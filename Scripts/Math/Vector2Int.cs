@@ -251,6 +251,34 @@ public struct Vector2Int
 
 	#region Serialization
 
+	public static string Serialize(Vector2Int value, char separator = ' ')
+	{
+		return value.x.ToString() + separator + value.y.ToString();
+	}
+
+	public static bool Deserialize(string valueString, out Vector2Int result, char separator = ' ')
+	{
+		if (!string.IsNullOrEmpty(valueString))
+		{
+			var split = valueString.Split(separator);
+			if (split.Length == 2)
+			{
+				Vector2Int value;
+				if (int.TryParse(split[0], out value.x))
+				{
+					if (int.TryParse(split[1], out value.y))
+					{
+						result = value;
+						return true;
+					}
+				}
+			}
+		}
+		result.x = 0;
+		result.y = 0;
+		return false;
+	}
+
 	public static Vector2Int Parse(string text)
 	{
 		string[] parts = text.Split(' ');

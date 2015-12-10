@@ -301,6 +301,38 @@ public struct Vector3Int
 
 	#region Serialization
 
+	public static string Serialize(Vector3Int value, char separator = ' ')
+	{
+		return value.x.ToString() + separator + value.y.ToString() + separator + value.z.ToString();
+	}
+
+	public static bool Deserialize(string valueString, out Vector3Int result, char separator = ' ')
+	{
+		if (!string.IsNullOrEmpty(valueString))
+		{
+			var split = valueString.Split(separator);
+			if (split.Length == 3)
+			{
+				Vector3Int value;
+				if (int.TryParse(split[0], out value.x))
+				{
+					if (int.TryParse(split[1], out value.y))
+					{
+						if (int.TryParse(split[2], out value.z))
+						{
+							result = value;
+							return true;
+						}
+					}
+				}
+			}
+		}
+		result.x = 0;
+		result.y = 0;
+		result.z = 0;
+		return false;
+	}
+
 	public static Vector3Int Parse(string text)
 	{
 		string[] parts = text.Split(' ');

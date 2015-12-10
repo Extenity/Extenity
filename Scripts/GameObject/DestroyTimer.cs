@@ -10,13 +10,13 @@ public class DestroyTimer : MonoBehaviour
 	void Awake()
 	{
 		if (removeFromParentOnAwake)
-			transform.parent = null;
+			transform.SetParent(null);
 	}
 
 	void Start()
 	{
 		if (removeFromParentOnStart)
-			transform.parent = null;
+			transform.SetParent(null);
 
 		Invoke("DestroyOnTimer", timer);
 	}
