@@ -2,8 +2,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
-public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Object
+public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
 {
 	#region Initialization
 
@@ -41,6 +42,7 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Objec
 
 		Update();
 		UpdateAutoRepaint();
+		UpdateMovementDetection();
 	}
 
 	public void RegisterUpdate()
@@ -177,6 +179,7 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Objec
 	#region Inspector GUI
 
 	public bool IsDefaultInspectorDrawingEnabled = true;
+	public bool IsDefaultInspectorScriptFieldEnabed = false;
 	public bool IsInspectorDisabledWhenPlaying = false;
 
 	private static readonly string[] ExcludedPropertiesInDefaultInspector = { "m_Script" };
@@ -196,7 +199,14 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Objec
 
 		if (IsDefaultInspectorDrawingEnabled)
 		{
-			DrawPropertiesExcluding(serializedObject, ExcludedPropertiesInDefaultInspector);
+			if (IsDefaultInspectorScriptFieldEnabed)
+			{
+				DrawDefaultInspector();
+			}
+			else
+			{
+				DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
+			}
 		}
 
 		OnAfterDefaultInspectorGUI();
@@ -218,7 +228,76 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Objec
 
 	#endregion
 
+	#region Transform Movement Detection
+
+	public Vector3 MovementDetectionPreviousPosition { get; private set; }
+	public Quaternion MovementDetectionPreviousRotation { get; private set; }
+	public Vector3 MovementDetectionPreviousScale { get; private set; }
+
+	protected virtual void OnMovementDetected() { }
+
+	private bool _IsMovementDetectionEnabled;
+	public bool IsMovementDetectionEnabled
+	{
+		get { return _IsMovementDetectionEnabled; }
+		set
+		{
+			if (value == _IsMovementDetectionEnabled)
+				return;
+
+			if (value)
+				InitializeMovementDetection();
+
+			if (value)
+				RegisterUpdate();
+			else
+				DeregisterUpdate();
+
+			_IsMovementDetectionEnabled = value;
+		}
+	}
+
+	private void InitializeMovementDetection()
+	{
+		var transform = Me.transform;
+		MovementDetectionPreviousPosition = transform.position;
+		MovementDetectionPreviousRotation = transform.rotation;
+		MovementDetectionPreviousScale = transform.localScale;
+	}
+
+	private void UpdateMovementDetection()
+	{
+		if (!IsMovementDetectionEnabled)
+			return;
+
+		var transform = Me.transform;
+		bool detected =
+			MovementDetectionPreviousPosition != transform.position ||
+			MovementDetectionPreviousRotation != transform.rotation ||
+			MovementDetectionPreviousScale != transform.localScale;
+
+		if (detected)
+		{
+			OnMovementDetected();
+			MovementDetectionPreviousPosition = transform.position;
+			MovementDetectionPreviousRotation = transform.rotation;
+			MovementDetectionPreviousScale = transform.localScale;
+		}
+	}
+
+	#endregion
+
 	#region Mouse
+
+	protected static Vector2 MouseSceneViewPosition
+	{
+		get
+		{
+			var mouseScreenPosition = Event.current.mousePosition;
+			mouseScreenPosition.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouseScreenPosition.y;
+			return mouseScreenPosition;
+		}
+	}
 
 	protected static bool IsMouseCloseToScreenPoint(Vector2 mousePosition, Vector3 screenPosition, float maximumDistanceFromMouse)
 	{
@@ -229,39 +308,55 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Objec
 		return diffY <= maximumDistanceFromMouse && diffY >= -maximumDistanceFromMouse;
 	}
 
+	protected bool IsMouseCloseToWorldPointInScreenCoordinates(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse)
+	{
+		var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
+		return
+			screenPosition.HasValue &&
+			IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse);
+	}
+
+	protected Vector2 GetDifferenceBetweenMousePositionAndWorldPoint(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse = 0f)
+	{
+		var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
+		if (screenPosition.HasValue)
+		{
+			var diff = mousePosition - screenPosition.Value.ToVector2XY();
+			if (maximumDistanceFromMouse > 0f)
+			{
+				if (diff.sqrMagnitude < maximumDistanceFromMouse * maximumDistanceFromMouse)
+				{
+					return diff;
+				}
+			}
+			else
+			{
+				return diff;
+			}
+		}
+		return new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+	}
+
 	#endregion
 
-	#region GUI Components - Progress Bar
+	#region Layout
 
-	public static void ProgressBar(float value, string inlineText)
-	{
-		ProgressBar(null, value, inlineText);
-	}
+	public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(30f);
 
-	public static void ProgressBar(string title, float value, string inlineText)
+	#endregion
+
+	#region Horizontal Line
+
+	private GUILayoutOption[] HorizontalLineLayoutOptions;
+
+	public void DrawHorizontalLine()
 	{
-		if (!string.IsNullOrEmpty(title))
+		if (HorizontalLineLayoutOptions == null)
 		{
-			GUILayout.Label(title);
+			HorizontalLineLayoutOptions = new[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) };
 		}
 
-		EditorGUILayout.BeginHorizontal();
-		var rect = EditorGUILayout.BeginVertical();
-		EditorGUI.ProgressBar(rect, value, inlineText);
-		GUILayout.Space(16);
-		EditorGUILayout.EndVertical();
-		GUILayout.Label(("% " + (int)(value * 100f)).ToString(), GUILayout.Width(40f));
-		EditorGUILayout.EndHorizontal();
-	}
-
-	public static void ProgressBar(float value)
-	{
-		ProgressBar(null, value, null);
-	}
-
-	public static void ProgressBar(string title, float value)
-	{
-		ProgressBar(title, value, null);
+		GUILayout.Box("", HorizontalLineLayoutOptions);
 	}
 
 	#endregion
