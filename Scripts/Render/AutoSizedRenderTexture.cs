@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Extenity.Logging;
 using UnityEngine.Events;
+using Logger = Extenity.Logging.Logger;
 
 public class AutoSizedRenderTexture : MonoBehaviour
 {

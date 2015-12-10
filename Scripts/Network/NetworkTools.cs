@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Net;
 using System.IO;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 public static class NetworkTools
 {

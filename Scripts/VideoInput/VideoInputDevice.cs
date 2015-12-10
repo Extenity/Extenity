@@ -1,5 +1,6 @@
 using Extenity.Logging;
 using UnityEngine;
+using Logger = Extenity.Logging.Logger;
 
 public class VideoInputDevice : MonoBehaviour
 {

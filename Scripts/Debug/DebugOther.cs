@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 public class DebugOther
 {

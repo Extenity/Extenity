@@ -1,5 +1,6 @@
 using UnityEngine;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 // Usage:
 //   Use "new" to create singleton.

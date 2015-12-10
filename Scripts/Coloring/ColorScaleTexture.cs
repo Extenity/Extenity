@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Extenity.Coloring;
 using Extenity.Logging;
 using UnityEngine.UI;
+using Logger = Extenity.Logging.Logger;
 
 public class ColorScaleTexture : MonoBehaviour
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 public class DatabaseFile
 {

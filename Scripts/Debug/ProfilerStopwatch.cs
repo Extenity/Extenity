@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Threading;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 using Object = UnityEngine.Object;
 
 public class ProfilerStopwatch

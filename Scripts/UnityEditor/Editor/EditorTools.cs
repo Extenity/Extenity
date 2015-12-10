@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 namespace Extenity
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 namespace Extenity
 {

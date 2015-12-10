@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Extenity.Logging;
 using UnityEngine;
+using Logger = Extenity.Logging.Logger;
 
 namespace Extenity
 {

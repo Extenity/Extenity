@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using Extenity.Logging;
+using Logger = Extenity.Logging.Logger;
 
 public struct ConsistencyError
 {
