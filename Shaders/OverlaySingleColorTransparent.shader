@@ -1,0 +1,24 @@
+﻿Shader "Primitive/Overlay Single Color Transparent"
+{
+	Properties
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+	}
+   
+	SubShader
+	{
+		Tags { "Queue" = "Transparent+1" "RenderType" = "Opaque" "LightMode" = "Always" }
+ 
+		Pass
+		{
+			Lighting Off
+			ZWrite Off
+			ZTest Always
+			Blend SrcAlpha OneMinusSrcAlpha
+ 
+			Color[_Color]
+		}
+	} 
+
+	Fallback "Unlit/Transparent"
+}

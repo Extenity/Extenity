@@ -1,0 +1,875 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+using Object = UnityEngine.Object;
+
+public static class GameObjectTools
+{
+	#region Create and Destroy
+
+	public static GameObject CreateOrGetGameObject(string name)
+	{
+		var go = GameObject.Find(name);
+		if (go != null)
+			return go;
+		return new GameObject(name);
+	}
+
+	public static void DestroyAll<T>(this IList<T> list) where T : Object
+	{
+		for (int i = 0; i < list.Count; i++)
+		{
+			Object.Destroy(list[i]);
+		}
+	}
+
+	public static void DestroyAllImmediate<T>(this IList<T> list) where T : Object
+	{
+		for (int i = 0; i < list.Count; i++)
+		{
+			Object.DestroyImmediate(list[i]);
+		}
+	}
+
+	#endregion
+
+	#region Recursive changes
+
+	public static void ChangeLayersRecursively(this GameObject gameObject, string layerName)
+	{
+		ChangeLayersRecursively(gameObject, LayerMask.NameToLayer(layerName));
+	}
+
+	public static void ChangeLayersRecursively(this GameObject gameObject, int layer)
+	{
+		gameObject.layer = layer;
+		foreach (Transform child in gameObject.transform)
+			ChangeLayersRecursively(child.gameObject, layer);
+	}
+
+	public static void EnableRenderersRecursively(this Transform transform)
+	{
+		var renderer = transform.GetComponent<Renderer>();
+		if (renderer != null)
+			renderer.enabled = true;
+		foreach (Transform child in transform)
+			EnableRenderersRecursively(child);
+	}
+
+	public static void DisableRenderersRecursively(this Transform transform)
+	{
+		var renderer = transform.GetComponent<Renderer>();
+		if (renderer != null)
+			renderer.enabled = false;
+		foreach (Transform child in transform)
+			DisableRenderersRecursively(child);
+	}
+
+	public static void SetRendererColorsRecursively(this Transform transform, Color color)
+	{
+		var renderer = transform.GetComponent<Renderer>();
+		if (renderer != null)
+			renderer.material.color = color;
+		foreach (Transform child in transform)
+			SetRendererColorsRecursively(child, color);
+	}
+
+	public delegate Material AssignNewMaterialMethod(Renderer processingRenderer, int processingMaterialIndex);
+	public delegate Color AssignNewColorMethod(Renderer processingRenderer, int processingMaterialIndex);
+
+	public static int ChangeAllChildRendererMaterials(this GameObject gameObject, AssignNewMaterialMethod assignNewMaterialMethod, AssignNewColorMethod assignNewColorMethod = null)
+	{
+		var processedMaterialCount = 0;
+		var renderers = gameObject.GetComponentsInChildren<Renderer>();
+		if (renderers != null && renderers.Length > 0)
+		{
+			for (int iRenderer = 0; iRenderer < renderers.Length; iRenderer++)
+			{
+				var renderer = renderers[iRenderer];
+				var materials = renderer.materials;
+				for (int iMaterial = 0; iMaterial < materials.Length; iMaterial++)
+				{
+					var oldMaterial = materials[iMaterial];
+					var newMaterial = assignNewMaterialMethod(renderer, iMaterial);
+
+					// Assign main texture
+					newMaterial.mainTexture = oldMaterial.mainTexture;
+
+					// Assign color
+					if (assignNewColorMethod != null)
+					{
+						newMaterial.color = assignNewColorMethod(renderer, iMaterial);
+					}
+
+					materials[iMaterial] = newMaterial;
+					processedMaterialCount++;
+				}
+				renderer.materials = materials;
+			}
+		}
+		return processedMaterialCount;
+	}
+
+	#endregion
+
+	#region Recursive calculations
+
+	public static bool CalculateRendererBoundsRecursively(this GameObject go, out Bounds bounds)
+	{
+		var renderers = go.GetComponentsInChildren<Renderer>();
+		if (renderers == null || renderers.Length == 0)
+		{
+			bounds = new Bounds();
+			return false;
+		}
+
+		bounds = new Bounds(renderers[0].bounds.center, renderers[0].bounds.size);
+
+		for (int i = 1; i < renderers.Length; i++)
+		{
+			var renderer = renderers[i];
+			bounds.Encapsulate(renderer.bounds);
+		}
+
+		return true;
+	}
+
+	#endregion
+
+	#region FindComponentInParents
+
+	public static T GetComponentInParents<T>(this Component me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var transform = me.transform.parent;
+
+		while (transform != null)
+		{
+			var component = transform.GetComponent<T>();
+			if (component != null)
+				return component;
+
+			transform = transform.parent;
+		}
+		return null;
+	}
+
+	public static T GetComponentInParents<T>(this GameObject me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var transform = me.transform.parent;
+
+		while (transform != null)
+		{
+			var component = transform.GetComponent<T>();
+			if (component != null)
+				return component;
+
+			transform = transform.parent;
+		}
+		return null;
+	}
+
+	public static T GetComponentInParentsIncludingSelf<T>(this Component me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var component = me.GetComponent<T>();
+		if (component != null)
+			return component;
+
+		var transform = me.transform.parent;
+
+		while (transform != null)
+		{
+			component = transform.GetComponent<T>();
+			if (component != null)
+				return component;
+
+			transform = transform.parent;
+		}
+		return null;
+	}
+
+	public static T GetComponentInParentsIncludingSelf<T>(this GameObject me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var component = me.GetComponent<T>();
+		if (component != null)
+			return component;
+
+		var transform = me.transform.parent;
+
+		while (transform != null)
+		{
+			component = transform.GetComponent<T>();
+			if (component != null)
+				return component;
+
+			transform = transform.parent;
+		}
+		return null;
+	}
+
+	#endregion
+
+	#region Find child(ren) by custom rule
+
+	public delegate bool CustomRuleDelegate(Transform transform);
+
+	public static Transform FindChildByCustomRule(this Transform me, CustomRuleDelegate customRuleDelegate)
+	{
+		if (customRuleDelegate(me))
+			return me;
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			var found = child.FindChildByCustomRule(customRuleDelegate);
+			if (found != null)
+				return found;
+		}
+		return null;
+	}
+
+	public static void FindChildrenByCustomRuleRecursive(this Transform me, CustomRuleDelegate customRuleDelegate, IList<Transform> list)
+	{
+		if (customRuleDelegate(me))
+		{
+			list.Add(me);
+		}
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			child.FindChildrenByCustomRuleRecursive(customRuleDelegate, list);
+		}
+	}
+
+	#endregion
+
+	#region Find child(ren) by name recursive
+
+	public static Transform FindChildByNameRecursive(this Transform me, string value)
+	{
+		if (me.name == value)
+			return me;
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			var found = child.FindChildByNameRecursive(value);
+			if (found != null)
+				return found;
+		}
+		return null;
+	}
+
+	public static void FindChildrenByNameRecursive(this Transform me, string value, IList<Transform> list)
+	{
+		if (me.name == value)
+		{
+			list.Add(me);
+		}
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			child.FindChildrenByNameRecursive(value, list);
+		}
+	}
+
+	#endregion
+
+	#region Find child(ren) by prefix (and ordered)
+
+	public static GameObject FindChildByPrefix(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.StartsWith(value))
+				return child.gameObject;
+		}
+		return null;
+	}
+
+	public static Transform FindChildByPrefix(this Transform me, string value)
+	{
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.StartsWith(value))
+				return child;
+		}
+		return null;
+	}
+
+	public static List<GameObject> FindChildrenByPrefix(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		var childrenList = new List<GameObject>();
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.StartsWith(value))
+				childrenList.Add(child.gameObject);
+		}
+		return childrenList;
+	}
+
+	public static List<Transform> FindChildrenByPrefix(this Transform me, string value)
+	{
+		var childrenList = new List<Transform>();
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.StartsWith(value))
+				childrenList.Add(child);
+		}
+		return childrenList;
+	}
+
+	public static List<Transform> FindChildrenByPrefixOrdered(this Transform me, string value)
+	{
+		var childrenList = me.FindChildrenByPrefix(value);
+
+		childrenList.Sort(
+			delegate (Transform p1, Transform p2)
+			{
+				int index1 = int.Parse(p1.name.Remove(0, value.Length));
+				int index2 = int.Parse(p2.name.Remove(0, value.Length));
+				return index1 - index2;
+			});
+
+		return childrenList;
+	}
+
+	#endregion
+
+	#region Find child(ren) by suffix
+
+	public static GameObject FindChildBySuffix(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.EndsWith(value))
+				return child.gameObject;
+		}
+		return null;
+	}
+
+	public static Transform FindChildBySuffix(this Transform me, string value)
+	{
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.EndsWith(value))
+				return child;
+		}
+		return null;
+	}
+
+	public static List<GameObject> FindChildrenBySuffix(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		var childrenList = new List<GameObject>();
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.EndsWith(value))
+				childrenList.Add(child.gameObject);
+		}
+		return childrenList;
+	}
+
+	public static List<Transform> FindChildrenBySuffix(this Transform me, string value)
+	{
+		var childrenList = new List<Transform>();
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.EndsWith(value))
+				childrenList.Add(child);
+		}
+		return childrenList;
+	}
+
+	#endregion
+
+	#region Find child(ren) by name-contains
+
+	public static GameObject FindChildByNameContains(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.Contains(value))
+				return child.gameObject;
+		}
+		return null;
+	}
+
+	public static Transform FindChildByNameContains(this Transform me, string value)
+	{
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.Contains(value))
+				return child;
+		}
+		return null;
+	}
+
+	public static List<GameObject> FindChildrenByNameContains(this GameObject me, string value)
+	{
+		Transform transform = me.transform;
+		var childrenList = new List<GameObject>();
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			var child = transform.GetChild(i);
+			if (child.name.Contains(value))
+				childrenList.Add(child.gameObject);
+		}
+		return childrenList;
+	}
+
+	public static List<Transform> FindChildrenByNameContains(this Transform me, string value)
+	{
+		var childrenList = new List<Transform>();
+		for (int i = 0; i < me.childCount; i++)
+		{
+			var child = me.GetChild(i);
+			if (child.name.Contains(value))
+				childrenList.Add(child);
+		}
+		return childrenList;
+	}
+
+	#endregion
+
+	#region Get component in children without active check
+
+	public static T GetComponentInChildrenWithoutActiveCheck<T>(this Transform me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		//if (this.activeInHierarchy)
+		{
+			T component = me.GetComponent<T>();
+			if (component != null)
+				return component;
+		}
+
+		foreach (Transform child in me)
+		{
+			T componentInChildren = child.GetComponentInChildrenWithoutActiveCheck<T>();
+			if (componentInChildren != null)
+				return componentInChildren;
+		}
+		return null;
+	}
+
+	#endregion
+
+	#region FindObjectOfType
+
+	public static T FindObjectOfType<T>() where T : class
+	{
+		return UnityEngine.Object.FindObjectOfType(typeof(T)) as T;
+	}
+
+	#endregion
+
+	#region FindObjectOfTypeEnsured
+
+	public static object FindObjectOfTypeEnsured(Type type)
+	{
+		var obj = UnityEngine.Object.FindObjectOfType(type);
+		if (obj == null)
+			throw new Exception("Could not find object of type '" + type.Name + "'");
+		return obj;
+	}
+
+	public static T FindObjectOfTypeEnsured<T>() where T : class
+	{
+		var type = typeof(T);
+		var obj = UnityEngine.Object.FindObjectOfType(type);
+		if (obj == null)
+			throw new Exception("Could not find object of type '" + type.Name + "'");
+		return obj as T;
+	}
+
+	#endregion
+
+	#region FindSingleObjectOfTypeEnsured
+
+	public static object FindSingleObjectOfTypeEnsured(Type type)
+	{
+		var objs = UnityEngine.Object.FindObjectsOfType(type);
+		if (objs == null || objs.Length == 0)
+			throw new Exception("Could not find object of type '" + type.Name + "'");
+		else if (objs.Length > 1)
+			throw new Exception("There are multiple instances for object of type '" + type.Name + "'");
+		return objs[0];
+	}
+
+	public static T FindSingleObjectOfTypeEnsured<T>() where T : class
+	{
+		var type = typeof(T);
+		var objs = UnityEngine.Object.FindObjectsOfType(type);
+		if (objs == null || objs.Length == 0)
+			throw new Exception("Could not find object of type '" + type.Name + "'");
+		else if (objs.Length > 1)
+			throw new Exception("There are multiple instances for object of type '" + type.Name + "'");
+		return objs[0] as T;
+	}
+
+	#endregion
+
+	#region FindChildEnsured
+
+	public static Transform FindChildEnsured(this GameObject me, string name)
+	{
+		var component = me.transform.FindChild(name);
+		if (component == null)
+			throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
+		return component;
+	}
+
+	public static Transform FindChildEnsured(this Component me, string name)
+	{
+		var component = me.transform.FindChild(name);
+		if (component == null)
+			throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
+		return component;
+	}
+
+	public static Transform FindChildEnsured(this Transform me, string name)
+	{
+		var component = me.FindChild(name);
+		if (component == null)
+			throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
+		return component;
+	}
+
+	#endregion
+
+	#region Get Children
+
+	public static List<GameObject> GetChildren(this GameObject parent)
+	{
+		var list = new List<GameObject>();
+		for (int i = 0; i < parent.transform.childCount; i++)
+		{
+			var child = parent.transform.GetChild(i);
+			list.Add(child.gameObject);
+		}
+		return list;
+	}
+
+	public static List<Transform> GetChildren(this Transform parent)
+	{
+		var list = new List<Transform>();
+		for (int i = 0; i < parent.childCount; i++)
+		{
+			var child = parent.GetChild(i);
+			list.Add(child);
+		}
+		return list;
+	}
+
+	#endregion
+
+	#region GetParentEnsured
+
+	public static Transform GetParentEnsured(this Component me)
+	{
+		var parent = me.transform.parent;
+		if (parent == null)
+		{
+			throw new Exception("Could not get parent of '" + me.name + "'");
+		}
+		return parent;
+	}
+
+	#endregion
+
+	#region GetComponentEnsured
+
+	public static T GetComponentEnsured<T>(this Component me) where T : Component
+	{
+		if (me == null)
+		{
+			throw new Exception("Tried to get component '" + typeof(T).Name + "' for a null object");
+		}
+		return me.gameObject.GetComponentEnsured<T>();
+	}
+
+	public static T GetComponentEnsured<T>(this GameObject me) where T : Component
+	{
+		if (me == null)
+		{
+			throw new Exception("Tried to get component '" + typeof(T).Name + "' for a null object");
+		}
+		var components = me.GetComponents<T>();
+		if (components == null || components.Length == 0)
+		{
+			throw new Exception("Could not get component '" + typeof(T).Name + "'");
+		}
+		if (components.Length != 1)
+		{
+			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in scene");
+		}
+		return components[0];
+	}
+
+	#endregion
+
+	#region GetOrAddComponent
+
+	public static T GetSingleOrAddComponent<T>(this GameObject me) where T : Component
+	{
+		if (me == null)
+		{
+			throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+		}
+		var components = me.GetComponents<T>();
+		if (components == null || components.Length == 0)
+		{
+			return me.AddComponent<T>();
+		}
+		if (components.Length != 1)
+		{
+			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in game object");
+		}
+		return components[0];
+	}
+
+	public static T GetFirstOrAddComponent<T>(this GameObject me) where T : Component
+	{
+		if (me == null)
+		{
+			throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+		}
+		var components = me.GetComponents<T>();
+		if (components == null || components.Length == 0)
+		{
+			return me.AddComponent<T>();
+		}
+		return components[0];
+	}
+
+	#endregion
+
+	#region InstantiateAndGetComponent
+
+	public static GameObject Instantiate(GameObject original, Transform parent, bool setLocationToLocalZero)
+	{
+		var go = GameObject.Instantiate(original);
+		go.transform.SetParent(parent);
+		if (setLocationToLocalZero)
+		{
+			go.transform.ResetTransformToLocalZero();
+		}
+		return go;
+	}
+
+	public static T InstantiateAndGetComponent<T>(GameObject original) where T : Component
+	{
+		var go = UnityEngine.Object.Instantiate(original) as GameObject;
+		return go.GetComponent<T>();
+	}
+
+	public static T InstantiateAndGetComponent<T>(GameObject original, Vector3 position, Quaternion rotation) where T : Component
+	{
+		var go = UnityEngine.Object.Instantiate(original, position, rotation) as GameObject;
+		return go.GetComponent<T>();
+	}
+
+	public static T InstantiateAndGetComponent<T>(GameObject original, Transform parent, bool setLocationToLocalZero) where T : Component
+	{
+		var go = Instantiate(original, parent, setLocationToLocalZero);
+		return go.GetComponent<T>();
+	}
+
+	#endregion
+
+	#region Instance Count
+
+	public static int GetComponentCount<T>(this GameObject me) where T : Component
+	{
+		var components = me.GetComponents<T>();
+		if (components == null)
+			return 0;
+		return components.Length;
+	}
+
+	public static int GetComponentCount<T>(this Component me) where T : Component
+	{
+		var components = me.GetComponents<T>();
+		if (components == null)
+			return 0;
+		return components.Length;
+	}
+
+	public static void EnsureOnlyOneComponentInstance<T>(this Component me) where T : Component
+	{
+		if (me.GetComponentCount<T>() != 1)
+			throw new Exception();
+	}
+
+	public static void EnsureOnlyOneComponentInstance<T>(this GameObject me) where T : Component
+	{
+		if (me.GetComponentCount<T>() != 1)
+			throw new Exception();
+	}
+
+	#endregion
+
+	#region Get Closest
+
+	public static Transform GetClosest<T>(this Transform me, IList<T> others) where T : Component
+	{
+		if (others.IsNullOrEmpty())
+			return null;
+
+		Transform closest = others[0].transform;
+		float closestSqrDistance = (me.position - closest.position).sqrMagnitude;
+
+		for (int i = 0; i < others.Count; i++)
+		{
+			var other = others[i];
+			float sqrDistance = (me.position - other.transform.position).sqrMagnitude;
+			if (closestSqrDistance > sqrDistance)
+			{
+				closestSqrDistance = sqrDistance;
+				closest = other.transform;
+			}
+		}
+
+		return closest;
+	}
+
+	public static Transform GetClosest<T>(this Transform me, T[] others) where T : Component
+	{
+		if (others.IsNullOrEmpty())
+			return null;
+
+		Transform closest = others[0].transform;
+		float closestSqrDistance = (me.position - closest.position).sqrMagnitude;
+
+		for (int i = 0; i < others.Length; i++)
+		{
+			var other = others[i];
+			float sqrDistance = (me.position - other.transform.position).sqrMagnitude;
+			if (closestSqrDistance > sqrDistance)
+			{
+				closestSqrDistance = sqrDistance;
+				closest = other.transform;
+			}
+		}
+
+		return closest;
+	}
+
+	#endregion
+
+	#region Get Closest (with distance)
+
+	public static Transform GetClosest<T>(this Transform me, IList<T> others, out float closestObjectDistance) where T : Component
+	{
+		if (others.IsNullOrEmpty())
+		{
+			closestObjectDistance = float.NaN;
+			return null;
+		}
+
+		Transform closest = others[0].transform;
+		float closestSqrDistance = (me.position - closest.position).sqrMagnitude;
+
+		for (int i = 0; i < others.Count; i++)
+		{
+			var other = others[i];
+			float sqrDistance = (me.position - other.transform.position).sqrMagnitude;
+			if (closestSqrDistance > sqrDistance)
+			{
+				closestSqrDistance = sqrDistance;
+				closest = other.transform;
+			}
+		}
+
+		closestObjectDistance = Mathf.Sqrt(closestSqrDistance);
+		return closest;
+	}
+
+	public static Transform GetClosest<T>(this Transform me, T[] others, out float closestObjectDistance) where T : Component
+	{
+		if (others.IsNullOrEmpty())
+		{
+			closestObjectDistance = float.NaN;
+			return null;
+		}
+
+		Transform closest = others[0].transform;
+		float closestSqrDistance = (me.position - closest.position).sqrMagnitude;
+
+		for (int i = 0; i < others.Length; i++)
+		{
+			var other = others[i];
+			float sqrDistance = (me.position - other.transform.position).sqrMagnitude;
+			if (closestSqrDistance > sqrDistance)
+			{
+				closestSqrDistance = sqrDistance;
+				closest = other.transform;
+			}
+		}
+
+		closestObjectDistance = Mathf.Sqrt(closestSqrDistance);
+		return closest;
+	}
+
+	#endregion
+
+	#region Reset Transform
+
+	public static void ResetTransformToLocalZero(this Transform me)
+	{
+		me.localPosition = Vector3.zero;
+		me.localRotation = Quaternion.identity;
+		me.localScale = Vector3.one;
+	}
+
+	public static void ResetTransformToWorldZero(this Transform me)
+	{
+		me.position = Vector3.zero;
+		me.rotation = Quaternion.identity;
+		me.localScale = Vector3.one;
+	}
+
+	#endregion
+
+	#region Full Name
+
+	public static string FullName(this GameObject me, char separator = '/')
+	{
+		var name = me.name;
+		var parent = me.transform.parent;
+		while (parent != null)
+		{
+			name = parent.name + separator + name;
+			parent = parent.parent;
+		}
+		return name;
+	}
+
+	#endregion
+}

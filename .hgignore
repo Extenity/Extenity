@@ -1,0 +1,5 @@
+syntax: glob
+*.orig
+*.orig.meta
+.DS_Store
+Thumbs.db
