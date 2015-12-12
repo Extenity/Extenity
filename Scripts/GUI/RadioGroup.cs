@@ -13,48 +13,115 @@ public class RadioGroup : MonoBehaviour
 	protected void Start()
 	{
 		InitializeRadioButtons();
+		SelectButton(DefaultButton);
 	}
 
 	#endregion
 
 	#region Deinitialization
 
-	protected void OnDestroy()
-	{
-	}
+	//protected void OnDestroy()
+	//{
+	//	DeinitializeRadioButtons();
+	//}
 
 	#endregion
 
 	#region Update
 
-	protected void Update()
+	protected void LateUpdate()
 	{
+		if (ChildrenInvalidated)
+		{
+			InitializeRadioButtons();
+        }
 	}
 
 	#endregion
 
-	private List<Toggle> Buttons;
-	public Toggle DefaultButton;
-	public Toggle SelectedButton;
-	private bool SuspendToggleChangedEvents;
+	#region Children
 
-	[Serializable]
-	public class RadioGroupSelectionEvent : UnityEvent<Toggle> { }
-    public RadioGroupSelectionEvent OnButtonSelected = new RadioGroupSelectionEvent();
+	protected bool ChildrenInvalidated;
+
+	protected void OnTransformChildrenChanged()
+	{
+		ChildrenInvalidated = true;
+	}
+
+	#endregion
+
+	#region Buttons
+
+	private List<Toggle> Buttons;
 
 	private void InitializeRadioButtons()
 	{
-		Buttons = transform.GetComponentsInChildren<Toggle>().ToList();
+		var newButtons = transform.GetComponentsInChildren<Toggle>();
 
-		foreach (var button in Buttons)
+		if (Buttons == null)
 		{
+			Buttons = new List<Toggle>(newButtons.Length);
+        }
+
+		Buttons.EqualizeTo(newButtons, button =>
+		{
+			Debug.Log("####### Radio registered: " + button.gameObject.name);
+
 			var cachedButton = button;
 			button.isOn = false;
-			button.onValueChanged.AddListener((toggleValue) => OnToggleChanged(cachedButton, toggleValue));
-		}
-
-		SelectButton(DefaultButton);
+			button.onValueChanged.AddListener(toggleValue => OnToggleChanged(cachedButton, toggleValue));
+		},
+		(toggle, i) =>
+		{
+			// TODO: Find a way to use RemoveListener to remove the event registered above.
+		});
 	}
+
+	//private void DeinitializeRadioButtons()
+	//{
+	//	if (Buttons == null)
+	//		return;
+
+	//	for (int i = 0; i < Buttons.Count; i++)
+	//	{
+	//		var button = Buttons[i];
+	//		button.onValueChanged.RemoveListener();
+	//	}
+
+	//	Buttons = null;
+	//}
+
+	#endregion
+
+	#region Default Button
+
+	public Toggle DefaultButton = null;
+
+	#endregion
+
+	#region Select Button
+
+	public Toggle SelectedButton { get; private set; }
+
+	public void SelectButton(Toggle toggle)
+	{
+		for (int i = 0; i < Buttons.Count; i++)
+		{
+			var button = Buttons[i];
+			var enable = button == toggle;
+			if (enable)
+			{
+				SelectedButton = button;
+			}
+			button.isOn = enable;
+		}
+	}
+
+	#endregion
+
+	#region Internal Events - Radio Buttons
+
+	private bool SuspendToggleChangedEvents;
 
 	private void OnToggleChanged(Toggle toggle, bool toggleValue)
 	{
@@ -75,17 +142,13 @@ public class RadioGroup : MonoBehaviour
 		SuspendToggleChangedEvents = false;
 	}
 
-	private void SelectButton(Toggle toggle)
-	{
-		for (int i = 0; i < Buttons.Count; i++)
-		{
-			var button = Buttons[i];
-			var enable = button == toggle;
-			if (enable)
-			{
-				SelectedButton = button;
-			}
-			button.isOn = enable;
-		}
-	}
+	#endregion
+
+	#region Events
+
+	[Serializable]
+	public class RadioGroupSelectionEvent : UnityEvent<Toggle> { }
+    public RadioGroupSelectionEvent OnButtonSelected = new RadioGroupSelectionEvent();
+
+	#endregion
 }
