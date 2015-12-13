@@ -8,13 +8,9 @@ public class UiFader : MonoBehaviour
 {
 	#region Configuration
 
-	public FadeType Type;
-
 	public bool GetFadeInConfigurationFromInitialValue = true;
-	public Color FadeInColor = Color.white;
 	public float FadeInAlpha = 1f;
 	public bool GetFadeOutConfigurationFromInitialValue = false;
-	public Color FadeOutColor = Color.black;
 	public float FadeOutAlpha = 0f;
 
 	public float FadeInDuration = 1f;
@@ -22,52 +18,56 @@ public class UiFader : MonoBehaviour
 	public float FadeInDelay = 0f;
 	public float FadeOutDelay = 0f;
 
+	public InitialFadeState InitialState = InitialFadeState.Untouched;
+
 	#endregion
 
 	#region Initialization
 
-	private void Awake()
+	public enum InitialFadeState
+	{
+		Untouched,
+		FadedIn,
+		FadedOut,
+	}
+
+	private void Start()
 	{
 		InitializeTarget();
+
+		switch (InitialState)
+		{
+			case InitialFadeState.Untouched:
+				break;
+			case InitialFadeState.FadedIn:
+				AlphaFadeIn(0f, 0f);
+				break;
+			case InitialFadeState.FadedOut:
+				AlphaFadeOut(0f, 0f);
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
 	}
 
 	#endregion
 
 	#region Target
 
-	private Image Image;
-	private CanvasGroup CanvasGroup;
+	public CanvasGroup CanvasGroup;
 
 	private void InitializeTarget()
 	{
-		Image = GetComponent<Image>();
-		CanvasGroup = GetComponent<CanvasGroup>();
-
 		if (GetFadeInConfigurationFromInitialValue)
 		{
-			if (Image != null)
-				FadeInColor = Image.color;
 			if (CanvasGroup != null)
 				FadeInAlpha = CanvasGroup.alpha;
 		}
 		if (GetFadeOutConfigurationFromInitialValue)
 		{
-			if (Image != null)
-				FadeOutColor = Image.color;
 			if (CanvasGroup != null)
 				FadeOutAlpha = CanvasGroup.alpha;
 		}
-	}
-
-	#endregion
-
-	#region Fade Type
-
-	public enum FadeType
-	{
-		Undefined,
-		Color,
-		Alpha,
 	}
 
 	#endregion
@@ -76,32 +76,12 @@ public class UiFader : MonoBehaviour
 
 	public float FadeIn()
 	{
-		switch (Type)
-		{
-			case FadeType.Undefined:
-				return 0f;
-			case FadeType.Color:
-				return ColorFadeIn();
-			case FadeType.Alpha:
-				return AlphaFadeIn();
-			default:
-				throw new ArgumentOutOfRangeException();
-		}
+		return AlphaFadeIn();
 	}
 
 	public float FadeOut()
 	{
-		switch (Type)
-		{
-			case FadeType.Undefined:
-				return 0f;
-			case FadeType.Color:
-				return ColorFadeOut();
-			case FadeType.Alpha:
-				return AlphaFadeOut();
-			default:
-				throw new ArgumentOutOfRangeException();
-		}
+		return AlphaFadeOut();
 	}
 
 	#endregion
@@ -116,10 +96,16 @@ public class UiFader : MonoBehaviour
 	protected float AlphaFadeIn(float delay, float duration)
 	{
 		Stop();
-		if (Image != null)
-			ImageTweener = Image.DOFade(FadeInAlpha, duration).SetDelay(delay);
 		if (CanvasGroup != null)
-			CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay);
+		{
+			CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+			CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
+			CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
+			{
+				CanvasGroup.blocksRaycasts = true;
+				CanvasGroup.interactable = true;
+			});
+		}
 		return duration + delay;
 	}
 
@@ -131,40 +117,16 @@ public class UiFader : MonoBehaviour
 	protected float AlphaFadeOut(float delay, float duration)
 	{
 		Stop();
-		if (Image != null)
-			ImageTweener = Image.DOFade(FadeOutAlpha, duration).SetDelay(delay);
 		if (CanvasGroup != null)
-			CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay);
-		return duration + delay;
-	}
-
-	#endregion
-
-	#region Fade - Color
-
-	protected float ColorFadeIn()
-	{
-		return ColorFadeIn(FadeInDelay, FadeInDuration);
-	}
-
-	protected float ColorFadeIn(float delay, float duration)
-	{
-		Stop();
-		if (Image != null)
-			ImageTweener = Image.DOColor(FadeInColor, duration).SetDelay(delay);
-		return duration + delay;
-	}
-
-	protected float ColorFadeOut()
-	{
-		return ColorFadeOut(FadeOutDelay, FadeOutDuration);
-	}
-
-	protected float ColorFadeOut(float delay, float duration)
-	{
-		Stop();
-		if (Image != null)
-			ImageTweener = Image.DOColor(FadeOutColor, duration).SetDelay(delay);
+		{
+			CanvasGroup.blocksRaycasts = true;  // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+			CanvasGroup.interactable = false; // Break interaction right away so user won't be able to click anything during fade out animation.
+			CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
+			{
+				CanvasGroup.blocksRaycasts = false;
+				CanvasGroup.interactable = false;
+			});
+		}
 		return duration + delay;
 	}
 
@@ -172,17 +134,11 @@ public class UiFader : MonoBehaviour
 
 	#region Tweener
 
-	private Tweener ImageTweener;
 	private Tweener CanvasGroupTweener;
 
 	public void Stop()
 	{
-		if (ImageTweener != null && ImageTweener.IsPlaying())
-		{
-			ImageTweener.Kill();
-			ImageTweener = null;
-		}
-		if (CanvasGroupTweener != null && CanvasGroupTweener.IsPlaying())
+		if (CanvasGroupTweener != null)
 		{
 			CanvasGroupTweener.Kill();
 			CanvasGroupTweener = null;

@@ -5,8 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using Logger = Extenity.Logging.Logger;
+using Object = UnityEngine.Object;
 
-public class RadioGroupGameObjectActivator : MonoBehaviour
+public class RadioGroupActivator : MonoBehaviour
 {
 	#region Initialization
 
@@ -57,7 +58,7 @@ public class RadioGroupGameObjectActivator : MonoBehaviour
 				throw new ArgumentOutOfRangeException("Mode");
 		}
 
-		gameObject.SetActive(isActive);
+		SetTargetActivation(isActive);
 	}
 
 	#endregion
@@ -65,6 +66,42 @@ public class RadioGroupGameObjectActivator : MonoBehaviour
 	#region Radio Group
 
 	public RadioGroup RadioGroup;
+
+	#endregion
+
+	#region Target
+
+	public Object Target;
+
+	private void SetTargetActivation(bool isActive)
+	{
+		if (Target == null)
+		{
+			Logger.LogError("Target was not set for radio group activator.");
+			return;
+		}
+
+		if (Target is GameObject)
+		{
+			((GameObject)Target).SetActive(isActive);
+		}
+		else if (Target is Button)
+		{
+			((Button)Target).interactable = isActive;
+		}
+		else if (Target is Image)
+		{
+			((Image)Target).enabled = isActive;
+		}
+		else if (Target is Behaviour)
+		{
+			((Behaviour)Target).enabled = isActive;
+		}
+		else
+		{
+			Logger.LogError("Unrecognized target set for radio group activator.");
+		}
+	}
 
 	#endregion
 
