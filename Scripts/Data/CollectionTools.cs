@@ -747,3 +747,44 @@ public class CollectionComparer<T> : IEqualityComparer<IEnumerable<T>>
 		return hash;
 	}
 }
+
+public class GenericComparer<T> : IEqualityComparer<T> where T : class
+{
+	private Func<T, object> Expression { get; set; }
+
+	public GenericComparer(Func<T, object> expression)
+	{
+		Expression = expression;
+	}
+
+	public bool Equals(T x, T y)
+	{
+		var value1 = Expression.Invoke(x);
+		var value2 = Expression.Invoke(y);
+		return value1 != null && value1.Equals(value2);
+	}
+
+	public int GetHashCode(T obj)
+	{
+		return obj.GetHashCode();
+	}
+}
+
+public class GenericComparer<T1, T2> : IEqualityComparer<T1, T2>
+{
+	private Func<T1, object> Expression1 { get; set; }
+	private Func<T2, object> Expression2 { get; set; }
+
+	public GenericComparer(Func<T1, object> expression1, Func<T2, object> expression2)
+	{
+		Expression1 = expression1;
+		Expression2 = expression2;
+	}
+
+	public bool Equals(T1 x, T2 y)
+	{
+		var value1 = Expression1.Invoke(x);
+		var value2 = Expression2.Invoke(y);
+		return value1 != null && value1.Equals(value2);
+	}
+}
