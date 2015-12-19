@@ -33,6 +33,25 @@ public static class GameObjectTools
 
 	#endregion
 
+	#region Create Primitive
+
+	public static GameObject CreatePrimitive(PrimitiveType primitiveType, string gameObjectName, bool createCollider, Transform parent = null)
+	{
+		var go = GameObject.CreatePrimitive(primitiveType);
+		if (!createCollider)
+		{
+			GameObject.DestroyImmediate(go.GetComponent<Collider>());
+		}
+		go.name = gameObjectName;
+		if (parent != null)
+		{
+			go.transform.parent = parent;
+		}
+		return go;
+	}
+
+	#endregion
+
 	#region Recursive changes
 
 	public static void ChangeLayersRecursively(this GameObject gameObject, string layerName)

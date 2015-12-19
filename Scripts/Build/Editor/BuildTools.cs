@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
 
 public static class BuildTools
 {
@@ -64,6 +66,79 @@ public static class BuildTools
 			throw new Exception("Could not get version from Mercurial repository. Exit code is " + exitCode + ". Output: '" + output + "'");
 		}
 		return output.Trim().Trim(new[] { '\r', '\n' });
+	}
+
+	#endregion
+
+	#region Get Scene Names From Build Settings
+
+	public static string[] GetSceneNamesFromBuildSettings(List<string> excludingNames)
+	{
+		var list = new List<string>();
+
+		for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+		{
+			var scene = EditorBuildSettings.scenes[i];
+
+			if (scene.enabled)
+			{
+				string name = scene.path.Substring(scene.path.LastIndexOf('/') + 1);
+				name = name.Substring(0, name.Length - 6);
+
+				if (excludingNames != null)
+				{
+					if (excludingNames.Contains(name))
+						continue;
+				}
+
+				list.Add(name);
+			}
+		}
+
+		return list.ToArray();
+	}
+
+	public static string[] GetScenePathsFromBuildSettings(List<string> excludingPaths)
+	{
+		var list = new List<string>();
+
+		for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+		{
+			var scene = EditorBuildSettings.scenes[i];
+
+			if (scene.enabled)
+			{
+				if (excludingPaths != null)
+				{
+					if (excludingPaths.Contains(scene.path))
+						continue;
+				}
+
+				list.Add(scene.path);
+			}
+		}
+
+		return list.ToArray();
+	}
+
+	public static string GetScenePathFromBuildSettings(string sceneName, bool onlyIfEnabled)
+	{
+		for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+		{
+			var scene = EditorBuildSettings.scenes[i];
+
+			if (!onlyIfEnabled || scene.enabled)
+			{
+				string name = scene.path.Substring(scene.path.LastIndexOf('/') + 1);
+				name = name.Substring(0, name.Length - 6);
+
+				if (name == sceneName)
+				{
+					return scene.path;
+				}
+			}
+		}
+		return null;
 	}
 
 	#endregion

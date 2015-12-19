@@ -90,6 +90,24 @@ namespace Extenity
 
 		#endregion
 
+		#region Load Scene
+
+		public static void LoadSceneInEditorByPath(string scenePath)
+		{
+			EditorApplication.SaveCurrentSceneIfUserWantsTo();
+			EditorApplication.OpenScene(scenePath);
+		}
+
+		public static void LoadSceneInEditorByName(string sceneName)
+		{
+			EditorApplication.SaveCurrentSceneIfUserWantsTo();
+			EditorApplication.OpenScene(BuildTools.GetScenePathFromBuildSettings(sceneName, false));
+		}
+
+		#endregion
+
+		#region Menu Items - Cleaning
+
 		[MenuItem("Tools/Clean Up/Clear all")]
 		public static void ClearAll()
 		{
@@ -153,5 +171,7 @@ namespace Extenity
 
 			AssetDatabase.Refresh();
 		}
+
+		#endregion
 	}
 }

@@ -1179,6 +1179,27 @@ public static class MathTools
 		return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z) || float.IsNaN(value.w);
 	}
 
+	/// <summary>
+	/// Rotates a rotation from towards to. Same as Quaternion.RotateTowards except this one notifies about rotation completion via isCompleted.
+	/// </summary>
+	public static Quaternion RotateTowards(this Quaternion from, Quaternion to, float maxDegreesDelta, out bool isCompleted)
+	{
+		var totalAngles = Quaternion.Angle(from, to);
+		if (totalAngles.IsZero())
+		{
+			isCompleted = true;
+			return to;
+		}
+		var t = maxDegreesDelta / totalAngles;
+		if (t > 1f)
+		{
+			isCompleted = true;
+			return to;
+		}
+		isCompleted = false;
+		return Quaternion.SlerpUnclamped(from, to, t);
+	}
+
 	#endregion
 
 	#region Closest Point On Line
