@@ -418,6 +418,18 @@ public static class MathTools
 		return Mathf.Acos(neighbourSideTo90Angle / hypotenuse);
 	}
 
+	public static bool IsValidTriangle(Vector3 point1, Vector3 point2, Vector3 point3)
+	{
+		var a = Vector3.Distance(point1, point2);
+		var b = Vector3.Distance(point1, point3);
+		var c = Vector3.Distance(point2, point3);
+
+		return
+			a + b > c &&
+			a + c > b &&
+			b + c > a;
+	}
+
 	#endregion
 
 	#region Vector
@@ -2072,7 +2084,7 @@ public static class MathTools
 
 	public static Bounds BoundsNaN = new Bounds(Vector3NaN, Vector3NaN);
 
-	public static void FixBounds(ref Bounds bounds)
+	public static void Fix(this Bounds bounds)
 	{
 		Vector3 min = bounds.min;
 		Vector3 max = bounds.max;
@@ -2087,26 +2099,30 @@ public static class MathTools
 			{
 				if (switchZ)
 				{
-					bounds.min = new Vector3(max.x, max.y, max.z);
-					bounds.max = new Vector3(min.x, min.y, min.z);
+					bounds.SetMinMax(
+						new Vector3(max.x, max.y, max.z),
+						new Vector3(min.x, min.y, min.z));
 				}
 				else
 				{
-					bounds.min = new Vector3(max.x, max.y, min.z);
-					bounds.max = new Vector3(min.x, min.y, max.z);
+					bounds.SetMinMax(
+						new Vector3(max.x, max.y, min.z),
+						new Vector3(min.x, min.y, max.z));
 				}
 			}
 			else
 			{
 				if (switchZ)
 				{
-					bounds.min = new Vector3(max.x, min.y, max.z);
-					bounds.max = new Vector3(min.x, max.y, min.z);
+					bounds.SetMinMax(
+						new Vector3(max.x, min.y, max.z),
+						new Vector3(min.x, max.y, min.z));
 				}
 				else
 				{
-					bounds.min = new Vector3(max.x, min.y, min.z);
-					bounds.max = new Vector3(min.x, max.y, max.z);
+					bounds.SetMinMax(
+						new Vector3(max.x, min.y, min.z),
+						new Vector3(min.x, max.y, max.z));
 				}
 			}
 		}
@@ -2116,30 +2132,41 @@ public static class MathTools
 			{
 				if (switchZ)
 				{
-					bounds.min = new Vector3(min.x, max.y, max.z);
-					bounds.max = new Vector3(max.x, min.y, min.z);
+					bounds.SetMinMax(
+						new Vector3(min.x, max.y, max.z),
+						new Vector3(max.x, min.y, min.z));
 				}
 				else
 				{
-					bounds.min = new Vector3(min.x, max.y, min.z);
-					bounds.max = new Vector3(max.x, min.y, max.z);
+					bounds.SetMinMax(
+						new Vector3(min.x, max.y, min.z),
+						new Vector3(max.x, min.y, max.z));
 				}
 			}
 			else
 			{
 				if (switchZ)
 				{
-					bounds.min = new Vector3(min.x, min.y, max.z);
-					bounds.max = new Vector3(max.x, max.y, min.z);
+					bounds.SetMinMax(
+						new Vector3(min.x, min.y, max.z),
+						new Vector3(max.x, max.y, min.z));
 				}
 				else
 				{
-					bounds.min = new Vector3(min.x, min.y, min.z);
-					bounds.max = new Vector3(max.x, max.y, max.z);
+					bounds.SetMinMax(
+						new Vector3(min.x, min.y, min.z),
+						new Vector3(max.x, max.y, max.z));
 				}
 			}
 		}
 
+	}
+
+	public static void Reset(this Bounds bounds)
+	{
+		bounds.SetMinMax(
+			new Vector3(float.MaxValue, float.MaxValue, float.MaxValue),
+			new Vector3(float.MinValue, float.MinValue, float.MinValue));
 	}
 
 	#endregion

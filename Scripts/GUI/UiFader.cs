@@ -1,183 +1,149 @@
-﻿//using System;
-//using DG.Tweening;
-//using UnityEngine;
-//using System.Collections;
-//using UnityEngine.UI;
+﻿using System;
+using DG.Tweening;
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
 
-//public class UiFader : MonoBehaviour
-//{
-//	#region Configuration
+public class UiFader : MonoBehaviour
+{
+	#region Configuration
 
-//	public FadeType Type;
+	public bool GetFadeInConfigurationFromInitialValue = true;
+	public float FadeInAlpha = 1f;
+	public bool GetFadeOutConfigurationFromInitialValue = false;
+	public float FadeOutAlpha = 0f;
 
-//	public bool GetFadeInConfigurationFromInitialValue = true;
-//	public Color FadeInColor = Color.white;
-//	public float FadeInAlpha = 1f;
-//	public bool GetFadeOutConfigurationFromInitialValue = false;
-//	public Color FadeOutColor = Color.black;
-//	public float FadeOutAlpha = 0f;
+	public float FadeInDuration = 1f;
+	public float FadeOutDuration = 1f;
+	public float FadeInDelay = 0f;
+	public float FadeOutDelay = 0f;
 
-//	public float FadeInDuration = 1f;
-//	public float FadeOutDuration = 1f;
-//	public float FadeInDelay = 0f;
-//	public float FadeOutDelay = 0f;
+	public InitialFadeState InitialState = InitialFadeState.Untouched;
 
-//	#endregion
+	#endregion
 
-//	#region Initialization
+	#region Initialization
 
-//	private void Awake()
-//	{
-//		InitializeTarget();
-//	}
+	public enum InitialFadeState
+	{
+		Untouched,
+		FadedIn,
+		FadedOut,
+	}
 
-//	#endregion
+	private void Start()
+	{
+		InitializeTarget();
 
-//	#region Target
+		switch (InitialState)
+		{
+			case InitialFadeState.Untouched:
+				break;
+			case InitialFadeState.FadedIn:
+				AlphaFadeIn(0f, 0f);
+				break;
+			case InitialFadeState.FadedOut:
+				AlphaFadeOut(0f, 0f);
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
+	}
 
-//	private Image Image;
-//	private CanvasGroup CanvasGroup;
+	#endregion
 
-//	private void InitializeTarget()
-//	{
-//		Image = GetComponent<Image>();
-//		CanvasGroup = GetComponent<CanvasGroup>();
+	#region Target
 
-//		if (GetFadeInConfigurationFromInitialValue)
-//		{
-//			if (Image != null)
-//				FadeInColor = Image.color;
-//			if (CanvasGroup != null)
-//				FadeInAlpha = CanvasGroup.alpha;
-//		}
-//		if (GetFadeOutConfigurationFromInitialValue)
-//		{
-//			if (Image != null)
-//				FadeOutColor = Image.color;
-//			if (CanvasGroup != null)
-//				FadeOutAlpha = CanvasGroup.alpha;
-//		}
-//	}
+	public CanvasGroup CanvasGroup;
 
-//	#endregion
+	private void InitializeTarget()
+	{
+		if (GetFadeInConfigurationFromInitialValue)
+		{
+			if (CanvasGroup != null)
+				FadeInAlpha = CanvasGroup.alpha;
+		}
+		if (GetFadeOutConfigurationFromInitialValue)
+		{
+			if (CanvasGroup != null)
+				FadeOutAlpha = CanvasGroup.alpha;
+		}
+	}
 
-//	#region Fade - Automatic
+	#endregion
 
-//	public enum FadeType
-//	{
-//		Undefined,
-//		Color,
-//		Alpha,
-//	}
+	#region Fade Commands
 
-//	public float FadeIn()
-//	{
-//		switch (Type)
-//		{
-//			case FadeType.Undefined:
-//				return 0f;
-//			case FadeType.Color:
-//				return ColorFadeIn();
-//			case FadeType.Alpha:
-//				return AlphaFadeIn();
-//			default:
-//				throw new ArgumentOutOfRangeException();
-//		}
-//	}
+	public float FadeIn()
+	{
+		return AlphaFadeIn();
+	}
 
-//	public float FadeOut()
-//	{
-//		switch (Type)
-//		{
-//			case FadeType.Undefined:
-//				return 0f;
-//			case FadeType.Color:
-//				return ColorFadeOut();
-//			case FadeType.Alpha:
-//				return AlphaFadeOut();
-//			default:
-//				throw new ArgumentOutOfRangeException();
-//		}
-//	}
+	public float FadeOut()
+	{
+		return AlphaFadeOut();
+	}
 
-//	#endregion
+	#endregion
 
-//	#region Fade - Alpha
+	#region Fade - Alpha
 
-//	public float AlphaFadeIn()
-//	{
-//		return AlphaFadeIn(FadeInDelay, FadeInDuration);
-//	}
+	protected float AlphaFadeIn()
+	{
+		return AlphaFadeIn(FadeInDelay, FadeInDuration);
+	}
 
-//	public float AlphaFadeIn(float delay, float duration)
-//	{
-//		Stop();
-//		if (Image != null)
-//			ImageTweener = Image.DOFade(FadeInAlpha, duration).SetDelay(delay);
-//		if (CanvasGroup != null)
-//			CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay);
-//		return duration + delay;
-//	}
+	protected float AlphaFadeIn(float delay, float duration)
+	{
+		Stop();
+		if (CanvasGroup != null)
+		{
+			CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+			CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
+			CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
+			{
+				CanvasGroup.blocksRaycasts = true;
+				CanvasGroup.interactable = true;
+			});
+		}
+		return duration + delay;
+	}
 
-//	public float AlphaFadeOut()
-//	{
-//		return AlphaFadeOut(FadeOutDelay, FadeOutDuration);
-//	}
+	protected float AlphaFadeOut()
+	{
+		return AlphaFadeOut(FadeOutDelay, FadeOutDuration);
+	}
 
-//	public float AlphaFadeOut(float delay, float duration)
-//	{
-//		Stop();
-//		if (Image != null)
-//			ImageTweener = Image.DOFade(FadeOutAlpha, duration).SetDelay(delay);
-//		if (CanvasGroup != null)
-//			CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay);
-//		return duration + delay;
-//	}
+	protected float AlphaFadeOut(float delay, float duration)
+	{
+		Stop();
+		if (CanvasGroup != null)
+		{
+			CanvasGroup.blocksRaycasts = true;  // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+			CanvasGroup.interactable = false; // Break interaction right away so user won't be able to click anything during fade out animation.
+			CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
+			{
+				CanvasGroup.blocksRaycasts = false;
+				CanvasGroup.interactable = false;
+			});
+		}
+		return duration + delay;
+	}
 
-//	#endregion
+	#endregion
 
-//	#region Fade - Color
+	#region Tweener
 
-//	public float ColorFadeIn()
-//	{
-//		return ColorFadeIn(FadeInDelay, FadeInDuration);
-//	}
+	private Tweener CanvasGroupTweener;
 
-//	public float ColorFadeIn(float delay, float duration)
-//	{
-//		Stop();
-//		if (Image != null)
-//			ImageTweener = Image.DOColor(FadeInColor, duration).SetDelay(delay);
-//		return duration + delay;
-//	}
+	public void Stop()
+	{
+		if (CanvasGroupTweener != null)
+		{
+			CanvasGroupTweener.Kill();
+			CanvasGroupTweener = null;
+		}
+	}
 
-//	public float ColorFadeOut()
-//	{
-//		return ColorFadeOut(FadeOutDelay, FadeOutDuration);
-//	}
-
-//	public float ColorFadeOut(float delay, float duration)
-//	{
-//		Stop();
-//		if (Image != null)
-//			ImageTweener = Image.DOColor(FadeOutColor, duration).SetDelay(delay);
-//		return duration + delay;
-//	}
-
-//	#endregion
-
-//	#region Tweener
-
-//	private Tweener ImageTweener;
-//	private Tweener CanvasGroupTweener;
-
-//	public void Stop()
-//	{
-//		if (ImageTweener != null && ImageTweener.IsPlaying())
-//			ImageTweener.Kill();
-//		if (CanvasGroupTweener != null && CanvasGroupTweener.IsPlaying())
-//			CanvasGroupTweener.Kill();
-//	}
-
-//	#endregion
-//}
+	#endregion
+}
