@@ -65,8 +65,6 @@ public class RadioGroup : MonoBehaviour
 
 		Buttons.EqualizeTo(newButtons, button =>
 		{
-			Debug.Log("####### Radio registered: " + button.gameObject.name);
-
 			var cachedButton = button;
 			button.isOn = false;
 			button.onValueChanged.AddListener(toggleValue => OnToggleChanged(cachedButton, toggleValue));
