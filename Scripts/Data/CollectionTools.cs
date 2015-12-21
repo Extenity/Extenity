@@ -437,6 +437,30 @@ public static class CollectionTools
 
 	#endregion
 
+	#region Register To List Event and Traverse
+
+	public static void RegisterToListEvent<TItem>(this List<TItem> list, bool ignoreIfListIsNull, Action subscriptionAction, Action<TItem> actionForEachItem)
+	{
+		if (list == null)
+		{
+			if (!ignoreIfListIsNull)
+			{
+				throw new ArgumentNullException("list", "List is null. Could not register to list events.");
+			}
+		}
+		else
+		{
+			for (int i = 0; i < list.Count; i++)
+			{
+				actionForEachItem(list[i]);
+			}
+		}
+
+		subscriptionAction();
+	}
+
+	#endregion
+
 	#region Dictionary
 
 	public static Dictionary<string, string> CreateDictionaryFromStringList(this ICollection<string> list, char keyValueSeparator = '=')
