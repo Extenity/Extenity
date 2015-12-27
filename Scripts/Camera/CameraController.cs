@@ -1,7 +1,4 @@
 using UnityEngine;
-using Extenity.Logging;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 namespace Extenity.CameraManagement
@@ -33,9 +30,15 @@ namespace Extenity.CameraManagement
 
 		#endregion
 
+		#region Camera
+
+		public Camera Camera;
+
+		#endregion
+
 		#region User Controls
 
-		public abstract bool IsKeyboardAndJoystickActive { get; set; }
+		public abstract bool IsAxisActive { get; set; }
 		public abstract bool IsMouseActive { get; set; }
 
 		#endregion

@@ -1,9 +1,6 @@
 using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
-using SpyQ;
-using UnityEngine.EventSystems;
 
 namespace Extenity.CameraManagement
 {
@@ -36,7 +33,7 @@ namespace Extenity.CameraManagement
 
 		#region Input
 
-		public override bool IsKeyboardAndJoystickActive { get; set; }
+		public override bool IsAxisActive { get; set; }
 		public override bool IsMouseActive { get; set; }
 
 		#endregion

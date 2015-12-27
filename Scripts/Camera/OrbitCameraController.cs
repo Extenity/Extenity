@@ -2,8 +2,6 @@ using UnityEngine;
 using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
-using SpyQ;
-using UnityEngine.EventSystems;
 
 namespace Extenity.CameraManagement
 {
@@ -12,9 +10,9 @@ namespace Extenity.CameraManagement
 	{
 		#region Initialization
 
-		private void Start()
+		private void OnEnable()
 		{
-			InitializeDynamics();
+			ResetDynamics();
 		}
 
 		#endregion
@@ -47,12 +45,12 @@ namespace Extenity.CameraManagement
 		public int MovementMouseButton = 0;
 		public int RotationMouseButton = 1;
 		public float MouseSensitivity = 1f;
-		public float KeyboardSensitivity = 1f;
+		public float AxisSensitivity = 1f;
 		private Vector3 InputShift;
 		private Vector3 InputRotate;
 		private float InputZoom;
 
-		public override bool IsKeyboardAndJoystickActive { get; set; }
+		public override bool IsAxisActive { get; set; }
 		public override bool IsMouseActive { get; set; }
 
 		private void UpdateInput()
@@ -60,14 +58,15 @@ namespace Extenity.CameraManagement
 			if (IsGUIActive)
 				return;
 
-			// Keyboard and joystick
-			if (IsKeyboardAndJoystickActive)
-			{
-				InputShift.x += InputManager.Instance.GetAxis(InputAxis.Roll) * KeyboardSensitivity * Time.deltaTime;
-				InputRotate.x += InputManager.Instance.GetAxis(InputAxis.Pitch) * KeyboardSensitivity * Time.deltaTime;
-				InputRotate.y += InputManager.Instance.GetAxis(InputAxis.Yaw) * KeyboardSensitivity * Time.deltaTime;
-				InputZoom += InputManager.Instance.GetAxis(InputAxis.Altitude) * KeyboardSensitivity * Time.deltaTime;
-			}
+			// TODO: Find a way to properly do this.
+			//// Keyboard and joystick
+			//if (IsKeyboardAndJoystickActive)
+			//{
+			//	InputShift.x += InputManager.Instance.GetAxis(InputAxis.Roll) * KeyboardSensitivity * Time.deltaTime;
+			//	InputRotate.x += InputManager.Instance.GetAxis(InputAxis.Pitch) * KeyboardSensitivity * Time.deltaTime;
+			//	InputRotate.y += InputManager.Instance.GetAxis(InputAxis.Yaw) * KeyboardSensitivity * Time.deltaTime;
+			//	InputZoom += InputManager.Instance.GetAxis(InputAxis.Altitude) * KeyboardSensitivity * Time.deltaTime;
+			//}
 
 			// Mouse
 			if (IsMouseActive)
@@ -122,11 +121,11 @@ namespace Extenity.CameraManagement
 		private float TargetZoom;
 		private float CurrentZoom;
 
-		private void InitializeDynamics()
+		private void ResetDynamics()
 		{
 			TargetOrbitPosition = OrbitCenter.position;
-			TargetRotation = transform.rotation;
-			TargetZoom = (transform.position - OrbitCenter.position).magnitude;
+			TargetRotation = Camera.transform.rotation;
+			TargetZoom = (Camera.transform.position - OrbitCenter.position).magnitude;
 			CurrentZoom = TargetZoom;
 		}
 
@@ -138,8 +137,22 @@ namespace Extenity.CameraManagement
 
 			var targetRotationEuler = TargetRotation.eulerAngles;
 
-			TargetOrbitPosition += Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f) * appliedMovement;
-			TargetRotation = Quaternion.Euler(0f, targetRotationEuler.y + appliedRotation.y, 0f) * Quaternion.Euler(targetRotationEuler.x + appliedRotation.x, 0f, 0f);
+			var newRotationY = targetRotationEuler.y + appliedRotation.y;
+			var newRotationX = targetRotationEuler.x + appliedRotation.x;
+			// Clip rotation to prevent gimbal locks
+			if (newRotationX > 180f)
+			{
+				if (newRotationX < 270.1f) // 270 + tolerance
+					newRotationX = 270.1f;
+			}
+			else
+			{
+				if (newRotationX > 89.9f) // 90 + tolerance
+					newRotationX = 89.9f;
+			}
+
+			TargetOrbitPosition += Quaternion.Euler(0f, Camera.transform.rotation.eulerAngles.y, 0f) * appliedMovement;
+			TargetRotation = Quaternion.Euler(0f, newRotationY, 0f) * Quaternion.Euler(newRotationX, 0f, 0f);
 			TargetZoom += appliedZoom;
 
 			var differenceToOrbitCenter = TargetOrbitPosition - OrbitCenter.position;
@@ -156,8 +169,8 @@ namespace Extenity.CameraManagement
 			var targetTotalPosition = TargetOrbitPosition - (TargetRotation * (Vector3.forward * CurrentZoom));
 
 			CurrentZoom += (TargetZoom - CurrentZoom) * ZoomSmoothingFactor;
-			transform.position += (targetTotalPosition - transform.position) * MovementSmoothingFactor;
-			transform.rotation = Quaternion.Slerp(transform.rotation, TargetRotation, RotationSmoothingFactor);
+			Camera.transform.position += (targetTotalPosition - Camera.transform.position) * MovementSmoothingFactor;
+			Camera.transform.rotation = Quaternion.Slerp(Camera.transform.rotation, TargetRotation, RotationSmoothingFactor);
 		}
 
 		#endregion
