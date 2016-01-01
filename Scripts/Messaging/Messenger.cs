@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 namespace Extenity.Messaging
 {
@@ -91,6 +92,12 @@ namespace Extenity.Messaging
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//receiver.Method.ReturnParameter
 			//receiver.Method.GetParameters()
+
+			if ((receiver.Target as Object) == null)
+			{
+				LogAddNonUnityObject();
+				return;
+			}
 
 			List<Delegate> delegates;
 			if (!Receivers.TryGetValue(messageId, out delegates))
@@ -364,6 +371,11 @@ namespace Extenity.Messaging
 		#endregion
 
 		#region Log Errors
+
+		private void LogAddNonUnityObject()
+		{
+			Debug.LogError("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.");
+		}
 
 		private void LogBadEmitParameters()
 		{
