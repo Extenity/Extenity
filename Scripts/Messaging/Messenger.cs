@@ -164,10 +164,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction;
-				if (castReceiver != null)
-					castReceiver.Invoke();
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke();
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -182,10 +186,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -200,10 +208,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -218,10 +230,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -236,10 +252,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -254,10 +274,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4, param5);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4, param5);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -272,10 +296,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4, param5, param6);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4, param5, param6);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -290,10 +318,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -308,10 +340,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
@@ -324,10 +360,14 @@ namespace Extenity.Messaging
 			for (int i = startIndex; i < receivers.Count; i++)
 			{
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
-				if (castReceiver != null)
-					castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
-				else
-					LogBadEmitParameters();
+				var targetMonoBehaviour = castReceiver.Target as MonoBehaviour;
+				if (targetMonoBehaviour != null) // Check if the object is still alive
+				{
+					if (castReceiver != null)
+						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+					else
+						LogBadEmitParameters();
+				}
 			}
 		}
 
