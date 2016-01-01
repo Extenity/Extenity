@@ -83,13 +83,13 @@ namespace Extenity.Messaging
 		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { AddListener(messageId, (Delegate)receiver); }
 
-		public void AddListener(int messageId, Delegate receiver)
+		public void AddListener(int messageId, Delegate listener)
 		{
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//receiver.Method.ReturnParameter
 			//receiver.Method.GetParameters()
 
-			if ((receiver.Target as Object) == null)
+			if ((listener.Target as Object) == null)
 			{
 				LogAddNonUnityObject();
 				return;
@@ -109,17 +109,17 @@ namespace Extenity.Messaging
 					// -special- method to check if parameters of following registered methods matches
 					// the parameters of this first added method. This way we can get rid of one
 					// 'Method.GetParameters()' call in every receiver registration.
-					var cached = receiver.Method.GetParameters();
+					var cached = listener.Method.GetParameters();
 					delegates.Add((Func<ParameterInfo[]>)delegate { return cached; });
 				}
 
 				// Add receiver to list and instantly return without getting into further consistency checks.
-				delegates.Add(receiver);
+				delegates.Add(listener);
 				return;
 			}
 
 			// Prevent duplicate entries
-			if (!delegates.Contains(receiver))
+			if (!delegates.Contains(listener))
 			{
 				// Make sure all receiver methods are identical (that is, recently added method is identical with the first added method in receivers list)
 				if (delegates.Count > 0)
@@ -128,7 +128,7 @@ namespace Extenity.Messaging
 					// First parameter in receivers list is always a special method that tells about
 					// parameter structure of receivers for this messageId.
 					var parameters = ((Func<ParameterInfo[]>)delegates[0])();
-					var newReceiverParameters = receiver.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
+					var newReceiverParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
 
 					if (!parameters.CompareMethodParameters(newReceiverParameters, false))
 					{
@@ -136,7 +136,19 @@ namespace Extenity.Messaging
 					}
 				}
 
-				delegates.Add(receiver);
+				// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
+				// Only add a new entry if there is nothing to overwrite.
+				const int startIndex = 1; // Optimization ID-150827532:
+				for (int i = startIndex; i < delegates.Count; i++)
+				{
+					if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
+					{
+						delegates[i] = listener;
+						return;
+					}
+				}
+
+				delegates.Add(listener);
 			}
 		}
 
