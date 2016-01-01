@@ -60,6 +60,7 @@ namespace Extenity.Messaging
 
 		#region Add Receiver
 
+		public void AddListener(int messageId, MessengerAction receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener(int messageId, MessengerAction<bool> receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener(int messageId, MessengerAction<byte> receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener(int messageId, MessengerAction<Int16> receiver) { AddListener(messageId, (Delegate)receiver); }
@@ -81,11 +82,6 @@ namespace Extenity.Messaging
 		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { AddListener(messageId, (Delegate)receiver); }
 		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { AddListener(messageId, (Delegate)receiver); }
-
-		public void AddListener(int messageId, MessengerAction receiver)
-		{
-			AddListener(messageId, (Delegate)receiver);
-		}
 
 		public void AddListener(int messageId, Delegate receiver)
 		{
@@ -147,6 +143,29 @@ namespace Extenity.Messaging
 		#endregion
 
 		#region Remove Receiver
+
+		public void RemoveListener(int messageId, MessengerAction receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<bool> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<byte> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<Int16> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<Int32> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<Int64> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<UInt16> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<UInt32> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<UInt64> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<float> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<double> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<char> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction<string> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1>(int messageId, MessengerAction<TParam1> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { RemoveListener(messageId, (Delegate)receiver); }
 
 		public bool RemoveListener(int messageId, Delegate receiver)
 		{
