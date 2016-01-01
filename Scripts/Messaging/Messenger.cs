@@ -60,34 +60,34 @@ namespace Extenity.Messaging
 
 		#region Add Receiver
 
-		public void AddReceiver(int messageId, MessengerAction<bool> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<byte> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<Int16> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<Int32> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<Int64> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<UInt16> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<UInt32> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<UInt64> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<float> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<double> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<char> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver(int messageId, MessengerAction<string> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1>(int messageId, MessengerAction<TParam1> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { AddReceiver(messageId, (Delegate)receiver); }
-		public void AddReceiver<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { AddReceiver(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<bool> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<byte> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<Int16> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<Int32> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<Int64> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<UInt16> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<UInt32> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<UInt64> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<float> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<double> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<char> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction<string> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1>(int messageId, MessengerAction<TParam1> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { AddListener(messageId, (Delegate)receiver); }
 
-		public void AddReceiver(int messageId, MessengerAction receiver)
+		public void AddListener(int messageId, MessengerAction receiver)
 		{
-			AddReceiver(messageId, (Delegate)receiver);
+			AddListener(messageId, (Delegate)receiver);
 		}
 
-		public void AddReceiver(int messageId, Delegate receiver)
+		public void AddListener(int messageId, Delegate receiver)
 		{
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//receiver.Method.ReturnParameter
@@ -148,7 +148,7 @@ namespace Extenity.Messaging
 
 		#region Remove Receiver
 
-		public bool RemoveReceiver(int messageId, Delegate receiver)
+		public bool RemoveListener(int messageId, Delegate receiver)
 		{
 			List<Delegate> delegates;
 			if (!Receivers.TryGetValue(messageId, out delegates))
