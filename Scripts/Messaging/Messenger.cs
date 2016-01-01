@@ -22,6 +22,7 @@ namespace Extenity.Messaging
 				if (_Global == null)
 				{
 					var go = new GameObject("_GlobalMessenger", typeof(Messenger));
+					go.hideFlags = HideFlags.HideAndDontSave;
 					_Global = go.GetComponent<Messenger>();
 				}
 				return _Global;
