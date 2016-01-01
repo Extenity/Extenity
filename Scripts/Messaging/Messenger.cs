@@ -4,7 +4,6 @@ using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Logger = Extenity.Logging.Logger;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.Messaging
@@ -12,82 +11,6 @@ namespace Extenity.Messaging
 
 	public class Messenger : MonoBehaviour
 	{
-		#region Initialization
-
-		protected virtual void Awake()
-		{
-			AddReceiver(1, Method_NoParam);
-
-			AddReceiver(1, Method_1Param_String);
-
-			//AddReceiver(3, Method_1Param_CustomType);
-			//AddReceiver<string>(3, Method_1Param_CustomType);
-			AddReceiver<CustomType>(3, Method_1Param_CustomType);
-
-			//AddReceiver(4, Method_1Param_OutInt);
-			//AddReceiver(5, Method_1Param_RefInt);
-
-			Emit(1);
-			Emit(1, "hehee");
-			Emit(2, "hehee");
-			Emit(3, new CustomType() { Integro = 151 });
-
-			Emit(1, 3525);
-			Emit(2, 46326);
-			Emit(3, 737);
-		}
-
-
-		public class CustomType
-		{
-			public int Integro;
-		}
-
-		protected void Method_NoParam()
-		{
-			Logger.Log("###### Method_NoParam");
-		}
-
-		protected void Method_1Param_String(string text)
-		{
-			Logger.Log("###### Method_1Param_String    text: " + text);
-		}
-
-		protected void Method_1Param_OutInt(out int value)
-		{
-			value = 3;
-			Logger.Log("###### Method_1Param_OutInt    value: " + value);
-		}
-
-		protected void Method_1Param_RefInt(ref int value)
-		{
-			Logger.Log("###### Method_1Param_RefInt    value: " + value);
-			value = 3;
-		}
-
-		protected void Method_1Param_CustomType(CustomType data)
-		{
-			Logger.Log("###### Method_1Param_CustomType    data.Integro: " + data.Integro);
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		//protected virtual void OnDestroy()
-		//{
-		//}
-
-		#endregion
-
-		#region Update
-
-		//protected virtual void Update()
-		//{
-		//}
-
-		#endregion
-
 		#region Actions
 
 		public delegate void MessengerAction();
@@ -128,7 +51,7 @@ namespace Extenity.Messaging
 
 		public void AddReceiver(int messageId, Delegate receiver)
 		{
-			// TODO: throw if ReturnParameter != void
+			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//receiver.Method.ReturnParameter
 			//receiver.Method.GetParameters()
 
@@ -379,45 +302,6 @@ namespace Extenity.Messaging
 		{
 			Debug.LogError("Mismatching parameter type(s) between recently adding message receiver and already added message receivers.");
 		}
-
-		#endregion
-
-		#region TEST - Dynamic Invoke Performance
-
-		/*
-		private void TEST_DynamicInvokePerformance()
-		{
-			if (Input.GetKeyDown(KeyCode.F1))
-			{
-				Func<int, int> twice = (x) => x * 2;
-				const int LOOP = 500000;
-
-				var watch = Stopwatch.StartNew();
-				for (int i = 0; i < LOOP; i++)
-				{
-					twice(3);
-				}
-				watch.Stop();
-				UnityEngine.Debug.LogFormat("Call: {0}ms", watch.Elapsed.TotalMilliseconds);
-
-				watch = Stopwatch.StartNew();
-				for (int i = 0; i < LOOP; i++)
-				{
-					twice.Invoke(3);
-				}
-				watch.Stop();
-				UnityEngine.Debug.LogFormat("Invoke: {0}ms", watch.Elapsed.TotalMilliseconds);
-
-				watch = Stopwatch.StartNew();
-				for (int i = 0; i < LOOP; i++)
-				{
-					twice.DynamicInvoke(3);
-				}
-				watch.Stop();
-				UnityEngine.Debug.LogFormat("DynamicInvoke: {0}ms", watch.Elapsed.TotalMilliseconds);
-			}
-		}
-		*/
 
 		#endregion
 	}
