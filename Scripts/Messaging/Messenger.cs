@@ -173,7 +173,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke();
 				}
 				else
@@ -194,7 +194,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1);
 				}
 				else
@@ -215,7 +215,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2);
 				}
 				else
@@ -236,7 +236,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3);
 				}
 				else
@@ -257,7 +257,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4);
 				}
 				else
@@ -278,7 +278,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4, param5);
 				}
 				else
@@ -299,7 +299,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4, param5, param6);
 				}
 				else
@@ -320,7 +320,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7);
 				}
 				else
@@ -341,7 +341,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
 				}
 				else
@@ -360,7 +360,7 @@ namespace Extenity.Messaging
 				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
 				if (castReceiver != null)
 				{
-					if ((castReceiver.Target as MonoBehaviour) != null) // Check if the object is still alive
+					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
 						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
 				}
 				else
