@@ -48,6 +48,17 @@ namespace Extenity.Messaging
 
 		private Dictionary<int, List<Delegate>> Receivers = new Dictionary<int, List<Delegate>>();
 
+		private List<Delegate> GetReceivers(int messageId)
+		{
+			List<Delegate> receivers;
+			Receivers.TryGetValue(messageId, out receivers);
+			return receivers;
+		}
+
+		#endregion
+
+		#region Add Receiver
+
 		public void AddReceiver(int messageId, MessengerAction<bool> receiver) { AddReceiver(messageId, (Delegate)receiver); }
 		public void AddReceiver(int messageId, MessengerAction<byte> receiver) { AddReceiver(messageId, (Delegate)receiver); }
 		public void AddReceiver(int messageId, MessengerAction<Int16> receiver) { AddReceiver(messageId, (Delegate)receiver); }
@@ -126,11 +137,16 @@ namespace Extenity.Messaging
 			}
 		}
 
-		private List<Delegate> GetReceivers(int messageId)
+		#endregion
+
+		#region Remove Receiver
+
+		public bool RemoveReceiver(int messageId, Delegate receiver)
 		{
-			List<Delegate> receivers;
-			Receivers.TryGetValue(messageId, out receivers);
-			return receivers;
+			List<Delegate> delegates;
+			if (!Receivers.TryGetValue(messageId, out delegates))
+				return false;
+			return delegates.Remove(receiver);
 		}
 
 		#endregion
