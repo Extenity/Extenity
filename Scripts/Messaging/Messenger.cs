@@ -45,49 +45,49 @@ namespace Extenity.Messaging
 
 		#endregion
 
-		#region Message Receivers
+		#region Message Listeners
 
-		private Dictionary<int, List<Delegate>> Receivers = new Dictionary<int, List<Delegate>>();
+		private Dictionary<int, List<Delegate>> Listeners = new Dictionary<int, List<Delegate>>();
 
-		private List<Delegate> GetReceivers(int messageId)
+		private List<Delegate> GetListeners(int messageId)
 		{
-			List<Delegate> receivers;
-			Receivers.TryGetValue(messageId, out receivers);
-			return receivers;
+			List<Delegate> delegates;
+			Listeners.TryGetValue(messageId, out delegates);
+			return delegates;
 		}
 
 		#endregion
 
-		#region Add Receiver
+		#region Add Listener
 
-		public void AddListener(int messageId, MessengerAction receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<bool> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<byte> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<Int16> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<Int32> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<Int64> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<UInt16> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<UInt32> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<UInt64> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<float> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<double> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<char> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener(int messageId, MessengerAction<string> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1>(int messageId, MessengerAction<TParam1> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { AddListener(messageId, (Delegate)receiver); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { AddListener(messageId, (Delegate)receiver); }
+		public void AddListener(int messageId, MessengerAction listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<bool> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<byte> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<Int16> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<Int32> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<Int64> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<UInt16> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<UInt32> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<UInt64> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<float> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<double> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<char> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener(int messageId, MessengerAction<string> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1>(int messageId, MessengerAction<TParam1> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { AddListener(messageId, (Delegate)listener); }
+		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { AddListener(messageId, (Delegate)listener); }
 
 		public void AddListener(int messageId, Delegate listener)
 		{
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
-			//receiver.Method.ReturnParameter
-			//receiver.Method.GetParameters()
+			//listener.Method.ReturnParameter
+			//listener.Method.GetParameters()
 
 			if ((listener.Target as Object) == null)
 			{
@@ -96,24 +96,24 @@ namespace Extenity.Messaging
 			}
 
 			List<Delegate> delegates;
-			if (!Receivers.TryGetValue(messageId, out delegates))
+			if (!Listeners.TryGetValue(messageId, out delegates))
 			{
 				delegates = new List<Delegate>(50);
-				Receivers.Add(messageId, delegates);
+				Listeners.Add(messageId, delegates);
 
 				// Do the initialization for this messageId
 				{
 					// Optimization ID-150827532:
-					// Create a method that will tell us about receiver method's parameter structure.
-					// Then add the method to receivers list as first item. We will use this first
+					// Create a method that will tell us about listener method's parameter structure.
+					// Then add the method to listeners list as first item. We will use this first
 					// -special- method to check if parameters of following registered methods matches
 					// the parameters of this first added method. This way we can get rid of one
-					// 'Method.GetParameters()' call in every receiver registration.
+					// 'Method.GetParameters()' call in every listener registration.
 					var cached = listener.Method.GetParameters();
 					delegates.Add((Func<ParameterInfo[]>)delegate { return cached; });
 				}
 
-				// Add receiver to list and instantly return without getting into further consistency checks.
+				// Add listener to list and instantly return without getting into further consistency checks.
 				delegates.Add(listener);
 				return;
 			}
@@ -121,18 +121,18 @@ namespace Extenity.Messaging
 			// Prevent duplicate entries
 			if (!delegates.Contains(listener))
 			{
-				// Make sure all receiver methods are identical (that is, recently added method is identical with the first added method in receivers list)
+				// Make sure all listener methods are identical (that is, recently added method is identical with the first added method in listeners list)
 				if (delegates.Count > 0)
 				{
 					// Optimization ID-150827532:
-					// First parameter in receivers list is always a special method that tells about
-					// parameter structure of receivers for this messageId.
+					// First entry in listeners list is always a special method that tells about
+					// parameter structure of listeners for this messageId.
 					var parameters = ((Func<ParameterInfo[]>)delegates[0])();
-					var newReceiverParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
+					var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
 
-					if (!parameters.CompareMethodParameters(newReceiverParameters, false))
+					if (!parameters.CompareMethodParameters(newListenerParameters, false))
 					{
-						LogBadReceiverParameters();
+						LogBadListenerParameters();
 					}
 				}
 
@@ -154,37 +154,37 @@ namespace Extenity.Messaging
 
 		#endregion
 
-		#region Remove Receiver
+		#region Remove Listener
 
-		public void RemoveListener(int messageId, MessengerAction receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<bool> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<byte> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<Int16> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<Int32> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<Int64> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<UInt16> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<UInt32> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<UInt64> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<float> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<double> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<char> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener(int messageId, MessengerAction<string> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1>(int messageId, MessengerAction<TParam1> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> receiver) { RemoveListener(messageId, (Delegate)receiver); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> receiver) { RemoveListener(messageId, (Delegate)receiver); }
+		public void RemoveListener(int messageId, MessengerAction listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<bool> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<byte> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<Int16> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<Int32> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<Int64> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<UInt16> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<UInt32> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<UInt64> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<float> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<double> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<char> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener(int messageId, MessengerAction<string> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1>(int messageId, MessengerAction<TParam1> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2>(int messageId, MessengerAction<TParam1, TParam2> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3>(int messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { RemoveListener(messageId, (Delegate)listener); }
+		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(int messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { RemoveListener(messageId, (Delegate)listener); }
 
-		public bool RemoveListener(int messageId, Delegate receiver)
+		public bool RemoveListener(int messageId, Delegate listener)
 		{
 			List<Delegate> delegates;
-			if (!Receivers.TryGetValue(messageId, out delegates))
+			if (!Listeners.TryGetValue(messageId, out delegates))
 				return false;
-			return delegates.Remove(receiver);
+			return delegates.Remove(listener);
 		}
 
 		#endregion
@@ -193,19 +193,19 @@ namespace Extenity.Messaging
 
 		public void Emit(int messageId)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke();
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke();
 				}
 				else
 					LogBadEmitParameters();
@@ -214,19 +214,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1>(int messageId, T1 param1)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1);
 				}
 				else
 					LogBadEmitParameters();
@@ -235,19 +235,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2>(int messageId, T1 param1, T2 param2)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2);
 				}
 				else
 					LogBadEmitParameters();
@@ -256,19 +256,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3>(int messageId, T1 param1, T2 param2, T3 param3)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3);
 				}
 				else
 					LogBadEmitParameters();
@@ -277,19 +277,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4);
 				}
 				else
 					LogBadEmitParameters();
@@ -298,19 +298,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4, param5);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4, param5);
 				}
 				else
 					LogBadEmitParameters();
@@ -319,19 +319,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4, param5, param6);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4, param5, param6);
 				}
 				else
 					LogBadEmitParameters();
@@ -340,19 +340,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7);
 				}
 				else
 					LogBadEmitParameters();
@@ -361,19 +361,19 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
-			if (receivers.Count <= 1) // Optimization ID-150827532:
+			if (listeners.Count <= 1) // Optimization ID-150827532:
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
 				}
 				else
 					LogBadEmitParameters();
@@ -382,17 +382,17 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9)
 		{
-			var receivers = GetReceivers(messageId);
-			if (receivers == null)
+			var listeners = GetListeners(messageId);
+			if (listeners == null)
 				return;
 			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < receivers.Count; i++)
+			for (int i = startIndex; i < listeners.Count; i++)
 			{
-				var castReceiver = receivers[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
-				if (castReceiver != null)
+				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
+				if (castListener != null)
 				{
-					if ((castReceiver.Target as Object) != null) // Check if the object is not destroyed
-						castReceiver.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
 				}
 				else
 					LogBadEmitParameters();
@@ -410,12 +410,12 @@ namespace Extenity.Messaging
 
 		private void LogBadEmitParameters()
 		{
-			Debug.LogError("Mismatching parameter type(s) between message receiver and emit request.");
+			Debug.LogError("Mismatching parameter type(s) between message listener and emit request.");
 		}
 
-		private void LogBadReceiverParameters()
+		private void LogBadListenerParameters()
 		{
-			Debug.LogError("Mismatching parameter type(s) between recently adding message receiver and already added message receivers.");
+			Debug.LogError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.");
 		}
 
 		#endregion
