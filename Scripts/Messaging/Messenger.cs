@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
@@ -12,6 +11,19 @@ namespace Extenity.Messaging
 
 	public class Messenger : MonoBehaviour
 	{
+		#region Update
+
+		protected void LateUpdate()
+		{
+			if (CleanupRequired)
+			{
+				CleanupRequired = false;
+				CleanUpListenersList();
+			}
+		}
+
+		#endregion
+
 		#region Global
 
 		private static Messenger _Global;
@@ -55,6 +67,43 @@ namespace Extenity.Messaging
 			List<Delegate> delegates;
 			Listeners.TryGetValue(messageId, out delegates);
 			return delegates;
+		}
+
+		#endregion
+
+		#region Message Listeners Cleanup
+
+		public bool CleanupRequired;
+
+		private void CleanUpListenersList()
+		{
+			if (Listeners == null || Listeners.Count == 0)
+				return;
+
+			foreach (var listenersItem in Listeners)
+			{
+				var delegates = listenersItem.Value;
+				const int startIndex = 1; // Optimization ID-150827532:
+				if (delegates == null || delegates.Count <= startIndex)
+					continue;
+
+				// This is not the most efficient way to clear the list.
+				var done = false;
+				while (!done)
+				{
+					done = true;
+					for (int i = startIndex; i < delegates.Count; i++)
+					{
+						var item = delegates[i];
+						if (item == null || (item.Target as Object) == null)
+						{
+							done = false;
+							delegates.RemoveAt(i);
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -137,17 +186,20 @@ namespace Extenity.Messaging
 					}
 				}
 
-				// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
-				// Only add a new entry if there is nothing to overwrite.
-				const int startIndex = 1; // Optimization ID-150827532:
-				for (int i = startIndex; i < delegates.Count; i++)
-				{
-					if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
-					{
-						delegates[i] = listener;
-						return;
-					}
-				}
+				// No need for this anymore. We now have CleanupRequired mechanism.
+				//{
+				//	// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
+				//	// Only add a new entry if there is nothing to overwrite.
+				//	const int startIndex = 1; // Optimization ID-150827532:
+				//	for (int i = startIndex; i < delegates.Count; i++)
+				//	{
+				//		if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
+				//		{
+				//			delegates[i] = listener;
+				//			return;
+				//		}
+				//	}
+				//}
 
 				delegates.Add(listener);
 			}
@@ -207,6 +259,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke();
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -228,6 +282,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -249,6 +305,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -270,6 +328,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -291,6 +351,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -312,6 +374,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4, param5);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -333,6 +397,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4, param5, param6);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -354,6 +420,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -375,6 +443,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7, param8);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -394,6 +464,8 @@ namespace Extenity.Messaging
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
 						castListener.Invoke(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+					else
+						CleanupRequired = true;
 				}
 				else
 					LogBadEmitParameters();
@@ -417,6 +489,45 @@ namespace Extenity.Messaging
 		private void LogBadListenerParameters()
 		{
 			Debug.LogError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.");
+		}
+
+		#endregion
+
+		#region Debug
+
+		public void DebugLogListAllListeners()
+		{
+			var stringBuilder = new StringBuilder();
+			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n",
+				Listeners == null ? 0 : Listeners.Count);
+
+			foreach (var listenerItem in Listeners)
+			{
+				const int startIndex = 1; // Optimization ID-150827532:
+
+				var delegates = listenerItem.Value;
+				stringBuilder.AppendFormat("   Message ID: {0}    Listeners: {1}\n",
+					listenerItem.Key,
+					delegates.Count - startIndex);
+
+				for (int i = startIndex; i < delegates.Count; i++)
+				{
+					var item = delegates[i];
+					if (item != null)
+					{
+						var target = item.Target as Object;
+						stringBuilder.AppendFormat("      Target: {0}      \tMethod: {1}\n",
+							target == null ? "null" : target.name,
+							item.Method.Name);
+					}
+					else
+					{
+						stringBuilder.Append("      null\n");
+					}
+				}
+			}
+
+			Debug.Log(stringBuilder.ToString());
 		}
 
 		#endregion
