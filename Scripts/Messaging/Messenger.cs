@@ -18,7 +18,7 @@ namespace Extenity.Messaging
 			if (CleanupRequired)
 			{
 				CleanupRequired = false;
-				CleanUpListenersList();
+				CleanUpListenerDelegateLists();
 			}
 		}
 
@@ -60,13 +60,25 @@ namespace Extenity.Messaging
 
 		#region Message Listeners
 
-		private Dictionary<int, List<Delegate>> Listeners = new Dictionary<int, List<Delegate>>();
-
-		private List<Delegate> GetListeners(int messageId)
+		private struct ListenerInfo
 		{
-			List<Delegate> delegates;
-			Listeners.TryGetValue(messageId, out delegates);
-			return delegates;
+			public int MessageId;
+			public ParameterInfo[] ParameterInfos;
+			public List<Delegate> Delegates;
+
+			public bool IsValid
+			{
+				get { return MessageId > 0; }
+			}
+		}
+
+		private Dictionary<int, ListenerInfo> ListenerInfoDictionary = new Dictionary<int, ListenerInfo>();
+
+		private ListenerInfo GetListenerInfo(int messageId)
+		{
+			ListenerInfo listenerInfo;
+			ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo);
+			return listenerInfo;
 		}
 
 		#endregion
@@ -75,16 +87,14 @@ namespace Extenity.Messaging
 
 		public bool CleanupRequired;
 
-		private void CleanUpListenersList()
+		private void CleanUpListenerDelegateLists()
 		{
-			if (Listeners == null || Listeners.Count == 0)
+			if (ListenerInfoDictionary == null || ListenerInfoDictionary.Count == 0)
 				return;
 
-			foreach (var listenersItem in Listeners)
+			foreach (var listenerInfo in ListenerInfoDictionary.Values)
 			{
-				var delegates = listenersItem.Value;
-				const int startIndex = 1; // Optimization ID-150827532:
-				if (delegates == null || delegates.Count <= startIndex)
+				if (!listenerInfo.IsValid)
 					continue;
 
 				// This is not the most efficient way to clear the list.
@@ -92,7 +102,10 @@ namespace Extenity.Messaging
 				while (!done)
 				{
 					done = true;
-					for (int i = startIndex; i < delegates.Count; i++)
+					var delegates = listenerInfo.Delegates;
+					if (delegates == null || delegates.Count == 0)
+						break;
+					for (int i = 0; i < delegates.Count; i++)
 					{
 						var item = delegates[i];
 						if (item == null || (item.Target as Object) == null)
@@ -145,27 +158,40 @@ namespace Extenity.Messaging
 				return;
 			}
 
-			List<Delegate> delegates;
-			if (!Listeners.TryGetValue(messageId, out delegates))
+			ListenerInfo listenerInfo;
+			// Is this the first time we add a listener for this messageId?
+			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
 			{
-				delegates = new List<Delegate>(50);
-				Listeners.Add(messageId, delegates);
-
 				// Do the initialization for this messageId
 				{
+					listenerInfo.MessageId = messageId;
+
+					// Create a brand new delegate list
+					listenerInfo.Delegates = new List<Delegate>(50);
+					// Add listener to list
+					listenerInfo.Delegates.Add(listener);
+
 					// Optimization ID-150827532:
-					// Create a method that will tell us about listener method's parameter structure.
-					// Then add the method to listeners list as first item. We will use this first
-					// -special- method to check if parameters of following registered methods matches
+					// Get method parameters of this initially added listener. This parameter info 
+					// will be used to check if parameters of following registered listeners matches
 					// the parameters of this first added method. This way we can get rid of one
 					// 'Method.GetParameters()' call in every listener registration.
-					var cached = listener.Method.GetParameters();
-					delegates.Add((Func<ParameterInfo[]>)delegate { return cached; });
+					listenerInfo.ParameterInfos = listener.Method.GetParameters();
 				}
 
-				// Add listener to list and instantly return without getting into further consistency checks.
-				delegates.Add(listener);
+				ListenerInfoDictionary.Add(messageId, listenerInfo);
+
+				// Instantly return without getting into further consistency checks.
 				return;
+			}
+
+			var delegates = listenerInfo.Delegates;
+
+			// Create new list if necessary
+			if (delegates == null)
+			{
+				delegates = new List<Delegate>(50);
+				listenerInfo.Delegates = delegates;
 			}
 
 			// Prevent duplicate entries
@@ -175,12 +201,8 @@ namespace Extenity.Messaging
 				if (delegates.Count > 0)
 				{
 					// Optimization ID-150827532:
-					// First entry in listeners list is always a special method that tells about
-					// parameter structure of listeners for this messageId.
-					var parameters = ((Func<ParameterInfo[]>)delegates[0])();
 					var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
-
-					if (!parameters.CompareMethodParameters(newListenerParameters, false))
+					if (!listenerInfo.ParameterInfos.CompareMethodParameters(newListenerParameters, false))
 					{
 						LogBadListenerParameters();
 					}
@@ -190,8 +212,7 @@ namespace Extenity.Messaging
 				//{
 				//	// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
 				//	// Only add a new entry if there is nothing to overwrite.
-				//	const int startIndex = 1; // Optimization ID-150827532:
-				//	for (int i = startIndex; i < delegates.Count; i++)
+				//	for (int i = 0; i < delegates.Count; i++)
 				//	{
 				//		if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
 				//		{
@@ -234,10 +255,12 @@ namespace Extenity.Messaging
 
 		public bool RemoveListener(int messageId, Delegate listener)
 		{
-			List<Delegate> delegates;
-			if (!Listeners.TryGetValue(messageId, out delegates))
+			ListenerInfo listenerInfo;
+			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
 				return false;
-			return delegates.Remove(listener);
+			if (listenerInfo.Delegates == null)
+				return false;
+			return listenerInfo.Delegates.Remove(listener);
 		}
 
 		#endregion
@@ -246,15 +269,13 @@ namespace Extenity.Messaging
 
 		public void Emit(int messageId)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction;
+				var castListener = delegates[i] as MessengerAction;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -269,15 +290,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1>(int messageId, T1 param1)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1>;
+				var castListener = delegates[i] as MessengerAction<T1>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -292,15 +311,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2>(int messageId, T1 param1, T2 param2)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2>;
+				var castListener = delegates[i] as MessengerAction<T1, T2>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -315,15 +332,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3>(int messageId, T1 param1, T2 param2, T3 param3)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -338,15 +353,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -361,15 +374,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -384,15 +395,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -407,15 +416,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -430,15 +437,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			if (listeners.Count <= 1) // Optimization ID-150827532:
-				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -453,13 +458,13 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9)
 		{
-			var listeners = GetListeners(messageId);
-			if (listeners == null)
+			var listenerInfo = GetListenerInfo(messageId);
+			var delegates = listenerInfo.Delegates;
+			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
 				return;
-			const int startIndex = 1; // Optimization ID-150827532:
-			for (int i = startIndex; i < listeners.Count; i++)
+			for (int i = 0; i < delegates.Count; i++)
 			{
-				var castListener = listeners[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
+				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
 				if (castListener != null)
 				{
 					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
@@ -499,18 +504,19 @@ namespace Extenity.Messaging
 		{
 			var stringBuilder = new StringBuilder();
 			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n",
-				Listeners == null ? 0 : Listeners.Count);
+				ListenerInfoDictionary == null ? 0 : ListenerInfoDictionary.Count);
 
-			foreach (var listenerItem in Listeners)
+			foreach (var listenerInfo in ListenerInfoDictionary.Values)
 			{
-				const int startIndex = 1; // Optimization ID-150827532:
-
-				var delegates = listenerItem.Value;
+				var delegates = listenerInfo.Delegates;
 				stringBuilder.AppendFormat("   Message ID: {0}    Listeners: {1}\n",
-					listenerItem.Key,
-					delegates.Count - startIndex);
+					listenerInfo.MessageId,
+					delegates == null ? 0 : delegates.Count);
 
-				for (int i = startIndex; i < delegates.Count; i++)
+				if (delegates == null)
+					continue;
+
+				for (int i = 0; i < delegates.Count; i++)
 				{
 					var item = delegates[i];
 					if (item != null)
