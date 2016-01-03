@@ -18,7 +18,7 @@ namespace Extenity.Messaging
 			if (CleanupRequired)
 			{
 				CleanupRequired = false;
-				CleanUpListenerDelegateLists();
+				CleanUpListenerLists();
 			}
 		}
 
@@ -70,6 +70,10 @@ namespace Extenity.Messaging
 			{
 				get { return MessageId > 0; }
 			}
+			public bool IsValidAndNotEmpty
+			{
+				get { return IsValid && Delegates != null && Delegates.Count > 0; }
+			}
 		}
 
 		private Dictionary<int, ListenerInfo> ListenerInfoDictionary = new Dictionary<int, ListenerInfo>();
@@ -81,20 +85,36 @@ namespace Extenity.Messaging
 			return listenerInfo;
 		}
 
+		private List<Delegate> GetDelegates(int messageId)
+		{
+			ListenerInfo listenerInfo;
+			if (ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
+			{
+				if (listenerInfo.IsValidAndNotEmpty)
+				{
+					return listenerInfo.Delegates;
+				}
+			}
+			return null;
+		}
+
 		#endregion
 
 		#region Message Listeners Cleanup
 
 		public bool CleanupRequired;
 
-		private void CleanUpListenerDelegateLists()
+		private void CleanUpListenerLists()
 		{
 			if (ListenerInfoDictionary == null || ListenerInfoDictionary.Count == 0)
 				return;
 
 			foreach (var listenerInfo in ListenerInfoDictionary.Values)
 			{
-				if (!listenerInfo.IsValid)
+				if (!listenerInfo.IsValidAndNotEmpty)
+					continue;
+				var delegates = listenerInfo.Delegates;
+				if (delegates == null || delegates.Count == 0)
 					continue;
 
 				// This is not the most efficient way to clear the list.
@@ -102,9 +122,6 @@ namespace Extenity.Messaging
 				while (!done)
 				{
 					done = true;
-					var delegates = listenerInfo.Delegates;
-					if (delegates == null || delegates.Count == 0)
-						break;
 					for (int i = 0; i < delegates.Count; i++)
 					{
 						var item = delegates[i];
@@ -148,6 +165,11 @@ namespace Extenity.Messaging
 
 		public void AddListener(int messageId, Delegate listener)
 		{
+			if (listener == null)
+				throw new ArgumentNullException("listener");
+			if (messageId == 0)
+				throw new ArgumentOutOfRangeException("messageId", "Message ID should not be 0.");
+
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//listener.Method.ReturnParameter
 			//listener.Method.GetParameters()
@@ -195,35 +217,36 @@ namespace Extenity.Messaging
 			}
 
 			// Prevent duplicate entries
-			if (!delegates.Contains(listener))
+			if (delegates.Contains(listener))
 			{
-				// Make sure all listener methods are identical (that is, recently added method is identical with the first added method in listeners list)
-				if (delegates.Count > 0)
-				{
-					// Optimization ID-150827532:
-					var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
-					if (!listenerInfo.ParameterInfos.CompareMethodParameters(newListenerParameters, false))
-					{
-						LogBadListenerParameters();
-					}
-				}
-
-				// No need for this anymore. We now have CleanupRequired mechanism.
-				//{
-				//	// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
-				//	// Only add a new entry if there is nothing to overwrite.
-				//	for (int i = 0; i < delegates.Count; i++)
-				//	{
-				//		if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
-				//		{
-				//			delegates[i] = listener;
-				//			return;
-				//		}
-				//	}
-				//}
-
-				delegates.Add(listener);
+				return;
 			}
+
+			// Make sure all listener methods are identical (that is, recently added method is identical with the first added method in listeners list)
+			{
+				// Optimization ID-150827532:
+				var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
+				if (!listenerInfo.ParameterInfos.CompareMethodParameters(newListenerParameters, false))
+				{
+					LogBadListenerParameters();
+				}
+			}
+
+			// No need for this anymore. We now have CleanupRequired mechanism.
+			//{
+			//	// First, check to see if we can overwrite an entry that contains delegate to destroyed object.
+			//	// Only add a new entry if there is nothing to overwrite.
+			//	for (int i = 0; i < delegates.Count; i++)
+			//	{
+			//		if ((delegates[i].Target as Object) == null) // Check if the object is destroyed
+			//		{
+			//			delegates[i] = listener;
+			//			return;
+			//		}
+			//	}
+			//}
+
+			delegates.Add(listener);
 		}
 
 		#endregion
@@ -255,12 +278,20 @@ namespace Extenity.Messaging
 
 		public bool RemoveListener(int messageId, Delegate listener)
 		{
+			if (listener == null)
+				throw new ArgumentNullException("listener");
+			if (messageId == 0)
+				throw new ArgumentOutOfRangeException("messageId", "Message ID should not be 0.");
+
 			ListenerInfo listenerInfo;
 			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
 				return false;
 			if (listenerInfo.Delegates == null)
 				return false;
-			return listenerInfo.Delegates.Remove(listener);
+			lock (listenerInfo.Delegates)
+			{
+				return listenerInfo.Delegates.Remove(listener);
+			}
 		}
 
 		#endregion
@@ -269,9 +300,8 @@ namespace Extenity.Messaging
 
 		public void Emit(int messageId)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -290,9 +320,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1>(int messageId, T1 param1)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -311,9 +340,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2>(int messageId, T1 param1, T2 param2)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -332,9 +360,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3>(int messageId, T1 param1, T2 param2, T3 param3)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -353,9 +380,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -374,9 +400,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -395,9 +420,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -416,9 +440,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -437,9 +460,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
@@ -458,9 +480,8 @@ namespace Extenity.Messaging
 
 		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9)
 		{
-			var listenerInfo = GetListenerInfo(messageId);
-			var delegates = listenerInfo.Delegates;
-			if (!listenerInfo.IsValid || delegates == null || delegates.Count == 0)
+			var delegates = GetDelegates(messageId);
+			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
 			{
