@@ -116,11 +116,17 @@ public class Instantiator : MonoBehaviour
 	{
 		for (int i = 0; i < everlastingPrefabs.Length; i++)
 		{
-			EverlastingInstantiate(everlastingPrefabs[i]);
+			using (Logger.IndentFormat(this, "Instantiating '{0}'", everlastingPrefabs[i].name))
+			{
+				EverlastingInstantiate(everlastingPrefabs[i]);
+			}
 		}
 		for (int i = 0; i < nonlastingPrefabs.Length; i++)
 		{
-			NonlastingInstantiate(nonlastingPrefabs[i]);
+			using (Logger.IndentFormat(this, "Instantiating '{0}'", nonlastingPrefabs[i].name))
+			{
+				NonlastingInstantiate(nonlastingPrefabs[i]);
+			}
 		}
 	}
 
