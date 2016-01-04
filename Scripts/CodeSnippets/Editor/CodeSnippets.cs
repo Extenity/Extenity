@@ -16,7 +16,7 @@ public static class CodeSnippets
 	{
 		Name = "Main",
 		Path = "__NAME__.cs",
-		Properties = new []{ "__NAME__" },
+		Properties = new[] { "__NAME__" },
 		FileContent =
 @"using UnityEngine;
 using Extenity.Logging;
@@ -27,25 +27,25 @@ public class __NAME__ : MonoBehaviour
 {
 	#region Initialization
 
-	protected void Awake()
-	{
-	}
+	//protected void Awake()
+	//{
+	//}
 
 	#endregion
 
 	#region Deinitialization
 
-	protected void OnDestroy()
-	{
-	}
+	//protected void OnDestroy()
+	//{
+	//}
 
 	#endregion
 
 	#region Update
 
-	protected void Update()
-	{
-	}
+	//protected void Update()
+	//{
+	//}
 
 	#endregion
 }
@@ -60,7 +60,7 @@ public class __NAME__ : MonoBehaviour
 	{
 		Name = "NamespacedMain",
 		Path = "__NAME__.cs",
-		Properties = new []{ "__NAME__", "__NAMESPACE__" },
+		Properties = new[] { "__NAME__", "__NAMESPACE__" },
 		FileContent =
 @"using UnityEngine;
 using Extenity.Logging;
@@ -74,25 +74,25 @@ namespace __NAMESPACE__
 	{
 		#region Initialization
 
-		protected void Awake()
-		{
-		}
+		//protected void Awake()
+		//{
+		//}
 
 		#endregion
 
 		#region Deinitialization
 
-		protected void OnDestroy()
-		{
-		}
+		//protected void OnDestroy()
+		//{
+		//}
 
 		#endregion
 
 		#region Update
 
-		protected void Update()
-		{
-		}
+		//protected void Update()
+		//{
+		//}
 
 		#endregion
 	}
@@ -109,7 +109,7 @@ namespace __NAMESPACE__
 	{
 		Name = "Inspector",
 		Path = "Editor/__NAME__Inspector.cs",
-		Properties = new []{ "__NAME__" },
+		Properties = new[] { "__NAME__" },
 		FileContent =
 @"using UnityEngine;
 using Extenity.Logging;
@@ -143,7 +143,7 @@ public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
 	{
 		Name = "Inspector",
 		Path = "Editor/__NAME__Inspector.cs",
-		Properties = new []{ "__NAME__", "__NAMESPACE__" },
+		Properties = new[] { "__NAME__", "__NAMESPACE__" },
 		FileContent =
 @"using UnityEngine;
 using Extenity.Logging;
