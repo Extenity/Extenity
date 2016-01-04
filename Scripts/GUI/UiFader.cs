@@ -74,6 +74,14 @@ public class UiFader : MonoBehaviour
 
 	#region Fade Commands
 
+	public float Fade(bool visible)
+	{
+		if (visible)
+			return FadeIn();
+		else
+			return FadeOut();
+	}
+
 	public float FadeIn()
 	{
 		return AlphaFadeIn();
