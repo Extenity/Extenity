@@ -6,41 +6,6 @@ using Logger = Extenity.Logging.Logger;
 
 public static class NetworkTools
 {
-	public static bool IsNetworkStarted
-	{
-		get { return Network.peerType != NetworkPeerType.Disconnected; }
-	}
-
-	public static bool IsNetworkReady
-	{
-		get { return Network.peerType == NetworkPeerType.Server || Network.peerType == NetworkPeerType.Client; }
-	}
-
-	public static bool IsServerStarted
-	{
-		get { return Network.peerType == NetworkPeerType.Server; }
-	}
-
-	public static bool IsClientConnecting
-	{
-		get { return Network.peerType == NetworkPeerType.Connecting; }
-	}
-
-	public static bool IsClientReady
-	{
-		get { return Network.peerType == NetworkPeerType.Client; }
-	}
-
-	public static int NetworkPlayerID(this NetworkPlayer player)
-	{
-		return int.Parse(player.ToString());
-	}
-
-	public static int GetSelfNetworkPlayerID
-	{
-		get { return int.Parse(Network.player.ToString()); }
-	}
-
 	public static bool CheckForAddressInconsistency(string address)
 	{
 		if (string.IsNullOrEmpty(address))
@@ -81,58 +46,25 @@ public static class NetworkTools
 		return externalIP;
 	}
 
-	#region Master Server
-	
-	public static bool IsEqual(this HostData[] us, HostData[] other)
+	public static string GetIPFromURL(string url)
 	{
-		if (us.Length != other.Length)
-			return false;
-
-		if (ReferenceEquals(us, other))
-			return true;
-
-		for (int i = 0; i < us.Length; i++)
+		url = url.Replace("http://", ""); //remove http://
+		url = url.Replace("https://", ""); //remove https://
+		if (url.IndexOf("/") > 0)
 		{
-			if (!us[i].IsEqual(other[i]))
-			{
-				return false;
-			}
+			url = url.Substring(0, url.IndexOf("/")); //remove everything after the first /
 		}
 
-		return true;
+		try
+		{
+			IPHostEntry hosts = Dns.GetHostEntry(url);
+			if (hosts.AddressList.Length > 0)
+				return hosts.AddressList[0].ToString();
+		}
+		catch
+		{
+			// ignored
+		}
+		return string.Empty;
 	}
-
-	public static bool IsEqual(this HostData us, HostData other)
-	{
-		return
-			us.connectedPlayers == other.connectedPlayers &&
-			us.comment == other.comment &&
-			us.gameName == other.gameName &&
-			us.gameType == other.gameType &&
-			us.passwordProtected == other.passwordProtected &&
-			us.ip.IsEqual(other.ip) &&
-			us.port == other.port &&
-			us.guid == other.guid &&
-			us.playerLimit == other.playerLimit &&
-			us.useNat == other.useNat;
-	}
-
-	public static void DebugLog(this HostData data)
-	{
-		string text = "";
-		text += "connectedPlayers: " + data.connectedPlayers + "\n";
-		text += "comment: " + data.comment + "\n";
-		text += "gameName: " + data.gameName + "\n";
-		text += "gameType: " + data.gameType + "\n";
-		text += "passwordProtected: " + data.passwordProtected + "\n";
-		text += "ip: " + data.ip.Serialize() + "\n";
-		text += "port: " + data.port + "\n";
-		text += "guid: " + data.guid + "\n";
-		text += "playerLimit: " + data.playerLimit + "\n";
-		text += "useNat: " + data.useNat;
-
-		Logger.Log(text);
-	}
-
-	#endregion
 }
