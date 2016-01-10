@@ -26,6 +26,42 @@ public static class DirectoryTools
 			Directory.CreateDirectory(directoryPath);
 		}
 	}
+
+	#region Copy Directory
+
+	public static void Copy(string sourceDirectory, string targetDirectory, string fileSearchPattern = "*", bool overwrite = true)
+	{
+		var sourceDirectoryInfo = new DirectoryInfo(sourceDirectory);
+		var targetDirectoryInfo = new DirectoryInfo(targetDirectory);
+		Copy(sourceDirectoryInfo, targetDirectoryInfo, fileSearchPattern, overwrite);
+	}
+
+	public static void Copy(DirectoryInfo source, DirectoryInfo target, string fileSearchPattern = "*", bool overwrite = true)
+	{
+		bool directoryCreated = false;
+
+		// Copy each file into the new directory.
+		foreach (var fileInfo in source.GetFiles(fileSearchPattern))
+		{
+			//Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
+
+			if (!directoryCreated)
+			{
+				Directory.CreateDirectory(target.FullName);
+			}
+
+			fileInfo.CopyTo(Path.Combine(target.FullName, fileInfo.Name), overwrite);
+		}
+
+		// Copy each subdirectory using recursion.
+		foreach (var sourceSubDirectory in source.GetDirectories())
+		{
+			var targetSubDirectory = target.CreateSubdirectory(sourceSubDirectory.Name);
+			Copy(sourceSubDirectory, targetSubDirectory);
+		}
+	}
+
+	#endregion
 }
 
 #endif
