@@ -20,7 +20,31 @@ namespace Extenity.Crypto
 				{
 					using (var md5 = MD5.Create())
 					{
-						return Encoding.Default.GetString(md5.ComputeHash(stream));
+						var checksum = md5.ComputeHash(stream);
+						return Encoding.Default.GetString(checksum);
+					}
+				}
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		#endregion
+
+		#region SHA256
+
+		public static string CalculateSHA256HashOfFile(string filePath)
+		{
+			try
+			{
+				using (FileStream stream = File.OpenRead(filePath))
+				{
+					using (var sha = new SHA256Managed())
+					{
+						var checksum = sha.ComputeHash(stream);
+						return BitConverter.ToString(checksum).Replace("-", String.Empty);
 					}
 				}
 			}
