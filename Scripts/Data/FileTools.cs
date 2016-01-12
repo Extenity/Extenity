@@ -41,7 +41,7 @@ public static class FileTools
 		var relativeUri = fromUri.MakeRelativeUri(toUri);
 		var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
-		return CorrectDirectorySeparatorChars(relativePath);
+		return FixDirectorySeparatorChars(relativePath);
 	}
 
 	#endregion
@@ -101,7 +101,7 @@ public static class FileTools
 		return index;
 	}
 
-	public static string CorrectDirectorySeparatorChars(this string path)
+	public static string FixDirectorySeparatorChars(this string path)
 	{
 		return path.Replace(OtherDirectorySeparatorChar, DirectorySeparatorChar);
 	}

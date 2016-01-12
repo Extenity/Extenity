@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 #if UNITY_EDITOR || !UNITY_WEBPLAYER
@@ -30,27 +31,175 @@ public static class DirectoryTools
 
 	#region Copy Directory
 
-	public class CopyFailReason
-	{
-		public string FilePath;
-		public Exception Exception;
-	}
-
 	public class CopyResult
 	{
-		public int CopiedFileCount;
-		public List<CopyFailReason> FailedFiles;
+		public struct FailReason
+		{
+			public string FilePath;
+			public Exception Exception;
+		}
+
+		public List<FailReason> FailedFiles = null;
+		public int FailedFileCount { get { return FailedFiles == null ? 0 : FailedFiles.Count; } }
+		public List<string> CopiedFiles = null;
+		public int CopiedFileCount = 0; // Does not directly return CopiedFiles.Count because CreateCopiedFileList can be false.
+		public readonly bool CreateCopiedFileList = false;
+		public readonly bool ThrowOnError = false;
+		public bool IsOK { get { return FailedFiles == null || FailedFiles.Count == 0; } }
+
+		public CopyResult()
+		{
+		}
+
+		public CopyResult(bool createCopiedFileList, bool throwOnError)
+		{
+			CreateCopiedFileList = createCopiedFileList;
+			ThrowOnError = throwOnError;
+		}
+
+		public void Reset()
+		{
+			CopiedFileCount = 0;
+			if (CopiedFiles != null)
+				CopiedFiles.Clear();
+			if (FailedFiles != null)
+				FailedFiles.Clear();
+		}
+
+		public void AddCopiedFile(string path)
+		{
+			CopiedFileCount++;
+			if (CreateCopiedFileList)
+			{
+				if (CopiedFiles == null)
+					CopiedFiles = new List<string>();
+				CopiedFiles.Add(path);
+			}
+		}
+
+		public void AddFailedFile(FailReason failReason)
+		{
+			if (FailedFiles == null)
+				FailedFiles = new List<FailReason>();
+			FailedFiles.Add(failReason);
+		}
 	}
 
-	/// <returns>Total number of copied files.</returns>
-	public static void Copy(string sourceDirectory, string targetDirectory, string fileSearchPattern = "*", bool overwrite = true, CopyResult result = null)
+	public static void Copy(string sourceDirectory, string targetDirectory,
+		string[] includeFilters = null, string[] excludeFilters = null,
+		SearchOption searchOption = SearchOption.AllDirectories,
+		bool overwrite = true,
+		CopyResult result = null)
 	{
-		var sourceDirectoryInfo = new DirectoryInfo(sourceDirectory);
-		var targetDirectoryInfo = new DirectoryInfo(targetDirectory);
-		Copy(sourceDirectoryInfo, targetDirectoryInfo, fileSearchPattern, overwrite, result);
+		if (sourceDirectory == null)
+			throw new ArgumentNullException("sourceDirectory");
+		if (targetDirectory == null)
+			throw new ArgumentNullException("targetDirectory");
+		if (File.Exists(targetDirectory))
+			throw new ArgumentException("Target directory points to a file.");
+
+		HashSet<string> filesToCopy = new HashSet<string>();
+
+		// Include files
+		if (includeFilters == null || includeFilters.Length == 0)
+		{
+			try
+			{
+				var list = Directory.GetFiles(sourceDirectory, "*", searchOption);
+				for (int i = 0; i < list.Length; i++)
+					filesToCopy.Add(list[i]);
+			}
+			catch (Exception)
+			{
+				if (result != null && result.ThrowOnError)
+					throw;
+			}
+		}
+		else
+		{
+			foreach (var includeFilter in includeFilters)
+			{
+				try
+				{
+					var list = Directory.GetFiles(sourceDirectory, includeFilter, searchOption);
+					for (int i = 0; i < list.Length; i++)
+						filesToCopy.Add(list[i]);
+				}
+				catch (Exception)
+				{
+					if (result != null && result.ThrowOnError)
+						throw;
+				}
+			}
+		}
+
+		if (filesToCopy.Count == 0)
+			return; // No files to copy
+
+		// Exclude files
+		if (excludeFilters != null)
+		{
+			foreach (var excludeFilter in excludeFilters)
+			{
+				try
+				{
+					var list = Directory.GetFiles(sourceDirectory, excludeFilter, searchOption);
+					for (int i = 0; i < list.Length; i++)
+						filesToCopy.Remove(list[i]);
+				}
+				catch (Exception)
+				{
+					if (result != null && result.ThrowOnError)
+						throw;
+				}
+			}
+		}
+
+		if (filesToCopy.Count == 0)
+			return; // No files to copy
+
+		// Copy files
+		foreach (var sourceFilePath in filesToCopy)
+		{
+			try
+			{
+				// Make relative path
+				string relativeSourceFilePath;
+				{
+					//relativeFilePath = FileTools.MakeRelativePath(sourceDirectory, sourceFilePath); // This method only works within two absolute paths.
+
+					if (!sourceFilePath.StartsWith(sourceDirectory))
+					{
+						throw new Exception("Relative file path could not be calculated.");
+					}
+					relativeSourceFilePath = sourceFilePath.Remove(0, sourceDirectory.Length + 1); // +1 is for directory separator at the end
+				}
+
+				var targetFilePath = Path.Combine(targetDirectory, relativeSourceFilePath);
+
+				// Create directory if does not exist
+				var directory = Path.GetDirectoryName(targetFilePath);
+				Directory.CreateDirectory(directory);
+
+				// Copy file
+				File.Copy(sourceFilePath, targetFilePath, overwrite);
+
+				if (result != null)
+					result.AddCopiedFile(sourceFilePath);
+			}
+			catch (Exception e)
+			{
+				if (result != null)
+				{
+					result.AddFailedFile(new CopyResult.FailReason { FilePath = sourceFilePath, Exception = e });
+					if (result.ThrowOnError)
+						throw;
+				}
+			}
+		}
 	}
 
-	/// <returns>Total number of copied files.</returns>
+	/*
 	public static void Copy(DirectoryInfo source, DirectoryInfo target, string fileSearchPattern = "*", bool overwrite = true, CopyResult result = null)
 	{
 		if (source == null)
@@ -65,7 +214,7 @@ public static class DirectoryTools
 		bool directoryCreated = false;
 
 		// Copy each file into the new directory.
-		foreach (var fileInfo in source.GetFiles(fileSearchPattern))
+		foreach (var fileInfo in source.GetFiles(fileSearchPattern, ))
 		{
 			try
 			{
@@ -87,9 +236,9 @@ public static class DirectoryTools
 				{
 					if (result.FailedFiles == null)
 					{
-						result.FailedFiles = new List<CopyFailReason>();
+						result.FailedFiles = new List<CopyResult.FailReason>();
 					}
-					result.FailedFiles.Add(new CopyFailReason { FilePath = fileInfo.FullName, Exception = e });
+					result.FailedFiles.Add(new CopyResult.FailReason { FilePath = fileInfo.FullName, Exception = e });
 				}
 				else
 				{
@@ -105,6 +254,7 @@ public static class DirectoryTools
 			Copy(sourceSubDirectory, targetSubDirectory, fileSearchPattern, overwrite, result);
 		}
 	}
+	*/
 
 	#endregion
 
