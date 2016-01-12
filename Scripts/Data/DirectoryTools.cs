@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +19,7 @@ public static class DirectoryTools
 #endif
 	}
 
-	public static void CreateDirectory(string filePath)
+	public static void Create(string filePath)
 	{
 		string directoryPath = Path.GetDirectoryName(filePath);
 		if (directoryPath.Length > 0 && !Directory.Exists(directoryPath))
@@ -29,35 +30,91 @@ public static class DirectoryTools
 
 	#region Copy Directory
 
-	public static void Copy(string sourceDirectory, string targetDirectory, string fileSearchPattern = "*", bool overwrite = true)
+	public class CopyFailReason
+	{
+		public string FilePath;
+		public Exception Exception;
+	}
+
+	public class CopyResult
+	{
+		public int CopiedFileCount;
+		public List<CopyFailReason> FailedFiles;
+	}
+
+	/// <returns>Total number of copied files.</returns>
+	public static void Copy(string sourceDirectory, string targetDirectory, string fileSearchPattern = "*", bool overwrite = true, CopyResult result = null)
 	{
 		var sourceDirectoryInfo = new DirectoryInfo(sourceDirectory);
 		var targetDirectoryInfo = new DirectoryInfo(targetDirectory);
-		Copy(sourceDirectoryInfo, targetDirectoryInfo, fileSearchPattern, overwrite);
+		Copy(sourceDirectoryInfo, targetDirectoryInfo, fileSearchPattern, overwrite, result);
 	}
 
-	public static void Copy(DirectoryInfo source, DirectoryInfo target, string fileSearchPattern = "*", bool overwrite = true)
+	/// <returns>Total number of copied files.</returns>
+	public static void Copy(DirectoryInfo source, DirectoryInfo target, string fileSearchPattern = "*", bool overwrite = true, CopyResult result = null)
 	{
+		if (source == null)
+			throw new ArgumentNullException("source");
+		if (target == null)
+			throw new ArgumentNullException("target");
+
+		// Do nothing if source directory does not exist
+		if (!source.Exists)
+			return;
+
 		bool directoryCreated = false;
 
 		// Copy each file into the new directory.
 		foreach (var fileInfo in source.GetFiles(fileSearchPattern))
 		{
-			//Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
-
-			if (!directoryCreated)
+			try
 			{
-				Directory.CreateDirectory(target.FullName);
-			}
+				// Create target directory if required
+				if (!directoryCreated)
+				{
+					Directory.CreateDirectory(target.FullName);
+					directoryCreated = true;
+				}
 
-			fileInfo.CopyTo(Path.Combine(target.FullName, fileInfo.Name), overwrite);
+				// Copy file
+				fileInfo.CopyTo(Path.Combine(target.FullName, fileInfo.Name), overwrite);
+				if (result != null)
+					result.CopiedFileCount++;
+			}
+			catch (Exception e)
+			{
+				if (result != null)
+				{
+					if (result.FailedFiles == null)
+					{
+						result.FailedFiles = new List<CopyFailReason>();
+					}
+					result.FailedFiles.Add(new CopyFailReason { FilePath = fileInfo.FullName, Exception = e });
+				}
+				else
+				{
+					// Ignore
+				}
+			}
 		}
 
 		// Copy each subdirectory using recursion.
 		foreach (var sourceSubDirectory in source.GetDirectories())
 		{
-			var targetSubDirectory = target.CreateSubdirectory(sourceSubDirectory.Name);
-			Copy(sourceSubDirectory, targetSubDirectory);
+			var targetSubDirectory = new DirectoryInfo(Path.Combine(target.FullName, sourceSubDirectory.Name));
+			Copy(sourceSubDirectory, targetSubDirectory, fileSearchPattern, overwrite, result);
+		}
+	}
+
+	#endregion
+
+	#region Delete Directory
+
+	public static void Delete(string path)
+	{
+		if (Directory.Exists(path))
+		{
+			Directory.Delete(path, true);
 		}
 	}
 

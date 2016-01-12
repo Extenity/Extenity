@@ -254,65 +254,92 @@ public static class StringTools
 	public static string ToHexString(this UInt32 value, bool decorated = false) { return String.Format(decorated ? "{0x0:X}" : "{0:X}", value); }
 	public static string ToHexString(this UInt64 value, bool decorated = false) { return String.Format(decorated ? "{0x0:X}" : "{0:X}", value); }
 
-	public static string ToHexString(this string text)
+	public static string ToHexString(this string text, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(text.Length * 3);
-		for (int i = 0; i < text.Length; i++)
-		{
-			stringBuilder.AppendFormat("{0:x2} ", text[i]);
-		}
+		var format = uppercase ? "{0:X2} " : "{0:x2} ";
+        for (int i = 0; i < text.Length; i++)
+			stringBuilder.AppendFormat(format, (byte)text[i]);
 		return stringBuilder.ToString();
 	}
 
-	public static string ToHexString(this byte[] bytes)
+	public static string ToHexString(this byte[] bytes, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(bytes.Length * 3);
+		var format = uppercase ? "{0:X2} " : "{0:x2} ";
 		for (int i = 0; i < bytes.Length; i++)
-		{
-			stringBuilder.AppendFormat("{0:x2} ", bytes[i]);
-		}
+			stringBuilder.AppendFormat(format, bytes[i]);
 		return stringBuilder.ToString();
 	}
 
-	public static string ToHexString(this byte[] bytes, int bytesToRead)
+	public static string ToHexString(this byte[] bytes, int bytesToRead, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(bytesToRead * 3);
+		var format = uppercase ? "{0:X2} " : "{0:x2} ";
 		for (int i = 0; i < bytesToRead; i++)
-		{
-			stringBuilder.AppendFormat("{0:x2} ", bytes[i]);
-		}
+			stringBuilder.AppendFormat(format, bytes[i]);
 		return stringBuilder.ToString();
 	}
 
-	public static string ToHexStringFancy(this string text)
+	public static string ToHexStringCombined(this string text, bool uppercase = false)
+	{
+		var stringBuilder = new StringBuilder(text.Length * 2);
+		var format = uppercase ? "X2" : "x2";
+		for (int i = 0; i < text.Length; i++)
+			stringBuilder.Append(((byte)text[i]).ToString(format));
+		return stringBuilder.ToString();
+	}
+
+	public static string ToHexStringCombined(this byte[] bytes, bool uppercase = false)
+	{
+		var stringBuilder = new StringBuilder(bytes.Length * 2);
+		var format = uppercase ? "X2" : "x2";
+		for (int i = 0; i < bytes.Length; i++)
+			stringBuilder.Append(bytes[i].ToString(format));
+		return stringBuilder.ToString();
+	}
+
+	public static string ToHexStringCombined(this byte[] bytes, int bytesToRead, bool uppercase = false)
+	{
+		var stringBuilder = new StringBuilder(bytes.Length * 2);
+		var format = uppercase ? "X2" : "x2";
+		for (int i = 0; i < bytesToRead; i++)
+			stringBuilder.Append(bytes[i].ToString(format));
+		return stringBuilder.ToString();
+	}
+
+	public static string ToHexStringFancy(this string text, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(text.Length * 3);
+		var format = uppercase ? "({0})0x{1:X2} " : "({0})0x{1:x2} ";
 		for (int i = 0; i < text.Length; i++)
 		{
 			var value = text[i];
-			stringBuilder.AppendFormat("({0})0x{1:x2} ", char.IsControl(value) ? "" : char.ToString(value), (byte)value);
+			stringBuilder.AppendFormat(format, char.IsControl(value) ? "" : char.ToString(value), (byte)value);
 		}
 		return stringBuilder.ToString();
 	}
 
-	public static string ToHexStringFancy(this byte[] bytes)
+	public static string ToHexStringFancy(this byte[] bytes, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(bytes.Length * 3);
+		var format = uppercase ? "({0})0x{1:X2} " : "({0})0x{1:x2} ";
 		for (int i = 0; i < bytes.Length; i++)
 		{
 			var value = (char)bytes[i];
-			stringBuilder.AppendFormat("({0})0x{1:x2} ", char.IsControl(value) ? "" : char.ToString(value), (byte)value);
+			stringBuilder.AppendFormat(format, char.IsControl(value) ? "" : char.ToString(value), (byte)value);
 		}
 		return stringBuilder.ToString();
 	}
 
-	public static string ToHexStringFancy(this byte[] bytes, int bytesToRead)
+	public static string ToHexStringFancy(this byte[] bytes, int bytesToRead, bool uppercase = false)
 	{
 		var stringBuilder = new StringBuilder(bytesToRead * 3);
+		var format = uppercase ? "({0})0x{1:X2} " : "({0})0x{1:x2} ";
 		for (int i = 0; i < bytesToRead; i++)
 		{
 			var value = (char)bytes[i];
-			stringBuilder.AppendFormat("({0})0x{1:x2} ", char.IsControl(value) ? "" : char.ToString(value), (byte)value);
+			stringBuilder.AppendFormat(format, char.IsControl(value) ? "" : char.ToString(value), (byte)value);
 		}
 		return stringBuilder.ToString();
 	}

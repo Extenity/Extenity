@@ -12,7 +12,7 @@ namespace Extenity.Crypto
 	{
 		#region MD5
 
-		public static string CalculateMD5HashOfFile(string filePath)
+		public static string CalculateMD5HashOfFile(string filePath, bool uppercase = true)
 		{
 			try
 			{
@@ -21,7 +21,30 @@ namespace Extenity.Crypto
 					using (var md5 = MD5.Create())
 					{
 						var checksum = md5.ComputeHash(stream);
-						return Encoding.Default.GetString(checksum);
+						return checksum.ToHexStringCombined(uppercase);
+					}
+				}
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		#endregion
+
+		#region SHA1
+
+		public static string CalculateSHA1HashOfFile(string filePath, bool uppercase = true)
+		{
+			try
+			{
+				using (FileStream stream = File.OpenRead(filePath))
+				{
+					using (var sha = new SHA1Managed())
+					{
+						var checksum = sha.ComputeHash(stream);
+						return checksum.ToHexStringCombined(uppercase);
 					}
 				}
 			}
@@ -35,7 +58,7 @@ namespace Extenity.Crypto
 
 		#region SHA256
 
-		public static string CalculateSHA256HashOfFile(string filePath)
+		public static string CalculateSHA256HashOfFile(string filePath, bool uppercase = true)
 		{
 			try
 			{
@@ -44,7 +67,7 @@ namespace Extenity.Crypto
 					using (var sha = new SHA256Managed())
 					{
 						var checksum = sha.ComputeHash(stream);
-						return BitConverter.ToString(checksum).Replace("-", String.Empty);
+						return checksum.ToHexStringCombined(uppercase);
 					}
 				}
 			}

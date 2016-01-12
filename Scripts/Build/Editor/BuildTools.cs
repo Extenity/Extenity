@@ -72,7 +72,7 @@ public static class BuildTools
 
 	#region Get Scene Names From Build Settings
 
-	public static string[] GetSceneNamesFromBuildSettings(List<string> excludingNames)
+	public static string[] GetSceneNamesFromBuildSettings(List<string> excludingNames = null)
 	{
 		var list = new List<string>();
 
@@ -98,7 +98,7 @@ public static class BuildTools
 		return list.ToArray();
 	}
 
-	public static string[] GetScenePathsFromBuildSettings(List<string> excludingPaths)
+	public static string[] GetScenePathsFromBuildSettings(List<string> excludingPaths = null)
 	{
 		var list = new List<string>();
 
@@ -123,6 +123,9 @@ public static class BuildTools
 
 	public static string GetScenePathFromBuildSettings(string sceneName, bool onlyIfEnabled)
 	{
+		if (string.IsNullOrEmpty(sceneName))
+			return null;
+
 		for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
 		{
 			var scene = EditorBuildSettings.scenes[i];
