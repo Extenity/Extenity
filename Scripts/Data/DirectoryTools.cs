@@ -20,7 +20,7 @@ public static class DirectoryTools
 #endif
 	}
 
-	public static void Create(string filePath)
+	public static void CreateFromFilePath(string filePath)
 	{
 		string directoryPath = Path.GetDirectoryName(filePath);
 		if (directoryPath.Length > 0 && !Directory.Exists(directoryPath))
