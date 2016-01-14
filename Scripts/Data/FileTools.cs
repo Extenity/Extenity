@@ -106,6 +106,22 @@ public static class FileTools
 		return path.Replace(OtherDirectorySeparatorChar, DirectorySeparatorChar);
 	}
 
+	public static string FixDirectorySeparatorChars(this string path, char separator)
+	{
+		if (separator == '\\')
+		{
+			return path.Replace('/', separator);
+		}
+		else if (separator == '/')
+		{
+			return path.Replace('\\', separator);
+		}
+		else
+		{
+			return path.Replace('/', separator).Replace('\\', separator);
+		}
+	}
+
 	public static string AddDirectorySeparatorToEnd(this string path)
 	{
 		if (path.IsEndingWithDirectorySeparatorChar())
