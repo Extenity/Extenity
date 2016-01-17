@@ -32,6 +32,18 @@ public static class CollectionTools
 		return source != null && source.Count != 0;
 	}
 
+	public static bool IsAllNullOrEmpty(this string[] source)
+	{
+		if (source == null)
+			return true;
+		for (int i = 0; i < source.Length; i++)
+		{
+			if (!string.IsNullOrEmpty(source[i]))
+				return false;
+		}
+		return true;
+	}
+
 	public static List<T> Clone<T>(this List<T> source)
 	{
 		return source.GetRange(0, source.Count);

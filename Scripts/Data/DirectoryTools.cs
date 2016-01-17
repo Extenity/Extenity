@@ -99,7 +99,7 @@ public static class DirectoryTools
 		HashSet<string> filesToCopy = new HashSet<string>();
 
 		// Include files
-		if (includeFilters == null || includeFilters.Length == 0)
+		if (includeFilters.IsAllNullOrEmpty())
 		{
 			try
 			{
