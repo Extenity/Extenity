@@ -44,17 +44,15 @@ public static class DirectoryTools
 		public List<string> CopiedFiles = null;
 		public int CopiedFileCount = 0; // Does not directly return CopiedFiles.Count because CreateCopiedFileList can be false.
 		public readonly bool CreateCopiedFileList = false;
-		public readonly bool ThrowOnError = false;
 		public bool IsOK { get { return FailedFiles == null || FailedFiles.Count == 0; } }
 
 		public CopyResult()
 		{
 		}
 
-		public CopyResult(bool createCopiedFileList, bool throwOnError)
+		public CopyResult(bool createCopiedFileList)
 		{
 			CreateCopiedFileList = createCopiedFileList;
-			ThrowOnError = throwOnError;
 		}
 
 		public void Reset()
@@ -85,10 +83,10 @@ public static class DirectoryTools
 		}
 	}
 
-	public static void Copy(string sourceDirectory, string targetDirectory,
+	public static bool Copy(string sourceDirectory, string targetDirectory,
 		string[] includeFilters = null, string[] excludeFilters = null,
 		SearchOption searchOption = SearchOption.AllDirectories,
-		bool overwrite = true,
+		bool overwrite = true, bool throwOnError = true, bool continueOnError = false,
 		CopyResult result = null)
 	{
 		if (sourceDirectory == null)
@@ -111,8 +109,9 @@ public static class DirectoryTools
 			}
 			catch (Exception)
 			{
-				if (result != null && result.ThrowOnError)
+				if (throwOnError)
 					throw;
+				return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
 			}
 		}
 		else
@@ -127,14 +126,15 @@ public static class DirectoryTools
 				}
 				catch (Exception)
 				{
-					if (result != null && result.ThrowOnError)
+					if (throwOnError)
 						throw;
+					return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
 				}
 			}
 		}
 
 		if (filesToCopy.Count == 0)
-			return; // No files to copy
+			return true; // No files to copy
 
 		// Exclude files
 		if (excludeFilters != null)
@@ -149,16 +149,18 @@ public static class DirectoryTools
 				}
 				catch (Exception)
 				{
-					if (result != null && result.ThrowOnError)
+					if (throwOnError)
 						throw;
+					return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
 				}
 			}
 		}
 
 		if (filesToCopy.Count == 0)
-			return; // No files to copy
+			return true; // No files to copy
 
 		// Copy files
+		var successful = true;
 		foreach (var sourceFilePath in filesToCopy)
 		{
 			try
@@ -166,7 +168,7 @@ public static class DirectoryTools
 				// Make relative path
 				string relativeSourceFilePath;
 				{
-					//relativeFilePath = FileTools.MakeRelativePath(sourceDirectory, sourceFilePath); // This method only works within two absolute paths.
+					//relativeFilePath = FileTools.MakeRelativePath(sourceDirectory, sourceFilePath); // This method only works between two absolute paths.
 
 					if (!sourceFilePath.StartsWith(sourceDirectory))
 					{
@@ -192,11 +194,15 @@ public static class DirectoryTools
 				if (result != null)
 				{
 					result.AddFailedFile(new CopyResult.FailReason { FilePath = sourceFilePath, Exception = e });
-					if (result.ThrowOnError)
-						throw;
 				}
+				if (throwOnError)
+					throw;
+				successful = false;
+				if (!continueOnError)
+					return false;
 			}
 		}
+		return successful;
 	}
 
 	/*
