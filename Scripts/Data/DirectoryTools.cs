@@ -120,6 +120,8 @@ public static class DirectoryTools
 			{
 				try
 				{
+					if (string.IsNullOrEmpty(includeFilter))
+						continue;
 					var list = Directory.GetFiles(sourceDirectory, includeFilter, searchOption);
 					for (int i = 0; i < list.Length; i++)
 						filesToCopy.Add(list[i]);

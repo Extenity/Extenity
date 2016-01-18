@@ -129,6 +129,20 @@ public static class FileTools
 		return path + DirectorySeparatorChar;
 	}
 
+	public static bool IsRelativePath(this string path)
+	{
+		if (string.IsNullOrEmpty(path))
+			return false;
+		return !Path.IsPathRooted(path);
+	}
+
+	public static bool IsFullPath(this string path)
+	{
+		if (string.IsNullOrEmpty(path))
+			return false;
+		return Path.IsPathRooted(path);
+	}
+
 	#endregion
 
 	#region String Operations - File Size
