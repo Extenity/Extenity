@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using System.Net;
 using System.IO;
+using System.Net.Sockets;
 using Extenity.Logging;
 using Logger = Extenity.Logging.Logger;
 
@@ -48,15 +50,15 @@ public static class NetworkTools
 
 	public static string GetIPFromURL(string url)
 	{
-		url = url.Replace("http://", ""); //remove http://
-		url = url.Replace("https://", ""); //remove https://
-		if (url.IndexOf("/") > 0)
-		{
-			url = url.Substring(0, url.IndexOf("/")); //remove everything after the first /
-		}
-
 		try
 		{
+			url = url.Replace("http://", ""); //remove http://
+			url = url.Replace("https://", ""); //remove https://
+			if (url.IndexOf("/") > 0)
+			{
+				url = url.Substring(0, url.IndexOf("/")); //remove everything after the first /
+			}
+
 			IPHostEntry hosts = Dns.GetHostEntry(url);
 			if (hosts.AddressList.Length > 0)
 				return hosts.AddressList[0].ToString();
@@ -66,5 +68,58 @@ public static class NetworkTools
 			// ignored
 		}
 		return string.Empty;
+	}
+
+	/// Source: http://stackoverflow.com/questions/6803073/get-local-ip-address
+	/// Explanation in StackOverflow: There is a more accurate way when there are multi ip addresses available on local machine. Just try to make a UDP connection to a target, the target no need to be existed at all. And you will receive the preferred outbound IP address of local machine. 
+	public static string GetPreferredLocalIP()
+	{
+		try
+		{
+			using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+			{
+				socket.Connect("10.0.0.0", 65530);
+				var endPoint = (IPEndPoint)socket.LocalEndPoint;
+				return endPoint.Address.ToString();
+			}
+		}
+		catch (Exception)
+		{
+			return "";
+		}
+	}
+
+	/// Source: http://www.csharp-examples.net/local-ip/
+	/// Examples:
+	/// IsLocalIP("localhost");        // true (loopback name)
+	/// IsLocalIP("127.0.0.1");        // true (loopback IP)
+	/// IsLocalIP("MyNotebook");       // true (my computer name)
+	/// IsLocalIP("192.168.0.1");      // true (my IP)
+	/// IsLocalIP("NonExistingName");  // false (non existing computer name)
+	/// IsLocalIP("99.0.0.1");         // false (non existing IP in my net)
+	public static bool IsLocalIP(string host)
+	{
+		try
+		{ // get host IP addresses
+			IPAddress[] hostIPs = Dns.GetHostAddresses(host);
+			// get local IP addresses
+			IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+
+			// test if any host IP equals to any local IP or to localhost
+			foreach (IPAddress hostIP in hostIPs)
+			{
+				// is localhost
+				if (IPAddress.IsLoopback(hostIP))
+					return true;
+				// is local address
+				foreach (IPAddress localIP in localIPs)
+				{
+					if (hostIP.Equals(localIP))
+						return true;
+				}
+			}
+		}
+		catch { }
+		return false;
 	}
 }
