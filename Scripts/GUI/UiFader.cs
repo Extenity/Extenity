@@ -103,6 +103,11 @@ public class UiFader : MonoBehaviour
 
 	protected float AlphaFadeIn(float delay, float duration)
 	{
+		if (DEBUG_ShowFadeMessages)
+		{
+			Debug.LogFormat("Fading in '{0}'", CanvasGroup.gameObject.name);
+		}
+
 		Stop();
 		if (CanvasGroup != null)
 		{
@@ -124,6 +129,11 @@ public class UiFader : MonoBehaviour
 
 	protected float AlphaFadeOut(float delay, float duration)
 	{
+		if (DEBUG_ShowFadeMessages)
+		{
+			Debug.LogFormat("Fading out '{0}'", CanvasGroup.gameObject.name);
+		}
+
 		Stop();
 		if (CanvasGroup != null)
 		{
@@ -152,6 +162,13 @@ public class UiFader : MonoBehaviour
 			CanvasGroupTweener = null;
 		}
 	}
+
+	#endregion
+
+	#region Debug
+
+	[Header("Debug")]
+	public bool DEBUG_ShowFadeMessages = false;
 
 	#endregion
 }
