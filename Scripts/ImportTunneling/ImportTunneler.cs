@@ -3,7 +3,10 @@ using UnityEngine;
 using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using Extenity.Parallel;
+using Debug = UnityEngine.Debug;
 
 namespace Extenity.ImportTunneling
 {
@@ -12,9 +15,13 @@ namespace Extenity.ImportTunneling
 	{
 		#region Initialization
 
-		//protected void Awake()
-		//{
-		//}
+		protected void Start()
+		{
+			if (LoadConfigurationAtStart)
+			{
+				LoadConfigurationFile();
+			}
+		}
 
 		#endregion
 
@@ -49,6 +56,7 @@ namespace Extenity.ImportTunneling
 
 		#region Configuration Loading
 
+		public bool LoadConfigurationAtStart = false;
 		public string ConfigurationFilePath = "ImportTunneler.conf";
 
 		private void LoadConfigurationFile()
@@ -121,9 +129,34 @@ namespace Extenity.ImportTunneling
 
 		#endregion
 
+		#region Unity Project
+
+		private IEnumerator CreateAndLaunchUnityProject(string projectPath, string executedMethod, params string[] executedMethodParameters)
+		{
+			var args = string.Format(
+				"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1}",
+				projectPath,
+				executedMethod);
+			args += " " + string.Join(" ", executedMethodParameters);
+
+			var process = new Process();
+			process.StartInfo.FileName = EnsuredUnityEditorPath;
+			process.StartInfo.Arguments = args;
+			process.StartInfo.RedirectStandardError = true;
+			process.StartInfo.RedirectStandardOutput = true;
+			process.EnableRaisingEvents = true;
+
+			while (!process.HasExited)
+			{
+				yield return new WaitForEndOfFrame();
+			}
+		}
+
+		#endregion
+
 		#region Process - Convert To Asset Bundle
 
-		public void ConvertToAssetBundle(string sourceAssetPath)
+		public IEnumerator ConvertToAssetBundle(CoroutineTask task, string sourceAssetPath)
 		{
 			if (string.IsNullOrEmpty(sourceAssetPath))
 				throw new ArgumentNullException("sourceAssetPath");
@@ -139,22 +172,31 @@ namespace Extenity.ImportTunneling
 			// Generate dummy project path
 			GenerateDummyProjectFullPath();
 			var dummyProjectPath = DummyProjectFullPath;
+			Directory.CreateDirectory(dummyProjectPath);
+			Debug.Log("Dummy project: " + dummyProjectPath);
 
 			// Create dummy project files
 			// TODO:
-			throw new NotImplementedException();
+
+			// Generate asset bundle path
+			// TODO:
+			var assetBundlePath = "C:\\TEMP\\ImportTunnelerTest\\Output.ab";
 
 			// Launch dummy project with conversion command
-			// TODO:
-			throw new NotImplementedException();
+			// TODO: remove hardcode
+			yield return task.StartNested(CreateAndLaunchUnityProject(dummyProjectPath, "AssetConverter.Convert", sourceAssetPath, assetBundlePath));
 
-			// Wait for dummy project output
-			// TODO:
-			throw new NotImplementedException();
+			//// Wait for dummy project output
+			//// TODO:
+			//throw new NotImplementedException();
 
-			// Import asset bundle
-			// TODO:
-			throw new NotImplementedException();
+			//// Delete dummy project (excluding the output)
+			//// TODO:
+			//throw new NotImplementedException();
+
+			//// Import asset bundle
+			//// TODO:
+			//throw new NotImplementedException();
 		}
 
 		#endregion

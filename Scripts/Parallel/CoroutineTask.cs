@@ -82,12 +82,25 @@ namespace Extenity.Parallel
 			return task;
 		}
 
+		public static CoroutineTask Create(IEnumerator coroutine, Finished onFinished, bool startImmediately = true)
+		{
+			var task = new CoroutineTask();
+			task.Initialize(coroutine, onFinished, startImmediately);
+			return task;
+		}
+
 		public void Initialize(IEnumerator coroutine, bool startImmediately = true)
 		{
 			CoroutineTaskManager.InitializeSingleton();
 			BaseCoroutine = coroutine;
 			if (startImmediately)
 				Start();
+		}
+
+		public void Initialize(IEnumerator coroutine, Finished onFinished, bool startImmediately = true)
+		{
+			OnFinished += onFinished;
+			Initialize(coroutine, startImmediately);
 		}
 
 		#endregion
@@ -168,11 +181,11 @@ namespace Extenity.Parallel
 				return;
 			IsRunning = false;
 
-			// Call OnFinished immediately if user stops manually. Otherwise there will be a delay 
-			// while waiting for the last iterator before ending wrapper loop.
-			var callback = OnFinished;
-			if (callback != null)
-				callback(IsManuallyStopped);
+			//// Call OnFinished immediately if user stops manually. Otherwise there will be a delay 
+			//// while waiting for the last iterator before ending wrapper loop.
+			//var callback = OnFinished;
+			//if (callback != null)
+			//	callback(IsManuallyStopped);
 		}
 
 		/// <summary>
@@ -258,7 +271,7 @@ namespace Extenity.Parallel
 				}
 			}
 
-			if (!IsManuallyStopped) // OnFinished will be handled differently if user stops the task manually. See Stop() for more info.
+			//if (!IsManuallyStopped) // OnFinished will be handled differently if user stops the task manually. See Stop() for more info.
 			{
 				var callback = OnFinished;
 				if (callback != null)
@@ -279,7 +292,7 @@ namespace Extenity.Parallel
 		{
 			if (Instance == null)
 			{
-				GameObject go = new GameObject("_CoroutineTaskManager");
+				var go = new GameObject("_CoroutineTaskManager");
 				go.hideFlags = HideFlags.HideAndDontSave;
 				Instance = go.AddComponent<CoroutineTaskManager>();
 			}
