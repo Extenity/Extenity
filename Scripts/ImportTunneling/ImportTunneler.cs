@@ -61,7 +61,15 @@ namespace Extenity.ImportTunneling
 
 		private void LoadConfigurationFile()
 		{
-			JsonUtility.FromJsonOverwrite(ConfigurationFilePath, Configuration);
+			try
+			{
+				var fileContent = File.ReadAllText(ConfigurationFilePath);
+				JsonUtility.FromJsonOverwrite(fileContent, Configuration);
+			}
+			catch
+			{
+				// ignored
+			}
 		}
 
 		#endregion
@@ -134,7 +142,8 @@ namespace Extenity.ImportTunneling
 		private IEnumerator CreateAndLaunchUnityProject(string projectPath, string executedMethod, params string[] executedMethodParameters)
 		{
 			var args = string.Format(
-				"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1}",
+				"-createProject {0} -executeMethod {1}",
+				//"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1}",
 				projectPath,
 				executedMethod);
 			args += " " + string.Join(" ", executedMethodParameters);
@@ -144,7 +153,11 @@ namespace Extenity.ImportTunneling
 			process.StartInfo.Arguments = args;
 			process.StartInfo.RedirectStandardError = true;
 			process.StartInfo.RedirectStandardOutput = true;
+			process.StartInfo.UseShellExecute = false;
+			//process.ErrorDataReceived += OnUnityEditorProcessErrorDataReceived;
+			//process.OutputDataReceived += OnUnityEditorProcessOutputDataReceived;
 			process.EnableRaisingEvents = true;
+			process.Start();
 
 			while (!process.HasExited)
 			{
@@ -152,11 +165,28 @@ namespace Extenity.ImportTunneling
 			}
 		}
 
+		//private void OnUnityEditorProcessOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
+		//{
+		//	var line = dataReceivedEventArgs.Data;
+		//	Debug.Log("  |  " + line);
+		//}
+
+		//private void OnUnityEditorProcessErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
+		//{
+		//	var line = dataReceivedEventArgs.Data;
+		//	Debug.Log("  Err |  " + line);
+		//}
+
 		#endregion
 
 		#region Process - Convert To Asset Bundle
 
-		public IEnumerator ConvertToAssetBundle(CoroutineTask task, string sourceAssetPath)
+		private static readonly string ImportTunnelerConverterFileContent =
+@"
+asd
+";
+
+		public IEnumerator ConvertToAssetBundle(CoroutineTask task, string sourceAssetPath, string outputAssetPath)
 		{
 			if (string.IsNullOrEmpty(sourceAssetPath))
 				throw new ArgumentNullException("sourceAssetPath");
@@ -175,28 +205,27 @@ namespace Extenity.ImportTunneling
 			Directory.CreateDirectory(dummyProjectPath);
 			Debug.Log("Dummy project: " + dummyProjectPath);
 
-			// Create dummy project files
-			// TODO:
+			// Create dummy project Assets directory
+			var dummyProjectAssetsPath = Path.Combine(dummyProjectPath, "Assets");
+			if (!Directory.Exists(dummyProjectAssetsPath))
+				Directory.CreateDirectory(dummyProjectAssetsPath);
 
-			// Generate asset bundle path
-			// TODO:
-			var assetBundlePath = "C:\\TEMP\\ImportTunnelerTest\\Output.ab";
+			// Copy source asset into dummy project
+			var sourceAssetFileName = Path.GetFileName(sourceAssetPath);
+			var sourceAssetDummyProjectPath = Path.Combine(dummyProjectAssetsPath, sourceAssetFileName);
+			File.Copy(sourceAssetPath, sourceAssetDummyProjectPath);
+
+			// Create converter code in dummy project
+			// TODO: remove hardcode
+			var converterCodePath = Path.Combine(dummyProjectAssetsPath, "ImportTunnelerConverter.cs");
+			File.WriteAllText(converterCodePath, ImportTunnelerConverterFileContent);
 
 			// Launch dummy project with conversion command
 			// TODO: remove hardcode
-			yield return task.StartNested(CreateAndLaunchUnityProject(dummyProjectPath, "AssetConverter.Convert", sourceAssetPath, assetBundlePath));
-
-			//// Wait for dummy project output
-			//// TODO:
-			//throw new NotImplementedException();
+			yield return task.StartNested(CreateAndLaunchUnityProject(dummyProjectPath, "AssetConverter.Convert", sourceAssetPath, outputAssetPath));
 
 			//// Delete dummy project (excluding the output)
-			//// TODO:
-			//throw new NotImplementedException();
-
-			//// Import asset bundle
-			//// TODO:
-			//throw new NotImplementedException();
+			DirectoryTools.Delete(dummyProjectPath);
 		}
 
 		#endregion
