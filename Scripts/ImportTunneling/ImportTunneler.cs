@@ -11,6 +11,41 @@ using Debug = UnityEngine.Debug;
 namespace Extenity.ImportTunneling
 {
 
+	/// <summary>
+	/// This is an exact copy of BuildTarget which provides independency from UnityEditor namespace;
+	/// </summary>
+	public enum AssetBundlePlatform
+	{
+		//StandaloneOSXUniversal = 2,
+		//StandaloneOSXIntel = 4,
+		//StandaloneWindows = 5,
+		//WebPlayer = 6,
+		//WebPlayerStreamed = 7,
+		//iOS = 9,
+		//PS3 = 10,
+		//XBOX360 = 11,
+		//Android = 13,
+		//StandaloneGLESEmu = 14,
+		//StandaloneLinux = 17,
+		StandaloneWindows64 = 19,
+		//WebGL = 20,
+		//WSAPlayer = 21,
+		//StandaloneLinux64 = 24,
+		//StandaloneLinuxUniversal = 25,
+		//WP8Player = 26,
+		//StandaloneOSXIntel64 = 27,
+		//BlackBerry = 28,
+		//Tizen = 29,
+		//PSP2 = 30,
+		//PS4 = 31,
+		//PSM = 32,
+		//XboxOne = 33,
+		//SamsungTV = 34,
+		//Nintendo3DS = 35,
+		//WiiU = 36,
+		//tvOS = 37,
+	}
+
 	public class ImportTunneler : MonoBehaviour
 	{
 		#region Initialization
@@ -139,14 +174,21 @@ namespace Extenity.ImportTunneling
 
 		#region Unity Project
 
-		private IEnumerator CreateAndLaunchUnityProject(string projectPath, string executedMethod, params string[] executedMethodParameters)
+		private IEnumerator CreateAndLaunchUnityProject(string projectPath, string executedMethod, string sourceAssetPath, string outputAssetPath, AssetBundlePlatform assetBundlePlatform)
 		{
+			if (string.IsNullOrEmpty(projectPath))
+				throw new ArgumentNullException("projectPath");
+			if (string.IsNullOrEmpty(executedMethod))
+				throw new ArgumentNullException("executedMethod");
+
 			var args = string.Format(
-				"-createProject {0} -executeMethod {1}",
-				//"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1}",
+				"-createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
+				//"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
 				projectPath,
-				executedMethod);
-			args += " " + string.Join(" ", executedMethodParameters);
+				executedMethod,
+				sourceAssetPath,
+				outputAssetPath,
+				assetBundlePlatform.ToString());
 
 			var process = new Process();
 			process.StartInfo.FileName = EnsuredUnityEditorPath;
@@ -221,8 +263,12 @@ asd
 			File.WriteAllText(converterCodePath, ImportTunnelerConverterFileContent);
 
 			// Launch dummy project with conversion command
-			// TODO: remove hardcode
-			yield return task.StartNested(CreateAndLaunchUnityProject(dummyProjectPath, "AssetConverter.Convert", sourceAssetPath, outputAssetPath));
+			yield return task.StartNested(CreateAndLaunchUnityProject(
+				dummyProjectPath, 
+				"ImportTunneling.ImportTunnelerSatellite.ConvertUsingArgs", // TODO: remove hardcode
+				sourceAssetPath, 
+				outputAssetPath,
+				AssetBundlePlatform.StandaloneWindows64)); // TODO: remove hardcode
 
 			//// Delete dummy project (excluding the output)
 			DirectoryTools.Delete(dummyProjectPath);
