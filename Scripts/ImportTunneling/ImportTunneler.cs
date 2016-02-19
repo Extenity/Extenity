@@ -12,7 +12,7 @@ namespace Extenity.ImportTunneling
 {
 
 	/// <summary>
-	/// This is an exact copy of BuildTarget which provides independency from UnityEditor namespace;
+	/// This is an exact copy of BuildTarget which provides independency from UnityEditor namespace.
 	/// </summary>
 	public enum AssetBundlePlatform
 	{
@@ -182,8 +182,8 @@ namespace Extenity.ImportTunneling
 				throw new ArgumentNullException("executedMethod");
 
 			var args = string.Format(
-				"-createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
-				//"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
+				//"-createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
+				"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
 				projectPath,
 				executedMethod,
 				sourceAssetPath,
@@ -221,12 +221,148 @@ namespace Extenity.ImportTunneling
 
 		#endregion
 
-		#region Process - Convert To Asset Bundle
+		#region ImportTunnelerSatellite as Text
 
 		private static readonly string ImportTunnelerConverterFileContent =
-@"
-asd
+@"using System;
+using System.IO;
+using UnityEngine;
+using UnityEditor;
+
+namespace ImportTunneling
+{
+
+	public static class ImportTunnelerSatellite
+	{
+		#region Conversion
+
+		public static void ConvertUsingArgs()
+		{
+			var sourceAssetPath = CommandLineTools.GetValue(""+sourceAssetPath"");
+			var outputAssetPath = CommandLineTools.GetValue(""+outputAssetPath"");
+			var assetBundlePlatformString = CommandLineTools.GetValue(""+assetBundlePlatform"");
+			if (string.IsNullOrEmpty(sourceAssetPath))
+				throw new ArgumentNullException(""sourceAssetPath"");
+			if (string.IsNullOrEmpty(outputAssetPath))
+				throw new ArgumentNullException(""outputAssetPath"");
+			if (string.IsNullOrEmpty(assetBundlePlatformString))
+				throw new ArgumentNullException(""assetBundlePlatform"");
+
+
+			var assetBundlePlatform = EnumTools.ParseSafe<BuildTarget>(assetBundlePlatformString, true);
+
+			Convert(sourceAssetPath, outputAssetPath, assetBundlePlatform);
+		}
+
+		public static void Convert(string sourceAssetPath, string outputAssetPath, BuildTarget assetBundlePlatform)
+		{
+			Debug.LogFormat(""Starting asset conversion for '{0}' output as '{1}'."", sourceAssetPath, outputAssetPath);
+
+			var outputFileName = Path.GetFileName(outputAssetPath);
+			var outputDirectoryPath = Path.GetDirectoryName(outputAssetPath);
+			var importer = AssetImporter.GetAtPath(sourceAssetPath);
+			importer.assetBundleName = outputFileName;
+
+			if (!Directory.Exists(outputDirectoryPath))
+				Directory.CreateDirectory(outputDirectoryPath);
+
+			var builds = new AssetBundleBuild[]
+			{
+				new AssetBundleBuild()
+				{
+					assetBundleName = outputFileName,
+					assetNames = new string[] {sourceAssetPath}
+				}
+			};
+
+			BuildPipeline.BuildAssetBundles(outputDirectoryPath, builds, BuildAssetBundleOptions.UncompressedAssetBundle, assetBundlePlatform);
+
+			Debug.Log(""Conversion completed"");
+		}
+
+		#endregion
+
+		#region Tools - CommandLineTools
+
+		private static class CommandLineTools
+		{
+			#region Initialization
+
+			static CommandLineTools()
+			{
+				CommandLine = Environment.CommandLine;
+				SplitCommandLine = CommandLine.Split(' ');
+			}
+
+			#endregion
+
+			#region Data
+
+			public static string CommandLine { get; private set; }
+			public static string[] SplitCommandLine { get; private set; }
+
+			#endregion
+
+			#region Get
+
+			public static string GetValue(string key)
+			{
+				for (int i = 0; i < SplitCommandLine.Length; i++)
+				{
+					if (SplitCommandLine[i] == key)
+					{
+						i++;
+
+						if (i < SplitCommandLine.Length)
+						{
+							return SplitCommandLine[i];
+						}
+						else
+						{
+							return null;
+						}
+					}
+				}
+				return null;
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region Tools - EnumTools
+
+		private static class EnumTools
+		{
+			public static T ParseSafe<T>(string value, bool ignoreCase = false)
+			{
+				var enumType = typeof(T);
+
+				if (!enumType.IsEnum)
+					throw new ArgumentException(""Generic type must be an enumeration."", ""enumType"");
+
+				try
+				{
+					var result = (T)Enum.Parse(enumType, value, ignoreCase);
+					return result;
+				}
+				catch
+				{
+				}
+				return default(T);
+			}
+		}
+
+		#endregion
+	}
+
+}
 ";
+
+		#endregion
+
+		#region Process - Convert To Asset Bundle
 
 		public IEnumerator ConvertToAssetBundle(CoroutineTask task, string sourceAssetPath, string outputAssetPath)
 		{
@@ -234,6 +370,8 @@ asd
 				throw new ArgumentNullException("sourceAssetPath");
 			if (!File.Exists(sourceAssetPath))
 				throw new FileNotFoundException("Source asset does not exist at path '" + sourceAssetPath + "'.");
+
+			var outputAssetFullPath = Path.GetFullPath(outputAssetPath);
 
 			// Load configuration
 			LoadConfigurationFile();
@@ -245,7 +383,6 @@ asd
 			GenerateDummyProjectFullPath();
 			var dummyProjectPath = DummyProjectFullPath;
 			Directory.CreateDirectory(dummyProjectPath);
-			Debug.Log("Dummy project: " + dummyProjectPath);
 
 			// Create dummy project Assets directory
 			var dummyProjectAssetsPath = Path.Combine(dummyProjectPath, "Assets");
@@ -255,19 +392,20 @@ asd
 			// Copy source asset into dummy project
 			var sourceAssetFileName = Path.GetFileName(sourceAssetPath);
 			var sourceAssetDummyProjectPath = Path.Combine(dummyProjectAssetsPath, sourceAssetFileName);
+			var sourceAssetDummyProjectRelativePath = dummyProjectPath.AddDirectorySeparatorToEnd().MakeRelativePath(sourceAssetDummyProjectPath);
 			File.Copy(sourceAssetPath, sourceAssetDummyProjectPath);
 
 			// Create converter code in dummy project
 			// TODO: remove hardcode
-			var converterCodePath = Path.Combine(dummyProjectAssetsPath, "ImportTunnelerConverter.cs");
+			var converterCodePath = Path.Combine(dummyProjectAssetsPath, "ImportTunnelerSatellite.cs");
 			File.WriteAllText(converterCodePath, ImportTunnelerConverterFileContent);
 
 			// Launch dummy project with conversion command
 			yield return task.StartNested(CreateAndLaunchUnityProject(
-				dummyProjectPath, 
+				dummyProjectPath,
 				"ImportTunneling.ImportTunnelerSatellite.ConvertUsingArgs", // TODO: remove hardcode
-				sourceAssetPath, 
-				outputAssetPath,
+				sourceAssetDummyProjectRelativePath,
+				outputAssetFullPath,
 				AssetBundlePlatform.StandaloneWindows64)); // TODO: remove hardcode
 
 			//// Delete dummy project (excluding the output)

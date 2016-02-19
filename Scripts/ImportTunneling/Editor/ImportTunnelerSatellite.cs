@@ -1,10 +1,6 @@
 using System;
-using UnityEngine;
-using Extenity.Logging;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using Extenity.Applicational;
+using UnityEngine;
 using UnityEditor;
 
 namespace ImportTunneling
@@ -54,38 +50,85 @@ namespace ImportTunneling
 			};
 
 			BuildPipeline.BuildAssetBundles(outputDirectoryPath, builds, BuildAssetBundleOptions.UncompressedAssetBundle, assetBundlePlatform);
+
+			Debug.Log("Conversion completed");
 		}
 
 		#endregion
 
-		[MenuItem("AAAA/Test")]
-		static void TEST()
+		#region Tools - CommandLineTools
+
+		private static class CommandLineTools
 		{
-			var outputPath = "TEST/ImportTunneler/TestFile/SketchUp/can.skp.pck";
+			#region Initialization
 
-			Convert(
-				"Assets/Aargh/TEST/ImportTunneler/TestFile/SketchUp/can.skp",
-				outputPath,
-				BuildTarget.StandaloneWindows64);
+			static CommandLineTools()
+			{
+				CommandLine = Environment.CommandLine;
+				SplitCommandLine = CommandLine.Split(' ');
+			}
 
-			var bundle = AssetBundle.LoadFromFile(outputPath);
-			Debug.Log("Bundle : " + bundle);
-			try
+			#endregion
+
+			#region Data
+
+			public static string CommandLine { get; private set; }
+			public static string[] SplitCommandLine { get; private set; }
+
+			#endregion
+
+			#region Get
+
+			public static string GetValue(string key)
 			{
-				bundle.GetAllAssetNames().LogList();
-				var asset = bundle.LoadAsset(bundle.GetAllAssetNames()[0]);
-				//var asset = bundle.mainAsset;
-				var go = GameObject.Instantiate(asset);
+				for (int i = 0; i < SplitCommandLine.Length; i++)
+				{
+					if (SplitCommandLine[i] == key)
+					{
+						i++;
+
+						if (i < SplitCommandLine.Length)
+						{
+							return SplitCommandLine[i];
+						}
+						else
+						{
+							return null;
+						}
+					}
+				}
+				return null;
 			}
-			catch (Exception)
+
+			#endregion
+		}
+
+		#endregion
+
+		#region Tools - EnumTools
+
+		private static class EnumTools
+		{
+			public static T ParseSafe<T>(string value, bool ignoreCase = false)
 			{
-				throw;
-			}
-			finally
-			{
-				bundle.Unload(false);
+				var enumType = typeof(T);
+
+				if (!enumType.IsEnum)
+					throw new ArgumentException("Generic type must be an enumeration.", "enumType");
+
+				try
+				{
+					var result = (T)Enum.Parse(enumType, value, ignoreCase);
+					return result;
+				}
+				catch
+				{
+				}
+				return default(T);
 			}
 		}
+
+		#endregion
 	}
 
 }
