@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Extenity.DataTypes;
 
 namespace Extenity.Coloring
 {
