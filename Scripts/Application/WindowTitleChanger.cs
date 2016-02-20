@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class WindowTitleChanger : MonoBehaviour
+namespace Extenity.Applicational
 {
-	public string Title;
 
-	private void Awake()
+	public class WindowTitleChanger : MonoBehaviour
 	{
-		ChangeTitle();
-	}
+		public string Title;
 
-	public void ChangeTitle()
-	{
-		if (!string.IsNullOrEmpty(Title))
+		private void Awake()
 		{
-			OperatingSystemTools.ChangeWindowTitle(Title);
+			ChangeTitle();
+		}
+
+		public void ChangeTitle()
+		{
+			if (!string.IsNullOrEmpty(Title))
+			{
+				OperatingSystemTools.ChangeWindowTitle(Title);
+			}
 		}
 	}
+
 }
