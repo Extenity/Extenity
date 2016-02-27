@@ -4,6 +4,7 @@ using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 using Extenity.Parallel;
+using Object = UnityEngine.Object;
 
 namespace Extenity.ResourceLoading
 {
@@ -100,6 +101,12 @@ namespace Extenity.ResourceLoading
 			get { return _ResourcePath; }
 			private set { _ResourcePath = ResourcePath; }
 		}
+
+		#endregion
+
+		#region Loaded Asset
+
+		public Object LoadedAsset { get; protected set; }
 
 		#endregion
 

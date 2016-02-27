@@ -15,8 +15,8 @@ namespace Extenity.ResourceLoading
 		/// <summary>
 		/// This class is reached via static methods, not via Instance. Instance is used internally.
 		/// </summary>
-		private AssetBundleManager _Instance;
-		protected AssetBundleManager Instance
+		private static AssetBundleManager _Instance;
+		protected static AssetBundleManager Instance
 		{
 			get
 			{
@@ -71,8 +71,9 @@ namespace Extenity.ResourceLoading
 
 		#region Load
 
-		public void LoadFromFile(string path)
+		public static LoadedAssetBundle LoadFromFile(string path)
 		{
+			LoadedAssetBundle loadedAssetBundle = null;
 			AssetBundle bundle;
 			try
 			{
@@ -80,11 +81,14 @@ namespace Extenity.ResourceLoading
 				bundle = AssetBundle.LoadFromFile(path);
 				try
 				{
+					loadedAssetBundle = new LoadedAssetBundle();
+					loadedAssetBundle.AssetBundle = bundle;
+					loadedAssetBundle.Path = path;
+					loadedAssetBundle.AssetNames = bundle.GetAllAssetNames();
+					Instance.LoadedAssetBundles.Add(loadedAssetBundle);
+
 					// TODO: register all assets in bundle to ResourceManager
 					bundle.GetAllAssetNames().LogList();
-					var asset = bundle.LoadAsset(bundle.GetAllAssetNames()[0]);
-					//var asset = bundle.mainAsset;
-					var go = GameObject.Instantiate(asset);
 				}
 				catch (Exception)
 				{
@@ -99,9 +103,20 @@ namespace Extenity.ResourceLoading
 			{
 				throw;
 			}
+			return loadedAssetBundle;
 		}
 
-		public void LoadFromMemory()
+		public static void LoadFromFileAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void LoadFromMemory()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void LoadFromMemoryAsync()
 		{
 			throw new NotImplementedException();
 		}
@@ -171,6 +186,7 @@ namespace Extenity.ResourceLoading
 	{
 		public string Path;
 		public AssetBundle AssetBundle;
+		public string[] AssetNames;
 
 		internal LoadedAssetBundle()
 		{

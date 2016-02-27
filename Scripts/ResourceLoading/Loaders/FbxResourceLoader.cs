@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Extenity.ImportTunneling;
 using Extenity.Parallel;
+using Object = UnityEngine.Object;
 
 namespace Extenity.ResourceLoading
 {
@@ -70,33 +71,9 @@ namespace Extenity.ResourceLoading
 
 			yield return task.StartNested(ImportTunneler.ConvertToAssetBundle(task, resourcePath, intermediateAssetBundlePath));
 
-			// TODO: Move this into 
-			AssetBundle bundle;
-			try
-			{
-				// Load asset bundle from file
-				bundle = AssetBundle.LoadFromFile(intermediateAssetBundlePath);
-				try
-				{
-					bundle.GetAllAssetNames().LogList();
-					var asset = bundle.LoadAsset(bundle.GetAllAssetNames()[0]);
-					//var asset = bundle.mainAsset;
-					var go = GameObject.Instantiate(asset);
-				}
-				catch (Exception)
-				{
-					throw;
-				}
-				finally
-				{
-					bundle.Unload(false);
-				}
-			}
-			catch (Exception)
-			{
-				throw;
-			}
+			var loadedAssetBundle = AssetBundleManager.LoadFromFile(intermediateAssetBundlePath);
 
+			LoadedAsset = loadedAssetBundle.AssetBundle.LoadAsset(loadedAssetBundle.AssetNames[0]);
 
 #else
 
