@@ -2,111 +2,116 @@
 using Extenity.Logging;
 using System.Collections;
 
-public class MouseCursor : SingletonUnity<MouseCursor>
+namespace Extenity.InputManagement
 {
-	#region Initialization
 
-	protected void Awake()
+	public class MouseCursor : SingletonUnity<MouseCursor>
 	{
-		InitializeSingleton(this, true);
-	}
+		#region Initialization
 
-	#endregion
-
-	#region Configuration
-
-	public bool LockMouseWhenHidden = true;
-	public bool UnlockMouseWhenShown = true;
-
-	#endregion
-
-	#region Update
-
-	protected void Update()
-	{
-		if (IsHidden)
+		protected void Awake()
 		{
-			if (LockMouseWhenHidden)
+			InitializeSingleton(this, true);
+		}
+
+		#endregion
+
+		#region Configuration
+
+		public bool LockMouseWhenHidden = true;
+		public bool UnlockMouseWhenShown = true;
+
+		#endregion
+
+		#region Update
+
+		protected void Update()
+		{
+			if (IsHidden)
 			{
-				Cursor.lockState = CursorLockMode.Locked;
+				if (LockMouseWhenHidden)
+				{
+					Cursor.lockState = CursorLockMode.Locked;
+				}
+				Cursor.visible = false;
 			}
-			Cursor.visible = false;
-		}
-		else
-		{
-			if (UnlockMouseWhenShown)
+			else
 			{
-				Cursor.lockState = CursorLockMode.None;
+				if (UnlockMouseWhenShown)
+				{
+					Cursor.lockState = CursorLockMode.None;
+				}
+				Cursor.visible = true;
 			}
-			Cursor.visible = true;
 		}
-	}
 
-	#endregion
+		#endregion
 
-	#region Mouse Lock and Hide
+		#region Mouse Lock and Hide
 
-	public static bool IsHidden { get; private set; }
+		public static bool IsHidden { get; private set; }
 
-	public static void ToggleCursor()
-	{
-		if (IsHidden)
+		public static void ToggleCursor()
 		{
-			ShowCursor();
+			if (IsHidden)
+			{
+				ShowCursor();
+			}
+			else
+			{
+				HideCursor();
+			}
 		}
-		else
+
+		public static void HideCursor()
 		{
-			HideCursor();
+			if (IsHidden)
+				return;
+			IsHidden = true;
+
+			//Instance.CancelInternalInvokes();
+			//Instance.Invoke("InternalDelayedHide", 0.1f);
 		}
+
+		public static void ShowCursor()
+		{
+			if (!IsHidden)
+				return;
+			IsHidden = false;
+
+			//Instance.CancelInternalInvokes();
+			//Instance.Invoke("InternalDelayedShow", 0.1f);
+		}
+
+		//private void InternalDelayedShow()
+		//{
+		//	CancelInternalInvokes();
+
+		//	if (UnlockMouseWhenShown)
+		//	{
+		//		Cursor.lockState = CursorLockMode.None;
+		//	}
+		//	Cursor.visible = true;
+		//}
+
+		//private void InternalDelayedHide()
+		//{
+		//	CancelInternalInvokes();
+
+		//	if (LockMouseWhenHidden)
+		//	{
+		//		Cursor.lockState = CursorLockMode.Locked;
+		//	}
+		//	Cursor.visible = false;
+		//}
+
+		//private void CancelInternalInvokes()
+		//{
+		//	CancelInvoke("InternalDelayedShow");
+		//	CancelInvoke("InternalDelayedHide");
+		//}
+
+		#endregion
 	}
 
-	public static void HideCursor()
-	{
-		if (IsHidden)
-			return;
-		IsHidden = true;
-
-		//Instance.CancelInternalInvokes();
-		//Instance.Invoke("InternalDelayedHide", 0.1f);
-	}
-
-	public static void ShowCursor()
-	{
-		if (!IsHidden)
-			return;
-		IsHidden = false;
-
-		//Instance.CancelInternalInvokes();
-		//Instance.Invoke("InternalDelayedShow", 0.1f);
-	}
-
-	//private void InternalDelayedShow()
-	//{
-	//	CancelInternalInvokes();
-
-	//	if (UnlockMouseWhenShown)
-	//	{
-	//		Cursor.lockState = CursorLockMode.None;
-	//	}
-	//	Cursor.visible = true;
-	//}
-
-	//private void InternalDelayedHide()
-	//{
-	//	CancelInternalInvokes();
-
-	//	if (LockMouseWhenHidden)
-	//	{
-	//		Cursor.lockState = CursorLockMode.Locked;
-	//	}
-	//	Cursor.visible = false;
-	//}
-
-	//private void CancelInternalInvokes()
-	//{
-	//	CancelInvoke("InternalDelayedShow");
-	//	CancelInvoke("InternalDelayedHide");
-	//}
-
-	#endregion
 }
