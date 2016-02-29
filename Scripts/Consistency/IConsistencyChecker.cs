@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
 
 public struct ConsistencyError
 {
@@ -51,7 +48,7 @@ public static class ConsistencyCheckerExtensions
 				message = titleMessage + "\n";
 			message += errors.Serialize('\n');
 
-			Logger.LogError(message);
+			Debug.LogError(message);
 		}
 	}
 
