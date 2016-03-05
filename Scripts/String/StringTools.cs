@@ -144,6 +144,67 @@ public static class StringTools
 		return true;
 	}
 
+	public static string SubstringBetween(this string text, string startTag, string endTag, int startIndex = 0)
+	{
+		if (text == null)
+			throw new ArgumentNullException("text");
+		if (string.IsNullOrEmpty(startTag))
+			throw new ArgumentNullException("startTag");
+		if (string.IsNullOrEmpty(endTag))
+			throw new ArgumentNullException("endTag");
+		if (text.Length == 0)
+			return null;
+
+		if (startIndex < 0)
+			startIndex = 0;
+
+		var startTagIndex = text.IndexOf(startTag, startIndex);
+		if (startTagIndex < 0)
+			return null;
+
+		startTagIndex += startTag.Length;
+
+		var endTagIndex = text.IndexOf(endTag, startTagIndex);
+		if (endTagIndex <= startTagIndex)
+			return null;
+
+		return text.Substring(startTagIndex, endTagIndex - startTagIndex);
+	}
+
+	/// <summary>
+	/// Replaces the text found between startTag and endTag. Only the first occurence will be replaced.
+	/// </summary>
+	/// <returns>Modified text.</returns>
+	public static string ReplaceBetween(this string text, string startTag, string endTag, string newValue, int startIndex = 0)
+	{
+		if (text == null)
+			throw new ArgumentNullException("text");
+		if (string.IsNullOrEmpty(startTag))
+			throw new ArgumentNullException("startTag");
+		if (string.IsNullOrEmpty(endTag))
+			throw new ArgumentNullException("endTag");
+		// Replacement text can be null. Which means we want to delete the text and not replace with anything.
+		//if (string.IsNullOrEmpty(newValue))
+		//	throw new ArgumentNullException("newValue");
+		if (text.Length == 0)
+			return text;
+
+		if (startIndex < 0)
+			startIndex = 0;
+
+		var startTagIndex = text.IndexOf(startTag, startIndex);
+		if (startTagIndex < 0)
+			return text;
+
+		startTagIndex += startTag.Length;
+
+		var endTagIndex = text.IndexOf(endTag, startTagIndex);
+		if (endTagIndex <= startTagIndex)
+			return text;
+
+		return text.Substring(0, startTagIndex) + newValue + text.Substring(endTagIndex, text.Length - endTagIndex);
+	}
+
 	public static int IndexOfNextLineEnding(this string text, int startIndex)
 	{
 		return text.IndexOfAny(LineEndingCharacters, startIndex);
@@ -258,7 +319,7 @@ public static class StringTools
 	{
 		var stringBuilder = new StringBuilder(text.Length * 3);
 		var format = uppercase ? "{0:X2} " : "{0:x2} ";
-        for (int i = 0; i < text.Length; i++)
+		for (int i = 0; i < text.Length; i++)
 			stringBuilder.AppendFormat(format, (byte)text[i]);
 		return stringBuilder.ToString();
 	}
