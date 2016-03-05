@@ -4,6 +4,8 @@ using System.IO;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using Extenity.Crypto;
 using UnityEditor;
 
 public static class BuildTools
@@ -142,6 +144,33 @@ public static class BuildTools
 			}
 		}
 		return null;
+	}
+
+	#endregion
+
+	#region Unity FileID Calculator
+
+	/// <summary>
+	/// http://forum.unity3d.com/threads/yaml-fileid-hash-function-for-dll-scripts.252075/
+	/// </summary>
+	public static int CalculateFileID(Type t)
+	{
+		string toBeHashed = "s\0\0\0" + t.Namespace + t.Name;
+
+		using (HashAlgorithm hash = new MD4())
+		{
+			byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+
+			int result = 0;
+
+			for (int i = 3; i >= 0; --i)
+			{
+				result <<= 8;
+				result |= hashed[i];
+			}
+
+			return result;
+		}
 	}
 
 	#endregion
