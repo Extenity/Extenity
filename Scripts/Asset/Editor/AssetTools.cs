@@ -2,9 +2,31 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
+using System.Text;
 
 public static class AssetTools
 {
+	[MenuItem("Assets/Copy Asset Path")]
+	public static void CopySelectedAssetPaths()
+	{
+		var stringBuilder = new StringBuilder();
+
+		foreach (Object obj in Selection.objects)
+		{
+			if (AssetDatabase.Contains(obj))
+			{
+				stringBuilder.AppendLine(AssetDatabase.GetAssetPath(obj));
+			}
+			else
+			{
+				Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
+			}
+		}
+
+		var paths = stringBuilder.ToString().Trim();
+		Clipboard.SetClipboardText(paths);
+	}
+
 	public static string GetAssetPathOfActiveGameObject()
 	{
 		string path = AssetDatabase.GetAssetPath(Selection.activeObject);
