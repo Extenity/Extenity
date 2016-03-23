@@ -758,7 +758,7 @@ public static class GameObjectTools
 
 	public static Transform GetClosest<T>(this Transform me, IList<T> others) where T : Component
 	{
-		if (others.IsNullOrEmpty())
+		if (others == null || others.Count == 0)
 			return null;
 
 		Transform closest = others[0].transform;
@@ -780,7 +780,7 @@ public static class GameObjectTools
 
 	public static Transform GetClosest<T>(this Transform me, T[] others) where T : Component
 	{
-		if (others.IsNullOrEmpty())
+		if (others == null || others.Length == 0)
 			return null;
 
 		Transform closest = others[0].transform;
@@ -806,7 +806,7 @@ public static class GameObjectTools
 
 	public static Transform GetClosest<T>(this Transform me, IList<T> others, out float closestObjectDistance) where T : Component
 	{
-		if (others.IsNullOrEmpty())
+		if (others == null || others.Count == 0)
 		{
 			closestObjectDistance = float.NaN;
 			return null;
@@ -832,7 +832,7 @@ public static class GameObjectTools
 
 	public static Transform GetClosest<T>(this Transform me, T[] others, out float closestObjectDistance) where T : Component
 	{
-		if (others.IsNullOrEmpty())
+		if (others == null || others.Length == 0)
 		{
 			closestObjectDistance = float.NaN;
 			return null;
