@@ -1,4 +1,3 @@
-using Extenity.Logging;
 using UnityEngine;
 using Logger = Extenity.Logging.Logger;
 
@@ -13,11 +12,16 @@ public class Instantiator : MonoBehaviour
 		Type5,
 	}
 
-	[Tooltip("Instantiator types will be instantiated sequentally.")]
+	[Header("Configuration")]
+	[Tooltip("Instantiator types allows the objects to be instantiated in groups. If there are multiple instantiators in scene, instantiators will be lined up by type number. Instantiation will be postponed until every other type that has lesser type number completes their instantiation first.")]
 	public InstantiatorTypes type = InstantiatorTypes.Type1;
+	[Tooltip("The parent object to be set for instantiated objects. This can be unassigned for making the objects instantiated at top level.")]
+	public Transform Parent;
+
+
+	[Header("Prefabs")]
 	public GameObject[] everlastingPrefabs;
 	public GameObject[] nonlastingPrefabs;
-
 
 	void Awake()
 	{
@@ -139,9 +143,16 @@ public class Instantiator : MonoBehaviour
 	private GameObject NonlastingInstantiate(GameObject prefab)
 	{
 		var instance = Instantiate(prefab) as GameObject;
+
 		// Remove "(Clone)" from the name and add '_' prefix.
 		instance.name = "_" + prefab.name;
-		//instance.transform.SetParent(ParentTransform, true);
+
+		// Set parent
+		if (Parent != null)
+		{
+			instance.transform.SetParent(Parent);
+		}
+
 		return instance;
 	}
 }
