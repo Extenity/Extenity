@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.Logging;
+using UnityEditor.SceneManagement;
 using Logger = Extenity.Logging.Logger;
 
 namespace Extenity
@@ -94,14 +95,14 @@ namespace Extenity
 
 		public static void LoadSceneInEditorByPath(string scenePath)
 		{
-			EditorApplication.SaveCurrentSceneIfUserWantsTo();
-			EditorApplication.OpenScene(scenePath);
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+				EditorSceneManager.OpenScene(scenePath);
 		}
 
 		public static void LoadSceneInEditorByName(string sceneName)
 		{
-			EditorApplication.SaveCurrentSceneIfUserWantsTo();
-			EditorApplication.OpenScene(GetScenePathFromBuildSettings(sceneName, false));
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+				EditorSceneManager.OpenScene(GetScenePathFromBuildSettings(sceneName, false));
 		}
 
 		#endregion
@@ -285,7 +286,7 @@ namespace Extenity
 			{
 				EnableAutoRefresh();
 			}
-        }
+		}
 
 		#endregion
 	}
