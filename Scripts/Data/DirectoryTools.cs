@@ -2,7 +2,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 
 #if UNITY_EDITOR || !UNITY_WEBPLAYER
@@ -274,6 +273,21 @@ public static class DirectoryTools
 		{
 			Directory.Delete(path, true);
 		}
+	}
+
+	#endregion
+
+	#region Get Root Directory
+
+	public static string GetRootDirectory(this string path)
+	{
+		path = path.FixDirectorySeparatorChars();
+		var root = Path.GetPathRoot(path);
+		var pathWithoutRoot = path.Substring(root.Length);
+		var split = pathWithoutRoot.Split(Path.DirectorySeparatorChar);
+		if (split.Length == 0)
+			return "";
+		return split[0];
 	}
 
 	#endregion
