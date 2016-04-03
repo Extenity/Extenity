@@ -57,7 +57,7 @@ namespace Extenity.Coloring
 		private Text CustomLabelText;
 		private float MaxPositionY;
 		private float MinPositionY;
-		private float CustomLabelPositionY;
+		//private float CustomLabelPositionY;
 
 		private void InitializeScaleText()
 		{

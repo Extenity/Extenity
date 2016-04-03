@@ -90,16 +90,7 @@ public class DebugDraw : SingletonUnity<DebugDraw>
 
 	private void CreateLineMaterial()
 	{
-		lineMaterial = new Material("Shader \"Lines/Colored Blended\" {" +
-			"SubShader { Pass { " +
-			"    Blend SrcAlpha OneMinusSrcAlpha " +
-			"    ZWrite Off" +
-			//"    ZTest Always" +
-			"    Cull Off" +
-			"    Fog { Mode Off }" +
-			"    BindChannels {" +
-			"      Bind \"vertex\", vertex Bind \"color\", color }" +
-			"} } }");
+		lineMaterial = new Material(Shader.Find("Lines/Colored Blended"));
 		lineMaterial.hideFlags = HideFlags.HideAndDontSave;
 		lineMaterial.shader.hideFlags = HideFlags.HideAndDontSave;
 
