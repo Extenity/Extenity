@@ -1,12 +1,10 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Extenity.Parallel;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.ImportTunneling
 {
