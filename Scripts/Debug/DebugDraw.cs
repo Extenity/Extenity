@@ -1009,6 +1009,23 @@ public class DebugDraw : SingletonUnity<DebugDraw>
 
 	#endregion
 
+	#region Frustum
+
+	public static void DrawFrustum(Transform transform, float fovY, float maxRange, float minRange, float aspect, Color color, Vector3 center)
+	{
+		var previousMatrix = Gizmos.matrix;
+		var previousColor = Gizmos.color;
+
+		Gizmos.matrix = transform.localToWorldMatrix;
+		Gizmos.color = color;
+		Gizmos.DrawFrustum(center, fovY, maxRange, minRange, aspect);
+
+		Gizmos.matrix = previousMatrix;
+		Gizmos.color = previousColor;
+	}
+
+	#endregion
+
 	#region Write To Screen
 
 	private class WriteScreenData
