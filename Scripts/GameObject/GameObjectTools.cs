@@ -52,7 +52,7 @@ public static class GameObjectTools
 
 	#endregion
 
-	#region Recursive changes
+	#region Recursive Changes - Layers
 
 	public static void ChangeLayersRecursively(this GameObject gameObject, string layerName)
 	{
@@ -66,31 +66,35 @@ public static class GameObjectTools
 			ChangeLayersRecursively(child.gameObject, layer);
 	}
 
-	public static void EnableRenderersRecursively(this Transform transform)
+	#endregion
+
+	#region Recursive Changes - Renderers
+
+	public static void EnableRenderersRecursively(this GameObject gameObject)
 	{
-		var renderer = transform.GetComponent<Renderer>();
+		var renderer = gameObject.GetComponent<Renderer>();
 		if (renderer != null)
 			renderer.enabled = true;
-		foreach (Transform child in transform)
-			EnableRenderersRecursively(child);
+		foreach (Transform child in gameObject.transform)
+			EnableRenderersRecursively(child.gameObject);
 	}
 
-	public static void DisableRenderersRecursively(this Transform transform)
+	public static void DisableRenderersRecursively(this GameObject gameObject)
 	{
-		var renderer = transform.GetComponent<Renderer>();
+		var renderer = gameObject.GetComponent<Renderer>();
 		if (renderer != null)
 			renderer.enabled = false;
-		foreach (Transform child in transform)
-			DisableRenderersRecursively(child);
+		foreach (Transform child in gameObject.transform)
+			DisableRenderersRecursively(child.gameObject);
 	}
 
-	public static void SetRendererColorsRecursively(this Transform transform, Color color)
+	public static void SetRendererColorsRecursively(this GameObject gameObject, Color color)
 	{
-		var renderer = transform.GetComponent<Renderer>();
+		var renderer = gameObject.GetComponent<Renderer>();
 		if (renderer != null)
 			renderer.material.color = color;
-		foreach (Transform child in transform)
-			SetRendererColorsRecursively(child, color);
+		foreach (Transform child in gameObject.transform)
+			SetRendererColorsRecursively(child.gameObject, color);
 	}
 
 	public delegate Material AssignNewMaterialMethod(Renderer processingRenderer, int processingMaterialIndex);
@@ -131,7 +135,7 @@ public static class GameObjectTools
 
 	#endregion
 
-	#region Recursive calculations
+	#region Recursive Calculations - Renderer Bounds
 
 	public static bool CalculateRendererBoundsRecursively(this GameObject go, out Bounds bounds)
 	{
@@ -175,47 +179,7 @@ public static class GameObjectTools
 		return null;
 	}
 
-	public static T GetComponentInParents<T>(this GameObject me) where T : Component
-	{
-		if (me == null)
-			return null;
-
-		var transform = me.transform.parent;
-
-		while (transform != null)
-		{
-			var component = transform.GetComponent<T>();
-			if (component != null)
-				return component;
-
-			transform = transform.parent;
-		}
-		return null;
-	}
-
 	public static T GetComponentInParentsIncludingSelf<T>(this Component me) where T : Component
-	{
-		if (me == null)
-			return null;
-
-		var component = me.GetComponent<T>();
-		if (component != null)
-			return component;
-
-		var transform = me.transform.parent;
-
-		while (transform != null)
-		{
-			component = transform.GetComponent<T>();
-			if (component != null)
-				return component;
-
-			transform = transform.parent;
-		}
-		return null;
-	}
-
-	public static T GetComponentInParentsIncludingSelf<T>(this GameObject me) where T : Component
 	{
 		if (me == null)
 			return null;
@@ -305,18 +269,6 @@ public static class GameObjectTools
 
 	#region Find child(ren) by prefix (and ordered)
 
-	public static GameObject FindChildByPrefix(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.StartsWith(value))
-				return child.gameObject;
-		}
-		return null;
-	}
-
 	public static Transform FindChildByPrefix(this Transform me, string value)
 	{
 		for (int i = 0; i < me.childCount; i++)
@@ -326,19 +278,6 @@ public static class GameObjectTools
 				return child;
 		}
 		return null;
-	}
-
-	public static List<GameObject> FindChildrenByPrefix(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		var childrenList = new List<GameObject>();
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.StartsWith(value))
-				childrenList.Add(child.gameObject);
-		}
-		return childrenList;
 	}
 
 	public static List<Transform> FindChildrenByPrefix(this Transform me, string value)
@@ -372,18 +311,6 @@ public static class GameObjectTools
 
 	#region Find child(ren) by suffix
 
-	public static GameObject FindChildBySuffix(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.EndsWith(value))
-				return child.gameObject;
-		}
-		return null;
-	}
-
 	public static Transform FindChildBySuffix(this Transform me, string value)
 	{
 		for (int i = 0; i < me.childCount; i++)
@@ -393,19 +320,6 @@ public static class GameObjectTools
 				return child;
 		}
 		return null;
-	}
-
-	public static List<GameObject> FindChildrenBySuffix(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		var childrenList = new List<GameObject>();
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.EndsWith(value))
-				childrenList.Add(child.gameObject);
-		}
-		return childrenList;
 	}
 
 	public static List<Transform> FindChildrenBySuffix(this Transform me, string value)
@@ -424,18 +338,6 @@ public static class GameObjectTools
 
 	#region Find child(ren) by name-contains
 
-	public static GameObject FindChildByNameContains(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.Contains(value))
-				return child.gameObject;
-		}
-		return null;
-	}
-
 	public static Transform FindChildByNameContains(this Transform me, string value)
 	{
 		for (int i = 0; i < me.childCount; i++)
@@ -445,19 +347,6 @@ public static class GameObjectTools
 				return child;
 		}
 		return null;
-	}
-
-	public static List<GameObject> FindChildrenByNameContains(this GameObject me, string value)
-	{
-		Transform transform = me.transform;
-		var childrenList = new List<GameObject>();
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			var child = transform.GetChild(i);
-			if (child.name.Contains(value))
-				childrenList.Add(child.gameObject);
-		}
-		return childrenList;
 	}
 
 	public static List<Transform> FindChildrenByNameContains(this Transform me, string value)
@@ -499,16 +388,12 @@ public static class GameObjectTools
 
 	#endregion
 
-	#region FindObjectOfType
+	#region FindObjectOfTypeEnsured and FindSingleObjectOfTypeEnsured
 
 	public static T FindObjectOfType<T>() where T : class
 	{
 		return UnityEngine.Object.FindObjectOfType(typeof(T)) as T;
 	}
-
-	#endregion
-
-	#region FindObjectOfTypeEnsured
 
 	public static object FindObjectOfTypeEnsured(Type type)
 	{
@@ -526,10 +411,6 @@ public static class GameObjectTools
 			throw new Exception("Could not find object of type '" + type.Name + "'");
 		return obj as T;
 	}
-
-	#endregion
-
-	#region FindSingleObjectOfTypeEnsured
 
 	public static object FindSingleObjectOfTypeEnsured(Type type)
 	{
@@ -556,22 +437,6 @@ public static class GameObjectTools
 
 	#region FindChildEnsured
 
-	public static Transform FindChildEnsured(this GameObject me, string name)
-	{
-		var component = me.transform.FindChild(name);
-		if (component == null)
-			throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
-		return component;
-	}
-
-	public static Transform FindChildEnsured(this Component me, string name)
-	{
-		var component = me.transform.FindChild(name);
-		if (component == null)
-			throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
-		return component;
-	}
-
 	public static Transform FindChildEnsured(this Transform me, string name)
 	{
 		var component = me.FindChild(name);
@@ -583,17 +448,6 @@ public static class GameObjectTools
 	#endregion
 
 	#region Get Children
-
-	public static List<GameObject> GetChildren(this GameObject parent)
-	{
-		var list = new List<GameObject>();
-		for (int i = 0; i < parent.transform.childCount; i++)
-		{
-			var child = parent.transform.GetChild(i);
-			list.Add(child.gameObject);
-		}
-		return list;
-	}
 
 	public static List<Transform> GetChildren(this Transform parent)
 	{
@@ -610,9 +464,9 @@ public static class GameObjectTools
 
 	#region GetParentEnsured
 
-	public static Transform GetParentEnsured(this Component me)
+	public static Transform GetParentEnsured(this Transform me)
 	{
-		var parent = me.transform.parent;
+		var parent = me.parent;
 		if (parent == null)
 		{
 			throw new Exception("Could not get parent of '" + me.name + "'");
@@ -624,20 +478,20 @@ public static class GameObjectTools
 
 	#region GetComponentEnsured
 
-	public static T GetComponentEnsured<T>(this Component me) where T : Component
+	public static T GetSingleComponentEnsured<T>(this Component me) where T : Component
 	{
 		if (me == null)
 		{
-			throw new Exception("Tried to get component '" + typeof(T).Name + "' for a null object");
+			throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 		}
-		return me.gameObject.GetComponentEnsured<T>();
+		return me.gameObject.GetSingleComponentEnsured<T>();
 	}
 
-	public static T GetComponentEnsured<T>(this GameObject me) where T : Component
+	public static T GetSingleComponentEnsured<T>(this GameObject me) where T : Component
 	{
 		if (me == null)
 		{
-			throw new Exception("Tried to get component '" + typeof(T).Name + "' for a null object");
+			throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 		}
 		var components = me.GetComponents<T>();
 		if (components == null || components.Length == 0)
@@ -646,7 +500,7 @@ public static class GameObjectTools
 		}
 		if (components.Length != 1)
 		{
-			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in scene");
+			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in object '" + me.name + "'");
 		}
 		return components[0];
 	}
@@ -668,7 +522,7 @@ public static class GameObjectTools
 		}
 		if (components.Length != 1)
 		{
-			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in game object");
+			throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in object '" + me.name + "'");
 		}
 		return components[0];
 	}
@@ -738,18 +592,6 @@ public static class GameObjectTools
 		if (components == null)
 			return 0;
 		return components.Length;
-	}
-
-	public static void EnsureOnlyOneComponentInstance<T>(this Component me) where T : Component
-	{
-		if (me.GetComponentCount<T>() != 1)
-			throw new Exception();
-	}
-
-	public static void EnsureOnlyOneComponentInstance<T>(this GameObject me) where T : Component
-	{
-		if (me.GetComponentCount<T>() != 1)
-			throw new Exception();
 	}
 
 	#endregion

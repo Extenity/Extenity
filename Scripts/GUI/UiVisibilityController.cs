@@ -64,7 +64,7 @@ public class UiVisibilityController : MonoBehaviour
 		{
 			if (_CanvasGroup == null)
 			{
-				_CanvasGroup = transform.GetComponentEnsured<CanvasGroup>();
+				_CanvasGroup = transform.GetSingleComponentEnsured<CanvasGroup>();
 			}
 			return _CanvasGroup;
 		}

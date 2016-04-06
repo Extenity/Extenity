@@ -31,6 +31,6 @@ public class UiImageColorInitializer : MonoBehaviour
 
 	public void SetValue()
 	{
-		transform.GetComponentEnsured<Image>().color = InitialColor;
+		transform.GetSingleComponentEnsured<Image>().color = InitialColor;
 	}
 }
