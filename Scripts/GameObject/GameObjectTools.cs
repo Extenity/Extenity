@@ -365,7 +365,21 @@ public static class GameObjectTools
 
 	#region Get component in children without active check
 
-	public static T GetComponentInChildrenWithoutActiveCheck<T>(this Transform me) where T : Component
+	public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		foreach (Transform child in me)
+		{
+			T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
+			if (componentInChildren != null)
+				return componentInChildren;
+		}
+		return null;
+	}
+
+	public static T GetComponentInChildrenRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
 	{
 		if (me == null)
 			return null;
@@ -379,10 +393,48 @@ public static class GameObjectTools
 
 		foreach (Transform child in me)
 		{
-			T componentInChildren = child.GetComponentInChildrenWithoutActiveCheck<T>();
+			T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
 			if (componentInChildren != null)
 				return componentInChildren;
 		}
+		return null;
+	}
+
+	#endregion
+
+	#region Get component in parent without active check
+
+	public static T GetComponentInParentRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var current = me.parent;
+		while (current != null)
+		{
+			var component = current.GetComponent<T>();
+			if (component != null)
+				return component;
+			current = current.parent;
+		}
+
+		return null;
+	}
+
+	public static T GetComponentInParentRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
+	{
+		if (me == null)
+			return null;
+
+		var current = me;
+		while (current != null)
+		{
+			var component = current.GetComponent<T>();
+			if (component != null)
+				return component;
+			current = current.parent;
+		}
+
 		return null;
 	}
 
