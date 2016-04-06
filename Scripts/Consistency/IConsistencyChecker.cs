@@ -38,7 +38,16 @@ public static class ConsistencyCheckerExtensions
 		return errors;
 	}
 
-	public static void CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage = null)
+	public static void CheckConsistencyAndLog(this IConsistencyChecker me)
+	{
+		var meObject = me as UnityEngine.Object;
+		var titleMessage = meObject != null
+			? "'" + meObject.name + "' has some inconsistencies."
+			: null;
+		CheckConsistencyAndLog(me, titleMessage);
+	}
+
+	public static void CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
 	{
 		var errors = me.CheckConsistency();
 		if (errors.Count > 0)
@@ -52,7 +61,16 @@ public static class ConsistencyCheckerExtensions
 		}
 	}
 
-	public static void CheckConsistencyAndThrow(this IConsistencyChecker me, string titleMessage = null)
+	public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
+	{
+		var meObject = me as UnityEngine.Object;
+		var titleMessage = meObject != null
+			? "'" + meObject.name + "' has some inconsistencies."
+			: null;
+		CheckConsistencyAndThrow(me, titleMessage);
+	}
+
+	public static void CheckConsistencyAndThrow(this IConsistencyChecker me, string titleMessage)
 	{
 		var errors = me.CheckConsistency();
 		if (errors.Count > 0)
