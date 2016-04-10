@@ -13,7 +13,7 @@ namespace Extenity.Applicational
 			{
 				switch (UnityEngine.Application.platform)
 				{
-					case RuntimePlatform.OSXEditor: throw new NotImplementedException();
+					//case RuntimePlatform.OSXEditor: throw new NotImplementedException();
 					case RuntimePlatform.OSXPlayer: throw new NotImplementedException();
 					case RuntimePlatform.OSXDashboardPlayer: throw new NotImplementedException();
 					case RuntimePlatform.IPhonePlayer: throw new NotImplementedException();
@@ -22,6 +22,7 @@ namespace Extenity.Applicational
 					case RuntimePlatform.Android: throw new NotImplementedException();
 					case RuntimePlatform.LinuxPlayer: throw new NotImplementedException();
 
+					case RuntimePlatform.OSXEditor: 
 					case RuntimePlatform.WindowsPlayer:
 					case RuntimePlatform.WindowsEditor:
 						return UnityEngine.Application.dataPath.RemoveLastDirectoryFromPath();
