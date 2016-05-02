@@ -2273,6 +2273,12 @@ public static class MathTools
 		return true;
 	}
 
+	public static Vector3 ProjectPointOnPlane(Vector3 planeNormal, Vector3 planePoint, Vector3 point)
+	{
+		var distance = -Vector3.Dot(planeNormal.normalized, point - planePoint);
+		return point + planeNormal * distance;
+	}
+
 	#endregion
 
 	#region Polygon / Surface
