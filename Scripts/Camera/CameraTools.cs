@@ -66,28 +66,44 @@ public static class CameraTools
 		if (!Physics.Linecast(center, eyePosition))
 			return true;
 
-		var corner = new Vector3(center.x - extents.x, center.y + extents.y, center.z - extents.z); // Front top left corner
+		Vector3 corner;
+		// Front top left corner
+		corner.x = center.x - extents.x; corner.y = center.y + extents.y; corner.z = center.z - extents.z;
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x + extents.x, center.y + extents.y, center.z - extents.z); // Front top right corner
+
+		// Front top right corner
+		corner.x = center.x + extents.x; /*corner.y = center.y + extents.y;*/ /*corner.z = center.z - extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x - extents.x, center.y - extents.y, center.z - extents.z); // Front bottom left corner
+
+		// Front bottom left corner
+		corner.x = center.x - extents.x; corner.y = center.y - extents.y; /*corner.z = center.z - extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x + extents.x, center.y - extents.y, center.z - extents.z); // Front bottom right corner
+
+		// Front bottom right corner
+		corner.x = center.x + extents.x; /*corner.y = center.y - extents.y;*/ /*corner.z = center.z - extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x - extents.x, center.y + extents.y, center.z + extents.z); // Back top left corner
+
+		// Back top left corner
+		corner.x = center.x - extents.x; corner.y = center.y + extents.y; corner.z = center.z + extents.z;
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x + extents.x, center.y + extents.y, center.z + extents.z); // Back top right corner
+
+		// Back top right corner
+		corner.x = center.x + extents.x; /*corner.y = center.y + extents.y;*/ /*corner.z = center.z + extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x - extents.x, center.y - extents.y, center.z + extents.z); // Back bottom left corner
+
+		// Back bottom left corner
+		corner.x = center.x - extents.x; corner.y = center.y - extents.y; /*corner.z = center.z + extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
-		corner.Set(center.x + extents.x, center.y - extents.y, center.z + extents.z); // Back bottom right corner
+
+		// Back bottom right corner
+		corner.x = center.x + extents.x; /*corner.y = center.y - extents.y;*/ /*corner.z = center.z + extents.z;*/
 		if (!Physics.Linecast(corner, eyePosition))
 			return true;
 
