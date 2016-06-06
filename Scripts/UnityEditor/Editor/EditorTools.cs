@@ -1,7 +1,5 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.Logging;
@@ -189,6 +187,7 @@ namespace Extenity
 		public static void ClearAll()
 		{
 			ClearOrigFiles();
+			ClearThumbsDbFiles();
 			ClearEmptyDirectories();
 		}
 
