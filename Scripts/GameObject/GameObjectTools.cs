@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.SceneManagement;
 using Object = UnityEngine.Object;
 
 public static class GameObjectTools
@@ -28,6 +29,24 @@ public static class GameObjectTools
 		for (int i = 0; i < list.Count; i++)
 		{
 			Object.DestroyImmediate(list[i]);
+		}
+	}
+
+	public static void DestroyComponentThenGameObjectIfNoneLeft(Component component)
+	{
+		if (component == null)
+			return;
+
+		var gameObject = component.gameObject;
+		var componentCount = gameObject.GetComponents<Component>().Length;
+
+		if (componentCount == 2) // 1 for Transform and 1 for the 'component'
+		{
+			GameObject.Destroy(gameObject);
+		}
+		else
+		{
+			GameObject.Destroy(component);
 		}
 	}
 
