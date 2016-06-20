@@ -154,7 +154,7 @@ public static class GameObjectTools
 
 	#endregion
 
-	#region Recursive Calculations - Renderer Bounds
+	#region Recursive Calculations - Renderer and Mesh Bounds
 
 	public static bool CalculateRendererBoundsRecursively(this GameObject go, out Bounds bounds)
 	{
@@ -165,7 +165,7 @@ public static class GameObjectTools
 			return false;
 		}
 
-		bounds = new Bounds(renderers[0].bounds.center, renderers[0].bounds.size);
+		bounds = renderers[0].bounds;
 
 		for (int i = 1; i < renderers.Length; i++)
 		{
@@ -174,6 +174,39 @@ public static class GameObjectTools
 		}
 
 		return true;
+	}
+
+	public static bool CalculateMeshBoundsRecursively(this GameObject go, out Bounds bounds)
+	{
+		var transform = go.transform;
+		var meshFilters = go.GetComponentsInChildren<MeshFilter>();
+		if (meshFilters == null || meshFilters.Length == 0)
+		{
+			bounds = new Bounds();
+			return false;
+		}
+
+		bounds = new Bounds();
+		var initialization = true;
+
+		for (int i = 0; i < meshFilters.Length; i++)
+		{
+			var mesh = meshFilters[i].sharedMesh;
+			if (mesh != null)
+			{
+				if (initialization)
+				{
+					bounds = transform.TransformBounds(mesh.bounds);
+					initialization = false;
+				}
+				else
+				{
+					bounds.Encapsulate(transform.TransformBounds(mesh.bounds));
+				}
+			}
+		}
+
+		return initialization; // false if never initialized
 	}
 
 	#endregion
