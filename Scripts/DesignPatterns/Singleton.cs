@@ -1,8 +1,11 @@
 //#define LogSingletonInEditor
-#define LogSingletonInBuilds
+//#define LogSingletonInBuilds
+#define LogSingletonInDebugBuilds
 
-#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds)
+#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds) || (!UNITY_EDITOR && DEBUG && LogSingletonInDebugBuilds)
 #define LoggingEnabled
+#else
+#undef LoggingEnabled
 #endif
 
 // Usage:

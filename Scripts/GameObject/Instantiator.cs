@@ -1,5 +1,14 @@
+//#define LogSingletonInEditor
+//#define LogSingletonInBuilds
+#define LogSingletonInDebugBuilds
+
+#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds) || (!UNITY_EDITOR && DEBUG && LogSingletonInDebugBuilds)
+#define LoggingEnabled
+#else
+#undef LoggingEnabled
+#endif
+
 using UnityEngine;
-using Logger = Extenity.Logging.Logger;
 
 public class Instantiator : MonoBehaviour
 {
@@ -97,7 +106,9 @@ public class Instantiator : MonoBehaviour
 
 	private void Initialize()
 	{
-		using (Logger.Indent(gameObject, "Initializing instantiator: " + type))
+#if LoggingEnabled
+		using (Extenity.Logging.Logger.Indent(gameObject, "Initializing instantiator: " + type))
+#endif
 		{
 			instantiated[(int)type] = true;
 			willBeInitialized[(int)type] = false;
@@ -120,14 +131,18 @@ public class Instantiator : MonoBehaviour
 	{
 		for (int i = 0; i < everlastingPrefabs.Length; i++)
 		{
-			using (Logger.IndentFormat(this, "Instantiating '{0}'", everlastingPrefabs[i].name))
+#if LoggingEnabled
+			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating '{0}'", everlastingPrefabs[i].name))
+#endif
 			{
 				EverlastingInstantiate(everlastingPrefabs[i]);
 			}
 		}
 		for (int i = 0; i < nonlastingPrefabs.Length; i++)
 		{
-			using (Logger.IndentFormat(this, "Instantiating '{0}'", nonlastingPrefabs[i].name))
+#if LoggingEnabled
+			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating '{0}'", nonlastingPrefabs[i].name))
+#endif
 			{
 				NonlastingInstantiate(nonlastingPrefabs[i]);
 			}
