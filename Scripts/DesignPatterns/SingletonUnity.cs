@@ -1,6 +1,11 @@
+//#define LogSingletonInEditor
+#define LogSingletonInBuilds
+
+#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds)
+#define LoggingEnabled
+#endif
+
 using UnityEngine;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
 
 // Usage:
 //   Use the derived class as a Component of a GameObject.
@@ -13,7 +18,9 @@ public class SingletonUnity<T> : MonoBehaviour where T : Component
 	protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
 	{
 		className = typeof(T).Name;
-		Logger.Log("Instantiating singleton: " + className, obj);
+#if LoggingEnabled
+		Extenity.Logging.Logger.Log("Instantiating singleton: " + className, obj);
+#endif
 		instance = obj;
 
 		if (dontDestroyOnLoad)
@@ -29,7 +36,9 @@ public class SingletonUnity<T> : MonoBehaviour where T : Component
 		if (instance == null)  // To prevent errors in ExecuteInEditMode
 			return;
 
-		Logger.Log("Destroying singleton: " + className);
+#if LoggingEnabled
+		Extenity.Logging.Logger.Log("Destroying singleton: " + className);
+#endif
 		instance = default(T);
 		DebugOther.SingletonDestroyed(className);
 	}

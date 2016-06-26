@@ -1,6 +1,9 @@
-using UnityEngine;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
+//#define LogSingletonInEditor
+#define LogSingletonInBuilds
+
+#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds)
+#define LoggingEnabled
+#endif
 
 // Usage:
 //   Use "new" to create singleton.
@@ -15,7 +18,9 @@ public class Singleton<T>
 	protected void InitializeSingleton(T obj)
 	{
 		className = typeof(T).Name;
-		Logger.Log("Instantiating singleton: " + className);
+#if LoggingEnabled
+		Extenity.Logging.Logger.Log("Instantiating singleton: " + className);
+#endif
 
 		instance = obj;
 		DebugOther.SingletonInstantiated(className);
@@ -23,7 +28,9 @@ public class Singleton<T>
 
 	public void DestroySingleton()
 	{
-		Logger.Log("Destroying singleton: " + className);
+#if LoggingEnabled
+		Extenity.Logging.Logger.Log("Destroying singleton: " + className);
+#endif
 
 		OnDestroySingleton();
 
