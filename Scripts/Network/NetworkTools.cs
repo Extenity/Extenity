@@ -1,10 +1,8 @@
 using System;
-using UnityEngine;
 using System.Net;
 using System.IO;
 using System.Net.Sockets;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
+using Extenity.DataTypes;
 
 public static class NetworkTools
 {

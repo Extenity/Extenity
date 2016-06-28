@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -64,7 +63,7 @@ namespace Extenity.Meshing
 			if (TriangleStartingIndices == null)
 			{
 				TriangleStartingIndices = new List<int>();
-            }
+			}
 
 			// Silently ignore nonvalid index
 			if (triangleStartingIndex < 0)

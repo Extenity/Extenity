@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
+using Extenity.DataTypes;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 

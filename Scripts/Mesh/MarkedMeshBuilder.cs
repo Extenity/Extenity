@@ -1,5 +1,4 @@
 using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 

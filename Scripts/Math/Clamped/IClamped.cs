@@ -1,4 +1,5 @@
-﻿
+﻿using Extenity.Consistency;
+
 public interface IClamped : IConsistencyChecker
 {
 	float NormalizedValue { get; }

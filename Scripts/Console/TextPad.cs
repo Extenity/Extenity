@@ -1,4 +1,5 @@
 using System;
+using Extenity.DataTypes;
 using UnityEngine;
 
 public class TextPad : SingletonUnity<TextPad>

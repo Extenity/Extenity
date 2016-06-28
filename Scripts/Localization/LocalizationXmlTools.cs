@@ -1,10 +1,9 @@
 ﻿#if !UNITY_WEBPLAYER
-using System.Collections;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Extenity.Logging;
-using UnityEngine;
+using Extenity.DataTypes;
 using Logger = Extenity.Logging.Logger;
 
 namespace Extenity

@@ -1,86 +1,92 @@
 ﻿using System;
 using System.Collections.Generic;
+using Extenity.DataTypes;
 using UnityEngine;
 
-public struct ConsistencyError
+namespace Extenity.Consistency
 {
-	public string Message;
-	public object Target;
-	public bool IsCritical;
 
-	public ConsistencyError(object target, string message, bool isCritical = true)
+	public struct ConsistencyError
 	{
-		Target = target;
-		Message = message;
-		IsCritical = isCritical;
-	}
+		public string Message;
+		public object Target;
+		public bool IsCritical;
 
-	public override string ToString()
-	{
-		return (IsCritical ? "Error: " : "Warning: ") + Message;
-	}
-}
-
-public interface IConsistencyChecker
-{
-	void CheckConsistency(ref List<ConsistencyError> errors);
-}
-
-public static class ConsistencyCheckerExtensions
-{
-	public static List<ConsistencyError> CheckConsistency(this IConsistencyChecker me)
-	{
-		if (me == null)
-			throw new ArgumentNullException("me");
-
-		var errors = new List<ConsistencyError>();
-		me.CheckConsistency(ref errors);
-		return errors;
-	}
-
-	public static void CheckConsistencyAndLog(this IConsistencyChecker me)
-	{
-		var meObject = me as UnityEngine.Object;
-		var titleMessage = meObject != null
-			? "'" + meObject.name + "' has some inconsistencies."
-			: null;
-		CheckConsistencyAndLog(me, titleMessage);
-	}
-
-	public static void CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
-	{
-		var errors = me.CheckConsistency();
-		if (errors.Count > 0)
+		public ConsistencyError(object target, string message, bool isCritical = true)
 		{
-			string message = "";
-			if (!string.IsNullOrEmpty(titleMessage))
-				message = titleMessage + "\n";
-			message += errors.Serialize('\n');
+			Target = target;
+			Message = message;
+			IsCritical = isCritical;
+		}
 
-			Debug.LogError(message);
+		public override string ToString()
+		{
+			return (IsCritical ? "Error: " : "Warning: ") + Message;
 		}
 	}
 
-	public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
+	public interface IConsistencyChecker
 	{
-		var meObject = me as UnityEngine.Object;
-		var titleMessage = meObject != null
-			? "'" + meObject.name + "' has some inconsistencies."
-			: null;
-		CheckConsistencyAndThrow(me, titleMessage);
+		void CheckConsistency(ref List<ConsistencyError> errors);
 	}
 
-	public static void CheckConsistencyAndThrow(this IConsistencyChecker me, string titleMessage)
+	public static class ConsistencyCheckerExtensions
 	{
-		var errors = me.CheckConsistency();
-		if (errors.Count > 0)
+		public static List<ConsistencyError> CheckConsistency(this IConsistencyChecker me)
 		{
-			string message = "";
-			if (!string.IsNullOrEmpty(titleMessage))
-				message = titleMessage + "\n";
-			message += errors.Serialize('\n');
+			if (me == null)
+				throw new ArgumentNullException("me");
 
-			throw new Exception(message);
+			var errors = new List<ConsistencyError>();
+			me.CheckConsistency(ref errors);
+			return errors;
+		}
+
+		public static void CheckConsistencyAndLog(this IConsistencyChecker me)
+		{
+			var meObject = me as UnityEngine.Object;
+			var titleMessage = meObject != null
+				? "'" + meObject.name + "' has some inconsistencies."
+				: null;
+			CheckConsistencyAndLog(me, titleMessage);
+		}
+
+		public static void CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
+		{
+			var errors = me.CheckConsistency();
+			if (errors.Count > 0)
+			{
+				string message = "";
+				if (!string.IsNullOrEmpty(titleMessage))
+					message = titleMessage + "\n";
+				message += errors.Serialize('\n');
+
+				Debug.LogError(message);
+			}
+		}
+
+		public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
+		{
+			var meObject = me as UnityEngine.Object;
+			var titleMessage = meObject != null
+				? "'" + meObject.name + "' has some inconsistencies."
+				: null;
+			CheckConsistencyAndThrow(me, titleMessage);
+		}
+
+		public static void CheckConsistencyAndThrow(this IConsistencyChecker me, string titleMessage)
+		{
+			var errors = me.CheckConsistency();
+			if (errors.Count > 0)
+			{
+				string message = "";
+				if (!string.IsNullOrEmpty(titleMessage))
+					message = titleMessage + "\n";
+				message += errors.Serialize('\n');
+
+				throw new Exception(message);
+			}
 		}
 	}
+
 }

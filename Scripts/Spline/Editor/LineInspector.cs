@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Extenity.OperatingSystem;
 
 [CustomEditor(typeof(Line))]
 public class LineInspector : ExtenityEditorBase<Line>
