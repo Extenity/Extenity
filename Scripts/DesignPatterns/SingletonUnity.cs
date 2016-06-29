@@ -48,7 +48,10 @@ public class SingletonUnity<T> : MonoBehaviour where T : Component
 
 	public static T CreateSingleton(string addedGameObjectName = "_")
 	{
-		return GameObjectTools.CreateOrGetGameObject(addedGameObjectName).AddComponent<T>();
+		var go = GameObject.Find(addedGameObjectName);
+		if (go == null)
+			go = new GameObject(addedGameObjectName);
+		return go.AddComponent<T>();
 	}
 
 	public static void DestroySingleton()

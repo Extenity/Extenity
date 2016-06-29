@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 using Extenity.Parallel;
+using Extenity.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Extenity.ResourceLoading

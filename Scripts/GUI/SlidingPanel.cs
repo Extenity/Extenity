@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Extenity.SceneManagement;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class SlidingPanel : MonoBehaviour
 {

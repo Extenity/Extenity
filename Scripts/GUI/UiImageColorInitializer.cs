@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Extenity.SceneManagement;
 using UnityEngine.UI;
 
 public class UiImageColorInitializer : MonoBehaviour
