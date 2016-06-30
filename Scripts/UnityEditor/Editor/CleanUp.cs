@@ -10,6 +10,12 @@ namespace Extenity.EditorUtilities
 
 	public static class CleanUp
 	{
+		#region Configuration
+
+		private const string MenuPath = "Tools/Clean Up";
+
+		#endregion
+
 		#region Empty directories
 
 		private static List<string> GetEmptyDirectories()
@@ -36,7 +42,7 @@ namespace Extenity.EditorUtilities
 
 		#endregion
 
-		#region '*.orig' Files
+		#region Get files
 
 		public static string[] GetOrigFiles()
 		{
@@ -60,9 +66,9 @@ namespace Extenity.EditorUtilities
 
 		#endregion
 
-		#region Menu Items - Cleaning
+		#region Menu
 
-		[MenuItem("Tools/Clean Up/Clear all")]
+		[MenuItem(MenuPath + "/Clear all")]
 		public static void ClearAll()
 		{
 			ClearOrigFiles();
@@ -70,7 +76,7 @@ namespace Extenity.EditorUtilities
 			ClearEmptyDirectories();
 		}
 
-		[MenuItem("Tools/Clean Up/Clear .orig files")]
+		[MenuItem(MenuPath + "/Clear .orig files")]
 		public static void ClearOrigFiles()
 		{
 			var items = GetOrigFiles();
@@ -86,7 +92,7 @@ namespace Extenity.EditorUtilities
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem("Tools/Clean Up/Clear thumbs.db files")]
+		[MenuItem(MenuPath + "/Clear thumbs.db files")]
 		public static void ClearThumbsDbFiles()
 		{
 			var items = GetThumbsDbFiles();
@@ -102,7 +108,7 @@ namespace Extenity.EditorUtilities
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem("Tools/Clean Up/Clear empty directories")]
+		[MenuItem(MenuPath + "/Clear empty directories")]
 		public static void ClearEmptyDirectories()
 		{
 			var tryAgain = true;

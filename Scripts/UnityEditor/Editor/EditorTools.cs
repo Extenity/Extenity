@@ -29,7 +29,7 @@ namespace Extenity.EditorUtilities
 			}
 		}
 
-		private static void DeleteMetaFileOfItem(string path)
+		public static void DeleteMetaFileOfItem(string path)
 		{
 			var metaFile = path + ".meta";
 			if (File.Exists(metaFile))
