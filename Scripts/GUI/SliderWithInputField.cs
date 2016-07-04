@@ -56,7 +56,7 @@ public class SliderWithInputField : MonoBehaviour
 		float valueFloat;
 		if (float.TryParse(value, out valueFloat))
 		{
-			if (!Slider.value.AlmostEquals(valueFloat, 0.001f))
+			if (!Slider.value.IsAlmostEqual(valueFloat))
 			{
 				Slider.value = valueFloat;
 			}

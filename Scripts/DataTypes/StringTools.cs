@@ -260,6 +260,16 @@ namespace Extenity.DataTypes
 
 		#endregion
 
+		#region StringBuilder
+
+		public static void Clear(this StringBuilder value)
+		{
+			value.Length = 0;
+			//value.Capacity = 0; This is not a good idea since we want to reuse the already allocated memory
+		}
+
+		#endregion
+
 		#region Conversions - Vector2/Vector3/Quaternion
 
 		public static string ToString(Vector2 val)
