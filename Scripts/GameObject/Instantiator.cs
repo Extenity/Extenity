@@ -1,8 +1,8 @@
-//#define LogSingletonInEditor
-//#define LogSingletonInBuilds
-#define LogSingletonInDebugBuilds
+//#define LogInstantiatorInEditor
+//#define LogInstantiatorInBuilds
+#define LogInstantiatorInDebugBuilds
 
-#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds) || (!UNITY_EDITOR && DEBUG && LogSingletonInDebugBuilds)
+#if (UNITY_EDITOR && LogInstantiatorInEditor) || (!UNITY_EDITOR && LogInstantiatorInBuilds) || (!UNITY_EDITOR && DEBUG && LogInstantiatorInDebugBuilds)
 #define LoggingEnabled
 #else
 #undef LoggingEnabled
@@ -39,6 +39,9 @@ public class Instantiator : MonoBehaviour
 			instantiated = new bool[1 + (int)InstantiatorTypes.Type5];
 			willBeInitialized = new bool[1 + (int)InstantiatorTypes.Type5];
 		}
+
+		// Initialize nonlasting prefabs first. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the instantiator created.
+		InitializeNonLastingPrefabs();
 
 		if (IsInstantiated)
 		{
@@ -132,16 +135,20 @@ public class Instantiator : MonoBehaviour
 		for (int i = 0; i < everlastingPrefabs.Length; i++)
 		{
 #if LoggingEnabled
-			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating '{0}'", everlastingPrefabs[i].name))
+			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating everlasting '{0}'", everlastingPrefabs[i].name))
 #endif
 			{
 				EverlastingInstantiate(everlastingPrefabs[i]);
 			}
 		}
+	}
+
+	private void InitializeNonLastingPrefabs()
+	{
 		for (int i = 0; i < nonlastingPrefabs.Length; i++)
 		{
 #if LoggingEnabled
-			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating '{0}'", nonlastingPrefabs[i].name))
+			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating nonlasting '{0}'", nonlastingPrefabs[i].name))
 #endif
 			{
 				NonlastingInstantiate(nonlastingPrefabs[i]);
