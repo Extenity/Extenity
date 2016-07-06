@@ -37,6 +37,10 @@ namespace Extenity.Asset
 				{
 					IsPressing = true;
 					Debug.Log("Refreshing asset database");
+					if (EditorApplication.isPlaying)
+					{
+						EditorApplication.isPlaying = false;
+					}
 					AssetDatabase.Refresh();
 				}
 			}
