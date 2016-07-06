@@ -18,6 +18,14 @@ namespace Extenity.Asset
 	{
 		#region Prefabs
 
+		public static bool IsPrefab(this GameObject gameObject)
+		{
+			if (gameObject == null)
+				return false;
+			var type = PrefabUtility.GetPrefabType(gameObject);
+			return type == PrefabType.Prefab || type == PrefabType.ModelPrefab;
+		}
+
 		public static List<GameObject> FindAllPrefabs()
 		{
 			var assetFolderPaths = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(".prefab"));
