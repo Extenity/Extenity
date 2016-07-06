@@ -76,6 +76,12 @@ public class PID
 
 	public void Reset()
 	{
+		Input = 0f;
+		Output = 0f;
+		Target = 0f;
+		LastComputationTime = 0f;
+		ITerm = 0f;
+
 		Initialize();
 	}
 
@@ -111,6 +117,12 @@ public class PID
 		else if (ITerm < OutMin)
 			ITerm = OutMin;
 	}
+
+	#endregion
+
+	#region ID
+
+	public string ID;
 
 	#endregion
 
