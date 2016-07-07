@@ -16,7 +16,9 @@ using UnityEngine;
 public class SingletonUnity<T> : MonoBehaviour where T : Component
 {
 	private static T instance;
+#pragma warning disable 414
 	private string className;
+#pragma warning restore
 
 	protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
 	{
