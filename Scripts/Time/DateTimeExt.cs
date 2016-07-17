@@ -150,5 +150,10 @@ public static class DateTimeExt // TODO: rename to DateTimeTools
 		return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + timeSpan.Seconds + "." + timeSpan.Milliseconds.ToString("000");
 	}
 
+	public static string ToStringMinutesSeconds(this TimeSpan timeSpan)
+	{
+		return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + timeSpan.Seconds;
+	}
+
 	#endregion
 }
