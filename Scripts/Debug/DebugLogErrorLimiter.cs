@@ -1,49 +1,51 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class DebugLogErrorLimiter : MonoBehaviour
+namespace Extenity.Debugging
 {
-	public int StopApplicationWhenErrorCountReaches = 500;
-	private int ReceivedErrorCount;
-	//public List<string> ErrorMessages;
 
-	protected void Awake()
+	public class DebugLogErrorLimiter : MonoBehaviour
 	{
-		//ErrorMessages = new List<string>(StopApplicationWhenErrorCountReaches);
+		public int StopApplicationWhenErrorCountReaches = 500;
+		public int ReceivedErrorCount;
+		//public List<string> ErrorMessages;
 
-		//Application.logMessageReceived += OnLogMessageReceived;
-		Application.logMessageReceivedThreaded += OnLogMessageReceived;
-	}
-
-	protected void OnDestroy()
-	{
-		//Application.logMessageReceived -= OnLogMessageReceived;
-		Application.logMessageReceivedThreaded -= OnLogMessageReceived;
-	}
-
-	public void OnLogMessageReceived(string condition, string stackTrace, LogType type)
-	{
-		if (type == LogType.Error)
+		protected void Awake()
 		{
-			ReceivedErrorCount++;
+			//ErrorMessages = new List<string>(StopApplicationWhenErrorCountReaches);
 
-			//ErrorMessages.Add(condition);
+			//Application.logMessageReceived += OnLogMessageReceived;
+			Application.logMessageReceivedThreaded += OnLogMessageReceived;
+		}
 
-			if (ReceivedErrorCount >= StopApplicationWhenErrorCountReaches)
+		protected void OnDestroy()
+		{
+			//Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+		}
+
+		public void OnLogMessageReceived(string condition, string stackTrace, LogType type)
+		{
+			if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
 			{
+				ReceivedErrorCount++;
+
+				//ErrorMessages.Add(condition);
+
+				if (ReceivedErrorCount >= StopApplicationWhenErrorCountReaches)
+				{
 #if UNITY_EDITOR
-				EditorApplication.isPaused = true;
+					EditorApplication.isPaused = true;
 #else
-				Application.Quit();
+					Application.Quit();
 #endif
 
-				Destroy(this);
+					Destroy(this);
+				}
 			}
 		}
 	}
+
 }
