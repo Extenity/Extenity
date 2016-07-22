@@ -266,4 +266,13 @@ public static class InspectorTools
 	}
 
 	#endregion
+
+	#region Editor Window Types
+
+	public static Type ProjectWindowType
+	{
+		get { return Assembly.GetAssembly(typeof(SceneView)).GetType("UnityEditor.ProjectBrowser"); }
+	}
+
+	#endregion
 }
