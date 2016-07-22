@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using Object = UnityEngine.Object;
 
 public static class InspectorTools
 {
@@ -210,6 +212,57 @@ public static class InspectorTools
 			}
 		}
 		return true;
+	}
+
+	/// <summary>
+	/// Use this to start prefab dragging and the prefab then can be dropped into Scene or Hierarchy like it is dragged from Project window.
+	/// Originally copied from AssetsTreeViewDragging.cs in UnityEditor.dll which is an internal editor class that probably handles Project view drag and drop operations.
+	/// </summary>
+	public static void StartObjectDragAndDrop(Object obj)
+	{
+		DragAndDrop.PrepareStartDrag();
+		DragAndDrop.objectReferences = new[] { obj };
+		DragAndDrop.paths = GetDragAndDropPaths(obj);
+		DragAndDrop.StartDrag(ObjectNames.GetDragAndDropTitle(obj));
+	}
+
+	/// <summary>
+	/// Use this to start prefab dragging and the prefab then can be dropped into Scene or Hierarchy like it is dragged from Project window.
+	/// Originally copied from AssetsTreeViewDragging.cs in UnityEditor.dll which is an internal editor class that probably handles Project view drag and drop operations.
+	/// </summary>
+	public static void StartObjectDragAndDrop(ICollection objects)
+	{
+		throw new NotImplementedException();
+
+		//DragAndDrop.PrepareStartDrag();
+		//DragAndDrop.objectReferences = ProjectWindowUtil.GetDragAndDropObjects(draggedItem.id, draggedItemIDs);
+		//DragAndDrop.paths = ProjectWindowUtil.GetDragAndDropPaths(draggedItem.id, draggedItemIDs);
+		//if (DragAndDrop.objectReferences.Length > 1)
+		//	DragAndDrop.StartDrag("<Multiple>");
+		//else
+		//	DragAndDrop.StartDrag(ObjectNames.GetDragAndDropTitle(InternalEditorUtility.GetObjectFromInstanceID(draggedItem.id)));
+	}
+
+	public static string[] GetDragAndDropPaths(Object obj)
+	{
+		var assetPath = AssetDatabase.GetAssetPath(obj);
+		return string.IsNullOrEmpty(assetPath)
+			? new string[0]
+			: new[] { assetPath };
+	}
+
+	public static string[] GetDragAndDropPaths(Object[] objects)
+	{
+		var list = new List<string>(objects.Length);
+		foreach (var obj in objects)
+		{
+			if (AssetDatabase.IsMainAsset(obj))
+			{
+				var assetPath = AssetDatabase.GetAssetPath(obj);
+				list.Add(assetPath);
+			}
+		}
+		return list.ToArray();
 	}
 
 	#endregion
