@@ -21,8 +21,8 @@ public static class DirectoryTools
 
 	public static void CreateFromFilePath(string filePath)
 	{
-		string directoryPath = Path.GetDirectoryName(filePath);
-		if (directoryPath.Length > 0 && !Directory.Exists(directoryPath))
+		var directoryPath = Path.GetDirectoryName(filePath);
+		if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
 		{
 			Directory.CreateDirectory(directoryPath);
 		}
@@ -288,6 +288,17 @@ public static class DirectoryTools
 		if (split.Length == 0)
 			return "";
 		return split[0];
+	}
+
+	#endregion
+
+	#region Temp Directory
+
+	public static string CreateTemporaryDirectory()
+	{
+		var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		Directory.CreateDirectory(path);
+		return path;
 	}
 
 	#endregion
