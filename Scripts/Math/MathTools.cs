@@ -1082,7 +1082,11 @@ public static class MathTools
 	public static float AngleBetween_NegPIToPI(this Vector3 vector1, Vector3 vector2, Vector3 referencePlaneNormal)
 	{
 		var angle = Mathf.Acos(Vector3.Dot(vector1.normalized, vector2.normalized));
+		if (float.IsNaN(angle))
+			return 0f; // Vectors are almost in the same direction.
+
 		var cross = Vector3.Cross(vector1, vector2);
+
 		if (Vector3.Dot(referencePlaneNormal, cross) > 0f)
 		{
 			angle = -angle;
