@@ -291,6 +291,34 @@ public static class MathTools
 		return value;
 	}
 
+	public static float Wrap01(this float x)
+	{
+		return Wrap(x, 0, 1);
+	}
+
+	public static float WrapNeg1Pos1(this float x)
+	{
+		return Wrap(x, -1, 1);
+	}
+
+	public static float WrapNegPIToPI(this float x)
+	{
+		return Wrap(x, NegPI, PosPI);
+	}
+
+	public static float WrapZeroToTwoPI(this float x)
+	{
+		return Wrap(x, 0, TwoPI);
+	}
+
+	public static float Wrap(this float x, float min, float max)
+	{
+		if (x < min)
+			return max - (min - x) % (max - min);
+		else
+			return min + (x - min) % (max - min);
+	}
+
 	public static float Lerp(float from, float to, float t)
 	{
 		if (t <= 0.0f) return from;
