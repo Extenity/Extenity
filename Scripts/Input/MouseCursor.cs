@@ -27,21 +27,25 @@ namespace Extenity.InputManagement
 
 		protected void Update()
 		{
-			if (IsHidden)
+			if (Changed)
 			{
-				if (LockMouseWhenHidden)
+				if (IsHidden)
 				{
-					Cursor.lockState = CursorLockMode.Locked;
+					if (LockMouseWhenHidden)
+					{
+						Cursor.lockState = CursorLockMode.Locked;
+					}
+					Cursor.visible = false;
 				}
-				Cursor.visible = false;
-			}
-			else
-			{
-				if (UnlockMouseWhenShown)
+				else
 				{
-					Cursor.lockState = CursorLockMode.None;
+					if (UnlockMouseWhenShown)
+					{
+						Cursor.lockState = CursorLockMode.None;
+					}
+					Cursor.visible = true;
 				}
-				Cursor.visible = true;
+				Changed = false;
 			}
 		}
 
@@ -50,6 +54,7 @@ namespace Extenity.InputManagement
 		#region Mouse Lock and Hide
 
 		public static bool IsHidden { get; private set; }
+		private static bool Changed;
 
 		public static void ToggleCursor()
 		{
@@ -68,6 +73,7 @@ namespace Extenity.InputManagement
 			if (IsHidden)
 				return;
 			IsHidden = true;
+			Changed = true;
 
 			//Instance.CancelInternalInvokes();
 			//Instance.Invoke("InternalDelayedHide", 0.1f);
@@ -78,6 +84,7 @@ namespace Extenity.InputManagement
 			if (!IsHidden)
 				return;
 			IsHidden = false;
+			Changed = true;
 
 			//Instance.CancelInternalInvokes();
 			//Instance.Invoke("InternalDelayedShow", 0.1f);
