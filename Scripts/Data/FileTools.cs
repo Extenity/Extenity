@@ -242,4 +242,14 @@ public static class FileTools
 	}
 
 	#endregion
+
+	#region Temp File
+
+	public static string CreateTemporaryFileInTemporaryDirectory()
+	{
+		var directory = DirectoryTools.CreateTemporaryDirectory();
+		return Path.Combine(directory, Path.GetRandomFileName());
+	}
+
+	#endregion
 }
