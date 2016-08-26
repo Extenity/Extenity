@@ -127,6 +127,13 @@ public static class FileTools
 		return path + DirectorySeparatorChar;
 	}
 
+	public static string AddDirectorySeparatorToEnd(this string path, char separator)
+	{
+		if (path.IsEndingWithDirectorySeparatorChar())
+			return path;
+		return path + separator;
+	}
+
 	public static bool IsRelativePath(this string path)
 	{
 		if (string.IsNullOrEmpty(path))
