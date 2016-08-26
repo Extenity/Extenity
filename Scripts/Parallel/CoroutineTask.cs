@@ -148,11 +148,16 @@ namespace Extenity.Parallel
 		#region Start / Stop / Pause / Resume
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public Coroutine Coroutine;
+
+		/// <summary>
 		/// Starts execution of task. Most of the time you will want to use 
 		/// 'startImmediately' parameter in constructor to start tasks. Though it's
 		/// possible to start the task manually anytime.
 		/// 
-		/// Start() should not be called more than once.
+		/// Start() should not be called more than once. Otherwise it will throw an error.
 		/// </summary>
 		public void Start()
 		{
@@ -163,7 +168,7 @@ namespace Extenity.Parallel
 
 			IsLaunched = true;
 			IsRunning = true;
-			CoroutineTaskManager.Instance.StartCoroutine(CoroutineEmulator());
+			Coroutine = CoroutineTaskManager.Instance.StartCoroutine(CoroutineEmulator());
 		}
 
 		/// <summary>

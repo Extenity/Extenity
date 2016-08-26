@@ -10,13 +10,13 @@ namespace SmartData
 	[AdvancedInspector(true, false)]
 	public class SmartVarManager : MonoBehaviour
 	{
-		#region Singleton
+		#region Deinitialization
 
-		public static SmartVarManager Instance { get; private set; }
+		public static bool IsQuittingApplication;
 
-		protected void Awake()
+		protected void OnApplicationQuit()
 		{
-			Instance = this;
+			IsQuittingApplication = true;
 		}
 
 		#endregion
@@ -57,16 +57,16 @@ namespace SmartData
 		#region Smart Vars
 
 		[Inspect, RuntimeResolve]
-		internal List<WeakReference> SmartVars = new List<WeakReference>(10000);
+		internal static List<WeakReference> SmartVars = new List<WeakReference>(10000);
 
 		[Inspect]
-		public int SmartVarCount { get { return SmartVars.Count; } }
+		public static int SmartVarCount { get { return SmartVars.Count; } }
 
 		#endregion
 
 		#region Register / Deregister Smart Var
 
-		internal void _Register(SmartVar smartVar)
+		internal static void _Register(SmartVar smartVar)
 		{
 			//Debug.Log("Registering SmartVar");
 
@@ -82,9 +82,9 @@ namespace SmartData
 			SmartVars.Add(new WeakReference(smartVar));
 		}
 
-		internal void _Deregister(SmartVar smartVar)
+		internal static void _Deregister(SmartVar smartVar)
 		{
-			//Debug.Log("DEregistering SmartVar");
+			//Debug.Log("Deregistering SmartVar");
 
 			if (smartVar == null)
 				throw new NullReferenceException("smartVar");
@@ -102,7 +102,7 @@ namespace SmartData
 			Debug.LogError("Smart var was not registered.");
 		}
 
-		internal bool _IsRegistered(SmartVar smartVar)
+		internal static bool _IsRegistered(SmartVar smartVar)
 		{
 			for (int i = 0; i < SmartVars.Count; i++)
 			{

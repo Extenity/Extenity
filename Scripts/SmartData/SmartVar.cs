@@ -46,13 +46,7 @@ namespace SmartData
 			if (IsRegistered)
 				return;
 
-			if (SmartVarManager.Instance == null)
-			{
-				// Manager must be initialized first
-				throw new Exception();
-			}
-
-			SmartVarManager.Instance._Register(this);
+			SmartVarManager._Register(this);
 			IsRegistered = true;
 		}
 
@@ -61,13 +55,13 @@ namespace SmartData
 			if (!IsRegistered)
 				return;
 
+			if (SmartVarManager.IsQuittingApplication)
+				return;
+
 			// Last check before deregistering from manager. This is needed because manager won't be able to send any more messages so we would miss the messages where all values gets NaN.
 			CheckForChanges();
 
-			if (SmartVarManager.Instance != null)
-			{
-				SmartVarManager.Instance._Deregister(this);
-			}
+			SmartVarManager._Deregister(this);
 			IsRegistered = false;
 		}
 
