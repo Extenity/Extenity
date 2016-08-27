@@ -54,6 +54,7 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.DownloadFile;
 				ftpWebRequest.UseBinary = true;
+				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 
 				FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
 				Stream inputStream = ftpWebResponse.GetResponseStream();
@@ -75,11 +76,7 @@ namespace Extenity.WorldWideWeb
 
 					while ((read = inputStream.Read(buffer, 0, buffer.Length)) > 0)
 					{
-						if (worker.CancellationPending)
-						{
-							args.Cancel = true;
-							return;
-						}
+						if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested
 
 						fileStream.Write(buffer, 0, read);
 
@@ -93,6 +90,7 @@ namespace Extenity.WorldWideWeb
 
 				// Rename downloaded file from temp filename to original filename
 				worker.ReportProgress(99, "Changing temporary file name");
+				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before changing the file name
 				File.Move(localTempFileFullPath, localFileFullPath);
 
 				worker.ReportProgress(100, "Done.");
@@ -134,6 +132,7 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
 				ftpWebRequest.UseBinary = true;
+				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 
 				using (var output = ftpWebRequest.GetRequestStream())
 				{
@@ -146,11 +145,7 @@ namespace Extenity.WorldWideWeb
 
 						while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
 						{
-							if (worker.CancellationPending)
-							{
-								args.Cancel = true;
-								return;
-							}
+							if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested
 
 							output.Write(buffer, 0, read);
 
@@ -162,7 +157,6 @@ namespace Extenity.WorldWideWeb
 					}
 				}
 
-
 				// Change file name from temp to original
 				worker.ReportProgress(99, "Changing temporary file name");
 				ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteTempFileFullPath);
@@ -170,6 +164,7 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.Rename;
 				ftpWebRequest.RenameTo = remoteFileName;
+				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 				ftpWebRequest.GetResponse();
 
 				worker.ReportProgress(100, "Done.");

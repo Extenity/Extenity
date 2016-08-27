@@ -17,15 +17,19 @@ namespace Extenity.Parallel
 				currentWorker.Dispose();
 				if (args.Error != null)
 				{
-					result.FinishedWithError(args.Error.Message);
+					result.InformFailed(args.Error.Message);
+				}
+				else if (args.Cancelled)
+				{
+					result.InformCancelled();
 				}
 				else
 				{
-					result.FinishedSuccessfully();
+					result.InformCompleted();
 				}
 			};
 
-			currentWorker.ProgressChanged += (sender, args) => result.UpdateProgress((string)args.UserState, args.ProgressPercentage / 100f);
+			currentWorker.ProgressChanged += (sender, args) => result.InformUpdateProgress((string)args.UserState, args.ProgressPercentage / 100f);
 
 			currentWorker.DoWork += doWork;
 			currentWorker.RunWorkerAsync();
@@ -51,6 +55,13 @@ namespace Extenity.Parallel
 		{
 			get { lock (this) { return _Finished; } }
 			private set { lock (this) { _Finished = value; } }
+		}
+
+		private bool _Cancelled;
+		public bool Cancelled
+		{
+			get { lock (this) { return _Cancelled; } }
+			private set { lock (this) { _Cancelled = value; } }
 		}
 
 		private bool _Successful;
@@ -87,13 +98,11 @@ namespace Extenity.Parallel
 
 		public event Action OnCompleted;
 
-		//public class FailedEvent : UnityEvent<string> { }
-		//public FailedEvent OnFailed = new FailedEvent();
 		public delegate void FailedDelegate(string errorMessage);
 		public event FailedDelegate OnFailed;
 
-		//public class ProgressEvent : UnityEvent<string, float> { }
-		//public ProgressEvent OnProgress = new ProgressEvent();
+		public event Action OnCancelled;
+
 		public delegate void ProgressDelegate(string status, float progress);
 		public event ProgressDelegate OnProgress;
 
@@ -101,7 +110,7 @@ namespace Extenity.Parallel
 
 		#region Internal State Updates
 
-		internal void UpdateProgress(string status, float progress)
+		internal void InformUpdateProgress(string status, float progress)
 		{
 			lock (this)
 			{
@@ -112,7 +121,7 @@ namespace Extenity.Parallel
 			}
 		}
 
-		internal void FinishedSuccessfully()
+		internal void InformCompleted()
 		{
 			lock (this)
 			{
@@ -124,15 +133,28 @@ namespace Extenity.Parallel
 			}
 		}
 
-		internal void FinishedWithError(string error)
+		internal void InformFailed(string error)
 		{
 			lock (this)
 			{
-				ErrorMessage = error;
 				Successful = false;
 				Finished = true;
+				ErrorMessage = error;
 				if (OnFailed != null)
 					OnFailed(error);
+			}
+		}
+
+		internal void InformCancelled()
+		{
+			lock (this)
+			{
+				Successful = false;
+				Finished = true;
+				ErrorMessage = null;
+				Cancelled = true;
+				if (OnCancelled != null)
+					OnCancelled();
 			}
 		}
 
