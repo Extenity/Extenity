@@ -85,14 +85,17 @@ namespace Extenity.WorldWideWeb
 
 						total += read;
 						var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
-						var progress = Mathf.CeilToInt(100f * total / fileSize);
+						var progress = Mathf.CeilToInt(99f * total / fileSize);
 						worker.ReportProgress(progress, message);
 					}
 					fileStream.Close();
 				}
 
 				// Rename downloaded file from temp filename to original filename
+				worker.ReportProgress(99, "Changing temporary file name");
 				File.Move(localTempFileFullPath, localFileFullPath);
+
+				worker.ReportProgress(100, "Done.");
 			});
 		}
 
@@ -153,19 +156,23 @@ namespace Extenity.WorldWideWeb
 
 							total += read;
 							var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
-							var progress = Mathf.CeilToInt(100f * total / fileSize);
+							var progress = Mathf.CeilToInt(99f * total / fileSize);
 							worker.ReportProgress(progress, message);
 						}
 					}
 				}
 
+
 				// Change file name from temp to original
+				worker.ReportProgress(99, "Changing temporary file name");
 				ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteTempFileFullPath);
 				ftpWebRequest.Credentials = Credentials;
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.Rename;
 				ftpWebRequest.RenameTo = remoteFileName;
 				ftpWebRequest.GetResponse();
+
+				worker.ReportProgress(100, "Done.");
 			});
 		}
 	}
