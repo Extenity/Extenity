@@ -1,6 +1,4 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 
 namespace Extenity.Parallel
@@ -46,6 +44,8 @@ namespace Extenity.Parallel
 			BackgroundWorker = backgroundWorker;
 		}
 
+		#region Status
+
 		private bool _Finished;
 		public bool Finished
 		{
@@ -81,18 +81,35 @@ namespace Extenity.Parallel
 			private set { lock (this) { _Progress = value; } }
 		}
 
+		#endregion
+
+		#region Events
+
+		public event Action OnCompleted;
+
+		//public class FailedEvent : UnityEvent<string> { }
+		//public FailedEvent OnFailed = new FailedEvent();
+		public delegate void FailedDelegate(string errorMessage);
+		public event FailedDelegate OnFailed;
+
+		//public class ProgressEvent : UnityEvent<string, float> { }
+		//public ProgressEvent OnProgress = new ProgressEvent();
+		public delegate void ProgressDelegate(string status, float progress);
+		public event ProgressDelegate OnProgress;
+
+		#endregion
+
+		#region Internal State Updates
+
 		internal void UpdateProgress(string status, float progress)
 		{
 			lock (this)
 			{
 				Status = status;
 				Progress = progress;
+				if (OnProgress != null)
+					OnProgress(status, progress);
 			}
-		}
-
-		public void Cancel()
-		{
-			BackgroundWorker.CancelAsync();
 		}
 
 		internal void FinishedSuccessfully()
@@ -102,6 +119,8 @@ namespace Extenity.Parallel
 				Successful = true;
 				Finished = true;
 				ErrorMessage = null;
+				if (OnCompleted != null)
+					OnCompleted();
 			}
 		}
 
@@ -112,8 +131,21 @@ namespace Extenity.Parallel
 				ErrorMessage = error;
 				Successful = false;
 				Finished = true;
+				if (OnFailed != null)
+					OnFailed(error);
 			}
 		}
+
+		#endregion
+
+		#region Commands
+
+		public void Cancel()
+		{
+			BackgroundWorker.CancelAsync();
+		}
+
+		#endregion
 	}
 
 }
