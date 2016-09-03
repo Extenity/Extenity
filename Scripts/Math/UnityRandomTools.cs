@@ -5,10 +5,9 @@ using Random = UnityEngine.Random;
 
 public static class UnityRandomTools
 {
-	public static int RandomizeGenerator()
+	public static void RandomizeGenerator()
 	{
-		Random.seed = (int)(Time.realtimeSinceStartup * 1000f);
-		return Random.seed;
+		Random.InitState((int)(Time.realtimeSinceStartup * 1000f));
 	}
 
 	public static int RandomRange(int min, int max)

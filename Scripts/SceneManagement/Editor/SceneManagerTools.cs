@@ -80,7 +80,7 @@ namespace Extenity.SceneManagement
 			var list = new List<string>();
 			foreach (var scene in scenes)
 			{
-				if (scene != null)
+				//if (scene != null)
 				{
 					list.Add(scene.path);
 				}

@@ -28,10 +28,6 @@ namespace Extenity.Applicational
 					case RuntimePlatform.WindowsEditor:
 						return UnityEngine.Application.dataPath.RemoveLastDirectoryFromPath();
 
-					case RuntimePlatform.OSXWebPlayer:
-					case RuntimePlatform.WindowsWebPlayer:
-						throw new Exception("Application path is not meaningful in '" + UnityEngine.Application.platform.ToString() + "' platform");
-
 					default:
 						throw new ArgumentOutOfRangeException("platform");
 				}
