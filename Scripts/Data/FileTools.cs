@@ -210,9 +210,9 @@ public static class FileTools
 
 	public static bool PathCompare(this string path1, string path2)
 	{
-		string fullPath1 = Path.GetFullPath(path1);
-		string fullPath2 = Path.GetFullPath(path2);
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+		var fullPath1 = Path.GetFullPath(path1);
+		var fullPath2 = Path.GetFullPath(path2);
 		return 0 == String.Compare(
 			fullPath1,
 			fullPath2,
