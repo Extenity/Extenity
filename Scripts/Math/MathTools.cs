@@ -414,6 +414,20 @@ public static class MathTools
 		return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 	}
 
+	public static float RoundToDigits(this float value, int digitsAfterDecimalPoint)
+	{
+		if (digitsAfterDecimalPoint < 0) digitsAfterDecimalPoint = 0;
+		float factor = Mathf.Pow(10, digitsAfterDecimalPoint);
+		return ((int) Mathf.Round(value*factor))/factor;
+	}
+
+	public static double RoundToDigits(this double value, int digitsAfterDecimalPoint)
+	{
+		if (digitsAfterDecimalPoint < 0) digitsAfterDecimalPoint = 0;
+		double factor = Math.Pow(10, digitsAfterDecimalPoint);
+		return ((int)Math.Round(value * factor)) / factor;
+	}
+
 	#endregion
 
 	#region Transform
