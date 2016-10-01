@@ -49,6 +49,20 @@ namespace Extenity.WorldWideWeb
 				string localTempFileFullPath = Path.Combine(Path.GetDirectoryName(localFileFullPath), TempFileNamePrefix + localFileName);
 				var remoteFileFullPath = BaseAddress + remoteFileRelativePath;
 
+				// Request file size first
+				long fileSize;
+				{
+					// Get the object used to communicate with the server.
+					var fileSizeRequest = (FtpWebRequest)FtpWebRequest.Create(remoteFileFullPath);
+					fileSizeRequest.Method = WebRequestMethods.Ftp.GetFileSize;
+					fileSizeRequest.Credentials = Credentials;
+					var fileSizeResponse = (FtpWebResponse)fileSizeRequest.GetResponse();
+					//Stream responseStream = fileSizeResponse.GetResponseStream();
+					fileSize = fileSizeResponse.ContentLength;
+					fileSizeResponse.Close();
+				}
+				var humanReadableFileSize = fileSize.ToFileSizeString();
+
 				var ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteFileFullPath);
 				ftpWebRequest.Credentials = Credentials;
 				ftpWebRequest.KeepAlive = true;
@@ -58,8 +72,8 @@ namespace Extenity.WorldWideWeb
 
 				FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
 				Stream inputStream = ftpWebResponse.GetResponseStream();
-				long fileSize = ftpWebResponse.ContentLength;
-				var humanReadableFileSize = fileSize.ToFileSizeString();
+				//long fileSize = ftpWebResponse.ContentLength; This is the wrong way to do this.
+				//var humanReadableFileSize = fileSize.ToFileSizeString();
 
 				//if (inputStream == null)
 				//{
@@ -82,7 +96,9 @@ namespace Extenity.WorldWideWeb
 
 						total += read;
 						var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
-						var progress = Mathf.CeilToInt(99f * total / fileSize);
+						var ratio = (double)total / fileSize;
+						var progress = (int)(99f * ratio);
+						progress = progress.Clamp(0, 99);
 						worker.ReportProgress(progress, message);
 					}
 					fileStream.Close();
