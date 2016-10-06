@@ -107,6 +107,12 @@ namespace Extenity.WorldWideWeb
 				// Rename downloaded file from temp filename to original filename
 				worker.ReportProgress(99, "Changing temporary file name");
 				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before changing the file name
+
+				// Delete if file already exists.
+				if (File.Exists(localFileFullPath))
+				{
+					File.Delete(localFileFullPath);
+				}
 				File.Move(localTempFileFullPath, localFileFullPath);
 
 				worker.ReportProgress(100, "Done.");
