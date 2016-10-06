@@ -7,43 +7,42 @@ namespace Extenity.Parallel
 	public static class DeferredExecution
 	{
 
-		public static DeferredExecutionState ExecuteInBackground(DoWorkEventHandler doWork)
+		public static DeferredExecutionController Setup(DoWorkEventHandler doWork)
 		{
 			var currentWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
-			var result = new DeferredExecutionState(currentWorker);
+			var controller = new DeferredExecutionController(currentWorker);
 
 			currentWorker.RunWorkerCompleted += (sender, args) =>
 			{
 				currentWorker.Dispose();
 				if (args.Error != null)
 				{
-					result.InformFailed(args.Error.Message);
+					controller.InformFailed(args.Error.Message);
 				}
 				else if (args.Cancelled)
 				{
-					result.InformCancelled();
+					controller.InformCancelled();
 				}
 				else
 				{
-					result.InformCompleted();
+					controller.InformCompleted();
 				}
 			};
 
-			currentWorker.ProgressChanged += (sender, args) => result.InformUpdateProgress((string)args.UserState, args.ProgressPercentage / 100f);
+			currentWorker.ProgressChanged += (sender, args) => controller.InformUpdateProgress((string)args.UserState, args.ProgressPercentage / 100f);
 
 			currentWorker.DoWork += doWork;
-			currentWorker.RunWorkerAsync();
 
-			return result;
+			return controller;
 		}
 
 	}
 
-	public class DeferredExecutionState
+	public class DeferredExecutionController
 	{
 		private readonly BackgroundWorker BackgroundWorker;
 
-		public DeferredExecutionState(BackgroundWorker backgroundWorker)
+		public DeferredExecutionController(BackgroundWorker backgroundWorker)
 		{
 			BackgroundWorker = backgroundWorker;
 		}
@@ -161,6 +160,11 @@ namespace Extenity.Parallel
 		#endregion
 
 		#region Commands
+
+		public void RunAsync()
+		{
+			BackgroundWorker.RunWorkerAsync();
+		}
 
 		public void Cancel()
 		{

@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.IO;
 using System.Net;
-using UnityEngine;
 using Extenity.Parallel;
 
 namespace Extenity.WorldWideWeb
@@ -36,9 +35,9 @@ namespace Extenity.WorldWideWeb
 			BaseAddress = string.Format("ftp://{0}/{1}", Host, BaseDirectory);
 		}
 
-		public DeferredExecutionState Download(string remoteFileRelativePath, string localFileFullPath)
+		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath)
 		{
-			return DeferredExecution.ExecuteInBackground((sender, args) =>
+			return DeferredExecution.Setup((sender, args) =>
 			{
 				var worker = (BackgroundWorker)sender;
 
@@ -98,7 +97,8 @@ namespace Extenity.WorldWideWeb
 						var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
 						var ratio = (double)total / fileSize;
 						var progress = (int)(99f * ratio);
-						progress = progress.Clamp(0, 99);
+						if (progress < 0) progress = 0;
+						if (progress > 99) progress = 99;
 						worker.ReportProgress(progress, message);
 					}
 					fileStream.Close();
@@ -113,9 +113,9 @@ namespace Extenity.WorldWideWeb
 			});
 		}
 
-		public DeferredExecutionState Upload(string remoteFileRelativePath, string localFileFullPath)
+		public DeferredExecutionController CreateUploadJob(string remoteFileRelativePath, string localFileFullPath)
 		{
-			return DeferredExecution.ExecuteInBackground((sender, args) =>
+			return DeferredExecution.Setup((sender, args) =>
 			{
 				var worker = (BackgroundWorker)sender;
 
@@ -167,7 +167,10 @@ namespace Extenity.WorldWideWeb
 
 							total += read;
 							var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
-							var progress = Mathf.CeilToInt(99f * total / fileSize);
+							var ratio = (double)total / fileSize;
+							var progress = (int)(99f * ratio);
+							if (progress < 0) progress = 0;
+							if (progress > 99) progress = 99;
 							worker.ReportProgress(progress, message);
 						}
 					}
