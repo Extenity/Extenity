@@ -24,17 +24,17 @@ public static class FileTools
 	/// <summary>
 	/// Creates a relative path from one file or directory to another.
 	/// </summary>
-	/// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
-	/// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+	/// <param name="basePath">Contains the directory that defines the start of the relative path.</param>
+	/// <param name="filePath">Contains the path that defines the endpoint of the relative path.</param>
 	/// <returns>The relative path from the start directory to the end path.</returns>
 	/// <exception cref="ArgumentNullException"></exception>
-	public static string MakeRelativePath(this string fromPath, string toPath)
+	public static string MakeRelativePath(this string basePath, string filePath)
 	{
-		if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-		if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+		if (string.IsNullOrEmpty(basePath)) throw new ArgumentNullException("basePath");
+		if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException("filePath");
 
-		var fromUri = new Uri(fromPath);
-		var toUri = new Uri(toPath);
+		var fromUri = new Uri(basePath);
+		var toUri = new Uri(filePath);
 
 		var relativeUri = fromUri.MakeRelativeUri(toUri);
 		var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
