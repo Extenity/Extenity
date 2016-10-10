@@ -252,4 +252,39 @@ public static class FileTools
 	}
 
 	#endregion
+
+	#region File Access
+
+	/// <summary>
+	/// Source: http://stackoverflow.com/questions/876473/is-there-a-way-to-check-if-a-file-is-in-use
+	/// </summary>
+	public static bool IsFileLocked(this FileInfo file)
+	{
+		FileStream stream = null;
+
+		try
+		{
+			stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+		}
+		catch (FileNotFoundException)
+		{
+			return false;
+		}
+		catch (IOException)
+		{
+			//the file is unavailable because it is:
+			//still being written to
+			//or being processed by another thread
+			return true;
+		}
+		finally
+		{
+			if (stream != null)
+				stream.Close();
+		}
+
+		return false;
+	}
+
+	#endregion
 }

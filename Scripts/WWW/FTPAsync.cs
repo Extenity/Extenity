@@ -81,6 +81,9 @@ namespace Extenity.WorldWideWeb
 				//    return;
 				//}
 
+				// Create directory
+				DirectoryTools.CreateFromFilePath(localTempFileFullPath);
+
 				using (var fileStream = File.OpenWrite(localTempFileFullPath))
 				{
 					var buffer = new byte[32768];

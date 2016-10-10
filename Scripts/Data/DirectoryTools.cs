@@ -294,9 +294,22 @@ public static class DirectoryTools
 
 	public static string CreateTemporaryDirectory()
 	{
-		var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-		Directory.CreateDirectory(path);
-		return path;
+		const int maxTries = 10;
+		const int waitBetweenTries = 1000; // ms
+		for (int iTry = 0; iTry < maxTries; iTry++)
+		{
+			try
+			{
+				var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()).AddDirectorySeparatorToEnd();
+				Directory.CreateDirectory(path);
+				return path;
+			}
+			catch
+			{
+			}
+			Thread.Sleep(waitBetweenTries);
+		}
+		throw new Exception("Failed to create temporary directory.");
 	}
 
 	#endregion
