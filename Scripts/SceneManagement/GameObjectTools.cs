@@ -700,6 +700,18 @@ namespace Extenity.SceneManagement
 			return components.Length;
 		}
 
+		public static void EnsureOnlyOneComponentInstance<T>(this Component me) where T : Component
+		{
+			if (me.GetComponentCount<T>() != 1)
+				throw new Exception();
+		}
+
+		public static void EnsureOnlyOneComponentInstance<T>(this GameObject me) where T : Component
+		{
+			if (me.GetComponentCount<T>() != 1)
+				throw new Exception();
+		}
+
 		#endregion
 
 		#region Get Closest
