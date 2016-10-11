@@ -104,6 +104,7 @@ namespace Extenity.WorldWideWeb
 						if (progress > 99) progress = 99;
 						worker.ReportProgress(progress, message);
 					}
+					fileStream.Flush(); // In any case...
 					fileStream.Close();
 				}
 

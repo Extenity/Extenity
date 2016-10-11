@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Security;
 
 public static class FileTools
 {
@@ -266,15 +267,36 @@ public static class FileTools
 		{
 			stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
 		}
-		catch (FileNotFoundException)
+		catch (FileNotFoundException) // The file is not found. So it's not locked.
 		{
 			return false;
 		}
-		catch (IOException)
+		catch (DirectoryNotFoundException) // The specified path is invalid, such as being on an unmapped drive.
 		{
-			//the file is unavailable because it is:
-			//still being written to
-			//or being processed by another thread
+			return true;
+		}
+		catch (IOException) // The file is already open.
+		{
+			return true;
+		}
+		catch (SecurityException) // The caller does not have the required permission.
+		{
+			return true;
+		}
+		catch (UnauthorizedAccessException) // path is read-only or is a directory.
+		{
+			return true;
+		}
+		catch (ArgumentNullException) // One or more arguments is null.
+		{
+			return true;
+		}
+		catch (ArgumentException) // path is empty or contains only white spaces.
+		{
+			return true;
+		}
+		catch // Unknown
+		{
 			return true;
 		}
 		finally

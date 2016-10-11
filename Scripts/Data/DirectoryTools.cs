@@ -36,13 +36,37 @@ public static class DirectoryTools
 			public string FilePath;
 			public Exception Exception;
 		}
+		public struct CopiedFile
+		{
+			public string SourcePath;
+			public string TargetPath;
 
-		public List<FailReason> FailedFiles = null;
-		public int FailedFileCount { get { return FailedFiles == null ? 0 : FailedFiles.Count; } }
-		public List<string> CopiedFiles = null;
+			public CopiedFile(string sourcePath, string targetPath)
+			{
+				SourcePath = sourcePath;
+				TargetPath = targetPath;
+			}
+
+			public override string ToString()
+			{
+				return "From \"" + SourcePath + "\" to \"" + TargetPath + "\"";
+			}
+		}
+
+		private List<FailReason> _FailedFiles = null;
+		public List<FailReason> FailedFiles { get { return _FailedFiles; } }
+		public int FailedFileCount { get { return _FailedFiles == null ? 0 : _FailedFiles.Count; } }
+		private List<CopiedFile> _CopiedFiles = null;
+		/// <summary>
+		/// Make sure CreateCopiedFileList set to true for accessing this list.
+		/// </summary>
+		public List<CopiedFile> CopiedFiles { get { return _CopiedFiles; } }
 		public int CopiedFileCount = 0; // Does not directly return CopiedFiles.Count because CreateCopiedFileList can be false.
+		/// <summary>
+		/// Allows you to choose not to cause overhead for creating the copied files list if you are not going to use it.
+		/// </summary>
 		public readonly bool CreateCopiedFileList = false;
-		public bool IsOK { get { return FailedFiles == null || FailedFiles.Count == 0; } }
+		public bool IsOK { get { return _FailedFiles == null || _FailedFiles.Count == 0; } }
 
 		public CopyResult()
 		{
@@ -56,28 +80,28 @@ public static class DirectoryTools
 		public void Reset()
 		{
 			CopiedFileCount = 0;
-			if (CopiedFiles != null)
-				CopiedFiles.Clear();
-			if (FailedFiles != null)
-				FailedFiles.Clear();
+			if (_CopiedFiles != null)
+				_CopiedFiles.Clear();
+			if (_FailedFiles != null)
+				_FailedFiles.Clear();
 		}
 
-		public void AddCopiedFile(string path)
+		public void AddCopiedFile(string sourceFilePath, string targetFilePath)
 		{
 			CopiedFileCount++;
 			if (CreateCopiedFileList)
 			{
-				if (CopiedFiles == null)
-					CopiedFiles = new List<string>();
-				CopiedFiles.Add(path);
+				if (_CopiedFiles == null)
+					_CopiedFiles = new List<CopiedFile>();
+				_CopiedFiles.Add(new CopiedFile(sourceFilePath, targetFilePath));
 			}
 		}
 
 		public void AddFailedFile(FailReason failReason)
 		{
-			if (FailedFiles == null)
-				FailedFiles = new List<FailReason>();
-			FailedFiles.Add(failReason);
+			if (_FailedFiles == null)
+				_FailedFiles = new List<FailReason>();
+			_FailedFiles.Add(failReason);
 		}
 	}
 
@@ -93,6 +117,9 @@ public static class DirectoryTools
 			throw new ArgumentNullException("targetDirectory");
 		if (File.Exists(targetDirectory))
 			throw new ArgumentException("Target directory points to a file.");
+
+		sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		targetDirectory = targetDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
 		HashSet<string> filesToCopy = new HashSet<string>();
 
@@ -174,7 +201,7 @@ public static class DirectoryTools
 					{
 						throw new Exception("Relative file path could not be calculated.");
 					}
-					relativeSourceFilePath = sourceFilePath.Remove(0, sourceDirectory.Length + 1); // +1 is for directory separator at the end
+					relativeSourceFilePath = sourceFilePath.Remove(0, sourceDirectory.Length);
 				}
 
 				var targetFilePath = Path.Combine(targetDirectory, relativeSourceFilePath);
@@ -187,7 +214,7 @@ public static class DirectoryTools
 				File.Copy(sourceFilePath, targetFilePath, overwrite);
 
 				if (result != null)
-					result.AddCopiedFile(sourceFilePath);
+					result.AddCopiedFile(sourceFilePath, targetFilePath);
 			}
 			catch (Exception e)
 			{
