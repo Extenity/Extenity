@@ -179,20 +179,20 @@ namespace Extenity.EditorUtilities
 			public string PreviousTagValueBeforeEditing = "";
 			public bool NeedsRepaint = false;
 			public bool NeedsEditingFocus = false;
-			//public bool DrawVertical = false;
 		}
 
-		public static string[] DrawTags(string[] tags, TagsPane tagsPane)
+		private static GUIStyle TagLabelStyle = new GUIStyle(GUI.skin.label);
+
+		public static string[] DrawTags(string[] tags, TagsPane tagsPane, float maxWidth)
 		{
 			if (tags == null)
 			{
 				tags = new string[0];
 			}
 
-			var maxWidth = EditorGUIUtility.currentViewWidth;
 			GUILayout.BeginHorizontal(GUILayout.MaxWidth(maxWidth));
 
-			const float buttonSize = 18f;
+			const float buttonSize = 20f;
 			bool stopEditing = false;
 			bool revertTag = false;
 			int changeEditingTo = -1;
@@ -229,12 +229,11 @@ namespace Extenity.EditorUtilities
 						const float doubleMargin = margin * 2f;
 						const float minimumLabelWidth = 40f;
 
-						var guiStyle = GUI.skin.label;
 						float labelMinWidth, labelMaxWidth, labelHeight;
 						var labelContent = new GUIContent(tag);
-						guiStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
-						labelHeight = guiStyle.CalcHeight(labelContent, labelMaxWidth);
+						TagLabelStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
 						labelMaxWidth += 6f; // Add a couple of pixels to get rid of silly clamping at the end
+						labelHeight = TagLabelStyle.CalcHeight(labelContent, labelMaxWidth);
 						var labelWidth = Mathf.Max(minimumLabelWidth, labelMaxWidth);
 						var totalWidth = labelWidth + buttonSize + doubleMargin;
 						var totalHeight = Mathf.Max(buttonSize + doubleMargin, labelHeight);
@@ -245,14 +244,12 @@ namespace Extenity.EditorUtilities
 							GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false));
 						GUI.Box(backgroundRect, "");
 						var labelRect = backgroundRect;
-						labelRect.width -= doubleMargin + buttonSize;
-						labelRect.height -= doubleMargin;
 						labelRect.xMin += margin;
-
-						if (Event.current.type != EventType.Layout && Event.current.type != EventType.Repaint && Event.current.type != EventType.MouseMove)
-						{
-							Debug.Log("## Event.current.type: " + Event.current.type);
-						}
+						labelRect.yMin = backgroundRect.yMin + (backgroundRect.height - labelHeight) / 2f;
+						labelRect.width -= doubleMargin + buttonSize;
+						labelRect.height = labelHeight;
+						var labelClickArea = backgroundRect;
+						labelClickArea.width -= margin + buttonSize;
 
 						if (tagsPane.EditingIndex == i)
 						{
@@ -261,10 +258,10 @@ namespace Extenity.EditorUtilities
 							if (tagsPane.NeedsEditingFocus)
 							{
 								tagsPane.NeedsEditingFocus = false;
-								EditorGUI.FocusTextInControl("TagEditTextField");
+								GUI.FocusControl("TagEditTextField");
 							}
 
-							if (Event.current.isMouse && Event.current.button == 0 && !labelRect.Contains(Event.current.mousePosition))
+							if (Event.current.isMouse && Event.current.button == 0 && !labelClickArea.Contains(Event.current.mousePosition))
 							{
 								stopEditing = true;
 							}
@@ -283,7 +280,7 @@ namespace Extenity.EditorUtilities
 						}
 						else
 						{
-							if (Event.current.isMouse && Event.current.type == EventType.MouseUp && Event.current.button == 0 && labelRect.Contains(Event.current.mousePosition))
+							if (Event.current.isMouse && Event.current.type == EventType.MouseUp && Event.current.button == 0 && labelClickArea.Contains(Event.current.mousePosition))
 							{
 								changeEditingTo = i;
 							}
@@ -321,6 +318,7 @@ namespace Extenity.EditorUtilities
 				tagsPane.EditingIndex = -1;
 				tagsPane.PreviousTagValueBeforeEditing = "";
 				tagsPane.NeedsRepaint = true;
+				GUI.FocusControl(null);
 			}
 
 			if (delayedRemoveAt >= 0)
