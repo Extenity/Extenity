@@ -176,7 +176,7 @@ namespace Extenity.EditorUtilities
 		public class TagsPane
 		{
 			public int EditingIndex = -1;
-			public bool DrawVertical = false;
+			//public bool DrawVertical = false;
 		}
 
 		public static string[] DrawTags(string[] tags, TagsPane tagsPane)
@@ -186,10 +186,8 @@ namespace Extenity.EditorUtilities
 				tags = new string[0];
 			}
 
-			if (tagsPane.DrawVertical)
-				GUILayout.BeginVertical();
-			else
-				GUILayout.BeginHorizontal();
+			var maxWidth = EditorGUIUtility.currentViewWidth;
+			GUILayout.BeginHorizontal(GUILayout.MaxWidth(maxWidth));
 
 			const float buttonSize = 18f;
 
@@ -246,9 +244,19 @@ namespace Extenity.EditorUtilities
 						labelRect.height -= doubleMargin;
 						labelRect.xMin += margin;
 
+						if (Event.current.type != EventType.Layout || Event.current.type != EventType.Repaint)
+						{
+							Debug.Log("## Event.current.type: " + Event.current.type);
+						}
+
 						if (tagsPane.EditingIndex == i)
 						{
 							tags[i] = GUI.TextField(labelRect, tag);
+
+							if (!EditorGUIUtility.editingTextField)
+							{
+								tagsPane.EditingIndex = -1;
+							}
 						}
 						else
 						{
@@ -256,7 +264,6 @@ namespace Extenity.EditorUtilities
 							{
 								tagsPane.EditingIndex = i;
 							}
-							Debug.Log("## Event.current.type: " + Event.current.type);
 							GUI.Label(labelRect, tag);
 						}
 
@@ -280,12 +287,7 @@ namespace Extenity.EditorUtilities
 				}
 			}
 
-
-			if (tagsPane.DrawVertical)
-				GUILayout.EndVertical();
-			else
-				GUILayout.EndHorizontal();
-
+			GUILayout.EndHorizontal();
 			return tags;
 		}
 
