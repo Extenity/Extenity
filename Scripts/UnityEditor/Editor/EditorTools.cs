@@ -1,7 +1,9 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using FluffyUnderware.DevTools.Extensions;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.EditorUtilities
@@ -165,6 +167,126 @@ namespace Extenity.EditorUtilities
 			{
 				EnableAutoRefresh();
 			}
+		}
+
+		#endregion
+
+		#region Tags
+
+		public class TagsPane
+		{
+			public int EditingIndex = -1;
+			public bool DrawVertical = false;
+		}
+
+		public static string[] DrawTags(string[] tags, TagsPane tagsPane)
+		{
+			if (tags == null)
+			{
+				tags = new string[0];
+			}
+
+			if (tagsPane.DrawVertical)
+				GUILayout.BeginVertical();
+			else
+				GUILayout.BeginHorizontal();
+
+			const float buttonSize = 18f;
+
+			// Draw add button
+			{
+				if (GUILayout.Button("+", GUILayout.Width(buttonSize), GUILayout.Height(buttonSize)))
+				{
+					// Ignore if related button is already empty
+					if (tags.Length > 0 && string.IsNullOrEmpty(tags[0]))
+					{
+						// Ignored
+					}
+					else
+					{
+						tags = tags.InsertAt(0);
+					}
+
+					tagsPane.EditingIndex = 0;
+				}
+			}
+
+			// Draw tags
+			if (tags.Length > 0)
+			{
+				int delayedRemoveAt = -1;
+
+				for (int i = 0; i < tags.Length; i++)
+				{
+					var tag = tags[i];
+
+					// Draw tag
+					{
+						const float margin = 3f;
+						const float doubleMargin = margin * 2f;
+						const float minimumLabelWidth = 40f;
+
+						var guiStyle = GUI.skin.label;
+						float labelMinWidth, labelMaxWidth, labelHeight;
+						var labelContent = new GUIContent(tag);
+						guiStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
+						labelHeight = guiStyle.CalcHeight(labelContent, labelMaxWidth);
+						labelMaxWidth += 6f; // Add a couple of pixels to get rid of silly clamping at the end
+						var labelWidth = Mathf.Max(minimumLabelWidth, labelMaxWidth);
+						var totalWidth = labelWidth + buttonSize + doubleMargin;
+						var totalHeight = Mathf.Max(buttonSize + doubleMargin, labelHeight);
+						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight,
+							GUILayout.Width(totalWidth), GUILayout.Height(totalHeight),
+							GUILayout.MaxWidth(totalWidth), GUILayout.MaxHeight(totalHeight),
+							GUILayout.MinWidth(totalWidth), GUILayout.MinHeight(totalHeight),
+							GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false));
+						GUI.Box(backgroundRect, "");
+						var labelRect = backgroundRect;
+						labelRect.width -= doubleMargin + buttonSize;
+						labelRect.height -= doubleMargin;
+						labelRect.xMin += margin;
+
+						if (tagsPane.EditingIndex == i)
+						{
+							tags[i] = GUI.TextField(labelRect, tag);
+						}
+						else
+						{
+							if (Event.current.isMouse && Event.current.button == 0 && labelRect.Contains(Event.current.mousePosition))
+							{
+								tagsPane.EditingIndex = i;
+							}
+							Debug.Log("## Event.current.type: " + Event.current.type);
+							GUI.Label(labelRect, tag);
+						}
+
+						var removeButtonRect = backgroundRect;
+						removeButtonRect.xMin = backgroundRect.xMax - margin - buttonSize;
+						removeButtonRect.yMin = backgroundRect.yMin + margin;
+						removeButtonRect.width = buttonSize;
+						removeButtonRect.height = buttonSize;
+						if (GUI.Button(removeButtonRect, "X"))
+						{
+							delayedRemoveAt = i;
+						}
+
+						GUILayout.Space(5f);
+					}
+				}
+
+				if (delayedRemoveAt >= 0)
+				{
+					tags = tags.RemoveAt(delayedRemoveAt);
+				}
+			}
+
+
+			if (tagsPane.DrawVertical)
+				GUILayout.EndVertical();
+			else
+				GUILayout.EndHorizontal();
+
+			return tags;
 		}
 
 		#endregion
