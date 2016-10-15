@@ -176,6 +176,9 @@ namespace Extenity.EditorUtilities
 		public class TagsPane
 		{
 			public int EditingIndex = -1;
+			public string PreviousTagValueBeforeEditing = "";
+			public bool NeedsRepaint = false;
+			public bool NeedsEditingFocus = false;
 			//public bool DrawVertical = false;
 		}
 
@@ -190,6 +193,10 @@ namespace Extenity.EditorUtilities
 			GUILayout.BeginHorizontal(GUILayout.MaxWidth(maxWidth));
 
 			const float buttonSize = 18f;
+			bool stopEditing = false;
+			bool revertTag = false;
+			int changeEditingTo = -1;
+			int delayedRemoveAt = -1;
 
 			// Draw add button
 			{
@@ -205,15 +212,13 @@ namespace Extenity.EditorUtilities
 						tags = tags.InsertAt(0);
 					}
 
-					tagsPane.EditingIndex = 0;
+					changeEditingTo = 0;
 				}
 			}
 
 			// Draw tags
 			if (tags.Length > 0)
 			{
-				int delayedRemoveAt = -1;
-
 				for (int i = 0; i < tags.Length; i++)
 				{
 					var tag = tags[i];
@@ -244,25 +249,43 @@ namespace Extenity.EditorUtilities
 						labelRect.height -= doubleMargin;
 						labelRect.xMin += margin;
 
-						if (Event.current.type != EventType.Layout || Event.current.type != EventType.Repaint)
+						if (Event.current.type != EventType.Layout && Event.current.type != EventType.Repaint && Event.current.type != EventType.MouseMove)
 						{
 							Debug.Log("## Event.current.type: " + Event.current.type);
 						}
 
 						if (tagsPane.EditingIndex == i)
 						{
-							tags[i] = GUI.TextField(labelRect, tag);
-
-							if (!EditorGUIUtility.editingTextField)
+							GUI.SetNextControlName("TagEditTextField");
+							tags[i] = GUI.TextField(labelRect, tag == null ? "" : tag);
+							if (tagsPane.NeedsEditingFocus)
 							{
-								tagsPane.EditingIndex = -1;
+								tagsPane.NeedsEditingFocus = false;
+								EditorGUI.FocusTextInControl("TagEditTextField");
+							}
+
+							if (Event.current.isMouse && Event.current.button == 0 && !labelRect.Contains(Event.current.mousePosition))
+							{
+								stopEditing = true;
+							}
+							if (Event.current.isKey)
+							{
+								if (Event.current.keyCode == KeyCode.Return)
+								{
+									stopEditing = true;
+								}
+								else if (Event.current.keyCode == KeyCode.Escape)
+								{
+									stopEditing = true;
+									revertTag = true;
+								}
 							}
 						}
 						else
 						{
-							if (Event.current.isMouse && Event.current.button == 0 && labelRect.Contains(Event.current.mousePosition))
+							if (Event.current.isMouse && Event.current.type == EventType.MouseUp && Event.current.button == 0 && labelRect.Contains(Event.current.mousePosition))
 							{
-								tagsPane.EditingIndex = i;
+								changeEditingTo = i;
 							}
 							GUI.Label(labelRect, tag);
 						}
@@ -280,11 +303,29 @@ namespace Extenity.EditorUtilities
 						GUILayout.Space(5f);
 					}
 				}
+			}
 
-				if (delayedRemoveAt >= 0)
-				{
-					tags = tags.RemoveAt(delayedRemoveAt);
-				}
+			if (revertTag)
+			{
+				tags[tagsPane.EditingIndex] = tagsPane.PreviousTagValueBeforeEditing;
+			}
+			if (changeEditingTo >= 0)
+			{
+				tagsPane.EditingIndex = changeEditingTo;
+				tagsPane.PreviousTagValueBeforeEditing = tags[changeEditingTo];
+				tagsPane.NeedsRepaint = true;
+				tagsPane.NeedsEditingFocus = true;
+			}
+			else if (stopEditing)
+			{
+				tagsPane.EditingIndex = -1;
+				tagsPane.PreviousTagValueBeforeEditing = "";
+				tagsPane.NeedsRepaint = true;
+			}
+
+			if (delayedRemoveAt >= 0)
+			{
+				tags = tags.RemoveAt(delayedRemoveAt);
 			}
 
 			GUILayout.EndHorizontal();
