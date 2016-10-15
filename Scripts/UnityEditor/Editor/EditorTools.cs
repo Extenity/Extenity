@@ -171,6 +171,15 @@ namespace Extenity.EditorUtilities
 
 		#endregion
 
+		#region Layout Options
+
+		public static class LayoutOptions
+		{
+			public static readonly GUILayoutOption[] DontExpand = { GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false) };
+		}
+
+		#endregion
+
 		#region Tags
 
 		public class TagsPane
@@ -181,16 +190,37 @@ namespace Extenity.EditorUtilities
 			public bool NeedsEditingFocus = false;
 		}
 
-		private static GUIStyle TagLabelStyle = new GUIStyle(GUI.skin.label);
+		private static GUIStyle TagBackgroundStyle;
+		private static GUIStyle TagEditingBackgroundStyle;
+		private static GUIStyle TagLabelStyle;
+
+		private static bool _IsTagRenderingInitialized = false;
+
+		private static void InitializeTagRendering()
+		{
+			if (_IsTagRenderingInitialized)
+				return;
+			_IsTagRenderingInitialized = true;
+
+			TagBackgroundStyle = new GUIStyle(GUI.skin.box);
+			TagEditingBackgroundStyle = new GUIStyle(GUI.skin.box);
+			var tintedBackground = TagBackgroundStyle.normal.background.CopyTextureAsReadable();
+			tintedBackground = TextureTools.Tint(tintedBackground, new Color(0.8f, 0.7f, 0.7f, 1f));
+			TagEditingBackgroundStyle.normal.background = tintedBackground;
+			TagLabelStyle = new GUIStyle(GUI.skin.label);
+		}
 
 		public static string[] DrawTags(string[] tags, TagsPane tagsPane, float maxWidth)
 		{
+			InitializeTagRendering();
+
 			if (tags == null)
 			{
 				tags = new string[0];
 			}
 
-			GUILayout.BeginHorizontal(GUILayout.MaxWidth(maxWidth));
+			GUILayout.BeginVertical(GUILayout.MaxWidth(maxWidth));
+			GUILayout.BeginHorizontal();
 
 			const float buttonSize = 20f;
 			bool stopEditing = false;
@@ -237,12 +267,7 @@ namespace Extenity.EditorUtilities
 						var labelWidth = Mathf.Max(minimumLabelWidth, labelMaxWidth);
 						var totalWidth = labelWidth + buttonSize + doubleMargin;
 						var totalHeight = Mathf.Max(buttonSize + doubleMargin, labelHeight);
-						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight,
-							GUILayout.Width(totalWidth), GUILayout.Height(totalHeight),
-							GUILayout.MaxWidth(totalWidth), GUILayout.MaxHeight(totalHeight),
-							GUILayout.MinWidth(totalWidth), GUILayout.MinHeight(totalHeight),
-							GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false));
-						GUI.Box(backgroundRect, "");
+						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight, LayoutOptions.DontExpand);
 						var labelRect = backgroundRect;
 						labelRect.xMin += margin;
 						labelRect.yMin = backgroundRect.yMin + (backgroundRect.height - labelHeight) / 2f;
@@ -253,15 +278,19 @@ namespace Extenity.EditorUtilities
 
 						if (tagsPane.EditingIndex == i)
 						{
-							GUI.SetNextControlName("TagEditTextField");
+							// Draw background
+							GUI.Box(backgroundRect, "", TagEditingBackgroundStyle);
+
+							// Draw tag editing text filed
+							GUI.SetNextControlName("TagEditingTextField");
 							tags[i] = GUI.TextField(labelRect, tag == null ? "" : tag);
 							if (tagsPane.NeedsEditingFocus)
 							{
 								tagsPane.NeedsEditingFocus = false;
-								GUI.FocusControl("TagEditTextField");
+								GUI.FocusControl("TagEditingTextField");
 							}
 
-							if (Event.current.isMouse && Event.current.button == 0 && !labelClickArea.Contains(Event.current.mousePosition))
+							if ((Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseDown) && !labelClickArea.Contains(Event.current.mousePosition))
 							{
 								stopEditing = true;
 							}
@@ -280,6 +309,10 @@ namespace Extenity.EditorUtilities
 						}
 						else
 						{
+							// Draw background
+							GUI.Box(backgroundRect, "", TagBackgroundStyle);
+
+							// Draw tag
 							if (Event.current.isMouse && Event.current.type == EventType.MouseUp && Event.current.button == 0 && labelClickArea.Contains(Event.current.mousePosition))
 							{
 								changeEditingTo = i;
@@ -287,6 +320,7 @@ namespace Extenity.EditorUtilities
 							GUI.Label(labelRect, tag);
 						}
 
+						// Draw remove button
 						var removeButtonRect = backgroundRect;
 						removeButtonRect.xMin = backgroundRect.xMax - margin - buttonSize;
 						removeButtonRect.yMin = backgroundRect.yMin + margin;
@@ -297,7 +331,11 @@ namespace Extenity.EditorUtilities
 							delayedRemoveAt = i;
 						}
 
-						GUILayout.Space(5f);
+						// Add separator
+						if (i != tags.Length - 1)
+						{
+							GUILayout.Space(5f);
+						}
 					}
 				}
 			}
@@ -327,6 +365,7 @@ namespace Extenity.EditorUtilities
 			}
 
 			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
 			return tags;
 		}
 
