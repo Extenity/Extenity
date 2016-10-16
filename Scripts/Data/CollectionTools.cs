@@ -108,6 +108,70 @@ public static class CollectionTools
 		}
 	}
 
+	public static T[] GetRange<T>(this T[] source, int index, int length)
+	{
+		var result = new T[length];
+		Array.Copy(source, index, result, 0, length);
+		return result;
+	}
+
+	public static T[] RemoveAt<T>(this T[] source, int index)
+	{
+		if (index < 0 || index >= source.Length)
+		{
+			throw new ArgumentOutOfRangeException("index", index, "Index is out of range.");
+		}
+
+		var result = new T[source.Length - 1];
+		if (index > 0)
+			Array.Copy(source, 0, result, 0, index);
+		if (index < source.Length - 1)
+			Array.Copy(source, index + 1, result, index, source.Length - index - 1);
+		return result;
+	}
+
+	public static T[] InsertAt<T>(this T[] source, int index)
+	{
+		var result = new T[source.Length + 1];
+
+		if (source.Length == 0)
+			return result;
+
+		if (index < 0)
+			index = 0;
+		if (index > source.Length - 1)
+			index = source.Length - 1;
+
+		if (index > 0)
+			Array.Copy(source, 0, result, 0, index);
+
+		Array.Copy(source, index, result, index + 1, source.Length - index);
+
+		return result;
+	}
+
+	public static T[] Swap<T>(this T[] source, int index1, int index2)
+	{
+		var val = source[index1];
+		source[index1] = source[index2];
+		source[index2] = val;
+		return source;
+	}
+
+	public static T[] Add<T>(this T[] source, T item)
+	{
+		Array.Resize(ref source, source.Length + 1);
+		source[source.Length - 1] = item;
+		return source;
+	}
+
+	public static T[] AddRange<T>(this T[] source, T[] items)
+	{
+		Array.Resize(ref source, source.Length + items.Length);
+		Array.Copy(items, 0, source, source.Length - items.Length, items.Length);
+		return source;
+	}
+
 	#region Duplicates
 
 	public static IEnumerable<int> DuplicatesIndexed<T>(this IEnumerable<T> source)
@@ -162,6 +226,37 @@ public static class CollectionTools
 				itemsSeen.Add(item);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Removes all duplicate items in list. Keeps only the last occurences of duplicate items.
+	/// </summary>
+	public static void RemoveDuplicates<T>(this List<T> source)
+	{
+		var hash = new HashSet<T>();
+		for (int i = source.Count - 1; i >= 0; i--)
+		{
+			var item = source[i];
+			if (!hash.Add(item))
+			{
+				source.RemoveAt(i);
+			}
+		}
+	}
+
+	public static T[] RemoveDuplicates<T>(this T[] source)
+	{
+		var hash = new HashSet<T>();
+		var cleanList = new List<T>();
+		for (int i = 0; i < source.Length; i++)
+		{
+			var item = source[i];
+			if (hash.Add(item))
+			{
+				cleanList.Add(item);
+			}
+		}
+		return cleanList.ToArray();
 	}
 
 	#endregion

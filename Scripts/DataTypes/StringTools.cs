@@ -258,6 +258,20 @@ namespace Extenity.DataTypes
 			return stringBuilder.ToString();
 		}
 
+		public static string TrimStart(this string text, string part, StringComparison comparison)
+		{
+			if (text.StartsWith(part, comparison))
+				return text.Substring(part.Length);
+			return text;
+		}
+
+		public static string TrimEnd(this string text, string part, StringComparison comparison)
+		{
+			if (text.EndsWith(part, comparison))
+				return text.Substring(0, text.Length - part.Length);
+			return text;
+		}
+
 		#endregion
 
 		#region StringBuilder

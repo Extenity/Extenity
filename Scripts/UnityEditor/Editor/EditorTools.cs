@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using FluffyUnderware.DevTools.Extensions;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.EditorUtilities
@@ -188,26 +187,41 @@ namespace Extenity.EditorUtilities
 			public string PreviousTagValueBeforeEditing = "";
 			public bool NeedsRepaint = false;
 			public bool NeedsEditingFocus = false;
+
+			internal List<int> LineBreaks = new List<int>();
 		}
 
-		private static GUIStyle TagBackgroundStyle;
-		private static GUIStyle TagEditingBackgroundStyle;
-		private static GUIStyle TagLabelStyle;
+		private static class TagPaneThings
+		{
+			public static readonly float ButtonSize = 20f;
+			public static readonly float Separator = 5f;
+			public static readonly float LineSeparator = 5f;
 
-		private static bool _IsTagRenderingInitialized = false;
+			public static readonly float BackgroundPadding = 3f;
+			public static readonly float BackgroundDoublePadding = BackgroundPadding * 2f;
+			public static readonly float MinimumLabelWidth = 40f;
+
+			public static GUIStyle TagBackgroundStyle;
+			public static GUIStyle TagEditingBackgroundStyle;
+			public static GUIStyle TagLabelStyle;
+			public static GUILayoutOption[] TagEditingPlusButtonLayoutOptions;
+
+			public static bool IsTagRenderingInitialized = false;
+		}
 
 		private static void InitializeTagRendering()
 		{
-			if (_IsTagRenderingInitialized)
+			if (TagPaneThings.IsTagRenderingInitialized)
 				return;
-			_IsTagRenderingInitialized = true;
+			TagPaneThings.IsTagRenderingInitialized = true;
 
-			TagBackgroundStyle = new GUIStyle(GUI.skin.box);
-			TagEditingBackgroundStyle = new GUIStyle(GUI.skin.box);
-			var tintedBackground = TagBackgroundStyle.normal.background.CopyTextureAsReadable();
+			TagPaneThings.TagBackgroundStyle = new GUIStyle(GUI.skin.box);
+			TagPaneThings.TagEditingBackgroundStyle = new GUIStyle(GUI.skin.box);
+			var tintedBackground = TagPaneThings.TagBackgroundStyle.normal.background.CopyTextureAsReadable();
 			tintedBackground = TextureTools.Tint(tintedBackground, new Color(0.8f, 0.7f, 0.7f, 1f));
-			TagEditingBackgroundStyle.normal.background = tintedBackground;
-			TagLabelStyle = new GUIStyle(GUI.skin.label);
+			TagPaneThings.TagEditingBackgroundStyle.normal.background = tintedBackground;
+			TagPaneThings.TagLabelStyle = new GUIStyle(GUI.skin.label);
+			TagPaneThings.TagEditingPlusButtonLayoutOptions = new[] { GUILayout.Width(TagPaneThings.ButtonSize), GUILayout.Height(TagPaneThings.ButtonSize) };
 		}
 
 		public static string[] DrawTags(string[] tags, TagsPane tagsPane, float maxWidth)
@@ -222,7 +236,6 @@ namespace Extenity.EditorUtilities
 			GUILayout.BeginVertical(GUILayout.MaxWidth(maxWidth));
 			GUILayout.BeginHorizontal();
 
-			const float buttonSize = 20f;
 			bool stopEditing = false;
 			bool revertTag = false;
 			int changeEditingTo = -1;
@@ -230,7 +243,7 @@ namespace Extenity.EditorUtilities
 
 			// Draw add button
 			{
-				if (GUILayout.Button("+", GUILayout.Width(buttonSize), GUILayout.Height(buttonSize)))
+				if (GUILayout.Button("+", TagPaneThings.TagEditingPlusButtonLayoutOptions))
 				{
 					// Ignore if related button is already empty
 					if (tags.Length > 0 && string.IsNullOrEmpty(tags[0]))
@@ -246,6 +259,38 @@ namespace Extenity.EditorUtilities
 				}
 			}
 
+			// Calculate layout
+			if (Event.current.type == EventType.Layout)
+			{
+				tagsPane.LineBreaks.Clear();
+				float currentLineWidth = 0f;
+				currentLineWidth += TagPaneThings.ButtonSize; // "add" button
+
+				for (int i = 0; i < tags.Length; i++)
+				{
+					var labelWidth = _CalculateLabelWidth(new GUIContent(tags[i]));
+					var totalWidth = _CalculateTagBackgroundTotalWidth(labelWidth);
+
+					// New line if required
+					var startedNewLine = false;
+					if (currentLineWidth + totalWidth >= maxWidth)
+					{
+						tagsPane.LineBreaks.Add(i);
+						startedNewLine = true;
+						currentLineWidth = 0f;
+					}
+
+					// Draw background
+					currentLineWidth += totalWidth;
+
+					// Add separator
+					if (i != tags.Length - 1 && !startedNewLine)
+					{
+						currentLineWidth += TagPaneThings.Separator;
+					}
+				}
+			}
+
 			// Draw tags
 			if (tags.Length > 0)
 			{
@@ -255,31 +300,36 @@ namespace Extenity.EditorUtilities
 
 					// Draw tag
 					{
-						const float margin = 3f;
-						const float doubleMargin = margin * 2f;
-						const float minimumLabelWidth = 40f;
-
-						float labelMinWidth, labelMaxWidth, labelHeight;
 						var labelContent = new GUIContent(tag);
-						TagLabelStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
-						labelMaxWidth += 6f; // Add a couple of pixels to get rid of silly clamping at the end
-						labelHeight = TagLabelStyle.CalcHeight(labelContent, labelMaxWidth);
-						var labelWidth = Mathf.Max(minimumLabelWidth, labelMaxWidth);
-						var totalWidth = labelWidth + buttonSize + doubleMargin;
-						var totalHeight = Mathf.Max(buttonSize + doubleMargin, labelHeight);
+						var labelWidth = _CalculateLabelWidth(labelContent);
+						var labelHeight = TagPaneThings.TagLabelStyle.CalcHeight(labelContent, labelWidth);
+						var totalWidth = _CalculateTagBackgroundTotalWidth(labelWidth);
+						var totalHeight = Mathf.Max(TagPaneThings.ButtonSize + TagPaneThings.BackgroundDoublePadding, labelHeight);
+
+						// New line if required
+						var startedNewLine = false;
+						{
+							if (tagsPane.LineBreaks.Contains(i)) // Not the best way but whatever
+							{
+								GUILayout.EndHorizontal();
+								GUILayout.Space(TagPaneThings.LineSeparator);
+								GUILayout.BeginHorizontal();
+							}
+						}
+
 						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight, LayoutOptions.DontExpand);
 						var labelRect = backgroundRect;
-						labelRect.xMin += margin;
-						labelRect.yMin = backgroundRect.yMin + (backgroundRect.height - labelHeight) / 2f;
-						labelRect.width -= doubleMargin + buttonSize;
-						labelRect.height = labelHeight;
+						labelRect.xMin += TagPaneThings.BackgroundPadding; // Background + left padding
+						labelRect.yMin = backgroundRect.yMin + (backgroundRect.height - labelHeight) / 2f; // Center vertically
+						labelRect.width -= TagPaneThings.BackgroundDoublePadding + TagPaneThings.ButtonSize; // Backround - close button - left and right paddings
+						labelRect.height = labelHeight; // Only the text's height
 						var labelClickArea = backgroundRect;
-						labelClickArea.width -= margin + buttonSize;
+						labelClickArea.width -= TagPaneThings.BackgroundPadding + TagPaneThings.ButtonSize; // Backround - close button - right padding
 
 						if (tagsPane.EditingIndex == i)
 						{
 							// Draw background
-							GUI.Box(backgroundRect, "", TagEditingBackgroundStyle);
+							GUI.Box(backgroundRect, "", TagPaneThings.TagEditingBackgroundStyle);
 
 							// Draw tag editing text filed
 							GUI.SetNextControlName("TagEditingTextField");
@@ -310,31 +360,33 @@ namespace Extenity.EditorUtilities
 						else
 						{
 							// Draw background
-							GUI.Box(backgroundRect, "", TagBackgroundStyle);
+							GUI.Box(backgroundRect, "", TagPaneThings.TagBackgroundStyle);
 
-							// Draw tag
+							// Detect left click
 							if (Event.current.isMouse && Event.current.type == EventType.MouseUp && Event.current.button == 0 && labelClickArea.Contains(Event.current.mousePosition))
 							{
 								changeEditingTo = i;
 							}
+
+							// Draw tag
 							GUI.Label(labelRect, tag);
 						}
 
 						// Draw remove button
 						var removeButtonRect = backgroundRect;
-						removeButtonRect.xMin = backgroundRect.xMax - margin - buttonSize;
-						removeButtonRect.yMin = backgroundRect.yMin + margin;
-						removeButtonRect.width = buttonSize;
-						removeButtonRect.height = buttonSize;
+						removeButtonRect.xMin = backgroundRect.xMax - TagPaneThings.BackgroundPadding - TagPaneThings.ButtonSize;
+						removeButtonRect.yMin = backgroundRect.yMin + TagPaneThings.BackgroundPadding;
+						removeButtonRect.width = TagPaneThings.ButtonSize;
+						removeButtonRect.height = TagPaneThings.ButtonSize;
 						if (GUI.Button(removeButtonRect, "X"))
 						{
 							delayedRemoveAt = i;
 						}
 
 						// Add separator
-						if (i != tags.Length - 1)
+						if (i != tags.Length - 1 && !startedNewLine)
 						{
-							GUILayout.Space(5f);
+							GUILayout.Space(TagPaneThings.Separator);
 						}
 					}
 				}
@@ -367,6 +419,19 @@ namespace Extenity.EditorUtilities
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 			return tags;
+		}
+
+		private static float _CalculateLabelWidth(GUIContent labelContent)
+		{
+			float labelMinWidth, labelMaxWidth;
+			TagPaneThings.TagLabelStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
+			labelMaxWidth += 6f; // Add a couple of pixels to get rid of silly clamping at the end
+			return Mathf.Max(TagPaneThings.MinimumLabelWidth, labelMaxWidth);
+		}
+
+		private static float _CalculateTagBackgroundTotalWidth(float labelWidth)
+		{
+			return labelWidth + TagPaneThings.ButtonSize + TagPaneThings.BackgroundDoublePadding;
 		}
 
 		#endregion
