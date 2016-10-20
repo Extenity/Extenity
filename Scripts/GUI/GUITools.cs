@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Extenity.Applicational;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public enum GUIAnchor // TODO: rename to ScreenAnchor
 {
@@ -45,6 +46,22 @@ public static class GUITools
 	}
 
 	#endregion
+
+	public static bool IsGUIActiveInCurrentEventSystem
+	{
+		get
+		{
+			var eventSystem = EventSystem.current;
+			if (eventSystem)
+			{
+				if (eventSystem.currentSelectedGameObject != null)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
 	public static bool IsEnterHit
 	{
