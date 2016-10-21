@@ -414,6 +414,29 @@ public static class MathTools
 		return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 	}
 
+	public static float RemapClamped(this float value, float fromMin, float fromMax, float toMin, float toMax)
+	{
+		if (fromMin.IsAlmostEqual(fromMax))
+		{
+			throw new ArgumentException("Base value min and max should not be the same.", "fromMin");
+		}
+		//if (fromMin > fromMax)
+		//{
+		//	Swap(ref fromMin, ref fromMax);
+		//}
+		//if (toMin > toMax)
+		//{
+		//	Swap(ref fromMin, ref fromMax);
+		//}
+
+		if (value <= fromMin)
+			return toMin;
+		if (value >= fromMax)
+			return toMax;
+
+		return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
+	}
+
 	public static float RoundToDigits(this float value, int digitsAfterDecimalPoint)
 	{
 		if (digitsAfterDecimalPoint < 0) digitsAfterDecimalPoint = 0;
