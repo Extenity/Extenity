@@ -55,6 +55,7 @@ namespace Extenity.WorldWideWeb
 					var fileSizeRequest = (FtpWebRequest)FtpWebRequest.Create(remoteFileFullPath);
 					fileSizeRequest.Method = WebRequestMethods.Ftp.GetFileSize;
 					fileSizeRequest.Credentials = Credentials;
+					fileSizeRequest.Timeout = 120000;
 					var fileSizeResponse = (FtpWebResponse)fileSizeRequest.GetResponse();
 					//Stream responseStream = fileSizeResponse.GetResponseStream();
 					fileSize = fileSizeResponse.ContentLength;
@@ -67,6 +68,7 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.DownloadFile;
 				ftpWebRequest.UseBinary = true;
+				ftpWebRequest.Timeout = 120000;
 				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 
 				FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
@@ -158,6 +160,7 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
 				ftpWebRequest.UseBinary = true;
+				ftpWebRequest.Timeout = 120000;
 				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 
 				using (var output = ftpWebRequest.GetRequestStream())
