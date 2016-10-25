@@ -301,6 +301,41 @@ public static class DirectoryTools
 		}
 	}
 
+	/// <summary>
+	/// Deletes empty subdirectories and returns a list of failed subdirectories if there are any.
+	/// </summary>
+	public static List<string> DeleteEmptySubdirectories(string directoryPath)
+	{
+		List<string> failedDirectories = null;
+
+		foreach (var subdirectory in Directory.GetDirectories(directoryPath))
+		{
+			var failedDirectoriesInSubdirectory = DeleteEmptySubdirectories(subdirectory);
+			if (failedDirectoriesInSubdirectory != null)
+			{
+				if (failedDirectories == null)
+					failedDirectories = failedDirectoriesInSubdirectory;
+				else
+					failedDirectories.AddRange(failedDirectoriesInSubdirectory);
+			}
+		}
+
+		try
+		{
+			if (Directory.GetFiles(directoryPath).Length == 0 && Directory.GetDirectories(directoryPath).Length == 0)
+			{
+				Directory.Delete(directoryPath, false);
+			}
+		}
+		catch
+		{
+			if (failedDirectories == null)
+				failedDirectories = new List<string>();
+			failedDirectories.Add(directoryPath);
+		}
+		return failedDirectories;
+	}
+
 	#endregion
 
 	#region Get Root Directory
