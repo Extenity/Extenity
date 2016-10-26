@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 using Extenity.DataTypes;
 using UnityEngine;
@@ -43,15 +42,6 @@ namespace Extenity.Applicational
 				}
 			}
 		}
-
-#if UNITY_EDITOR
-
-		public static string EditorTempDirectoryPath
-		{
-			get { return Path.Combine(ApplicationPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars(); }
-		}
-
-#endif
 
 		#endregion
 
