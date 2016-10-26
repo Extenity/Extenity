@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Extenity.DataTypes;
 using UnityEngine;
@@ -8,31 +9,51 @@ namespace Extenity.Applicational
 
 	public static class ApplicationTools
 	{
+		#region Paths
+
 		public static string ApplicationPath
 		{
 			get
 			{
-				switch (UnityEngine.Application.platform)
+				switch (Application.platform)
 				{
 					//case RuntimePlatform.OSXEditor: throw new NotImplementedException();
-					case RuntimePlatform.OSXPlayer: throw new NotImplementedException();
-					case RuntimePlatform.OSXDashboardPlayer: throw new NotImplementedException();
-					case RuntimePlatform.IPhonePlayer: throw new NotImplementedException();
-					case RuntimePlatform.XBOX360: throw new NotImplementedException();
-					case RuntimePlatform.PS3: throw new NotImplementedException();
-					case RuntimePlatform.Android: throw new NotImplementedException();
-					case RuntimePlatform.LinuxPlayer: throw new NotImplementedException();
+					case RuntimePlatform.OSXPlayer:
+						throw new NotImplementedException();
+					case RuntimePlatform.OSXDashboardPlayer:
+						throw new NotImplementedException();
+					case RuntimePlatform.IPhonePlayer:
+						throw new NotImplementedException();
+					case RuntimePlatform.XBOX360:
+						throw new NotImplementedException();
+					case RuntimePlatform.PS3:
+						throw new NotImplementedException();
+					case RuntimePlatform.Android:
+						throw new NotImplementedException();
+					case RuntimePlatform.LinuxPlayer:
+						throw new NotImplementedException();
 
-					case RuntimePlatform.OSXEditor: 
+					case RuntimePlatform.OSXEditor:
 					case RuntimePlatform.WindowsPlayer:
 					case RuntimePlatform.WindowsEditor:
-						return UnityEngine.Application.dataPath.RemoveLastDirectoryFromPath();
+						return Application.dataPath.RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
 					default:
 						throw new ArgumentOutOfRangeException("platform");
 				}
 			}
 		}
+
+#if UNITY_EDITOR
+
+		public static string EditorTempDirectoryPath
+		{
+			get { return Path.Combine(ApplicationPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars(); }
+		}
+
+#endif
+
+		#endregion
 
 		#region Company And Product Name
 
