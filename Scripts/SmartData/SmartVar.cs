@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using AdvancedInspector;
 using UnityEngine.Events;
 
@@ -15,7 +13,7 @@ namespace SmartData
 
 		public SmartVar()
 		{
-			if (Application.isPlaying) // Don't try to create variable in editor mode.
+			//if (Application.isPlaying) // Don't try to register variable in editor mode (but isPlaying is not allowed to be called during serialization, hence not allowed to be called in constructor. See SmartVarManager.ClearOnEditorModeChanges for the solution)
 			{
 				_Register();
 			}
@@ -29,10 +27,7 @@ namespace SmartData
 
 		~SmartVar()
 		{
-			//if (Application.isPlaying) // Don't try to remove variable in editor mode.
-			{
-				_Deregister();
-			}
+			_Deregister();
 		}
 
 		#endregion
@@ -61,8 +56,8 @@ namespace SmartData
 			// Last check before deregistering from manager. This is needed because manager won't be able to send any more messages so we would miss the messages where all values gets NaN.
 			CheckForChanges();
 
-			SmartVarManager._Deregister(this);
 			IsRegistered = false;
+			SmartVarManager._Deregister(this);
 		}
 
 		#endregion

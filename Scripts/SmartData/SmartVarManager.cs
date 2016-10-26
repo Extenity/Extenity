@@ -3,6 +3,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using AdvancedInspector;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace SmartData
 {
@@ -10,6 +13,26 @@ namespace SmartData
 	[AdvancedInspector(true, false)]
 	public class SmartVarManager : MonoBehaviour
 	{
+		#region Initialization
+
+#if UNITY_EDITOR
+		[InitializeOnLoadMethod]
+		private static void ClearOnEditorModeChanges()
+		{
+			SmartVars.Clear();
+
+			// That didn't work out well since playmodeStateChanged invoked too late (after Awake)
+			//EditorApplication.playmodeStateChanged += PlaymodeStateChanged;
+		}
+
+		//private static void PlaymodeStateChanged()
+		//{
+		//	SmartVars.Clear();
+		//}
+#endif
+
+		#endregion
+
 		#region Deinitialization
 
 		public static bool IsQuittingApplication;
