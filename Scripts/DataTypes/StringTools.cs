@@ -258,8 +258,17 @@ namespace Extenity.DataTypes
 			return stringBuilder.ToString();
 		}
 
+		public static string TrimSafe(this string text)
+		{
+			if (text == null)
+				return null;
+			return text.Trim();
+		}
+
 		public static string TrimStart(this string text, string part, StringComparison comparison)
 		{
+			if (text == null)
+				return null;
 			if (text.StartsWith(part, comparison))
 				return text.Substring(part.Length);
 			return text;
@@ -267,6 +276,8 @@ namespace Extenity.DataTypes
 
 		public static string TrimEnd(this string text, string part, StringComparison comparison)
 		{
+			if (text == null)
+				return null;
 			if (text.EndsWith(part, comparison))
 				return text.Substring(0, text.Length - part.Length);
 			return text;
