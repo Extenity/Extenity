@@ -30,7 +30,7 @@ namespace Extenity.UserInterface
 				return;
 
 			var wasInside = IsInside;
-			IsInside = RectTransformUtility.RectangleContainsScreenPoint(RectTransform, Input.mousePosition);
+			IsInside = ApplicationHasFocus && RectTransformUtility.RectangleContainsScreenPoint(RectTransform, Input.mousePosition);
 			if (IsInside)
 			{
 				if (!wasInside)
@@ -62,6 +62,17 @@ namespace Extenity.UserInterface
 #endif
 				}
 			}
+		}
+
+		#endregion
+
+		#region Application Focus
+
+		protected bool ApplicationHasFocus { get; private set; }
+
+		protected void OnApplicationFocus(bool hasFocus)
+		{
+			ApplicationHasFocus = hasFocus;
 		}
 
 		#endregion

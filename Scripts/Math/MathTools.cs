@@ -1048,6 +1048,16 @@ public static class MathTools
 		//}
 	}
 
+	public static float MaxComponentXY(this Vector3 value)
+	{
+		return value.x > value.y ? value.x : value.y;
+	}
+
+	public static float MaxComponentXZ(this Vector3 value)
+	{
+		return value.x > value.z ? value.x : value.z;
+	}
+
 	#endregion
 
 	#region Rotation
@@ -2256,6 +2266,25 @@ public static class MathTools
 
 		return new Bounds { center = center, extents = extents };
 	}
+
+	public static Bounds TransformBounds(this Transform transform, Bounds localBounds, Transform relativeTo)
+	{
+		var center = relativeTo.InverseTransformPoint(transform.TransformPoint(localBounds.center));
+
+		// transform the local extents' axes
+		var extents = localBounds.extents;
+		var axisX = relativeTo.InverseTransformVector(transform.TransformVector(extents.x, 0, 0));
+		var axisY = relativeTo.InverseTransformVector(transform.TransformVector(0, extents.y, 0));
+		var axisZ = relativeTo.InverseTransformVector(transform.TransformVector(0, 0, extents.z));
+
+		// sum their absolute value to get the world extents
+		extents.x = Mathf.Abs(axisX.x) + Mathf.Abs(axisY.x) + Mathf.Abs(axisZ.x);
+		extents.y = Mathf.Abs(axisX.y) + Mathf.Abs(axisY.y) + Mathf.Abs(axisZ.y);
+		extents.z = Mathf.Abs(axisX.z) + Mathf.Abs(axisY.z) + Mathf.Abs(axisZ.z);
+
+		return new Bounds { center = center, extents = extents };
+	}
+
 
 	#endregion
 

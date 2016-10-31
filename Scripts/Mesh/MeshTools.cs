@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public static class MeshTools
 {
+	#region Create Mesh
+
 	public static Mesh CreatePlaneXZ(float size = 1f)
 	{
 		float halfSize = size / 2f;
@@ -34,6 +36,66 @@ public static class MeshTools
 		mesh.triangles = triangles;
 		return mesh;
 	}
+
+	public static void CreatePieMesh(ref Mesh mesh, float radius, float angle, float stepAngle)
+	{
+		if (mesh == null)
+		{
+			mesh = new Mesh();
+		}
+
+		Vector3[] vertices;
+		int[] triangles;
+
+		var erroneous = angle < 0.0001f || stepAngle < 0.0001f;
+		if (erroneous)
+		{
+			vertices = mesh.ReuseOrCreateVertices(0);
+			triangles = mesh.ReuseOrCreateTriangles(0);
+		}
+		else
+		{
+			var pointsOnCircleCount = Mathf.RoundToInt(angle / stepAngle) + 1;
+			if (pointsOnCircleCount < 2)
+			{
+				pointsOnCircleCount = 2;
+			}
+
+			var pieCount = pointsOnCircleCount - 1;
+			var totalVerticesCount = pointsOnCircleCount + 1; // +1 is the central point
+			var totalTrianglesCount = pieCount;
+			var startAngleRad = (90f - angle / 2f) * Mathf.Deg2Rad;
+			var angleIncrementRad = (angle / pieCount) * Mathf.Deg2Rad;
+
+			vertices = mesh.ReuseOrCreateVertices(totalVerticesCount);
+			triangles = mesh.ReuseOrCreateTriangles(3 * totalTrianglesCount);
+
+			vertices[0] = Vector3.zero; // Center
+
+			int iPie;
+			float currentAngleRad;
+			for (iPie = 0; iPie < pieCount; iPie++)
+			{
+				currentAngleRad = startAngleRad + angleIncrementRad * iPie;
+				var pieTriangleStartIndex = iPie * 3;
+				vertices[1 + iPie] = new Vector3(Mathf.Cos(currentAngleRad) * radius, 0f, Mathf.Sin(currentAngleRad) * radius);
+
+				triangles[pieTriangleStartIndex + 0] = 0;
+				triangles[pieTriangleStartIndex + 1] = 1 + iPie + 1;
+				triangles[pieTriangleStartIndex + 2] = 1 + iPie;
+			}
+			currentAngleRad = startAngleRad + angleIncrementRad * iPie;
+			vertices[1 + iPie] = new Vector3(Mathf.Cos(currentAngleRad) * radius, 0f, Mathf.Sin(currentAngleRad) * radius);
+		}
+
+		mesh.triangles = null;
+		mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.RecalculateBounds();
+	}
+
+
+	#endregion
 
 	#region Spline
 
@@ -135,7 +197,7 @@ public static class MeshTools
 
 	#endregion
 
-	#region Vertices
+	#region Vertices, Triangles
 
 	public static Vector3[] GetVerticesByIndexLookup(this IList<Vector3> vertices, IList<int> indices)
 	{
@@ -145,6 +207,28 @@ public static class MeshTools
 			result[i] = vertices[indices[i]];
 		}
 		return result;
+	}
+
+	public static Vector3[] ReuseOrCreateVertices(this Mesh mesh, int desiredCount)
+	{
+		if (mesh != null)
+		{
+			var vertices = mesh.vertices;
+			if (vertices != null && vertices.Length == desiredCount)
+				return vertices;
+		}
+		return new Vector3[desiredCount];
+	}
+
+	public static int[] ReuseOrCreateTriangles(this Mesh mesh, int desiredCount)
+	{
+		if (mesh != null)
+		{
+			var triangles = mesh.triangles;
+			if (triangles != null && triangles.Length == desiredCount)
+				return triangles;
+		}
+		return new int[desiredCount];
 	}
 
 	#endregion

@@ -156,58 +156,124 @@ namespace Extenity.SceneManagement
 
 		#endregion
 
-		#region Recursive Calculations - Renderer and Mesh Bounds
+		#region Recursive Calculations - Renderer / Mesh / Collider Bounds
 
-		public static bool CalculateRendererBoundsRecursively(this GameObject go, out Bounds bounds)
+		public static bool CalculateRendererWorldBoundsRecursively(this GameObject go, out Bounds bounds)
 		{
+			bounds = new Bounds();
 			var renderers = go.GetComponentsInChildren<Renderer>();
 			if (renderers == null || renderers.Length == 0)
 			{
-				bounds = new Bounds();
 				return false;
 			}
 
-			bounds = renderers[0].bounds;
-
-			for (int i = 1; i < renderers.Length; i++)
+			var initialization = true;
+			for (int i = 0; i < renderers.Length; i++)
 			{
 				var renderer = renderers[i];
-				bounds.Encapsulate(renderer.bounds);
-			}
-
-			return true;
-		}
-
-		public static bool CalculateMeshBoundsRecursively(this GameObject go, out Bounds bounds)
-		{
-			var transform = go.transform;
-			var meshFilters = go.GetComponentsInChildren<MeshFilter>();
-			if (meshFilters == null || meshFilters.Length == 0)
-			{
-				bounds = new Bounds();
-				return false;
-			}
-
-			bounds = new Bounds();
-			var initialization = true;
-
-			for (int i = 0; i < meshFilters.Length; i++)
-			{
-				var mesh = meshFilters[i].sharedMesh;
-				if (mesh != null)
+				if (renderer != null)
 				{
 					if (initialization)
 					{
-						bounds = transform.TransformBounds(mesh.bounds);
+						bounds = renderer.bounds;
 						initialization = false;
 					}
 					else
 					{
-						bounds.Encapsulate(transform.TransformBounds(mesh.bounds));
+						bounds.Encapsulate(renderer.bounds);
 					}
 				}
 			}
+			return initialization; // false if never initialized
+		}
 
+		public static bool CalculateMeshLocalBoundsRecursively(this GameObject go, out Bounds bounds)
+		{
+			bounds = new Bounds();
+			var baseTransform = go.transform;
+			var meshFilters = go.GetComponentsInChildren<MeshFilter>();
+			if (meshFilters == null || meshFilters.Length == 0)
+			{
+				return false;
+			}
+
+			var initialization = true;
+			for (int i = 0; i < meshFilters.Length; i++)
+			{
+				var meshFilter = meshFilters[i];
+				var sharedMesh = meshFilter != null ? meshFilter.sharedMesh : null;
+				if (sharedMesh != null)
+				{
+					if (initialization)
+					{
+						bounds = meshFilter.transform.TransformBounds(sharedMesh.bounds, baseTransform);
+						initialization = false;
+					}
+					else
+					{
+						bounds.Encapsulate(meshFilter.transform.TransformBounds(sharedMesh.bounds, baseTransform));
+					}
+				}
+			}
+			return initialization; // false if never initialized
+		}
+
+		public static bool CalculateMeshWorldBoundsRecursively(this GameObject go, out Bounds bounds)
+		{
+			bounds = new Bounds();
+			var meshFilters = go.GetComponentsInChildren<MeshFilter>();
+			if (meshFilters == null || meshFilters.Length == 0)
+			{
+				return false;
+			}
+
+			var initialization = true;
+			for (int i = 0; i < meshFilters.Length; i++)
+			{
+				var meshFilter = meshFilters[i];
+				var sharedMesh = meshFilter != null ? meshFilter.sharedMesh : null;
+				if (sharedMesh != null)
+				{
+					if (initialization)
+					{
+						bounds = meshFilter.transform.TransformBounds(sharedMesh.bounds);
+						initialization = false;
+					}
+					else
+					{
+						bounds.Encapsulate(meshFilter.transform.TransformBounds(sharedMesh.bounds));
+					}
+				}
+			}
+			return initialization; // false if never initialized
+		}
+
+		public static bool CalculateColliderWorldBoundsRecursively(this GameObject go, out Bounds bounds)
+		{
+			bounds = new Bounds();
+			var colliders = go.GetComponentsInChildren<Collider>();
+			if (colliders == null || colliders.Length == 0)
+			{
+				return false;
+			}
+
+			var initialization = true;
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				var collider = colliders[i];
+				if (collider != null)
+				{
+					if (initialization)
+					{
+						bounds = collider.bounds;
+						initialization = false;
+					}
+					else
+					{
+						bounds.Encapsulate(collider.bounds);
+					}
+				}
+			}
 			return initialization; // false if never initialized
 		}
 
@@ -840,6 +906,8 @@ namespace Extenity.SceneManagement
 
 		public static string FullName(this GameObject me, char separator = '/')
 		{
+			if (me == null)
+				return "";
 			var name = me.name;
 			var parent = me.transform.parent;
 			while (parent != null)
