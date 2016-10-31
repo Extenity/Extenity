@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Extenity.Applicational
 {
@@ -30,8 +31,14 @@ namespace Extenity.Applicational
 				return;
 
 			Calculate();
-			Broadcast.ToScene("OnScreenSizeChange", SendMessageOptions.DontRequireReceiver);
+			OnScreenSizeChanged.Invoke();
 		}
+
+		#endregion
+
+		#region Events
+
+		public UnityEvent OnScreenSizeChanged = new UnityEvent();
 
 		#endregion
 
@@ -81,7 +88,7 @@ namespace Extenity.Applicational
 
 		#region Orientation Tools
 
-		private ScreenOrientation previousOrientation;
+		private ScreenOrientation previousOrientation = ScreenOrientation.Unknown;
 
 		public void ChangeOrientation(ScreenOrientation orientation)
 		{
