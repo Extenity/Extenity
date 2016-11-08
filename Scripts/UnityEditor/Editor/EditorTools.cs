@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.EditorUtilities
@@ -10,6 +11,15 @@ namespace Extenity.EditorUtilities
 
 	public static class EditorTools
 	{
+		#region Initialization
+
+		static EditorTools()
+		{
+			InitializeWindowDock();
+		}
+
+		#endregion
+
 		#region File/Directory Delete
 
 		public static void DeleteMetaFileAndItem(string path)
@@ -432,6 +442,23 @@ namespace Extenity.EditorUtilities
 		private static float _CalculateTagBackgroundTotalWidth(float labelWidth)
 		{
 			return labelWidth + TagPaneThings.ButtonSize + TagPaneThings.BackgroundDoublePadding;
+		}
+
+		#endregion
+
+		#region Window Dock
+
+		static PropertyInfo DockedPropertyInfo;
+
+		private static void InitializeWindowDock()
+		{
+			DockedPropertyInfo = typeof(EditorWindow).GetProperty("docked", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.GetProperty);
+		}
+
+		public static bool IsDocked(this EditorWindow window)
+		{
+			var obj = DockedPropertyInfo.GetValue(window, null);
+			return bool.Parse(obj.ToString());
 		}
 
 		#endregion

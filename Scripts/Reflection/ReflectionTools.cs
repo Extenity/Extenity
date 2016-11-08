@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using UnityEngine;
 using System.Collections;
+using Extenity.SystemToolbox;
 
 public static class ReflectionTools
 {
@@ -69,6 +69,470 @@ public static class ReflectionTools
 
 		return true;
 	}
+
+	#endregion
+
+	#region GetField
+
+	private static FieldInfo InternalGetFieldInfo(Type type, string fieldName)
+	{
+		var field = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		if (field == null)
+		{
+			throw new Exception(string.Format("Type '{0}' does not have the field '{1}'.", type, fieldName));
+		}
+		return field;
+	}
+
+	public static void GetFieldAsFunc<TInstance, TResult>(this Type type, string fieldName, out InstanceFunc<TInstance, TResult> result)
+	{
+		var field = InternalGetFieldInfo(type, fieldName);
+		result = (instance) =>
+		{
+			var ret = field.GetValue(instance);
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticFieldAsFunc<TResult>(this Type type, string fieldName, out Func<TResult> result)
+	{
+		var field = InternalGetFieldInfo(type, fieldName);
+		result = () =>
+		{
+			var ret = field.GetValue(null);
+			return (TResult)ret;
+		};
+	}
+
+	#endregion
+
+	#region GetMethod
+
+	private static MethodInfo InternalGetMethodInfo(Type type, string methodName, Type[] types)
+	{
+		var method = type.GetMethod(methodName,
+			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+			null, CallingConventions.Any, types, null);
+		if (method == null)
+		{
+			throw new Exception(string.Format("Type '{0}' does not have the method '{1}'.", type, methodName));
+		}
+		return method;
+	}
+
+	private static MethodInfo InternalGetStaticMethodInfo(Type type, string methodName, Type[] types)
+	{
+		var method = type.GetMethod(methodName,
+			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+			null, CallingConventions.Any, types, null);
+		if (method == null)
+		{
+			throw new Exception(string.Format("Type '{0}' does not have the static method '{1}'.", type, methodName));
+		}
+		return method;
+	}
+
+	// --------------------------------------------------------------
+	// GetMethodAsAction
+	// --------------------------------------------------------------
+
+	public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new Type[0]);
+		result = instance =>
+		{
+			method.Invoke(instance, CollectionTools.EmptyObjectArray);
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1>(this Type type, string methodName, out InstanceAction<TInstance, T1> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1) });
+		result = (instance, arg1) =>
+		{
+			method.Invoke(instance, new object[] { arg1 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		result = (instance, arg1, arg2) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		result = (instance, arg1, arg2, arg3) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		result = (instance, arg1, arg2, arg3, arg4) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
+		};
+	}
+
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
+		{
+			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
+		};
+	}
+
+	// --------------------------------------------------------------
+	// GetMethodAsFunc
+	// --------------------------------------------------------------
+
+	public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new Type[0]);
+		result = (instance) =>
+		{
+			var ret = method.Invoke(instance, CollectionTools.EmptyObjectArray);
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1) });
+		result = (instance, arg1) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		result = (instance, arg1, arg2) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		result = (instance, arg1, arg2, arg3) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		result = (instance, arg1, arg2, arg3, arg4) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result)
+	{
+		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
+		{
+			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
+			return (TResult)ret;
+		};
+	}
+
+	// --------------------------------------------------------------
+	// GetStaticMethodAsAction
+	// --------------------------------------------------------------
+
+	public static void GetStaticMethodAsAction(this Type type, string methodName, out Action result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
+		result = () =>
+		{
+			method.Invoke(null, new object[] { CollectionTools.EmptyObjectArray });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1>(this Type type, string methodName, out Action<T1> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1)});
+		result = (arg1) =>
+		{
+			method.Invoke(null, new object[] { arg1 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2>(this Type type, string methodName, out Action<T1, T2> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2)});
+		result = (arg1, arg2) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3>(this Type type, string methodName, out Action<T1, T2, T3> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		result = (arg1, arg2, arg3) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4>(this Type type, string methodName, out Action<T1, T2, T3, T4> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		result = (arg1, arg2, arg3, arg4) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4 });
+		};
+	}
+
+	// TODO: Uncomment after Unity gets Mono update.
+	/*
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		result = (arg1, arg2, arg3, arg4, arg5) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
+		};
+	}
+
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
+		{
+			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
+		};
+	}
+	*/
+
+	// --------------------------------------------------------------
+	// GetStaticMethodAsFunc
+	// --------------------------------------------------------------
+
+	public static void GetStaticMethodAsFunc<TResult>(this Type type, string methodName, out Func<TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
+		result = () =>
+		{
+			var ret = method.Invoke(null, CollectionTools.EmptyObjectArray);
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, TResult>(this Type type, string methodName, out Func<T1, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1) });
+		result = (arg1) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, TResult>(this Type type, string methodName, out Func<T1, T2, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		result = (arg1, arg2) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, TResult>(this Type type, string methodName, out Func<T1, T2, T3, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		result = (arg1, arg2, arg3) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		result = (arg1, arg2, arg3, arg4) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4 });
+			return (TResult)ret;
+		};
+	}
+
+	// TODO: Uncomment after Unity gets Mono update.
+	/*
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		result = (arg1, arg2, arg3, arg4, arg5) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
+			return (TResult)ret;
+		};
+	}
+
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result)
+	{
+		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
+		{
+			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
+			return (TResult)ret;
+		};
+	}
+	*/
 
 	#endregion
 

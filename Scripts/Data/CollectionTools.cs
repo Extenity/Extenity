@@ -801,6 +801,12 @@ public static class CollectionTools
 	}
 
 	#endregion
+
+	#region Helpers
+
+	public static readonly object[] EmptyObjectArray = new object[0];
+
+	#endregion
 }
 
 public class CollectionComparer<T> : IEqualityComparer<IEnumerable<T>>
