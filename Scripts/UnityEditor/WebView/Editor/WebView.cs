@@ -19,19 +19,26 @@ namespace Extenity.UnityEditorToolbox
 			var editorWindowType = typeof(EditorWindow);
 			var webViewType = editorAssembly.GetType("UnityEditor.WebView");
 			var webViewV8CallbackCSharpType = editorAssembly.GetType("UnityEditor.WebViewV8CallbackCSharp");
+			var guiViewType = editorAssembly.GetType("UnityEditor.GUIView");
+			if (webViewType == null)
+				throw new NullReferenceException();
+			if (webViewV8CallbackCSharpType == null)
+				throw new NullReferenceException();
+			if (guiViewType == null)
+				throw new NullReferenceException();
 
 			webViewV8CallbackCSharpType.GetMethodAsAction("Callback", out Callback);
 
 			editorWindowType.GetFieldAsFunc("m_Parent", out GetView);
 
 			webViewType.GetMethodAsAction("DestroyWebView", out _DestroyWebView);
-			webViewType.GetMethodAsAction("InitWebView", out _InitWebView);
+			webViewType.GetMethodAsAction("InitWebView", out _InitWebView, new[] { guiViewType, typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool) });
 			webViewType.GetMethodAsAction("ExecuteJavascript", out _ExecuteJavascript);
 			webViewType.GetMethodAsAction("LoadURL", out _LoadURL);
 			webViewType.GetMethodAsAction("LoadFile", out _LoadFile);
 			webViewType.GetMethodAsFunc("DefineScriptObject", out _DefineScriptObject);
 			webViewType.GetMethodAsAction("SetDelegateObject", out _SetDelegateObject);
-			webViewType.GetMethodAsAction("SetHostView", out _SetHostView);
+			webViewType.GetMethodAsAction("SetHostView", out _SetHostView, new[] { guiViewType });
 			webViewType.GetMethodAsAction("SetSizeAndPosition", out _SetSizeAndPosition);
 			webViewType.GetMethodAsAction("SetFocus", out _SetFocus);
 			webViewType.GetMethodAsFunc("HasApplicationFocus", out _HasApplicationFocus);

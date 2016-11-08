@@ -123,7 +123,7 @@ public static class ReflectionTools
 	private static MethodInfo InternalGetStaticMethodInfo(Type type, string methodName, Type[] types)
 	{
 		var method = type.GetMethod(methodName,
-			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
 			null, CallingConventions.Any, types, null);
 		if (method == null)
 		{
@@ -136,7 +136,7 @@ public static class ReflectionTools
 	// GetMethodAsAction
 	// --------------------------------------------------------------
 
-	public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result)
+	public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result, Type[] overrideTypes = null)
 	{
 		var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 		result = instance =>
@@ -145,81 +145,81 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1>(this Type type, string methodName, out InstanceAction<TInstance, T1> result)
+	public static void GetMethodAsAction<TInstance, T1>(this Type type, string methodName, out InstanceAction<TInstance, T1> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1) });
 		result = (instance, arg1) =>
 		{
 			method.Invoke(instance, new object[] { arg1 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2> result)
+	public static void GetMethodAsAction<TInstance, T1, T2>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2) });
 		result = (instance, arg1, arg2) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3) });
 		result = (instance, arg1, arg2, arg3) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
 		result = (instance, arg1, arg2, arg3, arg4) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
 		};
 	}
 
-	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9> result)
+	public static void GetMethodAsAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out InstanceAction<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
 		{
 			method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
@@ -230,7 +230,7 @@ public static class ReflectionTools
 	// GetMethodAsFunc
 	// --------------------------------------------------------------
 
-	public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result)
+	public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result, Type[] overrideTypes = null)
 	{
 		var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 		result = (instance) =>
@@ -240,9 +240,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1) });
 		result = (instance, arg1) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1 });
@@ -250,9 +250,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2) });
 		result = (instance, arg1, arg2) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2 });
@@ -260,9 +260,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3) });
 		result = (instance, arg1, arg2, arg3) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3 });
@@ -270,9 +270,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
 		result = (instance, arg1, arg2, arg3, arg4) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4 });
@@ -280,9 +280,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5 });
@@ -290,9 +290,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
@@ -300,9 +300,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
@@ -310,9 +310,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
@@ -320,9 +320,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result)
+	public static void GetMethodAsFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		var method = InternalGetMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
 		result = (instance, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
 		{
 			var ret = method.Invoke(instance, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
@@ -343,36 +343,36 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1>(this Type type, string methodName, out Action<T1> result)
+	public static void GetStaticMethodAsAction<T1>(this Type type, string methodName, out Action<T1> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1)});
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1) });
 		result = (arg1) =>
 		{
 			method.Invoke(null, new object[] { arg1 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2>(this Type type, string methodName, out Action<T1, T2> result)
+	public static void GetStaticMethodAsAction<T1, T2>(this Type type, string methodName, out Action<T1, T2> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2)});
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2) });
 		result = (arg1, arg2) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3>(this Type type, string methodName, out Action<T1, T2, T3> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3>(this Type type, string methodName, out Action<T1, T2, T3> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3) });
 		result = (arg1, arg2, arg3) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4>(this Type type, string methodName, out Action<T1, T2, T3, T4> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4>(this Type type, string methodName, out Action<T1, T2, T3, T4> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
 		result = (arg1, arg2, arg3, arg4) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4 });
@@ -381,45 +381,45 @@ public static class ReflectionTools
 
 	// TODO: Uncomment after Unity gets Mono update.
 	/*
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
 		result = (arg1, arg2, arg3, arg4, arg5) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
 		};
 	}
 
-	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> result)
+	public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
 		{
 			method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
@@ -431,7 +431,7 @@ public static class ReflectionTools
 	// GetStaticMethodAsFunc
 	// --------------------------------------------------------------
 
-	public static void GetStaticMethodAsFunc<TResult>(this Type type, string methodName, out Func<TResult> result)
+	public static void GetStaticMethodAsFunc<TResult>(this Type type, string methodName, out Func<TResult> result, Type[] overrideTypes = null)
 	{
 		var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
 		result = () =>
@@ -441,9 +441,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, TResult>(this Type type, string methodName, out Func<T1, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, TResult>(this Type type, string methodName, out Func<T1, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1) });
 		result = (arg1) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1 });
@@ -451,9 +451,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, TResult>(this Type type, string methodName, out Func<T1, T2, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, TResult>(this Type type, string methodName, out Func<T1, T2, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2) });
 		result = (arg1, arg2) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2 });
@@ -461,9 +461,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, TResult>(this Type type, string methodName, out Func<T1, T2, T3, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, TResult>(this Type type, string methodName, out Func<T1, T2, T3, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3) });
 		result = (arg1, arg2, arg3) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3 });
@@ -471,9 +471,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
 		result = (arg1, arg2, arg3, arg4) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4 });
@@ -483,9 +483,9 @@ public static class ReflectionTools
 
 	// TODO: Uncomment after Unity gets Mono update.
 	/*
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
 		result = (arg1, arg2, arg3, arg4, arg5) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5 });
@@ -493,9 +493,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
@@ -503,9 +503,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
@@ -513,9 +513,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
@@ -523,9 +523,9 @@ public static class ReflectionTools
 		};
 	}
 
-	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result)
+	public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> result, Type[] overrideTypes = null)
 	{
-		var method = InternalGetStaticMethodInfo(type, methodName, new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
+		var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9) });
 		result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) =>
 		{
 			var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
