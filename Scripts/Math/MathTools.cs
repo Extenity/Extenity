@@ -441,7 +441,7 @@ public static class MathTools
 	{
 		if (digitsAfterDecimalPoint < 0) digitsAfterDecimalPoint = 0;
 		float factor = Mathf.Pow(10, digitsAfterDecimalPoint);
-		return ((int) Mathf.Round(value*factor))/factor;
+		return ((int)Mathf.Round(value * factor)) / factor;
 	}
 
 	public static double RoundToDigits(this double value, int digitsAfterDecimalPoint)
@@ -1056,6 +1056,74 @@ public static class MathTools
 	public static float MaxComponentXZ(this Vector3 value)
 	{
 		return value.x > value.z ? value.x : value.z;
+	}
+
+	#endregion
+
+	#region Distance and Difference
+
+	public static float SqrDistanceTo(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var dy = b.y - a.y;
+		var dz = b.z - a.z;
+		return dx * dx + dy * dy + dz * dz;
+	}
+
+	public static float SqrDistanceToXY(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var dy = b.y - a.y;
+		return dx * dx + dy * dy;
+	}
+
+	public static float SqrDistanceToXZ(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var dz = b.z - a.z;
+		return dx * dx + dz * dz;
+	}
+
+	public static float DistanceTo(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var dy = b.y - a.y;
+		var dz = b.z - a.z;
+		return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	public static float DistanceToXY(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var xy = b.y - a.y;
+		return Mathf.Sqrt(dx * dx + xy * xy);
+	}
+
+	public static float DistanceToXZ(this Vector3 a, Vector3 b)
+	{
+		var dx = b.x - a.x;
+		var dz = b.z - a.z;
+		return Mathf.Sqrt(dx * dx + dz * dz);
+	}
+
+	public static Vector2 Difference2ToXY(this Vector3 a, Vector3 b)
+	{
+		return new Vector2(b.x - a.x, b.y - a.y);
+	}
+
+	public static Vector2 Difference2ToXZ(this Vector3 a, Vector3 b)
+	{
+		return new Vector2(b.x - a.x, b.z - a.z);
+	}
+
+	public static Vector3 Difference3ToXY(this Vector3 a, Vector3 b)
+	{
+		return new Vector3(b.x - a.x, b.y - a.y, 0f);
+	}
+
+	public static Vector3 Difference3ToXZ(this Vector3 a, Vector3 b)
+	{
+		return new Vector3(b.x - a.x, 0f, b.z - a.z);
 	}
 
 	#endregion
