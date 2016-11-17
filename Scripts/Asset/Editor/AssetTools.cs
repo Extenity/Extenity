@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Extenity.DataTypes;
 using Extenity.OperatingSystem;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
@@ -45,6 +45,52 @@ namespace Extenity.Asset
 		public static List<GameObject> FindAllPrefabsContainingComponent<TComponent>() where TComponent : Component
 		{
 			return FindAllPrefabsWhere(gameObject => gameObject.GetComponent<TComponent>() != null);
+		}
+
+		#endregion
+
+		#region Context Menu - Operations - Texture
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", priority = 3101)]
+		public static void GenerateEmbeddedCodeForTextureAsPNG()
+		{
+			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToPNG());
+		}
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", validate = true)]
+		private static bool Validate_GenerateEmbeddedCodeForTextureAsPNG()
+		{
+			if (Selection.objects == null || Selection.objects.Length != 1)
+				return false;
+			return Selection.objects[0] is Texture2D;
+		}
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", priority = 3102)]
+		public static void GenerateEmbeddedCodeForTextureAsJPG()
+		{
+			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToJPG());
+		}
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", validate = true)]
+		private static bool Validate_GenerateEmbeddedCodeForTextureAsJPG()
+		{
+			if (Selection.objects == null || Selection.objects.Length != 1)
+				return false;
+			return Selection.objects[0] is Texture2D;
+		}
+
+		private static void _GenerateEmbeddedCodeForTexture(Func<Texture2D, byte[]> getDataOfTexture)
+		{
+			var texture = Selection.objects[0] as Texture2D;
+			var path = AssetDatabase.GetAssetPath(texture);
+			var fileName = Path.GetFileNameWithoutExtension(path);
+			texture = texture.CopyTextureAsReadable(); // Get a readable copy of the texture
+			var data = getDataOfTexture(texture);
+			var textureName = fileName.ClearSpecialCharacters();
+			var stringBuilder = new StringBuilder();
+			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, ref stringBuilder);
+			Clipboard.SetClipboardText(stringBuilder.ToString());
+			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
 		}
 
 		#endregion

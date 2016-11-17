@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using UnityEngine;
 
 public static class TextureTools
@@ -108,4 +110,54 @@ public static class TextureTools
 		// "myTexture2D" now has the same pixels from "texture" and it's readable.
 		return myTexture2D;
 	}
+
+	#region Generate Embedded Code For Texture
+
+	public static string GenerateEmbeddedCodeForTexture(byte[] data, string textureName, ref StringBuilder stringBuilder)
+	{
+		if (stringBuilder == null)
+		{
+			stringBuilder = new StringBuilder();
+		}
+
+		stringBuilder.AppendLine("#region Embedded Texture - " + textureName);
+		stringBuilder.AppendLine();
+		stringBuilder.AppendLine("private static Texture2D _Texture_" + textureName + ";");
+		stringBuilder.AppendLine("public static Texture2D Texture_" + textureName + "");
+		stringBuilder.AppendLine("{");
+		stringBuilder.AppendLine("	get");
+		stringBuilder.AppendLine("	{");
+		stringBuilder.AppendLine("		if (_Texture_" + textureName + " == null)");
+		stringBuilder.AppendLine("		{");
+		stringBuilder.AppendLine("			_Texture_" + textureName + " = new Texture2D(1, 1);");
+		stringBuilder.AppendLine("			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
+		stringBuilder.AppendLine("		}");
+		stringBuilder.AppendLine("		return _Texture_" + textureName + ";");
+		stringBuilder.AppendLine("	}");
+		stringBuilder.AppendLine("}");
+		stringBuilder.AppendLine();
+		stringBuilder.AppendLine("private static readonly byte[] _TextureData_" + textureName + " = ");
+		stringBuilder.AppendLine("{");
+		stringBuilder.Append('	');
+		var counter = 0;
+		for (int i = 0; i < data.Length; i++)
+		{
+			stringBuilder.Append(((int)data[i]) + ", ");
+			if (++counter > 50)
+			{
+				counter = 0;
+				stringBuilder.Length--;
+				if (i < data.Length - 1) // Line break if there are more bytes to write
+				{
+					stringBuilder.Append(Environment.NewLine + '	');
+				}
+			}
+		}
+		stringBuilder.AppendLine(Environment.NewLine + "};");
+		stringBuilder.AppendLine();
+		stringBuilder.AppendLine("#endregion");
+		return "Texture_" + textureName;
+	}
+
+	#endregion
 }

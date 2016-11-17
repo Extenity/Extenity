@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Extenity.DataTypes
 {
@@ -100,6 +101,11 @@ namespace Extenity.DataTypes
 			}
 
 			return true;
+		}
+
+		public static string ClearSpecialCharacters(this string text)
+		{
+			return Regex.Replace(text, @"\W+", "");
 		}
 
 		public static string ClipIfNecessary(this string text, int maxCharacters)
