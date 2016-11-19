@@ -748,6 +748,15 @@ namespace Extenity.SceneManagement
 
 		#endregion
 
+		#region Instance
+
+		public static bool IsAnInstanceInScene(this GameObject me)
+		{
+			return me.scene.name != null;
+		}
+
+		#endregion
+
 		#region Instance Count
 
 		public static int GetComponentCount<T>(this GameObject me) where T : Component
