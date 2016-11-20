@@ -95,15 +95,30 @@ namespace Extenity.DataTypes
 			return result;
 		}
 
-		public static object GetDefaultValue(this Type t)
+		#region Get Default Value Of Type
+
+		private static Dictionary<Type, object> DefaultValues = new Dictionary<Type, object>();
+
+		public static object GetDefaultValue(this Type type)
 		{
-			// Check if this is a 'valut type'. Create an instance to get it's default value.
-			if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
-				return Activator.CreateInstance(t);
+			// Check if this is a 'value type'. Create an instance to get it's default value.
+			if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
+			{
+				// Try to get it from cache
+				object defaultValue;
+				if (DefaultValues.TryGetValue(type, out defaultValue))
+					return defaultValue;
+
+				defaultValue = Activator.CreateInstance(type);
+				DefaultValues.Add(type, defaultValue);
+				return defaultValue;
+			}
 
 			// Otherwise this is a 'reference type' and the default value for reference types is 'null'.
 			return null;
 		}
+
+		#endregion
 
 		#region Find Derived Types
 
