@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -104,6 +105,20 @@ namespace Extenity.DataTypes
 			return null;
 		}
 
+		#region Find Derived Types
+
+		public static IEnumerable<Type> FindDerivedTypes(this Assembly assembly, Type baseType)
+		{
+			return assembly.GetTypes().Where(t => t != baseType && baseType.IsAssignableFrom(t));
+		}
+
+		public static IEnumerable<Type> FindDerivedTypesInAllAssemblies(Type baseType)
+		{
+			return AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.FindDerivedTypes(baseType));
+		}
+
+		#endregion
+
 		#region Cached Type Getters - Public And Private Fields
 
 		private static Dictionary<Type, FieldInfo[]> PublicAndPrivateInstanceFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
@@ -153,9 +168,10 @@ namespace Extenity.DataTypes
 		#region Cached Attribute Getters - Public And Private Fields
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
 
 		/// <summary>
-		/// Gets public and private instance (non-static) fields. Caches the results for faster accesses.
+		/// Gets public and private instance (non-static) fields that has the specified attribute. Caches the results for faster accesses.
 		/// 
 		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
 		/// </summary>
@@ -167,7 +183,7 @@ namespace Extenity.DataTypes
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
 			if (PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
 			{
-				//Debug.LogFormat("Getting field with attributes info from cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+				//Debug.LogFormat("Getting field-with-attributes info from cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
 				return fieldsWithAttributes;
 			}
 
@@ -184,7 +200,7 @@ namespace Extenity.DataTypes
 			fieldsWithAttributes = list.ToArray();
 
 			// Add to cache
-			//Debug.LogFormat("Adding field with attributes info to cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+			//Debug.LogFormat("Adding field-with-attributes info to cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
 			PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.Add(
 				thisTypeAndAttributeTypeCombination,
 				fieldsWithAttributes);
@@ -192,6 +208,43 @@ namespace Extenity.DataTypes
 			return fieldsWithAttributes;
 		}
 
+		/// <summary>
+		/// Gets public and private instance (non-static) fields that doesn't have the specified attribute. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetPublicAndPrivateInstanceFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			{
+				//Debug.LogFormat("Getting field-without-attributes info from cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithoutAttributes;
+			}
+
+			var list = new List<KeyValuePair<FieldInfo, Attribute[]>>();
+			var fields = GetPublicAndPrivateInstanceFields(type);
+			for (int i = 0; i < fields.Length; i++)
+			{
+				var fieldInfo = fields[i];
+				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				if (attributes.Length == 0)
+					list.Add(new KeyValuePair<FieldInfo, Attribute[]>(fieldInfo, (Attribute[])attributes));
+			}
+			fieldsWithoutAttributes = list.ToArray();
+
+			// Add to cache
+			//Debug.LogFormat("Adding field-without-attributes info to cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+			PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.Add(
+				thisTypeAndAttributeTypeCombination,
+				fieldsWithoutAttributes);
+
+			return fieldsWithoutAttributes;
+		}
 
 		#endregion
 	}
