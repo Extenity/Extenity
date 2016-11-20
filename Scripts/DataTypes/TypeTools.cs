@@ -1,8 +1,8 @@
 using System;
-using System.Linq;
 using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
-using System.Collections;
 
 namespace Extenity.DataTypes
 {
@@ -93,6 +93,107 @@ namespace Extenity.DataTypes
 			result = result.Remove(result.Length - 1); // remove the trailing "."
 			return result;
 		}
+
+		public static object GetDefaultValue(this Type t)
+		{
+			// Check if this is a 'valut type'. Create an instance to get it's default value.
+			if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+				return Activator.CreateInstance(t);
+
+			// Otherwise this is a 'reference type' and the default value for reference types is 'null'.
+			return null;
+		}
+
+		#region Cached Type Getters - Public And Private Fields
+
+		private static Dictionary<Type, FieldInfo[]> PublicAndPrivateInstanceFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
+
+		/// <summary>
+		/// Gets public and private instance (non-static) fields. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo[] GetPublicAndPrivateInstanceFields(this Type type)
+		{
+			FieldInfo[] fields;
+
+			// Try to get it from cache
+			if (PublicAndPrivateInstanceFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			{
+				//Debug.LogFormat("Getting field info from cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+				return fields;
+			}
+
+			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			var baseType = type.BaseType;
+			if (baseType != typeof(MonoBehaviour) &&
+				baseType != typeof(Behaviour) &&
+				baseType != typeof(Component) &&
+				baseType != typeof(UnityEngine.Object) &&
+				baseType != typeof(System.Object))
+			{
+				var baseFields = GetPublicAndPrivateInstanceFields(baseType);
+				fields = type.GetFields(bindingFlags);
+				fields = fields.AddRange(baseFields);
+			}
+			else
+			{
+				fields = type.GetFields(bindingFlags);
+			}
+
+			// Add to cache
+			//Debug.LogFormat("Adding field info to cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+			PublicAndPrivateInstanceFieldsIncludingBaseTypes.Add(type, fields);
+			return fields;
+		}
+
+		#endregion
+
+		#region Cached Attribute Getters - Public And Private Fields
+
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+
+		/// <summary>
+		/// Gets public and private instance (non-static) fields. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetPublicAndPrivateInstanceFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			{
+				//Debug.LogFormat("Getting field with attributes info from cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithAttributes;
+			}
+
+			var list = new List<KeyValuePair<FieldInfo, Attribute[]>>();
+			var fields = GetPublicAndPrivateInstanceFields(type);
+			for (int i = 0; i < fields.Length; i++)
+			{
+				var fieldInfo = fields[i];
+				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				if (attributes.Length > 0)
+					list.Add(new KeyValuePair<FieldInfo, Attribute[]>(fieldInfo, (Attribute[])attributes));
+			}
+			fieldsWithAttributes = list.ToArray();
+
+			// Add to cache
+			//Debug.LogFormat("Adding field with attributes info to cache for '{0}' with types: \n{1}", type, fields.Serialize('\n'));
+			PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.Add(
+				thisTypeAndAttributeTypeCombination,
+				fieldsWithAttributes);
+
+			return fieldsWithAttributes;
+		}
+
+
+		#endregion
 	}
 
 }
