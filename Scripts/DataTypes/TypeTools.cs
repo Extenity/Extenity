@@ -106,6 +106,110 @@ namespace Extenity.DataTypes
 				type == typeof(System.Object);
 		}
 
+		public static T GetAttribute<T>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where T : Attribute
+		{
+			if (customAttributeProvider == null)
+				return default(T);
+			var customAttributes = customAttributeProvider.GetCustomAttributes(typeof(T), inherit);
+			if (customAttributes == null || customAttributes.Length == 0)
+				return default(T);
+			return (T)customAttributes[0];
+		}
+
+		public static IEnumerable<T> GetAttributes<T>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where T : Attribute
+		{
+			if (customAttributeProvider == null)
+				return null;
+			var customAttributes = customAttributeProvider.GetCustomAttributes(typeof(T), inherit);
+			if (customAttributes == null)
+				return null;
+			return customAttributes.Cast<T>();
+		}
+
+		public static bool IsDefined<T>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where T : Attribute
+		{
+			if (customAttributeProvider == null)
+				return false;
+			return customAttributeProvider.IsDefined(typeof(T), inherit);
+		}
+
+		#region Unity Serialized Fields
+
+		public static bool IsUnitySerialized(this FieldInfo fieldInfo)
+		{
+			return fieldInfo.IsPublic || fieldInfo.IsDefined<SerializeField>(true);
+		}
+
+		public static FieldInfo[] FilterUnitySerializedFields(this FieldInfo[] unfilteredFields)
+		{
+			if (unfilteredFields != null && unfilteredFields.Length > 0)
+			{
+				var fieldsList = new List<FieldInfo>(unfilteredFields.Length);
+				for (int i = 0; i < unfilteredFields.Length; i++)
+				{
+					if (unfilteredFields[i].IsUnitySerialized())
+					{
+						fieldsList.Add(unfilteredFields[i]);
+					}
+				}
+				return fieldsList.ToArray();
+			}
+			return new FieldInfo[0];
+		}
+
+		public static FieldInfo[] FilterUnityNonSerializedFields(this FieldInfo[] unfilteredFields)
+		{
+			if (unfilteredFields != null && unfilteredFields.Length > 0)
+			{
+				var fieldsList = new List<FieldInfo>(unfilteredFields.Length);
+				for (int i = 0; i < unfilteredFields.Length; i++)
+				{
+					if (!unfilteredFields[i].IsUnitySerialized())
+					{
+						fieldsList.Add(unfilteredFields[i]);
+					}
+				}
+				return fieldsList.ToArray();
+			}
+			return new FieldInfo[0];
+		}
+
+		private static KeyValuePair<FieldInfo, Attribute[]>[] FilterUnitySerializedFields(KeyValuePair<FieldInfo, Attribute[]>[] unfilteredFields)
+		{
+			if (unfilteredFields != null && unfilteredFields.Length > 0)
+			{
+				var fieldsList = new List<KeyValuePair<FieldInfo, Attribute[]>>(unfilteredFields.Length);
+				for (int i = 0; i < unfilteredFields.Length; i++)
+				{
+					if (unfilteredFields[i].Key.IsUnitySerialized())
+					{
+						fieldsList.Add(unfilteredFields[i]);
+					}
+				}
+				return fieldsList.ToArray();
+			}
+			return new KeyValuePair<FieldInfo, Attribute[]>[0];
+		}
+
+		private static KeyValuePair<FieldInfo, Attribute[]>[] FilterUnityNonSerializedFields(KeyValuePair<FieldInfo, Attribute[]>[] unfilteredFields)
+		{
+			if (unfilteredFields != null && unfilteredFields.Length > 0)
+			{
+				var fieldsList = new List<KeyValuePair<FieldInfo, Attribute[]>>(unfilteredFields.Length);
+				for (int i = 0; i < unfilteredFields.Length; i++)
+				{
+					if (!unfilteredFields[i].Key.IsUnitySerialized())
+					{
+						fieldsList.Add(unfilteredFields[i]);
+					}
+				}
+				return fieldsList.ToArray();
+			}
+			return new KeyValuePair<FieldInfo, Attribute[]>[0];
+		}
+
+		#endregion
+
 		#region Get Default Value Of Type
 
 		private static Dictionary<Type, object> DefaultValues = new Dictionary<Type, object>();
@@ -148,8 +252,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Fields
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		private static Dictionary<Type, FieldInfo[]> PublicAndPrivateInstanceFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
@@ -195,8 +299,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Fields Of Type
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		/// <summary>
@@ -246,8 +350,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Fields With/Without Attribute
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
@@ -284,7 +388,7 @@ namespace Extenity.DataTypes
 
 			// Add to cache
 			//Debug.LogFormat("Adding field-with-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
-			PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination,fieldsWithAttributes);
+			PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithAttributes);
 			return fieldsWithAttributes;
 		}
 
@@ -319,7 +423,7 @@ namespace Extenity.DataTypes
 
 			// Add to cache
 			//Debug.LogFormat("Adding field-without-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
-			PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination,fieldsWithoutAttributes);
+			PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithoutAttributes);
 			return fieldsWithoutAttributes;
 		}
 
@@ -328,8 +432,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Properties
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		private static Dictionary<Type, PropertyInfo[]> PublicAndPrivateInstancePropertiesIncludingBaseTypes = new Dictionary<Type, PropertyInfo[]>();
@@ -375,8 +479,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Properties Of Type
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		/// <summary>
@@ -426,8 +530,8 @@ namespace Extenity.DataTypes
 		#region Cached Type Getters - Public And Private Properties With/Without Attribute
 
 		// --------------------------------------------------------------------------------------------------------
-		// ---- NOTE: These codes are duplicated between Property and Field members.
-		// ---- Make sure you modify them both if anything changes here
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<PropertyInfo, Attribute[]>[]> PublicAndPrivateInstancePropertiesWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<PropertyInfo, Attribute[]>[]>();
@@ -501,6 +605,290 @@ namespace Extenity.DataTypes
 			//Debug.LogFormat("Adding property-without-attributes info to cache for '{0}' with properties: \n{1}", type, properties.Serialize('\n'));
 			PublicAndPrivateInstancePropertiesWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, propertiesWithoutAttributes);
 			return propertiesWithoutAttributes;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - Serialized Fields
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		private static Dictionary<Type, FieldInfo[]> SerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
+
+		/// <summary>
+		/// Gets fields that Unity uses in serialization (public instance fields and SerializeField tagged instance fields). Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo[] GetSerializedFields(this Type type)
+		{
+			FieldInfo[] fields;
+
+			// Try to get it from cache
+			if (SerializedFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			{
+				//Debug.LogFormat("Getting Unity-serialized field info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fields;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFields(type);
+			fields = FilterUnitySerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-serialized field info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			SerializedFieldsIncludingBaseTypes.Add(type, fields);
+			return fields;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - Serialized Fields Of Type
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Field type
+		/// FieldInfo[]: List of fields with specified field type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, Type>, FieldInfo[]> SerializedFieldsOfTypeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, FieldInfo[]>();
+
+		/// <summary>
+		/// Gets fields that Unity uses in serialization (public instance fields and SerializeField tagged instance fields) with specified field type. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo[] GetSerializedFieldsOfType(this Type type, Type fieldType)
+		{
+			var key = new KeyValuePair<Type, Type>(type, fieldType);
+			FieldInfo[] fields;
+
+			// Try to get it from cache
+			if (SerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out fields))
+			{
+				Debug.LogFormat("Getting Unity-serialized field info from cache for '{0}' and field type '{1}' with fields: \n{2}", type, fieldType, fields.Serialize('\n'));
+				return fields;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsOfType(type, fieldType);
+			fields = FilterUnitySerializedFields(unfilteredFields);
+
+			// Add to cache
+			Debug.LogFormat("Adding Unity-serialized field info to cache for '{0}' and field type '{1}' with fields: \n{2}", type, fieldType, fields.Serialize('\n'));
+			SerializedFieldsOfTypeIncludingBaseTypes.Add(key, fields);
+			return fields;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - Serialized Fields With/Without Attribute
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+
+		/// <summary>
+		/// Gets fields that Unity uses in serialization (public instance fields and SerializeField tagged instance fields) that has the specified attribute. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetSerializedFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (SerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			{
+				//Debug.LogFormat("Getting Unity-serialized field-with-attributes info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithAttributes;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsWithAttribute<TAttribute>(type);
+			fieldsWithAttributes = FilterUnitySerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-serialized field-with-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			SerializedFieldsWithAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithAttributes);
+			return fieldsWithAttributes;
+		}
+
+		/// <summary>
+		/// Gets fields that Unity uses in serialization (public instance fields and SerializeField tagged instance fields) that doesn't have the specified attribute. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetSerializedFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (SerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			{
+				//Debug.LogFormat("Getting Unity-serialized field-without-attributes info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithoutAttributes;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsWithoutAttribute<TAttribute>(type);
+			fieldsWithoutAttributes = FilterUnitySerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-serialized field-without-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			SerializedFieldsWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithoutAttributes);
+			return fieldsWithoutAttributes;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - NonSerialized Fields
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		private static Dictionary<Type, FieldInfo[]> NonSerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
+
+		/// <summary>
+		/// Gets fields that Unity does not use in serialization (public instance fields and SerializeField tagged instance fields). Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo[] GetNonSerializedFields(this Type type)
+		{
+			FieldInfo[] fields;
+
+			// Try to get it from cache
+			if (NonSerializedFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			{
+				//Debug.LogFormat("Getting Unity-NonSerialized field info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fields;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFields(type);
+			fields = FilterUnityNonSerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-NonSerialized field info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			NonSerializedFieldsIncludingBaseTypes.Add(type, fields);
+			return fields;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - NonSerialized Fields Of Type
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Field type
+		/// FieldInfo[]: List of fields with specified field type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, Type>, FieldInfo[]> NonSerializedFieldsOfTypeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, FieldInfo[]>();
+
+		/// <summary>
+		/// Gets fields that Unity does not use in serialization (public instance fields and SerializeField tagged instance fields) with specified field type. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo[] GetNonSerializedFieldsOfType(this Type type, Type fieldType)
+		{
+			var key = new KeyValuePair<Type, Type>(type, fieldType);
+			FieldInfo[] fields;
+
+			// Try to get it from cache
+			if (NonSerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out fields))
+			{
+				Debug.LogFormat("Getting Unity-NonSerialized field info from cache for '{0}' and field type '{1}' with fields: \n{2}", type, fieldType, fields.Serialize('\n'));
+				return fields;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsOfType(type, fieldType);
+			fields = FilterUnityNonSerializedFields(unfilteredFields);
+
+			// Add to cache
+			Debug.LogFormat("Adding Unity-NonSerialized field info to cache for '{0}' and field type '{1}' with fields: \n{2}", type, fieldType, fields.Serialize('\n'));
+			NonSerializedFieldsOfTypeIncludingBaseTypes.Add(key, fields);
+			return fields;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - NonSerialized Fields With/Without Attribute
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
+
+		/// <summary>
+		/// Gets fields that Unity does not use in serialization (public instance fields and SerializeField tagged instance fields) that has the specified attribute. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetNonSerializedFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (NonSerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			{
+				//Debug.LogFormat("Getting Unity-NonSerialized field-with-attributes info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithAttributes;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsWithAttribute<TAttribute>(type);
+			fieldsWithAttributes = FilterUnityNonSerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-NonSerialized field-with-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			NonSerializedFieldsWithAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithAttributes);
+			return fieldsWithAttributes;
+		}
+
+		/// <summary>
+		/// Gets fields that Unity does not use in serialization (public instance fields and SerializeField tagged instance fields) that doesn't have the specified attribute. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static KeyValuePair<FieldInfo, Attribute[]>[] GetNonSerializedFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
+		{
+			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
+
+			// Try to get it from cache
+			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
+			if (NonSerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			{
+				//Debug.LogFormat("Getting Unity-NonSerialized field-without-attributes info from cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+				return fieldsWithoutAttributes;
+			}
+
+			var unfilteredFields = GetPublicAndPrivateInstanceFieldsWithoutAttribute<TAttribute>(type);
+			fieldsWithoutAttributes = FilterUnityNonSerializedFields(unfilteredFields);
+
+			// Add to cache
+			//Debug.LogFormat("Adding Unity-NonSerialized field-without-attributes info to cache for '{0}' with fields: \n{1}", type, fields.Serialize('\n'));
+			NonSerializedFieldsWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithoutAttributes);
+			return fieldsWithoutAttributes;
 		}
 
 		#endregion
