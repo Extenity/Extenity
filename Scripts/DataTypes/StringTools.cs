@@ -544,6 +544,25 @@ namespace Extenity.DataTypes
 			return stringBuilder.ToString();
 		}
 
+		public static string Serialize<T>(this T[] array, Func<T, string> customSerialize, char separator = ',', int capacity = 0)
+		{
+			if (array.Length == 0)
+				return "";
+
+			var stringBuilder = capacity > 0 ? new StringBuilder(capacity) : new StringBuilder();
+
+			for (int i = 0; i < array.Length; i++)
+			{
+				stringBuilder.Append(customSerialize(array[i]));
+				if (i < array.Length - 1)
+				{
+					stringBuilder.Append(separator);
+				}
+			}
+
+			return stringBuilder.ToString();
+		}
+
 		public static ICollection<byte> DeserializeByte(this string text, char separator = ',')
 		{
 			if (text.Length == 0)
