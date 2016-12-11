@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Object = UnityEngine.Object;
 
 namespace Extenity.SceneManagement
@@ -8,7 +9,7 @@ namespace Extenity.SceneManagement
 
 	public static class GameObjectTools
 	{
-		#region Create and Destroy
+		#region Create
 
 		public static GameObject CreateOrGetGameObject(string name)
 		{
@@ -18,23 +19,27 @@ namespace Extenity.SceneManagement
 			return new GameObject(name);
 		}
 
-		public static void DestroyAll<T>(this IList<T> list) where T : Object
+		#endregion
+
+		#region Destroy Specials
+
+		public static void DestroyAll<T>(this IList<T> list, float delay = 0f, bool saveToHistory = true) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				Object.Destroy(list[i]);
+				Destroy(list[i], delay, saveToHistory);
 			}
 		}
 
-		public static void DestroyAllImmediate<T>(this IList<T> list) where T : Object
+		public static void DestroyAllImmediate<T>(this IList<T> list, bool allowDestroyingAssets = false, bool saveToHistory = true) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				Object.DestroyImmediate(list[i]);
+				DestroyImmediate(list[i], allowDestroyingAssets, saveToHistory);
 			}
 		}
 
-		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component)
+		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component, bool saveToHistory = true)
 		{
 			if (component == null)
 				return;
@@ -44,12 +49,109 @@ namespace Extenity.SceneManagement
 
 			if (componentCount == 2) // 1 for Transform and 1 for the 'component'
 			{
-				GameObject.Destroy(gameObject);
+				Destroy(gameObject, saveToHistory);
 			}
 			else
 			{
-				GameObject.Destroy(component);
+				Destroy(component, saveToHistory);
 			}
+		}
+
+		#endregion
+
+		#region Destroy With History
+
+		public struct DestroyHistoryItem
+		{
+			// Simple log
+			public string ObjectName;
+			public bool IsImmediate;
+			public bool IsImmediateAllowsDestroyingAssets;
+			public float DestroyDelay;
+
+			// Detailed log (that's costly)
+			public bool IsDetailedLog { get { return DestroyTime.Ticks != 0; } }
+			public string Type;
+			public string BaseType;
+			public string ObjectPathInScene;
+			public DateTime DestroyTime;
+			public StackFrame[] StackTraceFrames;
+		}
+
+		public static List<DestroyHistoryItem> DestroyHistory = new List<DestroyHistoryItem>(1000);
+
+		public static bool IsDestroyHistoryEnabled = false;
+		public static bool IsDetailedDestroyHistoryEnabled = false;
+
+		public static void Destroy(Object obj, bool saveToHistory = true)
+		{
+			Destroy(obj, 0f, saveToHistory);
+		}
+
+		public static void Destroy(Object obj, float delay, bool saveToHistory = true)
+		{
+			Object.Destroy(obj, delay);
+
+			if (saveToHistory)
+				_CreateDestroyHistoryItem(obj, false, false, delay);
+		}
+
+		// Commented out because it causes ambiguity errors.
+		//public static void DestroyImmediate(Object obj, bool saveToHistory = true)
+		//{
+		//	DestroyImmediate(obj, false, saveToHistory);
+		//}
+
+		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets = false, bool saveToHistory = true)
+		{
+			Object.DestroyImmediate(obj, allowDestroyingAssets);
+
+			if (saveToHistory)
+				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f);
+		}
+
+		private static void _CreateDestroyHistoryItem(Object obj, bool isImmediate, bool allowDestroyingAssets, float destroyDelay)
+		{
+			if (!IsDestroyHistoryEnabled)
+				return;
+
+			var item = new DestroyHistoryItem();
+			item.ObjectName = obj.name;
+			item.IsImmediate = isImmediate;
+			item.IsImmediateAllowsDestroyingAssets = allowDestroyingAssets;
+			item.DestroyDelay = destroyDelay;
+
+			if (IsDetailedDestroyHistoryEnabled)
+			{
+				item.DestroyTime = DateTime.Now;
+				item.Type = obj.GetType().Name;
+				item.StackTraceFrames = new StackTrace().GetFrames();
+
+				GameObject objAsGameObject;
+				Component objAsComponent;
+				if ((objAsGameObject = obj as GameObject) != null)
+				{
+					item.BaseType = "GameObject";
+					item.ObjectPathInScene = objAsGameObject.FullName();
+				}
+				else if ((objAsComponent = obj as Component) != null)
+				{
+					item.BaseType = "Component";
+					item.ObjectPathInScene = objAsComponent.FullName();
+				}
+				else if (obj is ScriptableObject)
+				{
+					item.BaseType = "ScriptableObject";
+					item.ObjectPathInScene = "[N/A]";
+				}
+				else
+				{
+					item.BaseType = "[Unknown]";
+					item.ObjectPathInScene = "[N/A]";
+				}
+			}
+
+			DestroyHistory.Add(item);
 		}
 
 		#endregion
@@ -61,7 +163,7 @@ namespace Extenity.SceneManagement
 			var go = GameObject.CreatePrimitive(primitiveType);
 			if (!createCollider)
 			{
-				GameObject.DestroyImmediate(go.GetComponent<Collider>());
+				DestroyImmediate(go.GetComponent<Collider>());
 			}
 			go.name = gameObjectName;
 			if (parent != null)
@@ -925,6 +1027,13 @@ namespace Extenity.SceneManagement
 				parent = parent.parent;
 			}
 			return name;
+		}
+
+		public static string FullName(this Component me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me == null)
+				return "";
+			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.name;
 		}
 
 		#endregion
