@@ -103,11 +103,17 @@ namespace Extenity.SceneManagement
 		public static bool IsDestroyHistoryEnabled = false;
 		public static bool IsDetailedDestroyHistoryEnabled = false;
 
+		public static void TrackedDestroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, historySaveType); }
 		public static void Destroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			Destroy(obj, 0f, historySaveType);
+			const float delay = 0f;
+			Object.Destroy(obj);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
+		public static void TrackedDestroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, delay, historySaveType); }
 		public static void Destroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			Object.Destroy(obj, delay);
@@ -116,11 +122,17 @@ namespace Extenity.SceneManagement
 				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
+		public static void TrackedDestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, historySaveType); }
 		public static void DestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			DestroyImmediate(obj, false, historySaveType);
+			const bool allowDestroyingAssets = false;
+			Object.DestroyImmediate(obj);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
 		}
 
+		public static void TrackedDestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, allowDestroyingAssets, historySaveType); }
 		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			Object.DestroyImmediate(obj, allowDestroyingAssets);
@@ -141,7 +153,7 @@ namespace Extenity.SceneManagement
 			item.DestroyDelay = destroyDelay;
 
 			var saveDetails = historySaveType == HistorySaveType.SaveDetailed ||
-			                  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
+							  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
 
 			if (saveDetails)
 			{
