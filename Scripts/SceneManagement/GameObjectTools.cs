@@ -23,23 +23,23 @@ namespace Extenity.SceneManagement
 
 		#region Destroy Specials
 
-		public static void DestroyAll<T>(this IList<T> list, float delay = 0f, bool saveToHistory = true) where T : Object
+		public static void DestroyAll<T>(this IList<T> list, float delay = 0f, HistorySaveType historySaveType = HistorySaveType.Save) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				Destroy(list[i], delay, saveToHistory);
+				Destroy(list[i], delay, historySaveType);
 			}
 		}
 
-		public static void DestroyAllImmediate<T>(this IList<T> list, bool allowDestroyingAssets = false, bool saveToHistory = true) where T : Object
+		public static void DestroyAllImmediate<T>(this IList<T> list, bool allowDestroyingAssets = false, HistorySaveType historySaveType = HistorySaveType.Save) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				DestroyImmediate(list[i], allowDestroyingAssets, saveToHistory);
+				DestroyImmediate(list[i], allowDestroyingAssets, historySaveType);
 			}
 		}
 
-		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component, bool saveToHistory = true)
+		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			if (component == null)
 				return;
@@ -49,11 +49,11 @@ namespace Extenity.SceneManagement
 
 			if (componentCount == 2) // 1 for Transform and 1 for the 'component'
 			{
-				Destroy(gameObject, saveToHistory);
+				Destroy(gameObject, historySaveType);
 			}
 			else
 			{
-				Destroy(component, saveToHistory);
+				Destroy(component, historySaveType);
 			}
 		}
 
@@ -78,39 +78,58 @@ namespace Extenity.SceneManagement
 			public StackFrame[] StackTraceFrames;
 		}
 
+		public enum HistorySaveType
+		{
+			/// <summary>
+			/// History won't be saved for this Destroy call.
+			/// </summary>
+			DontSave,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. Whether if it saved with details is up to  IsDetailedDestroyHistoryEnabled.
+			/// </summary>
+			Save,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. It will always be saved without details regardless of what IsDetailedDestroyHistoryEnabled says.
+			/// </summary>
+			SaveSimple,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. It will always be saved with details regardless of what IsDetailedDestroyHistoryEnabled says.
+			/// </summary>
+			SaveDetailed,
+		}
+
 		public static List<DestroyHistoryItem> DestroyHistory = new List<DestroyHistoryItem>(1000);
 
 		public static bool IsDestroyHistoryEnabled = false;
 		public static bool IsDetailedDestroyHistoryEnabled = false;
 
-		public static void Destroy(Object obj, bool saveToHistory = true)
+		public static void Destroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			Destroy(obj, 0f, saveToHistory);
+			Destroy(obj, 0f, historySaveType);
 		}
 
-		public static void Destroy(Object obj, float delay, bool saveToHistory = true)
+		public static void Destroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			Object.Destroy(obj, delay);
 
-			if (saveToHistory)
-				_CreateDestroyHistoryItem(obj, false, false, delay);
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
-		// Commented out because it causes ambiguity errors.
-		//public static void DestroyImmediate(Object obj, bool saveToHistory = true)
-		//{
-		//	DestroyImmediate(obj, false, saveToHistory);
-		//}
+		public static void DestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			DestroyImmediate(obj, false, historySaveType);
+		}
 
-		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets = false, bool saveToHistory = true)
+		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			Object.DestroyImmediate(obj, allowDestroyingAssets);
 
-			if (saveToHistory)
-				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f);
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
 		}
 
-		private static void _CreateDestroyHistoryItem(Object obj, bool isImmediate, bool allowDestroyingAssets, float destroyDelay)
+		private static void _CreateDestroyHistoryItem(Object obj, bool isImmediate, bool allowDestroyingAssets, float destroyDelay, HistorySaveType historySaveType)
 		{
 			if (!IsDestroyHistoryEnabled)
 				return;
@@ -121,7 +140,10 @@ namespace Extenity.SceneManagement
 			item.IsImmediateAllowsDestroyingAssets = allowDestroyingAssets;
 			item.DestroyDelay = destroyDelay;
 
-			if (IsDetailedDestroyHistoryEnabled)
+			var saveDetails = historySaveType == HistorySaveType.SaveDetailed ||
+			                  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
+
+			if (saveDetails)
 			{
 				item.DestroyTime = DateTime.Now;
 				item.Type = obj.GetType().Name;
