@@ -415,6 +415,59 @@ namespace Extenity.SceneManagement
 
 		#endregion
 
+		#region IsChildOf / IsParentOf / HasComponent
+
+		public static bool IsChildOf(this Component me, Component suspectedParent, bool checkContainingObject = true)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+			if (suspectedParent == null)
+				throw new ArgumentNullException("suspectedParent");
+
+			if (checkContainingObject)
+			{
+				if (me.transform.HasSiblingComponent(suspectedParent))
+					return true;
+			}
+
+			var transform = me.transform.parent;
+
+			while (transform != null)
+			{
+				if (transform.HasSiblingComponent(suspectedParent))
+					return true;
+				transform = transform.parent;
+			}
+
+			return false;
+		}
+
+		public static bool IsParentOf(this Component me, Component suspectedChild, bool checkContainingObject = true)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+			if (suspectedChild == null)
+				throw new ArgumentNullException("suspectedChild");
+
+			return suspectedChild.IsChildOf(me, checkContainingObject);
+		}
+
+		public static bool HasSiblingComponent(this Component me, Component other)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+
+			var components = me.transform.GetComponents<Component>();
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (components[i] == other)
+					return true;
+			}
+			return false;
+		}
+
+		#endregion
+
 		#region FindComponentInParents
 
 		public static T GetComponentInParents<T>(this Component me) where T : Component
