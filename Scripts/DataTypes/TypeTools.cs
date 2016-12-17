@@ -309,6 +309,56 @@ namespace Extenity.DataTypes
 
 		#endregion
 
+		#region Cached Type Getters - Public And Private Fields By Name
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Field name
+		/// FieldInfo[]: List of fields with specified field type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, string>, FieldInfo> PublicAndPrivateInstanceFieldsByNameIncludingBaseTypes = new Dictionary<KeyValuePair<Type, string>, FieldInfo>();
+
+		/// <summary>
+		/// Gets public and private instance (non-static) fields with specified field name. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo GetPublicAndPrivateInstanceFieldByName(this Type type, string fieldName)
+		{
+			var key = new KeyValuePair<Type, string>(type, fieldName);
+			FieldInfo field;
+
+			// Try to get it from cache
+			if (PublicAndPrivateInstanceFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			{
+				LogCTG("Getting field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+				return field;
+			}
+
+			var allFields = GetPublicAndPrivateInstanceFields(type);
+			for (int i = 0; i < allFields.Length; i++)
+			{
+				var fieldInfo = allFields[i];
+				if (fieldInfo.Name == fieldName)
+				{
+					field = fieldInfo;
+					break;
+				}
+			}
+
+			// Add to cache
+			LogCTG("Adding field info to cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+			PublicAndPrivateInstanceFieldsByNameIncludingBaseTypes.Add(key, field);
+			return field;
+		}
+
+		#endregion
+
 		#region Cached Type Getters - Public And Private Fields Of Type
 
 		// --------------------------------------------------------------------------------------------------------
@@ -489,6 +539,55 @@ namespace Extenity.DataTypes
 
 		#endregion
 
+		#region Cached Type Getters - Public And Private Properties By Name
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Property name
+		/// PropertyInfo[]: List of properties with specified property type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, string>, PropertyInfo> PublicAndPrivateInstancePropertiesByNameIncludingBaseTypes = new Dictionary<KeyValuePair<Type, string>, PropertyInfo>();
+
+		/// <summary>
+		/// Gets public and private instance (non-static) properties with specified property name. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private properties in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static PropertyInfo GetPublicAndPrivateInstancePropertyByName(this Type type, string propertyName)
+		{
+			var key = new KeyValuePair<Type, string>(type, propertyName);
+			PropertyInfo property;
+
+			// Try to get it from cache
+			if (PublicAndPrivateInstancePropertiesByNameIncludingBaseTypes.TryGetValue(key, out property))
+			{
+				LogCTG("Getting property info from cache for '{0}' and property name '{1}' with property '{2}'", type, propertyName, property.ToString());
+				return property;
+			}
+
+			var allProperties = GetPublicAndPrivateInstanceProperties(type);
+			for (int i = 0; i < allProperties.Length; i++)
+			{
+				var propertyInfo = allProperties[i];
+				if (propertyInfo.Name == propertyName)
+				{
+					property = propertyInfo;
+				}
+			}
+
+			// Add to cache
+			LogCTG("Adding property info to cache for '{0}' and property name '{1}' with property '{2}'", type, propertyName, property.ToString());
+			PublicAndPrivateInstancePropertiesByNameIncludingBaseTypes.Add(key, property);
+			return property;
+		}
+
+		#endregion
+
 		#region Cached Type Getters - Public And Private Properties Of Type
 
 		// --------------------------------------------------------------------------------------------------------
@@ -658,6 +757,48 @@ namespace Extenity.DataTypes
 
 		#endregion
 
+		#region Cached Type Getters - Serialized Fields By Name
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Field name
+		/// FieldInfo[]: List of fields with specified field type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, string>, FieldInfo> SerializedFieldsByNameIncludingBaseTypes = new Dictionary<KeyValuePair<Type, string>, FieldInfo>();
+
+		/// <summary>
+		/// Gets fields that Unity uses in serialization (public instance fields and SerializeField tagged instance fields) with specified field name. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo GetSerializedFieldByName(this Type type, string fieldName)
+		{
+			var key = new KeyValuePair<Type, string>(type, fieldName);
+			FieldInfo field;
+
+			// Try to get it from cache
+			if (SerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			{
+				LogCTG("Getting Unity-serialized field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+				return field;
+			}
+
+			var unfilteredField = GetPublicAndPrivateInstanceFieldByName(type, fieldName);
+			field = unfilteredField.IsUnitySerialized() ? unfilteredField : null;
+
+			// Add to cache
+			LogCTG("Adding Unity-serialized field info to cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+			SerializedFieldsByNameIncludingBaseTypes.Add(key, field);
+			return field;
+		}
+
+		#endregion
+
 		#region Cached Type Getters - Serialized Fields Of Type
 
 		// --------------------------------------------------------------------------------------------------------
@@ -796,6 +937,48 @@ namespace Extenity.DataTypes
 			LogCTG("Adding Unity-NonSerialized field info to cache for '{0}' with fields ({1}): \n{2}", type, fields.Length, fields.Serialize('\n'));
 			NonSerializedFieldsIncludingBaseTypes.Add(type, fields);
 			return fields;
+		}
+
+		#endregion
+
+		#region Cached Type Getters - NonSerialized Fields By Name
+
+		// --------------------------------------------------------------------------------------------------------
+		// ---- NOTE: These codes are duplicated between Cached Type Getters.
+		// ---- Make sure you modify them all if anything changes here
+		// --------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Key of KeyValuePair: Class type
+		/// Value of KeyValuePair: Field name
+		/// FieldInfo[]: List of fields with specified field type in specified class.
+		/// </summary>
+		private static Dictionary<KeyValuePair<Type, string>, FieldInfo> NonSerializedFieldsByNameIncludingBaseTypes = new Dictionary<KeyValuePair<Type, string>, FieldInfo>();
+
+		/// <summary>
+		/// Gets fields that Unity does not use in serialization (public instance fields and SerializeField tagged instance fields) with specified field name. Caches the results for faster accesses.
+		/// 
+		/// This method is developed around the fact that Reflection does not get private fields in base classes, which is stated here: http://stackoverflow.com/a/5911164
+		/// </summary>
+		public static FieldInfo GetNonSerializedFieldByName(this Type type, string fieldName)
+		{
+			var key = new KeyValuePair<Type, string>(type, fieldName);
+			FieldInfo field;
+
+			// Try to get it from cache
+			if (NonSerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			{
+				LogCTG("Getting Unity-NonSerialized field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+				return field;
+			}
+
+			var unfilteredField = GetPublicAndPrivateInstanceFieldByName(type, fieldName);
+			field = unfilteredField.IsUnitySerialized() ? unfilteredField : null;
+
+			// Add to cache
+			LogCTG("Adding Unity-NonSerialized field info to cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
+			NonSerializedFieldsByNameIncludingBaseTypes.Add(key, field);
+			return field;
 		}
 
 		#endregion
