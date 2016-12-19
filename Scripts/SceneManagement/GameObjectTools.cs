@@ -717,33 +717,23 @@ namespace Extenity.SceneManagement
 		{
 			if (me == null)
 				return null;
-
-			var current = me.parent;
-			while (current != null)
+			for (var current = me.parent; current != null; current = current.parent)
 			{
-				var component = current.GetComponent<T>();
-				if (component != null)
-					return component;
-				current = current.parent;
+				var test = current.GetComponent<T>();
+				if (test != null)
+					return test;
 			}
-
 			return null;
 		}
 
 		public static T GetComponentInParentRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
 		{
-			if (me == null)
-				return null;
-
-			var current = me;
-			while (current != null)
+			for (var current = me; current != null; current = current.parent)
 			{
-				var component = current.GetComponent<T>();
-				if (component != null)
-					return component;
-				current = current.parent;
+				var test = current.GetComponent<T>();
+				if (test != null)
+					return test;
 			}
-
 			return null;
 		}
 
