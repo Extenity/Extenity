@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AdvancedInspector;
+using UnityEngine;
 
 namespace Extenity.Rendering
 {
@@ -8,27 +9,48 @@ namespace Extenity.Rendering
 	{
 		#region Configuration
 
+		[Group("Data Source", Expandable = false, Priority = 10)]
 		public Camera FromCamera;
 
+		[Group("Configuration", Expandable = true, Priority = 20)]
 		public bool SyncClearFlags = false;
+		[Group("Configuration")]
 		public bool SyncClearStencilAfterLightingPass = false;
+		[Group("Configuration")]
 		public bool SyncBackgroundColor = false;
+		[Group("Configuration")]
 		public bool SyncCullingMask = false;
+		[Group("Configuration")]
 		public bool SyncCullingMatrix = false;
+		[Group("Configuration")]
 		public bool SyncProjectionMatrix = false;
+		[Group("Configuration")]
 		public bool SyncNonJitteredProjectionMatrix = false;
+		[Group("Configuration")]
 		public bool SyncOrthographic = true;
+		[Group("Configuration")]
 		public bool SyncOrthographicSize = true;
+		[Group("Configuration")]
 		public bool SyncFieldOfView = true;
+		[Group("Configuration")]
 		public bool SyncAspect = false;
+		[Group("Configuration")]
 		public bool SyncNearClipPlane = true;
+		[Group("Configuration")]
 		public bool SyncFarClipPlane = true;
+		[Group("Configuration")]
 		public bool SyncViewportRect = true;
+		[Group("Configuration")]
 		public bool SyncDepth = false;
+		[Group("Configuration")]
 		public bool SyncRenderingPath = false;
+		[Group("Configuration")]
 		public bool SyncTargetTexture = false;
+		[Group("Configuration")]
 		public bool SyncUseOcclusionCulling = true;
+		[Group("Configuration")]
 		public bool SyncHDR = true;
+		[Group("Configuration")]
 		public bool SyncTargetDisplay = false;
 
 		#endregion

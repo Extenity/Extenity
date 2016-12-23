@@ -42,22 +42,67 @@ namespace Extenity.Rendering
 
 		#region Render Texture
 
+		private int CurrentTextureWidth = -1;
+		private int CurrentTextureHeight = -1;
+		private int CurrentTextureDepth = -1;
+		private RenderTextureFormat CurrentTextureFormat = (RenderTextureFormat)(-1);
+		private RenderTextureReadWrite CurrentTextureReadWrite = (RenderTextureReadWrite)(-1);
+
 		public void RefreshRenderTexture()
 		{
 			if (Camera == null)
 				return;
 
+			var sizeX = (int)(Screen.width * SizeFactor.x);
+			var sizeY = (int)(Screen.height * SizeFactor.y);
 			var currentTexture = Camera.targetTexture;
-			if (currentTexture == null ||
-				currentTexture.width != (int)(Camera.pixelWidth * SizeFactor.x) ||
-				currentTexture.height != (int)(Camera.pixelHeight * SizeFactor.y) ||
-				currentTexture.depth != Depth ||
-				currentTexture.format != Format
-			)
+			if (currentTexture != null)
 			{
-				var newTexture = new RenderTexture((int)(Camera.pixelWidth * SizeFactor.x), (int)(Camera.pixelHeight * SizeFactor.y), Depth, Format, ReadWrite);
-				Camera.targetTexture = newTexture;
+				// Old method to check changes
+				//if (currentTexture.width == sizeX &&
+				//    currentTexture.height == sizeY &&
+				//    currentTexture.depth == Depth &&
+				//    (
+				//		Format == RenderTextureFormat.Default || // Ignore format checking if the format set to Default. We lose format checking when we set Format as Default. But currently there is no easy way to ask Unity what the current platform's default render texture format is.
+				//		currentTexture.format == Format
+				//	)
+				//)
+
+				if (CurrentTextureWidth == sizeX &&
+				    CurrentTextureHeight == sizeY &&
+				    CurrentTextureDepth == Depth &&
+					CurrentTextureFormat == Format &&
+					CurrentTextureReadWrite == ReadWrite
+				)
+				{
+					return; // No changes needed.
+				}
+				else
+				{
+					if (EnableLogging) // Checked here to prevent unnecessary string formatting.
+					{
+						LogFormat("Changing render texture. Old: {0}x{1} {2} {3} {4} New: {5}x{6} {7} {8} {9}",
+							CurrentTextureWidth, CurrentTextureHeight, CurrentTextureDepth, CurrentTextureFormat, CurrentTextureReadWrite,
+							sizeX, sizeY, Depth, Format, ReadWrite);
+					}
+				}
 			}
+			else
+			{
+				if (EnableLogging) // Checked here to prevent unnecessary string formatting.
+				{
+					LogFormat("Creating new render texture: {0}x{1} {2} {3} {4}",
+						sizeX, sizeY, Depth, Format, ReadWrite);
+				}
+			}
+
+			CurrentTextureWidth = sizeX;
+			CurrentTextureHeight = sizeY;
+			CurrentTextureDepth = Depth;
+			CurrentTextureFormat = Format;
+			CurrentTextureReadWrite = ReadWrite;
+			var newTexture = new RenderTexture(sizeX, sizeY, Depth, Format, ReadWrite);
+			Camera.targetTexture = newTexture;
 		}
 
 		#endregion
@@ -68,6 +113,20 @@ namespace Extenity.Rendering
 		{
 			// This will make sure the RenderTexture always created in editor mode. Ideally it's not necessary and not a good practice to create RenderTexture in Awake because camera settings could have been changed before we start rendering.
 			RefreshRenderTexture();
+		}
+
+		#endregion
+
+		#region Log
+
+		public bool EnableLogging = true;
+
+		private void LogFormat(string format, params object[] args)
+		{
+			if (EnableLogging)
+			{
+				Debug.LogFormat(this, format, args);
+			}
 		}
 
 		#endregion

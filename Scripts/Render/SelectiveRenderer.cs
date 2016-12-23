@@ -194,7 +194,7 @@ namespace Extenity.Rendering
 
 		#region Rendered Objects
 
-		public List<GameObject> RenderedObjects;
+		public List<GameObject> RenderedObjects = new List<GameObject>();
 
 		public void ChangeAllRenderedObjectLayers()
 		{
