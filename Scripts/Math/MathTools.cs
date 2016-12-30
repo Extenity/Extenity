@@ -2387,6 +2387,42 @@ public static class MathTools
 		return new Vector2(rect.xMax, rect.yMax);
 	}
 
+	public static void Combine(this Rect rect, Rect otherRect)
+	{
+		rect.xMin = Mathf.Min(rect.xMin, otherRect.xMin);
+		rect.yMin = Mathf.Min(rect.yMin, otherRect.yMin);
+		rect.width = Mathf.Max(rect.xMax, otherRect.xMax) - rect.xMin;
+		rect.height = Mathf.Max(rect.yMax, otherRect.yMax) - rect.yMin;
+	}
+
+	public static Rect Combined(this Rect rect1, Rect rect2)
+	{
+		var xMin = Mathf.Min(rect1.xMin, rect2.xMin);
+		var yMin = Mathf.Min(rect1.yMin, rect2.yMin);
+		return new Rect(
+			xMin,
+			yMin,
+			Mathf.Max(rect1.xMax, rect2.xMax) - xMin,
+			Mathf.Max(rect1.yMax, rect2.yMax) - yMin);
+	}
+
+	public static void Expand(this Rect rect, float expand)
+	{
+		rect.xMin -= expand;
+		rect.yMin -= expand;
+		rect.width += expand * 2f;
+		rect.height += expand * 2f;
+	}
+
+	public static Rect Expanded(this Rect rect, float expand)
+	{
+		return new Rect(
+				rect.xMin - expand,
+				rect.yMin - expand,
+				rect.width + expand * 2f,
+				rect.height + expand * 2f);
+	}
+
 	public static void Move(ref Rect rect, Vector2 translation)
 	{
 		rect.x += translation.x;
