@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 
+// TODO: Namespace should be Extenity.Rendering
 namespace Extenity.Render
 {
+
 	public static class MaterialTools
 	{
 		public static void SetMaterialToTransparentMode(this Material material)
@@ -16,4 +18,5 @@ namespace Extenity.Render
 			material.renderQueue = 3000;
 		}
 	}
+
 }

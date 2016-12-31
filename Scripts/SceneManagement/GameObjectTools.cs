@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Object = UnityEngine.Object;
 
 namespace Extenity.SceneManagement
@@ -8,7 +9,7 @@ namespace Extenity.SceneManagement
 
 	public static class GameObjectTools
 	{
-		#region Create and Destroy
+		#region Create
 
 		public static GameObject CreateOrGetGameObject(string name)
 		{
@@ -18,23 +19,27 @@ namespace Extenity.SceneManagement
 			return new GameObject(name);
 		}
 
-		public static void DestroyAll<T>(this IList<T> list) where T : Object
+		#endregion
+
+		#region Destroy Specials
+
+		public static void DestroyAll<T>(this IList<T> list, float delay = 0f, HistorySaveType historySaveType = HistorySaveType.Save) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				Object.Destroy(list[i]);
+				Destroy(list[i], delay, historySaveType);
 			}
 		}
 
-		public static void DestroyAllImmediate<T>(this IList<T> list) where T : Object
+		public static void DestroyAllImmediate<T>(this IList<T> list, bool allowDestroyingAssets = false, HistorySaveType historySaveType = HistorySaveType.Save) where T : Object
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				Object.DestroyImmediate(list[i]);
+				DestroyImmediate(list[i], allowDestroyingAssets, historySaveType);
 			}
 		}
 
-		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component)
+		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			if (component == null)
 				return;
@@ -44,12 +49,143 @@ namespace Extenity.SceneManagement
 
 			if (componentCount == 2) // 1 for Transform and 1 for the 'component'
 			{
-				GameObject.Destroy(gameObject);
+				Destroy(gameObject, historySaveType);
 			}
 			else
 			{
-				GameObject.Destroy(component);
+				Destroy(component, historySaveType);
 			}
+		}
+
+		#endregion
+
+		#region Destroy With History
+
+		public struct DestroyHistoryItem
+		{
+			// Simple log
+			public string ObjectName;
+			public bool IsImmediate;
+			public bool IsImmediateAllowsDestroyingAssets;
+			public float DestroyDelay;
+
+			// Detailed log (that's costly)
+			public bool IsDetailedLog { get { return DestroyTime.Ticks != 0; } }
+			public string Type;
+			public string BaseType;
+			public string ObjectPathInScene;
+			public DateTime DestroyTime;
+			public StackFrame[] StackTraceFrames;
+		}
+
+		public enum HistorySaveType
+		{
+			/// <summary>
+			/// History won't be saved for this Destroy call.
+			/// </summary>
+			DontSave,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. Whether if it saved with details is up to  IsDetailedDestroyHistoryEnabled.
+			/// </summary>
+			Save,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. It will always be saved without details regardless of what IsDetailedDestroyHistoryEnabled says.
+			/// </summary>
+			SaveSimple,
+			/// <summary>
+			/// History will be saved for this Destroy call if IsDestroyHistoryEnabled set. It will always be saved with details regardless of what IsDetailedDestroyHistoryEnabled says.
+			/// </summary>
+			SaveDetailed,
+		}
+
+		public static List<DestroyHistoryItem> DestroyHistory = new List<DestroyHistoryItem>(1000);
+
+		public static bool IsDestroyHistoryEnabled = false;
+		public static bool IsDetailedDestroyHistoryEnabled = false;
+
+		public static void TrackedDestroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, historySaveType); }
+		public static void Destroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			const float delay = 0f;
+			Object.Destroy(obj);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
+		}
+
+		public static void TrackedDestroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, delay, historySaveType); }
+		public static void Destroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			Object.Destroy(obj, delay);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
+		}
+
+		public static void TrackedDestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, historySaveType); }
+		public static void DestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			const bool allowDestroyingAssets = false;
+			Object.DestroyImmediate(obj);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
+		}
+
+		public static void TrackedDestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, allowDestroyingAssets, historySaveType); }
+		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			Object.DestroyImmediate(obj, allowDestroyingAssets);
+
+			if (historySaveType != HistorySaveType.DontSave)
+				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
+		}
+
+		private static void _CreateDestroyHistoryItem(Object obj, bool isImmediate, bool allowDestroyingAssets, float destroyDelay, HistorySaveType historySaveType)
+		{
+			if (!IsDestroyHistoryEnabled)
+				return;
+
+			var item = new DestroyHistoryItem();
+			item.ObjectName = obj.name;
+			item.IsImmediate = isImmediate;
+			item.IsImmediateAllowsDestroyingAssets = allowDestroyingAssets;
+			item.DestroyDelay = destroyDelay;
+
+			var saveDetails = historySaveType == HistorySaveType.SaveDetailed ||
+							  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
+
+			if (saveDetails)
+			{
+				item.DestroyTime = DateTime.Now;
+				item.Type = obj.GetType().Name;
+				item.StackTraceFrames = new StackTrace().GetFrames();
+
+				GameObject objAsGameObject;
+				Component objAsComponent;
+				if ((objAsGameObject = obj as GameObject) != null)
+				{
+					item.BaseType = "GameObject";
+					item.ObjectPathInScene = objAsGameObject.FullName();
+				}
+				else if ((objAsComponent = obj as Component) != null)
+				{
+					item.BaseType = "Component";
+					item.ObjectPathInScene = objAsComponent.FullName();
+				}
+				else if (obj is ScriptableObject)
+				{
+					item.BaseType = "ScriptableObject";
+					item.ObjectPathInScene = "[N/A]";
+				}
+				else
+				{
+					item.BaseType = "[Unknown]";
+					item.ObjectPathInScene = "[N/A]";
+				}
+			}
+
+			DestroyHistory.Add(item);
 		}
 
 		#endregion
@@ -61,7 +197,7 @@ namespace Extenity.SceneManagement
 			var go = GameObject.CreatePrimitive(primitiveType);
 			if (!createCollider)
 			{
-				GameObject.DestroyImmediate(go.GetComponent<Collider>());
+				DestroyImmediate(go.GetComponent<Collider>());
 			}
 			go.name = gameObjectName;
 			if (parent != null)
@@ -275,6 +411,59 @@ namespace Extenity.SceneManagement
 				}
 			}
 			return initialization; // false if never initialized
+		}
+
+		#endregion
+
+		#region IsChildOf / IsParentOf / HasComponent
+
+		public static bool IsChildOf(this Component me, Component suspectedParent, bool checkContainingObject = true)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+			if (suspectedParent == null)
+				throw new ArgumentNullException("suspectedParent");
+
+			if (checkContainingObject)
+			{
+				if (me.transform.HasSiblingComponent(suspectedParent))
+					return true;
+			}
+
+			var transform = me.transform.parent;
+
+			while (transform != null)
+			{
+				if (transform.HasSiblingComponent(suspectedParent))
+					return true;
+				transform = transform.parent;
+			}
+
+			return false;
+		}
+
+		public static bool IsParentOf(this Component me, Component suspectedChild, bool checkContainingObject = true)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+			if (suspectedChild == null)
+				throw new ArgumentNullException("suspectedChild");
+
+			return suspectedChild.IsChildOf(me, checkContainingObject);
+		}
+
+		public static bool HasSiblingComponent(this Component me, Component other)
+		{
+			if (me == null)
+				throw new ArgumentNullException("me");
+
+			var components = me.transform.GetComponents<Component>();
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (components[i] == other)
+					return true;
+			}
+			return false;
 		}
 
 		#endregion
@@ -528,33 +717,23 @@ namespace Extenity.SceneManagement
 		{
 			if (me == null)
 				return null;
-
-			var current = me.parent;
-			while (current != null)
+			for (var current = me.parent; current != null; current = current.parent)
 			{
-				var component = current.GetComponent<T>();
-				if (component != null)
-					return component;
-				current = current.parent;
+				var test = current.GetComponent<T>();
+				if (test != null)
+					return test;
 			}
-
 			return null;
 		}
 
 		public static T GetComponentInParentRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
 		{
-			if (me == null)
-				return null;
-
-			var current = me;
-			while (current != null)
+			for (var current = me; current != null; current = current.parent)
 			{
-				var component = current.GetComponent<T>();
-				if (component != null)
-					return component;
-				current = current.parent;
+				var test = current.GetComponent<T>();
+				if (test != null)
+					return test;
 			}
-
 			return null;
 		}
 
@@ -748,6 +927,15 @@ namespace Extenity.SceneManagement
 
 		#endregion
 
+		#region Instance
+
+		public static bool IsAnInstanceInScene(this GameObject me)
+		{
+			return me.scene.name != null;
+		}
+
+		#endregion
+
 		#region Instance Count
 
 		public static int GetComponentCount<T>(this GameObject me) where T : Component
@@ -916,6 +1104,13 @@ namespace Extenity.SceneManagement
 				parent = parent.parent;
 			}
 			return name;
+		}
+
+		public static string FullName(this Component me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me == null)
+				return "";
+			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.name;
 		}
 
 		#endregion

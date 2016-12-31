@@ -29,9 +29,9 @@ namespace Extenity.Asset
 
 		private static void Update()
 		{
-			if (GetAsyncKeyState(RControl) != 0 &&
-				GetAsyncKeyState(RShift) != 0 &&
-				GetAsyncKeyState(X) != 0)
+			if ((GetAsyncKeyState(RControl) & 0x8000) != 0 &&
+				(GetAsyncKeyState(RShift) & 0x8000) != 0 &&
+				(GetAsyncKeyState(X) & 0x8000) != 0)
 			{
 				if (!IsPressing) // Prevent calling refresh multiple times before user releases the keys
 				{
