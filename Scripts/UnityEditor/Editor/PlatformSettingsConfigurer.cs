@@ -20,13 +20,10 @@ namespace Extenity.EditorUtilities
 			Android,
 			iOS,
 
-			PS3,
 			PS4,
 			PSM,
 			PSP2,
-			XBOX360,
 			XboxOne,
-			Nintendo3DS,
 			WiiU,
 			tvOS,
 		}
@@ -77,20 +74,14 @@ namespace Extenity.EditorUtilities
 					return BuildTarget.Android;
 				case DesiredBuildTarget.iOS:
 					return BuildTarget.iOS;
-				case DesiredBuildTarget.PS3:
-					return BuildTarget.PS3;
 				case DesiredBuildTarget.PS4:
 					return BuildTarget.PS4;
 				case DesiredBuildTarget.PSM:
 					return BuildTarget.PSM;
 				case DesiredBuildTarget.PSP2:
 					return BuildTarget.PSP2;
-				case DesiredBuildTarget.XBOX360:
-					return BuildTarget.XBOX360;
 				case DesiredBuildTarget.XboxOne:
 					return BuildTarget.XboxOne;
-				case DesiredBuildTarget.Nintendo3DS:
-					return BuildTarget.Nintendo3DS;
 				case DesiredBuildTarget.WiiU:
 					return BuildTarget.WiiU;
 				case DesiredBuildTarget.tvOS:
