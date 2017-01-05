@@ -23,10 +23,6 @@ namespace Extenity.Applicational
 						throw new NotImplementedException();
 					case RuntimePlatform.IPhonePlayer:
 						throw new NotImplementedException();
-					case RuntimePlatform.XBOX360:
-						throw new NotImplementedException();
-					case RuntimePlatform.PS3:
-						throw new NotImplementedException();
 					case RuntimePlatform.Android:
 						throw new NotImplementedException();
 					case RuntimePlatform.LinuxPlayer:
