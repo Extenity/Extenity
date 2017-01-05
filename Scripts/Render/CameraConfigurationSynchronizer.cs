@@ -1,4 +1,4 @@
-﻿using AdvancedInspector;
+﻿//using AdvancedInspector;
 using UnityEngine;
 
 namespace Extenity.Rendering
@@ -9,48 +9,48 @@ namespace Extenity.Rendering
 	{
 		#region Configuration
 
-		[Group("Data Source", Expandable = false, Priority = 10)]
+		//[Group("Data Source", Expandable = false, Priority = 10)]
 		public Camera FromCamera;
 
-		[Group("Configuration", Expandable = true, Priority = 20)]
+		//[Group("Configuration", Expandable = true, Priority = 20)]
 		public bool SyncClearFlags = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncClearStencilAfterLightingPass = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncBackgroundColor = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncCullingMask = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncCullingMatrix = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncProjectionMatrix = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncNonJitteredProjectionMatrix = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncOrthographic = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncOrthographicSize = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncFieldOfView = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncAspect = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncNearClipPlane = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncFarClipPlane = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncViewportRect = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncDepth = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncRenderingPath = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncTargetTexture = false;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncUseOcclusionCulling = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncHDR = true;
-		[Group("Configuration")]
+		//[Group("Configuration")]
 		public bool SyncTargetDisplay = false;
 
 		#endregion
