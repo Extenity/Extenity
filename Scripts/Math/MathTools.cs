@@ -2425,6 +2425,15 @@ public static class MathTools
 				rect.height + (expandTop + expandBottom));
 	}
 
+	public static Rect Expanded(this Rect rect, RectOffset expand)
+	{
+		return new Rect(
+				rect.xMin - expand.left,
+				rect.yMin - expand.top,
+				rect.width + expand.horizontal,
+				rect.height + expand.vertical);
+	}
+
 	public static void Move(ref Rect rect, Vector2 translation)
 	{
 		rect.x += translation.x;
