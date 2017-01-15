@@ -129,8 +129,12 @@ public static class TextureTools
 		stringBuilder.AppendLine("	{");
 		stringBuilder.AppendLine("		if (_Texture_" + textureName + " == null)");
 		stringBuilder.AppendLine("		{");
+		stringBuilder.AppendLine("#if OverrideTextures");
+		stringBuilder.AppendLine("			_Texture_" + textureName + " = LoadTexture(\"" + textureName + "\");");
+		stringBuilder.AppendLine("#else");
 		stringBuilder.AppendLine("			_Texture_" + textureName + " = new Texture2D(1, 1);");
 		stringBuilder.AppendLine("			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
+		stringBuilder.AppendLine("#endif");
 		stringBuilder.AppendLine("		}");
 		stringBuilder.AppendLine("		return _Texture_" + textureName + ";");
 		stringBuilder.AppendLine("	}");
