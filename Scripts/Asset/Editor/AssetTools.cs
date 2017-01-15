@@ -51,7 +51,21 @@ namespace Extenity.Asset
 
 		#region Context Menu - Operations - Texture
 
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", priority = 3101)]
+		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", priority = 3105)]
+		public static void GenerateEmbeddedCodeForImageFile()
+		{
+			_GenerateEmbeddedCodeForImageFile();
+		}
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", validate = true)]
+		private static bool Validate_GenerateEmbeddedCodeForImageFile()
+		{
+			if (Selection.objects == null || Selection.objects.Length != 1)
+				return false;
+			return Selection.objects[0] is Texture2D;
+		}
+
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", priority = 3108)]
 		public static void GenerateEmbeddedCodeForTextureAsPNG()
 		{
 			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToPNG());
@@ -65,7 +79,7 @@ namespace Extenity.Asset
 			return Selection.objects[0] is Texture2D;
 		}
 
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", priority = 3102)]
+		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", priority = 3109)]
 		public static void GenerateEmbeddedCodeForTextureAsJPG()
 		{
 			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToJPG());
@@ -86,6 +100,19 @@ namespace Extenity.Asset
 			var fileName = Path.GetFileNameWithoutExtension(path);
 			texture = texture.CopyTextureAsReadable(); // Get a readable copy of the texture
 			var data = getDataOfTexture(texture);
+			var textureName = fileName.ClearSpecialCharacters();
+			var stringBuilder = new StringBuilder();
+			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, ref stringBuilder);
+			Clipboard.SetClipboardText(stringBuilder.ToString());
+			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
+		}
+
+		private static void _GenerateEmbeddedCodeForImageFile()
+		{
+			var texture = Selection.objects[0] as Texture2D;
+			var path = AssetDatabase.GetAssetPath(texture);
+			var fileName = Path.GetFileNameWithoutExtension(path);
+			var data = File.ReadAllBytes(path);
 			var textureName = fileName.ClearSpecialCharacters();
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, ref stringBuilder);
