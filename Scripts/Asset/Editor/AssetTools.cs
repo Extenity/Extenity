@@ -54,7 +54,7 @@ namespace Extenity.Asset
 		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", priority = 3105)]
 		public static void GenerateEmbeddedCodeForImageFile()
 		{
-			_GenerateEmbeddedCodeForImageFile();
+			_GenerateEmbeddedCodeForImageFile(TextureFormat.ARGB32);
 		}
 
 		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", validate = true)]
@@ -68,7 +68,7 @@ namespace Extenity.Asset
 		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", priority = 3108)]
 		public static void GenerateEmbeddedCodeForTextureAsPNG()
 		{
-			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToPNG());
+			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToPNG(), TextureFormat.ARGB32);
 		}
 
 		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", validate = true)]
@@ -82,7 +82,7 @@ namespace Extenity.Asset
 		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", priority = 3109)]
 		public static void GenerateEmbeddedCodeForTextureAsJPG()
 		{
-			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToJPG());
+			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToJPG(), TextureFormat.RGB24);
 		}
 
 		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", validate = true)]
@@ -93,29 +93,35 @@ namespace Extenity.Asset
 			return Selection.objects[0] is Texture2D;
 		}
 
-		private static void _GenerateEmbeddedCodeForTexture(Func<Texture2D, byte[]> getDataOfTexture)
+		private static void _GenerateEmbeddedCodeForTexture(Func<Texture2D, byte[]> getDataOfTexture, TextureFormat format)
 		{
 			var texture = Selection.objects[0] as Texture2D;
 			var path = AssetDatabase.GetAssetPath(texture);
-			var fileName = Path.GetFileNameWithoutExtension(path);
+			var textureImporter = TextureImporter.GetAtPath(path) as TextureImporter;
+			var mipmapEnabled = textureImporter.mipmapEnabled;
+			var linear = !textureImporter.sRGBTexture;
 			texture = texture.CopyTextureAsReadable(); // Get a readable copy of the texture
 			var data = getDataOfTexture(texture);
+			var fileName = Path.GetFileNameWithoutExtension(path);
 			var textureName = fileName.ClearSpecialCharacters();
 			var stringBuilder = new StringBuilder();
-			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, ref stringBuilder);
+			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString());
 			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
 		}
 
-		private static void _GenerateEmbeddedCodeForImageFile()
+		private static void _GenerateEmbeddedCodeForImageFile(TextureFormat format)
 		{
 			var texture = Selection.objects[0] as Texture2D;
 			var path = AssetDatabase.GetAssetPath(texture);
-			var fileName = Path.GetFileNameWithoutExtension(path);
+			var textureImporter = TextureImporter.GetAtPath(path) as TextureImporter;
+			var mipmapEnabled = textureImporter.mipmapEnabled;
+			var linear = !textureImporter.sRGBTexture;
 			var data = File.ReadAllBytes(path);
+			var fileName = Path.GetFileNameWithoutExtension(path);
 			var textureName = fileName.ClearSpecialCharacters();
 			var stringBuilder = new StringBuilder();
-			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, ref stringBuilder);
+			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString());
 			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
 		}

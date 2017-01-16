@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 
 public static class TextureTools
@@ -113,36 +114,36 @@ public static class TextureTools
 
 	#region Generate Embedded Code For Texture
 
-	public static string GenerateEmbeddedCodeForTexture(byte[] data, string textureName, ref StringBuilder stringBuilder)
+	public static string GenerateEmbeddedCodeForTexture(byte[] data, string textureName, TextureFormat format, bool mipmapEnabled, bool linear, string indentation, ref StringBuilder stringBuilder)
 	{
 		if (stringBuilder == null)
 		{
 			stringBuilder = new StringBuilder();
 		}
 
-		stringBuilder.AppendLine("#region Embedded Texture - " + textureName);
+		stringBuilder.AppendLine(indentation + "#region Embedded Texture - " + textureName);
 		stringBuilder.AppendLine();
-		stringBuilder.AppendLine("private static Texture2D _Texture_" + textureName + ";");
-		stringBuilder.AppendLine("public static Texture2D Texture_" + textureName + "");
-		stringBuilder.AppendLine("{");
-		stringBuilder.AppendLine("	get");
-		stringBuilder.AppendLine("	{");
-		stringBuilder.AppendLine("		if (_Texture_" + textureName + " == null)");
-		stringBuilder.AppendLine("		{");
+		stringBuilder.AppendLine(indentation + "private static Texture2D _Texture_" + textureName + ";");
+		stringBuilder.AppendLine(indentation + "public static Texture2D Texture_" + textureName + "");
+		stringBuilder.AppendLine(indentation + "{");
+		stringBuilder.AppendLine(indentation + "	get");
+		stringBuilder.AppendLine(indentation + "	{");
+		stringBuilder.AppendLine(indentation + "		if (_Texture_" + textureName + " == null)");
+		stringBuilder.AppendLine(indentation + "		{");
 		stringBuilder.AppendLine("#if OverrideTextures");
-		stringBuilder.AppendLine("			_Texture_" + textureName + " = LoadTexture(\"" + textureName + "\");");
+		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = LoadTexture(\"" + textureName + "\");");
 		stringBuilder.AppendLine("#else");
-		stringBuilder.AppendLine("			_Texture_" + textureName + " = new Texture2D(1, 1);");
-		stringBuilder.AppendLine("			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
+		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = new Texture2D(1, 1, TextureFormat." + format + ", " + mipmapEnabled.ToString().ToLower() + ", " + linear.ToString().ToLower() + ");");
+		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
 		stringBuilder.AppendLine("#endif");
-		stringBuilder.AppendLine("		}");
-		stringBuilder.AppendLine("		return _Texture_" + textureName + ";");
-		stringBuilder.AppendLine("	}");
-		stringBuilder.AppendLine("}");
+		stringBuilder.AppendLine(indentation + "		}");
+		stringBuilder.AppendLine(indentation + "		return _Texture_" + textureName + ";");
+		stringBuilder.AppendLine(indentation + "	}");
+		stringBuilder.AppendLine(indentation + "}");
 		stringBuilder.AppendLine();
-		stringBuilder.AppendLine("private static readonly byte[] _TextureData_" + textureName + " = ");
-		stringBuilder.AppendLine("{");
-		stringBuilder.Append('	');
+		stringBuilder.AppendLine(indentation + "private static readonly byte[] _TextureData_" + textureName + " = ");
+		stringBuilder.AppendLine(indentation + "{");
+		stringBuilder.Append(indentation + '	');
 		var counter = 0;
 		for (int i = 0; i < data.Length; i++)
 		{
@@ -153,13 +154,13 @@ public static class TextureTools
 				stringBuilder.Length--;
 				if (i < data.Length - 1) // Line break if there are more bytes to write
 				{
-					stringBuilder.Append(Environment.NewLine + '	');
+					stringBuilder.Append(Environment.NewLine + indentation + '	');
 				}
 			}
 		}
-		stringBuilder.AppendLine(Environment.NewLine + "};");
+		stringBuilder.AppendLine(Environment.NewLine + indentation + "};");
 		stringBuilder.AppendLine();
-		stringBuilder.AppendLine("#endregion");
+		stringBuilder.AppendLine(indentation + "#endregion");
 		return "Texture_" + textureName;
 	}
 
