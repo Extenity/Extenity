@@ -1110,7 +1110,7 @@ namespace Extenity.SceneManagement
 		{
 			if (me == null)
 				return "";
-			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.name;
+			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
 		#endregion
