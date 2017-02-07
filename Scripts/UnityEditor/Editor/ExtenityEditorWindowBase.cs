@@ -10,14 +10,6 @@ public abstract class ExtenityEditorWindowBase : EditorWindow
 
 	protected void OnGUI()
 	{
-		if (RefreshTitleContentInNextRender)
-		{
-			titleContent = new GUIContent(_Title, _IconRetriever != null ? _IconRetriever() : null);
-			_Title = null;
-			_IconRetriever = null;
-			RefreshTitleContentInNextRender = false;
-		}
-
 		CalculateRightMouseButtonScrolling();
 		OnGUIDerived();
 	}
@@ -26,18 +18,12 @@ public abstract class ExtenityEditorWindowBase : EditorWindow
 
 	#region Title And Icon
 
-	private string _Title;
-	private Func<Texture2D> _IconRetriever;
-	private bool RefreshTitleContentInNextRender;
-
 	/// <summary>
-	/// Call this inside OnEnable.
+	/// Call this inside OnEnable. Icon texture should have been set for DontDestroyOnLoad and HideAndDontSave set for hideFlags.
 	/// </summary>
-	public void SetTitleAndIcon(string title, Func<Texture2D> iconRetriever)
+	public void SetTitleAndIcon(string title, Texture2D icon)
 	{
-		_Title = title;
-		_IconRetriever = iconRetriever;
-		RefreshTitleContentInNextRender = true; // This will prevent any possibilities of losing window icon. This could happen on relaunching the editor while window was left open.
+		titleContent = new GUIContent(title, icon);
 	}
 
 	#endregion

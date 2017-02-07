@@ -136,6 +136,8 @@ public static class TextureTools
 		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = new Texture2D(1, 1, TextureFormat." + format + ", " + mipmapEnabled.ToString().ToLower() + ", " + linear.ToString().ToLower() + ");");
 		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
 		stringBuilder.AppendLine("#endif");
+		stringBuilder.AppendLine(indentation + "			Texture.DontDestroyOnLoad(_Texture_" + textureName + ");");
+		stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + ".hideFlags = HideFlags.HideAndDontSave;");
 		stringBuilder.AppendLine(indentation + "		}");
 		stringBuilder.AppendLine(indentation + "		return _Texture_" + textureName + ";");
 		stringBuilder.AppendLine(indentation + "	}");
