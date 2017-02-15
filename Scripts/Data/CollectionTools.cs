@@ -268,9 +268,9 @@ public static class CollectionTools
 	/// </summary>
 	/// <typeparam name="T">Item type of lists</typeparam>
 	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
-	/// <param name="otherList">"Other list" is used only for comparison to "this list".</param>
-	/// <param name="onAdd">Called when an item in "other list" is added to "this list".</param>
-	/// <param name="onRemove">Called when an item in "this list" is removed. First parameter "T" is the item that's going to be removed from list. Second parameter "int" is the list index of the item.</param>
+	/// <param name="otherList">"Other list" is used only for comparison to "this list" and not modified.</param>
+	/// <param name="onAdd">Called when an item in "other list" does not appear to be in "this list". Parameter "T" is the item in "other list" that's going to be added into "this list". It's possible not to specify a method. In this case, the item will be added automatically to "this list". But in case a method is specified, the item must be added at the end of "this list" manually. No other modifications should be made to the list.</param>
+	/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T" is the item that's going to be removed from "this list". Second parameter "int" is the list index of the item. It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 	/// <returns>True if anything in "this list" changed. False otherwise.</returns>
 	public static bool EqualizeTo<T>(this IList<T> thisList, IList<T> otherList,
 		Action<T> onAdd = null,
@@ -302,9 +302,15 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				thisList.RemoveAt(iThisList);
 				if (onRemove != null)
+				{
 					onRemove(thisListItem, iThisList);
+					//thisList.RemoveAt(iThisList); // User should do the remove in onRemove because onRemove specified.
+				}
+				else
+				{
+					thisList.RemoveAt(iThisList);
+				}
 				isAnythingChanged = true;
 			}
 		}
@@ -317,7 +323,7 @@ public static class CollectionTools
 
 			for (int iThisList = thisList.Count - 1; iThisList >= 0; iThisList--)
 			{
-				if (otherListItem.Equals(thisList[iThisList]))
+				if (thisList[iThisList].Equals(otherListItem))
 				{
 					found = true;
 					break;
@@ -326,9 +332,15 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				thisList.Add(otherListItem);
 				if (onAdd != null)
+				{
 					onAdd(otherListItem);
+					//thisList.Add(otherListItem); // User should do the add in onAdd because onAdd specified.
+				}
+				else
+				{
+					thisList.Add(otherListItem);
+				}
 				isAnythingChanged = true;
 			}
 		}
@@ -341,10 +353,10 @@ public static class CollectionTools
 	/// </summary>
 	/// <typeparam name="T">Item type of lists</typeparam>
 	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
-	/// <param name="otherList">"Other list" is used only for comparison to "this list".</param>
+	/// <param name="otherList">"Other list" is used only for comparison to "this list" and not modified.</param>
 	/// <param name="comparer">Allows user to define a custom equalty comparer.</param>
-	/// <param name="onAdd">Called when an item in "other list" is added to "this list".</param>
-	/// <param name="onRemove">Called when an item in "this list" is removed. First parameter "T" is the item that's going to be removed from list. Second parameter "int" is the list index of the item.</param>
+	/// <param name="onAdd">Called when an item in "other list" does not appear to be in "this list". Parameter "T" is the item in "other list" that's going to be added into "this list". It's possible not to specify a method. In this case, the item will be added automatically to "this list". But in case a method is specified, the item must be added at the end of "this list" manually. No other modifications should be made to the list.</param>
+	/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T" is the item that's going to be removed from "this list". Second parameter "int" is the list index of the item. It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 	/// <returns>True if anything in "this list" changed. False otherwise.</returns>
 	public static bool EqualizeTo<T>(this IList<T> thisList, IList<T> otherList,
 		IEqualityComparer<T> comparer,
@@ -377,9 +389,15 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				thisList.RemoveAt(iThisList);
 				if (onRemove != null)
+				{
 					onRemove(thisListItem, iThisList);
+					//thisList.RemoveAt(iThisList); // User should do the remove in onRemove because onRemove specified.
+				}
+				else
+				{
+					thisList.RemoveAt(iThisList);
+				}
 				isAnythingChanged = true;
 			}
 		}
@@ -401,90 +419,15 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				thisList.Add(otherListItem);
 				if (onAdd != null)
+				{
 					onAdd(otherListItem);
-				isAnythingChanged = true;
-			}
-		}
-
-		return isAnythingChanged;
-	}
-
-	/// <summary>
-	/// Equalizes items in "this list" by comparing each item in "other list". First it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
-	/// </summary>
-	/// <typeparam name="T1">Item type of "this list"</typeparam>
-	/// <typeparam name="T2">Item type of "other list"</typeparam>
-	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
-	/// <param name="otherList">"Other list" is used only for comparison to "this list".</param>
-	/// <param name="comparer">Allows user to define an equalty comparer between T1 and T2. This is how two different type lists find a common ground.</param>
-	/// <param name="creator">Called when an item in "other list" does not appear to be in "this list". User should create an item of type T1 and add it to "this list" manually.</param>
-	/// <param name="destroyer">This is optional. Called when an item in "this list" does not appear to be in "other list". User should remove the item from "this list" manually. Other actions like disposing etc. also can be made within this call. First parameter "T1" is the item that's going to be removed from list. Second parameter "int" is the list index of the item.</param>
-	/// <returns>True if anything in "this list" changed. False otherwise.</returns>
-	public static bool EqualizeTo<T1, T2>(this IList thisList, IList otherList,
-		IEqualityComparer<T1, T2> comparer,
-		Action<T2> creator,
-		Action<T1, int> destroyer = null)
-	{
-		if (thisList == null)
-			throw new ArgumentNullException("thisList");
-		if (otherList == null)
-			throw new ArgumentNullException("otherList");
-		if (Equals(thisList, otherList))
-			throw new ArgumentException("thisList and otherList are pointing to the same list");
-
-		bool isAnythingChanged = false;
-
-		// Remove this list item if other list does not contain it.
-		for (int iThisList = thisList.Count - 1; iThisList >= 0; iThisList--)
-		{
-			bool found = false;
-			var thisListItem = thisList[iThisList];
-
-			for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
-			{
-				if (comparer.Equals((T1)thisListItem, (T2)otherList[iOtherList]))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			if (!found)
-			{
-				if (destroyer != null)
-				{
-					destroyer((T1)thisListItem, iThisList);
-					//thisList.RemoveAt(iThisList); // Destroyer should do the remove.
+					//thisList.Add(otherListItem); // User should do the add in onAdd because onAdd specified.
 				}
 				else
 				{
-					thisList.RemoveAt(iThisList);
+					thisList.Add(otherListItem);
 				}
-				isAnythingChanged = true;
-			}
-		}
-
-		// Add other list item to this list if this list does not contain it.
-		for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
-		{
-			bool found = false;
-			var otherListItem = otherList[iOtherList];
-
-			for (int iThisList = thisList.Count - 1; iThisList >= 0; iThisList--)
-			{
-				if (comparer.Equals((T1)thisList[iThisList], (T2)otherListItem))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			if (!found)
-			{
-				creator((T2)otherListItem);
-				//thisList.Add(creator((T2)otherListItem)); // Creator should do the add.
 				isAnythingChanged = true;
 			}
 		}
@@ -498,15 +441,15 @@ public static class CollectionTools
 	/// <typeparam name="T1">Item type of "this list"</typeparam>
 	/// <typeparam name="T2">Item type of "other list"</typeparam>
 	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
-	/// <param name="otherList">"Other list" is used only for comparison to "this list".</param>
-	/// <param name="comparer">Allows user to define an equalty comparer between T1 and T2. This is how two different type lists find a common ground.</param>
-	/// <param name="creator">Called when an item in "other list" does not appear to be in "this list". User should create an item of type T1 and add it to "this list" manually.</param>
-	/// <param name="destroyer">This is optional. Called when an item in "this list" does not appear to be in "other list". User should remove the item from "this list" manually. Other actions like disposing etc. also can be made within this call. First parameter "T1" is the item that's going to be removed from list. Second parameter "int" is the list index of the item.</param>
+	/// <param name="otherList">"Other list" is used only for comparison to "this list" and not modified.</param>
+	/// <param name="comparer">Allows user to define a custom equalty comparer between T1 and T2. This is how two different type of lists find a common ground.</param>
+	/// <param name="onAdd">Called when an item in "other list" does not appear to be in "this list". Parameter "T2" is the item in "other list" that's going to be converted and added into "this list". The conversion of T2 to T1 can be made in this method and converted item must be added at the end of "this list" manually. No other modifications should be made to the list.</param>
+	/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T1" is the item that's going to be removed from "this list". Second parameter "int" is the list index of the item. It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 	/// <returns>True if anything in "this list" changed. False otherwise.</returns>
 	public static bool EqualizeTo<T1, T2>(this IList<T1> thisList, IList<T2> otherList,
 		IEqualityComparer<T1, T2> comparer,
-		Action<T2> creator,
-		Action<T1, int> destroyer = null)
+		Action<T2> onAdd,
+		Action<T1, int> onRemove = null)
 	{
 		if (thisList == null)
 			throw new ArgumentNullException("thisList");
@@ -514,6 +457,8 @@ public static class CollectionTools
 			throw new ArgumentNullException("otherList");
 		if (Equals(thisList, otherList))
 			throw new ArgumentException("thisList and otherList are pointing to the same list");
+		if (onAdd == null)
+			throw new ArgumentNullException("onAdd");
 
 		bool isAnythingChanged = false;
 
@@ -534,10 +479,10 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				if (destroyer != null)
+				if (onRemove != null)
 				{
-					destroyer(thisListItem, iThisList);
-					//thisList.RemoveAt(iThisList); // Destroyer should do the remove.
+					onRemove(thisListItem, iThisList);
+					//thisList.RemoveAt(iThisList); // User should do the remove in onRemove because onRemove specified.
 				}
 				else
 				{
@@ -564,8 +509,8 @@ public static class CollectionTools
 
 			if (!found)
 			{
-				creator(otherListItem);
-				//thisList.Add(creator((T2)otherListItem)); // Creator should do the add.
+				onAdd(otherListItem);
+				//thisList.Add(otherListItem); // User should do the add in onAdd no matter what because we don't know how to do conversion between T1 and T2 and we expect the user to do the conversion in onAdd.
 				isAnythingChanged = true;
 			}
 		}

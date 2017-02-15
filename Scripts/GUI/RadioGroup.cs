@@ -1,8 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -63,16 +61,20 @@ public class RadioGroup : MonoBehaviour
 			Buttons = new List<Toggle>(newButtons.Length);
         }
 
-		Buttons.EqualizeTo(newButtons, button =>
-		{
-			var cachedButton = button;
-			button.isOn = false;
-			button.onValueChanged.AddListener(toggleValue => OnToggleChanged(cachedButton, toggleValue));
-		},
-		(toggle, i) =>
-		{
-			// TODO: Find a way to use RemoveListener to remove the event registered above.
-		});
+		Buttons.EqualizeTo(newButtons, 
+			button =>
+			{
+				var cachedButton = button;
+				button.isOn = false;
+				button.onValueChanged.AddListener(toggleValue => OnToggleChanged(cachedButton, toggleValue));
+				Buttons.Add(button);
+			},
+			(toggle, i) =>
+			{
+				Buttons.RemoveAt(i);
+				// TODO: Find a way to use RemoveListener to remove the event registered above.
+			}
+		);
 	}
 
 	//private void DeinitializeRadioButtons()
