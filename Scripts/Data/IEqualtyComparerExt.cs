@@ -1,6 +1,7 @@
 ﻿
 namespace System.Collections.Generic
 {
+
 	/// <summary>
 	/// Defines methods to support the comparison of objects for equality.
 	/// </summary>
@@ -18,4 +19,15 @@ namespace System.Collections.Generic
 		/// <param name="x">The first object of type <paramref name="T1"/> to compare.</param><param name="y">The second object of type <paramref name="T2"/> to compare.</param>
 		bool Equals(T1 x, T2 y);
 	}
+
+	public class EqualityComparer<T1, T2> : IEqualityComparer<T1, T2>
+	{
+		public static readonly IEqualityComparer<T1, T2> Default = new EqualityComparer<T1, T2>();
+
+		public bool Equals(T1 x, T2 y)
+		{
+			return x.Equals(y);
+		}
+	}
+
 }
