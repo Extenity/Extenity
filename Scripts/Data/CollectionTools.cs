@@ -339,6 +339,81 @@ public static class CollectionTools
 	/// <summary>
 	/// Equalizes items in "this list" by comparing each item in "other list". First it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
 	/// </summary>
+	/// <typeparam name="T">Item type of lists</typeparam>
+	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
+	/// <param name="otherList">"Other list" is used only for comparison to "this list".</param>
+	/// <param name="comparer">Allows user to define a custom equalty comparer.</param>
+	/// <param name="onAdd">Called when an item in "other list" is added to "this list".</param>
+	/// <param name="onRemove">Called when an item in "this list" is removed. First parameter "T" is the item that's going to be removed from list. Second parameter "int" is the list index of the item.</param>
+	/// <returns>True if anything in "this list" changed. False otherwise.</returns>
+	public static bool EqualizeTo<T>(this IList<T> thisList, IList<T> otherList,
+		IEqualityComparer<T> comparer,
+		Action<T> onAdd = null,
+		Action<T, int> onRemove = null)
+	{
+		if (thisList == null)
+			throw new ArgumentNullException("thisList");
+		if (otherList == null)
+			throw new ArgumentNullException("otherList");
+		if (Equals(thisList, otherList))
+			throw new ArgumentException("thisList and otherList are pointing to the same list");
+
+		bool isAnythingChanged = false;
+
+		// Remove this list item if other list does not contain it.
+		for (int iThisList = thisList.Count - 1; iThisList >= 0; iThisList--)
+		{
+			bool found = false;
+			var thisListItem = thisList[iThisList];
+
+			for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+			{
+				if (comparer.Equals(thisListItem, otherList[iOtherList]))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				thisList.RemoveAt(iThisList);
+				if (onRemove != null)
+					onRemove(thisListItem, iThisList);
+				isAnythingChanged = true;
+			}
+		}
+
+		// Add other list item to this list if this list does not contain it.
+		for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+		{
+			bool found = false;
+			var otherListItem = otherList[iOtherList];
+
+			for (int iThisList = thisList.Count - 1; iThisList >= 0; iThisList--)
+			{
+				if (comparer.Equals(thisList[iThisList], otherListItem))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				thisList.Add(otherListItem);
+				if (onAdd != null)
+					onAdd(otherListItem);
+				isAnythingChanged = true;
+			}
+		}
+
+		return isAnythingChanged;
+	}
+
+	/// <summary>
+	/// Equalizes items in "this list" by comparing each item in "other list". First it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
+	/// </summary>
 	/// <typeparam name="T1">Item type of "this list"</typeparam>
 	/// <typeparam name="T2">Item type of "other list"</typeparam>
 	/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
