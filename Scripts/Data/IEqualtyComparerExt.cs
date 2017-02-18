@@ -26,6 +26,14 @@ namespace System.Collections.Generic
 
 		public bool Equals(T1 x, T2 y)
 		{
+			if (x == null)
+			{
+				if (y == null)
+					return true;
+				return false;
+			}
+			if (y == null)
+				return false;
 			return x.Equals(y);
 		}
 	}

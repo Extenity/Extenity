@@ -387,6 +387,8 @@ public static class CollectionTools
 			throw new ArgumentNullException("otherList");
 		if (Equals(thisList, otherList))
 			throw new ArgumentException("thisList and otherList are pointing to the same list");
+		if (comparer == null)
+			throw new ArgumentNullException("comparer");
 
 		bool isAnythingChanged = false;
 
@@ -477,6 +479,8 @@ public static class CollectionTools
 			throw new ArgumentException("thisList and otherList are pointing to the same list");
 		if (onAdd == null)
 			throw new ArgumentNullException("onAdd");
+		if (comparer == null)
+			throw new ArgumentNullException("comparer");
 
 		bool isAnythingChanged = false;
 
