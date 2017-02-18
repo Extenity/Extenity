@@ -44,6 +44,24 @@ public static class CollectionTools
 		return true;
 	}
 
+	// See if the list does not contain any items other than specified items.
+	public static bool DoesNotContainOtherThan<T>(this List<T> list, params T[] items)
+	{
+		if (list == null)
+			return true;
+		if (items == null)
+			throw new ArgumentNullException("items");
+
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (!items.Contains(list[i]))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static List<T> Clone<T>(this List<T> source)
 	{
 		return source.GetRange(0, source.Count);
