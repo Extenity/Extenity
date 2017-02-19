@@ -17,21 +17,60 @@ public enum GUIAnchor // TODO: rename to ScreenAnchor
 	Center,
 }
 
+public enum EnabledState
+{
+	Unchanged,
+	Enabled,
+	Disabled,
+}
+
 public static class GUILayoutTools
 {
-	public static bool Button(string text, bool buttonEnabled = true, params GUILayoutOption[] options)
+	#region Controls - Button
+
+	public static bool Button(string text, bool enabledState, params GUILayoutOption[] layoutOptions)
 	{
-		var enabledWas = GUI.enabled;
-		if (!buttonEnabled)
-		{
-			GUI.enabled = false;
-		}
-
-		var result = GUILayout.Button(text, options);
-
-		GUI.enabled = enabledWas;
-		return result;
+		return Button(text, enabledState ? EnabledState.Unchanged : EnabledState.Disabled, GUI.skin.button, layoutOptions);
 	}
+
+	public static bool Button(string text, EnabledState enabledState, params GUILayoutOption[] layoutOptions)
+	{
+		return Button(text, enabledState, GUI.skin.button, layoutOptions);
+	}
+
+	public static bool Button(string text, bool enabledState, GUIStyle guiStyle, params GUILayoutOption[] layoutOptions)
+	{
+		return Button(text, enabledState ? EnabledState.Unchanged : EnabledState.Disabled, guiStyle, layoutOptions);
+	}
+
+	public static bool Button(string text, EnabledState enabledState, GUIStyle guiStyle, params GUILayoutOption[] layoutOptions)
+	{
+		switch (enabledState)
+		{
+			case EnabledState.Unchanged:
+				return GUILayout.Button(text, guiStyle, layoutOptions);
+			case EnabledState.Enabled:
+				{
+					var enabledWas = GUI.enabled;
+					GUI.enabled = true;
+					var result = GUILayout.Button(text, guiStyle, layoutOptions);
+					GUI.enabled = enabledWas;
+					return result;
+				}
+			case EnabledState.Disabled:
+				{
+					var enabledWas = GUI.enabled;
+					GUI.enabled = false;
+					var result = GUILayout.Button(text, guiStyle, layoutOptions);
+					GUI.enabled = enabledWas;
+					return result;
+				}
+			default:
+				throw new ArgumentOutOfRangeException("enabledState", enabledState, null);
+		}
+	}
+
+	#endregion
 }
 
 public static class GUITools
@@ -46,6 +85,8 @@ public static class GUITools
 	}
 
 	#endregion
+
+	#region Input
 
 	public static bool IsGUIActiveInCurrentEventSystem
 	{
@@ -74,21 +115,11 @@ public static class GUITools
 			Event.current.Use();
 	}
 
-	public static bool Button(Rect rect, string text, bool buttonEnabled = true)
-	{
-		var enabledWas = GUI.enabled;
-		if (!buttonEnabled)
-		{
-			GUI.enabled = false;
-		}
+	#endregion
 
-		var result = GUI.Button(rect, text);
+	#region Anchored Points
 
-		GUI.enabled = enabledWas;
-		return result;
-	}
-
-	public static Rect Rect(int width, int height, GUIAnchor anchor, int marginX = 0, int marginY = 0)
+	public static Rect ScreenRect(int width, int height, GUIAnchor anchor, int marginX = 0, int marginY = 0)
 	{
 		switch (anchor)
 		{
@@ -105,7 +136,7 @@ public static class GUITools
 		}
 	}
 
-	public static Vector2 Point(GUIAnchor anchor, int marginX = 0, int marginY = 0)
+	public static Vector2 ScreenPoint(GUIAnchor anchor, int marginX = 0, int marginY = 0)
 	{
 		switch (anchor)
 		{
@@ -122,7 +153,7 @@ public static class GUITools
 		}
 	}
 
-	public static Vector2 OrthographicPoint(Camera camera, GUIAnchor anchor, float offsetX = 0, float offsetY = 0)
+	public static Vector2 OrthographicCameraPoint(Camera camera, GUIAnchor anchor, float offsetX = 0, float offsetY = 0)
 	{
 		var orthographicSizeY = camera.orthographicSize;
 		var orthographicSizeX = orthographicSizeY / ScreenManager.Instance.CurrentAspectRatio;
@@ -142,49 +173,73 @@ public static class GUITools
 		}
 	}
 
-	public static int CenterOrientedRectPositionX(int rectWidth, int windowWidth)
+	#endregion
+
+	#region Controls - Button
+
+	public static bool Button(Rect rect, string text, bool enabledState)
 	{
-		return (windowWidth - rectWidth) >> 1;
+		return Button(rect, text, enabledState ? EnabledState.Unchanged : EnabledState.Disabled, GUI.skin.button);
 	}
 
-	public static int CenterOrientedRectPositionY(int rectHeight, int windowHeight)
+	public static bool Button(Rect rect, string text, EnabledState enabledState)
 	{
-		return (windowHeight - rectHeight) >> 1;
+		return Button(rect, text, enabledState, GUI.skin.button);
 	}
 
-	public static int CenterOrientedRectPositionX(int rectWidth)
+	public static bool Button(Rect rect, string text, bool enabledState, GUIStyle guiStyle)
 	{
-		return (Screen.width - rectWidth) >> 1;
+		return Button(rect, text, enabledState ? EnabledState.Unchanged : EnabledState.Disabled, guiStyle);
 	}
 
-	public static int CenterOrientedRectPositionY(int rectHeight)
+	public static bool Button(Rect rect, string text, EnabledState enabledState, GUIStyle guiStyle)
 	{
-		return (Screen.height - rectHeight) >> 1;
+		switch (enabledState)
+		{
+			case EnabledState.Unchanged:
+				return GUI.Button(rect, text, guiStyle);
+			case EnabledState.Enabled:
+				{
+					var enabledWas = GUI.enabled;
+					GUI.enabled = true;
+					var result = GUI.Button(rect, text, guiStyle);
+					GUI.enabled = enabledWas;
+					return result;
+				}
+			case EnabledState.Disabled:
+				{
+					var enabledWas = GUI.enabled;
+					GUI.enabled = false;
+					var result = GUI.Button(rect, text, guiStyle);
+					GUI.enabled = enabledWas;
+					return result;
+				}
+			default:
+				throw new ArgumentOutOfRangeException("enabledState", enabledState, null);
+		}
 	}
+
+	#endregion
 
 	#region Conversions
 
 	public static Vector2 ScreenToScreenRatioCoordinates(this Vector2 valueInPixels)
 	{
-		// TODO: OPTIMIZATION
 		return new Vector2(valueInPixels.x / Screen.width, valueInPixels.y / Screen.height);
 	}
 
 	public static float ScreenToScreenRatioCoordinates(this float valueInPixels)
 	{
-		// TODO: OPTIMIZATION
 		return valueInPixels / Screen.height;
 	}
 
 	public static Vector2 ScreenRatioToScreenCoordinates(this Vector2 valueInScreenRatio)
 	{
-		// TODO: OPTIMIZATION
 		return new Vector2(valueInScreenRatio.x * Screen.width, valueInScreenRatio.y * Screen.height);
 	}
 
 	public static float ScreenRatioToScreenCoordinates(this float valueInScreenRatio)
 	{
-		// TODO: OPTIMIZATION
 		return valueInScreenRatio * Screen.height;
 	}
 
@@ -199,7 +254,7 @@ public static class GUITools
 
 	#endregion
 
-	#region Drawing Tools
+	#region Drawing Tools - Rect
 
 	public static void DrawRect(Rect rect) { DrawRect(rect, GUI.contentColor, 1.0f); }
 	public static void DrawRect(Rect rect, Color color) { DrawRect(rect, color, 1.0f); }
@@ -208,6 +263,10 @@ public static class GUITools
 	{
 		DrawLine(new Vector2(rect.x, rect.y), new Vector2(rect.x + rect.width, rect.y + rect.height), color, width);
 	}
+
+	#endregion
+
+	#region Drawing Tools - Line
 
 	// Line drawing routine originally courtesy of Linusmartensson:
 	// http://forum.unity3d.com/threads/71979-Drawing-lines-in-the-editor
@@ -250,7 +309,7 @@ public static class GUITools
 	private static Texture2D lineTex = null;
 	private static Material blitMaterial = null;
 	private static Material blendMaterial = null;
-	private static Rect lineRect = new Rect(0, 0, 1, 1);
+	private static readonly Rect lineRect = new Rect(0, 0, 1, 1);
 
 	public static void DrawLine(Vector2 pointA, Vector2 pointB, bool antiAlias = true) { DrawLine(pointA, pointB, GUI.contentColor, 1.0f, antiAlias); }
 	public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, bool antiAlias = true) { DrawLine(pointA, pointB, color, 1.0f, antiAlias); }
@@ -316,24 +375,6 @@ public static class GUITools
 		GL.PopMatrix();
 	}
 
-	// Other than method name, DrawBezierLine is unchanged from Linusmartensson's original implementation.
-	public static void DrawBezierLine(Vector2 start, Vector2 startTangent, Vector2 end, Vector2 endTangent, Color color, float width, bool antiAlias, int segments)
-	{
-		Vector2 lastV = CubeBezier(start, startTangent, end, endTangent, 0);
-		for (int i = 1; i < segments; ++i)
-		{
-			Vector2 v = CubeBezier(start, startTangent, end, endTangent, i / (float)segments);
-			DrawLine(lastV, v, color, width, antiAlias);
-			lastV = v;
-		}
-	}
-
-	private static Vector2 CubeBezier(Vector2 s, Vector2 st, Vector2 e, Vector2 et, float t)
-	{
-		float rt = 1 - t;
-		return rt * rt * rt * s + 3 * rt * rt * t * st + 3 * rt * t * t * et + t * t * t * e;
-	}
-
 	private static void InitializeLineDrawer()
 	{
 		if (lineTex == null)
@@ -356,6 +397,28 @@ public static class GUITools
 		// depending on the alphaBlend parameter. Use reflection to "borrow" these references.
 		blitMaterial = (Material)typeof(GUI).GetMethod("get_blitMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 		blendMaterial = (Material)typeof(GUI).GetMethod("get_blendMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+	}
+
+	#endregion
+
+	#region Drawing Tools - Bezier Line
+
+	// Other than method name, DrawBezierLine is unchanged from Linusmartensson's original implementation.
+	public static void DrawBezierLine(Vector2 start, Vector2 startTangent, Vector2 end, Vector2 endTangent, Color color, float width, bool antiAlias, int segments)
+	{
+		var lastV = CubeBezier(start, startTangent, end, endTangent, 0);
+		for (int i = 1; i < segments; ++i)
+		{
+			var v = CubeBezier(start, startTangent, end, endTangent, i / (float)segments);
+			DrawLine(lastV, v, color, width, antiAlias);
+			lastV = v;
+		}
+	}
+
+	private static Vector2 CubeBezier(Vector2 s, Vector2 st, Vector2 e, Vector2 et, float t)
+	{
+		var rt = 1 - t;
+		return rt * rt * rt * s + 3 * rt * rt * t * st + 3 * rt * t * t * et + t * t * t * e;
 	}
 
 	#endregion

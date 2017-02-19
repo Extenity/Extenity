@@ -2491,6 +2491,27 @@ public static class MathTools
 
 	#endregion
 
+	#region Alignment
+
+	public static int AlignCenterToContainer(this int objectDimensions, int containerDimensions)
+	{
+		return (containerDimensions - objectDimensions) >> 1;
+	}
+
+	public static float AlignCenterToContainer(this float objectDimensions, float containerDimensions)
+	{
+		return (containerDimensions - objectDimensions) * 0.5f;
+	}
+
+	public static Vector2 AlignCenterToContainer(this Vector2 objectDimensions, Vector2 containerDimensions)
+	{
+		return new Vector2(
+			objectDimensions.x.AlignCenterToContainer(containerDimensions.x),
+			objectDimensions.y.AlignCenterToContainer(containerDimensions.y));
+	}
+
+	#endregion
+
 	#region Plane
 
 	public static bool IsAllPointsOnPlane(this IList<Vector3> points, Vector3 planeNormal, float tolerance = 0.0001f)
