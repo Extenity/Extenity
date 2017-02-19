@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +19,6 @@ public static class CodeSnippets
 		Properties = new[] { "__NAME__" },
 		FileContent =
 @"using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -64,7 +62,6 @@ public class __NAME__ : MonoBehaviour
 		Properties = new[] { "__NAME__", "__NAMESPACE__" },
 		FileContent =
 @"using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -113,7 +110,6 @@ namespace __NAMESPACE__
 		Properties = new[] { "__NAME__" },
 		FileContent =
 @"using UnityEngine;
-using Extenity.Logging;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -142,12 +138,11 @@ public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
 
 	private static readonly SnippetInfo NamespacedInspectorScript = new SnippetInfo()
 	{
-		Name = "Inspector",
+		Name = "NamespacedInspector",
 		Path = "Editor/__NAME__Inspector.cs",
 		Properties = new[] { "__NAME__", "__NAMESPACE__" },
 		FileContent =
 @"using UnityEngine;
-using Extenity.Logging;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -182,19 +177,19 @@ namespace __NAMESPACE__
 	private static SnippetGroup ScriptWithInspectorGroup = new SnippetGroup()
 	{
 		MainFileExtension = "cs",
-		SnippetNames = new List<string> { "Main", "Inspector" }
+		SnippetNames = new List<string> { "NamespacedMain", "NamespacedInspector" }
 	};
 
 	private static SnippetGroup ScriptOnlyGroup = new SnippetGroup()
 	{
 		MainFileExtension = "cs",
-		SnippetNames = new List<string> { "Main" }
+		SnippetNames = new List<string> { "NamespacedMain" }
 	};
 
 	private static SnippetGroup InspectorOnlyGroup = new SnippetGroup()
 	{
 		MainFileExtension = "cs",
-		SnippetNames = new List<string> { "Inspector" }
+		SnippetNames = new List<string> { "NamespacedInspector" }
 	};
 
 	#endregion
