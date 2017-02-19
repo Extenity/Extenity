@@ -1,14 +1,14 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Events;
 
 public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
 {
 	#region Initialization
 
+	protected virtual void OnEnableBase() { }
 	protected abstract void OnEnableDerived();
+	protected virtual void OnDisableBase() { }
 	protected abstract void OnDisableDerived();
 
 	protected void OnEnable()
@@ -16,6 +16,7 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behav
 		Me = target as T;
 		Configuration = new SerializedObject(target);
 
+		OnEnableBase();
 		OnEnableDerived();
 
 		//RegisterUpdate();
@@ -26,6 +27,7 @@ public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behav
 		DeregisterUpdate(true);
 
 		OnDisableDerived();
+		OnDisableBase();
 	}
 
 	#endregion
