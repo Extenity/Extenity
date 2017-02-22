@@ -108,16 +108,30 @@ public class UiFader : MonoBehaviour
 			Debug.LogFormat("Fading in '{0}'", CanvasGroup.gameObject.name);
 		}
 
+		if (delay < 0f)
+			delay = 0f;
+		if (duration < 0f)
+			duration = 0f;
+
 		Stop();
 		if (CanvasGroup != null)
 		{
-			CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
-			CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
-			CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
+			if (duration < 0.001f)
 			{
+				CanvasGroup.alpha = FadeInAlpha;
 				CanvasGroup.blocksRaycasts = true;
 				CanvasGroup.interactable = true;
-			});
+			}
+			else
+			{
+				CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+				CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
+				CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
+				{
+					CanvasGroup.blocksRaycasts = true;
+					CanvasGroup.interactable = true;
+				});
+			}
 		}
 		return duration + delay;
 	}
@@ -134,16 +148,30 @@ public class UiFader : MonoBehaviour
 			Debug.LogFormat("Fading out '{0}'", CanvasGroup.gameObject.name);
 		}
 
+		if (delay < 0f)
+			delay = 0f;
+		if (duration < 0f)
+			duration = 0f;
+
 		Stop();
 		if (CanvasGroup != null)
 		{
-			CanvasGroup.blocksRaycasts = true;  // Always block raycasts while the panel is visible whether it's visible slightly or fully.
-			CanvasGroup.interactable = false; // Break interaction right away so user won't be able to click anything during fade out animation.
-			CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
+			if (duration < 0.001f)
 			{
+				CanvasGroup.alpha = FadeOutAlpha;
 				CanvasGroup.blocksRaycasts = false;
 				CanvasGroup.interactable = false;
-			});
+			}
+			else
+			{
+				CanvasGroup.blocksRaycasts = true;  // Always block raycasts while the panel is visible whether it's visible slightly or fully.
+				CanvasGroup.interactable = false; // Break interaction right away so user won't be able to click anything during fade out animation.
+				CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
+				{
+					CanvasGroup.blocksRaycasts = false;
+					CanvasGroup.interactable = false;
+				});
+			}
 		}
 		return duration + delay;
 	}
