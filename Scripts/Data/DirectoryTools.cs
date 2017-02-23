@@ -27,6 +27,89 @@ public static class DirectoryTools
 		}
 	}
 
+	#region Get File List
+
+	public static HashSet<string> ListFilesInDirectory(string sourceDirectory,
+		string[] includeFilters = null, string[] excludeFilters = null,
+		SearchOption searchOption = SearchOption.AllDirectories,
+		bool throwOnError = true)
+	{
+		if (sourceDirectory == null)
+			throw new ArgumentNullException("sourceDirectory");
+		if (File.Exists(sourceDirectory))
+			throw new ArgumentException("Source directory points to a file.");
+		if (!Directory.Exists(sourceDirectory))
+			return new HashSet<string>();
+
+		sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+
+		var files = new HashSet<string>();
+
+		// Include files
+		if (includeFilters.IsAllNullOrEmpty())
+		{
+			try
+			{
+				var list = Directory.GetFiles(sourceDirectory, "*", searchOption);
+				for (int i = 0; i < list.Length; i++)
+					files.Add(list[i]);
+			}
+			catch (Exception)
+			{
+				if (throwOnError)
+					throw;
+				return new HashSet<string>(); // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
+			}
+		}
+		else
+		{
+			foreach (var includeFilter in includeFilters)
+			{
+				try
+				{
+					if (string.IsNullOrEmpty(includeFilter))
+						continue;
+					var list = Directory.GetFiles(sourceDirectory, includeFilter, searchOption);
+					for (int i = 0; i < list.Length; i++)
+						files.Add(list[i]);
+				}
+				catch (Exception)
+				{
+					if (throwOnError)
+						throw;
+					return new HashSet<string>(); // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
+				}
+			}
+		}
+
+		if (files.Count == 0)
+			return files; // No files to include
+
+		// Exclude files
+		if (excludeFilters != null)
+		{
+			foreach (var excludeFilter in excludeFilters)
+			{
+				try
+				{
+					var list = Directory.GetFiles(sourceDirectory, excludeFilter, searchOption);
+					for (int i = 0; i < list.Length; i++)
+						files.Remove(list[i]);
+				}
+				catch (Exception)
+				{
+					if (throwOnError)
+						throw;
+					return new HashSet<string>(); // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
+				}
+			}
+		}
+
+		return files;
+	}
+
+	#endregion
+
 	#region Copy Directory
 
 	public class CopyResult
@@ -61,7 +144,8 @@ public static class DirectoryTools
 		/// Make sure CreateCopiedFileList set to true for accessing this list.
 		/// </summary>
 		public List<CopiedFile> CopiedFiles { get { return _CopiedFiles; } }
-		public int CopiedFileCount = 0; // Does not directly return CopiedFiles.Count because CreateCopiedFileList can be false.
+		// Does not directly return CopiedFiles.Count because CreateCopiedFileList can be false.
+		public int CopiedFileCount = 0;
 		/// <summary>
 		/// Allows you to choose not to cause overhead for creating the copied files list if you are not going to use it.
 		/// </summary>
@@ -121,67 +205,7 @@ public static class DirectoryTools
 		sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 		targetDirectory = targetDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
-		HashSet<string> filesToCopy = new HashSet<string>();
-
-		// Include files
-		if (includeFilters.IsAllNullOrEmpty())
-		{
-			try
-			{
-				var list = Directory.GetFiles(sourceDirectory, "*", searchOption);
-				for (int i = 0; i < list.Length; i++)
-					filesToCopy.Add(list[i]);
-			}
-			catch (Exception)
-			{
-				if (throwOnError)
-					throw;
-				return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
-			}
-		}
-		else
-		{
-			foreach (var includeFilter in includeFilters)
-			{
-				try
-				{
-					if (string.IsNullOrEmpty(includeFilter))
-						continue;
-					var list = Directory.GetFiles(sourceDirectory, includeFilter, searchOption);
-					for (int i = 0; i < list.Length; i++)
-						filesToCopy.Add(list[i]);
-				}
-				catch (Exception)
-				{
-					if (throwOnError)
-						throw;
-					return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
-				}
-			}
-		}
-
-		if (filesToCopy.Count == 0)
-			return true; // No files to copy
-
-		// Exclude files
-		if (excludeFilters != null)
-		{
-			foreach (var excludeFilter in excludeFilters)
-			{
-				try
-				{
-					var list = Directory.GetFiles(sourceDirectory, excludeFilter, searchOption);
-					for (int i = 0; i < list.Length; i++)
-						filesToCopy.Remove(list[i]);
-				}
-				catch (Exception)
-				{
-					if (throwOnError)
-						throw;
-					return false; // We could check continueOnError but it won't be useful at that point since we don't know what files to include or exclude.
-				}
-			}
-		}
+		var filesToCopy = ListFilesInDirectory(sourceDirectory, includeFilters, excludeFilters, searchOption, throwOnError);
 
 		if (filesToCopy.Count == 0)
 			return true; // No files to copy
