@@ -16,9 +16,11 @@ namespace Extenity.EditorUtilities
 		private Action OnContinue;
 		private string EnteredKey;
 
+		private bool NeedsFocus;
+
 		public static void Show(string title, string message, string key, string okButton, string cancelButton, Action onContinue)
 		{
-			FoolproofActionPopup popup = ScriptableObject.CreateInstance<FoolproofActionPopup>();
+			var popup = ScriptableObject.CreateInstance<FoolproofActionPopup>();
 			popup.titleContent = new GUIContent(title);
 			popup.position = new Rect(100, 100, 400, 250);
 			popup.Message = message;
@@ -27,6 +29,7 @@ namespace Extenity.EditorUtilities
 			popup.CancelButton = cancelButton;
 			popup.OnContinue += onContinue;
 			popup.EnteredKey = "";
+			popup.NeedsFocus = true;
 			popup.ShowAuxWindow();
 		}
 
@@ -51,6 +54,7 @@ namespace Extenity.EditorUtilities
 					GUILayout.BeginHorizontal();
 					GUILayout.Space(80f);
 					var enterPressed = Event.current.Equals(Event.KeyboardEvent("return"));
+					GUI.SetNextControlName("PassphraseField");
 					EnteredKey = GUILayout.PasswordField(EnteredKey, '*');
 					GUILayout.Space(80f);
 					GUILayout.EndHorizontal();
@@ -64,10 +68,11 @@ namespace Extenity.EditorUtilities
 						var result = sha.ComputeHash(Encoding.UTF8.GetBytes(EnteredKey)).ToHexStringCombined();
 						if (Key.Equals(result, StringComparison.InvariantCultureIgnoreCase))
 						{
+							Close();
+							Repaint();
+
 							if (OnContinue != null)
 								OnContinue();
-
-							Close();
 						}
 						else
 						{
@@ -83,6 +88,16 @@ namespace Extenity.EditorUtilities
 			}
 			GUILayout.Space(10f);
 			GUILayout.EndHorizontal();
+
+			if (NeedsFocus)
+			{
+				if (Event.current.type == EventType.Layout)
+				{
+					GUI.FocusControl("PassphraseField");
+					NeedsFocus = false;
+				}
+			}
+
 		}
 	}
 
