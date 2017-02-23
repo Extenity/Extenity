@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using UnityEngine;
@@ -21,6 +19,8 @@ namespace Extenity.WorldWideWeb
 		private Stream ftpStream = null;
 		private int bufferSize = 2048;
 
+		public string Host { get { return host; } }
+
 		/// <summary>
 		/// Construct Object
 		/// </summary>
@@ -39,7 +39,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + remoteFile);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + remoteFile);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -85,7 +85,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + remoteFile);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + remoteFile);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -123,12 +123,12 @@ namespace Extenity.WorldWideWeb
 		/// <summary>
 		/// Upload File
 		/// </summary>
-		public void Upload(string remoteFile, string localFile)
+		public bool Upload(string remoteFile, string localFile)
 		{
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + remoteFile);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + remoteFile);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -153,14 +153,25 @@ namespace Extenity.WorldWideWeb
 						bytesSent = localFileStream.Read(byteBuffer, 0, bufferSize);
 					}
 				}
-				catch (Exception exception) { Debug.LogException(exception); }
-				/* Resource Cleanup */
-				localFileStream.Close();
-				ftpStream.Close();
-				ftpRequest = null;
+				catch (Exception exception)
+				{
+					Debug.LogException(exception);
+					return false;
+				}
+				finally
+				{
+					/* Resource Cleanup */
+					localFileStream.Close();
+					ftpStream.Close();
+					ftpRequest = null;
+				}
 			}
-			catch (Exception exception) { Debug.LogException(exception); }
-			return;
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -171,7 +182,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)WebRequest.Create(host + "/" + deleteFile);
+				ftpRequest = (FtpWebRequest)WebRequest.Create(host.AddDirectorySeparatorToEnd('/') + deleteFile);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -193,12 +204,15 @@ namespace Extenity.WorldWideWeb
 		/// <summary>
 		/// Rename File
 		/// </summary>
-		public void Rename(string currentFileNameAndPath, string newFileName)
+		public bool Rename(string currentFileNameAndPath, string newFileName, bool ignoreErrors = false)
 		{
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)WebRequest.Create(host + "/" + currentFileNameAndPath);
+				var path = string.IsNullOrEmpty(currentFileNameAndPath)
+					? host.RemoveEndingDirectorySeparatorChar()
+					: host.AddDirectorySeparatorToEnd('/') + currentFileNameAndPath;
+				ftpRequest = (FtpWebRequest)WebRequest.Create(path);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -215,19 +229,29 @@ namespace Extenity.WorldWideWeb
 				ftpResponse.Close();
 				ftpRequest = null;
 			}
-			catch (Exception exception) { Debug.LogException(exception); }
-			return;
+			catch (Exception exception)
+			{
+				if (!ignoreErrors)
+				{
+					Debug.LogException(exception);
+				}
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>
 		/// Create a New Directory on the FTP Server
 		/// </summary>
-		public void CreateDirectory(string newDirectory)
+		public bool CreateDirectory(string newDirectory)
 		{
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)WebRequest.Create(host + "/" + newDirectory);
+				var path = string.IsNullOrEmpty(newDirectory)
+					? host.RemoveEndingDirectorySeparatorChar()
+					: host.AddDirectorySeparatorToEnd('/') + newDirectory;
+				ftpRequest = (FtpWebRequest)WebRequest.Create(path);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -242,8 +266,12 @@ namespace Extenity.WorldWideWeb
 				ftpResponse.Close();
 				ftpRequest = null;
 			}
-			catch (Exception exception) { Debug.LogException(exception); }
-			return;
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -254,7 +282,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + fileName);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + fileName);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -295,7 +323,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + fileName);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + fileName);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -336,7 +364,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + directory);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + directory);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
@@ -378,7 +406,7 @@ namespace Extenity.WorldWideWeb
 			try
 			{
 				/* Create an FTP Request */
-				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + directory);
+				ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host.AddDirectorySeparatorToEnd('/') + directory);
 				/* Log in to the FTP Server with the User Name and Password Provided */
 				ftpRequest.Credentials = new NetworkCredential(user, pass);
 				/* When in doubt, use these options */
