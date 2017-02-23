@@ -27,6 +27,34 @@ public static class DirectoryTools
 		}
 	}
 
+	#region Folder Name List To Be Created
+
+	public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths)
+	{
+		return GenerateFolderNameListToBeCreatedFromFilePaths(filePaths, FileTools.DirectorySeparatorChar);
+	}
+
+	public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths, char directorySeparator)
+	{
+		var folderOfFilePaths = new HashSet<string>();
+		foreach (var filePath in filePaths)
+		{
+			var directoryName = Path.GetDirectoryName(filePath).RemoveEndingDirectorySeparatorChar().FixDirectorySeparatorChars(directorySeparator);
+			if (!string.IsNullOrEmpty(directoryName))
+			{
+				folderOfFilePaths.Add(directoryName);
+			}
+		}
+		throw new NotImplementedException();
+		//var foldersWithAllSteps = new HashSet<string>();
+		//foreach (var folder in folderOfFilePaths)
+		//{
+		//	UnityEngine.Debug.Log("## folderOfFilePaths item : " + folder);
+		//}
+	}
+
+	#endregion
+
 	#region Get File List
 
 	public static HashSet<string> ListFilesInDirectory(string sourceDirectory,
