@@ -72,6 +72,8 @@ public static class FileTools
 
 	public static bool IsEndingWithDirectorySeparatorChar(this string path)
 	{
+		if (string.IsNullOrEmpty(path))
+			return false;
 		return path[path.Length - 1].IsDirectorySeparatorChar();
 	}
 
