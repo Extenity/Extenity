@@ -125,7 +125,7 @@ namespace Extenity.WorldWideWeb
 			});
 		}
 
-		public DeferredExecutionController CreateUploadJob(string remoteFileRelativePath, string localFileFullPath)
+		public DeferredExecutionController CreateUploadJob(string remoteFileRelativePath, string localFileFullPath, bool useTemporaryNaming = true)
 		{
 			return DeferredExecution.Setup((sender, args) =>
 			{
@@ -147,7 +147,7 @@ namespace Extenity.WorldWideWeb
 					remoteFileName = remoteFileRelativePath;
 					remoteTempFileRelativePath = TempFileNamePrefix + remoteFileRelativePath;
 				}
-				//var remoteFileFullPath = BaseAddress + remoteFileRelativePath;
+				var remoteFileFullPath = BaseAddress + remoteFileRelativePath;
 				var remoteTempFileFullPath = BaseAddress + remoteTempFileRelativePath;
 
 				// Get file size
@@ -155,7 +155,7 @@ namespace Extenity.WorldWideWeb
 				var humanReadableFileSize = fileSize.ToFileSizeString();
 
 				// Initialize web request to upload file (with temporary name)
-				var ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteTempFileFullPath);
+				var ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(useTemporaryNaming ? remoteTempFileFullPath : remoteFileFullPath);
 				ftpWebRequest.Credentials = Credentials;
 				ftpWebRequest.KeepAlive = true;
 				ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
@@ -190,14 +190,17 @@ namespace Extenity.WorldWideWeb
 				}
 
 				// Change file name from temp to original
-				worker.ReportProgress(99, "Changing temporary file name");
-				ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteTempFileFullPath);
-				ftpWebRequest.Credentials = Credentials;
-				ftpWebRequest.KeepAlive = true;
-				ftpWebRequest.Method = WebRequestMethods.Ftp.Rename;
-				ftpWebRequest.RenameTo = remoteFileName;
-				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
-				ftpWebRequest.GetResponse();
+				if (useTemporaryNaming)
+				{
+					worker.ReportProgress(99, "Changing temporary file name");
+					ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(remoteTempFileFullPath);
+					ftpWebRequest.Credentials = Credentials;
+					ftpWebRequest.KeepAlive = true;
+					ftpWebRequest.Method = WebRequestMethods.Ftp.Rename;
+					ftpWebRequest.RenameTo = remoteFileName;
+					if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
+					ftpWebRequest.GetResponse();
+				}
 
 				worker.ReportProgress(100, "Done.");
 			});
