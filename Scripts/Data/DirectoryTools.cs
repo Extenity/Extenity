@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 #if UNITY_EDITOR || !UNITY_WEBPLAYER
@@ -45,12 +46,29 @@ public static class DirectoryTools
 				folderOfFilePaths.Add(directoryName);
 			}
 		}
-		throw new NotImplementedException();
-		//var foldersWithAllSteps = new HashSet<string>();
-		//foreach (var folder in folderOfFilePaths)
-		//{
-		//	UnityEngine.Debug.Log("## folderOfFilePaths item : " + folder);
-		//}
+		var slicedFolders = new HashSet<string>();
+		foreach (var folder in folderOfFilePaths)
+		{
+			var indexOfSeparator = -1;
+			do
+			{
+				indexOfSeparator = folder.IndexOf(directorySeparator, indexOfSeparator + 1);
+				if (indexOfSeparator > 0)
+				{
+					var slicedFolder = folder.Substring(0, indexOfSeparator);
+					slicedFolders.Add(slicedFolder);
+				}
+			} while (indexOfSeparator >= 0);
+
+			slicedFolders.Add(folder);
+		}
+		var list = new List<string>(slicedFolders.Count);
+		foreach (var folder in slicedFolders)
+		{
+			list.Add(folder);
+		}
+		list.Sort(Comparer<string>.Default);
+		return list;
 	}
 
 	#endregion
