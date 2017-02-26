@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using Extenity.Parallel;
+using ICSharpCode.SharpZipLib.Extensions;
 
 namespace Extenity.WorldWideWeb
 {
@@ -35,7 +36,7 @@ namespace Extenity.WorldWideWeb
 			BaseAddress = string.Format("ftp://{0}/{1}", Host, BaseDirectory);
 		}
 
-		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath)
+		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath, bool extractCompressedFileAndDelete = false)
 		{
 			return DeferredExecution.Setup((sender, args) =>
 			{
@@ -44,8 +45,9 @@ namespace Extenity.WorldWideWeb
 				// Initialize paths
 				localFileFullPath = localFileFullPath.FixDirectorySeparatorChars(); // To system defaults
 				remoteFileRelativePath = remoteFileRelativePath.FixDirectorySeparatorChars('/'); // To FTP
-				string localFileName = Path.GetFileName(localFileFullPath);
-				string localTempFileFullPath = Path.Combine(Path.GetDirectoryName(localFileFullPath), TempFileNamePrefix + localFileName);
+				var localFileName = Path.GetFileName(localFileFullPath);
+				var localDirectoryPath = Path.GetDirectoryName(localFileFullPath).AddDirectorySeparatorToEnd();
+				var localTempFileFullPath = Path.Combine(localDirectoryPath, TempFileNamePrefix + localFileName);
 				var remoteFileFullPath = BaseAddress + remoteFileRelativePath;
 
 				// Request file size first
@@ -71,8 +73,8 @@ namespace Extenity.WorldWideWeb
 				ftpWebRequest.Timeout = 120000;
 				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before making the request
 
-				FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
-				Stream inputStream = ftpWebResponse.GetResponseStream();
+				var ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
+				var inputStream = ftpWebResponse.GetResponseStream();
 				//long fileSize = ftpWebResponse.ContentLength; This is the wrong way to do this.
 				//var humanReadableFileSize = fileSize.ToFileSizeString();
 
@@ -114,12 +116,23 @@ namespace Extenity.WorldWideWeb
 				worker.ReportProgress(99, "Changing temporary file name");
 				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before changing the file name
 
-				// Delete if file already exists.
-				if (File.Exists(localFileFullPath))
+
+				if (extractCompressedFileAndDelete)
 				{
-					File.Delete(localFileFullPath);
+					// Extract downloaded file and delete
+					SharpZipLibTools.ExtractFiles(File.OpenRead(localTempFileFullPath), localDirectoryPath);
+					File.Delete(localTempFileFullPath);
 				}
-				File.Move(localTempFileFullPath, localFileFullPath);
+				else
+				{
+					// Delete if file already exists.
+					if (File.Exists(localFileFullPath))
+					{
+						File.Delete(localFileFullPath);
+					}
+					// Rename downloaded file
+					File.Move(localTempFileFullPath, localFileFullPath);
+				}
 
 				worker.ReportProgress(100, "Done.");
 			});

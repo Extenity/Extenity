@@ -17,7 +17,7 @@ namespace Extenity.Parallel
 				currentWorker.Dispose();
 				if (args.Error != null)
 				{
-					controller.InformFailed(args.Error.Message);
+					controller.InformFailed(args.Error);
 				}
 				else if (args.Cancelled)
 				{
@@ -70,11 +70,11 @@ namespace Extenity.Parallel
 			private set { lock (this) { _Successful = value; } }
 		}
 
-		private string _ErrorMessage;
-		public string ErrorMessage
+		private Exception _Exception;
+		public Exception Exception
 		{
-			get { lock (this) { return _ErrorMessage; } }
-			private set { lock (this) { _ErrorMessage = value; } }
+			get { lock (this) { return _Exception; } }
+			private set { lock (this) { _Exception = value; } }
 		}
 
 		private string _Status;
@@ -97,7 +97,7 @@ namespace Extenity.Parallel
 
 		public event Action OnCompleted;
 
-		public delegate void FailedDelegate(string errorMessage);
+		public delegate void FailedDelegate(Exception exception);
 		public event FailedDelegate OnFailed;
 
 		public event Action OnCancelled;
@@ -126,21 +126,21 @@ namespace Extenity.Parallel
 			{
 				Successful = true;
 				Finished = true;
-				ErrorMessage = null;
+				Exception = null;
 				if (OnCompleted != null)
 					OnCompleted();
 			}
 		}
 
-		internal void InformFailed(string error)
+		internal void InformFailed(Exception exception)
 		{
 			lock (this)
 			{
 				Successful = false;
 				Finished = true;
-				ErrorMessage = error;
+				Exception = exception;
 				if (OnFailed != null)
-					OnFailed(error);
+					OnFailed(exception);
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace Extenity.Parallel
 			{
 				Successful = false;
 				Finished = true;
-				ErrorMessage = null;
+				Exception = null;
 				Cancelled = true;
 				if (OnCancelled != null)
 					OnCancelled();
