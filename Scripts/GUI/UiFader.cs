@@ -125,7 +125,8 @@ public class UiFader : MonoBehaviour
 			else
 			{
 				CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
-				CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
+				//CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
+				CanvasGroup.interactable = true; // Panel is going to be instantly interactable before getting fully visible.
 				CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
 				{
 					CanvasGroup.blocksRaycasts = true;
