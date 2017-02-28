@@ -120,7 +120,7 @@ namespace Extenity.WorldWideWeb
 				if (extractCompressedFileAndDelete)
 				{
 					// Extract downloaded file and delete
-					SharpZipLibTools.ExtractFiles(File.OpenRead(localTempFileFullPath), localDirectoryPath);
+					SharpZipLibTools.ExtractSingleFileEnsured(File.OpenRead(localTempFileFullPath), localFileFullPath);
 					File.Delete(localTempFileFullPath);
 				}
 				else
