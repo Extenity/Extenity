@@ -246,6 +246,29 @@ public static class FileTools
 
 	#endregion
 
+	#region File Info
+
+	public static bool TryGetFileSize(this string filePath, out long size)
+	{
+		try
+		{
+			size = new FileInfo(filePath).Length;
+		}
+		catch
+		{
+			size = -1;
+			return false;
+		}
+		return true;
+	}
+
+	public static long GetFileSize(this string filePath)
+	{
+		return new FileInfo(filePath).Length;
+	}
+
+	#endregion
+
 	#region Temp File
 
 	public static string CreateTemporaryFileInTemporaryDirectory()
