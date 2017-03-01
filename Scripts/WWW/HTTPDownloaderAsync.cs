@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
-using System.Net.Cache;
-using System.Text;
 using System.Threading;
 using Extenity.Parallel;
+using Extenity.WorldWideWeb.FileDownloader;
 using ICSharpCode.SharpZipLib.Extensions;
 using Timer = System.Timers.Timer;
 
@@ -23,7 +21,15 @@ namespace Extenity.WorldWideWeb
 			TempFileNamePrefix = tempFileNamePrefix;
 		}
 
-		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath, bool extractCompressedFileAndDelete = false)
+		public string BuildLocalTempFileFullPath(string localFileFullPath)
+		{
+			localFileFullPath = localFileFullPath.FixDirectorySeparatorChars(); // To system defaults
+			var localFileName = Path.GetFileName(localFileFullPath);
+			var localDirectoryPath = Path.GetDirectoryName(localFileFullPath).AddDirectorySeparatorToEnd();
+			return Path.Combine(localDirectoryPath, TempFileNamePrefix + localFileName);
+		}
+
+		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath, bool extractCompressedFileAndDelete = false, Func<Stream, bool> hashCalculator = null)
 		{
 			return DeferredExecution.Setup((sender, args) =>
 			{
@@ -32,20 +38,22 @@ namespace Extenity.WorldWideWeb
 				// Initialize paths
 				localFileFullPath = localFileFullPath.FixDirectorySeparatorChars(); // To system defaults
 				remoteFileRelativePath = remoteFileRelativePath.FixDirectorySeparatorChars('/'); // To HTTP
-				var localFileName = Path.GetFileName(localFileFullPath);
-				var localDirectoryPath = Path.GetDirectoryName(localFileFullPath).AddDirectorySeparatorToEnd();
-				var localTempFileFullPath = Path.Combine(localDirectoryPath, TempFileNamePrefix + localFileName);
+				var localTempFileFullPath = BuildLocalTempFileFullPath(localFileFullPath);
 				var remoteFileFullPath = BaseAddress + remoteFileRelativePath;
 
 				var waitEvent = new ManualResetEvent(false);
 				Exception downloadError = null;
 
 				// Get the object used to communicate with the server.
-				var client = new WebClient();
-				//client.UseDefaultCredentials
-				//fileSizeRequest.Credentials = Credentials;
-				client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-				client.Encoding = Encoding.UTF8;
+				{
+					// These were from the previous implementation that uses WebClient.
+					//var client = new WebClient();
+					////client.UseDefaultCredentials
+					////fileSizeRequest.Credentials = Credentials;
+					//client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+					//client.Encoding = Encoding.UTF8;
+				}
+				var fileDownloader = new FileDownloader.FileDownloader();
 
 				var timedOut = false;
 				var timeoutTimer = new Timer();
@@ -55,10 +63,10 @@ namespace Extenity.WorldWideWeb
 				timeoutTimer.Elapsed += (o, eventArgs) =>
 				{
 					timedOut = true;
-					client.CancelAsync();
+					fileDownloader.CancelDownloadAsync();
 				};
 
-				client.DownloadProgressChanged += (o, eventArgs) =>
+				fileDownloader.DownloadProgressChanged += (o, eventArgs) =>
 				{
 					timeoutTimer.Stop();
 					timeoutTimer.Start();
@@ -76,21 +84,21 @@ namespace Extenity.WorldWideWeb
 					// Cancel if requested
 					if (worker.CancellationPending)
 					{
-						client.CancelAsync();
+						fileDownloader.CancelDownloadAsync();
 						args.Cancel = true;
 					}
 				};
 
-				client.DownloadFileCompleted += (o, eventArgs) =>
+				fileDownloader.DownloadFileCompleted += (o, eventArgs) =>
 				{
 					timeoutTimer.Stop();
 
-					if (eventArgs.Error != null)
+					if (eventArgs.Error != null || eventArgs.Result == FileDownloaderResult.Failed)
 					{
 						downloadError = eventArgs.Error;
 						args.Cancel = true;
 					}
-					if (eventArgs.Cancelled)
+					if (eventArgs.Result == FileDownloaderResult.Cancelled)
 					{
 						args.Cancel = true;
 					}
@@ -100,11 +108,13 @@ namespace Extenity.WorldWideWeb
 				// Create directory
 				DirectoryTools.CreateFromFilePath(localTempFileFullPath);
 
-				client.DownloadFileAsync(new Uri(remoteFileFullPath), localTempFileFullPath);
+				fileDownloader.DownloadFileAsync(new Uri(remoteFileFullPath), localTempFileFullPath);
 				timeoutTimer.Start();
 				waitEvent.WaitOne();
 				waitEvent = null;
 				timeoutTimer.Stop();
+				fileDownloader.Dispose();
+				fileDownloader = null;
 
 				if (timedOut)
 				{
@@ -116,20 +126,81 @@ namespace Extenity.WorldWideWeb
 					throw downloadError;
 				}
 
-				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before changing the file name
+				worker.ReportProgress(99, "Finalizing file");
+				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested
 
-				// Rename downloaded file from temp filename to original filename
-				worker.ReportProgress(99, "Changing temporary file name");
-				if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested, just before changing the file name
-
+				// Extract downloaded file and delete
 				if (extractCompressedFileAndDelete)
 				{
-					// Extract downloaded file and delete
-					SharpZipLibTools.ExtractFiles(File.OpenRead(localTempFileFullPath), localDirectoryPath);
+					using (var memoryStream = new MemoryStream())
+					{
+						try
+						{
+							SharpZipLibTools.ExtractSingleFileEnsured(localTempFileFullPath, memoryStream);
+						}
+						catch (Exception exception)
+						{
+							throw new FileCorruptException("Failed to extract file.", exception);
+						}
+
+						// Calculate hash
+						if (hashCalculator != null)
+						{
+							var hashResult = false;
+							try
+							{
+								memoryStream.Position = 0;
+								hashResult = hashCalculator(memoryStream);
+							}
+							catch (Exception exception)
+							{
+								throw new Exception("Failed to calculate hash.", exception);
+							}
+							if (!hashResult)
+							{
+								throw new FileCorruptException("Downloaded file hash does not match.");
+							}
+						}
+
+						if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested
+
+						// Write memory to file
+						using (var fileStream = new FileStream(localFileFullPath, FileMode.Create, FileAccess.Write))
+						{
+							memoryStream.Position = 0;
+							memoryStream.WriteTo(fileStream);
+						}
+					}
+
+					// Delete compressed (downloaded) file
 					File.Delete(localTempFileFullPath);
 				}
 				else
 				{
+					// Calculate hash
+					if (hashCalculator != null)
+					{
+						var hashResult = false;
+						try
+						{
+							using (var fileStream = File.Open(localTempFileFullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+							{
+								hashResult = hashCalculator(fileStream);
+							}
+						}
+						catch (Exception exception)
+						{
+							throw new Exception("Failed to calculate hash.", exception);
+						}
+						if (!hashResult)
+						{
+							throw new FileCorruptException("Downloaded file hash does not match.");
+						}
+					}
+
+					if (worker.CancellationPending) { args.Cancel = true; return; } // Cancel if requested
+
+					// Rename downloaded file from temp filename to original filename
 					// Delete if file already exists.
 					if (File.Exists(localFileFullPath))
 					{
@@ -139,8 +210,6 @@ namespace Extenity.WorldWideWeb
 					File.Move(localTempFileFullPath, localFileFullPath);
 				}
 
-				client.Dispose();
-				client = null;
 				worker.ReportProgress(100, "Done.");
 			});
 		}
