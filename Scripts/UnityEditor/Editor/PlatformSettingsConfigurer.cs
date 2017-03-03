@@ -25,67 +25,109 @@ namespace Extenity.EditorUtilities
 			PSP2,
 			XboxOne,
 			WiiU,
+
 			tvOS,
+			SamsungTV,
+
+			//Facebook,
 		}
 
-		public static BuildTarget ConvertToBuildTarget(DesiredBuildTarget desiredBuildTarget)
+		public static void ConvertToBuildTarget(DesiredBuildTarget desiredBuildTarget, out BuildTargetGroup buildTargetGroup, out BuildTarget buildTarget)
 		{
 			switch (desiredBuildTarget)
 			{
 				case DesiredBuildTarget.None:
-					return (BuildTarget)0;
+					buildTarget = BuildTarget.NoTarget;
+					buildTargetGroup = BuildTargetGroup.Unknown;
+					break;
 				case DesiredBuildTarget.Standalone:
 					{
+						buildTargetGroup = BuildTargetGroup.Standalone;
 						switch (Application.platform)
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
 							case RuntimePlatform.OSXDashboardPlayer:
-								return BuildTarget.StandaloneOSXIntel;
+								buildTarget = BuildTarget.StandaloneOSXIntel;
+								break;
 							case RuntimePlatform.WindowsPlayer:
 							case RuntimePlatform.WindowsEditor:
-								return BuildTarget.StandaloneWindows;
+								buildTarget = BuildTarget.StandaloneWindows;
+								break;
 							case RuntimePlatform.LinuxPlayer:
-								return BuildTarget.StandaloneLinux;
+								buildTarget = BuildTarget.StandaloneLinux;
+								break;
 							default:
-								throw new ArgumentOutOfRangeException();
+								throw new ArgumentOutOfRangeException("Application.platform");
 						}
 					}
+					break;
 				case DesiredBuildTarget.Standalone64:
 					{
+						buildTargetGroup = BuildTargetGroup.Standalone;
 						switch (Application.platform)
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
 							case RuntimePlatform.OSXDashboardPlayer:
-								return BuildTarget.StandaloneOSXIntel64;
+								buildTarget = BuildTarget.StandaloneOSXIntel64;
+								break;
 							case RuntimePlatform.WindowsPlayer:
 							case RuntimePlatform.WindowsEditor:
-								return BuildTarget.StandaloneWindows64;
+								buildTarget = BuildTarget.StandaloneWindows64;
+								break;
 							case RuntimePlatform.LinuxPlayer:
-								return BuildTarget.StandaloneLinux64;
+								buildTarget = BuildTarget.StandaloneLinux64;
+								break;
 							default:
-								throw new ArgumentOutOfRangeException();
+								throw new ArgumentOutOfRangeException("Application.platform");
 						}
 					}
+					break;
 				case DesiredBuildTarget.WebGL:
-					return BuildTarget.WebGL;
+					buildTargetGroup = BuildTargetGroup.WebGL;
+					buildTarget = BuildTarget.WebGL;
+					break;
 				case DesiredBuildTarget.Android:
-					return BuildTarget.Android;
+					buildTargetGroup = BuildTargetGroup.Android;
+					buildTarget = BuildTarget.Android;
+					break;
 				case DesiredBuildTarget.iOS:
-					return BuildTarget.iOS;
+					buildTargetGroup = BuildTargetGroup.iOS;
+					buildTarget = BuildTarget.iOS;
+					break;
 				case DesiredBuildTarget.PS4:
-					return BuildTarget.PS4;
+					buildTargetGroup = BuildTargetGroup.PS4;
+					buildTarget = BuildTarget.PS4;
+					break;
 				case DesiredBuildTarget.PSM:
-					return BuildTarget.PSM;
+					buildTargetGroup = BuildTargetGroup.PSM;
+					buildTarget = BuildTarget.PSM;
+					break;
 				case DesiredBuildTarget.PSP2:
-					return BuildTarget.PSP2;
+					buildTargetGroup = BuildTargetGroup.PSP2;
+					buildTarget = BuildTarget.PSP2;
+					break;
 				case DesiredBuildTarget.XboxOne:
-					return BuildTarget.XboxOne;
+					buildTargetGroup = BuildTargetGroup.XboxOne;
+					buildTarget = BuildTarget.XboxOne;
+					break;
 				case DesiredBuildTarget.WiiU:
-					return BuildTarget.WiiU;
+					buildTargetGroup = BuildTargetGroup.WiiU;
+					buildTarget = BuildTarget.WiiU;
+					break;
 				case DesiredBuildTarget.tvOS:
-					return BuildTarget.tvOS;
+					buildTargetGroup = BuildTargetGroup.tvOS;
+					buildTarget = BuildTarget.tvOS;
+					break;
+				case DesiredBuildTarget.SamsungTV:
+					buildTargetGroup = BuildTargetGroup.SamsungTV;
+					buildTarget = BuildTarget.SamsungTV;
+					break;
+				//case DesiredBuildTarget.Facebook:
+				//	buildTargetGroup = BuildTargetGroup.Facebook;
+				//	buildTarget = BuildTarget.;
+				//	break;
 				default:
 					throw new ArgumentOutOfRangeException("desiredBuildTarget", desiredBuildTarget, null);
 			}
@@ -176,13 +218,15 @@ namespace Extenity.EditorUtilities
 			if (desiredBuildTarget == DesiredBuildTarget.None)
 				return;
 
-			var buildTarget = ConvertToBuildTarget(desiredBuildTarget);
+			BuildTarget buildTarget;
+			BuildTargetGroup buildTargetGroup;
+			ConvertToBuildTarget(desiredBuildTarget, out buildTargetGroup, out buildTarget);
 
 			if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 			{
 				Debug.LogWarningFormat("Changing active build platform from '{0}' to '{1}' as stated in '{2}'.", EditorUserBuildSettings.activeBuildTarget, buildTarget, SettingsFilePath);
 
-				EditorUserBuildSettings.SwitchActiveBuildTarget(buildTarget);
+				EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
 			}
 		}
 

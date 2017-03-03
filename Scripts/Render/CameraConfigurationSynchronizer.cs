@@ -130,7 +130,7 @@ namespace Extenity.Rendering
 			if (SyncUseOcclusionCulling)
 				Camera.useOcclusionCulling = FromCamera.useOcclusionCulling;
 			if (SyncHDR)
-				Camera.hdr = FromCamera.hdr;
+				Camera.allowHDR = FromCamera.allowHDR;
 			if (SyncTargetDisplay)
 				Camera.targetDisplay = FromCamera.targetDisplay;
 		}
