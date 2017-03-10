@@ -35,6 +35,8 @@ namespace Extenity.StringUtilities
 		/// </summary>
 		public static string SeparateCamelCasedAdjointWords(this string input, string separator = " ")
 		{
+			if (string.IsNullOrEmpty(input))
+				return "";
 			return CamelCasedAdjointWordSeparatorRegex.Replace(input, separator);
 		}
 
@@ -43,6 +45,8 @@ namespace Extenity.StringUtilities
 		/// </summary>
 		public static string[] SplitCamelCasedAdjointWords(this string input)
 		{
+			if (string.IsNullOrEmpty(input))
+				return new string[0];
 			return CamelCasedAdjointWordSeparatorRegex.Split(input).Where(item => !string.IsNullOrEmpty(item)).ToArray();
 		}
 
