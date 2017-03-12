@@ -58,6 +58,8 @@ namespace Extenity.UIToolbox
 
 			row.KeyText.transform.SetParent(KeyContainer);
 			row.ValueText.transform.SetParent(ValueContainer);
+			row.KeyText.transform.localScale = Vector3.one;
+			row.ValueText.transform.localScale = Vector3.one;
 
 			KeyValueListRows.Add(row);
 		}
