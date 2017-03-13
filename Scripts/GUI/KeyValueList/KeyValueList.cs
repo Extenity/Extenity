@@ -50,6 +50,14 @@ namespace Extenity.UIToolbox
 
 		public void AddRow(string key, string value)
 		{
+			InsertRow(key, value, KeyValueListRows.Count);
+		}
+
+		public void InsertRow(string key, string value, int index)
+		{
+			if (index < -1 || index > KeyValueListRows.Count)
+				throw new ArgumentOutOfRangeException("index");
+
 			var row = new KeyValueListRow(
 				GameObjectTools.InstantiateAndGetComponent<Text>(TextPrefab),
 				GameObjectTools.InstantiateAndGetComponent<Text>(TextPrefab));
@@ -65,7 +73,13 @@ namespace Extenity.UIToolbox
 			row.KeyText.transform.localScale = Vector3.one;
 			row.ValueText.transform.localScale = Vector3.one;
 
-			KeyValueListRows.Add(row);
+			if (index < KeyValueListRows.Count)
+			{
+				row.KeyText.transform.SetSiblingIndex(index);
+				row.ValueText.transform.SetSiblingIndex(index);
+			}
+
+			KeyValueListRows.Insert(index, row);
 		}
 
 		public bool RemoveRow(string key)
@@ -133,6 +147,7 @@ namespace Extenity.UIToolbox
 
 		private string _Tool_Key = "";
 		private string _Tool_Value = "";
+		private int _Tool_InsertIndex = 0;
 
 		[Conditional("UNITY_EDITOR")]
 		[Group("Tools", Expandable = false, Priority = 150)]
@@ -158,10 +173,32 @@ namespace Extenity.UIToolbox
 					}
 					GUILayout.EndVertical();
 				}
-				if (GUILayout.Button("Add Row", GUILayout.ExpandWidth(false)))
+				GUILayout.BeginVertical(GUILayout.ExpandWidth(false));
 				{
-					UnityEditor.EditorApplication.delayCall += () => { AddRow(_Tool_Key, _Tool_Value); };
+					if (GUILayout.Button("Add Row", GUILayout.ExpandWidth(false)))
+					{
+						UnityEditor.EditorApplication.delayCall += () =>
+						{
+							UnityEditor.Undo.RecordObject(gameObject, "Add row");
+							AddRow(_Tool_Key, _Tool_Value);
+						};
+					}
+					GUILayout.BeginHorizontal(GUILayout.ExpandWidth(false));
+					{
+						var insertIndexAsText = GUILayout.TextArea(_Tool_InsertIndex.ToString());
+						int.TryParse(insertIndexAsText, out _Tool_InsertIndex);
+						if (GUILayout.Button("Insert", GUILayout.ExpandWidth(false)))
+						{
+							UnityEditor.EditorApplication.delayCall += () =>
+							{
+								UnityEditor.Undo.RecordObject(gameObject, "Insert row");
+								InsertRow(_Tool_Key, _Tool_Value, _Tool_InsertIndex);
+							};
+						}
+					}
+					GUILayout.EndHorizontal();
 				}
+				GUILayout.EndVertical();
 				GUILayout.EndHorizontal();
 			}
 
@@ -175,7 +212,11 @@ namespace Extenity.UIToolbox
 				_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayout.ExpandWidth(true));
 				if (GUILayout.Button("Remove Row", GUILayout.ExpandWidth(false)))
 				{
-					UnityEditor.EditorApplication.delayCall += () => { RemoveRow(_Tool_Key); };
+					UnityEditor.EditorApplication.delayCall += () =>
+					{
+						UnityEditor.Undo.RecordObject(gameObject, "Remove row");
+						RemoveRow(_Tool_Key);
+					};
 				}
 				GUILayout.EndHorizontal();
 			}
