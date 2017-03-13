@@ -18,7 +18,7 @@ namespace Extenity.UIToolbox
 		[Group("Configuration"), Inspect(Priority = 17)]
 		public RectTransform ValueContainer;
 
-		[Group("Rows", Expandable = false, Priority = 20)]
+		[Group("Rows", Expandable = true, Priority = 20)]
 		public List<KeyValueListRow> KeyValueListRows = new List<KeyValueListRow>(50);
 
 		[Serializable]
