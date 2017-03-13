@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
+using AdvancedInspector;
 using Extenity.SceneManagement;
 using UnityEngine.UI;
 
@@ -64,16 +66,18 @@ namespace Extenity.UIToolbox
 			KeyValueListRows.Add(row);
 		}
 
-		public void RemoveRow(string key)
+		public bool RemoveRow(string key)
 		{
 			for (int i = 0; i < KeyValueListRows.Count; i++)
 			{
 				if (KeyValueListRows[i].KeyText.text == key)
 				{
 					KeyValueListRows[i].Destroy();
-					i--;
+					KeyValueListRows.RemoveAt(i);
+					return true;
 				}
 			}
+			return false;
 		}
 
 		public void ClearRows()
@@ -120,6 +124,82 @@ namespace Extenity.UIToolbox
 
 			AddRow(key, value);
 		}
+
+		#region Inspector
+
+#if UNITY_EDITOR
+
+		private string _Tool_Key = "";
+		private string _Tool_Value = "";
+
+		[Conditional("UNITY_EDITOR")]
+		[Group("Tools", Expandable = false)]
+		[Inspect(Priority = 15), Method(MethodDisplay.Invoke)]
+		private void _InternalDrawTools()
+		{
+			GUILayout.BeginVertical();
+
+			// Add Row button
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Add Row");
+				GUILayout.BeginHorizontal();
+				{
+					GUILayout.BeginVertical();
+					{
+						GUILayout.Label("Key");
+						GUILayout.Label("Value");
+					}
+					GUILayout.EndVertical();
+					GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+					{
+						_Tool_Key = GUILayout.TextField(_Tool_Key);
+						_Tool_Value = GUILayout.TextField(_Tool_Value);
+					}
+					GUILayout.EndVertical();
+				}
+				GUILayout.EndHorizontal();
+				if (GUILayout.Button("Add Row"))
+				{
+					UnityEditor.EditorApplication.delayCall += () => { AddRow(_Tool_Key, _Tool_Value); };
+				}
+				GUILayout.EndHorizontal();
+			}
+
+			// Horizontal line
+			GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+
+			// Remove Row button
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Remove Row");
+				GUILayout.BeginHorizontal();
+				{
+					GUILayout.BeginVertical();
+					{
+						GUILayout.Label("Key");
+					}
+					GUILayout.EndVertical();
+					GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+					{
+						_Tool_Key = GUILayout.TextField(_Tool_Key);
+					}
+					GUILayout.EndVertical();
+				}
+				GUILayout.EndHorizontal();
+				if (GUILayout.Button("Remove Row"))
+				{
+					UnityEditor.EditorApplication.delayCall += () => { RemoveRow(_Tool_Key); };
+				}
+				GUILayout.EndHorizontal();
+			}
+
+			GUILayout.EndVertical();
+		}
+
+#endif
+
+		#endregion
 	}
 
 }
