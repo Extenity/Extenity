@@ -1,8 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
-using AdvancedInspector;
 using Extenity.SceneManagement;
 using UnityEngine.UI;
 
@@ -11,14 +9,12 @@ namespace Extenity.UIToolbox
 
 	public class KeyValueList : MonoBehaviour
 	{
-		[Group("Configuration", Expandable = false, Priority = 10), Inspect(Priority = 13)]
+		[Header("Configuration")]
 		public GameObject TextPrefab;
-		[Group("Configuration"), Inspect(Priority = 15)]
 		public RectTransform KeyContainer;
-		[Group("Configuration"), Inspect(Priority = 17)]
 		public RectTransform ValueContainer;
 
-		[Group("Rows", Expandable = true, Priority = 20)]
+		[Header("Rows")]
 		public List<KeyValueListRow> KeyValueListRows = new List<KeyValueListRow>(50);
 
 		[Serializable]
@@ -140,93 +136,6 @@ namespace Extenity.UIToolbox
 
 			AddRow(key, value);
 		}
-
-		#region Inspector
-
-#if UNITY_EDITOR
-
-		private string _Tool_Key = "";
-		private string _Tool_Value = "";
-		private int _Tool_InsertIndex = 0;
-
-		[Conditional("UNITY_EDITOR")]
-		[Group("Tools", Expandable = false, Priority = 150)]
-		[Inspect(Priority = 15), Method(MethodDisplay.Invoke)]
-		private void _InternalDrawTools()
-		{
-			GUILayout.BeginVertical();
-
-			// Add Row button
-			{
-				GUILayout.BeginHorizontal();
-				{
-					GUILayout.BeginVertical(GUILayout.ExpandWidth(false));
-					{
-						GUILayout.Label("Key", GUILayout.ExpandWidth(false));
-						GUILayout.Label("Value", GUILayout.ExpandWidth(false));
-					}
-					GUILayout.EndVertical();
-					GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-					{
-						_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayout.ExpandWidth(true));
-						_Tool_Value = GUILayout.TextField(_Tool_Value, GUILayout.ExpandWidth(true));
-					}
-					GUILayout.EndVertical();
-				}
-				GUILayout.BeginVertical(GUILayout.ExpandWidth(false));
-				{
-					if (GUILayout.Button("Add Row", GUILayout.ExpandWidth(false)))
-					{
-						UnityEditor.EditorApplication.delayCall += () =>
-						{
-							UnityEditor.Undo.RecordObject(gameObject, "Add row");
-							AddRow(_Tool_Key, _Tool_Value);
-						};
-					}
-					GUILayout.BeginHorizontal(GUILayout.ExpandWidth(false));
-					{
-						var insertIndexAsText = GUILayout.TextArea(_Tool_InsertIndex.ToString());
-						int.TryParse(insertIndexAsText, out _Tool_InsertIndex);
-						if (GUILayout.Button("Insert", GUILayout.ExpandWidth(false)))
-						{
-							UnityEditor.EditorApplication.delayCall += () =>
-							{
-								UnityEditor.Undo.RecordObject(gameObject, "Insert row");
-								InsertRow(_Tool_Key, _Tool_Value, _Tool_InsertIndex);
-							};
-						}
-					}
-					GUILayout.EndHorizontal();
-				}
-				GUILayout.EndVertical();
-				GUILayout.EndHorizontal();
-			}
-
-			// Horizontal line
-			GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
-
-			// Remove Row button
-			{
-				GUILayout.BeginHorizontal();
-				GUILayout.Label("Key", GUILayout.ExpandWidth(false));
-				_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayout.ExpandWidth(true));
-				if (GUILayout.Button("Remove Row", GUILayout.ExpandWidth(false)))
-				{
-					UnityEditor.EditorApplication.delayCall += () =>
-					{
-						UnityEditor.Undo.RecordObject(gameObject, "Remove row");
-						RemoveRow(_Tool_Key);
-					};
-				}
-				GUILayout.EndHorizontal();
-			}
-
-			GUILayout.EndVertical();
-		}
-
-#endif
-
-		#endregion
 	}
 
 }
