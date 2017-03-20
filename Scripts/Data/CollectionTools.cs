@@ -81,6 +81,16 @@ public static class CollectionTools
 		}
 	}
 
+	public static bool AddIfDoesNotContain<T>(this List<T> thisList, T item)
+	{
+		if (!thisList.Contains(item))
+		{
+			thisList.Add(item);
+			return true;
+		}
+		return false;
+	}
+
 	public static void AddSorted<T>(this List<T> thisList, T item) where T : IComparable<T>
 	{
 		if (thisList.Count == 0)
