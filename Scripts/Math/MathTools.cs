@@ -233,6 +233,25 @@ public static class MathTools
 		}
 	}
 
+	/// <summary>
+	/// http://stackoverflow.com/questions/12097805/how-to-check-if-number-is-divisible-in-c
+	/// </summary>
+	public static bool IsGoodDivision(this int value, int divisor)
+	{
+		if (divisor == 0)
+			throw new DivideByZeroException();
+		while (divisor % 2 == 0) { divisor /= 2; }
+		while (divisor % 5 == 0) { divisor /= 5; }
+		return value % divisor == 0;
+	}
+
+	public static bool IsDivisible(this int value, int divisor)
+	{
+		if (divisor == 0)
+			throw new DivideByZeroException();
+		return value % divisor == 0;
+	}
+
 	public static float Tanh(float x)
 	{
 		return (Mathf.Pow(E, x) - Mathf.Pow(E, -x)) / (Mathf.Pow(E, x) + Mathf.Pow(E, -x));
