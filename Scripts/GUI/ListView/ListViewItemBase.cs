@@ -47,6 +47,7 @@ namespace Extenity.UserInterface
 
 		#region Link With Data
 
+		/*
 		/// <summary>
 		/// Tells if this list view item is created using the data specified with 'itemData'.
 		/// 
@@ -55,6 +56,7 @@ namespace Extenity.UserInterface
 		/// returns true if IDs match.
 		/// </summary>
 		public abstract bool IsLinkedWithData(object itemData);
+		*/
 
 		#endregion
 

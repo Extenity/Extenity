@@ -8,7 +8,7 @@ namespace Extenity.UserInterface
 {
 
 	[RequireComponent(typeof(UIWidgets.ListView))]
-	public class ListView : MonoBehaviour
+	public class ListViewBase<TItem, TItemID, TItemData> : MonoBehaviour where TItem : ListViewItemBase
 	{
 		#region Initialization
 
@@ -21,14 +21,6 @@ namespace Extenity.UserInterface
 		#region Deinitialization
 
 		//protected void OnDestroy()
-		//{
-		//}
-
-		#endregion
-
-		#region Update
-
-		//protected void Update()
 		//{
 		//}
 
@@ -48,16 +40,16 @@ namespace Extenity.UserInterface
 
 		#region Template Item
 
-		public ListViewItemBase TemplateItem;
+		public TItem TemplateItem;
 
 		#endregion
 
 		#region Items
 
-		private List<ListViewItemBase> _Items = new List<ListViewItemBase>();
-		private ReadOnlyCollection<ListViewItemBase> _ItemsAsReadOnly;
+		private List<KeyValuePair<TItemID, TItem>> _Items = new List<KeyValuePair<TItemID, TItem>>();
+		private ReadOnlyCollection<KeyValuePair<TItemID, TItem>> _ItemsAsReadOnly;
 
-		public ReadOnlyCollection<ListViewItemBase> Items
+		public ReadOnlyCollection<KeyValuePair<TItemID, TItem>> Items
 		{
 			get
 			{
@@ -66,50 +58,63 @@ namespace Extenity.UserInterface
 			}
 		}
 
-		public bool IsItemExists(object itemData)
+		public bool IsItemExists(TItemID itemID)
 		{
-			TypeCheck(itemData);
+			//TypeCheck(itemData);
 
 			for (var i = 0; i < _Items.Count; i++)
 			{
-				if (_Items[i] != null && _Items[i].IsLinkedWithData(itemData))
+				if (_Items[i].Key.Equals(itemID) && _Items[i].Value != null)
 					return true;
 			}
 			return false;
 		}
 
-		public void AddItem(object itemData, bool checkForDuplicates = false)
+		public TItem GetItem(TItemID itemID)
 		{
-			TypeCheck(itemData);
+			for (var i = 0; i < _Items.Count; i++)
+			{
+				if (_Items[i].Key.Equals(itemID) && _Items[i].Value != null)
+					return _Items[i].Value;
+			}
+			return default(TItem);
+		}
+
+		public void AddItem(TItemID itemID, TItemData itemData, bool checkForDuplicates = false)
+		{
+			//TypeCheck(itemData);
 
 			if (!TemplateItem.IsOkayToCreateItem(itemData))
 				return;
 
 			if (checkForDuplicates)
 			{
-				if (IsItemExists(itemData))
+				if (IsItemExists(itemID))
 					return;
 			}
 
-			var item = GameObjectTools.InstantiateAndGetComponent<ListViewItemBase>(TemplateItem.gameObject,
-				TemplateItem.transform.parent, true);
+			var item = GameObjectTools.InstantiateAndGetComponent<TItem>(TemplateItem.gameObject, TemplateItem.transform.parent, true);
 			item.Initialize(itemData);
 		}
 
-		public bool RemoveItem(object itemData)
+		public bool RemoveItem(TItemID itemID)
 		{
-			TypeCheck(itemData);
+			//TypeCheck(itemData);
 
+			var found = false;
 			for (var i = 0; i < _Items.Count; i++)
 			{
-				if (_Items[i] != null && _Items[i].IsLinkedWithData(itemData))
+				if (_Items[i].Key.Equals(itemID))
 				{
-					Destroy(_Items[i]);
+					if (_Items[i].Value != null)
+					{
+						Destroy(_Items[i].Value);
+					}
 					_Items.RemoveAt(i);
-					return true;
+					found = true;
 				}
 			}
-			return false;
+			return found;
 		}
 
 		public void ClearItems()
@@ -117,23 +122,24 @@ namespace Extenity.UserInterface
 			while (_Items.Count > 0)
 			{
 				var i = _Items.Count - 1;
-				Destroy(_Items[i]);
+				if (_Items[i].Value != null)
+				{
+					Destroy(_Items[i].Value);
+				}
 				_Items.RemoveAt(i);
 			}
 		}
 
-		public bool ModifyItem(object oldItemData, object newItemData)
+		public bool ModifyItem(TItemID itemID, TItemData newItemData)
 		{
-			TypeCheck(oldItemData);
-			TypeCheck(newItemData);
+			//TypeCheck(oldItemData);
+			//TypeCheck(newItemData);
 
-			for (var i = 0; i < _Items.Count; i++)
+			var item = GetItem(itemID);
+			if (item !=null)
 			{
-				if (_Items[i] != null && _Items[i].IsLinkedWithData(oldItemData))
-				{
-					_Items[i].Modify(newItemData);
-					return true;
-				}
+				item.Modify(newItemData);
+				return true;
 			}
 			return false;
 		}
@@ -142,6 +148,7 @@ namespace Extenity.UserInterface
 
 		#region Item Type
 
+		/*
 		private Type _ItemType;
 
 		public Type ItemType
@@ -167,6 +174,7 @@ namespace Extenity.UserInterface
 						itemData.GetType().FullName, _ItemType.FullName));
 			}
 		}
+		*/
 
 		#endregion
 
@@ -178,7 +186,7 @@ namespace Extenity.UserInterface
 				_UIWidgetsListView = GetComponent<UIWidgets.ListView>();
 
 			if (TemplateItem == null)
-				TemplateItem = transform.GetComponentInChildren<ListViewItemBase>();
+				TemplateItem = transform.GetComponentInChildren<TItem>();
 		}
 
 		#endregion
