@@ -8,7 +8,7 @@ namespace Extenity.UserInterface
 {
 
 	[RequireComponent(typeof(UIWidgets.ListView))]
-	public class ListViewBase<TItem, TItemID, TItemData> : MonoBehaviour where TItem : ListViewItemBase
+	public class ListViewBase<TItem, TItemID, TItemData> : MonoBehaviour where TItem : ListViewItemBase<TItemID, TItemData>
 	{
 		#region Initialization
 
@@ -93,8 +93,13 @@ namespace Extenity.UserInterface
 					return;
 			}
 
+			if (TemplateItem.UIWidgetsListViewItem == null)
+				throw new Exception();
+
 			var item = GameObjectTools.InstantiateAndGetComponent<TItem>(TemplateItem.gameObject, TemplateItem.transform.parent, true);
-			item.Initialize(itemData);
+			var uiWidgetsItem = item.UIWidgetsListViewItem;
+			UIWidgetsListView.Add(uiWidgetsItem);
+			item.Initialize(itemID, itemData);
 		}
 
 		public bool RemoveItem(TItemID itemID)

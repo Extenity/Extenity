@@ -1,20 +1,16 @@
-using System;
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Extenity.StringUtilities;
 using UnityEngine.UI;
+using Extenity.StringUtilities;
 
 namespace Extenity.UserInterface
 {
 
-	public class ListViewItem : ListViewItemBase
+	public class ListViewItem : ListViewItemBase<string, string>
 	{
 		#region Initialization
 
-		protected override void OnItemCreated(object itemData)
+		protected override void OnItemCreated(string itemData)
 		{
-			throw new System.NotImplementedException();
+			Modify(itemData);
 		}
 
 		//protected void Awake()
@@ -63,18 +59,9 @@ namespace Extenity.UserInterface
 			Text.text = displayedLabel;
 		}
 
-		#endregion
-
-		#region Link With Data
-
-		public bool IsLinkedWithData(string label)
+		public override void Modify(string newItemData)
 		{
-			return _Label.Equals(label);
-		}
-
-		public override bool IsLinkedWithData(object itemData)
-		{
-			throw new System.NotImplementedException();
+			SetLabel(newItemData);
 		}
 
 		#endregion
@@ -84,11 +71,6 @@ namespace Extenity.UserInterface
 		public Text Text;
 
 		#endregion
-
-		protected override void OnItemModified(object newItemData)
-		{
-			throw new NotImplementedException();
-		}
 	}
 
 }

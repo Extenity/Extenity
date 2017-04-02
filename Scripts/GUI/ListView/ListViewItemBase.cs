@@ -6,16 +6,15 @@ namespace Extenity.UserInterface
 {
 
 	[RequireComponent(typeof(UIWidgets.ListViewItem))]
-	public abstract class ListViewItemBase : MonoBehaviour
+	public abstract class ListViewItemBase<TItemID, TItemData> : MonoBehaviour
 	{
 		#region Initialization
 
-		internal virtual bool IsOkayToCreateItem(object itemData) { return true; }
+		protected abstract void OnItemCreated(TItemData itemData);
 
-		protected abstract void OnItemCreated(object itemData);
-
-		public void Initialize(object itemData)
+		public void Initialize(TItemID itemID, TItemData itemData)
 		{
+			ID = itemID;
 			OnItemCreated(itemData);
 		}
 
@@ -30,6 +29,21 @@ namespace Extenity.UserInterface
 		//protected void OnDestroy()
 		//{
 		//}
+
+		#endregion
+
+		#region Metadata
+
+		public TItemID ID { get; private set; }
+
+		#endregion
+
+		#region Item Create Verification
+
+		internal virtual bool IsOkayToCreateItem(TItemData itemData)
+		{
+			return true;
+		}
 
 		#endregion
 
@@ -62,12 +76,11 @@ namespace Extenity.UserInterface
 
 		#region Modify Data
 
-		protected abstract void OnItemModified(object newItemData);
-
-		public void Modify(object newItemData)
-		{
-			OnItemModified(newItemData);
-		}
+		/// <summary>
+		/// Allows a generalized data modify operation. There also could be other modification methods defined in derives list view item class.
+		/// </summary>
+		/// <param name="newItemData"></param>
+		public abstract void Modify(TItemData newItemData);
 
 		#endregion
 
