@@ -7,8 +7,7 @@ using Extenity.SceneManagement;
 namespace Extenity.UserInterface
 {
 
-	[RequireComponent(typeof(UIWidgets.ListView))]
-	public class ListViewBase<TItem, TItemID, TItemData> : MonoBehaviour where TItem : ListViewItemBase<TItemID, TItemData>
+	public class ListViewBase<TItem, TItemID, TItemData> : UIWidgets.ListView where TItem : ListViewItemBase<TItemID, TItemData>
 	{
 		#region Initialization
 
@@ -28,6 +27,7 @@ namespace Extenity.UserInterface
 
 		#region UIWidgets ListView
 
+		/*
 		[SerializeField]
 		private UIWidgets.ListView _UIWidgetsListView;
 
@@ -35,6 +35,7 @@ namespace Extenity.UserInterface
 		{
 			get { return _UIWidgetsListView; }
 		}
+		*/
 
 		#endregion
 
@@ -48,15 +49,7 @@ namespace Extenity.UserInterface
 
 		private List<KeyValuePair<TItemID, TItem>> _Items = new List<KeyValuePair<TItemID, TItem>>();
 		private ReadOnlyCollection<KeyValuePair<TItemID, TItem>> _ItemsAsReadOnly;
-
-		public ReadOnlyCollection<KeyValuePair<TItemID, TItem>> Items
-		{
-			get
-			{
-				if (_ItemsAsReadOnly == null) _ItemsAsReadOnly = _Items.AsReadOnly();
-				return _ItemsAsReadOnly;
-			}
-		}
+		public new ReadOnlyCollection<KeyValuePair<TItemID, TItem>> Items { get { if (_ItemsAsReadOnly == null) _ItemsAsReadOnly = _Items.AsReadOnly(); return _ItemsAsReadOnly; } }
 
 		public bool IsItemExists(TItemID itemID)
 		{
@@ -98,8 +91,9 @@ namespace Extenity.UserInterface
 
 			var item = GameObjectTools.InstantiateAndGetComponent<TItem>(TemplateItem.gameObject, TemplateItem.transform.parent, true);
 			var uiWidgetsItem = item.UIWidgetsListViewItem;
-			UIWidgetsListView.Add(uiWidgetsItem);
+			Add(uiWidgetsItem);
 			item.Initialize(itemID, itemData);
+			_Items.Add(new KeyValuePair<TItemID, TItem>(itemID, item));
 		}
 
 		public bool RemoveItem(TItemID itemID)
@@ -141,7 +135,7 @@ namespace Extenity.UserInterface
 			//TypeCheck(newItemData);
 
 			var item = GetItem(itemID);
-			if (item !=null)
+			if (item != null)
 			{
 				item.Modify(newItemData);
 				return true;
@@ -183,13 +177,27 @@ namespace Extenity.UserInterface
 
 		#endregion
 
+		#region Selected Item
+
+		public TItem SelectedItem
+		{
+			get
+			{
+				if (SelectedIndex >= 0)
+				{
+					var item = GetItem(SelectedIndex);
+					return item.GetComponent<TItem>();
+				}
+				return null;
+			}
+		}
+
+		#endregion
+
 		#region Validate
 
 		private void OnValidate()
 		{
-			if (_UIWidgetsListView == null)
-				_UIWidgetsListView = GetComponent<UIWidgets.ListView>();
-
 			if (TemplateItem == null)
 				TemplateItem = transform.GetComponentInChildren<TItem>();
 		}
