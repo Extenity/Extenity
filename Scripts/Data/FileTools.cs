@@ -334,4 +334,18 @@ public static class FileTools
 	}
 
 	#endregion
+
+	#region File Exists
+
+	public static string AnyFileExistsWithExtensions(string pathWithoutExtension, string[] extensions)
+	{
+		for (int i = 0; i < extensions.Length; i++)
+		{
+			if (File.Exists(pathWithoutExtension + extensions[i]))
+				return extensions[i];
+		}
+		return null;
+	}
+
+	#endregion
 }

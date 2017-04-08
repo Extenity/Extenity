@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using Extenity.DataTypes;
@@ -8,6 +9,44 @@ namespace Extenity.Crypto
 
 	public static class HashTools
 	{
+		#region Result Caching
+
+		private class CachedResult
+		{
+			//public string FilePath; No need to keep this information
+			public DateTime CreationTimeUtc;
+			public DateTime LastWriteTimeUtc;
+			public long FileSize;
+			public string Hash;
+			private long length;
+
+			public CachedResult(FileInfo fileInfo, string hash)
+			{
+				CreationTimeUtc = fileInfo.CreationTimeUtc;
+				LastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
+				FileSize = fileInfo.Length;
+				Hash = hash;
+			}
+
+			public void Set(FileInfo fileInfo, string hash)
+			{
+				CreationTimeUtc = fileInfo.CreationTimeUtc;
+				LastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
+				FileSize = fileInfo.Length;
+				Hash = hash;
+			}
+
+			public bool CheckEquality(FileInfo fileInfo)
+			{
+				return
+					CreationTimeUtc == fileInfo.CreationTimeUtc &&
+					LastWriteTimeUtc == fileInfo.LastWriteTimeUtc &&
+					FileSize == fileInfo.Length;
+			}
+		}
+
+		#endregion
+
 		#region Comparison
 
 		public static bool IsEqual(string hash1, string hash2)
@@ -19,20 +58,37 @@ namespace Extenity.Crypto
 
 		#region MD5
 
-		public static string CalculateFileMD5(this string filePath, bool uppercase = true)
+		private static readonly Dictionary<string, CachedResult> CachedResultsMD5 = new Dictionary<string, CachedResult>();
+
+		public static string CalculateFileMD5(this string filePath)
 		{
+			var fileInfo = new FileInfo(filePath);
+
+			// Use cache if already calculated.
+			CachedResult cachedResult;
+			if (CachedResultsMD5.TryGetValue(filePath, out cachedResult))
+			{
+				if (cachedResult.CheckEquality(fileInfo))
+					return cachedResult.Hash;
+			}
+
 			using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				return stream.CalculateMD5(uppercase);
+				var hash = stream.CalculateMD5();
+				if (cachedResult != null)
+					cachedResult.Set(fileInfo, hash);
+				else
+					CachedResultsMD5.Add(filePath, new CachedResult(fileInfo, hash));
+				return hash;
 			}
 		}
 
-		public static string CalculateMD5(this Stream stream, bool uppercase = true)
+		public static string CalculateMD5(this Stream stream)
 		{
 			using (var hashAlgorithm = MD5.Create())
 			{
 				var checksum = hashAlgorithm.ComputeHash(stream);
-				return checksum.ToHexStringCombined(uppercase);
+				return checksum.ToHexStringCombined(true);
 			}
 		}
 
@@ -52,20 +108,39 @@ namespace Extenity.Crypto
 
 		#region SHA1
 
-		public static string CalculateFileSHA1(this string filePath, bool uppercase = true)
+		private static readonly Dictionary<string, CachedResult> CachedResultsSHA1 = new Dictionary<string, CachedResult>();
+
+		public static string CalculateFileSHA1(this string filePath)
 		{
+			var fileInfo = new FileInfo(filePath);
+
+			// Use cache if already calculated.
+			CachedResult cachedResult;
+			if (CachedResultsSHA1.TryGetValue(filePath, out cachedResult))
+			{
+				if (cachedResult.CheckEquality(fileInfo))
+				{
+					return cachedResult.Hash;
+				}
+			}
+
 			using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				return stream.CalculateSHA1(uppercase);
+				var hash = stream.CalculateSHA1();
+				if (cachedResult != null)
+					cachedResult.Set(fileInfo, hash);
+				else
+					CachedResultsSHA1.Add(filePath, new CachedResult(fileInfo, hash));
+				return hash;
 			}
 		}
 
-		public static string CalculateSHA1(this Stream stream, bool uppercase = true)
+		public static string CalculateSHA1(this Stream stream)
 		{
 			using (var hashAlgorithm = new SHA1Managed())
 			{
 				var checksum = hashAlgorithm.ComputeHash(stream);
-				return checksum.ToHexStringCombined(uppercase);
+				return checksum.ToHexStringCombined(true);
 			}
 		}
 
@@ -85,20 +160,37 @@ namespace Extenity.Crypto
 
 		#region SHA256
 
-		public static string CalculateFileSHA256(this string filePath, bool uppercase = true)
+		private static readonly Dictionary<string, CachedResult> CachedResultsSHA256 = new Dictionary<string, CachedResult>();
+
+		public static string CalculateFileSHA256(this string filePath)
 		{
+			var fileInfo = new FileInfo(filePath);
+
+			// Use cache if already calculated.
+			CachedResult cachedResult;
+			if (CachedResultsSHA256.TryGetValue(filePath, out cachedResult))
+			{
+				if (cachedResult.CheckEquality(fileInfo))
+					return cachedResult.Hash;
+			}
+
 			using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				return stream.CalculateSHA256(uppercase);
+				var hash = stream.CalculateSHA256();
+				if (cachedResult != null)
+					cachedResult.Set(fileInfo, hash);
+				else
+					CachedResultsSHA256.Add(filePath, new CachedResult(fileInfo, hash));
+				return hash;
 			}
 		}
 
-		public static string CalculateSHA256(this Stream stream, bool uppercase = true)
+		public static string CalculateSHA256(this Stream stream)
 		{
 			using (var hashAlgorithm = new SHA256Managed())
 			{
 				var checksum = hashAlgorithm.ComputeHash(stream);
-				return checksum.ToHexStringCombined(uppercase);
+				return checksum.ToHexStringCombined(true);
 			}
 		}
 
