@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Extenity.SceneManagement;
+using UnityEngine.Events;
 
 namespace Extenity.UserInterface
 {
@@ -177,7 +178,12 @@ namespace Extenity.UserInterface
 
 		#endregion
 
-		#region Selected Item
+		#region Item Selection
+
+		[Serializable]
+		public class ItemEvent : UnityEvent<TItem> { }
+
+		public ItemEvent OnItemSelected = new ItemEvent();
 
 		public TItem SelectedItem
 		{
@@ -190,6 +196,13 @@ namespace Extenity.UserInterface
 				}
 				return null;
 			}
+		}
+
+		protected override void SelectItem(int index)
+		{
+			base.SelectItem(index);
+
+			OnItemSelected.Invoke(SelectedItem);
 		}
 
 		#endregion
