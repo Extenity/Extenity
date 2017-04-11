@@ -1,10 +1,51 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Random = UnityEngine.Random;
 
 namespace Extenity.DataTypes
 {
 
+	public class GuidJsonConverter : JsonConverter
+	{
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		{
+			if (value == null)
+			{
+				writer.WriteNull();
+			}
+			else
+			{
+				if (!(value is Guid))
+					throw new JsonSerializationException("Expected Extenity.DataTypes.Guid object value");
+				writer.WriteValue(value.ToString());
+			}
+		}
+
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+		{
+			if (reader.TokenType == JsonToken.Null)
+				return null;
+			if (reader.TokenType != JsonToken.String)
+				throw new JsonSerializationException(string.Format("Unexpected token or value when parsing Extenity.DataTypes.Guid. Token '{0}'. Value '{1}'.", reader.TokenType, reader.Value));
+			try
+			{
+				return new Guid((string)reader.Value);
+			}
+			catch (Exception exception)
+			{
+				throw new JsonSerializationException(string.Format("Error parsing Extenity.DataTypes.Guid string '{0}' at path '{1}'", reader.Value, reader.Path), exception);
+			}
+		}
+
+		public override bool CanConvert(Type objectType)
+		{
+			return objectType == typeof(Guid);
+		}
+	}
+
+
 	[Serializable]
+	[JsonConverter(typeof(GuidJsonConverter))]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid>
 	{
 		public byte[] Data;
