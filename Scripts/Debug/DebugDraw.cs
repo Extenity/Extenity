@@ -1030,6 +1030,7 @@ public class DebugDraw : SingletonUnity<DebugDraw>
 
 	private class WriteScreenData
 	{
+#pragma warning disable 649
 		public int lineIndex;
 		public GUIAnchor anchor;
 		public string text;
@@ -1037,6 +1038,7 @@ public class DebugDraw : SingletonUnity<DebugDraw>
 		public Color color;
 		public float startTime;
 		public float duration;
+#pragma warning restore 649
 
 		public WriteScreenData(int lineIndex, GUIAnchor anchor)
 		{
