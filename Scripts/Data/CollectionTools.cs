@@ -136,6 +136,25 @@ public static class CollectionTools
 		}
 	}
 
+	public static void MakeSameSizeAs<T1, T2>(this T1[] thisList, T2[] otherList)
+	{
+		if (thisList == null)
+		{
+			thisList = new T1[otherList != null ? otherList.Length : 0];
+		}
+		else if (otherList == null)
+		{
+			if (thisList.Length != 0)
+			{
+				thisList = new T1[0];
+			}
+		}
+		else if (thisList.Length != otherList.Length)
+		{
+			Array.Resize(ref thisList, otherList.Length);
+		}
+	}
+
 	public static T[] GetRange<T>(this T[] source, int index, int length)
 	{
 		var result = new T[length];
