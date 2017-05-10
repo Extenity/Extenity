@@ -155,6 +155,36 @@ public static class CollectionTools
 		}
 	}
 
+	public static void ResizeIfRequired<T>(this T[] thisList, int length)
+	{
+		if (length < 0)
+			return; // Ignored.
+
+		if (thisList == null)
+		{
+			thisList = new T[length];
+		}
+		else if (thisList.Length != length)
+		{
+			Array.Resize(ref thisList, length);
+		}
+	}
+
+	public static void ExpandIfRequired<T>(this T[] thisList, int length)
+	{
+		if (length < 0)
+			return; // Ignored.
+
+		if (thisList == null)
+		{
+			thisList = new T[length];
+		}
+		else if (thisList.Length < length)
+		{
+			Array.Resize(ref thisList, length);
+		}
+	}
+
 	public static T[] GetRange<T>(this T[] source, int index, int length)
 	{
 		var result = new T[length];
