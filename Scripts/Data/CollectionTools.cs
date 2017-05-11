@@ -136,7 +136,7 @@ public static class CollectionTools
 		}
 	}
 
-	public static void MakeSameSizeAs<T1, T2>(this T1[] thisList, T2[] otherList)
+	public static void MakeSameSizeAs<T1, T2>(ref T1[] thisList, T2[] otherList)
 	{
 		if (thisList == null)
 		{
@@ -155,7 +155,7 @@ public static class CollectionTools
 		}
 	}
 
-	public static void ResizeIfRequired<T>(this T[] thisList, int length)
+	public static void ResizeIfRequired<T>(ref T[] thisList, int length)
 	{
 		if (length < 0)
 			return; // Ignored.
@@ -170,7 +170,7 @@ public static class CollectionTools
 		}
 	}
 
-	public static void ExpandIfRequired<T>(this T[] thisList, int length)
+	public static void ExpandIfRequired<T>(ref T[] thisList, int length)
 	{
 		if (length < 0)
 			return; // Ignored.
