@@ -790,7 +790,7 @@ namespace Extenity.SceneManagement
 
 		public static Transform FindChildEnsured(this Transform me, string name)
 		{
-			var component = me.FindChild(name);
+			var component = me.Find(name);
 			if (component == null)
 				throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
 			return component;
