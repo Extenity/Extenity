@@ -155,34 +155,40 @@ public static class CollectionTools
 		}
 	}
 
-	public static void ResizeIfRequired<T>(ref T[] thisList, int length)
+	public static bool ResizeIfRequired<T>(ref T[] thisList, int length)
 	{
 		if (length < 0)
-			return; // Ignored.
+			return false; // Ignored.
 
 		if (thisList == null)
 		{
 			thisList = new T[length];
+			return true;
 		}
 		else if (thisList.Length != length)
 		{
 			Array.Resize(ref thisList, length);
+			return true;
 		}
+		return false;
 	}
 
-	public static void ExpandIfRequired<T>(ref T[] thisList, int length)
+	public static bool ExpandIfRequired<T>(ref T[] thisList, int length)
 	{
 		if (length < 0)
-			return; // Ignored.
+			return false; // Ignored.
 
 		if (thisList == null)
 		{
 			thisList = new T[length];
+			return true;
 		}
 		else if (thisList.Length < length)
 		{
 			Array.Resize(ref thisList, length);
+			return true;
 		}
+		return false;
 	}
 
 	public static T[] GetRange<T>(this T[] source, int index, int length)
