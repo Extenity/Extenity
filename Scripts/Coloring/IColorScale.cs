@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Extenity.Coloring
+namespace Extenity.ColoringToolbox
 {
 
 	public interface IColorScale

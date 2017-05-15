@@ -1,7 +1,7 @@
 using UnityEngine;
 using Extenity.DataTypes;
 
-namespace Extenity.Coloring
+namespace Extenity.ColoringToolbox
 {
 
 	public class TwoWayHueColorScale : TwoWayColorScale

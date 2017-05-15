@@ -2,7 +2,7 @@
 using DG.Tweening;
 using UnityEngine.UI;
 
-namespace Extenity.Coloring
+namespace Extenity.ColoringToolbox.UI
 {
 
 	public class ColorScaleUI : MonoBehaviour

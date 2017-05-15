@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Logger = Extenity.Logging.Logger;
 
-namespace Extenity.Coloring
+namespace Extenity.ColoringToolbox
 {
 
 	public class ColorScaleTexture : MonoBehaviour

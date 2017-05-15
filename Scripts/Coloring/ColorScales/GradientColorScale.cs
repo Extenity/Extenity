@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Extenity.Coloring
+namespace Extenity.ColoringToolbox
 {
 
 	public class GradientColorScale : ColorScale
