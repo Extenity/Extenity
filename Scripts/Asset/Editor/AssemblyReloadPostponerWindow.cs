@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.Asset
+namespace Extenity.AssetToolbox
 {
 
 	/// <summary>

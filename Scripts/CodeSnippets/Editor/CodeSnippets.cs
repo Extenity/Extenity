@@ -4,7 +4,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Extenity.Asset;
+using Extenity.AssetToolbox;
 
 public static class CodeSnippets
 {

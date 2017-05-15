@@ -11,7 +11,7 @@ using Extenity.OperatingSystem;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
-namespace Extenity.Asset
+namespace Extenity.AssetToolbox
 {
 
 	public static class AssetTools

@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.Asset
+namespace Extenity.AssetToolbox
 {
 
 	public class AssetPreviewHelper : MonoBehaviour
