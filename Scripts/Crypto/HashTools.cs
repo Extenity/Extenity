@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Extenity.DataTypes;
 
-namespace Extenity.Crypto
+namespace Extenity.CryptoToolbox
 {
 
 	public static class HashTools

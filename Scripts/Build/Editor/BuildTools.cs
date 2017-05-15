@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using Extenity.Crypto;
+using Extenity.CryptoToolbox;
 
 namespace Extenity.BuildToolbox
 {
