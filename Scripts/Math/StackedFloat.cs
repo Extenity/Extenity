@@ -15,10 +15,10 @@ public class StackedFloat
 	public StackedValue AddValue(float value, float duration = 0f)
 	{
 		var newValue = new StackedValue
-			{
-				value = value,
-				endTime = Time.time + duration,
-			};
+		{
+			value = value,
+			endTime = Time.time + duration,
+		};
 		values.Add(newValue);
 		return newValue;
 	}

@@ -31,19 +31,20 @@ namespace Extenity.Primitives.Bitfield
 			int offset = 0;
 
 			var fieldInfos = obj.GetType().GetFields();
-			Array.Sort(fieldInfos, delegate(FieldInfo first, FieldInfo second)
+			Array.Sort(fieldInfos, delegate (FieldInfo first, FieldInfo second)
 				{
 					return first.FieldHandle.Value.ToInt32().CompareTo(second.FieldHandle.Value.ToInt32());
-				});
+				}
+			);
 
 			// For every field suitably attributed with a BitfieldLength
 			for (int iFieldInfo = 0; iFieldInfo < fieldInfos.Length; iFieldInfo++)
 			{
 				FieldInfo fieldInfo = fieldInfos[iFieldInfo];
-				object[] customAttributes = fieldInfo.GetCustomAttributes(typeof (BitfieldLengthAttribute), false);
+				object[] customAttributes = fieldInfo.GetCustomAttributes(typeof(BitfieldLengthAttribute), false);
 				if (customAttributes.Length == 1)
 				{
-					uint fieldLength = ((BitfieldLengthAttribute) customAttributes[0]).Length;
+					uint fieldLength = ((BitfieldLengthAttribute)customAttributes[0]).Length;
 
 					// Calculate a bitmask of the desired length
 					long mask = 0;
@@ -52,9 +53,9 @@ namespace Extenity.Primitives.Bitfield
 						mask |= 1 << i;
 #pragma warning restore 675
 
-					result |= ((UInt32) fieldInfo.GetValue(obj) & mask) << offset;
+					result |= ((UInt32)fieldInfo.GetValue(obj) & mask) << offset;
 
-					offset += (int) fieldLength;
+					offset += (int)fieldLength;
 				}
 			}
 

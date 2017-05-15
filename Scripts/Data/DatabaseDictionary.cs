@@ -14,12 +14,12 @@ public class DatabaseDictionary
 
 	public void ReadFromFile()
 	{
-		
+
 	}
 
 	public void WriteToFile()
 	{
-		
+
 	}
 
 	#endregion

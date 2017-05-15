@@ -116,7 +116,7 @@ public class DebugAssert
 
 				System.Diagnostics.StackTrace myTrace = new System.Diagnostics.StackTrace(true);
 				System.Diagnostics.StackFrame myFrame = myTrace.GetFrame(2);
-				string assertInformation = "Assert failed! "+ assertString + "\nFilename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
+				string assertInformation = "Assert failed! " + assertString + "\nFilename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
 
 				// Loggin would be included in both Debug and UNITY_EDITOR builds
 				Logger.LogError(assertInformation);

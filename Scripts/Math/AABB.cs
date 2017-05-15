@@ -76,9 +76,9 @@ public struct AABB : IEquatable<AABB>
 		{
 			return new List<Vector2>
 			{
-				Min, 
-				new Vector2(Min.x, Max.y), 
-				Max, 
+				Min,
+				new Vector2(Min.x, Max.y),
+				Max,
 				new Vector2(Max.x, Min.y)
 			};
 		}
@@ -263,7 +263,7 @@ public struct AABB : IEquatable<AABB>
 	/// <param name="aabb1">The first AABB.</param>
 	/// <param name="aabb2">The second AABB</param>
 	/// <returns></returns>
-	public static bool Intersect(ref AABB aabb1, ref  AABB aabb2)
+	public static bool Intersect(ref AABB aabb1, ref AABB aabb2)
 	{
 		if (aabb1.Min.x > aabb2.Max.x || aabb2.Min.x > aabb1.Max.x)
 		{

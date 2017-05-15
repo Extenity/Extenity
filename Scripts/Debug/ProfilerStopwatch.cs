@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 public class ProfilerStopwatch
 {
-	private readonly Stopwatch Stopwatch = new Stopwatch(); 
+	private readonly Stopwatch Stopwatch = new Stopwatch();
 	private bool IsStopwatchStarted { get { return Stopwatch.IsRunning; } }
 
 	public void StartStopwatch()

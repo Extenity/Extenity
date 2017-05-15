@@ -32,7 +32,7 @@ public class RadioGroup : MonoBehaviour
 		if (ChildrenInvalidated)
 		{
 			InitializeRadioButtons();
-        }
+		}
 	}
 
 	#endregion
@@ -59,9 +59,9 @@ public class RadioGroup : MonoBehaviour
 		if (Buttons == null)
 		{
 			Buttons = new List<Toggle>(newButtons.Length);
-        }
+		}
 
-		Buttons.EqualizeTo(newButtons, 
+		Buttons.EqualizeTo(newButtons,
 			button =>
 			{
 				var cachedButton = button;
@@ -148,7 +148,7 @@ public class RadioGroup : MonoBehaviour
 
 	[Serializable]
 	public class RadioGroupSelectionEvent : UnityEvent<Toggle> { }
-    public RadioGroupSelectionEvent OnButtonSelected = new RadioGroupSelectionEvent();
+	public RadioGroupSelectionEvent OnButtonSelected = new RadioGroupSelectionEvent();
 
 	#endregion
 }

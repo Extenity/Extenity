@@ -69,8 +69,8 @@ namespace Extenity.Rendering
 				//)
 
 				if (CurrentTextureWidth == sizeX &&
-				    CurrentTextureHeight == sizeY &&
-				    CurrentTextureDepth == Depth &&
+					CurrentTextureHeight == sizeY &&
+					CurrentTextureDepth == Depth &&
 					CurrentTextureFormat == Format &&
 					CurrentTextureReadWrite == ReadWrite
 				)
