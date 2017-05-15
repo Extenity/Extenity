@@ -1,8 +1,5 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace Extenity.CameraManagement
+namespace Extenity.CameraToolbox
 {
 
 	public class FixedCameraController : CameraController

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Extenity.CameraManagement
+namespace Extenity.CameraToolbox
 {
 
 	public abstract class CameraController : MonoBehaviour

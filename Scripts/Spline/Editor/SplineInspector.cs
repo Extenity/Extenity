@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using Extenity.CameraToolbox;
 
 namespace Extenity.GeometryToolbox
 {

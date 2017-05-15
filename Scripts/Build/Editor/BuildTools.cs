@@ -3,94 +3,99 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using Extenity.Crypto;
 
-public static class BuildTools
+namespace Extenity.BuildToolbox
 {
-	#region Process
 
-	public static int RunConsoleCommandAndCaptureOutput(string filePath, string arguments, out string output)
+	public static class BuildTools
 	{
-		if (string.IsNullOrEmpty(filePath))
-			throw new ArgumentNullException("filePath");
+		#region Process
 
-		var process = new Process();
-
-		// Redirect the output stream of the child process.
-		process.StartInfo.UseShellExecute = false;
-		process.StartInfo.RedirectStandardOutput = true;
-		process.StartInfo.FileName = filePath;
-		if (!string.IsNullOrEmpty(arguments))
-			process.StartInfo.Arguments = arguments;
-		process.Start();
-
-		// Do not wait for the child process to exit before
-		// reading to the end of its redirected stream.
-		// process.WaitForExit();
-		// Read the output stream first and then wait.
-		output = process.StandardOutput.ReadToEnd();
-		process.WaitForExit();
-
-		return process.ExitCode;
-	}
-
-	public static int RunCommandLine(string commandLine, out string output, bool terminateWhenDone)
-	{
-		if (string.IsNullOrEmpty(commandLine))
-			throw new ArgumentNullException("commandLine");
-
-		string arguments = (terminateWhenDone ? "/C " : "/K ") + commandLine;
-		return RunConsoleCommandAndCaptureOutput("cmd.exe", arguments, out output);
-	}
-
-	#endregion
-
-	#region Mercurial
-
-	public static string GetVersionInfoFromMercurialRepository()
-	{
-		string output;
-		int exitCode;
-		try
+		public static int RunConsoleCommandAndCaptureOutput(string filePath, string arguments, out string output)
 		{
-			exitCode = RunConsoleCommandAndCaptureOutput("hg", "id -i -b", out output);
-		}
-		catch (Exception e)
-		{
-			throw new Exception("Could not get version from Mercurial repository. Exception: " + e);
+			if (string.IsNullOrEmpty(filePath))
+				throw new ArgumentNullException("filePath");
+
+			var process = new Process();
+
+			// Redirect the output stream of the child process.
+			process.StartInfo.UseShellExecute = false;
+			process.StartInfo.RedirectStandardOutput = true;
+			process.StartInfo.FileName = filePath;
+			if (!string.IsNullOrEmpty(arguments))
+				process.StartInfo.Arguments = arguments;
+			process.Start();
+
+			// Do not wait for the child process to exit before
+			// reading to the end of its redirected stream.
+			// process.WaitForExit();
+			// Read the output stream first and then wait.
+			output = process.StandardOutput.ReadToEnd();
+			process.WaitForExit();
+
+			return process.ExitCode;
 		}
 
-		if (exitCode != 0)
+		public static int RunCommandLine(string commandLine, out string output, bool terminateWhenDone)
 		{
-			throw new Exception("Could not get version from Mercurial repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			if (string.IsNullOrEmpty(commandLine))
+				throw new ArgumentNullException("commandLine");
+
+			string arguments = (terminateWhenDone ? "/C " : "/K ") + commandLine;
+			return RunConsoleCommandAndCaptureOutput("cmd.exe", arguments, out output);
 		}
-		return output.Trim().Trim(new[] { '\r', '\n' });
-	}
 
-	#endregion
+		#endregion
 
-	#region Unity FileID Calculator
+		#region Mercurial
 
-	/// <summary>
-	/// http://forum.unity3d.com/threads/yaml-fileid-hash-function-for-dll-scripts.252075/
-	/// </summary>
-	public static int CalculateFileID(Type t)
-	{
-		string toBeHashed = "s\0\0\0" + t.Namespace + t.Name;
-
-		using (HashAlgorithm hash = new MD4())
+		public static string GetVersionInfoFromMercurialRepository()
 		{
-			byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
-
-			int result = 0;
-
-			for (int i = 3; i >= 0; --i)
+			string output;
+			int exitCode;
+			try
 			{
-				result <<= 8;
-				result |= hashed[i];
+				exitCode = RunConsoleCommandAndCaptureOutput("hg", "id -i -b", out output);
+			}
+			catch (Exception e)
+			{
+				throw new Exception("Could not get version from Mercurial repository. Exception: " + e);
 			}
 
-			return result;
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not get version from Mercurial repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			return output.Trim().Trim(new[] { '\r', '\n' });
 		}
+
+		#endregion
+
+		#region Unity FileID Calculator
+
+		/// <summary>
+		/// http://forum.unity3d.com/threads/yaml-fileid-hash-function-for-dll-scripts.252075/
+		/// </summary>
+		public static int CalculateFileID(Type t)
+		{
+			string toBeHashed = "s\0\0\0" + t.Namespace + t.Name;
+
+			using (HashAlgorithm hash = new MD4())
+			{
+				byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+
+				int result = 0;
+
+				for (int i = 3; i >= 0; --i)
+				{
+					result <<= 8;
+					result |= hashed[i];
+				}
+
+				return result;
+			}
+		}
+
+		#endregion
 	}
 
-	#endregion
 }
