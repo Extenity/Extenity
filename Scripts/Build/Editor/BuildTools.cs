@@ -1,12 +1,7 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using Extenity.Crypto;
-using UnityEditor;
 
 public static class BuildTools
 {
