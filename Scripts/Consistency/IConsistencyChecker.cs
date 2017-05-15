@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Extenity.DataTypes;
 using UnityEngine;
 
-namespace Extenity.Consistency
+namespace Extenity.ConsistencyToolbox
 {
 
 	public struct ConsistencyError

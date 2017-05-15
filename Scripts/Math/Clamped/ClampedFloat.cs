@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Extenity.Consistency;
+using Extenity.ConsistencyToolbox;
 using UnityEngine;
 
 [Serializable]

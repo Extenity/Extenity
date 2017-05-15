@@ -1,4 +1,4 @@
-﻿using Extenity.Consistency;
+﻿using Extenity.ConsistencyToolbox;
 
 public interface IClamped : IConsistencyChecker
 {
