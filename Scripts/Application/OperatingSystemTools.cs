@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public static class OperatingSystemTools

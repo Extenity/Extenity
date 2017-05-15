@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public class ScreenManager : SingletonUnity<ScreenManager>

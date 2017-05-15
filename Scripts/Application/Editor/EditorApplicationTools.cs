@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.IO;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public class EditorApplicationTools : MonoBehaviour

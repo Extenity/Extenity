@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public class WindowTitleChanger : MonoBehaviour

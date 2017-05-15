@@ -1,10 +1,6 @@
 using System;
-using UnityEngine;
-using Extenity.Logging;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public static class CommandLineTools

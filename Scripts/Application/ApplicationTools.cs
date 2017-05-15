@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Extenity.DataTypes;
 using UnityEngine;
 
-namespace Extenity.Applicational
+namespace Extenity.ApplicationToolbox
 {
 
 	public static class ApplicationTools
