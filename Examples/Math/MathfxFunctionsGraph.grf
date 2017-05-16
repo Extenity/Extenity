@@ -8,12 +8,12 @@ OS = Windows NT 6.2
 [Axes]
 xMin = -2.80634415797522
 xMax = 4.94206562202482
-xTickUnit = 0.5
-xGridUnit = 0.5
+xTickUnit = 0.2
+xGridUnit = 0.2
 yMin = -2.66741152297874
 yMax = 5.08099825702129
-yTickUnit = 1
-yGridUnit = 1
+yTickUnit = 0.5
+yGridUnit = 0.5
 AxesColor = clBlue
 GridColor = 0x00FF9999
 ShowLegend = 1
@@ -34,7 +34,6 @@ Size = 2
 [Func3]
 FuncType = 0
 y = TanHLike(x*x*x)
-Visible = 0
 Style = 3
 Color = clGreen
 Size = 2
