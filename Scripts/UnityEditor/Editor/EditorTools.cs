@@ -475,6 +475,27 @@ namespace Extenity.EditorUtilities
 		}
 
 		#endregion
+
+		#region Selection
+
+		public static void AddToSelection(UnityEngine.Object obj)
+		{
+			Selection.objects = Selection.objects.Add(obj);
+		}
+
+		public static void RemoveFromSelection(UnityEngine.Object obj)
+		{
+			var objects = Selection.objects;
+			for (int i = 0; i < objects.Length; i++)
+			{
+				if (objects[i] == obj)
+				{
+					Selection.objects = objects.RemoveAt(i);
+				}
+			}
+		}
+
+		#endregion
 	}
 
 }
