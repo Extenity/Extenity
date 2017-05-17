@@ -316,7 +316,7 @@ namespace Extenity.DataTypes
 			return val.x + " " + val.y + " " + val.z + " " + val.w;
 		}
 
-		public static Vector3 ParseVector2(string text)
+		public static Vector2 ParseVector2(string text)
 		{
 			string[] parts = text.Split(' ');
 			return new Vector2(Single.Parse(parts[0]), Single.Parse(parts[1]));
