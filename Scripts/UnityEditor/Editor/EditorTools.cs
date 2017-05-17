@@ -462,6 +462,19 @@ namespace Extenity.EditorUtilities
 		}
 
 		#endregion
+
+		#region Project Metadata
+
+		public static string ProjectName
+		{
+			get
+			{
+				var assetsFolderPath = Application.dataPath.Split('/');
+				return assetsFolderPath[assetsFolderPath.Length - 2];
+			}
+		}
+
+		#endregion
 	}
 
 }
