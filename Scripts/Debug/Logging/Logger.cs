@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using Extenity.DataTypes;
+using Extenity.OperatingSystem;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
@@ -586,6 +588,48 @@ namespace Extenity.Logging
 			if (!inSeparateLogCalls)
 			{
 				Logger.Log(text.ToString());
+			}
+		}
+
+		#endregion
+
+		#region Dump Class Data
+
+		public static void LogAllProperties<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
+		{
+			var stringBuilder = new StringBuilder();
+			if (!string.IsNullOrEmpty(initialLine))
+			{
+				stringBuilder.AppendLine(initialLine);
+			}
+			foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
+			{
+				stringBuilder.AppendLine(descriptor.Name + " = " + descriptor.GetValue(obj));
+			}
+			var text = stringBuilder.ToString();
+			Debug.Log(text);
+			if (copyToClipboard)
+			{
+				Clipboard.SetClipboardText(text);
+			}
+		}
+
+		public static void LogAllFields<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
+		{
+			var stringBuilder = new StringBuilder();
+			if (!string.IsNullOrEmpty(initialLine))
+			{
+				stringBuilder.AppendLine(initialLine);
+			}
+			foreach (FieldInfo info in obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+			{
+				stringBuilder.AppendLine(info.Name + " = " + info.GetValue(obj));
+			}
+			var text = stringBuilder.ToString();
+			Debug.Log(text);
+			if (copyToClipboard)
+			{
+				Clipboard.SetClipboardText(text);
 			}
 		}
 
