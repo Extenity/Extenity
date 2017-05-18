@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -597,15 +598,17 @@ namespace Extenity.Logging
 
 		public static void LogAllProperties<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
 		{
+			// Initialize
 			var stringBuilder = new StringBuilder();
 			if (!string.IsNullOrEmpty(initialLine))
 			{
 				stringBuilder.AppendLine(initialLine);
 			}
-			foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
-			{
-				stringBuilder.AppendLine(descriptor.Name + " = " + descriptor.GetValue(obj));
-			}
+
+			// Do logging
+			InternalLogAllProperties(obj, stringBuilder);
+
+			// Finalize
 			var text = stringBuilder.ToString();
 			Debug.Log(text);
 			if (copyToClipboard)
@@ -616,20 +619,94 @@ namespace Extenity.Logging
 
 		public static void LogAllFields<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
 		{
+			// Initialize
 			var stringBuilder = new StringBuilder();
 			if (!string.IsNullOrEmpty(initialLine))
 			{
 				stringBuilder.AppendLine(initialLine);
 			}
-			foreach (FieldInfo info in obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-			{
-				stringBuilder.AppendLine(info.Name + " = " + info.GetValue(obj));
-			}
+
+			// Do logging
+			InternalLogAllFields(obj, stringBuilder);
+
+			// Finalize
 			var text = stringBuilder.ToString();
 			Debug.Log(text);
 			if (copyToClipboard)
 			{
 				Clipboard.SetClipboardText(text);
+			}
+		}
+
+		private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")
+		{
+			var nextIndentation = indentation + '\t';
+			var i = 0;
+
+			foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
+			{
+				var value = descriptor.GetValue(obj);
+				stringBuilder.AppendLine(indentation + i + ") " + descriptor.Name + " = " + value);
+
+				// Log enumerables (lists, arrays, etc.)
+				if (value != null && descriptor.PropertyType.InheritsOrImplements(typeof(IEnumerable)))
+				{
+					if (descriptor.PropertyType != typeof(string)) // string is an exception
+					{
+						var iInside = 0;
+
+						foreach (var item in (IEnumerable)value)
+						{
+							if (item == null)
+							{
+								stringBuilder.AppendLine(indentation + iInside + ") " + "(null)");
+							}
+							else
+							{
+								InternalLogAllFields(item, stringBuilder, nextIndentation + iInside + ".");
+							}
+							iInside++;
+						}
+					}
+				}
+
+				i++;
+			}
+		}
+
+		private static void InternalLogAllFields(this object obj, StringBuilder stringBuilder, string indentation = "")
+		{
+			var nextIndentation = indentation + '\t';
+			var i = 0;
+
+			foreach (var fieldInfo in obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+			{
+				var value = fieldInfo.GetValue(obj);
+				stringBuilder.AppendLine(indentation + i + ") " + fieldInfo.Name + " = " + value);
+
+				// Log enumerables (lists, arrays, etc.)
+				if (value != null && fieldInfo.FieldType.InheritsOrImplements(typeof(IEnumerable)))
+				{
+					if (fieldInfo.FieldType != typeof(string)) // string is an exception
+					{
+						var iInside = 0;
+
+						foreach (var item in (IEnumerable)value)
+						{
+							if (item == null)
+							{
+								stringBuilder.AppendLine(indentation + iInside + ") " + "(null)");
+							}
+							else
+							{
+								InternalLogAllFields(item, stringBuilder, nextIndentation + iInside + ".");
+							}
+							iInside++;
+						}
+					}
+				}
+
+				i++;
 			}
 		}
 
