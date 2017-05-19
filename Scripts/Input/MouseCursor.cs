@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Extenity.DesignPatternsToolbox;
 
 namespace Extenity.InputManagement
 {

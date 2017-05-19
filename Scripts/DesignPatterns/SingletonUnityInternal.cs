@@ -1,60 +1,65 @@
 using UnityEngine;
 using Extenity.DebugToolbox;
 
-// Usage:
-//   Use the derived class as a Component of a GameObject.
-//   InitializeSingleton(this); must be placed on the Awake method of derived class.
-public class SingletonUnityInternal<T> : MonoBehaviour where T : Component
+namespace Extenity.DesignPatternsToolbox
 {
-	private static T instance;
-	private string className;
 
-	protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
+	// Usage:
+	//   Use the derived class as a Component of a GameObject.
+	//   InitializeSingleton(this); must be placed on the Awake method of derived class.
+	public class SingletonUnityInternal<T> : MonoBehaviour where T : Component
 	{
-		className = typeof(T).Name;
-		Debug.Log("Instantiating internal singleton: " + className, obj);
-		instance = obj;
+		private static T instance;
+		private string className;
 
-		if (dontDestroyOnLoad)
+		protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
 		{
-			DontDestroyOnLoad(this);
+			className = typeof(T).Name;
+			Debug.Log("Instantiating internal singleton: " + className, obj);
+			instance = obj;
+
+			if (dontDestroyOnLoad)
+			{
+				DontDestroyOnLoad(this);
+			}
+
+			DebugOther.SingletonInstantiated(className);
 		}
 
-		DebugOther.SingletonInstantiated(className);
-	}
-
-	protected virtual void OnDestroy()
-	{
-		if (instance == null)  // To prevent errors in ExecuteInEditMode
-			return;
-
-		Debug.Log("Destroying internal singleton: " + className);
-		instance = default(T);
-		DebugOther.SingletonDestroyed(className);
-	}
-
-	internal static T CreateSingleton(string addedGameObjectName = "_")
-	{
-		var go = GameObject.Find(addedGameObjectName);
-		if (go == null)
-			go = new GameObject(addedGameObjectName);
-		return go.AddComponent<T>();
-	}
-
-	internal static void DestroySingleton()
-	{
-		if (instance.gameObject.GetComponents<Component>().Length == 2) // 1 for 'Transform' component and 1 for 'T' component
+		protected virtual void OnDestroy()
 		{
-			// If this component is the only one left in gameobject, destroy the gameobject as well
-			Destroy(instance.gameObject);
+			if (instance == null)  // To prevent errors in ExecuteInEditMode
+				return;
+
+			Debug.Log("Destroying internal singleton: " + className);
+			instance = default(T);
+			DebugOther.SingletonDestroyed(className);
 		}
-		else
+
+		internal static T CreateSingleton(string addedGameObjectName = "_")
 		{
-			// Destroy only this component
-			Destroy(instance);
+			var go = GameObject.Find(addedGameObjectName);
+			if (go == null)
+				go = new GameObject(addedGameObjectName);
+			return go.AddComponent<T>();
 		}
+
+		internal static void DestroySingleton()
+		{
+			if (instance.gameObject.GetComponents<Component>().Length == 2) // 1 for 'Transform' component and 1 for 'T' component
+			{
+				// If this component is the only one left in gameobject, destroy the gameobject as well
+				Destroy(instance.gameObject);
+			}
+			else
+			{
+				// Destroy only this component
+				Destroy(instance);
+			}
+		}
+
+		internal static T Instance { get { return instance; } }
+		internal static bool IsInstanceAvailable { get { return !(instance == null); } }
 	}
 
-	internal static T Instance { get { return instance; } }
-	internal static bool IsInstanceAvailable { get { return !(instance == null); } }
 }

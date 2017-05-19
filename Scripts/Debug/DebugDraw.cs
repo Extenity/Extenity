@@ -5,6 +5,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
 
 namespace Extenity.DebugToolbox

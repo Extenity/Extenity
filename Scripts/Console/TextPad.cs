@@ -1,5 +1,6 @@
 using System;
 using Extenity.DataToolbox;
+using Extenity.DesignPatternsToolbox;
 using UnityEngine;
 
 namespace Extenity.ConsoleToolbox
