@@ -6,7 +6,7 @@ using Extenity.ParallelToolbox;
 using Extenity.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace Extenity.ResourceLoading
+namespace Extenity.ResourceLoadingToolbox
 {
 
 	public abstract class ResourceLoader : MonoBehaviour

@@ -1,7 +1,8 @@
 ﻿using System;
 
-namespace Extenity.Resource
+namespace Extenity.ResourceToolbox
 {
+
 	public static class ResourceTools
 	{
 		#region FindObjectsOfType
@@ -74,4 +75,5 @@ namespace Extenity.Resource
 
 		#endregion
 	}
+
 }

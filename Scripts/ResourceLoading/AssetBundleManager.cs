@@ -4,7 +4,7 @@ using Extenity.DebugToolbox;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 
-namespace Extenity.ResourceLoading
+namespace Extenity.ResourceLoadingToolbox
 {
 
 	public class AssetBundleManager : MonoBehaviour

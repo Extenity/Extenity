@@ -4,7 +4,7 @@ using System.IO;
 using Extenity.ImportTunnelingToolbox;
 using Extenity.ParallelToolbox;
 
-namespace Extenity.ResourceLoading
+namespace Extenity.ResourceLoadingToolbox
 {
 
 	public class FbxResourceLoader : ResourceLoader
