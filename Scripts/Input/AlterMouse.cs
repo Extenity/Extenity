@@ -1,6 +1,7 @@
 #if UNITY_STANDALONE_WIN
 using System;
 using System.Runtime.InteropServices;
+using Extenity.MathToolbox;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Extenity.DebugToolbox;
 using UnityEngine;
+using Extenity.MathToolbox;
 
 public enum AngularDirection : byte
 {

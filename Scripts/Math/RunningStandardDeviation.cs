@@ -1,68 +1,73 @@
 ﻿using System;
 
-public class RunningStandardDeviation
+namespace Extenity.MathToolbox
 {
-	private int m_n;
-	private double m_oldM, m_newM, m_oldS, m_newS;
 
-	public RunningStandardDeviation()
+	public class RunningStandardDeviation
 	{
-		m_n = 0;
-	}
+		private int m_n;
+		private double m_oldM, m_newM, m_oldS, m_newS;
 
-	public void Clear()
-	{
-		m_n = 0;
-	}
-
-	public void Push(double x)
-	{
-		m_n++;
-
-		// See Knuth TAOCP vol 2, 3rd edition, page 232
-		if (m_n == 1)
+		public RunningStandardDeviation()
 		{
-			m_oldM = m_newM = x;
-			m_oldS = 0.0;
+			m_n = 0;
 		}
-		else
+
+		public void Clear()
 		{
-			m_newM = m_oldM + (x - m_oldM) / m_n;
-			m_newS = m_oldS + (x - m_oldM) * (x - m_newM);
-
-			// set up for next iteration
-			m_oldM = m_newM;
-			m_oldS = m_newS;
+			m_n = 0;
 		}
-	}
 
-	public int NumDataValues
-	{
-		get { return m_n; }
-	}
-
-	public double Mean
-	{
-		get
+		public void Push(double x)
 		{
-			return m_n > 0
-					? m_newM
-					: 0.0;
-		}
-	}
+			m_n++;
 
-	public double Variance
-	{
-		get
+			// See Knuth TAOCP vol 2, 3rd edition, page 232
+			if (m_n == 1)
+			{
+				m_oldM = m_newM = x;
+				m_oldS = 0.0;
+			}
+			else
+			{
+				m_newM = m_oldM + (x - m_oldM) / m_n;
+				m_newS = m_oldS + (x - m_oldM) * (x - m_newM);
+
+				// set up for next iteration
+				m_oldM = m_newM;
+				m_oldS = m_newS;
+			}
+		}
+
+		public int NumDataValues
 		{
-			return m_n > 1
-					? m_newS / (m_n - 1)
-					: 0.0;
+			get { return m_n; }
+		}
+
+		public double Mean
+		{
+			get
+			{
+				return m_n > 0
+						? m_newM
+						: 0.0;
+			}
+		}
+
+		public double Variance
+		{
+			get
+			{
+				return m_n > 1
+						? m_newS / (m_n - 1)
+						: 0.0;
+			}
+		}
+
+		public double StandardDeviation
+		{
+			get { return Math.Sqrt(Variance); }
 		}
 	}
 
-	public double StandardDeviation
-	{
-		get { return Math.Sqrt(Variance); }
-	}
 }

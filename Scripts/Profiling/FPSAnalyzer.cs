@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Extenity.MathToolbox;
 
 namespace Extenity.ProfilingToolbox
 {
