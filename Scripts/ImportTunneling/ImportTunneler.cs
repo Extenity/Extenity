@@ -18,11 +18,7 @@ namespace Extenity.ImportTunneling
 		//StandaloneOSXUniversal = 2,
 		//StandaloneOSXIntel = 4,
 		//StandaloneWindows = 5,
-		//WebPlayer = 6,
-		//WebPlayerStreamed = 7,
 		//iOS = 9,
-		//PS3 = 10,
-		//XBOX360 = 11,
 		//Android = 13,
 		//StandaloneGLESEmu = 14,
 		//StandaloneLinux = 17,
@@ -31,9 +27,7 @@ namespace Extenity.ImportTunneling
 		//WSAPlayer = 21,
 		//StandaloneLinux64 = 24,
 		//StandaloneLinuxUniversal = 25,
-		//WP8Player = 26,
 		//StandaloneOSXIntel64 = 27,
-		//BlackBerry = 28,
 		//Tizen = 29,
 		//PSP2 = 30,
 		//PS4 = 31,
@@ -43,6 +37,7 @@ namespace Extenity.ImportTunneling
 		//Nintendo3DS = 35,
 		//WiiU = 36,
 		//tvOS = 37,
+		//Switch = 38,
 	}
 
 	public class ImportTunneler : MonoBehaviour
