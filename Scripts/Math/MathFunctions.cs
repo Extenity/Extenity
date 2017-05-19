@@ -1,3 +1,4 @@
+using Extenity.DebugToolbox;
 
 public static class MathFunctions
 {

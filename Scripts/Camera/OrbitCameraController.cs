@@ -1,4 +1,5 @@
 using UnityEngine;
+using Extenity.DebugToolbox;
 using Extenity.InputManagement;
 
 namespace Extenity.CameraToolbox
