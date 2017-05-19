@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
-using Extenity.SceneManagement;
+using Extenity.GameObjectToolbox;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class UiVisibilityController : MonoBehaviour

@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Extenity.GameObjectToolbox;
 using Extenity.ParallelToolbox;
-using Extenity.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Extenity.ResourceLoadingToolbox

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Extenity.MathToolbox;
 using Object = UnityEngine.Object;
 
-namespace Extenity.SceneManagement
+namespace Extenity.GameObjectToolbox
 {
 
 	public static class GameObjectTools

@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Extenity.SceneManagement;
+using Extenity.GameObjectToolbox;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor

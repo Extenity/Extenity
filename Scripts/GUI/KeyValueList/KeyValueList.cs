@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using Extenity.SceneManagement;
+using Extenity.GameObjectToolbox;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox
