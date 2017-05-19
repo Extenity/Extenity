@@ -1,63 +1,67 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using System.Collections;
 
-[CustomEditor(typeof(RenderSettingsSaver))]
-public class RenderSettingsSaverInspector : Editor
+namespace Extenity.RenderingToolbox
 {
-	#region Initialization
 
-	private SerializedObject configuration;
-	private RenderSettingsSaver me;
-
-	private void OnEnable()
+	[CustomEditor(typeof(RenderSettingsSaver))]
+	public class RenderSettingsSaverInspector : Editor
 	{
-		me = (RenderSettingsSaver)target;
-		configuration = new SerializedObject(target);
-	}
+		#region Initialization
 
-	#endregion
+		private SerializedObject configuration;
+		private RenderSettingsSaver me;
 
-	#region Inspector GUI
-
-	public override void OnInspectorGUI()
-	{
-		configuration.Update();
-
-		// Display configuration as readonly
+		private void OnEnable()
 		{
-			EditorGUI.BeginDisabledGroup(true);
-			DrawDefaultInspector();
-			EditorGUI.EndDisabledGroup();
+			me = (RenderSettingsSaver)target;
+			configuration = new SerializedObject(target);
 		}
 
-		GUILayout.Space(20);
+		#endregion
 
-		// Reset Configuration
+		#region Inspector GUI
+
+		public override void OnInspectorGUI()
 		{
-			if (GUILayout.Button("Update"))
+			configuration.Update();
+
+			// Display configuration as readonly
 			{
-				me.GetConfigurationFromRenderSettings();
+				EditorGUI.BeginDisabledGroup(true);
+				DrawDefaultInspector();
+				EditorGUI.EndDisabledGroup();
 			}
+
+			GUILayout.Space(20);
+
+			// Reset Configuration
+			{
+				if (GUILayout.Button("Update"))
+				{
+					me.GetConfigurationFromRenderSettings();
+				}
+			}
+
+			configuration.ApplyModifiedProperties();
 		}
 
-		configuration.ApplyModifiedProperties();
+		#endregion
 	}
 
-	#endregion
+	//public class RenderSettingsAssetModificationProcessor : AssetModificationProcessor
+	//{
+	//	public static string[] OnWillSaveAssets(string[] paths)
+	//	{
+	//		var renderSettingsSavers = Object.FindObjectsOfType<RenderSettingsSaver>();
+
+	//		foreach (var renderSettingsSaver in renderSettingsSavers)
+	//		{
+	//			renderSettingsSaver.GetConfigurationFromRenderSettings();
+	//		}
+
+	//		return paths;
+	//	}
+	//}
+
 }
-
-//public class RenderSettingsAssetModificationProcessor : AssetModificationProcessor
-//{
-//	public static string[] OnWillSaveAssets(string[] paths)
-//	{
-//		var renderSettingsSavers = Object.FindObjectsOfType<RenderSettingsSaver>();
-
-//		foreach (var renderSettingsSaver in renderSettingsSavers)
-//		{
-//			renderSettingsSaver.GetConfigurationFromRenderSettings();
-//		}
-
-//		return paths;
-//	}
-//}

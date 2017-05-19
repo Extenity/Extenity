@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 // TODO: Keeping a reference to PreviouslyInvokedRenderTexture is bad for garbage collection. Change the way it works. Use OnValidate to detect changed values as needed.
 
-namespace Extenity.Rendering
+namespace Extenity.RenderingToolbox
 {
 
 	public class AutoSizedRenderTexture : MonoBehaviour

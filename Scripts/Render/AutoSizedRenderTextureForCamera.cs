@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Extenity.Rendering
+namespace Extenity.RenderingToolbox
 {
 
 	[ExecuteInEditMode]

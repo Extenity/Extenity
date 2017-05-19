@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Extenity.Rendering
+namespace Extenity.RenderingToolbox
 {
 
 	[RequireComponent(typeof(Camera))]

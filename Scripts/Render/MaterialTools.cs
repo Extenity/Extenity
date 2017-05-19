@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-// TODO: Namespace should be Extenity.Rendering
-namespace Extenity.Render
+namespace Extenity.RenderingToolbox
 {
 
 	public static class MaterialTools
