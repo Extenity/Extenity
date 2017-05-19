@@ -74,7 +74,7 @@ using System.Threading;
 using Extenity.DataToolbox;
 using Extenity.ParallelToolbox;
 
-namespace Extenity.WorldWideWeb.FileDownloader
+namespace Extenity.WWWToolbox.FileDownloader
 {
 
 	public enum FileDownloaderResult

@@ -6,7 +6,7 @@ using Extenity.DataToolbox;
 using Extenity.ParallelToolbox;
 using ICSharpCode.SharpZipLib.Extensions;
 
-namespace Extenity.WorldWideWeb
+namespace Extenity.WWWToolbox
 {
 
 	public class FTPAsync

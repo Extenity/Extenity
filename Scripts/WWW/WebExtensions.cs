@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Extenity.WorldWideWeb
+namespace Extenity.WWWToolbox
 {
 
 	public static class WebExtensions

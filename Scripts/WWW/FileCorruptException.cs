@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Extenity.WorldWideWeb
+namespace Extenity.WWWToolbox
 {
 
 	public class FileCorruptException : Exception

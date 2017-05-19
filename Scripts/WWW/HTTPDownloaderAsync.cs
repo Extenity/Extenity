@@ -4,11 +4,11 @@ using System.IO;
 using System.Threading;
 using Extenity.DataToolbox;
 using Extenity.ParallelToolbox;
-using Extenity.WorldWideWeb.FileDownloader;
+using Extenity.WWWToolbox.FileDownloader;
 using ICSharpCode.SharpZipLib.Extensions;
 using Timer = System.Timers.Timer;
 
-namespace Extenity.WorldWideWeb
+namespace Extenity.WWWToolbox
 {
 
 	public class HTTPDownloaderAsync

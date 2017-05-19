@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Extenity.WorldWideWeb.FileDownloader
+namespace Extenity.WWWToolbox.FileDownloader
 {
 
 	/// <summary>

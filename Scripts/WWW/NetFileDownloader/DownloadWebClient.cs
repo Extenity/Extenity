@@ -10,7 +10,7 @@ using System;
 using System.ComponentModel;
 using System.Net;
 
-namespace Extenity.WorldWideWeb.FileDownloader
+namespace Extenity.WWWToolbox.FileDownloader
 {
 
 	[DesignerCategory("Code")]

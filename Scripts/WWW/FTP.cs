@@ -4,7 +4,7 @@ using System.Net;
 using Extenity.DataToolbox;
 using UnityEngine;
 
-namespace Extenity.WorldWideWeb
+namespace Extenity.WWWToolbox
 {
 
 	/// <summary>
