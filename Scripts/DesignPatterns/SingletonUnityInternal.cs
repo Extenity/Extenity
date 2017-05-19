@@ -1,6 +1,5 @@
 using UnityEngine;
 using Extenity.DebugToolbox;
-using Logger = Extenity.Logging.Logger;
 
 // Usage:
 //   Use the derived class as a Component of a GameObject.
@@ -13,7 +12,7 @@ public class SingletonUnityInternal<T> : MonoBehaviour where T : Component
 	protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
 	{
 		className = typeof(T).Name;
-		Logger.Log("Instantiating internal singleton: " + className, obj);
+		Debug.Log("Instantiating internal singleton: " + className, obj);
 		instance = obj;
 
 		if (dontDestroyOnLoad)
@@ -29,7 +28,7 @@ public class SingletonUnityInternal<T> : MonoBehaviour where T : Component
 		if (instance == null)  // To prevent errors in ExecuteInEditMode
 			return;
 
-		Logger.Log("Destroying internal singleton: " + className);
+		Debug.Log("Destroying internal singleton: " + className);
 		instance = default(T);
 		DebugOther.SingletonDestroyed(className);
 	}
