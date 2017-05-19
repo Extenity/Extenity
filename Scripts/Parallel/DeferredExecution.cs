@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Extenity.Parallel
+namespace Extenity.ParallelToolbox
 {
 
 	public static class DeferredExecution

@@ -1,240 +1,244 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
 using UnityEditor;
 
-/// <summary>
-/// Provides a simulated multithreading manager for invoking callbacks on the main unity thread.
-/// </summary>
-public static class ContinuationManager
+namespace Extenity.ParallelToolbox
 {
+
 	/// <summary>
-	/// Provides a class for storing callback information.
+	/// Provides a simulated multithreading manager for invoking callbacks on the main unity thread.
 	/// </summary>
-	private class Job
+	public static class ContinuationManager
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Job"/> class.
+		/// Provides a class for storing callback information.
 		/// </summary>
-		/// <param name="checkCompleted">The check completed callback function.</param>
-		/// <param name="completionAction">The completion callback.</param>
-		public Job(Func<bool> checkCompleted, Action completionAction)
+		private class Job
 		{
-			this.CheckCompleted = checkCompleted;
-			this.CompletionAction = completionAction;
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Job"/> class.
+			/// </summary>
+			/// <param name="checkCompleted">The check completed callback function.</param>
+			/// <param name="completionAction">The completion callback.</param>
+			public Job(Func<bool> checkCompleted, Action completionAction)
+			{
+				this.CheckCompleted = checkCompleted;
+				this.CompletionAction = completionAction;
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Job"/> class.
+			/// </summary>
+			/// <param name="completionAction">The completion callback.</param>
+			public Job(Action completionAction)
+			{
+				this.CompletionAction = completionAction;
+			}
+
+			/// <summary>
+			/// Gets the check completed callback used to determine if the job has completed.
+			/// </summary>
+			public Func<bool> CheckCompleted { get; private set; }
+
+			/// <summary>
+			/// Gets the completion callback.
+			/// </summary>
+			public Action CompletionAction { get; private set; }
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Job"/> class.
+		/// The jobs list the holds the queued jobs to be later invoked.
 		/// </summary>
-		/// <param name="completionAction">The completion callback.</param>
-		public Job(Action completionAction)
+		private static readonly List<Job> jobQueue = new List<Job>();
+
+		/// <summary>
+		/// Gets or sets a value indicating whether <see cref="Update"/> is called automatically.
+		/// </summary>                              
+		public static bool AutoUpdate
 		{
-			this.CompletionAction = completionAction;
+			get
+			{
+				return autoUpdate;
+			}
+
+			set
+			{
+				autoUpdate = value;
+				lock (jobQueue)
+				{
+					if (autoUpdate && !updateHooked)
+					{
+						EditorApplication.update += Update;
+						updateHooked = true;
+					}
+
+					if (!autoUpdate && updateHooked)
+					{
+						EditorApplication.update -= Update;
+						updateHooked = false;
+					}
+				}
+			}
 		}
 
 		/// <summary>
-		/// Gets the check completed callback used to determine if the job has completed.
+		/// The update hooked flag used to determine weather or not the editor update method has been hooked into.
 		/// </summary>
-		public Func<bool> CheckCompleted { get; private set; }
+		private static bool updateHooked;
 
 		/// <summary>
-		/// Gets the completion callback.
+		/// Queues a callback that will be run on the next update if the completed callback returns true.
 		/// </summary>
-		public Action CompletionAction { get; private set; }
-	}
-
-	/// <summary>
-	/// The jobs list the holds the queued jobs to be later invoked.
-	/// </summary>
-	private static readonly List<Job> jobQueue = new List<Job>();
-
-	/// <summary>
-	/// Gets or sets a value indicating whether <see cref="Update"/> is called automatically.
-	/// </summary>                              
-	public static bool AutoUpdate
-	{
-		get
+		/// <param name="completed">The CheckCompleted.</param>
+		/// <param name="continueWith">The continue with.</param>
+		public static void Run(Func<bool> completed, Action continueWith)
 		{
-			return autoUpdate;
-		}
-
-		set
-		{
-			autoUpdate = value;
+			// lock the jobs list
 			lock (jobQueue)
 			{
-				if (autoUpdate && !updateHooked)
-				{
-					EditorApplication.update += Update;
-					updateHooked = true;
-				}
-
-				if (!autoUpdate && updateHooked)
-				{
-					EditorApplication.update -= Update;
-					updateHooked = false;
-				}
+				// queue the job on the jobs list
+				jobQueue.Add(new Job(completed, continueWith));
 			}
 		}
-	}
 
-	/// <summary>
-	/// The update hooked flag used to determine weather or not the editor update method has been hooked into.
-	/// </summary>
-	private static bool updateHooked;
-
-	/// <summary>
-	/// Queues a callback that will be run on the next update if the completed callback returns true.
-	/// </summary>
-	/// <param name="completed">The CheckCompleted.</param>
-	/// <param name="continueWith">The continue with.</param>
-	public static void Run(Func<bool> completed, Action continueWith)
-	{
-		// lock the jobs list
-		lock (jobQueue)
+		/// <summary>
+		/// Queues a callback that will be run on the next call to <see cref="Update"/>.
+		/// </summary>
+		/// <param name="continueWith">The continue with.</param>
+		public static void Run(Action continueWith)
 		{
-			// queue the job on the jobs list
-			jobQueue.Add(new Job(completed, continueWith));
-		}
-	}
-
-	/// <summary>
-	/// Queues a callback that will be run on the next call to <see cref="Update"/>.
-	/// </summary>
-	/// <param name="continueWith">The continue with.</param>
-	public static void Run(Action continueWith)
-	{
-		// lock the jobs list
-		lock (jobQueue)
-		{
-			// queue the job on the jobs list
-			jobQueue.Add(new Job(null, continueWith));
-		}
-	}
-
-	/// <summary>
-	/// Invoke all queued jobs if they have completed.
-	/// </summary>
-	public static void Update()
-	{
-		// check if we have been initialized by checking if the main thread has been set
-		if (MainThread == null)
-		{
-			throw new ThreadStateException("Not Initialized!");
-		}
-
-		// if we are not on the main thread throw an exception otherwise any code running in the callbacks
-		// might access unity api's that are not thread safe and cause an exception. So we throw a 
-		// thread exception before atempting to invoke any callbacks.
-		if (Thread.CurrentThread != MainThread)
-		{
-			throw new ThreadStateException("Can only be called from the main unity thread.");
-		}
-
-		// locking the jobs queue here means that any other calls to Update, Run or RunSyncronously will
-		// be blocked until all jobs have been processed.
-		lock (jobQueue)
-		{
-			// process each job in the queue
-			var i = 0;
-			while (i < jobQueue.Count)
+			// lock the jobs list
+			lock (jobQueue)
 			{
-				var job = jobQueue[i];
-				if (job.CheckCompleted == null || job.CheckCompleted())
-				{
-					job.CompletionAction();
-					jobQueue.RemoveAt(i);
-					continue;
-				}
-
-				i++;
+				// queue the job on the jobs list
+				jobQueue.Add(new Job(null, continueWith));
 			}
 		}
-	}
 
-	/// <summary>
-	/// A reference to the main unity thread.
-	/// </summary>
-	private static Thread MainThread;
-
-	/// <summary>
-	/// The automatic update flag used by the <see cref="AutoUpdate"/> property.
-	/// </summary>
-	private static bool autoUpdate;
-
-	/// <summary>
-	/// Called bu unity automatically and sets auto update to true.
-	/// </summary>
-	[InitializeOnLoadMethod]
-	private static void Initilize()
-	{
-		if (MainThread != null)
+		/// <summary>
+		/// Invoke all queued jobs if they have completed.
+		/// </summary>
+		public static void Update()
 		{
-			return;
+			// check if we have been initialized by checking if the main thread has been set
+			if (MainThread == null)
+			{
+				throw new ThreadStateException("Not Initialized!");
+			}
+
+			// if we are not on the main thread throw an exception otherwise any code running in the callbacks
+			// might access unity api's that are not thread safe and cause an exception. So we throw a 
+			// thread exception before atempting to invoke any callbacks.
+			if (Thread.CurrentThread != MainThread)
+			{
+				throw new ThreadStateException("Can only be called from the main unity thread.");
+			}
+
+			// locking the jobs queue here means that any other calls to Update, Run or RunSyncronously will
+			// be blocked until all jobs have been processed.
+			lock (jobQueue)
+			{
+				// process each job in the queue
+				var i = 0;
+				while (i < jobQueue.Count)
+				{
+					var job = jobQueue[i];
+					if (job.CheckCompleted == null || job.CheckCompleted())
+					{
+						job.CompletionAction();
+						jobQueue.RemoveAt(i);
+						continue;
+					}
+
+					i++;
+				}
+			}
 		}
 
-		MainThread = Thread.CurrentThread;
-		AutoUpdate = true;
-	}
+		/// <summary>
+		/// A reference to the main unity thread.
+		/// </summary>
+		private static Thread MainThread;
 
-	/// <summary>
-	/// Runs a callback syncronously.
-	/// </summary>
-	/// <param name="callback">The callback to be invoked.</param>
-	/// <returns></returns>
-	/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
-	public static void RunSyncronously(Action callback)
-	{
-		RunSyncronously(new Func<object>(() =>
+		/// <summary>
+		/// The automatic update flag used by the <see cref="AutoUpdate"/> property.
+		/// </summary>
+		private static bool autoUpdate;
+
+		/// <summary>
+		/// Called bu unity automatically and sets auto update to true.
+		/// </summary>
+		[InitializeOnLoadMethod]
+		private static void Initilize()
 		{
-			callback();
-			return null;
-		}));
-	}
+			if (MainThread != null)
+			{
+				return;
+			}
 
-	/// <summary>
-	/// Runs a callback syncronously.
-	/// </summary>
-	/// <typeparam name="T">The return type.</typeparam>
-	/// <param name="callback">The callback to be invoked.</param>
-	/// <returns></returns>
-	/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
-	public static T RunSyncronously<T>(Func<T> callback)
-	{
-		// setup a default return value
-		T result = default(T);
-
-		// check if we have been initialized by checking if the main thread has been set
-		if (MainThread == null)
-		{
-			throw new ThreadStateException("Not Initialized!");
+			MainThread = Thread.CurrentThread;
+			AutoUpdate = true;
 		}
 
-		// if we are already on the main thread then just invoke directly
-		if (Thread.CurrentThread == MainThread)
+		/// <summary>
+		/// Runs a callback syncronously.
+		/// </summary>
+		/// <param name="callback">The callback to be invoked.</param>
+		/// <returns></returns>
+		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
+		public static void RunSyncronously(Action callback)
 		{
-			return callback();
+			RunSyncronously(new Func<object>(() =>
+			{
+				callback();
+				return null;
+			}));
 		}
 
-		// otherwise queue up a job
-		var completed = false;
-		Run(() => !completed, () =>
+		/// <summary>
+		/// Runs a callback syncronously.
+		/// </summary>
+		/// <typeparam name="T">The return type.</typeparam>
+		/// <param name="callback">The callback to be invoked.</param>
+		/// <returns></returns>
+		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
+		public static T RunSyncronously<T>(Func<T> callback)
 		{
-			result = callback();
-			completed = true;
-		});
+			// setup a default return value
+			T result = default(T);
 
-		// wait for job to complete by putting the thread to sleep
-		// based on the previous check this code should only get executed if
-		// called from a thread other then the main unity thread
-		while (!completed)
-		{
-			Thread.Sleep(1);
+			// check if we have been initialized by checking if the main thread has been set
+			if (MainThread == null)
+			{
+				throw new ThreadStateException("Not Initialized!");
+			}
+
+			// if we are already on the main thread then just invoke directly
+			if (Thread.CurrentThread == MainThread)
+			{
+				return callback();
+			}
+
+			// otherwise queue up a job
+			var completed = false;
+			Run(() => !completed, () =>
+			{
+				result = callback();
+				completed = true;
+			});
+
+			// wait for job to complete by putting the thread to sleep
+			// based on the previous check this code should only get executed if
+			// called from a thread other then the main unity thread
+			while (!completed)
+			{
+				Thread.Sleep(1);
+			}
+
+			// return result
+			return result;
 		}
-
-		// return result
-		return result;
 	}
+
 }

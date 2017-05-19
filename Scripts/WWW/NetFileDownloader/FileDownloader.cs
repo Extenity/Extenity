@@ -72,7 +72,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Extenity.DataToolbox;
-using Extenity.Parallel;
+using Extenity.ParallelToolbox;
 
 namespace Extenity.WorldWideWeb.FileDownloader
 {

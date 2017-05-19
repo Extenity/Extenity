@@ -4,7 +4,7 @@ using System.Threading;
 using Extenity.DataToolbox;
 using Timer = System.Timers.Timer;
 
-namespace Extenity.Parallel
+namespace Extenity.ParallelToolbox
 {
 
 	public enum StreamCopierResult

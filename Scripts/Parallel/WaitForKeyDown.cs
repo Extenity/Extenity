@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Extenity.Parallel
+namespace Extenity.ParallelToolbox
 {
 
 	public class WaitForKeyDown : CustomYieldInstruction

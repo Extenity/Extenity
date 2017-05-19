@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 
-namespace Extenity.Parallel
+namespace Extenity.ParallelToolbox
 {
 
 	public class DelayedCaller

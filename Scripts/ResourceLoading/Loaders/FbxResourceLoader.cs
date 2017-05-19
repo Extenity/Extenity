@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using Extenity.ImportTunnelingToolbox;
-using Extenity.Parallel;
+using Extenity.ParallelToolbox;
 
 namespace Extenity.ResourceLoading
 {

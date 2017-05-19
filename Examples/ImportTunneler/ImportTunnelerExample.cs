@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Extenity.DebugToolbox;
 using Extenity.ImportTunnelingToolbox;
-using Extenity.Parallel;
+using Extenity.ParallelToolbox;
 
 public class ImportTunnelerExample : MonoBehaviour
 {
