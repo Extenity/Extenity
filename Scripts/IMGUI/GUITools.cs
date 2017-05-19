@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using Extenity.ApplicationToolbox;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Extenity.IMGUIToolbox
 {
@@ -41,22 +40,6 @@ namespace Extenity.IMGUIToolbox
 		#endregion
 
 		#region Input
-
-		public static bool IsGUIActiveInCurrentEventSystem
-		{
-			get
-			{
-				var eventSystem = EventSystem.current;
-				if (eventSystem)
-				{
-					if (eventSystem.currentSelectedGameObject != null)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
 
 		public static bool IsEnterHit
 		{
