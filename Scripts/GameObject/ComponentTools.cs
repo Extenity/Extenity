@@ -3,26 +3,31 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Reflection;
 
-public static class ComponentTools
+namespace Extenity.GameObjectToolbox
 {
-	#region Get Serialized Fields
 
-	public static List<FieldInfo> GetUnitySerializedFields(this Component component)
+	public static class ComponentTools
 	{
-		var fields = new List<FieldInfo>();
+		#region Get Serialized Fields
 
-		var allFields = component.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-		for (int i = 0; i < allFields.Length; i++)
+		public static List<FieldInfo> GetUnitySerializedFields(this Component component)
 		{
-			var field = allFields[i];
-			if ((field.IsPublic && !Attribute.IsDefined(field, typeof(NonSerializedAttribute))) || Attribute.IsDefined(field, typeof(SerializeField)))
+			var fields = new List<FieldInfo>();
+
+			var allFields = component.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			for (int i = 0; i < allFields.Length; i++)
 			{
-				fields.Add(field);
+				var field = allFields[i];
+				if ((field.IsPublic && !Attribute.IsDefined(field, typeof(NonSerializedAttribute))) || Attribute.IsDefined(field, typeof(SerializeField)))
+				{
+					fields.Add(field);
+				}
 			}
+
+			return fields;
 		}
 
-		return fields;
+		#endregion
 	}
 
-	#endregion
 }
