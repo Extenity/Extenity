@@ -1,9 +1,8 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using Extenity.MathToolbox;
 
-namespace Extenity.Meshing
+namespace Extenity.MeshToolbox
 {
 
 	public class MarkedMeshBuilder
