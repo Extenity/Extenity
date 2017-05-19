@@ -5,14 +5,14 @@ namespace Extenity.GameObjectToolbox
 
 	public class InstantiateOnStart : MonoBehaviour
 	{
-		public GameObject instantiate;
-		public bool destroySelf = true;
+		public GameObject Object;
+		public bool DestroySelf = true;
 
-		void Start()
+		private void Start()
 		{
-			Instantiate(instantiate);
+			Instantiate(Object);
 
-			if (destroySelf)
+			if (DestroySelf)
 			{
 				DestroyImmediate(gameObject);
 			}

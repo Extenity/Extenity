@@ -7,9 +7,9 @@ namespace Extenity.GameObjectToolbox
 	{
 		public GameObject Target;
 
-		void OnColliderEnter(Collision collision) { if (Target != null) Target.SendMessage("OnColliderEnter", collision, SendMessageOptions.DontRequireReceiver); }
-		void OnColliderExit(Collision collision) { if (Target != null) Target.SendMessage("OnCollisionExit", collision, SendMessageOptions.DontRequireReceiver); }
-		void OnColliderStay(Collision collision) { if (Target != null) Target.SendMessage("OnCollisionStay", collision, SendMessageOptions.DontRequireReceiver); }
+		private void OnColliderEnter(Collision collision) { if (Target != null) Target.SendMessage("OnColliderEnter", collision, SendMessageOptions.DontRequireReceiver); }
+		private void OnColliderExit(Collision collision) { if (Target != null) Target.SendMessage("OnCollisionExit", collision, SendMessageOptions.DontRequireReceiver); }
+		private void OnColliderStay(Collision collision) { if (Target != null) Target.SendMessage("OnCollisionStay", collision, SendMessageOptions.DontRequireReceiver); }
 	}
 
 }

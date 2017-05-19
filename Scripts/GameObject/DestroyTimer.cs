@@ -5,28 +5,28 @@ namespace Extenity.GameObjectToolbox
 
 	public class DestroyTimer : MonoBehaviour
 	{
-		public float timer = 0f;
-		public bool destroyImmediate = false;
-		public bool removeFromParentOnAwake = false;
-		public bool removeFromParentOnStart = false;
+		public float Timer = 0f;
+		public bool DestroyImmediately = false;
+		public bool RemoveFromParentOnAwake = false;
+		public bool RemoveFromParentOnStart = false;
 
-		void Awake()
+		private void Awake()
 		{
-			if (removeFromParentOnAwake)
+			if (RemoveFromParentOnAwake)
 				transform.SetParent(null);
 		}
 
-		void Start()
+		private void Start()
 		{
-			if (removeFromParentOnStart)
+			if (RemoveFromParentOnStart)
 				transform.SetParent(null);
 
-			Invoke("DestroyOnTimer", timer);
+			Invoke("DestroyOnTimer", Timer);
 		}
 
-		void DestroyOnTimer()
+		private void DestroyOnTimer()
 		{
-			if (destroyImmediate)
+			if (DestroyImmediately)
 				DestroyImmediate(gameObject);
 			else
 				Destroy(gameObject);
@@ -34,11 +34,11 @@ namespace Extenity.GameObjectToolbox
 
 		public void SetDestroyTimer(float value)
 		{
-			timer = value;
+			Timer = value;
 
 			if (IsInvoking("DestroyOnTimer"))
 				CancelInvoke("DestroyOnTimer");
-			Invoke("DestroyOnTimer", timer);
+			Invoke("DestroyOnTimer", Timer);
 		}
 	}
 

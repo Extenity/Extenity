@@ -20,7 +20,7 @@ namespace Extenity.GameObjectToolbox
 		public bool FixLocalRotation = false;
 		public bool FixLocalScale = false;
 
-		protected void Update()
+		private void Update()
 		{
 			Transform targetTransform = null;
 

@@ -5,11 +5,11 @@ namespace Extenity.GameObjectToolbox
 
 	public class DestroyOnLoad : MonoBehaviour
 	{
-		public bool destroyImmediate = false;
+		public bool DestroyImmediately = false;
 
 		private void Awake()
 		{
-			if (destroyImmediate)
+			if (DestroyImmediately)
 			{
 				DestroyImmediate(gameObject);
 			}
