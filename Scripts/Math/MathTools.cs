@@ -4,30 +4,6 @@ using Extenity.DebugToolbox;
 using UnityEngine;
 using Extenity.MathToolbox;
 
-public enum AngularDirection : byte
-{
-	None = 0,
-	CW = 1,
-	CCW = 2,
-}
-
-public static class AngularDirectionExt
-{
-	public static float ToFloat(this AngularDirection me)
-	{
-		switch (me)
-		{
-			case AngularDirection.None: return 0f;
-			case AngularDirection.CW: return 1f;
-			case AngularDirection.CCW: return -1f;
-			default:
-				throw new ArgumentOutOfRangeException();
-		}
-
-		//return ((float)me).Sign(); // Using sign to make sure it's normalized. Could be helpful for safety.
-	}
-}
-
 public static class MathTools
 {
 	#region Int Float Double
