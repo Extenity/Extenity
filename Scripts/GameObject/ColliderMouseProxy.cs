@@ -5,15 +5,15 @@ namespace Extenity.GameObjectToolbox
 
 	public class ColliderMouseProxy : MonoBehaviour
 	{
-		public GameObject target;
+		public GameObject Target;
 
-		private void OnMouseDown() { if (target != null) target.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseDrag() { if (target != null) target.SendMessage("OnMouseDrag", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseEnter() { if (target != null) target.SendMessage("OnMouseEnter", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseExit() { if (target != null) target.SendMessage("OnMouseExit", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseOver() { if (target != null) target.SendMessage("OnMouseOver", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseUp() { if (target != null) target.SendMessage("OnMouseUp", SendMessageOptions.DontRequireReceiver); }
-		private void OnMouseUpAsButton() { if (target != null) target.SendMessage("OnMouseUpAsButton", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseDown() { if (Target != null) Target.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseDrag() { if (Target != null) Target.SendMessage("OnMouseDrag", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseEnter() { if (Target != null) Target.SendMessage("OnMouseEnter", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseExit() { if (Target != null) Target.SendMessage("OnMouseExit", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseOver() { if (Target != null) Target.SendMessage("OnMouseOver", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseUp() { if (Target != null) Target.SendMessage("OnMouseUp", SendMessageOptions.DontRequireReceiver); }
+		private void OnMouseUpAsButton() { if (Target != null) Target.SendMessage("OnMouseUpAsButton", SendMessageOptions.DontRequireReceiver); }
 	}
 
 }
