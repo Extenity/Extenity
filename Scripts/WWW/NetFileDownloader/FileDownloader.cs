@@ -71,6 +71,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Threading;
+using Extenity.DataToolbox;
 using Extenity.Parallel;
 
 namespace Extenity.WorldWideWeb.FileDownloader

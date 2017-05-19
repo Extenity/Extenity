@@ -1,171 +1,173 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using Extenity.Logging;
 using Logger = Extenity.Logging.Logger;
 
-public class DatabaseFile
+namespace Extenity.DataToolbox
 {
-	private char separator = '=';
-	private string filename;
 
-	private Dictionary<string, string> database = new Dictionary<string, string>();
-
-
-	public DatabaseFile(string filename)
+	public class DatabaseFile
 	{
-		this.filename = filename;
-	}
+		private char separator = '=';
+		private string filename;
 
-	#region File Operations
+		private Dictionary<string, string> database = new Dictionary<string, string>();
 
-	public bool ReadFromFile()
-	{
-		if (UnityEngine.Application.isWebPlayer)
+
+		public DatabaseFile(string filename)
 		{
-			Logger.LogWarning("Cannot load database from file while running in web player");
-			return false;
+			this.filename = filename;
 		}
 
-		FileStream fileStream = null;
+		#region File Operations
 
-		try
+		public bool ReadFromFile()
 		{
-			fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
-			if (!fileStream.CanRead)
-				return false;
-			TextReader reader = new StreamReader(fileStream);
-
-			string line;
-			while ((line = reader.ReadLine()) != null)
+			if (UnityEngine.Application.isWebPlayer)
 			{
-				line = line.Trim();
+				Logger.LogWarning("Cannot load database from file while running in web player");
+				return false;
+			}
 
-				//lString = AES.Decrypt(lString);
+			FileStream fileStream = null;
 
-				if (!string.IsNullOrEmpty(line))
+			try
+			{
+				fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+				if (!fileStream.CanRead)
+					return false;
+				TextReader reader = new StreamReader(fileStream);
+
+				string line;
+				while ((line = reader.ReadLine()) != null)
 				{
-					string[] pair = line.Split(new char[] { separator }, 2);
+					line = line.Trim();
 
-					if (pair.Length != 2)
+					//lString = AES.Decrypt(lString);
+
+					if (!string.IsNullOrEmpty(line))
 					{
-						Logger.LogError("Invalid database file! Line: " + line);
-					}
-					else
-					{
-						database[pair[0].Trim()] = pair[1].Trim();
+						string[] pair = line.Split(new char[] { separator }, 2);
+
+						if (pair.Length != 2)
+						{
+							Logger.LogError("Invalid database file! Line: " + line);
+						}
+						else
+						{
+							database[pair[0].Trim()] = pair[1].Trim();
+						}
 					}
 				}
 			}
+			catch (System.Exception)
+			{
+				return false;
+			}
+
+			fileStream.Close();
+			return true;
 		}
-		catch (System.Exception)
+
+		public bool WriteToFile()
 		{
-			return false;
+			if (UnityEngine.Application.isWebPlayer)
+			{
+				Logger.LogWarning("Cannot save database to file while running in web player");
+				return false;
+			}
+
+			FileStream fileStream = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+			if (!fileStream.CanWrite)
+				return false;
+			TextWriter writer = new StreamWriter(fileStream);
+
+			foreach (KeyValuePair<string, string> keyValue in database)
+			{
+				string lineToWrite = keyValue.Key + separator + keyValue.Value;
+
+				//lLineToWrite = AES.Encrypt(lineToWrite);
+
+				writer.WriteLine(lineToWrite);
+			}
+
+			writer.Close();
+			fileStream.Close();
+			return true;
 		}
 
-		fileStream.Close();
-		return true;
-	}
+		#endregion
 
-	public bool WriteToFile()
-	{
-		if (UnityEngine.Application.isWebPlayer)
+		#region Database Commands
+
+		public bool ContainsKey(string key)
 		{
-			Logger.LogWarning("Cannot save database to file while running in web player");
-			return false;
+			return database.ContainsKey(key);
 		}
 
-		FileStream fileStream = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-		if (!fileStream.CanWrite)
-			return false;
-		TextWriter writer = new StreamWriter(fileStream);
-
-		foreach (KeyValuePair<string, string> keyValue in database)
+		public string GetValue(string key)
 		{
-			string lineToWrite = keyValue.Key + separator + keyValue.Value;
-
-			//lLineToWrite = AES.Encrypt(lineToWrite);
-
-			writer.WriteLine(lineToWrite);
+			return database[key];
 		}
 
-		writer.Close();
-		fileStream.Close();
-		return true;
-	}
-
-	#endregion
-
-	#region Database Commands
-
-	public bool ContainsKey(string key)
-	{
-		return database.ContainsKey(key);
-	}
-
-	public string GetValue(string key)
-	{
-		return database[key];
-	}
-
-	public Dictionary<string, string> GetValueList(IList<string> keyList)
-	{
-		var keyValueList = new Dictionary<string, string>(keyList.Count);
-
-		for (int i = 0; i < keyList.Count; i++)
+		public Dictionary<string, string> GetValueList(IList<string> keyList)
 		{
-			string key = keyList[i];
-			keyValueList.Add(key, GetValue(key));
+			var keyValueList = new Dictionary<string, string>(keyList.Count);
+
+			for (int i = 0; i < keyList.Count; i++)
+			{
+				string key = keyList[i];
+				keyValueList.Add(key, GetValue(key));
+			}
+
+			return keyValueList;
 		}
 
-		return keyValueList;
-	}
-
-	public Dictionary<string, string> GetValueList()
-	{
-		return new Dictionary<string, string>(database); // Copy dictionary
-	}
-
-	public List<string> GetKeyList()
-	{
-		return database.Keys.ToList();
-	}
-
-	public void Remove(string key)
-	{
-		if (database.ContainsKey(key))
+		public Dictionary<string, string> GetValueList()
 		{
-			database.Remove(key);
+			return new Dictionary<string, string>(database); // Copy dictionary
 		}
-	}
 
-	public void Remove(IList<string> keyList)
-	{
-		for (int i = 0; i < keyList.Count; i++)
+		public List<string> GetKeyList()
 		{
-			Remove(keyList[i]);
+			return database.Keys.ToList();
 		}
-	}
 
-	public void SetValue(string key, string value)
-	{
-		database[key] = value;
-	}
-
-	public void SetValue(KeyValuePair<string, string> keyValue)
-	{
-		SetValue(keyValue.Key, keyValue.Value);
-	}
-
-	public void SetValueList(Dictionary<string, string> keyValueList)
-	{
-		foreach (KeyValuePair<string, string> pair in keyValueList)
+		public void Remove(string key)
 		{
-			SetValue(pair);
+			if (database.ContainsKey(key))
+			{
+				database.Remove(key);
+			}
 		}
-	}
 
-	#endregion
+		public void Remove(IList<string> keyList)
+		{
+			for (int i = 0; i < keyList.Count; i++)
+			{
+				Remove(keyList[i]);
+			}
+		}
+
+		public void SetValue(string key, string value)
+		{
+			database[key] = value;
+		}
+
+		public void SetValue(KeyValuePair<string, string> keyValue)
+		{
+			SetValue(keyValue.Key, keyValue.Value);
+		}
+
+		public void SetValueList(Dictionary<string, string> keyValueList)
+		{
+			foreach (KeyValuePair<string, string> pair in keyValueList)
+			{
+				SetValue(pair);
+			}
+		}
+
+		#endregion
+	}
 
 }

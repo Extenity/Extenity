@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Extenity.DataToolbox;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.EditorUtilities
