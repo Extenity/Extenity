@@ -1,15 +1,20 @@
 using UnityEngine;
 
-public static class RigidbodyTools
+namespace Extenity.PhysicsToolbox
 {
-	public static void ResetVelocity(this Rigidbody rigidbody)
+
+	public static class RigidbodyTools
 	{
-		rigidbody.velocity = Vector3.zero;
-		rigidbody.angularVelocity = Vector3.zero;
+		public static void ResetVelocity(this Rigidbody rigidbody)
+		{
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.angularVelocity = Vector3.zero;
+		}
+
+		public static Vector3 LocalAngularVelocity(this Rigidbody rigidbody)
+		{
+			return Quaternion.Inverse(rigidbody.rotation) * rigidbody.angularVelocity;
+		}
 	}
 
-	public static Vector3 LocalAngularVelocity(this Rigidbody rigidbody)
-	{
-		return Quaternion.Inverse(rigidbody.rotation) * rigidbody.angularVelocity;
-	}
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Extenity.Particle
+namespace Extenity.ParticleToolbox
 {
 
 	public class AutoDestroyParticle : MonoBehaviour
