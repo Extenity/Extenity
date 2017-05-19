@@ -6,7 +6,7 @@ using System.Text;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace Extenity.Messaging
+namespace Extenity.MessagingToolbox
 {
 
 	public class Messenger : MonoBehaviour

@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace Extenity.OperatingSystem
+namespace Extenity.OperatingSystemToolbox
 {
 
 	public static class Clipboard
