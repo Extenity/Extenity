@@ -1,5 +1,5 @@
 ﻿
-namespace Extenity.SystemToolbox
+namespace Extenity.DataToolbox
 {
 
 	public delegate void InstanceAction<TInstance>(TInstance instance);
