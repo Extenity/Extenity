@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Extenity.StringUtilities
+namespace Extenity.DataToolbox
 {
 
 	public static class CamelCaseWording

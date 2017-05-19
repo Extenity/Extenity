@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Extenity.StringUtilities
+namespace Extenity.DataToolbox
 {
 
 	/// <summary>

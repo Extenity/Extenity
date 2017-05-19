@@ -1,5 +1,5 @@
 using UnityEngine.UI;
-using Extenity.StringUtilities;
+using Extenity.DataToolbox;
 
 namespace Extenity.UserInterface
 {
