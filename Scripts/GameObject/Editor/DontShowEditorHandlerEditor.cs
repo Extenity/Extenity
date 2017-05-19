@@ -1,20 +1,23 @@
 using UnityEditor;
-using UnityEngine;
-using System.Collections;
 
-[CustomEditor(typeof(DontShowEditorHandler))]
-public class DontShowEditorHandlerEditor : Editor
+namespace Extenity.GameObjectToolbox
 {
-	Tool LastTool = Tool.None;
 
-	void OnEnable()
+	[CustomEditor(typeof(DontShowEditorHandler))]
+	public class DontShowEditorHandlerEditor : Editor
 	{
-		LastTool = Tools.current;
-		Tools.current = Tool.None;
+		Tool LastTool = Tool.None;
+
+		void OnEnable()
+		{
+			LastTool = Tools.current;
+			Tools.current = Tool.None;
+		}
+
+		void OnDisable()
+		{
+			Tools.current = LastTool;
+		}
 	}
 
-	void OnDisable()
-	{
-		Tools.current = LastTool;
-	}
 }

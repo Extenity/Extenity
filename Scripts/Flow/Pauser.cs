@@ -1,9 +1,7 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Extenity.Flow
+namespace Extenity.FlowToolbox
 {
 
 	public class PauseHandler

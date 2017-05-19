@@ -1,6 +1,10 @@
 using UnityEngine;
-using System.Collections;
 
-public class DontShowEditorHandler : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
+
+	public class DontShowEditorHandler : MonoBehaviour
+	{
+	}
+
 }
