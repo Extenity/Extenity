@@ -10,171 +10,176 @@
 
 using UnityEngine;
 
-public class Instantiator : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
-	public enum InstantiatorTypes
+
+	public class Instantiator : MonoBehaviour
 	{
-		Type1,
-		Type2,
-		Type3,
-		Type4,
-		Type5,
-	}
-
-	[Header("Configuration")]
-	[Tooltip("Instantiator types allows the objects to be instantiated in groups. If there are multiple instantiators in scene, instantiators will be lined up by type number. Instantiation will be postponed until every other type that has lesser type number completes their instantiation first.")]
-	public InstantiatorTypes type = InstantiatorTypes.Type1;
-	[Tooltip("The parent object to be set for instantiated objects. This can be unassigned for making the objects instantiated at top level.")]
-	public Transform Parent;
-
-
-	[Header("Prefabs")]
-	public GameObject[] everlastingPrefabs;
-	public GameObject[] nonlastingPrefabs;
-
-	void Awake()
-	{
-		if (instantiated == null)
+		public enum InstantiatorTypes
 		{
-			instantiated = new bool[1 + (int)InstantiatorTypes.Type5];
-			willBeInitialized = new bool[1 + (int)InstantiatorTypes.Type5];
+			Type1,
+			Type2,
+			Type3,
+			Type4,
+			Type5,
 		}
 
-		// Initialize nonlasting prefabs first. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the instantiator created.
-		InitializeNonLastingPrefabs();
+		[Header("Configuration")]
+		[Tooltip("Instantiator types allows the objects to be instantiated in groups. If there are multiple instantiators in scene, instantiators will be lined up by type number. Instantiation will be postponed until every other type that has lesser type number completes their instantiation first.")]
+		public InstantiatorTypes type = InstantiatorTypes.Type1;
+		[Tooltip("The parent object to be set for instantiated objects. This can be unassigned for making the objects instantiated at top level.")]
+		public Transform Parent;
 
-		if (IsInstantiated)
+
+		[Header("Prefabs")]
+		public GameObject[] everlastingPrefabs;
+		public GameObject[] nonlastingPrefabs;
+
+		void Awake()
 		{
-			DestroyImmediate(gameObject);
-			return;
-		}
-
-		name = "_" + name;
-
-		if (HasAnyPreviousUnawakenInstantiator(type))
-		{
-			willBeInitialized[(int)type] = true;
-		}
-		else
-		{
-			Initialize();
-			InitializeMarkedInstantiators();
-		}
-	}
-
-	/// <summary>
-	/// CAUTION! Use this with care.
-	/// </summary>
-	public static void ResetType(InstantiatorTypes type)
-	{
-		//DebugAssert.IsTrue(instantiated[(int)type]);
-		instantiated[(int)type] = false;
-	}
-
-	private void InitializeMarkedInstantiators()
-	{
-		for (int iType = (int)type + 1; iType < willBeInitialized.Length; iType++)
-		{
-			if (willBeInitialized[iType])
+			if (instantiated == null)
 			{
-				var allInstantiators = FindObjectsOfType<Instantiator>();
-				for (int iInstantiator = 0; iInstantiator < allInstantiators.Length; iInstantiator++)
-				{
-					var instantiator = allInstantiators[iInstantiator];
-					if ((int)instantiator.type == iType)
-					{
-						instantiator.Initialize();
-						break;
-					}
-				}
+				instantiated = new bool[1 + (int)InstantiatorTypes.Type5];
+				willBeInitialized = new bool[1 + (int)InstantiatorTypes.Type5];
+			}
+
+			// Initialize nonlasting prefabs first. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the instantiator created.
+			InitializeNonLastingPrefabs();
+
+			if (IsInstantiated)
+			{
+				DestroyImmediate(gameObject);
+				return;
+			}
+
+			name = "_" + name;
+
+			if (HasAnyPreviousUnawakenInstantiator(type))
+			{
+				willBeInitialized[(int)type] = true;
 			}
 			else
 			{
-				break;
+				Initialize();
+				InitializeMarkedInstantiators();
 			}
 		}
-	}
 
-	private bool HasAnyPreviousUnawakenInstantiator(InstantiatorTypes type)
-	{
-		for (int i = 0; i < (int)type; i++)
+		/// <summary>
+		/// CAUTION! Use this with care.
+		/// </summary>
+		public static void ResetType(InstantiatorTypes type)
 		{
-			if (!instantiated[i])
+			//DebugAssert.IsTrue(instantiated[(int)type]);
+			instantiated[(int)type] = false;
+		}
+
+		private void InitializeMarkedInstantiators()
+		{
+			for (int iType = (int)type + 1; iType < willBeInitialized.Length; iType++)
 			{
-				return true;
+				if (willBeInitialized[iType])
+				{
+					var allInstantiators = FindObjectsOfType<Instantiator>();
+					for (int iInstantiator = 0; iInstantiator < allInstantiators.Length; iInstantiator++)
+					{
+						var instantiator = allInstantiators[iInstantiator];
+						if ((int)instantiator.type == iType)
+						{
+							instantiator.Initialize();
+							break;
+						}
+					}
+				}
+				else
+				{
+					break;
+				}
 			}
 		}
-		return false;
-	}
 
-	private void Initialize()
-	{
-#if LoggingEnabled
-		using (Extenity.Logging.Logger.Indent(gameObject, "Initializing instantiator: " + type))
-#endif
+		private bool HasAnyPreviousUnawakenInstantiator(InstantiatorTypes type)
 		{
-			instantiated[(int)type] = true;
-			willBeInitialized[(int)type] = false;
-
-			InstantiateLists();
-
-			Destroy(gameObject);
-		}
-	}
-
-	private static bool[] instantiated;
-	private static bool[] willBeInitialized;
-
-	public bool IsInstantiated
-	{
-		get { return instantiated[(int)type]; }
-	}
-
-	private void InstantiateLists()
-	{
-		for (int i = 0; i < everlastingPrefabs.Length; i++)
-		{
-#if LoggingEnabled
-			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating everlasting '{0}'", everlastingPrefabs[i].name))
-#endif
+			for (int i = 0; i < (int)type; i++)
 			{
-				EverlastingInstantiate(everlastingPrefabs[i]);
+				if (!instantiated[i])
+				{
+					return true;
+				}
 			}
+			return false;
 		}
-	}
 
-	private void InitializeNonLastingPrefabs()
-	{
-		for (int i = 0; i < nonlastingPrefabs.Length; i++)
+		private void Initialize()
 		{
 #if LoggingEnabled
-			using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating nonlasting '{0}'", nonlastingPrefabs[i].name))
+			using (Extenity.Logging.Logger.Indent(gameObject, "Initializing instantiator: " + type))
 #endif
 			{
-				NonlastingInstantiate(nonlastingPrefabs[i]);
+				instantiated[(int)type] = true;
+				willBeInitialized[(int)type] = false;
+
+				InstantiateLists();
+
+				Destroy(gameObject);
 			}
 		}
-	}
 
-	private void EverlastingInstantiate(GameObject prefab)
-	{
-		var instance = NonlastingInstantiate(prefab);
-		DontDestroyOnLoad(instance);
-	}
+		private static bool[] instantiated;
+		private static bool[] willBeInitialized;
 
-	private GameObject NonlastingInstantiate(GameObject prefab)
-	{
-		var instance = Instantiate(prefab) as GameObject;
-
-		// Remove "(Clone)" from the name and add '_' prefix.
-		instance.name = "_" + prefab.name;
-
-		// Set parent
-		if (Parent != null)
+		public bool IsInstantiated
 		{
-			instance.transform.SetParent(Parent);
+			get { return instantiated[(int)type]; }
 		}
 
-		return instance;
+		private void InstantiateLists()
+		{
+			for (int i = 0; i < everlastingPrefabs.Length; i++)
+			{
+#if LoggingEnabled
+				using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating everlasting '{0}'", everlastingPrefabs[i].name))
+#endif
+				{
+					EverlastingInstantiate(everlastingPrefabs[i]);
+				}
+			}
+		}
+
+		private void InitializeNonLastingPrefabs()
+		{
+			for (int i = 0; i < nonlastingPrefabs.Length; i++)
+			{
+#if LoggingEnabled
+				using (Extenity.Logging.Logger.IndentFormat(this, "Instantiating nonlasting '{0}'", nonlastingPrefabs[i].name))
+#endif
+				{
+					NonlastingInstantiate(nonlastingPrefabs[i]);
+				}
+			}
+		}
+
+		private void EverlastingInstantiate(GameObject prefab)
+		{
+			var instance = NonlastingInstantiate(prefab);
+			DontDestroyOnLoad(instance);
+		}
+
+		private GameObject NonlastingInstantiate(GameObject prefab)
+		{
+			var instance = Instantiate(prefab) as GameObject;
+
+			// Remove "(Clone)" from the name and add '_' prefix.
+			instance.name = "_" + prefab.name;
+
+			// Set parent
+			if (Parent != null)
+			{
+				instance.transform.SetParent(Parent);
+			}
+
+			return instance;
+		}
 	}
+
 }

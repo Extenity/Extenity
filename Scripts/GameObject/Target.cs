@@ -1,18 +1,22 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 
-[Serializable]
-public struct Target
+namespace Extenity.GameObjectToolbox
 {
-	public Transform Transform;
-	public Vector3 Position;
 
-	public void RefreshPosition()
+	[Serializable]
+	public struct Target
 	{
-		if (Transform != null)
+		public Transform Transform;
+		public Vector3 Position;
+
+		public void RefreshPosition()
 		{
-			Position = Transform.position;
+			if (Transform != null)
+			{
+				Position = Transform.position;
+			}
 		}
 	}
+
 }

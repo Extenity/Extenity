@@ -1,21 +1,26 @@
 ﻿using UnityEngine;
 
-public class ObjectEnabler : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
-	public GameObject Object;
 
-	public void EnableObject(bool enable)
+	public class ObjectEnabler : MonoBehaviour
 	{
-		Object.SetActive(enable);
+		public GameObject Object;
+
+		public void EnableObject(bool enable)
+		{
+			Object.SetActive(enable);
+		}
+
+		public void EnableObject()
+		{
+			Object.SetActive(true);
+		}
+
+		public void DisableObject()
+		{
+			Object.SetActive(false);
+		}
 	}
 
-	public void EnableObject()
-	{
-		Object.SetActive(true);
-	}
-
-	public void DisableObject()
-	{
-		Object.SetActive(false);
-	}
 }

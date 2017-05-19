@@ -1,17 +1,22 @@
 using UnityEngine;
 
-public class InstantiateOnStart : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
-	public GameObject instantiate;
-	public bool destroySelf = true;
 
-	void Start()
+	public class InstantiateOnStart : MonoBehaviour
 	{
-		Instantiate(instantiate);
+		public GameObject instantiate;
+		public bool destroySelf = true;
 
-		if (destroySelf)
+		void Start()
 		{
-			DestroyImmediate(gameObject);
+			Instantiate(instantiate);
+
+			if (destroySelf)
+			{
+				DestroyImmediate(gameObject);
+			}
 		}
 	}
+
 }

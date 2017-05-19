@@ -1,9 +1,14 @@
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
-	private void Awake()
+
+	public class DontDestroyOnLoad : MonoBehaviour
 	{
-		DontDestroyOnLoad(gameObject);
+		private void Awake()
+		{
+			DontDestroyOnLoad(gameObject);
+		}
 	}
+
 }

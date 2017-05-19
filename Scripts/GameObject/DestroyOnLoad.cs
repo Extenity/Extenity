@@ -1,18 +1,23 @@
 using UnityEngine;
 
-public class DestroyOnLoad : MonoBehaviour
+namespace Extenity.GameObjectToolbox
 {
-	public bool destroyImmediate = false;
 
-	private void Awake()
+	public class DestroyOnLoad : MonoBehaviour
 	{
-		if (destroyImmediate)
+		public bool destroyImmediate = false;
+
+		private void Awake()
 		{
-			DestroyImmediate(gameObject);
-		}
-		else
-		{
-			Destroy(gameObject);
+			if (destroyImmediate)
+			{
+				DestroyImmediate(gameObject);
+			}
+			else
+			{
+				Destroy(gameObject);
+			}
 		}
 	}
+
 }
