@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 namespace Extenity.OperatingSystemToolbox
 {
 
+#if UNITY_STANDALONE_WIN
+
 	public static class Clipboard
 	{
 		enum ClipboardFormats : int
@@ -101,5 +103,7 @@ namespace Extenity.OperatingSystemToolbox
 			return data;
 		}
 	}
+
+#endif
 
 }
