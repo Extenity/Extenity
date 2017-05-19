@@ -1,21 +1,26 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(SingleLayer))]
-public class SingleLayerPropertyDrawer : PropertyDrawer
+namespace Extenity.DataToolbox
 {
-	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+
+	[CustomPropertyDrawer(typeof(SingleLayer))]
+	public class SingleLayerPropertyDrawer : PropertyDrawer
 	{
-		EditorGUI.BeginProperty(position, GUIContent.none, property);
-
-		SerializedProperty layerIndex = property.FindPropertyRelative("_LayerIndex");
-
-		position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-		if (layerIndex != null)
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			layerIndex.intValue = EditorGUI.LayerField(position, layerIndex.intValue);
-		}
+			EditorGUI.BeginProperty(position, GUIContent.none, property);
 
-		EditorGUI.EndProperty();
+			SerializedProperty layerIndex = property.FindPropertyRelative("_LayerIndex");
+
+			position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+			if (layerIndex != null)
+			{
+				layerIndex.intValue = EditorGUI.LayerField(position, layerIndex.intValue);
+			}
+
+			EditorGUI.EndProperty();
+		}
 	}
+
 }

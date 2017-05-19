@@ -2,28 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public static class EnumTools
+namespace Extenity.DataToolbox
 {
-	public static T ParseSafe<T>(string value, bool ignoreCase = false)
+
+	public static class EnumTools
 	{
-		var enumType = typeof(T);
-
-		if (!enumType.IsEnum)
-			throw new ArgumentException("Generic type must be an enumeration.", "enumType");
-
-		try
+		public static T ParseSafe<T>(string value, bool ignoreCase = false)
 		{
-			var result = (T)Enum.Parse(enumType, value, ignoreCase);
-			return result;
+			var enumType = typeof(T);
+
+			if (!enumType.IsEnum)
+				throw new ArgumentException("Generic type must be an enumeration.", "enumType");
+
+			try
+			{
+				var result = (T)Enum.Parse(enumType, value, ignoreCase);
+				return result;
+			}
+			catch
+			{
+			}
+			return default(T);
 		}
-		catch
+
+		public static IEnumerable<T> GetValues<T>()
 		{
+			return Enum.GetValues(typeof(T)).Cast<T>();
 		}
-		return default(T);
 	}
 
-	public static IEnumerable<T> GetValues<T>()
-	{
-		return Enum.GetValues(typeof(T)).Cast<T>();
-	}
 }
