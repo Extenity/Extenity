@@ -1,44 +1,47 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
 
-public class ResizeTreeWindow : EditorWindow
+namespace Extenity.TerrainToolbox
 {
-	[MenuItem("Tools/Terrain/Resize Trees")]
-	public static void ShowWindow()
+
+	public class ResizeTreeWindow : EditorWindow
 	{
-		EditorWindow.GetWindow(typeof(ResizeTreeWindow));
-	}
-
-	public static float MinSize = 0.1f;
-	public static float MaxSize = 0.15f;
-
-	void OnGUI()
-	{
-		GUILayout.Label("Resize Trees", EditorStyles.boldLabel);
-
-		MinSize = EditorGUILayout.FloatField("Min Size", MinSize);
-		MaxSize = EditorGUILayout.FloatField("Max Size", MaxSize);
-
-		if (GUILayout.Button("Resize Trees", GUILayout.Height(30f)))
+		[MenuItem("Tools/Terrain/Resize Trees")]
+		public static void ShowWindow()
 		{
-			//List<TreeInstance> newTrees = new List<TreeInstance>(Terrain.activeTerrain.terrainData.treePrototypes);
-			TreeInstance[] newTrees = Terrain.activeTerrain.terrainData.treeInstances;
+			EditorWindow.GetWindow(typeof(ResizeTreeWindow));
+		}
 
-			for (int i = 0; i < newTrees.Length; i++)
+		public static float MinSize = 0.1f;
+		public static float MaxSize = 0.15f;
+
+		void OnGUI()
+		{
+			GUILayout.Label("Resize Trees", EditorStyles.boldLabel);
+
+			MinSize = EditorGUILayout.FloatField("Min Size", MinSize);
+			MaxSize = EditorGUILayout.FloatField("Max Size", MaxSize);
+
+			if (GUILayout.Button("Resize Trees", GUILayout.Height(30f)))
 			{
-				var scale = Random.Range(MinSize, MaxSize);
-				newTrees[i].heightScale = scale;
-				newTrees[i].widthScale = scale;
+				//List<TreeInstance> newTrees = new List<TreeInstance>(Terrain.activeTerrain.terrainData.treePrototypes);
+				TreeInstance[] newTrees = Terrain.activeTerrain.terrainData.treeInstances;
 
-				// Re asign it
-				Terrain.activeTerrain.terrainData.treeInstances = newTrees;
-				//Terrain.activeTerrain.terrainData.treeInstances[i] = ti;
+				for (int i = 0; i < newTrees.Length; i++)
+				{
+					var scale = Random.Range(MinSize, MaxSize);
+					newTrees[i].heightScale = scale;
+					newTrees[i].widthScale = scale;
+
+					// Re asign it
+					Terrain.activeTerrain.terrainData.treeInstances = newTrees;
+					//Terrain.activeTerrain.terrainData.treeInstances[i] = ti;
+				}
+
+				Terrain.activeTerrain.terrainData.RefreshPrototypes();
+				Terrain.activeTerrain.Flush();
 			}
-
-			Terrain.activeTerrain.terrainData.RefreshPrototypes();
-			Terrain.activeTerrain.Flush();
 		}
 	}
+
 }
