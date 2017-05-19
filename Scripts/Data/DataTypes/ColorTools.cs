@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Extenity.DataTypes
+namespace Extenity.DataToolbox
 {
 
 	public static class ColorTools

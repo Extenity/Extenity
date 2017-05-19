@@ -1,5 +1,5 @@
 using System;
-using Extenity.DataTypes;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.ConsoleToolbox

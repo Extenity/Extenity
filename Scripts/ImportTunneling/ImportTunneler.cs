@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using Extenity.DataToolbox;
 using Extenity.Parallel;
+using Guid = System.Guid;
 
 namespace Extenity.ImportTunneling
 {

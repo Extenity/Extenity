@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Random = UnityEngine.Random;
 
-namespace Extenity.DataTypes
+namespace Extenity.DataToolbox
 {
 
 	public class GuidJsonConverter : JsonConverter

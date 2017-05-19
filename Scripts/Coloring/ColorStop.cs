@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Extenity.DataTypes;
+using Extenity.DataToolbox;
 
 namespace Extenity.ColoringToolbox
 {

@@ -1,5 +1,5 @@
 using UnityEngine;
-using Extenity.DataTypes;
+using Extenity.DataToolbox;
 
 namespace Extenity.ColoringToolbox
 {

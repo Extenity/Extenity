@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Extenity.DataTypes;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.ConsistencyToolbox

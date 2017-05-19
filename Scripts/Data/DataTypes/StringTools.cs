@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Extenity.DataTypes
+namespace Extenity.DataToolbox
 {
 
 	public static class StringTools

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
-using Extenity.DataTypes;
+using Extenity.DataToolbox;
 
 namespace Extenity.CryptoToolbox
 {

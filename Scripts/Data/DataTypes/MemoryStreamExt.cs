@@ -1,7 +1,5 @@
 using System.IO;
 using System.Text;
-using UnityEngine;
-using System.Collections;
 
 public static class MemoryStreamExt
 {
