@@ -9,6 +9,7 @@
 #endif
 
 using UnityEngine;
+using Extenity.DebugToolbox;
 
 // Usage:
 //   Use the derived class as a Component of a GameObject.

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Extenity.Debugging
+namespace Extenity.DebugToolbox
 {
 
 	public class DebugTimeController : MonoBehaviour

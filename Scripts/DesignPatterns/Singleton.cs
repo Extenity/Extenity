@@ -8,6 +8,8 @@
 #undef LoggingEnabled
 #endif
 
+using Extenity.DebugToolbox;
+
 // Usage:
 //   Use "new" to create singleton.
 //   InitializeSingleton(this); must be placed on the constructor of derived class.

@@ -3,7 +3,7 @@
 using UnityEditor;
 #endif
 
-namespace Extenity.Debugging
+namespace Extenity.DebugToolbox
 {
 
 	public class DebugLogErrorLimiter : MonoBehaviour

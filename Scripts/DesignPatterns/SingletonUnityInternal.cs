@@ -1,5 +1,5 @@
 using UnityEngine;
-using Extenity.Logging;
+using Extenity.DebugToolbox;
 using Logger = Extenity.Logging.Logger;
 
 // Usage:
