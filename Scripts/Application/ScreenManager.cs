@@ -1,4 +1,5 @@
 using Extenity.DesignPatternsToolbox;
+using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.Events;
 

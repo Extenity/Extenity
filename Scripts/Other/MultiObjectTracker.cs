@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
+using Extenity.MathToolbox;
 
 public class MultiObjectTracker : MonoBehaviour
 {

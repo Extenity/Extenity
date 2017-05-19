@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Extenity.MathToolbox;
 using Object = UnityEngine.Object;
 
 namespace Extenity.SceneManagement

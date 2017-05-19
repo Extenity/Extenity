@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using Extenity.MathToolbox;
 using UnityEngine.UI;
 
 namespace Extenity.ColoringToolbox.UI

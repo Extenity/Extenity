@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.CameraToolbox;
+using Extenity.MathToolbox;
 
 public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
 {

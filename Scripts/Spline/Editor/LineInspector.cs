@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Text;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 using Extenity.OperatingSystem;
 
 namespace Extenity.GeometryToolbox

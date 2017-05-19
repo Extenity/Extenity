@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 
 namespace Extenity.ColoringToolbox
 {

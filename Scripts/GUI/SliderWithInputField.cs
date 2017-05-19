@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using Extenity.MathToolbox;
 using UnityEngine.UI;
 
 public class SliderWithInputField : MonoBehaviour

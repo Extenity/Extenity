@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 
 namespace Extenity.ColoringToolbox
 {

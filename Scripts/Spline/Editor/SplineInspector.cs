@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
+using Extenity.MathToolbox;
 
 namespace Extenity.GeometryToolbox
 {
