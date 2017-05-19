@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Extenity.DesignPatternsToolbox;
 
-namespace Extenity.InputManagement
+namespace Extenity.InputToolbox
 {
 
 	public class MouseCursor : SingletonUnity<MouseCursor>
