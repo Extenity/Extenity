@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.SceneManagement
+namespace Extenity.SceneManagementToolbox
 {
 
 	public static class SceneManagerTools

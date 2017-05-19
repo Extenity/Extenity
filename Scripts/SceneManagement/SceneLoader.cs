@@ -2,7 +2,7 @@ using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.SceneManagement
+namespace Extenity.SceneManagementToolbox
 {
 
 	public class SceneLoader : MonoBehaviour
