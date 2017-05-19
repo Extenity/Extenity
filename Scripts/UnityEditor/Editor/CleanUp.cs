@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.DataToolbox;
-using Extenity.Logging;
+using Extenity.DebugToolbox;
 using UnityEditor;
 
 namespace Extenity.EditorUtilities

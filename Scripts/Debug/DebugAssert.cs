@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.DebugToolbox
 {

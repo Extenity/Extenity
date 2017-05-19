@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using System.Collections;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity
 {

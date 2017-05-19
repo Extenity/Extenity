@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 using Object = UnityEngine.Object;
 
 public class RadioGroupActivator : MonoBehaviour

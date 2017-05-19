@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using Extenity.Logging;
+using Extenity.DebugToolbox;
 using Extenity.ImportTunneling;
 using Extenity.Parallel;
 

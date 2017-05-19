@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Extenity.DataToolbox;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity
 {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.ColoringToolbox
 {

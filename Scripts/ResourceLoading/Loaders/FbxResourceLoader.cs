@@ -1,12 +1,8 @@
 using System;
-using UnityEngine;
-using Extenity.Logging;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using Extenity.ImportTunneling;
 using Extenity.Parallel;
-using Object = UnityEngine.Object;
 
 namespace Extenity.ResourceLoading
 {

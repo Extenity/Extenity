@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using Logger = Extenity.Logging.Logger;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.DataToolbox
 {
