@@ -7,7 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.Parallel;
 using Guid = System.Guid;
 
-namespace Extenity.ImportTunneling
+namespace Extenity.ImportTunnelingToolbox
 {
 
 	/// <summary>
@@ -51,22 +51,6 @@ namespace Extenity.ImportTunneling
 				LoadConfigurationFile();
 			}
 		}
-
-		#endregion
-
-		#region Deinitialization
-
-		//protected void OnDestroy()
-		//{
-		//}
-
-		#endregion
-
-		#region Update
-
-		//protected void Update()
-		//{
-		//}
 
 		#endregion
 
@@ -223,7 +207,7 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-namespace ImportTunneling
+namespace Extenity.ImportTunnelingToolbox
 {
 
 	public static class ImportTunnelerSatellite
@@ -397,7 +381,7 @@ namespace ImportTunneling
 			// Launch dummy project with conversion command
 			yield return task.StartNested(CreateAndLaunchUnityProject(
 				dummyProjectPath,
-				"ImportTunneling.ImportTunnelerSatellite.ConvertUsingArgs", // TODO: remove hardcode
+				"Extenity.ImportTunnelingToolbox.ImportTunnelerSatellite.ConvertUsingArgs", // TODO: remove hardcode
 				sourceAssetDummyProjectRelativePath,
 				outputAssetFullPath,
 				AssetBundlePlatform.StandaloneWindows64)); // TODO: remove hardcode

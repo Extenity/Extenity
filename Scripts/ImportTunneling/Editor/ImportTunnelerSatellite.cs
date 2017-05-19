@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-namespace ImportTunneling
+namespace Extenity.ImportTunnelingToolbox
 {
 
 	public static class ImportTunnelerSatellite

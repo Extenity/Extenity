@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
-using Extenity.ImportTunneling;
+using Extenity.ImportTunnelingToolbox;
 using Extenity.Parallel;
 
 namespace Extenity.ResourceLoading
