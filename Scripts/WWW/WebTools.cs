@@ -3,7 +3,7 @@
 namespace Extenity.WWWToolbox
 {
 
-	public static class WebExtensions
+	public static class WebTools
 	{
 		public static long GetContentLength(this WebHeaderCollection responseHeaders)
 		{

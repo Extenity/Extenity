@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Extenity.DataToolbox
 {
 
-	public static class PlayerPrefsExt
+	public static class PlayerPrefsTools
 	{
 		public static void SetBool(string key, bool value)
 		{

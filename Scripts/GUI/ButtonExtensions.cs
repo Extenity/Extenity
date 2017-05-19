@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public static class ButtonExtensions
 {
+	// TODO: Move to UITools
 	public static void SetNormalColorAlpha(this Button me, float value)
 	{
 		var colors = me.colors;

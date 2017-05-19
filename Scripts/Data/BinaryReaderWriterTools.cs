@@ -4,7 +4,7 @@ using System.Text;
 namespace Extenity.DataToolbox
 {
 
-	public static class BinaryWriterExt
+	public static class BinaryWriterTools
 	{
 		public static void WriteNullTerminatedSingleByte(this BinaryWriter writer, string value)
 		{
@@ -19,7 +19,7 @@ namespace Extenity.DataToolbox
 		}
 	}
 
-	public static class BinaryReaderExt
+	public static class BinaryReaderTools
 	{
 		public static string ReadStringNullTerminatedSingleByte(this BinaryReader reader)
 		{

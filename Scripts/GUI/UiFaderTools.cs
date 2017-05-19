@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public static class UiFaderExtensions
+public static class UiFaderTools
 {
 	public static float FadeInAllChildren(this GameObject gameObject)
 	{

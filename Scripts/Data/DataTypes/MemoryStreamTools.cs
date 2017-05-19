@@ -4,7 +4,7 @@ using System.Text;
 namespace Extenity.DataToolbox
 {
 
-	public static class MemoryStreamExt
+	public static class MemoryStreamTools
 	{
 		public static void Append(this MemoryStream stream, char value, Encoding encoding)
 		{
