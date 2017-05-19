@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Serialization
+namespace Extenity.DataToolbox
 {
 
 	public abstract class SerializedMonoBehaviour : MonoBehaviour

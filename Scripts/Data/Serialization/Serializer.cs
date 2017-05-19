@@ -1,10 +1,9 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Serialization
+namespace Extenity.DataToolbox
 {
 
 	public sealed class Serializer : IDisposable
