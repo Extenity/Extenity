@@ -4,364 +4,369 @@ using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.MathToolbox;
 
-public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
+namespace Extenity.UnityEditorToolbox
 {
-	#region Initialization
 
-	protected virtual void OnEnableBase() { }
-	protected abstract void OnEnableDerived();
-	protected virtual void OnDisableBase() { }
-	protected abstract void OnDisableDerived();
-
-	protected void OnEnable()
+	public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
 	{
-		Me = target as T;
-		Configuration = new SerializedObject(target);
+		#region Initialization
 
-		OnEnableBase();
-		OnEnableDerived();
+		protected virtual void OnEnableBase() { }
+		protected abstract void OnEnableDerived();
+		protected virtual void OnDisableBase() { }
+		protected abstract void OnDisableDerived();
 
-		//RegisterUpdate();
-	}
-
-	protected void OnDisable()
-	{
-		DeregisterUpdate(true);
-
-		OnDisableDerived();
-		OnDisableBase();
-	}
-
-	#endregion
-
-	#region Update
-
-	protected virtual void Update() { }
-	public int RequestedUpdateRegistrationCount { get; private set; }
-
-	private void UpdateInternal()
-	{
-		if (Me == null)
-			return;
-
-		Update();
-		UpdateAutoRepaint();
-		UpdateMovementDetection();
-	}
-
-	public void RegisterUpdate()
-	{
-		RequestedUpdateRegistrationCount++;
-		if (RequestedUpdateRegistrationCount > 1)
-			return;
-		EditorApplication.update += UpdateInternal;
-	}
-
-	public void DeregisterUpdate(bool force = false)
-	{
-		RequestedUpdateRegistrationCount--;
-		if (force || RequestedUpdateRegistrationCount <= 0)
+		protected void OnEnable()
 		{
-			EditorApplication.update -= UpdateInternal;
+			Me = target as T;
+			Configuration = new SerializedObject(target);
+
+			OnEnableBase();
+			OnEnableDerived();
+
+			//RegisterUpdate();
 		}
-	}
 
-	#endregion
-
-	#region Auto Repaint
-
-	public float AutoRepaintSceneViewPeriod = 0.08f;
-	private float LastRepaintSceneViewTime;
-	private bool _IsAutoRepaintSceneViewEnabled;
-	public bool IsAutoRepaintSceneViewEnabled
-	{
-		get { return _IsAutoRepaintSceneViewEnabled; }
-		set
+		protected void OnDisable()
 		{
-			if (value == _IsAutoRepaintSceneViewEnabled)
+			DeregisterUpdate(true);
+
+			OnDisableDerived();
+			OnDisableBase();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected virtual void Update() { }
+		public int RequestedUpdateRegistrationCount { get; private set; }
+
+		private void UpdateInternal()
+		{
+			if (Me == null)
 				return;
 
-			if (value)
-				RegisterUpdate();
-			else
-				DeregisterUpdate();
-
-			_IsAutoRepaintSceneViewEnabled = value;
+			Update();
+			UpdateAutoRepaint();
+			UpdateMovementDetection();
 		}
-	}
 
-	public float AutoRepaintInspectorPeriod = 0.08f;
-	private float LastRepaintInspectorTime;
-	private bool _IsAutoRepaintInspectorEnabled;
-	public bool IsAutoRepaintInspectorEnabled
-	{
-		get { return _IsAutoRepaintInspectorEnabled; }
-		set
+		public void RegisterUpdate()
 		{
-			if (value == _IsAutoRepaintInspectorEnabled)
+			RequestedUpdateRegistrationCount++;
+			if (RequestedUpdateRegistrationCount > 1)
 				return;
-
-			if (value)
-				RegisterUpdate();
-			else
-				DeregisterUpdate();
-
-			_IsAutoRepaintInspectorEnabled = value;
-		}
-	}
-
-	private void UpdateAutoRepaint()
-	{
-		var currentTime = Time.realtimeSinceStartup;
-
-		// SceneView
-		if (LastRepaintSceneViewTime + AutoRepaintSceneViewPeriod < currentTime)
-		{
-			SceneView.RepaintAll();
-			LastRepaintSceneViewTime = currentTime;
+			EditorApplication.update += UpdateInternal;
 		}
 
-		// Inspector
-		if (LastRepaintInspectorTime + AutoRepaintInspectorPeriod < currentTime)
+		public void DeregisterUpdate(bool force = false)
 		{
-			Repaint();
-			LastRepaintInspectorTime = currentTime;
-		}
-	}
-
-	//public override bool RequiresConstantRepaint() // This method is abandoned to provide RepaintPeriod functionality by using EditorApplication.update callback
-	//{
-	//	return base.RequiresConstantRepaint() || AutoRepaintEnabled;
-	//}
-
-	#endregion
-
-	#region Configuration
-
-	protected SerializedObject Configuration;
-	protected T Me;
-
-	#endregion
-
-	#region Cached Properties
-
-	public Dictionary<string, SerializedProperty> CachedSerializedProperties;
-
-	public SerializedProperty GetProperty(string propertyName)
-	{
-		SerializedProperty serializedProperty;
-
-		if (CachedSerializedProperties == null)
-		{
-			CachedSerializedProperties = new Dictionary<string, SerializedProperty>();
-		}
-		else
-		{
-			if (CachedSerializedProperties.TryGetValue(propertyName, out serializedProperty))
+			RequestedUpdateRegistrationCount--;
+			if (force || RequestedUpdateRegistrationCount <= 0)
 			{
-				if (serializedProperty != null)
+				EditorApplication.update -= UpdateInternal;
+			}
+		}
+
+		#endregion
+
+		#region Auto Repaint
+
+		public float AutoRepaintSceneViewPeriod = 0.08f;
+		private float LastRepaintSceneViewTime;
+		private bool _IsAutoRepaintSceneViewEnabled;
+		public bool IsAutoRepaintSceneViewEnabled
+		{
+			get { return _IsAutoRepaintSceneViewEnabled; }
+			set
+			{
+				if (value == _IsAutoRepaintSceneViewEnabled)
+					return;
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsAutoRepaintSceneViewEnabled = value;
+			}
+		}
+
+		public float AutoRepaintInspectorPeriod = 0.08f;
+		private float LastRepaintInspectorTime;
+		private bool _IsAutoRepaintInspectorEnabled;
+		public bool IsAutoRepaintInspectorEnabled
+		{
+			get { return _IsAutoRepaintInspectorEnabled; }
+			set
+			{
+				if (value == _IsAutoRepaintInspectorEnabled)
+					return;
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsAutoRepaintInspectorEnabled = value;
+			}
+		}
+
+		private void UpdateAutoRepaint()
+		{
+			var currentTime = Time.realtimeSinceStartup;
+
+			// SceneView
+			if (LastRepaintSceneViewTime + AutoRepaintSceneViewPeriod < currentTime)
+			{
+				SceneView.RepaintAll();
+				LastRepaintSceneViewTime = currentTime;
+			}
+
+			// Inspector
+			if (LastRepaintInspectorTime + AutoRepaintInspectorPeriod < currentTime)
+			{
+				Repaint();
+				LastRepaintInspectorTime = currentTime;
+			}
+		}
+
+		//public override bool RequiresConstantRepaint() // This method is abandoned to provide RepaintPeriod functionality by using EditorApplication.update callback
+		//{
+		//	return base.RequiresConstantRepaint() || AutoRepaintEnabled;
+		//}
+
+		#endregion
+
+		#region Configuration
+
+		protected SerializedObject Configuration;
+		protected T Me;
+
+		#endregion
+
+		#region Cached Properties
+
+		public Dictionary<string, SerializedProperty> CachedSerializedProperties;
+
+		public SerializedProperty GetProperty(string propertyName)
+		{
+			SerializedProperty serializedProperty;
+
+			if (CachedSerializedProperties == null)
+			{
+				CachedSerializedProperties = new Dictionary<string, SerializedProperty>();
+			}
+			else
+			{
+				if (CachedSerializedProperties.TryGetValue(propertyName, out serializedProperty))
 				{
-					return serializedProperty;
+					if (serializedProperty != null)
+					{
+						return serializedProperty;
+					}
+					else
+					{
+						CachedSerializedProperties.Remove(propertyName);
+					}
+				}
+			}
+
+			serializedProperty = Configuration.FindProperty(propertyName);
+			if (serializedProperty != null)
+			{
+				CachedSerializedProperties.Add(propertyName, serializedProperty);
+			}
+			return serializedProperty;
+		}
+
+		#endregion
+
+		#region Inspector GUI
+
+		public bool IsDefaultInspectorDrawingEnabled = true;
+		public bool IsDefaultInspectorScriptFieldEnabed = false;
+		public bool IsInspectorDisabledWhenPlaying = false;
+
+		private static readonly string[] ExcludedPropertiesInDefaultInspector = { "m_Script" };
+
+		protected virtual void OnBeforeDefaultInspectorGUI() { }
+		protected abstract void OnAfterDefaultInspectorGUI();
+
+		public override sealed void OnInspectorGUI()
+		{
+			Configuration.Update();
+
+			var disabled = IsInspectorDisabledWhenPlaying;
+			if (disabled)
+				EditorGUI.BeginDisabledGroup(Application.isPlaying);
+
+			OnBeforeDefaultInspectorGUI();
+
+			if (IsDefaultInspectorDrawingEnabled)
+			{
+				if (IsDefaultInspectorScriptFieldEnabed)
+				{
+					DrawDefaultInspector();
 				}
 				else
 				{
-					CachedSerializedProperties.Remove(propertyName);
+					DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
 				}
 			}
+
+			OnAfterDefaultInspectorGUI();
+
+			if (disabled)
+				EditorGUI.EndDisabledGroup();
+
+			Configuration.ApplyModifiedProperties();
 		}
 
-		serializedProperty = Configuration.FindProperty(propertyName);
-		if (serializedProperty != null)
+		#endregion
+
+		#region Invalidate Modified Properties
+
+		protected void InvalidateModifiedProperties()
 		{
-			CachedSerializedProperties.Add(propertyName, serializedProperty);
+			EditorUtility.SetDirty(Me);
 		}
-		return serializedProperty;
-	}
 
-	#endregion
+		#endregion
 
-	#region Inspector GUI
+		#region Transform Movement Detection
 
-	public bool IsDefaultInspectorDrawingEnabled = true;
-	public bool IsDefaultInspectorScriptFieldEnabed = false;
-	public bool IsInspectorDisabledWhenPlaying = false;
+		public Vector3 MovementDetectionPreviousPosition { get; private set; }
+		public Quaternion MovementDetectionPreviousRotation { get; private set; }
+		public Vector3 MovementDetectionPreviousScale { get; private set; }
 
-	private static readonly string[] ExcludedPropertiesInDefaultInspector = { "m_Script" };
+		protected virtual void OnMovementDetected() { }
 
-	protected virtual void OnBeforeDefaultInspectorGUI() { }
-	protected abstract void OnAfterDefaultInspectorGUI();
-
-	public override sealed void OnInspectorGUI()
-	{
-		Configuration.Update();
-
-		var disabled = IsInspectorDisabledWhenPlaying;
-		if (disabled)
-			EditorGUI.BeginDisabledGroup(Application.isPlaying);
-
-		OnBeforeDefaultInspectorGUI();
-
-		if (IsDefaultInspectorDrawingEnabled)
+		private bool _IsMovementDetectionEnabled;
+		public bool IsMovementDetectionEnabled
 		{
-			if (IsDefaultInspectorScriptFieldEnabed)
+			get { return _IsMovementDetectionEnabled; }
+			set
 			{
-				DrawDefaultInspector();
-			}
-			else
-			{
-				DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
+				if (value == _IsMovementDetectionEnabled)
+					return;
+
+				if (value)
+					InitializeMovementDetection();
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsMovementDetectionEnabled = value;
 			}
 		}
 
-		OnAfterDefaultInspectorGUI();
-
-		if (disabled)
-			EditorGUI.EndDisabledGroup();
-
-		Configuration.ApplyModifiedProperties();
-	}
-
-	#endregion
-
-	#region Invalidate Modified Properties
-
-	protected void InvalidateModifiedProperties()
-	{
-		EditorUtility.SetDirty(Me);
-	}
-
-	#endregion
-
-	#region Transform Movement Detection
-
-	public Vector3 MovementDetectionPreviousPosition { get; private set; }
-	public Quaternion MovementDetectionPreviousRotation { get; private set; }
-	public Vector3 MovementDetectionPreviousScale { get; private set; }
-
-	protected virtual void OnMovementDetected() { }
-
-	private bool _IsMovementDetectionEnabled;
-	public bool IsMovementDetectionEnabled
-	{
-		get { return _IsMovementDetectionEnabled; }
-		set
+		private void InitializeMovementDetection()
 		{
-			if (value == _IsMovementDetectionEnabled)
-				return;
-
-			if (value)
-				InitializeMovementDetection();
-
-			if (value)
-				RegisterUpdate();
-			else
-				DeregisterUpdate();
-
-			_IsMovementDetectionEnabled = value;
-		}
-	}
-
-	private void InitializeMovementDetection()
-	{
-		var transform = Me.transform;
-		MovementDetectionPreviousPosition = transform.position;
-		MovementDetectionPreviousRotation = transform.rotation;
-		MovementDetectionPreviousScale = transform.localScale;
-	}
-
-	private void UpdateMovementDetection()
-	{
-		if (!IsMovementDetectionEnabled)
-			return;
-
-		var transform = Me.transform;
-		bool detected =
-			MovementDetectionPreviousPosition != transform.position ||
-			MovementDetectionPreviousRotation != transform.rotation ||
-			MovementDetectionPreviousScale != transform.localScale;
-
-		if (detected)
-		{
-			OnMovementDetected();
+			var transform = Me.transform;
 			MovementDetectionPreviousPosition = transform.position;
 			MovementDetectionPreviousRotation = transform.rotation;
 			MovementDetectionPreviousScale = transform.localScale;
 		}
-	}
 
-	#endregion
-
-	#region Mouse
-
-	protected static Vector2 MouseSceneViewPosition
-	{
-		get
+		private void UpdateMovementDetection()
 		{
-			var mouseScreenPosition = Event.current.mousePosition;
-			mouseScreenPosition.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouseScreenPosition.y;
-			return mouseScreenPosition;
-		}
-	}
+			if (!IsMovementDetectionEnabled)
+				return;
 
-	protected static bool IsMouseCloseToScreenPoint(Vector2 mousePosition, Vector3 screenPosition, float maximumDistanceFromMouse)
-	{
-		int diffX = (int)(mousePosition.x - screenPosition.x);
-		if (diffX > maximumDistanceFromMouse || diffX < -maximumDistanceFromMouse)
-			return false;
-		int diffY = (int)(mousePosition.y - screenPosition.y);
-		return diffY <= maximumDistanceFromMouse && diffY >= -maximumDistanceFromMouse;
-	}
+			var transform = Me.transform;
+			bool detected =
+				MovementDetectionPreviousPosition != transform.position ||
+				MovementDetectionPreviousRotation != transform.rotation ||
+				MovementDetectionPreviousScale != transform.localScale;
 
-	protected bool IsMouseCloseToWorldPointInScreenCoordinates(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse)
-	{
-		var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
-		return
-			screenPosition.HasValue &&
-			IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse);
-	}
-
-	protected Vector2 GetDifferenceBetweenMousePositionAndWorldPoint(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse = 0f)
-	{
-		var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
-		if (screenPosition.HasValue)
-		{
-			var diff = mousePosition - screenPosition.Value.ToVector2XY();
-			if (maximumDistanceFromMouse > 0f)
+			if (detected)
 			{
-				if (diff.sqrMagnitude < maximumDistanceFromMouse * maximumDistanceFromMouse)
+				OnMovementDetected();
+				MovementDetectionPreviousPosition = transform.position;
+				MovementDetectionPreviousRotation = transform.rotation;
+				MovementDetectionPreviousScale = transform.localScale;
+			}
+		}
+
+		#endregion
+
+		#region Mouse
+
+		protected static Vector2 MouseSceneViewPosition
+		{
+			get
+			{
+				var mouseScreenPosition = Event.current.mousePosition;
+				mouseScreenPosition.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouseScreenPosition.y;
+				return mouseScreenPosition;
+			}
+		}
+
+		protected static bool IsMouseCloseToScreenPoint(Vector2 mousePosition, Vector3 screenPosition, float maximumDistanceFromMouse)
+		{
+			int diffX = (int)(mousePosition.x - screenPosition.x);
+			if (diffX > maximumDistanceFromMouse || diffX < -maximumDistanceFromMouse)
+				return false;
+			int diffY = (int)(mousePosition.y - screenPosition.y);
+			return diffY <= maximumDistanceFromMouse && diffY >= -maximumDistanceFromMouse;
+		}
+
+		protected bool IsMouseCloseToWorldPointInScreenCoordinates(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse)
+		{
+			var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
+			return
+				screenPosition.HasValue &&
+				IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse);
+		}
+
+		protected Vector2 GetDifferenceBetweenMousePositionAndWorldPoint(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse = 0f)
+		{
+			var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
+			if (screenPosition.HasValue)
+			{
+				var diff = mousePosition - screenPosition.Value.ToVector2XY();
+				if (maximumDistanceFromMouse > 0f)
+				{
+					if (diff.sqrMagnitude < maximumDistanceFromMouse * maximumDistanceFromMouse)
+					{
+						return diff;
+					}
+				}
+				else
 				{
 					return diff;
 				}
 			}
-			else
-			{
-				return diff;
-			}
+			return new Vector2(float.PositiveInfinity, float.PositiveInfinity);
 		}
-		return new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-	}
 
-	#endregion
+		#endregion
 
-	#region Layout
+		#region Layout
 
-	public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(30f);
+		public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(30f);
 
-	#endregion
+		#endregion
 
-	#region Horizontal Line
+		#region Horizontal Line
 
-	private GUILayoutOption[] HorizontalLineLayoutOptions;
+		private GUILayoutOption[] HorizontalLineLayoutOptions;
 
-	public void DrawHorizontalLine()
-	{
-		if (HorizontalLineLayoutOptions == null)
+		public void DrawHorizontalLine()
 		{
-			HorizontalLineLayoutOptions = new[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) };
+			if (HorizontalLineLayoutOptions == null)
+			{
+				HorizontalLineLayoutOptions = new[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) };
+			}
+
+			GUILayout.Box("", HorizontalLineLayoutOptions);
 		}
 
-		GUILayout.Box("", HorizontalLineLayoutOptions);
+		#endregion
 	}
 
-	#endregion
 }

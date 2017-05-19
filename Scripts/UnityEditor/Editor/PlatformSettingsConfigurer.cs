@@ -3,7 +3,7 @@ using UnityEditor;
 using System;
 using System.IO;
 
-namespace Extenity.EditorUtilities
+namespace Extenity.UnityEditorToolbox
 {
 
 	public static class PlatformSettingsConfigurer

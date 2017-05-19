@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEditor;
 
 namespace Extenity.CodeSnippetsToolbox

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 
-namespace Extenity.EditorUtilities
+namespace Extenity.UnityEditorToolbox
 {
 
 	public class HiddenGameObjectTools : EditorWindow
