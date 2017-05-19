@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
+using Conditional = System.Diagnostics.ConditionalAttribute;
 
 public class DebugOther
 {
@@ -29,7 +27,7 @@ public class DebugOther
 			singletonCalls[className]++;
 			if (singletonCalls[className] > 1)
 			{
-				Logger.LogError("Singleton '" + className + "' instantiated " + singletonCalls[className] + " times");
+				Debug.LogError("Singleton '" + className + "' instantiated " + singletonCalls[className] + " times");
 			}
 		}
 		else
@@ -48,7 +46,7 @@ public class DebugOther
 		if (singletonCalls.ContainsKey(className))
 			singletonCalls[className]--;
 		else
-			Logger.LogError("Unregistered singleton: " + className);
+			Debug.LogError("Unregistered singleton: " + className);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]

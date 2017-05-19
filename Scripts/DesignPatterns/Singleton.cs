@@ -24,7 +24,7 @@ public class Singleton<T>
 	{
 		className = typeof(T).Name;
 #if LoggingEnabled
-		Extenity.Logging.Logger.Log("Instantiating singleton: " + className);
+		Debug.Log("Instantiating singleton: " + className);
 #endif
 
 		instance = obj;
@@ -34,7 +34,7 @@ public class Singleton<T>
 	public void DestroySingleton()
 	{
 #if LoggingEnabled
-		Extenity.Logging.Logger.Log("Destroying singleton: " + className);
+		Debug.Log("Destroying singleton: " + className);
 #endif
 
 		OnDestroySingleton();

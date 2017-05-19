@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
-using System.Diagnostics;
-using System.Threading;
-using Extenity.Logging;
-using Logger = Extenity.Logging.Logger;
 using Object = UnityEngine.Object;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 public class ProfilerStopwatch
 {
@@ -15,7 +12,7 @@ public class ProfilerStopwatch
 	{
 		if (IsStopwatchStarted)
 		{
-			Logger.LogError("Tried to start profiler stopwatch but it was already started.");
+			Debug.LogError("Tried to start profiler stopwatch but it was already started.");
 			return;
 		}
 
@@ -27,7 +24,7 @@ public class ProfilerStopwatch
 	{
 		if (!IsStopwatchStarted)
 		{
-			Logger.LogError("Tried to end profiler stopwatch but it was not started.");
+			Debug.LogError("Tried to end profiler stopwatch but it was not started.");
 			return TimeSpan.Zero;
 		}
 
@@ -55,22 +52,22 @@ public class ProfilerStopwatch
 
 	public void Log(string profilerMessageFormat)
 	{
-		Logger.LogFormat(profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
+		Debug.LogFormat(profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
 	}
 
 	public void Log(Object context, string profilerMessageFormat)
 	{
-		Logger.LogFormat(context, profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
+		Debug.LogFormat(context, profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
 	}
 
 	public void LogCumulative(string profilerMessageFormat)
 	{
-		Logger.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
+		Debug.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
 	}
 
 	public void LogCumulative(Object context, string profilerMessageFormat)
 	{
-		Logger.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
+		Debug.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
 	}
 
 	#endregion

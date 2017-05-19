@@ -24,7 +24,7 @@ public class AutoSingletonUnity<T> : MonoBehaviour where T : Component
 	{
 		className = typeof(T).Name;
 #if LoggingEnabled
-		Extenity.Logging.Logger.Log("Instantiating singleton: " + className, obj);
+		Debug.Log("Instantiating singleton: " + className, obj);
 #endif
 		instance = obj;
 
@@ -42,7 +42,7 @@ public class AutoSingletonUnity<T> : MonoBehaviour where T : Component
 			return;
 
 #if LoggingEnabled
-		Extenity.Logging.Logger.Log("Destroying singleton: " + className);
+		Debug.Log("Destroying singleton: " + className);
 #endif
 		instance = default(T);
 		DebugOther.SingletonDestroyed(className);
