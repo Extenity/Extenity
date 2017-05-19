@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DesignPatternsToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.MathToolbox;
 
 namespace Extenity.DebugToolbox

@@ -2,7 +2,7 @@
 using Extenity.ReflectionToolbox;
 using UnityEngine;
 
-namespace Extenity.UIToolbox
+namespace Extenity.IMGUIToolbox
 {
 
 	public sealed class GUIClip
