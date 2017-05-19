@@ -1,14 +1,19 @@
 using UnityEngine;
 
-public struct Circle
+namespace Extenity.MathToolbox
 {
-	public Vector3 center;
-	public float radius;
 
-	public Circle(Vector3 center, float radius)
+	public struct Circle
 	{
-		this.center = center;
-		this.radius = radius;
+		public Vector3 center;
+		public float radius;
+
+		public Circle(Vector3 center, float radius)
+		{
+			this.center = center;
+			this.radius = radius;
+		}
+
 	}
 
 }

@@ -1,11 +1,16 @@
 ﻿using Extenity.ConsistencyToolbox;
 
-public interface IClamped : IConsistencyChecker
+namespace Extenity.MathToolbox
 {
-	float NormalizedValue { get; }
-	bool IsMinMaxValid { get; }
 
-	string ToStringLimits();
-	string ToStringWithLimits();
-	string ToStringDetailed();
+	public interface IClamped : IConsistencyChecker
+	{
+		float NormalizedValue { get; }
+		bool IsMinMaxValid { get; }
+
+		string ToStringLimits();
+		string ToStringWithLimits();
+		string ToStringDetailed();
+	}
+
 }
