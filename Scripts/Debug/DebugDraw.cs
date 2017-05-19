@@ -5,7 +5,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using Extenity.Math;
+using Extenity.MathToolbox;
 
 namespace Extenity.DebugToolbox
 {

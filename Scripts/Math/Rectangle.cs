@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Extenity.Math
+namespace Extenity.MathToolbox
 {
 
 	public struct Rectangle

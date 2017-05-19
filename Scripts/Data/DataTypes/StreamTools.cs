@@ -56,7 +56,7 @@ namespace Extenity.DataToolbox
 				if (count1 == 0)
 					return true;
 
-				var iterations = (int)System.Math.Ceiling((double)count1 / sizeof(Int64));
+				var iterations = (int)Math.Ceiling((double)count1 / sizeof(Int64));
 				for (var i = 0; i < iterations; i++)
 				{
 					if (BitConverter.ToInt64(buffer1, i * sizeof(Int64)) !=
