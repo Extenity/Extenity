@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UnityEditor
+namespace Extenity.UnityEditorToolbox
 {
 
 	[CustomPropertyDrawer(typeof(HeightAttribute))]

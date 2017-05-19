@@ -1,18 +1,18 @@
 ﻿using System;
 using UnityEngine;
 
-//namespace Extenity.UnityEditor
-//{
-
-[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-public sealed class OnlyAllowPrefabsAttribute : PropertyAttribute
+namespace Extenity.UnityEditorToolbox
 {
-	public readonly bool allowImportedModels;
 
-	public OnlyAllowPrefabsAttribute(bool allowImportedModels = true)
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+	public sealed class OnlyAllowPrefabsAttribute : PropertyAttribute
 	{
-		this.allowImportedModels = allowImportedModels;
-	}
-}
+		public readonly bool allowImportedModels;
 
-//}
+		public OnlyAllowPrefabsAttribute(bool allowImportedModels = true)
+		{
+			this.allowImportedModels = allowImportedModels;
+		}
+	}
+
+}
