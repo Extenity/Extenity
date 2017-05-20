@@ -1,22 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 #if PLAYMAKER
 using HutongGames.PlayMaker.Ecosystem.Utils;
 using HutongGames.PlayMaker.Actions;
 #endif
 
-namespace Extenity.UserInterface
+namespace Extenity.UIToolbox
 {
 
-	public class DetectMouseHover : MonoBehaviour
+	public class DetectMouseHoverGroup : MonoBehaviour
 	{
 		#region Initialization
 
-		protected void Awake()
-		{
-			if (RectTransform == null)
-				RectTransform = GetComponent<RectTransform>();
-		}
+		//protected void Awake()
+		//{
+		//}
 
 		#endregion
 
@@ -26,11 +25,9 @@ namespace Extenity.UserInterface
 
 		protected void Update()
 		{
-			if (RectTransform == null)
-				return;
-
 			var wasInside = IsInside;
-			IsInside = ApplicationHasFocus && RectTransformUtility.RectangleContainsScreenPoint(RectTransform, Input.mousePosition);
+
+			IsInside = IsMouseInsideAnyDetector;
 			if (IsInside)
 			{
 				if (!wasInside)
@@ -66,21 +63,24 @@ namespace Extenity.UserInterface
 
 		#endregion
 
-		#region Application Focus
+		#region Detectors
 
-		protected bool ApplicationHasFocus { get; private set; }
+		public List<DetectMouseHover> Detectors;
 
-		protected void OnApplicationFocus(bool hasFocus)
+		public bool IsMouseInsideAnyDetector
 		{
-			ApplicationHasFocus = hasFocus;
+			get
+			{
+				if (Detectors == null)
+					return false;
+				for (int i = 0; i < Detectors.Count; i++)
+				{
+					if (Detectors[i].IsInside)
+						return true;
+				}
+				return false;
+			}
 		}
-
-		#endregion
-
-		#region RectTransform
-
-		[Tooltip("RectTransform to be used in mouse hover detection. Current game object's RectTransform will be automatically assigned if not specified manually.")]
-		public RectTransform RectTransform;
 
 		#endregion
 
