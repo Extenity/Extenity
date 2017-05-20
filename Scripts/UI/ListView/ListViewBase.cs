@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using Extenity.GameObjectToolbox;
 using UnityEngine.Events;
 
-namespace Extenity.UserInterface
+namespace Extenity.UIToolbox
 {
 
 	public class ListViewBase<TItem, TItemID, TItemData> : UIWidgets.ListView where TItem : ListViewItemBase<TItemID, TItemData>

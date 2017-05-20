@@ -1,7 +1,7 @@
 using UnityEngine.UI;
 using Extenity.DataToolbox;
 
-namespace Extenity.UserInterface
+namespace Extenity.UIToolbox
 {
 
 	public class ListViewItem : ListViewItemBase<string, string>

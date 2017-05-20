@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Extenity.UserInterface
+namespace Extenity.UIToolbox
 {
 
 	[RequireComponent(typeof(UIWidgets.ListViewItem))]
