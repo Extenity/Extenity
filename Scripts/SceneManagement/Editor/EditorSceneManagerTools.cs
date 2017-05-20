@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 namespace Extenity.SceneManagementToolbox.Editor
 {
 
-	public static class SceneManagerTools // TODO: Rename to EditorSceneManagerTools
+	public static class EditorSceneManagerTools
 	{
 		public static List<SceneSetup> GetLoadedSceneSetups(bool includeActiveScene)
 		{
