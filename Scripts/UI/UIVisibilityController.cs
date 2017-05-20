@@ -5,7 +5,7 @@ using DG.Tweening;
 using Extenity.GameObjectToolbox;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class UiVisibilityController : MonoBehaviour
+public class UIVisibilityController : MonoBehaviour
 {
 	#region Initialization
 

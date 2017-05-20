@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class UiFader : MonoBehaviour
+public class UIFader : MonoBehaviour
 {
 	#region Configuration
 

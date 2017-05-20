@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public static class UiFaderTools
+public static class UIFaderTools
 {
 	public static float FadeInAllChildren(this GameObject gameObject)
 	{
@@ -9,7 +9,7 @@ public static class UiFaderTools
 
 	public static float FadeInAllChildren(this Transform transform)
 	{
-		var faders = transform.GetComponentsInChildren<UiFader>();
+		var faders = transform.GetComponentsInChildren<UIFader>();
 		float maxDuration = 0f;
 
 		for (int i = 0; i < faders.Length; i++)
@@ -28,7 +28,7 @@ public static class UiFaderTools
 
 	public static float FadeOutAllChildren(this Transform transform)
 	{
-		var faders = transform.GetComponentsInChildren<UiFader>();
+		var faders = transform.GetComponentsInChildren<UIFader>();
 		float maxDuration = 0f;
 
 		for (int i = 0; i < faders.Length; i++)

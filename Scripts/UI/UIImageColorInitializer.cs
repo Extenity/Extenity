@@ -3,7 +3,7 @@ using System.Collections;
 using Extenity.GameObjectToolbox;
 using UnityEngine.UI;
 
-public class UiImageColorInitializer : MonoBehaviour
+public class UIImageColorInitializer : MonoBehaviour
 {
 	public enum InitializationPlace
 	{
