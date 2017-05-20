@@ -5,7 +5,7 @@ using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	public static class CleanUp

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Runtime.InteropServices;
 
-namespace Extenity.AssetToolbox
+namespace Extenity.AssetToolbox.Editor
 {
 
 	[InitializeOnLoad]

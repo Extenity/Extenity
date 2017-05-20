@@ -1,10 +1,10 @@
 using UnityEditor;
 
-namespace Extenity.GameObjectToolbox
+namespace Extenity.GameObjectToolbox.Editor
 {
 
 	[CustomEditor(typeof(DontShowEditorHandler))]
-	public class DontShowEditorHandlerEditor : Editor
+	public class DontShowEditorHandlerEditor : UnityEditor.Editor
 	{
 		Tool LastTool = Tool.None;
 

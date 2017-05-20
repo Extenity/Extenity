@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
-using Extenity.UnityEditorToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 
-namespace Extenity.MathToolbox
+namespace Extenity.MathToolbox.Editor
 {
 
 	[CustomEditor(typeof(Spline))]

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.MathToolbox
+namespace Extenity.MathToolbox.Editor
 {
 
 	[CustomPropertyDrawer(typeof(ClampedInt))]

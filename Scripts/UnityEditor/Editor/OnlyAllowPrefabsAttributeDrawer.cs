@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	[CustomPropertyDrawer(typeof(OnlyAllowPrefabsAttribute))]

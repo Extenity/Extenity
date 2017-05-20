@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEditor;
 
-namespace Extenity.ParallelToolbox
+namespace Extenity.ParallelToolbox.Editor
 {
 
 	/// <summary>

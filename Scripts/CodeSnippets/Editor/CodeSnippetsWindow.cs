@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 using System.Threading;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
-using Extenity.IMGUIToolbox;
-using Extenity.UnityEditorToolbox;
+using Extenity.IMGUIToolbox.Editor;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 
-namespace Extenity.CodeSnippetsToolbox
+namespace Extenity.CodeSnippetsToolbox.Editor
 {
 
 	public class CodeSnippetsWindow : ExtenityEditorWindowBase

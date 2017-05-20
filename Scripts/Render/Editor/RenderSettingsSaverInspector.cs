@@ -1,11 +1,11 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.RenderingToolbox
+namespace Extenity.RenderingToolbox.Editor
 {
 
 	[CustomEditor(typeof(RenderSettingsSaver))]
-	public class RenderSettingsSaverInspector : Editor
+	public class RenderSettingsSaverInspector : UnityEditor.Editor
 	{
 		#region Initialization
 

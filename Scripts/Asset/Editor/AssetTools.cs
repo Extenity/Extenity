@@ -12,7 +12,7 @@ using Extenity.TextureToolbox;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
-namespace Extenity.AssetToolbox
+namespace Extenity.AssetToolbox.Editor
 {
 
 	public static class AssetTools

@@ -3,7 +3,7 @@ using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.AssetToolbox
+namespace Extenity.AssetToolbox.Editor
 {
 
 	public class AssetPreviewHelper : MonoBehaviour
@@ -27,10 +27,10 @@ namespace Extenity.AssetToolbox
 				Debug.LogError((object)"Fail to find RenderStaticPreview base method");
 				return null;
 			}
-			if (method.DeclaringType == typeof(Editor))
+			if (method.DeclaringType == typeof(UnityEditor.Editor))
 				return null;
 
-			var editor = Editor.CreateEditor(obj);
+			var editor = UnityEditor.Editor.CreateEditor(obj);
 			if (editor == null)
 				return null;
 			var texture2D = editor.RenderStaticPreview(assetPath, subAssets, width, height);

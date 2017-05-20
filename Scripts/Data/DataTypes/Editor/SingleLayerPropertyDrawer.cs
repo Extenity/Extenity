@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.DataToolbox
+namespace Extenity.DataToolbox.Editor
 {
 
 	[CustomPropertyDrawer(typeof(SingleLayer))]

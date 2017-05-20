@@ -1,10 +1,10 @@
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	[InitializeOnLoad]
-	public class EditorNotifications : Editor
+	public class EditorNotifications : UnityEditor.Editor
 	{
 		#region Initialization
 

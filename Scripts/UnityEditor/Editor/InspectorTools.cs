@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	public static class InspectorTools
@@ -50,7 +50,7 @@ namespace Extenity.UnityEditorToolbox
 			get
 			{
 				if (_EditorAssembly == null)
-					_EditorAssembly = Assembly.GetAssembly(typeof(Editor));
+					_EditorAssembly = Assembly.GetAssembly(typeof(UnityEditor.Editor));
 				return _EditorAssembly;
 			}
 		}

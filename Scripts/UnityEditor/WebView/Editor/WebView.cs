@@ -4,7 +4,7 @@ using System;
 using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	[Serializable]
@@ -16,7 +16,7 @@ namespace Extenity.UnityEditorToolbox
 		{
 			Debug.Log("########### WebView constructor");
 
-			var editorAssembly = typeof(Editor).Assembly;
+			var editorAssembly = typeof(UnityEditor.Editor).Assembly;
 			var editorWindowType = typeof(EditorWindow);
 			var webViewType = editorAssembly.GetType("UnityEditor.WebView");
 			var webViewV8CallbackCSharpType = editorAssembly.GetType("UnityEditor.WebViewV8CallbackCSharp");
@@ -90,7 +90,7 @@ namespace Extenity.UnityEditorToolbox
 		{
 			if (UnityWebView == null)
 			{
-				var webViewType = typeof(Editor).Assembly.GetType("UnityEditor.WebView");
+				var webViewType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.WebView");
 				UnityWebView = ScriptableObject.CreateInstance(webViewType);
 				UnityWebView.hideFlags = HideFlags.HideAndDontSave;
 			}

@@ -4,7 +4,7 @@ using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	public class FoolproofActionPopup : EditorWindow

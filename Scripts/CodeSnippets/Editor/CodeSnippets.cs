@@ -4,9 +4,9 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Extenity.AssetToolbox;
+using Extenity.AssetToolbox.Editor;
 
-namespace Extenity.CodeSnippetsToolbox
+namespace Extenity.CodeSnippetsToolbox.Editor
 {
 
 	public static class CodeSnippets

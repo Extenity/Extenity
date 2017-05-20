@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.IMGUIToolbox
+namespace Extenity.IMGUIToolbox.Editor
 {
 
 	public static class EditorGUILayoutTools

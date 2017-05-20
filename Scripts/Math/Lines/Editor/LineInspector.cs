@@ -5,9 +5,9 @@ using System.Text;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
 using Extenity.OperatingSystemToolbox;
-using Extenity.UnityEditorToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 
-namespace Extenity.MathToolbox
+namespace Extenity.MathToolbox.Editor
 {
 
 	[CustomEditor(typeof(Line))]

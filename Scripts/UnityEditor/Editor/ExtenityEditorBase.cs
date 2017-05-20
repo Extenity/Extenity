@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.MathToolbox;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public abstract class ExtenityEditorBase<T> : Editor where T : UnityEngine.Behaviour
+	public abstract class ExtenityEditorBase<T> : UnityEditor.Editor where T : UnityEngine.Behaviour
 	{
 		#region Initialization
 

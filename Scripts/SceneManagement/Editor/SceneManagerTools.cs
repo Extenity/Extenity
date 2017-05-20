@@ -2,10 +2,10 @@
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.SceneManagementToolbox
+namespace Extenity.SceneManagementToolbox.Editor
 {
 
-	public static class SceneManagerTools
+	public static class SceneManagerTools // TODO: Rename to EditorSceneManagerTools
 	{
 		public static List<SceneSetup> GetLoadedSceneSetups(bool includeActiveScene)
 		{

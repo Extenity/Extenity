@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using Extenity.CryptoToolbox;
 
-namespace Extenity.BuildToolbox
+namespace Extenity.BuildToolbox.Editor
 {
 
 	public static class BuildTools

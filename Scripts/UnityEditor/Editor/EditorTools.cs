@@ -7,7 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.TextureToolbox;
 using UnityEditor.SceneManagement;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	public static class EditorTools

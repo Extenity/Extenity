@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.TerrainToolbox
+namespace Extenity.TerrainToolbox.Editor
 {
 
 	public class ResizeTreeWindow : EditorWindow

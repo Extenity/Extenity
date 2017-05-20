@@ -2,7 +2,7 @@ using UnityEngine;
 using System.IO;
 using Extenity.DataToolbox;
 
-namespace Extenity.ApplicationToolbox
+namespace Extenity.ApplicationToolbox.Editor
 {
 
 	public class EditorApplicationTools : MonoBehaviour
