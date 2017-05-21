@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
-using Extenity.OperatingSystemToolbox;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
@@ -596,7 +595,7 @@ namespace Extenity.DebugToolbox
 
 		#region Dump Class Data
 
-		public static void LogAllProperties<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
+		public static void LogAllProperties<T>(this T obj, string initialLine = null)
 		{
 			// Initialize
 			var stringBuilder = new StringBuilder();
@@ -611,13 +610,9 @@ namespace Extenity.DebugToolbox
 			// Finalize
 			var text = stringBuilder.ToString();
 			Debug.Log(text);
-			if (copyToClipboard)
-			{
-				Clipboard.SetClipboardText(text);
-			}
 		}
 
-		public static void LogAllFields<T>(this T obj, string initialLine = null, bool copyToClipboard = false)
+		public static void LogAllFields<T>(this T obj, string initialLine = null)
 		{
 			// Initialize
 			var stringBuilder = new StringBuilder();
@@ -632,10 +627,6 @@ namespace Extenity.DebugToolbox
 			// Finalize
 			var text = stringBuilder.ToString();
 			Debug.Log(text);
-			if (copyToClipboard)
-			{
-				Clipboard.SetClipboardText(text);
-			}
 		}
 
 		private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")
