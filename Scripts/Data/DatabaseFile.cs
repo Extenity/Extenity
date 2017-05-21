@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using Logger = Extenity.DebugToolbox.Logger;
+using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -23,9 +23,9 @@ namespace Extenity.DataToolbox
 
 		public bool ReadFromFile()
 		{
-			if (UnityEngine.Application.isWebPlayer)
+			if (Application.isWebPlayer)
 			{
-				Logger.LogWarning("Cannot load database from file while running in web player");
+				Debug.LogWarning("Cannot load database from file while running in web player");
 				return false;
 			}
 
@@ -51,7 +51,7 @@ namespace Extenity.DataToolbox
 
 						if (pair.Length != 2)
 						{
-							Logger.LogError("Invalid database file! Line: " + line);
+							Debug.LogError("Invalid database file! Line: " + line);
 						}
 						else
 						{
@@ -73,7 +73,7 @@ namespace Extenity.DataToolbox
 		{
 			if (UnityEngine.Application.isWebPlayer)
 			{
-				Logger.LogWarning("Cannot save database to file while running in web player");
+				Debug.LogWarning("Cannot save database to file while running in web player");
 				return false;
 			}
 

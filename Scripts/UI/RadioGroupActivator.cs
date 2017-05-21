@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Logger = Extenity.DebugToolbox.Logger;
 using Object = UnityEngine.Object;
 
 namespace Extenity.UIToolbox
@@ -77,7 +76,7 @@ namespace Extenity.UIToolbox
 		{
 			if (Target == null)
 			{
-				Logger.LogError("Target was not set for radio group activator.");
+				Debug.LogError("Target was not set for radio group activator.");
 				return;
 			}
 
@@ -99,7 +98,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Logger.LogError("Unrecognized target set for radio group activator.");
+				Debug.LogError("Unrecognized target set for radio group activator.");
 			}
 		}
 
@@ -127,7 +126,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Logger.LogError("Radio group was not specified for activator.", this);
+				Debug.LogError("Radio group was not specified for activator.", this);
 			}
 		}
 
