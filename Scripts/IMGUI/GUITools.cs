@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Extenity.ApplicationToolbox;
+using Extenity.RenderingToolbox;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox

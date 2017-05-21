@@ -3,7 +3,7 @@ using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Extenity.ApplicationToolbox
+namespace Extenity.RenderingToolbox
 {
 
 	public class ScreenManager : SingletonUnity<ScreenManager>
