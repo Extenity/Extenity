@@ -1,5 +1,4 @@
 using UnityEngine;
-using Extenity.DebugToolbox;
 
 namespace Extenity.DesignPatternsToolbox
 {
@@ -23,7 +22,7 @@ namespace Extenity.DesignPatternsToolbox
 				DontDestroyOnLoad(this);
 			}
 
-			DebugOther.SingletonInstantiated(className);
+			SingletonTracker.SingletonInstantiated(className);
 		}
 
 		protected virtual void OnDestroy()
@@ -33,7 +32,7 @@ namespace Extenity.DesignPatternsToolbox
 
 			Debug.Log("Destroying internal singleton: " + className);
 			instance = default(T);
-			DebugOther.SingletonDestroyed(className);
+			SingletonTracker.SingletonDestroyed(className);
 		}
 
 		internal static T CreateSingleton(string addedGameObjectName = "_")

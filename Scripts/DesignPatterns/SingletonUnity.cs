@@ -9,7 +9,6 @@
 #endif
 
 using UnityEngine;
-using Extenity.DebugToolbox;
 
 namespace Extenity.DesignPatternsToolbox
 {
@@ -28,7 +27,7 @@ namespace Extenity.DesignPatternsToolbox
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
-		Debug.Log("Instantiating singleton: " + className, obj);
+			Debug.Log("Instantiating singleton: " + className, obj);
 #endif
 			instance = obj;
 
@@ -37,7 +36,7 @@ namespace Extenity.DesignPatternsToolbox
 				DontDestroyOnLoad(this);
 			}
 
-			DebugOther.SingletonInstantiated(className);
+			SingletonTracker.SingletonInstantiated(className);
 		}
 
 		protected virtual void OnDestroy()
@@ -46,10 +45,10 @@ namespace Extenity.DesignPatternsToolbox
 				return;
 
 #if LoggingEnabled
-		Debug.Log("Destroying singleton: " + className);
+			Debug.Log("Destroying singleton: " + className);
 #endif
 			instance = default(T);
-			DebugOther.SingletonDestroyed(className);
+			SingletonTracker.SingletonDestroyed(className);
 		}
 
 		public static T CreateSingleton(string addedGameObjectName = "_")

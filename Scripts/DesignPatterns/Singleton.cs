@@ -8,8 +8,6 @@
 #undef LoggingEnabled
 #endif
 
-using Extenity.DebugToolbox;
-
 namespace Extenity.DesignPatternsToolbox
 {
 
@@ -29,24 +27,24 @@ namespace Extenity.DesignPatternsToolbox
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
-		Debug.Log("Instantiating singleton: " + className);
+			Debug.Log("Instantiating singleton: " + className);
 #endif
 
 			instance = obj;
-			DebugOther.SingletonInstantiated(className);
+			SingletonTracker.SingletonInstantiated(className);
 		}
 
 		public void DestroySingleton()
 		{
 #if LoggingEnabled
-		Debug.Log("Destroying singleton: " + className);
+			Debug.Log("Destroying singleton: " + className);
 #endif
 
 			OnDestroySingleton();
 
 			instance = default(T);
 
-			DebugOther.SingletonDestroyed(className);
+			SingletonTracker.SingletonDestroyed(className);
 		}
 
 		public static T Instance { get { return instance; } }
