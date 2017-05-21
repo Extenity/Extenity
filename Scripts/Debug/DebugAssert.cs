@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.DebugToolbox
 {
@@ -121,7 +120,7 @@ namespace Extenity.DebugToolbox
 					string assertInformation = "Assert failed! " + assertString + "\nFilename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
 
 					// Loggin would be included in both Debug and UNITY_EDITOR builds
-					Logger.LogError(assertInformation);
+					UnityEngine.Debug.LogError(assertInformation);
 
 #if UNITY_EDITOR
 					// Pause application
