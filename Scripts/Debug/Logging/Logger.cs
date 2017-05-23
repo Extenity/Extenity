@@ -531,7 +531,9 @@ namespace Extenity.DebugToolbox
 
 		public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogType logType = LogType.Log)
 		{
-			StringBuilder stringBuilder = null;
+			StringBuilder stringBuilder = !inSeparateLogCalls
+				? new StringBuilder()
+				: null;
 
 			// Initial line
 			if (!string.IsNullOrEmpty(initialLine))
@@ -542,7 +544,6 @@ namespace Extenity.DebugToolbox
 				}
 				else
 				{
-					stringBuilder = new StringBuilder();
 					stringBuilder.AppendLine(initialLine);
 				}
 			}
