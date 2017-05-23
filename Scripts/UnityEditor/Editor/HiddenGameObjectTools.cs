@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public class HiddenGameObjectTools : EditorWindow
+	public class HiddenGameObjectTools : ExtenityEditorWindowBase
 	{
 		#region Menu Command
 
@@ -20,12 +20,21 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Initialization
+
+		private void OnEnable()
+		{
+			IsRightMouseButtonScrollingEnabled = true;
+		}
+
+		#endregion
+
 		#region GUI
 
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
 		private static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(35);
 
-		private void OnGUI()
+		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(10f);
 			GUILayout.BeginHorizontal();
@@ -44,42 +53,61 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GUILayout.EndHorizontal();
 			GUILayout.Space(10f);
 
+			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
+
 			EditorGUILayout.LabelField("Hidden Objects (" + HiddenObjects.Count + ")", EditorStyles.boldLabel);
 			for (int i = 0; i < HiddenObjects.Count; i++)
 			{
-				var hiddenObject = HiddenObjects[i];
-				GUILayout.BeginHorizontal();
+				DrawLine(HiddenObjects[i]);
+			}
+
+			GUILayout.Space(20f);
+
+			EditorGUILayout.LabelField("Visible Objects (" + VisibleObjects.Count + ")", EditorStyles.boldLabel);
+			for (int i = 0; i < VisibleObjects.Count; i++)
+			{
+				DrawLine(VisibleObjects[i]);
+			}
+
+			GUILayout.EndScrollView();
+		}
+
+		private static void DrawLine(GameObject obj)
+		{
+			GUILayout.BeginHorizontal();
+			{
+				var gone = obj == null;
+				GUILayout.Label(gone ? "null" : obj.name);
+				GUILayout.FlexibleSpace();
+				if (gone)
 				{
-					var gone = hiddenObject == null;
-					GUILayout.Label(gone ? "null" : hiddenObject.name);
-					GUILayout.FlexibleSpace();
-					if (gone)
+					GUILayout.Box("Select", ButtonWidth);
+					GUILayout.Box("Reveal", ButtonWidth);
+					GUILayout.Box("Delete", ButtonWidth);
+				}
+				else
+				{
+					if (GUILayout.Button("Select", ButtonWidth))
 					{
-						GUILayout.Box("Select", ButtonWidth);
-						GUILayout.Box("Reveal", ButtonWidth);
-						GUILayout.Box("Delete", ButtonWidth);
+						Selection.activeGameObject = obj;
 					}
-					else
+					if (GUILayout.Button(IsHidden(obj) ? "Reveal" : "Hide", ButtonWidth))
 					{
-						if (GUILayout.Button("Select", ButtonWidth))
+						obj.hideFlags ^= HideFlags.HideInHierarchy;
+						if (!Application.isPlaying)
 						{
-							Selection.activeGameObject = hiddenObject;
+							EditorSceneManager.MarkSceneDirty(obj.scene);
 						}
-						if (GUILayout.Button(IsHidden(hiddenObject) ? "Reveal" : "Hide", ButtonWidth))
-						{
-							hiddenObject.hideFlags ^= HideFlags.HideInHierarchy;
-							EditorSceneManager.MarkSceneDirty(hiddenObject.scene);
-						}
-						if (GUILayout.Button("Delete", ButtonWidth))
-						{
-							var scene = hiddenObject.scene;
-							DestroyImmediate(hiddenObject);
-							EditorSceneManager.MarkSceneDirty(scene);
-						}
+					}
+					if (GUILayout.Button("Delete", ButtonWidth))
+					{
+						var scene = obj.scene;
+						DestroyImmediate(obj);
+						EditorSceneManager.MarkSceneDirty(scene);
 					}
 				}
-				GUILayout.EndHorizontal();
 			}
+			GUILayout.EndHorizontal();
 		}
 
 		#endregion
@@ -87,18 +115,25 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Hidden Objects
 
 		private List<GameObject> HiddenObjects = new List<GameObject>();
+		private List<GameObject> VisibleObjects = new List<GameObject>();
 
 		private void GatherHiddenObjects()
 		{
 			HiddenObjects.Clear();
-
-			var allObjects = FindObjectsOfType<GameObject>();
+			VisibleObjects.Clear();
+			//var allObjects = FindObjectsOfType<GameObject>(); This one does not reveal objects marked as DontDestroyOnLoad.
+			var allObjects = Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[];
 			for (int i = 0; i < allObjects.Length; i++)
 			{
 				var go = allObjects[i];
+
 				if (IsHidden(go))
 				{
 					HiddenObjects.Add(go);
+				}
+				else
+				{
+					VisibleObjects.Add(go);
 				}
 			}
 
