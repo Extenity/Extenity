@@ -529,33 +529,67 @@ namespace Extenity.DebugToolbox
 
 		#region List
 
-		public static void LogList<T>(this IEnumerable<T> list, bool inSeparateLogCalls = false)
+		public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogType logType = LogType.Log)
 		{
-			if (list == null)
-			{
-				Logger.Log("List is null.");
-				return;
-			}
+			StringBuilder stringBuilder = null;
 
-			string text = "";
-
-			foreach (T item in list)
+			// Initial line
+			if (!string.IsNullOrEmpty(initialLine))
 			{
-				var line = (item == null ? "Null" : item.ToString());
 				if (inSeparateLogCalls)
 				{
-					Logger.Log(line);
+					Debug.logger.Log(logType, initialLine);
 				}
 				else
 				{
-					text += line + "\n";
+					stringBuilder = new StringBuilder();
+					stringBuilder.AppendLine(initialLine);
+				}
+			}
+
+			// Check if list is null
+			if (list == null)
+			{
+				if (inSeparateLogCalls)
+				{
+					Debug.logger.Log(logType, "[NullList]");
+				}
+				else
+				{
+					stringBuilder.AppendLine("[NullList]");
+				}
+			}
+			else
+			{
+				// Log list
+				foreach (T item in list)
+				{
+					var line = (item == null ? "[Null]" : item.ToString());
+					if (inSeparateLogCalls)
+					{
+						Debug.logger.Log(logType, line);
+					}
+					else
+					{
+						stringBuilder.AppendLine(line);
+					}
 				}
 			}
 
 			if (!inSeparateLogCalls)
 			{
-				Logger.Log(text.ToString());
+				Debug.logger.Log(logType, stringBuilder.ToString());
 			}
+		}
+
+		public static void LogWarningList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false)
+		{
+			LogList<T>(list, initialLine, inSeparateLogCalls, LogType.Warning);
+		}
+
+		public static void LogErrorList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false)
+		{
+			LogList<T>(list, initialLine, inSeparateLogCalls, LogType.Error);
 		}
 
 		#endregion
