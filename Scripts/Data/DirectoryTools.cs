@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Extenity.DataToolbox
@@ -406,6 +407,55 @@ namespace Extenity.DataToolbox
 				failedDirectories.Add(directoryPath);
 			}
 			return failedDirectories;
+		}
+
+		#endregion
+
+		#region Delete Files
+
+		public static List<FileInfo> DeleteFilesWithExtensionInDirectory(string directoryPath, string extension, SearchOption searchOption)
+		{
+			var directoryInfo = new DirectoryInfo(directoryPath);
+			var fileInfos = directoryInfo.GetFiles("*." + extension, searchOption).Where(fileInfo => fileInfo.Extension == "." + extension).ToList();
+			var error = false;
+			for (var i = fileInfos.Count - 1; i >= 0; i--)
+			{
+				var fileInfo = fileInfos[i];
+				try
+				{
+					// Try to set attributes to "Normal". Because File.Delete() fails if file is readonly.
+					if (fileInfo.IsReadOnly)
+					{
+						fileInfo.Attributes = FileAttributes.Normal;
+					}
+
+					File.Delete(fileInfo.FullName);
+					fileInfos[i] = null;
+				}
+				catch
+				{
+					error = true;
+				}
+			}
+
+			if (error)
+			{
+				// Clean up the list. This will remove all successfully processed files from the list (because their entries are now null).
+				for (var i = fileInfos.Count - 1; i >= 0; i--)
+				{
+					if (fileInfos[i] == null)
+					{
+						fileInfos.RemoveAt(i);
+					}
+				}
+
+				return fileInfos;
+			}
+			else
+			{
+				fileInfos.Clear(); // Clear unnecessary stuff.
+				return null;
+			}
 		}
 
 		#endregion
