@@ -58,7 +58,7 @@ namespace Extenity.UIToolbox
 				if (OnClickedOkay != null)
 					OnClickedOkay();
 				if (OnClickedOkayWithUserInput != null)
-					OnClickedOkayWithUserInput(UserInputField.text);
+					OnClickedOkayWithUserInput(UserInputField.text.Trim());
 
 				Close();
 			});
@@ -75,7 +75,7 @@ namespace Extenity.UIToolbox
 		{
 			if (UserInputField.gameObject.activeSelf && !AllowEmptyUserInput)
 			{
-				OkayButton.interactable = !string.IsNullOrEmpty(UserInputField.text);
+				OkayButton.interactable = !string.IsNullOrEmpty(UserInputField.text.Trim());
 			}
 			else
 			{
@@ -112,7 +112,7 @@ namespace Extenity.UIToolbox
 			UserInputTitle.gameObject.SetActive(!string.IsNullOrEmpty(userInputTitle));
 			UserInputTitle.text = userInputTitle;
 			UserInputField.gameObject.SetActive(true);
-			UserInputField.text = userInputDefaultValue;
+			UserInputField.text = userInputDefaultValue.Trim();
 
 			AllowEmptyUserInput = allowEmptyUserInput;
 
