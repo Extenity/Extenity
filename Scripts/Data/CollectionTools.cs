@@ -488,7 +488,7 @@ namespace Extenity.DataToolbox
 					for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
 					{
 						var otherListItem = otherList[iOtherList];
-						if (thisListItem.Equals(otherList[iOtherList]))
+						if (comparer.Equals(thisListItem, otherListItem))
 						{
 							onUnchanged(thisListItem, otherListItem);
 							break;
@@ -600,7 +600,7 @@ namespace Extenity.DataToolbox
 					for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
 					{
 						var otherListItem = otherList[iOtherList];
-						if (thisListItem.Equals(otherList[iOtherList]))
+						if (comparer.Equals(thisListItem, otherListItem))
 						{
 							onUnchanged(thisListItem, otherListItem);
 							break;
