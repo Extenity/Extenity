@@ -46,16 +46,18 @@ namespace Extenity.GameObjectToolbox
 				return;
 
 			var gameObject = component.gameObject;
-			var componentCount = gameObject.GetComponents<Component>().Length;
+			var hasChildren = gameObject.transform.childCount > 0;
+			if (!hasChildren) // Make sure the gameobject has no sub gameobjects
+			{
+				var componentCount = gameObject.GetComponents<Component>().Length;
+				if (componentCount == 2) // 1 for Transform and 1 for the 'component'
+				{
+					Destroy(gameObject, historySaveType);
+					return;
+				}
+			}
 
-			if (componentCount == 2) // 1 for Transform and 1 for the 'component'
-			{
-				Destroy(gameObject, historySaveType);
-			}
-			else
-			{
-				Destroy(component, historySaveType);
-			}
+			Destroy(component, historySaveType);
 		}
 
 		#endregion
