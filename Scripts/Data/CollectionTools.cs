@@ -46,6 +46,30 @@ namespace Extenity.DataToolbox
 			return true;
 		}
 
+		public static bool IsAnyNonNullItemExists<T>(this IEnumerable<T> collection)
+		{
+			if (collection == null)
+				return false;
+			foreach (var item in collection)
+			{
+				if (item != null)
+					return true;
+			}
+			return false;
+		}
+
+		public static bool IsAnyNonNullItemExists<T>(this IList<T> list)
+		{
+			if (list == null)
+				return false;
+			for (var i = 0; i < list.Count; i++)
+			{
+				if (list[i] != null)
+					return true;
+			}
+			return false;
+		}
+
 		// See if the list does not contain any items other than specified items.
 		public static bool DoesNotContainOtherThan<T>(this List<T> list, params T[] items)
 		{
