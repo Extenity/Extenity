@@ -420,6 +420,9 @@ namespace Extenity.GameObjectToolbox
 
 		#region IsChildOf / IsParentOf / HasComponent
 
+		/// <summary>
+		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
+		/// </summary>
 		public static bool IsChildOf(this Component me, Component suspectedParent, bool checkContainingObject = true)
 		{
 			if (me == null)
@@ -445,6 +448,9 @@ namespace Extenity.GameObjectToolbox
 			return false;
 		}
 
+		/// <summary>
+		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
+		/// </summary>
 		public static bool IsParentOf(this Component me, Component suspectedChild, bool checkContainingObject = true)
 		{
 			if (me == null)
@@ -455,10 +461,15 @@ namespace Extenity.GameObjectToolbox
 			return suspectedChild.IsChildOf(me, checkContainingObject);
 		}
 
+		/// <summary>
+		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
+		/// </summary>
 		public static bool HasSiblingComponent(this Component me, Component other)
 		{
 			if (me == null)
 				throw new ArgumentNullException("me");
+			if (other == null)
+				return false;
 
 			var components = me.transform.GetComponents<Component>();
 			for (int i = 0; i < components.Length; i++)
@@ -466,6 +477,56 @@ namespace Extenity.GameObjectToolbox
 				if (components[i] == other)
 					return true;
 			}
+			return false;
+		}
+
+		/// <summary>
+		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
+		/// </summary>
+		public static bool HasComponent(this GameObject gameObject, Component component)
+		{
+			if (gameObject == null)
+				throw new ArgumentNullException("gameObject");
+			if (component == null)
+				return false;
+
+			var components = gameObject.GetComponents<Component>();
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (components[i] == component)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check if component is inside objects list. Also check if any gameobject in objects list has the component attached to itself.
+		/// CAUTION! This is a performance heavy method because it uses HasComponent. Use it wisely.
+		/// </summary>
+		public static bool ContainsComponentAsIsOrAttachedToGameObject(this IEnumerable<UnityEngine.Object> objects, Component component)
+		{
+			if (objects == null)
+				return false;
+			if (component == null)
+				return false;
+
+			foreach (var obj in objects)
+			{
+				// Check if the component is in the list as it is.
+				if (obj == component)
+					return true;
+
+				// Check if the component is attached to a gameobject.
+				var gameObject = obj as GameObject;
+				if (gameObject != null) // Ignore if not a gameobject
+				{
+					if (gameObject.HasComponent(component))
+					{
+						return true;
+					}
+				}
+			}
+
 			return false;
 		}
 
