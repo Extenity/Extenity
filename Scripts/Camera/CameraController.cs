@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Extenity.CameraToolbox
 {
@@ -45,24 +44,24 @@ namespace Extenity.CameraToolbox
 
 		#region GUI
 
-		private EventSystem CachedEventSystem;
+		//private EventSystem CachedEventSystem;
 
-		public bool IsGUIActive
-		{
-			get
-			{
-				if (CachedEventSystem == null)
-				{
-					CachedEventSystem = FindObjectOfType<EventSystem>();
-				}
-				if (CachedEventSystem == null)
-				{
-					Debug.LogErrorFormat(this, "Scene should have an EventSystem for camera controller on game object '{0}' to work.", gameObject.name);
-					return false;
-				}
-				return CachedEventSystem.currentSelectedGameObject != null;
-			}
-		}
+		//public bool IsGUIActive
+		//{
+		//	get
+		//	{
+		//		if (CachedEventSystem == null)
+		//		{
+		//			CachedEventSystem = FindObjectOfType<EventSystem>();
+		//		}
+		//		if (CachedEventSystem == null)
+		//		{
+		//			Debug.LogErrorFormat(this, "Scene should have an EventSystem for camera controller on game object '{0}' to work.", gameObject.name);
+		//			return false;
+		//		}
+		//		return CachedEventSystem.currentSelectedGameObject != null;
+		//	}
+		//}
 
 		#endregion
 	}
