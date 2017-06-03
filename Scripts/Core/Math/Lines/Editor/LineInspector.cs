@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
-using System.Text;
 using Extenity.CameraToolbox;
-using Extenity.DataToolbox;
-using Extenity.OperatingSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
@@ -52,21 +49,21 @@ namespace Extenity.MathToolbox.Editor
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
-			GUILayout.BeginHorizontal();
+			//GUILayout.BeginHorizontal();
 
-			// Invalidate
-			{
-				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
-				{
-					CopyToClipboard();
-				}
-				if (GUILayout.Button("Paste", BigButtonHeight))
-				{
-					PasteClipboard();
-				}
-			}
+			//// Invalidate
+			//{
+			//	if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
+			//	{
+			//		CopyToClipboard();
+			//	}
+			//	if (GUILayout.Button("Paste", BigButtonHeight))
+			//	{
+			//		PasteClipboard();
+			//	}
+			//}
 
-			GUILayout.EndHorizontal();
+			//GUILayout.EndHorizontal();
 			GUILayout.BeginHorizontal();
 
 			// Invalidate
@@ -282,36 +279,36 @@ namespace Extenity.MathToolbox.Editor
 
 		#region Clipboard
 
-		private void CopyToClipboard()
-		{
-			if (Me.Points.IsNullOrEmpty())
-				return;
+		//private void CopyToClipboard()
+		//{
+		//	if (Me.Points.IsNullOrEmpty())
+		//		return;
 
-			StringBuilder stringBuilder = new StringBuilder();
-			for (int i = 0; i < Me.Points.Count; i++)
-			{
-				var point = Me.Points[i];
-				stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
-			}
+		//	StringBuilder stringBuilder = new StringBuilder();
+		//	for (int i = 0; i < Me.Points.Count; i++)
+		//	{
+		//		var point = Me.Points[i];
+		//		stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
+		//	}
 
-			Clipboard.SetClipboardText(stringBuilder.ToString());
-		}
+		//	Clipboard.SetClipboardText(stringBuilder.ToString());
+		//}
 
-		private void PasteClipboard()
-		{
-			var text = Clipboard.GetClipboardText();
-			if (!string.IsNullOrEmpty(text))
-			{
-				var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int iLine = 0; iLine < lines.Length; iLine++)
-				{
-					var line = lines[iLine];
-					var split = line.Split(' ');
-					var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
-					Me.Points.Add(point);
-				}
-			}
-		}
+		//private void PasteClipboard()
+		//{
+		//	var text = Clipboard.GetClipboardText();
+		//	if (!string.IsNullOrEmpty(text))
+		//	{
+		//		var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+		//		for (int iLine = 0; iLine < lines.Length; iLine++)
+		//		{
+		//			var line = lines[iLine];
+		//			var split = line.Split(' ');
+		//			var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+		//			Me.Points.Add(point);
+		//		}
+		//	}
+		//}
 
 		#endregion
 	}
