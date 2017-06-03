@@ -51,7 +51,7 @@ namespace Extenity.ConsistencyToolbox
 			CheckConsistencyAndLog(me, titleMessage);
 		}
 
-		public static void CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
 		{
 			var errors = me.CheckConsistency();
 			if (errors.Count > 0)
@@ -63,6 +63,7 @@ namespace Extenity.ConsistencyToolbox
 
 				Debug.LogError(message);
 			}
+			return errors;
 		}
 
 		public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
