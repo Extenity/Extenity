@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Extenity.DLLBuilder
 {
@@ -34,35 +35,57 @@ namespace Extenity.DLLBuilder
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
 
+			Repaint();
+
 			Cleaner.ClearOutputDLLs(
 				() =>
 				{
+					Repaint();
+
 					Compiler.CompileAllDLLs(
 						() =>
 						{
 							try
 							{
+								Repaint();
 								PackageBuilder.CopyExtenityAssetsToOutputProject();
+								Repaint();
 								Distributer.DistributeToOutsideProjects();
+								Repaint();
 							}
 							catch (Exception exception)
 							{
 								Debug.LogException(exception);
 							}
 							IsProcessing = false;
+							Repaint();
 						},
 						error =>
 						{
 							IsProcessing = false;
+							Repaint();
+							Debug.LogError(error);
 						}
 					);
 				},
 				exception =>
 				{
-					Debug.LogException(exception);
 					IsProcessing = false;
+					Repaint();
+					Debug.LogException(exception);
 				}
 			);
+		}
+
+		#endregion
+
+		#region UI Repaint
+
+		public static readonly UnityEvent OnRepaintRequested = new UnityEvent();
+
+		public static void Repaint()
+		{
+			OnRepaintRequested.Invoke();
 		}
 
 		#endregion

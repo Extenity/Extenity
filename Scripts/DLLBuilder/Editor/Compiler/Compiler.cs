@@ -26,6 +26,13 @@ namespace Extenity.DLLBuilder
 
 		private static IEnumerator InternalCompileDLLs(Action onSucceeded, Action<string> onFailed)
 		{
+			if (DLLBuilderConfiguration.Instance.CompilerConfigurations.IsNullOrEmpty())
+			{
+				if (onFailed != null)
+					onFailed(string.Format("DLL Builder configuration does not have any entries. Please check your configuration at path '{0}'.", AssetDatabase.GetAssetPath(DLLBuilderConfiguration.Instance)));
+				yield break;
+			}
+
 			// Check for consistency first
 			foreach (var compilerConfiguration in DLLBuilderConfiguration.Instance.CompilerConfigurations)
 			{

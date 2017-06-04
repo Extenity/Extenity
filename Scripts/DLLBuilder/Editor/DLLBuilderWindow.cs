@@ -8,15 +8,24 @@ using UnityEngine;
 namespace Extenity.DLLBuilder
 {
 
-	public class BuilderWindow : ExtenityEditorWindowBase
+	public class DLLBuilderWindow : ExtenityEditorWindowBase
 	{
+		#region Initialization
+
+		private void OnEnable()
+		{
+			DLLBuilder.OnRepaintRequested.AddListener(Repaint);
+		}
+
+		#endregion
+
 		#region Show
 
 		[MenuItem(Constants.MenuItemPrefix + "Open Builder", priority = 1000)]
 		public static void ShowWindow()
 		{
-			var window = GetWindow<BuilderWindow>();
-			window.titleContent = new GUIContent("Extenity Build");
+			var window = GetWindow<DLLBuilderWindow>();
+			window.titleContent = new GUIContent("DLL Builder");
 		}
 
 		#endregion
@@ -30,10 +39,12 @@ namespace Extenity.DLLBuilder
 		{
 			GUILayout.Space(20f);
 
+			GUI.enabled = !DLLBuilder.IsProcessing;
 			if (GUILayout.Button("Build And Distribute", ThickButtonOptions))
 			{
 				DLLBuilder.StartProcess();
 			}
+			GUI.enabled = true;
 
 			GUILayout.Space(20f);
 			if (GUILayout.Button("Configuration", ThickButtonOptions))
