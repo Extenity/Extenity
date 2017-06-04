@@ -1,14 +1,31 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Extenity.OperatingSystemToolbox
 {
 
 #if UNITY_STANDALONE_WIN
 
-	public static class Clipboard
+	public class Clipboard : ApplicationToolbox.Clipboard
 	{
+		#region Initialize
+
+		internal static bool IsInitialized;
+
+		[RuntimeInitializeOnLoadMethod]
+		public static void Initialize()
+		{
+			if (IsInitialized)
+				return;
+			IsInitialized = true;
+			Instance = new Clipboard();
+		}
+
+		#endregion
+
+
 		enum ClipboardFormats : int
 		{
 			Text = 1,
@@ -55,7 +72,7 @@ namespace Extenity.OperatingSystemToolbox
 		static extern bool GlobalUnlock(IntPtr hMem);
 
 
-		public static void SetClipboardText(string text)
+		protected override void DoSetClipboardText(string text)
 		{
 			if (!OpenClipboard(IntPtr.Zero))
 			{
@@ -80,7 +97,7 @@ namespace Extenity.OperatingSystemToolbox
 			}
 		}
 
-		public static string GetClipboardText()
+		protected override string DoGetClipboardText()
 		{
 			if (!IsClipboardFormatAvailable(ClipboardFormats.UnicodeText))
 				return null;
