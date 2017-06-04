@@ -7,7 +7,7 @@ using Extenity.MathToolbox;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public abstract class ExtenityEditorBase<T> : UnityEditor.Editor where T : UnityEngine.Behaviour
+	public abstract class ExtenityObjectEditorBase<T> : UnityEditor.Editor where T : UnityEngine.Object
 	{
 		#region Initialization
 
@@ -40,6 +40,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Update
 
 		protected virtual void Update() { }
+		protected virtual void _InternalUpdate() { }
 		public int RequestedUpdateRegistrationCount { get; private set; }
 
 		private void UpdateInternal()
@@ -49,7 +50,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			Update();
 			UpdateAutoRepaint();
-			UpdateMovementDetection();
+			_InternalUpdate();
 		}
 
 		public void RegisterUpdate()
@@ -235,65 +236,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Transform Movement Detection
-
-		public Vector3 MovementDetectionPreviousPosition { get; private set; }
-		public Quaternion MovementDetectionPreviousRotation { get; private set; }
-		public Vector3 MovementDetectionPreviousScale { get; private set; }
-
-		protected virtual void OnMovementDetected() { }
-
-		private bool _IsMovementDetectionEnabled;
-		public bool IsMovementDetectionEnabled
-		{
-			get { return _IsMovementDetectionEnabled; }
-			set
-			{
-				if (value == _IsMovementDetectionEnabled)
-					return;
-
-				if (value)
-					InitializeMovementDetection();
-
-				if (value)
-					RegisterUpdate();
-				else
-					DeregisterUpdate();
-
-				_IsMovementDetectionEnabled = value;
-			}
-		}
-
-		private void InitializeMovementDetection()
-		{
-			var transform = Me.transform;
-			MovementDetectionPreviousPosition = transform.position;
-			MovementDetectionPreviousRotation = transform.rotation;
-			MovementDetectionPreviousScale = transform.localScale;
-		}
-
-		private void UpdateMovementDetection()
-		{
-			if (!IsMovementDetectionEnabled)
-				return;
-
-			var transform = Me.transform;
-			bool detected =
-				MovementDetectionPreviousPosition != transform.position ||
-				MovementDetectionPreviousRotation != transform.rotation ||
-				MovementDetectionPreviousScale != transform.localScale;
-
-			if (detected)
-			{
-				OnMovementDetected();
-				MovementDetectionPreviousPosition = transform.position;
-				MovementDetectionPreviousRotation = transform.rotation;
-				MovementDetectionPreviousScale = transform.localScale;
-			}
-		}
-
-		#endregion
-
 		#region Mouse
 
 		protected static Vector2 MouseSceneViewPosition
@@ -364,6 +306,78 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			GUILayout.Box("", HorizontalLineLayoutOptions);
+		}
+
+		#endregion
+	}
+
+	public abstract class ExtenityEditorBase<T> : ExtenityObjectEditorBase<T> where T : UnityEngine.Behaviour
+	{
+		#region Update
+
+		protected override void _InternalUpdate()
+		{
+			UpdateMovementDetection();
+			base._InternalUpdate();
+		}
+
+		#endregion
+
+		#region Transform Movement Detection
+
+		public Vector3 MovementDetectionPreviousPosition { get; private set; }
+		public Quaternion MovementDetectionPreviousRotation { get; private set; }
+		public Vector3 MovementDetectionPreviousScale { get; private set; }
+
+		protected virtual void OnMovementDetected() { }
+
+		private bool _IsMovementDetectionEnabled;
+		public bool IsMovementDetectionEnabled
+		{
+			get { return _IsMovementDetectionEnabled; }
+			set
+			{
+				if (value == _IsMovementDetectionEnabled)
+					return;
+
+				if (value)
+					InitializeMovementDetection();
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsMovementDetectionEnabled = value;
+			}
+		}
+
+		private void InitializeMovementDetection()
+		{
+			var transform = Me.transform;
+			MovementDetectionPreviousPosition = transform.position;
+			MovementDetectionPreviousRotation = transform.rotation;
+			MovementDetectionPreviousScale = transform.localScale;
+		}
+
+		private void UpdateMovementDetection()
+		{
+			if (!IsMovementDetectionEnabled)
+				return;
+
+			var transform = Me.transform;
+			bool detected =
+				MovementDetectionPreviousPosition != transform.position ||
+				MovementDetectionPreviousRotation != transform.rotation ||
+				MovementDetectionPreviousScale != transform.localScale;
+
+			if (detected)
+			{
+				OnMovementDetected();
+				MovementDetectionPreviousPosition = transform.position;
+				MovementDetectionPreviousRotation = transform.rotation;
+				MovementDetectionPreviousScale = transform.localScale;
+			}
 		}
 
 		#endregion
