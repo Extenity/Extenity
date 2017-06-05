@@ -37,6 +37,8 @@ namespace Extenity.DLLBuilder
 
 			Repaint();
 
+			Debug.Log(Constants.DLLBuilderName + " started to build all DLLs.");
+
 			Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
 				() =>
 				{
@@ -52,6 +54,7 @@ namespace Extenity.DLLBuilder
 								Repaint();
 								Distributer.DistributeToAll();
 								Repaint();
+								Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
 							}
 							catch (Exception exception)
 							{

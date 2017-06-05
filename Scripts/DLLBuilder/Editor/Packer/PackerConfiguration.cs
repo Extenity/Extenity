@@ -25,8 +25,9 @@ namespace Extenity.DLLBuilder
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)
 		{
-			if (!Enabled)
-				return;
+			// We won't be doing this anymore. Instead, we won't be calling consistency checks on disabled configurations.
+			//if (!Enabled)
+			//	return;
 
 			if (string.IsNullOrEmpty(ConfigurationName))
 			{

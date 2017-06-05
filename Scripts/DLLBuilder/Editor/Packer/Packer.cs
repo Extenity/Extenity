@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using UnityEngine;
@@ -16,18 +15,16 @@ namespace Extenity.DLLBuilder
 		{
 			Debug.Log("--------- Packing all configurations");
 
-			if (!DLLBuilderConfiguration.Instance.PackerConfigurations.Select(configuration => configuration.Enabled).Any())
+			var configurations = DLLBuilderConfiguration.Instance.EnabledPackerConfigurations;
+			if (configurations.IsNullOrEmpty())
 			{
 				Debug.Log("Skipping packer. Nothing to pack.");
 				return true;
 			}
 
-			for (var i = 0; i < DLLBuilderConfiguration.Instance.PackerConfigurations.Length; i++)
+			for (var i = 0; i < configurations.Count; i++)
 			{
-				var configuration = DLLBuilderConfiguration.Instance.PackerConfigurations[i];
-				if (!configuration.Enabled)
-					continue;
-				if (!Pack(configuration))
+				if (!Pack(configurations[i]))
 					return false;
 			}
 

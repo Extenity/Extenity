@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using UnityEngine;
@@ -16,29 +15,22 @@ namespace Extenity.DLLBuilder
 		{
 			Debug.Log("--------- Distributing to all targets");
 
-			throw new NotImplementedException();
-
-			/*
-			if (!DLLBuilderConfiguration.Instance.DistributerConfigurations.Select(configuration => configuration.Enabled).Any())
+			var configurations = DLLBuilderConfiguration.Instance.EnabledDistributerConfigurations;
+			if (configurations.IsNullOrEmpty())
 			{
 				Debug.Log("Skipping distributer. Nothing to distribute.");
 				return true;
 			}
 
-			for (var i = 0; i < DLLBuilderConfiguration.Instance.DistributerConfigurations.Length; i++)
+			for (var i = 0; i < configurations.Count; i++)
 			{
-				var configuration = DLLBuilderConfiguration.Instance.DistributerConfigurations[i];
-				if (!configuration.Enabled)
-					continue;
-				if (!Distribute(configuration))
+				if (!Distribute(configurations[i]))
 					return false;
 			}
 
 			return true;
-			*/
 		}
 
-		/*
 		public static bool Distribute(DistributerConfiguration configuration)
 		{
 			Debug.LogFormat("Distributing configuration '{0}'", configuration.ConfigurationName);
@@ -63,12 +55,13 @@ namespace Extenity.DLLBuilder
 					continue;
 
 
-				var targetDirectoryPath = target.Path.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+				var sourceDirectoryPath = target.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+				var targetDirectoryPath = target.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 
 				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
 				if (!Directory.Exists(targetDirectoryPath))
 				{
-					Debug.LogErrorFormat("Distribution target directory '{0}' does not exist. Please make sure the target directory is created.", target.Path);
+					Debug.LogErrorFormat("Distribution target directory '{0}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.", target.TargetDirectoryPath);
 					continue;
 				}
 
@@ -81,7 +74,6 @@ namespace Extenity.DLLBuilder
 
 			return true;
 		}
-		*/
 
 	}
 

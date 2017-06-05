@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +14,43 @@ namespace Extenity.DLLBuilder
 
 		public CompilerConfiguration[] CompilerConfigurations;
 		public PackerConfiguration[] PackerConfigurations;
-		//public DistributerConfiguration[] DistributerConfigurations;
+		public DistributerConfiguration[] DistributerConfigurations;
+
+		public List<CompilerConfiguration> EnabledCompilerConfigurations
+		{
+			get
+			{
+				if (CompilerConfigurations == null)
+					return new List<CompilerConfiguration>();
+				return (from configuration in CompilerConfigurations
+						where configuration != null && configuration.Enabled
+						select configuration).ToList();
+			}
+		}
+
+		public List<PackerConfiguration> EnabledPackerConfigurations
+		{
+			get
+			{
+				if (PackerConfigurations == null)
+					return new List<PackerConfiguration>();
+				return (from configuration in PackerConfigurations
+						where configuration != null && configuration.Enabled
+						select configuration).ToList();
+			}
+		}
+
+		public List<DistributerConfiguration> EnabledDistributerConfigurations
+		{
+			get
+			{
+				if (DistributerConfigurations == null)
+					return new List<DistributerConfiguration>();
+				return (from configuration in DistributerConfigurations
+						where configuration != null && configuration.Enabled
+						select configuration).ToList();
+			}
+		}
 
 		#endregion
 

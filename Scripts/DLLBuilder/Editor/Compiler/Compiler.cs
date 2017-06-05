@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Extenity.AssetToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
@@ -27,7 +26,9 @@ namespace Extenity.DLLBuilder
 
 		private static IEnumerator InternalCompileDLLs(Action onSucceeded, Action<string> onFailed)
 		{
-			if (DLLBuilderConfiguration.Instance.CompilerConfigurations.IsNullOrEmpty())
+			var configurations = DLLBuilderConfiguration.Instance.EnabledCompilerConfigurations;
+
+			if (configurations.IsNullOrEmpty())
 			{
 				if (onFailed != null)
 					onFailed(string.Format("DLL Builder configuration does not have any entries. Please check your configuration at path '{0}'.", AssetDatabase.GetAssetPath(DLLBuilderConfiguration.Instance)));
@@ -35,27 +36,24 @@ namespace Extenity.DLLBuilder
 			}
 
 			// Check for consistency first
-			foreach (var compilerConfiguration in DLLBuilderConfiguration.Instance.CompilerConfigurations)
+			foreach (var configuration in configurations)
 			{
-				var errors = compilerConfiguration.CheckConsistencyAndLog("There are inconsistencies in DLL compilation configurations.");
+				var errors = configuration.CheckConsistencyAndLog("There are inconsistencies in DLL compilation configurations.");
 				if (errors.Count > 0)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to initialize compilation of DLL '{0}'.", compilerConfiguration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed to initialize compilation of DLL '{0}'.", configuration.DLLNameWithoutExtension));
 					yield break;
 				}
 			}
 
-			foreach (var compilerConfiguration in DLLBuilderConfiguration.Instance.CompilerConfigurations)
+			foreach (var configuration in configurations)
 			{
-				if (!compilerConfiguration.Enabled)
-					continue;
-
 				CompilerJob job = null;
 
 				try
 				{
-					job = new CompilerJob(compilerConfiguration);
+					job = new CompilerJob(configuration);
 					AsyncGenerateDLL(job);
 				}
 				catch (Exception exception)
@@ -83,7 +81,6 @@ namespace Extenity.DLLBuilder
 
 		private static void InternalOnFinished(CompilerJob job)
 		{
-			Debug.Log("####### DLL build finished. RuntimeDLLSucceeded: " + job.RuntimeDLLSucceeded + "     EditorDLLSucceeded: " + job.EditorDLLSucceeded);
 			job.Finished = true;
 			if (job.OnFinished != null)
 			{
