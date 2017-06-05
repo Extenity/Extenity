@@ -8,17 +8,11 @@ namespace Extenity.DLLBuilder
 
 	public class DLLBuilderConfiguration : ScriptableObject
 	{
-		#region Configuration - Compiler
+		#region Configuration
 
-		[SerializeField]
 		public CompilerConfiguration[] CompilerConfigurations;
-
-		#endregion
-
-		#region Configuration - Distributer
-
-		[SerializeField]
-		public DistributerConfiguration Distributer;
+		public PackerConfiguration[] PackerConfigurations;
+		//public DistributerConfiguration[] DistributerConfigurations;
 
 		#endregion
 

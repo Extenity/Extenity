@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Extenity.AssetToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
@@ -19,7 +20,7 @@ namespace Extenity.DLLBuilder
 
 		public static void CompileAllDLLs(Action onSucceeded, Action<string> onFailed)
 		{
-			Debug.Log("Compiling all DLLs");
+			Debug.Log("--------- Compiling all DLLs");
 
 			InternalCompileDLLs(onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
@@ -192,11 +193,15 @@ namespace Extenity.DLLBuilder
 				// > only editor DLL if we are building editor DLL
 				Cleaner.ClearOutputDLLs(job.Configuration, !isEditorBuild, true);
 
-				Directory.CreateDirectory(isEditorBuild ? job.Configuration.EditorDLLOutputDirectoryPath : job.Configuration.ProcessedDLLOutputDirectoryPath);
+				Directory.CreateDirectory(isEditorBuild ? job.Configuration.ProcessedEditorDLLOutputDirectoryPath : job.Configuration.ProcessedDLLOutputDirectoryPath);
 
 				var defines = isEditorBuild
 					? job.Configuration.EditorDefinesAsString
 					: job.Configuration.RuntimeDefinesAsString;
+
+				var outputPath = isEditorBuild
+					? job.Configuration.EditorDLLPath
+					: job.Configuration.DLLPath;
 
 				// Create references list
 				var allReferences = new List<string>();
@@ -246,12 +251,13 @@ namespace Extenity.DLLBuilder
 				arguments.Add("\"" + gmcsPath + "\"");
 				arguments.Add("/target:library");
 
-				//if (job.Configuration.GenerateDocumentation == true)
+				Debug.LogError("NOT IMPLEMENTED YET! Generate Documentation and Generate Debug Info!");
+				//if (job.Configuration.GenerateDocumentation)
 				//{
 				//	arguments.Add("/doc:\"" + documentationOutputPath + "\"");
 				//}
 
-				//if (job.Configuration.GenerateDebugInfo == true)
+				//if (job.Configuration.GenerateDebugInfo)
 				//{
 				//	arguments.Add("/debug+ /debug:full");
 				//}
@@ -263,7 +269,7 @@ namespace Extenity.DLLBuilder
 				arguments.Add("/optimize+");
 
 
-				arguments.Add("/out:\"" + (isEditorBuild ? job.Configuration.EditorDLLPath : job.Configuration.DLLPath) + "\"");
+				arguments.Add("/out:\"" + outputPath + "\"");
 
 				//defines = defines.Trim();
 				////// Append Unity version directives.
@@ -357,7 +363,7 @@ namespace Extenity.DLLBuilder
 
 				if (!process.Start())
 				{
-					Debug.LogError("Process CSC stopped with code " + process.ExitCode + ".");
+					Debug.LogError("Compiler process stopped with code " + process.ExitCode + ".");
 					return CompileResult.Failed;
 				}
 
@@ -372,7 +378,14 @@ namespace Extenity.DLLBuilder
 
 				if (process.ExitCode == 0)
 				{
-					Debug.Log("Process successfully completed");
+					Debug.LogFormat("Finished compiling '{0}'.", isEditorBuild ? job.Configuration.EditorDLLName : job.Configuration.DLLName);
+
+					if (!CheckIfMetaExists(outputPath))
+					{
+						Debug.LogErrorFormat("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", outputPath);
+						return CompileResult.Failed;
+					}
+
 					return CompileResult.Succeeded;
 				}
 
@@ -385,6 +398,11 @@ namespace Extenity.DLLBuilder
 				Debug.LogException(ex);
 				return CompileResult.Failed;
 			}
+		}
+
+		private static bool CheckIfMetaExists(string filePath)
+		{
+			return File.Exists(filePath + ".meta");
 		}
 
 		private static void GenerateExportedFiles(string sourcePath, bool isEditor, ref List<string> exportedFiles, string[] excludedKeywords)
@@ -415,6 +433,8 @@ namespace Extenity.DLLBuilder
 			exportedFiles.Sort();
 			exportedFiles.RemoveDuplicates();
 			exportedFiles.LogList(string.Format("Source files for {0} DLL ({1}):", isEditor ? "editor" : "runtime", exportedFiles.Count));
+
+			Debug.LogError("NOT IMPLEMENTED YET! Sources are not checked for precompiler directives.");
 		}
 
 

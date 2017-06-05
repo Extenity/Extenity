@@ -12,6 +12,8 @@ namespace Extenity.DLLBuilder
 	{
 		public static void ClearAllOutputDLLs(DLLBuilderConfiguration configuration, Action onSucceeded = null, Action<Exception> onFailed = null)
 		{
+			Debug.Log("--------- Clearing all existing DLLs");
+
 			try
 			{
 				foreach (var compilerConfiguration in configuration.CompilerConfigurations)
@@ -31,10 +33,12 @@ namespace Extenity.DLLBuilder
 
 		public static bool ClearOutputDLLs(CompilerConfiguration configuration, bool clearRutimeDLL, bool clearEditorDLL)
 		{
+			// Do not check whether compiler configuration is enabled or not.
+
 			// Check consistency first
 			{
 				var errors = new List<ConsistencyError>();
-				configuration.CheckConsistencyOfPaths(ref errors);
+				configuration.CheckConsistencyOfPaths(ref errors); // Note that this does not check whether configuration is enabled or not.
 				if (errors.Count > 0)
 				{
 					Debug.LogError("Failed to clear output because of consistency errors:\n" + errors.Serialize('\n'));

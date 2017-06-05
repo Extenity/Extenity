@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using UnityEngine;
 
@@ -8,32 +11,59 @@ namespace Extenity.DLLBuilder
 
 	public static class Distributer
 	{
-		public static void DistributeToOutsideProjects()
+
+		public static bool DistributeToAll()
 		{
-			var sourceDirectoryPath = Constants.OutputProjectExtenityDirectory;
-			Debug.LogFormat("Distributing '{0}' to outside projects", sourceDirectoryPath);
+			Debug.Log("--------- Distributing to all targets");
 
-			var targets = DLLBuilderConfiguration.Instance.Distributer.Targets.Where(
-				item => item != null &&
-				item.Enabled &&
-				!string.IsNullOrEmpty(item.Path)).ToList();
+			throw new NotImplementedException();
 
-			if (targets.IsNullOrEmpty())
+			/*
+			if (!DLLBuilderConfiguration.Instance.DistributerConfigurations.Select(configuration => configuration.Enabled).Any())
 			{
-				Debug.LogWarning("There are no outside projects to be distributed. Please check builder configuration.");
-				return;
+				Debug.Log("Skipping distributer. Nothing to distribute.");
+				return true;
 			}
 
-			foreach (var target in targets)
+			for (var i = 0; i < DLLBuilderConfiguration.Instance.DistributerConfigurations.Length; i++)
 			{
-				var targetDirectoryPath = target.Path.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
-
-				// Check that we don't destroy an unwanted directory.
-				if (!targetDirectoryPath.EndsWith("/Extenity/"))
-				{
-					Debug.LogErrorFormat("Distribution target directory '{0}' does not end with 'Extenity'. This is a precaution to prevent destruction. Please make sure the target directory is correct.", target.Path);
+				var configuration = DLLBuilderConfiguration.Instance.DistributerConfigurations[i];
+				if (!configuration.Enabled)
 					continue;
+				if (!Distribute(configuration))
+					return false;
+			}
+
+			return true;
+			*/
+		}
+
+		/*
+		public static bool Distribute(DistributerConfiguration configuration)
+		{
+			Debug.LogFormat("Distributing configuration '{0}'", configuration.ConfigurationName);
+
+			if (!configuration.Enabled)
+				throw new Exception(string.Format("Internal error. Tried to distribute using a disabled configuration '{0}'.", configuration.ConfigurationName));
+
+			// Check consistency first.
+			{
+				var errors = new List<ConsistencyError>();
+				configuration.CheckConsistency(ref errors);
+				if (errors.Count > 0)
+				{
+					Debug.LogError("Failed to distribute because of consistency errors:\n" + errors.Serialize('\n'));
+					return false;
 				}
+			}
+
+			foreach (var target in configuration.Targets)
+			{
+				if (!target.Enabled)
+					continue;
+
+
+				var targetDirectoryPath = target.Path.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 
 				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
 				if (!Directory.Exists(targetDirectoryPath))
@@ -49,8 +79,10 @@ namespace Extenity.DLLBuilder
 				DirectoryTools.Copy(sourceDirectoryPath, targetDirectoryPath, null, null, SearchOption.AllDirectories, true, true, false, null);
 			}
 
-			Debug.Log("Distribution completed.");
+			return true;
 		}
+		*/
+
 	}
 
 }

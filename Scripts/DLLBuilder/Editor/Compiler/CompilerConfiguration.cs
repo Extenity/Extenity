@@ -17,12 +17,12 @@ namespace Extenity.DLLBuilder
 		[Header("Paths")]
 		public string DLLNameWithoutExtension;
 		public string DLLName { get { return DLLNameWithoutExtension + ".dll"; } }
-		public string DLLOutputDirectoryPath = @"Output\Assets\Plugins\ProjectName";
 		public string EditorDLLNamePostfix = ".Editor";
 		public string EditorDLLNameWithoutExtension { get { return DLLNameWithoutExtension + EditorDLLNamePostfix; } }
 		public string EditorDLLName { get { return EditorDLLNameWithoutExtension + ".dll"; } }
-		public bool UseRelativeEditorDLLOutputDirectoryPath = true;
+		public string DLLOutputDirectoryPath = @"Output\Assets\Plugins\ProjectName";
 		public string EditorDLLOutputDirectoryPath = "Editor";
+		public bool UseRelativeEditorDLLOutputDirectoryPath = true;
 		public string ProcessedDLLOutputDirectoryPath
 		{
 			get
@@ -78,6 +78,10 @@ namespace Extenity.DLLBuilder
 
 		public void CheckConsistencyOfPaths(ref List<ConsistencyError> errors)
 		{
+			// Do not check for enabled here. Other parts of the application may depend on this.
+			//if (!Enabled)
+			//	return;
+
 			if (string.IsNullOrEmpty(DLLNameWithoutExtension))
 			{
 				errors.Add(new ConsistencyError(this, "DLL Name Without Extension must be specified."));
@@ -90,6 +94,10 @@ namespace Extenity.DLLBuilder
 
 		public void CheckConsistencyOfSources(ref List<ConsistencyError> errors)
 		{
+			// Do not check for enabled here. Other parts of the application may depend on this.
+			//if (!Enabled)
+			//	return;
+
 			if (string.IsNullOrEmpty(SourcePath))
 			{
 				errors.Add(new ConsistencyError(this, "Source Path must be specified."));

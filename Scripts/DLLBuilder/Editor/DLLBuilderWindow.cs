@@ -78,7 +78,7 @@ namespace Extenity.DLLBuilder
 
 			//if (GUILayout.Button("Distribute", ThinButtonOptions))
 			//{
-			//	Distributer.DistributeToOutsideProjects();
+			//	Distributer.DistributeToAll();
 			//}
 		}
 

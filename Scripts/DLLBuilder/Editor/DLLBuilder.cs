@@ -48,9 +48,9 @@ namespace Extenity.DLLBuilder
 							try
 							{
 								Repaint();
-								PackageBuilder.CopyExtenityAssetsToOutputProject();
+								Packer.PackAll();
 								Repaint();
-								Distributer.DistributeToOutsideProjects();
+								Distributer.DistributeToAll();
 								Repaint();
 							}
 							catch (Exception exception)
