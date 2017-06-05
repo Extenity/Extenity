@@ -13,7 +13,7 @@ namespace Extenity.DLLBuilder
 
 	public class CompilerJob
 	{
-		public DLLBuilderConfiguration.CompilerConfiguration Configuration;
+		public CompilerConfiguration Configuration;
 
 		public List<string> SourceFilePathsForRuntimeDLL;
 		public List<string> SourceFilePathsForEditorDLL;
@@ -25,7 +25,7 @@ namespace Extenity.DLLBuilder
 		public bool Finished;
 		public Action<CompilerJob> OnFinished;
 
-		public CompilerJob(DLLBuilderConfiguration.CompilerConfiguration configuration, Action<CompilerJob> onFinished = null)
+		public CompilerJob(CompilerConfiguration configuration, Action<CompilerJob> onFinished = null)
 		{
 			Configuration = configuration;
 			OnFinished = onFinished;

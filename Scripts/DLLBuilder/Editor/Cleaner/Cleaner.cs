@@ -29,7 +29,7 @@ namespace Extenity.DLLBuilder
 			}
 		}
 
-		public static bool ClearOutputDLLs(DLLBuilderConfiguration.CompilerConfiguration configuration, bool clearRutimeDLL, bool clearEditorDLL)
+		public static bool ClearOutputDLLs(CompilerConfiguration configuration, bool clearRutimeDLL, bool clearEditorDLL)
 		{
 			// Check consistency first
 			{
