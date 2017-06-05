@@ -66,6 +66,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Repaint After Script Reload
+
+		//[DidReloadScripts]
+		//private static void InternalRepaintAfterReload()
+		//{
+		//	// TODO: This will be implemented along with registering all windows in a static list. So that we can iterate the list here and call Repaint on them. Note that there is also EditorApplication.isCompiling if this approach fails in a way.
+		//}
+
+		#endregion
 	}
 
 }
