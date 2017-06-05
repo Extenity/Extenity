@@ -55,9 +55,9 @@ namespace Extenity.DLLBuilder
 			//GUILayout.Space(40f);
 			//GUILayout.Label("Compile DLLs");
 
-			//if (GUILayout.Button("Clear Output DLLs", ThinButtonOptions))
+			//if (GUILayout.Button("Clear All Output DLLs", ThinButtonOptions))
 			//{
-			//	DLLBuilder.ClearOutputDLLs();
+			//	DLLBuilder.ClearAllOutputDLLs();
 			//}
 
 			//if (GUILayout.Button("Build DLLs", ThinButtonOptions))

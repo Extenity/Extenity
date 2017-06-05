@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Extenity.DataToolbox;
 using UnityEditor;
 using UnityEngine;
 
@@ -64,7 +65,7 @@ namespace Extenity.DLLBuilder
 			var files = Directory.GetFiles(unityLibraryPath, "*.dll");
 
 			for (int i = 0; i < files.Length; i++)
-				unityReferences.Add(files[i]);
+				unityReferences.Add(files[i].FixDirectorySeparatorChars());
 
 			if (unityReferences.Count == 0)
 				throw new Exception("Failed to find Unity DLLs in Unity installation path: " + unityLibraryPath);

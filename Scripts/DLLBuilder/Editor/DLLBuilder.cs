@@ -37,7 +37,7 @@ namespace Extenity.DLLBuilder
 
 			Repaint();
 
-			Cleaner.ClearOutputDLLs(
+			Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
 				() =>
 				{
 					Repaint();

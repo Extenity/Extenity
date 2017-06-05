@@ -24,7 +24,8 @@ namespace Extenity.DLLBuilder
 			public string DLLName { get { return DLLNameWithoutExtension + ".dll"; } }
 			public string DLLOutputDirectoryPath = @"Output\Assets\Plugins\ProjectName";
 			public string EditorDLLNamePostfix = ".Editor";
-			public string EditorDLLName { get { return DLLNameWithoutExtension + EditorDLLNamePostfix + ".dll"; } }
+			public string EditorDLLNameWithoutExtension { get { return DLLNameWithoutExtension + EditorDLLNamePostfix; } }
+			public string EditorDLLName { get { return EditorDLLNameWithoutExtension + ".dll"; } }
 			public bool UseRelativeEditorDLLOutputDirectoryPath = true;
 			public string EditorDLLOutputDirectoryPath = "Editor";
 			public string ProcessedDLLOutputDirectoryPath
@@ -45,6 +46,10 @@ namespace Extenity.DLLBuilder
 			}
 			public string DLLPath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLName); } }
 			public string EditorDLLPath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLName); } }
+			public string DLLDocumentationPath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLNameWithoutExtension + ".xml"); } }
+			public string DLLDebugDatabasePath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLNameWithoutExtension + ".mdb"); } }
+			public string EditorDLLDocumentationPath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLNameWithoutExtension + ".xml"); } }
+			public string EditorDLLDebugDatabasePath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLNameWithoutExtension + ".mdb"); } }
 
 			[Header("Sources")]
 			public string SourcePath;
@@ -75,34 +80,37 @@ namespace Extenity.DLLBuilder
 				get { return EditorDefines.Serialize(';'); }
 			}
 
+			public void CheckConsistencyOfPaths(ref List<ConsistencyError> errors)
+			{
+				if (string.IsNullOrEmpty(DLLNameWithoutExtension))
+				{
+					errors.Add(new ConsistencyError(this, "DLL Name Without Extension must be specified."));
+				}
+				if (string.IsNullOrEmpty(DLLOutputDirectoryPath))
+				{
+					errors.Add(new ConsistencyError(this, "DLL Output Directory Path must be specified."));
+				}
+			}
+
+			public void CheckConsistencyOfSources(ref List<ConsistencyError> errors)
+			{
+				if (string.IsNullOrEmpty(SourcePath))
+				{
+					errors.Add(new ConsistencyError(this, "Source Path must be specified."));
+				}
+				if (string.IsNullOrEmpty(IntermediateSourceDirectoryPath))
+				{
+					errors.Add(new ConsistencyError(this, "Intermediate Source Directory Path must be specified."));
+				}
+			}
+
 			public void CheckConsistency(ref List<ConsistencyError> errors)
 			{
 				if (!Enabled)
 					return;
 
-				// Paths
-				{
-					if (string.IsNullOrEmpty(DLLNameWithoutExtension))
-					{
-						errors.Add(new ConsistencyError(this, "DLL Name Without Extension must be specified."));
-					}
-					if (string.IsNullOrEmpty(DLLOutputDirectoryPath))
-					{
-						errors.Add(new ConsistencyError(this, "DLL Output Directory Path must be specified."));
-					}
-				}
-
-				// Sources
-				{
-					if (string.IsNullOrEmpty(SourcePath))
-					{
-						errors.Add(new ConsistencyError(this, "Source Path must be specified."));
-					}
-					if (string.IsNullOrEmpty(IntermediateSourceDirectoryPath))
-					{
-						errors.Add(new ConsistencyError(this, "Intermediate Source Directory Path must be specified."));
-					}
-				}
+				CheckConsistencyOfPaths(ref errors);
+				CheckConsistencyOfSources(ref errors);
 			}
 		}
 

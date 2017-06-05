@@ -185,61 +185,40 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
+				// This will clear:
+				// > both editor and runtime DLLs if we are building runtime DLL (so that editor DLL won't get outdated because of overwritten runtime DLL that was added to it's references)
+				// > only editor DLL if we are building editor DLL
+				Cleaner.ClearOutputDLLs(job.Configuration, !isEditorBuild, true);
+
+				Directory.CreateDirectory(isEditorBuild ? job.Configuration.EditorDLLOutputDirectoryPath : job.Configuration.ProcessedDLLOutputDirectoryPath);
+
 				var defines = isEditorBuild
 					? job.Configuration.EditorDefinesAsString
 					: job.Configuration.RuntimeDefinesAsString;
-
-				var dllOutputPath = isEditorBuild
-					? job.Configuration.EditorDLLPath
-					: job.Configuration.DLLPath;
-				var documentationOutputPath = isEditorBuild
-					? job.Configuration.EditorDLLPath
-					: job.Configuration.DLLPath;
-				var debugDatabaseOutputPath = isEditorBuild
-					? job.Configuration.EditorDLLPath
-					: job.Configuration.DLLPath;
-
-				if (File.Exists(dllOutputPath))
-				{
-					File.Delete(dllOutputPath);
-					Debug.Log("Previous output file \"" + dllOutputPath + "\" deleted.");
-				}
-				if (File.Exists(documentationOutputPath))
-				{
-					File.Delete(documentationOutputPath);
-					Debug.Log("Previous output file \"" + documentationOutputPath + "\" deleted.");
-				}
-				if (File.Exists(debugDatabaseOutputPath))
-				{
-					File.Delete(debugDatabaseOutputPath);
-					Debug.Log("Previous output file \"" + debugDatabaseOutputPath + "\" deleted.");
-				}
-
-				DirectoryTools.CreateFromFilePath(dllOutputPath);
 
 				// Create references list
 				var allReferences = new List<string>();
 				{
 					if (job.Configuration.AddAllDLLsInUnityManagedDirectory)
 						for (int i = 0; i < job.UnityManagedReferences.Count; i++)
-							allReferences.AddIfDoesNotContain(job.UnityManagedReferences[i].Trim());
+							allReferences.AddIfDoesNotContain(job.UnityManagedReferences[i].Trim()); // Directory separators already fixed.
 
 					if (job.Configuration.References != null)
 						for (int i = 0; i < job.Configuration.References.Length; i++)
-							allReferences.AddIfDoesNotContain(job.Configuration.References[i].Trim());
+							allReferences.AddIfDoesNotContain(job.Configuration.References[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
 
 					if (isEditorBuild && job.Configuration.AddRuntimeDLLReferenceInEditorDLL)
 					{
 						if (!File.Exists(job.Configuration.DLLPath))
 							throw new Exception("Tried to add runtime DLL reference into editor DLL but runtime DLL does not exists.");
-						allReferences.AddIfDoesNotContain(job.Configuration.DLLPath.Trim());
+						allReferences.AddIfDoesNotContain(job.Configuration.DLLPath.Trim()); // Directory separators already fixed.
 					}
 
 					if (job.Configuration.AddUnityEngineDLLInUnityManagedDirectory)
-						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEngine.dll", StringComparison.OrdinalIgnoreCase)));
+						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEngine.dll", StringComparison.OrdinalIgnoreCase))); // Directory separators already fixed.
 
 					if (isEditorBuild && job.Configuration.AddUnityEditorDLLInUnityManagedDirectoryForEditorDLL)
-						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEditor.dll", StringComparison.OrdinalIgnoreCase)));
+						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEditor.dll", StringComparison.OrdinalIgnoreCase))); // Directory separators already fixed.
 
 					allReferences.Sort();
 					allReferences.RemoveAll(item => string.IsNullOrEmpty(item));
@@ -278,7 +257,7 @@ namespace Extenity.DLLBuilder
 				arguments.Add("/optimize+");
 
 
-				arguments.Add("/out:\"" + dllOutputPath + "\"");
+				arguments.Add("/out:\"" + (isEditorBuild ? job.Configuration.EditorDLLPath : job.Configuration.DLLPath) + "\"");
 
 				//defines = defines.Trim();
 				////// Append Unity version directives.
