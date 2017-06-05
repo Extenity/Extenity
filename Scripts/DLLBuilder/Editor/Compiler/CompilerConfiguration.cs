@@ -56,11 +56,12 @@ namespace Extenity.DLLBuilder
 		public bool GenerateDebugInfo;
 
 		[Header("DLL References")]
-		public bool AddUnityEngineDLLInUnityManagedDirectory = true;
-		public bool AddUnityEditorDLLInUnityManagedDirectoryForEditorDLL = true;
-		public bool AddAllDLLsInUnityManagedDirectory = false;
-		public bool AddRuntimeDLLReferenceInEditorDLL;
-		public string[] References;
+		public bool AddUnityEngineDLLReferenceIntoRuntimeAndEditorDLLs = true;
+		public bool AddUnityEditorDLLReferenceIntoEditorDLL = true;
+		//public bool AddAllDLLsInUnityManagedDirectory = false; Not a wise idea
+		public bool AddRuntimeDLLReferenceIntoEditorDLL;
+		public string[] RuntimeReferences;
+		public string[] EditorReferences;
 
 		[Header("Preprocessor")]
 		public string[] RuntimeDefines = { };

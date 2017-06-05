@@ -201,25 +201,29 @@ namespace Extenity.DLLBuilder
 				// Create references list
 				var allReferences = new List<string>();
 				{
-					if (job.Configuration.AddAllDLLsInUnityManagedDirectory)
-						for (int i = 0; i < job.UnityManagedReferences.Count; i++)
-							allReferences.AddIfDoesNotContain(job.UnityManagedReferences[i].Trim()); // Directory separators already fixed.
+					//if (job.Configuration.AddAllDLLsInUnityManagedDirectory)
+					//	for (int i = 0; i < job.UnityManagedReferences.Count; i++)
+					//		allReferences.AddIfDoesNotContain(job.UnityManagedReferences[i].Trim()); // Directory separators already fixed.
 
-					if (job.Configuration.References != null)
-						for (int i = 0; i < job.Configuration.References.Length; i++)
-							allReferences.AddIfDoesNotContain(job.Configuration.References[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
+					if (job.Configuration.RuntimeReferences != null)
+						for (int i = 0; i < job.Configuration.RuntimeReferences.Length; i++)
+							allReferences.AddIfDoesNotContain(job.Configuration.RuntimeReferences[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
 
-					if (isEditorBuild && job.Configuration.AddRuntimeDLLReferenceInEditorDLL)
+					if (isEditorBuild && job.Configuration.EditorReferences != null)
+						for (int i = 0; i < job.Configuration.EditorReferences.Length; i++)
+							allReferences.AddIfDoesNotContain(job.Configuration.EditorReferences[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
+
+					if (isEditorBuild && job.Configuration.AddRuntimeDLLReferenceIntoEditorDLL)
 					{
 						if (!File.Exists(job.Configuration.DLLPath))
 							throw new Exception("Tried to add runtime DLL reference into editor DLL but runtime DLL does not exists.");
 						allReferences.AddIfDoesNotContain(job.Configuration.DLLPath.Trim()); // Directory separators already fixed.
 					}
 
-					if (job.Configuration.AddUnityEngineDLLInUnityManagedDirectory)
+					if (job.Configuration.AddUnityEngineDLLReferenceIntoRuntimeAndEditorDLLs)
 						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEngine.dll", StringComparison.OrdinalIgnoreCase))); // Directory separators already fixed.
 
-					if (isEditorBuild && job.Configuration.AddUnityEditorDLLInUnityManagedDirectoryForEditorDLL)
+					if (isEditorBuild && job.Configuration.AddUnityEditorDLLReferenceIntoEditorDLL)
 						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEditor.dll", StringComparison.OrdinalIgnoreCase))); // Directory separators already fixed.
 
 					allReferences.Sort();
