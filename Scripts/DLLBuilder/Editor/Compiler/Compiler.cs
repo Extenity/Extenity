@@ -90,14 +90,11 @@ namespace Extenity.DLLBuilder
 
 		private static void AsyncGenerateDLL(CompilerJob job)
 		{
-			if (string.IsNullOrEmpty(job.Configuration.SourcePath))
-				throw new ArgumentNullException("job.Configuration.SourcePath");
-
 			Debug.LogFormat("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
 
 			DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
-			GenerateExportedFiles(job.Configuration.SourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
-			GenerateExportedFiles(job.Configuration.SourcePath, true, ref job.SourceFilePathsForEditorDLL, job.Configuration.ExcludedKeywords);
+			GenerateExportedFiles(job.Configuration.ProcessedSourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
+			GenerateExportedFiles(job.Configuration.ProcessedSourcePath, true, ref job.SourceFilePathsForEditorDLL, job.Configuration.ExcludedKeywords);
 
 			var thread = new Thread(GenerateDLL);
 			thread.Name = "Generate " + job.Configuration.DLLNameWithoutExtension;
@@ -122,9 +119,9 @@ namespace Extenity.DLLBuilder
 
 				if (anyRuntimeSourceFiles)
 				{
-					CopySourcesToTemporaryDirectory(job.SourceFilePathsForRuntimeDLL, job.Configuration.SourcePath, job.Configuration.IntermediateSourceDirectoryPath);
-					job.RuntimeDLLSucceeded = CompileDLL(job.Configuration.IntermediateSourceDirectoryPath, false, job);
-					DirectoryTools.Delete(job.Configuration.IntermediateSourceDirectoryPath);
+					CopySourcesToTemporaryDirectory(job.SourceFilePathsForRuntimeDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+					job.RuntimeDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, false, job);
+					DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
 				}
 				else
 				{
@@ -138,9 +135,9 @@ namespace Extenity.DLLBuilder
 				{
 					if (anyEditorSourceFiles)
 					{
-						CopySourcesToTemporaryDirectory(job.SourceFilePathsForEditorDLL, job.Configuration.SourcePath, job.Configuration.IntermediateSourceDirectoryPath);
-						job.EditorDLLSucceeded = CompileDLL(job.Configuration.IntermediateSourceDirectoryPath, true, job);
-						DirectoryTools.Delete(job.Configuration.IntermediateSourceDirectoryPath);
+						CopySourcesToTemporaryDirectory(job.SourceFilePathsForEditorDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+						job.EditorDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, true, job);
+						DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
 					}
 					else
 					{
@@ -168,7 +165,7 @@ namespace Extenity.DLLBuilder
 			for (int i = 0; i < sourceFilePaths.Count; i++)
 			{
 				if (!sourceFilePaths[i].StartsWith(sourceBasePath))
-					throw new Exception("Source file path does not start with base path.");
+					throw new Exception(string.Format("Source path '{0}' does not start with base path '{1}'.", sourceFilePaths[i], sourceBasePath));
 
 				var relativeDestPath = sourceFilePaths[i].Substring(sourceBasePath.Length).FixDirectorySeparatorChars();
 				if (relativeDestPath[0].IsDirectorySeparatorChar())
@@ -272,7 +269,7 @@ namespace Extenity.DLLBuilder
 
 				arguments.Add("/optimize+");
 				arguments.Add("/nowarn:1591,1573");
-				
+
 				arguments.Add("/out:\"" + dllOutputPath + "\"");
 
 				//defines = defines.Trim();
@@ -462,7 +459,7 @@ namespace Extenity.DLLBuilder
 					if (j < excludedKeywords.Length)
 						continue;
 
-					exportedFiles.Add(paths[i]);
+					exportedFiles.Add(paths[i].FixDirectorySeparatorChars());
 				}
 			}
 

@@ -50,6 +50,14 @@ namespace Extenity.DLLBuilder
 		public string SourcePath;
 		public string IntermediateSourceDirectoryPath;
 		public string[] ExcludedKeywords;
+		public string ProcessedSourcePath
+		{
+			get { return SourcePath.FixDirectorySeparatorChars().RemoveEndingDirectorySeparatorChar(); }
+		}
+		public string ProcessedIntermediateSourceDirectoryPath
+		{
+			get { return IntermediateSourceDirectoryPath.FixDirectorySeparatorChars().RemoveEndingDirectorySeparatorChar(); }
+		}
 
 		[Header("Generation")]
 		public bool GenerateDocumentation;
