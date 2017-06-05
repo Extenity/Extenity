@@ -548,8 +548,8 @@ namespace Extenity.ReflectionToolbox
 		/// 	MethodInfo indexOf = typeof(string).GetMethod("IndexOf", new Type[] { typeof(char) });
 		/// 	MethodInfo getByteCount = typeof(Encoding).GetMethod("GetByteCount", new Type[] { typeof(string) });
 		/// 
-		/// 	Func<string, object, object> indexOfFunc = indexOf.ConvertToFuncWithSingleParameter<string>();
-		/// 	Func<Encoding, object, object> getByteCountFunc = getByteCount.ConvertToFuncWithSingleParameter<Encoding>();
+		/// 	Func&lt;string, object, object&gt; indexOfFunc = indexOf.ConvertToFuncWithSingleParameter&lt;string&gt;();
+		/// 	Func&lt;Encoding, object, object&gt; getByteCountFunc = getByteCount.ConvertToFuncWithSingleParameter&lt;Encoding&gt;();
 		/// 
 		/// 	Debug.Log(indexOfFunc("Hello", 'e'));
 		/// 	Debug.Log(getByteCountFunc(Encoding.UTF8, "Euro sign: u20ac"));

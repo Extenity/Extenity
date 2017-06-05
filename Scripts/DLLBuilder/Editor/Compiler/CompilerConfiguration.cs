@@ -42,9 +42,9 @@ namespace Extenity.DLLBuilder
 		public string DLLPath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLName); } }
 		public string EditorDLLPath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLName); } }
 		public string DLLDocumentationPath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLNameWithoutExtension + ".xml"); } }
-		public string DLLDebugDatabasePath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLNameWithoutExtension + ".mdb"); } }
+		public string DLLDebugDatabasePath { get { return Path.Combine(ProcessedDLLOutputDirectoryPath, DLLName + ".mdb"); } }
 		public string EditorDLLDocumentationPath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLNameWithoutExtension + ".xml"); } }
-		public string EditorDLLDebugDatabasePath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLNameWithoutExtension + ".mdb"); } }
+		public string EditorDLLDebugDatabasePath { get { return Path.Combine(ProcessedEditorDLLOutputDirectoryPath, EditorDLLName + ".mdb"); } }
 
 		[Header("Sources")]
 		public string SourcePath;
