@@ -61,17 +61,17 @@ namespace Extenity.DLLBuilder
 				{
 					Debug.LogException(exception);
 					if (onFailed != null)
-						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", !job.RuntimeDLLSucceeded ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
 				}
 
 				// Wait until compilation finishes
 				while (!job.Finished)
 					yield return null;
 
-				if (!job.RuntimeDLLSucceeded || !job.EditorDLLSucceeded)
+				if (job.RuntimeDLLSucceeded == CompileResult.Failed || job.EditorDLLSucceeded == CompileResult.Failed)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", !job.RuntimeDLLSucceeded ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
 					yield break;
 				}
 			}
@@ -131,11 +131,12 @@ namespace Extenity.DLLBuilder
 				else
 				{
 					// Skip
-					Debug.Log("No scripts to compile for runtime DLL.");
-					job.RuntimeDLLSucceeded = true;
+					Cleaner.ClearOutputDLLs(job.Configuration, true, true); // We still need to clear previous outputs in case there are any left from previous builds.
+					Debug.Log("Skipping runtime DLL build. No scripts to compile for runtime DLL.");
+					job.RuntimeDLLSucceeded = CompileResult.Skipped;
 				}
 
-				if (job.RuntimeDLLSucceeded)
+				if (job.RuntimeDLLSucceeded == CompileResult.Succeeded || job.RuntimeDLLSucceeded == CompileResult.Skipped)
 				{
 					if (anyEditorSourceFiles)
 					{
@@ -146,8 +147,9 @@ namespace Extenity.DLLBuilder
 					else
 					{
 						// Skip
-						Debug.Log("No scripts to compile for editor DLL.");
-						job.EditorDLLSucceeded = true;
+						Cleaner.ClearOutputDLLs(job.Configuration, false, true); // We still need to clear previous outputs in case there are any left from previous builds.
+						Debug.Log("Skipping editor DLL build. No scripts to compile for editor DLL.");
+						job.EditorDLLSucceeded = CompileResult.Skipped;
 					}
 				}
 			}
@@ -181,7 +183,7 @@ namespace Extenity.DLLBuilder
 			}
 		}
 
-		private static bool CompileDLL(string sourcePath, bool isEditorBuild, CompilerJob job)
+		private static CompileResult CompileDLL(string sourcePath, bool isEditorBuild, CompilerJob job)
 		{
 			try
 			{
@@ -352,7 +354,7 @@ namespace Extenity.DLLBuilder
 				if (!process.Start())
 				{
 					Debug.LogError("Process CSC stopped with code " + process.ExitCode + ".");
-					return false;
+					return CompileResult.Failed;
 				}
 
 				var stdoutOutput = process.StandardOutput.ReadToEnd().Trim();
@@ -367,19 +369,18 @@ namespace Extenity.DLLBuilder
 				if (process.ExitCode == 0)
 				{
 					Debug.Log("Process successfully completed");
-					return true;
+					return CompileResult.Succeeded;
 				}
 
 				Debug.LogError("Compilation exit code: " + process.ExitCode);
 				Debug.LogWarning("The failure might be due to a compilation error. Start Unity and manually check the errors.");
-				return false;
+				return CompileResult.Failed;
 			}
 			catch (Exception ex)
 			{
 				Debug.LogException(ex);
+				return CompileResult.Failed;
 			}
-
-			return false;
 		}
 
 		private static void GenerateExportedFiles(string sourcePath, bool isEditor, ref List<string> exportedFiles, string[] excludedKeywords)

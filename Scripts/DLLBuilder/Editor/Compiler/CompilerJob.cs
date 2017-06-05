@@ -1,10 +1,15 @@
 using System;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Extenity.DLLBuilder
 {
+
+	public enum CompileResult
+	{
+		Failed,
+		Succeeded,
+		Skipped,
+	}
 
 	public class CompilerJob
 	{
@@ -15,8 +20,8 @@ namespace Extenity.DLLBuilder
 
 		public List<string> UnityManagedReferences;
 
-		public bool RuntimeDLLSucceeded;
-		public bool EditorDLLSucceeded;
+		public CompileResult RuntimeDLLSucceeded;
+		public CompileResult EditorDLLSucceeded;
 		public bool Finished;
 		public Action<CompilerJob> OnFinished;
 

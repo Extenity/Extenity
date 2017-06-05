@@ -66,20 +66,20 @@ namespace Extenity.DLLBuilder
 					if (File.Exists(fileToDelete))
 					{
 						File.Delete(fileToDelete);
-						result.Add("OK : " + fileToDelete);
+						result.Add("Deleted : " + fileToDelete);
 					}
 					else
 					{
-						result.Add("OK (not found) : " + fileToDelete);
+						result.Add("Not Found : " + fileToDelete);
 					}
 				}
 				catch (DirectoryNotFoundException)
 				{
-					result.Add("OK (not found) : " + fileToDelete);
+					result.Add("Not Found : " + fileToDelete);
 				}
 				//catch (FileNotFoundException) // Well, this does not happen since File.Delete won't throw if file not found.
 				//{
-				//	result.Add("OK (not found) : " + fileToDelete);
+				//	result.Add("Not Found : " + fileToDelete);
 				//}
 				catch (Exception exception)
 				{

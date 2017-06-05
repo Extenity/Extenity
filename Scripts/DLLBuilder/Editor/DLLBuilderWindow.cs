@@ -52,13 +52,13 @@ namespace Extenity.DLLBuilder
 				DLLBuilderConfiguration.SelectOrCreateConfigurationAsset();
 			}
 
-			//GUILayout.Space(40f);
-			//GUILayout.Label("Compile DLLs");
+			GUILayout.Space(40f);
+			GUILayout.Label("Cleanup");
 
-			//if (GUILayout.Button("Clear All Output DLLs", ThinButtonOptions))
-			//{
-			//	DLLBuilder.ClearAllOutputDLLs();
-			//}
+			if (GUILayout.Button("Clear All Output DLLs", ThinButtonOptions))
+			{
+				Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance);
+			}
 
 			//if (GUILayout.Button("Build DLLs", ThinButtonOptions))
 			//{
