@@ -1,16 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
+using Extenity.DebugToolbox;
 using Extenity.TextureToolbox;
 
 namespace Extenity.AssetToolbox.Editor
 {
 
-	public static class TextureAssetTools
+	public static class EditorAssetTools
 	{
 		#region Context Menu - Operations - Texture
 
@@ -87,6 +90,44 @@ namespace Extenity.AssetToolbox.Editor
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString());
 			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
+		}
+
+		#endregion
+
+		#region Context Menu - Operations - Prefabs and Scenes
+
+		[MenuItem("Assets/Operations/Mark All Prefabs And Scenes As Dirty", priority = 1105)]
+		public static void MarkAllPrefabsAndScenesAsDirty()
+		{
+			{
+				var list = GetAllSceneAssetPaths();
+				list.Sort();
+				list.LogList();
+				foreach (var assetPath in list)
+				{
+					var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+					EditorUtility.SetDirty(asset);
+				}
+			}
+			{
+				var list = GetAllPrefabAssetPaths();
+				list.Sort();
+				list.LogList();
+				foreach (var assetPath in list)
+				{
+					var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+					EditorUtility.SetDirty(asset);
+				}
+			}
+		}
+
+		public static List<string> GetAllSceneAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().Contains(".unity")).ToList();
+		}
+		public static List<string> GetAllPrefabAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().Contains(".prefab")).ToList();
 		}
 
 		#endregion

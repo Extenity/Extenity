@@ -213,7 +213,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 				else
 				{
-					DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
+					DrawDefaultInspectorWithoutScriptField();
 				}
 			}
 
@@ -223,6 +223,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 				EditorGUI.EndDisabledGroup();
 
 			Configuration.ApplyModifiedProperties();
+		}
+
+		public void DrawDefaultInspectorWithoutScriptField()
+		{
+			DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
 		}
 
 		#endregion
