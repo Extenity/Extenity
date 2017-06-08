@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -12,6 +11,9 @@ namespace Extenity.DLLBuilder
 
 	public static class DLLBuilderTools
 	{
+		public static readonly string CSCPath = @"C:\Windows\Microsoft.NET\Framework64\v3.5\csc.exe";
+		//public static readonly string CSCPath = @"C:\Windows\Microsoft.NET\Framework64\v2.0.50727\csc.exe";
+		
 		public static string AutoDetectCSCPath()
 		{
 			string CSCPath = null;

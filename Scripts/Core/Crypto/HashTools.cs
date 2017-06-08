@@ -18,7 +18,6 @@ namespace Extenity.CryptoToolbox
 			public DateTime LastWriteTimeUtc;
 			public long FileSize;
 			public string Hash;
-			private long length;
 
 			public CachedResult(FileInfo fileInfo, string hash)
 			{

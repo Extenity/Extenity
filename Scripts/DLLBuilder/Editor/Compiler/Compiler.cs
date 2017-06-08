@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define EnableNoStdLib
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -240,118 +242,180 @@ namespace Extenity.DLLBuilder
 				var arguments = new List<string>(100);
 
 
+				string compilerPath;
 
-
-
-
-
-
-
-				var gmcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\2.0\gmcs.exe";
-				var compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
-
-				arguments.Add("\"" + gmcsPath + "\"");
-				arguments.Add("/target:library");
-
-				if (job.Configuration.GenerateDocumentation)
+				// Initialize compiler arguments
+				switch (job.Configuration.Compiler)
 				{
-					arguments.Add("/doc:\"" + documentationOutputPath + "\"");
+					case CompilerType.Gmcs:
+						{
+							var gmcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\2.0\gmcs.exe";
+							compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
+
+							arguments.Add("\"" + gmcsPath + "\"");
+							arguments.Add("/target:library");
+
+							if (job.Configuration.GenerateDocumentation)
+							{
+								arguments.Add("/doc:\"" + documentationOutputPath + "\"");
+							}
+
+							if (job.Configuration.GenerateDebugInfo)
+							{
+								arguments.Add("/debug+ /debug:full");
+							}
+							else
+							{
+								arguments.Add("/debug-");
+							}
+
+							arguments.Add("/optimize+");
+							arguments.Add("/nowarn:1591,1573");
+#if EnableNoStdLib
+							arguments.Add("/nostdlib+");
+#endif
+							arguments.Add("/warnaserror");
+
+							arguments.Add("/out:\"" + dllOutputPath + "\"");
+
+							//defines = defines.Trim();
+							////// Append Unity version directives.
+							////{
+							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
+							////	defines += string.IsNullOrEmpty(defines)
+							////		? unityVersionDefines
+							////		: ";" + unityVersionDefines;
+							////}
+
+							if (!string.IsNullOrEmpty(defines))
+							{
+								arguments.Add("/define:" + defines);
+							}
+
+							foreach (var reference in allReferences.Where(reference => !string.IsNullOrEmpty(reference)))
+								arguments.Add("/reference:\"" + reference + "\"");
+
+							arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
+						}
+						break;
+
+					case CompilerType.Smcs:
+						{
+							var gmcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\smcs.exe";
+							compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
+
+							arguments.Add("\"" + gmcsPath + "\"");
+							arguments.Add("/target:library");
+
+							if (job.Configuration.GenerateDocumentation)
+							{
+								arguments.Add("/doc:\"" + documentationOutputPath + "\"");
+							}
+
+							if (job.Configuration.GenerateDebugInfo)
+							{
+								arguments.Add("/debug+ /debug:full");
+							}
+							else
+							{
+								arguments.Add("/debug-");
+							}
+
+							arguments.Add("/optimize+");
+							arguments.Add("/nowarn:1591,1573");
+#if EnableNoStdLib
+							arguments.Add("/nostdlib+");
+#endif
+							arguments.Add("/warnaserror");
+
+							arguments.Add("/out:\"" + dllOutputPath + "\"");
+
+							//defines = defines.Trim();
+							////// Append Unity version directives.
+							////{
+							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
+							////	defines += string.IsNullOrEmpty(defines)
+							////		? unityVersionDefines
+							////		: ";" + unityVersionDefines;
+							////}
+
+							if (!string.IsNullOrEmpty(defines))
+							{
+								arguments.Add("/define:" + defines);
+							}
+
+							foreach (var reference in allReferences.Where(reference => !string.IsNullOrEmpty(reference)))
+								arguments.Add("/reference:\"" + reference + "\"");
+
+							arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
+						}
+						break;
+
+					case CompilerType.MSBuild:
+						{
+							if (job.Configuration.GenerateDocumentation == true)
+							{
+								arguments.Add("/doc:\"" + documentationOutputPath + "\"");
+							}
+
+							if (job.Configuration.GenerateDebugInfo == true)
+							{
+								arguments.Add("/debug+ /debug:full");
+							}
+							else
+							{
+								arguments.Add("/debug-");
+							}
+
+							arguments.Add("/noconfig");
+							arguments.Add("/nowarn:1591,1573");
+							arguments.Add("/warnaserror");
+#if EnableNoStdLib
+							arguments.Add("/nostdlib+");
+#endif
+							arguments.Add("/nologo");
+							arguments.Add("/platform:AnyCPU");
+							arguments.Add("/errorreport:none");
+							//arguments.Add("/warn:0");
+							//arguments.Add("/filealign:512");
+
+							defines = defines.Trim();
+							//// Append Unity version directives.
+							//{
+							//	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
+							//	defines += string.IsNullOrEmpty(defines)
+							//		? unityVersionDefines
+							//		: ";" + unityVersionDefines;
+							//}
+
+							if (!string.IsNullOrEmpty(defines))
+							{
+								arguments.Add("/define:" + defines);
+							}
+
+							//arguments.Add("/errorendlocation");
+							//arguments.Add("/preferreduilang:en-US");
+							//arguments.Add("/highentropyva-");
+
+							foreach (var reference in allReferences.Where(reference => !string.IsNullOrEmpty(reference)))
+								arguments.Add("/reference:\"" + reference + "\"");
+
+							arguments.Add("/out:\"" + dllOutputPath + "\"");
+							arguments.Add("/target:library");
+							arguments.Add("/utf8output");
+							arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
+
+							compilerPath = DLLBuilderTools.AutoDetectCSCPath();
+							//compilerPath = DLLBuilderTools.CSCPath;
+						}
+						break;
+
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 
-				if (job.Configuration.GenerateDebugInfo)
-				{
-					arguments.Add("/debug+ /debug:full");
-				}
-				else
-				{
-					arguments.Add("/debug-");
-				}
 
-				arguments.Add("/optimize+");
-				arguments.Add("/nowarn:1591,1573");
-
-				arguments.Add("/out:\"" + dllOutputPath + "\"");
-
-				//defines = defines.Trim();
-				////// Append Unity version directives.
-				////{
-				////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-				////	defines += string.IsNullOrEmpty(defines)
-				////		? unityVersionDefines
-				////		: ";" + unityVersionDefines;
-				////}
-
-				if (!string.IsNullOrEmpty(defines))
-				{
-					arguments.Add("/define:" + defines);
-				}
-
-				for (int i = 0; i < allReferences.Count; i++)
-					arguments.Add("/reference:\"" + allReferences[i] + "\"");
-
-				arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
-
-
-
-
-
-
-
-
-
-
-
-				//if (job.Configuration.GenerateDocumentation == true)
-				//{
-				//	arguments.Add("/doc:\"" + documentationOutputPath + "\"");
-				//}
-
-				//if (job.Configuration.GenerateDebugInfo == true)
-				//{
-				//	arguments.Add("/debug+ /debug:full");
-				//}
-				//else
-				//{
-				//	arguments.Add("/debug-");
-				//}
-
-				//arguments.Add("/noconfig /nowarn:1701,1702,2008 /nostdlib+ /nologo /platform:AnyCPU /errorreport:none /warn:0 /filealign:512");
-
-				//defines = defines.Trim();
-				////// Append Unity version directives.
-				////{
-				////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-				////	defines += string.IsNullOrEmpty(defines)
-				////		? unityVersionDefines
-				////		: ";" + unityVersionDefines;
-				////}
-
-				//if (!string.IsNullOrEmpty(defines))
-				//{
-				//	arguments.Add("/define:" + defines);
-				//}
-
-				//arguments.Add("/errorendlocation /preferreduilang:en-US /highentropyva-");
-
-				//for (int i = 0; i < allReferences.Count; i++)
-				//	arguments.Add("/reference:\"" + allReferences[i] + "\"");
-
-				//arguments.Add("/out:\"" + dllOutputPath + "\"");
-				//arguments.Add("/target:library");
-				//arguments.Add("/utf8output");
-				//arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
-
-				//var compilerPath = AutoDetectCSCPath();
-
-
-
-
-
-
-
-
-
-				arguments.LogList("Launching compiler with arguments:");
+				arguments.LogList(string.Format("Launching compiler '{0}' with arguments:", job.Configuration.Compiler.ToString()));
 
 				var process = new Process();
 				process.StartInfo.RedirectStandardOutput = true;

@@ -69,7 +69,7 @@ namespace Extenity.DLLBuilder
 
 				// TODO: Better just sync files, instead of deleting and copying from scratch.
 				DirectoryTools.Delete(targetDirectoryPath);
-				DirectoryTools.Copy(sourceDirectoryPath, targetDirectoryPath, null, null, SearchOption.AllDirectories, true, true, false, null);
+				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
 			}
 
 			return true;

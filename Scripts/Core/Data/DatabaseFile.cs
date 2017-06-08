@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -47,7 +48,7 @@ namespace Extenity.DataToolbox
 
 					if (!string.IsNullOrEmpty(line))
 					{
-						string[] pair = line.Split(new char[] { separator }, 2);
+						string[] pair = line.Split(new char[] { separator }, 2, StringSplitOptions.None);
 
 						if (pair.Length != 2)
 						{

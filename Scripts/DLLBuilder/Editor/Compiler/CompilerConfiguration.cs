@@ -9,6 +9,13 @@ using UnityEngine;
 namespace Extenity.DLLBuilder
 {
 
+	public enum CompilerType
+	{
+		Gmcs = 0,
+		Smcs = 1,
+		MSBuild = 20,
+	}
+
 	[Serializable]
 	public class CompilerConfiguration : IConsistencyChecker
 	{
@@ -84,6 +91,11 @@ namespace Extenity.DLLBuilder
 			get { return EditorDefines.Serialize(';'); }
 		}
 
+		[Header("Compiler")]
+		public CompilerType Compiler = CompilerType.Gmcs;
+
+		#region Consistency
+
 		public void CheckConsistencyOfPaths(ref List<ConsistencyError> errors)
 		{
 			// Do not check for enabled here. Other parts of the application may depend on this.
@@ -125,6 +137,8 @@ namespace Extenity.DLLBuilder
 			CheckConsistencyOfPaths(ref errors);
 			CheckConsistencyOfSources(ref errors);
 		}
+
+		#endregion
 	}
 
 

@@ -78,9 +78,8 @@ namespace Extenity.DataToolbox
 
 		#region Get File List
 
-		public static HashSet<string> ListFilesInDirectory(string sourceDirectory,
+		public static HashSet<string> ListFilesInDirectory(string sourceDirectory, SearchOption searchOption,
 			string[] includeFilters = null, string[] excludeFilters = null,
-			SearchOption searchOption = SearchOption.AllDirectories,
 			bool throwOnError = true)
 		{
 			if (sourceDirectory == null)
@@ -238,9 +237,8 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static bool Copy(string sourceDirectory, string targetDirectory,
+		public static bool Copy(string sourceDirectory, SearchOption searchOption, string targetDirectory, 
 			string[] includeFilters = null, string[] excludeFilters = null,
-			SearchOption searchOption = SearchOption.AllDirectories,
 			bool overwrite = true, bool throwOnError = true, bool continueOnError = false,
 			CopyResult result = null)
 		{
@@ -254,7 +252,7 @@ namespace Extenity.DataToolbox
 			sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 			targetDirectory = targetDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
-			var filesToCopy = ListFilesInDirectory(sourceDirectory, includeFilters, excludeFilters, searchOption, throwOnError);
+			var filesToCopy = ListFilesInDirectory(sourceDirectory, searchOption, includeFilters, excludeFilters, throwOnError);
 
 			if (filesToCopy.Count == 0)
 				return true; // No files to copy
