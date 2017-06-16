@@ -38,7 +38,8 @@ namespace Extenity.MathToolbox
 
 		private float SampleTime = 0.01f; // Seconds
 		public float LastComputationTime { get; private set; }
-		private double ITerm, LastInput;
+		public double ITerm { get; private set; }
+		public double LastInput { get; private set; }
 		public double Kp { get; private set; }
 		public double Ki { get; private set; }
 		public double Kd { get; private set; }
@@ -129,31 +130,31 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public bool Compute(float now)
+		public int Compute(float now)
 		{
 			if (!IsActive)
-				return false;
+				return 0;
 
+			var calculatedStepCount = 0;
 			while (now - LastComputationTime >= SampleTime)
 			{
-				// Compute all the working error variables.
-				double error = Target - Input;
-				ITerm += (Ki * error);
+				double difference = Target - Input;
+				ITerm += (Ki * difference);
 				if (ITerm > OutMax) ITerm = OutMax;
 				else if (ITerm < OutMin) ITerm = OutMin;
-				double dInput = (Input - LastInput);
+				double deltaInput = (Input - LastInput);
 
 				// Compute PID Output.
-				Output = Kp * error + ITerm - Kd * dInput;
+				Output = Kp * difference + ITerm - Kd * deltaInput;
 				if (Output > OutMax) Output = OutMax;
 				else if (Output < OutMin) Output = OutMin;
 
 				// Remember some variables for next time.
 				LastInput = Input;
 				LastComputationTime += SampleTime;
-				return true;
+				calculatedStepCount++;
 			}
-			return false;
+			return calculatedStepCount;
 		}
 
 		public void SetTunings(PIDConfiguration configuration)
@@ -175,7 +176,7 @@ namespace Extenity.MathToolbox
 
 		public void SetSampleTime(float newSampleTime)
 		{
-			if (newSampleTime > 0)
+			if (newSampleTime > 0 && !newSampleTime.IsAlmostEqual(SampleTime, 0.00001f))
 			{
 				double ratio = (double)newSampleTime / (double)SampleTime;
 				Ki *= ratio;
