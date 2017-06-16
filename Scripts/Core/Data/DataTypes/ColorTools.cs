@@ -6,6 +6,16 @@ namespace Extenity.DataToolbox
 
 	public static class ColorTools
 	{
+		public static Color Red { get { return new Color(1f, 0.0f, 0.0f, 1f); } }
+		public static Color DimmedRed { get { return new Color(0.8f, 0.0f, 0.0f, 1f); } }
+		public static Color DarkRed { get { return new Color(0.5f, 0.0f, 0.0f, 1f); } }
+		public static Color Green { get { return new Color(0.0f, 1f, 0.0f, 1f); } }
+		public static Color DimmedGreen { get { return new Color(0.0f, 0.8f, 0.0f, 1f); } }
+		public static Color DarkGreen { get { return new Color(0.0f, 0.5f, 0.0f, 1f); } }
+		public static Color Blue { get { return new Color(0.0f, 0.0f, 1f, 1f); } }
+		public static Color DimmedBlue { get { return new Color(0.0f, 0.0f, 0.8f, 1f); } }
+		public static Color DarkBlue { get { return new Color(0.0f, 0.0f, 0.5f, 1f); } }
+
 		public static bool IsAlmostEqualRGBA(this Color value1, Color value2, float precision)
 		{
 			double rDiff = value1.r - value2.r;
