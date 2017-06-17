@@ -87,6 +87,8 @@ namespace Extenity.UIToolbox
 		{
 			OkayButton.gameObject.SetActive(!string.IsNullOrEmpty(okayButtonText));
 			CancelButton.gameObject.SetActive(!string.IsNullOrEmpty(cancelButtonText));
+			OkayButton.GetComponentInChildren<Text>().text = okayButtonText;
+			CancelButton.GetComponentInChildren<Text>().text = cancelButtonText;
 			OnClickedOkay = onClickedOkay;
 			OnClickedCancel = onClickedCancel;
 
@@ -104,6 +106,8 @@ namespace Extenity.UIToolbox
 		{
 			OkayButton.gameObject.SetActive(!string.IsNullOrEmpty(okayButtonText));
 			CancelButton.gameObject.SetActive(!string.IsNullOrEmpty(cancelButtonText));
+			OkayButton.GetComponentInChildren<Text>().text = okayButtonText;
+			CancelButton.GetComponentInChildren<Text>().text = cancelButtonText;
 			OnClickedOkayWithUserInput = onClickedOkay;
 			OnClickedCancel = onClickedCancel;
 
