@@ -237,7 +237,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static bool Copy(string sourceDirectory, SearchOption searchOption, string targetDirectory, 
+		public static bool Copy(string sourceDirectory, SearchOption searchOption, string targetDirectory,
 			string[] includeFilters = null, string[] excludeFilters = null,
 			bool overwrite = true, bool throwOnError = true, bool continueOnError = false,
 			CopyResult result = null)
@@ -493,6 +493,21 @@ namespace Extenity.DataToolbox
 				Thread.Sleep(waitBetweenTries);
 			}
 			throw new Exception("Failed to create temporary directory.");
+		}
+
+		#endregion
+
+		#region Unity Project Directory
+
+		/// <summary>
+		/// Checks if the specified directory is a Unity project directory. It will throw in case Path.Combine or Directory.Exists methods are not happy with the given path.
+		/// </summary>
+		public static bool IsUnityProjectPath(string directoryPath)
+		{
+			return
+				Directory.Exists(directoryPath) &&
+				Directory.Exists(Path.Combine(directoryPath, "Assets")) &&
+				Directory.Exists(Path.Combine(directoryPath, "ProjectSettings"));
 		}
 
 		#endregion
