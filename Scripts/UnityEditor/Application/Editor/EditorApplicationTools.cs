@@ -9,11 +9,19 @@ namespace Extenity.ApplicationToolbox.Editor
 	{
 		#region Paths
 
+		public static string UnityProjectPath
+		{
+			get
+			{
+				return ApplicationTools.ApplicationPath.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+			}
+		}
+
 		public static string EditorTempDirectoryPath
 		{
 			get
 			{
-				return Path.Combine(ApplicationTools.ApplicationPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+				return Path.Combine(UnityProjectPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 			}
 		}
 
