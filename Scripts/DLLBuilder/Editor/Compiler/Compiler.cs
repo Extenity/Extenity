@@ -10,6 +10,7 @@ using System.Threading;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
+using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
 
@@ -533,44 +534,6 @@ namespace Extenity.DLLBuilder
 
 			Debug.LogError("NOT IMPLEMENTED YET! Sources are not checked for precompiler directives.");
 		}
-
-
-
-
-
-
-
-
-		// TODO: Move into Extenity
-		public static void StartCoroutineInEditorUpdate(this IEnumerator update, Action onFinished = null)
-		{
-			EditorApplication.CallbackFunction onUpdate = null;
-
-			onUpdate = () =>
-			{
-				try
-				{
-					if (update.MoveNext() == false)
-					{
-						if (onFinished != null)
-							onFinished();
-						EditorApplication.update -= onUpdate;
-					}
-				}
-				catch (Exception ex)
-				{
-					if (onFinished != null)
-						onFinished();
-					Debug.LogException(ex);
-					EditorApplication.update -= onUpdate;
-				}
-			};
-
-			EditorApplication.update += onUpdate;
-		}
-
-
-
 
 	}
 

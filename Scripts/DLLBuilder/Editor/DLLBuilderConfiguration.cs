@@ -12,9 +12,22 @@ namespace Extenity.DLLBuilder
 	{
 		#region Configuration
 
+		public RemoteBuilderConfiguration[] RemoteBuilderConfigurations;
 		public CompilerConfiguration[] CompilerConfigurations;
 		public PackerConfiguration[] PackerConfigurations;
 		public DistributerConfiguration[] DistributerConfigurations;
+
+		public List<RemoteBuilderConfiguration> EnabledRemoteBuilderConfigurations
+		{
+			get
+			{
+				if (RemoteBuilderConfigurations == null)
+					return new List<RemoteBuilderConfiguration>();
+				return (from configuration in RemoteBuilderConfigurations
+						where configuration != null && configuration.Enabled
+						select configuration).ToList();
+			}
+		}
 
 		public List<CompilerConfiguration> EnabledCompilerConfigurations
 		{

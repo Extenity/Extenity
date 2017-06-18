@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,13 +33,42 @@ namespace Extenity.DLLBuilder
 
 		public static void StartProcess()
 		{
+			var request = new BuildRequest
+			{
+				BuildJobID = Guid.NewGuid()
+			};
+			StartProcess(request);
+		}
+
+		public static void StartProcess(BuildRequest request)
+		{
+			var job = new BuildJob
+			{
+				BuildRequest = request
+			};
+			StartProcess(job);
+		}
+
+		public static void StartProcess(BuildJob job)
+		{
 			if (IsProcessing)
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
 
+			if (!job.IsStarted)
+			{
+				job.BuildRequest.AddCurrentProjectToRequesterProjectChain();
+				Debug.Log(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.BuildRequest.BuildJobID);
+				job.IsStarted = true;
+			}
+			else
+			{
+				// Means we are in the middle of build process. That is we are continuing after a recompilation.
+				Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.BuildRequest.BuildJobID);
+			}
+
 			Repaint();
 
-			Debug.Log(Constants.DLLBuilderName + " started to build all DLLs.");
 
 			Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
 				() =>
