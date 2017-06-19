@@ -11,7 +11,7 @@ namespace Extenity.DLLBuilder
 
 		private void OnEnable()
 		{
-			DLLBuilder.OnRepaintRequested.AddListener(Repaint);
+			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 		}
 
 		#endregion
