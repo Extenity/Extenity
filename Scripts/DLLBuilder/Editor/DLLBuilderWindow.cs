@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Extenity.UnityEditorToolbox.Editor;
+﻿using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -42,7 +39,7 @@ namespace Extenity.DLLBuilder
 			GUI.enabled = !DLLBuilder.IsProcessing;
 			if (GUILayout.Button("Build And Distribute", ThickButtonOptions))
 			{
-				DLLBuilder.StartProcess();
+				DLLBuilder.StartProcess(BuildTriggerSource.UI);
 			}
 			GUI.enabled = true;
 

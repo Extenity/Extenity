@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
-using UnityEditor;
+using System.Linq;
+using Extenity.ConsistencyToolbox;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,44 +31,53 @@ namespace Extenity.DLLBuilder
 
 		public static bool IsProcessing { get; private set; }
 
-		public static void StartProcess()
+		public static void StartProcess(BuildTriggerSource triggerSource)
 		{
-			var request = new BuildRequest
+			var newJob = new BuildJob
 			{
-				BuildJobID = Guid.NewGuid()
+				JobID = Guid.NewGuid()
 			};
-			StartProcess(request);
+			newJob.AddCurrentProjectToChain(DLLBuilderConfiguration.Instance.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray());
+			StartProcess(newJob, triggerSource);
 		}
 
-		public static void StartProcess(BuildRequest request)
-		{
-			var job = new BuildJob
-			{
-				BuildRequest = request
-			};
-			StartProcess(job);
-		}
-
-		public static void StartProcess(BuildJob job)
+		public static void StartProcess(BuildJob job, BuildTriggerSource triggerSource)
 		{
 			if (IsProcessing)
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
 
-			if (!job.IsStarted)
+			try
 			{
-				job.BuildRequest.AddCurrentProjectToRequesterProjectChain();
-				Debug.Log(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.BuildRequest.BuildJobID);
-				job.IsStarted = true;
+				if (!job.CurrentProjectStatus.IsStarted)
+				{
+					Debug.Log(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.JobID);
+					job.CurrentProjectStatus.IsStarted = true;
+
+					if (job.CurrentProjectStatus.BuildTriggerSource != BuildTriggerSource.Unspecified)
+						throw new Exception(string.Format("Build trigger source was already specified as '{0}' where it was going to be set as '{1}'.", job.CurrentProjectStatus.BuildTriggerSource, triggerSource));
+					job.CurrentProjectStatus.BuildTriggerSource = triggerSource;
+				}
+				else
+				{
+					// Means we are in the middle of build process. That is we are continuing after a recompilation.
+					Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.JobID);
+				}
 			}
-			else
+			catch (Exception exception)
 			{
-				// Means we are in the middle of build process. That is we are continuing after a recompilation.
-				Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.BuildRequest.BuildJobID);
+				Debug.LogException(exception);
+				InternalFinishProcess(job, false);
+				return;
+			}
+
+			if (job.CheckConsistencyAndLog().Count > 0)
+			{
+				InternalFinishProcess(job, false);
+				return;
 			}
 
 			Repaint();
-
 
 			Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
 				() =>
@@ -78,37 +87,61 @@ namespace Extenity.DLLBuilder
 					Compiler.CompileAllDLLs(
 						() =>
 						{
+							var succeeded = false;
 							try
 							{
 								Repaint();
 								Packer.PackAll();
 								Repaint();
 								Distributer.DistributeToAll();
-								Repaint();
+
 								Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
+								succeeded = true;
 							}
 							catch (Exception exception)
 							{
 								Debug.LogException(exception);
 							}
-							IsProcessing = false;
-							Repaint();
+							InternalFinishProcess(job, succeeded);
 						},
 						error =>
 						{
-							IsProcessing = false;
-							Repaint();
 							Debug.LogError(error);
+							InternalFinishProcess(job, false);
 						}
 					);
 				},
 				exception =>
 				{
-					IsProcessing = false;
-					Repaint();
 					Debug.LogException(exception);
+					InternalFinishProcess(job, false);
 				}
 			);
+		}
+
+		private static void InternalFinishProcess(BuildJob job, bool succeeded)
+		{
+			try
+			{
+				IsProcessing = false;
+
+				if (succeeded)
+					job.CurrentProjectStatus.IsSucceeded = true;
+				else
+					job.CurrentProjectStatus.IsFailed = true;
+
+				RemoteBuilder.SaveBuildResponseFile(job);
+			}
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
+
+				// Well, it won't count as succeeded if we can't finalize the process.
+				job.CurrentProjectStatus.IsSucceeded = false;
+				job.CurrentProjectStatus.IsFailed = true;
+			}
+
+			Repaint();
 		}
 
 		#endregion

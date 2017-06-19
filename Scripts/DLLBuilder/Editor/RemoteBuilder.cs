@@ -42,11 +42,11 @@ namespace Extenity.DLLBuilder
 				DeleteBuildRequestFile();
 				Debug.Log("## file content: " + content);
 
-				var request = JsonUtility.FromJson<BuildRequest>(content);
-				request.CheckConsistencyAndThrow();
+				var job = JsonUtility.FromJson<BuildJob>(content);
+				job.CheckConsistencyAndThrow();
 
-				Debug.Log("Remote DLL build request received. " + request);
-				DLLBuilder.StartProcess(request);
+				Debug.Log("Remote DLL build request received. " + job);
+				DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
 			}
 			catch (DirectoryNotFoundException)
 			{
@@ -80,11 +80,11 @@ namespace Extenity.DLLBuilder
 
 		#region Create Build Request
 
-		public static void CreateBuildRequestFileForProject(BuildRequest request, string targetProjectPath)
+		public static void CreateBuildRequestFileForProject(BuildJob job, string targetProjectPath)
 		{
 			if (string.IsNullOrEmpty(targetProjectPath))
 				throw new ArgumentNullException("targetProjectPath");
-			request.CheckConsistencyAndThrow();
+			job.CheckConsistencyAndThrow();
 			// Make sure target project path aims at a Unity project directory.
 			if (!DirectoryTools.IsUnityProjectPath(targetProjectPath))
 				throw new ArgumentException(string.Format("Target project path '{0}' is not a Unity project path.", targetProjectPath), "targetProjectPath");
@@ -95,7 +95,7 @@ namespace Extenity.DLLBuilder
 			var filePath = Path.Combine(targetProjectPath, Constants.RemoteBuilder.RequestFilePath);
 			DirectoryTools.CreateFromFilePath(filePath);
 
-			var json = JsonUtility.ToJson(request, true);
+			var json = JsonUtility.ToJson(job, true);
 			File.WriteAllText(filePath, json);
 		}
 
@@ -105,7 +105,7 @@ namespace Extenity.DLLBuilder
 
 		public static void CreateBuildRequestsOfRemoteProjects(BuildJob job, Action onSucceeded, Action<string> onFailed)
 		{
-			if (job.IsRemoteBuildsCompleted)
+			if (job.CurrentProjectStatus.IsRemoteBuildsCompleted)
 			{
 				if (onSucceeded != null)
 					onSucceeded();
@@ -147,17 +147,38 @@ namespace Extenity.DLLBuilder
 				}
 
 				// Trigger a compilation on remote project and wait for it to finish
-				throw new NotImplementedException();
+				Debug.LogError("NOT IMPLEMENTED YET!");
 			}
+
+			job.CurrentProjectStatus.IsRemoteBuildsCompleted = true;
 
 			// Recompile this project. Because we probably got new DLLs coming out of remote builds.
 			{
-				job.SaveToFile();
+				job.SaveBeforeAssemblyReload();
 				AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
 				// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
 				if (onSucceeded != null)
 					onSucceeded();
+			}
+		}
+
+		#endregion
+
+		#region Save Build Response
+
+		public static void SaveBuildResponseFile(BuildJob job)
+		{
+			try
+			{
+				var json = JsonUtility.ToJson(job, true);
+				var filePath = string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID.ToString());
+				DirectoryTools.CreateFromFilePath(filePath);
+				File.WriteAllText(filePath, json);
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Failed to save " + Constants.DLLBuilderName + " remote build response file.", exception);
 			}
 		}
 

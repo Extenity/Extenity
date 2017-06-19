@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using UnityEditor;
@@ -17,6 +18,10 @@ namespace Extenity.DLLBuilder
 		public PackerConfiguration[] PackerConfigurations;
 		public DistributerConfiguration[] DistributerConfigurations;
 
+		/// <summary>
+		/// Gives a list of Remote Builder Configurations that are enabled.
+		/// See also EnabledAndIgnoreFilteredRemoteBuilderConfigurations.
+		///</summary>
 		public List<RemoteBuilderConfiguration> EnabledRemoteBuilderConfigurations
 		{
 			get
@@ -25,6 +30,25 @@ namespace Extenity.DLLBuilder
 					return new List<RemoteBuilderConfiguration>();
 				return (from configuration in RemoteBuilderConfigurations
 						where configuration != null && configuration.Enabled
+						select configuration).ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gives a list of Remote Builder Configurations that are enabled. 
+		/// Does not add the non-existing project paths if they are marked 
+		/// as IgnoreIfNotFound. Note that non-existing paths are added
+		/// to the list if they are not marked as IgnoreIfNotFound, which
+		/// should be handled manually in further operations.
+		/// </summary>
+		public List<RemoteBuilderConfiguration> EnabledAndIgnoreFilteredRemoteBuilderConfigurations
+		{
+			get
+			{
+				if (RemoteBuilderConfigurations == null)
+					return new List<RemoteBuilderConfiguration>();
+				return (from configuration in RemoteBuilderConfigurations
+						where configuration != null && configuration.Enabled && (Directory.Exists(configuration.ProjectPath) || !configuration.IgnoreIfNotFound)
 						select configuration).ToList();
 			}
 		}

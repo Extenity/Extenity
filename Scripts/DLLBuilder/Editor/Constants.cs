@@ -18,7 +18,7 @@ namespace Extenity.DLLBuilder
 
 		public static class BuildJob
 		{
-			public static readonly string CurrentBuildJobFilePath = "Temp/ExtenityDLLBuilder/CurrentBuildJob.json";
+			public static readonly string AssemblyReloadSurvivalFilePath = "Temp/ExtenityDLLBuilder/CurrentBuildJob.json";
 		}
 	}
 
