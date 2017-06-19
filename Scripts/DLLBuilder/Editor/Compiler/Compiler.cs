@@ -20,21 +20,21 @@ namespace Extenity.DLLBuilder
 	public static class Compiler
 	{
 
-		public static void CompileAllDLLs(Action onSucceeded, Action<string> onFailed)
+		public static void CompileAllDLLs(DLLBuilderConfiguration builderConfiguration, Action onSucceeded, Action<string> onFailed)
 		{
 			Debug.Log("--------- Compiling all DLLs");
 
-			InternalCompileDLLs(onSucceeded, onFailed).StartCoroutineInEditorUpdate();
+			InternalCompileDLLs(builderConfiguration, onSucceeded, onFailed).StartCoroutineInTimer();
 		}
 
-		private static IEnumerator InternalCompileDLLs(Action onSucceeded, Action<string> onFailed)
+		private static IEnumerator InternalCompileDLLs(DLLBuilderConfiguration builderConfiguration, Action onSucceeded, Action<string> onFailed)
 		{
-			var configurations = DLLBuilderConfiguration.Instance.EnabledCompilerConfigurations;
+			var configurations = builderConfiguration.EnabledCompilerConfigurations;
 
 			if (configurations.IsNullOrEmpty())
 			{
 				if (onFailed != null)
-					onFailed(string.Format("DLL Builder configuration does not have any entries. Please check your configuration at path '{0}'.", AssetDatabase.GetAssetPath(DLLBuilderConfiguration.Instance)));
+					onFailed(string.Format("DLL Builder configuration does not have any entries. Please check your configuration at path '{0}'.", AssetDatabase.GetAssetPath(builderConfiguration)));
 				yield break;
 			}
 
@@ -162,6 +162,7 @@ namespace Extenity.DLLBuilder
 		private static void CopySourcesToTemporaryDirectory(List<string> sourceFilePaths, string sourceBasePath, string temporaryDirectoryPath)
 		{
 			Debug.LogFormat("Copying sources into temporary directory '{0}'.", temporaryDirectoryPath);
+			sourceBasePath = sourceBasePath.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars('/');
 
 			DirectoryTools.Delete(temporaryDirectoryPath);
 
@@ -505,26 +506,25 @@ namespace Extenity.DLLBuilder
 
 		private static void GenerateExportedFiles(string sourcePath, bool isEditor, ref List<string> exportedFiles, string[] excludedKeywords)
 		{
-			var paths = AssetDatabase.GetAllAssetPaths();
+			var paths = Directory.GetFiles(sourcePath, "*.cs", SearchOption.AllDirectories);
 
 			exportedFiles = new List<string>(1024);
 
 			for (int i = 0; i < paths.Length; i++)
 			{
-				if (DLLBuilderTools.IsAssetInPath(paths[i], sourcePath) &&
-					paths[i].Contains("/Editor/") == isEditor &&
-					paths[i].EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+				var path = paths[i].FixDirectorySeparatorChars('/');
+				if (path.Contains("/Editor/") == isEditor)
 				{
 					int j = 0;
 					for (; j < excludedKeywords.Length; j++)
 					{
-						if (paths[i].Contains(excludedKeywords[j]) == true)
+						if (path.Contains(excludedKeywords[j]))
 							break;
 					}
 					if (j < excludedKeywords.Length)
 						continue;
 
-					exportedFiles.Add(paths[i].FixDirectorySeparatorChars());
+					exportedFiles.Add(path);
 				}
 			}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
 using UnityEditor;
 using UnityEngine;
@@ -62,7 +63,7 @@ namespace Extenity.DLLBuilder
 		{
 			unityReferences = new List<string>();
 
-			var unityExeDirectoryPath = Path.GetDirectoryName(EditorApplication.applicationPath);
+			var unityExeDirectoryPath = EditorApplicationTools.UnityEditorExecutableDirectory;
 			var unityLibraryPath = Path.Combine(unityExeDirectoryPath, @"Data\Managed");
 			var files = Directory.GetFiles(unityLibraryPath, "*.dll");
 
@@ -71,27 +72,6 @@ namespace Extenity.DLLBuilder
 
 			if (unityReferences.Count == 0)
 				throw new Exception("Failed to find Unity DLLs in Unity installation path: " + unityLibraryPath);
-		}
-
-		public static bool IsAssetInPath(string assetPath, string sourcePath)
-		{
-			if (assetPath.Length <= sourcePath.Length)
-				return false;
-
-			int i = 0;
-			for (int j = 0; i < assetPath.Length && j < sourcePath.Length; i++, j++)
-			{
-				if (assetPath[i] == sourcePath[j])
-					continue;
-
-				if ((assetPath[i] != Path.DirectorySeparatorChar && assetPath[i] != Path.AltDirectorySeparatorChar) ||
-				    (sourcePath[j] != Path.DirectorySeparatorChar && sourcePath[j] != Path.AltDirectorySeparatorChar))
-				{
-					return false;
-				}
-			}
-
-			return assetPath[i] == Path.DirectorySeparatorChar || assetPath[i] == Path.AltDirectorySeparatorChar;
 		}
 
 		public static string GetUnityVersionDefines(string unityVersion)

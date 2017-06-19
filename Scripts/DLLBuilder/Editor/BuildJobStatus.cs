@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.ConsistencyToolbox;
+using Extenity.DataToolbox;
 using Newtonsoft.Json;
 
 namespace Extenity.DLLBuilder
@@ -26,26 +27,10 @@ namespace Extenity.DLLBuilder
 	{
 		#region Initialization
 
-		public BuildJobStatus(string projectPath, string[] remoteProjectPaths)
+		public BuildJobStatus(string projectPath)
 		{
 			ProjectPath = projectPath;
-			if (remoteProjectPaths != null)
-			{
-				Array.Resize(ref RemoteProjects, remoteProjectPaths.Length);
-				for (var i = 0; i < remoteProjectPaths.Length; i++)
-				{
-					var remoteProjectPath = remoteProjectPaths[i];
-					// As passing null, we are telling we don't know remote projects of the remote project.
-					// That information will be filled inside remote project and we will fetch the information
-					// via build results.
-					RemoteProjects[i] = new BuildJobStatus(remoteProjectPath, null);
-				}
-			}
-			else
-			{
-				//RemoteProjects = new BuildJobStatus[0]; Not that line! We want to keep it as unknown.
-				RemoteProjects = null;
-			}
+			RemoteProjects = null; // Null means we don't know remote projects yet. See IsRemoteProjectDataAvailable.
 		}
 
 		#endregion
@@ -85,11 +70,52 @@ namespace Extenity.DLLBuilder
 
 		#endregion
 
+		#region Data - Currently Processed Project
+
+		[JsonProperty]
+		public bool IsCurrentlyProcessedProject;
+
+		#endregion
+
 		#region Data - Remote Projects
 
 		[JsonProperty]
 		public BuildJobStatus[] RemoteProjects;
 		public bool IsRemoteProjectDataAvailable { get { return RemoteProjects != null; } }
+
+		public BuildJobStatus GetRemoteProject(string projectPath)
+		{
+			if (!IsRemoteProjectDataAvailable)
+				return null;
+			for (var i = 0; i < RemoteProjects.Length; i++)
+			{
+				var status = RemoteProjects[i];
+				if (status.ProjectPath.PathCompare(projectPath))
+					return status;
+			}
+			return null;
+		}
+
+		public void SetRemoteProjectStatusList(string[] remoteProjectPaths)
+		{
+			if (remoteProjectPaths != null)
+			{
+				Array.Resize(ref RemoteProjects, remoteProjectPaths.Length);
+				for (var i = 0; i < remoteProjectPaths.Length; i++)
+				{
+					var remoteProjectPath = remoteProjectPaths[i];
+					// We don't know remote projects of the remote project. That information 
+					// will be filled inside remote project and we will fetch the information
+					// via remote build results.
+					RemoteProjects[i] = new BuildJobStatus(remoteProjectPath);
+				}
+			}
+			else
+			{
+				//RemoteProjects = new BuildJobStatus[0]; Not that line! We want to keep it as unknown, which is stated with null value.
+				RemoteProjects = null;
+			}
+		}
 
 		#endregion
 
@@ -106,10 +132,10 @@ namespace Extenity.DLLBuilder
 				errors.Add(new ConsistencyError(this, string.Format("Project Path directory '{0}' does not exist.", ProjectPath)));
 			}
 
-			if (BuildTriggerSource == BuildTriggerSource.Unspecified)
-			{
-				errors.Add(new ConsistencyError(this, "Build Trigger Source must be specified."));
-			}
+			//if (BuildTriggerSource == BuildTriggerSource.Unspecified)
+			//{
+			//	errors.Add(new ConsistencyError(this, "Build Trigger Source must be specified."));
+			//}
 
 			if (IsRemoteProjectDataAvailable)
 			{

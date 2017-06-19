@@ -44,10 +44,26 @@ namespace Extenity.DLLBuilder
 				Debug.Log("## file content: " + content);
 
 				var job = JsonConvert.DeserializeObject<BuildJob>(content);
-				job.CheckConsistencyAndThrow();
+				//job.CheckConsistencyAndThrow(); This will be done in DLLBuilder.StartProcess. Otherwise we can't be able to produce response file.
 
 				Debug.Log("Remote DLL build request received. " + job);
 				DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
+
+				//// Continue in main thread
+				//ContinuationManager.Run(
+				//	() =>
+				//	{
+				//		try
+				//		{
+				//			Debug.Log("Remote DLL build request received. " + job);
+				//			DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
+				//		}
+				//		catch (Exception exception)
+				//		{
+				//			Debug.LogException(exception);
+				//		}
+				//	}
+				//);
 			}
 			catch (DirectoryNotFoundException)
 			{
@@ -96,7 +112,7 @@ namespace Extenity.DLLBuilder
 			var filePath = Path.Combine(targetProjectPath, Constants.RemoteBuilder.RequestFilePath);
 			DirectoryTools.CreateFromFilePath(filePath);
 
-			var json = JsonUtility.ToJson(job, true);
+			var json = JsonConvert.SerializeObject(job, Formatting.Indented);
 			File.WriteAllText(filePath, json);
 		}
 
@@ -104,10 +120,29 @@ namespace Extenity.DLLBuilder
 
 		#region Create Build Requests Of Remote Projects
 
-		public static void CreateBuildRequestsOfRemoteProjects(BuildJob job, Action onSucceeded, Action<string> onFailed)
+		private static float LastResponseCheckTime;
+		private static readonly float ResponseCheckInterval = 1f;
+
+		public static void CreateBuildRequestsOfRemoteProjects(DLLBuilderConfiguration builderConfiguration, BuildJob job, BuildJobStatus thisProjectStatus, Action onSucceeded, Action<string> onFailed)
 		{
-			if (job.CurrentProjectStatus.IsRemoteBuildsCompleted)
+			if (!thisProjectStatus.IsCurrentlyProcessedProject)
 			{
+				Debug.LogError("Internal error! Trying to build remote projects for a project that was not set as current.");
+				if (onFailed != null)
+					onFailed("Internal error! Trying to build remote projects for a project that was not set as current.");
+			}
+
+			if (thisProjectStatus.IsRemoteBuildsCompleted)
+			{
+				if (onSucceeded != null)
+					onSucceeded();
+				return;
+			}
+
+			var configurations = builderConfiguration.EnabledRemoteBuilderConfigurations;
+			if (configurations.IsNullOrEmpty())
+			{
+				Debug.Log("Skipping remote builder. Nothing to pack.");
 				if (onSucceeded != null)
 					onSucceeded();
 				return;
@@ -115,20 +150,11 @@ namespace Extenity.DLLBuilder
 
 			Debug.Log("--------- Building all remote projects");
 
-			InternalCreateBuildRequestsOfRemoteProjects(job, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
+			InternalCreateBuildRequestsOfRemoteProjects(configurations, job, thisProjectStatus, onSucceeded, onFailed).StartCoroutineInTimer();
 		}
 
-		private static IEnumerator InternalCreateBuildRequestsOfRemoteProjects(BuildJob job, Action onSucceeded, Action<string> onFailed)
+		private static IEnumerator InternalCreateBuildRequestsOfRemoteProjects(List<RemoteBuilderConfiguration> configurations, BuildJob job, BuildJobStatus thisProjectStatus, Action onSucceeded, Action<string> onFailed)
 		{
-			var configurations = DLLBuilderConfiguration.Instance.EnabledRemoteBuilderConfigurations;
-			if (configurations.IsNullOrEmpty())
-			{
-				Debug.Log("Skipping remote builder. Nothing to pack.");
-				if (onSucceeded != null)
-					onSucceeded();
-				yield break;
-			}
-
 			for (var i = 0; i < configurations.Count; i++)
 			{
 				var configuration = configurations[i];
@@ -148,10 +174,40 @@ namespace Extenity.DLLBuilder
 				}
 
 				// Trigger a compilation on remote project and wait for it to finish
-				Debug.LogError("NOT IMPLEMENTED YET!");
+				job.SetCurrentlyProcessedProject(thisProjectStatus.GetRemoteProject(configuration.ProjectPath));
+				CreateBuildRequestFileForProject(job, configuration.ProjectPath);
+
+				var remoteProjectResponseFilePath = Path.Combine(configuration.ProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
+				while (true)
+				{
+					if (LastResponseCheckTime + ResponseCheckInterval > Time.realtimeSinceStartup)
+					{
+						yield return null;
+						continue;
+					}
+					LastResponseCheckTime = Time.realtimeSinceStartup;
+
+					Debug.Log("### checking remote project: " + remoteProjectResponseFilePath);
+					var responseJob = CheckRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
+					if (responseJob != null)
+					{
+						var result = job.UpdateCurrentlyProcessedProjectStatus(responseJob.CurrentlyProcessedProjectStatus);
+						if (!result)
+						{
+							Debug.LogError("Internal error! Currently processed remote project status could not be updated.");
+							if (onFailed != null)
+								onFailed("Internal error! Currently processed remote project status could not be updated.");
+							yield break;
+						}
+						job.UnsetCurrentlyProcessedProject();
+						break;
+					}
+					yield return null;
+				}
 			}
 
-			job.CurrentProjectStatus.IsRemoteBuildsCompleted = true;
+			job.SetCurrentlyProcessedProject(thisProjectStatus);
+			thisProjectStatus.IsRemoteBuildsCompleted = true;
 
 			// Recompile this project. Because we probably got new DLLs coming out of remote builds.
 			{
@@ -162,6 +218,32 @@ namespace Extenity.DLLBuilder
 				if (onSucceeded != null)
 					onSucceeded();
 			}
+		}
+
+		#endregion
+
+		#region Check Remote Project Build Response
+
+		public static BuildJob CheckRemoteProjectBuildResponseFile(string remoteProjectResponseFilePath)
+		{
+			try
+			{
+				var json = File.ReadAllText(remoteProjectResponseFilePath);
+				return JsonConvert.DeserializeObject<BuildJob>(json);
+			}
+			catch (FileNotFoundException)
+			{
+				// ignore
+			}
+			catch (DirectoryNotFoundException)
+			{
+				// ignore
+			}
+			catch
+			{
+				throw;
+			}
+			return null;
 		}
 
 		#endregion

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System.Linq;
 using Extenity.ApplicationToolbox.Editor;
@@ -48,36 +47,119 @@ namespace Extenity.DLLBuilder
 		[JsonProperty]
 		public BuildJobStatus[] ProjectChain;
 
-		public void AddCurrentProjectToChain(string[] remoteProjectPaths)
+		public BuildJobStatus AddCurrentProjectToChain()
 		{
-			ProjectChain = ProjectChain.Add(new BuildJobStatus(EditorApplicationTools.UnityProjectPath, remoteProjectPaths));
+			var jobStatus = new BuildJobStatus(EditorApplicationTools.UnityProjectPath);
+			ProjectChain = ProjectChain.Add(jobStatus);
+			return jobStatus;
 		}
 
 		#endregion
 
-		#region Current Project Status in Project Chain
+		#region Currently Processed Project
 
-		private BuildJobStatus _CurrentProjectStatus;
-		public BuildJobStatus CurrentProjectStatus
+		[NonSerialized]
+		private BuildJobStatus _CurrentlyProcessedProjectStatus;
+		public BuildJobStatus CurrentlyProcessedProjectStatus
 		{
 			get
 			{
-				if (_CurrentProjectStatus == null)
+				if (_CurrentlyProcessedProjectStatus == null || _CurrentlyProcessedProjectStatus.IsCurrentlyProcessedProject == false)
 				{
-					var currentProjectPath = EditorApplicationTools.UnityProjectPath;
-					foreach (var jobStatus in ProjectChain)
-					{
-						if (jobStatus.ProjectPath.PathCompare(currentProjectPath))
-						{
-							_CurrentProjectStatus = jobStatus;
-							break;
-						}
-					}
-					if (_CurrentProjectStatus == null)
-						throw new Exception("Internal error! Current project status does not exist in project chain.");
+					_CurrentlyProcessedProjectStatus = InternalFindCurrentlyProcessedProjectStatusRecursively();
 				}
-				return _CurrentProjectStatus;
+				return _CurrentlyProcessedProjectStatus;
 			}
+		}
+
+		private BuildJobStatus InternalFindCurrentlyProcessedProjectStatusRecursively()
+		{
+			for (var i = 0; i < ProjectChain.Length; i++)
+			{
+				var found = InternalFindCurrentlyProcessedProjectStatusRecursively(ProjectChain[i]);
+				if (found != null)
+					return found;
+			}
+			return null;
+		}
+
+		private BuildJobStatus InternalFindCurrentlyProcessedProjectStatusRecursively(BuildJobStatus status)
+		{
+			if (status == null)
+				return null;
+			if (status.IsCurrentlyProcessedProject)
+				return status;
+			if (status.IsRemoteProjectDataAvailable)
+			{
+				for (var i = 0; i < status.RemoteProjects.Length; i++)
+				{
+					var found = InternalFindCurrentlyProcessedProjectStatusRecursively(status.RemoteProjects[i]);
+					if (found != null)
+						return found;
+				}
+			}
+			return null;
+		}
+
+		public void SetCurrentlyProcessedProject(BuildJobStatus remoteProjectStatus)
+		{
+			UnsetCurrentlyProcessedProject();
+
+			remoteProjectStatus.IsCurrentlyProcessedProject = true;
+		}
+
+		public void UnsetCurrentlyProcessedProject()
+		{
+			foreach (var status in ProjectChain)
+			{
+				UnsetCurrentlyProcessedProject(status);
+			}
+		}
+
+		private void UnsetCurrentlyProcessedProject(BuildJobStatus status)
+		{
+			status.IsCurrentlyProcessedProject = false;
+			if (status.IsRemoteProjectDataAvailable)
+			{
+				foreach (var remoteProject in status.RemoteProjects)
+					UnsetCurrentlyProcessedProject(remoteProject);
+			}
+		}
+
+		public bool UpdateCurrentlyProcessedProjectStatus(BuildJobStatus newStatus)
+		{
+			var oldStatus = CurrentlyProcessedProjectStatus;
+			_CurrentlyProcessedProjectStatus = null; // Because we will change this object with newStatus. So we must get rid of this cached reference.
+
+			for (int i = 0; i < ProjectChain.Length; i++)
+			{
+				if (ProjectChain[i] == oldStatus)
+				{
+					ProjectChain[i] = newStatus;
+					return true;
+				}
+				var result = InternalChangeCurrentlyProcessedProjectStatusReference(ProjectChain[i], oldStatus, newStatus);
+				if (result)
+					return true;
+			}
+			return false;
+		}
+
+		private bool InternalChangeCurrentlyProcessedProjectStatusReference(BuildJobStatus iteratedStatus, BuildJobStatus oldStatus, BuildJobStatus newStatus)
+		{
+			if (iteratedStatus.IsRemoteProjectDataAvailable)
+			{
+				for (int i = 0; i < iteratedStatus.RemoteProjects.Length; i++)
+				{
+					if (iteratedStatus.RemoteProjects[i] == oldStatus)
+					{
+						iteratedStatus.RemoteProjects[i] = newStatus;
+						return true;
+					}
+					InternalChangeCurrentlyProcessedProjectStatusReference(iteratedStatus.RemoteProjects[i], oldStatus, newStatus);
+				}
+			}
+			return false;
 		}
 
 		#endregion
@@ -107,11 +189,24 @@ namespace Extenity.DLLBuilder
 					return null;
 
 				var json = File.ReadAllText(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
+				DeleteAssemblyReloadSurvivalFile();
 				return JsonConvert.DeserializeObject<BuildJob>(json);
 			}
 			catch (Exception exception)
 			{
 				throw new Exception("Failed to load " + Constants.DLLBuilderName + " current job information to continue after recompilation.", exception);
+			}
+		}
+
+		public static void DeleteAssemblyReloadSurvivalFile()
+		{
+			try
+			{
+				File.Delete(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
+			}
+			catch
+			{
+				// ignored
 			}
 		}
 

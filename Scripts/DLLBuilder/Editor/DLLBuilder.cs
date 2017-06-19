@@ -37,7 +37,8 @@ namespace Extenity.DLLBuilder
 			{
 				JobID = Guid.NewGuid()
 			};
-			newJob.AddCurrentProjectToChain(DLLBuilderConfiguration.Instance.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray());
+			var newJobStatus = newJob.AddCurrentProjectToChain();
+			newJobStatus.IsCurrentlyProcessedProject = true;
 			StartProcess(newJob, triggerSource);
 		}
 
@@ -47,88 +48,107 @@ namespace Extenity.DLLBuilder
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
 
+			var jobStatus = job.CurrentlyProcessedProjectStatus;
+			if (jobStatus == null)
+				throw new Exception("Internal error! Currently processed project status is not set.");
+
 			try
 			{
-				if (!job.CurrentProjectStatus.IsStarted)
+				if (!jobStatus.IsStarted)
 				{
 					Debug.Log(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.JobID);
-					job.CurrentProjectStatus.IsStarted = true;
+					jobStatus.IsStarted = true;
 
-					if (job.CurrentProjectStatus.BuildTriggerSource != BuildTriggerSource.Unspecified)
-						throw new Exception(string.Format("Build trigger source was already specified as '{0}' where it was going to be set as '{1}'.", job.CurrentProjectStatus.BuildTriggerSource, triggerSource));
-					job.CurrentProjectStatus.BuildTriggerSource = triggerSource;
+					if (jobStatus.BuildTriggerSource != BuildTriggerSource.Unspecified)
+						throw new Exception(string.Format("Build trigger source was already specified as '{0}' where it was going to be set as '{1}'.", jobStatus.BuildTriggerSource, triggerSource));
+					jobStatus.BuildTriggerSource = triggerSource;
 				}
 				else
 				{
 					// Means we are in the middle of build process. That is we are continuing after a recompilation.
 					Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.JobID);
 				}
+
+				var remoteProjectPaths = DLLBuilderConfiguration.Instance.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray();
+				jobStatus.SetRemoteProjectStatusList(remoteProjectPaths);
 			}
 			catch (Exception exception)
 			{
 				Debug.LogException(exception);
-				InternalFinishProcess(job, false);
+				InternalFinishProcess(job, jobStatus, false);
 				return;
 			}
 
 			if (job.CheckConsistencyAndLog().Count > 0)
 			{
-				InternalFinishProcess(job, false);
+				InternalFinishProcess(job, jobStatus, false);
 				return;
 			}
 
 			Repaint();
 
-			Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
+			RemoteBuilder.CreateBuildRequestsOfRemoteProjects(DLLBuilderConfiguration.Instance, job, jobStatus,
 				() =>
 				{
-					Repaint();
-
-					Compiler.CompileAllDLLs(
+					Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
 						() =>
 						{
-							var succeeded = false;
-							try
-							{
-								Repaint();
-								Packer.PackAll();
-								Repaint();
-								Distributer.DistributeToAll();
+							Repaint();
 
-								Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
-								succeeded = true;
-							}
-							catch (Exception exception)
-							{
-								Debug.LogException(exception);
-							}
-							InternalFinishProcess(job, succeeded);
+							Compiler.CompileAllDLLs(DLLBuilderConfiguration.Instance,
+								() =>
+								{
+									var succeeded = false;
+									try
+									{
+										Repaint();
+										Packer.PackAll();
+										Repaint();
+										Distributer.DistributeToAll(DLLBuilderConfiguration.Instance);
+
+										Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
+										succeeded = true;
+									}
+									catch (Exception exception)
+									{
+										Debug.LogException(exception);
+									}
+									InternalFinishProcess(job, jobStatus, succeeded);
+								},
+								error =>
+								{
+									Debug.LogError(error);
+									InternalFinishProcess(job, jobStatus, false);
+								}
+							);
 						},
-						error =>
+						exception =>
 						{
-							Debug.LogError(error);
-							InternalFinishProcess(job, false);
+							Debug.LogException(exception);
+							InternalFinishProcess(job, jobStatus, false);
 						}
 					);
 				},
-				exception =>
+				error =>
 				{
-					Debug.LogException(exception);
-					InternalFinishProcess(job, false);
+					Debug.LogError(error);
+					InternalFinishProcess(job, jobStatus, false);
 				}
 			);
 		}
 
-		private static void InternalFinishProcess(BuildJob job, bool succeeded)
+		private static void InternalFinishProcess(BuildJob job, BuildJobStatus jobStatus, bool succeeded)
 		{
 			try
 			{
 				IsProcessing = false;
 
+				BuildJob.DeleteAssemblyReloadSurvivalFile();
+
 				if (succeeded)
-					job.CurrentProjectStatus.IsSucceeded = true;
+					jobStatus.IsSucceeded = true;
 				else
-					job.CurrentProjectStatus.IsFailed = true;
+					jobStatus.IsFailed = true;
 
 				RemoteBuilder.SaveBuildResponseFile(job);
 			}
@@ -137,8 +157,8 @@ namespace Extenity.DLLBuilder
 				Debug.LogException(exception);
 
 				// Well, it won't count as succeeded if we can't finalize the process.
-				job.CurrentProjectStatus.IsSucceeded = false;
-				job.CurrentProjectStatus.IsFailed = true;
+				jobStatus.IsSucceeded = false;
+				jobStatus.IsFailed = true;
 			}
 
 			Repaint();

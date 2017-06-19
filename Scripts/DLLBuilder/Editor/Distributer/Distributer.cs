@@ -11,11 +11,11 @@ namespace Extenity.DLLBuilder
 	public static class Distributer
 	{
 
-		public static bool DistributeToAll()
+		public static bool DistributeToAll(DLLBuilderConfiguration builderConfiguration)
 		{
 			Debug.Log("--------- Distributing to all targets");
 
-			var configurations = DLLBuilderConfiguration.Instance.EnabledDistributerConfigurations;
+			var configurations = builderConfiguration.EnabledDistributerConfigurations;
 			if (configurations.IsNullOrEmpty())
 			{
 				Debug.Log("Skipping distributer. Nothing to distribute.");
