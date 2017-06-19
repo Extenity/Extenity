@@ -42,13 +42,13 @@ namespace Extenity.ConsistencyToolbox
 			return errors;
 		}
 
-		public static void CheckConsistencyAndLog(this IConsistencyChecker me)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me)
 		{
 			var meObject = me as UnityEngine.Object;
 			var titleMessage = meObject != null
 				? "'" + meObject.name + "' has some inconsistencies."
 				: null;
-			CheckConsistencyAndLog(me, titleMessage);
+			return CheckConsistencyAndLog(me, titleMessage);
 		}
 
 		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
