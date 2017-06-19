@@ -299,6 +299,7 @@ namespace Extenity.ParallelToolbox
 			{
 				var go = new GameObject("_CoroutineTaskManager");
 				go.hideFlags = HideFlags.HideAndDontSave;
+				DontDestroyOnLoad(go);
 				Instance = go.AddComponent<CoroutineTaskManager>();
 			}
 		}

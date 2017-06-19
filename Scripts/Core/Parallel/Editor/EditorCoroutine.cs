@@ -9,6 +9,10 @@ namespace Extenity.ParallelToolbox.Editor
 
 	public static class EditorCoroutine
 	{
+		/// <summary>
+		/// Runs coroutine inside EditorApplication.update calls. This sometimes would hang in the middle of the operation because
+		/// Unity may decide not to call updates.
+		/// </summary>
 		public static void StartCoroutineInEditorUpdate(this IEnumerator update, Action onFinished = null)
 		{
 			EditorApplication.CallbackFunction onUpdate = null;
@@ -17,6 +21,7 @@ namespace Extenity.ParallelToolbox.Editor
 			{
 				try
 				{
+					EditorApplication.delayCall += () => { }; // A little trick to keep EditorApplication.update calls coming.
 					if (update.MoveNext() == false)
 					{
 						if (onFinished != null)
@@ -35,16 +40,23 @@ namespace Extenity.ParallelToolbox.Editor
 
 			EditorApplication.update += onUpdate;
 		}
-
-		public static void StartCoroutineInTimer(this IEnumerator update, float interval = 0.05f, Action onFinished = null)
+		
+		public static void StartCoroutineInDelayCalls(this IEnumerator update, Action onFinished = null)
 		{
-			var timer = new Timer(interval);
+			//EditorApplication.delayCall
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Runs coroutines inside System.Timers.Timer. Runs really fast when given small intervals. Runs in the thread.
+		/// </summary>
+		public static void StartCoroutineInTimer(this IEnumerator update, float interval = 0.001f, Action onFinished = null)
+		{
+			var timer = new Timer(1000f * interval);
 			timer.AutoReset = false;
 
 			timer.Elapsed += (sender, args) =>
 			{
-				throw new NotImplementedException();
-				Debug.Log("## timer");
 				try
 				{
 					if (update.MoveNext() == false)
