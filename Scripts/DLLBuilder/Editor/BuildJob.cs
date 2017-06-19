@@ -6,6 +6,7 @@ using System.Linq;
 using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 using UnityEditor;
 using Guid = System.Guid;
 
@@ -23,7 +24,7 @@ namespace Extenity.DLLBuilder
 	/// Another area we use BuildJob is informing remote projects about 
 	/// the whole build process. 
 	/// </summary>
-	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	public class BuildJob : IConsistencyChecker
 	{
 		#region Initialization
@@ -37,12 +38,14 @@ namespace Extenity.DLLBuilder
 
 		#region Data - Metadata
 
+		[JsonProperty]
 		public Guid JobID;
 
 		#endregion
 
 		#region Data - Project Chain
 
+		[JsonProperty]
 		public BuildJobStatus[] ProjectChain;
 
 		public void AddCurrentProjectToChain(string[] remoteProjectPaths)
@@ -85,8 +88,10 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
-				var json = JsonUtility.ToJson(this, true);
-				File.WriteAllText(Constants.BuildJob.AssemblyReloadSurvivalFilePath, json);
+				var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+				var filePath = Constants.BuildJob.AssemblyReloadSurvivalFilePath;
+				DirectoryTools.CreateFromFilePath(filePath);
+				File.WriteAllText(filePath, json);
 			}
 			catch (Exception exception)
 			{
@@ -102,7 +107,7 @@ namespace Extenity.DLLBuilder
 					return null;
 
 				var json = File.ReadAllText(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
-				return JsonUtility.FromJson<BuildJob>(json);
+				return JsonConvert.DeserializeObject<BuildJob>(json);
 			}
 			catch (Exception exception)
 			{

@@ -8,6 +8,7 @@ using System.IO;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.ParallelToolbox.Editor;
+using Newtonsoft.Json;
 
 namespace Extenity.DLLBuilder
 {
@@ -42,7 +43,7 @@ namespace Extenity.DLLBuilder
 				DeleteBuildRequestFile();
 				Debug.Log("## file content: " + content);
 
-				var job = JsonUtility.FromJson<BuildJob>(content);
+				var job = JsonConvert.DeserializeObject<BuildJob>(content);
 				job.CheckConsistencyAndThrow();
 
 				Debug.Log("Remote DLL build request received. " + job);
@@ -171,7 +172,7 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
-				var json = JsonUtility.ToJson(job, true);
+				var json = JsonConvert.SerializeObject(job, Formatting.Indented);
 				var filePath = string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID.ToString());
 				DirectoryTools.CreateFromFilePath(filePath);
 				File.WriteAllText(filePath, json);

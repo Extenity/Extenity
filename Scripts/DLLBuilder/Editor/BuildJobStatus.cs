@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.ConsistencyToolbox;
+using Newtonsoft.Json;
 
 namespace Extenity.DLLBuilder
 {
@@ -20,7 +21,7 @@ namespace Extenity.DLLBuilder
 	/// Represents the build status of one project. Also keeps links 
 	/// to the project's remote projects, like a tree structure.
 	/// </summary>
-	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	public class BuildJobStatus : IConsistencyChecker
 	{
 		#region Initialization
@@ -54,22 +55,28 @@ namespace Extenity.DLLBuilder
 		/// <summary>
 		/// Unity project path.
 		/// </summary>
+		[JsonProperty]
 		public string ProjectPath;
 
 		/// <summary>
 		/// Tells about why this build process started.
 		/// </summary>
+		[JsonProperty]
 		public BuildTriggerSource BuildTriggerSource;
 
 		#endregion
 
 		#region Data - Build Status
 
+		[JsonProperty]
 		public bool IsStarted;
+		[JsonProperty]
 		public bool IsSucceeded;
+		[JsonProperty]
 		public bool IsFailed;
 		public bool IsFinished { get { return IsSucceeded || IsFailed; } }
 
+		[JsonProperty]
 		public bool IsRemoteBuildsCompleted;
 
 		// We won't be needing these. We only need to keep track of what has happened between recompilations and recompilation only happens after remote compilations, which will likely update some DLLs in this project.
@@ -80,6 +87,7 @@ namespace Extenity.DLLBuilder
 
 		#region Data - Remote Projects
 
+		[JsonProperty]
 		public BuildJobStatus[] RemoteProjects;
 		public bool IsRemoteProjectDataAvailable { get { return RemoteProjects != null; } }
 
