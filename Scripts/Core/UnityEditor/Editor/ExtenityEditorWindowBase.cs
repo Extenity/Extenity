@@ -76,6 +76,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 		//}
 
 		#endregion
+
+		#region Thread Safe Repaint
+
+		public void ThreadSafeRepaint()
+		{
+			EditorApplication.delayCall += Repaint;
+		}
+
+		#endregion
 	}
 
 }
