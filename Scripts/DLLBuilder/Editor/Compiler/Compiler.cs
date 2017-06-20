@@ -24,7 +24,7 @@ namespace Extenity.DLLBuilder
 		{
 			Debug.Log("--------- Compiling all DLLs");
 
-			InternalCompileDLLs(builderConfiguration, onSucceeded, onFailed).StartCoroutineInTimer();
+			InternalCompileDLLs(builderConfiguration, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
 
 		private static IEnumerator InternalCompileDLLs(DLLBuilderConfiguration builderConfiguration, Action onSucceeded, Action<string> onFailed)
@@ -156,7 +156,8 @@ namespace Extenity.DLLBuilder
 				Debug.LogException(exception);
 			}
 
-			EditorApplication.delayCall += () => { InternalOnFinished(job); };
+			InternalOnFinished(job);
+			//EditorApplication.delayCall += () => { InternalOnFinished(job); };
 		}
 
 		private static void CopySourcesToTemporaryDirectory(List<string> sourceFilePaths, string sourceBasePath, string temporaryDirectoryPath)

@@ -150,7 +150,7 @@ namespace Extenity.DLLBuilder
 
 			Debug.Log("--------- Building all remote projects");
 
-			InternalCreateBuildRequestsOfRemoteProjects(configurations, job, thisProjectStatus, onSucceeded, onFailed).StartCoroutineInTimer();
+			InternalCreateBuildRequestsOfRemoteProjects(configurations, job, thisProjectStatus, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
 
 		private static IEnumerator InternalCreateBuildRequestsOfRemoteProjects(List<RemoteBuilderConfiguration> configurations, BuildJob job, BuildJobStatus thisProjectStatus, Action onSucceeded, Action<string> onFailed)
@@ -221,7 +221,10 @@ namespace Extenity.DLLBuilder
 			// Recompile this project. Because we probably got new DLLs coming out of remote builds.
 			{
 				job.SaveBeforeAssemblyReload();
-				AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+				while (EditorApplication.isUpdating || EditorApplication.isCompiling)
+					yield return null;
 
 				// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
 				if (onSucceeded != null)

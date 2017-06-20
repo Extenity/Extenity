@@ -27,7 +27,7 @@ namespace Extenity.DLLBuilder
 			get
 			{
 				if (RemoteBuilderConfigurations == null)
-					return new List<RemoteBuilderConfiguration>();
+					throw new NullReferenceException("RemoteBuilderConfigurations list is null");
 				return (from configuration in RemoteBuilderConfigurations
 						where configuration != null && configuration.Enabled
 						select configuration).ToList();
@@ -46,7 +46,7 @@ namespace Extenity.DLLBuilder
 			get
 			{
 				if (RemoteBuilderConfigurations == null)
-					return new List<RemoteBuilderConfiguration>();
+					throw new NullReferenceException("RemoteBuilderConfigurations list is null");
 				return (from configuration in RemoteBuilderConfigurations
 						where configuration != null && configuration.Enabled && (Directory.Exists(configuration.ProjectPath) || !configuration.IgnoreIfNotFound)
 						select configuration).ToList();
@@ -58,7 +58,7 @@ namespace Extenity.DLLBuilder
 			get
 			{
 				if (CompilerConfigurations == null)
-					return new List<CompilerConfiguration>();
+					throw new NullReferenceException("CompilerConfigurations list is null");
 				return (from configuration in CompilerConfigurations
 						where configuration != null && configuration.Enabled
 						select configuration).ToList();
@@ -70,7 +70,7 @@ namespace Extenity.DLLBuilder
 			get
 			{
 				if (PackerConfigurations == null)
-					return new List<PackerConfiguration>();
+					throw new NullReferenceException("PackerConfigurations list is null");
 				return (from configuration in PackerConfigurations
 						where configuration != null && configuration.Enabled
 						select configuration).ToList();
@@ -82,7 +82,7 @@ namespace Extenity.DLLBuilder
 			get
 			{
 				if (DistributerConfigurations == null)
-					return new List<DistributerConfiguration>();
+					throw new NullReferenceException("DistributerConfigurations list is null");
 				return (from configuration in DistributerConfigurations
 						where configuration != null && configuration.Enabled
 						select configuration).ToList();
