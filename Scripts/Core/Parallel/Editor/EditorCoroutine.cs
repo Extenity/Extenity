@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Timers;
+using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
@@ -50,7 +51,7 @@ namespace Extenity.ParallelToolbox.Editor
 		/// <summary>
 		/// Runs coroutines inside System.Timers.Timer. Runs really fast when given small intervals. Runs in the thread.
 		/// </summary>
-		public static void StartCoroutineInTimer(this IEnumerator update, float interval = 0.001f, Action onFinished = null)
+		public static void StartCoroutineInTimer(this IEnumerator update, bool autoRefreshUI = true, float interval = 0.001f, Action onFinished = null)
 		{
 			var timer = new Timer(1000f * interval);
 			timer.AutoReset = false;
@@ -69,10 +70,14 @@ namespace Extenity.ParallelToolbox.Editor
 						}
 						if (onFinished != null)
 							onFinished();
+						if (autoRefreshUI)
+							EditorGUITools.SafeRepaintAllViews();
 					}
 					else
 					{
 						timer.Enabled = true;
+						if (autoRefreshUI)
+							EditorGUITools.SafeRepaintAllViews();
 					}
 				}
 				catch (Exception ex)
@@ -86,6 +91,8 @@ namespace Extenity.ParallelToolbox.Editor
 					if (onFinished != null)
 						onFinished();
 					Debug.LogException(ex);
+					if (autoRefreshUI)
+						EditorGUITools.SafeRepaintAllViews();
 				}
 			};
 

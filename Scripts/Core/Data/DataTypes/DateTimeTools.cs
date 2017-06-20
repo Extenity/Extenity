@@ -125,6 +125,15 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Milliseconds
+
+		public static double TotalMilliseconds(this DateTime dateTime)
+		{
+			return (dateTime - DateTime.MinValue).TotalMilliseconds;
+		}
+
+		#endregion
+
 		#region Formatted String
 
 		public static string ToFullDateTimeForFilename(this DateTime datetime)
