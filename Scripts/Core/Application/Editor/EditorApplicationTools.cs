@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.IO;
 using Extenity.DataToolbox;
+using UnityEditor;
 
 namespace Extenity.ApplicationToolbox.Editor
 {
@@ -46,6 +47,38 @@ namespace Extenity.ApplicationToolbox.Editor
 				}
 				return _UnityEditorExecutableDirectory;
 			}
+		}
+
+		#endregion
+
+		#region Update Continuum
+
+		/// <summary>
+		/// Creates and destroys gameobjects to keep EditorApplication.update calls coming.
+		/// That's the worst ever idea but it's the only way I could find.
+		/// 
+		/// Note that this is costly so try to use it only when needed.
+		/// </summary>
+		public static void GuaranteeNextUpdateCall()
+		{
+			var go = new GameObject("_EditorApplicationUpdateHelper");
+			GameObject.DestroyImmediate(go);
+		}
+
+		/// <summary>
+		/// A little trick to hopefully keep EditorApplication.update calls coming. It uses
+		/// EditorApplication.delayCall to trigger a call to EditorApplication.update.
+		/// This won't help if Editor window does not have focus.
+		/// 
+		/// Note that it may greatly increase calls to EditorApplication.update beyond needs.
+		/// Scripts that does costly operations in their updates would slow down the editor.
+		/// </summary>
+		public static void IncreaseChancesOfNextUpdateCall()
+		{
+			EditorApplication.delayCall += () =>
+			{
+				EditorApplication.update.Invoke();
+			};
 		}
 
 		#endregion
