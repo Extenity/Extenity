@@ -120,8 +120,8 @@ namespace Extenity.DLLBuilder
 
 		#region Create Build Requests Of Remote Projects
 
-		private static float LastResponseCheckTime;
-		private static readonly float ResponseCheckInterval = 1f;
+		private static double LastResponseCheckTime;
+		private static readonly double ResponseCheckInterval = 1000;
 
 		public static void CreateBuildRequestsOfRemoteProjects(DLLBuilderConfiguration builderConfiguration, BuildJob job, BuildJobStatus thisProjectStatus, Action onSucceeded, Action<string> onFailed)
 		{
@@ -180,18 +180,20 @@ namespace Extenity.DLLBuilder
 				var remoteProjectResponseFilePath = Path.Combine(configuration.ProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
 				while (true)
 				{
-					if (LastResponseCheckTime + ResponseCheckInterval > Time.realtimeSinceStartup)
+					var now = DateTime.UtcNow.TotalMilliseconds();
+					if (LastResponseCheckTime + ResponseCheckInterval > now)
 					{
 						yield return null;
 						continue;
 					}
-					LastResponseCheckTime = Time.realtimeSinceStartup;
+					LastResponseCheckTime = now;
 
 					Debug.Log("### checking remote project: " + remoteProjectResponseFilePath);
 					var responseJob = CheckRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
 					if (responseJob != null)
 					{
-						var result = job.UpdateCurrentlyProcessedProjectStatus(responseJob.CurrentlyProcessedProjectStatus);
+						var responseStatus = responseJob.CurrentlyProcessedProjectStatus;
+						var result = job.UpdateCurrentlyProcessedProjectStatus(responseStatus);
 						if (!result)
 						{
 							Debug.LogError("Internal error! Currently processed remote project status could not be updated.");
@@ -200,6 +202,13 @@ namespace Extenity.DLLBuilder
 							yield break;
 						}
 						job.UnsetCurrentlyProcessedProject();
+						if (responseStatus.IsFailed)
+						{
+							Debug.LogError("Remote project build failed. Check console logs for more information.");
+							if (onFailed != null)
+								onFailed("Remote project build failed. Check console logs for more information.");
+							yield break;
+						}
 						break;
 					}
 					yield return null;
