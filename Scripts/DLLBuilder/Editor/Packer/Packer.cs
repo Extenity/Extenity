@@ -13,27 +13,26 @@ namespace Extenity.DLLBuilder
 
 		public static bool PackAll()
 		{
-			Debug.Log("--------- Packing all configurations");
+			DLLBuilder.LogAndUpdateStatus("Packing all configurations");
 
 			var configurations = DLLBuilderConfiguration.Instance.EnabledPackerConfigurations;
 			if (configurations.IsNullOrEmpty())
 			{
-				Debug.Log("Skipping packer. Nothing to pack.");
+				DLLBuilder.LogAndUpdateStatus("Skipping packer. Nothing to pack.");
 				return true;
 			}
 
 			for (var i = 0; i < configurations.Count; i++)
 			{
-				if (!Pack(configurations[i]))
-					return false;
+				Pack(configurations[i]);
 			}
 
 			return true;
 		}
 
-		public static bool Pack(PackerConfiguration configuration)
+		public static void Pack(PackerConfiguration configuration)
 		{
-			Debug.LogFormat("Packing configuration '{0}'", configuration.ConfigurationName);
+			DLLBuilder.LogAndUpdateStatus("Packing configuration '{0}'", configuration.ConfigurationName);
 
 			if (!configuration.Enabled)
 				throw new Exception(string.Format("Internal error. Tried to pack using a disabled configuration '{0}'.", configuration.ConfigurationName));
@@ -44,8 +43,7 @@ namespace Extenity.DLLBuilder
 				configuration.CheckConsistency(ref errors);
 				if (errors.Count > 0)
 				{
-					Debug.LogError("Failed to pack because of consistency errors:\n" + errors.Serialize('\n'));
-					return false;
+					throw new Exception("Failed to pack because of consistency errors:\n" + errors.Serialize('\n'));
 				}
 			}
 
@@ -75,8 +73,6 @@ namespace Extenity.DLLBuilder
 				DirectoryTools.Delete(targetDirectoryPath);
 				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
 			}
-
-			return true;
 		}
 
 	}

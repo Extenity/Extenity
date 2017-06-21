@@ -12,6 +12,16 @@ namespace Extenity.DLLBuilder
 		private void OnEnable()
 		{
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
+			InitializeStatusMessage();
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		private void OnDisable()
+		{
+			DeinitializeStatusMessage();
 		}
 
 		#endregion
@@ -50,6 +60,10 @@ namespace Extenity.DLLBuilder
 			}
 
 			GUILayout.Space(40f);
+
+			DrawStatusMessage();
+
+			GUILayout.Space(40f);
 			GUILayout.Label("Cleanup");
 
 			if (GUILayout.Button("Clear All Output DLLs", ThinButtonOptions))
@@ -77,6 +91,68 @@ namespace Extenity.DLLBuilder
 			//{
 			//	Distributer.DistributeToAll();
 			//}
+		}
+
+		#endregion
+
+		#region GUI - Status Message
+
+		private GUIStyle[] StatusMessageStyles;
+		private static readonly int DisplayedStatusMessageCount = 3;
+		private DLLBuilder.StatusMessage[] LastStatusMessages;
+		private int LastStatusMessageIndex;
+		private int TotalStatusMessageCount;
+
+		private void InitializeStatusMessage()
+		{
+			// Clear the list
+			LastStatusMessages = new DLLBuilder.StatusMessage[DisplayedStatusMessageCount];
+			LastStatusMessageIndex = -1;
+			TotalStatusMessageCount = 0;
+			DLLBuilder.OnStatusChanged.AddListener(OnStatusMessageReceived);
+		}
+
+		private void DeinitializeStatusMessage()
+		{
+			DLLBuilder.OnStatusChanged.RemoveListener(OnStatusMessageReceived);
+		}
+
+		private void OnStatusMessageReceived()
+		{
+			TotalStatusMessageCount++;
+			LastStatusMessageIndex++;
+			if (LastStatusMessageIndex >= DisplayedStatusMessageCount)
+				LastStatusMessageIndex = 0;
+			LastStatusMessages[LastStatusMessageIndex] = DLLBuilder.CurrentStatus.Clone();
+			ThreadSafeRepaint();
+		}
+
+		private void DrawStatusMessage()
+		{
+			if (LastStatusMessageIndex < 0)
+				return;
+
+			if (StatusMessageStyles == null || StatusMessageStyles.Length == 0)
+			{
+				StatusMessageStyles = new GUIStyle[3];
+				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Normal] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Warning] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Warning].normal.textColor = Color.yellow;
+				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error].normal.textColor = Color.red;
+			}
+
+			var i = LastStatusMessageIndex;
+			for (int iZero = 0; iZero < DisplayedStatusMessageCount; iZero++)
+			{
+				var message = LastStatusMessages[i];
+				if (message == null)
+					break;
+				GUILayout.Label((TotalStatusMessageCount - iZero) + ") " + message.Message, StatusMessageStyles[(int)message.Type]);
+				i--;
+				if (i < 0)
+					i += DisplayedStatusMessageCount;
+			}
 		}
 
 		#endregion

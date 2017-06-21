@@ -46,7 +46,7 @@ namespace Extenity.DLLBuilder
 				var job = JsonConvert.DeserializeObject<BuildJob>(content);
 				//job.CheckConsistencyAndThrow(); This will be done in DLLBuilder.StartProcess. Otherwise we can't be able to produce response file.
 
-				Debug.Log("Remote DLL build request received. " + job);
+				DLLBuilder.LogAndUpdateStatus("Remote DLL build request received. " + job);
 				DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
 
 				//// Continue in main thread
@@ -75,7 +75,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				Debug.LogError("Failed to process " + Constants.DLLBuilderName + " remote request file. Reason: " + exception);
+				DLLBuilder.LogErrorAndUpdateStatus("Failed to process " + Constants.DLLBuilderName + " remote request file. Reason: " + exception);
 				// Delete request file so that it won't bother console logs again.
 				DeleteBuildRequestFile();
 			}
@@ -99,6 +99,8 @@ namespace Extenity.DLLBuilder
 
 		public static void CreateBuildRequestFileForProject(BuildJob job, string targetProjectPath)
 		{
+			DLLBuilder.UpdateStatus("Creating build request file for project '{0}'.", targetProjectPath);
+
 			if (string.IsNullOrEmpty(targetProjectPath))
 				throw new ArgumentNullException("targetProjectPath");
 			job.CheckConsistencyAndThrow();
@@ -127,13 +129,13 @@ namespace Extenity.DLLBuilder
 		{
 			if (!thisProjectStatus.IsCurrentlyProcessedProject)
 			{
-				Debug.LogError("Internal error! Trying to build remote projects for a project that was not set as current.");
 				if (onFailed != null)
 					onFailed("Internal error! Trying to build remote projects for a project that was not set as current.");
 			}
 
 			if (thisProjectStatus.IsRemoteBuildsCompleted)
 			{
+				DLLBuilder.LogAndUpdateStatus("Skipping remote builder. Already completed.");
 				if (onSucceeded != null)
 					onSucceeded();
 				return;
@@ -142,13 +144,13 @@ namespace Extenity.DLLBuilder
 			var configurations = builderConfiguration.EnabledRemoteBuilderConfigurations;
 			if (configurations.IsNullOrEmpty())
 			{
-				Debug.Log("Skipping remote builder. Nothing to pack.");
+				DLLBuilder.LogAndUpdateStatus("Skipping remote builder. Nothing to pack.");
 				if (onSucceeded != null)
 					onSucceeded();
 				return;
 			}
 
-			Debug.Log("--------- Building all remote projects");
+			DLLBuilder.LogAndUpdateStatus("Building all remote projects");
 
 			InternalCreateBuildRequestsOfRemoteProjects(configurations, job, thisProjectStatus, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
@@ -158,7 +160,7 @@ namespace Extenity.DLLBuilder
 			for (var i = 0; i < configurations.Count; i++)
 			{
 				var configuration = configurations[i];
-				Debug.LogFormat("Building remote project at path '{0}'", configuration.ProjectPath);
+				DLLBuilder.LogAndUpdateStatus("Building remote project at path '{0}'", configuration.ProjectPath);
 
 				// Check consistency first.
 				{
@@ -166,9 +168,8 @@ namespace Extenity.DLLBuilder
 					configuration.CheckConsistency(ref errors);
 					if (errors.Count > 0)
 					{
-						Debug.LogError("Failed to pack because of consistency errors:\n" + errors.Serialize('\n'));
 						if (onFailed != null)
-							onFailed("There were consistency errors. Check console for more information.");
+							onFailed("Failed to pack because of consistency errors:\n" + errors.Serialize('\n'));
 						yield break;
 					}
 				}
@@ -177,6 +178,7 @@ namespace Extenity.DLLBuilder
 				job.SetCurrentlyProcessedProject(thisProjectStatus.GetRemoteProject(configuration.ProjectPath));
 				CreateBuildRequestFileForProject(job, configuration.ProjectPath);
 
+				var checkCount = 0;
 				var remoteProjectResponseFilePath = Path.Combine(configuration.ProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
 				while (true)
 				{
@@ -188,15 +190,17 @@ namespace Extenity.DLLBuilder
 					}
 					LastResponseCheckTime = now;
 
-					Debug.Log("### checking remote project: " + remoteProjectResponseFilePath);
-					var responseJob = CheckRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
+					checkCount++;
+
+					DLLBuilder.UpdateStatus("Waiting for remote project response ({0})", checkCount);
+					var responseJob = LoadRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
 					if (responseJob != null)
 					{
+						DLLBuilder.UpdateStatus("Processing remote project response");
 						var responseStatus = responseJob.CurrentlyProcessedProjectStatus;
 						var result = job.UpdateCurrentlyProcessedProjectStatus(responseStatus);
 						if (!result)
 						{
-							Debug.LogError("Internal error! Currently processed remote project status could not be updated.");
 							if (onFailed != null)
 								onFailed("Internal error! Currently processed remote project status could not be updated.");
 							yield break;
@@ -204,7 +208,6 @@ namespace Extenity.DLLBuilder
 						job.UnsetCurrentlyProcessedProject();
 						if (responseStatus.IsFailed)
 						{
-							Debug.LogError("Remote project build failed. Check console logs for more information.");
 							if (onFailed != null)
 								onFailed("Remote project build failed. Check console logs for more information.");
 							yield break;
@@ -215,16 +218,21 @@ namespace Extenity.DLLBuilder
 				}
 			}
 
+			DLLBuilder.UpdateStatus("Marking remote build completion in project status");
 			job.SetCurrentlyProcessedProject(thisProjectStatus);
 			thisProjectStatus.IsRemoteBuildsCompleted = true;
 
 			// Recompile this project. Because we probably got new DLLs coming out of remote builds.
 			{
+				DLLBuilder.UpdateStatus("Refreshing asset database");
+
 				job.SaveBeforeAssemblyReload();
 
 				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
 				while (EditorApplication.isUpdating || EditorApplication.isCompiling)
 					yield return null;
+
+				DLLBuilder.UpdateStatus("Continuing after asset database refresh");
 
 				// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
 				if (onSucceeded != null)
@@ -236,7 +244,7 @@ namespace Extenity.DLLBuilder
 
 		#region Check Remote Project Build Response
 
-		public static BuildJob CheckRemoteProjectBuildResponseFile(string remoteProjectResponseFilePath)
+		public static BuildJob LoadRemoteProjectBuildResponseFile(string remoteProjectResponseFilePath)
 		{
 			try
 			{
@@ -266,6 +274,8 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
+				DLLBuilder.UpdateStatus("Saving build response file");
+
 				var json = JsonConvert.SerializeObject(job, Formatting.Indented);
 				var filePath = string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID.ToString());
 				DirectoryTools.CreateFromFilePath(filePath);

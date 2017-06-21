@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using Extenity.ConsistencyToolbox;
+using Extenity.ParallelToolbox.Editor;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,6 +47,11 @@ namespace Extenity.DLLBuilder
 
 		public static void StartProcess(BuildJob job, BuildTriggerSource triggerSource)
 		{
+			InternalStartProcess(job, triggerSource).StartCoroutineInEditorUpdate();
+		}
+
+		private static IEnumerator InternalStartProcess(BuildJob job, BuildTriggerSource triggerSource)
+		{
 			if (IsProcessing)
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
@@ -51,6 +59,12 @@ namespace Extenity.DLLBuilder
 			var jobStatus = job.CurrentlyProcessedProjectStatus;
 			if (jobStatus == null)
 				throw new Exception("Internal error! Currently processed project status is not set.");
+
+			// Don't continue until we are sure no loading is in progress.
+			while (EditorApplication.isUpdating || EditorApplication.isCompiling)
+				yield return null;
+
+			DLLBuilderConfiguration builderConfiguration = null;
 
 			try
 			{
@@ -68,34 +82,47 @@ namespace Extenity.DLLBuilder
 					// Means we are in the middle of build process. That is we are continuing after a recompilation.
 					Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.JobID);
 				}
-
-				var remoteProjectPaths = DLLBuilderConfiguration.Instance.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray();
-				jobStatus.SetRemoteProjectStatusList(remoteProjectPaths);
 			}
 			catch (Exception exception)
 			{
 				Debug.LogException(exception);
 				InternalFinishProcess(job, jobStatus, false);
-				return;
+				yield break;
 			}
 
+			// Load configuration
+			{
+				builderConfiguration = DLLBuilderConfiguration.Instance;
+				UpdateStatus("Waiting to get Builder Configuration.");
+
+				// Don't continue until we are sure no loading is in progress.
+				// This may be needed to load builder configuration properly.
+				while (EditorApplication.isUpdating || EditorApplication.isCompiling)
+					yield return null;
+			}
+
+			UpdateStatus("Initializing remote project status list.");
+			var remoteProjectPaths = builderConfiguration.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray();
+			jobStatus.SetRemoteProjectStatusList(remoteProjectPaths);
+
+			UpdateStatus("Checking job consistency.");
 			if (job.CheckConsistencyAndLog().Count > 0)
 			{
 				InternalFinishProcess(job, jobStatus, false);
-				return;
+				yield break;
 			}
 
 			Repaint();
 
-			RemoteBuilder.CreateBuildRequestsOfRemoteProjects(DLLBuilderConfiguration.Instance, job, jobStatus,
+			RemoteBuilder.CreateBuildRequestsOfRemoteProjects(builderConfiguration, job, jobStatus,
 				() =>
 				{
-					Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance,
+					Cleaner.ClearAllOutputDLLs(builderConfiguration,
 						() =>
 						{
 							Repaint();
 
-							Compiler.CompileAllDLLs(DLLBuilderConfiguration.Instance,
+							Compiler.CompileAllDLLs(builderConfiguration,
 								() =>
 								{
 									var succeeded = false;
@@ -104,34 +131,34 @@ namespace Extenity.DLLBuilder
 										Repaint();
 										Packer.PackAll();
 										Repaint();
-										Distributer.DistributeToAll(DLLBuilderConfiguration.Instance);
+										Distributer.DistributeToAll(builderConfiguration);
 
 										Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
 										succeeded = true;
 									}
 									catch (Exception exception)
 									{
-										Debug.LogException(exception);
+										DLLBuilder.LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
 									}
 									InternalFinishProcess(job, jobStatus, succeeded);
 								},
 								error =>
 								{
-									Debug.LogError(error);
+									DLLBuilder.LogErrorAndUpdateStatus(error);
 									InternalFinishProcess(job, jobStatus, false);
 								}
 							);
 						},
 						exception =>
 						{
-							Debug.LogException(exception);
+							DLLBuilder.LogErrorAndUpdateStatus(exception.Message);
 							InternalFinishProcess(job, jobStatus, false);
 						}
 					);
 				},
 				error =>
 				{
-					Debug.LogError(error);
+					DLLBuilder.LogErrorAndUpdateStatus(error);
 					InternalFinishProcess(job, jobStatus, false);
 				}
 			);
@@ -142,6 +169,8 @@ namespace Extenity.DLLBuilder
 			try
 			{
 				IsProcessing = false;
+
+				UpdateStatus("Finishing process {0}.", succeeded ? "successfully" : "with errors");
 
 				BuildJob.DeleteAssemblyReloadSurvivalFile();
 
@@ -173,6 +202,117 @@ namespace Extenity.DLLBuilder
 		public static void Repaint()
 		{
 			OnRepaintRequested.Invoke();
+		}
+
+		#endregion
+
+		#region UI Status
+
+		public enum StatusMessageType
+		{
+			Normal,
+			Warning,
+			Error,
+		}
+
+		public class StatusMessage
+		{
+			public StatusMessageType Type;
+			public string Message;
+
+			public StatusMessage Clone()
+			{
+				return new StatusMessage
+				{
+					Type = Type,
+					Message = Message
+				};
+			}
+		}
+
+		public static StatusMessage CurrentStatus { get; private set; }
+		public static readonly UnityEvent OnStatusChanged = new UnityEvent();
+
+		public static void UpdateWarningStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			UpdateStatus(text, StatusMessageType.Warning);
+		}
+
+		public static void UpdateErrorStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			UpdateStatus(text, StatusMessageType.Error);
+		}
+
+		public static void UpdateStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			UpdateStatus(text, StatusMessageType.Normal);
+		}
+
+		public static void UpdateWarningStatus(string text)
+		{
+			UpdateStatus(text, StatusMessageType.Warning);
+		}
+
+		public static void UpdateErrorStatus(string text)
+		{
+			UpdateStatus(text, StatusMessageType.Error);
+		}
+
+		public static void UpdateStatus(string text, StatusMessageType type = StatusMessageType.Normal)
+		{
+			if (CurrentStatus == null)
+				CurrentStatus = new StatusMessage();
+
+			CurrentStatus.Type = type;
+			CurrentStatus.Message = text;
+			OnStatusChanged.Invoke();
+		}
+
+		public static void LogWarningAndUpdateStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			Debug.LogWarning(text);
+			UpdateStatus(text, StatusMessageType.Warning);
+		}
+
+		public static void LogErrorAndUpdateStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			Debug.LogError(text);
+			UpdateStatus(text, StatusMessageType.Error);
+		}
+
+		public static void LogAndUpdateStatus(string format, params object[] args)
+		{
+			var text = string.Format(format, args);
+			Debug.Log(text);
+			UpdateStatus(text, StatusMessageType.Normal);
+		}
+
+		public static void LogWarningAndUpdateStatus(string text)
+		{
+			LogAndUpdateStatus(text, StatusMessageType.Warning);
+		}
+
+		public static void LogErrorAndUpdateStatus(string text)
+		{
+			LogAndUpdateStatus(text, StatusMessageType.Error);
+		}
+
+		public static void LogAndUpdateStatus(string text, StatusMessageType type = StatusMessageType.Normal)
+		{
+			switch (type)
+			{
+				case StatusMessageType.Normal: Debug.Log(text); break;
+				case StatusMessageType.Warning: Debug.LogWarning(text); break;
+				case StatusMessageType.Error: Debug.LogError(text); break;
+				default:
+					throw new ArgumentOutOfRangeException("type", type, null);
+			}
+			UpdateStatus(text, type);
 		}
 
 		#endregion

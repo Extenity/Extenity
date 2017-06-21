@@ -51,6 +51,7 @@ namespace Extenity.DLLBuilder
 		{
 			var jobStatus = new BuildJobStatus(EditorApplicationTools.UnityProjectPath);
 			ProjectChain = ProjectChain.Add(jobStatus);
+			DLLBuilder.UpdateStatus("Current project added to project chain");
 			return jobStatus;
 		}
 
@@ -67,6 +68,7 @@ namespace Extenity.DLLBuilder
 				if (_CurrentlyProcessedProjectStatus == null || _CurrentlyProcessedProjectStatus.IsCurrentlyProcessedProject == false)
 				{
 					_CurrentlyProcessedProjectStatus = InternalFindCurrentlyProcessedProjectStatusRecursively();
+					DLLBuilder.UpdateStatus("Currently processed project detected as '{0}'.", _CurrentlyProcessedProjectStatus == null ? "[Null]" : _CurrentlyProcessedProjectStatus.ProjectPath);
 				}
 				return _CurrentlyProcessedProjectStatus;
 			}
@@ -105,58 +107,52 @@ namespace Extenity.DLLBuilder
 		{
 			UnsetCurrentlyProcessedProject();
 
+			DLLBuilder.UpdateStatus("Setting currently processed project status to '{0}'.", remoteProjectStatus.ProjectPath);
 			remoteProjectStatus.IsCurrentlyProcessedProject = true;
 		}
 
 		public void UnsetCurrentlyProcessedProject()
 		{
-			foreach (var status in ProjectChain)
-			{
-				UnsetCurrentlyProcessedProject(status);
-			}
+			DLLBuilder.UpdateStatus("Unsetting currently processed project status");
+			InternalUnsetCurrentlyProcessedProject(ref ProjectChain);
 		}
 
-		private void UnsetCurrentlyProcessedProject(BuildJobStatus status)
+		private void InternalUnsetCurrentlyProcessedProject(ref BuildJobStatus[] statusList)
 		{
-			status.IsCurrentlyProcessedProject = false;
-			if (status.IsRemoteProjectDataAvailable)
+			if (statusList == null)
+				return;
+			for (int i = 0; i < statusList.Length; i++)
 			{
-				foreach (var remoteProject in status.RemoteProjects)
-					UnsetCurrentlyProcessedProject(remoteProject);
+				statusList[i].IsCurrentlyProcessedProject = false;
+				InternalUnsetCurrentlyProcessedProject(ref statusList[i].RemoteProjects);
 			}
 		}
 
 		public bool UpdateCurrentlyProcessedProjectStatus(BuildJobStatus newStatus)
 		{
+			DLLBuilder.UpdateStatus("Updating currently processed project status");
 			var oldStatus = CurrentlyProcessedProjectStatus;
 			_CurrentlyProcessedProjectStatus = null; // Because we will change this object with newStatus. So we must get rid of this cached reference.
 
-			for (int i = 0; i < ProjectChain.Length; i++)
-			{
-				if (ProjectChain[i] == oldStatus)
-				{
-					ProjectChain[i] = newStatus;
-					return true;
-				}
-				var result = InternalChangeCurrentlyProcessedProjectStatusReference(ProjectChain[i], oldStatus, newStatus);
-				if (result)
-					return true;
-			}
+			var result = InternalChangeCurrentlyProcessedProjectStatusReference(ref ProjectChain, oldStatus, newStatus);
+			if (result)
+				return true;
+			DLLBuilder.UpdateErrorStatus("Failed to update currently processed project status");
 			return false;
 		}
 
-		private bool InternalChangeCurrentlyProcessedProjectStatusReference(BuildJobStatus iteratedStatus, BuildJobStatus oldStatus, BuildJobStatus newStatus)
+		private bool InternalChangeCurrentlyProcessedProjectStatusReference(ref BuildJobStatus[] iteratedStatusList, BuildJobStatus oldStatus, BuildJobStatus newStatus)
 		{
-			if (iteratedStatus.IsRemoteProjectDataAvailable)
+			for (int i = 0; i < iteratedStatusList.Length; i++)
 			{
-				for (int i = 0; i < iteratedStatus.RemoteProjects.Length; i++)
+				if (iteratedStatusList[i] == oldStatus)
 				{
-					if (iteratedStatus.RemoteProjects[i] == oldStatus)
-					{
-						iteratedStatus.RemoteProjects[i] = newStatus;
-						return true;
-					}
-					InternalChangeCurrentlyProcessedProjectStatusReference(iteratedStatus.RemoteProjects[i], oldStatus, newStatus);
+					iteratedStatusList[i] = newStatus;
+					return true;
+				}
+				if (iteratedStatusList[i].IsRemoteProjectDataAvailable)
+				{
+					InternalChangeCurrentlyProcessedProjectStatusReference(ref iteratedStatusList[i].RemoteProjects, oldStatus, newStatus);
 				}
 			}
 			return false;
@@ -170,6 +166,7 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
+				DLLBuilder.UpdateStatus("Saving assembly reload survival file");
 				var json = JsonConvert.SerializeObject(this, Formatting.Indented);
 				var filePath = Constants.BuildJob.AssemblyReloadSurvivalFilePath;
 				DirectoryTools.CreateFromFilePath(filePath);
@@ -188,6 +185,7 @@ namespace Extenity.DLLBuilder
 				if (!File.Exists(Constants.BuildJob.AssemblyReloadSurvivalFilePath))
 					return null;
 
+				DLLBuilder.UpdateStatus("Loading assembly reload survival file");
 				var json = File.ReadAllText(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
 				DeleteAssemblyReloadSurvivalFile();
 				return JsonConvert.DeserializeObject<BuildJob>(json);
@@ -202,6 +200,7 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
+				DLLBuilder.UpdateStatus("Deleting assembly reload survival file");
 				File.Delete(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
 			}
 			catch

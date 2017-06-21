@@ -22,7 +22,7 @@ namespace Extenity.DLLBuilder
 
 		public static void CompileAllDLLs(DLLBuilderConfiguration builderConfiguration, Action onSucceeded, Action<string> onFailed)
 		{
-			Debug.Log("--------- Compiling all DLLs");
+			DLLBuilder.LogAndUpdateStatus("Compiling all DLLs");
 
 			InternalCompileDLLs(builderConfiguration, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
@@ -93,7 +93,7 @@ namespace Extenity.DLLBuilder
 
 		private static void AsyncGenerateDLL(CompilerJob job)
 		{
-			Debug.LogFormat("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
+			DLLBuilder.LogAndUpdateStatus("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
 
 			DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
 			GenerateExportedFiles(job.Configuration.ProcessedSourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
@@ -130,7 +130,7 @@ namespace Extenity.DLLBuilder
 				{
 					// Skip
 					Cleaner.ClearOutputDLLs(job.Configuration, true, true); // We still need to clear previous outputs in case there are any left from previous builds.
-					Debug.Log("Skipping runtime DLL build. No scripts to compile for runtime DLL.");
+					DLLBuilder.LogAndUpdateStatus("Skipping runtime DLL build. No scripts to compile for runtime DLL.");
 					job.RuntimeDLLSucceeded = CompileResult.Skipped;
 				}
 
@@ -146,7 +146,7 @@ namespace Extenity.DLLBuilder
 					{
 						// Skip
 						Cleaner.ClearOutputDLLs(job.Configuration, false, true); // We still need to clear previous outputs in case there are any left from previous builds.
-						Debug.Log("Skipping editor DLL build. No scripts to compile for editor DLL.");
+						DLLBuilder.LogAndUpdateStatus("Skipping editor DLL build. No scripts to compile for editor DLL.");
 						job.EditorDLLSucceeded = CompileResult.Skipped;
 					}
 				}
@@ -162,7 +162,7 @@ namespace Extenity.DLLBuilder
 
 		private static void CopySourcesToTemporaryDirectory(List<string> sourceFilePaths, string sourceBasePath, string temporaryDirectoryPath)
 		{
-			Debug.LogFormat("Copying sources into temporary directory '{0}'.", temporaryDirectoryPath);
+			DLLBuilder.LogAndUpdateStatus("Copying sources into temporary directory '{0}'.", temporaryDirectoryPath);
 			sourceBasePath = sourceBasePath.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars('/');
 
 			DirectoryTools.Delete(temporaryDirectoryPath);
@@ -431,7 +431,7 @@ namespace Extenity.DLLBuilder
 
 				if (!process.Start())
 				{
-					Debug.LogError("Compiler process stopped with code " + process.ExitCode + ".");
+					DLLBuilder.LogErrorAndUpdateStatus("Compiler process stopped with code " + process.ExitCode + ".");
 					return CompileResult.Failed;
 				}
 
@@ -465,23 +465,23 @@ namespace Extenity.DLLBuilder
 						}
 					}
 
-					Debug.LogFormat("Finished compiling '{0}'.", isEditorBuild ? job.Configuration.EditorDLLName : job.Configuration.DLLName);
+					DLLBuilder.LogAndUpdateStatus("Finished compiling '{0}'.", isEditorBuild ? job.Configuration.EditorDLLName : job.Configuration.DLLName);
 
 					// Make sure meta files exist
 					{
 						if (!CheckIfMetaFileExists(dllOutputPath))
 						{
-							Debug.LogErrorFormat("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", dllOutputPath);
+							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", dllOutputPath);
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDocumentation && !CheckIfMetaFileExists(documentationOutputPath))
 						{
-							Debug.LogErrorFormat("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", documentationOutputPath);
+							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", documentationOutputPath);
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDebugInfo && !CheckIfMetaFileExists(debugDatabaseOutputPath))
 						{
-							Debug.LogErrorFormat("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", debugDatabaseOutputPath);
+							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", debugDatabaseOutputPath);
 							return CompileResult.Failed;
 						}
 					}

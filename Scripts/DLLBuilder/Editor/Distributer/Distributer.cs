@@ -13,27 +13,26 @@ namespace Extenity.DLLBuilder
 
 		public static bool DistributeToAll(DLLBuilderConfiguration builderConfiguration)
 		{
-			Debug.Log("--------- Distributing to all targets");
+			DLLBuilder.LogAndUpdateStatus("Distributing to all targets");
 
 			var configurations = builderConfiguration.EnabledDistributerConfigurations;
 			if (configurations.IsNullOrEmpty())
 			{
-				Debug.Log("Skipping distributer. Nothing to distribute.");
+				DLLBuilder.LogAndUpdateStatus("Skipping distributer. Nothing to distribute.");
 				return true;
 			}
 
 			for (var i = 0; i < configurations.Count; i++)
 			{
-				if (!Distribute(configurations[i]))
-					return false;
+				Distribute(configurations[i]);
 			}
 
 			return true;
 		}
 
-		public static bool Distribute(DistributerConfiguration configuration)
+		public static void Distribute(DistributerConfiguration configuration)
 		{
-			Debug.LogFormat("Distributing configuration '{0}'", configuration.ConfigurationName);
+			DLLBuilder.LogAndUpdateStatus("Distributing configuration '{0}'", configuration.ConfigurationName);
 
 			if (!configuration.Enabled)
 				throw new Exception(string.Format("Internal error. Tried to distribute using a disabled configuration '{0}'.", configuration.ConfigurationName));
@@ -44,8 +43,7 @@ namespace Extenity.DLLBuilder
 				configuration.CheckConsistency(ref errors);
 				if (errors.Count > 0)
 				{
-					Debug.LogError("Failed to distribute because of consistency errors:\n" + errors.Serialize('\n'));
-					return false;
+					throw new Exception("Failed to distribute because of consistency errors:\n" + errors.Serialize('\n'));
 				}
 			}
 
@@ -54,25 +52,21 @@ namespace Extenity.DLLBuilder
 				if (!target.Enabled)
 					continue;
 
-
 				var sourceDirectoryPath = target.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 				var targetDirectoryPath = target.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 
 				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
 				if (!Directory.Exists(targetDirectoryPath))
 				{
-					Debug.LogErrorFormat("Distribution target directory '{0}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.", target.TargetDirectoryPath);
-					continue;
+					throw new Exception(string.Format("Distribution target directory '{0}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.", target.TargetDirectoryPath));
 				}
 
-				Debug.LogFormat("Distributing to '{0}'", targetDirectoryPath);
+				DLLBuilder.LogAndUpdateStatus("Distributing to '{0}'", targetDirectoryPath);
 
 				// TODO: Better just sync files, instead of deleting and copying from scratch.
 				DirectoryTools.Delete(targetDirectoryPath);
 				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
 			}
-
-			return true;
 		}
 
 	}
