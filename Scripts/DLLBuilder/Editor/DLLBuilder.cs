@@ -61,9 +61,13 @@ namespace Extenity.DLLBuilder
 			if (jobStatus == null)
 				throw new Exception("Internal error! Currently processed project status is not set.");
 
-			// Don't continue until we are sure no loading is in progress.
-			while (EditorApplication.isUpdating || EditorApplication.isCompiling)
-				yield return null;
+			// Don't continue if loading is in progress.
+			if (EditorApplication.isUpdating || EditorApplication.isCompiling)
+			{
+				LogErrorAndUpdateStatus("Unity was processing assets at the time the builder started.");
+				InternalFinishProcess(job, jobStatus, false);
+				yield break;
+			}
 
 			DLLBuilderConfiguration builderConfiguration = null;
 
@@ -71,7 +75,7 @@ namespace Extenity.DLLBuilder
 			{
 				if (!jobStatus.IsStarted)
 				{
-					Debug.Log(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.JobID);
+					LogAndUpdateStatus(Constants.DLLBuilderName + " started to build all DLLs. Job ID: " + job.JobID);
 					jobStatus.IsStarted = true;
 
 					if (jobStatus.BuildTriggerSource != BuildTriggerSource.Unspecified)
@@ -81,25 +85,46 @@ namespace Extenity.DLLBuilder
 				else
 				{
 					// Means we are in the middle of build process. That is we are continuing after a recompilation.
-					Debug.Log(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.JobID);
+					LogAndUpdateStatus(Constants.DLLBuilderName + " continuing to build all DLLs. Job ID: " + job.JobID);
 				}
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				LogErrorAndUpdateStatus(exception.Message);
 				InternalFinishProcess(job, jobStatus, false);
 				yield break;
 			}
 
 			// Load configuration
 			{
+				if (EditorApplication.isCompiling)
+				{
+					LogErrorAndUpdateStatus("Unity was compiling just before the builder needed configuration asset.");
+					InternalFinishProcess(job, jobStatus, false);
+					yield break;
+				}
+
 				builderConfiguration = DLLBuilderConfiguration.Instance;
 				UpdateStatus("Waiting to get Builder Configuration.");
 
-				// Don't continue until we are sure no loading is in progress.
-				// This may be needed to load builder configuration properly.
-				while (EditorApplication.isUpdating || EditorApplication.isCompiling)
+				// Give it a minute to process internal things to lower the chance of getting isCompiling or isUpdating. Better safe than sorry.
+				yield return null;
+				yield return null;
+				yield return null;
+
+				//// Don't continue until we are sure no loading is in progress.
+				//// This may be needed to load builder configuration properly.
+				//if (EditorApplication.isCompiling) Can't figure out how not to get it not compiling. That's probably a Unity glitch.
+				//{
+				//	LogErrorAndUpdateStatus("Unity was compiling at the time the builder needed configuration asset.");
+				//	InternalFinishProcess(job, jobStatus, false);
+				//	yield break;
+				//}
+				while (EditorApplication.isUpdating)
+				{
+					LogAndUpdateStatus("Waiting for asset refresh");
 					yield return null;
+				}
 			}
 
 			UpdateStatus("Initializing remote project status list.");
@@ -140,7 +165,7 @@ namespace Extenity.DLLBuilder
 										Repaint();
 										Distributer.DistributeToAll(builderConfiguration);
 
-										Debug.Log(Constants.DLLBuilderName + " successfully built all DLLs.");
+										LogAndUpdateStatus(Constants.DLLBuilderName + " successfully built all DLLs.");
 										succeeded = true;
 									}
 									catch (Exception exception)
@@ -187,6 +212,8 @@ namespace Extenity.DLLBuilder
 					jobStatus.IsFailed = true;
 
 				RemoteBuilder.SaveBuildResponseFile(job);
+
+				UpdateStatus("Process finished {0}.", succeeded ? "successfully" : "with errors");
 			}
 			catch (Exception exception)
 			{

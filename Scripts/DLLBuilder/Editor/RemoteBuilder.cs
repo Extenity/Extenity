@@ -20,6 +20,9 @@ namespace Extenity.DLLBuilder
 		[InitializeOnLoadMethod]
 		private static void InitializePeriodicBuildRequestChecker()
 		{
+			if (EditorApplication.isCompiling)
+				return; // Let it pass. We will start the operation after Unity finishes recompiling assemblies. This may be an unnecessary safety belt. But let's keep it here anyway.
+
 			var timer = new Timer(Constants.RemoteBuilder.RequestCheckerInterval * 1000);
 			timer.Elapsed += OnTimeToCheckRequests;
 			timer.AutoReset = true;
@@ -108,8 +111,9 @@ namespace Extenity.DLLBuilder
 			if (!DirectoryTools.IsUnityProjectPath(targetProjectPath))
 				throw new ArgumentException(string.Format("Target project path '{0}' is not a Unity project path.", targetProjectPath), "targetProjectPath");
 
-			// This is not needed since it's done by DLLBuilder.StartProcess
-			//request.AddCurrentProjectToRequesterProjectChain();
+			// Remove already existing response file with the same job ID if exists.
+			var remoteProjectResponseFilePath = Path.Combine(targetProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
+			DeleteRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
 
 			var filePath = Path.Combine(targetProjectPath, Constants.RemoteBuilder.RequestFilePath);
 			DirectoryTools.CreateFromFilePath(filePath);
@@ -265,6 +269,27 @@ namespace Extenity.DLLBuilder
 				throw;
 			}
 			return null;
+		}
+
+		public static void DeleteRemoteProjectBuildResponseFile(string remoteProjectResponseFilePath)
+		{
+			try
+			{
+				File.Delete(remoteProjectResponseFilePath);
+				DLLBuilder.LogAndUpdateStatus("Deleted remote project build response file '{0}'.", remoteProjectResponseFilePath);
+			}
+			catch (FileNotFoundException)
+			{
+				// ignore
+			}
+			catch (DirectoryNotFoundException)
+			{
+				// ignore
+			}
+			catch
+			{
+				throw;
+			}
 		}
 
 		#endregion
