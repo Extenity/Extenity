@@ -49,29 +49,30 @@ namespace Extenity.DLLBuilder
 			GUILayout.Space(20f);
 
 			GUI.enabled = !DLLBuilder.IsProcessing;
-			if (GUILayout.Button("Build And Distribute", ThickButtonOptions))
+			if (GUILayout.Button("Build Remote", ThickButtonOptions))
+			{
+				DLLBuilder.StartProcess(BuildTriggerSource.UI, null, true);
+			}
+			if (GUILayout.Button("Build All", ThickButtonOptions))
 			{
 				DLLBuilder.StartProcess(BuildTriggerSource.UI);
 			}
 			GUI.enabled = true;
 
 			GUILayout.Space(20f);
-			if (GUILayout.Button("Configuration", ThickButtonOptions))
+			if (GUILayout.Button("Configuration", ThinButtonOptions))
 			{
 				DLLBuilderConfiguration.SelectOrCreateConfigurationAsset();
 			}
-
-			GUILayout.Space(40f);
-
-			DrawStatusMessage();
-
-			GUILayout.Space(40f);
-			GUILayout.Label("Cleanup");
-
 			if (GUILayout.Button("Clear All Output DLLs", ThinButtonOptions))
 			{
 				Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance);
 			}
+
+			GUILayout.Space(30f);
+
+			DrawStatusMessage();
+
 
 			//if (GUILayout.Button("Build DLLs", ThinButtonOptions))
 			//{

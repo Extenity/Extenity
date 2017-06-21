@@ -224,7 +224,7 @@ namespace Extenity.DLLBuilder
 			var buildJob = LoadAfterAssemblyReload();
 			if (buildJob != null)
 			{
-				DLLBuilder.StartProcess(buildJob, BuildTriggerSource.ContinueAfterAssemblyReload);
+				DLLBuilder.StartProcess(BuildTriggerSource.ContinueAfterAssemblyReload, buildJob);
 			}
 		}
 

@@ -34,27 +34,28 @@ namespace Extenity.DLLBuilder
 
 		public static bool IsProcessing { get; private set; }
 
-		public static void StartProcess(BuildTriggerSource triggerSource)
+		public static void StartProcess(BuildTriggerSource triggerSource, BuildJob job = null, bool buildOnlyRemote = false)
 		{
-			var newJob = new BuildJob
-			{
-				JobID = Guid.NewGuid()
-			};
-			var newJobStatus = newJob.AddCurrentProjectToChain();
-			newJobStatus.IsCurrentlyProcessedProject = true;
-			StartProcess(newJob, triggerSource);
+			InternalStartProcess(triggerSource, job, buildOnlyRemote).StartCoroutineInEditorUpdate();
 		}
 
-		public static void StartProcess(BuildJob job, BuildTriggerSource triggerSource)
-		{
-			InternalStartProcess(job, triggerSource).StartCoroutineInEditorUpdate();
-		}
-
-		private static IEnumerator InternalStartProcess(BuildJob job, BuildTriggerSource triggerSource)
+		private static IEnumerator InternalStartProcess(BuildTriggerSource triggerSource, BuildJob job, bool buildOnlyRemote)
 		{
 			if (IsProcessing)
 				throw new Exception("A process was already started.");
 			IsProcessing = true;
+
+			// Create new job if not specified an existing one.
+			if (job == null)
+			{
+				var newJob = new BuildJob
+				{
+					JobID = Guid.NewGuid()
+				};
+				var newJobStatus = newJob.AddCurrentProjectToChain();
+				newJobStatus.IsCurrentlyProcessedProject = true;
+				job = newJob;
+			}
 
 			var jobStatus = job.CurrentlyProcessedProjectStatus;
 			if (jobStatus == null)
@@ -117,6 +118,12 @@ namespace Extenity.DLLBuilder
 			RemoteBuilder.CreateBuildRequestsOfRemoteProjects(builderConfiguration, job, jobStatus,
 				() =>
 				{
+					if (buildOnlyRemote)
+					{
+						InternalFinishProcess(job, jobStatus, true);
+						return;
+					}
+
 					Cleaner.ClearAllOutputDLLs(builderConfiguration,
 						() =>
 						{

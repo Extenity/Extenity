@@ -47,7 +47,7 @@ namespace Extenity.DLLBuilder
 				//job.CheckConsistencyAndThrow(); This will be done in DLLBuilder.StartProcess. Otherwise we can't be able to produce response file.
 
 				DLLBuilder.LogAndUpdateStatus("Remote DLL build request received. " + job);
-				DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
+				DLLBuilder.StartProcess(BuildTriggerSource.RemoteBuildRequest, job);
 
 				//// Continue in main thread
 				//ContinuationManager.Run(
