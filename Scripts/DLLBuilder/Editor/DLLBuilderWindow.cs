@@ -1,4 +1,6 @@
-﻿using Extenity.UnityEditorToolbox.Editor;
+﻿using System;
+using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -101,6 +103,7 @@ namespace Extenity.DLLBuilder
 		private static readonly int DisplayedStatusMessageCount = 3;
 		private DLLBuilder.StatusMessage[] LastStatusMessages;
 		private int LastStatusMessageIndex;
+		private DateTime LastStatusMessageTime;
 		private int TotalStatusMessageCount;
 
 		private void InitializeStatusMessage()
@@ -108,6 +111,7 @@ namespace Extenity.DLLBuilder
 			// Clear the list
 			LastStatusMessages = new DLLBuilder.StatusMessage[DisplayedStatusMessageCount];
 			LastStatusMessageIndex = -1;
+			LastStatusMessageTime = DateTime.MinValue;
 			TotalStatusMessageCount = 0;
 			DLLBuilder.OnStatusChanged.AddListener(OnStatusMessageReceived);
 		}
@@ -119,6 +123,7 @@ namespace Extenity.DLLBuilder
 
 		private void OnStatusMessageReceived()
 		{
+			LastStatusMessageTime = DateTime.Now;
 			TotalStatusMessageCount++;
 			LastStatusMessageIndex++;
 			if (LastStatusMessageIndex >= DisplayedStatusMessageCount)
@@ -141,6 +146,8 @@ namespace Extenity.DLLBuilder
 				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error] = new GUIStyle(GUI.skin.label);
 				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error].normal.textColor = Color.red;
 			}
+
+			GUILayout.Label(LastStatusMessageTime.ToFullDateTimeMsec());
 
 			var i = LastStatusMessageIndex;
 			for (int iZero = 0; iZero < DisplayedStatusMessageCount; iZero++)

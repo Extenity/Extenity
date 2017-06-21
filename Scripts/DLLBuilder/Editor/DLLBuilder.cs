@@ -138,27 +138,27 @@ namespace Extenity.DLLBuilder
 									}
 									catch (Exception exception)
 									{
-										DLLBuilder.LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
+										LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
 									}
 									InternalFinishProcess(job, jobStatus, succeeded);
 								},
 								error =>
 								{
-									DLLBuilder.LogErrorAndUpdateStatus(error);
+									LogErrorAndUpdateStatus(error);
 									InternalFinishProcess(job, jobStatus, false);
 								}
 							);
 						},
 						exception =>
 						{
-							DLLBuilder.LogErrorAndUpdateStatus(exception.Message);
+							LogErrorAndUpdateStatus(exception.Message);
 							InternalFinishProcess(job, jobStatus, false);
 						}
 					);
 				},
 				error =>
 				{
-					DLLBuilder.LogErrorAndUpdateStatus(error);
+					LogErrorAndUpdateStatus(error);
 					InternalFinishProcess(job, jobStatus, false);
 				}
 			);

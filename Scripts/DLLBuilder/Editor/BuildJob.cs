@@ -59,18 +59,21 @@ namespace Extenity.DLLBuilder
 
 		#region Currently Processed Project
 
-		[NonSerialized]
-		private BuildJobStatus _CurrentlyProcessedProjectStatus;
+		//[NonSerialized]
+		//private BuildJobStatus _CurrentlyProcessedProjectStatus;
 		public BuildJobStatus CurrentlyProcessedProjectStatus
 		{
 			get
 			{
-				if (_CurrentlyProcessedProjectStatus == null || _CurrentlyProcessedProjectStatus.IsCurrentlyProcessedProject == false)
-				{
-					_CurrentlyProcessedProjectStatus = InternalFindCurrentlyProcessedProjectStatusRecursively();
-					DLLBuilder.UpdateStatus("Currently processed project detected as '{0}'.", _CurrentlyProcessedProjectStatus == null ? "[Null]" : _CurrentlyProcessedProjectStatus.ProjectPath);
-				}
-				return _CurrentlyProcessedProjectStatus;
+				//if (_CurrentlyProcessedProjectStatus == null || _CurrentlyProcessedProjectStatus.IsCurrentlyProcessedProject == false)
+				//{
+				//	_CurrentlyProcessedProjectStatus = InternalFindCurrentlyProcessedProjectStatusRecursively();
+				//	DLLBuilder.LogAndUpdateStatus("Currently processed project detected as '{0}'.", _CurrentlyProcessedProjectStatus == null ? "[Null]" : _CurrentlyProcessedProjectStatus.ProjectPath);
+				//}
+				//return _CurrentlyProcessedProjectStatus;
+				var status = InternalFindCurrentlyProcessedProjectStatusRecursively();
+				DLLBuilder.UpdateStatus("Currently processed project detected as '{0}'.", status == null ? "[Null]" : status.ProjectPath);
+				return status;
 			}
 		}
 
@@ -132,12 +135,12 @@ namespace Extenity.DLLBuilder
 		{
 			DLLBuilder.UpdateStatus("Updating currently processed project status");
 			var oldStatus = CurrentlyProcessedProjectStatus;
-			_CurrentlyProcessedProjectStatus = null; // Because we will change this object with newStatus. So we must get rid of this cached reference.
+			//_CurrentlyProcessedProjectStatus = null; // Because we will change this object with newStatus. So we must get rid of this cached reference.
 
 			var result = InternalChangeCurrentlyProcessedProjectStatusReference(ref ProjectChain, oldStatus, newStatus);
 			if (result)
 				return true;
-			DLLBuilder.UpdateErrorStatus("Failed to update currently processed project status");
+			DLLBuilder.LogErrorAndUpdateStatus("Failed to update currently processed project status");
 			return false;
 		}
 
@@ -152,7 +155,9 @@ namespace Extenity.DLLBuilder
 				}
 				if (iteratedStatusList[i].IsRemoteProjectDataAvailable)
 				{
-					InternalChangeCurrentlyProcessedProjectStatusReference(ref iteratedStatusList[i].RemoteProjects, oldStatus, newStatus);
+					var succeeded = InternalChangeCurrentlyProcessedProjectStatusReference(ref iteratedStatusList[i].RemoteProjects, oldStatus, newStatus);
+					if (succeeded)
+						return true;
 				}
 			}
 			return false;

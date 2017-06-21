@@ -249,6 +249,7 @@ namespace Extenity.DLLBuilder
 			try
 			{
 				var json = File.ReadAllText(remoteProjectResponseFilePath);
+				Debug.Log("## Remote project response: " + json);
 				return JsonConvert.DeserializeObject<BuildJob>(json);
 			}
 			catch (FileNotFoundException)
