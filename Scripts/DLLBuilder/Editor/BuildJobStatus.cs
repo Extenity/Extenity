@@ -59,14 +59,26 @@ namespace Extenity.DLLBuilder
 		public bool IsSucceeded;
 		[JsonProperty]
 		public bool IsFailed;
+		//[JsonProperty]
+		//public bool IsCancelled;
 		public bool IsFinished { get { return IsSucceeded || IsFailed; } }
 
 		[JsonProperty]
 		public bool IsRemoteBuildsCompleted;
+		[JsonProperty]
+		public bool IsCollectorCompleted;
 
 		// We won't be needing these. We only need to keep track of what has happened between recompilations and recompilation only happens after remote compilations, which will likely update some DLLs in this project.
 		//public bool IsCleanUpCompleted;
 		//public bool IsCompilationCompleted;
+
+		//public void RequestCancel()
+		//{
+		//	if (IsCancelled)
+		//		return;
+		//	DLLBuilder.LogAndUpdateStatus("Cancel requested");
+		//	IsCancelled = true;
+		//}
 
 		#endregion
 

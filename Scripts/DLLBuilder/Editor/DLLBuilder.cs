@@ -143,47 +143,57 @@ namespace Extenity.DLLBuilder
 			RemoteBuilder.CreateBuildRequestsOfRemoteProjects(builderConfiguration, job, jobStatus,
 				() =>
 				{
-					if (buildOnlyRemote)
-					{
-						InternalFinishProcess(job, jobStatus, true);
-						return;
-					}
-
-					Cleaner.ClearAllOutputDLLs(builderConfiguration,
+					Collector.GatherDependenciesFromAll(builderConfiguration, job,
 						() =>
 						{
-							Repaint();
+							if (buildOnlyRemote)
+							{
+								InternalFinishProcess(job, jobStatus, true);
+								return;
+							}
 
-							Compiler.CompileAllDLLs(builderConfiguration,
+							Cleaner.ClearAllOutputDLLs(builderConfiguration,
 								() =>
 								{
-									var succeeded = false;
-									try
-									{
-										Repaint();
-										Packer.PackAll();
-										Repaint();
-										Distributer.DistributeToAll(builderConfiguration);
+									Repaint();
 
-										LogAndUpdateStatus(Constants.DLLBuilderName + " successfully built all DLLs.");
-										succeeded = true;
-									}
-									catch (Exception exception)
-									{
-										LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
-									}
-									InternalFinishProcess(job, jobStatus, succeeded);
+									Compiler.CompileAllDLLs(builderConfiguration,
+										() =>
+										{
+											var succeeded = false;
+											try
+											{
+												Repaint();
+												Packer.PackAll();
+												Repaint();
+												Distributer.DistributeToAll(builderConfiguration);
+
+												LogAndUpdateStatus(Constants.DLLBuilderName + " successfully built all DLLs.");
+												succeeded = true;
+											}
+											catch (Exception exception)
+											{
+												LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
+											}
+											InternalFinishProcess(job, jobStatus, succeeded);
+										},
+										error =>
+										{
+											LogErrorAndUpdateStatus(error);
+											InternalFinishProcess(job, jobStatus, false);
+										}
+									);
 								},
-								error =>
+								exception =>
 								{
-									LogErrorAndUpdateStatus(error);
+									LogErrorAndUpdateStatus(exception.Message);
 									InternalFinishProcess(job, jobStatus, false);
 								}
 							);
 						},
-						exception =>
+						error =>
 						{
-							LogErrorAndUpdateStatus(exception.Message);
+							LogErrorAndUpdateStatus(error);
 							InternalFinishProcess(job, jobStatus, false);
 						}
 					);
@@ -213,7 +223,10 @@ namespace Extenity.DLLBuilder
 
 				RemoteBuilder.SaveBuildResponseFile(job);
 
-				UpdateStatus("Process finished {0}.", succeeded ? "successfully" : "with errors");
+				if (succeeded)
+					LogAndUpdateStatus("Process finished successfully.");
+				else
+					LogErrorAndUpdateStatus("Process finished with errors. Check previous console logs for more information.");
 			}
 			catch (Exception exception)
 			{
@@ -347,6 +360,27 @@ namespace Extenity.DLLBuilder
 					throw new ArgumentOutOfRangeException("type", type, null);
 			}
 			UpdateStatus(text, type);
+		}
+
+		#endregion
+
+		#region Reload Assemblies
+
+		public static IEnumerator ReloadAssemblies(BuildJob job, Action onSucceeded)
+		{
+			UpdateStatus("Refreshing asset database");
+
+			job.SaveBeforeAssemblyReload();
+
+			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+			while (EditorApplication.isUpdating || EditorApplication.isCompiling)
+				yield return null;
+
+			UpdateStatus("Continuing after asset database refresh");
+
+			// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
+			if (onSucceeded != null)
+				onSucceeded();
 		}
 
 		#endregion

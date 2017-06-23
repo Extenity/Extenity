@@ -227,21 +227,7 @@ namespace Extenity.DLLBuilder
 			thisProjectStatus.IsRemoteBuildsCompleted = true;
 
 			// Recompile this project. Because we probably got new DLLs coming out of remote builds.
-			{
-				DLLBuilder.UpdateStatus("Refreshing asset database");
-
-				job.SaveBeforeAssemblyReload();
-
-				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-				while (EditorApplication.isUpdating || EditorApplication.isCompiling)
-					yield return null;
-
-				DLLBuilder.UpdateStatus("Continuing after asset database refresh");
-
-				// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
-				if (onSucceeded != null)
-					onSucceeded();
-			}
+			DLLBuilder.ReloadAssemblies(job, onSucceeded).StartCoroutineInEditorUpdate();
 		}
 
 		#endregion
@@ -275,8 +261,11 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
-				File.Delete(remoteProjectResponseFilePath);
-				DLLBuilder.LogAndUpdateStatus("Deleted remote project build response file '{0}'.", remoteProjectResponseFilePath);
+				if (File.Exists(remoteProjectResponseFilePath))
+				{
+					File.Delete(remoteProjectResponseFilePath);
+					DLLBuilder.LogAndUpdateStatus("Deleted remote project build response file '{0}'.", remoteProjectResponseFilePath);
+				}
 			}
 			catch (FileNotFoundException)
 			{

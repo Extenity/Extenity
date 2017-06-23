@@ -14,10 +14,11 @@ namespace Extenity.DLLBuilder
 		#region Configuration
 
 		public RemoteBuilderConfiguration[] RemoteBuilderConfigurations;
+		public CollectorConfiguration[] CollectorConfigurations;
 		public CompilerConfiguration[] CompilerConfigurations;
 		public PackerConfiguration[] PackerConfigurations;
 		public DistributerConfiguration[] DistributerConfigurations;
-
+		
 		/// <summary>
 		/// Gives a list of Remote Builder Configurations that are enabled.
 		/// See also EnabledAndIgnoreFilteredRemoteBuilderConfigurations.
@@ -49,6 +50,18 @@ namespace Extenity.DLLBuilder
 					throw new NullReferenceException("RemoteBuilderConfigurations list is null");
 				return (from configuration in RemoteBuilderConfigurations
 						where configuration != null && configuration.Enabled && (Directory.Exists(configuration.ProjectPath) || !configuration.IgnoreIfNotFound)
+						select configuration).ToList();
+			}
+		}
+
+		public List<CollectorConfiguration> EnabledCollectorConfigurations
+		{
+			get
+			{
+				if (CollectorConfigurations == null)
+					throw new NullReferenceException("CollectorConfigurations list is null");
+				return (from configuration in CollectorConfigurations
+						where configuration != null && configuration.Enabled
 						select configuration).ToList();
 			}
 		}
