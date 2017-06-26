@@ -16,9 +16,10 @@ namespace Extenity.DLLBuilder
 		{
 			DLLBuilder.LogAndUpdateStatus("Gathering dependencies from all sources");
 
-			if (job.CurrentlyProcessedProjectStatus.IsRemoteBuildsCompleted)
+			if (job.CurrentlyProcessedProjectStatus.IsCollectorCompleted)
 			{
 				DLLBuilder.LogAndUpdateStatus("Skipping collector. Already completed.");
+				//thisProjectStatus.IsCollectorCompleted = true; Already true. But we will keep it here to remind that we need to set this to true when successfully finishing this process.
 				if (onSucceeded != null)
 					onSucceeded();
 				return;

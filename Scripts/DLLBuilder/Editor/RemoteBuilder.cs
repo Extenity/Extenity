@@ -140,6 +140,7 @@ namespace Extenity.DLLBuilder
 			if (thisProjectStatus.IsRemoteBuildsCompleted)
 			{
 				DLLBuilder.LogAndUpdateStatus("Skipping remote builder. Already completed.");
+				//thisProjectStatus.IsRemoteBuildsCompleted = true; Already true. But we will keep it here to remind that we need to set this to true when successfully finishing this process.
 				if (onSucceeded != null)
 					onSucceeded();
 				return;
@@ -149,6 +150,7 @@ namespace Extenity.DLLBuilder
 			if (configurations.IsNullOrEmpty())
 			{
 				DLLBuilder.LogAndUpdateStatus("Skipping remote builder. Nothing to pack.");
+				thisProjectStatus.IsRemoteBuildsCompleted = true;
 				if (onSucceeded != null)
 					onSucceeded();
 				return;
@@ -200,7 +202,7 @@ namespace Extenity.DLLBuilder
 					var responseJob = LoadRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
 					if (responseJob != null)
 					{
-						DLLBuilder.UpdateStatus("Processing remote project response");
+						DLLBuilder.LogAndUpdateStatus("Processing remote project response");
 						var responseStatus = responseJob.CurrentlyProcessedProjectStatus;
 						var result = job.UpdateCurrentlyProcessedProjectStatus(responseStatus);
 						if (!result)
@@ -222,7 +224,7 @@ namespace Extenity.DLLBuilder
 				}
 			}
 
-			DLLBuilder.UpdateStatus("Marking remote build completion in project status");
+			DLLBuilder.LogAndUpdateStatus("Marking remote build completion in project status");
 			job.SetCurrentlyProcessedProject(thisProjectStatus);
 			thisProjectStatus.IsRemoteBuildsCompleted = true;
 
