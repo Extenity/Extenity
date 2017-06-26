@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
@@ -368,7 +369,7 @@ namespace Extenity.DLLBuilder
 
 		public static IEnumerator ReloadAssemblies(BuildJob job, Action onSucceeded)
 		{
-			UpdateStatus("Refreshing asset database");
+			LogAndUpdateStatus("Refreshing asset database");
 
 			job.SaveBeforeAssemblyReload();
 
@@ -376,11 +377,13 @@ namespace Extenity.DLLBuilder
 			while (EditorApplication.isUpdating || EditorApplication.isCompiling)
 				yield return null;
 
-			UpdateStatus("Continuing after asset database refresh");
+			LogAndUpdateStatus("Continuing after asset database refresh");
 
 			// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
-			if (onSucceeded != null)
-				onSucceeded();
+			//if (onSucceeded != null)
+			//	onSucceeded();
+			EditorApplication.delayCall += () => onSucceeded();
+			EditorApplicationTools.GuaranteeNextUpdateCall();
 		}
 
 		#endregion

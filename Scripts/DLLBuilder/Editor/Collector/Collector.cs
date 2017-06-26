@@ -33,67 +33,68 @@ namespace Extenity.DLLBuilder
 				return;
 			}
 
-			for (var i = 0; i < configurations.Count; i++)
-			{
-				InternalGatherDependencies(configurations[i], job, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
-			}
+			InternalGatherDependencies(configurations, job, onSucceeded, onFailed).StartCoroutineInEditorUpdate();
 		}
 
-		public static IEnumerator InternalGatherDependencies(CollectorConfiguration configuration, BuildJob job, Action onSucceeded, Action<string> onFailed)
+		public static IEnumerator InternalGatherDependencies(List<CollectorConfiguration> configurations, BuildJob job, Action onSucceeded, Action<string> onFailed)
 		{
-			DLLBuilder.LogAndUpdateStatus("Gathering dependencies for configuration '{0}'", configuration.ConfigurationName);
-
-			if (!configuration.Enabled)
+			for (var i = 0; i < configurations.Count; i++)
 			{
-				if (onFailed != null)
-					onFailed(string.Format("Internal error. Tried to gather dependencies of a disabled configuration '{0}'.", configuration.ConfigurationName));
-				yield break;
-			}
+				var configuration = configurations[i];
+				DLLBuilder.LogAndUpdateStatus("Gathering dependencies for configuration '{0}'", configuration.ConfigurationName);
 
-			// Check consistency first.
-			{
-				var errors = new List<ConsistencyError>();
-				configuration.CheckConsistency(ref errors);
-				if (errors.Count > 0)
+				if (!configuration.Enabled)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to gather dependencies because of consistency errors:\n" + errors.Serialize('\n')));
-					yield break;
-				}
-			}
-
-			foreach (var source in configuration.Sources)
-			{
-				if (!source.Enabled)
-					continue;
-
-				var sourceDirectoryPath = source.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
-				var targetDirectoryPath = source.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
-
-				// Check that the source directory exists.
-				if (!Directory.Exists(sourceDirectoryPath))
-				{
-					if (onFailed != null)
-						onFailed(string.Format("Collector source directory '{0}' does not exist.", source.SourceDirectoryPath));
+						onFailed(string.Format("Internal error. Tried to gather dependencies of a disabled configuration '{0}'.", configuration.ConfigurationName));
 					yield break;
 				}
 
-				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
-				if (!Directory.Exists(targetDirectoryPath))
+				// Check consistency first.
 				{
-					if (onFailed != null)
-						onFailed(string.Format("Collector target directory '{0}' does not exist. Please make sure the target directory is created. This is a precaution to prevent any damage caused by misconfiguration.", source.TargetDirectoryPath));
-					yield break;
+					var errors = new List<ConsistencyError>();
+					configuration.CheckConsistency(ref errors);
+					if (errors.Count > 0)
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Failed to gather dependencies because of consistency errors:\n" + errors.Serialize('\n')));
+						yield break;
+					}
 				}
 
-				DLLBuilder.LogAndUpdateStatus("Gathering dependencies for '{0}'", targetDirectoryPath);
+				foreach (var source in configuration.Sources)
+				{
+					if (!source.Enabled)
+						continue;
 
-				// TODO: Better just sync files, instead of deleting and copying from scratch.
-				DirectoryTools.Delete(targetDirectoryPath);
-				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
+					var sourceDirectoryPath = source.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+					var targetDirectoryPath = source.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+
+					// Check that the source directory exists.
+					if (!Directory.Exists(sourceDirectoryPath))
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Collector source directory '{0}' does not exist.", source.SourceDirectoryPath));
+						yield break;
+					}
+
+					// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
+					if (!Directory.Exists(targetDirectoryPath))
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Collector target directory '{0}' does not exist. Please make sure the target directory is created. This is a precaution to prevent any damage caused by misconfiguration.", source.TargetDirectoryPath));
+						yield break;
+					}
+
+					DLLBuilder.LogAndUpdateStatus("Gathering dependencies for '{0}'", targetDirectoryPath);
+
+					// TODO: Better just sync files, instead of deleting and copying from scratch.
+					DirectoryTools.Delete(targetDirectoryPath);
+					DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
+				}
 			}
 
-			DLLBuilder.UpdateStatus("Marking collector completion in project status");
+			DLLBuilder.LogAndUpdateStatus("Marking collector completion in project status");
 			job.CurrentlyProcessedProjectStatus.IsCollectorCompleted = true;
 
 			// Recompile this project. Because we probably got new DLLs.
