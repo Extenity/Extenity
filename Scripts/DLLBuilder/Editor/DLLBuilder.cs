@@ -380,10 +380,10 @@ namespace Extenity.DLLBuilder
 			LogAndUpdateStatus("Continuing after asset database refresh");
 
 			// It's either we call onSucceeded or we lose control on assembly reload. In the latter case BuildJob.ContinueAfterRecompilation will handle the rest.
-			//if (onSucceeded != null)
-			//	onSucceeded();
-			EditorApplication.delayCall += () => onSucceeded();
-			EditorApplicationTools.GuaranteeNextUpdateCall();
+			if (onSucceeded != null)
+				onSucceeded();
+			//EditorApplication.delayCall += () => onSucceeded();
+			//EditorApplicationTools.GuaranteeNextUpdateCall();
 		}
 
 		#endregion
