@@ -150,6 +150,17 @@ namespace Extenity.DataToolbox
 			list.RemoveRange(list.Count - count, count);
 		}
 
+		public static T Dequeue<T>(this List<T> list)
+		{
+			if (list == null || list.Count == 0)
+				return default(T);
+
+			var index = list.Count - 1;
+			var item = list[index];
+			list.RemoveAt(index);
+			return item;
+		}
+
 		public static void AddCapacity<T>(ref List<T> list, int additionalCapacity)
 		{
 			if (list == null)
