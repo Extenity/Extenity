@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Extenity.DebugToolbox;
 using UnityEngine;
-using Extenity.MathToolbox;
 
 namespace Extenity.MathToolbox
 {
@@ -258,6 +257,16 @@ namespace Extenity.MathToolbox
 			return Mathf.RoundToInt(value);
 		}
 
+		public static int FastFloor(float val)
+		{
+			return val >= 0.0f ? (int)val : (int)val - 1;
+		}
+
+		public static int FastRound(float val)
+		{
+			return val >= 0.0f ? (int)(val + 0.5f) : (int)(val - 0.5f);
+		}
+
 		public static int Clamp(this int value, int min, int max)
 		{
 			if (value < min) return min;
@@ -319,10 +328,15 @@ namespace Extenity.MathToolbox
 				return min + (x - min) % (max - min);
 		}
 
-		public static float Lerp(float from, float to, float t)
+		public static float LerpClamped(float from, float to, float t)
 		{
 			if (t <= 0.0f) return from;
 			if (t >= 1.0f) return to;
+			return from + (to - from) * t;
+		}
+
+		public static float Lerp(float from, float to, float t)
+		{
 			return from + (to - from) * t;
 		}
 

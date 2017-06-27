@@ -42,38 +42,52 @@ namespace Extenity.MathToolbox
 			a.y = -a.y;
 			return a;
 		}
+
 		public static Vector2Int operator -(Vector2Int a, Vector2Int b)
 		{
 			return new Vector2Int(a.x - b.x, a.y - b.y);
 		}
+
 		public static Vector2Int operator +(Vector2Int a, Vector2Int b)
 		{
 			return new Vector2Int(a.x + b.x, a.y + b.y);
 		}
+
 		public static Vector2 operator *(float d, Vector2Int a)
 		{
 			return new Vector2(a.x * d, a.y * d);
 		}
+
 		public static Vector2Int operator *(int d, Vector2Int a)
 		{
 			return new Vector2Int(a.x * d, a.y * d);
 		}
+
 		public static Vector2 operator *(Vector2Int a, float d)
 		{
 			return new Vector2(a.x * d, a.y * d);
 		}
+
 		public static Vector2Int operator *(Vector2Int a, int d)
 		{
 			return new Vector2Int(a.x * d, a.y * d);
 		}
+
 		public static Vector2Int operator /(Vector2Int a, float d)
 		{
 			return new Vector2Int((int)(a.x / d), (int)(a.y / d));
 		}
+
 		public static Vector2Int operator /(Vector2Int a, int d)
 		{
 			return new Vector2Int(a.x / d, a.y / d);
 		}
+
+		public static Vector2Int operator %(Vector2Int a, int d)
+		{
+			return new Vector2Int(a.x % d, a.y % d);
+		}
+
 		public static bool operator !=(Vector2Int lhs, Vector2Int rhs)
 		{
 			return lhs.x != rhs.x || lhs.y != rhs.y;
@@ -101,10 +115,10 @@ namespace Extenity.MathToolbox
 
 		public override bool Equals(object other)
 		{
-			if (other is Vector2Int)
-				return Equals((Vector2Int)other);
-			else
+			if (!(other is Vector2Int))
 				return false;
+			var vector = (Vector2Int)other;
+			return x == vector.x && y == vector.y;
 		}
 
 		public bool Equals(Vector2Int other)
@@ -112,10 +126,13 @@ namespace Extenity.MathToolbox
 			return x == other.x && y == other.y;
 		}
 
+		private const int X_PRIME = 1619;
+		private const int Y_PRIME = 31337;
+
 		[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
 		public override int GetHashCode()
 		{
-			return x.GetHashCode() ^ y.GetHashCode() << 2;
+			return (x * X_PRIME) ^ (y * Y_PRIME);
 		}
 
 		public static Vector2Int zero = new Vector2Int(0, 0);
@@ -128,22 +145,55 @@ namespace Extenity.MathToolbox
 		public static Vector2Int right = new Vector2Int(1, 0);
 		public static Vector2Int left = new Vector2Int(-1, 0);
 
+		public static readonly Vector2Int[] directions =
+		{
+			left, right,
+			down, up,
+		};
+
 		//public int this[int index] { get; set; }
+
+		#region Magnitude And Distance
 
 		public float magnitude
 		{
 			get { return Mathf.Sqrt(x * x + y * y); }
 		}
 
-		public float sqrMagnitude
+		public int sqrMagnitude
 		{
-			get { return (x * x + y * y); }
+			get { return x * x + y * y; }
 		}
 
-		public float distance(Vector2Int b)
+		public float Distance(Vector2Int other)
 		{
-			return (this - b).magnitude;
+			var dx = x - other.x;
+			var dy = y - other.y;
+			return Mathf.Sqrt(dx * dx + dy * dy);
 		}
+
+		public int SqrDistance(Vector2Int other)
+		{
+			var dx = x - other.x;
+			var dy = y - other.y;
+			return dx * dx + dy * dy;
+		}
+
+		public static float Distance(Vector2Int a, Vector2Int b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return Mathf.Sqrt(dx * dx + dy * dy);
+		}
+
+		public static int SqrDistance(Vector2Int a, Vector2Int b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return dx * dx + dy * dy;
+		}
+
+		#endregion
 
 		public Vector2Int Sign
 		{
@@ -330,6 +380,11 @@ namespace Extenity.MathToolbox
 		public Vector2 ToVector2()
 		{
 			return new Vector2(x, y);
+		}
+
+		public static explicit operator Vector2(Vector2Int v)
+		{
+			return new Vector2(v.x, v.y);
 		}
 
 		#endregion

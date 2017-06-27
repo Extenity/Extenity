@@ -20,6 +20,13 @@ namespace Extenity.MathToolbox
 			this.z = z;
 		}
 
+		public Vector3Int(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+			this.z = 0;
+		}
+
 		public static Vector3Int operator -(Vector3Int a)
 		{
 			a.x = -a.x;
@@ -68,6 +75,11 @@ namespace Extenity.MathToolbox
 			return new Vector3Int(a.x / d, a.y / d, a.z / d);
 		}
 
+		public static Vector3Int operator %(Vector3Int a, int d)
+		{
+			return new Vector3Int(a.x % d, a.y % d, a.z % d);
+		}
+
 		public static bool operator !=(Vector3Int lhs, Vector3Int rhs)
 		{
 			return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z;
@@ -100,10 +112,10 @@ namespace Extenity.MathToolbox
 
 		public override bool Equals(object other)
 		{
-			if (other is Vector3Int)
-				return Equals((Vector3Int)other);
-			else
+			if (!(other is Vector3Int))
 				return false;
+			var vector = (Vector3Int)other;
+			return x == vector.x && y == vector.y && z == vector.z;
 		}
 
 		public bool Equals(Vector3Int other)
@@ -111,10 +123,14 @@ namespace Extenity.MathToolbox
 			return x == other.x && y == other.y && z == other.z;
 		}
 
+		private const int X_PRIME = 1619;
+		private const int Y_PRIME = 31337;
+		private const int Z_PRIME = 6971;
+
 		[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
 		public override int GetHashCode()
 		{
-			return x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
+			return (x * X_PRIME) ^ (y * Y_PRIME) ^ (z * Z_PRIME);
 		}
 
 		public static Vector3Int zero = new Vector3Int(0, 0, 0);
@@ -136,6 +152,15 @@ namespace Extenity.MathToolbox
 		public static Vector3Int positiveZ = new Vector3Int(0, 0, 1);
 		public static Vector3Int negativeZ = new Vector3Int(0, 0, -1);
 
+		public static readonly Vector3Int[] directions =
+		{
+			left, right,
+			down, up,
+			back, forward,
+		};
+
+		#region Magnitude And Distance
+
 		public float magnitude
 		{
 			get { return Mathf.Sqrt(x * x + y * y + z * z); }
@@ -145,6 +170,40 @@ namespace Extenity.MathToolbox
 		{
 			get { return x * x + y * y + z * z; }
 		}
+
+		public float Distance(Vector3Int other)
+		{
+			var dx = x - other.x;
+			var dy = y - other.y;
+			var dz = z - other.z;
+			return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+		}
+
+		public int SqrDistance(Vector3Int other)
+		{
+			var dx = x - other.x;
+			var dy = y - other.y;
+			var dz = z - other.z;
+			return dx * dx + dy * dy + dz * dz;
+		}
+
+		public static float Distance(Vector3Int a, Vector3Int b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			var dz = b.z - a.z;
+			return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+		}
+
+		public static int SqrDistance(Vector3Int a, Vector3Int b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			var dz = b.z - a.z;
+			return dx * dx + dy * dy + dz * dz;
+		}
+
+		#endregion
 
 		//public Vector3 normalized { get; }
 
@@ -386,6 +445,11 @@ namespace Extenity.MathToolbox
 		public Vector3 ToVector3()
 		{
 			return new Vector3(x, y, z);
+		}
+
+		public static explicit operator Vector3(Vector3Int v)
+		{
+			return new Vector3(v.x, v.y, v.z);
 		}
 
 		#endregion
