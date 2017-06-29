@@ -27,7 +27,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<GameObject> FindAllPrefabs()
 		{
-			var assetFolderPaths = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(".prefab"));
+			var assetFolderPaths = GetAllPrefabAssetPaths();
 			var assets = assetFolderPaths.Select(item => AssetDatabase.LoadAssetAtPath(item, typeof(GameObject))).Cast<GameObject>().Where(obj => obj != null);
 			var list = assets.ToList();
 			return list;
@@ -35,7 +35,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<GameObject> FindAllPrefabsWhere(Func<GameObject, bool> predicate)
 		{
-			var assetFolderPaths = AssetDatabase.GetAllAssetPaths().Where(path => path.EndsWith(".prefab"));
+			var assetFolderPaths = GetAllPrefabAssetPaths();
 			var assets = assetFolderPaths.Select(item => AssetDatabase.LoadAssetAtPath(item, typeof(GameObject))).Cast<GameObject>().Where(obj => obj != null).Where(predicate);
 			var list = assets.ToList();
 			return list;
@@ -48,26 +48,161 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		[MenuItem("Assets/Copy Asset Path")]
-		public static void CopySelectedAssetPaths()
+		#region Get Asset Paths
+
+		public static List<string> GetAllSceneAssetPaths()
 		{
-			var stringBuilder = new StringBuilder();
-
-			foreach (Object obj in Selection.objects)
-			{
-				if (AssetDatabase.Contains(obj))
-				{
-					stringBuilder.AppendLine(AssetDatabase.GetAssetPath(obj));
-				}
-				else
-				{
-					Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
-				}
-			}
-
-			var paths = stringBuilder.ToString().Trim();
-			Clipboard.SetClipboardText(paths);
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".unity")).ToList();
 		}
+
+		public static List<string> GetAllPrefabAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".prefab")).ToList();
+		}
+
+		public static List<string> GetAllModelAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".fbx") ||
+					   lower.EndsWith(".dae") ||
+					   lower.EndsWith(".3ds") ||
+					   lower.EndsWith(".dxf") ||
+					   lower.EndsWith(".obj") ||
+					   lower.EndsWith(".skp");
+			}).ToList();
+		}
+
+		public static List<string> GetAllAnimationAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".anim") ||
+					   lower.EndsWith(".controller") ||
+					   lower.EndsWith(".overrideController") ||
+					   lower.EndsWith(".mask");
+			}).ToList();
+		}
+
+		public static List<string> GetAllMaterialAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".mat")).ToList();
+		}
+
+		public static List<string> GetAllShaderAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".compute") ||
+				       lower.EndsWith(".shadervariants") ||
+				       lower.EndsWith(".shader");
+			}).ToList();
+		}
+
+		public static List<string> GetAllTextureAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".cubemap") ||
+				       lower.EndsWith(".bmp") ||
+				       lower.EndsWith(".exr") ||
+				       lower.EndsWith(".gif") ||
+				       lower.EndsWith(".hdr") ||
+				       lower.EndsWith(".iff") ||
+				       lower.EndsWith(".jpg") ||
+				       lower.EndsWith(".pict") ||
+				       lower.EndsWith(".png") ||
+				       lower.EndsWith(".psd") ||
+				       lower.EndsWith(".tga") ||
+				       lower.EndsWith(".tiff");
+			}).ToList();
+		}
+
+		public static List<string> GetAllProceduralTextureAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".sbsar")).ToList();
+		}
+
+		public static List<string> GetAllRenderTextureAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".renderTexture")).ToList();
+		}
+
+		public static List<string> GetAllLightmapAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".giparams")).ToList();
+		}
+
+		public static List<string> GetAllFlareAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".flare")).ToList();
+		}
+
+		public static List<string> GetAllVideoAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".asf") ||
+				       lower.EndsWith(".avi") ||
+				       lower.EndsWith(".dv") ||
+				       lower.EndsWith(".m4v") ||
+				       lower.EndsWith(".mov") ||
+				       lower.EndsWith(".mp4") ||
+				       lower.EndsWith(".mpg") ||
+				       lower.EndsWith(".mpeg") ||
+				       lower.EndsWith(".ogv") ||
+				       lower.EndsWith(".vp8") ||
+				       lower.EndsWith(".webm") ||
+				       lower.EndsWith(".wmv");
+			}).ToList();
+		}
+
+		public static List<string> GetAllUIAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".guiskin") ||
+				       lower.EndsWith(".fontsettings");
+			}).ToList();
+		}
+
+		public static List<string> GetAllAudioAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".mixer") ||
+				       lower.EndsWith(".mp3") ||
+				       lower.EndsWith(".ogg") ||
+				       lower.EndsWith(".wav") ||
+				       lower.EndsWith(".aiff ") ||
+				       lower.EndsWith(".aif") ||
+				       lower.EndsWith(".mod") ||
+				       lower.EndsWith(".it") ||
+				       lower.EndsWith(".s3m") ||
+				       lower.EndsWith(".xm");
+			}).ToList();
+		}
+
+		public static List<string> GetAllPhysicsAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".physicMaterial") ||
+				       lower.EndsWith(".physicsMaterial2D");
+			}).ToList();
+		}
+
+		#endregion
+
+		#region Get Asset Path Of Selection
 
 		public static string GetAssetPathOfActiveGameObject()
 		{
@@ -83,34 +218,6 @@ namespace Extenity.AssetToolbox.Editor
 			}
 
 			return path;
-		}
-
-		public static string GenerateUniqueAssetPathAtSelectedFolder(string fileName)
-		{
-			try
-			{
-				// Private implementation of a filenaming function which puts the file at the selected path.
-				Type assetDatabase = typeof(AssetDatabase);
-				var method = assetDatabase.GetMethod("GetUniquePathNameAtSelectedPath", BindingFlags.NonPublic | BindingFlags.Static);
-				return (string)method.Invoke(assetDatabase, new object[] { fileName });
-			}
-			catch
-			{
-				// Protection against implementation changes.
-				return AssetDatabase.GenerateUniqueAssetPath("Assets/" + fileName);
-			}
-		}
-
-		public static bool IsFolderAsset(Object obj)
-		{
-			if (obj == null)
-				return false;
-
-			var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
-			if (string.IsNullOrEmpty(path))
-				return false;
-
-			return Directory.Exists(path);
 		}
 
 		public static string GetSelectedPathOrAssetRootPath()
@@ -143,6 +250,57 @@ namespace Extenity.AssetToolbox.Editor
 				}
 			}
 			return "";
+		}
+
+		#endregion
+
+		[MenuItem("Assets/Copy Asset Path")]
+		public static void CopySelectedAssetPaths()
+		{
+			var stringBuilder = new StringBuilder();
+
+			foreach (Object obj in Selection.objects)
+			{
+				if (AssetDatabase.Contains(obj))
+				{
+					stringBuilder.AppendLine(AssetDatabase.GetAssetPath(obj));
+				}
+				else
+				{
+					Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
+				}
+			}
+
+			var paths = stringBuilder.ToString().Trim();
+			Clipboard.SetClipboardText(paths);
+		}
+
+		public static string GenerateUniqueAssetPathAtSelectedFolder(string fileName)
+		{
+			try
+			{
+				// Private implementation of a filenaming function which puts the file at the selected path.
+				Type assetDatabase = typeof(AssetDatabase);
+				var method = assetDatabase.GetMethod("GetUniquePathNameAtSelectedPath", BindingFlags.NonPublic | BindingFlags.Static);
+				return (string)method.Invoke(assetDatabase, new object[] { fileName });
+			}
+			catch
+			{
+				// Protection against implementation changes.
+				return AssetDatabase.GenerateUniqueAssetPath("Assets/" + fileName);
+			}
+		}
+
+		public static bool IsFolderAsset(Object obj)
+		{
+			if (obj == null)
+				return false;
+
+			var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+			if (string.IsNullOrEmpty(path))
+				return false;
+
+			return Directory.Exists(path);
 		}
 
 		public static T CreateAsset<T>(string assetPath = "", bool pathRelativeToActiveObject = false) where T : ScriptableObject

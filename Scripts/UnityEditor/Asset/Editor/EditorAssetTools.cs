@@ -94,40 +94,137 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Context Menu - Operations - Prefabs and Scenes
+		#region Context Menu - Operations - Mark As Dirty
+
+		[MenuItem("Assets/Operations/Mark All Assets As Dirty", priority = 1104)]
+		public static void MarkAllAssetsAsDirty()
+		{
+			MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+		}
 
 		[MenuItem("Assets/Operations/Mark All Prefabs And Scenes As Dirty", priority = 1105)]
 		public static void MarkAllPrefabsAndScenesAsDirty()
 		{
+			MarkAssetsAsDirty(true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+		}
+
+		public static void MarkAssetsAsDirty(
+			bool scenes,
+			bool prefabs,
+			bool animations,
+			bool materials,
+			bool shaders,
+			bool models,
+			bool textures,
+			bool proceduralTextures,
+			bool renderTextures,
+			bool lightmap,
+			bool flares,
+			bool videos,
+			bool ui,
+			bool physics,
+			bool audio
+		)
+		{
+			var fullList = new List<string>();
+			var log = new StringBuilder();
+			if (scenes)
 			{
-				var list = GetAllSceneAssetPaths();
-				list.Sort();
-				list.LogList();
-				foreach (var assetPath in list)
-				{
-					var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-					EditorUtility.SetDirty(asset);
-				}
+				var list = AssetTools.GetAllSceneAssetPaths();
+				InternalAddToAssetList(list, fullList, "Scenes", log);
 			}
+			if (prefabs)
 			{
-				var list = GetAllPrefabAssetPaths();
-				list.Sort();
-				list.LogList();
-				foreach (var assetPath in list)
-				{
-					var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-					EditorUtility.SetDirty(asset);
-				}
+				var list = AssetTools.GetAllPrefabAssetPaths();
+				InternalAddToAssetList(list, fullList, "Prefabs", log);
+			}
+			if (models)
+			{
+				var list = AssetTools.GetAllModelAssetPaths();
+				InternalAddToAssetList(list, fullList, "Models", log);
+			}
+			if (animations)
+			{
+				var list = AssetTools.GetAllAnimationAssetPaths();
+				InternalAddToAssetList(list, fullList, "Animations", log);
+			}
+			if (materials)
+			{
+				var list = AssetTools.GetAllMaterialAssetPaths();
+				InternalAddToAssetList(list, fullList, "Materials", log);
+			}
+			if (shaders)
+			{
+				var list = AssetTools.GetAllShaderAssetPaths();
+				InternalAddToAssetList(list, fullList, "Shaders", log);
+			}
+			if (textures)
+			{
+				var list = AssetTools.GetAllTextureAssetPaths();
+				InternalAddToAssetList(list, fullList, "Textures", log);
+			}
+			if (proceduralTextures)
+			{
+				var list = AssetTools.GetAllProceduralTextureAssetPaths();
+				InternalAddToAssetList(list, fullList, "Procedural Textures", log);
+			}
+			if (renderTextures)
+			{
+				var list = AssetTools.GetAllRenderTextureAssetPaths();
+				InternalAddToAssetList(list, fullList, "Render Textures", log);
+			}
+			if (lightmap)
+			{
+				var list = AssetTools.GetAllLightmapAssetPaths();
+				InternalAddToAssetList(list, fullList, "Lightmaps", log);
+			}
+			if (flares)
+			{
+				var list = AssetTools.GetAllFlareAssetPaths();
+				InternalAddToAssetList(list, fullList, "Flares", log);
+			}
+			if (videos)
+			{
+				var list = AssetTools.GetAllVideoAssetPaths();
+				InternalAddToAssetList(list, fullList, "Videos", log);
+			}
+			if (ui)
+			{
+				var list = AssetTools.GetAllUIAssetPaths();
+				InternalAddToAssetList(list, fullList, "UI", log);
+			}
+			if (audio)
+			{
+				var list = AssetTools.GetAllAudioAssetPaths();
+				InternalAddToAssetList(list, fullList, "Audio", log);
+			}
+			if (physics)
+			{
+				var list = AssetTools.GetAllPhysicsAssetPaths();
+				InternalAddToAssetList(list, fullList, "Physics", log);
+			}
+
+			Debug.Log(log.ToString());
+
+			foreach (var assetPath in fullList)
+			{
+				var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+				EditorUtility.SetDirty(asset);
 			}
 		}
 
-		public static List<string> GetAllSceneAssetPaths()
+		private static void InternalAddToAssetList(List<string> list, List<string> fullList, string logTitle, StringBuilder log)
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().Contains(".unity")).ToList();
-		}
-		public static List<string> GetAllPrefabAssetPaths()
-		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().Contains(".prefab")).ToList();
+			if (list.Count == 0)
+				return;
+
+			list.Sort();
+			fullList.AddRange(list);
+			log.AppendLine(string.Format("====  ({0}) {1}  ====", list.Count, logTitle));
+			foreach (var item in list)
+			{
+				log.AppendLine(item);
+			}
 		}
 
 		#endregion
