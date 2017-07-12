@@ -540,7 +540,7 @@ namespace Extenity.DebugToolbox
 			{
 				if (inSeparateLogCalls)
 				{
-					Debug.logger.Log(logType, initialLine);
+					Debug.unityLogger.Log(logType, initialLine);
 				}
 				else
 				{
@@ -553,7 +553,7 @@ namespace Extenity.DebugToolbox
 			{
 				if (inSeparateLogCalls)
 				{
-					Debug.logger.Log(logType, "[NullList]");
+					Debug.unityLogger.Log(logType, "[NullList]");
 				}
 				else
 				{
@@ -568,7 +568,7 @@ namespace Extenity.DebugToolbox
 					var line = (item == null ? "[Null]" : item.ToString());
 					if (inSeparateLogCalls)
 					{
-						Debug.logger.Log(logType, line);
+						Debug.unityLogger.Log(logType, line);
 					}
 					else
 					{
@@ -579,7 +579,7 @@ namespace Extenity.DebugToolbox
 
 			if (!inSeparateLogCalls)
 			{
-				Debug.logger.Log(logType, stringBuilder.ToString());
+				Debug.unityLogger.Log(logType, stringBuilder.ToString());
 			}
 		}
 
