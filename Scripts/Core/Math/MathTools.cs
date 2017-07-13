@@ -277,6 +277,33 @@ namespace Extenity.MathToolbox
 			return val >= 0.0 ? (long)(val + 0.5) : (long)(val - 0.5);
 		}
 
+		/// <summary>
+		/// See: https://stackoverflow.com/questions/827252/c-sharp-making-one-int64-from-two-int32s
+		/// </summary>
+		public static long MakeLong(int left, int right)
+		{
+			//implicit conversion of left to a long
+			long res = left;
+
+			//shift the bits creating an empty space on the right
+			// ex: 0x0000CFFF becomes 0xCFFF0000
+			res = (res << 32);
+
+			//combine the bits on the right with the previous value
+			// ex: 0xCFFF0000 | 0x0000ABCD becomes 0xCFFFABCD
+			res = res | (long)(uint)right; //uint first to prevent loss of signed bit
+
+			return res;
+		}
+
+		/// <summary>
+		/// See: https://stackoverflow.com/questions/1209439/what-is-the-best-way-to-combine-two-uints-into-a-ulong-in-c-sharp
+		/// </summary>
+		public static ulong MakeULong(uint left, uint right)
+		{
+			return (ulong)left << 32 | right;
+		}
+
 		public static int Clamp(this int value, int min, int max)
 		{
 			if (value < min) return min;
