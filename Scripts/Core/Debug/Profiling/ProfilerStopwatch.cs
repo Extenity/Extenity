@@ -1,54 +1,77 @@
-using System;
+using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Extenity.DebugToolbox
 {
 
 	public class ProfilerStopwatch
 	{
-		private readonly Stopwatch Stopwatch = new Stopwatch();
-		private bool IsStopwatchStarted { get { return Stopwatch.IsRunning; } }
+		public double StartTime { get; private set; }
+		public bool IsStarted { get; private set; }
 
-		public void StartStopwatch()
+		public double EndTime { get; private set; }
+
+		public double Elapsed
 		{
-			if (IsStopwatchStarted)
+			get
+			{
+				if (IsStarted)
+				{
+					return CurrentTime - StartTime;
+				}
+				return EndTime - StartTime;
+			}
+		}
+
+		public double CurrentTime
+		{
+			get { return PrecisionTiming.PreciseTime; }
+		}
+
+		public void Start()
+		{
+			if (IsStarted)
 			{
 				Debug.LogError("Tried to start profiler stopwatch but it was already started.");
 				return;
 			}
+			IsStarted = true;
 
-			Stopwatch.Reset();
-			Stopwatch.Start();
+			StartTime = CurrentTime;
+			EndTime = 0;
 		}
 
-		public TimeSpan EndStopwatch()
+		public double End()
 		{
-			if (!IsStopwatchStarted)
+			EndTime = CurrentTime;
+
+			if (!IsStarted)
 			{
+				StartTime = 0;
+				EndTime = 0;
 				Debug.LogError("Tried to end profiler stopwatch but it was not started.");
-				return TimeSpan.Zero;
+				return 0;
 			}
 
-			Stopwatch.Stop();
-			var elapsed = Stopwatch.Elapsed;
+			var elapsed = Elapsed;
 
 			TotalCalls++;
 			CumulativeTime += elapsed;
+			IsStarted = false;
 			return elapsed;
 		}
 
-		public void EndStopwatchAndLog(string profilerMessageFormat)
+		public void EndAndLog(string profilerMessageFormat)
 		{
-			EndStopwatch();
+			End();
 			Log(profilerMessageFormat);
 		}
 
-		public void EndStopwatchAndLog(Object context, string profilerMessageFormat)
+		public void EndAndLog(Object context, string profilerMessageFormat)
 		{
-			EndStopwatch();
+			End();
 			Log(context, profilerMessageFormat);
 		}
 
@@ -56,22 +79,22 @@ namespace Extenity.DebugToolbox
 
 		public void Log(string profilerMessageFormat)
 		{
-			Debug.LogFormat(profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
+			Debug.LogFormat(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
 		public void Log(Object context, string profilerMessageFormat)
 		{
-			Debug.LogFormat(context, profilerMessageFormat, Stopwatch.Elapsed.ToStringMinutesSecondsMilliseconds());
+			Debug.LogFormat(context, profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
 		public void LogCumulative(string profilerMessageFormat)
 		{
-			Debug.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
+			Debug.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
 		public void LogCumulative(Object context, string profilerMessageFormat)
 		{
-			Debug.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMilliseconds());
+			Debug.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
 		#endregion
@@ -79,12 +102,12 @@ namespace Extenity.DebugToolbox
 		#region Cumulative Time
 
 		public int TotalCalls;
-		public TimeSpan CumulativeTime { get; private set; }
+		public double CumulativeTime { get; private set; }
 
 		public void ResetCumulativeTime()
 		{
 			TotalCalls = 0;
-			CumulativeTime = default(TimeSpan);
+			CumulativeTime = 0;
 		}
 
 		#endregion
