@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace Extenity.OperatingSystemToolbox
+namespace Extenity.ApplicationToolbox
 {
 
 #if UNITY_STANDALONE_WIN
