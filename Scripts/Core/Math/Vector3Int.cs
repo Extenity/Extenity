@@ -291,6 +291,28 @@ namespace Extenity.MathToolbox
 		//public void Scale(Vector3 scale);
 		//public static Vector3 Scale(Vector3Int a, Vector3Int b);
 
+		public static void SwapToMakeLesserAndGreater(ref Vector3Int shouldBeLesser, ref Vector3Int shouldBeGreater)
+		{
+			if (shouldBeLesser.x > shouldBeGreater.x)
+			{
+				var tmp = shouldBeLesser.x;
+				shouldBeLesser.x = shouldBeGreater.x;
+				shouldBeGreater.x = tmp;
+			}
+			if (shouldBeLesser.y > shouldBeGreater.y)
+			{
+				var tmp = shouldBeLesser.y;
+				shouldBeLesser.y = shouldBeGreater.y;
+				shouldBeGreater.y = tmp;
+			}
+			if (shouldBeLesser.z > shouldBeGreater.z)
+			{
+				var tmp = shouldBeLesser.z;
+				shouldBeLesser.z = shouldBeGreater.z;
+				shouldBeGreater.z = tmp;
+			}
+		}
+
 		public Vector3Int RotatedY90CW
 		{
 			get { return new Vector3Int(z, y, -x); }

@@ -252,6 +252,22 @@ namespace Extenity.MathToolbox
 		//public void Scale(Vector2 scale);
 		//public static Vector2 Scale(Vector2Int a, Vector2Int b);
 
+		public static void SwapToMakeLesserAndGreater(ref Vector2Int shouldBeLesser, ref Vector2Int shouldBeGreater)
+		{
+			if (shouldBeLesser.x > shouldBeGreater.x)
+			{
+				var tmp = shouldBeLesser.x;
+				shouldBeLesser.x = shouldBeGreater.x;
+				shouldBeGreater.x = tmp;
+			}
+			if (shouldBeLesser.y > shouldBeGreater.y)
+			{
+				var tmp = shouldBeLesser.y;
+				shouldBeLesser.y = shouldBeGreater.y;
+				shouldBeGreater.y = tmp;
+			}
+		}
+
 		#region Basic Checks
 
 		public bool IsUnit()
