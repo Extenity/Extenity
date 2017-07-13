@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Extenity.MathToolbox;
 
 namespace Extenity.DataToolbox
 {
@@ -522,6 +523,35 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Conversions - Time
+
+		public static string ToStringMinutesSecondsMillisecondsFromSeconds(this double totalSeconds)
+		{
+			//TimeSpan t = TimeSpan.FromSeconds(seconds);
+			//return string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D2}", t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
+			//return string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
+
+			// Round to milliseconds
+			totalSeconds = MathTools.FastRoundToInt(totalSeconds * 1000.0) / 1000.0;
+
+			var minutes = (long)(totalSeconds / 60);
+			var seconds = (int)(totalSeconds % 60);
+			var milliseconds = MathTools.FastRoundToInt((totalSeconds - Math.Truncate(totalSeconds)) * 1000);
+			return string.Format("{0}:{1:00}.{2:000}", minutes, seconds, milliseconds);
+		}
+
+		public static string ToStringMillisecondsFromSeconds(this double totalSeconds)
+		{
+			return (totalSeconds * 1000).ToString("0.000");
+		}
+
+		public static string ToStringMicrosecondsFromSeconds(this double totalSeconds)
+		{
+			return (totalSeconds * 1000000).ToString("0.000");
+		}
+
+		#endregion
+
 		#region Serialization
 
 		public static string Serialize<T>(this T array, char separator = ',', int capacity = 0) where T : ICollection
@@ -659,18 +689,6 @@ namespace Extenity.DataToolbox
 				array[i] = ParseQuaternion(listString[i]);
 
 			return array;
-		}
-
-		#endregion
-
-		#region Time
-
-		static string FormatTime(float seconds)
-		{
-			TimeSpan t = TimeSpan.FromSeconds(seconds);
-
-			return string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D2}", t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
-			//return string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
 		}
 
 		#endregion

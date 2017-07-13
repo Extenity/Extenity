@@ -257,14 +257,24 @@ namespace Extenity.MathToolbox
 			return Mathf.RoundToInt(value);
 		}
 
-		public static int FastFloor(float val)
+		public static int FastFloorToInt(float val)
 		{
 			return val >= 0.0f ? (int)val : (int)val - 1;
 		}
 
-		public static int FastRound(float val)
+		public static int FastRoundToInt(float val)
 		{
 			return val >= 0.0f ? (int)(val + 0.5f) : (int)(val - 0.5f);
+		}
+
+		public static int FastRoundToInt(double val)
+		{
+			return val >= 0.0 ? (int)(val + 0.5) : (int)(val - 0.5);
+		}
+
+		public static long FastRoundToLong(double val)
+		{
+			return val >= 0.0 ? (long)(val + 0.5) : (long)(val - 0.5);
 		}
 
 		public static int Clamp(this int value, int min, int max)
