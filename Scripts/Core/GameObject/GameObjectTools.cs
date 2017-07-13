@@ -1189,12 +1189,28 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region Full Name
+		#region GameObject Name
+
+		public const string NullGameObjectNamePlaceholder = "[Null]";
+
+		public static string NameSafe(this Transform transform)
+		{
+			if (transform == null)
+				return NullGameObjectNamePlaceholder;
+			return transform.gameObject.name;
+		}
+
+		public static string NameSafe(this GameObject gameObject)
+		{
+			if (gameObject == null)
+				return NullGameObjectNamePlaceholder;
+			return gameObject.name;
+		}
 
 		public static string FullName(this GameObject me, char separator = '/')
 		{
 			if (me == null)
-				return "";
+				return NullGameObjectNamePlaceholder;
 			var name = me.name;
 			var parent = me.transform.parent;
 			while (parent != null)
@@ -1208,7 +1224,7 @@ namespace Extenity.GameObjectToolbox
 		public static string FullName(this Component me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
 		{
 			if (me == null)
-				return "";
+				return NullGameObjectNamePlaceholder;
 			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
