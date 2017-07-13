@@ -163,7 +163,7 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringMinutesSeconds(this TimeSpan timeSpan)
 		{
-			return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + timeSpan.Seconds;
+			return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + (object)timeSpan.Seconds.ToString("00");
 		}
 
 		#endregion
