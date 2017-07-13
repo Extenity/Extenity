@@ -4,7 +4,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
-using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.DLLBuilder

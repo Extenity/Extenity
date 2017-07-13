@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;

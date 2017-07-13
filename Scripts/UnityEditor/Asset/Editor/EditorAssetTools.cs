@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using Extenity.TextureToolbox;
 
 namespace Extenity.AssetToolbox.Editor

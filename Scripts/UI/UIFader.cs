@@ -1,9 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class UIFader : MonoBehaviour
 {

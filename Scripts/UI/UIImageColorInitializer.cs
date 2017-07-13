@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Extenity.GameObjectToolbox;
 using UnityEngine.UI;
 
