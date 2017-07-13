@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Extenity.DataToolbox;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -82,6 +83,15 @@ namespace Extenity.ApplicationToolbox
 		public static int IntPtrSize
 		{
 			get { return Marshal.SizeOf(typeof(IntPtr)); }
+		}
+
+		#endregion
+
+		#region Headless
+
+		public static bool IsHeadless()
+		{
+			return SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
 		}
 
 		#endregion
