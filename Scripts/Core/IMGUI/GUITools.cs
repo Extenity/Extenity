@@ -203,6 +203,19 @@ namespace Extenity.IMGUIToolbox
 
 		#endregion
 
+		#region Drawing Tools - Filled Rect
+
+		public static void DrawFilledRect(Rect rect) { DrawFilledRect(rect, GUI.contentColor); }
+		public static void DrawFilledRect(Rect rect, Color color)
+		{
+			var backgroundColor = GUI.backgroundColor;
+			GUI.backgroundColor = color;
+			GUI.Box(rect, GUIContent.none, WhiteTextureStyle);
+			GUI.backgroundColor = backgroundColor;
+		}
+
+		#endregion
+
 		#region Drawing Tools - Line
 
 		// Line drawing routine originally courtesy of Linusmartensson:
@@ -357,6 +370,13 @@ namespace Extenity.IMGUIToolbox
 			var rt = 1 - t;
 			return rt * rt * rt * s + 3 * rt * rt * t * st + 3 * rt * t * t * et + t * t * t * e;
 		}
+
+		#endregion
+
+		#region Textures
+
+		public static readonly Texture2D WhiteTexture = Texture2D.whiteTexture;
+		public static readonly GUIStyle WhiteTextureStyle = new GUIStyle { normal = new GUIStyleState { background = WhiteTexture } };
 
 		#endregion
 	}
