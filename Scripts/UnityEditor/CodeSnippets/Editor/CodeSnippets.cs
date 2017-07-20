@@ -21,9 +21,9 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 			Path = "__NAME__.cs",
 			Properties = new[] { "__NAME__" },
 			FileContent =
-@"using UnityEngine;
-using System.Collections;
+@"using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class __NAME__ : MonoBehaviour
 {
@@ -64,9 +64,9 @@ public class __NAME__ : MonoBehaviour
 			Path = "__NAME__.cs",
 			Properties = new[] { "__NAME__", "__NAMESPACE__" },
 			FileContent =
-@"using UnityEngine;
-using System.Collections;
+@"using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace __NAMESPACE__
 {
@@ -112,10 +112,11 @@ namespace __NAMESPACE__
 			Path = "Editor/__NAME__Inspector.cs",
 			Properties = new[] { "__NAME__" },
 			FileContent =
-@"using UnityEngine;
-using UnityEditor;
-using System.Collections;
+@"using System.Collections;
 using System.Collections.Generic;
+using Extenity.UnityEditorToolbox.Editor;
+using UnityEngine;
+using UnityEditor;
 
 [CustomEditor(typeof(__NAME__))]
 public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
@@ -145,10 +146,11 @@ public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
 			Path = "Editor/__NAME__Inspector.cs",
 			Properties = new[] { "__NAME__", "__NAMESPACE__" },
 			FileContent =
-@"using UnityEngine;
-using UnityEditor;
-using System.Collections;
+@"using System.Collections;
 using System.Collections.Generic;
+using Extenity.UnityEditorToolbox.Editor;
+using UnityEngine;
+using UnityEditor;
 
 namespace __NAMESPACE__
 {
