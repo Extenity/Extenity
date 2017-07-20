@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Extenity.ColoringToolbox;
 using Extenity.RenderingToolbox;
 using UnityEngine;
 
@@ -153,6 +154,61 @@ namespace Extenity.IMGUIToolbox
 					}
 				default:
 					throw new ArgumentOutOfRangeException("enabledState", enabledState, null);
+			}
+		}
+
+		#endregion
+
+		#region Controls - Bars
+
+		public static void Bars(Rect rect, float separatorLength, bool drawBottomLabels, ColorScale barColorScale, ColorScale barBackgroundColorScale, int barCount, Func<int, float> barValueGetter)
+		{
+			var totalSeparatorLenght = separatorLength * (barCount - 1);
+			var bottomLabelHeight = drawBottomLabels ? 20f : 0f;
+			var barWidth = (rect.width - totalSeparatorLenght) / barCount;
+			var barFullHeight = rect.height - bottomLabelHeight;
+			var barFullRect = new Rect(rect.x, rect.y, barWidth, barFullHeight);
+			var barRect = new Rect(rect.x, 0, barWidth, 0f);
+
+			for (int iBar = 0; iBar < barCount; iBar++)
+			{
+				barFullRect.x = rect.x + (barWidth + separatorLength) * iBar;
+				barRect.x = barFullRect.x;
+
+				var value = barValueGetter(iBar);
+				Color32 barColor;
+				Color32 barBackgroundColor;
+				if (value > 1f || value < 0f)
+				{
+					barColor = Color.red;
+					barBackgroundColor = Color.red;
+
+					barRect.height = 0f;
+					barRect.y = barFullRect.y;
+				}
+				else
+				{
+					barColor = barColorScale.GetNormalizedColor32(value);
+					barBackgroundColor = barBackgroundColorScale.GetNormalizedColor32(value);
+
+					barRect.height = barFullHeight * value;
+					barRect.y = barFullRect.y + barFullHeight - barRect.height;
+				}
+
+				DrawFilledRect(barFullRect, barBackgroundColor);
+				DrawFilledRect(barRect, barColor);
+
+				if (drawBottomLabels)
+				{
+					barRect.y = barFullRect.yMax;
+					barRect.height = bottomLabelHeight;
+					var valueString = value > 1f
+						? "> 1"
+						: value < 0f
+						? "< 0"
+						: ((int)(value * 100f)).ToString();
+					GUI.Label(barRect, valueString);
+				}
 			}
 		}
 

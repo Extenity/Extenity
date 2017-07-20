@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.ColoringToolbox;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox
@@ -48,6 +49,16 @@ namespace Extenity.IMGUIToolbox
 				default:
 					throw new ArgumentOutOfRangeException("enabledState", enabledState, null);
 			}
+		}
+
+		#endregion
+
+		#region Controls - Bars
+
+		public static void Bars(float width, float height, float separatorLength, bool drawBottomLabels, ColorScale barColorScale, ColorScale barBackgroundColorScale, int barCount, Func<int, float> barValueGetter)
+		{
+			var rect = GUILayoutUtility.GetRect(width, width, height, height);
+			GUITools.Bars(rect, separatorLength, drawBottomLabels, barColorScale, barBackgroundColorScale, barCount, barValueGetter);
 		}
 
 		#endregion
