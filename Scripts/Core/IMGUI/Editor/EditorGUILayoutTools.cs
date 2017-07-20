@@ -40,6 +40,18 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 		#endregion
+
+		#region Header
+
+		public static void DrawHeader(string header)
+		{
+			GUILayout.Space(8f);
+			var position = GUILayoutUtility.GetRect(0, float.MaxValue, 16f, 16f);
+			position = EditorGUI.IndentedRect(position);
+			GUI.Label(position, header, EditorStyles.boldLabel);
+		}
+
+		#endregion
 	}
 
 }
