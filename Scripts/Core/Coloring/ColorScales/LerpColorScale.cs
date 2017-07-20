@@ -1,15 +1,17 @@
+using System;
 using UnityEngine;
 using Extenity.DataToolbox;
 
 namespace Extenity.ColoringToolbox
 {
 
+	[Serializable]
 	public class LerpColorScale : ColorScale
 	{
 		#region Configuration
 
-		public Color32 MinimumColor { get; set; }
-		public Color32 MaximumColor { get; set; }
+		public Color32 MinimumColor;
+		public Color32 MaximumColor;
 
 		#endregion
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
@@ -6,11 +7,12 @@ using Extenity.MathToolbox;
 namespace Extenity.ColoringToolbox
 {
 
+	[Serializable]
 	public class GradientColorScale : ColorScale
 	{
 		#region Configuration
 
-		public readonly List<ColorStop> ColorStops;
+		public List<ColorStop> ColorStops;
 
 		#endregion
 
@@ -22,15 +24,20 @@ namespace Extenity.ColoringToolbox
 			ColorStops = new List<ColorStop>();
 		}
 
+		public GradientColorScale(IList<ColorStop> colorStops)
+			: base()
+		{
+			ColorStops = new List<ColorStop>(colorStops.Count);
+			for (int i = 0; i < colorStops.Count; i++)
+				ColorStops.AddSorted(colorStops[i]);
+		}
+
 		public GradientColorScale(float minimumValue, float maximumValue, IList<ColorStop> colorStops)
 			: base(minimumValue, maximumValue)
 		{
 			ColorStops = new List<ColorStop>(colorStops.Count);
-
 			for (int i = 0; i < colorStops.Count; i++)
-			{
 				ColorStops.AddSorted(colorStops[i]);
-			}
 		}
 
 		#endregion

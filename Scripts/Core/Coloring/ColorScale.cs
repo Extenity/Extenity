@@ -51,7 +51,7 @@ namespace Extenity.ColoringToolbox
 		{
 			_MinimumValue = 0f;
 			_MaximumValue = 1f;
-			_OneOverDifference = (_MaximumValue - _MinimumValue) > 0f ? 1f / (_MaximumValue - _MinimumValue) : 0f;
+			_OneOverDifference = 1f;
 		}
 
 		public ColorScale(float minimumValue, float maximumValue)

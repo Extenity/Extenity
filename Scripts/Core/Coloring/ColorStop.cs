@@ -9,21 +9,31 @@ namespace Extenity.ColoringToolbox
 
 	#region Color Stop
 
+	[Serializable]
 	public struct ColorStop : IComparable<ColorStop>
 	{
-		public readonly float Position;
-		public readonly float Hue;
-		public readonly float Saturation;
-		public readonly float Lightness;
-		public readonly Color32 Color32;
+		public float Position;
+		//public float Hue;
+		//public float Saturation;
+		//public float Lightness;
+		public Color32 Color32;
 
 		public ColorStop(float position, float hue, float saturation, float lightness)
 		{
 			Position = position;
-			Hue = hue;
-			Saturation = saturation;
-			Lightness = lightness;
-			Color32 = ColorTools.HSL2RGB(Hue, Saturation, Lightness);
+			//Hue = hue;
+			//Saturation = saturation;
+			//Lightness = lightness;
+			Color32 = ColorTools.HSL2RGB(hue, saturation, lightness);
+		}
+
+		public ColorStop(float position, Color32 color)
+		{
+			Position = position;
+			//Hue = ;
+			//Saturation = ;
+			//Lightness = ;
+			Color32 = color;
 		}
 
 		public int CompareTo(ColorStop other)

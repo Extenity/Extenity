@@ -1,19 +1,21 @@
+using System;
 using UnityEngine;
 using Extenity.DataToolbox;
 
 namespace Extenity.ColoringToolbox
 {
 
+	[Serializable]
 	public class HueColorScale : ColorScale
 	{
 		#region Configuration
 
-		public float MinimumHue { get; set; }
-		public float MaximumHue { get; set; }
-		public float MinimumSaturation { get; set; }
-		public float MaximumSaturation { get; set; }
-		public float MinimumLightness { get; set; }
-		public float MaximumLightness { get; set; }
+		public float MinimumHue;
+		public float MaximumHue;
+		public float MinimumSaturation;
+		public float MaximumSaturation;
+		public float MinimumLightness;
+		public float MaximumLightness;
 
 		#endregion
 
