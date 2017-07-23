@@ -1,60 +1,80 @@
-﻿using System.ComponentModel;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 
 namespace Extenity.ApplicationToolbox
 {
 
-#if UNITY_STANDALONE_WIN
-
 	public static class PrecisionTiming
 	{
-		private static double HighPerformanceCounterFrequency;
+		#region Precise Sleep
 
-		[DllImport("Kernel32.dll")]
-		[System.Security.SuppressUnmanagedCodeSecurity()]
-		private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
-		[DllImport("Kernel32.dll")]
-		[System.Security.SuppressUnmanagedCodeSecurity()]
-		private static extern bool QueryPerformanceFrequency(out long lpFrequency);
+#if UNITY_STANDALONE_WIN
 
 		[DllImport("winmm.dll")]
-		[System.Security.SuppressUnmanagedCodeSecurity()]
+		[SuppressUnmanagedCodeSecurity]
 		public static extern int timeBeginPeriod(int uPeriod);
 		[DllImport("winmm.dll")]
-		[System.Security.SuppressUnmanagedCodeSecurity()]
+		[SuppressUnmanagedCodeSecurity]
 		public static extern int timeEndPeriod(int uPeriod);
 
-		public static void PrecisionSleep(int msec)
+		public static void PreciseSleep(int msec)
 		{
 			timeBeginPeriod(msec);
 			Thread.Sleep(msec);
 			timeEndPeriod(msec);
 		}
 
+#endif
+
+		#endregion
+
+		#region Precise Time
+
 		public static double PreciseTime
 		{
-			get
-			{
-				if (HighPerformanceCounterFrequency == 0)
-				{
-					long freq;
-					if (QueryPerformanceFrequency(out freq) == false)
-					{
-						// high-performance counter not supported
-						throw new Win32Exception();
-					}
-					HighPerformanceCounterFrequency = freq;
-				}
-
-				long counter;
-				QueryPerformanceCounter(out counter);
-
-				return counter / HighPerformanceCounterFrequency;
-			}
+			get { return (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency; }
 		}
-	}
 
-#endif
+		#endregion
+
+		#region Precise Time - Old Implementation
+
+		// Decided to use Stopwatch's wrapper to access performance counter since it's platform independent and works if system does not support high resolution timer.
+
+		//private static double HighPerformanceCounterFrequency;
+
+		//[DllImport("Kernel32.dll")]
+		//[SuppressUnmanagedCodeSecurity]
+		//private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+		//[DllImport("Kernel32.dll")]
+		//[SuppressUnmanagedCodeSecurity]
+		//private static extern bool QueryPerformanceFrequency(out long lpFrequency);
+
+		//public static double PreciseTime
+		//{
+		//	get
+		//	{
+		//		if (HighPerformanceCounterFrequency == 0)
+		//		{
+		//			long freq;
+		//			if (QueryPerformanceFrequency(out freq) == false)
+		//			{
+		//				// high-performance counter not supported
+		//				throw new Win32Exception();
+		//			}
+		//			HighPerformanceCounterFrequency = freq;
+		//		}
+
+		//		long counter;
+		//		QueryPerformanceCounter(out counter);
+
+		//		return counter / HighPerformanceCounterFrequency;
+		//	}
+		//}
+
+		#endregion
+	}
 
 }
