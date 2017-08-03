@@ -71,7 +71,10 @@ namespace Extenity.DLLBuilder
 
 				// TODO: Better just sync files, instead of deleting and copying from scratch.
 				DirectoryTools.Delete(targetDirectoryPath);
-				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, null, true, true, false, null);
+				var excludeFilters = configuration.ExcludeScriptFiles
+					? new[] { "*.cs", "*.cs.meta" }
+					: null;
+				DirectoryTools.Copy(sourceDirectoryPath, SearchOption.AllDirectories, targetDirectoryPath, null, excludeFilters, true, true, false, null);
 			}
 		}
 

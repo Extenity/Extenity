@@ -20,6 +20,7 @@ namespace Extenity.DLLBuilder
 		public string ConfigurationName;
 		public string SourceDirectoryPath;
 		public string TargetDirectoryPath;
+		public bool ExcludeScriptFiles = true;
 
 		public PackingDirectoryInfo[] DirectoriesToCopy;
 
