@@ -17,7 +17,7 @@ namespace Extenity.DebugToolbox
 		public static bool DebugDrawingDisabled = false;
 
 		public static Color[] DebugColors =
-			{
+		{
 			Color.magenta,
 			Color.cyan,
 			Color.yellow,
@@ -38,7 +38,7 @@ namespace Extenity.DebugToolbox
 			InitializeTextures();
 
 #if !UNITY_DRAWER
-		CreateLineMaterial();
+			CreateLineMaterial();
 #endif
 		}
 
@@ -76,54 +76,54 @@ namespace Extenity.DebugToolbox
 
 #if !UNITY_DRAWER
 
-	private Material lineMaterial;
-	private List<DebugLineData> lineData;
+		private Material lineMaterial;
+		private List<DebugLineData> lineData;
 
-	private struct DebugLineData
-	{
-		public Vector3 start;
-		public Vector3 end;
-		public Color color;
-
-		public DebugLineData(Vector3 start, Vector3 end, Color color)
+		private struct DebugLineData
 		{
-			this.start = start;
-			this.end = end;
-			this.color = color;
-		}
-	}
+			public Vector3 start;
+			public Vector3 end;
+			public Color color;
 
-	private void CreateLineMaterial()
-	{
-		lineMaterial = new Material(Shader.Find("Lines/Colored Blended"));
-		lineMaterial.hideFlags = HideFlags.HideAndDontSave;
-		lineMaterial.shader.hideFlags = HideFlags.HideAndDontSave;
-
-		lineData = new List<DebugLineData>(1000);
-	}
-
-	void OnPostRender()
-	{
-		if (DebugDrawingDisabled) return;
-
-		//GL.PushMatrix();
-		//GL.LoadIdentity();
-		lineMaterial.SetPass(0);
-		GL.Begin(GL.LINES);
-
-		for (int i = 0; i < lineData.Count; i++)
-		{
-			var debugLineData = lineData[i];
-			GL.Color(debugLineData.color);
-			GL.Vertex(debugLineData.start);
-			GL.Vertex(debugLineData.end);
+			public DebugLineData(Vector3 start, Vector3 end, Color color)
+			{
+				this.start = start;
+				this.end = end;
+				this.color = color;
+			}
 		}
 
-		GL.End();
-		//GL.PopMatrix();
+		private void CreateLineMaterial()
+		{
+			lineMaterial = new Material(Shader.Find("Lines/Colored Blended"));
+			lineMaterial.hideFlags = HideFlags.HideAndDontSave;
+			lineMaterial.shader.hideFlags = HideFlags.HideAndDontSave;
 
-		lineData.Clear();
-	}
+			lineData = new List<DebugLineData>(1000);
+		}
+
+		void OnPostRender()
+		{
+			if (DebugDrawingDisabled) return;
+
+			//GL.PushMatrix();
+			//GL.LoadIdentity();
+			lineMaterial.SetPass(0);
+			GL.Begin(GL.LINES);
+
+			for (int i = 0; i < lineData.Count; i++)
+			{
+				var debugLineData = lineData[i];
+				GL.Color(debugLineData.color);
+				GL.Vertex(debugLineData.start);
+				GL.Vertex(debugLineData.end);
+			}
+
+			GL.End();
+			//GL.PopMatrix();
+
+			lineData.Clear();
+		}
 
 #endif
 
@@ -152,14 +152,14 @@ namespace Extenity.DebugToolbox
 
 			ColoredTextures = new[]
 			{
-			TextureRed,
-			TextureOrange,
-			TextureYellow,
-			TextureGreen,
-			TextureCyan,
-			TextureBlue,
-			TexturePurple,
-		};
+				TextureRed,
+				TextureOrange,
+				TextureYellow,
+				TextureGreen,
+				TextureCyan,
+				TextureBlue,
+				TexturePurple,
+			};
 		}
 
 		private static Texture2D CreateColoredTexture(Color color)
@@ -167,11 +167,11 @@ namespace Extenity.DebugToolbox
 			var texture = new Texture2D(4, 4, TextureFormat.ARGB32, false);
 			texture.SetPixels(0, 0, 4, 4, new[]
 			{
-			color, color, color, color,
-			color, color, color, color,
-			color, color, color, color,
-			color, color, color, color,
-		});
+				color, color, color, color,
+				color, color, color, color,
+				color, color, color, color,
+				color, color, color, color,
+			});
 
 			texture.Apply(false, true);
 			return texture;
@@ -194,7 +194,7 @@ namespace Extenity.DebugToolbox
 			if (DebugDrawingDisabled) return;
 
 #if !UNITY_DRAWER
-		Instance.lineData.Add(new DebugLineData(start, end, color));
+			Instance.lineData.Add(new DebugLineData(start, end, color));
 #else
 			Debug.DrawLine(start, end, color, duration, depthTest);
 #endif
@@ -791,7 +791,7 @@ namespace Extenity.DebugToolbox
 			GUIAnchor anchor, int lineIndex,
 			float duration, int width, bool clamp)
 		{
-			if (!Instance)
+			if (!IsInstanceAvailable)
 				return null;
 			return UpdateOrCreateBarData(text, value, minValue, maxValue, centerValue, anchor, lineIndex, Instance.DefaultBarColor, Instance.DefaultBarBackgroundColor, duration, width, clamp);
 		}
@@ -802,7 +802,7 @@ namespace Extenity.DebugToolbox
 			Color barColor,
 			float duration, int width, bool clamp)
 		{
-			if (!Instance)
+			if (!IsInstanceAvailable)
 				return null;
 			return UpdateOrCreateBarData(text, value, minValue, maxValue, centerValue, anchor, lineIndex, barColor, Instance.DefaultBarBackgroundColor, duration, width, clamp);
 		}
@@ -813,7 +813,7 @@ namespace Extenity.DebugToolbox
 			Color barColor, Color backgroundColor,
 			float duration, int width, bool clamp)
 		{
-			if (!Instance)
+			if (!IsInstanceAvailable)
 				return null;
 
 			var data = Instance.GetOrCreateBarData(lineIndex, anchor);
@@ -896,11 +896,11 @@ namespace Extenity.DebugToolbox
 				InitializeBars();
 			}
 
-			if (!barBackgroundTexture)
+			if (barBackgroundTexture == null)
 			{
 				barBackgroundTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 			}
-			if (!barTexture)
+			if (barTexture == null)
 			{
 				barTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 			}
@@ -1078,7 +1078,7 @@ namespace Extenity.DebugToolbox
 
 		public static void WriteScreen(string text, int lineIndex, GUIAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
-			if (!Instance)
+			if (!IsInstanceAvailable)
 				return;
 
 			var data = Instance.GetOrCreateWriteScreenData(lineIndex, anchor);
@@ -1177,7 +1177,7 @@ namespace Extenity.DebugToolbox
 
 		public static void WriteScene(string text, int lineIndex, Vector3 position, Color textColor, float duration = 1f)
 		{
-			if (!Instance)
+			if (!IsInstanceAvailable)
 				return;
 
 			var data = Instance.GetOrCreateWriteSceneData(lineIndex, position);
