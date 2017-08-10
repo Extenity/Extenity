@@ -8,20 +8,20 @@ namespace Extenity.MathToolbox
 	[Serializable]
 	public struct PIDConfiguration
 	{
-		public float Kp;
-		public float Ki;
-		public float Kd;
+		public double Kp;
+		public double Ki;
+		public double Kd;
 
-		public bool IsValid { get { return Kp >= 0f && Ki >= 0f && Kd >= 0f; } }
+		public bool IsValid { get { return Kp >= 0.0 && Ki >= 0.0 && Kd >= 0.0; } }
 
 		//public PIDConfiguration()
 		//{
-		//	Kp = 0f;
-		//	Ki = 0f;
-		//	Kd = 0f;
+		//	Kp = 0.0;
+		//	Ki = 0.0;
+		//	Kd = 0.0;
 		//}
 
-		public PIDConfiguration(float Kp, float Ki, float Kd)
+		public PIDConfiguration(double Kp, double Ki, double Kd)
 		{
 			this.Kp = Kp;
 			this.Ki = Ki;
@@ -36,8 +36,8 @@ namespace Extenity.MathToolbox
 		public double Output { get; private set; }
 		public double Target { get; set; }
 
-		private float SampleTime = 0.01f; // Seconds
-		public float LastComputationTime { get; private set; }
+		private double SampleTime = 0.01f; // Seconds
+		public double LastComputationTime { get; private set; }
 		public double ITerm { get; private set; }
 		public double LastInput { get; private set; }
 		public double Kp { get; private set; }
@@ -45,8 +45,6 @@ namespace Extenity.MathToolbox
 		public double Kd { get; private set; }
 		public double OutMin { get; private set; }
 		public double OutMax { get; private set; }
-		public float OutMinF { get { return (float)OutMin; } }
-		public float OutMaxF { get { return (float)OutMax; } }
 		public bool IsActive { get; private set; }
 		private DirectionTypes Direction = DirectionTypes.Forward;
 		public InputInitializationTypes InputInitializationType { get; set; }
@@ -130,7 +128,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public int Compute(float now)
+		public int Compute(double now)
 		{
 			if (!IsActive)
 				return 0;
@@ -168,13 +166,13 @@ namespace Extenity.MathToolbox
 
 			if (Direction == DirectionTypes.Reverse)
 			{
-				Kp = (0 - Kp);
-				Ki = (0 - Ki);
-				Kd = (0 - Kd);
+				Kp = 0 - Kp;
+				Ki = 0 - Ki;
+				Kd = 0 - Kd;
 			}
 		}
 
-		public void SetSampleTime(float newSampleTime)
+		public bool SetSampleTime(double newSampleTime)
 		{
 			if (newSampleTime > 0 && !newSampleTime.IsAlmostEqual(SampleTime, 0.00001f))
 			{
@@ -182,7 +180,9 @@ namespace Extenity.MathToolbox
 				Ki *= ratio;
 				Kd /= ratio;
 				SampleTime = newSampleTime;
+				return true;
 			}
+			return false;
 		}
 
 		public void SetOutputLimits(double min, double max)
@@ -206,7 +206,7 @@ namespace Extenity.MathToolbox
 				ITerm = OutMin;
 		}
 
-		public void SetActive(bool active, float currentTime)
+		public void SetActive(bool active, double currentTime)
 		{
 			if (active == IsActive)
 				return;
