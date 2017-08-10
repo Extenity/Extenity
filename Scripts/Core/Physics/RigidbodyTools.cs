@@ -1,3 +1,4 @@
+using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.PhysicsToolbox
@@ -14,6 +15,12 @@ namespace Extenity.PhysicsToolbox
 		public static Vector3 LocalAngularVelocity(this Rigidbody rigidbody)
 		{
 			return Quaternion.Inverse(rigidbody.rotation) * rigidbody.angularVelocity;
+		}
+
+		public static float HorizontalSpeed(this Rigidbody rigidbody)
+		{
+			var velocity = rigidbody.velocity;
+			return Mathf.Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 		}
 	}
 
