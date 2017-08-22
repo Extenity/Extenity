@@ -944,6 +944,20 @@ namespace Extenity.MathToolbox
 
 		#region Clamp Length / SqrLength
 
+		public static Vector2 ClampLength01(this Vector2 value)
+		{
+			if (value.x * value.x + value.y * value.y > 1f)
+				return value.normalized;
+			return value;
+		}
+
+		public static Vector3 ClampLength01(this Vector3 value)
+		{
+			if (value.x * value.x + value.y * value.y + value.z * value.z > 1f)
+				return value.normalized;
+			return value;
+		}
+
 		public static Vector2 ClampLengthMax(this Vector2 value, float max)
 		{
 			if (value.magnitude > max)
