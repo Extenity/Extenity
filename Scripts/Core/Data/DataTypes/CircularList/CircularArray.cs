@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Object = System.Object;
 
@@ -8,31 +9,31 @@ namespace Extenity.DataToolbox
 {
 
 	/// <summary>
-	/// Auto expandable circular list.
+	/// Fixed length circular array.
 	/// </summary>
-	public class CircularList<T> : ICollection//, ICollection<T>
+	public class CircularArray<T> : ICollection//, ICollection<T>
 	{
 		#region Initialization
 
-		public CircularList()
+		//public CircularArray()
+		//{
+		//	CyclicTailIndex = -1;
+		//	CyclicHeadIndex = -1;
+		//	Items = EmptyArray;
+		//}
+
+		public CircularArray(int capacity)
 		{
 			CyclicTailIndex = -1;
 			CyclicHeadIndex = -1;
-			Items = EmptyArray;
-		}
 
-		public CircularList(int capacity)
-		{
-			CyclicTailIndex = -1;
-			CyclicHeadIndex = -1;
-
-			if (capacity < 0)
-				throw new ArgumentOutOfRangeException("capacity", capacity, "Capacity is not allowed to be less than zero.");
+			if (capacity <= 0)
+				throw new ArgumentOutOfRangeException("capacity", capacity, "Capacity is not allowed to be less than or equal to zero.");
 
 			Items = new T[capacity];
 		}
 
-		public CircularList(IEnumerable<T> collection)
+		public CircularArray(IEnumerable<T> collection)
 		{
 			if (collection == null)
 			{
@@ -42,17 +43,25 @@ namespace Extenity.DataToolbox
 			}
 
 			var castCollection = collection as ICollection<T>;
+			var collectionSize = castCollection != null
+				? castCollection.Count
+				: collection.Count();
+
+			if (collectionSize == 0)
+			{
+				throw new Exception("Collection size must be greater than zero.");
+			}
+
 			if (castCollection != null)
 			{
-				var count = castCollection.Count;
-				Items = new T[count];
+				Items = new T[collectionSize];
 				castCollection.CopyTo(Items, 0);
-				CyclicTailIndex = count > 0 ? 0 : -1;
-				CyclicHeadIndex = count > 0 ? count - 1 : -1;
+				CyclicTailIndex = collectionSize > 0 ? 0 : -1;
+				CyclicHeadIndex = collectionSize > 0 ? collectionSize - 1 : -1;
 			}
 			else
 			{
-				Items = new T[DefaultCapacity];
+				Items = new T[collectionSize];
 				CyclicTailIndex = -1;
 				CyclicHeadIndex = -1;
 
@@ -78,8 +87,8 @@ namespace Extenity.DataToolbox
 		[NonSerialized]
 		private Object SyncRootObject;
 
-		public const int DefaultCapacity = 4;
-		private static T[] EmptyArray = new T[0];
+		//public const int DefaultCapacity = 4;
+		//private static T[] EmptyArray = new T[0];
 
 		public bool IsEmpty { get { return CyclicTailIndex < 0; } }
 		public bool IsEmptyOrArranged { get { return CyclicTailIndex <= 0; } }
@@ -126,90 +135,14 @@ namespace Extenity.DataToolbox
 		public int Capacity
 		{
 			get { return Items.Length; }
-			set
-			{
-				if (value < Count)
-				{
-					throw new ArgumentOutOfRangeException("value", value, "Capacity cannot be less than count of items.");
-				}
-
-				if (value == Items.Length)
-					return; // Nothing to do.
-
-				if (value > 0)
-				{
-					var newItems = new T[value];
-					var count = Count;
-					if (count > 0)
-					{
-						// Copy old items to new collection. Rearrange items while doing that.
-						if (CyclicTailIndex == 0)
-						{
-							Array.Copy(Items, 0, newItems, 0, count);
-						}
-						else
-						{
-							Array.Copy(Items, CyclicTailIndex, newItems, 0, count - CyclicTailIndex);
-							Array.Copy(Items, 0, newItems, count - CyclicTailIndex, CyclicTailIndex);
-							CyclicTailIndex = 0;
-							CyclicHeadIndex = count - 1;
-						}
-					}
-					Items = newItems;
-				}
-				else
-				{
-					Items = EmptyArray;
-					//CyclicTailIndex = -1;
-					//CyclicHeadIndex = -1;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Ensures that the capacity of this list is at least the given minimum
-		/// value. If the currect capacity of the list is less than min, the 
-		/// capacity is increased to twice the current capacity or to min,
-		/// whichever is larger.
-		/// 
-		/// Items will be rearranged in case the capacity of the list increases.
-		/// </summary>
-		public void EnsureCapacity(int min)
-		{
-			if (Capacity < min)
-			{
-				int newCapacity = Capacity == 0 ? DefaultCapacity : Capacity * 2;
-				if (newCapacity < min)
-					newCapacity = min;
-				Capacity = newCapacity;
-			}
-		}
-
-		/// <summary>
-		/// Sets the capacity of this list to the size of the list. This method can 
-		/// be used to minimize a list's memory overhead once it is known that no
-		/// new elements will be added to the list. 
-		/// 
-		/// Note that a rearrange will occur when changing the capacity of the list.
-		/// 
-		/// To completely clear a list and 
-		/// release all memory referenced by the list, execute the following
-		/// statements:
-		///
-		/// list.Clear(); 
-		/// list.TrimExcess();
-		/// </summary>
-		public void TrimExcess()
-		{
-			Capacity = Count;
 		}
 
 		///// <summary>
-		///// Shift items in list so that the cyclic start index placed at the start of the internal list. This operation is seamless to user.
+		///// Shift items in array so that the cyclic start index placed at the start of the internal array. This operation is seamless to user.
 		///// </summary>
 		//private void Rearrange()
 		//{
-		//	Version++; // Update the version whether or not any changes made to the list. This will make sure behavior of the list is deterministic in user's perspective.
+		//	Version++; // Update the version whether or not any changes made to the array. This will make sure behavior of the array is deterministic in user's perspective.
 
 		//	if (IsEmptyOrArranged)
 		//		return; // Nothing to do here.
@@ -246,23 +179,13 @@ namespace Extenity.DataToolbox
 		#region Add Data
 
 		/// <summary>
-		/// Adds the given object to the end of this list. The size of the list is
-		/// increased by one. If required, the capacity of the list is doubled
-		/// before adding the new element.
-		/// 
-		/// Items will be rearranged in case the capacity of the list increases.
-		/// 
-		/// Does not check if items are decayed.
+		/// Adds the given object to the end of this array. The size of the array is
+		/// increased by one. The capacity of the array won't change. Tailing items
+		/// will be overwritten if the array is filled.
 		/// </summary>
 		public void Add(T item)
 		{
 			Version++;
-
-			if (IsCapacityFilled)
-			{
-				// Note that a rearrange will occur when changing capacity.
-				EnsureCapacity(Capacity + 1);
-			}
 
 			// Initialize if this is the first item
 			if (IsEmpty)
@@ -278,6 +201,14 @@ namespace Extenity.DataToolbox
 				else
 					CyclicHeadIndex++;
 				Items[CyclicHeadIndex] = item;
+
+				if (CyclicHeadIndex == CyclicTailIndex)
+				{
+					if (CyclicTailIndex == Items.Length - 1)
+						CyclicTailIndex = 0;
+					else
+						CyclicTailIndex++;
+				}
 			}
 		}
 
@@ -627,20 +558,20 @@ namespace Extenity.DataToolbox
 		[Serializable]
 		public struct Enumerator : IEnumerator<T>
 		{
-			private CircularList<T> List;
+			private CircularArray<T> Array;
 			private int Index;
 			private int Remaining;
 			private int Capacity;
 			private int Version;
 			private T _Current;
 
-			internal Enumerator(CircularList<T> list)
+			internal Enumerator(CircularArray<T> array)
 			{
-				List = list;
-				Index = list.CyclicTailIndex;
-				Remaining = list.Count;
-				Capacity = list.Capacity;
-				Version = list.Version;
+				Array = array;
+				Index = array.CyclicTailIndex;
+				Remaining = array.Count;
+				Capacity = array.Capacity;
+				Version = array.Version;
 				_Current = default(T);
 			}
 
@@ -650,7 +581,7 @@ namespace Extenity.DataToolbox
 
 			public bool MoveNext()
 			{
-				var localCollection = List;
+				var localCollection = Array;
 
 				if (Remaining > 0 && Version == localCollection.Version)
 				{
@@ -666,7 +597,7 @@ namespace Extenity.DataToolbox
 
 			private bool MoveNextRare()
 			{
-				if (Version != List.Version)
+				if (Version != Array.Version)
 				{
 					throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
 				}
@@ -688,7 +619,7 @@ namespace Extenity.DataToolbox
 			{
 				get
 				{
-					if (Index == List.CyclicTailIndex || Index == -1)
+					if (Index == Array.CyclicTailIndex || Index == -1)
 					{
 						throw new InvalidOperationException("Enumeration has either not started or has already finished.");
 					}
@@ -698,12 +629,12 @@ namespace Extenity.DataToolbox
 
 			void System.Collections.IEnumerator.Reset()
 			{
-				if (Version != List.Version)
+				if (Version != Array.Version)
 				{
 					throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
 				}
 
-				Index = List.CyclicTailIndex;
+				Index = Array.CyclicTailIndex;
 				_Current = default(T);
 			}
 		}
@@ -712,13 +643,13 @@ namespace Extenity.DataToolbox
 
 		#region Conversion
 
-		public CircularList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+		public CircularArray<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
 		{
 			if (converter == null)
 				throw new ArgumentNullException("converter");
 
 			var count = Count;
-			var output = new CircularList<TOutput>(count);
+			var output = new CircularArray<TOutput>(count);
 			if (count > 0)
 			{
 				// Convert all items in order. So we start at the cycle's start index. As a bonus, we get a rearranged collection.
