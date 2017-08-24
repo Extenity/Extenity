@@ -1,10 +1,22 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace Extenity.DebugFlowTool.Generic
 {
 
 	public class Page
 	{
+		#region Initialization
+
+		public Page(int id, string pageName)
+		{
+			ID = id;
+			PageName = pageName;
+			TimedChartGroups = new List<TimedChartGroup>(10);
+		}
+
+		#endregion
+
 		#region Metadata
 
 		public readonly int ID;
@@ -28,13 +40,22 @@ namespace Extenity.DebugFlowTool.Generic
 
 		#endregion
 
-		#region Initialization
+		#region Network Serialization
 
-		public Page(int id, string pageName)
+		public void SendToNetwork(BinaryWriter destination)
 		{
-			ID = id;
-			PageName = pageName;
-			TimedChartGroups = new List<TimedChartGroup>(10);
+			var packet = PacketBuilder.Create();
+			packet.Writer.Write(ID);
+			packet.Writer.Write(PageName);
+			PacketBuilder.Finalize(PacketType.CreatePage, ref packet, destination);
+		}
+
+		public static Page ReceiveFromNetwork(BinaryReader source)
+		{
+			return new Page(
+				source.ReadInt32(),
+				source.ReadString()
+			);
 		}
 
 		#endregion

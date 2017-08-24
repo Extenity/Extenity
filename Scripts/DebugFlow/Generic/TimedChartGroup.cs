@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace Extenity.DebugFlowTool.Generic
 {
@@ -35,6 +36,26 @@ namespace Extenity.DebugFlowTool.Generic
 					return TimedCharts[i];
 			}
 			return null;
+		}
+
+		#endregion
+
+		#region Network Serialization
+
+		public void SendToNetwork(BinaryWriter destination)
+		{
+			var packet = PacketBuilder.Create();
+			packet.Writer.Write(ID);
+			packet.Writer.Write(GroupName);
+			PacketBuilder.Finalize(PacketType.CreateTimedChartGroup, ref packet, destination);
+		}
+
+		public static TimedChartGroup ReceiveFromNetwork(BinaryReader source)
+		{
+			return new TimedChartGroup(
+				source.ReadInt32(),
+				source.ReadString()
+			);
 		}
 
 		#endregion

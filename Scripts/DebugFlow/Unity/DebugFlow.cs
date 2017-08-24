@@ -132,7 +132,7 @@ namespace Extenity.DebugFlowTool.Unity
 			// Create page
 			page = new Page(GetNextUniqueID(), pageName);
 			Pages.Add(page);
-			Connector.Connection.InformCreatePage(page);
+			page.SendToNetwork(Connector.Connection.NetworkWriter);
 			return page;
 		}
 
@@ -145,7 +145,7 @@ namespace Extenity.DebugFlowTool.Unity
 			// Create TimedChartGroup
 			group = new TimedChartGroup(GetNextUniqueID(), groupName);
 			page.TimedChartGroups.Add(group);
-			Connector.Connection.InformCreateTimedChartGroup(group);
+			group.SendToNetwork(Connector.Connection.NetworkWriter);
 			return group;
 		}
 
@@ -158,7 +158,7 @@ namespace Extenity.DebugFlowTool.Unity
 			// Create TimedChart
 			chart = new TimedChart(GetNextUniqueID(), chartName, color.ToDebugFlowColor());
 			group.TimedCharts.Add(chart);
-			Connector.Connection.InformCreateTimedChart(chart);
+			chart.SendToNetwork(Connector.Connection.NetworkWriter);
 			return chart;
 		}
 

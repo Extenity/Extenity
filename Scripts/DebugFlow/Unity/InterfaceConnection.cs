@@ -41,49 +41,6 @@ namespace Extenity.DebugFlowTool.Unity
 
 		#endregion
 
-		#region Send Data - Create Widgets
-
-		internal void InformCreatePage(Page page)
-		{
-			lock (Stream)
-			{
-				var packet = PacketBuilder.Create(PacketType.CreatePage);
-				packet.Writer.Write(page.ID);
-				packet.Writer.Write(page.PageName);
-				PacketBuilder.Finalize(ref packet, NetworkWriter);
-			}
-		}
-
-		internal void InformCreateTimedChartGroup(TimedChartGroup group)
-		{
-			lock (Stream)
-			{
-				var packet = PacketBuilder.Create(PacketType.CreateTimedChartGroup);
-				packet.Writer.Write(group.ID);
-				packet.Writer.Write(group.GroupName);
-				PacketBuilder.Finalize(ref packet, NetworkWriter);
-			}
-		}
-
-		internal void InformCreateTimedChart(TimedChart chart)
-		{
-			lock (Stream)
-			{
-				var packet = PacketBuilder.Create(PacketType.CreateTimedChart);
-				packet.Writer.Write(chart.ID);
-				packet.Writer.Write(chart.ChartName);
-				PacketBuilder.Finalize(ref packet, NetworkWriter);
-			}
-		}
-
-		#endregion
-
-		#region Send Data - Values
-
-		// TODO:
-
-		#endregion
-
 		#region Send Data - Initial Data
 
 		private void SendInitialData()
@@ -91,17 +48,17 @@ namespace Extenity.DebugFlowTool.Unity
 			// Pages
 			foreach (var page in DebugFlow.Pages)
 			{
-				InformCreatePage(page);
+				page.SendToNetwork(NetworkWriter);
 
 				// TimedChartGroups
 				foreach (var timedChartGroup in page.TimedChartGroups)
 				{
-					InformCreateTimedChartGroup(timedChartGroup);
+					timedChartGroup.SendToNetwork(NetworkWriter);
 
 					// TimedCharts
 					foreach (var timedChart in timedChartGroup.TimedCharts)
 					{
-						InformCreateTimedChart(timedChart);
+						timedChart.SendToNetwork(NetworkWriter);
 					}
 				}
 			}

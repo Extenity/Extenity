@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Extenity.DataToolbox;
 
 namespace Extenity.DebugFlowTool.Generic
@@ -6,8 +7,36 @@ namespace Extenity.DebugFlowTool.Generic
 
 	public class TimedChartEntry
 	{
+		public const int PacketSize = sizeof(UInt64) + sizeof(float);
+
 		public DateTime X { get; set; }
 		public float Y { get; set; }
+
+		public TimedChartEntry(DateTime x, float y)
+		{
+			X = x;
+			Y = y;
+		}
+
+		#region Network Serialization
+
+		public void SendToNetwork(BinaryWriter destination)
+		{
+			var packet = PacketBuilder.Create();
+			packet.Writer.Write(X.ToBinary());
+			packet.Writer.Write(Y);
+			PacketBuilder.Finalize(PacketType.AddTimedChartEntry, ref packet, destination);
+		}
+
+		public static TimedChartEntry ReceiveFromNetwork(BinaryReader source)
+		{
+			return new TimedChartEntry(
+				DateTime.FromBinary(source.ReadInt64()),
+				source.ReadSingle()
+			);
+		}
+
+		#endregion
 	}
 
 	public class TimedChart
@@ -49,6 +78,34 @@ namespace Extenity.DebugFlowTool.Generic
 		public void AddEntry(DateTime time, float value)
 		{
 			throw new NotImplementedException();
+		}
+
+		#endregion
+
+		#region Network Serialization
+
+		public void SendToNetwork(BinaryWriter destination)
+		{
+			var packet = PacketBuilder.Create();
+			packet.Writer.Write(ID);
+			packet.Writer.Write(ChartName);
+			packet.Writer.Write(Color.r);
+			packet.Writer.Write(Color.g);
+			packet.Writer.Write(Color.b);
+			PacketBuilder.Finalize(PacketType.CreateTimedChart, ref packet, destination);
+		}
+
+		public static TimedChart ReceiveFromNetwork(BinaryReader source)
+		{
+			return new TimedChart(
+				source.ReadInt32(),
+				source.ReadString(),
+				new Color(
+					source.ReadByte(),
+					source.ReadByte(),
+					source.ReadByte()
+				)
+			);
 		}
 
 		#endregion

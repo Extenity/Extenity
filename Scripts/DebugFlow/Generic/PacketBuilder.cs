@@ -6,12 +6,26 @@ using System.Text;
 namespace Extenity.DebugFlowTool.Generic
 {
 
+	/// <summary>
+	/// Packet layout is:
+	///		byte (1 byte): PacketType
+	///		ushort (2 bytes): PacketSize (Only if the type is a variable size packet)
+	///		byte[]: Packet content
+	/// </summary>
 	public class PacketBuilder
 	{
 		#region Configuration
 
 		public const int MaxPacketSize = ushort.MaxValue;
 		public static readonly Encoding PacketEncoding = Encoding.UTF8;
+
+		/// <summary>
+		/// A hard limit to prevent any memory damage caused by heavy networking operations.
+		/// </summary>
+		private const int PoolingMaxSize = 1000;
+
+		public const int FixedSizePacketHeaderLength = 1; // PacketType: 1 (byte)
+		public const int VariableSizePacketHeaderLength = 1 + 2; // PacketType: 1 (byte) + PacketSize: 2 (ushort)
 
 		#endregion
 
@@ -43,21 +57,46 @@ namespace Extenity.DebugFlowTool.Generic
 
 		#region Start / End Build
 
-		private BinaryWriter StartBuild(PacketType packetType)
+		private void StartBuild()
 		{
 			Clear();
-			Writer.Write((byte)packetType);
-			return Writer;
 		}
 
-		private void EndBuild(BinaryWriter destination)
+		private void EndBuild(BinaryWriter destination, PacketType packetType)
 		{
-			var packetSize = (int)Buffer.Position;
-			if (packetSize > MaxPacketSize)
+			var writtenSize = (int)Buffer.Position;
+			var isVariableSize = packetType.IsVariableSize();
+			int packetSize;
+
+			if (isVariableSize)
 			{
-				throw new Exception("Network package sizes larger than '" + MaxPacketSize + "' are not supported.");
+				packetSize = writtenSize;
+				if (packetSize > MaxPacketSize)
+				{
+					throw new Exception(string.Format(
+						"Network packet of type '{0}' exceeds the maximum packet size with '{1}' which should be lesser than '{2}'.",
+						packetType.ToString(),
+						packetSize,
+						MaxPacketSize));
+				}
 			}
-			destination.Write((ushort)packetSize);
+			else
+			{
+				packetSize = packetType.FixedPacketSize();
+				if (packetSize != writtenSize)
+				{
+					throw new Exception(string.Format(
+						"Network packet written size '{0}' differs from the expected size '{1}' for packet of type '{2}'.",
+						writtenSize,
+						packetSize,
+						packetType.ToString()));
+				}
+			}
+
+			// Everything looks good. Write the packet to destination.
+			destination.Write((byte)packetType);
+			if (isVariableSize)
+				destination.Write((ushort)packetSize);
 			destination.Write(Buffer.GetBuffer(), 0, packetSize);
 		}
 
@@ -67,7 +106,7 @@ namespace Extenity.DebugFlowTool.Generic
 
 		private static List<PacketBuilder> PooledPacketBuilders = new List<PacketBuilder>(10);
 
-		public static PacketBuilder Create(PacketType packetType)
+		public static PacketBuilder Create()
 		{
 			PacketBuilder packetBuilder;
 
@@ -82,16 +121,29 @@ namespace Extenity.DebugFlowTool.Generic
 				packetBuilder = new PacketBuilder();
 			}
 
-			packetBuilder.StartBuild(packetType);
+			packetBuilder.StartBuild();
 			return packetBuilder;
 		}
 
-		public static void Finalize(ref PacketBuilder packetBuilder, BinaryWriter destination)
+		public static void Finalize(PacketType packetType, ref PacketBuilder packetBuilder, BinaryWriter destination)
 		{
-			packetBuilder.EndBuild(destination);
-			packetBuilder.Clear();
-			PooledPacketBuilders.Add(packetBuilder);
+			var cachedPacketBuilder = packetBuilder;
 			packetBuilder = null;
+
+			try
+			{
+				cachedPacketBuilder.EndBuild(destination, packetType);
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				cachedPacketBuilder.Clear();
+				if (PooledPacketBuilders.Count < PoolingMaxSize)
+					PooledPacketBuilders.Add(cachedPacketBuilder);
+			}
 		}
 
 		#endregion
