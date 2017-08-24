@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 using Extenity.DebugFlowTool.Generic;
 
 namespace Extenity.DebugFlowTool.Unity
@@ -15,8 +14,8 @@ namespace Extenity.DebugFlowTool.Unity
 		{
 			//TCPClient = tcpClient;
 			Stream = tcpClient.GetStream();
-			Reader = new BinaryReader(Stream, Encoding.UTF8);
-			Writer = new BinaryWriter(Stream, Encoding.UTF8);
+			NetworkReader = new BinaryReader(Stream, PacketBuilder.PacketEncoding);
+			NetworkWriter = new BinaryWriter(Stream, PacketBuilder.PacketEncoding);
 
 			SendInitialData();
 		}
@@ -27,8 +26,8 @@ namespace Extenity.DebugFlowTool.Unity
 
 		//private TcpClient TCPClient;
 		public NetworkStream Stream { get; private set; }
-		public BinaryReader Reader { get; private set; }
-		public BinaryWriter Writer { get; private set; }
+		public BinaryReader NetworkReader { get; private set; }
+		public BinaryWriter NetworkWriter { get; private set; }
 
 		#endregion
 
@@ -48,9 +47,10 @@ namespace Extenity.DebugFlowTool.Unity
 		{
 			lock (Stream)
 			{
-				Writer.Write((byte)Packets.CreatePage);
-				Writer.Write(page.ID);
-				Writer.Write(page.PageName);
+				var packet = PacketBuilder.Create(PacketType.CreatePage);
+				packet.Writer.Write(page.ID);
+				packet.Writer.Write(page.PageName);
+				PacketBuilder.Finalize(ref packet, NetworkWriter);
 			}
 		}
 
@@ -58,9 +58,10 @@ namespace Extenity.DebugFlowTool.Unity
 		{
 			lock (Stream)
 			{
-				Writer.Write((byte)Packets.CreateTimedChartGroup);
-				Writer.Write(group.ID);
-				Writer.Write(group.GroupName);
+				var packet = PacketBuilder.Create(PacketType.CreateTimedChartGroup);
+				packet.Writer.Write(group.ID);
+				packet.Writer.Write(group.GroupName);
+				PacketBuilder.Finalize(ref packet, NetworkWriter);
 			}
 		}
 
@@ -68,9 +69,10 @@ namespace Extenity.DebugFlowTool.Unity
 		{
 			lock (Stream)
 			{
-				Writer.Write((byte)Packets.CreateTimedChart);
-				Writer.Write(chart.ID);
-				Writer.Write(chart.ChartName);
+				var packet = PacketBuilder.Create(PacketType.CreateTimedChart);
+				packet.Writer.Write(chart.ID);
+				packet.Writer.Write(chart.ChartName);
+				PacketBuilder.Finalize(ref packet, NetworkWriter);
 			}
 		}
 

@@ -3,3 +3,4 @@ syntax: glob
 *.orig.meta
 .DS_Store
 Thumbs.db
+sync.ffs_db*
