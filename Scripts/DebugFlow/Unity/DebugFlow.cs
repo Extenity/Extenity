@@ -48,7 +48,14 @@ namespace Extenity.DebugFlowTool.Unity
 		#region Metadata
 
 		/// <summary>
-		/// A randomly generated ID that represents the application instance. Gets a new value each time the application runs.
+		/// A randomly generated session ID. Interface generates the session ID and tells us
+		/// inside handshaking result.
+		/// </summary>
+		public static int SessionID { get; private set; }
+
+		/// <summary>
+		/// A randomly generated ID that represents the application instance. Gets a new value 
+		/// each time the application runs.
 		/// </summary>
 		public static int RunID { get; private set; }
 
@@ -57,6 +64,7 @@ namespace Extenity.DebugFlowTool.Unity
 			var random = new System.Random((int)(DateTime.Now.Ticks % int.MaxValue));
 			RunID = random.Next(100, int.MaxValue);
 		}
+
 
 		#endregion
 
