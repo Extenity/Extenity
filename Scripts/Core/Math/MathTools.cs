@@ -2597,6 +2597,46 @@ namespace Extenity.MathToolbox
 			return point + planeNormal * distance;
 		}
 
+		public static bool Linecast(this Plane plane, Vector3 line1, Vector3 line2)
+		{
+			return !plane.SameSide(line1, line2);
+		}
+
+		public static bool Linecast(this Plane plane, Vector3 line1, Vector3 line2, out Vector3 intersection)
+		{
+			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
+			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
+			var notIntersected = distanceToPoint1 > 0.0 && distanceToPoint2 > 0.0 || distanceToPoint1 <= 0.0 && distanceToPoint2 <= 0.0;
+			if (notIntersected)
+			{
+				intersection = MathTools.Vector3NaN;
+				return false;
+			}
+
+			var totalDistance = distanceToPoint1 - distanceToPoint2;
+			var ratio = distanceToPoint1 / totalDistance;
+			intersection = line1 + (line2 - line1) * ratio;
+			return true;
+		}
+
+		public static bool LinecastWithProximity(this Plane plane, Vector3 line1, Vector3 line2, Vector3 proximityCheckingPoint, float proximityCheckingRadius)
+		{
+			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
+			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
+			var notIntersected = distanceToPoint1 > 0.0 && distanceToPoint2 > 0.0 || distanceToPoint1 <= 0.0 && distanceToPoint2 <= 0.0;
+			if (notIntersected)
+			{
+				return false;
+			}
+
+			var totalDistance = distanceToPoint1 - distanceToPoint2;
+			var ratio = distanceToPoint1 / totalDistance;
+			var intersection = line1 + (line2 - line1) * ratio;
+
+			var distanceSqr = (proximityCheckingPoint - intersection).sqrMagnitude;
+			return distanceSqr < proximityCheckingRadius * proximityCheckingRadius;
+		}
+
 		#endregion
 
 		#region Polygon / Surface
