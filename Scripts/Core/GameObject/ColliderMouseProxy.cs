@@ -1,3 +1,4 @@
+/* Disabled because OnMouse_ methods are not optimization friendly. Find another way if you need this functionality.
 using UnityEngine;
 
 namespace Extenity.GameObjectToolbox
@@ -17,3 +18,4 @@ namespace Extenity.GameObjectToolbox
 	}
 
 }
+*/
