@@ -1,42 +1,47 @@
 ﻿using UnityEngine;
 
-public static class UIFaderTools
+namespace Extenity.UIToolbox
 {
-	public static float FadeInAllChildren(this GameObject gameObject)
-	{
-		return gameObject.transform.FadeInAllChildren();
-	}
 
-	public static float FadeInAllChildren(this Transform transform)
+	public static class UIFaderTools
 	{
-		var faders = transform.GetComponentsInChildren<UIFader>();
-		float maxDuration = 0f;
-
-		for (int i = 0; i < faders.Length; i++)
+		public static float FadeInAllChildren(this GameObject gameObject)
 		{
-			var duration = faders[i].FadeIn();
-			if (maxDuration < duration)
-				maxDuration = duration;
+			return gameObject.transform.FadeInAllChildren();
 		}
-		return maxDuration;
-	}
 
-	public static float FadeOutAllChildren(this GameObject gameObject)
-	{
-		return gameObject.transform.FadeOutAllChildren();
-	}
-
-	public static float FadeOutAllChildren(this Transform transform)
-	{
-		var faders = transform.GetComponentsInChildren<UIFader>();
-		float maxDuration = 0f;
-
-		for (int i = 0; i < faders.Length; i++)
+		public static float FadeInAllChildren(this Transform transform)
 		{
-			var duration = faders[i].FadeOut();
-			if (maxDuration < duration)
-				maxDuration = duration;
+			var faders = transform.GetComponentsInChildren<UIFader>();
+			float maxDuration = 0f;
+
+			for (int i = 0; i < faders.Length; i++)
+			{
+				var duration = faders[i].FadeIn();
+				if (maxDuration < duration)
+					maxDuration = duration;
+			}
+			return maxDuration;
 		}
-		return maxDuration;
+
+		public static float FadeOutAllChildren(this GameObject gameObject)
+		{
+			return gameObject.transform.FadeOutAllChildren();
+		}
+
+		public static float FadeOutAllChildren(this Transform transform)
+		{
+			var faders = transform.GetComponentsInChildren<UIFader>();
+			float maxDuration = 0f;
+
+			for (int i = 0; i < faders.Length; i++)
+			{
+				var duration = faders[i].FadeOut();
+				if (maxDuration < duration)
+					maxDuration = duration;
+			}
+			return maxDuration;
+		}
 	}
+
 }
