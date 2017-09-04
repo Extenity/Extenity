@@ -52,6 +52,15 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 		#endregion
+
+		#region Horizontal Line
+
+		public static void DrawHorizontalLine()
+		{
+			EditorGUILayout.TextArea("", GUI.skin.horizontalSlider);
+		}
+
+		#endregion
 	}
 
 }

@@ -171,9 +171,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Drawing
 
+		[Obsolete("Use EditorGUILayoutTools.DrawHorizontalLine")]
 		public static void DrawHorizontalLine()
 		{
-			EditorGUILayout.TextArea("", GUI.skin.horizontalSlider);
+			throw new Exception("Obsolete. Use EditorGUILayoutTools.DrawHorizontalLine.");
 		}
 
 		#endregion
