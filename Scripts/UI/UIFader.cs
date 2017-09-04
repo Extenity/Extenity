@@ -10,17 +10,23 @@ namespace Extenity.UIToolbox
 	{
 		#region Configuration
 
+		[Header("Setup")]
+		public CanvasGroup CanvasGroup;
+		public InitialFadeState InitialState = InitialFadeState.Untouched;
+
+		[Header("Transparency")]
 		public bool GetFadeInConfigurationFromInitialValue = true;
+		[Range(0f, 1f)]
 		public float FadeInAlpha = 1f;
 		public bool GetFadeOutConfigurationFromInitialValue = false;
+		[Range(0f, 1f)]
 		public float FadeOutAlpha = 0f;
 
-		public float FadeInDuration = 1f;
-		public float FadeOutDuration = 1f;
+		[Header("Timing")]
+		public float FadeInDuration = 0.5f;
+		public float FadeOutDuration = 0.5f;
 		public float FadeInDelay = 0f;
 		public float FadeOutDelay = 0f;
-
-		public InitialFadeState InitialState = InitialFadeState.Untouched;
 
 		#endregion
 
@@ -35,7 +41,16 @@ namespace Extenity.UIToolbox
 
 		private void Start()
 		{
-			InitializeTarget();
+			if (GetFadeInConfigurationFromInitialValue)
+			{
+				if (CanvasGroup != null)
+					FadeInAlpha = CanvasGroup.alpha;
+			}
+			if (GetFadeOutConfigurationFromInitialValue)
+			{
+				if (CanvasGroup != null)
+					FadeOutAlpha = CanvasGroup.alpha;
+			}
 
 			switch (InitialState)
 			{
@@ -54,30 +69,16 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Target
-
-		public CanvasGroup CanvasGroup;
-
-		private void InitializeTarget()
-		{
-			if (GetFadeInConfigurationFromInitialValue)
-			{
-				if (CanvasGroup != null)
-					FadeInAlpha = CanvasGroup.alpha;
-			}
-			if (GetFadeOutConfigurationFromInitialValue)
-			{
-				if (CanvasGroup != null)
-					FadeOutAlpha = CanvasGroup.alpha;
-			}
-		}
-
-		#endregion
-
 		#region Fade Commands
 
+		[NonSerialized]
 		public UnityEvent OnFadeIn = new UnityEvent();
+		[NonSerialized]
 		public UnityEvent OnFadeOut = new UnityEvent();
+		[NonSerialized]
+		public UnityEvent OnFinishedFadeIn = new UnityEvent();
+		[NonSerialized]
+		public UnityEvent OnFinishedFadeOut = new UnityEvent();
 
 		public float Fade(bool visible)
 		{
@@ -131,13 +132,17 @@ namespace Extenity.UIToolbox
 				}
 				else
 				{
-					CanvasGroup.blocksRaycasts = true; // Always block raycasts while the panel is visible whether it's visible slightly or fully.
-													   //CanvasGroup.interactable = false; // Panel won't be interactable until fully visible.
-					CanvasGroup.interactable = true; // Panel is going to be instantly interactable before getting fully visible.
+					// Always block raycasts while the panel is visible whether it's visible slightly or fully.
+					CanvasGroup.blocksRaycasts = true;
+					// Panel won't be interactable until fully visible.
+					//CanvasGroup.interactable = false;
+					// Panel is going to be instantly interactable before getting fully visible.
+					CanvasGroup.interactable = true;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
 					{
 						CanvasGroup.blocksRaycasts = true;
 						CanvasGroup.interactable = true;
+						OnFinishedFadeIn.Invoke();
 					});
 				}
 			}
@@ -172,12 +177,15 @@ namespace Extenity.UIToolbox
 				}
 				else
 				{
-					CanvasGroup.blocksRaycasts = true;  // Always block raycasts while the panel is visible whether it's visible slightly or fully.
-					CanvasGroup.interactable = false; // Break interaction right away so user won't be able to click anything during fade out animation.
+					// Always block raycasts while the panel is visible whether it's visible slightly or fully.
+					CanvasGroup.blocksRaycasts = true;
+					// Break interaction right away so user won't be able to click anything during fade out animation.
+					CanvasGroup.interactable = false;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
 					{
 						CanvasGroup.blocksRaycasts = false;
 						CanvasGroup.interactable = false;
+						OnFinishedFadeOut.Invoke();
 					});
 				}
 			}
