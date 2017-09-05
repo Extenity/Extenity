@@ -74,6 +74,9 @@ namespace Extenity.GridPaintTool.Editor
 
 		private void OnEnable()
 		{
+			SetTitleAndIcon("Snappa", GridPaintIcons.Texture_ArrowStraight);
+			minSize = new Vector2(200f, 50f);
+
 			InitializeKeyboard();
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
@@ -90,7 +93,22 @@ namespace Extenity.GridPaintTool.Editor
 
 		#endregion
 
-		#region GUI
+		#region GUI - Window
+
+		protected override void OnGUIDerived()
+		{
+			GUILayout.Space(8f);
+			IsEnabled = GUILayout.Toggle(IsEnabled, "Enabled", "Button", GUILayout.Width(100f), GUILayout.Height(30f));
+
+			if (GUI.changed)
+			{
+				SceneView.RepaintAll();
+			}
+		}
+
+		#endregion
+
+		#region GUI - Scene
 
 		private bool IsMouseDown;
 
@@ -109,6 +127,9 @@ namespace Extenity.GridPaintTool.Editor
 					IsMouseDown = false;
 					break;
 			}
+
+			if (!IsEnabled)
+				return;
 
 			// Get SceneView camera
 			if (SceneView.currentDrawingSceneView == null || SceneView.currentDrawingSceneView.camera == null)
@@ -159,9 +180,11 @@ namespace Extenity.GridPaintTool.Editor
 			}
 		}
 
-		protected override void OnGUIDerived()
-		{
-		}
+		#endregion
+
+		#region Enabled/Disabled
+
+		public bool IsEnabled = true;
 
 		#endregion
 
