@@ -130,6 +130,9 @@ namespace Extenity.SnappaTool.Editor
 
 			if (!IsEnabled)
 				return;
+			if (Tools.current != Tool.Move)
+				return;
+			//Tools.hidden = true;
 
 			// Get SceneView camera
 			if (SceneView.currentDrawingSceneView == null || SceneView.currentDrawingSceneView.camera == null)
@@ -250,11 +253,15 @@ namespace Extenity.SnappaTool.Editor
 
 		private void DoAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
 		{
-			//Debug.Log("Action: " + action);
-
 			var distance = speedModifier
 				? SnappingDistance * SpeedModifierMovementFactor
 				: SnappingDistance;
+
+			// Magic! If the object is not snapped currently, this will make it snap to the closest position in movement direction.
+			if (!transform.position.IsSnapped(SnappingDistance, SnappingOffset, SnappingPrecision))
+			{
+				distance -= 0.5f;
+			}
 
 			if (IsSnappingEnabled)
 			{
@@ -335,10 +342,11 @@ namespace Extenity.SnappaTool.Editor
 		public bool IsSnappingEnabled = true;
 		public float SnappingDistance = 1f;
 		public float SnappingOffset = 0.5f;
+		public float SnappingPrecision = 0.001f;
 
-		public bool IsSnapped(Vector3 point, float precision = 0.001f)
+		public bool IsSnapped(Vector3 point)
 		{
-			return point.IsSnapped(SnappingDistance, SnappingOffset, precision);
+			return point.IsSnapped(SnappingDistance, SnappingOffset, SnappingPrecision);
 		}
 
 		#endregion
