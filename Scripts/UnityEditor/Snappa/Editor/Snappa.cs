@@ -4,10 +4,10 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.GridPaintTool.Editor
+namespace Extenity.SnappaTool.Editor
 {
 
-	public class GridPaint : ExtenityEditorWindowBase
+	public class Snappa : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
@@ -65,16 +65,16 @@ namespace Extenity.GridPaintTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Window/Extenity GridPaint", false, 1003)]
+		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
 		private static void ShowWindow()
 		{
-			var window = GetWindow<GridPaint>();
+			var window = GetWindow<Snappa>();
 			window.Show();
 		}
 
 		private void OnEnable()
 		{
-			SetTitleAndIcon("Snappa", GridPaintIcons.Texture_ArrowStraight);
+			SetTitleAndIcon("Snappa", SnappaIcons.Texture_ArrowStraight);
 			minSize = new Vector2(200f, 50f);
 
 			InitializeKeyboard();
@@ -309,7 +309,7 @@ namespace Extenity.GridPaintTool.Editor
 
 			var colors = drawRed ? RedArrowColors : NormalArrowColors;
 
-			var texture = GridPaintIcons.Texture_ArrowStraight;
+			var texture = SnappaIcons.Texture_ArrowStraight;
 			// Front arrow
 			GL.modelview = baseMatrix * FrontArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.Front);
@@ -317,7 +317,7 @@ namespace Extenity.GridPaintTool.Editor
 			GL.modelview = baseMatrix * BackArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.Back);
 
-			texture = GridPaintIcons.Texture_ArrowBent;
+			texture = SnappaIcons.Texture_ArrowBent;
 			// Right arrow
 			GL.modelview = baseMatrix * RightArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.LeftRight);
