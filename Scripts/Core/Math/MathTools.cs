@@ -2813,15 +2813,34 @@ namespace Extenity.MathToolbox
 				IsSnapped(value.w, snapStep, snapOffset, precision);
 		}
 
-		//public static float GetNextSnap(this float value, float snapStep, float snapOffset, float precision = 0.001f)
-		//{
-		//	var diff = value - snapOffset;
-		//	if (diff < 0)
-		//		diff = -diff;
+		public static float Snap(this float value, float snapStep, float snapOffset)
+		{
+			return Mathf.Round((value + snapOffset) / snapStep) * snapStep - snapOffset;
+		}
 
-		//	var halfSnapStep = snapStep * 0.5f;
-		//	var mod = ((diff + halfSnapStep) % snapStep) - halfSnapStep;
-		//}
+		public static Vector2 Snap(this Vector2 value, float snapStep, float snapOffset)
+		{
+			return new Vector2(
+				Snap(value.x, snapStep, snapOffset),
+				Snap(value.y, snapStep, snapOffset));
+		}
+
+		public static Vector3 Snap(this Vector3 value, float snapStep, float snapOffset)
+		{
+			return new Vector3(
+				Snap(value.x, snapStep, snapOffset),
+				Snap(value.y, snapStep, snapOffset),
+				Snap(value.z, snapStep, snapOffset));
+		}
+
+		public static Vector4 Snap(this Vector4 value, float snapStep, float snapOffset)
+		{
+			return new Vector4(
+				Snap(value.x, snapStep, snapOffset),
+				Snap(value.y, snapStep, snapOffset),
+				Snap(value.z, snapStep, snapOffset),
+				Snap(value.w, snapStep, snapOffset));
+		}
 
 		#endregion
 	}

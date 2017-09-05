@@ -235,9 +235,8 @@ namespace Extenity.GridPaintTool.Editor
 
 			if (IsSnappingEnabled)
 			{
-				// TODO: TEMP
-				Debug.LogError("Snapping is not implemented yet!");
-				transform.position += (gizmoRotation * GetDirection(action)) * distance;
+				var targetPosition = transform.position + (gizmoRotation * GetDirection(action)) * distance;
+				transform.position = targetPosition.Snap(SnappingDistance, SnappingOffset);
 			}
 			else
 			{
