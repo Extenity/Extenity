@@ -9,6 +9,60 @@ namespace Extenity.GridPaintTool.Editor
 
 	public class GridPaint : ExtenityEditorWindowBase
 	{
+		#region Configuration
+
+		private const float GizmoSize = 1f;
+		private const float SpeedModifierMovementFactor = 5f;
+
+		private readonly Key[] KeyScheme_LeftHand =
+		{
+			new Key{ KeyCode = KeyCode.S, Action = KeyAction.Forward },
+			new Key{ KeyCode = KeyCode.X, Action = KeyAction.Backward },
+			new Key{ KeyCode = KeyCode.Z, Action = KeyAction.Left },
+			new Key{ KeyCode = KeyCode.C, Action = KeyAction.Right },
+			new Key{ KeyCode = KeyCode.D, Action = KeyAction.Up },
+			new Key{ KeyCode = KeyCode.A, Action = KeyAction.Down },
+		};
+
+		//private readonly Key[] KeyScheme_Keypad =
+		//{
+		//	new Key{ KeyCode = KeyCode.Keypad8, Action = KeyAction.Forward },
+		//	new Key{ KeyCode = KeyCode.Keypad5, Action = KeyAction.Backward },
+		//	new Key{ KeyCode = KeyCode.Keypad4, Action = KeyAction.Left },
+		//	new Key{ KeyCode = KeyCode.Keypad6, Action = KeyAction.Right },
+		//	new Key{ KeyCode = KeyCode.Keypad9, Action = KeyAction.Up },
+		//	new Key{ KeyCode = KeyCode.Keypad3, Action = KeyAction.Down },
+		//};
+
+		//private readonly Key[] KeyScheme_Arrows =
+		//{
+		//	new Key{ KeyCode = KeyCode.UpArrow, Action = KeyAction.Forward },
+		//	new Key{ KeyCode = KeyCode.DownArrow, Action = KeyAction.Backward },
+		//	new Key{ KeyCode = KeyCode.LeftArrow, Action = KeyAction.Left },
+		//	new Key{ KeyCode = KeyCode.RightArrow, Action = KeyAction.Right },
+		//	new Key{ KeyCode = KeyCode.Keypad1, Action = KeyAction.Up },
+		//	new Key{ KeyCode = KeyCode.Keypad0, Action = KeyAction.Down },
+		//};
+
+		private readonly ArrowColors NormalArrowColors = new ArrowColors()
+		{
+			Front = new Color(0.5f, 0.7f, 0.5f, 0.5f),
+			LeftRight = new Color(0.5f, 0.5f, 0.5f, 0.3f),
+			Back = new Color(0.5f, 0.5f, 0.5f, 0.1f),
+		};
+		private readonly ArrowColors RedArrowColors = new ArrowColors()
+		{
+			Front = new Color(0.9f, 0.4f, 0.4f, 0.5f),
+			LeftRight = new Color(0.9f, 0.5f, 0.5f, 0.3f),
+			Back = new Color(0.9f, 0.5f, 0.5f, 0.1f),
+		};
+
+		private const float FrontArrowScale = 0.3f;
+		private const float LeftRightArrowScale = 0.25f;
+		private const float BackArrowScale = 0.2f;
+
+		#endregion
+
 		#region Initialization
 
 		[MenuItem("Window/Extenity GridPaint", false, 1003)]
@@ -80,7 +134,9 @@ namespace Extenity.GridPaintTool.Editor
 			// Move with keyboard
 			if (currentEventType == EventType.KeyDown)
 			{
-				if (!IsMouseDown && currentEvent.isKey && currentEvent.modifiers == EventModifiers.None)
+				var modifiers = currentEvent.modifiers;
+				var speedModifier = modifiers == EventModifiers.Shift;
+				if (!IsMouseDown && (modifiers == EventModifiers.None || speedModifier))
 				{
 					var keyCode = currentEvent.keyCode;
 					if (keyCode != 0)
@@ -88,7 +144,7 @@ namespace Extenity.GridPaintTool.Editor
 						var action = GetKeyAction(keyCode);
 						if (action != KeyAction.Unspecified)
 						{
-							DoAction(action, selectedObject, gizmoRotation);
+							DoAction(action, speedModifier, selectedObject, gizmoRotation);
 							currentEvent.Use();
 						}
 					}
@@ -99,7 +155,7 @@ namespace Extenity.GridPaintTool.Editor
 			if (currentEventType == EventType.Repaint)
 			{
 				//Handles.DoPositionHandle(GizmoPosition, GizmoRotation);
-				DrawArrows(camera, gizmoPosition, gizmoRotation, !isSnapped);
+				DrawArrows(camera, gizmoPosition, gizmoRotation, GizmoSize, !isSnapped);
 			}
 		}
 
@@ -129,36 +185,6 @@ namespace Extenity.GridPaintTool.Editor
 		}
 
 		//private KeyValuePair<string, Key[]>[] PredefinedKeySchemes;
-
-		private readonly Key[] KeyScheme_LeftHand =
-		{
-			new Key{ KeyCode = KeyCode.S, Action = KeyAction.Forward },
-			new Key{ KeyCode = KeyCode.X, Action = KeyAction.Backward },
-			new Key{ KeyCode = KeyCode.Z, Action = KeyAction.Left },
-			new Key{ KeyCode = KeyCode.C, Action = KeyAction.Right },
-			new Key{ KeyCode = KeyCode.D, Action = KeyAction.Up },
-			new Key{ KeyCode = KeyCode.A, Action = KeyAction.Down },
-		};
-
-		//private readonly Key[] KeyScheme_Keypad =
-		//{
-		//	new Key{ KeyCode = KeyCode.Keypad8, Action = KeyAction.Forward },
-		//	new Key{ KeyCode = KeyCode.Keypad5, Action = KeyAction.Backward },
-		//	new Key{ KeyCode = KeyCode.Keypad4, Action = KeyAction.Left },
-		//	new Key{ KeyCode = KeyCode.Keypad6, Action = KeyAction.Right },
-		//	new Key{ KeyCode = KeyCode.Keypad9, Action = KeyAction.Up },
-		//	new Key{ KeyCode = KeyCode.Keypad3, Action = KeyAction.Down },
-		//};
-
-		//private readonly Key[] KeyScheme_Arrows =
-		//{
-		//	new Key{ KeyCode = KeyCode.UpArrow, Action = KeyAction.Forward },
-		//	new Key{ KeyCode = KeyCode.DownArrow, Action = KeyAction.Backward },
-		//	new Key{ KeyCode = KeyCode.LeftArrow, Action = KeyAction.Left },
-		//	new Key{ KeyCode = KeyCode.RightArrow, Action = KeyAction.Right },
-		//	new Key{ KeyCode = KeyCode.Keypad1, Action = KeyAction.Up },
-		//	new Key{ KeyCode = KeyCode.Keypad0, Action = KeyAction.Down },
-		//};
 
 		private Key[] Keys;
 
@@ -199,19 +225,23 @@ namespace Extenity.GridPaintTool.Editor
 			}
 		}
 
-		private void DoAction(KeyAction action, Transform transform, Quaternion gizmoRotation)
+		private void DoAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
 		{
 			//Debug.Log("Action: " + action);
+
+			var distance = speedModifier
+				? SnappingDistance * SpeedModifierMovementFactor
+				: SnappingDistance;
 
 			if (IsSnappingEnabled)
 			{
 				// TODO: TEMP
 				Debug.LogError("Snapping is not implemented yet!");
-				transform.position += (gizmoRotation * GetDirection(action)) * SnappingDistance;
+				transform.position += (gizmoRotation * GetDirection(action)) * distance;
 			}
 			else
 			{
-				transform.position += (gizmoRotation * GetDirection(action)) * SnappingDistance;
+				transform.position += (gizmoRotation * GetDirection(action)) * distance;
 			}
 		}
 
@@ -237,26 +267,9 @@ namespace Extenity.GridPaintTool.Editor
 		private class ArrowColors
 		{
 			public Color Front;
-			public Color Back;
 			public Color LeftRight;
+			public Color Back;
 		}
-
-		private readonly ArrowColors NormalArrowColors = new ArrowColors()
-		{
-			Front = new Color(0.5f, 0.7f, 0.5f, 0.5f),
-			Back = new Color(0.5f, 0.5f, 0.5f, 0.1f),
-			LeftRight = new Color(0.5f, 0.5f, 0.5f, 0.3f),
-		};
-		private readonly ArrowColors RedArrowColors = new ArrowColors()
-		{
-			Front = new Color(0.9f, 0.4f, 0.4f, 0.5f),
-			Back = new Color(0.9f, 0.5f, 0.5f, 0.1f),
-			LeftRight = new Color(0.9f, 0.5f, 0.5f, 0.3f),
-		};
-
-		private const float FrontArrowScale = 0.3f;
-		private const float LeftRightArrowScale = 0.275f;
-		private const float BackArrowScale = 0.25f;
 
 		private readonly Rect IdentityRect = new Rect(0f, 0f, 1f, 1f);
 		private readonly Matrix4x4 FrontArrowMatrix = Matrix4x4.TRS(new Vector3(-0.5f, -1.5f, 0f) * FrontArrowScale, Quaternion.identity, new Vector3(1f, 1f, 1f) * FrontArrowScale);
@@ -264,9 +277,9 @@ namespace Extenity.GridPaintTool.Editor
 		private readonly Matrix4x4 RightArrowMatrix = Matrix4x4.TRS(new Vector3(0.5f, -0.5f, 0f) * LeftRightArrowScale, Quaternion.identity, new Vector3(1f, 1f, 1f) * LeftRightArrowScale);
 		private readonly Matrix4x4 LeftArrowMatrix = Matrix4x4.TRS(new Vector3(-0.5f, -0.5f, 0f) * LeftRightArrowScale, Quaternion.identity, new Vector3(-1f, 1f, 1f) * LeftRightArrowScale);
 
-		private void DrawArrows(Camera camera, Vector3 gizmoPosition, Quaternion gizmoRotation, bool drawRed)
+		private void DrawArrows(Camera camera, Vector3 gizmoPosition, Quaternion gizmoRotation, float gizmoSize, bool drawRed)
 		{
-			var distanceToCameraFactor = (camera.transform.position - gizmoPosition).magnitude * 0.2f;
+			var distanceToCameraFactor = (camera.transform.position - gizmoPosition).magnitude * 0.2f * gizmoSize;
 
 			GL.PushMatrix();
 			GL.LoadProjectionMatrix(camera.projectionMatrix);
