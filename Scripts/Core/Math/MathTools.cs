@@ -2773,6 +2773,57 @@ namespace Extenity.MathToolbox
 		}
 
 		#endregion
+
+		#region Snapping
+
+		public static bool IsSnapped(this float value, float snapStep, float snapOffset, float precision = 0.001f)
+		{
+			var diff = value - snapOffset;
+			if (diff < 0)
+				diff = -diff;
+
+			var halfSnapStep = snapStep * 0.5f;
+			var mod = ((diff + halfSnapStep) % snapStep) - halfSnapStep;
+
+			return mod <= precision && mod >= -precision;
+			//return mod.IsAlmostEqual(0f, precision);
+		}
+
+		public static bool IsSnapped(this Vector2 value, float snapStep, float snapOffset, float precision = 0.001f)
+		{
+			return
+				IsSnapped(value.x, snapStep, snapOffset, precision) &&
+				IsSnapped(value.y, snapStep, snapOffset, precision);
+		}
+
+		public static bool IsSnapped(this Vector3 value, float snapStep, float snapOffset, float precision = 0.001f)
+		{
+			return
+				IsSnapped(value.x, snapStep, snapOffset, precision) &&
+				IsSnapped(value.y, snapStep, snapOffset, precision) &&
+				IsSnapped(value.z, snapStep, snapOffset, precision);
+		}
+
+		public static bool IsSnapped(this Vector4 value, float snapStep, float snapOffset, float precision = 0.001f)
+		{
+			return
+				IsSnapped(value.x, snapStep, snapOffset, precision) &&
+				IsSnapped(value.y, snapStep, snapOffset, precision) &&
+				IsSnapped(value.z, snapStep, snapOffset, precision) &&
+				IsSnapped(value.w, snapStep, snapOffset, precision);
+		}
+
+		//public static float GetNextSnap(this float value, float snapStep, float snapOffset, float precision = 0.001f)
+		//{
+		//	var diff = value - snapOffset;
+		//	if (diff < 0)
+		//		diff = -diff;
+
+		//	var halfSnapStep = snapStep * 0.5f;
+		//	var mod = ((diff + halfSnapStep) % snapStep) - halfSnapStep;
+		//}
+
+		#endregion
 	}
 
 }
