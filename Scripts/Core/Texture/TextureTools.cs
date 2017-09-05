@@ -190,7 +190,7 @@ namespace Extenity.TextureToolbox
 			var counter = 0;
 			for (int i = 0; i < data.Length; i++)
 			{
-				stringBuilder.Append(((int)data[i]) + ", ");
+				stringBuilder.Append(((int)data[i]) + ",");
 				if (++counter > 50)
 				{
 					counter = 0;
