@@ -304,33 +304,66 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Vector2/Vector3/Quaternion
 
-		public static string ToString(Vector2 val)
+		public static string ToSerializableString(this Vector2 val)
 		{
 			return val.x + " " + val.y;
 		}
-		public static string ToString(Vector3 val)
+		public static string ToSerializableString(this Vector3 val)
 		{
 			return val.x + " " + val.y + " " + val.z;
 		}
-		public static string ToString(Quaternion val)
+		public static string ToSerializableString(this Vector4 val)
+		{
+			return val.x + " " + val.y + " " + val.z + " " + val.w;
+		}
+		public static string ToSerializableString(this Quaternion val)
 		{
 			return val.x + " " + val.y + " " + val.z + " " + val.w;
 		}
 
-		public static Vector2 ParseVector2(string text)
+		public static string ToStringAngleAxis(this Quaternion val)
 		{
-			string[] parts = text.Split(' ');
-			return new Vector2(Single.Parse(parts[0]), Single.Parse(parts[1]));
+			float angle;
+			Vector3 axis;
+			val.ToAngleAxis(out angle, out axis);
+			return angle + " " + axis.x + " " + axis.y + " " + axis.z;
 		}
-		public static Vector3 ParseVector3(string text)
+
+		public static string ToStringAngleAxisDecorated(this Quaternion val)
 		{
-			string[] parts = text.Split(' ');
-			return new Vector3(Single.Parse(parts[0]), Single.Parse(parts[1]), Single.Parse(parts[2]));
+			float angle;
+			Vector3 axis;
+			val.ToAngleAxis(out angle, out axis);
+			return "Angle " + angle.ToString("N1") + " Axis " + axis.ToString();
 		}
-		public static Quaternion ParseQuaternion(string text)
+
+		public static string ToStringAngleAxisEulerDecorated(this Quaternion val, string separatorBeforeEuler = "\t")
 		{
-			string[] parts = text.Split(' ');
-			return new Quaternion(Single.Parse(parts[0]), Single.Parse(parts[1]), Single.Parse(parts[2]), Single.Parse(parts[3]));
+			float angle;
+			Vector3 axis;
+			val.ToAngleAxis(out angle, out axis);
+			return "Angle " + angle.ToString("N1") + " Axis " + axis.ToString() + separatorBeforeEuler + " Euler " + val.eulerAngles.ToString();
+		}
+
+		public static Vector2 ParseVector2(this string text)
+		{
+			var parts = text.Split(' ');
+			return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+		}
+		public static Vector3 ParseVector3(this string text)
+		{
+			var parts = text.Split(' ');
+			return new Vector3(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]));
+		}
+		public static Vector4 ParseVector4(this string text)
+		{
+			var parts = text.Split(' ');
+			return new Vector4(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
+		}
+		public static Quaternion ParseQuaternion(this string text)
+		{
+			var parts = text.Split(' ');
+			return new Quaternion(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
 		}
 
 		#endregion
