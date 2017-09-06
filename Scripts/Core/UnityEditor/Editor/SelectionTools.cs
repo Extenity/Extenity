@@ -39,7 +39,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var objects = Selection.objects;
 			if (objects.Length == 0 || objects.Length > 1)
 				return null;
-			var selected = objects[0] as Transform;
+			var selected = Selection.activeTransform;
 			if (selected == null || !selected.gameObject.scene.isLoaded)
 				return null;
 			return selected;
