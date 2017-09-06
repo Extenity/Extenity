@@ -12,7 +12,7 @@ namespace Extenity.SnappaTool.Editor
 		#region Configuration
 
 		private const float GizmoSize = 1f;
-		private const float SpeedModifierMovementFactor = 5f;
+		private const float SpeedModifierFactor = 5f;
 
 		private readonly Key[] KeyScheme_LeftHand =
 		{
@@ -130,7 +130,7 @@ namespace Extenity.SnappaTool.Editor
 
 			if (!IsEnabled)
 				return;
-			if (Tools.current != Tool.Move)
+			if (Tools.current != Tool.Move && Tools.current != Tool.Rotate)
 				return;
 			//Tools.hidden = true;
 
@@ -153,9 +153,8 @@ namespace Extenity.SnappaTool.Editor
 			//var gizmoPosition = cameraTransform.position + cameraTransform.forward * Distance;
 			var gizmoPosition = selectedObject.position;
 			var gizmoRotation = CalculateGizmoRotation(cameraTransform);
-			var isSnapped = IsSnapped(gizmoPosition);
 
-			// Move with keyboard
+			// Move and rotate with keyboard
 			if (currentEventType == EventType.KeyDown)
 			{
 				var modifiers = currentEvent.modifiers;
@@ -168,7 +167,14 @@ namespace Extenity.SnappaTool.Editor
 						var action = GetKeyAction(keyCode);
 						if (action != KeyAction.Unspecified)
 						{
-							DoAction(action, speedModifier, selectedObject, gizmoRotation);
+							if (Tools.current == Tool.Move)
+							{
+								DoMovementAction(action, speedModifier, selectedObject, gizmoRotation);
+							}
+							else // Tools.current == Tool.Rotation
+							{
+								DoRotationAction(action, speedModifier, selectedObject, gizmoRotation);
+							}
 							currentEvent.Use();
 						}
 					}
@@ -178,8 +184,16 @@ namespace Extenity.SnappaTool.Editor
 			// Draw
 			if (currentEventType == EventType.Repaint)
 			{
-				//Handles.DoPositionHandle(GizmoPosition, GizmoRotation);
-				DrawArrows(camera, gizmoPosition, gizmoRotation, GizmoSize, !isSnapped);
+				if (Tools.current == Tool.Move)
+				{
+					var isPositionSnapped = IsPositionSnapped(selectedObject.position);
+					DrawMovementArrows(camera, gizmoPosition, gizmoRotation, GizmoSize, !isPositionSnapped);
+				}
+				//else // Tools.current == Tool.Rotation
+				//{
+				//	var isRotationSnapped = IsRotationSnapped(selectedObject.eulerAngles);
+				//	DrawRotationArrows(camera, gizmoPosition, gizmoRotation, GizmoSize, !isRotationSnapped);
+				//}
 			}
 		}
 
@@ -236,7 +250,7 @@ namespace Extenity.SnappaTool.Editor
 			return KeyAction.Unspecified;
 		}
 
-		private static Vector3 GetDirection(KeyAction action)
+		private static Vector3 GetLinearDirection(KeyAction action)
 		{
 			switch (action)
 			{
@@ -251,26 +265,68 @@ namespace Extenity.SnappaTool.Editor
 			}
 		}
 
-		private void DoAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
+		private static Vector3 GetAngularDirection(KeyAction action)
 		{
-			var distance = speedModifier
-				? SnappingDistance * SpeedModifierMovementFactor
-				: SnappingDistance;
+			switch (action)
+			{
+				case KeyAction.Forward: return Vector3.right;
+				case KeyAction.Backward: return Vector3.left;
+				case KeyAction.Left: return Vector3.down;
+				case KeyAction.Right: return Vector3.up;
+				case KeyAction.Up: return Vector3.back;
+				case KeyAction.Down: return Vector3.forward;
+				default:
+					throw new ArgumentOutOfRangeException("action", action, null);
+			}
+		}
+
+		private void DoMovementAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
+		{
+			Undo.RecordObject(transform, "Snappa Move");
+
+			var shift = speedModifier
+				? LinearSnappingStep * SpeedModifierFactor
+				: LinearSnappingStep;
 
 			// Magic! If the object is not snapped currently, this will make it snap to the closest position in movement direction.
-			if (!transform.position.IsSnapped(SnappingDistance, SnappingOffset, SnappingPrecision))
+			if (!transform.position.IsSnapped(LinearSnappingStep, LinearSnappingOffset, LinearSnappingPrecision))
 			{
-				distance -= 0.5f;
+				shift -= LinearSnappingStep * 0.5f;
 			}
 
 			if (IsSnappingEnabled)
 			{
-				var targetPosition = transform.position + (gizmoRotation * GetDirection(action)) * distance;
-				transform.position = targetPosition.Snap(SnappingDistance, SnappingOffset);
+				var targetPosition = transform.position + (gizmoRotation * GetLinearDirection(action)) * shift;
+				transform.position = targetPosition.Snap(LinearSnappingStep, LinearSnappingOffset);
 			}
 			else
 			{
-				transform.position += (gizmoRotation * GetDirection(action)) * distance;
+				transform.position += (gizmoRotation * GetLinearDirection(action)) * shift;
+			}
+		}
+
+		private void DoRotationAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
+		{
+			Undo.RecordObject(transform, "Snappa Rotate");
+
+			var shift = speedModifier
+				? AngularSnappingStep * SpeedModifierFactor
+				: AngularSnappingStep;
+
+			// Magic! If the object is not snapped currently, this will make it snap to the closest position in movement direction.
+			if (!transform.eulerAngles.IsSnapped(AngularSnappingStep, AngularSnappingOffset, AngularSnappingPrecision))
+			{
+				shift -= AngularSnappingStep * 0.5f;
+			}
+
+			if (IsSnappingEnabled)
+			{
+				var targetRotation = transform.eulerAngles + (gizmoRotation * GetAngularDirection(action)) * shift;
+				transform.rotation = Quaternion.Euler(targetRotation.Snap(AngularSnappingStep, AngularSnappingOffset));
+			}
+			else
+			{
+				transform.rotation *= Quaternion.AngleAxis(shift, gizmoRotation * GetAngularDirection(action));
 			}
 		}
 
@@ -306,7 +362,7 @@ namespace Extenity.SnappaTool.Editor
 		private readonly Matrix4x4 RightArrowMatrix = Matrix4x4.TRS(new Vector3(0.5f, -0.5f, 0f) * LeftRightArrowScale, Quaternion.identity, new Vector3(1f, 1f, 1f) * LeftRightArrowScale);
 		private readonly Matrix4x4 LeftArrowMatrix = Matrix4x4.TRS(new Vector3(-0.5f, -0.5f, 0f) * LeftRightArrowScale, Quaternion.identity, new Vector3(-1f, 1f, 1f) * LeftRightArrowScale);
 
-		private void DrawArrows(Camera camera, Vector3 gizmoPosition, Quaternion gizmoRotation, float gizmoSize, bool drawRed)
+		private void DrawMovementArrows(Camera camera, Vector3 gizmoPosition, Quaternion gizmoRotation, float gizmoSize, bool drawRed)
 		{
 			var distanceToCameraFactor = (camera.transform.position - gizmoPosition).magnitude * 0.2f * gizmoSize;
 
@@ -340,13 +396,23 @@ namespace Extenity.SnappaTool.Editor
 		#region Snapping
 
 		public bool IsSnappingEnabled = true;
-		public float SnappingDistance = 1f;
-		public float SnappingOffset = 0.5f;
-		public float SnappingPrecision = 0.001f;
 
-		public bool IsSnapped(Vector3 point)
+		public float LinearSnappingStep = 1f;
+		public float LinearSnappingOffset = 0.5f;
+		public float LinearSnappingPrecision = 0.001f;
+
+		public float AngularSnappingStep = 30f;
+		public float AngularSnappingOffset = 0f;
+		public float AngularSnappingPrecision = 0.001f;
+
+		public bool IsPositionSnapped(Vector3 point)
 		{
-			return point.IsSnapped(SnappingDistance, SnappingOffset, SnappingPrecision);
+			return point.IsSnapped(LinearSnappingStep, LinearSnappingOffset, LinearSnappingPrecision);
+		}
+
+		public bool IsRotationSnapped(Vector3 euler)
+		{
+			return euler.IsSnapped(AngularSnappingStep, AngularSnappingOffset, AngularSnappingPrecision);
 		}
 
 		#endregion
