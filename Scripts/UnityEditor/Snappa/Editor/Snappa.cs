@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
@@ -95,10 +98,27 @@ namespace Extenity.SnappaTool.Editor
 
 		#region GUI - Window
 
+		private readonly GUILayoutOption[] ActiveButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
+		private readonly GUILayoutOption[] SnapButtonOptions = { GUILayout.Width(30f), GUILayout.Height(30f) };
+		private readonly GUIContent ActiveButtonContent = new GUIContent("Active", "Toggle whole Snappa tool functionality. Useful for temporarily deactivating the tool.");
+		private readonly GUIContent LinearSnapButtonContent = new GUIContent("P", "Snap position of selected objects.");
+		private readonly GUIContent AngularSnapButtonContent = new GUIContent("R", "Snap rotation of selected objects.");
+
 		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(8f);
-			IsEnabled = GUILayout.Toggle(IsEnabled, "Enabled", "Button", GUILayout.Width(100f), GUILayout.Height(30f));
+
+			GUILayout.BeginHorizontal();
+			IsActive = GUILayout.Toggle(IsActive, ActiveButtonContent, "Button", ActiveButtonOptions);
+			if (GUILayout.Button(LinearSnapButtonContent, SnapButtonOptions))
+			{
+				LinearSnapSelected();
+			}
+			if (GUILayout.Button(AngularSnapButtonContent, SnapButtonOptions))
+			{
+				AngularSnapSelected();
+			}
+			GUILayout.EndHorizontal();
 
 			if (GUI.changed)
 			{
@@ -128,7 +148,7 @@ namespace Extenity.SnappaTool.Editor
 					break;
 			}
 
-			if (!IsEnabled)
+			if (!IsActive)
 				return;
 			if (Tools.current != Tool.Move && Tools.current != Tool.Rotate)
 				return;
@@ -141,12 +161,8 @@ namespace Extenity.SnappaTool.Editor
 			var cameraTransform = camera.transform;
 
 			// Get selected object
-			if (Selection.objects.Length == 0)
-				return;
-			if (Selection.objects.Length > 1)
-				return;
-			var selectedObject = Selection.activeTransform;
-			if (selectedObject == null || !selectedObject.gameObject.scene.isLoaded)
+			var selectedObject = SelectionTools.GetSingleTransformInScene();
+			if (selectedObject == null)
 				return;
 
 			// Calculate gizmo position and rotation
@@ -201,7 +217,7 @@ namespace Extenity.SnappaTool.Editor
 
 		#region Enabled/Disabled
 
-		public bool IsEnabled = true;
+		public bool IsActive = true;
 
 		#endregion
 
@@ -322,7 +338,7 @@ namespace Extenity.SnappaTool.Editor
 			if (IsSnappingEnabled)
 			{
 				var targetRotation = transform.eulerAngles + (gizmoRotation * GetAngularDirection(action)) * shift;
-				transform.rotation = Quaternion.Euler(targetRotation.Snap(AngularSnappingStep, AngularSnappingOffset));
+				transform.eulerAngles = targetRotation.Snap(AngularSnappingStep, AngularSnappingOffset);
 			}
 			else
 			{
@@ -413,6 +429,46 @@ namespace Extenity.SnappaTool.Editor
 		public bool IsRotationSnapped(Vector3 euler)
 		{
 			return euler.IsSnapped(AngularSnappingStep, AngularSnappingOffset, AngularSnappingPrecision);
+		}
+
+		#endregion
+
+		#region Snap Selected Objects
+
+		public void LinearSnapSelected()
+		{
+			DoSnapOnSelected(transform =>
+			{
+				transform.position = transform.position.Snap(LinearSnappingStep, LinearSnappingOffset);
+			});
+		}
+
+		public void AngularSnapSelected()
+		{
+			DoSnapOnSelected(transform =>
+			{
+				transform.eulerAngles = transform.eulerAngles.Snap(AngularSnappingStep, AngularSnappingOffset);
+			});
+		}
+
+		private void DoSnapOnSelected(Action<Transform> onApplySnap)
+		{
+			var transforms = Selection.GetTransforms(SelectionMode.ExcludePrefab | SelectionMode.TopLevel);
+			if (transforms.IsNullOrEmpty())
+			{
+				Debug.Log("Nothing to snap.");
+			}
+			else
+			{
+				Debug.LogFormat("Snapping objects ({0}): \n{1}", transforms.Length, transforms.Select(item => item.gameObject.FullName()).ToList().Serialize('\n'));
+
+				Undo.RecordObjects(transforms, string.Format("Snap {0} object{1}", transforms.Length, transforms.Length > 1 ? "s" : ""));
+
+				foreach (var transform in transforms)
+				{
+					onApplySnap(transform);
+				}
+			}
 		}
 
 		#endregion

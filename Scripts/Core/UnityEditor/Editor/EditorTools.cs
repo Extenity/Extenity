@@ -10,6 +10,7 @@ using UnityEditor.SceneManagement;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
+	// TODO: EditorTools is not a good name. Move methods into their own classes. Like move LoadSceneInEditorByPath into EditorSceneManagerTools because it extends EditorSceneManager.
 	public static class EditorTools
 	{
 		#region Initialization
@@ -472,27 +473,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				var assetsFolderPath = Application.dataPath.Split('/');
 				return assetsFolderPath[assetsFolderPath.Length - 2];
-			}
-		}
-
-		#endregion
-
-		#region Selection
-
-		public static void AddToSelection(UnityEngine.Object obj)
-		{
-			Selection.objects = Selection.objects.Add(obj);
-		}
-
-		public static void RemoveFromSelection(UnityEngine.Object obj)
-		{
-			var objects = Selection.objects;
-			for (int i = 0; i < objects.Length; i++)
-			{
-				if (objects[i] == obj)
-				{
-					Selection.objects = objects.RemoveAt(i);
-				}
 			}
 		}
 
