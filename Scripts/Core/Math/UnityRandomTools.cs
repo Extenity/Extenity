@@ -90,7 +90,7 @@ namespace Extenity.MathToolbox
 			get { return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
 		}
 
-		#region Collection Operations
+		#region Collection Operations - RandomIndexSelection
 
 		public static int RandomIndexSelection<T>(this T[] list)
 		{
@@ -134,6 +134,10 @@ namespace Extenity.MathToolbox
 				list.RemoveAt(index);
 			return index;
 		}
+
+		#endregion
+
+		#region Collection Operations - RandomSelection
 
 		public static T RandomSelection<T>(this T[] list)
 		{
@@ -180,14 +184,156 @@ namespace Extenity.MathToolbox
 			return val;
 		}
 
+		#endregion
+
+		#region Collection Operations - RandomSelectionFiltered
+
+		/// <summary>
+		/// Selects a random item from list while excluding any items that is equal to excludeItem.
+		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
+		/// selection if there are any.
+		/// 
+		/// Note that the method will check for any unwanted situtations in exchange for performance.
+		/// The method checks if there are any items in the list that is not equal to excludeItem, 
+		/// which prevents the algorithm to go into an infinite loop. The cost of this operation 
+		/// will be 1 or 2 Equals check most of the time.
+		/// 
+		/// See also RandomSelectionFilteredUnsafe.
+		/// </summary>
+		public static T RandomSelectionFilteredSafe<T>(this IList<T> list, T excludeItem, bool returnExcludedIfNoOtherChoice = false)
+		{
+			if (list.Count == 0)
+				return default(T);
+			if (list.Count == 1)
+			{
+				if (returnExcludedIfNoOtherChoice)
+					return list[0];
+				return list[0].Equals(excludeItem) ? default(T) : list[0];
+			}
+			// See if the list contains at least one item that is not equal to exludeItem. Otherwise we won't be able to get out from the loop below.
+			for (int i = 0; i < list.Count; i++)
+			{
+				if (!list[i].Equals(excludeItem))
+				{
+					while (true)
+					{
+						var item = list.RandomSelection();
+						if (item.Equals(excludeItem))
+							continue;
+						return item;
+					}
+				}
+			}
+			if (returnExcludedIfNoOtherChoice)
+				return list.RandomSelection(); // All items are equal to the exluded item. Select one of them randomly.
+			return default(T);
+		}
+		/// <summary>
+		/// Selects a random item from list while excluding any items that is equal to excludeItem.
+		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
+		/// selection if there are any.
+		/// 
+		/// Note that the method will check for any unwanted situtations in exchange for performance.
+		/// The method checks if there are any items in the list that is not equal to excludeItem, 
+		/// which prevents the algorithm to go into an infinite loop. The cost of this operation 
+		/// will be 1 or 2 Equals check most of the time.
+		/// 
+		/// See also RandomSelectionFilteredUnsafe.
+		/// </summary>
+		public static T RandomSelectionFilteredSafe<T>(this IList<T> list, T excludeItem, System.Random random, bool returnExcludedIfNoOtherChoice = false)
+		{
+			if (list.Count == 0)
+				return default(T);
+			if (list.Count == 1)
+			{
+				if (returnExcludedIfNoOtherChoice)
+					return list[0];
+				return list[0].Equals(excludeItem) ? default(T) : list[0];
+			}
+			// See if the list contains at least one item that is not equal to exludeItem. Otherwise we won't be able to get out from the loop below.
+			for (int i = 0; i < list.Count; i++)
+			{
+				if (!list[i].Equals(excludeItem))
+				{
+					while (true)
+					{
+						var item = list.RandomSelection(random);
+						if (item.Equals(excludeItem))
+							continue;
+						return item;
+					}
+				}
+			}
+			if (returnExcludedIfNoOtherChoice)
+				return list.RandomSelection(random); // All items are equal to the exluded item. Select one of them randomly.
+			return default(T);
+		}
+
+		/// <summary>
+		/// Selects a random item from list while excluding any items that is equal to excludeItem.
+		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
+		/// selection if there are any.
+		/// 
+		/// Note that the method will go into an infinite loop if all the items in the list is equal
+		/// to excludeItem. See also RandomSelectionFilteredSafe.
+		/// </summary>
+		public static T RandomSelectionFilteredUnsafe<T>(this IList<T> list, T excludeItem, bool returnExcludedIfNoOtherChoice = false)
+		{
+			if (list.Count == 0)
+				return default(T);
+			if (list.Count == 1)
+			{
+				if (returnExcludedIfNoOtherChoice)
+					return list[0];
+				return list[0].Equals(excludeItem) ? default(T) : list[0];
+			}
+			while (true)
+			{
+				var item = list.RandomSelection();
+				if (item.Equals(excludeItem))
+					continue;
+				return item;
+			}
+		}
+		/// <summary>
+		/// Selects a random item from list while excluding any items that is equal to excludeItem.
+		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
+		/// selection if there are any.
+		/// 
+		/// Note that the method will go into an infinite loop if all the items in the list is equal
+		/// to excludeItem. See also RandomSelectionFilteredSafe.
+		/// </summary>
+		public static T RandomSelectionFilteredUnsafe<T>(this IList<T> list, T excludeItem, System.Random random, bool returnExcludedIfNoOtherChoice = false)
+		{
+			if (list.Count == 0)
+				return default(T);
+			if (list.Count == 1)
+			{
+				if (returnExcludedIfNoOtherChoice)
+					return list[0];
+				return list[0].Equals(excludeItem) ? default(T) : list[0];
+			}
+			while (true)
+			{
+				var item = list.RandomSelection(random);
+				if (item.Equals(excludeItem))
+					continue;
+				return item;
+			}
+		}
+
+		#endregion
+
+		#region Collection Operations - RandomizeOrderFisherYates
+
 		public static void RandomizeOrderFisherYates<T>(this IList<T> list)
 		{
-			int n = list.Count;
+			var n = list.Count;
 			while (n > 1)
 			{
 				n--;
-				int k = Random.Range(0, n + 1);
-				T value = list[k];
+				var k = Random.Range(0, n + 1);
+				var value = list[k];
 				list[k] = list[n];
 				list[n] = value;
 			}
@@ -199,7 +345,7 @@ namespace Extenity.MathToolbox
 
 		public static T RandomSelection<T>()
 		{
-			Array values = Enum.GetValues(typeof(T));
+			var values = Enum.GetValues(typeof(T));
 			return (T)values.GetValue(Random.Range(0, values.Length));
 		}
 
