@@ -572,6 +572,7 @@ namespace Extenity.DebugToolbox
 			public int lineIndex;
 			public GUIAnchor anchor;
 			public float value;
+			public float shadowedValue;
 			public float minValue;
 			public float maxValue;
 			public float centerValue;
@@ -588,6 +589,7 @@ namespace Extenity.DebugToolbox
 
 			public BarData(int lineIndex, GUIAnchor anchor)
 			{
+				this.shadowedValue = float.NaN;
 				this.lineIndex = lineIndex;
 				this.anchor = anchor;
 			}
@@ -783,6 +785,19 @@ namespace Extenity.DebugToolbox
 		}
 
 		#endregion
+		#region User - Bar Shadowed Value
+
+		public static BarData BarShadowedValue(float shadowedValue, GUIAnchor anchor, int lineIndex)
+		{
+			return UpdateOrCreateBarDataForOnlyShadowedValue(shadowedValue, anchor, lineIndex);
+		}
+
+		public static BarData BarShadowedValueReset(GUIAnchor anchor, int lineIndex)
+		{
+			return UpdateOrCreateBarDataForOnlyShadowedValue(float.NaN, anchor, lineIndex);
+		}
+
+		#endregion
 
 		#region UpdateOrCreateBarData
 
@@ -831,6 +846,20 @@ namespace Extenity.DebugToolbox
 			data.SetBackgroundColor(backgroundColor);
 			data.width = width;
 			data.duration = duration;
+			data.lastUpdateTime = Time.time;
+			data.updatedInFrame = Time.frameCount;
+
+			return data;
+		}
+
+		private static BarData UpdateOrCreateBarDataForOnlyShadowedValue(float shadowedValue, GUIAnchor anchor, int lineIndex)
+		{
+			if (!IsInstanceAvailable)
+				return null;
+
+			var data = Instance.GetOrCreateBarData(lineIndex, anchor);
+
+			data.shadowedValue = shadowedValue;
 			data.lastUpdateTime = Time.time;
 			data.updatedInFrame = Time.frameCount;
 
@@ -980,6 +1009,12 @@ namespace Extenity.DebugToolbox
 					GUI.BeginGroup(rectBar);
 					rect.x = barStart;
 					rect.y = 0;
+					if (!float.IsNaN(data.shadowedValue))
+					{
+						var barShadowedEnd = (int)(rectArea.width * ((data.shadowedValue - data.minValue) / (data.maxValue - data.minValue)));
+						rect.width = barShadowedEnd - barStart;
+						GUI.DrawTexture(rect, barTexture, ScaleMode.StretchToFill, true, 0f, new Color(0.6f, 0.6f, 0.6f, 0.6f), 0f, 0f);
+					}
 					rect.width = barEnd - barStart;
 					GUI.DrawTexture(rect, barTexture);
 					GUI.EndGroup();
@@ -988,6 +1023,12 @@ namespace Extenity.DebugToolbox
 				{
 					GUI.DrawTexture(rectBackground, barBackgroundTexture);
 					rect.x += barStart;
+					if (!float.IsNaN(data.shadowedValue))
+					{
+						var barShadowedEnd = (int)(rectArea.width * ((data.shadowedValue - data.minValue) / (data.maxValue - data.minValue)));
+						rect.width = barShadowedEnd - barStart;
+						GUI.DrawTexture(rect, barTexture, ScaleMode.StretchToFill, true, 0f, new Color(0.6f, 0.6f, 0.6f, 0.6f), 0f, 0f);
+					}
 					rect.width = barEnd - barStart;
 					GUI.DrawTexture(rect, barTexture);
 				}
