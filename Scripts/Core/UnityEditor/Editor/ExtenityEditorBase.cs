@@ -187,7 +187,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Inspector GUI
 
 		public bool IsDefaultInspectorDrawingEnabled = true;
-		public bool IsDefaultInspectorScriptFieldEnabed = false;
+		public bool IsDefaultInspectorScriptFieldEnabled = false;
+		public bool IsDefaultInspectorScriptFieldNotReadOnly = true;
 		public bool IsInspectorDisabledWhenPlaying = false;
 
 		private static readonly string[] ExcludedPropertiesInDefaultInspector = { "m_Script" };
@@ -207,9 +208,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (IsDefaultInspectorDrawingEnabled)
 			{
-				if (IsDefaultInspectorScriptFieldEnabed)
+				if (IsDefaultInspectorScriptFieldEnabled)
 				{
-					DrawDefaultInspector();
+					if (IsDefaultInspectorScriptFieldNotReadOnly)
+					{
+						DrawScriptField();
+						DrawDefaultInspectorWithoutScriptField();
+					}
+					else
+					{
+						DrawDefaultInspector(); // This one seems to draw readonly script field.
+					}
 				}
 				else
 				{
@@ -228,6 +237,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void DrawDefaultInspectorWithoutScriptField()
 		{
 			DrawPropertiesExcluding(Configuration, ExcludedPropertiesInDefaultInspector);
+		}
+
+		public void DrawScriptField()
+		{
+			EditorGUILayout.PropertyField(GetProperty("m_Script"));
 		}
 
 		#endregion

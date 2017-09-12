@@ -10,7 +10,7 @@ namespace Extenity.DLLBuilder
 		protected override void OnEnableDerived()
 		{
 			IsDefaultInspectorDrawingEnabled = true;
-			IsDefaultInspectorScriptFieldEnabed = false;
+			IsDefaultInspectorScriptFieldEnabled = false;
 		}
 
 		protected override void OnDisableDerived()
