@@ -1,4 +1,3 @@
-using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.PhysicsToolbox
@@ -21,6 +20,19 @@ namespace Extenity.PhysicsToolbox
 		{
 			var velocity = rigidbody.velocity;
 			return Mathf.Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+		}
+
+		public static float ForwardSpeed(this Rigidbody rigidbody)
+		{
+			return Vector3.Dot(rigidbody.transform.forward, rigidbody.velocity);
+		}
+
+		public static float HorizontalForwardSpeed(this Rigidbody rigidbody)
+		{
+			var forward = rigidbody.transform.forward;
+			forward.y = 0f;
+			forward.Normalize();
+			return Vector3.Dot(forward, rigidbody.velocity);
 		}
 	}
 
