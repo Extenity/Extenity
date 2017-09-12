@@ -14,6 +14,8 @@ namespace Extenity.SnappaTool.Editor
 	{
 		#region Configuration
 
+		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+
 		private const float GizmoSize = 1f;
 		private const float SpeedModifierFactor = 5f;
 
@@ -78,7 +80,7 @@ namespace Extenity.SnappaTool.Editor
 		private void OnEnable()
 		{
 			SetTitleAndIcon("Snappa", SnappaIcons.Texture_ArrowStraight);
-			minSize = new Vector2(200f, 50f);
+			minSize = MinimumWindowSize;
 
 			InitializeKeyboard();
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
