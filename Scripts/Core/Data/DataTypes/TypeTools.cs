@@ -1,11 +1,13 @@
 //#define LogCachedTypeGetters
 using System;
+using System.Collections;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.DataToolbox
@@ -209,6 +211,21 @@ namespace Extenity.DataToolbox
 				return fieldsList.ToArray();
 			}
 			return new KeyValuePair<FieldInfo, Attribute[]>[0];
+		}
+
+		#endregion
+
+		#region Component Helpers
+
+		public static List<FieldInfo> GetNotAssignedSerializedComponentFields(this Component component)
+		{
+			return component.GetType().GetSerializedFields().Where(
+				field => !field.FieldType.IsValueType
+				         && field.FieldType.IsSubclassOf(typeof(Component))
+				         && !field.FieldType.IsSubclassOf(typeof(UnityEventBase))
+				         && !field.FieldType.IsSubclassOf(typeof(IEnumerable))
+				         && (Component)field.GetValue(component) == null // Converting to Component is required so Unity can run internal == operator on Components.
+			).ToList();
 		}
 
 		#endregion

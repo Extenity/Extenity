@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using Extenity.TextureToolbox;
 
 namespace Extenity.AssetToolbox.Editor
@@ -222,6 +223,70 @@ namespace Extenity.AssetToolbox.Editor
 			foreach (var item in list)
 			{
 				log.AppendLine(item);
+			}
+		}
+
+		#endregion
+
+		#region Context Menu - Fill Empty References
+
+		[MenuItem("CONTEXT/Component/Fill Empty References", true)]
+		private static bool FillEmptyReferences_Validate(MenuCommand menuCommand)
+		{
+			var component = (Component)menuCommand.context;
+			return component.GetNotAssignedSerializedComponentFields().Count > 0;
+		}
+
+		[MenuItem("CONTEXT/Component/Fill Empty References", priority = 504)]
+		private static void FillEmptyReferences(MenuCommand menuCommand)
+		{
+			var component = (Component)menuCommand.context;
+			var fields = component.GetNotAssignedSerializedComponentFields();
+
+			foreach (var field in fields)
+			{
+				// First search inside current gameobject
+				Component selected = null;
+				var candidates = component.GetComponents(field.FieldType);
+				if (candidates != null && candidates.Length > 0)
+				{
+					if (candidates.Length > 1)
+					{
+						Debug.LogErrorFormat("Found more than one candidate of type '{0}'. You need to manually assign the field '{1}'.", field.FieldType, field.Name);
+					}
+					else
+					{
+						selected = candidates[0];
+					}
+				}
+				else
+				{
+					// Then search inside children
+					candidates = component.GetComponentsInChildren(field.FieldType);
+					if (candidates != null && candidates.Length > 0)
+					{
+						if (candidates.Length > 1)
+						{
+							Debug.LogErrorFormat("Found more than one candidate of type '{0}' in children. You need to manually assign the field '{1}'.", field.FieldType, field.Name);
+						}
+						else
+						{
+							selected = candidates[0];
+						}
+					}
+					else
+					{
+						Debug.LogErrorFormat("No candidates found of type '{0}' for field '{1}'.", field.FieldType, field.Name);
+					}
+				}
+
+				if (selected != null)
+				{
+					Debug.LogFormat("Filling field '{0}' of type '{1}' with '{2}'.", field.Name, field.FieldType, selected.gameObject.FullName());
+					Undo.RecordObject(component, "Fill Empty References");
+					field.SetValue(component, candidates[0]);
+
+				}
 			}
 		}
 
