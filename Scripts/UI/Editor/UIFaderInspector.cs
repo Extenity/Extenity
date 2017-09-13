@@ -32,12 +32,12 @@ namespace Extenity.UIToolbox.Editor
 			EditorGUILayout.PropertyField(GetProperty("InitialState"));
 
 			EditorGUILayout.PropertyField(GetProperty("GetFadeInConfigurationFromInitialValue"), CachedLabel1);
-			if (Me.GetFadeInConfigurationFromInitialValue)
+			if (!Me.GetFadeInConfigurationFromInitialValue)
 			{
 				EditorGUILayout.PropertyField(GetProperty("FadeInAlpha"));
 			}
 			EditorGUILayout.PropertyField(GetProperty("GetFadeOutConfigurationFromInitialValue"), CachedLabel2);
-			if (Me.GetFadeOutConfigurationFromInitialValue)
+			if (!Me.GetFadeOutConfigurationFromInitialValue)
 			{
 				EditorGUILayout.PropertyField(GetProperty("FadeOutAlpha"));
 			}
