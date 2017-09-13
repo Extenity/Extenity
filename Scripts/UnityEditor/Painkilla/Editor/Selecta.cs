@@ -3,7 +3,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.SelectaTool.Editor
+namespace Extenity.PainkillaTool.Editor
 {
 
 	public class Selecta : ExtenityEditorWindowBase

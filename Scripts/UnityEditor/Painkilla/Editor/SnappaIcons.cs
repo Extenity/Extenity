@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Extenity.SnappaTool.Editor
+namespace Extenity.PainkillaTool.Editor
 {
 
 	public static class SnappaIcons

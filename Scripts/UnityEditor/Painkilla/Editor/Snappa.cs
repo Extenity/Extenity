@@ -7,7 +7,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.SnappaTool.Editor
+namespace Extenity.PainkillaTool.Editor
 {
 
 	public class Snappa : ExtenityEditorWindowBase
