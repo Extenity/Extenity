@@ -545,26 +545,6 @@ namespace Extenity.DebugToolbox
 
 		#endregion
 
-		#region Mesh Helpers
-
-		public static void MeshNormals(Mesh mesh, Transform transform, float lineLenght, Color color, float duration = 0f, bool depthTest = true)
-		{
-			if (mesh.normals == null)
-				return;
-
-			Vector3[] vertices = mesh.vertices;
-			Vector3[] normals = mesh.normals;
-
-			DebugAssert.IsEqual(normals.Length, vertices.Length);
-
-			for (int i = 0; i < normals.Length; i++)
-			{
-				Line(vertices[i], vertices[i] + (normals[i] * lineLenght), color, duration, depthTest);
-			}
-		}
-
-		#endregion
-
 		#region Bar
 
 		public class BarData
@@ -1052,23 +1032,6 @@ namespace Extenity.DebugToolbox
 		}
 
 		#endregion
-
-		#endregion
-
-		#region Frustum
-
-		public static void DrawFrustum(Transform transform, float fovY, float maxRange, float minRange, float aspect, Color color, Vector3 center)
-		{
-			var previousMatrix = Gizmos.matrix;
-			var previousColor = Gizmos.color;
-
-			Gizmos.matrix = transform.localToWorldMatrix;
-			Gizmos.color = color;
-			Gizmos.DrawFrustum(center, fovY, maxRange, minRange, aspect);
-
-			Gizmos.matrix = previousMatrix;
-			Gizmos.color = previousColor;
-		}
 
 		#endregion
 
