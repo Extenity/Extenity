@@ -70,6 +70,7 @@ namespace Extenity.SelectaTool.Editor
 
 			if (GUI.changed)
 			{
+				Calculate();
 				SceneView.RepaintAll();
 			}
 		}
@@ -136,27 +137,62 @@ namespace Extenity.SelectaTool.Editor
 
 		private void SelectionChanged()
 		{
+			Calculate();
+		}
+
+		private void Calculate()
+		{
 			if (!IsActive)
 				return;
 
-			var change = false;
+			var changed = false;
 			var currentSelection = Selection.objects;
-			var expectedSelection = currentSelection.Where(
+			//var expectedSelection = currentSelection.Where(
+			//	(item) =>
+			//	{
+			//		var gameObject = item as GameObject;
+			//		var shouldDeselect = gameObject == null || gameObject.GetComponent<Collider>() == null;
+			//		if (shouldDeselect)
+			//			change = true;
+			//		return !shouldDeselect;
+			//	}
+			//).ToList();
+			var expectedSelection = currentSelection.Select(
 				(item) =>
 				{
 					var gameObject = item as GameObject;
-					var shouldDeselect = gameObject == null || gameObject.GetComponent<Collider>() == null;
-					if (shouldDeselect)
-						change = true;
-					return !shouldDeselect;
-				}
-			).ToList();
+					if (gameObject == null)
+					{
+						changed = true;
+						return null;
+					}
+					else
+					{
+						if (gameObject.GetComponent<Collider>() != null)
+						{
+							return gameObject;
+						}
+						else
+						{
+							changed = true;
 
-			//Debug.LogFormat("Selection changed to ({0}): {1}",
+							// See if we can find a collider on parent objects
+							var parent = gameObject.GetComponentInParent<Collider>();
+							if (parent != null)
+							{
+								return parent.gameObject;
+							}
+							return null;
+						}
+					}
+				}
+			).Where(item => item != null).ToList();
+
+			//Debug.LogFormat("Current selection ({0}): {1}",
 			//	currentSelection.Length,
 			//	currentSelection.Serialize('|'));
 
-			if (change)
+			if (changed)
 			{
 				//Debug.Log("Should deselect");
 				NewSelection = expectedSelection.ToArray();
