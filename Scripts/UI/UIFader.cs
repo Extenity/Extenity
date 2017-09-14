@@ -138,7 +138,7 @@ namespace Extenity.UIToolbox
 					//CanvasGroup.interactable = false;
 					// Panel is going to be instantly interactable before getting fully visible.
 					CanvasGroup.interactable = true;
-					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetDelay(delay).OnComplete(() =>
+					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
 						CanvasGroup.blocksRaycasts = true;
 						CanvasGroup.interactable = true;
@@ -181,7 +181,7 @@ namespace Extenity.UIToolbox
 					CanvasGroup.blocksRaycasts = true;
 					// Break interaction right away so user won't be able to click anything during fade out animation.
 					CanvasGroup.interactable = false;
-					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetDelay(delay).OnComplete(() =>
+					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
 						CanvasGroup.blocksRaycasts = false;
 						CanvasGroup.interactable = false;
