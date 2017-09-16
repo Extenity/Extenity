@@ -94,6 +94,9 @@ namespace Extenity.DLLBuilder
 		[Header("Compiler")]
 		public CompilerType Compiler = CompilerType.Gmcs;
 
+		[Header("Obfuscation")]
+		public bool Obfuscate = false;
+
 		#region Consistency
 
 		public void CheckConsistencyOfPaths(ref List<ConsistencyError> errors)

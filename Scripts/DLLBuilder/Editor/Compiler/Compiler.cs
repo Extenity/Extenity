@@ -63,18 +63,58 @@ namespace Extenity.DLLBuilder
 				{
 					Debug.LogException(exception);
 					if (onFailed != null)
-						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed to start compilation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+					yield break;
 				}
 
 				// Wait until compilation finishes
 				while (!job.Finished)
 					yield return null;
 
-				if (job.RuntimeDLLSucceeded == CompileResult.Failed || job.EditorDLLSucceeded == CompileResult.Failed)
+				if (job.RuntimeDLLSucceeded == CompileResult.Failed ||
+					job.EditorDLLSucceeded == CompileResult.Failed)
 				{
 					if (onFailed != null)
 						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
 					yield break;
+				}
+
+				// Obfuscate
+				if (configuration.Obfuscate)
+				{
+					ObfuscationJob obfuscationJob;
+
+					try
+					{
+						obfuscationJob = ObfuscationLauncher.Obfuscate(job);
+					}
+					catch (Exception exception)
+					{
+						Debug.LogException(exception);
+						if (onFailed != null)
+							onFailed(string.Format("Failed to start obfuscation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						yield break;
+					}
+
+					// Wait until obfuscation finishes
+					while (!obfuscationJob.Finished)
+						yield return null;
+
+					if (obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Unspecified ||
+						obfuscationJob.EditorDLLSucceeded == ObfuscateResult.Unspecified)
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Obfuscation result was not specified for {0} DLL '{1}'.", obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Unspecified ? "runtime" : "editor", configuration.DLLNameWithoutExtension));
+						yield break;
+					}
+
+					if (obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Failed ||
+						obfuscationJob.EditorDLLSucceeded == ObfuscateResult.Failed)
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Failed to obfuscate {0} DLL '{1}'.", obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Failed ? "runtime" : "editor", configuration.DLLNameWithoutExtension));
+						yield break;
+					}
 				}
 			}
 
