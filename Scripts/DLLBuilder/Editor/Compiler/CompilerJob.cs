@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 
 namespace Extenity.DLLBuilder
 {
@@ -22,13 +22,27 @@ namespace Extenity.DLLBuilder
 
 		public CompileResult RuntimeDLLSucceeded;
 		public CompileResult EditorDLLSucceeded;
-		public bool Finished;
-		public Action<CompilerJob> OnFinished;
+		public bool RuntimeDLLFinished;
+		public bool EditorDLLFinished;
 
-		public CompilerJob(CompilerConfiguration configuration, Action<CompilerJob> onFinished = null)
+		public CompilerJob(CompilerConfiguration configuration)
 		{
 			Configuration = configuration;
-			OnFinished = onFinished;
+		}
+
+		public bool AnyRuntimeSourceFiles
+		{
+			get { return SourceFilePathsForRuntimeDLL.IsNotNullAndEmpty(); }
+		}
+
+		public bool AnyEditorSourceFiles
+		{
+			get { return SourceFilePathsForEditorDLL.IsNotNullAndEmpty(); }
+		}
+
+		public bool AnySourceFiles
+		{
+			get { return AnyRuntimeSourceFiles || AnyEditorSourceFiles; }
 		}
 	}
 

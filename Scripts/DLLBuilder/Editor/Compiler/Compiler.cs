@@ -54,29 +54,110 @@ namespace Extenity.DLLBuilder
 			{
 				CompilerJob job = null;
 
+				// Initialization
 				try
 				{
 					job = new CompilerJob(configuration);
-					AsyncGenerateDLL(job);
+					DLLBuilder.LogAndUpdateStatus("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
+
+					DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
+					GenerateExportedFiles(job.Configuration.ProcessedSourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
+					GenerateExportedFiles(job.Configuration.ProcessedSourcePath, true, ref job.SourceFilePathsForEditorDLL, job.Configuration.ExcludedKeywords);
+
+					if (!job.AnySourceFiles)
+					{
+						throw new Exception("There are no source files to compile.");
+					}
 				}
 				catch (Exception exception)
 				{
 					Debug.LogException(exception);
 					if (onFailed != null)
-						onFailed(string.Format("Failed to start compilation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed initialize compilation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+					yield break;
+				}
+
+				// Compile runtime DLL
+				try
+				{
+					AsyncGenerateRuntimeDLL(job);
+				}
+				catch (Exception exception)
+				{
+					Debug.LogException(exception);
+					if (onFailed != null)
+						onFailed(string.Format("Failed to start compilation of runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
 					yield break;
 				}
 
 				// Wait until compilation finishes
-				while (!job.Finished)
+				while (!job.RuntimeDLLFinished)
 					yield return null;
 
-				if (job.RuntimeDLLSucceeded == CompileResult.Failed ||
-					job.EditorDLLSucceeded == CompileResult.Failed)
+				if (job.RuntimeDLLSucceeded == CompileResult.Failed)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
+						onFailed(string.Format("Failed to compile runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
 					yield break;
+				}
+
+				// Obfuscate (right after compilation and before using the DLL in any other place)
+				if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
+				{
+					try
+					{
+						ObfuscationLauncher.Obfuscate(job.Configuration.DLLPath);
+					}
+					catch (Exception exception)
+					{
+						Debug.LogException(exception);
+						if (onFailed != null)
+							onFailed(string.Format("Failed to obfuscate runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						yield break;
+					}
+				}
+
+				// Compile editor DLL
+				if (job.RuntimeDLLSucceeded == CompileResult.Succeeded || job.RuntimeDLLSucceeded == CompileResult.Skipped)
+				{
+					try
+					{
+						AsyncGenerateEditorDLL(job);
+					}
+					catch (Exception exception)
+					{
+						Debug.LogException(exception);
+						if (onFailed != null)
+							onFailed(string.Format("Failed to start compilation of editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						yield break;
+					}
+
+					// Wait until compilation finishes
+					while (!job.EditorDLLFinished)
+						yield return null;
+
+					if (job.EditorDLLSucceeded == CompileResult.Failed)
+					{
+						if (onFailed != null)
+							onFailed(string.Format("Failed to compile editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						yield break;
+					}
+
+					// Obfuscate (right after compilation and before using the DLL in any other place)
+					if (job.Configuration.Obfuscate && job.EditorDLLSucceeded == CompileResult.Succeeded)
+					{
+						try
+						{
+							ObfuscationLauncher.Obfuscate(job.Configuration.EditorDLLPath);
+						}
+						catch (Exception exception)
+						{
+							Debug.LogException(exception);
+							if (onFailed != null)
+								onFailed(string.Format("Failed to obfuscate editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+							yield break;
+						}
+					}
 				}
 			}
 
@@ -84,77 +165,46 @@ namespace Extenity.DLLBuilder
 				onSucceeded();
 		}
 
-		private static void InternalOnFinished(CompilerJob job)
+		private static void AsyncGenerateRuntimeDLL(CompilerJob job)
 		{
-			job.Finished = true;
-			if (job.OnFinished != null)
-			{
-				job.OnFinished(job);
-			}
-		}
-
-		private static void AsyncGenerateDLL(CompilerJob job)
-		{
-			DLLBuilder.LogAndUpdateStatus("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
-
-			DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
-			GenerateExportedFiles(job.Configuration.ProcessedSourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
-			GenerateExportedFiles(job.Configuration.ProcessedSourcePath, true, ref job.SourceFilePathsForEditorDLL, job.Configuration.ExcludedKeywords);
-
-			var thread = new Thread(GenerateDLL);
-			thread.Name = "Generate " + job.Configuration.DLLNameWithoutExtension;
+			var thread = new Thread(GenerateRuntimeDLL);
+			thread.Name = "Generate runtime " + job.Configuration.DLLNameWithoutExtension;
 			thread.Start(new object[] { job });
 		}
 
-		private static void GenerateDLL(object data)
+		private static void AsyncGenerateEditorDLL(CompilerJob job)
 		{
-			GenerateDLL((CompilerJob)((object[])data)[0]);
+			var thread = new Thread(GenerateEditorDLL);
+			thread.Name = "Generate editor " + job.Configuration.DLLNameWithoutExtension;
+			thread.Start(new object[] { job });
 		}
 
-		private static void GenerateDLL(CompilerJob job)
+		private static void GenerateRuntimeDLL(object data)
+		{
+			GenerateRuntimeDLL((CompilerJob)((object[])data)[0]);
+		}
+
+		private static void GenerateEditorDLL(object data)
+		{
+			GenerateEditorDLL((CompilerJob)((object[])data)[0]);
+		}
+
+		private static void GenerateRuntimeDLL(CompilerJob job)
 		{
 			try
 			{
-				var anyRuntimeSourceFiles = job.SourceFilePathsForRuntimeDLL.IsNotNullAndEmpty();
-				var anyEditorSourceFiles = job.SourceFilePathsForEditorDLL.IsNotNullAndEmpty();
-				if (!anyRuntimeSourceFiles && !anyEditorSourceFiles)
-				{
-					throw new Exception("There are no source files to compile.");
-				}
-
-				if (anyRuntimeSourceFiles)
+				if (job.AnyRuntimeSourceFiles)
 				{
 					CopySourcesToTemporaryDirectory(job.SourceFilePathsForRuntimeDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
 					job.RuntimeDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, false, job);
 					DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
-					if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
-						ObfuscationLauncher.Obfuscate(job.Configuration.DLLPath);
 				}
 				else
 				{
 					// Skip
 					Cleaner.ClearOutputDLLs(job.Configuration, true, true); // We still need to clear previous outputs in case there are any left from previous builds.
-					DLLBuilder.LogAndUpdateStatus("Skipping runtime DLL build. No scripts to compile for runtime DLL.");
+					DLLBuilder.LogAndUpdateStatus("Skipping runtime DLL build. No scripts to compile.");
 					job.RuntimeDLLSucceeded = CompileResult.Skipped;
-				}
-
-				if (job.RuntimeDLLSucceeded == CompileResult.Succeeded || job.RuntimeDLLSucceeded == CompileResult.Skipped)
-				{
-					if (anyEditorSourceFiles)
-					{
-						CopySourcesToTemporaryDirectory(job.SourceFilePathsForEditorDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
-						job.EditorDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, true, job);
-						DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
-						if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
-							ObfuscationLauncher.Obfuscate(job.Configuration.EditorDLLPath);
-					}
-					else
-					{
-						// Skip
-						Cleaner.ClearOutputDLLs(job.Configuration, false, true); // We still need to clear previous outputs in case there are any left from previous builds.
-						DLLBuilder.LogAndUpdateStatus("Skipping editor DLL build. No scripts to compile for editor DLL.");
-						job.EditorDLLSucceeded = CompileResult.Skipped;
-					}
 				}
 			}
 			catch (Exception exception)
@@ -162,8 +212,37 @@ namespace Extenity.DLLBuilder
 				Debug.LogException(exception);
 			}
 
-			InternalOnFinished(job);
-			//EditorApplication.delayCall += () => { InternalOnFinished(job); };
+			job.RuntimeDLLFinished = true;
+
+			//EditorApplication.delayCall += () => { InternalOnFinished(job); }; This causes hanging sometimes. Better not to use it in thread switching.
+		}
+
+		private static void GenerateEditorDLL(CompilerJob job)
+		{
+			try
+			{
+				if (job.AnyEditorSourceFiles)
+				{
+					CopySourcesToTemporaryDirectory(job.SourceFilePathsForEditorDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+					job.EditorDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, true, job);
+					DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+				}
+				else
+				{
+					// Skip
+					Cleaner.ClearOutputDLLs(job.Configuration, false, true); // We still need to clear previous outputs in case there are any left from previous builds.
+					DLLBuilder.LogAndUpdateStatus("Skipping editor DLL build. No scripts to compile.");
+					job.EditorDLLSucceeded = CompileResult.Skipped;
+				}
+			}
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
+			}
+
+			job.EditorDLLFinished = true;
+
+			//EditorApplication.delayCall += () => { InternalOnFinished(job); }; This causes hanging sometimes. Better not to use it in thread switching.
 		}
 
 		private static void CopySourcesToTemporaryDirectory(List<string> sourceFilePaths, string sourceBasePath, string temporaryDirectoryPath)
