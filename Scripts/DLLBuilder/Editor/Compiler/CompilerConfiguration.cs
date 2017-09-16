@@ -95,7 +95,8 @@ namespace Extenity.DLLBuilder
 		public CompilerType Compiler = CompilerType.Gmcs;
 
 		[Header("Obfuscation")]
-		public bool Obfuscate = false;
+		public bool ObfuscateRuntimeDLL = false;
+		public bool ObfuscateEditorDLL = false;
 
 		#region Consistency
 

@@ -102,7 +102,7 @@ namespace Extenity.DLLBuilder
 				}
 
 				// Obfuscate (right after compilation and before using the DLL in any other place)
-				if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
+				if (job.Configuration.ObfuscateRuntimeDLL && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
 				{
 					try
 					{
@@ -115,6 +115,9 @@ namespace Extenity.DLLBuilder
 							onFailed(string.Format("Failed to obfuscate runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
 						yield break;
 					}
+					// Wait for a couple of frames for obfuscation result to settle down. This is not required. Just a precaution.
+					for (int i = 0; i < 5; i++)
+						yield return null;
 				}
 
 				// Compile editor DLL
@@ -144,7 +147,7 @@ namespace Extenity.DLLBuilder
 					}
 
 					// Obfuscate (right after compilation and before using the DLL in any other place)
-					if (job.Configuration.Obfuscate && job.EditorDLLSucceeded == CompileResult.Succeeded)
+					if (job.Configuration.ObfuscateEditorDLL && job.EditorDLLSucceeded == CompileResult.Succeeded)
 					{
 						try
 						{
@@ -157,6 +160,9 @@ namespace Extenity.DLLBuilder
 								onFailed(string.Format("Failed to obfuscate editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
 							yield break;
 						}
+						// Wait for a couple of frames for obfuscation result to settle down. This is not required. Just a precaution.
+						for (int i = 0; i < 5; i++)
+							yield return null;
 					}
 				}
 			}
