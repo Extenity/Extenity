@@ -78,44 +78,6 @@ namespace Extenity.DLLBuilder
 						onFailed(string.Format("Failed to compile {0} DLL '{1}'.", job.RuntimeDLLSucceeded == CompileResult.Failed ? "runtime" : "editor", job.Configuration.DLLNameWithoutExtension));
 					yield break;
 				}
-
-				// Obfuscate
-				if (configuration.Obfuscate)
-				{
-					ObfuscationJob obfuscationJob;
-
-					try
-					{
-						obfuscationJob = ObfuscationLauncher.Obfuscate(job);
-					}
-					catch (Exception exception)
-					{
-						Debug.LogException(exception);
-						if (onFailed != null)
-							onFailed(string.Format("Failed to start obfuscation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
-						yield break;
-					}
-
-					// Wait until obfuscation finishes
-					while (!obfuscationJob.Finished)
-						yield return null;
-
-					if (obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Unspecified ||
-						obfuscationJob.EditorDLLSucceeded == ObfuscateResult.Unspecified)
-					{
-						if (onFailed != null)
-							onFailed(string.Format("Obfuscation result was not specified for {0} DLL '{1}'.", obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Unspecified ? "runtime" : "editor", configuration.DLLNameWithoutExtension));
-						yield break;
-					}
-
-					if (obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Failed ||
-						obfuscationJob.EditorDLLSucceeded == ObfuscateResult.Failed)
-					{
-						if (onFailed != null)
-							onFailed(string.Format("Failed to obfuscate {0} DLL '{1}'.", obfuscationJob.RuntimeDLLSucceeded == ObfuscateResult.Failed ? "runtime" : "editor", configuration.DLLNameWithoutExtension));
-						yield break;
-					}
-				}
 			}
 
 			if (onSucceeded != null)
@@ -165,6 +127,8 @@ namespace Extenity.DLLBuilder
 					CopySourcesToTemporaryDirectory(job.SourceFilePathsForRuntimeDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
 					job.RuntimeDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, false, job);
 					DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+					if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
+						ObfuscationLauncher.Obfuscate(job.Configuration.DLLPath);
 				}
 				else
 				{
@@ -181,6 +145,8 @@ namespace Extenity.DLLBuilder
 						CopySourcesToTemporaryDirectory(job.SourceFilePathsForEditorDLL, job.Configuration.ProcessedSourcePath, job.Configuration.ProcessedIntermediateSourceDirectoryPath);
 						job.EditorDLLSucceeded = CompileDLL(job.Configuration.ProcessedIntermediateSourceDirectoryPath, true, job);
 						DirectoryTools.Delete(job.Configuration.ProcessedIntermediateSourceDirectoryPath);
+						if (job.Configuration.Obfuscate && job.RuntimeDLLSucceeded == CompileResult.Succeeded)
+							ObfuscationLauncher.Obfuscate(job.Configuration.EditorDLLPath);
 					}
 					else
 					{

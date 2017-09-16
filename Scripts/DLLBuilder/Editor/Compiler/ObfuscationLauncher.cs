@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {
@@ -14,81 +15,74 @@ namespace Extenity.DLLBuilder
 		private const BindingFlags ProxyMethodBindingFlags = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
 		private static readonly Type[] ProxyMethodInputParameters =
 		{
-			typeof(string),
 			typeof(string)
 		};
 
 		#endregion
 
-		private class DummyObfuscationJob : ObfuscationJob
+		#region Status
+
+		private static bool IsProcessing;
+
+		#endregion
+
+		public static void Obfuscate(string dllPath)
 		{
-			public override bool Finished
+			if (IsProcessing)
 			{
-				get { return true; }
+				throw new Exception("Tried to start another obfuscation while there is an ongoing operation.");
 			}
-		}
+			IsProcessing = true;
 
-		public static ObfuscationJob Obfuscate(CompilerJob job)
-		{
-			// Fail whole obfuscation if one of the DLLs failed to compile.
-			if (job.RuntimeDLLSucceeded == CompileResult.Failed || job.EditorDLLSucceeded == CompileResult.Failed)
-			{
-				var obfuscationJob = new DummyObfuscationJob();
-				obfuscationJob.RuntimeDLLSucceeded = ObfuscateResult.Failed;
-				obfuscationJob.EditorDLLSucceeded = ObfuscateResult.Failed;
-				return obfuscationJob;
-			}
-			// Skip whole obfuscation if both of the DLLs skipped compilation.
-			if (job.RuntimeDLLSucceeded == CompileResult.Skipped && job.EditorDLLSucceeded == CompileResult.Skipped)
-			{
-				var obfuscationJob = new DummyObfuscationJob();
-				obfuscationJob.RuntimeDLLSucceeded = ObfuscateResult.Skipped;
-				obfuscationJob.EditorDLLSucceeded = ObfuscateResult.Skipped;
-				return obfuscationJob;
-			}
+			FailMessageWrittenByObfuscator = false;
+			Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceived += OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded += OnLogMessageReceived;
 
-			//var startTime = DateTime.Now;
-			var method = GetObfuscateMethod();
-			//Debug.LogFormat("Method search took '{0}'", (DateTime.Now - startTime).ToStringMinutesSecondsMilliseconds());
-
-			if (method == null)
+			try
 			{
-				throw new Exception("Failed to find obfuscation proxy method in loaded assemblies.");
-			}
-			if (method.ReturnParameter.ParameterType.IsSubclassOf(typeof(ObfuscationJob)))
-			{
-				throw new Exception(string.Format("Obfuscation proxy method return parameter type should be '{0}' instead of '{1}'.",
-					typeof(ObfuscationJob),
-					method.ReturnParameter.ParameterType));
-			}
+				//var startTime = DateTime.Now;
+				var method = GetObfuscateMethod();
+				//Debug.LogFormat("Method search took '{0}'", (DateTime.Now - startTime).ToStringMinutesSecondsMilliseconds());
 
-			var runtimeDLLPath = job.RuntimeDLLSucceeded == CompileResult.Skipped
-				? ""
-				: job.Configuration.DLLPath;
-			var editorDLLPath = job.EditorDLLSucceeded == CompileResult.Skipped
-				? ""
-				: job.Configuration.EditorDLLPath;
-
-			// Check if DLL files really exist
-			{
-				if (!string.IsNullOrEmpty(runtimeDLLPath))
+				if (method == null)
 				{
-					if (!File.Exists(runtimeDLLPath))
+					throw new Exception("Failed to find obfuscation proxy method in loaded assemblies.");
+				}
+				//if (method.ReturnParameter.ParameterType.IsSubclassOf(typeof(ObfuscateResult)))
+				//{
+				//	throw new Exception(string.Format("Obfuscation proxy method return parameter type should be '{0}' instead of '{1}'.",
+				//		typeof(ObfuscateResult),
+				//		method.ReturnParameter.ParameterType));
+				//}
+
+				// Check if DLL file really exist
+				if (!string.IsNullOrEmpty(dllPath))
+				{
+					if (!File.Exists(dllPath))
 					{
-						throw new Exception("Could not find the file to obfuscate at path '" + runtimeDLLPath + "'.");
+						throw new Exception("Could not find the file to obfuscate at path '" + dllPath + "'.");
 					}
 				}
-				if (!string.IsNullOrEmpty(editorDLLPath))
-				{
-					if (!File.Exists(editorDLLPath))
-					{
-						throw new Exception("Could not find the file to obfuscate at path '" + editorDLLPath + "'.");
-					}
-				}
-			}
 
-			var obfuscationJobAsObject = method.Invoke(null, new object[] { runtimeDLLPath, editorDLLPath });
-			return (ObfuscationJob)obfuscationJobAsObject;
+				method.Invoke(null, new object[] { dllPath });
+				//var obfuscationJobAsObject = method.Invoke(null, new object[] { dllPath });
+				//return (ObfuscateResult)obfuscationJobAsObject;
+
+				if (FailMessageWrittenByObfuscator)
+					throw new Exception("Obfuscator failed! Check previous error messages.");
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				IsProcessing = false;
+				Application.logMessageReceived -= OnLogMessageReceived;
+				Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+			}
 		}
 
 		private static MethodInfo GetObfuscateMethod()
@@ -115,6 +109,30 @@ namespace Extenity.DLLBuilder
 			}
 			return null;
 		}
+
+		#region Catch Obfuscator Error Messages
+
+		private static bool FailMessageWrittenByObfuscator = false;
+
+		private static void OnLogMessageReceived(string condition, string stackTrace, LogType type)
+		{
+			switch (type)
+			{
+				case LogType.Error:
+				case LogType.Assert:
+				case LogType.Exception:
+				case LogType.Warning:
+					FailMessageWrittenByObfuscator = true;
+					break;
+				case LogType.Log:
+					// Nothing to do.
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("type", type, null);
+			}
+		}
+
+		#endregion
 	}
 
 }
