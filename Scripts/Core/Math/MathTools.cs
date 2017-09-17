@@ -69,6 +69,7 @@ namespace Extenity.MathToolbox
 			float diff = value1 - value2;
 			return diff <= precision && diff >= -precision;
 		}
+
 		public static bool IsBetween(this float val, float a, float b)
 		{
 			if (a < b)
@@ -93,6 +94,24 @@ namespace Extenity.MathToolbox
 				return val >= a && val <= b;
 			return val >= b && val <= a;
 		}
+
+		public static bool IsBetweenMinMax(this float val, float min, float max)
+		{
+			return val > min && val < max;
+		}
+		public static bool IsBetweenOrEqualMinMax(this float val, float min, float max)
+		{
+			return val >= min && val <= max;
+		}
+		public static bool IsBetweenMinMax(this int val, int min, int max)
+		{
+			return val > min && val < max;
+		}
+		public static bool IsBetweenOrEqualMinMax(this int val, int min, int max)
+		{
+			return val >= min && val <= max;
+		}
+
 
 		public static float MakeZeroIfNaN(this float val)
 		{
