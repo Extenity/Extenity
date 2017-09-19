@@ -76,12 +76,12 @@ namespace Extenity.MathToolbox
 			IntegralInitializationType = integralInitializationType;
 		}
 
-		public void Reset()
+		public void Reset(double lastComputationTime = 0)
 		{
 			Input = 0f;
 			Output = 0f;
 			Target = 0f;
-			LastComputationTime = 0f;
+			LastComputationTime = lastComputationTime;
 			ITerm = 0f;
 
 			Initialize();
