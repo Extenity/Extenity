@@ -97,8 +97,8 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".compute") ||
-				       lower.EndsWith(".shadervariants") ||
-				       lower.EndsWith(".shader");
+					   lower.EndsWith(".shadervariants") ||
+					   lower.EndsWith(".shader");
 			}).ToList();
 		}
 
@@ -108,17 +108,17 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".cubemap") ||
-				       lower.EndsWith(".bmp") ||
-				       lower.EndsWith(".exr") ||
-				       lower.EndsWith(".gif") ||
-				       lower.EndsWith(".hdr") ||
-				       lower.EndsWith(".iff") ||
-				       lower.EndsWith(".jpg") ||
-				       lower.EndsWith(".pict") ||
-				       lower.EndsWith(".png") ||
-				       lower.EndsWith(".psd") ||
-				       lower.EndsWith(".tga") ||
-				       lower.EndsWith(".tiff");
+					   lower.EndsWith(".bmp") ||
+					   lower.EndsWith(".exr") ||
+					   lower.EndsWith(".gif") ||
+					   lower.EndsWith(".hdr") ||
+					   lower.EndsWith(".iff") ||
+					   lower.EndsWith(".jpg") ||
+					   lower.EndsWith(".pict") ||
+					   lower.EndsWith(".png") ||
+					   lower.EndsWith(".psd") ||
+					   lower.EndsWith(".tga") ||
+					   lower.EndsWith(".tiff");
 			}).ToList();
 		}
 
@@ -148,17 +148,17 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".asf") ||
-				       lower.EndsWith(".avi") ||
-				       lower.EndsWith(".dv") ||
-				       lower.EndsWith(".m4v") ||
-				       lower.EndsWith(".mov") ||
-				       lower.EndsWith(".mp4") ||
-				       lower.EndsWith(".mpg") ||
-				       lower.EndsWith(".mpeg") ||
-				       lower.EndsWith(".ogv") ||
-				       lower.EndsWith(".vp8") ||
-				       lower.EndsWith(".webm") ||
-				       lower.EndsWith(".wmv");
+					   lower.EndsWith(".avi") ||
+					   lower.EndsWith(".dv") ||
+					   lower.EndsWith(".m4v") ||
+					   lower.EndsWith(".mov") ||
+					   lower.EndsWith(".mp4") ||
+					   lower.EndsWith(".mpg") ||
+					   lower.EndsWith(".mpeg") ||
+					   lower.EndsWith(".ogv") ||
+					   lower.EndsWith(".vp8") ||
+					   lower.EndsWith(".webm") ||
+					   lower.EndsWith(".wmv");
 			}).ToList();
 		}
 
@@ -168,7 +168,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".guiskin") ||
-				       lower.EndsWith(".fontsettings");
+					   lower.EndsWith(".fontsettings");
 			}).ToList();
 		}
 
@@ -178,15 +178,15 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".mixer") ||
-				       lower.EndsWith(".mp3") ||
-				       lower.EndsWith(".ogg") ||
-				       lower.EndsWith(".wav") ||
-				       lower.EndsWith(".aiff ") ||
-				       lower.EndsWith(".aif") ||
-				       lower.EndsWith(".mod") ||
-				       lower.EndsWith(".it") ||
-				       lower.EndsWith(".s3m") ||
-				       lower.EndsWith(".xm");
+					   lower.EndsWith(".mp3") ||
+					   lower.EndsWith(".ogg") ||
+					   lower.EndsWith(".wav") ||
+					   lower.EndsWith(".aiff ") ||
+					   lower.EndsWith(".aif") ||
+					   lower.EndsWith(".mod") ||
+					   lower.EndsWith(".it") ||
+					   lower.EndsWith(".s3m") ||
+					   lower.EndsWith(".xm");
 			}).ToList();
 		}
 
@@ -196,7 +196,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".physicMaterial") ||
-				       lower.EndsWith(".physicsMaterial2D");
+					   lower.EndsWith(".physicsMaterial2D");
 			}).ToList();
 		}
 
@@ -340,6 +340,18 @@ namespace Extenity.AssetToolbox.Editor
 			Selection.activeObject = asset;
 
 			return asset;
+		}
+
+		public static T SaveAssetToFile<T>(T asset, string assetPath) where T : Object
+		{
+			if (asset == null)
+				throw new NullReferenceException("asset");
+			if (string.IsNullOrEmpty(assetPath))
+				throw new NullReferenceException("assetPath");
+
+			AssetDatabase.CreateAsset(asset, assetPath);
+			AssetDatabase.SaveAssets();
+			return AssetDatabase.LoadAssetAtPath<T>(assetPath);
 		}
 	}
 
