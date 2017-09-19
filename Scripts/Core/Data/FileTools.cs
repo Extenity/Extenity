@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Security;
+using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -348,6 +349,84 @@ namespace Extenity.DataToolbox
 					return extensions[i];
 			}
 			return null;
+		}
+
+		#endregion
+
+		#region Unique File
+
+		public static string GenerateUniqueFilePath(this string path, string numberPrefix = " (", string numberPostfix = ")")
+		{
+			var fileName = Path.GetFileNameWithoutExtension(path);
+			if (string.IsNullOrEmpty(fileName))
+			{
+				throw new Exception("Could not find the file name in path.");
+			}
+			var fileExtension = Path.GetExtension(path);
+			var filePathWithoutExtension = string.IsNullOrEmpty(fileExtension)
+				? path
+				: path.Substring(0, path.Length - fileExtension.Length);
+
+			//Debug.Log("path : " + path);
+			//Debug.Log("fileName : " + fileName);
+			//Debug.Log("extension : " + fileExtension);
+			//Debug.Log("filePathWithoutExtension : " + filePathWithoutExtension);
+
+			return GenerateUniqueNumberedName(
+				filePathWithoutExtension,
+				checkingFilePath => File.Exists(checkingFilePath + fileExtension),
+				numberPrefix, numberPostfix) + fileExtension;
+		}
+
+		public static string GenerateUniqueNumberedName(this string name, Predicate<string> doesExistCheck, string numberPrefix = " (", string numberPostfix = ")", int maxTries = 10000)
+		{
+			if (string.IsNullOrEmpty(name))
+				throw new NullReferenceException("name");
+
+			if (!doesExistCheck(name))
+				return name;
+
+			//Debug.Log("---- Name already exists: " + name);
+
+			int number = 1;
+			string nameWithPrefix = null;
+
+			// Detect current number of name
+			if (name.EndsWith(numberPostfix))
+			{
+				var startIndex = name.LastIndexOf(numberPrefix, StringComparison.InvariantCulture);
+				if (startIndex > 0)
+				{
+					startIndex += numberPrefix.Length;
+					var numberString = name.Substring(startIndex, name.Length - startIndex - numberPostfix.Length);
+					if (!string.IsNullOrEmpty(numberString) && numberString.IsNumeric(false))
+					{
+						// There is already a number at the end of the name. So use it instead of generating a new postfix to the name.
+						number = int.Parse(numberString);
+						number++;
+						nameWithPrefix = name.Substring(0, startIndex);
+					}
+
+				}
+			}
+
+			if (nameWithPrefix == null)
+			{
+				nameWithPrefix = name + numberPrefix;
+			}
+
+			var tryCount = 0;
+			var newName = nameWithPrefix + number + numberPostfix;
+			while (doesExistCheck(newName))
+			{
+				//Debug.Log("---- Tried name already exists: " + newName);
+				number++;
+				newName = nameWithPrefix + number + numberPostfix;
+				if (++tryCount > maxTries)
+					throw new Exception("Failed to find a unique name in maximum allowed tries.");
+			}
+
+			return newName;
 		}
 
 		#endregion
