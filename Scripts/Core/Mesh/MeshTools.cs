@@ -100,6 +100,21 @@ namespace Extenity.MeshToolbox
 
 		#endregion
 
+		#region Scale
+
+		public static void Scale(this Mesh mesh, Vector3 localScale)
+		{
+			var vertices = mesh.vertices;
+			for (var i = 0; i < vertices.Length; i++)
+			{
+				vertices[i] = Vector3.Scale(vertices[i], localScale);
+			}
+			mesh.vertices = vertices;
+			mesh.RecalculateBounds();
+		}
+
+		#endregion
+
 		#region Spline
 
 		public static Mesh CreateHorizontalMeshFromSpline(List<Vector3> points, float width)
