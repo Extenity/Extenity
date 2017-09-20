@@ -9,6 +9,20 @@ namespace Extenity.DataToolbox
 	{
 		#region Array / List / Collection / Enumerable
 
+		public static int SafeCount<T>(this ICollection<T> collection)
+		{
+			if (collection == null)
+				return 0;
+			return collection.Count;
+		}
+
+		public static int SafeLength<T>(this T[] array)
+		{
+			if (array == null)
+				return 0;
+			return array.Length;
+		}
+
 		public static bool IsEqual<T>(this IEnumerable<T> source, IEnumerable<T> other)
 		{
 			return new CollectionComparer<T>().Equals(source, other);
