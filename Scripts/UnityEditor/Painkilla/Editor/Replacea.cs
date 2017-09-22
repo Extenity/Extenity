@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
@@ -5,6 +6,7 @@ using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using SerializedObject = UnityEditor.SerializedObject;
 
 namespace Extenity.PainkillaTool.Editor
 {
@@ -31,6 +33,12 @@ namespace Extenity.PainkillaTool.Editor
 			SetTitleAndIcon("Replacea", null);
 			minSize = MinimumWindowSize;
 
+			serializedObject = new SerializedObject(this);
+			ReplaceAsPrefabProperty = serializedObject.FindProperty("ReplaceAsPrefab");
+			ReplacePrefabParentProperty = serializedObject.FindProperty("ReplacePrefabParent");
+			ReplaceRotationsProperty = serializedObject.FindProperty("ReplaceRotations");
+			ReplaceScalesProperty = serializedObject.FindProperty("ReplaceScales");
+
 			Selection.selectionChanged -= OnSelectionChanged;
 			Selection.selectionChanged += OnSelectionChanged;
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
@@ -49,11 +57,22 @@ namespace Extenity.PainkillaTool.Editor
 
 		#endregion
 
+		#region Serialized Properties
+
+		private SerializedObject serializedObject;
+		private SerializedProperty ReplaceAsPrefabProperty;
+		private SerializedProperty ReplacePrefabParentProperty;
+		private SerializedProperty ReplaceRotationsProperty;
+		private SerializedProperty ReplaceScalesProperty;
+
+		#endregion
+
 		#region GUI - Window
 
 		private readonly GUILayoutOption[] ReplaceButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
 		private readonly GUIContent ReplaceButtonContent = new GUIContent("Replace", "Replaces all selected objects with the specified object.");
 		private readonly GUIContent ReplaceWithContent = new GUIContent("Replace With", "This object will be duplicated and replaced with selected objects.");
+
 
 		protected override void OnGUIDerived()
 		{
@@ -67,8 +86,20 @@ namespace Extenity.PainkillaTool.Editor
 					OnSelectionChanged();
 				}
 
-				ReplaceRotations = EditorGUILayout.Toggle("Replace Rotations", ReplaceRotations);
-				ReplaceScales = EditorGUILayout.Toggle("Replace Scales", ReplaceScales);
+				var isPrefab = ReplaceWithObject != null && IsReplaceWithObjectReferencesToAPrefab;
+				EditorGUI.BeginDisabledGroup(!isPrefab);
+				{
+					EditorGUILayout.PropertyField(ReplaceAsPrefabProperty);
+					EditorGUI.BeginDisabledGroup(!ReplaceAsPrefab || !isPrefab || !IsNotThePrefabParent);
+					{
+						EditorGUILayout.PropertyField(ReplacePrefabParentProperty);
+					}
+					EditorGUI.EndDisabledGroup();
+				}
+				EditorGUI.EndDisabledGroup();
+
+				EditorGUILayout.PropertyField(ReplaceRotationsProperty);
+				EditorGUILayout.PropertyField(ReplaceScalesProperty);
 
 				EditorGUI.BeginDisabledGroup(FilteredSelection.IsNullOrEmpty() || ReplaceWithObject == null);
 				if (GUILayout.Button(ReplaceButtonContent, "Button", ReplaceButtonOptions))
@@ -114,8 +145,22 @@ namespace Extenity.PainkillaTool.Editor
 		#region Replace
 
 		public Transform ReplaceWithObject;
+		[Tooltip("This option becomes available if ReplaceWithObject is a prefab or a scene instance of a prefab. The cloned object simply won't keep a link to the prefab if this option is disabled.")]
+		public bool ReplaceAsPrefab = true;
+		[Tooltip("This option becomes available when a child of the prefab is selected, rather than selecting the parent object of the prefab. This allows user to decide whether the selected child object or the prefab parent should be cloned.")]
+		public bool ReplacePrefabParent = true;
 		public bool ReplaceRotations = false;
 		public bool ReplaceScales = false;
+
+		public bool IsReplaceWithObjectReferencesToAPrefab
+		{
+			get { return ReplaceWithObject == null ? false : PrefabUtility.GetPrefabParent(ReplaceWithObject.gameObject); }
+		}
+
+		public bool IsNotThePrefabParent
+		{
+			get { return ReplaceWithObject.gameObject != PrefabUtility.FindValidUploadPrefabInstanceRoot(ReplaceWithObject.gameObject); }
+		}
 
 		private void Replace()
 		{
@@ -124,9 +169,47 @@ namespace Extenity.PainkillaTool.Editor
 			if (ReplaceWithObject == null)
 				return;
 
+			// Select which object we should instantiate. 
+			// - The object itselft?
+			// - The corresponding object in the prefab?
+			// - The root of the prefab?
+			var isPrefab = ReplaceAsPrefab && IsReplaceWithObjectReferencesToAPrefab;
+			GameObject instantiatedObject;
+			if (isPrefab)
+			{
+				if (ReplacePrefabParent && IsNotThePrefabParent)
+				{
+					// The root of the prefab.
+					var root = PrefabUtility.FindValidUploadPrefabInstanceRoot(ReplaceWithObject.gameObject);
+					if (root == null)
+					{
+						throw new Exception("Internal error! Failed to find prefab root.");
+					}
+					instantiatedObject = (GameObject)PrefabUtility.GetPrefabParent(root);
+				}
+				else
+				{
+					// The corresponding object in the prefab.
+					instantiatedObject = (GameObject)PrefabUtility.GetPrefabParent(ReplaceWithObject.gameObject);
+				}
+			}
+			else
+			{
+				// The object itselft.
+				instantiatedObject = ReplaceWithObject.gameObject;
+			}
+
 			foreach (var selection in FilteredSelection)
 			{
-				var duplicate = Instantiate(ReplaceWithObject.gameObject, selection.parent).transform;
+				Transform duplicate;
+				if (isPrefab)
+				{
+					duplicate = ((GameObject)PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
+				}
+				else
+				{
+					duplicate = Instantiate(instantiatedObject, selection.parent).transform;
+				}
 				duplicate.localPosition = selection.localPosition;
 				if (!ReplaceRotations)
 					duplicate.localRotation = selection.localRotation;
