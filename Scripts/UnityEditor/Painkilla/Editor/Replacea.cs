@@ -169,6 +169,8 @@ namespace Extenity.PainkillaTool.Editor
 			if (ReplaceWithObject == null)
 				return;
 
+			var siblingIndex = ReplaceWithObject.GetSiblingIndex();
+
 			// Select which object we should instantiate. 
 			// - The object itselft?
 			// - The corresponding object in the prefab?
@@ -204,12 +206,15 @@ namespace Extenity.PainkillaTool.Editor
 				Transform duplicate;
 				if (isPrefab)
 				{
+
 					duplicate = ((GameObject)PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
+					duplicate.SetParent(selection.parent);
 				}
 				else
 				{
 					duplicate = Instantiate(instantiatedObject, selection.parent).transform;
 				}
+				duplicate.SetSiblingIndex(siblingIndex);
 				duplicate.localPosition = selection.localPosition;
 				if (!ReplaceRotations)
 					duplicate.localRotation = selection.localRotation;
