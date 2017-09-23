@@ -85,6 +85,24 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region serializedObject
+
+		// Name intentionally left small casing to make it compatible with Editor.serializedObject
+		private SerializedObject _serializedObject;
+		public SerializedObject serializedObject
+		{
+			get
+			{
+				if (_serializedObject == null)
+				{
+					_serializedObject = new SerializedObject(this);
+				}
+				return _serializedObject;
+			}
+		}
+
+		#endregion
 	}
 
 }

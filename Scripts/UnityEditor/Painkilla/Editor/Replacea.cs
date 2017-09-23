@@ -6,7 +6,6 @@ using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
-using SerializedObject = UnityEditor.SerializedObject;
 
 namespace Extenity.PainkillaTool.Editor
 {
@@ -33,11 +32,10 @@ namespace Extenity.PainkillaTool.Editor
 			SetTitleAndIcon("Replacea", null);
 			minSize = MinimumWindowSize;
 
-			serializedObject = new SerializedObject(this);
 			ReplaceAsPrefabProperty = serializedObject.FindProperty("ReplaceAsPrefab");
 			ReplacePrefabParentProperty = serializedObject.FindProperty("ReplacePrefabParent");
-			ReplaceRotationsProperty = serializedObject.FindProperty("ReplaceRotations");
-			ReplaceScalesProperty = serializedObject.FindProperty("ReplaceScales");
+			OverrideRotationsProperty = serializedObject.FindProperty("OverrideRotations");
+			OverrideScalesProperty = serializedObject.FindProperty("OverrideScales");
 
 			Selection.selectionChanged -= OnSelectionChanged;
 			Selection.selectionChanged += OnSelectionChanged;
@@ -59,11 +57,10 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Serialized Properties
 
-		private SerializedObject serializedObject;
 		private SerializedProperty ReplaceAsPrefabProperty;
 		private SerializedProperty ReplacePrefabParentProperty;
-		private SerializedProperty ReplaceRotationsProperty;
-		private SerializedProperty ReplaceScalesProperty;
+		private SerializedProperty OverrideRotationsProperty;
+		private SerializedProperty OverrideScalesProperty;
 
 		#endregion
 
@@ -98,8 +95,8 @@ namespace Extenity.PainkillaTool.Editor
 				}
 				EditorGUI.EndDisabledGroup();
 
-				EditorGUILayout.PropertyField(ReplaceRotationsProperty);
-				EditorGUILayout.PropertyField(ReplaceScalesProperty);
+				EditorGUILayout.PropertyField(OverrideRotationsProperty);
+				EditorGUILayout.PropertyField(OverrideScalesProperty);
 
 				EditorGUI.BeginDisabledGroup(FilteredSelection.IsNullOrEmpty() || ReplaceWithObject == null);
 				if (GUILayout.Button(ReplaceButtonContent, "Button", ReplaceButtonOptions))
@@ -112,13 +109,17 @@ namespace Extenity.PainkillaTool.Editor
 			GUILayout.Space(20f);
 
 			GUILayout.BeginHorizontal();
-			EditorGUILayoutTools.DrawHeader("Selected Objects (" + FilteredSelection.SafeCount() + " of " + Selection.objects.SafeLength() + ")");
+			var filteredCount = FilteredSelection.SafeCount();
+			var selectedCount = Selection.objects.SafeLength();
+			EditorGUILayoutTools.DrawHeader("Selected Objects (" + filteredCount + " of " + selectedCount + ")");
 			if (!FilteredSelection.IsNullOrEmpty())
 			{
+				EditorGUI.BeginDisabledGroup(filteredCount == selectedCount);
 				if (GUILayout.Button("Select Filtered"))
 				{
 					EditorApplication.delayCall += SelectFilteredObjects;
 				}
+				EditorGUI.EndDisabledGroup();
 			}
 			GUILayout.EndHorizontal();
 			{
@@ -149,8 +150,8 @@ namespace Extenity.PainkillaTool.Editor
 		public bool ReplaceAsPrefab = true;
 		[Tooltip("This option becomes available when a child of the prefab is selected, rather than selecting the parent object of the prefab. This allows user to decide whether the selected child object or the prefab parent should be cloned.")]
 		public bool ReplacePrefabParent = true;
-		public bool ReplaceRotations = false;
-		public bool ReplaceScales = false;
+		public bool OverrideRotations = false;
+		public bool OverrideScales = false;
 
 		public bool IsReplaceWithObjectReferencesToAPrefab
 		{
@@ -224,10 +225,15 @@ namespace Extenity.PainkillaTool.Editor
 				}
 				duplicate.SetSiblingIndex(siblingIndex);
 				duplicate.localPosition = selection.localPosition;
-				if (!ReplaceRotations)
+				if (OverrideRotationsProperty.boolValue)
+					duplicate.localRotation = ReplaceWithObject.localRotation;
+				else
 					duplicate.localRotation = selection.localRotation;
-				if (!ReplaceScales)
+				if (OverrideScalesProperty.boolValue)
+					duplicate.localScale = ReplaceWithObject.localScale;
+				else
 					duplicate.localScale = selection.localScale;
+
 				duplicate.gameObject.name = selection.gameObject.name;
 
 				createdObjects.Add(duplicate.gameObject);
