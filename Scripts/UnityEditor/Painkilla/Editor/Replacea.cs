@@ -169,10 +169,8 @@ namespace Extenity.PainkillaTool.Editor
 			if (ReplaceWithObject == null)
 				return;
 
-			var siblingIndex = ReplaceWithObject.GetSiblingIndex();
-
 			// Select which object we should instantiate. 
-			// - The object itselft?
+			// - The object itself?
 			// - The corresponding object in the prefab?
 			// - The root of the prefab?
 			var isPrefab = ReplaceAsPrefab && IsReplaceWithObjectReferencesToAPrefab;
@@ -197,12 +195,16 @@ namespace Extenity.PainkillaTool.Editor
 			}
 			else
 			{
-				// The object itselft.
+				// The object itself.
 				instantiatedObject = ReplaceWithObject.gameObject;
 			}
 
+			var createdObjects = new List<GameObject>(FilteredSelection.Count);
+
 			foreach (var selection in FilteredSelection)
 			{
+				var siblingIndex = selection.GetSiblingIndex();
+
 				Transform duplicate;
 				if (isPrefab)
 				{
@@ -212,6 +214,12 @@ namespace Extenity.PainkillaTool.Editor
 				}
 				else
 				{
+					//Selection.activeObject = instantiatedObject;
+					//SceneView.lastActiveSceneView.Focus();
+					//EditorWindow.focusedWindow.SendEvent(EditorGUIUtility.CommandEvent("Duplicate"));
+					//duplicate = Selection.activeTransform;
+					//duplicate.SetParent(selection.parent);
+
 					duplicate = Instantiate(instantiatedObject, selection.parent).transform;
 				}
 				duplicate.SetSiblingIndex(siblingIndex);
@@ -222,9 +230,13 @@ namespace Extenity.PainkillaTool.Editor
 					duplicate.localScale = selection.localScale;
 				duplicate.gameObject.name = selection.gameObject.name;
 
+				createdObjects.Add(duplicate.gameObject);
+
 				Undo.DestroyObjectImmediate(selection.gameObject);
 				Undo.RegisterCreatedObjectUndo(duplicate.gameObject, "Replace Selected Objects");
 			}
+
+			Selection.objects = createdObjects.ToArray();
 		}
 
 		#endregion
