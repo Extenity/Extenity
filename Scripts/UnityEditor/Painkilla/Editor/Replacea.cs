@@ -202,15 +202,20 @@ namespace Extenity.PainkillaTool.Editor
 
 			var createdObjects = new List<GameObject>(FilteredSelection.Count);
 
-			foreach (var selection in FilteredSelection)
+			// This helps losing sibling order on undo
+			var previousObjectSiblingIndices = new List<int>(FilteredSelection.Count);
+			for (var i = 0; i < FilteredSelection.Count; i++)
 			{
-				var siblingIndex = selection.GetSiblingIndex();
+				previousObjectSiblingIndices.Add(FilteredSelection[i].GetSiblingIndex());
+			}
 
+			for (var i = 0; i < FilteredSelection.Count; i++)
+			{
+				var selection = FilteredSelection[i];
 				Transform duplicate;
 				if (isPrefab)
 				{
-
-					duplicate = ((GameObject)PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
+					duplicate = ((GameObject) PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
 					duplicate.SetParent(selection.parent);
 				}
 				else
@@ -223,7 +228,7 @@ namespace Extenity.PainkillaTool.Editor
 
 					duplicate = Instantiate(instantiatedObject, selection.parent).transform;
 				}
-				duplicate.SetSiblingIndex(siblingIndex);
+				duplicate.SetSiblingIndex(previousObjectSiblingIndices[i]);
 				duplicate.localPosition = selection.localPosition;
 				if (OverrideRotationsProperty.boolValue)
 					duplicate.localRotation = ReplaceWithObject.localRotation;
@@ -261,6 +266,7 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			return Selection.GetFiltered<Transform>(SelectionMode.TopLevel)
 				.Where(transform => transform != null && transform != ReplaceWithObject)
+				.OrderBy(item => item.GetSiblingIndex()) // This helps losing sibling order on undo
 				.ToList();
 		}
 
