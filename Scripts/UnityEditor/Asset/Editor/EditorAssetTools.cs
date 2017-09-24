@@ -14,7 +14,7 @@ namespace Extenity.AssetToolbox.Editor
 
 	public static class EditorAssetTools
 	{
-		#region Context Menu - Operations - Texture
+		#region Assets Menu - Operations - Texture
 
 		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", priority = 3105)]
 		public static void GenerateEmbeddedCodeForImageFile()
@@ -93,7 +93,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Context Menu - Operations - Mark As Dirty
+		#region Assets Menu - Operations - Mark As Dirty
 
 		[MenuItem("Assets/Operations/Mark All Assets As Dirty", priority = 1104)]
 		public static void MarkAllAssetsAsDirty()
@@ -224,6 +224,40 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				log.AppendLine(item);
 			}
+		}
+
+		#endregion
+
+		#region Assets Menu - Operations - Set Static
+
+		[MenuItem("Assets/Operations/Set Selection As Static", priority = 804)]
+		public static void SetSelectionAsStatic()
+		{
+			var gameObjects = Selection.gameObjects;
+			foreach (var gameObject in gameObjects)
+				if (!gameObject.isStatic)
+					gameObject.isStatic = true;
+		}
+
+		[MenuItem("Assets/Operations/Set Selection As Static", validate = true)]
+		public static bool Validate_SetSelectionAsStatic()
+		{
+			return Selection.gameObjects.Length > 0;
+		}
+
+		[MenuItem("Assets/Operations/Set Selection As Non Static", priority = 805)]
+		public static void SetSelectionAsNonStatic()
+		{
+			var gameObjects = Selection.gameObjects;
+			foreach (var gameObject in gameObjects)
+				if (gameObject.isStatic)
+					gameObject.isStatic = false;
+		}
+
+		[MenuItem("Assets/Operations/Set Selection As Non Static", validate = true)]
+		public static bool Validate_SetSelectionAsNonStatic()
+		{
+			return Selection.gameObjects.Length > 0;
 		}
 
 		#endregion
