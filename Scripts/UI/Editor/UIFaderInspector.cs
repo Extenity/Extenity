@@ -29,6 +29,9 @@ namespace Extenity.UIToolbox.Editor
 			{
 				EditorGUILayout.HelpBox("A Canvas Group must be assigned.", MessageType.Warning);
 			}
+			EditorGUI.BeginDisabledGroup(GetProperty("CanvasGroup").objectReferenceValue == null);
+			EditorGUILayout.PropertyField(GetProperty("Canvas"));
+			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.PropertyField(GetProperty("InitialState"));
 
 			EditorGUILayout.PropertyField(GetProperty("GetFadeInConfigurationFromInitialValue"), CachedLabel1);

@@ -12,6 +12,8 @@ namespace Extenity.UIToolbox
 
 		[Header("Setup")]
 		public CanvasGroup CanvasGroup;
+		[Tooltip("Optional Canvas reference that will be enabled or disabled.")]
+		public Canvas Canvas;
 		public InitialFadeState InitialState = InitialFadeState.Untouched;
 
 		[Header("Transparency")]
@@ -129,6 +131,8 @@ namespace Extenity.UIToolbox
 					CanvasGroup.alpha = FadeInAlpha;
 					CanvasGroup.blocksRaycasts = true;
 					CanvasGroup.interactable = true;
+					if (Canvas != null)
+						Canvas.enabled = true;
 				}
 				else
 				{
@@ -138,10 +142,14 @@ namespace Extenity.UIToolbox
 					//CanvasGroup.interactable = false;
 					// Panel is going to be instantly interactable before getting fully visible.
 					CanvasGroup.interactable = true;
+					if (Canvas != null)
+						Canvas.enabled = true;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
 						CanvasGroup.blocksRaycasts = true;
 						CanvasGroup.interactable = true;
+						if (Canvas != null)
+							Canvas.enabled = true;
 						OnFinishedFadeIn.Invoke();
 					});
 				}
@@ -171,6 +179,8 @@ namespace Extenity.UIToolbox
 			{
 				if (duration < 0.001f)
 				{
+					if (Canvas != null)
+						Canvas.enabled = false;
 					CanvasGroup.alpha = FadeOutAlpha;
 					CanvasGroup.blocksRaycasts = false;
 					CanvasGroup.interactable = false;
@@ -183,6 +193,8 @@ namespace Extenity.UIToolbox
 					CanvasGroup.interactable = false;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
+						if (Canvas != null)
+							Canvas.enabled = false;
 						CanvasGroup.blocksRaycasts = false;
 						CanvasGroup.interactable = false;
 						OnFinishedFadeOut.Invoke();
