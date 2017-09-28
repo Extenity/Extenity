@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
+using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {
@@ -17,8 +18,11 @@ namespace Extenity.DLLBuilder
 			//public string[] ExcludedKeywords;
 		}
 
-		public bool Enabled = true;
+		[Header("Meta")]
 		public string ConfigurationName;
+		public bool Enabled = true;
+
+		[Header("Sources")]
 		public CollectorSource[] Sources;
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)

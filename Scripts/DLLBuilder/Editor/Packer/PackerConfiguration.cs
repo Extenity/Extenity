@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
+using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {
@@ -16,8 +17,11 @@ namespace Extenity.DLLBuilder
 	[Serializable]
 	public class PackerConfiguration : IConsistencyChecker
 	{
-		public bool Enabled = true;
+		[Header("Meta")]
 		public string ConfigurationName;
+		public bool Enabled = true;
+
+		[Header("Paths")]
 		public string SourceDirectoryPath;
 		public string TargetDirectoryPath;
 		public bool ExcludeScriptFiles = true;

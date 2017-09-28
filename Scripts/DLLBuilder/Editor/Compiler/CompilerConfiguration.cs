@@ -19,14 +19,15 @@ namespace Extenity.DLLBuilder
 	[Serializable]
 	public class CompilerConfiguration : IConsistencyChecker
 	{
+		[Header("Meta")]
+		public string DLLNameWithoutExtension;
 		public bool Enabled = true;
 
 		[Header("Paths")]
-		public string DLLNameWithoutExtension;
-		public string DLLName { get { return DLLNameWithoutExtension + ".dll"; } }
 		public string EditorDLLNamePostfix = ".Editor";
 		public string EditorDLLNameWithoutExtension { get { return DLLNameWithoutExtension + EditorDLLNamePostfix; } }
 		public string EditorDLLName { get { return EditorDLLNameWithoutExtension + ".dll"; } }
+		public string DLLName { get { return DLLNameWithoutExtension + ".dll"; } }
 		public string DLLOutputDirectoryPath = @"Output\Assets\Plugins\ProjectName";
 		public string EditorDLLOutputDirectoryPath = "Editor";
 		public bool UseRelativeEditorDLLOutputDirectoryPath = true;

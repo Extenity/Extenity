@@ -8,9 +8,8 @@ namespace Extenity.DLLBuilder
 	[Serializable]
 	public class RemoteBuilderConfiguration : IConsistencyChecker
 	{
-		public bool Enabled = true;
-
 		public string ProjectPath;
+		public bool Enabled = true;
 		public bool IgnoreIfNotFound = false;
 
 		#region Consistency
