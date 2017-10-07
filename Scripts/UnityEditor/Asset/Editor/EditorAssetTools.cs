@@ -319,7 +319,7 @@ namespace Extenity.AssetToolbox.Editor
 					Debug.LogFormat("Filling field '{0}' of type '{1}' with '{2}'.", field.Name, field.FieldType, selected.gameObject.FullName());
 					Undo.RecordObject(component, "Fill Empty References");
 					field.SetValue(component, candidates[0]);
-
+					EditorUtility.SetDirty(component);
 				}
 			}
 		}
