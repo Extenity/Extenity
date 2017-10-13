@@ -254,6 +254,49 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region CreateOrReplaceAsset
+
+		public static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object
+		{
+			var existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
+
+			if (!existingAsset)
+			{
+				AssetDatabase.CreateAsset(asset, path);
+				existingAsset = asset;
+			}
+			else
+			{
+				EditorUtility.CopySerialized(asset, existingAsset);
+			}
+
+			return existingAsset;
+		}
+
+		public static void CreateOrReplaceAsset(string sourcePath, string destinationPath)
+		{
+			var destinationAsset = AssetDatabase.LoadAssetAtPath<Object>(destinationPath);
+
+			if (!destinationAsset)
+			{
+				AssetDatabase.CopyAsset(sourcePath, destinationPath);
+			}
+			else
+			{
+				var sourceAsset = AssetDatabase.LoadAssetAtPath<Object>(sourcePath);
+				EditorUtility.CopySerialized(sourceAsset, destinationAsset);
+				AssetDatabase.SaveAssets();
+			}
+		}
+
+		public static void CreateOrReplaceScene(string sourcePath, string destinationPath)
+		{
+			File.Copy(sourcePath, destinationPath, true);
+			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+		}
+
+		#endregion
+
 		[MenuItem("Assets/Copy Asset Path")]
 		public static void CopySelectedAssetPaths()
 		{

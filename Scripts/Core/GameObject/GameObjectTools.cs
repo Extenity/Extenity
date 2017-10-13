@@ -2,7 +2,14 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using Extenity.DataToolbox;
 using Extenity.MathToolbox;
+using Extenity.ReflectionToolbox;
+using UnityEditor;
+using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace Extenity.GameObjectToolbox
@@ -418,7 +425,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region IsChildOf / IsParentOf / HasComponent
+		#region IsChildOf / IsParentOf / HasComponent / IsEmpty
 
 		/// <summary>
 		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
@@ -528,6 +535,24 @@ namespace Extenity.GameObjectToolbox
 			}
 
 			return false;
+		}
+
+		public static bool IsEmpty(this Transform transform)
+		{
+			if (!transform)
+				return false;
+			return
+				transform.childCount == 0 && // No children
+				transform.GetComponents<Component>().Length == 1; // Only contains Transform component, which is bare minimum
+		}
+
+		public static bool IsEmpty(this GameObject gameObject)
+		{
+			if (!gameObject)
+				return false;
+			return
+				gameObject.transform.childCount == 0 && // No children
+				gameObject.GetComponents<Component>().Length == 1; // Only contains Transform component, which is bare minimum
 		}
 
 		#endregion
@@ -803,12 +828,30 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region FindObjectOfTypeEnsured and FindSingleObjectOfTypeEnsured
+		#region FindObjectsOfTypeAll in Scene
 
-		public static T FindObjectOfType<T>() where T : class
+		public static List<T> FindObjectsOfTypeAllInActiveScene<T>()
 		{
-			return UnityEngine.Object.FindObjectOfType(typeof(T)) as T;
+			return SceneManager.GetActiveScene().FindObjectsOfTypeAll<T>();
 		}
+
+		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene)
+		{
+			var temp = new List<T>();
+			var results = new List<T>();
+			var rootGameObjects = scene.GetRootGameObjects();
+			for (int i = 0; i < rootGameObjects.Length; i++)
+			{
+				rootGameObjects[i].GetComponentsInChildren(true, temp);
+				results.AddRange(temp);
+				temp.Clear();
+			}
+			return results;
+		}
+
+		#endregion
+
+		#region FindObjectOfTypeEnsured and FindSingleObjectOfTypeEnsured
 
 		public static object FindObjectOfTypeEnsured(Type type)
 		{
@@ -877,6 +920,53 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region ListAllChildrenGameObjects
+
+		public static List<GameObject> ListAllGameObjectsInActiveScene()
+		{
+			var list = new List<GameObject>();
+			SceneManager.GetActiveScene().GetRootGameObjects().ListAllChildrenGameObjects(list, true);
+			return list;
+		}
+
+		public static void ListAllChildrenGameObjects(this IEnumerable<GameObject> parentGameObjects, List<GameObject> list, bool includingTheParent)
+		{
+			if (parentGameObjects == null)
+				return;
+			foreach (var parentGameObject in parentGameObjects)
+			{
+				if (includingTheParent)
+				{
+					list.Add(parentGameObject);
+				}
+				InternalListAllChildrenGameObjects(parentGameObject.transform, list);
+			}
+		}
+
+		public static void ListAllChildrenGameObjects(this GameObject parentGameObject, List<GameObject> list, bool includingTheParent)
+		{
+			if (!parentGameObject)
+				return;
+			if (includingTheParent)
+			{
+				list.Add(parentGameObject);
+			}
+			InternalListAllChildrenGameObjects(parentGameObject.transform, list);
+		}
+
+		private static void InternalListAllChildrenGameObjects(Transform transform, List<GameObject> list)
+		{
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
+			{
+				var child = transform.GetChild(i);
+				list.Add(child.gameObject);
+				InternalListAllChildrenGameObjects(child, list);
+			}
+		}
+
+		#endregion
+
 		#region GetParentEnsured
 
 		public static Transform GetParentEnsured(this Transform me)
@@ -887,6 +977,32 @@ namespace Extenity.GameObjectToolbox
 				throw new Exception("Could not get parent of '" + me.name + "'");
 			}
 			return parent;
+		}
+
+		#endregion
+
+		#region SetParent
+
+		public static void SetParentOfAllObjectsContainingComponent<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		{
+			IEnumerable<Transform> componentTransforms;
+			if (onlyStaticObjects)
+			{
+				componentTransforms = FindObjectsOfTypeAllInActiveScene<T>()
+					.Where(item => item.gameObject.isStatic)
+					.Select(item => item.transform);
+			}
+			else
+			{
+				componentTransforms = FindObjectsOfTypeAllInActiveScene<T>()
+					.Select(item => item.transform);
+			}
+
+			foreach (var transform in componentTransforms)
+			{
+				transform.SetParent(parent, true);
+				transform.SetAsLastSibling();
+			}
 		}
 
 		#endregion
@@ -1226,6 +1342,146 @@ namespace Extenity.GameObjectToolbox
 			if (me == null)
 				return NullGameObjectNamePlaceholder;
 			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
+		}
+
+		#endregion
+
+		#region Delete Empty Unreferenced GameObjects
+
+		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool undoable, bool log)
+		{
+			var gameObjects = ListAllGameObjectsInActiveScene();
+			if (gameObjects.IsNullOrEmpty())
+				return;
+
+			var allComponents = FindObjectsOfTypeAllInActiveScene<Component>();
+			var allObjectFields = allComponents.FindAllReferencedObjectsInComponents();
+
+			StringBuilder deletedObjectsText = null;
+			StringBuilder skippedObjectsText = null;
+			HashSet<GameObject> skippedObjects = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+				skippedObjectsText = new StringBuilder();
+				skippedObjects = new HashSet<GameObject>();
+			}
+
+			bool needsReRun;
+			do
+			{
+				needsReRun = false;
+				foreach (var gameObject in gameObjects.Where(item => item.IsEmpty()))
+				{
+					if (!gameObject)
+						continue;
+
+					// Check if the object referenced in any of the components
+					if (!allObjectFields.Contains(gameObject))
+					{
+						if (log)
+							deletedObjectsText.AppendLine(gameObject.FullName());
+						if (undoable)
+							Undo.DestroyObjectImmediate(gameObject);
+						else
+							Object.DestroyImmediate(gameObject);
+
+						// Maybe the parent too turns into an empty object after deleting it's child. Easiest way to find out is restart the whole search.
+						needsReRun = true;
+					}
+					else
+					{
+						if (log)
+							if (skippedObjects.Add(gameObject))
+								skippedObjectsText.AppendLine(gameObject.FullName());
+					}
+				}
+			}
+			while (needsReRun);
+
+			if (log)
+				Debug.Log("Deleting empty objects:\n" + deletedObjectsText.ToString() + (skippedObjectsText.Length == 0 ? "" : "\n\nSkipping empty objects:\n" + skippedObjectsText.ToString()));
+		}
+
+		#endregion
+
+		#region Delete All GameObjects Containing Component
+
+		public static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool undoable, bool log) where T : Component
+		{
+			SceneManager.GetActiveScene().DeleteAllGameObjectsContainingComponent<T>(undoable, log);
+		}
+
+		public static void DeleteAllGameObjectsContainingComponent<T>(this Scene scene, bool undoable, bool log) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>();
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+
+				if (log)
+					deletedObjectsText.AppendLine(component.gameObject.FullName());
+				if (undoable)
+					Undo.DestroyObjectImmediate(component.gameObject);
+				else
+					Object.DestroyImmediate(component.gameObject);
+			}
+
+			if (log)
+				Debug.LogFormat("Deleting objects containing component '{0}':\n{1}", typeof(T).Name, deletedObjectsText.ToString());
+		}
+
+		#endregion
+
+		#region Delete All Static MeshRenderers
+
+		public static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool undoable, bool log)
+		{
+			SceneManager.GetActiveScene().DeleteAllDisabledStaticMeshRenderers(undoable, log);
+		}
+
+		public static void DeleteAllDisabledStaticMeshRenderers(this Scene scene, bool undoable, bool log)
+		{
+			var components = scene.FindObjectsOfTypeAll<MeshRenderer>()
+				.Where(component => !component.gameObject.activeInHierarchy || !component.gameObject.activeSelf);
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+
+				var meshFilter = component.GetComponent<MeshFilter>();
+
+				if (log)
+					deletedObjectsText.AppendLine(component.gameObject.FullName());
+				if (undoable)
+				{
+					Undo.DestroyObjectImmediate(component);
+					Undo.DestroyObjectImmediate(meshFilter);
+				}
+				else
+				{
+					Object.DestroyImmediate(component);
+					Object.DestroyImmediate(meshFilter);
+				}
+			}
+
+			if (log)
+				Debug.LogFormat("Deleting disabled static MeshRenderers (and their filters):\n{0}", deletedObjectsText.ToString());
 		}
 
 		#endregion

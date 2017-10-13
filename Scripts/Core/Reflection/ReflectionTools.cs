@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
+using UnityEngine;
 
 namespace Extenity.ReflectionToolbox
 {
@@ -601,6 +605,19 @@ namespace Extenity.ReflectionToolbox
 			{
 				return System.Runtime.InteropServices.Marshal.SizeOf(new TypeSizeProxy<T>());
 			}
+		}
+
+		#endregion
+
+		#region FindAllReferencedObjectsInComponents
+
+		public static List<GameObject> FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components) where T : Component
+		{
+			return components.SelectMany(
+				item => item.GetUnitySerializedFields()
+					.Where(field => field.FieldType.IsSubclassOf(typeof(Component)) && (field.GetValue(item) as Component) != null)
+					.Select(field => ((Component)field.GetValue(item)).gameObject)
+			).ToList();
 		}
 
 		#endregion
