@@ -16,7 +16,7 @@ namespace Extenity.MathToolbox
 
 		public static Bounds2Int CreateInvalid()
 		{
-			return new Bounds2Int(Vector2Int.maxValue, Vector2Int.minValue);
+			return new Bounds2Int(Vector2IntTools.maxValue, Vector2IntTools.minValue);
 		}
 
 		public Bounds2Int(Vector2Int min, Vector2Int max)
@@ -27,21 +27,23 @@ namespace Extenity.MathToolbox
 
 		public Bounds2Int(int minX, int minY, int maxX, int maxY)
 		{
-			min.x = minX;
-			min.y = minY;
-			max.x = maxX;
-			max.y = maxY;
+			min = new Vector2Int(minX, minY);
+			max = new Vector2Int(maxX, maxY);
 		}
 
 		public void Reset()
 		{
-			min = Vector2Int.maxValue;
-			max = Vector2Int.minValue;
+			min = Vector2IntTools.maxValue;
+			max = Vector2IntTools.minValue;
 		}
 
 		public bool Contains(Vector2Int point)
 		{
-			return point >= min && point <= max;
+			return
+				point.x >= min.x &&
+				point.y >= min.y &&
+				point.x <= max.x &&
+				point.y <= max.y;
 		}
 
 		public void Encapsulate(Bounds2Int bounds)
@@ -101,7 +103,13 @@ namespace Extenity.MathToolbox
 
 		public Vector2Int CenterInt
 		{
-			get { return min + (max - min + Vector2Int.one) / 2; }
+			get
+			{
+				var tmp = max - min + Vector2Int.one;
+				tmp.x /= 2;
+				tmp.y /= 2;
+				return min + tmp;
+			}
 		}
 
 		public Vector2 Center

@@ -20,8 +20,6 @@ namespace Extenity.ApplicationToolbox
 					//case RuntimePlatform.OSXEditor: throw new NotImplementedException();
 					case RuntimePlatform.OSXPlayer:
 						throw new NotImplementedException();
-					case RuntimePlatform.OSXDashboardPlayer:
-						throw new NotImplementedException();
 					case RuntimePlatform.IPhonePlayer:
 						throw new NotImplementedException();
 					case RuntimePlatform.Android:

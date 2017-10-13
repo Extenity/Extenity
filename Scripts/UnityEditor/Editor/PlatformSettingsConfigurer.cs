@@ -47,7 +47,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
-							case RuntimePlatform.OSXDashboardPlayer:
 								buildTarget = BuildTarget.StandaloneOSXIntel;
 								break;
 							case RuntimePlatform.WindowsPlayer:
@@ -69,7 +68,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
-							case RuntimePlatform.OSXDashboardPlayer:
 								buildTarget = BuildTarget.StandaloneOSXIntel64;
 								break;
 							case RuntimePlatform.WindowsPlayer:

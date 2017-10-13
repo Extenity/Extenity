@@ -1,138 +1,11 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
 
-	[Serializable]
-	public struct Vector3Int
+	public static class Vector3IntTools
 	{
-		public int x;
-		public int y;
-		public int z;
-
-		public Vector3Int(int x, int y, int z)
-		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-
-		public Vector3Int(int x, int y)
-		{
-			this.x = x;
-			this.y = y;
-			this.z = 0;
-		}
-
-		public static Vector3Int operator -(Vector3Int a)
-		{
-			a.x = -a.x;
-			a.y = -a.y;
-			a.z = -a.z;
-			return a;
-		}
-
-		public static Vector3Int operator -(Vector3Int a, Vector3Int b)
-		{
-			return new Vector3Int(a.x - b.x, a.y - b.y, a.z - b.z);
-		}
-
-		public static Vector3Int operator +(Vector3Int a, Vector3Int b)
-		{
-			return new Vector3Int(a.x + b.x, a.y + b.y, a.z + b.z);
-		}
-
-		public static Vector3 operator *(float d, Vector3Int a)
-		{
-			return new Vector3(a.x * d, a.y * d, a.z * d);
-		}
-
-		public static Vector3Int operator *(int d, Vector3Int a)
-		{
-			return new Vector3Int(a.x * d, a.y * d, a.z * d);
-		}
-
-		public static Vector3 operator *(Vector3Int a, float d)
-		{
-			return new Vector3(a.x * d, a.y * d, a.z * d);
-		}
-
-		public static Vector3Int operator *(Vector3Int a, int d)
-		{
-			return new Vector3Int(a.x * d, a.y * d, a.z * d);
-		}
-
-		public static Vector3Int operator /(Vector3Int a, float d)
-		{
-			return new Vector3Int((int)(a.x / d), (int)(a.y / d), (int)(a.z / d));
-		}
-
-		public static Vector3Int operator /(Vector3Int a, int d)
-		{
-			return new Vector3Int(a.x / d, a.y / d, a.z / d);
-		}
-
-		public static Vector3Int operator %(Vector3Int a, int d)
-		{
-			return new Vector3Int(a.x % d, a.y % d, a.z % d);
-		}
-
-		public static bool operator !=(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z;
-		}
-
-		public static bool operator ==(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
-		}
-
-		public static bool operator >(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
-		}
-
-		public static bool operator >=(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z;
-		}
-
-		public static bool operator <(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z;
-		}
-
-		public static bool operator <=(Vector3Int lhs, Vector3Int rhs)
-		{
-			return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z;
-		}
-
-		public override bool Equals(object other)
-		{
-			if (!(other is Vector3Int))
-				return false;
-			var vector = (Vector3Int)other;
-			return x == vector.x && y == vector.y && z == vector.z;
-		}
-
-		public bool Equals(Vector3Int other)
-		{
-			return x == other.x && y == other.y && z == other.z;
-		}
-
-		private const int X_PRIME = 1619;
-		private const int Y_PRIME = 31337;
-		private const int Z_PRIME = 6971;
-
-		[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
-		public override int GetHashCode()
-		{
-			return (x * X_PRIME) ^ (y * Y_PRIME) ^ (z * Z_PRIME);
-		}
-
 		public static Vector3Int zero = new Vector3Int(0, 0, 0);
 		public static Vector3Int one = new Vector3Int(1, 1, 1);
 		public static Vector3Int minValue = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
@@ -161,32 +34,6 @@ namespace Extenity.MathToolbox
 
 		#region Magnitude And Distance
 
-		public float magnitude
-		{
-			get { return Mathf.Sqrt(x * x + y * y + z * z); }
-		}
-
-		public int sqrMagnitude
-		{
-			get { return x * x + y * y + z * z; }
-		}
-
-		public float Distance(Vector3Int other)
-		{
-			var dx = x - other.x;
-			var dy = y - other.y;
-			var dz = z - other.z;
-			return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
-		}
-
-		public int SqrDistance(Vector3Int other)
-		{
-			var dx = x - other.x;
-			var dy = y - other.y;
-			var dz = z - other.z;
-			return dx * dx + dy * dy + dz * dz;
-		}
-
 		public static float Distance(Vector3Int a, Vector3Int b)
 		{
 			var dx = b.x - a.x;
@@ -205,91 +52,63 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		//public Vector3 normalized { get; }
-
-		//public int this[int index] { get; set; }
-
-		public Vector3Int Sign
+		public static Vector3Int Sign(this Vector3Int vector)
 		{
-			get
-			{
-				return new Vector3Int(
-					x > 0 ? 1 : (x < 0 ? -1 : 0),
-					y > 0 ? 1 : (y < 0 ? -1 : 0),
-					z > 0 ? 1 : (z < 0 ? -1 : 0));
-			}
+			return new Vector3Int(
+				vector.x > 0 ? 1 : (vector.x < 0 ? -1 : 0),
+				vector.y > 0 ? 1 : (vector.y < 0 ? -1 : 0),
+				vector.z > 0 ? 1 : (vector.z < 0 ? -1 : 0));
 		}
 
-		public Vector3Int Abs
+		public static Vector3Int Abs(this Vector3Int vector)
 		{
-			get
-			{
-				return new Vector3Int(
-					Mathf.Abs(x),
-					Mathf.Abs(y),
-					Mathf.Abs(z));
-			}
+			return new Vector3Int(
+				Mathf.Abs(vector.x),
+				Mathf.Abs(vector.y),
+				Mathf.Abs(vector.z));
 		}
 
-		public int MinComponent
+		public static int MinComponent(this Vector3Int vector)
 		{
-			get
-			{
-				int xAbs = Mathf.Abs(x);
-				int yAbs = Mathf.Abs(y);
-				int zAbs = Mathf.Abs(z);
+			int xAbs = Mathf.Abs(vector.x);
+			int yAbs = Mathf.Abs(vector.y);
+			int zAbs = Mathf.Abs(vector.z);
 
-				// TODO: optimize like MaxComponent
-				if (xAbs <= yAbs && xAbs <= zAbs) return x;
-				if (yAbs <= xAbs && yAbs <= zAbs) return y;
-				else return z;
-			}
+			// TODO: optimize like MaxComponent
+			if (xAbs <= yAbs && xAbs <= zAbs) return vector.x;
+			if (yAbs <= xAbs && yAbs <= zAbs) return vector.y;
+			else return vector.z;
 		}
 
-		public int MaxComponent
+		public static int MaxComponent(this Vector3Int vector)
 		{
-			get
-			{
-				int xAbs = Mathf.Abs(x);
-				int yAbs = Mathf.Abs(y);
-				int zAbs = Mathf.Abs(z);
+			int xAbs = Mathf.Abs(vector.x);
+			int yAbs = Mathf.Abs(vector.y);
+			int zAbs = Mathf.Abs(vector.z);
 
-				if (xAbs > yAbs)
+			if (xAbs > yAbs)
+			{
+				if (xAbs > zAbs)
 				{
-					if (xAbs > zAbs)
-					{
-						return x;
-					}
-					else
-					{
-						return z;
-					}
+					return vector.x;
 				}
 				else
 				{
-					if (yAbs > zAbs)
-					{
-						return y;
-					}
-					else
-					{
-						return z;
-					}
+					return vector.z;
+				}
+			}
+			else
+			{
+				if (yAbs > zAbs)
+				{
+					return vector.y;
+				}
+				else
+				{
+					return vector.z;
 				}
 			}
 		}
-
-		//public static Vector3Int Max(Vector3Int lhs, Vector3Int rhs);
-		//public static Vector3Int Min(Vector3Int lhs, Vector3Int rhs);
-		//public static float Angle(Vector3Int from, Vector3Int to);
-		//public static Vector3 ClampMagnitude(Vector3Int vector, float maxLength);
-		//public static float Distance(Vector3Int a, Vector3Int b);
-		//public static float Magnitude(Vector3Int a);
-		//public static float SqrMagnitude(Vector3Int a);
-		//public void Normalize();
-		//public static Vector3 Normalize(Vector3Int value);
-		//public void Scale(Vector3 scale);
-		//public static Vector3 Scale(Vector3Int a, Vector3Int b);
 
 		public static void SwapToMakeLesserAndGreater(ref Vector3Int shouldBeLesser, ref Vector3Int shouldBeGreater)
 		{
@@ -313,72 +132,72 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		public Vector3Int RotatedY90CW
+		public static Vector3Int RotatedY90CW(this Vector3Int vector)
 		{
-			get { return new Vector3Int(z, y, -x); }
+			return new Vector3Int(vector.z, vector.y, -vector.x);
 		}
 
-		public Vector3Int RotatedY90CCW
+		public static Vector3Int RotatedY90CCW(this Vector3Int vector)
 		{
-			get { return new Vector3Int(-z, y, x); }
+			return new Vector3Int(-vector.z, vector.y, vector.x);
 		}
 
 		#region Basic Checks
 
-		public bool IsUnit()
+		public static bool IsUnit(this Vector3Int vector)
 		{
-			if (x == 0)
+			if (vector.x == 0)
 			{
-				if (y == 0)
+				if (vector.y == 0)
 				{
-					return z == 1 || z == -1;
+					return vector.z == 1 || vector.z == -1;
 				}
-				if (z == 0)
+				if (vector.z == 0)
 				{
-					return y == 1 || y == -1;
+					return vector.y == 1 || vector.y == -1;
 				}
 				return false;
 			}
-			if (y == 0 && z == 0)
+			if (vector.y == 0 && vector.z == 0)
 			{
-				return x == 1 || x == -1;
+				return vector.x == 1 || vector.x == -1;
 			}
 			return false;
 		}
 
-		public bool IsAllEqual(int value) { return x == value && y == value && z == value; }
-		public bool IsAnyEqual(int value) { return x == value || y == value || z == value; }
-		public bool IsZero() { return IsAllZero(); }
-		public bool IsAllZero() { return x == 0 && y == 0 && z == 0; }
-		public bool IsAnyZero() { return x == 0 || y == 0 || z == 0; }
-		public bool IsAllBelowZero() { return x < 0 && y < 0 && z < 0; }
-		public bool IsAnyBelowZero() { return x < 0 || y < 0 || z < 0; }
-		public bool IsAllAboveZero() { return x > 0 && y > 0 && z > 0; }
-		public bool IsAnyAboveZero() { return x > 0 || y > 0 || z > 0; }
-		public bool IsAllBelowOrEqualZero() { return x <= 0 && y <= 0 && z <= 0; }
-		public bool IsAnyBelowOrEqualZero() { return x <= 0 || y <= 0 || z <= 0; }
-		public bool IsAllAboveOrEqualZero() { return x >= 0 && y >= 0 && z >= 0; }
-		public bool IsAnyAboveOrEqualZero() { return x >= 0 || y >= 0 || z >= 0; }
+		public static bool IsAllEqual(this Vector3Int vector, int value) { return vector.x == value && vector.y == value && vector.z == value; }
+		public static bool IsAnyEqual(this Vector3Int vector, int value) { return vector.x == value || vector.y == value || vector.z == value; }
+		public static bool IsZero(this Vector3Int vector) { return IsAllZero(vector); }
+		public static bool IsAllZero(this Vector3Int vector) { return vector.x == 0 && vector.y == 0 && vector.z == 0; }
+		public static bool IsAnyZero(this Vector3Int vector) { return vector.x == 0 || vector.y == 0 || vector.z == 0; }
+		public static bool IsAllBelowZero(this Vector3Int vector) { return vector.x < 0 && vector.y < 0 && vector.z < 0; }
+		public static bool IsAnyBelowZero(this Vector3Int vector) { return vector.x < 0 || vector.y < 0 || vector.z < 0; }
+		public static bool IsAllAboveZero(this Vector3Int vector) { return vector.x > 0 && vector.y > 0 && vector.z > 0; }
+		public static bool IsAnyAboveZero(this Vector3Int vector) { return vector.x > 0 || vector.y > 0 || vector.z > 0; }
+		public static bool IsAllBelowOrEqualZero(this Vector3Int vector) { return vector.x <= 0 && vector.y <= 0 && vector.z <= 0; }
+		public static bool IsAnyBelowOrEqualZero(this Vector3Int vector) { return vector.x <= 0 || vector.y <= 0 || vector.z <= 0; }
+		public static bool IsAllAboveOrEqualZero(this Vector3Int vector) { return vector.x >= 0 && vector.y >= 0 && vector.z >= 0; }
+		public static bool IsAnyAboveOrEqualZero(this Vector3Int vector) { return vector.x >= 0 || vector.y >= 0 || vector.z >= 0; }
 
-		public bool IsAllMininum() { return x == int.MinValue && y == int.MinValue && z == int.MinValue; }
-		public bool IsAllMaximum() { return x == int.MaxValue && y == int.MaxValue && z == int.MaxValue; }
-		public bool IsAnyMininum() { return x == int.MinValue || y == int.MinValue || z == int.MinValue; }
-		public bool IsAnyMaximum() { return x == int.MaxValue || y == int.MaxValue || z == int.MaxValue; }
+		public static bool IsAllMininum(this Vector3Int vector) { return vector.x == int.MinValue && vector.y == int.MinValue && vector.z == int.MinValue; }
+		public static bool IsAllMaximum(this Vector3Int vector) { return vector.x == int.MaxValue && vector.y == int.MaxValue && vector.z == int.MaxValue; }
+		public static bool IsAnyMininum(this Vector3Int vector) { return vector.x == int.MinValue || vector.y == int.MinValue || vector.z == int.MinValue; }
+		public static bool IsAnyMaximum(this Vector3Int vector) { return vector.x == int.MaxValue || vector.y == int.MaxValue || vector.z == int.MaxValue; }
 
-		public bool IsAllMininumOrMaximum()
+		public static bool IsAllMininumOrMaximum(this Vector3Int vector)
 		{
 			return
-				(x == int.MinValue || x == int.MaxValue) &&
-				(y == int.MinValue || y == int.MaxValue) &&
-				(z == int.MinValue || z == int.MaxValue);
+				(vector.x == int.MinValue || vector.x == int.MaxValue) &&
+				(vector.y == int.MinValue || vector.y == int.MaxValue) &&
+				(vector.z == int.MinValue || vector.z == int.MaxValue);
 		}
 
-		public bool IsAnyMininumOrMaximum()
+		public static bool IsAnyMininumOrMaximum(this Vector3Int vector)
 		{
 			return
-				(x == int.MinValue || x == int.MaxValue) ||
-				(y == int.MinValue || y == int.MaxValue) ||
-				(z == int.MinValue || z == int.MaxValue);
+				(vector.x == int.MinValue || vector.x == int.MaxValue) ||
+				(vector.y == int.MinValue || vector.y == int.MaxValue) ||
+				(vector.z == int.MinValue || vector.z == int.MaxValue);
 		}
 
 		#endregion
@@ -397,23 +216,23 @@ namespace Extenity.MathToolbox
 				var split = valueString.Split(separator);
 				if (split.Length == 3)
 				{
-					Vector3Int value;
-					if (int.TryParse(split[0], out value.x))
+					int x;
+					if (int.TryParse(split[0], out x))
 					{
-						if (int.TryParse(split[1], out value.y))
+						int y;
+						if (int.TryParse(split[1], out y))
 						{
-							if (int.TryParse(split[2], out value.z))
+							int z;
+							if (int.TryParse(split[2], out z))
 							{
-								result = value;
+								result = new Vector3Int(x, y, z);
 								return true;
 							}
 						}
 					}
 				}
 			}
-			result.x = 0;
-			result.y = 0;
-			result.z = 0;
+			result = minValue;
 			return false;
 		}
 
@@ -445,40 +264,28 @@ namespace Extenity.MathToolbox
 		public static bool TryParse(string text, out Vector3Int value)
 		{
 			string[] parts = text.Split(' ');
-			if (int.TryParse(parts[0], out value.x))
-				if (int.TryParse(parts[1], out value.y))
-					if (int.TryParse(parts[2], out value.z))
+			int x;
+			if (int.TryParse(parts[0], out x))
+			{
+				int y;
+				if (int.TryParse(parts[1], out y))
+				{
+					int z;
+					if (int.TryParse(parts[2], out z))
+					{
+						value = new Vector3Int(x, y, z);
 						return true;
-			value = zero;
+					}
+				}
+			}
+			value = minValue;
 			return false;
 		}
 
-		public override string ToString()
-		{
-			return x + " " + y + " " + z;
-		}
-
-		//public string ToString(string format);
-
 		#endregion
 
-		#region Conversion
+		#region Serialization - BinaryWriter/BinaryReader
 
-		public Vector3 ToVector3()
-		{
-			return new Vector3(x, y, z);
-		}
-
-		public static explicit operator Vector3(Vector3Int v)
-		{
-			return new Vector3(v.x, v.y, v.z);
-		}
-
-		#endregion
-	}
-
-	public static class Vector3IntExt
-	{
 		public static void Write(this BinaryWriter writer, Vector3Int value)
 		{
 			writer.Write(value.x);
@@ -491,10 +298,21 @@ namespace Extenity.MathToolbox
 			return new Vector3Int(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 		}
 
+		#endregion
+
+		#region Conversion
+
+		public static Vector3 ToVector3(this Vector3Int vector)
+		{
+			return new Vector3(vector.x, vector.y, vector.z);
+		}
+
 		public static Vector3Int ToVector3Int(this Vector3 value)
 		{
 			return new Vector3Int((int)value.x, (int)value.y, (int)value.z);
 		}
+
+		#endregion
 	}
 
 }

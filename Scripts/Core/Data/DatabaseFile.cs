@@ -24,12 +24,6 @@ namespace Extenity.DataToolbox
 
 		public bool ReadFromFile()
 		{
-			if (Application.isWebPlayer)
-			{
-				Debug.LogWarning("Cannot load database from file while running in web player");
-				return false;
-			}
-
 			FileStream fileStream = null;
 
 			try
@@ -72,12 +66,6 @@ namespace Extenity.DataToolbox
 
 		public bool WriteToFile()
 		{
-			if (UnityEngine.Application.isWebPlayer)
-			{
-				Debug.LogWarning("Cannot save database to file while running in web player");
-				return false;
-			}
-
 			FileStream fileStream = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 			if (!fileStream.CanWrite)
 				return false;

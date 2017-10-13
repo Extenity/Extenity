@@ -16,7 +16,7 @@ namespace Extenity.MathToolbox
 
 		public static Bounds3Int CreateInvalid()
 		{
-			return new Bounds3Int(Vector3Int.maxValue, Vector3Int.minValue);
+			return new Bounds3Int(Vector3IntTools.maxValue, Vector3IntTools.minValue);
 		}
 
 		public Bounds3Int(Vector3Int min, Vector3Int max)
@@ -27,23 +27,25 @@ namespace Extenity.MathToolbox
 
 		public Bounds3Int(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
 		{
-			min.x = minX;
-			min.y = minY;
-			min.z = minZ;
-			max.x = maxX;
-			max.y = maxY;
-			max.z = maxZ;
+			min = new Vector3Int(minX, minY, minZ);
+			max = new Vector3Int(maxX, maxY, maxZ);
 		}
 
 		public void Reset()
 		{
-			min = Vector3Int.maxValue;
-			max = Vector3Int.minValue;
+			min = Vector3IntTools.maxValue;
+			max = Vector3IntTools.minValue;
 		}
 
 		public bool Contains(Vector3Int point)
 		{
-			return point >= min && point <= max;
+			return
+				point.x >= min.x &&
+				point.y >= min.y &&
+				point.z >= min.z &&
+				point.x <= max.x &&
+				point.y <= max.y &&
+				point.z <= max.z;
 		}
 
 		public void Encapsulate(Bounds3Int bounds)
@@ -111,7 +113,14 @@ namespace Extenity.MathToolbox
 
 		public Vector3Int CenterInt
 		{
-			get { return min + (max - min + Vector3Int.one) / 2; }
+			get
+			{
+				var tmp = max - min + Vector3Int.one;
+				tmp.x /= 2;
+				tmp.y /= 2;
+				tmp.z /= 2;
+				return min + tmp;
+			}
 		}
 
 		public Vector3 Center

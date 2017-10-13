@@ -1,26 +1,14 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
 
-	[Serializable]
-	public struct Vector2Int
+	public static class Vector2IntTools
 	{
-		public int x;
-		public int y;
-
-		public Vector2Int(int x, int y)
+		public static int GetIndex(this Vector2Int vector, int width)
 		{
-			this.x = x;
-			this.y = y;
-		}
-
-		public int GetIndex(int width)
-		{
-			return y * width + x;
+			return vector.y * width + vector.x;
 		}
 
 		public static int GetIndex(int x, int y, int width)
@@ -30,110 +18,10 @@ namespace Extenity.MathToolbox
 
 		public static Vector2Int CreateFromIndex(int index, int width)
 		{
-			Vector2Int value;
-			value.x = index % width;
-			value.y = (index - value.x) / width;
-			return value;
+			var x = index % width;
+			return new Vector2Int(x, (index - x) / width);
 		}
 
-		public static Vector2Int operator -(Vector2Int a)
-		{
-			a.x = -a.x;
-			a.y = -a.y;
-			return a;
-		}
-
-		public static Vector2Int operator -(Vector2Int a, Vector2Int b)
-		{
-			return new Vector2Int(a.x - b.x, a.y - b.y);
-		}
-
-		public static Vector2Int operator +(Vector2Int a, Vector2Int b)
-		{
-			return new Vector2Int(a.x + b.x, a.y + b.y);
-		}
-
-		public static Vector2 operator *(float d, Vector2Int a)
-		{
-			return new Vector2(a.x * d, a.y * d);
-		}
-
-		public static Vector2Int operator *(int d, Vector2Int a)
-		{
-			return new Vector2Int(a.x * d, a.y * d);
-		}
-
-		public static Vector2 operator *(Vector2Int a, float d)
-		{
-			return new Vector2(a.x * d, a.y * d);
-		}
-
-		public static Vector2Int operator *(Vector2Int a, int d)
-		{
-			return new Vector2Int(a.x * d, a.y * d);
-		}
-
-		public static Vector2Int operator /(Vector2Int a, float d)
-		{
-			return new Vector2Int((int)(a.x / d), (int)(a.y / d));
-		}
-
-		public static Vector2Int operator /(Vector2Int a, int d)
-		{
-			return new Vector2Int(a.x / d, a.y / d);
-		}
-
-		public static Vector2Int operator %(Vector2Int a, int d)
-		{
-			return new Vector2Int(a.x % d, a.y % d);
-		}
-
-		public static bool operator !=(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x != rhs.x || lhs.y != rhs.y;
-		}
-		public static bool operator ==(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x == rhs.x && lhs.y == rhs.y;
-		}
-		public static bool operator >(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x > rhs.x && lhs.y > rhs.y;
-		}
-		public static bool operator >=(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x >= rhs.x && lhs.y >= rhs.y;
-		}
-		public static bool operator <(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x < rhs.x && lhs.y < rhs.y;
-		}
-		public static bool operator <=(Vector2Int lhs, Vector2Int rhs)
-		{
-			return lhs.x <= rhs.x && lhs.y <= rhs.y;
-		}
-
-		public override bool Equals(object other)
-		{
-			if (!(other is Vector2Int))
-				return false;
-			var vector = (Vector2Int)other;
-			return x == vector.x && y == vector.y;
-		}
-
-		public bool Equals(Vector2Int other)
-		{
-			return x == other.x && y == other.y;
-		}
-
-		private const int X_PRIME = 1619;
-		private const int Y_PRIME = 31337;
-
-		[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
-		public override int GetHashCode()
-		{
-			return (x * X_PRIME) ^ (y * Y_PRIME);
-		}
 
 		public static Vector2Int zero = new Vector2Int(0, 0);
 		public static Vector2Int one = new Vector2Int(1, 1);
@@ -151,33 +39,7 @@ namespace Extenity.MathToolbox
 			down, up,
 		};
 
-		//public int this[int index] { get; set; }
-
 		#region Magnitude And Distance
-
-		public float magnitude
-		{
-			get { return Mathf.Sqrt(x * x + y * y); }
-		}
-
-		public int sqrMagnitude
-		{
-			get { return x * x + y * y; }
-		}
-
-		public float Distance(Vector2Int other)
-		{
-			var dx = x - other.x;
-			var dy = y - other.y;
-			return Mathf.Sqrt(dx * dx + dy * dy);
-		}
-
-		public int SqrDistance(Vector2Int other)
-		{
-			var dx = x - other.x;
-			var dy = y - other.y;
-			return dx * dx + dy * dy;
-		}
 
 		public static float Distance(Vector2Int a, Vector2Int b)
 		{
@@ -195,62 +57,41 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public Vector2Int Sign
+		public static Vector2Int Sign(this Vector2Int vector)
 		{
-			get
-			{
-				return new Vector2Int(
-					x > 0 ? 1 : (x < 0 ? -1 : 0),
-					y > 0 ? 1 : (y < 0 ? -1 : 0));
-			}
+			return new Vector2Int(
+				vector.x > 0 ? 1 : (vector.x < 0 ? -1 : 0),
+				vector.y > 0 ? 1 : (vector.y < 0 ? -1 : 0));
 		}
 
-		public Vector2Int Abs
+		public static Vector2Int Abs(this Vector2Int vector)
 		{
-			get
-			{
-				return new Vector2Int(
-					Mathf.Abs(x),
-					Mathf.Abs(y));
-			}
+			return new Vector2Int(
+				Mathf.Abs(vector.x),
+				Mathf.Abs(vector.y));
 		}
 
-		public int MinComponent
+		public static int MinComponent(this Vector2Int vector)
 		{
-			get
-			{
-				int xAbs = Mathf.Abs(x);
-				int yAbs = Mathf.Abs(y);
+			int xAbs = Mathf.Abs(vector.x);
+			int yAbs = Mathf.Abs(vector.y);
 
-				if (xAbs < yAbs)
-					return x;
-				else
-					return y;
-			}
+			if (xAbs < yAbs)
+				return vector.x;
+			else
+				return vector.y;
 		}
 
-		public int MaxComponent
+		public static int MaxComponent(this Vector2Int vector)
 		{
-			get
-			{
-				int xAbs = Mathf.Abs(x);
-				int yAbs = Mathf.Abs(y);
+			int xAbs = Mathf.Abs(vector.x);
+			int yAbs = Mathf.Abs(vector.y);
 
-				if (xAbs > yAbs)
-					return x;
-				else
-					return y;
-			}
+			if (xAbs > yAbs)
+				return vector.x;
+			else
+				return vector.y;
 		}
-
-		//public static Vector2Int Max(Vector2Int lhs, Vector2Int rhs);
-		//public static Vector2Int Min(Vector2Int lhs, Vector2Int rhs);
-		//public static float Angle(Vector2Int from, Vector2Int to);
-		//public static Vector2 ClampMagnitude(Vector2Int vector, float maxLength);
-		//public void Normalize();
-		//public static Vector2 Normalize(Vector2Int value);
-		//public void Scale(Vector2 scale);
-		//public static Vector2 Scale(Vector2Int a, Vector2Int b);
 
 		public static void SwapToMakeLesserAndGreater(ref Vector2Int shouldBeLesser, ref Vector2Int shouldBeGreater)
 		{
@@ -270,57 +111,57 @@ namespace Extenity.MathToolbox
 
 		#region Basic Checks
 
-		public bool IsUnit()
+		public static bool IsUnit(this Vector2Int vector)
 		{
-			if (x == 0)
+			if (vector.x == 0)
 			{
-				return y == 1 || y == -1;
+				return vector.y == 1 || vector.y == -1;
 			}
-			if (y == 0)
+			if (vector.y == 0)
 			{
-				return x == 1 || x == -1;
+				return vector.x == 1 || vector.x == -1;
 			}
 			return false;
 		}
 
-		public bool IsAllEqual(int value) { return x == value && y == value; }
-		public bool IsAnyEqual(int value) { return x == value || y == value; }
-		public bool IsZero() { return IsAllZero(); }
-		public bool IsAllZero() { return x == 0 && y == 0; }
-		public bool IsAnyZero() { return x == 0 || y == 0; }
-		public bool IsAllBelowZero() { return x < 0 && y < 0; }
-		public bool IsAnyBelowZero() { return x < 0 || y < 0; }
-		public bool IsAllAboveZero() { return x > 0 && y > 0; }
-		public bool IsAnyAboveZero() { return x > 0 || y > 0; }
-		public bool IsAllBelowOrEqualZero() { return x <= 0 && y <= 0; }
-		public bool IsAnyBelowOrEqualZero() { return x <= 0 || y <= 0; }
-		public bool IsAllAboveOrEqualZero() { return x >= 0 && y >= 0; }
-		public bool IsAnyAboveOrEqualZero() { return x >= 0 || y >= 0; }
+		public static bool IsAllEqual(this Vector2Int vector, int value) { return vector.x == value && vector.y == value; }
+		public static bool IsAnyEqual(this Vector2Int vector, int value) { return vector.x == value || vector.y == value; }
+		public static bool IsZero(this Vector2Int vector) { return IsAllZero(vector); }
+		public static bool IsAllZero(this Vector2Int vector) { return vector.x == 0 && vector.y == 0; }
+		public static bool IsAnyZero(this Vector2Int vector) { return vector.x == 0 || vector.y == 0; }
+		public static bool IsAllBelowZero(this Vector2Int vector) { return vector.x < 0 && vector.y < 0; }
+		public static bool IsAnyBelowZero(this Vector2Int vector) { return vector.x < 0 || vector.y < 0; }
+		public static bool IsAllAboveZero(this Vector2Int vector) { return vector.x > 0 && vector.y > 0; }
+		public static bool IsAnyAboveZero(this Vector2Int vector) { return vector.x > 0 || vector.y > 0; }
+		public static bool IsAllBelowOrEqualZero(this Vector2Int vector) { return vector.x <= 0 && vector.y <= 0; }
+		public static bool IsAnyBelowOrEqualZero(this Vector2Int vector) { return vector.x <= 0 || vector.y <= 0; }
+		public static bool IsAllAboveOrEqualZero(this Vector2Int vector) { return vector.x >= 0 && vector.y >= 0; }
+		public static bool IsAnyAboveOrEqualZero(this Vector2Int vector) { return vector.x >= 0 || vector.y >= 0; }
 
-		public bool IsAllMininum() { return x == int.MinValue && y == int.MinValue; }
-		public bool IsAllMaximum() { return x == int.MaxValue && y == int.MaxValue; }
-		public bool IsAnyMininum() { return x == int.MinValue || y == int.MinValue; }
-		public bool IsAnyMaximum() { return x == int.MaxValue || y == int.MaxValue; }
+		public static bool IsAllMininum(this Vector2Int vector) { return vector.x == int.MinValue && vector.y == int.MinValue; }
+		public static bool IsAllMaximum(this Vector2Int vector) { return vector.x == int.MaxValue && vector.y == int.MaxValue; }
+		public static bool IsAnyMininum(this Vector2Int vector) { return vector.x == int.MinValue || vector.y == int.MinValue; }
+		public static bool IsAnyMaximum(this Vector2Int vector) { return vector.x == int.MaxValue || vector.y == int.MaxValue; }
 
-		public bool IsAllMininumOrMaximum()
+		public static bool IsAllMininumOrMaximum(this Vector2Int vector)
 		{
 			return
-				(x == int.MinValue || x == int.MaxValue) &&
-				(y == int.MinValue || y == int.MaxValue);
+				(vector.x == int.MinValue || vector.x == int.MaxValue) &&
+				(vector.y == int.MinValue || vector.y == int.MaxValue);
 		}
 
-		public bool IsAnyMininumOrMaximum()
+		public static bool IsAnyMininumOrMaximum(this Vector2Int vector)
 		{
 			return
-				(x == int.MinValue || x == int.MaxValue) ||
-				(y == int.MinValue || y == int.MaxValue);
+				(vector.x == int.MinValue || vector.x == int.MaxValue) ||
+				(vector.y == int.MinValue || vector.y == int.MaxValue);
 		}
 
 		#endregion
 
 		#region Serialization
 
-		public static string Serialize(Vector2Int value, char separator = ' ')
+		public static string Serialize(this Vector2Int value, char separator = ' ')
 		{
 			return value.x.ToString() + separator + value.y.ToString();
 		}
@@ -332,19 +173,19 @@ namespace Extenity.MathToolbox
 				var split = valueString.Split(separator);
 				if (split.Length == 2)
 				{
-					Vector2Int value;
-					if (int.TryParse(split[0], out value.x))
+					int x;
+					if (int.TryParse(split[0], out x))
 					{
-						if (int.TryParse(split[1], out value.y))
+						int y;
+						if (int.TryParse(split[1], out y))
 						{
-							result = value;
+							result = new Vector2Int(x, y);
 							return true;
 						}
 					}
 				}
 			}
-			result.x = 0;
-			result.y = 0;
+			result = minValue;
 			return false;
 		}
 
@@ -375,39 +216,24 @@ namespace Extenity.MathToolbox
 		public static bool TryParse(string text, out Vector2Int value)
 		{
 			string[] parts = text.Split(' ');
-			if (int.TryParse(parts[0], out value.x))
-				if (int.TryParse(parts[1], out value.y))
+			int x;
+			if (int.TryParse(parts[0], out x))
+			{
+				int y;
+				if (int.TryParse(parts[1], out y))
+				{
+					value = new Vector2Int(x, y);
 					return true;
-			value = zero;
+				}
+			}
+			value = minValue;
 			return false;
 		}
 
-		//public string ToString(string format);
-
-		public override string ToString()
-		{
-			return x + " " + y;
-		}
-
 		#endregion
 
-		#region Conversion
+		#region Serialization - BinaryWriter/BinaryReader
 
-		public Vector2 ToVector2()
-		{
-			return new Vector2(x, y);
-		}
-
-		public static explicit operator Vector2(Vector2Int v)
-		{
-			return new Vector2(v.x, v.y);
-		}
-
-		#endregion
-	}
-
-	public static class Vector2IntExt
-	{
 		public static void Write(this BinaryWriter writer, Vector2Int value)
 		{
 			writer.Write(value.x);
@@ -419,10 +245,21 @@ namespace Extenity.MathToolbox
 			return new Vector2Int(reader.ReadInt32(), reader.ReadInt32());
 		}
 
+		#endregion
+
+		#region Conversion
+
+		public static Vector2 ToVector2(this Vector2Int vector)
+		{
+			return new Vector2(vector.x, vector.y);
+		}
+
 		public static Vector2Int ToVector2Int(this Vector2 value)
 		{
 			return new Vector2Int((int)value.x, (int)value.y);
 		}
+
+		#endregion
 	}
 
 }
