@@ -40,12 +40,12 @@ namespace Extenity.GameObjectToolbox.Editor
 		// This is just to give the menu a priority so that sub items may have their own priorities.
 		// It's not a good way, though there is no other way.
 		[MenuItem("GameObject/Operations/", priority = -53)]
-		private static void Dummy() { }
+		private static void Menu_Dummy() { }
 
 		#region Hierarchy Menu - Delete Empty Unreferenced GameObjects
 
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 0)]
-		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene()
+		private static void Menu_DeleteEmptyUnreferencedGameObjectsInActiveScene()
 		{
 			DeleteEmptyUnreferencedGameObjectsInActiveScene(true, true);
 		}
@@ -55,7 +55,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		#region Hierarchy Menu - Delete All Disabled Static MeshRenderers
 
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 4)]
-		public static void DeleteAllDisabledStaticMeshRenderersInActiveScene()
+		private static void Menu_DeleteAllDisabledStaticMeshRenderersInActiveScene()
 		{
 			DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true);
 		}
