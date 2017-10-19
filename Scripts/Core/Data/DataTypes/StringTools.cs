@@ -1,11 +1,11 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Extenity.MathToolbox;
+using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -15,6 +15,8 @@ namespace Extenity.DataToolbox
 		#region Constants
 
 		public static readonly char[] LineEndingCharacters = { '\r', '\n' };
+		public static readonly char[] NumericCharacters = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+		public static readonly char[] HexadecimalCharacters = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 		#endregion
 
@@ -302,6 +304,42 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Conversions - Int ToStringAsCharArray
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 11 for radix-10, and 32 for radix-2.
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this int value, int radix, char[] array, out int startIndex, out int length)
+		{
+			var i = array.Length;
+			var isNegative = (value < 0);
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		#endregion
+
 		#region Conversions - Vector2/Vector3/Quaternion
 
 		public static string ToSerializableString(this Vector2 val)
@@ -581,6 +619,19 @@ namespace Extenity.DataToolbox
 		public static string ToStringMicrosecondsFromSeconds(this double totalSeconds)
 		{
 			return (totalSeconds * 1000000).ToString("0.000");
+		}
+
+		#endregion
+
+		#region Conversions - char[]
+
+		public static string ConvertToString(this char[] chars, int startIndex, int length)
+		{
+			var stringBuilder = new StringBuilder();
+			var endIndex = startIndex + length;
+			for (int i = startIndex; i < chars.Length && i <= endIndex && (uint)chars[i] > 0U; ++i)
+				stringBuilder.Append(chars[i]);
+			return stringBuilder.ToString();
 		}
 
 		#endregion
