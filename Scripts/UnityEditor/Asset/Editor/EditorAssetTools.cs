@@ -275,6 +275,28 @@ namespace Extenity.AssetToolbox.Editor
 		private static void FillEmptyReferences(MenuCommand menuCommand)
 		{
 			var component = (Component)menuCommand.context;
+			FillEmptyReferences(component);
+		}
+
+		[MenuItem("CONTEXT/Component/Fill Empty References In All Components", true)]
+		private static bool FillEmptyReferencesInAllComponents_Validate(MenuCommand menuCommand)
+		{
+			return true;
+		}
+
+		[MenuItem("CONTEXT/Component/Fill Empty References In All Components", priority = 504)]
+		private static void FillEmptyReferencesInAllComponents(MenuCommand menuCommand)
+		{
+			var selectedComponent = (Component)menuCommand.context;
+			var components = selectedComponent.gameObject.GetComponents<Component>();
+			foreach (var component in components)
+			{
+				FillEmptyReferences(component);
+			}
+		}
+
+		public static void FillEmptyReferences(Component component)
+		{
 			var fields = component.GetNotAssignedSerializedComponentFields();
 
 			foreach (var field in fields)
