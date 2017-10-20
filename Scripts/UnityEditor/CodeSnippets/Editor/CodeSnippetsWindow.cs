@@ -115,8 +115,8 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 		private ThreadStopper NamespaceGatheringThreadStopper;
 		private static readonly string NamespaceContentSearchString = "namespace ";
 		private static readonly object NamespaceListLocker = new object();
-		private bool SignalToFinalizeNamespaceGathering { get; set; }
-		private bool SignalToRefreshGUI { get; set; }
+		private bool SignalToFinalizeNamespaceGathering;
+		private bool SignalToRefreshGUI;
 
 		private class ThreadStopper
 		{

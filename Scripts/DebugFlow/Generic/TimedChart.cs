@@ -5,12 +5,12 @@ using Extenity.DataToolbox;
 namespace Extenity.DebugFlowTool.Generic
 {
 
-	public class TimedChartEntry
+	public struct TimedChartEntry
 	{
 		public const int PacketSize = sizeof(UInt64) + sizeof(float);
 
-		public DateTime X { get; set; }
-		public float Y { get; set; }
+		public readonly DateTime X;
+		public readonly float Y;
 
 		public TimedChartEntry(DateTime x, float y)
 		{

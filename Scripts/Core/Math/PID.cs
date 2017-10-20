@@ -29,26 +29,26 @@ namespace Extenity.MathToolbox
 		}
 	}
 
-	[Serializable]
+	//[Serializable]
 	public class PID
 	{
-		public double Input { get; set; }
-		public double Output { get; private set; }
-		public double Target { get; set; }
+		public double Output;
+		public double Input;
+		public double Target;
 
 		private double SampleTime = 0.01f; // Seconds
-		public double LastComputationTime { get; private set; }
-		public double ITerm { get; private set; }
-		public double LastInput { get; private set; }
-		public double Kp { get; private set; }
-		public double Ki { get; private set; }
-		public double Kd { get; private set; }
-		public double OutMin { get; private set; }
-		public double OutMax { get; private set; }
-		public bool IsActive { get; private set; }
+		public double LastComputationTime;
+		public double ITerm;
+		public double LastInput;
+		public double Kp;
+		public double Ki;
+		public double Kd;
+		public double OutMin;
+		public double OutMax;
+		public bool IsActive;
 		private DirectionTypes Direction = DirectionTypes.Forward;
-		public InputInitializationTypes InputInitializationType { get; set; }
-		public IntegralInitializationTypes IntegralInitializationType { get; set; }
+		public readonly InputInitializationTypes InputInitializationType;
+		public readonly IntegralInitializationTypes IntegralInitializationType;
 
 		public enum InputInitializationTypes : byte
 		{

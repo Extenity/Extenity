@@ -1105,7 +1105,7 @@ namespace Extenity.DataToolbox
 
 	public class GenericComparer<T> : IEqualityComparer<T> where T : class
 	{
-		private Func<T, object> Expression { get; set; }
+		private readonly Func<T, object> Expression;
 
 		public GenericComparer(Func<T, object> expression)
 		{
@@ -1127,8 +1127,8 @@ namespace Extenity.DataToolbox
 
 	public class GenericComparer<T1, T2> : IEqualityComparer<T1, T2>
 	{
-		private Func<T1, object> Expression1 { get; set; }
-		private Func<T2, object> Expression2 { get; set; }
+		private readonly Func<T1, object> Expression1;
+		private readonly Func<T2, object> Expression2;
 
 		public GenericComparer(Func<T1, object> expression1, Func<T2, object> expression2)
 		{
