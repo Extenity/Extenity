@@ -58,7 +58,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorGUILayout.LabelField("Hidden Objects (" + HiddenObjects.Count + ")", EditorStyles.boldLabel);
 			for (int i = 0; i < HiddenObjects.Count; i++)
 			{
-				DrawLine(HiddenObjects[i]);
+				DrawEntry(HiddenObjects[i]);
 			}
 
 			GUILayout.Space(20f);
@@ -66,13 +66,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorGUILayout.LabelField("Visible Objects (" + VisibleObjects.Count + ")", EditorStyles.boldLabel);
 			for (int i = 0; i < VisibleObjects.Count; i++)
 			{
-				DrawLine(VisibleObjects[i]);
+				DrawEntry(VisibleObjects[i]);
 			}
 
 			GUILayout.EndScrollView();
 		}
 
-		private static void DrawLine(GameObject obj)
+		private static void DrawEntry(GameObject obj)
 		{
 			GUILayout.BeginHorizontal();
 			{
