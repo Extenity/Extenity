@@ -814,6 +814,84 @@ namespace Extenity.DataToolbox
 		}
 
 		#endregion
+
+		#region Smart Format
+
+		public static void SmartFormat(ref string text, bool trim = true, bool trimEndOfEachLine = true, bool normalizeLineEndings = true, int maxAllowedConsecutiveLineEndings = -1, int maxLength = -1)
+		{
+			// No null
+			if (text == null)
+			{
+				text = "";
+				return;
+			}
+
+			// Nothing to do with empty
+			if (text.Length == 0)
+				return;
+
+			// Trim
+			if (trim)
+			{
+				text = text.Trim();
+				if (text.Length == 0)
+					return;
+			}
+
+			// Normalize line endings
+			if (normalizeLineEndings)
+			{
+				text = text.NormalizeLineEndings().Replace("\r\n", "\n");
+			}
+
+			// Trim end of each line (do not trim the beginning of the line)
+			if (trimEndOfEachLine)
+			{
+				var lines = text.Split('\n');
+				if (lines.Length > 1)
+				{
+					for (var i = 0; i < lines.Length; i++)
+					{
+						lines[i] = lines[i].TrimEnd();
+					}
+					text = string.Join("\n", lines);
+				}
+				else
+				{
+					text = text.TrimEnd();
+				}
+			}
+
+			// Max allowed consecutive line endings
+			if (maxAllowedConsecutiveLineEndings >= 0)
+			{
+				if (maxAllowedConsecutiveLineEndings == 0)
+				{
+					text = text.Replace("\n", "");
+				}
+				else
+				{
+					var oneBig = new string('\n', maxAllowedConsecutiveLineEndings + 1);
+					var expected = new string('\n', maxAllowedConsecutiveLineEndings);
+					var again = true;
+					while (again)
+					{
+						var newText = text.Replace(oneBig, expected);
+						again = newText.Length != text.Length;
+						text = newText;
+					}
+				}
+			}
+
+			// Max length (must be done after trimming)
+			if (maxLength >= 0)
+			{
+				if (text.Length > maxLength)
+					text = text.Substring(0, maxLength);
+			}
+		}
+
+		#endregion
 	}
 
 }
