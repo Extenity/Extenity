@@ -1409,6 +1409,33 @@ namespace Extenity.MathToolbox
 			if (value.z == 0f) value.z = changeTo;
 		}
 
+		public static Vector2 ScaleX(this Vector2 vector, float scale)
+		{
+			vector.x *= scale;
+			return vector;
+		}
+		public static Vector2 ScaleY(this Vector2 vector, float scale)
+		{
+			vector.y *= scale;
+			return vector;
+		}
+
+		public static Vector3 ScaleX(this Vector3 vector, float scale)
+		{
+			vector.x *= scale;
+			return vector;
+		}
+		public static Vector3 ScaleY(this Vector3 vector, float scale)
+		{
+			vector.y *= scale;
+			return vector;
+		}
+		public static Vector3 ScaleZ(this Vector3 vector, float scale)
+		{
+			vector.z *= scale;
+			return vector;
+		}
+
 		#endregion
 
 		#endregion
