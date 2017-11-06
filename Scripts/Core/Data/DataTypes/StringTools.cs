@@ -408,11 +408,13 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Hex
 
-		public static bool IsHexString(this string value)
+		public static bool IsHexString(this string text)
 		{
-			for (int i = 0; i < value.Length; i++)
+			if (text == null)
+				return false;
+			for (int i = 0; i < text.Length; i++)
 			{
-				var character = value[i];
+				var character = text[i];
 				bool isHexChar = (character >= '0' && character <= '9') ||
 								 (character >= 'a' && character <= 'f') ||
 								 (character >= 'A' && character <= 'F');
@@ -433,6 +435,8 @@ namespace Extenity.DataToolbox
 
 		public static string ToHexString(this string text, bool uppercase = false)
 		{
+			if (text == null)
+				return null;
 			var stringBuilder = new StringBuilder(text.Length * 3);
 			var format = uppercase ? "{0:X2} " : "{0:x2} ";
 			for (int i = 0; i < text.Length; i++)
@@ -460,6 +464,8 @@ namespace Extenity.DataToolbox
 
 		public static string ToHexStringCombined(this string text, bool uppercase = false)
 		{
+			if (text == null)
+				return null;
 			var stringBuilder = new StringBuilder(text.Length * 2);
 			var format = uppercase ? "X2" : "x2";
 			for (int i = 0; i < text.Length; i++)
@@ -487,6 +493,8 @@ namespace Extenity.DataToolbox
 
 		public static string ToHexStringFancy(this string text, bool uppercase = false)
 		{
+			if (text == null)
+				return null;
 			var stringBuilder = new StringBuilder(text.Length * 3);
 			var format = uppercase ? "({0})0x{1:X2} " : "({0})0x{1:x2} ";
 			for (int i = 0; i < text.Length; i++)
