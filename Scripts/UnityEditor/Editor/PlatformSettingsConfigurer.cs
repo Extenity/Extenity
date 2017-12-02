@@ -27,7 +27,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 			WiiU,
 
 			tvOS,
-			SamsungTV,
 
 			//Facebook,
 		}
@@ -47,7 +46,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
-								buildTarget = BuildTarget.StandaloneOSXIntel;
+								buildTarget = BuildTarget.StandaloneOSX;
 								break;
 							case RuntimePlatform.WindowsPlayer:
 							case RuntimePlatform.WindowsEditor:
@@ -68,7 +67,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						{
 							case RuntimePlatform.OSXEditor:
 							case RuntimePlatform.OSXPlayer:
-								buildTarget = BuildTarget.StandaloneOSXIntel64;
+								buildTarget = BuildTarget.StandaloneOSX;
 								break;
 							case RuntimePlatform.WindowsPlayer:
 							case RuntimePlatform.WindowsEditor:
@@ -117,10 +116,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 				case DesiredBuildTarget.tvOS:
 					buildTargetGroup = BuildTargetGroup.tvOS;
 					buildTarget = BuildTarget.tvOS;
-					break;
-				case DesiredBuildTarget.SamsungTV:
-					buildTargetGroup = BuildTargetGroup.SamsungTV;
-					buildTarget = BuildTarget.SamsungTV;
 					break;
 				//case DesiredBuildTarget.Facebook:
 				//	buildTargetGroup = BuildTargetGroup.Facebook;
