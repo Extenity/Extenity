@@ -395,11 +395,64 @@ namespace Extenity.DLLBuilder
 
 					case CompilerType.Smcs:
 						{
-							var gmcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\smcs.exe";
+							var smcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\smcs.exe";
 							compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
 
-							arguments.Add("\"" + gmcsPath + "\"");
+							arguments.Add("\"" + smcsPath + "\"");
 							arguments.Add("/target:library");
+
+							if (job.Configuration.GenerateDocumentation)
+							{
+								arguments.Add("/doc:\"" + documentationOutputPath + "\"");
+							}
+
+							if (job.Configuration.GenerateDebugInfo)
+							{
+								arguments.Add("/debug+ /debug:full");
+							}
+							else
+							{
+								arguments.Add("/debug-");
+							}
+
+							arguments.Add("/optimize+");
+							arguments.Add("/nowarn:1591,1573");
+#if EnableNoStdLib
+							arguments.Add("/nostdlib+");
+#endif
+							arguments.Add("/warnaserror");
+
+							arguments.Add("/out:\"" + dllOutputPath + "\"");
+
+							//defines = defines.Trim();
+							////// Append Unity version directives.
+							////{
+							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
+							////	defines += string.IsNullOrEmpty(defines)
+							////		? unityVersionDefines
+							////		: ";" + unityVersionDefines;
+							////}
+
+							if (!string.IsNullOrEmpty(defines))
+							{
+								arguments.Add("/define:" + defines);
+							}
+
+							foreach (var reference in allReferences.Where(reference => !string.IsNullOrEmpty(reference)))
+								arguments.Add("/reference:\"" + reference + "\"");
+
+							arguments.Add("/recurse:\"" + Path.Combine(sourcePath, "*.cs") + "\"");
+						}
+						break;
+
+					case CompilerType.McsBleedingEdge:
+						{
+							var mcsPath = @"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.5\mcs.exe";
+							compilerPath = @"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\bin\mono.exe";
+
+							arguments.Add("\"" + mcsPath + "\"");
+							arguments.Add("/target:library");
+							arguments.Add("/sdk:4.5");
 
 							if (job.Configuration.GenerateDocumentation)
 							{
