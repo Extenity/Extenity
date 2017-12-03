@@ -29,6 +29,9 @@ namespace Extenity.RenderingToolbox
 
 		private void Update()
 		{
+			if (IsFullscreenAutoNativeSizeAdjusterEnabled)
+				CalculateFullscreenAutoNativeSizeAdjuster();
+
 			if (currentScreenWidth == Screen.width && currentScreenHeight == Screen.height)
 				return;
 
@@ -41,6 +44,103 @@ namespace Extenity.RenderingToolbox
 		#region Events
 
 		public UnityEvent OnScreenSizeChanged = new UnityEvent();
+
+		#endregion
+
+		#region Fullscreen Auto Native Size Adjuster
+
+		private bool FullscreenAutoNativeSizeAdjuster_WasFullscreen;
+		private int FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+
+		private bool IsFullscreenAutoNativeSizeAdjusterEnabled;
+		public bool IsFullscreenAutoNativeSizeAdjusterLoggingEnabled { get; set; }
+
+		public void ActivateFullscreenAutoNativeSizeAdjuster(bool activate)
+		{
+			if (IsFullscreenAutoNativeSizeAdjusterEnabled == activate)
+				return;
+			IsFullscreenAutoNativeSizeAdjusterEnabled = activate;
+
+			if (activate)
+			{
+				// Just activated
+				FullscreenAutoNativeSizeAdjuster_WasFullscreen = !Screen.fullScreen; // This will make sure calculation below will be invalidated
+				CalculateFullscreenAutoNativeSizeAdjuster();
+			}
+			else
+			{
+				// Just deactivated
+			}
+		}
+
+		private void CalculateFullscreenAutoNativeSizeAdjuster()
+		{
+			if (FullscreenAutoNativeSizeAdjuster_PostponeCounter >= 0)
+			{
+				if (!Screen.fullScreen)
+				{
+					FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+				}
+				else if (--FullscreenAutoNativeSizeAdjuster_PostponeCounter == 0)
+				{
+					FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+					InternalSetToNativeSizeInFullscreen();
+				}
+			}
+
+			var isFullscreen = Screen.fullScreen;
+			if (FullscreenAutoNativeSizeAdjuster_WasFullscreen != isFullscreen)
+			{
+				FullscreenAutoNativeSizeAdjuster_WasFullscreen = isFullscreen;
+				if (isFullscreen)
+				{
+					FullscreenAutoNativeSizeAdjuster_PostponeCounter = 2;
+				}
+			}
+		}
+
+		private void InternalSetToNativeSizeInFullscreen()
+		{
+			var activeDisplayIndex = GetActiveDisplayIndex();
+			if (activeDisplayIndex >= 0)
+			{
+				var activeDisplay = Display.displays[activeDisplayIndex];
+				var width = activeDisplay.systemWidth;
+				var height = activeDisplay.systemHeight;
+				if (width > 0 && height > 0)
+				{
+					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+						Debug.LogFormat("Adjusting screen resolution to native {0}x{1} on monitor {2}.", width, height, activeDisplayIndex);
+					//activeDisplay.SetParams(width, height, 0, 0);
+					//activeDisplay.SetRenderingResolution(width, height);
+					Screen.SetResolution(width, height, true);
+				}
+				else
+				{
+					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+						Debug.LogFormat("Failed to get screen resolution of active monitor {0}.", activeDisplayIndex);
+				}
+			}
+			else
+			{
+				if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+					Debug.Log("Failed to find active display.");
+			}
+		}
+
+		#endregion
+
+		#region Displays
+
+		public int GetActiveDisplayIndex()
+		{
+			for (var i = 0; i < Display.displays.Length; i++)
+			{
+				if (Display.displays[i].active)
+					return i;
+			}
+			return -1;
+		}
 
 		#endregion
 
