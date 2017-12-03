@@ -94,7 +94,7 @@ namespace Extenity.DLLBuilder
 		}
 
 		[Header("Compiler")]
-		public CompilerType Compiler = CompilerType.McsBleedingEdge;
+		public CompilerType Compiler = CompilerType.Gmcs;
 
 		[Header("Obfuscation")]
 		public bool ObfuscateRuntimeDLL = false;
