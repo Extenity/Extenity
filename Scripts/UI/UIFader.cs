@@ -73,14 +73,16 @@ namespace Extenity.UIToolbox
 
 		#region Fade Commands
 
+		public class FaderEvent : UnityEvent<UIFader> { }
+
 		[NonSerialized]
-		public UnityEvent OnFadeIn = new UnityEvent();
+		public FaderEvent OnFadeIn = new FaderEvent();
 		[NonSerialized]
-		public UnityEvent OnFadeOut = new UnityEvent();
+		public FaderEvent OnFadeOut = new FaderEvent();
 		[NonSerialized]
-		public UnityEvent OnFinishedFadeIn = new UnityEvent();
+		public FaderEvent OnFinishedFadeIn = new FaderEvent();
 		[NonSerialized]
-		public UnityEvent OnFinishedFadeOut = new UnityEvent();
+		public FaderEvent OnFinishedFadeOut = new FaderEvent();
 
 		public float Fade(bool visible)
 		{
@@ -92,13 +94,13 @@ namespace Extenity.UIToolbox
 
 		public float FadeIn()
 		{
-			OnFadeIn.Invoke();
+			OnFadeIn.Invoke(this);
 			return AlphaFadeIn();
 		}
 
 		public float FadeOut()
 		{
-			OnFadeOut.Invoke();
+			OnFadeOut.Invoke(this);
 			return AlphaFadeOut();
 		}
 
@@ -150,7 +152,7 @@ namespace Extenity.UIToolbox
 						CanvasGroup.interactable = true;
 						if (Canvas != null)
 							Canvas.enabled = true;
-						OnFinishedFadeIn.Invoke();
+						OnFinishedFadeIn.Invoke(this);
 					});
 				}
 			}
@@ -197,7 +199,7 @@ namespace Extenity.UIToolbox
 							Canvas.enabled = false;
 						CanvasGroup.blocksRaycasts = false;
 						CanvasGroup.interactable = false;
-						OnFinishedFadeOut.Invoke();
+						OnFinishedFadeOut.Invoke(this);
 					});
 				}
 			}
