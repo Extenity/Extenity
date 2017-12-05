@@ -95,19 +95,35 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Assets Menu - Operations - Mark As Dirty
 
-		[MenuItem("Assets/Operations/Mark All Assets As Dirty", priority = 1104)]
-		public static void MarkAllAssetsAsDirty()
+		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1104)]
+		public static void ReserializeAllAssets()
 		{
-			MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+			// This is the old way of doing it. Which somewhat worked with some flaws.
+			//MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+
+			// This is the brand new Unity's method. This works quite better.
+			AssetDatabase.ForceReserializeAssets();
 		}
 
-		[MenuItem("Assets/Operations/Mark All Prefabs And Scenes As Dirty", priority = 1105)]
-		public static void MarkAllPrefabsAndScenesAsDirty()
+		[MenuItem("Assets/Operations/Reserialize All Prefabs And Scenes", priority = 1105)]
+		public static void ReserializeAllPrefabsAndScenes()
 		{
-			MarkAssetsAsDirty(true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			ReserializeAssets(true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
 		}
 
-		public static void MarkAssetsAsDirty(
+		[MenuItem("Assets/Operations/Reserialize All Graphics Assets", priority = 1106)]
+		public static void ReserializeAllGraphicsAssets()
+		{
+			ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false);
+		}
+
+		[MenuItem("Assets/Operations/Reserialize All Audio Assets", priority = 1105)]
+		public static void ReserializeAllAudioAssets()
+		{
+			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+		}
+
+		public static void ReserializeAssets(
 			bool scenes,
 			bool prefabs,
 			bool animations,
@@ -205,21 +221,25 @@ namespace Extenity.AssetToolbox.Editor
 
 			Debug.Log(log.ToString());
 
-			foreach (var assetPath in fullList)
-			{
-				var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-				EditorUtility.SetDirty(asset);
-			}
+			// The old way.
+			//foreach (var assetPath in fullList)
+			//{
+			//	var asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+			//	EditorUtility.SetDirty(asset);
+			//}
+
+			AssetDatabase.ForceReserializeAssets(fullList);
 		}
 
 		private static void InternalAddToAssetList(List<string> list, List<string> fullList, string logTitle, StringBuilder log)
 		{
+			log.AppendLine(string.Format("====  ({0}) {1}  ====", list.Count, logTitle));
+
 			if (list.Count == 0)
 				return;
 
 			list.Sort();
 			fullList.AddRange(list);
-			log.AppendLine(string.Format("====  ({0}) {1}  ====", list.Count, logTitle));
 			foreach (var item in list)
 			{
 				log.AppendLine(item);
