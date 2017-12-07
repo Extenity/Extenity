@@ -309,11 +309,193 @@ namespace Extenity.DataToolbox
 		/// <summary>
 		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
 		/// 
-		/// Note that maximum length needed for char array is 11 for radix-10, and 32 for radix-2.
+		/// Note that maximum length needed for char array is 10+1 (Digits+Minus).
 		/// 
 		/// Array length assumed to be enough and won't be checked because of performance concerns.
 		/// </summary>
-		public static void ToStringAsCharArray(this int value, int radix, char[] array, out int startIndex, out int length)
+		public static void ToStringAsCharArray(this Int32 value, char[] array, out int startIndex, out int length)
+		{
+			const int radix = 10;
+			var i = array.Length;
+			var isNegative = (value < 0);
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1 (Digits+Minus).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int64 value, char[] array, out int startIndex, out int length)
+		{
+			const int radix = 10;
+			var i = array.Length;
+			var isNegative = (value < 0);
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		#endregion
+
+		#region Conversions - Int ToStringAsCharArray with ThousandsSeparator
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1+3 (Digits+Minus+Commas).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int32 value, char[] array, char thousandsSeparator, out int startIndex, out int length)
+		{
+			const int radix = 10;
+			var i = array.Length;
+			var isNegative = (value < 0);
+			var thousandsCounter = 3;
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+				thousandsCounter--;
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+				if (--thousandsCounter == 0 && value > 0)
+				{
+					array[--i] = thousandsSeparator;
+					thousandsCounter = 3;
+				}
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+6 (Digits+Minus+Commas).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int64 value, char[] array, char thousandsSeparator, out int startIndex, out int length)
+		{
+			const int radix = 10;
+			var i = array.Length;
+			var isNegative = (value < 0);
+			var thousandsCounter = 3;
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+				thousandsCounter--;
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+				if (--thousandsCounter == 0 && value > 0)
+				{
+					array[--i] = thousandsSeparator;
+					thousandsCounter = 3;
+				}
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		#endregion
+
+		#region Conversions - Int ToStringAsCharArray with Radix
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int32 value, int radix, char[] array, out int startIndex, out int length)
+		{
+			var i = array.Length;
+			var isNegative = (value < 0);
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int64 value, int radix, char[] array, out int startIndex, out int length)
 		{
 			var i = array.Length;
 			var isNegative = (value < 0);
