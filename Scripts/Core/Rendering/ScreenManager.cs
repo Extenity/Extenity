@@ -32,18 +32,32 @@ namespace Extenity.RenderingToolbox
 			if (IsFullscreenAutoNativeSizeAdjusterEnabled)
 				CalculateFullscreenAutoNativeSizeAdjuster();
 
-			if (currentScreenWidth == Screen.width && currentScreenHeight == Screen.height)
+			var isFullscreen = Screen.fullScreen ? 1 : 0;
+			if (
+				currentScreenWidth == Screen.width && 
+				currentScreenHeight == Screen.height && 
+				previousFullscreen == isFullscreen
+			)
 				return;
 
 			Calculate();
 			OnScreenSizeChanged.Invoke();
+
+			if (previousFullscreen != isFullscreen)
+			{
+				previousFullscreen = isFullscreen;
+				OnFullscreenChanged.Invoke(isFullscreen == 1);
+			}
 		}
 
 		#endregion
 
 		#region Events
 
+		public class FullscreenEvent : UnityEvent<bool> { }
+
 		public UnityEvent OnScreenSizeChanged = new UnityEvent();
+		public FullscreenEvent OnFullscreenChanged = new FullscreenEvent();
 
 		#endregion
 
@@ -216,6 +230,7 @@ namespace Extenity.RenderingToolbox
 		private int previousScreenHeight = int.MinValue;
 		private int currentScreenWidth = int.MinValue;
 		private int currentScreenHeight = int.MinValue;
+		private int previousFullscreen = int.MinValue;
 
 		private float screenWidthInches = float.NaN;
 		private float screenHeightInches = float.NaN;
