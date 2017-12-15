@@ -7,7 +7,6 @@ using Object = System.Object;
 namespace Extenity.DataToolbox
 {
 
-	// TODO: Move to Extenity
 	/// <summary>
 	/// Auto expandable circular list that allows user to define a decay condition 
 	/// that makes auto removal of items as new items arrive.
