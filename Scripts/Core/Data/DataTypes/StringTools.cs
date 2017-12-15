@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections;
@@ -1070,6 +1070,52 @@ namespace Extenity.DataToolbox
 			{
 				if (text.Length > maxLength)
 					text = text.Substring(0, maxLength);
+			}
+		}
+
+		#endregion
+
+		#region Percentage Bar
+
+		private static StringBuilder PercentageBarStringBuilder;
+
+		public static string ToStringAsPercentageBar(this double value, int barLength = 20)
+		{
+			return ToStringAsPercentageBar((float)value, barLength);
+		}
+
+		public static string ToStringAsPercentageBar(this float value, int barLength = 20)
+		{
+			if (PercentageBarStringBuilder == null)
+			{
+				// ReSharper disable once InconsistentlySynchronizedField
+				PercentageBarStringBuilder = new StringBuilder(barLength + 10);
+			}
+			lock (PercentageBarStringBuilder)
+			{
+				PercentageBarStringBuilder.Length = 0;
+				if (barLength > 0)
+				{
+					PercentageBarStringBuilder.Append('[');
+					var clampedValue = value < 0f ? 0f : value > 1f ? 1f : value;
+					var filledCount = (int)(clampedValue * barLength);
+					if (filledCount == 0 && clampedValue > 0.00001f)
+					{
+						filledCount = 1; // Always show some bar piece if the value is greater than zero.
+					}
+					var emptyCount = barLength - filledCount;
+					for (int i = 0; i < filledCount; i++)
+					{
+						PercentageBarStringBuilder.Append('█');
+					}
+					for (int i = 0; i < emptyCount; i++)
+					{
+						PercentageBarStringBuilder.Append('─');
+					}
+					PercentageBarStringBuilder.Append("] ");
+				}
+				PercentageBarStringBuilder.Append(value.ToString("P1"));
+				return PercentageBarStringBuilder.ToString();
 			}
 		}
 
