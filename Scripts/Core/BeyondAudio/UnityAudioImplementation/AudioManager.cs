@@ -43,6 +43,7 @@ namespace Extenity.BeyondAudio
 		{
 			InitializeSingleton(this, true);
 			InitializeAudioSourceTemplate();
+			InitializeVolumeControls();
 		}
 
 		#endregion
@@ -71,63 +72,40 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
-		#region Master Audio Mixer
+		#region Master Audio Mixer and Music/Effect Volumes
 
-		[Header("Audio Mixers")]
+		[Header("Audio Mixers and Volume Controls")]
 		public AudioMixer MasterAudioMixer;
-		public string MasterVolumeParameterName = "MasterVolume";
-
-		public float MasterVolume
+		public VolumeControl[] MixerVolumeControls =
 		{
-			get
+			new VolumeControl { MixerParameterName = "MasterVolume" },
+			new VolumeControl { MixerParameterName = "MusicVolume" },
+			new VolumeControl { MixerParameterName = "EffectsVolume" },
+		};
+
+		private void InitializeVolumeControls()
+		{
+			ReassignAllMixerVolumeControlParameters();
+		}
+
+		public void ReassignAllMixerVolumeControlParameters()
+		{
+			for (var i = 0; i < MixerVolumeControls.Length; i++)
 			{
-				float value;
-				MasterAudioMixer.GetFloat(MasterVolumeParameterName, out value);
-				return ToNormalizedRange(value);
-			}
-			set
-			{
-				MasterAudioMixer.SetFloat(MasterVolumeParameterName, ToDbRange(value));
+				MixerVolumeControls[i].ReassignMixerParameter();
 			}
 		}
 
-		public void ToggleMuteMaster()
+		public VolumeControl GetVolumeControl(string mixerParameterName)
 		{
-			var volume = MasterVolume;
-			if (volume < 0.05f)
+			for (var i = 0; i < MixerVolumeControls.Length; i++)
 			{
-				MasterVolume = 1f;
+				var volumeControl = MixerVolumeControls[i];
+				if (volumeControl.MixerParameterName == mixerParameterName)
+					return volumeControl;
 			}
-			else
-			{
-				MasterVolume = 0f;
-			}
-		}
-
-		#endregion
-
-		#region Music/Effect Volumes
-
-		public float MusicVolume
-		{
-			get
-			{
-				float value;
-				MasterAudioMixer.GetFloat("MusicVolume", out value);
-				return DbToNormalizedRange(value);
-			}
-			set { MasterAudioMixer.SetFloat("MusicVolume", NormalizedToDbRange(value)); }
-		}
-
-		public float EffectsVolume
-		{
-			get
-			{
-				float value;
-				MasterAudioMixer.GetFloat("EffectsVolume", out value);
-				return DbToNormalizedRange(value);
-			}
-			set { MasterAudioMixer.SetFloat("EffectsVolume", NormalizedToDbRange(value)); }
+			Debug.LogErrorFormat("Volume control '{0}' does not exist.", mixerParameterName);
+			return null;
 		}
 
 		#endregion
@@ -160,6 +138,7 @@ namespace Extenity.BeyondAudio
 
 		#region AudioSource Template
 
+		[Header("Audio Source Configuration")]
 		public GameObject AudioSourceTemplate;
 
 		private void InitializeAudioSourceTemplate()
@@ -282,6 +261,7 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
+		[Header("Audio Events")]
 		public List<AudioEvent> Events;
 
 		public AudioEvent GetEvent(string eventName, bool errorIfNotFound)
@@ -440,20 +420,6 @@ namespace Extenity.BeyondAudio
 			audioSource.gameObject.SetActive(true);
 			audioSource.Play();
 			return audioSource;
-		}
-
-		#endregion
-
-		#region Tools
-
-		public static float ToNormalizedRange(float value)
-		{
-			return value.Remap(-80f, 0f, 0f, 1f);
-		}
-
-		public static float ToDbRange(float value)
-		{
-			return value.Remap(0f, 1f, -80f, 0f);
 		}
 
 		#endregion
