@@ -96,6 +96,14 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
+		public void SetVolumeLoggingForAllControllers(bool isLoggingEnabled)
+		{
+			for (var i = 0; i < MixerVolumeControls.Length; i++)
+			{
+				MixerVolumeControls[i].LogMixerAndVolumeChanges = isLoggingEnabled;
+			}
+		}
+
 		public VolumeControl GetVolumeControl(string mixerParameterName)
 		{
 			for (var i = 0; i < MixerVolumeControls.Length; i++)

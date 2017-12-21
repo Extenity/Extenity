@@ -16,10 +16,15 @@ namespace Extenity.BeyondAudio
 		public bool UsePlayerPrefsForSavingVolume = true;
 		public float DefaultVolume = 1.0f;
 		public bool DefaultMuted = false;
+		[NonSerialized]
+		public bool LogMixerAndVolumeChanges = false;
 
 		public class VolumeEvent : UnityEvent<float> { }
+		public class MuteEvent : UnityEvent<bool> { }
 		[NonSerialized]
 		public readonly VolumeEvent OnVolumeChanged = new VolumeEvent();
+		[NonSerialized]
+		public readonly MuteEvent OnMuteChanged = new MuteEvent();
 
 		public void ChangeMixerParameterName(string mixerParameterName)
 		{
@@ -72,6 +77,11 @@ namespace Extenity.BeyondAudio
 				_IsMuted = value;
 				if (UsePlayerPrefsForSavingVolume)
 					PlayerPrefsTools.SetBool(MixerParameterNameForMute, value);
+				if (LogMixerAndVolumeChanges)
+				{
+					Debug.LogFormat("Mute set to '{0}' for parameter '{1}'.", value, MixerParameterName);
+				}
+				OnMuteChanged.Invoke(value);
 				ReassignMixerParameter();
 			}
 		}
@@ -94,12 +104,18 @@ namespace Extenity.BeyondAudio
 			}
 			set
 			{
+				if (IsMuted)
+					return; // Ignore changes if muted because UI sliders would try to update volume settings even though it is not the intention.
 				var valueClamped = value.Clamp01();
 				if (Volume.IsAlmostEqual(valueClamped))
 					return;
 				_Volume = valueClamped;
 				if (UsePlayerPrefsForSavingVolume)
 					PlayerPrefs.SetFloat(MixerParameterNameForVolume, valueClamped);
+				if (LogMixerAndVolumeChanges)
+				{
+					Debug.LogFormat("Volume set to '{0} for parameter '{1}''.", valueClamped.ToString("N2"), MixerParameterName);
+				}
 				ReassignMixerParameter();
 			}
 		}
@@ -107,6 +123,11 @@ namespace Extenity.BeyondAudio
 		public void SetVolume(float value)
 		{
 			Volume = value;
+		}
+
+		public void SetMute(bool isMuted)
+		{
+			IsMuted = isMuted;
 		}
 
 		public float GetActualVolume()
@@ -120,7 +141,10 @@ namespace Extenity.BeyondAudio
 		{
 			var resultingVolume = IsMuted ? 0f : Volume;
 
-			//Debug.LogFormat("Reassign mixer parameter for '{0}'. Muted: '{1}'. Volume: '{2}'. Result: '{2}'.", MixerParameterName, IsMuted, Volume.ToString("N2"), resultingVolume.ToString("N2"));
+			if (LogMixerAndVolumeChanges)
+			{
+				Debug.LogFormat("Reassign mixer parameter for '{0}'. Muted: '{1}'. Volume: '{2}'. Result: '{3}'.", MixerParameterName, IsMuted, Volume.ToString("N2"), resultingVolume.ToString("N2"));
+			}
 
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
 			OnVolumeChanged.Invoke(resultingVolume);
