@@ -1144,6 +1144,30 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Magnitude
+
+		public static float MagnitudeXY(this Vector3 value)
+		{
+			return Mathf.Sqrt(value.x * value.x + value.y * value.y);
+		}
+
+		public static float MagnitudeXZ(this Vector3 value)
+		{
+			return Mathf.Sqrt(value.x * value.x + value.z * value.z);
+		}
+
+		public static float SqrMagnitudeXY(this Vector3 value)
+		{
+			return value.x * value.x + value.y * value.y;
+		}
+
+		public static float SqrMagnitudeXZ(this Vector3 value)
+		{
+			return value.x * value.x + value.z * value.z;
+		}
+
+		#endregion
+
 		#region Distance and Difference
 
 		public static float SqrDistanceTo(this Vector3 a, Vector3 b)
