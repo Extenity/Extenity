@@ -664,9 +664,29 @@ namespace Extenity.DebugToolbox
 			Debug.Log(text);
 		}
 
+		public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null)
+		{
+			// Initialize
+			var stringBuilder = new StringBuilder();
+			if (!string.IsNullOrEmpty(initialLine))
+			{
+				stringBuilder.AppendLine(initialLine);
+			}
+
+			// Do logging
+			stringBuilder.AppendLine("Fields:");
+			InternalLogAllFields(obj, stringBuilder);
+			stringBuilder.AppendLine("Properties:");
+			InternalLogAllProperties(obj, stringBuilder);
+
+			// Finalize
+			var text = stringBuilder.ToString();
+			Debug.Log(text);
+		}
+
 		private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")
 		{
-			var nextIndentation = indentation + '\t';
+			string nextIndentation = null;
 			var i = 0;
 
 			foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
@@ -677,7 +697,7 @@ namespace Extenity.DebugToolbox
 				// Log enumerables (lists, arrays, etc.)
 				if (value != null && descriptor.PropertyType.InheritsOrImplements(typeof(IEnumerable)))
 				{
-					if (descriptor.PropertyType != typeof(string)) // string is an exception
+					if (descriptor.PropertyType != typeof(string)) // string is an exception. We don't want to iterate its characters.
 					{
 						var iInside = 0;
 
@@ -689,7 +709,9 @@ namespace Extenity.DebugToolbox
 							}
 							else
 							{
-								InternalLogAllFields(item, stringBuilder, nextIndentation + iInside + ".");
+								if (nextIndentation == null)
+									nextIndentation = indentation + '\t';
+								InternalLogAllProperties(item, stringBuilder, nextIndentation + iInside + ".");
 							}
 							iInside++;
 						}
@@ -702,7 +724,7 @@ namespace Extenity.DebugToolbox
 
 		private static void InternalLogAllFields(this object obj, StringBuilder stringBuilder, string indentation = "")
 		{
-			var nextIndentation = indentation + '\t';
+			string nextIndentation = null;
 			var i = 0;
 
 			foreach (var fieldInfo in obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
@@ -713,7 +735,7 @@ namespace Extenity.DebugToolbox
 				// Log enumerables (lists, arrays, etc.)
 				if (value != null && fieldInfo.FieldType.InheritsOrImplements(typeof(IEnumerable)))
 				{
-					if (fieldInfo.FieldType != typeof(string)) // string is an exception
+					if (fieldInfo.FieldType != typeof(string)) // string is an exception. We don't want to iterate its characters.
 					{
 						var iInside = 0;
 
@@ -725,6 +747,8 @@ namespace Extenity.DebugToolbox
 							}
 							else
 							{
+								if (nextIndentation == null)
+									nextIndentation = indentation + '\t';
 								InternalLogAllFields(item, stringBuilder, nextIndentation + iInside + ".");
 							}
 							iInside++;
