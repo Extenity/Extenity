@@ -14,9 +14,9 @@ namespace Extenity.DesignPatternsToolbox
 {
 
 	// Usage:
-	//   Use the derived class as a Component of a GameObject.
+	//   Use the derived class as a MonoBehaviour of a GameObject.
 	//   InitializeSingleton(this); must be placed on the Awake method of derived class.
-	public class SingletonUnity<T> : MonoBehaviour where T : Component
+	public class SingletonUnity<T> : MonoBehaviour where T : MonoBehaviour
 	{
 		private static T instance;
 #pragma warning disable 414
@@ -74,7 +74,8 @@ namespace Extenity.DesignPatternsToolbox
 		}
 
 		public static T Instance { get { return instance; } }
-		public static bool IsInstanceAvailable { get { return !(instance == null); } }
+		public static bool IsInstanceAvailable { get { return instance; } }
+		public static bool IsInstanceEnabled { get { return instance && instance.isActiveAndEnabled; } }
 	}
 
 }
