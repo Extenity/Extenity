@@ -318,6 +318,26 @@ namespace Extenity.AssetToolbox.Editor
 			Clipboard.SetClipboardText(paths);
 		}
 
+		public static List<string> GetSelectedAssetPaths()
+		{
+			var selectionObjects = Selection.objects;
+			var list = new List<string>(selectionObjects.Length);
+
+			foreach (Object obj in selectionObjects)
+			{
+				if (AssetDatabase.Contains(obj))
+				{
+					list.Add(AssetDatabase.GetAssetPath(obj));
+				}
+				else
+				{
+					Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
+				}
+			}
+
+			return list;
+		}
+
 		public static string GenerateUniqueAssetPathAtSelectedFolder(string fileName)
 		{
 			try
