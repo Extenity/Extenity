@@ -93,7 +93,21 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Assets Menu - Operations - Mark As Dirty
+		#region Assets Menu - Operations - Reserialize Assets
+
+		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1103)]
+		public static void ReserializeSelectedAssets()
+		{
+			var fullList = new List<string>();
+			var log = new StringBuilder();
+
+			var list = AssetTools.GetSelectedAssetPaths();
+			InternalAddToAssetList(list, fullList, "Selected Assets", log);
+
+			Debug.Log(log.ToString());
+
+			AssetDatabase.ForceReserializeAssets(fullList);
+		}
 
 		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1104)]
 		public static void ReserializeAllAssets()
