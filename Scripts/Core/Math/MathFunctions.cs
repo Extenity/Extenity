@@ -1,7 +1,14 @@
 using Extenity.DebugToolbox;
+using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
+
+	public class BiasLerpContext
+	{
+		public float lastBias = -1.0f;
+		public float lastExponent = 0.0f;
+	}
 
 	public static class MathFunctions
 	{
@@ -90,6 +97,62 @@ namespace Extenity.MathToolbox
 			var a = 1f - ((x - startX) / (endX - startX));
 			return 1 - a * a;
 		}
+
+		#region Biased Lerp
+
+		// Generic biased lerp with optional context optimization:
+		//
+		// 	BiasedLerp(x, bias)				generic unoptimized
+		//	BiasedLerp(x, bias, context)	optimized for bias which changes unfrequently
+
+		private static float BiasWithContext(float x, float bias, BiasLerpContext context)
+		{
+			if (x <= 0.0f) return 0.0f;
+			if (x >= 1.0f) return 1.0f;
+
+			if (bias != context.lastBias)
+			{
+				if (bias <= 0.0f) return x >= 1.0f ? 1.0f : 0.0f;
+				else if (bias >= 1.0f) return x > 0.0f ? 1.0f : 0.0f;
+				else if (bias == 0.5f) return x;
+
+				context.lastExponent = Mathf.Log(bias) * -1.4427f;
+				context.lastBias = bias;
+			}
+
+			return Mathf.Pow(x, context.lastExponent);
+		}
+
+		private static float BiasRaw(float x, float bias)
+		{
+			if (x <= 0.0f) return 0.0f;
+			if (x >= 1.0f) return 1.0f;
+
+			if (bias <= 0.0f) return x >= 1.0f ? 1.0f : 0.0f;
+			else if (bias >= 1.0f) return x > 0.0f ? 1.0f : 0.0f;
+			else if (bias == 0.5f) return x;
+
+			var exponent = Mathf.Log(bias) * -1.4427f;
+			return Mathf.Pow(x, exponent);
+		}
+
+		public static float BiasedLerp(float x, float bias)
+		{
+			var result = bias <= 0.5f
+				? BiasRaw(Mathf.Abs(x), bias)
+				: 1.0f - BiasRaw(1.0f - Mathf.Abs(x), 1.0f - bias);
+			return x < 0.0f ? -result : result;
+		}
+
+		public static float BiasedLerp(float x, float bias, BiasLerpContext context)
+		{
+			var result = bias <= 0.5f
+				? BiasWithContext(Mathf.Abs(x), bias, context)
+				: 1.0f - BiasWithContext(1.0f - Mathf.Abs(x), 1.0f - bias, context);
+			return x < 0.0f ? -result : result;
+		}
+
+		#endregion
 	}
 
 }
