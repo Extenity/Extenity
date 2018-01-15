@@ -174,8 +174,8 @@ namespace Extenity.MathToolbox.Editor
 						}
 					}
 					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				//default:
+				//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
 			}
 
 			Handles.BeginGUI();
