@@ -60,44 +60,54 @@ namespace Extenity.MathToolbox.Editor
 			var eventRawType = Event.current.rawType;
 			var rect = new Rect();
 			var camera = SceneView.lastActiveSceneView.camera;
-			//var screenWidth = camera.pixelWidth;
+			var screenWidth = camera.pixelWidth;
 			var screenHeight = camera.pixelHeight;
 			var mousePosition = MouseSceneViewPosition;
 			//Handles.BeginGUI();
 			//GUI.Button(new Rect(mousePosition.x - 10, mousePosition.y - 10, 20, 20), "#");
 			//Handles.EndGUI();
-			float mouseVisibilityDistance = screenHeight / 4f;
+			float mouseVisibilityDistance = Mathf.Min(screenWidth, screenHeight) / 4f;
 
 
 			if (eventRawType == EventType.MouseUp)
+			{
 				DraggingPointIndex = -1;
+			}
 
 			// Point handles
 			if (Me.RawPoints != null)
 			{
-				for (int i = 0; i < Me.RawPoints.Count; i++)
+				// Find closest point to mouse pointer (if not currently dragging)
+				if (DraggingPointIndex < 0)
 				{
-					var point = ConvertLocalToWorldPosition(Me.RawPoints[i]);
-					if (IsMouseCloseToWorldPointInScreenCoordinates(camera, point, mousePosition, mouseVisibilityDistance))
+					var closestPointIndex = -1;
+					var closestPointDistance = mouseVisibilityDistance;
+
+					for (int i = 0; i < Me.RawPoints.Count; i++)
 					{
-						if (DraggingPointIndex >= 0 && DraggingPointIndex != i)
-							continue;
-
-						var newPoint = Handles.PositionHandle(point, Quaternion.identity);
-						if (newPoint != point)
+						var point = ConvertLocalToWorldPosition(Me.RawPoints[i]);
+						Vector2 difference;
+						if (IsMouseCloseToWorldPointInScreenCoordinates(camera, point, mousePosition, closestPointDistance,
+							out difference))
 						{
-							Me.RawPoints[i] = ConvertWorldToLocalPosition(newPoint);
-
-							if (eventType == EventType.MouseDown ||
-								eventType == EventType.MouseDrag ||
-								eventType == EventType.MouseMove)
-							{
-								if (newPoint != point)
-								{
-									DraggingPointIndex = i;
-								}
-							}
+							closestPointIndex = i;
+							closestPointDistance = difference.magnitude;
 						}
+					}
+
+					if (closestPointIndex >= 0)
+					{
+						DraggingPointIndex = closestPointIndex;
+					}
+				}
+
+				if (DraggingPointIndex >= 0)
+				{
+					var point = ConvertLocalToWorldPosition(Me.RawPoints[DraggingPointIndex]);
+					var newPoint = Handles.PositionHandle(point, Quaternion.identity);
+					if (newPoint != point)
+					{
+						Me.RawPoints[DraggingPointIndex] = ConvertWorldToLocalPosition(newPoint);
 					}
 				}
 			}

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;

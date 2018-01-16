@@ -276,12 +276,35 @@ namespace Extenity.UnityEditorToolbox.Editor
 			return diffY <= maximumDistanceFromMouse && diffY >= -maximumDistanceFromMouse;
 		}
 
+		protected static bool IsMouseCloseToScreenPoint(Vector2 mousePosition, Vector3 screenPosition, float maximumDistanceFromMouse, out Vector2 difference)
+		{
+			difference.x = mousePosition.x - screenPosition.x;
+			difference.y = mousePosition.y - screenPosition.y;
+			if (difference.x > maximumDistanceFromMouse || difference.x < -maximumDistanceFromMouse ||
+			    difference.y > maximumDistanceFromMouse && difference.y < -maximumDistanceFromMouse)
+			{
+				return false;
+			}
+			return true;
+		}
+
 		protected bool IsMouseCloseToWorldPointInScreenCoordinates(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse)
 		{
 			var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
 			return
 				screenPosition.HasValue &&
 				IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse);
+		}
+
+		protected bool IsMouseCloseToWorldPointInScreenCoordinates(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse, out Vector2 difference)
+		{
+			var screenPosition = camera.WorldToScreenPointWithReverseCheck(worldPoint);
+			if (screenPosition.HasValue)
+			{
+				return IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse, out difference);
+			}
+			difference = MathTools.Vector2Infinity;
+			return false;
 		}
 
 		protected Vector2 GetDifferenceBetweenMousePositionAndWorldPoint(Camera camera, Vector3 worldPoint, Vector2 mousePosition, float maximumDistanceFromMouse = 0f)
