@@ -56,7 +56,7 @@ namespace Extenity.MathToolbox.Editor
 
 		private void OnSceneGUI()
 		{
-			var eventType = Event.current.type;
+			//var eventType = Event.current.type;
 			var eventRawType = Event.current.rawType;
 			var rect = new Rect();
 			var camera = SceneView.lastActiveSceneView.camera;

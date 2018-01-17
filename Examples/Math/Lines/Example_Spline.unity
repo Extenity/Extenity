@@ -113,6 +113,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &15311712
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 15311714}
+  - component: {fileID: 15311713}
+  m_Layer: 0
+  m_Name: Line
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &15311713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 15311712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 080ff9634b48ace44b863d793ca0d5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Loop: 0
+  Points:
+  - {x: 0.022781372, y: 0, z: 0.5710419}
+  - {x: -1.926636, y: 0.30825377, z: 0.85314894}
+  - {x: -3.115259, y: 0.42966557, z: 2.892756}
+  - {x: -2.3693128, y: 0.7520642, z: 5.496432}
+  - {x: -3.2690487, y: 0, z: 13.165357}
+  - {x: 4.470689, y: -0.9899499, z: 15.529091}
+  DEBUG:
+    DrawUnselected: 1
+    UnselectedGizmoColor: {r: 0.4, g: 0.4, b: 0.42, a: 1}
+    GizmoColor: {r: 0, g: 0, b: 1, a: 1}
+    FirstControlPointSizeFactor: 0.08
+    ControlPointSizeFactor: 0.04
+--- !u!4 &15311714
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 15311712}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.439, y: -1.0148025, z: -0.36}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1003209242
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,6 +313,60 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1341223190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1341223192}
+  - component: {fileID: 1341223191}
+  m_Layer: 0
+  m_Name: Line (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1341223191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1341223190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 080ff9634b48ace44b863d793ca0d5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Loop: 0
+  Points:
+  - {x: -11.838218, y: 0, z: 0.5710419}
+  - {x: -13.787635, y: 0.30825377, z: 0.85314894}
+  - {x: -14.976258, y: 0.42966557, z: 2.892756}
+  - {x: -14.230311, y: 0.7520642, z: 5.496432}
+  - {x: -15.130048, y: 0, z: 13.165357}
+  - {x: -7.3903103, y: -0.9899499, z: 15.529091}
+  DEBUG:
+    DrawUnselected: 1
+    UnselectedGizmoColor: {r: 0.4, g: 0.4, b: 0.42, a: 1}
+    GizmoColor: {r: 0, g: 0, b: 1, a: 1}
+    FirstControlPointSizeFactor: 0.08
+    ControlPointSizeFactor: 0.04
+--- !u!4 &1341223192
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1341223190}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -16.3, y: -1.0148025, z: -0.36}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2015686653
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,8 +396,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   KeepDataInLocalCoordinates: 1
   RawPoints:
-  - {x: 1.18, y: 0, z: 0}
-  - {x: 0.78897667, y: 0.11449671, z: 2.6094403}
+  - {x: 1.18, y: 0.0627327, z: 1.2813092}
+  - {x: 0.51296854, y: 0.5851469, z: 2.5851307}
+  - {x: 0.25469017, y: -0.059528425, z: 3.3921344}
+  - {x: -0.025836498, y: 0.12533364, z: 4.199138}
+  - {x: 0.30890316, y: 0.2550847, z: 5.8131456}
   DEBUG_GizmoColor: {r: 0.6, g: 0.6, b: 0.7, a: 1}
   DEBUG_ControlPointSizeFactor: 0.04
 --- !u!4 &2015686655
