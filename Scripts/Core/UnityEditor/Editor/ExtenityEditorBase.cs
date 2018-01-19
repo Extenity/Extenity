@@ -332,7 +332,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Layout
 
-		public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(30f);
+		public static readonly GUILayoutOption SmallButtonHeight = GUILayout.Height(18);
+		public static readonly GUILayoutOption MediumButtonHeight = GUILayout.Height(24);
+		public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(36f);
 
 		#endregion
 
@@ -415,10 +417,76 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (detected)
 			{
+				if (IsGroundSnappingEnabled)
+				{
+					CalculateGroundSnapping();
+				}
 				OnMovementDetected();
 				MovementDetectionPreviousPosition = transform.position;
 				MovementDetectionPreviousRotation = transform.rotation;
 				MovementDetectionPreviousScale = transform.localScale;
+			}
+		}
+
+		#endregion
+
+		#region Ground Snapping
+
+		public bool IsGroundSnappingEnabled { get; private set; }
+		public int GroundSnappingRaycastLayerMask = 0;
+		public float GroundSnappingRaycastDistance = 30f;
+		public int GroundSnappingRaycastSteps = 20;
+
+		/// <summary>
+		/// Note that ground snapping requires Movement Detection, which is automatically enabled when enabling ground snapping.
+		/// </summary>
+		public void EnableGroundSnapping(int raycastLayerMask)
+		{
+			GroundSnappingRaycastLayerMask = raycastLayerMask;
+			if (!IsMovementDetectionEnabled)
+				IsMovementDetectionEnabled = true;
+			IsGroundSnappingEnabled = true;
+		}
+
+		/// <summary>
+		/// Note that ground snapping requires Movement Detection, which is automatically enabled when enabling ground snapping.
+		/// </summary>
+		public void EnableGroundSnapping(int raycastLayerMask, float raycastDistance, int raycastSteps = 20)
+		{
+			GroundSnappingRaycastDistance = raycastDistance;
+			GroundSnappingRaycastSteps = raycastSteps;
+			EnableGroundSnapping(raycastLayerMask);
+		}
+
+		public void DisableGroundSnapping()
+		{
+			IsGroundSnappingEnabled = false;
+		}
+
+		private void CalculateGroundSnapping()
+		{
+			var position = Me.transform.position;
+			var stepLength = GroundSnappingRaycastDistance / GroundSnappingRaycastSteps;
+			var direction = Vector3.down;
+			var upperRayStartPosition = position;
+			var lowerRayStartPosition = position;
+
+			for (int i = 0; i < GroundSnappingRaycastSteps; i++)
+			{
+				upperRayStartPosition.y = position.y + stepLength * (i + 1);
+				lowerRayStartPosition.y = position.y - stepLength * i;
+
+				//Debug.DrawLine(upperRayStartPosition, upperRayStartPosition + direction * stepLength, Color.red, 1f);
+				//Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
+
+				RaycastHit hit;
+				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLength, GroundSnappingRaycastLayerMask) |
+				    Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, GroundSnappingRaycastLayerMask))
+				{
+					position.y = hit.point.y;
+					Me.transform.position = position;
+					break;
+				}
 			}
 		}
 

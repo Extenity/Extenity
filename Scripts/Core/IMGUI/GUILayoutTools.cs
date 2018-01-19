@@ -62,6 +62,38 @@ namespace Extenity.IMGUIToolbox
 		}
 
 		#endregion
+
+		#region Layout
+
+		public static void BeginHorizontalWithSpace(float spaceBefore)
+		{
+			if (spaceBefore > 0f)
+				GUILayout.Space(spaceBefore);
+			GUILayout.BeginHorizontal();
+		}
+
+		public static void EndHorizontalWithSpace(float spaceAfter)
+		{
+			GUILayout.EndHorizontal();
+			if (spaceAfter > 0f)
+				GUILayout.Space(spaceAfter);
+		}
+
+		public static void BeginVerticalWithSpace(float spaceBefore)
+		{
+			if (spaceBefore > 0f)
+				GUILayout.Space(spaceBefore);
+			GUILayout.BeginVertical();
+		}
+
+		public static void EndVerticalWithSpace(float spaceAfter)
+		{
+			GUILayout.EndVertical();
+			if (spaceAfter > 0f)
+				GUILayout.Space(spaceAfter);
+		}
+
+		#endregion
 	}
 
 }
