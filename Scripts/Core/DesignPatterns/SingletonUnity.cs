@@ -8,6 +8,7 @@
 #undef LoggingEnabled
 #endif
 
+using System;
 using UnityEngine;
 
 namespace Extenity.DesignPatternsToolbox
@@ -76,6 +77,39 @@ namespace Extenity.DesignPatternsToolbox
 		public static T Instance { get { return instance; } }
 		public static bool IsInstanceAvailable { get { return instance; } }
 		public static bool IsInstanceEnabled { get { return instance && instance.isActiveAndEnabled; } }
+
+		private static T _EditorInstance;
+		public static T EditorInstance
+		{
+			get
+			{
+				if (Application.isPlaying)
+				{
+					Debug.LogErrorFormat("Tried to get editor instance of singleton '{0}' in play time.", typeof(T).Name);
+					return null;
+				}
+				if (!_EditorInstance)
+				{
+					_EditorInstance = FindObjectOfType<T>();
+					if (!_EditorInstance)
+					{
+						Debug.LogErrorFormat("Could not find an instance of singleton '{0}' in scene.", typeof(T).Name);
+					}
+				}
+				return _EditorInstance;
+			}
+		}
+		public static bool IsEditorInstanceAvailable
+		{
+			get
+			{
+				if (!_EditorInstance)
+				{
+					_EditorInstance = FindObjectOfType<T>();
+				}
+				return _EditorInstance;
+			}
+		}
 	}
 
 }
