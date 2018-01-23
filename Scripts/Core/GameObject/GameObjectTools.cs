@@ -1300,6 +1300,37 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region Ground Snapping
+
+		public static void SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset)
+		{
+			var currentPosition = transform.position;
+			var stepLength = raycastDistance / raycastSteps;
+			var direction = Vector3.down;
+			var upperRayStartPosition = currentPosition;
+			var lowerRayStartPosition = currentPosition;
+
+			for (int i = 0; i < raycastSteps; i++)
+			{
+				upperRayStartPosition.y = currentPosition.y + stepLength * (i + 1);
+				lowerRayStartPosition.y = currentPosition.y - stepLength * i;
+
+				//Debug.DrawLine(upperRayStartPosition, upperRayStartPosition + direction * stepLength, Color.red, 1f);
+				//Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
+
+				RaycastHit hit;
+				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLength, raycastLayerMask) |
+					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, raycastLayerMask))
+				{
+					currentPosition.y = hit.point.y + offset;
+					transform.position = currentPosition;
+					break;
+				}
+			}
+		}
+
+		#endregion
+
 		#region GameObject Name
 
 		public const string NullGameObjectNamePlaceholder = "[Null]";
