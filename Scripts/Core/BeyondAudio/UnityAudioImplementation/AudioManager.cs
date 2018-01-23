@@ -296,14 +296,17 @@ namespace Extenity.BeyondAudio
 		public List<AudioEvent> ListEventsWithUnassignedOutputs()
 		{
 			List<AudioEvent> list = null;
-			for (var i = 0; i < Events.Count; i++)
+			if (Events != null)
 			{
-				var audioEvent = Events[i];
-				if (!audioEvent.Output)
+				for (var i = 0; i < Events.Count; i++)
 				{
-					if (list == null)
-						list = new List<AudioEvent>(10);
-					list.Add(audioEvent);
+					var audioEvent = Events[i];
+					if (!audioEvent.Output)
+					{
+						if (list == null)
+							list = new List<AudioEvent>(10);
+						list.Add(audioEvent);
+					}
 				}
 			}
 			return list;
@@ -313,14 +316,17 @@ namespace Extenity.BeyondAudio
 		public List<AudioEvent> ListEventsWithUnassignedClips()
 		{
 			List<AudioEvent> list = null;
-			for (var i = 0; i < Events.Count; i++)
+			if (Events != null)
 			{
-				var audioEvent = Events[i];
-				if (audioEvent.HasAnyUnassignedClip)
+				for (var i = 0; i < Events.Count; i++)
 				{
-					if (list == null)
-						list = new List<AudioEvent>(10);
-					list.Add(audioEvent);
+					var audioEvent = Events[i];
+					if (audioEvent.HasAnyUnassignedClip)
+					{
+						if (list == null)
+							list = new List<AudioEvent>(10);
+						list.Add(audioEvent);
+					}
 				}
 			}
 			return list;
