@@ -28,6 +28,32 @@ namespace Extenity.NavigationToolbox
 			for (int i = 0; i < corners.Length - 1; i++)
 				Debug.DrawLine(corners[i], corners[i + 1], color, duration, depthTest);
 		}
+
+		#region Length
+
+		//private const int TotalLengthCornersBufferMaximumSize = 100;
+		//private static Vector3[] TotalLengthCornersBuffer;
+
+		public static float CalculateTotalLength(this NavMeshPath path)
+		{
+			// TODO: Optimize. Use GetCornersNonAlloc
+
+			var corners = path.corners;
+			if (corners == null || corners.Length < 2)
+				return 0f;
+
+			var totalDistance = 0f;
+			var previousCorner = corners[0];
+			for (int i = 1; i < corners.Length; i++)
+			{
+				var corner = corners[i];
+				totalDistance += (corner - previousCorner).magnitude;
+				previousCorner = corner;
+			}
+			return totalDistance;
+		}
+
+		#endregion
 	}
 
 }
