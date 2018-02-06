@@ -42,16 +42,16 @@ namespace Extenity.ConsistencyToolbox
 			return errors;
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, UnityEngine.Object context = null)
 		{
 			var meObject = me as UnityEngine.Object;
 			var titleMessage = meObject != null
 				? "'" + meObject.name + "' has some inconsistencies."
 				: null;
-			return CheckConsistencyAndLog(me, titleMessage);
+			return CheckConsistencyAndLog(me, titleMessage, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, UnityEngine.Object context = null)
 		{
 			var errors = me.CheckConsistency();
 			if (errors.Count > 0)
@@ -61,7 +61,7 @@ namespace Extenity.ConsistencyToolbox
 					message = titleMessage + "\n";
 				message += errors.Serialize('\n');
 
-				Debug.LogError(message);
+				Debug.LogError(message, context);
 			}
 			return errors;
 		}
