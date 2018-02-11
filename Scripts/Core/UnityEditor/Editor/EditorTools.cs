@@ -264,7 +264,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					}
 					else
 					{
-						tags = tags.InsertAt(0);
+						tags = tags.Insert(0);
 					}
 
 					changeEditingTo = 0;
