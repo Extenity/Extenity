@@ -73,7 +73,7 @@ namespace Extenity.MathToolbox
 		{
 			get
 			{
-				if (Points == null)
+				if (Points == null || Points.Count == 0)
 					return 0;
 
 				if (Loop)
@@ -231,7 +231,7 @@ namespace Extenity.MathToolbox
 			var size = AverageSegmentLength * DEBUG.FirstControlPointSizeFactor;
 			var size3 = new Vector3(size, size, size);
 
-			Gizmos.DrawWireCube(previousPoint, new Vector3(size, size, size));
+			Gizmos.DrawWireCube(previousPoint, size3);
 
 			size = AverageSegmentLength * DEBUG.ControlPointSizeFactor;
 			size3.Set(size, size, size);
