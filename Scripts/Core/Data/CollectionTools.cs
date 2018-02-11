@@ -284,9 +284,28 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-		//public static T[] Insert<T>(this T[] source, int index, T obj)
-		//{
-		//}
+		public static T[] Insert<T>(this T[] source, int index, T obj)
+		{
+			if (index < 0 || index > source.Length)
+				throw new ArgumentOutOfRangeException("index", index, "Index is out of range.");
+
+			var result = new T[source.Length + 1];
+
+			if (source.Length == 0)
+			{
+				result[0] = obj;
+				return result;
+			}
+
+			// Copy left part
+			if (index > 0)
+				Array.Copy(source, 0, result, 0, index);
+			// Copy right part
+			Array.Copy(source, index, result, index + 1, source.Length - index);
+
+			result[index] = obj;
+			return result;
+		}
 
 		public static T[] Swap<T>(this T[] source, int index1, int index2)
 		{
