@@ -22,6 +22,90 @@ namespace Extenity.GameObjectToolbox
 			return new GameObject(name);
 		}
 
+		public static GameObject CreateGameObject(string name, Transform parent = null)
+		{
+			var go = new GameObject(name);
+			if (parent)
+			{
+				go.transform.SetParent(parent, false);
+			}
+			go.transform.ResetTransformToLocalZero();
+			return go;
+		}
+
+		public static GameObject CreateGameObject(string name, Vector3 position, Quaternion rotation, Transform parent = null)
+		{
+			var go = new GameObject(name);
+			if (parent)
+			{
+				go.transform.SetParent(parent, false);
+			}
+			go.transform.position = position;
+			go.transform.rotation = rotation;
+			go.transform.localScale = Vector3.one;
+			return go;
+		}
+
+		public static void CreateOrModifyGameObject(ref Transform transform, string name, Transform parent = null)
+		{
+			if (!transform)
+			{
+				transform = new GameObject(name).transform;
+			}
+			else
+			{
+				transform.gameObject.name = name;
+			}
+			transform.SetParent(parent, false);
+			transform.ResetTransformToLocalZero();
+		}
+
+		public static void CreateOrModifyGameObject(ref Transform transform, string name, Vector3 position, Quaternion rotation, Transform parent = null)
+		{
+			if (!transform)
+			{
+				transform = new GameObject(name).transform;
+			}
+			else
+			{
+				transform.gameObject.name = name;
+			}
+			transform.SetParent(parent, false);
+			transform.position = position;
+			transform.rotation = rotation;
+			transform.localScale = Vector3.one;
+		}
+
+		public static void CreateOrModifyGameObject(ref GameObject gameObject, string name, Transform parent = null)
+		{
+			if (!gameObject)
+			{
+				gameObject = new GameObject(name);
+			}
+			else
+			{
+				gameObject.name = name;
+			}
+			gameObject.transform.SetParent(parent, false);
+			gameObject.transform.ResetTransformToLocalZero();
+		}
+
+		public static void CreateOrModifyGameObject(ref GameObject gameObject, string name, Vector3 position, Quaternion rotation, Transform parent = null)
+		{
+			if (!gameObject)
+			{
+				gameObject = new GameObject(name);
+			}
+			else
+			{
+				gameObject.name = name;
+			}
+			gameObject.transform.SetParent(parent, false);
+			gameObject.transform.position = position;
+			gameObject.transform.rotation = rotation;
+			gameObject.transform.localScale = Vector3.one;
+		}
+
 		#endregion
 
 		#region Destroy Specials
