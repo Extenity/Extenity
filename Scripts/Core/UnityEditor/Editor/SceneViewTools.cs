@@ -11,6 +11,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 			return HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).origin;
 			//return SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(Event.current.mousePosition);
 		}
+
+		public static void PreventSelectionForCurrentMouseClick()
+		{
+			var currentEvent = Event.current;
+			if (currentEvent.type != EventType.MouseDown)
+			{
+				Debug.LogErrorFormat("Tried to prevent mouse selection in an event with type '{0}' which should be 'MouseDown'.", currentEvent.type);
+				return;
+			}
+			var passiveControlId = GUIUtility.GetControlID(FocusType.Passive);
+			GUIUtility.hotControl = passiveControlId;
+			currentEvent.Use();
+		}
 	}
 
 }

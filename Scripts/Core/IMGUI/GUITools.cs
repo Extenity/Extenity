@@ -53,6 +53,12 @@ namespace Extenity.IMGUIToolbox
 				Event.current.Use();
 		}
 
+		public static bool IsMouseOverLastElement()
+		{
+			return Event.current.type == EventType.Repaint &&
+				   GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
+		}
+
 		#endregion
 
 		#region Anchored Points

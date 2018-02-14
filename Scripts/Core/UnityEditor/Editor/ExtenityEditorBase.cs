@@ -1,9 +1,11 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
+using UnityEditor.SceneManagement;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -139,6 +141,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 		//	return base.RequiresConstantRepaint() || AutoRepaintEnabled;
 		//}
 
+		public void RepaintCurrentSceneView()
+		{
+			HandleUtility.Repaint();
+		}
+
+		public void RepaintAllSceneViews()
+		{
+			SceneView.RepaintAll();
+		}
+
 		#endregion
 
 		#region Configuration
@@ -249,9 +261,25 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Invalidate Modified Properties
 
+		[Obsolete("This method was using EditorUtility.SetDirty which no longer works as before. See Unity documentation.")]
 		protected void InvalidateModifiedProperties()
 		{
 			EditorUtility.SetDirty(Me);
+		}
+
+		protected void InvalidateScene()
+		{
+			// Try to invalidate only the scene that this object is included.
+			var behaviour = Me as Behaviour;
+			if (behaviour)
+			{
+				EditorSceneManager.MarkSceneDirty(behaviour.gameObject.scene);
+			}
+			else
+			{
+				// Just invalidate all scenes and move on.
+				EditorSceneManager.MarkAllScenesDirty();
+			}
 		}
 
 		#endregion
