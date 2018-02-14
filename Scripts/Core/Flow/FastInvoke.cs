@@ -149,20 +149,38 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Debug.LogError("Tried to cancel an invoke of a null behaviour.");
+				Debug.LogError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
-			if (FixedUpdateInvokes.Count > 0)
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
 			{
-				for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
-					var entry = FixedUpdateInvokes[i];
-					if (entry.Behaviour == behaviour && entry.Action == action)
-					{
-						FixedUpdateInvokes.RemoveAt(i);
-						PoolEntry(entry);
-						//break; Do not break. There may be more than one.
-					}
+					FixedUpdateInvokes.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+		}
+
+		internal void CancelAll(Behaviour behaviour)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to cancel fast invoke of a null behaviour.");
+				return;
+			}
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			{
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour)
+				{
+					FixedUpdateInvokes.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
 				}
 			}
 		}
@@ -202,6 +220,11 @@ namespace Extenity.FlowToolbox
 		public static void CancelFastInvoke(this Behaviour behaviour, Action action)
 		{
 			Handler.Cancel(behaviour, action);
+		}
+
+		public static void CancelAllFastInvokes(this Behaviour behaviour)
+		{
+			Handler.CancelAll(behaviour);
 		}
 	}
 
