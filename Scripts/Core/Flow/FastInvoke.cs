@@ -56,11 +56,14 @@ namespace Extenity.FlowToolbox
 						entry.Action();
 					}
 
-					// Remove from queue
-					FixedUpdateInvokes.RemoveAt(0);
+					// Remove from queue. But first check if the user manually removed it or not.
+					if (entry == FixedUpdateInvokes[0])
+					{
+						FixedUpdateInvokes.RemoveAt(0);
 
-					// Repeat or delete
-					RepeatIfNeededOrPool(entry);
+						// Repeat or delete
+						RepeatIfNeededOrPool(entry);
+					}
 				}
 				else
 				{
