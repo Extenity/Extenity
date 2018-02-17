@@ -226,6 +226,99 @@ namespace Extenity.FlowToolbox
 		{
 			return FixedUpdateInvokes.Count > 0;
 		}
+
+		internal int TotalInvokeCount()
+		{
+			return FixedUpdateInvokes.Count;
+		}
+
+		internal int InvokeCount(Behaviour behaviour)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return -1;
+			}
+			var count = 0;
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			{
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour)
+				{
+					count++;
+				}
+			}
+			return count;
+		}
+
+		internal int InvokeCount(Behaviour behaviour, Action action)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return -1;
+			}
+			var count = 0;
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			{
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					count++;
+				}
+			}
+			return count;
+		}
+
+		// TODO: See if this can be optimized by returning the first found entry.
+		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour, Action action)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return double.NaN;
+			}
+			double now = (double)Time.time;
+			double minimumRemaining = double.MaxValue;
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			{
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					var remaining = entry.NextTime - now;
+					if (minimumRemaining > remaining)
+					{
+						minimumRemaining = remaining;
+					}
+				}
+			}
+			return minimumRemaining;
+		}
+
+		// TODO: See if this can be optimized by returning the first found entry.
+		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return double.NaN;
+			}
+			double now = (double)Time.time;
+			double minimumRemaining = double.MaxValue;
+			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			{
+				var entry = FixedUpdateInvokes[i];
+				if (entry.Behaviour == behaviour)
+				{
+					var remaining = entry.NextTime - now;
+					if (minimumRemaining > remaining)
+					{
+						minimumRemaining = remaining;
+					}
+				}
+			}
+			return minimumRemaining == double.MaxValue ? double.NaN : minimumRemaining;
+		}
 	}
 
 }
