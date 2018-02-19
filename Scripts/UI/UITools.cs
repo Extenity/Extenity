@@ -1,3 +1,5 @@
+using System.Collections;
+using Extenity.ParallelToolbox;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -13,6 +15,29 @@ namespace Extenity.UIToolbox
 			colors.normalColor = new Color(colors.normalColor.r, colors.normalColor.g, colors.normalColor.b, value);
 			me.colors = colors;
 		}
+
+		#region Simulate Button Click
+
+		public static void SimulateButtonClick(this Button button)
+		{
+			CoroutineTask.Create(DoSimulateButtonClick(button));
+		}
+
+		private static IEnumerator DoSimulateButtonClick(Button button)
+		{
+			var pointer = new PointerEventData(EventSystem.current);
+			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+			yield return new WaitForEndOfFrame();
+			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+			yield return new WaitForEndOfFrame();
+			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.submitHandler);
+			yield return new WaitForEndOfFrame();
+			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+			yield return new WaitForEndOfFrame();
+			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+		}
+
+		#endregion
 
 		#region Input
 
