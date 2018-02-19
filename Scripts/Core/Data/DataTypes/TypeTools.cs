@@ -219,6 +219,10 @@ namespace Extenity.DataToolbox
 
 		public static List<FieldInfo> GetNotAssignedSerializedComponentFields(this Component component)
 		{
+			if (!component)
+			{
+				throw new ArgumentNullException("component");
+			}
 			return component.GetType().GetSerializedFields().Where(
 				field => !field.FieldType.IsValueType
 				         && field.FieldType.IsSubclassOf(typeof(Component))

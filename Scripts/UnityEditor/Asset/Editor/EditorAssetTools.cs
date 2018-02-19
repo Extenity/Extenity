@@ -302,6 +302,8 @@ namespace Extenity.AssetToolbox.Editor
 		private static bool FillEmptyReferences_Validate(MenuCommand menuCommand)
 		{
 			var component = (Component)menuCommand.context;
+			if (!component)
+				return false;
 			return component.GetNotAssignedSerializedComponentFields().Count > 0;
 		}
 
