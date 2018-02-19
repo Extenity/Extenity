@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +9,20 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 	public static class EditorSceneManagerTools
 	{
+		public static void EnforceUserToSaveAllModifiedScenes(string failMessage)
+		{
+			var isAnySceneDirty = IsAnyLoadedSceneDirty();
+			if (isAnySceneDirty)
+			{
+				EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+				var isSceneStillDirty = IsAnyLoadedSceneDirty();
+				if (isSceneStillDirty)
+				{
+					throw new Exception(failMessage);
+				}
+			}
+		}
+
 		public static List<SceneSetup> GetLoadedSceneSetups(bool includeActiveScene)
 		{
 			var list = new List<SceneSetup>();
@@ -45,6 +61,11 @@ namespace Extenity.SceneManagementToolbox.Editor
 		public static bool IsActive(this Scene scene)
 		{
 			return EditorSceneManager.GetActiveScene().path == scene.path;
+		}
+
+		public static bool IsAnyLoadedSceneDirty(bool includeActiveScene = true)
+		{
+			return GetLoadedScenes(includeActiveScene).Any(scene => scene.isDirty);
 		}
 
 		public static void LoadMultipleScenes(string activeScene, List<string> loadedScenes)
