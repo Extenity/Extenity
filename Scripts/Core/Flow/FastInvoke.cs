@@ -38,19 +38,19 @@ namespace Extenity.FlowToolbox
 
 		#region Methods on Behaviour
 
-		public static void FastInvoke(this Behaviour behaviour, Action action, double time)
+		public static void FastInvoke(this Behaviour behaviour, Action action, double time, bool unscaledTime = false)
 		{
-			Handler.Launch(behaviour, action, time, 0f);
+			Handler.Invoke(behaviour, action, time, 0f, unscaledTime);
 		}
 
-		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double repeatRate)
+		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double repeatRate, bool unscaledTime = false)
 		{
-			Handler.Launch(behaviour, action, repeatRate, repeatRate);
+			Handler.Invoke(behaviour, action, repeatRate, repeatRate, unscaledTime);
 		}
 
-		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double initialDelay, double repeatRate)
+		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double initialDelay, double repeatRate, bool unscaledTime = false)
 		{
-			Handler.Launch(behaviour, action, initialDelay, repeatRate);
+			Handler.Invoke(behaviour, action, initialDelay, repeatRate, unscaledTime);
 		}
 
 		/// <summary>
@@ -87,6 +87,16 @@ namespace Extenity.FlowToolbox
 		public static double RemainingTimeUntilNextFastInvoke(this Behaviour behaviour)
 		{
 			return Handler.RemainingTimeUntilNextInvoke(behaviour);
+		}
+
+		public static double RemainingTimeUntilNextUnscaledFastInvoke(this Behaviour behaviour, Action action)
+		{
+			return Handler.RemainingTimeUntilNextUnscaledInvoke(behaviour, action);
+		}
+
+		public static double RemainingTimeUntilNextUnscaledFastInvoke(this Behaviour behaviour)
+		{
+			return Handler.RemainingTimeUntilNextUnscaledInvoke(behaviour);
 		}
 
 		public static int FastInvokeCount(this Behaviour behaviour, Action action)

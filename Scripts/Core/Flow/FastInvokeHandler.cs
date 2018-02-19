@@ -13,6 +13,7 @@ namespace Extenity.FlowToolbox
 			public Behaviour Behaviour;
 			public Action Action;
 			public double RepeatRate;
+			public bool UnscaledTime;
 
 			public void Reset()
 			{
@@ -20,33 +21,39 @@ namespace Extenity.FlowToolbox
 				Behaviour = null;
 				Action = null;
 				RepeatRate = 0f;
+				UnscaledTime = false;
 			}
 
-			public void Initialize(Behaviour behaviour, Action action, double time, double repeatRate)
+			public void Initialize(Behaviour behaviour, Action action, double invokeTime, double repeatRate, bool unscaledTime)
 			{
-				NextTime = time;
+				var now = unscaledTime
+					? (double)Time.unscaledTime
+					: (double)Time.time;
+
+				NextTime = now + invokeTime;
 				Behaviour = behaviour;
 				Action = action;
 				RepeatRate = repeatRate;
+				UnscaledTime = unscaledTime;
 			}
 		}
 
-		public readonly List<InvokeEntry> FixedUpdateInvokes = new List<InvokeEntry>(100);
+		#region Update
 
 		private void FixedUpdate()
 		{
 			var now = (double)Time.time;
 
-			while (FixedUpdateInvokes.Count > 0)
+			while (ScaledInvokeQueue.Count > 0)
 			{
-				var entry = FixedUpdateInvokes[0];
+				var entry = ScaledInvokeQueue[0];
 				//Debug.LogFormat("now: {0}      \tnexttime: {1}", now, entry.NextTime);
 				if (now >= entry.NextTime)
 				{
 					// Remove entry if the related object does not exist anymore.
 					if (!entry.Behaviour)
 					{
-						FixedUpdateInvokes.RemoveAt(0);
+						ScaledInvokeQueue.RemoveAt(0);
 						PoolEntry(entry);
 						continue;
 					}
@@ -58,9 +65,9 @@ namespace Extenity.FlowToolbox
 					}
 
 					// Remove from queue. But first check if the user manually removed it or not.
-					if (entry == FixedUpdateInvokes[0])
+					if (entry == ScaledInvokeQueue[0])
 					{
-						FixedUpdateInvokes.RemoveAt(0);
+						ScaledInvokeQueue.RemoveAt(0);
 
 						// Repeat or delete
 						RepeatIfNeededOrPool(entry);
@@ -73,36 +80,96 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
-		private void RepeatIfNeededOrPool(InvokeEntry entry)
+		private void Update()
 		{
-			if (entry.RepeatRate > 0.0)
+			var now = (double)Time.unscaledTime;
+
+			while (UnscaledInvokeQueue.Count > 0)
 			{
-				entry.NextTime += entry.RepeatRate;
-				AddToFixedUpdateInvokes(entry);
-			}
-			else
-			{
-				PoolEntry(entry);
+				var entry = UnscaledInvokeQueue[0];
+				//Debug.LogFormat("now: {0}      \tnexttime: {1}", now, entry.NextTime);
+				if (now >= entry.NextTime)
+				{
+					// Remove entry if the related object does not exist anymore.
+					if (!entry.Behaviour)
+					{
+						UnscaledInvokeQueue.RemoveAt(0);
+						PoolEntry(entry);
+						continue;
+					}
+
+					// It's time to do the action
+					if (entry.Behaviour.isActiveAndEnabled)
+					{
+						entry.Action();
+					}
+
+					// Remove from queue. But first check if the user manually removed it or not.
+					if (entry == UnscaledInvokeQueue[0])
+					{
+						UnscaledInvokeQueue.RemoveAt(0);
+
+						// Repeat or delete
+						RepeatIfNeededOrPool(entry);
+					}
+				}
+				else
+				{
+					break;
+				}
 			}
 		}
 
-		private void AddToFixedUpdateInvokes(InvokeEntry entry)
+		#endregion
+
+		#region Queue
+
+		public readonly List<InvokeEntry> ScaledInvokeQueue = new List<InvokeEntry>(100);
+		public readonly List<InvokeEntry> UnscaledInvokeQueue = new List<InvokeEntry>(100);
+
+		private void AddToQueue(InvokeEntry entry)
 		{
-			if (FixedUpdateInvokes.Count != 0)
+			if (entry.UnscaledTime)
+				_InsertIntoUpdateQueue(entry);
+			else
+				_InsertIntoFixedUpdateQueue(entry);
+		}
+
+		private void _InsertIntoFixedUpdateQueue(InvokeEntry entry)
+		{
+			if (ScaledInvokeQueue.Count != 0)
 			{
 				var nextTime = entry.NextTime;
-				for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+				for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 				{
-					if (nextTime < FixedUpdateInvokes[i].NextTime)
+					if (nextTime < ScaledInvokeQueue[i].NextTime)
 					{
-						FixedUpdateInvokes.Insert(i, entry);
+						ScaledInvokeQueue.Insert(i, entry);
 						return;
 					}
 				}
 			}
-
-			FixedUpdateInvokes.Add(entry);
+			ScaledInvokeQueue.Add(entry);
 		}
+
+		private void _InsertIntoUpdateQueue(InvokeEntry entry)
+		{
+			if (UnscaledInvokeQueue.Count != 0)
+			{
+				var nextTime = entry.NextTime;
+				for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+				{
+					if (nextTime < UnscaledInvokeQueue[i].NextTime)
+					{
+						UnscaledInvokeQueue.Insert(i, entry);
+						return;
+					}
+				}
+			}
+			UnscaledInvokeQueue.Add(entry);
+		}
+
+		#endregion
 
 		#region Entry Pooling
 
@@ -131,19 +198,33 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
+		private void RepeatIfNeededOrPool(InvokeEntry entry)
+		{
+			if (entry.RepeatRate > 0.0)
+			{
+				entry.NextTime += entry.RepeatRate;
+				AddToQueue(entry);
+			}
+			else
+			{
+				PoolEntry(entry);
+			}
+		}
+
 		#endregion
 
-		internal void Launch(Behaviour behaviour, Action action, double time, double repeatRate)
+		#region Invoke / Cancel
+
+		internal void Invoke(Behaviour behaviour, Action action, double time, double repeatRate, bool unscaledTime)
 		{
 			if (!behaviour)
 			{
 				Debug.LogError("Tried to invoke for a null behaviour.");
 				return;
 			}
-			var now = (double)Time.time;
 			var entry = CreateOrGetEntryPool();
-			entry.Initialize(behaviour, action, now + time, repeatRate);
-			AddToFixedUpdateInvokes(entry);
+			entry.Initialize(behaviour, action, time, repeatRate, unscaledTime);
+			AddToQueue(entry);
 		}
 
 		internal void Cancel(Behaviour behaviour, Action action)
@@ -153,12 +234,23 @@ namespace Extenity.FlowToolbox
 				Debug.LogError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
-					FixedUpdateInvokes.RemoveAt(i);
+					ScaledInvokeQueue.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					UnscaledInvokeQueue.RemoveAt(i);
 					i--;
 					PoolEntry(entry);
 					//break; Do not break. There may be more than one.
@@ -173,18 +265,33 @@ namespace Extenity.FlowToolbox
 				Debug.LogError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour)
 				{
-					FixedUpdateInvokes.RemoveAt(i);
+					ScaledInvokeQueue.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour)
+				{
+					UnscaledInvokeQueue.RemoveAt(i);
 					i--;
 					PoolEntry(entry);
 					//break; Do not break. There may be more than one.
 				}
 			}
 		}
+
+		#endregion
+
+		#region Information
 
 		internal bool IsInvoking(Behaviour behaviour, Action action)
 		{
@@ -193,9 +300,17 @@ namespace Extenity.FlowToolbox
 				Debug.LogError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					return true;
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
 					return true;
@@ -211,10 +326,16 @@ namespace Extenity.FlowToolbox
 				Debug.LogError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
-				if (entry.Behaviour == behaviour)
+				if (ScaledInvokeQueue[i].Behaviour == behaviour)
+				{
+					return true;
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				if (UnscaledInvokeQueue[i].Behaviour == behaviour)
 				{
 					return true;
 				}
@@ -224,12 +345,12 @@ namespace Extenity.FlowToolbox
 
 		internal bool IsInvokingAny()
 		{
-			return FixedUpdateInvokes.Count > 0;
+			return ScaledInvokeQueue.Count > 0 || UnscaledInvokeQueue.Count > 0;
 		}
 
 		internal int TotalInvokeCount()
 		{
-			return FixedUpdateInvokes.Count;
+			return ScaledInvokeQueue.Count + UnscaledInvokeQueue.Count;
 		}
 
 		internal int InvokeCount(Behaviour behaviour)
@@ -240,10 +361,16 @@ namespace Extenity.FlowToolbox
 				return -1;
 			}
 			var count = 0;
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
-				if (entry.Behaviour == behaviour)
+				if (ScaledInvokeQueue[i].Behaviour == behaviour)
+				{
+					count++;
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				if (UnscaledInvokeQueue[i].Behaviour == behaviour)
 				{
 					count++;
 				}
@@ -259,9 +386,17 @@ namespace Extenity.FlowToolbox
 				return -1;
 			}
 			var count = 0;
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					count++;
+				}
+			}
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
 					count++;
@@ -270,7 +405,6 @@ namespace Extenity.FlowToolbox
 			return count;
 		}
 
-		// TODO: See if this can be optimized by returning the first found entry.
 		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour, Action action)
 		{
 			if (!behaviour)
@@ -279,23 +413,36 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.time;
-			double minimumRemaining = double.MaxValue;
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
-					var remaining = entry.NextTime - now;
-					if (minimumRemaining > remaining)
-					{
-						minimumRemaining = remaining;
-					}
+					return entry.NextTime - now;
 				}
 			}
-			return minimumRemaining;
+			return double.NaN;
 		}
 
-		// TODO: See if this can be optimized by returning the first found entry.
+		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour, Action action)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return double.NaN;
+			}
+			double now = (double)Time.unscaledTime;
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					return entry.NextTime - now;
+				}
+			}
+			return double.NaN;
+		}
+
 		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour)
 		{
 			if (!behaviour)
@@ -304,21 +451,37 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.time;
-			double minimumRemaining = double.MaxValue;
-			for (int i = 0; i < FixedUpdateInvokes.Count; i++)
+			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
-				var entry = FixedUpdateInvokes[i];
+				var entry = ScaledInvokeQueue[i];
 				if (entry.Behaviour == behaviour)
 				{
-					var remaining = entry.NextTime - now;
-					if (minimumRemaining > remaining)
-					{
-						minimumRemaining = remaining;
-					}
+					return entry.NextTime - now;
 				}
 			}
-			return minimumRemaining == double.MaxValue ? double.NaN : minimumRemaining;
+			return double.NaN;
 		}
+
+		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour)
+		{
+			if (!behaviour)
+			{
+				Debug.LogError("Tried to query fast invoke of a null behaviour.");
+				return double.NaN;
+			}
+			double now = (double)Time.unscaledTime;
+			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			{
+				var entry = UnscaledInvokeQueue[i];
+				if (entry.Behaviour == behaviour)
+				{
+					return entry.NextTime - now;
+				}
+			}
+			return double.NaN;
+		}
+
+		#endregion
 	}
 
 }
