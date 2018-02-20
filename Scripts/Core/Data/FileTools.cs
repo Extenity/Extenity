@@ -2,13 +2,46 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Security;
-using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
 
 	public static class FileTools
 	{
+		#region String Operations - Alter File Name
+
+		public static string AddPrefixToFileName(this string path, string prefix)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException("path");
+			if (string.IsNullOrEmpty(prefix))
+				throw new ArgumentNullException("prefix");
+			var directory = Path.GetDirectoryName(path);
+			var fileName = Path.GetFileNameWithoutExtension(path);
+			var extension = Path.GetExtension(path);
+			return Path.Combine(directory,
+				string.IsNullOrEmpty(extension)
+					? prefix + fileName
+					: prefix + fileName + extension);
+		}
+
+		public static string AddSuffixToFileName(this string path, string suffix)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException("path");
+			if (string.IsNullOrEmpty(suffix))
+				throw new ArgumentNullException("suffix");
+			var directory = Path.GetDirectoryName(path);
+			var fileName = Path.GetFileNameWithoutExtension(path);
+			var extension = Path.GetExtension(path);
+			return Path.Combine(directory,
+				string.IsNullOrEmpty(extension)
+					? fileName + suffix
+					: fileName + suffix + extension);
+		}
+
+		#endregion
+
 		#region String Operations - Remove Last Directory
 
 		public static string RemoveLastDirectoryFromPath(this string path)
@@ -45,6 +78,20 @@ namespace Extenity.DataToolbox
 			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
 			return FixDirectorySeparatorChars(relativePath);
+		}
+
+		public static bool IsRelativePath(this string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return false;
+			return !Path.IsPathRooted(path);
+		}
+
+		public static bool IsFullPath(this string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return false;
+			return Path.IsPathRooted(path);
 		}
 
 		#endregion
@@ -139,20 +186,6 @@ namespace Extenity.DataToolbox
 			if (path.IsEndingWithDirectorySeparatorChar())
 				return path;
 			return path + separator;
-		}
-
-		public static bool IsRelativePath(this string path)
-		{
-			if (string.IsNullOrEmpty(path))
-				return false;
-			return !Path.IsPathRooted(path);
-		}
-
-		public static bool IsFullPath(this string path)
-		{
-			if (string.IsNullOrEmpty(path))
-				return false;
-			return Path.IsPathRooted(path);
 		}
 
 		#endregion
