@@ -42,13 +42,49 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region String Operations - Remove Last Directory
+		#region String Operations - Remove First/Last Directory
+
+		/// <summary>
+		/// Removes the first directory in path while keeping root intact.
+		/// </summary>
+		public static string RemoveFirstDirectoryFromPath(this string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException(path);
+
+			string root;
+			string directory;
+			string fileName;
+			path.SplitPath(out root, out directory, out fileName);
+			var isRooted = !string.IsNullOrEmpty(root);
+
+			if (string.IsNullOrEmpty(directory))
+			{
+				throw new Exception(string.Format("There was no directory to remove from path '{0}'.", path));
+			}
+			var index = directory.IndexOfStartingDirectorySeparatorChar();
+			if (index < 0)
+			{
+				if (isRooted)
+				{
+					return Path.Combine(root, fileName);
+				}
+				return fileName;
+			}
+			var result = Path.Combine(directory.Substring(index + 1, directory.Length - index - 1), fileName);
+			if (isRooted)
+			{
+				return Path.Combine(root, result);
+			}
+			return result;
+		}
 
 		public static string RemoveLastDirectoryFromPath(this string path)
 		{
 			if (string.IsNullOrEmpty(path))
 				return "";
 
+			path = path.Trim();
 			path = path.RemoveEndingDirectorySeparatorChar();
 
 			var index = IndexOfEndingDirectorySeparatorChar(path);
@@ -130,6 +166,8 @@ namespace Extenity.DataToolbox
 
 		public static string RemoveEndingDirectorySeparatorChar(this string path)
 		{
+			if (path == null)
+				return null;
 			if (path.IsEndingWithDirectorySeparatorChar())
 			{
 				return path.Substring(0, path.Length - 1);
@@ -139,6 +177,8 @@ namespace Extenity.DataToolbox
 
 		public static int IndexOfStartingDirectorySeparatorChar(this string path)
 		{
+			if (path == null)
+				return -1;
 			int index = path.IndexOf('/');
 			if (index < 0)
 				index = path.IndexOf('\\');
@@ -147,6 +187,8 @@ namespace Extenity.DataToolbox
 
 		public static int IndexOfEndingDirectorySeparatorChar(this string path)
 		{
+			if (path == null)
+				return -1;
 			int index = path.LastIndexOf('/');
 			if (index < 0)
 				index = path.LastIndexOf('\\');
@@ -155,11 +197,15 @@ namespace Extenity.DataToolbox
 
 		public static string FixDirectorySeparatorChars(this string path)
 		{
+			if (path == null)
+				return null;
 			return path.Replace(OtherDirectorySeparatorChar, DirectorySeparatorChar);
 		}
 
 		public static string FixDirectorySeparatorChars(this string path, char separator)
 		{
+			if (path == null)
+				return null;
 			if (separator == '\\')
 			{
 				return path.Replace('/', separator);
@@ -176,6 +222,8 @@ namespace Extenity.DataToolbox
 
 		public static string AddDirectorySeparatorToEnd(this string path)
 		{
+			if (path == null)
+				return new string(DirectorySeparatorChar, 1);
 			if (path.IsEndingWithDirectorySeparatorChar())
 				return path;
 			return path + DirectorySeparatorChar;
@@ -183,6 +231,8 @@ namespace Extenity.DataToolbox
 
 		public static string AddDirectorySeparatorToEnd(this string path, char separator)
 		{
+			if (path == null)
+				return new string(separator, 1);
 			if (path.IsEndingWithDirectorySeparatorChar())
 				return path;
 			return path + separator;
@@ -246,6 +296,37 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Path Info
+
+		public static void SplitPath(this string path, out string root, out string directoryWithoutRoot, out string fileName)
+		{
+			if (string.IsNullOrEmpty(path))
+			{
+				root = null;
+				directoryWithoutRoot = null;
+				fileName = null;
+				return;
+			}
+			root = Path.GetPathRoot(path);
+			fileName = Path.GetFileName(path);
+			directoryWithoutRoot = Path.GetDirectoryName(path);
+			if (!string.IsNullOrEmpty(root))
+			{
+				// We should check if there is a root and GetDirectoryName fails to detect it.
+				// This is from the docs: "Directory information for path, or null if path denotes a root directory or is null."
+				if (!string.IsNullOrEmpty(directoryWithoutRoot))
+				{
+					if (!directoryWithoutRoot.StartsWith(root))
+					{
+						throw new Exception(string.Format("Path '{0}' expected to start with '{1}'.", path, root));
+					}
+					directoryWithoutRoot = directoryWithoutRoot.Substring(root.Length);
+				}
+			}
+		}
+
+		#endregion
+
 		#region Comparison
 
 		public static bool PathCompare(this string path1, string path2)
@@ -283,7 +364,7 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region File Info
+		#region File Size
 
 		public static bool TryGetFileSize(this string filePath, out long size)
 		{
