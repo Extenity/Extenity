@@ -62,12 +62,12 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public static bool IsActive(this Scene scene)
 		{
-			if (scene.IsValid())
+			if (!scene.IsValid())
 				throw new Exception("Scene is not valid.");
 			if (string.IsNullOrEmpty(scene.path))
 				throw new Exception("Scene path is not available.");
 			var activeScene = EditorSceneManager.GetActiveScene();
-			if (activeScene.IsValid())
+			if (!activeScene.IsValid())
 				throw new Exception("Active scene is not valid.");
 			if (string.IsNullOrEmpty(activeScene.path))
 				throw new Exception("Active scene path is not available.");
