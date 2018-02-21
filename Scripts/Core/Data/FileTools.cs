@@ -81,8 +81,12 @@ namespace Extenity.DataToolbox
 
 			if (string.IsNullOrEmpty(fileName))
 			{
-				if (path.IsEndingWithDirectorySeparatorChar() && )
+				if (path.IsEndingWithDirectorySeparatorChar())
+				{
+					if (string.IsNullOrEmpty(result)) // Don't add directory separator if there is no root or directory left.
+						return result;
 					return result.AddDirectorySeparatorToEnd();
+				}
 				else
 					return result;
 			}
