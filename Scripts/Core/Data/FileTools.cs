@@ -65,18 +65,28 @@ namespace Extenity.DataToolbox
 			var index = directory.IndexOfStartingDirectorySeparatorChar();
 			if (index < 0)
 			{
+				// No more directories left after removing this one. Just use root and filename.
 				if (isRooted)
 				{
 					return Path.Combine(root, fileName);
 				}
 				return fileName;
 			}
-			var result = Path.Combine(directory.Substring(index + 1, directory.Length - index - 1), fileName);
+
+			var result = directory.Substring(index + 1, directory.Length - index - 1);
 			if (isRooted)
 			{
-				return Path.Combine(root, result);
+				result = Path.Combine(root, result);
 			}
-			return result;
+
+			if (string.IsNullOrEmpty(fileName))
+			{
+				if (path.IsEndingWithDirectorySeparatorChar() && )
+					return result.AddDirectorySeparatorToEnd();
+				else
+					return result;
+			}
+			return Path.Combine(result, fileName);
 		}
 
 		public static string RemoveLastDirectoryFromPath(this string path)
