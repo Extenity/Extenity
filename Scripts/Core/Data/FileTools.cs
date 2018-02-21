@@ -96,13 +96,47 @@ namespace Extenity.DataToolbox
 		public static string RemoveLastDirectoryFromPath(this string path)
 		{
 			if (string.IsNullOrEmpty(path))
-				return "";
+				throw new ArgumentNullException(path);
 
-			path = path.Trim();
-			path = path.RemoveEndingDirectorySeparatorChar();
+			string root;
+			string directory;
+			string fileName;
+			path.SplitPath(out root, out directory, out fileName);
+			var isRooted = !string.IsNullOrEmpty(root);
 
-			var index = IndexOfEndingDirectorySeparatorChar(path);
-			return index < 0 ? "" : path.Substring(0, index);
+			if (string.IsNullOrEmpty(directory))
+			{
+				throw new Exception(string.Format("There was no directory to remove from path '{0}'.", path));
+			}
+			var index = directory.IndexOfEndingDirectorySeparatorChar();
+			if (index < 0)
+			{
+				// No more directories left after removing this one. Just use root and filename.
+				if (isRooted)
+				{
+					return Path.Combine(root, fileName);
+				}
+				return fileName;
+			}
+
+			var result = directory.Substring(0, index + 1);
+			if (isRooted)
+			{
+				result = Path.Combine(root, result);
+			}
+
+			if (string.IsNullOrEmpty(fileName))
+			{
+				if (path.IsEndingWithDirectorySeparatorChar())
+				{
+					if (string.IsNullOrEmpty(result)) // Don't add directory separator if there is no root or directory left.
+						return result;
+					return result.AddDirectorySeparatorToEnd();
+				}
+				else
+					return result;
+			}
+			return Path.Combine(result, fileName);
 		}
 
 		#endregion
