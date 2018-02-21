@@ -16,13 +16,8 @@ namespace Extenity.DataToolbox
 				throw new ArgumentNullException("path");
 			if (string.IsNullOrEmpty(prefix))
 				throw new ArgumentNullException("prefix");
-			var directory = Path.GetDirectoryName(path);
-			var fileName = Path.GetFileNameWithoutExtension(path);
-			var extension = Path.GetExtension(path);
-			return Path.Combine(directory,
-				string.IsNullOrEmpty(extension)
-					? prefix + fileName
-					: prefix + fileName + extension);
+			var fileNameWithExtension = Path.GetFileName(path);
+			return path.Substring(0, path.Length - fileNameWithExtension.Length) + prefix + fileNameWithExtension;
 		}
 
 		public static string AddSuffixToFileName(this string path, string suffix)
@@ -31,13 +26,12 @@ namespace Extenity.DataToolbox
 				throw new ArgumentNullException("path");
 			if (string.IsNullOrEmpty(suffix))
 				throw new ArgumentNullException("suffix");
-			var directory = Path.GetDirectoryName(path);
+			var fileNameWithExtension = Path.GetFileName(path);
 			var fileName = Path.GetFileNameWithoutExtension(path);
-			var extension = Path.GetExtension(path);
-			return Path.Combine(directory,
-				string.IsNullOrEmpty(extension)
-					? fileName + suffix
-					: fileName + suffix + extension);
+			if (fileName.Length == fileNameWithExtension.Length)
+				return path + suffix;
+			var extension = fileNameWithExtension.Substring(fileName.Length);
+			return path.Substring(0, path.Length - extension.Length) + suffix + extension;
 		}
 
 		#endregion
@@ -56,41 +50,20 @@ namespace Extenity.DataToolbox
 			string directory;
 			string fileName;
 			path.SplitPath(out root, out directory, out fileName);
-			var isRooted = !string.IsNullOrEmpty(root);
 
 			if (string.IsNullOrEmpty(directory))
 			{
-				throw new Exception(string.Format("There was no directory to remove from path '{0}'.", path));
+				throw new InvalidOperationException(string.Format("There was no directory to remove from path '{0}'.", path));
 			}
 			var index = directory.IndexOfStartingDirectorySeparatorChar();
-			if (index < 0)
+			if (index < 0 || index == directory.Length - 1)
 			{
 				// No more directories left after removing this one. Just use root and filename.
-				if (isRooted)
-				{
-					return Path.Combine(root, fileName);
-				}
-				return fileName;
+				return root + fileName;
 			}
 
 			var result = directory.Substring(index + 1, directory.Length - index - 1);
-			if (isRooted)
-			{
-				result = Path.Combine(root, result);
-			}
-
-			if (string.IsNullOrEmpty(fileName))
-			{
-				if (path.IsEndingWithDirectorySeparatorChar())
-				{
-					if (string.IsNullOrEmpty(result)) // Don't add directory separator if there is no root or directory left.
-						return result;
-					return result.AddDirectorySeparatorToEnd();
-				}
-				else
-					return result;
-			}
-			return Path.Combine(result, fileName);
+			return root + result + fileName;
 		}
 
 		public static string RemoveLastDirectoryFromPath(this string path)
@@ -102,41 +75,23 @@ namespace Extenity.DataToolbox
 			string directory;
 			string fileName;
 			path.SplitPath(out root, out directory, out fileName);
-			var isRooted = !string.IsNullOrEmpty(root);
 
 			if (string.IsNullOrEmpty(directory))
 			{
-				throw new Exception(string.Format("There was no directory to remove from path '{0}'.", path));
+				throw new InvalidOperationException(string.Format("There was no directory to remove from path '{0}'.", path));
 			}
-			var index = directory.IndexOfEndingDirectorySeparatorChar();
+			var startIndex = directory.IsEndingWithDirectorySeparatorChar()
+				? directory.Length - 2
+				: directory.Length - 1;
+			var index = directory.IndexOfEndingDirectorySeparatorChar(startIndex);
 			if (index < 0)
 			{
 				// No more directories left after removing this one. Just use root and filename.
-				if (isRooted)
-				{
-					return Path.Combine(root, fileName);
-				}
-				return fileName;
+				return root + fileName;
 			}
 
 			var result = directory.Substring(0, index + 1);
-			if (isRooted)
-			{
-				result = Path.Combine(root, result);
-			}
-
-			if (string.IsNullOrEmpty(fileName))
-			{
-				if (path.IsEndingWithDirectorySeparatorChar())
-				{
-					if (string.IsNullOrEmpty(result)) // Don't add directory separator if there is no root or directory left.
-						return result;
-					return result.AddDirectorySeparatorToEnd();
-				}
-				else
-					return result;
-			}
-			return Path.Combine(result, fileName);
+			return root + result + fileName;
 		}
 
 		#endregion
@@ -189,15 +144,7 @@ namespace Extenity.DataToolbox
 
 		public static char OtherDirectorySeparatorChar
 		{
-			get
-			{
-				switch (DirectorySeparatorChar)
-				{
-					case '\\': return '/';
-					case '/': return '\\';
-					default: throw new InvalidEnumArgumentException("System directory separator char is not known.");
-				}
-			}
+			get { return Path.AltDirectorySeparatorChar; }
 		}
 
 		public static bool IsDirectorySeparatorChar(this char c)
@@ -227,9 +174,16 @@ namespace Extenity.DataToolbox
 		{
 			if (path == null)
 				return -1;
-			int index = path.IndexOf('/');
+			return IndexOfStartingDirectorySeparatorChar(path, 0);
+		}
+
+		public static int IndexOfStartingDirectorySeparatorChar(this string path, int startIndex)
+		{
+			if (path == null)
+				return -1;
+			int index = path.IndexOf('/', startIndex);
 			if (index < 0)
-				index = path.IndexOf('\\');
+				index = path.IndexOf('\\', startIndex);
 			return index;
 		}
 
@@ -237,9 +191,16 @@ namespace Extenity.DataToolbox
 		{
 			if (path == null)
 				return -1;
-			int index = path.LastIndexOf('/');
+			return IndexOfEndingDirectorySeparatorChar(path, path.Length - 1);
+		}
+
+		public static int IndexOfEndingDirectorySeparatorChar(this string path, int startIndex)
+		{
+			if (path == null)
+				return -1;
+			int index = path.LastIndexOf('/', startIndex);
 			if (index < 0)
-				index = path.LastIndexOf('\\');
+				index = path.LastIndexOf('\\', startIndex);
 			return index;
 		}
 
@@ -254,17 +215,14 @@ namespace Extenity.DataToolbox
 		{
 			if (path == null)
 				return null;
-			if (separator == '\\')
+			switch (separator)
 			{
-				return path.Replace('/', separator);
-			}
-			else if (separator == '/')
-			{
-				return path.Replace('\\', separator);
-			}
-			else
-			{
-				return path.Replace('/', separator).Replace('\\', separator);
+				case '\\':
+					return path.Replace('/', separator);
+				case '/':
+					return path.Replace('\\', separator);
+				default:
+					return path.Replace('/', separator).Replace('\\', separator);
 			}
 		}
 
@@ -349,28 +307,14 @@ namespace Extenity.DataToolbox
 		public static void SplitPath(this string path, out string root, out string directoryWithoutRoot, out string fileName)
 		{
 			if (string.IsNullOrEmpty(path))
-			{
-				root = null;
-				directoryWithoutRoot = null;
-				fileName = null;
-				return;
-			}
-			root = Path.GetPathRoot(path);
-			fileName = Path.GetFileName(path);
-			directoryWithoutRoot = Path.GetDirectoryName(path);
-			if (!string.IsNullOrEmpty(root))
-			{
-				// We should check if there is a root and GetDirectoryName fails to detect it.
-				// This is from the docs: "Directory information for path, or null if path denotes a root directory or is null."
-				if (!string.IsNullOrEmpty(directoryWithoutRoot))
-				{
-					if (!directoryWithoutRoot.StartsWith(root))
-					{
-						throw new Exception(string.Format("Path '{0}' expected to start with '{1}'.", path, root));
-					}
-					directoryWithoutRoot = directoryWithoutRoot.Substring(root.Length);
-				}
-			}
+				throw new ArgumentNullException("path");
+
+			var rootReported = Path.GetPathRoot(path);
+			var fileNameReported = Path.GetFileName(path);
+
+			root = path.Substring(0, rootReported.Length);
+			fileName = path.Substring(path.Length - fileNameReported.Length);
+			directoryWithoutRoot = path.Substring(rootReported.Length, path.Length - rootReported.Length - fileNameReported.Length);
 		}
 
 		#endregion
@@ -408,6 +352,33 @@ namespace Extenity.DataToolbox
 					return fileStream1.CompareStreamContents(fileStream2);
 				}
 			}
+		}
+
+		#endregion
+
+		#region Combine
+
+		/// <summary>
+		/// Works just like Path.Combine, with an additional 'separator' parameter that is used in-between merged paths.
+		/// </summary>
+		public static string Combine(string path1, string path2, char separator)
+		{
+			if (path1 == null || path2 == null)
+				throw new ArgumentNullException((path1 == null) ? "path1" : "path2");
+			//CheckInvalidPathChars(path1);
+			//CheckInvalidPathChars(path2);
+
+			if (path2.Length == 0)
+				return path1;
+			if (path1.Length == 0)
+				return path2;
+			if (Path.IsPathRooted(path2))
+				return path2;
+
+			var ch = path1[path1.Length - 1];
+			if (ch != Path.DirectorySeparatorChar && ch != Path.AltDirectorySeparatorChar && ch != Path.VolumeSeparatorChar)
+				return path1 + separator + path2;
+			return path1 + path2;
 		}
 
 		#endregion
