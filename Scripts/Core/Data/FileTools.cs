@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Security;
 
@@ -315,6 +314,33 @@ namespace Extenity.DataToolbox
 			root = path.Substring(0, rootReported.Length);
 			fileName = path.Substring(path.Length - fileNameReported.Length);
 			directoryWithoutRoot = path.Substring(rootReported.Length, path.Length - rootReported.Length - fileNameReported.Length);
+		}
+
+		#endregion
+
+		#region Extension
+
+		public static string AddFileExtension(this string path, string extension, bool ignoreIfAlreadyThere = true)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException("path");
+			if (string.IsNullOrEmpty(extension))
+				throw new ArgumentNullException("extension");
+
+			var extensionWithDot = extension[0] == '.'
+				? extension
+				: '.' + extension;
+
+			if (ignoreIfAlreadyThere)
+			{
+				return path.EndsWith(extensionWithDot, StringComparison.OrdinalIgnoreCase)
+					? path
+					: path + extensionWithDot;
+			}
+			else
+			{
+				return path + extensionWithDot;
+			}
 		}
 
 		#endregion
