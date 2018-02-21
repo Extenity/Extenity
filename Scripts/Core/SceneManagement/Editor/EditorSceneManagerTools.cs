@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Extenity.DataToolbox;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
@@ -60,7 +62,16 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public static bool IsActive(this Scene scene)
 		{
-			return EditorSceneManager.GetActiveScene().path == scene.path;
+			if (scene.IsValid())
+				throw new Exception("Scene is not valid.");
+			if (string.IsNullOrEmpty(scene.path))
+				throw new Exception("Scene path is not available.");
+			var activeScene = EditorSceneManager.GetActiveScene();
+			if (activeScene.IsValid())
+				throw new Exception("Active scene is not valid.");
+			if (string.IsNullOrEmpty(activeScene.path))
+				throw new Exception("Active scene path is not available.");
+			return activeScene.path.PathCompare(scene.path);
 		}
 
 		public static bool IsAnyLoadedSceneDirty(bool includeActiveScene = true)
@@ -107,6 +118,13 @@ namespace Extenity.SceneManagementToolbox.Editor
 			return list;
 		}
 
+		public static bool IsSceneExistsAtPath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException("path");
+			var fullPath = path.AddFileExtension(".unity");
+			return File.Exists(fullPath);
+		}
 	}
 
 }
