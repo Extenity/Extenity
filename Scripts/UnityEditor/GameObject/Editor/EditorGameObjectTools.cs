@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
@@ -6,6 +6,7 @@ using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Extenity.GameObjectToolbox.Editor
 {
@@ -92,24 +93,23 @@ namespace Extenity.GameObjectToolbox.Editor
 
 			StringBuilder deletedObjectsText = null;
 			StringBuilder skippedObjectsText = null;
-			HashSet<GameObject> skippedObjects = null;
 			if (log)
 			{
 				deletedObjectsText = new StringBuilder();
 				skippedObjectsText = new StringBuilder();
-				skippedObjects = new HashSet<GameObject>();
 			}
 
 			bool needsReRun;
 			do
 			{
 				needsReRun = false;
-				foreach (var gameObject in gameObjects.Where(item => item.IsEmpty()))
+				for (var i = 0; i < gameObjects.Count; i++)
 				{
-					if (!gameObject)
+					var gameObject = gameObjects[i];
+					if (!gameObject || !gameObject.IsEmpty())
 						continue;
 
-					// Check if the object referenced in any of the components
+					// Check if the object referenced in any of the components in active scene
 					if (!allObjectFields.Contains(gameObject))
 					{
 						if (log)
@@ -125,9 +125,12 @@ namespace Extenity.GameObjectToolbox.Editor
 					else
 					{
 						if (log)
-							if (skippedObjects.Add(gameObject))
-								skippedObjectsText.AppendLine(gameObject.FullName());
+							skippedObjectsText.AppendLine(gameObject.FullName());
 					}
+
+					// We won't need to process this gameObject anymore. Remove it from list.
+					// Or better, remove only the reference so no heavy list operations will be needed.
+					gameObjects[i] = null;
 				}
 			}
 			while (needsReRun);
@@ -183,8 +186,12 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		public static void DeleteAllDisabledStaticMeshRenderers(this Scene scene, bool undoable, bool log)
 		{
-			var components = scene.FindObjectsOfTypeAll<MeshRenderer>()
-				.Where(component => !component.gameObject.activeInHierarchy || !component.gameObject.activeSelf);
+			if (!scene.IsValid())
+				throw new Exception("Scene is not valid.");
+			if (!scene.isLoaded)
+				throw new Exception("Scene is not loaded.");
+
+			var meshRenderers = scene.FindObjectsOfTypeAll<MeshRenderer>();
 
 			StringBuilder deletedObjectsText = null;
 			if (log)
@@ -192,24 +199,31 @@ namespace Extenity.GameObjectToolbox.Editor
 				deletedObjectsText = new StringBuilder();
 			}
 
-			foreach (var component in components)
+			foreach (var meshRenderer in meshRenderers)
 			{
-				if (!component)
+				if (!meshRenderer)
+					continue;
+				var gameObject = meshRenderer.gameObject;
+				if (gameObject.activeInHierarchy)
+					continue;
+				if (!gameObject.isStatic)
 					continue;
 
-				var meshFilter = component.GetComponent<MeshFilter>();
+				var meshFilter = meshRenderer.GetComponent<MeshFilter>();
 
 				if (log)
-					deletedObjectsText.AppendLine(component.gameObject.FullName());
+					deletedObjectsText.AppendLine(gameObject.FullName());
 				if (undoable)
 				{
-					Undo.DestroyObjectImmediate(component);
-					Undo.DestroyObjectImmediate(meshFilter);
+					Undo.DestroyObjectImmediate(meshRenderer);
+					if (meshFilter)
+						Undo.DestroyObjectImmediate(meshFilter);
 				}
 				else
 				{
-					Object.DestroyImmediate(component);
-					Object.DestroyImmediate(meshFilter);
+					Object.DestroyImmediate(meshRenderer);
+					if (meshFilter)
+						Object.DestroyImmediate(meshFilter);
 				}
 			}
 
