@@ -612,13 +612,44 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedObjectsInComponents
 
-		public static List<GameObject> FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components) where T : Component
+		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
-			return components.SelectMany(
-				item => item.GetUnitySerializedFields()
-					.Where(field => field.FieldType.IsSubclassOf(typeof(Component)) && (field.GetValue(item) as Component) != null)
-					.Select(field => ((Component)field.GetValue(item)).gameObject)
-			).ToList();
+			foreach (var component in components)
+			{
+				FindAllReferencedObjectsInComponent(component, result, includeChildren);
+			}
+		}
+
+		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
+		{
+			var serializedFields = component.GetUnitySerializedFields();
+			foreach (var field in serializedFields)
+			{
+				GameObject referencedGameObject = null;
+				if (field.FieldType.IsSubclassOf(typeof(Component)))
+				{
+					var referencedComponent = field.GetValue(component) as Component;
+					if (referencedComponent)
+					{
+						referencedGameObject = referencedComponent.gameObject;
+					}
+				}
+				else if (field.FieldType.IsSubclassOf(typeof(GameObject)))
+				{
+					referencedGameObject = field.GetValue(component) as GameObject;
+				}
+
+				if (referencedGameObject)
+				{
+					var isAdded = result.Add(referencedGameObject);
+					// Check if the gameobject was added before, which means we have already processed the gameobject.
+					// This will also prevent going into an infinite loop where there are circular references.
+					if (includeChildren && isAdded)
+					{
+						FindAllReferencedObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
+					}
+				}
+			}
 		}
 
 		#endregion

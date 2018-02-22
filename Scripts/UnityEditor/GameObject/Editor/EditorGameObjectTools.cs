@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
@@ -89,7 +90,8 @@ namespace Extenity.GameObjectToolbox.Editor
 				return;
 
 			var allComponents = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Component>();
-			var allObjectFields = allComponents.FindAllReferencedObjectsInComponents();
+			var allReferencedObjects = new HashSet<GameObject>();
+			allComponents.FindAllReferencedObjectsInComponents(allReferencedObjects, true);
 
 			StringBuilder deletedObjectsText = null;
 			StringBuilder skippedObjectsText = null;
@@ -110,7 +112,7 @@ namespace Extenity.GameObjectToolbox.Editor
 						continue;
 
 					// Check if the object referenced in any of the components in active scene
-					if (!allObjectFields.Contains(gameObject))
+					if (!allReferencedObjects.Contains(gameObject))
 					{
 						if (log)
 							deletedObjectsText.AppendLine(gameObject.FullName());
