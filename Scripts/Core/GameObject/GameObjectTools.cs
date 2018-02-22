@@ -622,7 +622,7 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			return
 				transform.childCount == 0 && // No children
-				transform.GetComponents<Component>().Length == 1; // Only contains Transform component, which is bare minimum
+				transform.GetComponentCount<Component>() == 1; // Only contains Transform component, which is bare minimum
 		}
 
 		public static bool IsEmpty(this GameObject gameObject)
@@ -631,7 +631,7 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			return
 				gameObject.transform.childCount == 0 && // No children
-				gameObject.GetComponents<Component>().Length == 1; // Only contains Transform component, which is bare minimum
+				gameObject.GetComponentCount<Component>() == 1; // Only contains Transform component, which is bare minimum
 		}
 
 		#endregion
