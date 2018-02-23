@@ -318,7 +318,7 @@ namespace Extenity.AssetToolbox.Editor
 			Clipboard.SetClipboardText(paths);
 		}
 
-		public static List<string> GetSelectedAssetPaths()
+		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)
 		{
 			var selectionObjects = Selection.objects;
 			var list = new List<string>(selectionObjects.Length);
@@ -327,7 +327,23 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				if (AssetDatabase.Contains(obj))
 				{
-					list.Add(AssetDatabase.GetAssetPath(obj));
+					var path = AssetDatabase.GetAssetPath(obj);
+					if (AssetDatabase.IsValidFolder(path))
+					{
+						if (includeFilesInSubdirectoriesOfSelectedDirectories)
+						{
+							var assetGuids = AssetDatabase.FindAssets("*", new[] { path });
+							for (int i = 0; i < assetGuids.Length; i++)
+							{
+								var assetPath = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+								list.Add(assetPath);
+							}
+						}
+					}
+					else
+					{
+						list.Add(path);
+					}
 				}
 				else
 				{

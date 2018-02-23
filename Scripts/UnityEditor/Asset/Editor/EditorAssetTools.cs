@@ -101,7 +101,7 @@ namespace Extenity.AssetToolbox.Editor
 			var fullList = new List<string>();
 			var log = new StringBuilder();
 
-			var list = AssetTools.GetSelectedAssetPaths();
+			var list = AssetTools.GetSelectedAssetPaths(true);
 			InternalAddToAssetList(list, fullList, "Selected Assets", log);
 
 			Debug.Log(log.ToString());
