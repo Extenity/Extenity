@@ -101,6 +101,7 @@ namespace Extenity.AssetToolbox.Editor
 			var fullList = new List<string>();
 			var log = new StringBuilder();
 
+			Debug.Log("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
 			var list = AssetTools.GetSelectedAssetPaths(true);
 			InternalAddToAssetList(list, fullList, "Selected Assets", log);
 
