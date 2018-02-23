@@ -112,7 +112,9 @@ namespace Extenity.GameObjectToolbox.Editor
 						continue;
 
 					// Check if the object referenced in any of the components in active scene
-					if (!allReferencedObjects.Contains(gameObject))
+					if (!allReferencedObjects.Contains(gameObject) &&
+						!gameObject.GetComponentInParent<Animator>(true, true)
+					)
 					{
 						if (log)
 							deletedObjectsText.AppendLine(gameObject.FullName());

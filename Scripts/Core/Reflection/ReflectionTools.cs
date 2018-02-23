@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Extenity.DataToolbox;
@@ -623,20 +622,72 @@ namespace Extenity.ReflectionToolbox
 		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			var serializedFields = component.GetUnitySerializedFields();
-			foreach (var field in serializedFields)
+			FindAllReferencedObjectsInSerializedFields(component, serializedFields, result, includeChildren);
+		}
+
+		public static void FindAllReferencedObjectsInUnityObject(this UnityEngine.Object unityObject, HashSet<GameObject> result, bool includeChildren)
+		{
+			var serializedFields = unityObject.GetUnitySerializedFields();
+			unityObject.FindAllReferencedObjectsInSerializedFields(serializedFields, result, includeChildren);
+		}
+
+		public static void FindAllReferencedObjectsInSerializedFields(this UnityEngine.Object unityObject, IEnumerable<FieldInfo> serializedFields, HashSet<GameObject> result, bool includeChildren)
+		{
+			foreach (var serializedField in serializedFields)
+			{
+				FindAllReferencedObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
+			}
+		}
+
+		public static void FindAllReferencedObjectsInSerializedFields(this UnityEngine.Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
+		{
+			var serializedFieldType = serializedField.FieldType;
+
+			if (serializedFieldType.IsArray)
+			{
+				var array = serializedField.GetValue(unityObject) as Array;
+				if (array != null)
+				{
+					foreach (var item in array)
+					{
+						var itemAsObject = item as UnityEngine.Object;
+						if (itemAsObject)
+						{
+							FindAllReferencedObjectsInUnityObject(itemAsObject, result, includeChildren);
+						}
+					}
+				}
+			}
+			else
 			{
 				GameObject referencedGameObject = null;
-				if (field.FieldType.IsSubclassOf(typeof(Component)))
+				if (serializedFieldType.IsSameOrSubclassOf(typeof(Component)))
 				{
-					var referencedComponent = field.GetValue(component) as Component;
+					var referencedComponent = serializedField.GetValue(unityObject) as Component;
 					if (referencedComponent)
 					{
 						referencedGameObject = referencedComponent.gameObject;
 					}
 				}
-				else if (field.FieldType.IsSubclassOf(typeof(GameObject)))
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(GameObject)))
 				{
-					referencedGameObject = field.GetValue(component) as GameObject;
+					referencedGameObject = serializedField.GetValue(unityObject) as GameObject;
+				}
+				else if (serializedFieldType.IsSubclassOf(typeof(UnityEngine.Object))) // Other objects
+				{
+					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
+					// The commented out code below should handle serialized fields of this unknown object but it's safer 
+					// to handle the object manually. See how Component and GameObject is handled in their own way and
+					// figure out how to handle this unknown type likewise.
+					Debug.LogFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
+
+					// These lines are intentionally commented out. See the comment above.
+					//var referencedObject = serializedField.GetValue(unityObject) as UnityEngine.Object;
+					//if (referencedObject) 
+					//{
+					//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
+					//	return;
+					//}
 				}
 
 				if (referencedGameObject)
