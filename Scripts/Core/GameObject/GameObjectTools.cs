@@ -638,46 +638,39 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindComponentInParents
 
-		public static T GetComponentInParents<T>(this Component me) where T : Component
+		public static T GetComponentInParent<T>(this Transform me, bool includingSelf, bool includingInactive) where T : Component
 		{
-			if (me == null)
+			return me.gameObject.GetComponentInParent<T>(includingSelf, includingInactive);
+		}
+
+		public static T GetComponentInParent<T>(this GameObject me, bool includingSelf, bool includingInactive) where T : Component
+		{
+			if (!me)
 				return null;
 
-			var transform = me.transform.parent;
+			if (!includingInactive && !me.activeInHierarchy)
+				return null;
 
-			while (transform != null)
+			if (includingSelf)
 			{
-				var component = transform.GetComponent<T>();
-				if (component != null)
+				var component = me.GetComponent<T>();
+				if (component)
+					return component;
+			}
+
+			var parent = me.transform.parent;
+
+			while (parent)
+			{
+				var component = parent.GetComponent<T>();
+				if (component)
 					return component;
 
-				transform = transform.parent;
+				parent = parent.parent;
 			}
 			return null;
 		}
-
-		public static T GetComponentInParentsIncludingSelf<T>(this Component me) where T : Component
-		{
-			if (me == null)
-				return null;
-
-			var component = me.GetComponent<T>();
-			if (component != null)
-				return component;
-
-			var transform = me.transform.parent;
-
-			while (transform != null)
-			{
-				component = transform.GetComponent<T>();
-				if (component != null)
-					return component;
-
-				transform = transform.parent;
-			}
-			return null;
-		}
-
+		
 		#endregion
 
 		#region Find child(ren) by custom rule
