@@ -138,6 +138,14 @@ namespace Extenity.DataToolbox
 			return customAttributeProvider.IsDefined(typeof(T), inherit);
 		}
 
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/2742276/how-do-i-check-if-a-type-is-a-subtype-or-the-type-of-an-object
+		/// </summary>
+		public static bool IsSameOrSubclassOf(this Type derivedClass, Type baseClass)
+		{
+			return derivedClass.IsSubclassOf(baseClass) || derivedClass == baseClass;
+		}
+
 		#region Unity Serialized Fields
 
 		public static bool IsUnitySerialized(this FieldInfo fieldInfo)
@@ -225,10 +233,10 @@ namespace Extenity.DataToolbox
 			}
 			return component.GetType().GetSerializedFields().Where(
 				field => !field.FieldType.IsValueType
-				         && field.FieldType.IsSubclassOf(typeof(Component))
-				         && !field.FieldType.IsSubclassOf(typeof(UnityEventBase))
-				         && !field.FieldType.IsSubclassOf(typeof(IEnumerable))
-				         && (Component)field.GetValue(component) == null // Converting to Component is required so Unity can run internal == operator on Components.
+						 && field.FieldType.IsSubclassOf(typeof(Component))
+						 && !field.FieldType.IsSubclassOf(typeof(UnityEventBase))
+						 && !field.FieldType.IsSubclassOf(typeof(IEnumerable))
+						 && (Component)field.GetValue(component) == null // Converting to Component is required so Unity can run internal == operator on Components.
 			).ToList();
 		}
 

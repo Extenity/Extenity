@@ -654,6 +654,36 @@ namespace Extenity.ReflectionToolbox
 
 		#endregion
 
+		#region Referenced Object Checks
+
+		public static bool IsFieldReferencesUnityObject(this UnityEngine.Object unityObject, FieldInfo fieldOfUnityObject, UnityEngine.Object expectedUnityObject)
+		{
+			if (!expectedUnityObject)
+				throw new ArgumentNullException("expectedUnityObject");
+
+			if (fieldOfUnityObject.FieldType.IsArray)
+			{
+				var array = fieldOfUnityObject.GetValue(unityObject) as Array;
+				if (array == null)
+					return false;
+				foreach (var item in array)
+				{
+					var itemAsObject = item as UnityEngine.Object;
+					if (itemAsObject == expectedUnityObject)
+						return true;
+				}
+			}
+			else
+			{
+				var item = fieldOfUnityObject.GetValue(unityObject) as UnityEngine.Object;
+				if (item == expectedUnityObject)
+					return true;
+			}
+			return false;
+		}
+
+		#endregion
+
 		#region List.GetInternalArray
 
 		// Source: https://stackoverflow.com/questions/4972951/listt-to-t-without-copying
