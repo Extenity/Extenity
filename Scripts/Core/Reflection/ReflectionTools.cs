@@ -615,7 +615,8 @@ namespace Extenity.ReflectionToolbox
 		{
 			foreach (var component in components)
 			{
-				FindAllReferencedObjectsInComponent(component, result, includeChildren);
+				if (component)
+					FindAllReferencedObjectsInComponent(component, result, includeChildren);
 			}
 		}
 
