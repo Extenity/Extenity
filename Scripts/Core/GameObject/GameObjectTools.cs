@@ -1039,6 +1039,27 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region Iterate Children
+
+		public delegate void ChildHandler(GameObject child);
+
+		public static void ForeachChildren(this GameObject gameObject, ChildHandler childHandler, bool recursive)
+		{
+			InternalIterateChildren(gameObject, childHandler, recursive);
+		}
+
+		private static void InternalIterateChildren(GameObject gameObject, ChildHandler childHandler, bool recursive)
+		{
+			foreach (Transform child in gameObject.transform)
+			{
+				childHandler(child.gameObject);
+				if (recursive)
+					InternalIterateChildren(child.gameObject, childHandler, true);
+			}
+		}
+
+		#endregion
+
 		#region GetParentEnsured
 
 		public static Transform GetParentEnsured(this Transform me)
