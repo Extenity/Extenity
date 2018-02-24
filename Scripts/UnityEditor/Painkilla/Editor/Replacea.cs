@@ -36,6 +36,7 @@ namespace Extenity.PainkillaTool.Editor
 			ReplacePrefabParentProperty = serializedObject.FindProperty("ReplacePrefabParent");
 			OverrideRotationsProperty = serializedObject.FindProperty("OverrideRotations");
 			OverrideScalesProperty = serializedObject.FindProperty("OverrideScales");
+			OverrideNamesProperty = serializedObject.FindProperty("OverrideNames");
 
 			Selection.selectionChanged -= OnSelectionChanged;
 			Selection.selectionChanged += OnSelectionChanged;
@@ -61,6 +62,7 @@ namespace Extenity.PainkillaTool.Editor
 		private SerializedProperty ReplacePrefabParentProperty;
 		private SerializedProperty OverrideRotationsProperty;
 		private SerializedProperty OverrideScalesProperty;
+		private SerializedProperty OverrideNamesProperty;
 
 		#endregion
 
@@ -97,6 +99,7 @@ namespace Extenity.PainkillaTool.Editor
 
 				EditorGUILayout.PropertyField(OverrideRotationsProperty);
 				EditorGUILayout.PropertyField(OverrideScalesProperty);
+				EditorGUILayout.PropertyField(OverrideNamesProperty);
 
 				EditorGUI.BeginDisabledGroup(FilteredSelection.IsNullOrEmpty() || ReplaceWithObject == null);
 				if (GUILayout.Button(ReplaceButtonContent, "Button", ReplaceButtonOptions))
@@ -152,6 +155,7 @@ namespace Extenity.PainkillaTool.Editor
 		public bool ReplacePrefabParent = true;
 		public bool OverrideRotations = false;
 		public bool OverrideScales = false;
+		public bool OverrideNames = false;
 
 		public bool IsReplaceWithObjectReferencesToAPrefab
 		{
@@ -215,7 +219,7 @@ namespace Extenity.PainkillaTool.Editor
 				Transform duplicate;
 				if (isPrefab)
 				{
-					duplicate = ((GameObject) PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
+					duplicate = ((GameObject)PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
 					duplicate.SetParent(selection.parent);
 				}
 				else
@@ -239,7 +243,10 @@ namespace Extenity.PainkillaTool.Editor
 				else
 					duplicate.localScale = selection.localScale;
 
-				duplicate.gameObject.name = selection.gameObject.name;
+				if (OverrideNamesProperty.boolValue)
+					duplicate.gameObject.name = instantiatedObject.name;
+				else
+					duplicate.gameObject.name = selection.gameObject.name;
 
 				createdObjects.Add(duplicate.gameObject);
 
