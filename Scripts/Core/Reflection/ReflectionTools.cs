@@ -673,6 +673,22 @@ namespace Extenity.ReflectionToolbox
 				{
 					referencedGameObject = serializedField.GetValue(unityObject) as GameObject;
 				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Mesh)))
+				{
+					// Does not contain any link to game objects. So we skip.
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Material)))
+				{
+					// Does not contain any link to game objects. So we skip.
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Texture)))
+				{
+					// Does not contain any link to game objects. So we skip.
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(TerrainData)))
+				{
+					// Does not contain any link to game objects. So we skip.
+				}
 				else if (serializedFieldType.IsSubclassOf(typeof(UnityEngine.Object))) // Other objects
 				{
 					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.

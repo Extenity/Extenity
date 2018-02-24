@@ -6,6 +6,7 @@ using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -93,6 +94,38 @@ namespace Extenity.GameObjectToolbox.Editor
 			var allReferencedObjects = new HashSet<GameObject>();
 			allComponents.FindAllReferencedObjectsInComponents(allReferencedObjects, true);
 
+			// Exclude all child gameobjects of Animators.
+			{
+				var animators = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Animator>();
+				if (animators.Count > 0)
+				{
+					var children = new List<GameObject>();
+					foreach (var animator in animators)
+					{
+						children.Clear();
+						animator.gameObject.ListAllChildrenGameObjects(children, true);
+						foreach (var child in children)
+						{
+							allReferencedObjects.Add(child);
+						}
+					}
+				}
+			}
+
+			// Exclude referenced gameobjects in OffMeshLinks
+			{
+				var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<OffMeshLink>();
+				foreach (var offMeshLink in offMeshLinks)
+				{
+					var linked = offMeshLink.startTransform;
+					if (linked)
+						allReferencedObjects.Add(linked.gameObject);
+					linked = offMeshLink.endTransform;
+					if (linked)
+						allReferencedObjects.Add(linked.gameObject);
+				}
+			}
+
 			StringBuilder deletedObjectsText = null;
 			StringBuilder skippedObjectsText = null;
 			if (log)
@@ -112,9 +145,7 @@ namespace Extenity.GameObjectToolbox.Editor
 						continue;
 
 					// Check if the object referenced in any of the components in active scene
-					if (!allReferencedObjects.Contains(gameObject) &&
-						!gameObject.GetComponentInParent<Animator>(true, true)
-					)
+					if (!allReferencedObjects.Contains(gameObject))
 					{
 						if (log)
 							deletedObjectsText.AppendLine(gameObject.FullName());
