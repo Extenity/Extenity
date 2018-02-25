@@ -158,7 +158,12 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringMinutesSecondsMilliseconds(this TimeSpan timeSpan)
 		{
-			return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + timeSpan.Seconds + "." + timeSpan.Milliseconds.ToString("000");
+			return ((int)timeSpan.TotalMinutes).ToString("00") + ":" + timeSpan.Seconds.ToString("00") + "." + timeSpan.Milliseconds.ToString("000");
+		}
+
+		public static string ToStringHoursMinutesSecondsMilliseconds(this TimeSpan timeSpan)
+		{
+			return ((int)timeSpan.TotalHours).ToString() + ":" + timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00") + "." + timeSpan.Milliseconds.ToString("000");
 		}
 
 		public static string ToStringMinutesSeconds(this TimeSpan timeSpan)
