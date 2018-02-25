@@ -91,7 +91,6 @@ namespace Extenity.ParallelToolbox
 
 		public void Initialize(IEnumerator coroutine, bool startImmediately = true)
 		{
-			CoroutineTaskManager.InitializeSingleton();
 			BaseCoroutine = coroutine;
 			if (startImmediately)
 				Start();
@@ -147,10 +146,7 @@ namespace Extenity.ParallelToolbox
 
 		#region Start / Stop / Pause / Resume
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Coroutine Coroutine;
+		//public Coroutine Coroutine;
 
 		/// <summary>
 		/// Starts execution of task. Most of the time you will want to use 
@@ -159,7 +155,14 @@ namespace Extenity.ParallelToolbox
 		/// 
 		/// Start() should not be called more than once. Otherwise it will throw an error.
 		/// </summary>
-		public void Start()
+		public Coroutine Start()
+		{
+			_InternalStart();
+			//Coroutine = CoroutineTaskManager.Instance.StartCoroutine(CoroutineEmulator());
+			return CoroutineTaskManager.Instance.StartCoroutine(CoroutineEmulator());
+		}
+
+		public void _InternalStart()
 		{
 			if (!IsInitialized)
 				throw new Exception("Task was not initialized.");
@@ -168,7 +171,6 @@ namespace Extenity.ParallelToolbox
 
 			IsLaunched = true;
 			IsRunning = true;
-			Coroutine = CoroutineTaskManager.Instance.StartCoroutine(CoroutineEmulator());
 		}
 
 		/// <summary>
@@ -236,7 +238,7 @@ namespace Extenity.ParallelToolbox
 		private IEnumerator BaseCoroutine;
 		private Stack<IEnumerator> CoroutineStack;
 
-		private IEnumerator CoroutineEmulator()
+		public IEnumerator CoroutineEmulator()
 		{
 			if (CoroutineStack == null)
 			{
@@ -291,16 +293,19 @@ namespace Extenity.ParallelToolbox
 	{
 		#region Singleton
 
-		internal static CoroutineTaskManager Instance;
-
-		internal static void InitializeSingleton()
+		private static CoroutineTaskManager _Instance;
+		internal static CoroutineTaskManager Instance
 		{
-			if (Instance == null)
+			get
 			{
-				var go = new GameObject("_CoroutineTaskManager");
-				go.hideFlags = HideFlags.HideAndDontSave;
-				DontDestroyOnLoad(go);
-				Instance = go.AddComponent<CoroutineTaskManager>();
+				if (!_Instance)
+				{
+					var go = new GameObject("_CoroutineTaskManager");
+					go.hideFlags = HideFlags.HideAndDontSave;
+					DontDestroyOnLoad(go);
+					_Instance = go.AddComponent<CoroutineTaskManager>();
+				}
+				return _Instance;
 			}
 		}
 
