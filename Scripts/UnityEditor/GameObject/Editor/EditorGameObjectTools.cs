@@ -171,7 +171,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			while (needsReRun);
 
 			if (log)
-				Debug.Log("Deleting empty objects:\n" + deletedObjectsText.ToString() + (skippedObjectsText.Length == 0 ? "" : "\n\nSkipping empty objects:\n" + skippedObjectsText.ToString()));
+				Debug.Log("<b>Deleting empty objects:</b>\n" + deletedObjectsText.ToString() + (skippedObjectsText.Length == 0 ? "" : "\n\n<b>Skipping empty objects:</b>\n" + skippedObjectsText.ToString()));
 		}
 
 		#endregion
@@ -207,7 +207,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.LogFormat("Deleting objects containing component '{0}':\n{1}", typeof(T).Name, deletedObjectsText.ToString());
+				Debug.LogFormat("<b>Deleting objects containing component '{0}':</b>\n{1}", typeof(T).Name, deletedObjectsText.ToString());
 		}
 
 		#endregion
@@ -263,7 +263,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.LogFormat("Deleting disabled static MeshRenderers (and their filters):\n{0}", deletedObjectsText.ToString());
+				Debug.LogFormat("<b>Deleting disabled static MeshRenderers (and their filters):</b>\n{0}", deletedObjectsText.ToString());
 		}
 
 		#endregion
