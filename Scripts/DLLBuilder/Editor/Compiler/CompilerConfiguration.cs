@@ -95,6 +95,7 @@ namespace Extenity.DLLBuilder
 
 		[Header("Compiler")]
 		public CompilerType Compiler = CompilerType.Gmcs;
+		public bool Unsafe = false;
 
 		[Header("Obfuscation")]
 		public bool ObfuscateRuntimeDLL = false;

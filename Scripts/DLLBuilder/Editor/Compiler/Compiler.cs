@@ -370,6 +370,11 @@ namespace Extenity.DLLBuilder
 #endif
 							arguments.Add("/warnaserror");
 
+							if (job.Configuration.Unsafe)
+							{
+								arguments.Add("/unsafe");
+							}
+
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
 
 							//defines = defines.Trim();
@@ -421,6 +426,11 @@ namespace Extenity.DLLBuilder
 							arguments.Add("/nostdlib+");
 #endif
 							arguments.Add("/warnaserror");
+
+							if (job.Configuration.Unsafe)
+							{
+								arguments.Add("/unsafe");
+							}
 
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
 
@@ -475,6 +485,11 @@ namespace Extenity.DLLBuilder
 #endif
 							arguments.Add("/warnaserror");
 
+							if (job.Configuration.Unsafe)
+							{
+								arguments.Add("/unsafe");
+							}
+
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
 
 							//defines = defines.Trim();
@@ -525,6 +540,11 @@ namespace Extenity.DLLBuilder
 							arguments.Add("/errorreport:none");
 							//arguments.Add("/warn:0");
 							//arguments.Add("/filealign:512");
+
+							if (job.Configuration.Unsafe)
+							{
+								arguments.Add("/unsafe");
+							}
 
 							defines = defines.Trim();
 							//// Append Unity version directives.
