@@ -815,13 +815,24 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - char[]
 
+		private static StringBuilder ReusedStringBuilder;
+
 		public static string ConvertToString(this char[] chars, int startIndex, int length)
 		{
-			var stringBuilder = new StringBuilder();
+			if (ReusedStringBuilder == null)
+				ReusedStringBuilder = new StringBuilder();
+
 			var endIndex = startIndex + length;
-			for (int i = startIndex; i < chars.Length && i <= endIndex && (uint)chars[i] > 0U; ++i)
-				stringBuilder.Append(chars[i]);
-			return stringBuilder.ToString();
+			for (int i = startIndex; i < chars.Length && i < endIndex && (uint)chars[i] > 0U; ++i)
+				ReusedStringBuilder.Append(chars[i]);
+			var result = ReusedStringBuilder.ToString();
+			ReusedStringBuilder.Clear();
+
+			// Hard limit to prevent memory bogging. We probably accept the consequences of reallocation when working that big.
+			if (ReusedStringBuilder.Capacity > 1000000)
+				ReusedStringBuilder = null;
+
+			return result;
 		}
 
 		public static int CopyTo(this string value, char[] destination)
