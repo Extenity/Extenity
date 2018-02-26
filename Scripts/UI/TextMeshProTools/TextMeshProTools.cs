@@ -74,6 +74,72 @@ namespace TMPro.Extensions
 			}
 		}
 
+		#region SetCharArrayFormatted
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, uint value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, int value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, ulong value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, long value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, float value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, double value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, decimal value)
+		{
+			lock (Buffer)
+			{
+				var length = value.ToStringAsCharArray(format, Buffer);
+				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		#endregion
 	}
 
 }
