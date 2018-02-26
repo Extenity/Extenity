@@ -43,6 +43,9 @@ namespace Extenity.DebugToolbox
 			EndTime = 0;
 		}
 
+		/// <summary>
+		/// Stops the stopwatch and returns elapsed time.
+		/// </summary>
 		public double End()
 		{
 			EndTime = CurrentTime;
@@ -60,6 +63,24 @@ namespace Extenity.DebugToolbox
 			TotalCalls++;
 			CumulativeTime += elapsed;
 			IsStarted = false;
+			return elapsed;
+		}
+
+		/// <summary>
+		/// Stops the stopwatch if running and starts again. Returns elapsed time.
+		/// </summary>
+		public double Restart()
+		{
+			double elapsed;
+			if (IsStarted)
+			{
+				elapsed = End();
+			}
+			else
+			{
+				elapsed = 0.0;
+			}
+			Start();
 			return elapsed;
 		}
 
