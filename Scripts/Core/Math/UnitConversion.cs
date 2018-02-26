@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Extenity.MathToolbox
@@ -32,6 +33,22 @@ namespace Extenity.MathToolbox
 		{
 			return speed / radius / RPMToLinearVelocityInMetersPerSecond;
 		}
+
+		#region Time
+
+		public static int ConvertSecondsToMillisecondsInt(this double seconds) { return (int)Math.Ceiling(seconds * 1000.0); }
+		public static int ConvertSecondsToMillisecondsInt(this float seconds) { return (int)Math.Ceiling(seconds * 1000.0); }
+
+		public static double ConvertSecondsToMilliseconds(this double seconds) { return seconds * 1000.0; }
+		public static float ConvertSecondsToMilliseconds(this float seconds) { return seconds * 1000.0f; }
+
+		public static int ConvertMillisecondsToSecondsInt(this double milliseconds) { return (int)Math.Ceiling(milliseconds * 0.001); }
+		public static int ConvertMillisecondsToSecondsInt(this float milliseconds) { return (int)Math.Ceiling(milliseconds * 0.001); }
+
+		public static double ConvertMillisecondsToSeconds(this double milliseconds) { return milliseconds * 0.001; }
+		public static float ConvertMillisecondsToSeconds(this float milliseconds) { return milliseconds * 0.001f; }
+
+		#endregion
 	}
 
 }
