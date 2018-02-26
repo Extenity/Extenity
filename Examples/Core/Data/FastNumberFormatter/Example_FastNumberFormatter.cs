@@ -26,6 +26,7 @@ namespace ExtenityExamples.DataToolbox
 		{
 			counter += 0.1572f;
 
+			ConvertAndWrite("C5", (int)counter, Text_C);
 			ConvertAndWrite("D5", (int)counter, Text_D);
 			ConvertAndWrite("E2", counter, Text_E);
 			ConvertAndWrite("F4", counter, Text_F);
