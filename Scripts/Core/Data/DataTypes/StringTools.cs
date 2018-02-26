@@ -824,6 +824,13 @@ namespace Extenity.DataToolbox
 			return stringBuilder.ToString();
 		}
 
+		public static int CopyTo(this string value, char[] destination)
+		{
+			var length = value.Length;
+			value.CopyTo(0, destination, 0, length);
+			return length;
+		}
+
 		#endregion
 
 		#region Whitespaces
