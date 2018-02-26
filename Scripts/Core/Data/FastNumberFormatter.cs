@@ -1062,7 +1062,11 @@ namespace Extenity.DataToolbox
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator(nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator);
+			//AppendIntegerStringWithGroupSeparator(nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator);
+			// --- Custom Implementation Start
+			// Using custom implementation instead of the commented out line above because that one allocates memory.
+			AppendIntegerStringWithGroupSeparator((int[])CurrencyGroupSizesField.GetValue(nfi), nfi.CurrencyGroupSeparator);
+			// --- Custom Implementation End
 
 			if (precision > 0)
 			{
@@ -2367,6 +2371,19 @@ namespace Extenity.DataToolbox
 					_PercentGroupSizesField = typeof(NumberFormatInfo).GetField("percentGroupSizes", BindingFlags.NonPublic | BindingFlags.Instance);
 				}
 				return _PercentGroupSizesField;
+			}
+		}
+
+		private static FieldInfo _CurrencyGroupSizesField;
+		private static FieldInfo CurrencyGroupSizesField
+		{
+			get
+			{
+				if (_CurrencyGroupSizesField == null)
+				{
+					_CurrencyGroupSizesField = typeof(NumberFormatInfo).GetField("currencyGroupSizes", BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+				return _CurrencyGroupSizesField;
 			}
 		}
 
