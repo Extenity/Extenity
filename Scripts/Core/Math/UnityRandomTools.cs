@@ -90,6 +90,14 @@ namespace Extenity.MathToolbox
 			get { return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
 		}
 
+		public static void FillRandomly(this char[] chars)
+		{
+			for (int i = 0; i < chars.Length; i++)
+			{
+				chars[i] = (char)Random.Range((int)'a', (int)'z');
+			}
+		}
+
 		#region Collection Operations - RandomIndexSelection
 
 		public static int RandomIndexSelection<T>(this T[] list)
