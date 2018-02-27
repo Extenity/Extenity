@@ -13,6 +13,8 @@ namespace Extenity.ParallelToolbox
 	/// * Coroutine status can be checked outside of the coroutine
 	/// * Callback when finished execution
 	/// * Coroutines can be started without the need for a MonoBehaviour
+	/// * Coroutines can be used inside Unity Editor. See 'EditorCoroutineTask' for details.
+	/// * Coroutines can be used in threads. See 'EditorCoroutineTask' for details.
 	/// 
 	/// </summary>
 	/// <example>
