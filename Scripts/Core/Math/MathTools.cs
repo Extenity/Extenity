@@ -1170,6 +1170,13 @@ namespace Extenity.MathToolbox
 
 		#region Distance and Difference
 
+		public static float SqrDistanceTo(this Vector2 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return dx * dx + dy * dy;
+		}
+
 		public static float SqrDistanceTo(this Vector3 a, Vector3 b)
 		{
 			var dx = b.x - a.x;
@@ -1190,6 +1197,13 @@ namespace Extenity.MathToolbox
 			var dx = b.x - a.x;
 			var dz = b.z - a.z;
 			return dx * dx + dz * dz;
+		}
+
+		public static float DistanceTo(this Vector2 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return Mathf.Sqrt(dx * dx + dy * dy);
 		}
 
 		public static float DistanceTo(this Vector3 a, Vector3 b)
