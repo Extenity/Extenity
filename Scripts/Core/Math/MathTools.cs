@@ -1591,7 +1591,7 @@ namespace Extenity.MathToolbox
 		{
 			Vector3 diff = lineEnd - lineStart;
 			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
@@ -1610,7 +1610,7 @@ namespace Extenity.MathToolbox
 		{
 			Vector3 diff = lineEnd - lineStart;
 			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
@@ -1633,7 +1633,7 @@ namespace Extenity.MathToolbox
 		{
 			Vector3 diff = lineEnd - lineStart;
 			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
@@ -2098,7 +2098,7 @@ namespace Extenity.MathToolbox
 					distanceFromStartOfClosestPoint = totalLength + distanceFromStartOfCurrentSegmentClosestPoint;
 				}
 
-				totalLength += (currentPoint - previousPoint).magnitude;
+				totalLength += currentPoint.DistanceTo(previousPoint);
 				previousPoint = currentPoint;
 			}
 
@@ -2123,7 +2123,7 @@ namespace Extenity.MathToolbox
 
 				float distanceFromStartOfCurrentSegmentClosestPoint;
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -2132,7 +2132,7 @@ namespace Extenity.MathToolbox
 					distanceFromStartOfClosestPoint = totalLength + distanceFromStartOfCurrentSegmentClosestPoint;
 				}
 
-				totalLength += (currentPoint - previousPoint).magnitude;
+				totalLength += currentPoint.DistanceTo(previousPoint);
 				previousPoint = currentPoint;
 			}
 			if (loop)
@@ -2141,7 +2141,7 @@ namespace Extenity.MathToolbox
 
 				float distanceFromStartOfCurrentSegmentClosestPoint;
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -2165,7 +2165,7 @@ namespace Extenity.MathToolbox
 			for (int i = startIndex; i < values.Count; i++)
 			{
 				var value = values[i];
-				var sqrDistance = (value - targetValue).sqrMagnitude;
+				var sqrDistance = value.SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -2183,7 +2183,7 @@ namespace Extenity.MathToolbox
 			for (int i = startIndex; i < values.Length; i++)
 			{
 				var value = values[i];
-				var sqrDistance = (value - targetValue).sqrMagnitude;
+				var sqrDistance = value.SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -2201,7 +2201,7 @@ namespace Extenity.MathToolbox
 			for (int i = startIndex; i < values.Count; i++)
 			{
 				var value = values[i];
-				var sqrDistance = (value - targetValue).sqrMagnitude;
+				var sqrDistance = value.SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -2219,7 +2219,7 @@ namespace Extenity.MathToolbox
 			for (int i = startIndex; i < values.Length; i++)
 			{
 				var value = values[i];
-				var sqrDistance = (value - targetValue).sqrMagnitude;
+				var sqrDistance = value.SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
