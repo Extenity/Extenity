@@ -10,7 +10,6 @@ namespace Extenity.UIToolbox
 	{
 		#region Configuration
 
-		[Header("Setup")]
 		public CanvasGroup CanvasGroup;
 		[Tooltip("Optional Canvas reference that will be enabled or disabled.")]
 		public Canvas Canvas;

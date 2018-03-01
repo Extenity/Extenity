@@ -2,6 +2,7 @@ using Extenity.GameObjectToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
 {
@@ -18,6 +19,21 @@ namespace Extenity.UIToolbox.Editor
 
 		protected override void OnDisableDerived()
 		{
+		}
+
+		private void MakeSureCanvasGroupIsNotInteractableToo()
+		{
+			if (Me.CanvasGroup)
+			{
+				if (!Me.Interactable)
+				{
+					Me.CanvasGroup.interactable = false;
+				}
+				if (!Me.BlocksRaycasts)
+				{
+					Me.CanvasGroup.blocksRaycasts = false;
+				}
+			}
 		}
 
 		private void AutoAssignLinksIfNeeded()
@@ -50,10 +66,14 @@ namespace Extenity.UIToolbox.Editor
 		private readonly GUIContent Cached_FadeIn = new GUIContent("Fade In");
 		private readonly GUIContent Cached_FadeOut = new GUIContent("Fade Out");
 		private readonly GUIContent Cached_Add = new GUIContent("Add");
-		private readonly GUILayoutOption[] Cached_AddButtonLayout = { GUILayout.Width(40) };
+		private readonly GUIContent Cached_Remove = new GUIContent("Remove");
+		private readonly GUILayoutOption[] Cached_AddButtonLayout = { GUILayout.Width(60), GUILayout.Height(17) };
+		private readonly GUILayoutOption[] Cached_RemoveButtonLayout = { GUILayout.Width(60), GUILayout.Height(17) };
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
+			// CanvasGroup
+			GUILayout.BeginHorizontal();
 			EditorGUILayout.PropertyField(GetProperty("CanvasGroup"));
 			if (Me.CanvasGroup == null)
 			{
@@ -62,9 +82,16 @@ namespace Extenity.UIToolbox.Editor
 					Me.CanvasGroup = Undo.AddComponent<CanvasGroup>(Me.gameObject);
 					Me.CanvasGroup.MoveComponentAbove(Me);
 				}
+			}
+			GUILayout.EndHorizontal();
+			if (Me.CanvasGroup == null)
+			{
 				EditorGUILayout.HelpBox("A Canvas Group must be assigned.", MessageType.Warning);
 			}
-			EditorGUI.BeginDisabledGroup(GetProperty("CanvasGroup").objectReferenceValue == null);
+
+			// Canvas
+			EditorGUI.BeginDisabledGroup(!Me.CanvasGroup);
+			GUILayout.BeginHorizontal();
 			EditorGUILayout.PropertyField(GetProperty("Canvas"));
 			if (Me.Canvas == null)
 			{
@@ -74,9 +101,39 @@ namespace Extenity.UIToolbox.Editor
 					Me.Canvas.MoveComponentAbove(Me.CanvasGroup);
 				}
 			}
+			GUILayout.EndHorizontal();
 			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.PropertyField(GetProperty("InitialState"));
 			EditorGUILayout.PropertyField(GetProperty("Interactable"));
+			MakeSureCanvasGroupIsNotInteractableToo();
+
+			// GraphicRaycaster
+			if (Me.Canvas)
+			{
+				var graphicRaycaster = Me.transform.GetComponent<GraphicRaycaster>();
+				if (Me.Interactable && !graphicRaycaster)
+				{
+					GUILayout.BeginHorizontal();
+					EditorGUILayout.HelpBox("A Graphic Raycaster will be needed for interactable canvasses.", MessageType.Warning);
+					if (GUILayout.Button(Cached_Add, Cached_AddButtonLayout))
+					{
+						var component = Undo.AddComponent<GraphicRaycaster>(Me.gameObject);
+						component.MoveComponentBelow(Me.Canvas);
+					}
+					GUILayout.EndHorizontal();
+				}
+				else if (!Me.Interactable && graphicRaycaster)
+				{
+					GUILayout.BeginHorizontal();
+					EditorGUILayout.HelpBox("Graphic Raycaster will NOT be needed for interactable canvasses.", MessageType.Warning);
+					if (GUILayout.Button(Cached_Remove, Cached_RemoveButtonLayout))
+					{
+						Undo.DestroyObjectImmediate(graphicRaycaster);
+					}
+					GUILayout.EndHorizontal();
+				}
+			}
+
 			EditorGUILayout.PropertyField(GetProperty("BlocksRaycasts"));
 
 			EditorGUILayout.PropertyField(GetProperty("GetFadeInConfigurationFromInitialValue"), CachedLabel1);
