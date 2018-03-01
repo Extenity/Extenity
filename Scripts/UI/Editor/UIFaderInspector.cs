@@ -76,6 +76,8 @@ namespace Extenity.UIToolbox.Editor
 			}
 			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.PropertyField(GetProperty("InitialState"));
+			EditorGUILayout.PropertyField(GetProperty("Interactable"));
+			EditorGUILayout.PropertyField(GetProperty("BlocksRaycasts"));
 
 			EditorGUILayout.PropertyField(GetProperty("GetFadeInConfigurationFromInitialValue"), CachedLabel1);
 			if (!Me.GetFadeInConfigurationFromInitialValue)

@@ -19,7 +19,7 @@ namespace Extenity.UIToolbox
 		public bool BlocksRaycasts = true;
 
 		[Header("Transparency")]
-		public bool GetFadeInConfigurationFromInitialValue = true;
+		public bool GetFadeInConfigurationFromInitialValue = false;
 		[Range(0f, 1f)]
 		public float FadeInAlpha = 1f;
 		public bool GetFadeOutConfigurationFromInitialValue = false;
