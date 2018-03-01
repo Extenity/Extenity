@@ -88,6 +88,58 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
+		#region Fade Out All
+
+		public void FadeOutAll()
+		{
+			for (var i = 0; i < Faders.Count; i++)
+			{
+				var fader = Faders[i];
+				if (fader)
+				{
+					fader.FadeOut();
+				}
+			}
+		}
+
+		public void FadeOutAllImmediate()
+		{
+			for (var i = 0; i < Faders.Count; i++)
+			{
+				var fader = Faders[i];
+				if (fader)
+				{
+					fader.FadeOutImmediate();
+				}
+			}
+		}
+
+		public void FadeInAllImmediate()
+		{
+			for (var i = 0; i < Faders.Count; i++)
+			{
+				var fader = Faders[i];
+				if (fader)
+				{
+					fader.FadeInImmediate();
+				}
+			}
+		}
+
+		public void FadeInImmediate(UIFader fader)
+		{
+			// Immediatelly fade out all others.
+			for (var i = 0; i < Faders.Count; i++)
+			{
+				if (Faders[i] != fader && Faders[i])
+					Faders[i].FadeOutImmediate();
+			}
+
+			fader.FadeInImmediate();
+		}
+
+		#endregion
+
 		#region Validate
 
 #if UNITY_EDITOR

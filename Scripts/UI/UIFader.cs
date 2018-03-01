@@ -94,16 +94,36 @@ namespace Extenity.UIToolbox
 				return FadeOut();
 		}
 
+		public float FadeImmediate(bool visible)
+		{
+			if (visible)
+				return FadeInImmediate();
+			else
+				return FadeOutImmediate();
+		}
+
 		public float FadeIn()
 		{
 			OnFadeIn.Invoke(this);
 			return AlphaFadeIn();
 		}
 
+		public float FadeInImmediate()
+		{
+			OnFadeIn.Invoke(this);
+			return AlphaFadeIn(0f, 0f);
+		}
+
 		public float FadeOut()
 		{
 			OnFadeOut.Invoke(this);
 			return AlphaFadeOut();
+		}
+
+		public float FadeOutImmediate()
+		{
+			OnFadeOut.Invoke(this);
+			return AlphaFadeOut(0f, 0f);
 		}
 
 		#endregion
