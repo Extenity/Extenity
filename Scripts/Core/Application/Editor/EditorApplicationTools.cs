@@ -55,7 +55,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		/// <summary>
 		/// Creates and destroys gameobjects to keep EditorApplication.update calls coming.
-		/// That's the worst ever idea but it's the only way I could find.
+		/// That's the worst idea ever but it's the only way I could find.
 		/// 
 		/// Note that this is costly so try to use it only when needed.
 		/// </summary>
@@ -71,7 +71,7 @@ namespace Extenity.ApplicationToolbox.Editor
 		/// This won't help if Editor window does not have focus.
 		/// 
 		/// Note that it may greatly increase calls to EditorApplication.update beyond needs.
-		/// Scripts that does costly operations in their updates would slow down the editor.
+		/// Scripts that do costly operations in their updates would slow down the editor.
 		/// </summary>
 		public static void IncreaseChancesOfNextUpdateCall()
 		{
