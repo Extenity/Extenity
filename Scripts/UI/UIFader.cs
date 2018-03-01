@@ -15,6 +15,8 @@ namespace Extenity.UIToolbox
 		[Tooltip("Optional Canvas reference that will be enabled or disabled.")]
 		public Canvas Canvas;
 		public InitialFadeState InitialState = InitialFadeState.Untouched;
+		public bool Interactable = true;
+		public bool BlocksRaycasts = true;
 
 		[Header("Transparency")]
 		public bool GetFadeInConfigurationFromInitialValue = true;
@@ -131,25 +133,31 @@ namespace Extenity.UIToolbox
 				if (duration < 0.001f)
 				{
 					CanvasGroup.alpha = FadeInAlpha;
-					CanvasGroup.blocksRaycasts = true;
-					CanvasGroup.interactable = true;
+					if (BlocksRaycasts)
+						CanvasGroup.blocksRaycasts = true;
+					if (Interactable)
+						CanvasGroup.interactable = true;
 					if (Canvas != null)
 						Canvas.enabled = true;
 				}
 				else
 				{
 					// Always block raycasts while the panel is visible whether it's visible slightly or fully.
-					CanvasGroup.blocksRaycasts = true;
+					if (BlocksRaycasts)
+						CanvasGroup.blocksRaycasts = true;
 					// Panel won't be interactable until fully visible.
 					//CanvasGroup.interactable = false;
 					// Panel is going to be instantly interactable before getting fully visible.
-					CanvasGroup.interactable = true;
+					if (Interactable)
+						CanvasGroup.interactable = true;
 					if (Canvas != null)
 						Canvas.enabled = true;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
-						CanvasGroup.blocksRaycasts = true;
-						CanvasGroup.interactable = true;
+						if (BlocksRaycasts)
+							CanvasGroup.blocksRaycasts = true;
+						if (Interactable)
+							CanvasGroup.interactable = true;
 						if (Canvas != null)
 							Canvas.enabled = true;
 						OnFinishedFadeIn.Invoke(this);
@@ -190,7 +198,8 @@ namespace Extenity.UIToolbox
 				else
 				{
 					// Always block raycasts while the panel is visible whether it's visible slightly or fully.
-					CanvasGroup.blocksRaycasts = true;
+					if (BlocksRaycasts)
+						CanvasGroup.blocksRaycasts = true;
 					// Break interaction right away so user won't be able to click anything during fade out animation.
 					CanvasGroup.interactable = false;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
