@@ -68,8 +68,8 @@ namespace Extenity.DLLBuilder
 					if (!source.Enabled)
 						continue;
 
-					var sourceDirectoryPath = source.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
-					var targetDirectoryPath = source.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+					var sourceDirectoryPath = DLLBuilderConfiguration.InsertEnvironmentVariables(source.SourceDirectoryPath).FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+					var targetDirectoryPath = DLLBuilderConfiguration.InsertEnvironmentVariables(source.TargetDirectoryPath).FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 
 					// Check that the source directory exists.
 					if (!Directory.Exists(sourceDirectoryPath))

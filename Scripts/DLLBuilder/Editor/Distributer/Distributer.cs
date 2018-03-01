@@ -51,8 +51,8 @@ namespace Extenity.DLLBuilder
 				if (!target.Enabled)
 					continue;
 
-				var sourceDirectoryPath = target.SourceDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
-				var targetDirectoryPath = target.TargetDirectoryPath.FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+				var sourceDirectoryPath = DLLBuilderConfiguration.InsertEnvironmentVariables(target.SourceDirectoryPath).FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
+				var targetDirectoryPath = DLLBuilderConfiguration.InsertEnvironmentVariables(target.TargetDirectoryPath).FixDirectorySeparatorChars('/').AddDirectorySeparatorToEnd('/');
 
 				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
 				if (!Directory.Exists(targetDirectoryPath))

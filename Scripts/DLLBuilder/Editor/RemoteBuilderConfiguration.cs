@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
+using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {
@@ -8,6 +9,7 @@ namespace Extenity.DLLBuilder
 	[Serializable]
 	public class RemoteBuilderConfiguration : IConsistencyChecker
 	{
+		[Tooltip("Allows environment variables.")]
 		public string ProjectPath;
 		public bool Enabled = true;
 		public bool IgnoreIfNotFound = false;
@@ -24,6 +26,7 @@ namespace Extenity.DLLBuilder
 			{
 				errors.Add(new ConsistencyError(this, "Project Path must be specified."));
 			}
+			DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(ProjectPath, ref errors);
 		}
 
 		#endregion

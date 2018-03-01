@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Extenity.ApplicationToolbox;
 using Extenity.AssetToolbox.Editor;
+using Extenity.ConsistencyToolbox;
+using Extenity.DataToolbox;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,7 +22,7 @@ namespace Extenity.DLLBuilder
 		public CompilerConfiguration[] CompilerConfigurations;
 		public PackerConfiguration[] PackerConfigurations;
 		public DistributerConfiguration[] DistributerConfigurations;
-		
+
 		/// <summary>
 		/// Gives a list of Remote Builder Configurations that are enabled.
 		/// See also EnabledAndIgnoreFilteredRemoteBuilderConfigurations.
@@ -49,7 +53,7 @@ namespace Extenity.DLLBuilder
 				if (RemoteBuilderConfigurations == null)
 					throw new NullReferenceException("RemoteBuilderConfigurations list is null");
 				return (from configuration in RemoteBuilderConfigurations
-						where configuration != null && configuration.Enabled && (Directory.Exists(configuration.ProjectPath) || !configuration.IgnoreIfNotFound)
+						where configuration != null && configuration.Enabled && (Directory.Exists(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.ProjectPath)) || !configuration.IgnoreIfNotFound)
 						select configuration).ToList();
 			}
 		}
@@ -141,6 +145,107 @@ namespace Extenity.DLLBuilder
 				Debug.Log(Constants.DLLBuilderName + " configuration asset found at path: " + assetPath);
 				_Instance = AssetDatabase.LoadAssetAtPath<DLLBuilderConfiguration>(assetPath);
 			}
+
+			// It's a great time to also load environment variables.
+			LoadEnvironmentVariables();
+		}
+
+		#endregion
+
+		#region Environment Variables
+
+		public const string EnvironmentVariableStart = "$(";
+		public const string EnvironmentVariableEnd = ")";
+		public static readonly List<KeyValue<string, string>> EnvironmentVariables = new List<KeyValue<string, string>>();
+
+		public static string InsertEnvironmentVariables(string text)
+		{
+			string result;
+			text.ReplaceBetweenAll(
+				EnvironmentVariableStart,
+				EnvironmentVariableEnd,
+				key =>
+				{
+					Debug.LogFormat("Replacing '{0}' in text '{1}'.", key, text);
+
+					for (int i = 0; i < EnvironmentVariables.Count; i++)
+					{
+						if (key == EnvironmentVariables[i].Key)
+							return EnvironmentVariables[i].Value;
+					}
+					throw new Exception(_BuildErrorMessage(key));
+				},
+				false,
+				false,
+				out result
+			);
+			return result;
+		}
+
+		public static void CheckEnvironmentVariableConsistency(string text, ref List<ConsistencyError> errors)
+		{
+			// Do a simulation of replace operation to see if we fail to find any keys. 
+			// Note that this also handles recursive replacements.
+			List<ConsistencyError> errorList = null;
+			string dummy;
+			text.ReplaceBetweenAll(EnvironmentVariableStart, EnvironmentVariableEnd,
+				key =>
+				{
+					for (int i = 0; i < EnvironmentVariables.Count; i++)
+					{
+						if (key == EnvironmentVariables[i].Key)
+							return EnvironmentVariables[i].Value;
+					}
+					if (errorList == null)
+						errorList = new List<ConsistencyError>();
+					errorList.Add(new ConsistencyError(null, _BuildErrorMessage(key), true));
+					return null;
+				},
+				false,
+				false,
+				out dummy
+			);
+			if (errorList != null)
+				errors.AddRange(errorList);
+		}
+
+		private static string _BuildErrorMessage(string key)
+		{
+			return string.Format("Key '{0}' is not found in environment variables. You may happen to forgot to create an entry for this key in configuration?", key);
+		}
+
+		#endregion
+
+		#region Environment Variables - Save/Load
+
+		private static string EnvironmentVariablesPrefsKey
+		{
+			get
+			{
+				return "DLLBuilder.EnvironmentVariables." +
+					   ApplicationTools.AsciiCompanyName + "." +
+					   ApplicationTools.AsciiProductName;
+			}
+		}
+
+		public static void LoadEnvironmentVariables()
+		{
+			EnvironmentVariables.Clear();
+
+			var json = EditorPrefs.GetString(EnvironmentVariablesPrefsKey);
+			if (string.IsNullOrEmpty(json))
+				return;
+
+			var list = JsonConvert.DeserializeObject<List<KeyValue<string, string>>>(json);
+			//var list = JsonUtility.FromJson<List<KeyValue<string, string>>>(json); Unity can't serialize KeyValue
+			EnvironmentVariables.AddRange(list);
+		}
+
+		public static void SaveEnvironmentVariables()
+		{
+			var json = JsonConvert.SerializeObject(EnvironmentVariables);
+			//var json = EditorJsonUtility.ToJson(EnvironmentVariables); Unity can't serialize KeyValue
+			EditorPrefs.SetString(EnvironmentVariablesPrefsKey, json);
 		}
 
 		#endregion

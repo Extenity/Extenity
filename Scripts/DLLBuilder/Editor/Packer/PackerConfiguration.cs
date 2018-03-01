@@ -22,7 +22,9 @@ namespace Extenity.DLLBuilder
 		public bool Enabled = true;
 
 		[Header("Paths")]
+		[Tooltip("Allows environment variables.")]
 		public string SourceDirectoryPath;
+		[Tooltip("Allows environment variables.")]
 		public string TargetDirectoryPath;
 		public bool ExcludeScriptFiles = true;
 
@@ -42,10 +44,12 @@ namespace Extenity.DLLBuilder
 			{
 				errors.Add(new ConsistencyError(this, "Source Directory Path must be specified."));
 			}
+			DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(SourceDirectoryPath, ref errors);
 			if (string.IsNullOrEmpty(TargetDirectoryPath))
 			{
 				errors.Add(new ConsistencyError(this, "Target Directory Path must be specified."));
 			}
+			DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(TargetDirectoryPath, ref errors);
 			if (DirectoriesToCopy == null || DirectoriesToCopy.Length == 0)
 			{
 				errors.Add(new ConsistencyError(this, "There must be at least one entry in Directories To Copy."));

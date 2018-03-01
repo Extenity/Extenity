@@ -66,8 +66,8 @@ namespace Extenity.DLLBuilder
 							: string.Format(" Notes: '{0}'", directoryInfo.BuildEngineerNotes));
 				}
 
-				var sourceDirectoryPath = Path.Combine(configuration.SourceDirectoryPath, directoryInfo.DirectoryName);
-				var targetDirectoryPath = Path.Combine(configuration.TargetDirectoryPath, directoryInfo.DirectoryName);
+				var sourceDirectoryPath = Path.Combine(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.SourceDirectoryPath), directoryInfo.DirectoryName);
+				var targetDirectoryPath = Path.Combine(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.TargetDirectoryPath), directoryInfo.DirectoryName);
 
 				// TODO: Better just sync files, instead of deleting and copying from scratch.
 				DirectoryTools.Delete(targetDirectoryPath);

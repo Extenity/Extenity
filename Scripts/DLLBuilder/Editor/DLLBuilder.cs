@@ -128,7 +128,7 @@ namespace Extenity.DLLBuilder
 			}
 
 			UpdateStatus("Initializing remote project status list.");
-			var remoteProjectPaths = builderConfiguration.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => item.ProjectPath).ToArray();
+			var remoteProjectPaths = builderConfiguration.EnabledAndIgnoreFilteredRemoteBuilderConfigurations.Select(item => DLLBuilderConfiguration.InsertEnvironmentVariables(item.ProjectPath)).ToArray();
 			jobStatus.SetRemoteProjectStatusList(remoteProjectPaths);
 
 			UpdateStatus("Checking job consistency.");

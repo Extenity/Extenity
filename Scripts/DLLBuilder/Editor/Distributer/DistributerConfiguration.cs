@@ -13,7 +13,9 @@ namespace Extenity.DLLBuilder
 		public class DistributionTarget
 		{
 			public bool Enabled = true;
+			[Tooltip("Allows environment variables.")]
 			public string SourceDirectoryPath;
+			[Tooltip("Allows environment variables.")]
 			public string TargetDirectoryPath;
 			//public string[] ExcludedKeywords;
 		}
@@ -50,10 +52,13 @@ namespace Extenity.DLLBuilder
 						{
 							errors.Add(new ConsistencyError(this, string.Format("Source Directory Path in Targets (at index '{0}') must be specified.", i)));
 						}
+						DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(target.SourceDirectoryPath, ref errors);
+
 						if (string.IsNullOrEmpty(target.TargetDirectoryPath))
 						{
 							errors.Add(new ConsistencyError(this, string.Format("Target Directory Path in Targets (at index '{0}') must be specified.", i)));
 						}
+						DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(target.TargetDirectoryPath, ref errors);
 					}
 				}
 			}

@@ -310,11 +310,11 @@ namespace Extenity.DLLBuilder
 
 					if (job.Configuration.RuntimeReferences != null)
 						for (int i = 0; i < job.Configuration.RuntimeReferences.Length; i++)
-							allReferences.AddIfDoesNotContain(job.Configuration.RuntimeReferences[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
+							allReferences.AddIfDoesNotContain(DLLBuilderConfiguration.InsertEnvironmentVariables(job.Configuration.RuntimeReferences[i].Trim()).FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
 
 					if (isEditorBuild && job.Configuration.EditorReferences != null)
 						for (int i = 0; i < job.Configuration.EditorReferences.Length; i++)
-							allReferences.AddIfDoesNotContain(job.Configuration.EditorReferences[i].Trim().FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
+							allReferences.AddIfDoesNotContain(DLLBuilderConfiguration.InsertEnvironmentVariables(job.Configuration.EditorReferences[i].Trim()).FixDirectorySeparatorChars()); // Fix directory separators because these are entered by user.
 
 					if (isEditorBuild && job.Configuration.AddRuntimeDLLReferenceIntoEditorDLL)
 					{
@@ -330,7 +330,7 @@ namespace Extenity.DLLBuilder
 						allReferences.AddIfDoesNotContain(job.UnityManagedReferences.First(item => item.EndsWith("UnityEditor.dll", StringComparison.OrdinalIgnoreCase))); // Directory separators already fixed.
 
 					allReferences.Sort();
-					allReferences.RemoveAll(item => string.IsNullOrEmpty(item));
+					allReferences.RemoveAll(string.IsNullOrEmpty);
 				}
 
 				var arguments = new List<string>(100);

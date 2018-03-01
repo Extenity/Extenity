@@ -181,11 +181,12 @@ namespace Extenity.DLLBuilder
 				}
 
 				// Trigger a compilation on remote project and wait for it to finish
-				job.SetCurrentlyProcessedProject(thisProjectStatus.GetRemoteProject(configuration.ProjectPath));
-				CreateBuildRequestFileForProject(job, configuration.ProjectPath);
+				var projectPathProcessed = DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.ProjectPath);
+				job.SetCurrentlyProcessedProject(thisProjectStatus.GetRemoteProject(projectPathProcessed));
+				CreateBuildRequestFileForProject(job, projectPathProcessed);
 
 				var checkCount = 0;
-				var remoteProjectResponseFilePath = Path.Combine(configuration.ProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
+				var remoteProjectResponseFilePath = Path.Combine(projectPathProcessed, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));
 				while (true)
 				{
 					var now = DateTime.UtcNow.TotalMilliseconds();
