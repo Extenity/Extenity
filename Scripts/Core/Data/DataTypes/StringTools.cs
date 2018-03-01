@@ -187,7 +187,7 @@ namespace Extenity.DataToolbox
 		/// Replaces the text found between startTag and endTag. Only the first occurence will be replaced.
 		/// </summary>
 		/// <returns>Modified text.</returns>
-		public static string ReplaceBetween(this string text, string startTag, string endTag, string newValue, int startIndex = 0)
+		public static string ReplaceBetween(this string text, string startTag, string endTag, Func<string, string> decider, bool keepTags, int startIndex = 0)
 		{
 			if (text == null)
 				throw new ArgumentNullException("text");
@@ -195,26 +195,114 @@ namespace Extenity.DataToolbox
 				throw new ArgumentNullException("startTag");
 			if (string.IsNullOrEmpty(endTag))
 				throw new ArgumentNullException("endTag");
-			// Replacement text can be null. Which means we want to delete the text and not replace with anything.
-			//if (string.IsNullOrEmpty(newValue))
-			//	throw new ArgumentNullException("newValue");
 			if (text.Length == 0)
 				return text;
-
-			if (startIndex < 0)
-				startIndex = 0;
+			if (startIndex < 0 || startIndex >= text.Length)
+				throw new ArgumentOutOfRangeException("startIndex");
 
 			var startTagIndex = text.IndexOf(startTag, startIndex);
 			if (startTagIndex < 0)
 				return text;
-
-			startTagIndex += startTag.Length;
-
-			var endTagIndex = text.IndexOf(endTag, startTagIndex);
-			if (endTagIndex <= startTagIndex)
+			var keyStartIndex = startTagIndex + startTag.Length;
+			var endTagIndex = text.IndexOf(endTag, keyStartIndex);
+			if (endTagIndex < 0)
 				return text;
 
-			return text.Substring(0, startTagIndex) + newValue + text.Substring(endTagIndex, text.Length - endTagIndex);
+			var key = text.Substring(keyStartIndex, endTagIndex - keyStartIndex);
+			var replacedWith = decider(key);
+			// Null string means we won't be processing this key and leave it as it is. 
+			// Empty string means we replace the key with the empty text, i.e we remove the key.
+			if (replacedWith == null) // Do not use string.IsNullOrEmpty here.
+				return text;
+			int replaceStart;
+			int replaceEnd;
+			if (keepTags)
+			{
+				replaceStart = keyStartIndex;
+				replaceEnd = endTagIndex;
+			}
+			else
+			{
+				replaceStart = startTagIndex;
+				replaceEnd = endTagIndex + endTag.Length;
+			}
+			return text.Substring(0, replaceStart) +
+			       replacedWith +
+			       text.Substring(replaceEnd, text.Length - replaceEnd);
+		}
+
+		/// <summary>
+		/// Replaces the text found between startTag and endTag. All occurences will be replaced. 
+		/// </summary>
+		public static bool ReplaceBetweenAll(this string text, string startTag, string endTag, Func<string, string> decider, bool keepTags, bool skipTagsInReplacedText, out string result, int startIndex = 0)
+		{
+			if (text == null)
+				throw new ArgumentNullException("text");
+			if (string.IsNullOrEmpty(startTag))
+				throw new ArgumentNullException("startTag");
+			if (string.IsNullOrEmpty(endTag))
+				throw new ArgumentNullException("endTag");
+			if (text.Length == 0)
+			{
+				result = text;
+				return false;
+			}
+			if (startIndex < 0 || startIndex >= text.Length)
+				throw new ArgumentOutOfRangeException("startIndex");
+
+			var changed = false;
+			while (true)
+			{
+				var startTagIndex = text.IndexOf(startTag, startIndex);
+				if (startTagIndex < 0)
+				{
+					result = text;
+					return changed;
+				}
+				var keyStartIndex = startTagIndex + startTag.Length;
+				var endTagIndex = text.IndexOf(endTag, keyStartIndex);
+				if (endTagIndex < 0)
+				{
+					result = text;
+					return changed;
+				}
+
+				var key = text.Substring(keyStartIndex, endTagIndex - keyStartIndex);
+				var replacedWith = decider(key);
+				// Null string means we won't be processing this key and leave it as it is. 
+				// Empty string means we replace the key with the empty text, i.e we remove the key.
+				if (replacedWith == null) // Do not use string.IsNullOrEmpty here.
+				{
+					startIndex = endTagIndex + endTag.Length;
+					continue;
+				}
+				int replaceStart;
+				int replaceEnd;
+				if (keepTags)
+				{
+					replaceStart = keyStartIndex;
+					replaceEnd = endTagIndex;
+				}
+				else
+				{
+					replaceStart = startTagIndex;
+					replaceEnd = endTagIndex + endTag.Length;
+				}
+				text = text.Substring(0, replaceStart) +
+						 replacedWith +
+						 text.Substring(replaceEnd, text.Length - replaceEnd);
+
+				if (skipTagsInReplacedText)
+				{
+					startIndex = keyStartIndex + replacedWith.Length;
+				}
+				else
+				{
+					startIndex = keyStartIndex;
+				}
+
+				changed = true;
+			}
 		}
 
 		public static int IndexOfNextLineEnding(this string text, int startIndex)
