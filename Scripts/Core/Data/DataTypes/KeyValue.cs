@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -8,7 +9,9 @@ namespace Extenity.DataToolbox
 	{
 		#region Data
 
+		[SerializeField]
 		public TKey Key;
+		[SerializeField]
 		public TValue Value;
 
 		#endregion
@@ -27,7 +30,7 @@ namespace Extenity.DataToolbox
 
 		public override string ToString()
 		{
-			return Key.ToString() + ": " + Value.ToString();
+			return Key + ": " + Value;
 		}
 
 		#endregion
