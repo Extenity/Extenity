@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.DataToolbox;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +12,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 	public static class EditorSceneManagerTools
 	{
-		public static void EnforceUserToSaveAllModifiedScenes(string failMessage)
+		public static void EnforceUserToSaveAllModifiedScenes(string failMessage, bool showMessageBox = false, string messageBoxTitle = "Attention Required", string okayButtonText = "Okay")
 		{
 			var isAnySceneDirty = IsAnyLoadedSceneDirty();
 			if (isAnySceneDirty)
@@ -20,6 +21,10 @@ namespace Extenity.SceneManagementToolbox.Editor
 				var isSceneStillDirty = IsAnyLoadedSceneDirty();
 				if (isSceneStillDirty)
 				{
+					if (showMessageBox)
+					{
+						EditorUtility.DisplayDialog(messageBoxTitle, failMessage, okayButtonText);
+					}
 					throw new Exception(failMessage);
 				}
 			}
