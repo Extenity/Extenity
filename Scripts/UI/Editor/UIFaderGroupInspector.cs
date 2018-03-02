@@ -1,3 +1,4 @@
+using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
@@ -16,6 +17,7 @@ namespace Extenity.UIToolbox.Editor
 		{
 		}
 
+		private readonly GUILayoutOption[] Cached_FaderButtonLayout = { GUILayout.ExpandWidth(true), GUILayout.Height(30) };
 		private readonly GUILayoutOption[] Cached_FadeButtonLayout = { GUILayout.Width(80), GUILayout.Height(30) };
 		private readonly GUIContent Cached_FadeIn = new GUIContent("Fade In");
 		private readonly GUIContent Cached_FadeOut = new GUIContent("Fade Out");
@@ -46,7 +48,10 @@ namespace Extenity.UIToolbox.Editor
 				{
 					var fader = Me.Faders[i];
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(fader == null ? "[Not assigned]" : fader.name);
+					if (GUILayoutTools.Button(fader == null ? "[Not assigned]" : fader.name, fader != null, Cached_FaderButtonLayout))
+					{
+						Selection.activeGameObject = fader.gameObject;
+					}
 					EditorGUI.BeginDisabledGroup(fader == null);
 					{
 						if (GUILayout.Button(Cached_FadeIn, Cached_FadeButtonLayout))
