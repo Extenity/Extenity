@@ -1,3 +1,4 @@
+using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,20 +7,24 @@ namespace Extenity.NavigationToolbox
 
 	public static class NavigationTools
 	{
-		public static void DrawPath(this NavMeshPath path, LineRenderer lineRenderer)
+		public static int DrawPath(this NavMeshPath path, LineRenderer lineRenderer, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
 		{
 			if (!lineRenderer)
-				return;
+				return 0;
 
-			if (path.corners.Length < 2)
+			var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
+
+			if (count < 2)
 			{
 				lineRenderer.positionCount = 0;
 			}
 			else
 			{
-				lineRenderer.positionCount = path.corners.Length;
-				lineRenderer.SetPositions(path.corners);
+				lineRenderer.positionCount = count;
+				lineRenderer.SetPositions(buffer);
 			}
+
+			return count;
 		}
 
 		public static void DrawDebugPath(this NavMeshPath path, Color color, float duration = 0f, bool depthTest = false)
@@ -29,28 +34,40 @@ namespace Extenity.NavigationToolbox
 				Debug.DrawLine(corners[i], corners[i + 1], color, duration, depthTest);
 		}
 
+		#region Get Corners
+
+		public static int GetCornersNonAllocDynamic(this NavMeshPath path, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
+		{
+			var count = path.GetCornersNonAlloc(buffer);
+			if (count == buffer.Length)
+			{
+				var size = buffer.Length;
+				//Debug.LogFormat("Extending the buffer size from: {0}", size);
+				while (size < maxBufferExtensionSize)
+				{
+					size = size == 0 ? 8 : Mathf.Min(size * 2, maxBufferExtensionSize);
+					//Debug.LogFormat("New buffer size: {0}", size);
+					buffer = new Vector3[size];
+					count = path.GetCornersNonAlloc(buffer);
+					if (count < buffer.Length)
+						return count;
+				}
+			}
+			//Debug.LogFormat("Buffer size: {0}    count: {1}", buffer.Length, count);
+			return count;
+		}
+
+		#endregion
+
 		#region Length
 
-		//private const int TotalLengthCornersBufferMaximumSize = 100;
-		//private static Vector3[] TotalLengthCornersBuffer;
-
-		public static float CalculateTotalLength(this NavMeshPath path)
+		/// <summary>
+		/// Calculates total length of the path. Consider using 'buffer.CalculateLineStripLength' if you already have the path corners.
+		/// </summary>
+		public static float CalculateTotalLength(this NavMeshPath path, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
 		{
-			// TODO: Optimize. Use GetCornersNonAlloc
-
-			var corners = path.corners;
-			if (corners == null || corners.Length < 2)
-				return 0f;
-
-			var totalDistance = 0f;
-			var previousCorner = corners[0];
-			for (int i = 1; i < corners.Length; i++)
-			{
-				var corner = corners[i];
-				totalDistance += (corner - previousCorner).magnitude;
-				previousCorner = corner;
-			}
-			return totalDistance;
+			var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
+			return buffer.CalculateLineStripLength(0, count);
 		}
 
 		#endregion

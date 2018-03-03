@@ -1727,6 +1727,23 @@ namespace Extenity.MathToolbox
 			return totalDistance;
 		}
 
+		public static float CalculateLineStripLength(this IList<Vector3> points, int startIndex, int count)
+		{
+			if (points == null || points.Count < 2 || count < 2)
+				return 0f;
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			var endIndex = startIndex + count;
+			for (int i = startIndex + 1; i < endIndex; i++)
+			{
+				var currentPoint = points[i];
+				totalDistance += Vector3.Distance(previousPoint, currentPoint);
+				previousPoint = currentPoint;
+			}
+			return totalDistance;
+		}
+
 		public static float CalculateAverageLengthOfLineStripParts(this IList<Vector3> points)
 		{
 			if (points == null || points.Count < 2)
@@ -1765,7 +1782,7 @@ namespace Extenity.MathToolbox
 
 		#region Line Strip Operations
 
-		public static Vector3 GetPointAtDistanceFromStart(IList<Vector3> points, float distanceFromStart, ref Vector3 part)
+		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, ref Vector3 part)
 		{
 			if (points == null || points.Count == 0)
 				return Vector3NaN;
@@ -1796,7 +1813,7 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointAtDistanceFromStart(IList<Vector3> points, bool loop, float distanceFromStart, ref Vector3 part)
+		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, bool loop, float distanceFromStart, ref Vector3 part)
 		{
 			if (points == null || points.Count == 0)
 				return Vector3NaN;
@@ -1845,7 +1862,7 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointAtDistanceFromStart(IList<Vector3> points, float distanceFromStart)
+		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart)
 		{
 			if (points == null || points.Count == 0)
 				return Vector3NaN;
@@ -1875,7 +1892,7 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointAtDistanceFromStart(IList<Vector3> points, bool loop, float distanceFromStart)
+		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, bool loop, float distanceFromStart)
 		{
 			if (points == null || points.Count == 0)
 				return Vector3NaN;
@@ -2155,6 +2172,20 @@ namespace Extenity.MathToolbox
 			}
 
 			return distanceFromStartOfClosestPoint;
+		}
+
+		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector3> points, Vector3 point, float resultingPointDistanceToClosestPoint)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point);
+			var resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart);
+		}
+
+		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector3> points, Vector3 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point);
+			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart);
 		}
 
 		public static int FindClosestValueIndex(this IList<Vector3> values, Vector3 targetValue, int startIndex = 0)
