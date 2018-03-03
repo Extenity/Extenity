@@ -47,12 +47,12 @@ namespace Extenity.MathToolbox
 
 		public Vector3 GetPoint(float distanceFromStart, ref Vector3 part)
 		{
-			return MathTools.GetPointAtDistanceFromStart(Points, Loop, distanceFromStart, ref part);
+			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
 		}
 
 		public Vector3 GetPoint(float distanceFromStart)
 		{
-			return MathTools.GetPointAtDistanceFromStart(Points, Loop, distanceFromStart);
+			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart);
 		}
 
 		public Vector3 GetPoint(int index)
@@ -62,7 +62,7 @@ namespace Extenity.MathToolbox
 
 		public int SortPoints(Vector3 initialPointReference)
 		{
-			return MathTools.SortLineStripUsingClosestSequentialPointsMethod(Points, initialPointReference);
+			return Points.SortLineStripUsingClosestSequentialPointsMethod(initialPointReference);
 		}
 
 		#endregion
