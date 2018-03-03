@@ -72,7 +72,7 @@ namespace Extenity.UnityEditorToolbox
 				var definition = Scenes.FirstOrDefault(item =>
 					item.ProcessedScenePath.Equals(scenePath, StringComparison.InvariantCultureIgnoreCase) ||
 					item.MainScenePath.Equals(scenePath, StringComparison.InvariantCultureIgnoreCase) ||
-					item.MergedScenePaths.Any(mergedScenePath => mergedScenePath.Equals(scenePath, StringComparison.InvariantCultureIgnoreCase))
+					(item.MergedScenePaths != null && item.MergedScenePaths.Any(mergedScenePath => mergedScenePath.Equals(scenePath, StringComparison.InvariantCultureIgnoreCase)))
 				);
 				if (definition == null)
 				{
@@ -133,16 +133,19 @@ namespace Extenity.UnityEditorToolbox
 					}
 
 					// Merge other scenes into processing scene.
-					foreach (var mergedScenePath in definition.MergedScenePaths)
+					if (definition.MergedScenePaths != null)
 					{
-						if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
+						foreach (var mergedScenePath in definition.MergedScenePaths)
 						{
-							throw new Exception(string.Format("Merged scene could not be found at path '{0}'.", mergedScenePath));
-						}
+							if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
+							{
+								throw new Exception(string.Format("Merged scene could not be found at path '{0}'.", mergedScenePath));
+							}
 
-						// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
-						var mergedScene = EditorSceneManager.OpenScene(mergedScenePath, OpenSceneMode.Additive);
-						EditorSceneManager.MergeScenes(mergedScene, processingScene);
+							// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
+							var mergedScene = EditorSceneManager.OpenScene(mergedScenePath, OpenSceneMode.Additive);
+							EditorSceneManager.MergeScenes(mergedScene, processingScene);
+						}
 					}
 
 					// Save processed scene
