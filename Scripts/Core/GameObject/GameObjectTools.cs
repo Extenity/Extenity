@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Extenity.MathToolbox;
+using Extenity.SceneManagementToolbox;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -907,6 +908,11 @@ namespace Extenity.GameObjectToolbox
 			return SceneManager.GetActiveScene().FindObjectsOfTypeAll<T>();
 		}
 
+		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>()
+		{
+			return SceneManagerTools.GetLoadedScenes().FindObjectsOfTypeAll<T>();
+		}
+
 		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene)
 		{
 			var temp = new List<T>();
@@ -917,6 +923,17 @@ namespace Extenity.GameObjectToolbox
 				rootGameObjects[i].GetComponentsInChildren(true, temp);
 				results.AddRange(temp);
 				temp.Clear();
+			}
+			return results;
+		}
+
+		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes)
+		{
+			var results = new List<T>();
+			foreach (var scene in scenes)
+			{
+				var list = scene.FindObjectsOfTypeAll<T>();
+				results.AddRange(list);
 			}
 			return results;
 		}

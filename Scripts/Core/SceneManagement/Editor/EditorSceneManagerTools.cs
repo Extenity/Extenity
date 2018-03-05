@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 namespace Extenity.SceneManagementToolbox.Editor
 {
 
-	public static class EditorSceneManagerTools
+	public class EditorSceneManagerTools : SceneManagerTools
 	{
 		public static void EnforceUserToSaveAllModifiedScenes(string failMessage, bool showMessageBox = false, string messageBoxTitle = "Attention Required", string okayButtonText = "Okay")
 		{
@@ -48,35 +48,6 @@ namespace Extenity.SceneManagementToolbox.Editor
 			return list;
 		}
 
-		public static List<Scene> GetLoadedScenes(bool includeActiveScene)
-		{
-			var list = new List<Scene>();
-			for (int i = 0; i < EditorSceneManager.sceneCount; i++)
-			{
-				var scene = EditorSceneManager.GetSceneAt(i);
-				if (scene.isLoaded)
-				{
-					if (!scene.IsActive() || includeActiveScene)
-					{
-						list.Add(scene);
-					}
-				}
-			}
-			return list;
-		}
-
-		public static bool IsActive(this Scene scene)
-		{
-			if (!scene.IsValid())
-				throw new Exception("Scene is not valid.");
-
-			var activeScene = EditorSceneManager.GetActiveScene();
-			if (!activeScene.IsValid())
-				throw new Exception("Active scene is not valid.");
-
-			return activeScene == scene;
-		}
-
 		public static bool IsAnyLoadedSceneDirty(bool includeActiveScene = true)
 		{
 			return GetLoadedScenes(includeActiveScene).Any(scene => scene.isDirty);
@@ -95,6 +66,17 @@ namespace Extenity.SceneManagementToolbox.Editor
 			}
 		}
 
+		public static bool IsSceneExistsAtPath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException("path");
+			var fullPath = path.AddFileExtension(".unity");
+			return File.Exists(fullPath);
+		}
+	}
+
+	public static class EditorSceneManagerToolsExtensions
+	{
 		public static List<string> GetPaths(this IEnumerable<SceneSetup> sceneSetups)
 		{
 			var list = new List<string>();
@@ -119,14 +101,6 @@ namespace Extenity.SceneManagementToolbox.Editor
 				}
 			}
 			return list;
-		}
-
-		public static bool IsSceneExistsAtPath(string path)
-		{
-			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
-			var fullPath = path.AddFileExtension(".unity");
-			return File.Exists(fullPath);
 		}
 	}
 
