@@ -25,14 +25,24 @@ namespace Extenity.UIToolbox
 
 		private static IEnumerator DoSimulateButtonClick(Button button)
 		{
+			if (!button)
+				yield break;
 			var pointer = new PointerEventData(EventSystem.current);
 			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+			if (!button)
+				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+			if (!button)
+				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.submitHandler);
+			if (!button)
+				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+			if (!button)
+				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
 		}
