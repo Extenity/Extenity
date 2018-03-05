@@ -202,28 +202,6 @@ namespace Extenity.RenderingToolbox
 
 		#endregion
 
-		#region Orientation Tools
-
-		private ScreenOrientation previousOrientation = ScreenOrientation.Unknown;
-
-		public void ChangeOrientation(ScreenOrientation orientation)
-		{
-			previousOrientation = Screen.orientation;
-			Screen.orientation = orientation;
-		}
-
-		public void ChangeOrientationToPrevious()
-		{
-			ChangeOrientation(previousOrientation);
-		}
-
-		public ScreenOrientation PreviousOrientation
-		{
-			get { return previousOrientation; }
-		}
-
-		#endregion
-
 		#region Data
 
 		private int previousScreenWidth = int.MinValue;
