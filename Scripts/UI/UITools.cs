@@ -27,24 +27,25 @@ namespace Extenity.UIToolbox
 		{
 			if (!button)
 				yield break;
+			var go = button.gameObject;
 			var pointer = new PointerEventData(EventSystem.current);
-			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-			if (!button)
+			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerEnterHandler);
+			if (!button || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
-			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
-			if (!button)
+			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerDownHandler);
+			if (!button || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
-			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.submitHandler);
-			if (!button)
+			ExecuteEvents.Execute(go, pointer, ExecuteEvents.submitHandler);
+			if (!button || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
-			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
-			if (!button)
+			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerUpHandler);
+			if (!button || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
-			ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerExitHandler);
 		}
 
 		#endregion
