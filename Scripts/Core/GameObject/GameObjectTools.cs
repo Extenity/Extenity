@@ -147,6 +147,26 @@ namespace Extenity.GameObjectToolbox
 			Destroy(component, historySaveType);
 		}
 
+		public static void DestroyImmediateComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
+		{
+			if (component == null)
+				return;
+
+			var gameObject = component.gameObject;
+			var hasChildren = gameObject.transform.childCount > 0;
+			if (!hasChildren) // Make sure the gameobject has no sub gameobjects
+			{
+				var componentCount = gameObject.GetComponents<Component>().Length;
+				if (componentCount == 2) // 1 for Transform and 1 for the 'component'
+				{
+					DestroyImmediate(gameObject, historySaveType);
+					return;
+				}
+			}
+
+			DestroyImmediate(component, historySaveType);
+		}
+
 		#endregion
 
 		#region Destroy With History
