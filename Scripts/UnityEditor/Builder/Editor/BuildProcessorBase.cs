@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
@@ -293,6 +294,8 @@ namespace Extenity.UnityEditorToolbox
 
 		private static string ProgressBarTitle;
 		private static string ProgressBarMessage;
+		private static double LastProgressBarUpdateTime;
+		private const float ProgressBarUpdateInterval = 0.2f;
 
 		protected static void DisplayProgressBar(string title, string message, float progress = 0f)
 		{
@@ -303,7 +306,12 @@ namespace Extenity.UnityEditorToolbox
 
 		protected static void UpdateProgressBar(float progress)
 		{
-			EditorUtility.DisplayProgressBar(ProgressBarTitle, ProgressBarMessage, progress);
+			var now = PrecisionTiming.PreciseTime;
+			if (now > ProgressBarUpdateInterval + LastProgressBarUpdateTime)
+			{
+				LastProgressBarUpdateTime = now;
+				EditorUtility.DisplayProgressBar(ProgressBarTitle, ProgressBarMessage, progress);
+			}
 		}
 
 		protected static void ClearProgressBar()
