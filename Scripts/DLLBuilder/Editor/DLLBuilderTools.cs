@@ -13,7 +13,7 @@ namespace Extenity.DLLBuilder
 	{
 		public static readonly string CSCPath = @"C:\Windows\Microsoft.NET\Framework64\v3.5\csc.exe";
 		//public static readonly string CSCPath = @"C:\Windows\Microsoft.NET\Framework64\v2.0.50727\csc.exe";
-		
+
 		public static string AutoDetectCSCPath()
 		{
 			string CSCPath = null;
@@ -75,12 +75,15 @@ namespace Extenity.DLLBuilder
 
 		public static string GetUnityVersionDefines(string unityVersion)
 		{
-			string[] parts = unityVersion.Split('.');
-			Regex re = new Regex(@"\d+");
-			Match m = re.Match(parts[2]);
-			if (m.Success == true)
-				return "UNITY_" + parts[0] + ";UNITY_" + parts[0] + "_" + parts[1] + ";UNITY_" + parts[0] + "_" + parts[1] + "_" + m.Value;
-			return "UNITY_" + parts[0] + ";UNITY_" + parts[0] + "_" + parts[1] + ";UNITY_" + parts[0] + "_" + parts[1] + "_" + parts[2];
+			var parts = unityVersion.Split('.');
+			var regex = new Regex(@"\d+");
+			var match = regex.Match(parts[2]);
+			var lastPart = match.Success ? match.Value : parts[2];
+			return
+				"UNITY_" + parts[0] +
+				";UNITY_" + parts[0] + "_" + parts[1] +
+				";UNITY_" + parts[0] + "_" + parts[1] + "_" + lastPart +
+				";UNITY_" + parts[0] + "_" + parts[1] + "_OR_NEWER";
 		}
 	}
 

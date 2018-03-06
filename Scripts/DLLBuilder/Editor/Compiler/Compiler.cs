@@ -12,6 +12,7 @@ using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.DLLBuilder
@@ -60,6 +61,7 @@ namespace Extenity.DLLBuilder
 					job = new CompilerJob(configuration);
 					DLLBuilder.LogAndUpdateStatus("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
 
+					job.UnityVersion = Application.unityVersion;
 					DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
 					GenerateExportedFiles(job.Configuration.ProcessedSourcePath, false, ref job.SourceFilePathsForRuntimeDLL, job.Configuration.ExcludedKeywords);
 					GenerateExportedFiles(job.Configuration.ProcessedSourcePath, true, ref job.SourceFilePathsForEditorDLL, job.Configuration.ExcludedKeywords);
@@ -289,6 +291,15 @@ namespace Extenity.DLLBuilder
 					? job.Configuration.EditorDefinesAsString
 					: job.Configuration.RuntimeDefinesAsString;
 
+				// Append Unity version directives.
+				if (job.Configuration.IncludeUnityVersion)
+				{
+					var unityVersionDefines = DLLBuilderTools.GetUnityVersionDefines(job.UnityVersion);
+					defines += string.IsNullOrEmpty(defines)
+						? unityVersionDefines
+						: ";" + unityVersionDefines;
+				}
+
 				var dllOutputPath = isEditorBuild
 					? job.Configuration.EditorDLLPath
 					: job.Configuration.DLLPath;
@@ -377,15 +388,6 @@ namespace Extenity.DLLBuilder
 
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
 
-							//defines = defines.Trim();
-							////// Append Unity version directives.
-							////{
-							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-							////	defines += string.IsNullOrEmpty(defines)
-							////		? unityVersionDefines
-							////		: ";" + unityVersionDefines;
-							////}
-
 							if (!string.IsNullOrEmpty(defines))
 							{
 								arguments.Add("/define:" + defines);
@@ -433,15 +435,6 @@ namespace Extenity.DLLBuilder
 							}
 
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
-
-							//defines = defines.Trim();
-							////// Append Unity version directives.
-							////{
-							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-							////	defines += string.IsNullOrEmpty(defines)
-							////		? unityVersionDefines
-							////		: ";" + unityVersionDefines;
-							////}
 
 							if (!string.IsNullOrEmpty(defines))
 							{
@@ -492,15 +485,6 @@ namespace Extenity.DLLBuilder
 
 							arguments.Add("/out:\"" + dllOutputPath + "\"");
 
-							//defines = defines.Trim();
-							////// Append Unity version directives.
-							////{
-							////	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-							////	defines += string.IsNullOrEmpty(defines)
-							////		? unityVersionDefines
-							////		: ";" + unityVersionDefines;
-							////}
-
 							if (!string.IsNullOrEmpty(defines))
 							{
 								arguments.Add("/define:" + defines);
@@ -545,15 +529,6 @@ namespace Extenity.DLLBuilder
 							{
 								arguments.Add("/unsafe");
 							}
-
-							defines = defines.Trim();
-							//// Append Unity version directives.
-							//{
-							//	var unityVersionDefines = GetUnityVersionDefines(unityVersion);
-							//	defines += string.IsNullOrEmpty(defines)
-							//		? unityVersionDefines
-							//		: ";" + unityVersionDefines;
-							//}
 
 							if (!string.IsNullOrEmpty(defines))
 							{

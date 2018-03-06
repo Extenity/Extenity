@@ -19,6 +19,7 @@ namespace Extenity.DLLBuilder
 		public List<string> SourceFilePathsForEditorDLL;
 
 		public List<string> UnityManagedReferences;
+		public string UnityVersion;
 
 		public CompileResult RuntimeDLLSucceeded;
 		public CompileResult EditorDLLSucceeded;

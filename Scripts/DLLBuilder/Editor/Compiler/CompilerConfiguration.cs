@@ -88,6 +88,7 @@ namespace Extenity.DLLBuilder
 		[Header("Preprocessor")]
 		public string[] RuntimeDefines = { };
 		public string[] EditorDefines = { "TRACE", "DEBUG" };
+		public bool IncludeUnityVersion = true;
 
 		public string RuntimeDefinesAsString
 		{

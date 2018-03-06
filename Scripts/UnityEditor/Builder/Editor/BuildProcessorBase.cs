@@ -15,6 +15,9 @@ using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
 using UnityEditor;
 using UnityEditor.Build;
+#if UNITY_2018_1_OR_NEWER
+using UnityEditor.Build.Reporting;
+#endif
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -188,19 +191,31 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Build Preprocessor / Build Postprocessor / Scene Processor
 
-		public void OnPreprocessBuild(BuildTarget target, string path)
+#if UNITY_2018_1_OR_NEWER
+		public void OnPreprocessBuild(BuildReport report)
+#else
+		//public void OnPreprocessBuild(BuildTarget target, string path)
+#endif
 		{
 			Debug.LogFormat("Build processor '{0}' is checking up in build preprocess...", BuildProcessorName);
 
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
 		}
 
-		public void OnPostprocessBuild(BuildTarget target, string path)
+#if UNITY_2018_1_OR_NEWER
+		public void OnPostprocessBuild(BuildReport report)
+#else
+		//public void OnPostprocessBuild(BuildTarget target, string path)
+#endif
 		{
 			//Debug.Log("Cleaning up in build postprocess...");
 		}
-
-		public void OnProcessScene(Scene scene)
+		
+#if UNITY_2018_1_OR_NEWER
+		public void OnProcessScene(Scene scene, BuildReport report)
+#else
+		//public void OnProcessScene(Scene scene)
+#endif
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 				return;

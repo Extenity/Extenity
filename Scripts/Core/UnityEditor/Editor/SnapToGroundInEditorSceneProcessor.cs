@@ -1,6 +1,9 @@
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEditor.Build;
+#if UNITY_2018_1_OR_NEWER
+using UnityEditor.Build.Reporting;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +14,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		public int callbackOrder { get { return -1000; } }
 
-		public void OnProcessScene(Scene scene)
+#if UNITY_2018_1_OR_NEWER
+		public void OnProcessScene(Scene scene, BuildReport report)
+#else
+		//public void OnProcessScene(Scene scene)
+#endif
 		{
 			RemoveSnapToGroundInEditorComponents(scene, true);
 		}
