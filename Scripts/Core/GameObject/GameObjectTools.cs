@@ -1533,6 +1533,22 @@ namespace Extenity.GameObjectToolbox
 			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
+		/// <summary>
+		/// Only sets the name if it's not the same. Prevents firing hierarchy changed events in editor.
+		/// </summary>
+		public static bool SetNameIfRequired(this GameObject me, string newName)
+		{
+			if (!me)
+				throw new NullReferenceException("me");
+
+			if (me.name != newName)
+			{
+				me.name = newName;
+				return true;
+			}
+			return false;
+		}
+
 		#endregion
 	}
 
