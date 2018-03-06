@@ -1,3 +1,5 @@
+using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,19 +13,22 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void OnProcessScene(Scene scene)
 		{
-			//Debug.LogFormat("Removing SnapToGroundInEditor from scene '{0}'.", scene.name);
+			RemoveSnapToGroundInEditorComponents(scene, true);
+		}
 
-			var rootGameObjects = scene.GetRootGameObjects();
-			if (rootGameObjects != null)
+		public static void RemoveSnapToGroundInEditorComponents(Scene scene, bool log)
+		{
+			var objects = scene.FindObjectsOfTypeAll<SnapToGroundInEditor>();
+			if (objects.IsNotNullAndEmpty())
 			{
-				for (var iRoot = 0; iRoot < rootGameObjects.Length; iRoot++)
+				if (log)
 				{
-					var rootGameObject = rootGameObjects[iRoot];
-					var components = rootGameObject.GetComponentsInChildren<SnapToGroundInEditor>();
-					for (var iComponent = 0; iComponent < components.Length; iComponent++)
-					{
-						Object.Destroy(components[iComponent]);
-					}
+					Debug.LogFormat("Removing '{0}' SnapToGroundInEditor components from scene '{1}'.", objects.Count, scene.name);
+				}
+
+				for (var i = 0; i < objects.Count; i++)
+				{
+					Object.DestroyImmediate(objects[i]);
 				}
 			}
 		}

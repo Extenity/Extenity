@@ -9,6 +9,7 @@ using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
 using Extenity.ParallelToolbox;
 using Extenity.ParallelToolbox.Editor;
+using Extenity.SceneManagementToolbox;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
@@ -374,6 +375,15 @@ namespace Extenity.UnityEditorToolbox
 		protected static void DeleteAllDisabledStaticMeshRenderersInActiveScene()
 		{
 			EditorGameObjectTools.DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true);
+		}
+
+		public void DeleteSnapToGroundInEditorComponents()
+		{
+			var scenes = SceneManagerTools.GetLoadedScenes();
+			for (var i = 0; i < scenes.Count; i++)
+			{
+				SnapToGroundInEditorSceneProcessor.RemoveSnapToGroundInEditorComponents(scenes[i], true);
+			}
 		}
 
 		public static void BlurReflectionProbesOfActiveScene()
