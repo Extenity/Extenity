@@ -194,7 +194,7 @@ namespace Extenity.UnityEditorToolbox
 #if UNITY_2018_1_OR_NEWER
 		public void OnPreprocessBuild(BuildReport report)
 #else
-		//public void OnPreprocessBuild(BuildTarget target, string path)
+		public void OnPreprocessBuild(BuildTarget target, string path)
 #endif
 		{
 			Debug.LogFormat("Build processor '{0}' is checking up in build preprocess...", BuildProcessorName);
@@ -205,7 +205,7 @@ namespace Extenity.UnityEditorToolbox
 #if UNITY_2018_1_OR_NEWER
 		public void OnPostprocessBuild(BuildReport report)
 #else
-		//public void OnPostprocessBuild(BuildTarget target, string path)
+		public void OnPostprocessBuild(BuildTarget target, string path)
 #endif
 		{
 			//Debug.Log("Cleaning up in build postprocess...");
@@ -214,7 +214,7 @@ namespace Extenity.UnityEditorToolbox
 #if UNITY_2018_1_OR_NEWER
 		public void OnProcessScene(Scene scene, BuildReport report)
 #else
-		//public void OnProcessScene(Scene scene)
+		public void OnProcessScene(Scene scene)
 #endif
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)

@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 #if UNITY_2018_1_OR_NEWER
 		public void OnProcessScene(Scene scene, BuildReport report)
 #else
-		//public void OnProcessScene(Scene scene)
+		public void OnProcessScene(Scene scene)
 #endif
 		{
 			RemoveSnapToGroundInEditorComponents(scene, true);
