@@ -28,14 +28,21 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var configuration = processor.GetConfiguration(entry.Configuration);
 			for (var i = 0; i < entry.Objects.Length; i++)
 			{
-				count += ProcessSelection(entry.Objects[i], configuration);
+				count += ProcessSelection(processor, entryIndex, i, configuration);
 			}
 			return count;
 		}
 
 		/// <returns>Changed object count.</returns>
-		public static int ProcessSelection(BatchObjectProcessorSelection selection, BatchObjectProcessorConfiguration configuration)
+		public static int ProcessSelection(this BatchObjectProcessor processor, int entryIndex, int objectIndex, BatchObjectProcessorConfiguration configuration)
 		{
+			var selection = processor.Entries[entryIndex].Objects[objectIndex];
+			if (!selection.Object)
+			{
+				Debug.LogErrorFormat("Batch object processor has a null reference in entry '{0}' (at index {1}) and object at index '{2}'.", processor.Entries[entryIndex].Configuration, entryIndex, objectIndex);
+				return 0;
+			}
+
 			var count = 0;
 			if (selection.IncludeChildren)
 			{

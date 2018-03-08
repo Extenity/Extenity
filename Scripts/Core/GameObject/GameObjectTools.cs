@@ -1082,11 +1082,15 @@ namespace Extenity.GameObjectToolbox
 
 		public static void ForeachChildren(this GameObject gameObject, ChildHandler childHandler, bool recursive)
 		{
+			if (!gameObject)
+				throw new ArgumentNullException("gameObject");
 			InternalIterateChildren(gameObject, childHandler, recursive);
 		}
 
 		private static void InternalIterateChildren(GameObject gameObject, ChildHandler childHandler, bool recursive)
 		{
+			if (!gameObject)
+				throw new ArgumentNullException("gameObject");
 			foreach (Transform child in gameObject.transform)
 			{
 				childHandler(child.gameObject);
