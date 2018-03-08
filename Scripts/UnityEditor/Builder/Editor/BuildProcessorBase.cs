@@ -356,7 +356,10 @@ namespace Extenity.UnityEditorToolbox
 				var previousStepDuration = now - PreviousStepStartTime;
 				Debug.LogFormat("Step '{0}' took {1}.", PreviousStepTitle, previousStepDuration.ToStringHoursMinutesSecondsMilliseconds());
 				Debug.LogFormat("{0} | {1}Scene Processor Step {2} - {3}", now.ToStringHoursMinutesSecondsMilliseconds(), skippedText, CurrentStep, title);
-				DisplayProgressBar("Scene Processor Step " + CurrentStep, title);
+				if (isAllowed)
+				{
+					DisplayProgressBar("Scene Processor Step " + CurrentStep, title);
+				}
 			}
 
 			PreviousStepStartTime = now;
