@@ -1,4 +1,5 @@
 using System;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -25,7 +26,7 @@ namespace Extenity.UnityEditorToolbox
 
 		[Header("Change Layers")]
 		public bool ChangeLayers = false;
-		public LayerMask Layer;
+		public SingleLayer Layer;
 
 		[Header("Change Tags")]
 		public bool ChangeTags = false;

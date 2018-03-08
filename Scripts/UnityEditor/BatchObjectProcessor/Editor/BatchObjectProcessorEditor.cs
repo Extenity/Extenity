@@ -78,10 +78,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (configuration.ChangeLayers)
 			{
-				if (go.layer != configuration.Layer)
+				if (go.layer != configuration.Layer.LayerIndex)
 				{
 					changed = true;
-					go.layer = configuration.Layer;
+					go.layer = configuration.Layer.LayerIndex;
 				}
 			}
 
