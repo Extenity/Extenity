@@ -157,6 +157,8 @@ namespace Extenity.UnityEditorToolbox
 					EditorSceneManager.SaveOpenScenes();
 				}
 
+				Debug.Log("Scene is ready to be processed. Starting the process.");
+
 				yield return Task.StartNested(OnProcessActiveScene(definition, configuration, runAsync));
 
 				var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
