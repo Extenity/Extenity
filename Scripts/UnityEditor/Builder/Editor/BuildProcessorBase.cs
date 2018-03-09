@@ -468,14 +468,24 @@ namespace Extenity.UnityEditorToolbox
 			AssetDatabase.SaveAssets();
 		}
 
+		protected static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>() where T : Component
+		{
+			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(true, true);
+		}
+
 		protected static void DeleteAllGameObjectsContainingComponentInActiveScene<T>() where T : Component
 		{
 			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInActiveScene<T>(true, true);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponent<T>() where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>() where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponent<T>(null, true);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, true);
+		}
+
+		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>() where T : Component
+		{
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, true);
 		}
 
 		protected static void DeleteEmptyUnreferencedGameObjectsInActiveScene()

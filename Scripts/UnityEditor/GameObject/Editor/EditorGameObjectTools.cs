@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
+using Extenity.SceneManagementToolbox;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -177,6 +178,11 @@ namespace Extenity.GameObjectToolbox.Editor
 		#endregion
 
 		#region Delete All GameObjects Containing Component
+
+		public static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool undoable, bool log) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DeleteAllGameObjectsContainingComponent<T>(undoable, log));
+		}
 
 		public static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool undoable, bool log) where T : Component
 		{

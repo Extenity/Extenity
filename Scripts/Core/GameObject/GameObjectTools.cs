@@ -691,7 +691,7 @@ namespace Extenity.GameObjectToolbox
 			}
 			return null;
 		}
-		
+
 		#endregion
 
 		#region Find child(ren) by custom rule
@@ -1117,18 +1117,28 @@ namespace Extenity.GameObjectToolbox
 
 		#region SetParent
 
-		public static void SetParentOfAllObjectsContainingComponent<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		{
+			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, onlyStaticObjects);
+		}
+
+		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, onlyStaticObjects));
+		}
+
+		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool onlyStaticObjects) where T : Component
 		{
 			IEnumerable<Transform> componentTransforms;
 			if (onlyStaticObjects)
 			{
-				componentTransforms = FindObjectsOfTypeAllInActiveScene<T>()
+				componentTransforms = scene.FindObjectsOfTypeAll<T>()
 					.Where(item => item.gameObject.isStatic)
 					.Select(item => item.transform);
 			}
 			else
 			{
-				componentTransforms = FindObjectsOfTypeAllInActiveScene<T>()
+				componentTransforms = scene.FindObjectsOfTypeAll<T>()
 					.Select(item => item.transform);
 			}
 
