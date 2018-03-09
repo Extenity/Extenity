@@ -8,6 +8,8 @@ namespace Extenity.UnityEditorToolbox
 	[Serializable]
 	public struct BuildProcessConfiguration : IConsistencyChecker
 	{
+		public string Category;
+
 		public bool SkipAtCustomProcessing;
 		public bool SkipAtBuildPreprocessing;
 

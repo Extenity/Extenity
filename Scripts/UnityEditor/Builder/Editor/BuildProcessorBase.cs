@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
@@ -47,7 +48,8 @@ namespace Extenity.UnityEditorToolbox
 		public static string PreviousStepTitle { get; private set; }
 		private static CoroutineTask Task;
 
-		protected abstract IEnumerator OnProcessActiveScene(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
+		protected abstract IEnumerator OnBeforeProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
+		protected abstract IEnumerator OnAfterProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
 
 		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges)
 		{
@@ -159,10 +161,30 @@ namespace Extenity.UnityEditorToolbox
 
 				Debug.Log("Scene is ready to be processed. Starting the process.");
 
-				yield return Task.StartNested(OnProcessActiveScene(definition, configuration, runAsync));
+				// Call initialization process
+				yield return Task.StartNested(OnBeforeProcess(definition, configuration, runAsync));
+
+				// Call custom processors
+				{
+					var category = string.IsNullOrEmpty(configuration.Category)
+						? "Default"
+						: configuration.Category;
+					var methods = CollectProcessorMethods(category);
+					foreach (var method in methods)
+					{
+						var enumerator = (IEnumerator)method.Invoke(this, new object[] { definition, configuration, runAsync });
+						yield return Task.StartNested(enumerator);
+					}
+				}
+
+				// Call finalization process
+				yield return Task.StartNested(OnAfterProcess(definition, configuration, runAsync));
 
 				var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
-				Debug.LogFormat("Step {0} took {1}.", CurrentStep - 1, previousStepDuration.ToStringHoursMinutesSecondsMilliseconds());
+				if (CurrentStep - 1 > 0)
+				{
+					Debug.LogFormat("Step {0} took {1}.", CurrentStep - 1, previousStepDuration.ToStringHoursMinutesSecondsMilliseconds());
+				}
 
 				// Hack: This is needed to save the scene after lightmap settings change.
 				// For some reason, we need to wait one more frame or the scene would get
@@ -191,6 +213,72 @@ namespace Extenity.UnityEditorToolbox
 
 		#endregion
 
+		#region Processor Methods
+
+		public static List<MethodInfo> CollectProcessorMethods(string category)
+		{
+			if (string.IsNullOrEmpty(category))
+				throw new ArgumentNullException("category");
+
+			var methods = typeof(TBuildProcessor)
+				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(method =>
+					{
+						if (!method.IsVirtual && method.ReturnType == typeof(IEnumerator))
+						{
+							var parameters = method.GetParameters();
+							if (parameters.Length == 3 &&
+								parameters[0].ParameterType == typeof(BuildProcessorSceneDefinition) &&
+								parameters[1].ParameterType == typeof(BuildProcessConfiguration) &&
+								parameters[2].ParameterType == typeof(bool)
+							)
+							{
+								var attribute = method.GetAttribute<ProcessorAttribute>(true);
+								if (attribute != null && attribute.Categories.IsNotNullAndEmpty())
+								{
+									return attribute.Categories.Contains(category);
+								}
+							}
+						}
+						return false;
+					}
+				)
+				.OrderBy(method => method.GetAttribute<ProcessorAttribute>(true).Order)
+				.ToList();
+
+			//methods.LogList();
+
+			// Check for duplicate Order values. Note that we already ordered it above.
+			if (methods.Count > 1)
+			{
+				var detected = false;
+				var previousMethod = methods[0];
+				var previousMethodOrder = previousMethod.GetAttribute<ProcessorAttribute>(true).Order;
+				for (int i = 1; i < methods.Count; i++)
+				{
+					var currentMethod = methods[i];
+					var currentMethodOrder = currentMethod.GetAttribute<ProcessorAttribute>(true).Order;
+
+					if (previousMethodOrder == currentMethodOrder)
+					{
+						detected = true;
+						Debug.LogErrorFormat("Methods '{0}' and '{1}' have the same order of '{2}'.", previousMethod.Name, currentMethod.Name, currentMethodOrder);
+					}
+
+					previousMethod = currentMethod;
+					previousMethodOrder = currentMethodOrder;
+				}
+				if (detected)
+				{
+					throw new Exception("Failed to sort processor method list because there were methods with the same order value.");
+				}
+			}
+
+			return methods;
+		}
+
+		#endregion
+
 		#region Build Preprocessor / Build Postprocessor / Scene Processor
 
 #if UNITY_2018_1_OR_NEWER
@@ -212,7 +300,7 @@ namespace Extenity.UnityEditorToolbox
 		{
 			//Debug.Log("Cleaning up in build postprocess...");
 		}
-		
+
 #if UNITY_2018_1_OR_NEWER
 		public void OnProcessScene(Scene scene, BuildReport report)
 #else
