@@ -5,6 +5,7 @@ using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.ReflectionToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -79,6 +80,8 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			GUILayout.Space(8f);
 
+			EnsureReplaceWithObjectTargetsTheRootObjectOfPrefab();
+
 			{
 				var newReplaceWithObject = (GameObject)EditorGUILayout.ObjectField(ReplaceWithContent, ReplaceWithObject, typeof(GameObject), true);
 				if (ReplaceWithObject != newReplaceWithObject)
@@ -91,11 +94,16 @@ namespace Extenity.PainkillaTool.Editor
 				EditorGUI.BeginDisabledGroup(!isPrefab);
 				{
 					EditorGUILayout.PropertyField(ReplaceAsPrefabProperty);
-					EditorGUI.BeginDisabledGroup(
+
+					var isReplacePrefabParentOptionDisabled =
 						!ReplaceAsPrefab || !isPrefab || // Don't need to display 'ReplacePrefabParent' if we are not even replacing the prefab as it is
 						!ReplaceWithObject.IsAnInstanceInScene() || // This option is only available for prefab instances
-						IsRootOfThePrefabInstance // This option is only available if a child of the prefab instance is selected
-					);
+						IsRootOfThePrefabInstance; // This option is only available if a child of the prefab instance is selected
+
+					//if (isReplacePrefabParentOptionDisabled) No need to force user to change this value every time. We just display it as disabled in UI.
+					//	ReplacePrefabParentProperty.boolValue = true;
+
+					EditorGUI.BeginDisabledGroup(isReplacePrefabParentOptionDisabled);
 					{
 						EditorGUILayout.PropertyField(ReplacePrefabParentProperty);
 					}
@@ -161,11 +169,11 @@ namespace Extenity.PainkillaTool.Editor
 		public GameObject ReplaceWithObject;
 		[Tooltip("This option becomes available if ReplaceWithObject is a prefab or a scene instance of a prefab. The cloned object simply won't keep a link to the prefab if this option is disabled.")]
 		public bool ReplaceAsPrefab = true;
-		[Tooltip("This option becomes available when a child of the prefab is selected, rather than selecting the parent object of the prefab. This allows user to decide whether the selected child object or the prefab parent should be cloned.")]
+		[Tooltip("This option becomes available when a child of a prefab is selected in scene, rather than selecting the parent object of the prefab. This allows user to decide whether the selected child object or the prefab parent should be cloned. Note that it won't work if a child object of a prefab is selected in Project window because Unity won't tell us enough info about the selection that way. Instead, just drag a temporary instance into the scene and select the child object inside the scene.")]
 		public bool ReplacePrefabParent = true;
 		public bool OverrideRotations = false;
 		public bool OverrideScales = false;
-		public bool OverrideNames = false;
+		public bool OverrideNames = true;
 
 		public bool IsReplaceWithObjectReferencesToAPrefabOrPrefabInstance
 		{
@@ -188,17 +196,10 @@ namespace Extenity.PainkillaTool.Editor
 					Debug.Log("go.IsPrefab(includePrefabInstances: true): " + go.IsPrefab(true));
 					Debug.Log("go.IsPrefab(includePrefabInstances: false): " + go.IsPrefab(false));
 					Debug.Log("go.IsAnInstanceInScene(): " + go.IsAnInstanceInScene());
-					Debug.Log("FindPrefabRoot(go): " + PrefabUtility.FindPrefabRoot(go) + "           \t Type: " + PrefabUtility.FindPrefabRoot(go).GetType(), PrefabUtility.FindPrefabRoot(go));
-					Debug.Log("GetPrefabObject(go): " + PrefabUtility.GetPrefabObject(go) + "          \t Type: " + PrefabUtility.GetPrefabObject(go).GetType(), PrefabUtility.GetPrefabObject(go));
+					Debug.Log("FindPrefabRoot(go): " + PrefabUtility.FindPrefabRoot(go) + "           \t Type: " + PrefabUtility.FindPrefabRoot(go).GetTypeSafe(), PrefabUtility.FindPrefabRoot(go));
+					Debug.Log("GetPrefabObject(go): " + PrefabUtility.GetPrefabObject(go) + "          \t Type: " + PrefabUtility.GetPrefabObject(go).GetTypeSafe(), PrefabUtility.GetPrefabObject(go));
 					Debug.Log("GetPrefabParent(go): " + PrefabUtility.GetPrefabParent(go), PrefabUtility.GetPrefabParent(go));
 					Debug.Log("FindValidUploadPrefabInstanceRoot(go): " + PrefabUtility.FindValidUploadPrefabInstanceRoot(go).FullName(), PrefabUtility.FindValidUploadPrefabInstanceRoot(go));
-					//Debug.Log("------ ");
-					//Debug.Log("selection.IsPrefab(includePrefabInstances: true): " + selection.IsPrefab(true));
-					//Debug.Log("selection.IsPrefab(includePrefabInstances: false): " + selection.IsPrefab(false));
-					//Debug.Log("selection.IsAnInstanceInScene(): " + selection.IsAnInstanceInScene());
-					//Debug.Log("GetPrefabObject(selection): " + PrefabUtility.GetPrefabObject(selection) + "      \t Type: " + PrefabUtility.GetPrefabObject(selection).GetType(), PrefabUtility.GetPrefabObject(selection));
-					//Debug.Log("GetPrefabParent(selection): " + PrefabUtility.GetPrefabParent(selection), PrefabUtility.GetPrefabParent(selection));
-					//Debug.Log("FindValidUploadPrefabInstanceRoot(selection): " + PrefabUtility.FindValidUploadPrefabInstanceRoot(selection).FullName(), PrefabUtility.FindValidUploadPrefabInstanceRoot(selection));
 				}
 				//return;
 			}
@@ -212,10 +213,10 @@ namespace Extenity.PainkillaTool.Editor
 			// - The object itself?
 			// - The corresponding object in the prefab?
 			// - The root of the prefab?
-			var isPrefab = ReplaceAsPrefab && IsReplaceWithObjectReferencesToAPrefabOrPrefabInstance;
+			var isDoingPrefabCloning = ReplaceAsPrefab && IsReplaceWithObjectReferencesToAPrefabOrPrefabInstance;
 			GameObject instantiatedObject;
-			Debug.Log("isPrefab: " + isPrefab + "           ReplaceAsPrefab: " + ReplaceAsPrefab + "                IsReplaceWithObjectReferencesToAPrefab: " + IsReplaceWithObjectReferencesToAPrefabOrPrefabInstance);
-			if (isPrefab)
+			Debug.Log("isDoingPrefabCloning: " + isDoingPrefabCloning + "           ReplaceAsPrefab: " + ReplaceAsPrefab + "                IsReplaceWithObjectReferencesToAPrefab: " + IsReplaceWithObjectReferencesToAPrefabOrPrefabInstance);
+			if (isDoingPrefabCloning)
 			{
 				var isPrefabInstance = ReplaceWithObject.IsAnInstanceInScene();
 				if (isPrefabInstance)
@@ -274,7 +275,7 @@ namespace Extenity.PainkillaTool.Editor
 			}
 			else
 			{
-				Debug.Log("object replacement");
+				Debug.Log("#### object replacement");
 				// The object itself.
 				instantiatedObject = ReplaceWithObject;
 			}
@@ -296,7 +297,7 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				var selection = FilteredSelection[i];
 				Transform duplicate;
-				if (isPrefab)
+				if (isDoingPrefabCloning)
 				{
 					duplicate = ((GameObject)PrefabUtility.InstantiatePrefab(instantiatedObject)).transform;
 					duplicate.SetParent(selection.parent);
@@ -363,6 +364,20 @@ namespace Extenity.PainkillaTool.Editor
 				Selection.activeObject = null;
 			}
 			Selection.objects = FilteredSelection.Select(transform => transform.gameObject).ToArray();
+		}
+
+		#endregion
+
+		#region Tools
+
+		private void EnsureReplaceWithObjectTargetsTheRootObjectOfPrefab()
+		{
+			var go = ReplaceWithObject.GetRootGameObjectIfChildOfAPrefab();
+			if (go != ReplaceWithObject)
+			{
+				Debug.LogFormat(go, "Correcting the reference. Switched to parent object of the prefab, rather than the child '{0}'. See 'Replace Prefab Parent' option's tooltip for more information.", ReplaceWithObject);
+				ReplaceWithObject = go;
+			}
 		}
 
 		#endregion
