@@ -16,6 +16,13 @@ namespace Extenity.DataToolbox
 		{
 			return (T)obj;
 		}
+
+		// Copied directy from UnityEngine.Object.CheckNullArgument (Unity 2017.3.1)
+		public static void CheckNullArgument(object arg, string message)
+		{
+			if (arg == null)
+				throw new ArgumentException(message);
+		}
 	}
 
 }

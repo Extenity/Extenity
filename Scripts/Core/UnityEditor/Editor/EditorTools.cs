@@ -477,6 +477,49 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Duplicate Selection
+
+		/// <summary>
+		/// Triggers Unity's duplicate (CTRL+D) functionality.
+		/// Source: https://answers.unity.com/questions/168580/how-do-i-properly-duplicate-an-object-in-a-editor.html
+		/// </summary>
+		public static void Duplicate()
+		{
+			SceneView.lastActiveSceneView.Focus();
+			EditorWindow.focusedWindow.SendEvent(EditorGUIUtility.CommandEvent("Duplicate"));
+		}
+
+		/// <summary>
+		/// Triggers Unity's duplicate (CTRL+D) functionality.
+		/// Source: https://answers.unity.com/questions/168580/how-do-i-properly-duplicate-an-object-in-a-editor.html
+		/// </summary>
+		public static GameObject Duplicate(this GameObject original, bool keepSelectionIntact)
+		{
+			ObjectTools.CheckNullArgument(original, "The Object you want to instantiate is null.");
+
+			// Save selection
+			int[] savedSelection = null;
+			if (keepSelectionIntact)
+			{
+				savedSelection = Selection.instanceIDs;
+			}
+
+			// Select the original object and tell Unity to duplicate the object.
+			Selection.activeGameObject = original;
+			Duplicate();
+			var duplicate = Selection.activeGameObject;
+
+			// Restore selection
+			if (keepSelectionIntact)
+			{
+				Selection.instanceIDs = savedSelection;
+			}
+
+			return duplicate;
+		}
+
+		#endregion
 	}
 
 }
