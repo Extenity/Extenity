@@ -17,11 +17,11 @@ namespace Extenity.AssetToolbox.Editor
 	{
 		#region Prefabs
 
-		public static bool IsPrefab(this GameObject gameObject, bool includePrefabInstances)
+		public static bool IsPrefab(this GameObject me, bool includePrefabInstances)
 		{
-			if (gameObject == null)
+			if (!me)
 				return false;
-			var type = PrefabUtility.GetPrefabType(gameObject);
+			var type = PrefabUtility.GetPrefabType(me);
 
 			if (type == PrefabType.Prefab || type == PrefabType.ModelPrefab)
 				return true;
@@ -31,6 +31,20 @@ namespace Extenity.AssetToolbox.Editor
 				return type == PrefabType.PrefabInstance || type == PrefabType.ModelPrefabInstance;
 			}
 			return false;
+		}
+
+		public static GameObject GetRootGameObjectIfChildOfAPrefab(this GameObject me)
+		{
+			if (!me)
+				return null;
+			var type = PrefabUtility.GetPrefabType(me);
+
+			if (type == PrefabType.Prefab || type == PrefabType.ModelPrefab)
+			{
+				return PrefabUtility.FindPrefabRoot(me);
+			}
+
+			return me;
 		}
 
 		public static List<GameObject> FindAllPrefabs()

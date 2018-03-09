@@ -543,6 +543,17 @@ namespace Extenity.ReflectionToolbox
 
 		#endregion
 
+		#region GetType
+
+		public static Type GetTypeSafe(this object me)
+		{
+			return me == null
+				? null
+				: me.GetType();
+		}
+
+		#endregion
+
 		#region MethodInfo to Method in runtime
 
 		/// <example>
