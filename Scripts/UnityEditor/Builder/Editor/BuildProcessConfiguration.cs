@@ -9,6 +9,7 @@ namespace Extenity.UnityEditorToolbox
 	public struct BuildProcessConfiguration : IConsistencyChecker
 	{
 		public string Category;
+		public bool DontLoadAndMergeScenes;
 
 		public bool SkipAtCustomProcessing;
 		public bool SkipAtBuildPreprocessing;
