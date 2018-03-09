@@ -8,6 +8,43 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 	public static class PrefabUtilityTools
 	{
+		#region Prefab Asset
+
+		public static bool IsPrefab(this GameObject me, bool includePrefabInstances, bool includeDisconnectedPrefabInstances, bool includeMissingPrefabInstances)
+		{
+			if (!me)
+				return false;
+			var type = PrefabUtility.GetPrefabType(me);
+
+			if (type.IsPrefabAsset())
+				return true;
+			if (includePrefabInstances && type.IsHealthyInstance())
+				return true;
+			if (includeDisconnectedPrefabInstances && type.IsDisconnectedInstance())
+				return true;
+			if (includeMissingPrefabInstances && type.IsInstanceMissing())
+				return true;
+			return false;
+		}
+
+		public static GameObject GetRootGameObjectIfChildOfAPrefabAsset(this GameObject me)
+		{
+			if (!me)
+				return null;
+			var type = PrefabUtility.GetPrefabType(me);
+
+			if (type.IsPrefabAsset())
+			{
+				return PrefabUtility.FindPrefabRoot(me);
+			}
+
+			return me;
+		}
+
+		#endregion
+
+		#region Prefab Type
+
 		public static bool IsHealthyInstance(this PrefabType type)
 		{
 			return type == PrefabType.PrefabInstance || type == PrefabType.ModelPrefabInstance;
@@ -27,6 +64,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			return type == PrefabType.Prefab || type == PrefabType.ModelPrefab;
 		}
+
+		#endregion
+
+		#region Instantiate Prefab
 
 		public static GameObject InstantiatePrefabOrSceneObject(GameObject original, bool keepPrefabLinkIfSceneObject)
 		{
@@ -71,6 +112,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 					throw new ArgumentOutOfRangeException("prefabType", prefabType, "prefabType");
 			}
 		}
+
+		#endregion
 	}
 
 }

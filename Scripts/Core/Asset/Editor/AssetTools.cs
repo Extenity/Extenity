@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Extenity.ApplicationToolbox;
-using Extenity.UnityEditorToolbox.Editor;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
@@ -16,39 +15,7 @@ namespace Extenity.AssetToolbox.Editor
 
 	public static class AssetTools
 	{
-		// TODO: REFACTOR: Move these into PrefabUtilityTools
 		#region Prefabs
-
-		public static bool IsPrefab(this GameObject me, bool includePrefabInstances, bool includeDisconnectedPrefabInstances, bool includeMissingPrefabInstances)
-		{
-			if (!me)
-				return false;
-			var type = PrefabUtility.GetPrefabType(me);
-
-			if (type.IsPrefabAsset())
-				return true;
-			if (includePrefabInstances && type.IsHealthyInstance())
-				return true;
-			if (includeDisconnectedPrefabInstances && type.IsDisconnectedInstance())
-				return true;
-			if (includeMissingPrefabInstances && type.IsInstanceMissing())
-				return true;
-			return false;
-		}
-
-		public static GameObject GetRootGameObjectIfChildOfAPrefab(this GameObject me)
-		{
-			if (!me)
-				return null;
-			var type = PrefabUtility.GetPrefabType(me);
-
-			if (type == PrefabType.Prefab || type == PrefabType.ModelPrefab)
-			{
-				return PrefabUtility.FindPrefabRoot(me);
-			}
-
-			return me;
-		}
 
 		public static List<GameObject> FindAllPrefabs()
 		{

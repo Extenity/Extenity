@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
@@ -85,7 +84,7 @@ namespace Extenity.PainkillaTool.Editor
 
 				// Ensure ReplaceWithObject targets the root object of prefab, if it is a child object of a prefab.
 				{
-					var go = newReplaceWithObject.GetRootGameObjectIfChildOfAPrefab();
+					var go = newReplaceWithObject.GetRootGameObjectIfChildOfAPrefabAsset();
 					if (go != newReplaceWithObject)
 					{
 						Debug.LogFormat(go, "Correcting the reference. Switched to parent object of the prefab, rather than the child '{0}'. See 'Replace Prefab Parent' option's tooltip for more information.", newReplaceWithObject);
