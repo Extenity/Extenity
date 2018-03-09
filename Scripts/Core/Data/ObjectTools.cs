@@ -11,6 +11,11 @@ namespace Extenity.DataToolbox
 				throw new NullReferenceException();
 			return obj;
 		}
+
+		public static T Cast<T>(this UnityEngine.Object obj) where T : UnityEngine.Object
+		{
+			return (T)obj;
+		}
 	}
 
 }

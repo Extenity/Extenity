@@ -1,3 +1,4 @@
+using System;
 using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,7 +11,7 @@ namespace Extenity.NavigationToolbox
 		public static int DrawPath(this NavMeshPath path, LineRenderer lineRenderer, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
 		{
 			if (!lineRenderer)
-				return 0;
+				throw new ArgumentNullException("lineRenderer");
 
 			var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
 

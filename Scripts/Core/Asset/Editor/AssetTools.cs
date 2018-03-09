@@ -17,12 +17,20 @@ namespace Extenity.AssetToolbox.Editor
 	{
 		#region Prefabs
 
-		public static bool IsPrefab(this GameObject gameObject)
+		public static bool IsPrefab(this GameObject gameObject, bool includePrefabInstances)
 		{
 			if (gameObject == null)
 				return false;
 			var type = PrefabUtility.GetPrefabType(gameObject);
-			return type == PrefabType.Prefab || type == PrefabType.ModelPrefab;
+
+			if (type == PrefabType.Prefab || type == PrefabType.ModelPrefab)
+				return true;
+
+			if (includePrefabInstances)
+			{
+				return type == PrefabType.PrefabInstance || type == PrefabType.ModelPrefabInstance;
+			}
+			return false;
 		}
 
 		public static List<GameObject> FindAllPrefabs()
