@@ -375,7 +375,7 @@ namespace Extenity.DLLBuilder
 							}
 
 							arguments.Add("/optimize+");
-							arguments.Add("/nowarn:1591,1573");
+							arguments.Add("/nowarn:1591,1573,169");
 #if EnableNoStdLib
 							arguments.Add("/nostdlib+");
 #endif
@@ -423,7 +423,7 @@ namespace Extenity.DLLBuilder
 							}
 
 							arguments.Add("/optimize+");
-							arguments.Add("/nowarn:1591,1573");
+							arguments.Add("/nowarn:1591,1573,169");
 #if EnableNoStdLib
 							arguments.Add("/nostdlib+");
 #endif
@@ -472,7 +472,7 @@ namespace Extenity.DLLBuilder
 							}
 
 							arguments.Add("/optimize+");
-							arguments.Add("/nowarn:1591,1573");
+							arguments.Add("/nowarn:1591,1573,169");
 #if EnableNoStdLib
 							arguments.Add("/nostdlib+");
 #endif
@@ -514,7 +514,7 @@ namespace Extenity.DLLBuilder
 							}
 
 							arguments.Add("/noconfig");
-							arguments.Add("/nowarn:1591,1573");
+							arguments.Add("/nowarn:1591,1573,169");
 							arguments.Add("/warnaserror");
 #if EnableNoStdLib
 							arguments.Add("/nostdlib+");

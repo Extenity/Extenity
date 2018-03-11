@@ -176,7 +176,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Replace
 
-#pragma warning disable 414, 169
+#pragma warning disable 414
 
 		[SerializeField]
 		private GameObject _ReplaceWithObject;
@@ -193,7 +193,7 @@ namespace Extenity.PainkillaTool.Editor
 		[SerializeField]
 		private bool _OverrideNames = true;
 
-#pragma warning restore 414, 169
+#pragma warning restore 414
 
 		public GameObject ReplaceWithObject { get { return (GameObject)ReplaceWithObjectProperty.objectReferenceValue; } }
 		public bool ReplaceAsPrefab { get { return ReplaceAsPrefabProperty.boolValue; } }
