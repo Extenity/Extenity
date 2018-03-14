@@ -1,4 +1,5 @@
 using System.Collections;
+using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -77,6 +78,54 @@ namespace Extenity.UIToolbox
 		{
 			if (Event.current.keyCode == KeyCode.Tab || Event.current.character == '\t')
 				Event.current.Use();
+		}
+
+		#endregion
+
+		#region Drag
+
+		public static void Calculate2DLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, bool radial, ref Vector2 normalizedLeverPosition)
+		{
+			Vector2 position;
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			{
+				var dragAreaSize = dragAreaTransform.sizeDelta;
+
+				normalizedLeverPosition = new Vector2(
+					(position.x / dragAreaSize.x) * 2f + 1f,
+					(position.y / dragAreaSize.y) * 2f - 1f);
+
+				if (radial)
+				{
+					// Radial input
+					normalizedLeverPosition = normalizedLeverPosition.ClampLength01();
+				}
+				else
+				{
+					// Rectangular input
+					normalizedLeverPosition.x = Mathf.Clamp(normalizedLeverPosition.x, -1f, 1f);
+					normalizedLeverPosition.y = Mathf.Clamp(normalizedLeverPosition.y, -1f, 1f);
+				}
+
+				handleTransform.anchoredPosition = new Vector2(
+					normalizedLeverPosition.x * (dragAreaSize.x / 2f),
+					normalizedLeverPosition.y * (dragAreaSize.y / 2f));
+			}
+		}
+
+		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
+		{
+			Vector2 position;
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			{
+				var dragAreaSize = dragAreaTransform.sizeDelta.x;
+
+				normalizedLeverPosition = Mathf.Clamp((position.x / dragAreaSize) * 2f + 1f, -1f, 1f);
+
+				handleTransform.anchoredPosition = new Vector2(
+					normalizedLeverPosition * (dragAreaSize / 2f),
+					0);
+			}
 		}
 
 		#endregion
