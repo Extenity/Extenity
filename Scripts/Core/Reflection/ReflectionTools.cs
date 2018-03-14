@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Extenity.ReflectionToolbox
@@ -623,6 +624,11 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjectsInComponents
 
+		public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
+		{
+			asd;
+		}
+
 		public static void FindAllReferencedGameObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			foreach (var component in components)
@@ -708,7 +714,7 @@ namespace Extenity.ReflectionToolbox
 					// The commented out code below should handle serialized fields of this unknown object but it's safer 
 					// to handle the object manually. See how Component and GameObject is handled in their own way and
 					// figure out how to handle this unknown type likewise.
-					Debug.LogFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
+					Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
 
 					// These lines are intentionally commented out. See the comment above.
 					//var referencedObject = serializedField.GetValue(unityObject) as Object;
@@ -727,6 +733,138 @@ namespace Extenity.ReflectionToolbox
 					if (includeChildren && isAdded)
 					{
 						FindAllReferencedGameObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region FindAllReferencedObjectsInComponents
+
+		public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
+		{
+			asd;
+		}
+
+		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<Object> result, bool includeChildren) where T : Component
+		{
+			foreach (var component in components)
+			{
+				if (component)
+					FindAllReferencedObjectsInComponent(component, result, includeChildren);
+			}
+		}
+
+		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<Object> result, bool includeChildren) where T : Component
+		{
+			var serializedFields = component.GetUnitySerializedFields();
+			FindAllReferencedObjectsInSerializedFields(component, serializedFields, result, includeChildren);
+		}
+
+		public static void FindAllReferencedObjectsInUnityObject(this Object unityObject, HashSet<Object> result, bool includeChildren)
+		{
+			var serializedFields = unityObject.GetUnitySerializedFields();
+			unityObject.FindAllReferencedObjectsInSerializedFields(serializedFields, result, includeChildren);
+		}
+
+		//public static void FindAllReferencedObjectsInUnityObject<TObject>(this Object unityObject, HashSet<GameObject> result, bool includeChildren) where TObject : Object
+		//{
+		//	var allObjects = new HashSet<Object>();
+		//	unityObject.FindAllReferencedObjectsInUnityObject(allGameObjects, )
+		//}
+
+		public static void FindAllReferencedObjectsInSerializedFields(this Object unityObject, IEnumerable<FieldInfo> serializedFields, HashSet<Object> result, bool includeChildren)
+		{
+			foreach (var serializedField in serializedFields)
+			{
+				FindAllReferencedObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
+			}
+		}
+
+		public static void FindAllReferencedObjectsInSerializedFields(this Object unityObject, FieldInfo serializedField, HashSet<Object> result, bool includeChildren)
+		{
+			var serializedFieldType = serializedField.FieldType;
+
+			if (serializedFieldType.IsArray)
+			{
+				var array = serializedField.GetValue(unityObject) as Array;
+				if (array != null)
+				{
+					foreach (var item in array)
+					{
+						var itemAsObject = item as Object;
+						if (itemAsObject)
+						{
+							FindAllReferencedObjectsInUnityObject(itemAsObject, result, includeChildren);
+						}
+					}
+				}
+			}
+			else
+			{
+				Object referencedObject = null;
+				if (serializedFieldType.IsSameOrSubclassOf(typeof(Component)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as Component;
+					// A Component is also part of a GameObject. And this GameObject also contains other Components.
+					// Process all of them!
+					if (referencedObject)
+					{
+						asd;
+					}
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(GameObject)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as GameObject;
+					// GameObject also contains other Components.
+					// Process all of them!
+					if (referencedObject)
+					{
+						asd;
+					}
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Mesh)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as Mesh;
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Material)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as Material;
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Texture)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as Texture;
+				}
+				else if (serializedFieldType.IsSameOrSubclassOf(typeof(TerrainData)))
+				{
+					referencedObject = serializedField.GetValue(unityObject) as TerrainData;
+				}
+				else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
+				{
+					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
+					// The commented out code below should handle serialized fields of this unknown object but it's safer 
+					// to handle the object manually. See how Component and GameObject is handled in their own way and
+					// figure out how to handle this unknown type likewise.
+					Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
+
+					// These lines are intentionally commented out. See the comment above.
+					//var referencedObject = serializedField.GetValue(unityObject) as Object;
+					//if (referencedObject) 
+					//{
+					//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
+					//	return;
+					//}
+				}
+
+				if (referencedObject)
+				{
+					var isAdded = result.Add(referencedObject);
+					// Check if the gameobject was added before, which means we have already processed the gameobject.
+					// This will also prevent going into an infinite loop where there are circular references.
+					if (includeChildren && isAdded)
+					{
+						FindAllReferencedObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
 					}
 				}
 			}
