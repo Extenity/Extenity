@@ -6,7 +6,6 @@ using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Extenity.ReflectionToolbox
@@ -624,24 +623,31 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjectsInComponents
 
-		public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
-		{
-			asd;
-		}
+		// TODO:
+		//public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
+		//{
+		//	...
+		//}
 
 		public static void FindAllReferencedGameObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			foreach (var component in components)
 			{
 				if (component)
-					FindAllReferencedGameObjectsInComponent(component, result, includeChildren);
+					component.FindAllReferencedGameObjectsInComponent(result, includeChildren);
 			}
 		}
 
 		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			var serializedFields = component.GetUnitySerializedFields();
-			FindAllReferencedGameObjectsInSerializedFields(component, serializedFields, result, includeChildren);
+			component.FindAllReferencedGameObjectsInSerializedFields(serializedFields, result, includeChildren);
+		}
+
+		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result, bool includeChildren)
+		{
+			var components = gameObject.GetComponents<Component>();
+			components.FindAllReferencedGameObjectsInComponents(result, includeChildren);
 		}
 
 		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result, bool includeChildren)
@@ -654,7 +660,7 @@ namespace Extenity.ReflectionToolbox
 		{
 			foreach (var serializedField in serializedFields)
 			{
-				FindAllReferencedGameObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
+				unityObject.FindAllReferencedGameObjectsInSerializedFields(serializedField, result, includeChildren);
 			}
 		}
 
@@ -672,7 +678,7 @@ namespace Extenity.ReflectionToolbox
 						var itemAsObject = item as Object;
 						if (itemAsObject)
 						{
-							FindAllReferencedGameObjectsInUnityObject(itemAsObject, result, includeChildren);
+							itemAsObject.FindAllReferencedGameObjectsInUnityObject(result, includeChildren);
 						}
 					}
 				}
@@ -732,7 +738,7 @@ namespace Extenity.ReflectionToolbox
 					// This will also prevent going into an infinite loop where there are circular references.
 					if (includeChildren && isAdded)
 					{
-						FindAllReferencedGameObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
+						referencedGameObject.FindAllReferencedGameObjectsInGameObject(result, includeChildren);
 					}
 				}
 			}
@@ -742,24 +748,31 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedObjectsInComponents
 
-		public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
-		{
-			asd;
-		}
+		// TODO:
+		//public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
+		//{
+		//	...
+		//}
 
 		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<Object> result, bool includeChildren) where T : Component
 		{
 			foreach (var component in components)
 			{
 				if (component)
-					FindAllReferencedObjectsInComponent(component, result, includeChildren);
+					component.FindAllReferencedObjectsInComponent(result, includeChildren);
 			}
 		}
 
 		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<Object> result, bool includeChildren) where T : Component
 		{
 			var serializedFields = component.GetUnitySerializedFields();
-			FindAllReferencedObjectsInSerializedFields(component, serializedFields, result, includeChildren);
+			component.FindAllReferencedObjectsInSerializedFields(serializedFields, result, includeChildren);
+		}
+
+		public static void FindAllReferencedObjectsInGameObject(this GameObject gameObject, HashSet<Object> result, bool includeChildren)
+		{
+			var components = gameObject.GetComponents<Component>();
+			components.FindAllReferencedObjectsInComponents(result, includeChildren);
 		}
 
 		public static void FindAllReferencedObjectsInUnityObject(this Object unityObject, HashSet<Object> result, bool includeChildren)
@@ -778,7 +791,7 @@ namespace Extenity.ReflectionToolbox
 		{
 			foreach (var serializedField in serializedFields)
 			{
-				FindAllReferencedObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
+				unityObject.FindAllReferencedObjectsInSerializedFields(serializedField, result, includeChildren);
 			}
 		}
 
@@ -796,7 +809,7 @@ namespace Extenity.ReflectionToolbox
 						var itemAsObject = item as Object;
 						if (itemAsObject)
 						{
-							FindAllReferencedObjectsInUnityObject(itemAsObject, result, includeChildren);
+							itemAsObject.FindAllReferencedObjectsInUnityObject(result, includeChildren);
 						}
 					}
 				}
@@ -806,22 +819,24 @@ namespace Extenity.ReflectionToolbox
 				Object referencedObject = null;
 				if (serializedFieldType.IsSameOrSubclassOf(typeof(Component)))
 				{
-					referencedObject = serializedField.GetValue(unityObject) as Component;
+					referencedObject = null; // Better leave referenced object as null because it will be added in the process below.
+					var component = serializedField.GetValue(unityObject) as Component;
 					// A Component is also part of a GameObject. And this GameObject also contains other Components.
 					// Process all of them!
-					if (referencedObject)
+					if (component)
 					{
-						asd;
+						component.gameObject.FindAllReferencedObjectsInGameObject(result, includeChildren);
 					}
 				}
 				else if (serializedFieldType.IsSameOrSubclassOf(typeof(GameObject)))
 				{
-					referencedObject = serializedField.GetValue(unityObject) as GameObject;
+					referencedObject = null; // Better leave referenced object as null because it will be added in the process below.
+					var gameObject = serializedField.GetValue(unityObject) as GameObject;
 					// GameObject also contains other Components.
 					// Process all of them!
-					if (referencedObject)
+					if (gameObject)
 					{
-						asd;
+						gameObject.FindAllReferencedObjectsInGameObject(result, includeChildren);
 					}
 				}
 				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Mesh)))
@@ -860,11 +875,11 @@ namespace Extenity.ReflectionToolbox
 				if (referencedObject)
 				{
 					var isAdded = result.Add(referencedObject);
-					// Check if the gameobject was added before, which means we have already processed the gameobject.
+					// Check if the object was added before, which means we have already processed the object.
 					// This will also prevent going into an infinite loop where there are circular references.
 					if (includeChildren && isAdded)
 					{
-						FindAllReferencedObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
+						referencedObject.FindAllReferencedObjectsInUnityObject(result, includeChildren);
 					}
 				}
 			}
