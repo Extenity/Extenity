@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Extenity.ReflectionToolbox
 {
@@ -620,38 +621,38 @@ namespace Extenity.ReflectionToolbox
 
 		#endregion
 
-		#region FindAllReferencedObjectsInComponents
+		#region FindAllReferencedGameObjectsInComponents
 
-		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
+		public static void FindAllReferencedGameObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			foreach (var component in components)
 			{
 				if (component)
-					FindAllReferencedObjectsInComponent(component, result, includeChildren);
+					FindAllReferencedGameObjectsInComponent(component, result, includeChildren);
 			}
 		}
 
-		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
+		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
 			var serializedFields = component.GetUnitySerializedFields();
-			FindAllReferencedObjectsInSerializedFields(component, serializedFields, result, includeChildren);
+			FindAllReferencedGameObjectsInSerializedFields(component, serializedFields, result, includeChildren);
 		}
 
-		public static void FindAllReferencedObjectsInUnityObject(this UnityEngine.Object unityObject, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result, bool includeChildren)
 		{
 			var serializedFields = unityObject.GetUnitySerializedFields();
-			unityObject.FindAllReferencedObjectsInSerializedFields(serializedFields, result, includeChildren);
+			unityObject.FindAllReferencedGameObjectsInSerializedFields(serializedFields, result, includeChildren);
 		}
 
-		public static void FindAllReferencedObjectsInSerializedFields(this UnityEngine.Object unityObject, IEnumerable<FieldInfo> serializedFields, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInSerializedFields(this Object unityObject, IEnumerable<FieldInfo> serializedFields, HashSet<GameObject> result, bool includeChildren)
 		{
 			foreach (var serializedField in serializedFields)
 			{
-				FindAllReferencedObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
+				FindAllReferencedGameObjectsInSerializedFields(unityObject, serializedField, result, includeChildren);
 			}
 		}
 
-		public static void FindAllReferencedObjectsInSerializedFields(this UnityEngine.Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInSerializedFields(this Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
 		{
 			var serializedFieldType = serializedField.FieldType;
 
@@ -662,10 +663,10 @@ namespace Extenity.ReflectionToolbox
 				{
 					foreach (var item in array)
 					{
-						var itemAsObject = item as UnityEngine.Object;
+						var itemAsObject = item as Object;
 						if (itemAsObject)
 						{
-							FindAllReferencedObjectsInUnityObject(itemAsObject, result, includeChildren);
+							FindAllReferencedGameObjectsInUnityObject(itemAsObject, result, includeChildren);
 						}
 					}
 				}
@@ -701,7 +702,7 @@ namespace Extenity.ReflectionToolbox
 				{
 					// Does not contain any link to game objects. So we skip.
 				}
-				else if (serializedFieldType.IsSubclassOf(typeof(UnityEngine.Object))) // Other objects
+				else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
 				{
 					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
 					// The commented out code below should handle serialized fields of this unknown object but it's safer 
@@ -710,7 +711,7 @@ namespace Extenity.ReflectionToolbox
 					Debug.LogFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
 
 					// These lines are intentionally commented out. See the comment above.
-					//var referencedObject = serializedField.GetValue(unityObject) as UnityEngine.Object;
+					//var referencedObject = serializedField.GetValue(unityObject) as Object;
 					//if (referencedObject) 
 					//{
 					//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
@@ -725,7 +726,7 @@ namespace Extenity.ReflectionToolbox
 					// This will also prevent going into an infinite loop where there are circular references.
 					if (includeChildren && isAdded)
 					{
-						FindAllReferencedObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
+						FindAllReferencedGameObjectsInComponents(referencedGameObject.GetComponents<Component>(), result, includeChildren);
 					}
 				}
 			}
@@ -735,7 +736,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region Referenced Object Checks
 
-		public static bool IsFieldReferencesUnityObject(this UnityEngine.Object unityObject, FieldInfo fieldOfUnityObject, UnityEngine.Object expectedUnityObject)
+		public static bool IsFieldReferencesUnityObject(this Object unityObject, FieldInfo fieldOfUnityObject, Object expectedUnityObject)
 		{
 			if (!expectedUnityObject)
 				throw new ArgumentNullException("expectedUnityObject");
@@ -747,14 +748,14 @@ namespace Extenity.ReflectionToolbox
 					return false;
 				foreach (var item in array)
 				{
-					var itemAsObject = item as UnityEngine.Object;
+					var itemAsObject = item as Object;
 					if (itemAsObject == expectedUnityObject)
 						return true;
 				}
 			}
 			else
 			{
-				var item = fieldOfUnityObject.GetValue(unityObject) as UnityEngine.Object;
+				var item = fieldOfUnityObject.GetValue(unityObject) as Object;
 				if (item == expectedUnityObject)
 					return true;
 			}
