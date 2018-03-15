@@ -1142,6 +1142,16 @@ namespace Extenity.MathToolbox
 			return value.x > value.z ? value.x : value.z;
 		}
 
+		public static float MultiplyComponents(this Vector2 value)
+		{
+			return value.x * value.y;
+		}
+
+		public static float MultiplyComponents(this Vector3 value)
+		{
+			return value.x * value.y * value.y;
+		}
+
 		#endregion
 
 		#region Magnitude
