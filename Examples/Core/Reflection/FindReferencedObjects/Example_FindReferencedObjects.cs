@@ -67,6 +67,18 @@ namespace ExtenityExamples.Reflection
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
 				}
 			}
+
+			// All materials in scene
+			{
+				var result = new HashSet<Material>();
+				SceneManager.GetActiveScene().FindAllReferencedObjectsInScene(result);
+
+				Debug.LogFormat("================================= Found '{0}' referenced materials in scene:", result.Count);
+				foreach (var item in result)
+				{
+					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
+				}
+			}
 		}
 	}
 

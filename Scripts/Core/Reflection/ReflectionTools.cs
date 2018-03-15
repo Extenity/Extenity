@@ -754,47 +754,60 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedObjectsInComponents
 
-		public static void FindAllReferencedObjectsInScene(this Scene scene, HashSet<Object> result)
+		public static void FindAllReferencedObjectsInScene<TSearched>(this Scene scene, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(scene.ListAllGameObjectsInScene().ToArray());
 			foreach (var obj in objects)
-				result.Add(obj);
+			{
+				var cast = obj as TSearched;
+				if (cast)
+					result.Add(cast);
+			}
 		}
 
-		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<Object> result) where T : Component
+		public static void FindAllReferencedObjectsInComponents<T, TSearched>(this IEnumerable<T> components, HashSet<TSearched> result) where T : Component where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(components.ToArray());
 			foreach (var obj in objects)
-				result.Add(obj);
+			{
+				var cast = obj as TSearched;
+				if (cast)
+					result.Add(cast);
+			}
 		}
 
-		public static void FindAllReferencedObjectsInComponent<T>(this T component, HashSet<Object> result) where T : Component
+		public static void FindAllReferencedObjectsInComponent<T, TSearched>(this T component, HashSet<TSearched> result) where T : Component where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { component });
 			foreach (var obj in objects)
-				result.Add(obj);
+			{
+				var cast = obj as TSearched;
+				if (cast)
+					result.Add(cast);
+			}
 		}
 
-		public static void FindAllReferencedObjectsInGameObject(this GameObject gameObject, HashSet<Object> result)
+		public static void FindAllReferencedObjectsInGameObject<TSearched>(this GameObject gameObject, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { gameObject });
 			foreach (var obj in objects)
-				result.Add(obj);
+			{
+				var cast = obj as TSearched;
+				if (cast)
+					result.Add(cast);
+			}
 		}
 
-		public static void FindAllReferencedObjectsInUnityObject(this Object unityObject, HashSet<Object> result)
+		public static void FindAllReferencedObjectsInUnityObject<TSearched>(this Object unityObject, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { unityObject });
 			foreach (var obj in objects)
-				result.Add(obj);
+			{
+				var cast = obj as TSearched;
+				if (cast)
+					result.Add(cast);
+			}
 		}
-
-		// TODO:
-		//public static void FindAllReferencedObjectsInUnityObject<TObject>(this Object unityObject, HashSet<GameObject> result) where TObject : Object
-		//{
-		//	var allObjects = new HashSet<Object>();
-		//	unityObject.FindAllReferencedObjectsInUnityObject(allGameObjects, )
-		//}
 
 		#endregion
 
