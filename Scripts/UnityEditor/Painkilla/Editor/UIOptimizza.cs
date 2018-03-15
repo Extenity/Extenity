@@ -22,7 +22,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Optimizza/UI Optimizza", false, 100)]
+		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
 		private static void ShowWindow()
 		{
 			var window = GetWindow<UIOptimizza>();
