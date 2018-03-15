@@ -13,8 +13,10 @@ namespace Extenity.PainkillaTool.Editor
 
 	public class AssetUtilizzaList : TreeViewWithTreeModel<AssetUtilizzaElement>
 	{
+		#region Configuration
+
 		const float kRowHeights = 20f;
-		const float kToggleWidth = 18f;
+		//const float kToggleWidth = 18f;
 
 		//static Texture2D[] s_TestIcons =
 		//{
@@ -27,8 +29,7 @@ namespace Extenity.PainkillaTool.Editor
 		//	EditorGUIUtility.FindTexture("Texture Icon")
 		//};
 
-		// All columns
-		enum MyColumns
+		private enum Columns
 		{
 			Preview,
 			Material,
@@ -37,7 +38,7 @@ namespace Extenity.PainkillaTool.Editor
 			AssetPath,
 		}
 
-		public enum SortOption
+		private enum SortOption
 		{
 			Name,
 			ShaderName,
@@ -46,7 +47,7 @@ namespace Extenity.PainkillaTool.Editor
 		}
 
 		// Sort options per column
-		SortOption[] m_SortOptions =
+		private readonly SortOption[] SortOptions =
 		{
 			SortOption.Name, // Not applicable
 			SortOption.Name,
@@ -55,7 +56,7 @@ namespace Extenity.PainkillaTool.Editor
 			SortOption.AssetPath,
 		};
 
-		public static MultiColumnHeaderState CreateDefaultMultiColumnHeaderState()
+		internal static MultiColumnHeaderState CreateDefaultMultiColumnHeaderState()
 		{
 			var columns = new[]
 			{
@@ -117,12 +118,122 @@ namespace Extenity.PainkillaTool.Editor
 				},
 			};
 
-			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(MyColumns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
+			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(Columns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
 
 			var state = new MultiColumnHeaderState(columns);
 			return state;
 		}
 
+		protected override bool CanRename(TreeViewItem item)
+		{
+			return false;
+		}
+
+		protected override bool CanMultiSelect(TreeViewItem item)
+		{
+			return true;
+		}
+
+		#endregion
+
+		#region GUI
+
+		protected override void RowGUI(RowGUIArgs args)
+		{
+			var item = (TreeViewItem<AssetUtilizzaElement>)args.item;
+
+			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
+			{
+				CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
+			}
+		}
+
+		private void CellGUI(Rect cellRect, TreeViewItem<AssetUtilizzaElement> item, Columns column, ref RowGUIArgs args)
+		{
+			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
+			CenterRectUsingSingleLineHeight(ref cellRect);
+
+			switch (column)
+			{
+				case Columns.Preview:
+					{
+						GUI.DrawTexture(cellRect, item.Data.Preview, ScaleMode.ScaleToFit);
+					}
+					break;
+
+				//case MyColumns.Name:
+				//	{
+				//		//// Do toggle
+				//		//Rect toggleRect = cellRect;
+				//		//toggleRect.x += GetContentIndent(item);
+				//		//toggleRect.width = kToggleWidth;
+				//		//if (toggleRect.xMax < cellRect.xMax)
+				//		//	item.data.enabled = EditorGUI.Toggle(toggleRect, item.data.enabled); // hide when outside cell rect
+
+				//		// Default icon and label
+				//		args.rowRect = cellRect;
+				//		base.RowGUI(args);
+				//	}
+				//	break;
+
+				case Columns.Material:
+					{
+						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
+					}
+					break;
+
+				case Columns.ShaderName:
+					{
+						GUI.Label(cellRect, item.Data.ShaderName);
+					}
+					break;
+
+				case Columns.Scenes:
+					{
+						GUI.Label(cellRect, item.Data.FoundInScenesCombined);
+					}
+					break;
+
+				case Columns.AssetPath:
+					{
+						GUI.Label(cellRect, item.Data.AssetPath);
+					}
+					break;
+			}
+		}
+
+		#endregion
+
+		#region Initialization
+
+		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<AssetUtilizzaElement> model) : base(state, multiColumnHeader, model)
+		{
+			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
+
+			// Custom setup
+			rowHeight = kRowHeights;
+			columnIndexForTreeFoldouts = 1;
+			showAlternatingRowBackgrounds = true;
+			showBorder = true;
+			customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f; // center foldout in the row since we also center content. See RowGUI
+			//extraSpaceBeforeIconAndLabel = kToggleWidth;
+			multiColumnHeader.sortingChanged += OnSortingChanged;
+
+			Reload();
+		}
+
+		#endregion
+
+		#region Data
+
+		// Note we We only build the visible rows, only the backend has the full tree information. 
+		// The treeview only creates info for the row list.
+		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
+		{
+			var rows = base.BuildRows(root);
+			SortIfNeeded(root, rows);
+			return rows;
+		}
 
 		public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
 		{
@@ -155,31 +266,9 @@ namespace Extenity.PainkillaTool.Editor
 			}
 		}
 
-		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multicolumnHeader, TreeModel<AssetUtilizzaElement> model) : base(state, multicolumnHeader, model)
-		{
-			Assert.AreEqual(m_SortOptions.Length, Enum.GetValues(typeof(MyColumns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
+		#endregion
 
-			// Custom setup
-			rowHeight = kRowHeights;
-			columnIndexForTreeFoldouts = 1;
-			showAlternatingRowBackgrounds = true;
-			showBorder = true;
-			customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f; // center foldout in the row since we also center content. See RowGUI
-			extraSpaceBeforeIconAndLabel = kToggleWidth;
-			multicolumnHeader.sortingChanged += OnSortingChanged;
-
-			Reload();
-		}
-
-
-		// Note we We only build the visible rows, only the backend has the full tree information. 
-		// The treeview only creates info for the row list.
-		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
-		{
-			var rows = base.BuildRows(root);
-			SortIfNeeded(root, rows);
-			return rows;
-		}
+		#region Sorting
 
 		private void OnSortingChanged(MultiColumnHeader multiColumnHeader)
 		{
@@ -213,7 +302,7 @@ namespace Extenity.PainkillaTool.Editor
 			var orderedQuery = InitialOrder(myTypes, sortedColumns);
 			for (int i = 1; i < sortedColumns.Length; i++)
 			{
-				var sortOption = m_SortOptions[sortedColumns[i]];
+				var sortOption = SortOptions[sortedColumns[i]];
 				var ascending = multiColumnHeader.IsSortedAscending(sortedColumns[i]);
 
 				switch (sortOption)
@@ -238,7 +327,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private IOrderedEnumerable<TreeViewItem<AssetUtilizzaElement>> InitialOrder(IEnumerable<TreeViewItem<AssetUtilizzaElement>> myTypes, int[] history)
 		{
-			SortOption sortOption = m_SortOptions[history[0]];
+			SortOption sortOption = SortOptions[history[0]];
 			bool ascending = multiColumnHeader.IsSortedAscending(history[0]);
 			switch (sortOption)
 			{
@@ -259,110 +348,7 @@ namespace Extenity.PainkillaTool.Editor
 			return myTypes.Order(l => l.Data.name, ascending);
 		}
 
-		private Texture2D GetPreviewOrIcon(TreeViewItem<AssetUtilizzaElement> item)
-		{
-			return item.Data.Preview;
-		}
-
-		protected override void RowGUI(RowGUIArgs args)
-		{
-			var item = (TreeViewItem<AssetUtilizzaElement>)args.item;
-
-			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
-			{
-				CellGUI(args.GetCellRect(i), item, (MyColumns)args.GetColumn(i), ref args);
-			}
-		}
-
-		private void CellGUI(Rect cellRect, TreeViewItem<AssetUtilizzaElement> item, MyColumns column, ref RowGUIArgs args)
-		{
-			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
-			CenterRectUsingSingleLineHeight(ref cellRect);
-
-			switch (column)
-			{
-				case MyColumns.Preview:
-					{
-						GUI.DrawTexture(cellRect, GetPreviewOrIcon(item), ScaleMode.ScaleToFit);
-					}
-					break;
-
-				//case MyColumns.Name:
-				//	{
-				//		//// Do toggle
-				//		//Rect toggleRect = cellRect;
-				//		//toggleRect.x += GetContentIndent(item);
-				//		//toggleRect.width = kToggleWidth;
-				//		//if (toggleRect.xMax < cellRect.xMax)
-				//		//	item.data.enabled = EditorGUI.Toggle(toggleRect, item.data.enabled); // hide when outside cell rect
-
-				//		// Default icon and label
-				//		args.rowRect = cellRect;
-				//		base.RowGUI(args);
-				//	}
-				//	break;
-
-				case MyColumns.Material:
-					{
-						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
-					}
-					break;
-
-				case MyColumns.ShaderName:
-					{
-						GUI.Label(cellRect, item.Data.ShaderName);
-					}
-					break;
-
-				case MyColumns.Scenes:
-					{
-						GUI.Label(cellRect, item.Data.FoundInScenesCombined);
-					}
-					break;
-
-				case MyColumns.AssetPath:
-					{
-						GUI.Label(cellRect, item.Data.AssetPath);
-					}
-					break;
-			}
-		}
-
-		// Rename
-		//--------
-
-		protected override bool CanRename(TreeViewItem item)
-		{
-			// Only allow rename if we can show the rename overlay with a certain width (label might be clipped by other columns)
-			Rect renameRect = GetRenameRect(treeViewRect, 0, item);
-			return renameRect.width > 30;
-		}
-
-		protected override void RenameEnded(RenameEndedArgs args)
-		{
-			// Set the backend name and reload the tree to reflect the new model
-			if (args.acceptedRename)
-			{
-				var element = treeModel.Find(args.itemID);
-				element.name = args.newName;
-				Reload();
-			}
-		}
-
-		protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
-		{
-			Rect cellRect = GetCellRectForTreeFoldouts(rowRect);
-			CenterRectUsingSingleLineHeight(ref cellRect);
-			return base.GetRenameRect(cellRect, row, item);
-		}
-
-		// Misc
-		//--------
-
-		protected override bool CanMultiSelect(TreeViewItem item)
-		{
-			return true;
-		}
+		#endregion
 	}
 
 }

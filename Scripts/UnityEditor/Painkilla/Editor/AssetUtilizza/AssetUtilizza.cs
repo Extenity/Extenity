@@ -229,14 +229,14 @@ namespace Extenity.PainkillaTool.Editor
 			if (TreeViewState == null)
 				TreeViewState = new TreeViewState();
 
-			bool firstInit = MultiColumnHeaderState == null;
+			var isFirstInitialization = MultiColumnHeaderState == null;
 			var headerState = AssetUtilizzaList.CreateDefaultMultiColumnHeaderState();
 			if (MultiColumnHeaderState.CanOverwriteSerializedFields(MultiColumnHeaderState, headerState))
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
 
 			var multiColumnHeader = new AssetUtilizzaColumnHeader(headerState);
-			if (firstInit)
+			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
 			var treeModel = new TreeModel<AssetUtilizzaElement>(GetData());
