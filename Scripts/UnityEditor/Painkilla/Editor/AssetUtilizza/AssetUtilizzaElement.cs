@@ -1,4 +1,5 @@
 using System;
+using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
@@ -15,6 +16,7 @@ namespace Extenity.PainkillaTool.Editor
 		public AssetUtilizzaElement(Material material, string sceneName) : base(material.name, 0, material.GetInstanceID())
 		{
 			Material = material;
+			AssetPath = AssetTools.GetAssetPathWithoutRoot(Material);
 			FoundInScenes = new[] { sceneName };
 		}
 
