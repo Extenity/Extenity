@@ -31,8 +31,8 @@ namespace Extenity.PainkillaTool.Editor
 		enum MyColumns
 		{
 			Preview,
-			Name,
 			Material,
+			ShaderName,
 			Scenes,
 			AssetPath,
 		}
@@ -40,6 +40,7 @@ namespace Extenity.PainkillaTool.Editor
 		public enum SortOption
 		{
 			Name,
+			ShaderName,
 			AssetPath,
 			SceneCount,
 		}
@@ -49,7 +50,7 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			SortOption.Name, // Not applicable
 			SortOption.Name,
-			SortOption.Name, // Not applicable
+			SortOption.ShaderName,
 			SortOption.SceneCount,
 			SortOption.AssetPath,
 		};
@@ -72,23 +73,24 @@ namespace Extenity.PainkillaTool.Editor
 				},
 				new MultiColumnHeaderState.Column
 				{
-					headerContent = new GUIContent("Name"),
+					headerContent = new GUIContent("Material"),
 					headerTextAlignment = TextAlignment.Center,
 					sortedAscending = true,
 					sortingArrowAlignment = TextAlignment.Center,
 					width = 250,
 					minWidth = 60,
-					autoResize = false,
+					autoResize = true,
 					allowToggleVisibility = false,
 				},
 				new MultiColumnHeaderState.Column
 				{
-					headerContent = new GUIContent("Material"),
+					headerContent = new GUIContent("Shader"),
 					headerTextAlignment = TextAlignment.Center,
-					canSort = false,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
 					width = 250,
 					minWidth = 60,
-					autoResize = false,
+					autoResize = true,
 					allowToggleVisibility = true,
 				},
 				new MultiColumnHeaderState.Column
@@ -219,6 +221,9 @@ namespace Extenity.PainkillaTool.Editor
 					case SortOption.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
+					case SortOption.ShaderName:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.ShaderName, ascending);
+						break;
 					case SortOption.SceneCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);
 						break;
@@ -239,6 +244,8 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				case SortOption.Name:
 					return myTypes.Order(l => l.Data.name, ascending);
+				case SortOption.ShaderName:
+					return myTypes.Order(l => l.Data.ShaderName, ascending);
 				case SortOption.SceneCount:
 					return myTypes.Order(l => l.Data.FoundInScenes.Length, ascending);
 				case SortOption.AssetPath:
@@ -280,24 +287,30 @@ namespace Extenity.PainkillaTool.Editor
 					}
 					break;
 
-				case MyColumns.Name:
-					{
-						//// Do toggle
-						//Rect toggleRect = cellRect;
-						//toggleRect.x += GetContentIndent(item);
-						//toggleRect.width = kToggleWidth;
-						//if (toggleRect.xMax < cellRect.xMax)
-						//	item.data.enabled = EditorGUI.Toggle(toggleRect, item.data.enabled); // hide when outside cell rect
+				//case MyColumns.Name:
+				//	{
+				//		//// Do toggle
+				//		//Rect toggleRect = cellRect;
+				//		//toggleRect.x += GetContentIndent(item);
+				//		//toggleRect.width = kToggleWidth;
+				//		//if (toggleRect.xMax < cellRect.xMax)
+				//		//	item.data.enabled = EditorGUI.Toggle(toggleRect, item.data.enabled); // hide when outside cell rect
 
-						// Default icon and label
-						args.rowRect = cellRect;
-						base.RowGUI(args);
-					}
-					break;
+				//		// Default icon and label
+				//		args.rowRect = cellRect;
+				//		base.RowGUI(args);
+				//	}
+				//	break;
 
 				case MyColumns.Material:
 					{
-						item.Data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
+						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
+					}
+					break;
+
+				case MyColumns.ShaderName:
+					{
+						GUI.Label(cellRect, item.Data.ShaderName);
 					}
 					break;
 

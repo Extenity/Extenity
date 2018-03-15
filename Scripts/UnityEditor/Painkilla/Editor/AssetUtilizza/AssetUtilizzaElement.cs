@@ -16,6 +16,7 @@ namespace Extenity.PainkillaTool.Editor
 		public AssetUtilizzaElement(Material material, string sceneName) : base(material.name, 0, material.GetInstanceID())
 		{
 			Material = material;
+			ShaderName = material != null ? material.shader.name : "";
 			AssetPath = AssetTools.GetAssetPathWithoutRoot(Material);
 			FoundInScenes = new[] { sceneName };
 		}
@@ -34,6 +35,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region Material
 
 		public Material Material;
+		public string ShaderName;
 		public string AssetPath;
 
 		#endregion
