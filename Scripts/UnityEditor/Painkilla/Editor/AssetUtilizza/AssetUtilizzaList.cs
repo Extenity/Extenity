@@ -129,6 +129,10 @@ namespace Extenity.PainkillaTool.Editor
 			return false;
 		}
 
+		protected override void RenameEnded(RenameEndedArgs args)
+		{
+		}
+
 		protected override bool CanMultiSelect(TreeViewItem item)
 		{
 			return true;

@@ -87,7 +87,7 @@ namespace Extenity.PainkillaTool.Editor
 				DrawSearchBar(rect);
 				rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 				DrawTreeView(rect);
-				DrawBottomToolBar();
+				//DrawBottomToolBar();
 			}
 
 			if (GUI.changed)
@@ -175,6 +175,7 @@ namespace Extenity.PainkillaTool.Editor
 			TreeView.OnGUI(rect);
 		}
 
+		/*
 		private void DrawBottomToolBar()
 		{
 			GUILayout.BeginHorizontal();
@@ -194,30 +195,31 @@ namespace Extenity.PainkillaTool.Editor
 
 				if (GUILayout.Button("Set sorting", style))
 				{
-					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.SetSortingColumns(new int[] { 4, 3, 2 }, new[] { true, false, true });
-					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
+					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					columnHeader.SetSortingColumns(new int[] { 4, 3, 2 }, new[] { true, false, true });
+					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
 				}
 
 				GUILayout.Label("Header: ", "minilabel");
 				if (GUILayout.Button("Large", style))
 				{
-					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
+					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
 				}
 				if (GUILayout.Button("Default", style))
 				{
-					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.DefaultHeader;
+					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.DefaultHeader;
 				}
 				if (GUILayout.Button("No sort", style))
 				{
-					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.MinimumHeaderWithoutSorting;
+					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.MinimumHeaderWithoutSorting;
 				}
 			}
 			GUILayout.EndHorizontal();
 		}
+		*/
 
 		private void InitializeListIfNeeded()
 		{

@@ -5,7 +5,10 @@ namespace Extenity.PainkillaTool.Editor
 
 	public class AssetUtilizzaColumnHeader : MultiColumnHeader
 	{
-		Mode m_Mode;
+		public AssetUtilizzaColumnHeader(MultiColumnHeaderState state) : base(state)
+		{
+			mode = Mode.DefaultHeader;
+		}
 
 		public enum Mode
 		{
@@ -14,21 +17,17 @@ namespace Extenity.PainkillaTool.Editor
 			MinimumHeaderWithoutSorting
 		}
 
-		public AssetUtilizzaColumnHeader(MultiColumnHeaderState state) : base(state)
-		{
-			mode = Mode.DefaultHeader;
-		}
-
+		private Mode _Mode;
 		public Mode mode
 		{
 			get
 			{
-				return m_Mode;
+				return _Mode;
 			}
 			set
 			{
-				m_Mode = value;
-				switch (m_Mode)
+				_Mode = value;
+				switch (_Mode)
 				{
 					case Mode.LargeHeader:
 						canSort = true;
