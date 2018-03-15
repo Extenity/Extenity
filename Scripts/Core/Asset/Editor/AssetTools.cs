@@ -246,6 +246,18 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Get Asset Path Without Root
+
+		public static string GetAssetPathWithoutRoot(Object obj)
+		{
+			var path = AssetDatabase.GetAssetPath(obj);
+			if (path.StartsWith("Assets/"))
+				return path.Remove(0, "Assets/".Length);
+			return path;
+		}
+
+		#endregion
+
 		#region CreateOrReplaceAsset
 
 		public static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object

@@ -20,7 +20,10 @@ namespace Extenity.RenderingToolbox.Editor
 				{
 					var propertyName = ShaderUtil.GetPropertyName(shader, i);
 					var texture = material.GetTexture(propertyName);
-					result.Add(texture);
+					if (texture)
+					{
+						result.Add(texture);
+					}
 				}
 			}
 			return result;

@@ -93,6 +93,11 @@ namespace Extenity.MathToolbox
 				return vector.y;
 		}
 
+		public static int MultiplyComponents(this Vector2Int vector)
+		{
+			return vector.x * vector.y;
+		}
+
 		public static void SwapToMakeLesserAndGreater(ref Vector2Int shouldBeLesser, ref Vector2Int shouldBeGreater)
 		{
 			if (shouldBeLesser.x > shouldBeGreater.x)
