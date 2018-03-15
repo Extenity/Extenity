@@ -11,53 +11,6 @@ using UnityEngine;
 namespace Extenity.PainkillaTool.Editor
 {
 
-	// TODO: Move somewhere
-	public class MyMultiColumnHeader : MultiColumnHeader
-	{
-		Mode m_Mode;
-
-		public enum Mode
-		{
-			LargeHeader,
-			DefaultHeader,
-			MinimumHeaderWithoutSorting
-		}
-
-		public MyMultiColumnHeader(MultiColumnHeaderState state) : base(state)
-		{
-			mode = Mode.DefaultHeader;
-		}
-
-		public Mode mode
-		{
-			get
-			{
-				return m_Mode;
-			}
-			set
-			{
-				m_Mode = value;
-				switch (m_Mode)
-				{
-					case Mode.LargeHeader:
-						canSort = true;
-						height = 37f;
-						break;
-					case Mode.DefaultHeader:
-						canSort = true;
-						height = DefaultGUI.defaultHeight;
-						break;
-					case Mode.MinimumHeaderWithoutSorting:
-						canSort = false;
-						height = DefaultGUI.minimumHeight;
-						break;
-				}
-			}
-		}
-	}
-
-
-
 	public class AssetUtilizza : ExtenityEditorWindowBase
 	{
 		#region Configuration
@@ -240,27 +193,27 @@ namespace Extenity.PainkillaTool.Editor
 
 				if (GUILayout.Button("Set sorting", style))
 				{
-					var myColumnHeader = (MyMultiColumnHeader)TreeView.multiColumnHeader;
+					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
 					myColumnHeader.SetSortingColumns(new int[] { 4, 3, 2 }, new[] { true, false, true });
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.LargeHeader;
+					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
 				}
 
 
 				GUILayout.Label("Header: ", "minilabel");
 				if (GUILayout.Button("Large", style))
 				{
-					var myColumnHeader = (MyMultiColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.LargeHeader;
+					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
 				}
 				if (GUILayout.Button("Default", style))
 				{
-					var myColumnHeader = (MyMultiColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.DefaultHeader;
+					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.DefaultHeader;
 				}
 				if (GUILayout.Button("No sort", style))
 				{
-					var myColumnHeader = (MyMultiColumnHeader)TreeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.MinimumHeaderWithoutSorting;
+					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
+					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.MinimumHeaderWithoutSorting;
 				}
 
 				GUILayout.Space(10);
@@ -289,7 +242,7 @@ namespace Extenity.PainkillaTool.Editor
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
 
-			var multiColumnHeader = new MyMultiColumnHeader(headerState);
+			var multiColumnHeader = new AssetUtilizzaColumnHeader(headerState);
 			if (firstInit)
 				multiColumnHeader.ResizeToFit();
 
