@@ -10,12 +10,14 @@ namespace Extenity.IMGUIToolbox.Editor
 
 	public class TreeViewWithTreeModel<T> : TreeView where T : TreeElement
 	{
+#pragma warning disable 67
 		private TreeModel<T> m_TreeModel;
 		private readonly List<TreeViewItem> m_Rows = new List<TreeViewItem>(100);
 		public event Action treeChanged;
 
 		public TreeModel<T> treeModel { get { return m_TreeModel; } }
 		public event Action<IList<TreeViewItem>> beforeDroppingDraggedItems;
+#pragma warning restore 67
 
 
 		public TreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) : base(state)

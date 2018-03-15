@@ -19,7 +19,9 @@ namespace Extenity.IMGUIToolbox.Editor
 		private int m_MaxID;
 
 		public T root { get { return m_Root; } set { m_Root = value; } }
+#pragma warning disable 67
 		public event Action modelChanged;
+#pragma warning restore 67
 		public int numberOfDataElements
 		{
 			get { return m_Data.Count; }
