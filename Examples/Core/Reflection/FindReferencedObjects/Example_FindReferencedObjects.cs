@@ -23,7 +23,7 @@ namespace ExtenityExamples.Reflection
 			// Object
 			{
 				var result = new HashSet<Object>();
-				this.FindAllReferencedObjectsInUnityObject(result, true);
+				this.FindAllReferencedObjectsInUnityObject(result);
 
 				Debug.LogFormat("================================= Found '{0}' referenced objects:", result.Count);
 				foreach (var item in result)
@@ -47,7 +47,7 @@ namespace ExtenityExamples.Reflection
 			// All objects in scene
 			{
 				var result = new HashSet<Object>();
-				SceneManager.GetActiveScene().FindAllReferencedObjectsInScene(result, true);
+				SceneManager.GetActiveScene().FindAllReferencedObjectsInScene(result);
 
 				Debug.LogFormat("================================= Found '{0}' referenced objects in scene:", result.Count);
 				foreach (var item in result)
