@@ -1,4 +1,5 @@
 using System;
+using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,20 +10,48 @@ namespace Extenity.PainkillaTool.Editor
 	[Serializable]
 	public class AssetUtilizzaElement : TreeElement
 	{
+		// TODO: Delete these
 		public int intValue1;
+		public float floatValue2;
 
-		public float floatValue2, floatValue3;
-		public Material material;
-		public string text = "";
-		public bool enabled;
+		#region Initialization
 
-		public AssetUtilizzaElement(string name, int depth, int id) : base(name, depth, id)
+		public AssetUtilizzaElement(Material material, string sceneName) : base(material.name, 0, material.GetInstanceID())
 		{
 			intValue1 = (int)(Random.value * 100);
 			floatValue2 = Random.value;
-			floatValue3 = Random.value;
-			enabled = true;
+
+			Material = material;
+			FoundInScenes = new[] { sceneName };
 		}
+
+		private AssetUtilizzaElement() : base(null, -1, 0)
+		{
+		}
+
+		public static AssetUtilizzaElement CreateRoot()
+		{
+			return new AssetUtilizzaElement();
+		}
+
+		#endregion
+
+		#region Material
+
+		public Material Material;
+
+		#endregion
+
+		#region Found In Scenes
+
+		public string[] FoundInScenes;
+
+		public void AddScene(string sceneName)
+		{
+			FoundInScenes = FoundInScenes.Add(sceneName);
+		}
+
+		#endregion
 	}
 
 }

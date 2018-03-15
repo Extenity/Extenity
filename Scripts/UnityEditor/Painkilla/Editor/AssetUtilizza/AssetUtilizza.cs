@@ -1,63 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.ReflectionToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Extenity.PainkillaTool.Editor
 {
 
-	public static class MyTreeElementGenerator
-	{
-		static int IDCounter;
-		static int minNumChildren = 5;
-		static int maxNumChildren = 10;
-		static float probabilityOfBeingLeaf = 0.5f;
-
-		public static List<AssetUtilizzaElement> GenerateRandomTree(int numTotalElements)
-		{
-			int numRootChildren = numTotalElements / 4;
-			IDCounter = 0;
-			var treeElements = new List<AssetUtilizzaElement>(numTotalElements);
-
-			var root = new AssetUtilizzaElement("Root", -1, IDCounter);
-			treeElements.Add(root);
-			for (int i = 0; i < numRootChildren; ++i)
-			{
-				int allowedDepth = 6;
-				AddChildrenRecursive(root, Random.Range(minNumChildren, maxNumChildren), true, numTotalElements, ref allowedDepth, treeElements);
-			}
-
-			return treeElements;
-		}
-
-		private static void AddChildrenRecursive(TreeElement element, int numChildren, bool force, int numTotalElements, ref int allowedDepth, List<AssetUtilizzaElement> treeElements)
-		{
-			if (element.depth >= allowedDepth)
-			{
-				allowedDepth = 0;
-				return;
-			}
-
-			for (int i = 0; i < numChildren; ++i)
-			{
-				if (IDCounter > numTotalElements)
-					return;
-
-				var child = new AssetUtilizzaElement("Element " + IDCounter, element.depth + 1, ++IDCounter);
-				treeElements.Add(child);
-
-				if (!force && Random.value < probabilityOfBeingLeaf)
-					continue;
-
-				AddChildrenRecursive(child, Random.Range(minNumChildren, maxNumChildren), false, numTotalElements, ref allowedDepth, treeElements);
-			}
-		}
-	}
-
+	// TODO: Move somewhere
 	public class MyMultiColumnHeader : MultiColumnHeader
 	{
 		Mode m_Mode;
@@ -358,8 +312,44 @@ namespace Extenity.PainkillaTool.Editor
 
 		private IList<AssetUtilizzaElement> GetData()
 		{
-			// generate some test data
-			return MyTreeElementGenerator.GenerateRandomTree(130);
+			var materialsInScenes = GatherMaterialsInScenes();
+			return materialsInScenes;
+		}
+
+		private static List<AssetUtilizzaElement> GatherMaterialsInScenes()
+		{
+			var objectsInScenes = EditorReflectionTools.FindAllReferencedObjectsInLoadedScenes<Material>();
+
+			var elementsByObjects = new Dictionary<Material, AssetUtilizzaElement>(objectsInScenes.Sum(item => item.Value.Length));
+
+			foreach (var objectsInScene in objectsInScenes)
+			{
+				var scene = objectsInScene.Key;
+				var objects = objectsInScene.Value;
+
+				foreach (var obj in objects)
+				{
+					AssetUtilizzaElement element;
+					if (!elementsByObjects.TryGetValue(obj, out element))
+					{
+						element = new AssetUtilizzaElement(obj, scene.name);
+						elementsByObjects.Add(obj, element);
+					}
+					else
+					{
+						element.AddScene(scene.name);
+					}
+				}
+			}
+
+			var elements = elementsByObjects.Values.ToList();
+			elements.Insert(0, AssetUtilizzaElement.CreateRoot());
+			return elements;
+		}
+
+		private static void GatherTexturesInScenes()
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion

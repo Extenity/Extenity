@@ -35,7 +35,6 @@ namespace Extenity.PainkillaTool.Editor
 			Name,
 			Value1,
 			Value2,
-			Value3,
 		}
 
 		public enum SortOption
@@ -43,7 +42,6 @@ namespace Extenity.PainkillaTool.Editor
 			Name,
 			Value1,
 			Value2,
-			Value3,
 		}
 
 		// Sort options per column
@@ -53,7 +51,6 @@ namespace Extenity.PainkillaTool.Editor
 			SortOption.Name,
 			SortOption.Value1,
 			SortOption.Value2,
-			SortOption.Value3
 		};
 
 		public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
@@ -159,9 +156,6 @@ namespace Extenity.PainkillaTool.Editor
 					case SortOption.Value2:
 						orderedQuery = orderedQuery.ThenBy(l => l.data.floatValue2, ascending);
 						break;
-					case SortOption.Value3:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.floatValue3, ascending);
-						break;
 				}
 			}
 
@@ -180,8 +174,6 @@ namespace Extenity.PainkillaTool.Editor
 					return myTypes.Order(l => l.data.intValue1, ascending);
 				case SortOption.Value2:
 					return myTypes.Order(l => l.data.floatValue2, ascending);
-				case SortOption.Value3:
-					return myTypes.Order(l => l.data.floatValue3, ascending);
 				default:
 					Assert.IsTrue(false, string.Format("Unhandled enum '{0}'.", sortOption));
 					break;
@@ -221,7 +213,7 @@ namespace Extenity.PainkillaTool.Editor
 
 				case MyColumns.Name:
 					{
-						// Do toggle
+						//// Do toggle
 						//Rect toggleRect = cellRect;
 						//toggleRect.x += GetContentIndent(item);
 						//toggleRect.width = kToggleWidth;
@@ -236,7 +228,6 @@ namespace Extenity.PainkillaTool.Editor
 
 				case MyColumns.Value1:
 				case MyColumns.Value2:
-				case MyColumns.Value3:
 					{
 						if (showControls)
 						{
@@ -245,9 +236,7 @@ namespace Extenity.PainkillaTool.Editor
 							if (column == MyColumns.Value1)
 								item.data.intValue1 = EditorGUI.IntSlider(cellRect, GUIContent.none, item.data.intValue1, 0, 100);
 							if (column == MyColumns.Value2)
-								item.data.material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.data.material, typeof(Material), false);
-							if (column == MyColumns.Value3)
-								item.data.text = GUI.TextField(cellRect, item.data.text);
+								item.data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.data.Material, typeof(Material), false);
 						}
 						else
 						{
@@ -256,8 +245,6 @@ namespace Extenity.PainkillaTool.Editor
 								value = item.data.intValue1.ToString();
 							if (column == MyColumns.Value2)
 								value = item.data.floatValue2.ToString("f5");
-							if (column == MyColumns.Value3)
-								value = item.data.floatValue3.ToString("f5");
 
 							DefaultGUI.LabelRightAligned(cellRect, value, args.selected, args.focused);
 						}
@@ -351,16 +338,6 @@ namespace Extenity.PainkillaTool.Editor
 					autoResize = true,
 					allowToggleVisibility = true
 				},
-				new MultiColumnHeaderState.Column
-				{
-					headerContent = new GUIContent("Note", "Nam at tellus ultricies ligula vehicula ornare sit amet quis metus."),
-					headerTextAlignment = TextAlignment.Right,
-					sortedAscending = true,
-					sortingArrowAlignment = TextAlignment.Left,
-					width = 70,
-					minWidth = 60,
-					autoResize = true
-				}
 			};
 
 			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(MyColumns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
