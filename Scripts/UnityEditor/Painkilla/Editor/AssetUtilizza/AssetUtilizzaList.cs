@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.MathToolbox;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -33,6 +34,8 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			Preview,
 			Material,
+			TextureCount,
+			MaxTextureSize,
 			ShaderName,
 			Scenes,
 			AssetPath,
@@ -41,6 +44,8 @@ namespace Extenity.PainkillaTool.Editor
 		private enum SortOption
 		{
 			Name,
+			TextureCount,
+			MaxTextureSize,
 			ShaderName,
 			AssetPath,
 			SceneCount,
@@ -51,6 +56,8 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			SortOption.Name, // Not applicable
 			SortOption.Name,
+			SortOption.TextureCount,
+			SortOption.MaxTextureSize,
 			SortOption.ShaderName,
 			SortOption.SceneCount,
 			SortOption.AssetPath,
@@ -82,6 +89,30 @@ namespace Extenity.PainkillaTool.Editor
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = false,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Textures"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 65,
+					minWidth = 65,
+					maxWidth = 65,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Largest Texture"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 105,
+					minWidth = 105,
+					maxWidth = 105,
+					autoResize = false,
+					allowToggleVisibility = true,
 				},
 				new MultiColumnHeaderState.Column
 				{
@@ -142,6 +173,20 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region GUI
 
+		private GUIStyle _CenteredLabel;
+		private GUIStyle CenteredLabel
+		{
+			get
+			{
+				if (_CenteredLabel == null)
+				{
+					_CenteredLabel = new GUIStyle(EditorStyles.label);
+					_CenteredLabel.alignment = TextAnchor.UpperCenter;
+				}
+				return _CenteredLabel;
+			}
+		}
+
 		protected override void RowGUI(RowGUIArgs args)
 		{
 			var item = (TreeViewItem<AssetUtilizzaElement>)args.item;
@@ -186,6 +231,19 @@ namespace Extenity.PainkillaTool.Editor
 					}
 					break;
 
+				case Columns.TextureCount:
+					{
+						GUI.Label(cellRect, item.Data.TextureCount.ToString(), CenteredLabel);
+					}
+					break;
+
+				case Columns.MaxTextureSize:
+					{
+						var size = item.Data.MaxTextureSize;
+						GUI.Label(cellRect, size.IsAllZero() ? "" : size.x + ", " + size.y, CenteredLabel);
+					}
+					break;
+
 				case Columns.ShaderName:
 					{
 						GUI.Label(cellRect, item.Data.ShaderName);
@@ -219,7 +277,8 @@ namespace Extenity.PainkillaTool.Editor
 			columnIndexForTreeFoldouts = 1;
 			showAlternatingRowBackgrounds = true;
 			showBorder = true;
-			customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f; // center foldout in the row since we also center content. See RowGUI
+			// Center foldout in the row since we also center the content. See RowGUI.
+			customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f;
 			//extraSpaceBeforeIconAndLabel = kToggleWidth;
 			multiColumnHeader.sortingChanged += OnSortingChanged;
 
@@ -314,6 +373,12 @@ namespace Extenity.PainkillaTool.Editor
 					case SortOption.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
+					case SortOption.TextureCount:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.TextureCount, ascending);
+						break;
+					case SortOption.MaxTextureSize:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
+						break;
 					case SortOption.ShaderName:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.ShaderName, ascending);
 						break;
@@ -337,6 +402,10 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				case SortOption.Name:
 					return myTypes.Order(l => l.Data.name, ascending);
+				case SortOption.TextureCount:
+					return myTypes.Order(l => l.Data.TextureCount, ascending);
+				case SortOption.MaxTextureSize:
+					return myTypes.Order(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
 				case SortOption.ShaderName:
 					return myTypes.Order(l => l.Data.ShaderName, ascending);
 				case SortOption.SceneCount:

@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.RenderingToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,8 +18,15 @@ namespace Extenity.PainkillaTool.Editor
 		public AssetUtilizzaElement(Material material, string sceneName) : base(material.name, 0, material.GetInstanceID())
 		{
 			Material = material;
-			ShaderName = material != null ? material.shader.name : "";
-			AssetPath = AssetTools.GetAssetPathWithoutRoot(Material);
+			if (Material)
+			{
+				ShaderName = Material.shader.name;
+				var textures = Material.GetAllTextures();
+				var largestTexture = textures.Count > 0 ? textures.First(texture => texture.width * texture.height == textures.Max(comp => comp.width * comp.height)) : null;
+				TextureCount = textures.Count;
+				MaxTextureSize = largestTexture ? new Vector2Int(largestTexture.width, largestTexture.height) : Vector2Int.zero;
+				AssetPath = AssetTools.GetAssetPathWithoutRoot(Material);
+			}
 			FoundInScenes = new[] { sceneName };
 		}
 
@@ -36,6 +45,8 @@ namespace Extenity.PainkillaTool.Editor
 
 		public Material Material;
 		public string ShaderName;
+		public int TextureCount;
+		public Vector2Int MaxTextureSize;
 		public string AssetPath;
 
 		#endregion
