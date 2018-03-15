@@ -1033,8 +1033,13 @@ namespace Extenity.GameObjectToolbox
 
 		public static List<GameObject> ListAllGameObjectsInActiveScene()
 		{
+			return SceneManager.GetActiveScene().ListAllGameObjectsInScene();
+		}
+
+		public static List<GameObject> ListAllGameObjectsInScene(this Scene scene)
+		{
 			var list = new List<GameObject>();
-			SceneManager.GetActiveScene().GetRootGameObjects().ListAllChildrenGameObjects(list, true);
+			scene.GetRootGameObjects().ListAllChildrenGameObjects(list, true);
 			return list;
 		}
 

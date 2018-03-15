@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Extenity.ReflectionToolbox
@@ -623,11 +624,14 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjectsInComponents
 
-		// TODO:
-		//public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
-		//{
-		//	...
-		//}
+		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result, bool includeChildren)
+		{
+			var gameObjects = scene.ListAllGameObjectsInScene();
+			for (var i = 0; i < gameObjects.Count; i++)
+			{
+				gameObjects[i].FindAllReferencedGameObjectsInGameObject(result, includeChildren);
+			}
+		}
 
 		public static void FindAllReferencedGameObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
 		{
@@ -748,11 +752,14 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedObjectsInComponents
 
-		// TODO:
-		//public static void FindAllReferencedObjectsInScene(this Scene scene, ...)
-		//{
-		//	...
-		//}
+		public static void FindAllReferencedObjectsInScene(this Scene scene, HashSet<Object> result, bool includeChildren)
+		{
+			var gameObjects = scene.ListAllGameObjectsInScene();
+			for (var i = 0; i < gameObjects.Count; i++)
+			{
+				gameObjects[i].FindAllReferencedObjectsInGameObject(result, includeChildren);
+			}
+		}
 
 		public static void FindAllReferencedObjectsInComponents<T>(this IEnumerable<T> components, HashSet<Object> result, bool includeChildren) where T : Component
 		{
