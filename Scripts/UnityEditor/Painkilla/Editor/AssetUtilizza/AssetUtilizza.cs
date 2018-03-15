@@ -77,6 +77,7 @@ namespace Extenity.PainkillaTool.Editor
 			if (GUILayout.Button(RefreshButtonContent, RefreshButtonOptions))
 			{
 				GatherData();
+				Debug.LogError("Not implemented yet!");
 			}
 			GUILayout.EndHorizontal();
 
@@ -164,7 +165,7 @@ namespace Extenity.PainkillaTool.Editor
 			IsTreeViewInitialized = false;
 		}
 
-		void DrawSearchBar(Rect rect)
+		private void DrawSearchBar(Rect rect)
 		{
 			TreeView.searchString = SearchField.OnGUI(rect, TreeView.searchString);
 		}
@@ -174,7 +175,7 @@ namespace Extenity.PainkillaTool.Editor
 			TreeView.OnGUI(rect);
 		}
 
-		void DrawBottomToolBar()
+		private void DrawBottomToolBar()
 		{
 			GUILayout.BeginHorizontal();
 			{
@@ -198,7 +199,6 @@ namespace Extenity.PainkillaTool.Editor
 					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
 				}
 
-
 				GUILayout.Label("Header: ", "minilabel");
 				if (GUILayout.Button("Large", style))
 				{
@@ -214,13 +214,6 @@ namespace Extenity.PainkillaTool.Editor
 				{
 					var myColumnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
 					myColumnHeader.mode = AssetUtilizzaColumnHeader.Mode.MinimumHeaderWithoutSorting;
-				}
-
-				GUILayout.Space(10);
-
-				if (GUILayout.Button("values <-> controls", style))
-				{
-					TreeView.showControls = !TreeView.showControls;
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -261,6 +254,7 @@ namespace Extenity.PainkillaTool.Editor
 		private void GatherData()
 		{
 			TreeView.Reload();
+			Repaint();
 		}
 
 		private IList<AssetUtilizzaElement> GetData()

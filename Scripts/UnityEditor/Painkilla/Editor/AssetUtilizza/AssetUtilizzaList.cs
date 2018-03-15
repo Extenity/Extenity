@@ -15,43 +15,112 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		const float kRowHeights = 20f;
 		const float kToggleWidth = 18f;
-		public bool showControls = true;
 
-		static Texture2D[] s_TestIcons =
-		{
-			EditorGUIUtility.FindTexture("Folder Icon"),
-			EditorGUIUtility.FindTexture("AudioSource Icon"),
-			EditorGUIUtility.FindTexture("Camera Icon"),
-			EditorGUIUtility.FindTexture("Windzone Icon"),
-			EditorGUIUtility.FindTexture("GameObject Icon"),
-			EditorGUIUtility.FindTexture("Material Icon"),
-			EditorGUIUtility.FindTexture("Texture Icon")
-		};
+		//static Texture2D[] s_TestIcons =
+		//{
+		//	EditorGUIUtility.FindTexture("Material Icon"),
+		//	EditorGUIUtility.FindTexture("Folder Icon"),
+		//	EditorGUIUtility.FindTexture("AudioSource Icon"),
+		//	EditorGUIUtility.FindTexture("Camera Icon"),
+		//	EditorGUIUtility.FindTexture("Windzone Icon"),
+		//	EditorGUIUtility.FindTexture("GameObject Icon"),
+		//	EditorGUIUtility.FindTexture("Texture Icon")
+		//};
 
 		// All columns
 		enum MyColumns
 		{
-			Icon1,
+			Preview,
 			Name,
-			Value1,
-			Value2,
+			Material,
+			Scenes,
+			AssetPath,
 		}
 
 		public enum SortOption
 		{
 			Name,
-			Value1,
-			Value2,
+			AssetPath,
+			SceneCount,
 		}
 
 		// Sort options per column
 		SortOption[] m_SortOptions =
 		{
-			SortOption.Value1,
+			SortOption.Name, // Not applicable
 			SortOption.Name,
-			SortOption.Value1,
-			SortOption.Value2,
+			SortOption.Name, // Not applicable
+			SortOption.SceneCount,
+			SortOption.AssetPath,
 		};
+
+		public static MultiColumnHeaderState CreateDefaultMultiColumnHeaderState()
+		{
+			var columns = new[]
+			{
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = GUIContent.none,
+					contextMenuText = "Preview",
+					headerTextAlignment = TextAlignment.Center,
+					canSort = false,
+					width = 30,
+					minWidth = 30,
+					maxWidth = 60,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Name"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 250,
+					minWidth = 60,
+					autoResize = false,
+					allowToggleVisibility = false,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Material"),
+					headerTextAlignment = TextAlignment.Center,
+					canSort = false,
+					width = 250,
+					minWidth = 60,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Scenes"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 110,
+					minWidth = 60,
+					autoResize = true,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Asset Path"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 180,
+					minWidth = 60,
+					autoResize = true,
+					allowToggleVisibility = true,
+				},
+			};
+
+			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(MyColumns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
+
+			var state = new MultiColumnHeaderState(columns);
+			return state;
+		}
+
 
 		public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
 		{
@@ -150,11 +219,11 @@ namespace Extenity.PainkillaTool.Editor
 					case SortOption.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
-					case SortOption.Value1:
-						orderedQuery = orderedQuery.ThenBy(l => l.Data.intValue1, ascending);
+					case SortOption.SceneCount:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);
 						break;
-					case SortOption.Value2:
-						orderedQuery = orderedQuery.ThenBy(l => l.Data.floatValue2, ascending);
+					case SortOption.AssetPath:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.AssetPath, ascending);
 						break;
 				}
 			}
@@ -170,10 +239,10 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				case SortOption.Name:
 					return myTypes.Order(l => l.Data.name, ascending);
-				case SortOption.Value1:
-					return myTypes.Order(l => l.Data.intValue1, ascending);
-				case SortOption.Value2:
-					return myTypes.Order(l => l.Data.floatValue2, ascending);
+				case SortOption.SceneCount:
+					return myTypes.Order(l => l.Data.FoundInScenes.Length, ascending);
+				case SortOption.AssetPath:
+					return myTypes.Order(l => l.Data.AssetPath, ascending);
 				default:
 					Assert.IsTrue(false, string.Format("Unhandled enum '{0}'.", sortOption));
 					break;
@@ -183,9 +252,9 @@ namespace Extenity.PainkillaTool.Editor
 			return myTypes.Order(l => l.Data.name, ascending);
 		}
 
-		private int GetIcon1Index(TreeViewItem<AssetUtilizzaElement> item)
+		private Texture2D GetPreviewOrIcon(TreeViewItem<AssetUtilizzaElement> item)
 		{
-			return (int)(Mathf.Min(0.99f, item.Data.intValue1 * 0.01f) * s_TestIcons.Length);
+			return item.Data.Preview;
 		}
 
 		protected override void RowGUI(RowGUIArgs args)
@@ -205,9 +274,9 @@ namespace Extenity.PainkillaTool.Editor
 
 			switch (column)
 			{
-				case MyColumns.Icon1:
+				case MyColumns.Preview:
 					{
-						GUI.DrawTexture(cellRect, s_TestIcons[GetIcon1Index(item)], ScaleMode.ScaleToFit);
+						GUI.DrawTexture(cellRect, GetPreviewOrIcon(item), ScaleMode.ScaleToFit);
 					}
 					break;
 
@@ -226,28 +295,21 @@ namespace Extenity.PainkillaTool.Editor
 					}
 					break;
 
-				case MyColumns.Value1:
-				case MyColumns.Value2:
+				case MyColumns.Material:
 					{
-						if (showControls)
-						{
-							cellRect.xMin += 5f; // When showing controls make some extra spacing
+						item.Data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
+					}
+					break;
 
-							if (column == MyColumns.Value1)
-								item.Data.intValue1 = EditorGUI.IntSlider(cellRect, GUIContent.none, item.Data.intValue1, 0, 100);
-							if (column == MyColumns.Value2)
-								item.Data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
-						}
-						else
-						{
-							string value = "Missing";
-							if (column == MyColumns.Value1)
-								value = item.Data.intValue1.ToString();
-							if (column == MyColumns.Value2)
-								value = item.Data.floatValue2.ToString("f5");
+				case MyColumns.Scenes:
+					{
+						GUI.Label(cellRect, item.Data.FoundInScenesCombined);
+					}
+					break;
 
-							DefaultGUI.LabelRightAligned(cellRect, value, args.selected, args.focused);
-						}
+				case MyColumns.AssetPath:
+					{
+						GUI.Label(cellRect, item.Data.AssetPath);
 					}
 					break;
 			}
@@ -287,63 +349,6 @@ namespace Extenity.PainkillaTool.Editor
 		protected override bool CanMultiSelect(TreeViewItem item)
 		{
 			return true;
-		}
-
-		public static MultiColumnHeaderState CreateDefaultMultiColumnHeaderState()
-		{
-			var columns = new[]
-			{
-				new MultiColumnHeaderState.Column
-				{
-					headerContent = new GUIContent(EditorGUIUtility.FindTexture("FilterByLabel"), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "),
-					contextMenuText = "Asset",
-					headerTextAlignment = TextAlignment.Center,
-					sortedAscending = true,
-					sortingArrowAlignment = TextAlignment.Right,
-					width = 30,
-					minWidth = 30,
-					maxWidth = 60,
-					autoResize = false,
-					allowToggleVisibility = true
-				},
-				new MultiColumnHeaderState.Column
-				{
-					headerContent = new GUIContent("Name"),
-					headerTextAlignment = TextAlignment.Left,
-					sortedAscending = true,
-					sortingArrowAlignment = TextAlignment.Center,
-					width = 150,
-					minWidth = 60,
-					autoResize = false,
-					allowToggleVisibility = false
-				},
-				new MultiColumnHeaderState.Column
-				{
-					headerContent = new GUIContent("Multiplier", "In sed porta ante. Nunc et nulla mi."),
-					headerTextAlignment = TextAlignment.Right,
-					sortedAscending = true,
-					sortingArrowAlignment = TextAlignment.Left,
-					width = 110,
-					minWidth = 60,
-					autoResize = true
-				},
-				new MultiColumnHeaderState.Column
-				{
-					headerContent = new GUIContent("Material", "Maecenas congue non tortor eget vulputate."),
-					headerTextAlignment = TextAlignment.Right,
-					sortedAscending = true,
-					sortingArrowAlignment = TextAlignment.Left,
-					width = 95,
-					minWidth = 60,
-					autoResize = true,
-					allowToggleVisibility = true
-				},
-			};
-
-			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(MyColumns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
-
-			var state = new MultiColumnHeaderState(columns);
-			return state;
 		}
 	}
 

@@ -1,8 +1,8 @@
 using System;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Extenity.PainkillaTool.Editor
 {
@@ -10,17 +10,10 @@ namespace Extenity.PainkillaTool.Editor
 	[Serializable]
 	public class AssetUtilizzaElement : TreeElement
 	{
-		// TODO: Delete these
-		public int intValue1;
-		public float floatValue2;
-
 		#region Initialization
 
 		public AssetUtilizzaElement(Material material, string sceneName) : base(material.name, 0, material.GetInstanceID())
 		{
-			intValue1 = (int)(Random.value * 100);
-			floatValue2 = Random.value;
-
 			Material = material;
 			FoundInScenes = new[] { sceneName };
 		}
@@ -39,12 +32,43 @@ namespace Extenity.PainkillaTool.Editor
 		#region Material
 
 		public Material Material;
+		public string AssetPath;
+
+		#endregion
+
+		#region Preview
+
+		private Texture2D _Preview;
+		public Texture2D Preview
+		{
+			get
+			{
+				if (!_Preview)
+				{
+					_Preview = AssetPreview.GetAssetPreview(Material);
+				}
+				return _Preview;
+			}
+		}
 
 		#endregion
 
 		#region Found In Scenes
 
 		public string[] FoundInScenes;
+
+		private string _FoundInScenesCombined;
+		public string FoundInScenesCombined
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_FoundInScenesCombined) && FoundInScenes.Length > 0)
+				{
+					_FoundInScenesCombined = string.Join(", ", FoundInScenes);
+				}
+				return _FoundInScenesCombined;
+			}
+		}
 
 		public void AddScene(string sceneName)
 		{
