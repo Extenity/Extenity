@@ -77,7 +77,6 @@ namespace Extenity.PainkillaTool.Editor
 			if (GUILayout.Button(RefreshButtonContent, RefreshButtonOptions))
 			{
 				GatherData();
-				Debug.LogError("Not implemented yet!");
 			}
 			GUILayout.EndHorizontal();
 
@@ -159,6 +158,8 @@ namespace Extenity.PainkillaTool.Editor
 		private SearchField SearchField;
 		[NonSerialized]
 		private AssetUtilizzaList TreeView;
+		[NonSerialized]
+		private TreeModel<AssetUtilizzaElement> TreeModel;
 
 		private void OnEnableTreeView()
 		{
@@ -241,9 +242,9 @@ namespace Extenity.PainkillaTool.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			var treeModel = new TreeModel<AssetUtilizzaElement>(GetData());
+			TreeModel = new TreeModel<AssetUtilizzaElement>(GetData());
 
-			TreeView = new AssetUtilizzaList(TreeViewState, multiColumnHeader, treeModel);
+			TreeView = new AssetUtilizzaList(TreeViewState, multiColumnHeader, TreeModel);
 
 			SearchField = new SearchField();
 			SearchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
@@ -255,6 +256,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private void GatherData()
 		{
+			TreeModel.SetData(GetData());
 			TreeView.Reload();
 			Repaint();
 		}
