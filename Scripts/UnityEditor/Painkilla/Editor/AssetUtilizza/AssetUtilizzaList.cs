@@ -148,13 +148,13 @@ namespace Extenity.PainkillaTool.Editor
 				switch (sortOption)
 				{
 					case SortOption.Name:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.name, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
 					case SortOption.Value1:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.intValue1, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.intValue1, ascending);
 						break;
 					case SortOption.Value2:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.floatValue2, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.floatValue2, ascending);
 						break;
 				}
 			}
@@ -169,23 +169,23 @@ namespace Extenity.PainkillaTool.Editor
 			switch (sortOption)
 			{
 				case SortOption.Name:
-					return myTypes.Order(l => l.data.name, ascending);
+					return myTypes.Order(l => l.Data.name, ascending);
 				case SortOption.Value1:
-					return myTypes.Order(l => l.data.intValue1, ascending);
+					return myTypes.Order(l => l.Data.intValue1, ascending);
 				case SortOption.Value2:
-					return myTypes.Order(l => l.data.floatValue2, ascending);
+					return myTypes.Order(l => l.Data.floatValue2, ascending);
 				default:
 					Assert.IsTrue(false, string.Format("Unhandled enum '{0}'.", sortOption));
 					break;
 			}
 
 			// default
-			return myTypes.Order(l => l.data.name, ascending);
+			return myTypes.Order(l => l.Data.name, ascending);
 		}
 
 		private int GetIcon1Index(TreeViewItem<AssetUtilizzaElement> item)
 		{
-			return (int)(Mathf.Min(0.99f, item.data.intValue1 * 0.01f) * s_TestIcons.Length);
+			return (int)(Mathf.Min(0.99f, item.Data.intValue1 * 0.01f) * s_TestIcons.Length);
 		}
 
 		protected override void RowGUI(RowGUIArgs args)
@@ -234,17 +234,17 @@ namespace Extenity.PainkillaTool.Editor
 							cellRect.xMin += 5f; // When showing controls make some extra spacing
 
 							if (column == MyColumns.Value1)
-								item.data.intValue1 = EditorGUI.IntSlider(cellRect, GUIContent.none, item.data.intValue1, 0, 100);
+								item.Data.intValue1 = EditorGUI.IntSlider(cellRect, GUIContent.none, item.Data.intValue1, 0, 100);
 							if (column == MyColumns.Value2)
-								item.data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.data.Material, typeof(Material), false);
+								item.Data.Material = (Material)EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
 						}
 						else
 						{
 							string value = "Missing";
 							if (column == MyColumns.Value1)
-								value = item.data.intValue1.ToString();
+								value = item.Data.intValue1.ToString();
 							if (column == MyColumns.Value2)
-								value = item.data.floatValue2.ToString("f5");
+								value = item.Data.floatValue2.ToString("f5");
 
 							DefaultGUI.LabelRightAligned(cellRect, value, args.selected, args.focused);
 						}

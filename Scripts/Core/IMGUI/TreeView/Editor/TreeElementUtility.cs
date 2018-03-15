@@ -8,8 +8,7 @@ namespace Extenity.IMGUIToolbox.Editor
 {
 
 	// TreeElementUtility and TreeElement are useful helper classes for backend tree data structures.
-	// See tests at the bottom for examples of how to use.
-
+	// See tests for examples of how to use.
 	public static class TreeElementUtility
 	{
 		public static void TreeToList<T>(T root, IList<T> result) where T : TreeElement
@@ -122,7 +121,6 @@ namespace Extenity.IMGUIToolbox.Editor
 				throw new ArgumentException("Input list item at index 1 is assumed to have a depth of 0", "list");
 		}
 
-
 		// For updating depth values below any given element e.g after reparenting elements
 		public static void UpdateDepthValues<T>(T root) where T : TreeElement
 		{
@@ -149,7 +147,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 		// Returns true if there is an ancestor of child in the elements list
-		static bool IsChildOf<T>(T child, IList<T> elements) where T : TreeElement
+		private static bool IsChildOf<T>(T child, IList<T> elements) where T : TreeElement
 		{
 			while (child != null)
 			{

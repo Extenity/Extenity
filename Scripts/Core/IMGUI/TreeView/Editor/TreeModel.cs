@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace Extenity.IMGUIToolbox.Editor
 {
+
 	// The TreeModel is a utility class working on a list of serializable TreeElements where the order and the depth of each TreeElement define
 	// the tree structure. Note that the TreeModel itself is not serializable (in Unity we are currently limited to serializing lists/arrays) but the 
 	// input list is.
@@ -12,12 +13,11 @@ namespace Extenity.IMGUIToolbox.Editor
 	// values of the elements). 
 	// The first element of the input list is required to have depth == -1 (the hiddenroot) and the rest to have
 	// depth >= 0 (otherwise an exception will be thrown)
-
 	public class TreeModel<T> where T : TreeElement
 	{
-		IList<T> m_Data;
-		T m_Root;
-		int m_MaxID;
+		private IList<T> m_Data;
+		private T m_Root;
+		private int m_MaxID;
 
 		public T root { get { return m_Root; } set { m_Root = value; } }
 		public event Action modelChanged;
@@ -41,7 +41,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			Init(data);
 		}
 
-		void Init(IList<T> data)
+		private void Init(IList<T> data)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data", "Input data is null. Ensure input is a non-null list.");
@@ -83,7 +83,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			return new List<int>();
 		}
 
-		IList<int> GetParentsBelowStackBased(TreeElement searchFromThis)
+		private IList<int> GetParentsBelowStackBased(TreeElement searchFromThis)
 		{
 			Stack<TreeElement> stack = new Stack<TreeElement>();
 			stack.Push(searchFromThis);
@@ -222,7 +222,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			Changed();
 		}
 
-		void Changed()
+		private void Changed()
 		{
 			if (modelChanged != null)
 				modelChanged();

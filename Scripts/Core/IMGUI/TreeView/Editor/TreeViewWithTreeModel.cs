@@ -10,8 +10,8 @@ namespace Extenity.IMGUIToolbox.Editor
 
 	public class TreeViewWithTreeModel<T> : TreeView where T : TreeElement
 	{
-		TreeModel<T> m_TreeModel;
-		readonly List<TreeViewItem> m_Rows = new List<TreeViewItem>(100);
+		private TreeModel<T> m_TreeModel;
+		private readonly List<TreeViewItem> m_Rows = new List<TreeViewItem>(100);
 		public event Action treeChanged;
 
 		public TreeModel<T> treeModel { get { return m_TreeModel; } }
@@ -29,13 +29,13 @@ namespace Extenity.IMGUIToolbox.Editor
 			Init(model);
 		}
 
-		void Init(TreeModel<T> model)
+		private void Init(TreeModel<T> model)
 		{
 			m_TreeModel = model;
 			m_TreeModel.modelChanged += ModelChanged;
 		}
 
-		void ModelChanged()
+		private void ModelChanged()
 		{
 			if (treeChanged != null)
 				treeChanged();
@@ -74,7 +74,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			return m_Rows;
 		}
 
-		void AddChildrenRecursive(T parent, int depth, IList<TreeViewItem> newRows)
+		private void AddChildrenRecursive(T parent, int depth, IList<TreeViewItem> newRows)
 		{
 			foreach (T child in parent.children)
 			{
@@ -95,7 +95,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 		}
 
-		void Search(T searchFromThis, string search, List<TreeViewItem> result)
+		private void Search(T searchFromThis, string search, List<TreeViewItem> result)
 		{
 			if (string.IsNullOrEmpty(search))
 				throw new ArgumentException("Invalid search: cannot be null or empty", "search");
@@ -144,7 +144,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		// Dragging
 		//-----------
 
-		const string k_GenericDragID = "GenericDragColumnDragging";
+		private const string k_GenericDragID = "GenericDragColumnDragging";
 
 		protected override bool CanStartDrag(CanStartDragArgs args)
 		{
@@ -180,7 +180,7 @@ namespace Extenity.IMGUIToolbox.Editor
 						bool validDrag = ValidDrag(args.parentItem, draggedRows);
 						if (args.performDrop && validDrag)
 						{
-							T parentData = ((TreeViewItem<T>)args.parentItem).data;
+							T parentData = ((TreeViewItem<T>)args.parentItem).Data;
 							OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
 						}
 						return validDrag ? DragAndDropVisualMode.Move : DragAndDropVisualMode.None;
@@ -206,7 +206,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 			var draggedElements = new List<TreeElement>();
 			foreach (var x in draggedRows)
-				draggedElements.Add(((TreeViewItem<T>)x).data);
+				draggedElements.Add(((TreeViewItem<T>)x).Data);
 
 			var selectedIDs = draggedElements.Select(x => x.id).ToArray();
 			m_TreeModel.MoveElements(parent, insertIndex, draggedElements);
@@ -214,7 +214,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 
-		bool ValidDrag(TreeViewItem parent, List<TreeViewItem> draggedItems)
+		private bool ValidDrag(TreeViewItem parent, List<TreeViewItem> draggedItems)
 		{
 			TreeViewItem currentParent = parent;
 			while (currentParent != null)
@@ -225,7 +225,6 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 			return true;
 		}
-
 	}
 
 }
