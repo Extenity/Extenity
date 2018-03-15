@@ -826,8 +826,8 @@ namespace Extenity.ReflectionToolbox
 				Object referencedObject = null;
 				if (serializedFieldType.IsSameOrSubclassOf(typeof(Component)))
 				{
-					referencedObject = null; // Better leave referenced object as null because it will be added in the process below.
 					var component = serializedField.GetValue(unityObject) as Component;
+					referencedObject = component;
 					// A Component is also part of a GameObject. And this GameObject also contains other Components.
 					// Process all of them!
 					if (component)
@@ -837,8 +837,8 @@ namespace Extenity.ReflectionToolbox
 				}
 				else if (serializedFieldType.IsSameOrSubclassOf(typeof(GameObject)))
 				{
-					referencedObject = null; // Better leave referenced object as null because it will be added in the process below.
 					var gameObject = serializedField.GetValue(unityObject) as GameObject;
+					referencedObject = gameObject;
 					// GameObject also contains other Components.
 					// Process all of them!
 					if (gameObject)

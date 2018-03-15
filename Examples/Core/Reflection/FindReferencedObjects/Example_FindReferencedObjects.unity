@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499105b847a13724cbf9abb128dc757a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CameraLink: {fileID: 195879928}
   MaterialLink: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   MeshLink: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   OtherGameObject: {fileID: 0}
@@ -329,6 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499105b847a13724cbf9abb128dc757a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CameraLink: {fileID: 195879928}
   MaterialLink: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   MeshLink: {fileID: 4300000, guid: 4d110d23c411834488ffa02833723927, type: 3}
   OtherGameObject: {fileID: 315410067}
