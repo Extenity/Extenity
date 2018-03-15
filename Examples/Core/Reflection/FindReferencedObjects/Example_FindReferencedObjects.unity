@@ -340,7 +340,8 @@ MonoBehaviour:
   CameraLink: {fileID: 195879928}
   MaterialLink: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   MeshLink: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  OtherGameObject: {fileID: 0}
+  OtherGameObject: {fileID: 1657888684574850, guid: f72e2ddceeecd364db92e08785cec4f1,
+    type: 2}
 --- !u!4 &315410069
 Transform:
   m_ObjectHideFlags: 0
