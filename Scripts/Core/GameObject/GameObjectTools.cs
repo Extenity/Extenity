@@ -11,6 +11,14 @@ using Object = UnityEngine.Object;
 namespace Extenity.GameObjectToolbox
 {
 
+	public enum SnapToGroundRotationOption
+	{
+		DontRotate,
+		X = 1,
+		Z = 2,
+		ZX = 4,
+	}
+
 	public static class GameObjectTools
 	{
 		#region Create
@@ -1456,13 +1464,20 @@ namespace Extenity.GameObjectToolbox
 
 		#region Ground Snapping
 
-		public static void SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset)
+		public static bool SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset)
+		{
+			return transform.SnapToGround(raycastDistance, raycastSteps, raycastLayerMask, offset, SnapToGroundRotationOption.DontRotate, 0f, 0f);
+		}
+
+		public static bool SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset, SnapToGroundRotationOption rotation, float rotationCastDistanceX, float rotationCastDistanceZ)
 		{
 			var currentPosition = transform.position;
 			var stepLength = raycastDistance / raycastSteps;
 			var direction = Vector3.down;
 			var upperRayStartPosition = currentPosition;
 			var lowerRayStartPosition = currentPosition;
+
+			var snapped = false;
 
 			for (int i = 0; i < raycastSteps; i++)
 			{
@@ -1478,9 +1493,147 @@ namespace Extenity.GameObjectToolbox
 				{
 					currentPosition.y = hit.point.y + offset;
 					transform.position = currentPosition;
+					snapped = true;
 					break;
 				}
 			}
+
+			// Rotation
+			if (snapped && rotation != SnapToGroundRotationOption.DontRotate)
+			{
+				var rotationY = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+				var rotationResult = rotationY;
+
+				switch (rotation)
+				{
+					case SnapToGroundRotationOption.X:
+						{
+							var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
+							if (!float.IsNaN(angleZ))
+							{
+								rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
+							}
+						}
+						break;
+					case SnapToGroundRotationOption.Z:
+						{
+							var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
+							if (!float.IsNaN(angleX))
+							{
+								rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
+							}
+						}
+						break;
+					//case SnapToGroundRotationOption.XZ: That did not work for some reason and did not bother to fix it because there is the ZX option that would be enough for now.
+					//	{
+					//		var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
+					//		if (!float.IsNaN(angleX))
+					//		{
+					//			rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
+					//		}
+					//		var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
+					//		if (!float.IsNaN(angleZ))
+					//		{
+					//			rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
+					//		}
+					//	}
+					//	break;
+					case SnapToGroundRotationOption.ZX:
+						{
+							var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
+							if (!float.IsNaN(angleX))
+							{
+								rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
+							}
+							var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
+							if (!float.IsNaN(angleZ))
+							{
+								rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
+							}
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException("rotation", rotation, null);
+				}
+
+				transform.rotation = rotationResult;
+			}
+
+			return snapped;
+		}
+
+		private static float InternalCalculateSnapToGroundRotationAngle(Vector3 objectPosition, float offset, Vector3 castStartPointDirection, float castDistance, int raycastLayerMask)
+		{
+			const float castLength = 4f;
+			const float castHalfLength = castLength / 2f;
+
+			objectPosition.y -= offset;
+
+			//UnityEngine.Debug.DrawLine(objectPosition, objectPosition + castStartPointDirection, Color.red);
+
+			var castLocalPosition = castStartPointDirection * castDistance;
+			var direction = Vector3.down;
+
+			var positiveSideHit = false;
+			var negativeSideHit = false;
+			var positiveSideHitPoint = MathTools.Vector3NaN;
+			var negativeSideHitPoint = MathTools.Vector3NaN;
+			RaycastHit hit;
+
+			// Positive side
+			var castPosition = objectPosition + castLocalPosition;
+			castPosition.y += castDistance * castHalfLength;
+			if (Physics.Raycast(castPosition, direction, out hit, castDistance * castLength, raycastLayerMask))
+			{
+				//UnityEngine.Debug.DrawLine(castPosition, castPosition + direction * (castDistance * castLength), Color.red);
+				//DebugToolbox.DebugDraw.Cross(hit.point, 0.05f, Color.red);
+				positiveSideHitPoint = hit.point;
+				positiveSideHit = true;
+			}
+
+			// Negative side
+			castPosition = objectPosition - castLocalPosition;
+			castPosition.y += castDistance * castHalfLength;
+			if (Physics.Raycast(castPosition, direction, out hit, castDistance * castLength, raycastLayerMask))
+			{
+				//UnityEngine.Debug.DrawLine(castPosition, castPosition + direction * (castDistance * castLength), Color.red);
+				//DebugToolbox.DebugDraw.Cross(hit.point, 0.05f, Color.red);
+				negativeSideHitPoint = hit.point;
+				negativeSideHit = true;
+			}
+
+			if (positiveSideHit || negativeSideHit)
+			{
+				if (positiveSideHit)
+				{
+					if (negativeSideHit)
+					{
+						// Both sides hit
+						var positiveHitDirection = positiveSideHitPoint - objectPosition;
+						//UnityEngine.Debug.DrawLine(objectPosition, objectPosition + positiveHitDirection, Color.blue, 0f, false);
+						var angleBetweenPositive = castLocalPosition.AngleBetween(positiveHitDirection) * Mathf.Rad2Deg * (positiveHitDirection.y - castLocalPosition.y).Sign();
+						var negativeHitDirection = negativeSideHitPoint - objectPosition;
+						//UnityEngine.Debug.DrawLine(objectPosition, objectPosition + negativeHitDirection, Color.red, 0f, false);
+						var angleBetweenNegative = castLocalPosition.AngleBetween(-negativeHitDirection) * Mathf.Rad2Deg * (castLocalPosition.y - negativeHitDirection.y).Sign();
+						return (angleBetweenPositive + angleBetweenNegative) * 0.5f;
+					}
+					else
+					{
+						// Only positive side hit
+						var positiveHitDirection = positiveSideHitPoint - objectPosition;
+						//UnityEngine.Debug.DrawLine(objectPosition, objectPosition + positiveHitDirection, Color.blue, 0f, false);
+						return castLocalPosition.AngleBetween(positiveHitDirection) * Mathf.Rad2Deg * (positiveHitDirection.y - castLocalPosition.y).Sign();
+					}
+				}
+				else
+				{
+					// Only negative side hit
+					var negativeHitDirection = negativeSideHitPoint - objectPosition;
+					//UnityEngine.Debug.DrawLine(objectPosition, objectPosition + negativeHitDirection, Color.red, 0f, false);
+					return castLocalPosition.AngleBetween(-negativeHitDirection) * Mathf.Rad2Deg * (castLocalPosition.y - negativeHitDirection.y).Sign();
+				}
+			}
+			return float.NaN;
 		}
 
 		public static bool SnapToGround(this Vector3 position, out Vector3 result, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset)
