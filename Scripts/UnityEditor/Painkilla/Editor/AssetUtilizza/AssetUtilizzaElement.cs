@@ -20,7 +20,6 @@ namespace Extenity.PainkillaTool.Editor
 			Material = material;
 			if (Material)
 			{
-				ShaderName = Material.shader.name;
 				var textures = Material.GetAllTextures();
 				var largestTexture = textures.Count > 0 ? textures.First(texture => texture.width * texture.height == textures.Max(comp => comp.width * comp.height)) : null;
 				TextureCount = textures.Count;
@@ -44,7 +43,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region Material
 
 		public Material Material;
-		public string ShaderName;
+		public string ShaderName { get { return Material ? Material.shader.name : ""; } }
 		public int TextureCount;
 		public Vector2Int MaxTextureSize;
 		public bool IsInstanced { get { return Material ? Material.enableInstancing : false; } }
