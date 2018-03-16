@@ -47,6 +47,7 @@ namespace Extenity.PainkillaTool.Editor
 		public string ShaderName;
 		public int TextureCount;
 		public Vector2Int MaxTextureSize;
+		public bool IsInstanced { get { return Material ? Material.enableInstancing : false; } }
 		public string AssetPath;
 
 		#endregion

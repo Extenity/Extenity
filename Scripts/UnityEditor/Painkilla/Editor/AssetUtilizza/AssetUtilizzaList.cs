@@ -17,7 +17,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region Configuration
 
 		const float kRowHeights = 20f;
-		//const float kToggleWidth = 18f;
+		const float kToggleWidth = 18f;
 
 		//static Texture2D[] s_TestIcons =
 		//{
@@ -36,6 +36,7 @@ namespace Extenity.PainkillaTool.Editor
 			Material,
 			TextureCount,
 			MaxTextureSize,
+			Instanced,
 			ShaderName,
 			Scenes,
 			AssetPath,
@@ -46,6 +47,7 @@ namespace Extenity.PainkillaTool.Editor
 			Name,
 			TextureCount,
 			MaxTextureSize,
+			Instanced,
 			ShaderName,
 			AssetPath,
 			SceneCount,
@@ -58,6 +60,7 @@ namespace Extenity.PainkillaTool.Editor
 			SortOption.Name,
 			SortOption.TextureCount,
 			SortOption.MaxTextureSize,
+			SortOption.Instanced,
 			SortOption.ShaderName,
 			SortOption.SceneCount,
 			SortOption.AssetPath,
@@ -111,6 +114,18 @@ namespace Extenity.PainkillaTool.Editor
 					width = 105,
 					minWidth = 105,
 					maxWidth = 105,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Instanced"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 65,
+					minWidth = 65,
+					maxWidth = 65,
 					autoResize = false,
 					allowToggleVisibility = true,
 				},
@@ -241,6 +256,16 @@ namespace Extenity.PainkillaTool.Editor
 					{
 						var size = item.Data.MaxTextureSize;
 						GUI.Label(cellRect, size.IsAllZero() ? "" : size.x + ", " + size.y, CenteredLabel);
+					}
+					break;
+
+				case Columns.Instanced:
+					{
+						var toggleRect = cellRect;
+						toggleRect.x += (toggleRect.width - kToggleWidth) / 2;
+						toggleRect.width = kToggleWidth;
+						if (toggleRect.xMax < cellRect.xMax)
+							EditorGUI.Toggle(toggleRect, item.Data.IsInstanced); // hide when outside cell rect
 					}
 					break;
 
@@ -379,6 +404,9 @@ namespace Extenity.PainkillaTool.Editor
 					case SortOption.MaxTextureSize:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
 						break;
+					case SortOption.Instanced:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.IsInstanced, ascending);
+						break;
 					case SortOption.ShaderName:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.ShaderName, ascending);
 						break;
@@ -406,6 +434,8 @@ namespace Extenity.PainkillaTool.Editor
 					return myTypes.Order(l => l.Data.TextureCount, ascending);
 				case SortOption.MaxTextureSize:
 					return myTypes.Order(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
+				case SortOption.Instanced:
+					return myTypes.Order(l => l.Data.IsInstanced, ascending);
 				case SortOption.ShaderName:
 					return myTypes.Order(l => l.Data.ShaderName, ascending);
 				case SortOption.SceneCount:
