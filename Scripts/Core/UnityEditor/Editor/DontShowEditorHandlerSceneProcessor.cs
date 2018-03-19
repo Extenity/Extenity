@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public class SnapToGroundInEditorSceneProcessor : IProcessScene
+	public class DontShowEditorHandlerSceneProcessor : IProcessScene
 	{
 		public int callbackOrder { get { return -1000; } }
 
@@ -25,12 +25,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void RemoveComponentsInScene(Scene scene, bool log)
 		{
-			var objects = scene.FindObjectsOfTypeAll<SnapToGroundInEditor>();
+			var objects = scene.FindObjectsOfTypeAll<DontShowEditorHandler>();
 			if (objects.IsNotNullAndEmpty())
 			{
 				if (log)
 				{
-					Debug.LogFormat("Removing '{0}' SnapToGroundInEditor components from scene '{1}'.", objects.Count, scene.name);
+					Debug.LogFormat("Removing '{0}' DontShowEditorHandler components from scene '{1}'.", objects.Count, scene.name);
 				}
 
 				for (var i = 0; i < objects.Count; i++)

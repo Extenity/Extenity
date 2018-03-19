@@ -513,7 +513,16 @@ namespace Extenity.UnityEditorToolbox
 			var scenes = SceneManagerTools.GetLoadedScenes();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				SnapToGroundInEditorSceneProcessor.RemoveSnapToGroundInEditorComponents(scenes[i], true);
+				SnapToGroundInEditorSceneProcessor.RemoveComponentsInScene(scenes[i], true);
+			}
+		}
+
+		public void DeleteDontShowEditorHandlerComponents()
+		{
+			var scenes = SceneManagerTools.GetLoadedScenes();
+			for (var i = 0; i < scenes.Count; i++)
+			{
+				DontShowEditorHandlerSceneProcessor.RemoveComponentsInScene(scenes[i], true);
 			}
 		}
 
