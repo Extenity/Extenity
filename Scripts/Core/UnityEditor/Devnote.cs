@@ -34,8 +34,8 @@ namespace Extenity.UnityEditorToolbox
 
 			var screenPosition = Camera.current.WorldToScreenPoint(transform.position);
 			screenPosition.y = Screen.height - screenPosition.y;
-			var width = (float)Screen.width;
-			var height = (float)Screen.height;
+			//var width = (float)Screen.width;
+			//var height = (float)Screen.height;
 			var rect = new Rect(screenPosition.x, screenPosition.y, 50, 50);
 			//var rect = new Rect(screenPosition.x / width, screenPosition.y / height, 50 / width, 50 / height);
 			//Debug.Log("## rect :" + rect);
