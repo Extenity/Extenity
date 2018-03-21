@@ -1533,6 +1533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Note: asdgasdgsdfg
+  Asd: {fileID: 10910, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!23 &347277772
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4498,6 +4499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Note: asdfasdg
+  Asd: {fileID: 10910, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!23 &1104761124
 MeshRenderer:
   m_ObjectHideFlags: 0

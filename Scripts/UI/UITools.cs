@@ -84,6 +84,9 @@ namespace Extenity.UIToolbox
 
 		#region Drag
 
+		/// <summary>
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// </summary>
 		public static void Calculate2DLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, bool radial, ref Vector2 normalizedLeverPosition)
 		{
 			Vector2 position;
@@ -113,6 +116,9 @@ namespace Extenity.UIToolbox
 			}
 		}
 
+		/// <summary>
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// </summary>
 		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
 		{
 			Vector2 position;
@@ -126,6 +132,45 @@ namespace Extenity.UIToolbox
 					normalizedLeverPosition * (dragAreaSize / 2f),
 					0);
 			}
+		}
+
+		/// <summary>
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// </summary>
+		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform hitAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
+		{
+			Vector2 position;
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(hitAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			{
+				Vector2 positionInDragArea;
+				RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out positionInDragArea);
+
+				var dragAreaSize = dragAreaTransform.sizeDelta.x;
+
+				normalizedLeverPosition = Mathf.Clamp((positionInDragArea.x / dragAreaSize) * 2f + 1f, -1f, 1f);
+
+				handleTransform.anchoredPosition = new Vector2(
+					normalizedLeverPosition * (dragAreaSize / 2f),
+					0);
+			}
+		}
+
+		#endregion
+
+		#region RectTransform
+
+		/// <summary>
+		/// Converts RectTransform.rect to screen space.
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// Source: https://answers.unity.com/questions/1013011/convert-recttransform-rect-to-screen-space.html
+		/// </summary>
+		public static Rect RectInScreenSpace(this RectTransform transform)
+		{
+			var size = Vector2.Scale(transform.rect.size, transform.lossyScale);
+			var rect = new Rect(transform.position.x, Screen.height - transform.position.y, size.x, size.y);
+			rect.x -= (transform.pivot.x * size.x);
+			rect.y -= ((1.0f - transform.pivot.y) * size.y);
+			return rect;
 		}
 
 		#endregion
