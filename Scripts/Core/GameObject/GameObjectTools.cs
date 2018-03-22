@@ -1471,8 +1471,11 @@ namespace Extenity.GameObjectToolbox
 
 		public static bool SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset, SnapToGroundRotationOption rotation, float rotationCastDistanceX, float rotationCastDistanceZ)
 		{
+			//var detailed = transform.gameObject.name == "DETAILEDSNAP";
+
 			var currentPosition = transform.position;
 			var stepLength = raycastDistance / raycastSteps;
+			var stepLengthWithErrorMargin = stepLength + 0.01f;
 			var direction = Vector3.down;
 			var upperRayStartPosition = currentPosition;
 			var lowerRayStartPosition = currentPosition;
@@ -1484,12 +1487,15 @@ namespace Extenity.GameObjectToolbox
 				upperRayStartPosition.y = currentPosition.y + stepLength * (i + 1);
 				lowerRayStartPosition.y = currentPosition.y - stepLength * i;
 
-				//Debug.DrawLine(upperRayStartPosition, upperRayStartPosition + direction * stepLength, Color.red, 1f);
-				//Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
+				//if (detailed)
+				//{
+				//	UnityEngine.Debug.DrawLine(upperRayStartPosition, upperRayStartPosition + direction * stepLength, Color.red, 1f);
+				//	UnityEngine.Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
+				//}
 
 				RaycastHit hit;
-				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLength, raycastLayerMask) ||
-					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, raycastLayerMask))
+				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask) ||
+					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask))
 				{
 					currentPosition.y = hit.point.y + offset;
 					transform.position = currentPosition;
