@@ -27,7 +27,16 @@ using Debug = UnityEngine.Debug;
 namespace Extenity.UnityEditorToolbox
 {
 
-	public abstract class BuildProcessorBase<TBuildProcessor> : IPreprocessBuild, IPostprocessBuild, IProcessScene
+	public abstract class BuildProcessorBase<TBuildProcessor> :
+#if UNITY_2018_1_OR_NEWER
+		IPreprocessBuildWithReport,
+		IPostprocessBuildWithReport,
+		IProcessSceneWithReport
+#else
+		IPreprocessBuild, 
+		IPostprocessBuild, 
+		IProcessScene
+#endif
 		where TBuildProcessor : BuildProcessorBase<TBuildProcessor>
 	{
 		#region Configuration

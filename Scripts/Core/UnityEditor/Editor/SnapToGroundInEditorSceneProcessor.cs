@@ -10,7 +10,12 @@ using UnityEngine.SceneManagement;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public class SnapToGroundInEditorSceneProcessor : IProcessScene
+	public class SnapToGroundInEditorSceneProcessor :
+#if UNITY_2018_1_OR_NEWER
+		IProcessSceneWithReport
+#else
+		IProcessScene
+#endif
 	{
 		public int callbackOrder { get { return -1000; } }
 
