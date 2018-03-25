@@ -36,22 +36,34 @@ namespace Extenity.DLLBuilder
 					var variable = DLLBuilderConfiguration.EnvironmentVariables[i];
 					var isFirst = i == 0;
 					var isLast = i == DLLBuilderConfiguration.EnvironmentVariables.Count - 1;
+					var isPreviousReadonly = i > 0 && DLLBuilderConfiguration.EnvironmentVariables[i - 1].Value.Readonly;
 					GUILayout.BeginHorizontal();
 					EditorGUI.BeginChangeCheck();
+					EditorGUI.BeginDisabledGroup(variable.Value.Readonly);
 					variable.Key = EditorGUILayout.TextField(variable.Key, GUILayout.ExpandWidth(true));
-					variable.Value = EditorGUILayout.TextField(variable.Value, GUILayout.ExpandWidth(true));
+					variable.Value.Value = EditorGUILayout.TextField(variable.Value.Value, GUILayout.ExpandWidth(true));
+					EditorGUI.EndDisabledGroup();
 					if (EditorGUI.EndChangeCheck())
-						DLLBuilderConfiguration.EnvironmentVariables[i] = variable;
+					{
+						if (!variable.Value.Readonly)
+							DLLBuilderConfiguration.EnvironmentVariables[i] = variable;
+					}
+
+					if (variable.Value.Readonly)
+					{
+						GUILayout.EndHorizontal();
+						continue;
+					}
 
 					// Move up
-					if (isFirst)
+					if (isFirst || isPreviousReadonly)
 						EditorGUI.BeginDisabledGroup(true);
 					if (GUILayout.Button("^", ListButtonLayout))
 					{
 						var iCached = i;
 						EditorApplication.delayCall += () => { MoveEnvironmentVariableUp(iCached); };
 					}
-					if (isFirst)
+					if (isFirst || isPreviousReadonly)
 						EditorGUI.EndDisabledGroup();
 
 					// Move down
@@ -112,7 +124,7 @@ namespace Extenity.DLLBuilder
 
 		private void AddEnvironmentVariable()
 		{
-			DLLBuilderConfiguration.EnvironmentVariables.Add(new KeyValue<string, string>());
+			DLLBuilderConfiguration.EnvironmentVariables.Add(new KeyValue<string, DLLBuilderConfiguration.EnvironmentVariable>());
 			DLLBuilderConfiguration.SaveEnvironmentVariables();
 			Repaint();
 		}

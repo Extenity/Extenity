@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.ApplicationToolbox;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.AssetToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
@@ -53,7 +54,7 @@ namespace Extenity.DLLBuilder
 				if (RemoteBuilderConfigurations == null)
 					throw new NullReferenceException("RemoteBuilderConfigurations list is null");
 				return (from configuration in RemoteBuilderConfigurations
-						where configuration != null && configuration.Enabled && (Directory.Exists(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.ProjectPath)) || !configuration.IgnoreIfNotFound)
+						where configuration != null && configuration.Enabled && (Directory.Exists(InsertEnvironmentVariables(configuration.ProjectPath)) || !configuration.IgnoreIfNotFound)
 						select configuration).ToList();
 			}
 		}
@@ -154,9 +155,16 @@ namespace Extenity.DLLBuilder
 
 		#region Environment Variables
 
+		[Serializable]
+		public struct EnvironmentVariable
+		{
+			public string Value;
+			public bool Readonly;
+		}
+
 		public const string EnvironmentVariableStart = "$(";
 		public const string EnvironmentVariableEnd = ")";
-		public static readonly List<KeyValue<string, string>> EnvironmentVariables = new List<KeyValue<string, string>>();
+		public static readonly List<KeyValue<string, EnvironmentVariable>> EnvironmentVariables = new List<KeyValue<string, EnvironmentVariable>>();
 
 		public static string InsertEnvironmentVariables(string text)
 		{
@@ -171,7 +179,7 @@ namespace Extenity.DLLBuilder
 					for (int i = 0; i < EnvironmentVariables.Count; i++)
 					{
 						if (key == EnvironmentVariables[i].Key)
-							return EnvironmentVariables[i].Value;
+							return EnvironmentVariables[i].Value.Value;
 					}
 					throw new Exception(_BuildErrorMessage(key));
 				},
@@ -194,7 +202,7 @@ namespace Extenity.DLLBuilder
 					for (int i = 0; i < EnvironmentVariables.Count; i++)
 					{
 						if (key == EnvironmentVariables[i].Key)
-							return EnvironmentVariables[i].Value;
+							return EnvironmentVariables[i].Value.Value;
 					}
 					if (errorList == null)
 						errorList = new List<ConsistencyError>();
@@ -232,20 +240,57 @@ namespace Extenity.DLLBuilder
 		{
 			EnvironmentVariables.Clear();
 
+			GatherSystemEnvironmentVariables();
+
 			var json = EditorPrefs.GetString(EnvironmentVariablesPrefsKey);
 			if (string.IsNullOrEmpty(json))
 				return;
 
 			var list = JsonConvert.DeserializeObject<List<KeyValue<string, string>>>(json);
 			//var list = JsonUtility.FromJson<List<KeyValue<string, string>>>(json); Unity can't serialize KeyValue
-			EnvironmentVariables.AddRange(list);
+
+			for (int i = 0; i < list.Count; i++)
+			{
+				var item = list[i];
+
+				EnvironmentVariables.Add(new KeyValue<string, EnvironmentVariable>(
+					item.Key,
+					new EnvironmentVariable
+					{
+						Value = item.Value,
+						Readonly = false,
+					}
+				));
+			}
 		}
 
 		public static void SaveEnvironmentVariables()
 		{
-			var json = JsonConvert.SerializeObject(EnvironmentVariables);
-			//var json = EditorJsonUtility.ToJson(EnvironmentVariables); Unity can't serialize KeyValue
+			var list = new List<KeyValue<string, string>>(EnvironmentVariables.Count);
+			for (var i = 0; i < EnvironmentVariables.Count; i++)
+			{
+				var environmentVariable = EnvironmentVariables[i];
+				if (environmentVariable.Value.Readonly)
+					continue; // Skip readonly variables
+				list.Add(new KeyValue<string, string>(environmentVariable.Key, environmentVariable.Value.Value));
+			}
+
+			var json = JsonConvert.SerializeObject(list);
+			//var json = EditorJsonUtility.ToJson(list); Unity can't serialize KeyValue
 			EditorPrefs.SetString(EnvironmentVariablesPrefsKey, json);
+		}
+
+		private static void GatherSystemEnvironmentVariables()
+		{
+			var unityEditor = EditorApplicationTools.UnityEditorExecutableDirectory;
+			EnvironmentVariables.Add(new KeyValue<string, EnvironmentVariable>(
+				"UnityEditor",
+				new EnvironmentVariable
+				{
+					Value = unityEditor,
+					Readonly = true,
+				}
+			));
 		}
 
 		#endregion
