@@ -295,15 +295,14 @@ namespace Extenity.DLLBuilder
 
 		private static void GatherSystemEnvironmentVariables()
 		{
-			var unityEditor = EditorApplicationTools.UnityEditorExecutableDirectory;
-			EnvironmentVariables.Add(new KeyValue<string, EnvironmentVariable>(
-				"UnityEditor",
-				new EnvironmentVariable
-				{
-					Value = unityEditor,
-					Readonly = true,
-				}
-			));
+			// UnityEditor
+			{
+				var variable = EditorApplicationTools.UnityEditorExecutableDirectory;
+				EnvironmentVariables.Add(new KeyValue<string, EnvironmentVariable>(
+					Constants.SystemEnvironmentVariables.UnityEditor,
+					new EnvironmentVariable { Value = variable, Readonly = true }
+				));
+			}
 		}
 
 		#endregion

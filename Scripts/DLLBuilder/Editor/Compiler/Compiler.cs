@@ -347,7 +347,7 @@ namespace Extenity.DLLBuilder
 
 				var arguments = new List<string>(100);
 
-				var editorPath = DLLBuilderConfiguration.GetEnvironmentVariable("UnityEditor");
+				var editorPath = DLLBuilderConfiguration.GetEnvironmentVariable(Constants.SystemEnvironmentVariables.UnityEditor);
 				string compilerPath;
 
 				// Initialize compiler arguments

@@ -20,6 +20,11 @@ namespace Extenity.DLLBuilder
 		{
 			public static readonly string AssemblyReloadSurvivalFilePath = "Temp/ExtenityDLLBuilder/CurrentBuildJob.json";
 		}
+
+		public static class SystemEnvironmentVariables
+		{
+			public static readonly string UnityEditor = "UnityEditor";
+		}
 	}
 
 }
