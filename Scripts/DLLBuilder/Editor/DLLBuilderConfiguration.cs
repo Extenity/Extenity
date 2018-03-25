@@ -166,6 +166,19 @@ namespace Extenity.DLLBuilder
 		public const string EnvironmentVariableEnd = ")";
 		public static readonly List<KeyValue<string, EnvironmentVariable>> EnvironmentVariables = new List<KeyValue<string, EnvironmentVariable>>();
 
+		public static string GetEnvironmentVariable(string variableName)
+		{
+			for (var i = 0; i < EnvironmentVariables.Count; i++)
+			{
+				var environmentVariable = EnvironmentVariables[i];
+				if (environmentVariable.Key == variableName)
+				{
+					return environmentVariable.Value.Value;
+				}
+			}
+			throw new Exception(string.Format("Environment variable '{0}' does not exist.", variableName));
+		}
+
 		public static string InsertEnvironmentVariables(string text)
 		{
 			string result;

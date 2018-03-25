@@ -62,7 +62,7 @@ namespace Extenity.DLLBuilder
 		{
 			unityReferences = new List<string>();
 
-			var unityExeDirectoryPath = EditorApplicationTools.UnityEditorExecutableDirectory;
+			var unityExeDirectoryPath = DLLBuilderConfiguration.GetEnvironmentVariable("UnityEditor");
 			var unityLibraryPath = Path.Combine(unityExeDirectoryPath, @"Data\Managed");
 			var files = Directory.GetFiles(unityLibraryPath, "*.dll");
 
