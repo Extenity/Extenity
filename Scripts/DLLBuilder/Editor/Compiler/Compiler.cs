@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
@@ -346,7 +347,7 @@ namespace Extenity.DLLBuilder
 
 				var arguments = new List<string>(100);
 
-
+				var editorPath = EditorApplicationTools.UnityEditorExecutableDirectory;
 				string compilerPath;
 
 				// Initialize compiler arguments
@@ -354,8 +355,8 @@ namespace Extenity.DLLBuilder
 				{
 					case CompilerType.Gmcs:
 						{
-							var gmcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\2.0\gmcs.exe";
-							compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
+							var gmcsPath = Path.Combine(editorPath, @"Data\Mono\lib\mono\2.0\gmcs.exe");
+							compilerPath = Path.Combine(editorPath, @"Data\Mono\bin\mono.exe");
 
 							arguments.Add("\"" + gmcsPath + "\"");
 							arguments.Add("/target:library");
@@ -402,8 +403,8 @@ namespace Extenity.DLLBuilder
 
 					case CompilerType.Smcs:
 						{
-							var smcsPath = @"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\smcs.exe";
-							compilerPath = @"C:\Program Files\Unity\Editor\Data\Mono\bin\mono.exe";
+							var smcsPath = Path.Combine(editorPath, @"Data\Mono\lib\mono\unity\smcs.exe");
+							compilerPath = Path.Combine(editorPath, @"Data\Mono\bin\mono.exe");
 
 							arguments.Add("\"" + smcsPath + "\"");
 							arguments.Add("/target:library");
@@ -450,8 +451,8 @@ namespace Extenity.DLLBuilder
 
 					case CompilerType.McsBleedingEdge:
 						{
-							var mcsPath = @"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.5\mcs.exe";
-							compilerPath = @"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\bin\mono.exe";
+							var mcsPath = Path.Combine(editorPath, @"Data\MonoBleedingEdge\lib\mono\4.5\mcs.exe");
+							compilerPath = Path.Combine(editorPath, @"Data\MonoBleedingEdge\bin\mono.exe");
 
 							arguments.Add("\"" + mcsPath + "\"");
 							arguments.Add("/target:library");
