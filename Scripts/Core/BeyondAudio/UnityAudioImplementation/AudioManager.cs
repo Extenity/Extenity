@@ -1,11 +1,13 @@
 //#if BeyondAudioUsesUnityAudio
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 
 namespace Extenity.BeyondAudio
 {
@@ -160,6 +162,11 @@ namespace Extenity.BeyondAudio
 
 		#region Pooled AudioClips
 
+		public class AllocationEvent : UnityEvent<AudioSource, string> { }
+		public class DeallocationEvent : UnityEvent<AudioSource> { }
+		public readonly AllocationEvent OnAllocatedAudioSource = new AllocationEvent();
+		public readonly DeallocationEvent OnReleasingAudioSource = new DeallocationEvent();
+
 		private List<AudioSource> FreeAudioSources = new List<AudioSource>(10);
 		private HashSet<AudioSource> ActiveAudioSources = new HashSet<AudioSource>();
 
@@ -201,6 +208,7 @@ namespace Extenity.BeyondAudio
 			var audioSource = instance.GetOrCreateAudioSource();
 			audioSource.clip = clip;
 			audioSource.outputAudioMixerGroup = audioEvent.Output;
+			instance.OnAllocatedAudioSource.Invoke(audioSource, eventName);
 			return audioSource;
 		}
 
@@ -210,6 +218,9 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 
+			instance.OnReleasingAudioSource.Invoke(audioSource);
+
+			audioSource.Stop();
 			audioSource.gameObject.SetActive(false);
 			audioSource.clip = null;
 			audioSource.outputAudioMixerGroup = null;
@@ -434,6 +445,126 @@ namespace Extenity.BeyondAudio
 			audioSource.gameObject.SetActive(true);
 			audioSource.Play();
 			return audioSource;
+		}
+
+		#endregion
+
+		#region Play Music
+
+		[NonSerialized]
+		public AudioSource MusicAudioSource;
+
+		/// <summary>
+		/// Starts to play a music. Currently played music will be crossfaded.
+		/// 
+		/// It's okay to quickly switch between tracks without waiting for crossfade to finish, as long as the crossfade duration is not lesser than the previously triggered crossfade.
+		/// </summary>
+		/// <param name="crossfadeDuration">Duration of the crossfade in seconds. Can be '0' for instantly stopping the old music and starting the new one without a crossfade.</param>
+		public static AudioSource PlayMusic(string eventName, bool loop = true, float crossfadeDuration = 3f, float fadeStartVolume = 0f, float volume = 1f, float pitch = 1f)
+		{
+			var doFade = crossfadeDuration > 0f;
+
+			var newAudioSource = AllocateAudioSourceWithClip(eventName, true);
+			if (newAudioSource)
+			{
+				newAudioSource.transform.position = Vector3.zero;
+				newAudioSource.loop = loop;
+				newAudioSource.pitch = pitch;
+				newAudioSource.volume = doFade
+					? fadeStartVolume
+					: volume;
+				newAudioSource.spatialBlend = 0f;
+				newAudioSource.gameObject.SetActive(true);
+				newAudioSource.Play();
+				if (!loop)
+				{
+					Instance.AddToReleaseTracker(newAudioSource);
+				}
+			}
+
+			var oldAudioSource = Instance.MusicAudioSource;
+
+			if (doFade)
+			{
+				Instance.StartCoroutine(DoCrossfade(oldAudioSource, newAudioSource, volume, crossfadeDuration, true));
+			}
+			else
+			{
+				if (oldAudioSource)
+				{
+					ReleaseAudioSource(oldAudioSource);
+				}
+			}
+
+			Instance.MusicAudioSource = newAudioSource;
+			return newAudioSource;
+		}
+
+		public static void StopMusic()
+		{
+			if (!Instance.MusicAudioSource)
+				return;
+			ReleaseAudioSource(Instance.MusicAudioSource);
+		}
+
+		#endregion
+
+		#region Crossfade
+
+		/// <summary>
+		/// Fades out one clip while fading in the other clip. It's okay to specify null audio sources
+		/// if one of fading in or fading out is not necessary.
+		/// </summary>
+		public void Crossfade(AudioSource fadingOutSource, AudioSource fadingInSource, float volume, float duration, bool releaseFadedOutAudioSource = true)
+		{
+			StartCoroutine(DoCrossfade(fadingOutSource, fadingInSource, volume, duration, releaseFadedOutAudioSource));
+		}
+
+		private static IEnumerator DoCrossfade(AudioSource fadingOutSource, AudioSource fadingInSource, float volume, float duration, bool releaseFadedOutAudioSource)
+		{
+			var timeLeft = duration;
+			var oneOverDuration = 1f / duration;
+			var doFadeOut = fadingOutSource;
+			var doFadeIn = fadingInSource;
+			var initialFadingOutSourceVolume = doFadeOut ? fadingOutSource.volume : 0f;
+			var initialFadingInSourceVolume = doFadeIn ? fadingInSource.volume : 0f;
+			var fadingInVolumeRange = volume - initialFadingInSourceVolume;
+			while (timeLeft > 0)
+			{
+				timeLeft -= Time.deltaTime;
+				if (timeLeft < 0)
+				{
+					break;
+				}
+
+				// Update audio source volumes
+				var ratio = timeLeft * oneOverDuration;
+				if (doFadeOut)
+					fadingOutSource.volume = initialFadingOutSourceVolume * ratio;
+				if (doFadeIn)
+					fadingInSource.volume = initialFadingInSourceVolume + fadingInVolumeRange * (1f - ratio);
+
+				// Wait for next update
+				yield return null;
+			}
+
+			// Finalize
+			if (doFadeOut)
+			{
+				if (releaseFadedOutAudioSource)
+				{
+					ReleaseAudioSource(fadingOutSource);
+				}
+				else
+				{
+					fadingOutSource.Stop();
+					fadingOutSource.volume = 0f;
+				}
+			}
+			if (doFadeIn)
+			{
+				fadingInSource.volume = volume;
+			}
 		}
 
 		#endregion
