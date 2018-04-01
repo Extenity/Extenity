@@ -174,23 +174,27 @@ namespace Extenity.BeyondAudio
 
 		private AudioSource GetOrCreateAudioSource()
 		{
-			if (FreeAudioSources.Count > 0)
+			while (FreeAudioSources.Count > 0)
 			{
 				var index = FreeAudioSources.Count - 1;
-				var obj = FreeAudioSources[index];
+				var reusedAudioSource = FreeAudioSources[index];
 				FreeAudioSources.RemoveAt(index);
-				ActiveAudioSources.Add(obj);
-				return obj;
+
+				// See if the audio source is still alive.
+				// Otherwise, continue to look in FreeAudioSources.
+				if (reusedAudioSource)
+				{
+					ActiveAudioSources.Add(reusedAudioSource);
+					return reusedAudioSource;
+				}
 			}
-			else
-			{
-				var go = Instantiate(AudioSourceTemplate);
-				go.name = "Audio Source " + LastCreatedAudioSourceIndex++;
-				var obj = go.GetComponent<AudioSource>();
-				DontDestroyOnLoad(go);
-				ActiveAudioSources.Add(obj);
-				return obj;
-			}
+
+			var go = Instantiate(AudioSourceTemplate);
+			go.name = "Audio Source " + LastCreatedAudioSourceIndex++;
+			var newAudioSource = go.GetComponent<AudioSource>();
+			DontDestroyOnLoad(go);
+			ActiveAudioSources.Add(newAudioSource);
+			return newAudioSource;
 		}
 
 		public static AudioSource AllocateAudioSourceWithClip(string eventName, bool errorIfNotFound)
@@ -218,17 +222,44 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 
+			if (!audioSource)
+			{
+				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
+				instance.ClearLostReferencesInActiveAudioSourcesList();
+				instance.ClearLostReferencesInFreeAudioSourcesList();
+				instance.ClearLostReferencesInReleaseTrackerList();
+				return;
+			}
+
 			instance.OnReleasingAudioSource.Invoke(audioSource);
 
 			audioSource.Stop();
-			audioSource.gameObject.SetActive(false);
 			audioSource.clip = null;
 			audioSource.outputAudioMixerGroup = null;
+			audioSource.gameObject.SetActive(false);
+			audioSource.transform.SetParent(null);
 
 			instance.ActiveAudioSources.Remove(audioSource);
 			instance.FreeAudioSources.Add(audioSource);
 
 			instance.InternalRemoveFromReleaseTrackerList(audioSource);
+		}
+
+		private void ClearLostReferencesInActiveAudioSourcesList()
+		{
+			ActiveAudioSources.RemoveWhere(item => !item);
+		}
+
+		private void ClearLostReferencesInFreeAudioSourcesList()
+		{
+			for (int i = 0; i < FreeAudioSources.Count; i++)
+			{
+				if (!FreeAudioSources[i])
+				{
+					FreeAudioSources.RemoveAt(i);
+					i--;
+				}
+			}
 		}
 
 		#endregion
@@ -396,6 +427,18 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
+		private void ClearLostReferencesInReleaseTrackerList()
+		{
+			for (int i = 0; i < ReleaseTracker.Count; i++)
+			{
+				if (!ReleaseTracker[i].AudioSource)
+				{
+					ReleaseTracker.RemoveAt(i);
+					i--;
+				}
+			}
+		}
+
 		#endregion
 
 		#region Play One Shot
@@ -422,6 +465,23 @@ namespace Extenity.BeyondAudio
 			if (!audioSource)
 				return null;
 			audioSource.transform.position = position;
+			audioSource.loop = false;
+			audioSource.pitch = pitch;
+			audioSource.volume = volume;
+			audioSource.spatialBlend = spatialBlend;
+			audioSource.gameObject.SetActive(true);
+			audioSource.Play();
+			Instance.AddToReleaseTracker(audioSource);
+			return audioSource;
+		}
+
+		public static AudioSource PlayAttached(string eventName, Transform parent, Vector3 localPosition, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		{
+			var audioSource = AllocateAudioSourceWithClip(eventName, true);
+			if (!audioSource)
+				return null;
+			audioSource.transform.SetParent(parent);
+			audioSource.transform.localPosition = localPosition;
 			audioSource.loop = false;
 			audioSource.pitch = pitch;
 			audioSource.volume = volume;
