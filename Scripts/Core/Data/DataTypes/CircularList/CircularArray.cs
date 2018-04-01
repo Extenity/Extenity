@@ -79,7 +79,10 @@ namespace Extenity.DataToolbox
 
 		#region Data
 
-		private T[] Items;
+		/// <summary>
+		/// CAUTION! Use it as readonly, do not modify.
+		/// </summary>
+		public T[] Items;
 		public int CyclicTailIndex { get; private set; }
 		public int CyclicHeadIndex { get; private set; }
 
