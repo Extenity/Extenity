@@ -16,7 +16,7 @@ namespace Extenity.BeyondAudio.UI
 
 		private void OnClick()
 		{
-			AudioPlayer.Play(EventName);
+			AudioManager.Play(EventName);
 		}
 
 		private void OnValidate()

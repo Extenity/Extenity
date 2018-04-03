@@ -100,11 +100,11 @@ namespace Extenity.UIToolbox
 
 			if (blinkState)
 			{
-				AudioPlayer.Play(HideAudio);
+				AudioManager.Play(HideAudio);
 			}
 			else
 			{
-				AudioPlayer.Play(BlinkAudio);
+				AudioManager.Play(BlinkAudio);
 			}
 		}
 	}
