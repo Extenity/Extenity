@@ -292,7 +292,7 @@ namespace Extenity.BeyondAudio
 			{
 				if (Clips != null && Clips.Count != 0)
 				{
-					var clip = LastPlayedAudioClip && Clips.Count > 1
+					var clip = EnsureNonrecurringRandomness && LastPlayedAudioClip && Clips.Count > 1
 						? Clips.RandomSelectionFilteredSafe(LastPlayedAudioClip)
 						: Clips.RandomSelection();
 					if (clip)
