@@ -44,6 +44,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			var count = 0;
+			if (ProcessObject(selection.Object, configuration))
+				count++;
 			if (selection.IncludeChildren)
 			{
 				selection.Object.ForeachChildren(child =>
@@ -51,11 +53,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 					if (ProcessObject(child, configuration))
 						count++;
 				}, true);
-			}
-			else
-			{
-				if (ProcessObject(selection.Object, configuration))
-					count++;
 			}
 			return count;
 		}
