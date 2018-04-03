@@ -124,21 +124,21 @@ namespace Extenity.MathToolbox
 				return -1;
 			return random.Next(0, collection.Count);
 		}
-		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromlist)
+		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromList)
 		{
 			if (list.Count == 0)
 				return -1;
 			int index = Random.Range(0, list.Count);
-			if (removeFromlist)
+			if (removeFromList)
 				list.RemoveAt(index);
 			return index;
 		}
-		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromlist, System.Random random)
+		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromList, System.Random random)
 		{
 			if (list.Count == 0)
 				return -1;
 			int index = random.Next(0, list.Count);
-			if (removeFromlist)
+			if (removeFromList)
 				list.RemoveAt(index);
 			return index;
 		}
@@ -201,7 +201,7 @@ namespace Extenity.MathToolbox
 		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
 		/// selection if there are any.
 		/// 
-		/// Note that the method will check for any unwanted situtations in exchange for performance.
+		/// Note that the method will check for any unwanted situations in exchange for performance.
 		/// The method checks if there are any items in the list that is not equal to excludeItem, 
 		/// which prevents the algorithm to go into an infinite loop. The cost of this operation 
 		/// will be 1 or 2 Equals check most of the time.
@@ -218,7 +218,7 @@ namespace Extenity.MathToolbox
 					return list[0];
 				return list[0].Equals(excludeItem) ? default(T) : list[0];
 			}
-			// See if the list contains at least one item that is not equal to exludeItem. Otherwise we won't be able to get out from the loop below.
+			// See if the list contains at least one item that is not equal to excludeItem. Otherwise we won't be able to get out from the loop below.
 			for (int i = 0; i < list.Count; i++)
 			{
 				if (!list[i].Equals(excludeItem))
@@ -233,7 +233,7 @@ namespace Extenity.MathToolbox
 				}
 			}
 			if (returnExcludedIfNoOtherChoice)
-				return list.RandomSelection(); // All items are equal to the exluded item. Select one of them randomly.
+				return list.RandomSelection(); // All items are equal to the excluded item. Select one of them randomly.
 			return default(T);
 		}
 		/// <summary>
@@ -241,7 +241,7 @@ namespace Extenity.MathToolbox
 		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
 		/// selection if there are any.
 		/// 
-		/// Note that the method will check for any unwanted situtations in exchange for performance.
+		/// Note that the method will check for any unwanted situations in exchange for performance.
 		/// The method checks if there are any items in the list that is not equal to excludeItem, 
 		/// which prevents the algorithm to go into an infinite loop. The cost of this operation 
 		/// will be 1 or 2 Equals check most of the time.
@@ -258,7 +258,7 @@ namespace Extenity.MathToolbox
 					return list[0];
 				return list[0].Equals(excludeItem) ? default(T) : list[0];
 			}
-			// See if the list contains at least one item that is not equal to exludeItem. Otherwise we won't be able to get out from the loop below.
+			// See if the list contains at least one item that is not equal to excludeItem. Otherwise we won't be able to get out from the loop below.
 			for (int i = 0; i < list.Count; i++)
 			{
 				if (!list[i].Equals(excludeItem))
@@ -273,7 +273,7 @@ namespace Extenity.MathToolbox
 				}
 			}
 			if (returnExcludedIfNoOtherChoice)
-				return list.RandomSelection(random); // All items are equal to the exluded item. Select one of them randomly.
+				return list.RandomSelection(random); // All items are equal to the excluded item. Select one of them randomly.
 			return default(T);
 		}
 
