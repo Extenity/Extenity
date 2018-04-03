@@ -272,6 +272,8 @@ namespace Extenity.BeyondAudio
 			public string Name;
 			public AudioMixerGroup Output;
 			public List<AudioClip> Clips;
+			public bool EnsureNonrecurringRandomness = true;
+			private AudioClip LastPlayedAudioClip;
 
 			public bool HasAnyUnassignedClip
 			{
@@ -290,9 +292,12 @@ namespace Extenity.BeyondAudio
 			{
 				if (Clips != null && Clips.Count != 0)
 				{
-					var clip = Clips.RandomSelection();
+					var clip = LastPlayedAudioClip && Clips.Count > 1
+						? Clips.RandomSelectionFilteredSafe(LastPlayedAudioClip)
+						: Clips.RandomSelection();
 					if (clip)
 					{
+						LastPlayedAudioClip = clip;
 						return clip;
 					}
 					else if (errorIfNotFound)
