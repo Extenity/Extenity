@@ -12,7 +12,7 @@ using UnityEngine.Events;
 namespace Extenity.BeyondAudio
 {
 
-	public class AudioManager : SingletonUnity<AudioManager>
+	public class AudioManager : SingletonUnity<AudioManager>, ISerializationCallbackReceiver
 	{
 		#region Configuration
 
@@ -44,6 +44,7 @@ namespace Extenity.BeyondAudio
 		private void Awake()
 		{
 			InitializeSingleton(this, true);
+			CalculateEventInternals();
 			InitializeAudioSourceTemplate();
 			InitializeVolumeControls();
 		}
@@ -197,7 +198,7 @@ namespace Extenity.BeyondAudio
 			return newAudioSource;
 		}
 
-		public static AudioSource AllocateAudioSourceWithClip(string eventName, bool errorIfNotFound)
+		public static AudioSource AllocateAudioSourceWithClip(string eventName, float selectorPin, bool errorIfNotFound)
 		{
 			var instance = InstanceEnsured;
 			if (!instance)
@@ -206,7 +207,7 @@ namespace Extenity.BeyondAudio
 			var audioEvent = instance.GetEvent(eventName, errorIfNotFound);
 			if (audioEvent == null)
 				return null;
-			var clip = audioEvent.SelectRandomClip(eventName, errorIfNotFound);
+			var clip = audioEvent.SelectRandomClip(eventName, selectorPin, errorIfNotFound);
 			if (!clip)
 				return null;
 			var audioSource = instance.GetOrCreateAudioSource();
@@ -266,53 +267,274 @@ namespace Extenity.BeyondAudio
 
 		#region Events
 
+		public enum AudioEventType
+		{
+			Regular,
+			WeightedGroups,
+		}
+
+		[Serializable]
+		public struct WeightedAudioClipGroup
+		{
+			public AudioClip[] Clips;
+
+			/// <summary>
+			/// The weight of this group. The odds will be high with the group that has more weight than others when selecting an AudioClip randomly.
+			/// </summary>
+			public float Weight;
+
+			/// <summary>
+			/// CAUTION! This is automatically calculated. Do not change this unless you know what you do.
+			/// </summary>
+			[NonSerialized]
+			internal float SeparatorPositionBetweenNextGroup;
+
+			/// <summary>
+			/// CAUTION! This is automatically calculated. Do not change this unless you know what you do.
+			/// </summary>
+			[NonSerialized]
+			internal int ClipCount;
+
+			public void CalculateInternals()
+			{
+				ClipCount = Clips == null ? 0 : Clips.Length;
+
+				if (Weight < 0f)
+					Weight = 0f;
+				else if (Weight > 1000f)
+					Weight = 1000f;
+			}
+		}
+
 		[Serializable]
 		public class AudioEvent
 		{
 			public string Name;
 			public AudioMixerGroup Output;
-			public List<AudioClip> Clips;
-			public bool EnsureNonrecurringRandomness = true;
-			private AudioClip LastPlayedAudioClip;
+			public AudioEventType Type = AudioEventType.Regular;
+
+			// Type.Regular
+			public List<AudioClip> Clips; // TODO: Change type to AudioClip[]
+
+			// Type.WeightedGroups
+			public WeightedAudioClipGroup[] WeightedGroups;
+
+			public bool EnsureNonrecurringRandomness = true; // TODO: Show only when assigned more than one clip
+			private AudioClip LastSelectedAudioClip;
+
+			/// <summary>
+			/// CAUTION! This is automatically calculated. Do not change this unless you know what you do.
+			/// </summary>
+			[NonSerialized]
+			internal int ClipCount;
 
 			public bool HasAnyUnassignedClip
 			{
 				get
 				{
-					for (int i = 0; i < Clips.Count; i++)
+					switch (Type)
 					{
-						if (!Clips[i])
-							return true;
+						case AudioEventType.Regular:
+							{
+								for (int i = 0; i < Clips.Count; i++)
+								{
+									if (!Clips[i])
+										return true;
+								}
+								return false;
+							}
+						case AudioEventType.WeightedGroups:
+							{
+								for (var iGroup = 0; iGroup < WeightedGroups.Length; iGroup++)
+								{
+									for (int i = 0; i < WeightedGroups[iGroup].Clips.Length; i++)
+									{
+										if (!WeightedGroups[iGroup].Clips[i])
+											return true;
+									}
+								}
+								return false;
+							}
+						default:
+							throw new ArgumentOutOfRangeException();
 					}
-					return false;
 				}
 			}
 
-			public AudioClip SelectRandomClip(string eventName, bool errorIfNotFound)
+			internal void CalculateInternals()
 			{
-				if (Clips != null && Clips.Count != 0)
+				switch (Type)
 				{
-					var clip = EnsureNonrecurringRandomness && LastPlayedAudioClip && Clips.Count > 1
-						? Clips.RandomSelectionFilteredSafe(LastPlayedAudioClip)
-						: Clips.RandomSelection();
-					if (clip)
-					{
-						LastPlayedAudioClip = clip;
-						return clip;
-					}
-					else if (errorIfNotFound)
-					{
-						Debug.LogErrorFormat("There is a null clip in sound event '{0}'.", eventName);
-					}
+					case AudioEventType.Regular:
+						{
+							ClipCount = Clips == null ? 0 : Clips.Count;
+						}
+						break;
+					case AudioEventType.WeightedGroups:
+						{
+							if (WeightedGroups == null)
+							{
+								ClipCount = 0;
+							}
+							else
+							{
+								// Clip count
+								int totalCount = 0;
+								float totalWeight = 0f;
+								for (var i = 0; i < WeightedGroups.Length; i++)
+								{
+									WeightedGroups[i].CalculateInternals();
+									totalCount += WeightedGroups[i].ClipCount;
+									totalWeight += WeightedGroups[i].Weight;
+								}
+								ClipCount = totalCount;
+
+								// Weights
+								float oneOverTotalWeight = 1f / totalWeight;
+								float processedTotalWeight = 0f;
+								for (var i = 0; i < WeightedGroups.Length - 1; i++)
+								{
+									processedTotalWeight += WeightedGroups[i].Weight;
+									WeightedGroups[i].SeparatorPositionBetweenNextGroup = processedTotalWeight * oneOverTotalWeight;
+								}
+								WeightedGroups[WeightedGroups.Length - 1].SeparatorPositionBetweenNextGroup = 1f;
+							}
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
-				else
+			}
+
+			public AudioClip SelectRandomClip(string eventName, float selectorPin, bool errorIfNotFound)
+			{
+				AudioClip clip;
+
+				switch (Type)
 				{
-					if (errorIfNotFound)
-					{
-						Debug.LogErrorFormat("There is no clip in sound event '{0}'.", eventName);
-					}
+					case AudioEventType.Regular:
+						{
+							if (ClipCount > 0)
+							{
+								if (ClipCount > 1)
+								{
+									clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+										? Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+										: Clips.RandomSelection();
+								}
+								else
+								{
+									clip = Clips[0];
+								}
+							}
+							else
+							{
+								clip = null;
+							}
+						}
+						break;
+					case AudioEventType.WeightedGroups:
+						{
+							if (ClipCount > 0)
+							{
+								if (ClipCount > 1)
+								{
+									if (WeightedGroups.Length == 1)
+									{
+										clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+											? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+											: WeightedGroups[0].Clips.RandomSelection();
+									}
+									else
+									{
+										if (selectorPin <= 0.001f) // Equal to zero
+										{
+											clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+												? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+												: WeightedGroups[0].Clips.RandomSelection();
+										}
+										else if (selectorPin >= 0.999f) // Equal to one
+										{
+											clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+												? WeightedGroups[WeightedGroups.Length - 1].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+												: WeightedGroups[WeightedGroups.Length - 1].Clips.RandomSelection();
+										}
+										else
+										{
+											clip = null; // This is here to make compiler happy.
+											int i;
+											for (i = WeightedGroups.Length - 2; i >= 0; i--)
+											{
+												if (selectorPin > WeightedGroups[i].SeparatorPositionBetweenNextGroup)
+												{
+													clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+														? WeightedGroups[i + 1].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+														: WeightedGroups[i + 1].Clips.RandomSelection();
+												}
+											}
+											if (i < 0)
+											{
+												clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
+													? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
+													: WeightedGroups[0].Clips.RandomSelection();
+											}
+										}
+									}
+								}
+								else
+								{
+									// Quickly find the single clip that is out there somewhere in WeightedGroups.
+									if (WeightedGroups.Length == 1)
+									{
+										clip = WeightedGroups[0].Clips[0];
+									}
+									else
+									{
+										clip = null; // This is here to make compiler happy.
+										for (var i = 0; i < WeightedGroups.Length; i++)
+										{
+											if (WeightedGroups[i].ClipCount > 0)
+												clip = WeightedGroups[i].Clips[0];
+										}
+									}
+								}
+							}
+							else
+							{
+								clip = null;
+							}
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
-				return null;
+
+				if (errorIfNotFound && !clip)
+				{
+					Debug.LogErrorFormat("There is a null clip in sound event '{0}'.", eventName);
+				}
+
+				LastSelectedAudioClip = clip;
+				return clip;
+			}
+
+			internal void ClearUnnecessaryReferences()
+			{
+				switch (Type)
+				{
+					case AudioEventType.Regular:
+						{
+							WeightedGroups = null;
+						}
+						break;
+					case AudioEventType.WeightedGroups:
+						{
+							Clips = null;
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -359,7 +581,6 @@ namespace Extenity.BeyondAudio
 			return list;
 		}
 
-
 		public List<AudioEvent> ListEventsWithUnassignedClips()
 		{
 			List<AudioEvent> list = null;
@@ -377,6 +598,28 @@ namespace Extenity.BeyondAudio
 				}
 			}
 			return list;
+		}
+
+		private void CalculateEventInternals()
+		{
+			if (Events != null)
+			{
+				for (var i = 0; i < Events.Count; i++)
+				{
+					Events[i].CalculateInternals();
+				}
+			}
+		}
+
+		private void ClearUnnecessaryReferencesInEvents()
+		{
+			if (Events != null)
+			{
+				for (var i = 0; i < Events.Count; i++)
+				{
+					Events[i].ClearUnnecessaryReferences();
+				}
+			}
 		}
 
 		#endregion
@@ -448,68 +691,100 @@ namespace Extenity.BeyondAudio
 
 		#region Play One Shot
 
-		public static AudioSource Play(string eventName, float volume = 1f, float pitch = 1f)
+		private static void SetAudioSourceParametersAndPlay(AudioSource audioSource, bool loop, float volume, float pitch, float spatialBlend)
 		{
-			var audioSource = AllocateAudioSourceWithClip(eventName, true);
-			if (!audioSource)
-				return null;
-			audioSource.transform.position = Vector3.zero;
-			audioSource.loop = false;
-			audioSource.pitch = pitch;
-			audioSource.volume = volume;
-			audioSource.spatialBlend = 0f;
-			audioSource.gameObject.SetActive(true);
-			audioSource.Play();
-			Instance.AddToReleaseTracker(audioSource);
-			return audioSource;
-		}
-
-		public static AudioSource PlayAtPosition(string eventName, Vector3 position, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
-		{
-			var audioSource = AllocateAudioSourceWithClip(eventName, true);
-			if (!audioSource)
-				return null;
-			audioSource.transform.position = position;
-			audioSource.loop = false;
+			audioSource.loop = loop;
 			audioSource.pitch = pitch;
 			audioSource.volume = volume;
 			audioSource.spatialBlend = spatialBlend;
 			audioSource.gameObject.SetActive(true);
 			audioSource.Play();
-			Instance.AddToReleaseTracker(audioSource);
+		}
+
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource Play(string eventName, bool loop = false, float volume = 1f, float pitch = 1f)
+		{
+			return Play(eventName, 0f, loop, volume, pitch);
+		}
+
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource Play(string eventName, float selectorPin, bool loop = false, float volume = 1f, float pitch = 1f)
+		{
+			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			if (!audioSource)
+				return null;
+			audioSource.transform.position = Vector3.zero;
+			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, 0f);
+			if (!loop)
+			{
+				Instance.AddToReleaseTracker(audioSource);
+			}
 			return audioSource;
 		}
 
-		public static AudioSource PlayAttached(string eventName, Transform parent, Vector3 localPosition, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource PlayAtPosition(string eventName, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
-			var audioSource = AllocateAudioSourceWithClip(eventName, true);
+			return PlayAtPosition(eventName, 0f, position, loop, volume, pitch, spatialBlend);
+		}
+
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource PlayAtPosition(string eventName, float selectorPin, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		{
+			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			if (!audioSource)
+				return null;
+			audioSource.transform.position = position;
+			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
+			if (!loop)
+			{
+				Instance.AddToReleaseTracker(audioSource);
+			}
+			return audioSource;
+		}
+
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource PlayAttached(string eventName, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		{
+			return PlayAttached(eventName, 0f, parent, localPosition, loop, volume, pitch, spatialBlend);
+		}
+
+		/// <summary>
+		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
+		/// </summary>
+		public static AudioSource PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		{
+			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
-			audioSource.loop = false;
-			audioSource.pitch = pitch;
-			audioSource.volume = volume;
-			audioSource.spatialBlend = spatialBlend;
-			audioSource.gameObject.SetActive(true);
-			audioSource.Play();
-			Instance.AddToReleaseTracker(audioSource);
+			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
+			if (!loop)
+			{
+				Instance.AddToReleaseTracker(audioSource);
+			}
 			return audioSource;
 		}
 
-		public static AudioSource PlayLooped(string eventName, float volume = 1f, float pitch = 1f)
+		public static void Stop(ref AudioSource audioSource)
 		{
-			var audioSource = AllocateAudioSourceWithClip(eventName, true);
-			if (!audioSource)
-				return null;
-			audioSource.transform.position = Vector3.zero;
-			audioSource.loop = true;
-			audioSource.pitch = pitch;
-			audioSource.volume = volume;
-			audioSource.spatialBlend = 0f;
-			audioSource.gameObject.SetActive(true);
-			audioSource.Play();
-			return audioSource;
+			if (audioSource)
+			{
+				audioSource.Stop();
+				ReleaseAudioSource(audioSource);
+				audioSource = null;
+			}
 		}
 
 		#endregion
@@ -527,9 +802,20 @@ namespace Extenity.BeyondAudio
 		/// <param name="crossfadeDuration">Duration of the crossfade in seconds. Can be '0' for instantly stopping the old music and starting the new one without a crossfade.</param>
 		public static AudioSource PlayMusic(string eventName, bool loop = true, float crossfadeDuration = 3f, float fadeStartVolume = 0f, float volume = 1f, float pitch = 1f)
 		{
+			return PlayMusic(eventName, 0f, loop, crossfadeDuration, fadeStartVolume, volume, pitch);
+		}
+
+		/// <summary>
+		/// Starts to play a music. Currently played music will be crossfaded.
+		/// 
+		/// It's okay to quickly switch between tracks without waiting for crossfade to finish, as long as the crossfade duration is not lesser than the previously triggered crossfade.
+		/// </summary>
+		/// <param name="crossfadeDuration">Duration of the crossfade in seconds. Can be '0' for instantly stopping the old music and starting the new one without a crossfade.</param>
+		public static AudioSource PlayMusic(string eventName, float selectorPin, bool loop = true, float crossfadeDuration = 3f, float fadeStartVolume = 0f, float volume = 1f, float pitch = 1f)
+		{
 			var doFade = crossfadeDuration > 0f;
 
-			var newAudioSource = AllocateAudioSourceWithClip(eventName, true);
+			var newAudioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (newAudioSource)
 			{
 				newAudioSource.transform.position = Vector3.zero;
@@ -630,6 +916,28 @@ namespace Extenity.BeyondAudio
 			{
 				fadingInSource.volume = volume;
 			}
+		}
+
+		#endregion
+
+		#region Editor
+
+		private void OnValidate()
+		{
+			CalculateEventInternals();
+		}
+
+		#endregion
+
+		#region Serialization
+
+		public void OnBeforeSerialize()
+		{
+			ClearUnnecessaryReferencesInEvents();
+		}
+
+		public void OnAfterDeserialize()
+		{
 		}
 
 		#endregion
