@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.MathToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -23,9 +24,11 @@ namespace Extenity.BeyondAudio
 		public AudioEventType Type = AudioEventType.Regular;
 
 		// Type.Regular
+		[ConditionalHideInInspector("Type", AudioEventType.Regular)]
 		public List<AudioClip> Clips; // TODO: Change type to AudioClip[]
 
 		// Type.WeightedGroups
+		[ConditionalHideInInspector("Type", AudioEventType.WeightedGroups)]
 		public WeightedAudioClipGroup[] WeightedGroups;
 
 		public bool EnsureNonrecurringRandomness = true; // TODO: Show only when assigned more than one clip
