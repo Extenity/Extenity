@@ -78,6 +78,31 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 		#endregion
+
+		#region EditorGUI Exposed Internals
+
+		// TODO: Better call internal methods with reflection, rather than copying the method here to make it future proof.
+		/// <summary>
+		/// Copied directly from EditorGUI.HasVisibleChildFields at Unity version 2018.1.0b13
+		/// </summary>
+		public static bool HasVisibleChildFields(SerializedProperty property)
+		{
+			switch (property.propertyType)
+			{
+				case SerializedPropertyType.Vector3:
+				case SerializedPropertyType.Vector2:
+				case SerializedPropertyType.Vector3Int:
+				case SerializedPropertyType.Vector2Int:
+				case SerializedPropertyType.Rect:
+				case SerializedPropertyType.RectInt:
+				case SerializedPropertyType.Bounds:
+				case SerializedPropertyType.BoundsInt:
+					return false;
+			}
+			return property.hasVisibleChildren;
+		}
+		
+		#endregion
 	}
 
 }

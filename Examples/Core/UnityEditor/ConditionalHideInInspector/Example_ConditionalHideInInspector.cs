@@ -5,57 +5,146 @@ using UnityEngine;
 namespace ExtenityExamples.UnityEditorToolbox
 {
 
-	[Serializable]
-	public class Example_ConditionalHideIn_Container
+	public enum Example_ConditionalHideIn_Enum
 	{
-		public int InnerValue;
+		Unspecified,
+		EnumOn,
+		EnumOff,
+	}
 
-		[ConditionalHideInInspector("InnerValue", 1)]
-		public int InnerVariableShownIfValueIs1;
+	[Serializable]
+	public class Example_ConditionalHideIn_BigClass
+	{
+		[Header("Values")]
+		public int IntValue;
+		public Example_ConditionalHideIn_Enum EnumValue;
 
-		[ConditionalHideInInspector("InnerValue", 2, true)]
-		public int InnerVariableShownIfValueIsNot2;
+		// IntValue
+		[Header("Conditions based on " + nameof(IntValue))]
+		[ConditionalHideInInspector(nameof(IntValue), 1)]
+		public int VariableShownIfValueIs1;
 
-		[ConditionalHideInInspector("InnerValue", 5, true, HideOrDisable.Disable)]
-		public int InnerVariableDisabledIfValueIs5;
+		[ConditionalHideInInspector(nameof(IntValue), 2, true)]
+		public int VariableShownIfValueIsNot2;
 
-		[ConditionalHideInInspector("InnerValue", 5, false, HideOrDisable.Disable)]
-		public int InnerVariableEnabledIfValueIs5;
+		[ConditionalHideInInspector(nameof(IntValue), 5, true, HideOrDisable.Disable)]
+		public int VariableDisabledIfValueIs5;
+
+		[ConditionalHideInInspector(nameof(IntValue), 5, false, HideOrDisable.Disable)]
+		public int VariableEnabledIfValueIs5;
+
+		[ConditionalHideInInspector(nameof(IntValue), 6)]
+		public int[] IntArrayEnabledIfValueIs6;
+
+		[ConditionalHideInInspector(nameof(IntValue), 6)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfValueIs6;
+
+		[ConditionalHideInInspector(nameof(IntValue), 6, true)]
+		public int[] IntArrayEnabledIfValueIsNot6;
+
+		[ConditionalHideInInspector(nameof(IntValue), 6, true)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfValueIsNot6;
+
+		// EnumValue
+		[Header("Conditions based on " + nameof(EnumValue))]
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public int VariableShownIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOff)]
+		public int VariableShownIfEnumValueIsOff;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public int VariableShownIfEnumValueIsNotOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOff, HideOrDisable.Disable)]
+		public int VariableDisabledIfEnumValueIsOff;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public int[] IntArrayEnabledIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public int[] IntArrayEnabledIfEnumValueIsNotOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfEnumValueIsNotOn;
 	}
 
 	[Serializable]
 	public class Example_ConditionalHideIn_Entry
 	{
-		public int Value;
+		public int SomeValue;
 
-		[ConditionalHideInInspector("Value", 3)]
+		[ConditionalHideInInspector(nameof(SomeValue), 3)]
 		public int VariableEnabledIfValueIs3;
+
+		[ConditionalHideInInspector(nameof(SomeValue), 6)]
+		public int[] IntArrayEnabledIfValueIs6;
 	}
 
 	public class Example_ConditionalHideInInspector : MonoBehaviour
 	{
-		public int SomeValue;
+		[Header("Values")]
+		public int IntValue;
+		public Example_ConditionalHideIn_Enum EnumValue;
 
-		[ConditionalHideInInspector("SomeValue", 1)]
+		// IntValue
+		[Header("Conditions based on " + nameof(IntValue))]
+		[ConditionalHideInInspector(nameof(IntValue), 1)]
 		public int VariableShownIfValueIs1;
 
-		[ConditionalHideInInspector("SomeValue", 2, true)]
+		[ConditionalHideInInspector(nameof(IntValue), 2, true)]
 		public int VariableShownIfValueIsNot2;
 
-		[ConditionalHideInInspector("SomeValue", 5, true, HideOrDisable.Disable)]
+		[ConditionalHideInInspector(nameof(IntValue), 5, true, HideOrDisable.Disable)]
 		public int VariableDisabledIfValueIs5;
 
-		[ConditionalHideInInspector("SomeValue", 5, false, HideOrDisable.Disable)]
+		[ConditionalHideInInspector(nameof(IntValue), 5, false, HideOrDisable.Disable)]
 		public int VariableEnabledIfValueIs5;
 
-		[ConditionalHideInInspector("SomeValue", 6)]
-		public int[] ArrayEnabledIfValueIs6;
+		[ConditionalHideInInspector(nameof(IntValue), 6)]
+		public int[] IntArrayEnabledIfValueIs6;
 
-		[Header("Inner Class Example")]
-		public Example_ConditionalHideIn_Container Container;
+		[ConditionalHideInInspector(nameof(IntValue), 6)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfValueIs6;
 
-		[Header("Custom Type List")]
-		public Example_ConditionalHideIn_Entry[] ListWithCustomType;
+		[ConditionalHideInInspector(nameof(IntValue), 6, true)]
+		public int[] IntArrayEnabledIfValueIsNot6;
+
+		[ConditionalHideInInspector(nameof(IntValue), 6, true)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfValueIsNot6;
+
+		// EnumValue
+		[Header("Conditions based on " + nameof(EnumValue))]
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public int VariableShownIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOff)]
+		public int VariableShownIfEnumValueIsOff;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public int VariableShownIfEnumValueIsNotOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOff, HideOrDisable.Disable)]
+		public int VariableDisabledIfEnumValueIsOff;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public int[] IntArrayEnabledIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfEnumValueIsOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public int[] IntArrayEnabledIfEnumValueIsNotOn;
+
+		[ConditionalHideInInspector(nameof(EnumValue), Example_ConditionalHideIn_Enum.EnumOn, true)]
+		public Example_ConditionalHideIn_Entry[] ObjectArrayEnabledIfEnumValueIsNotOn;
+
+		// Container
+		[Header("Class Referenced In MonoBehaviour")]
+		public Example_ConditionalHideIn_BigClass BigClass;
 	}
 
 }

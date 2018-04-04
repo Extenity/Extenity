@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox
@@ -6,6 +7,50 @@ namespace Extenity.UnityEditorToolbox
 
 	public static class SerializedObjectTools
 	{
+		public static FieldInfo GetFieldInfo(this SerializedProperty property)
+		{
+			// TODO: A proper cache mechanism would skyrocket the performance.
+
+			var slices = property.propertyPath.Split('.');
+			var objectType = property.serializedObject.targetObject.GetType();
+
+			var fieldType = objectType; // Starting point of the search.
+			//Type parentFieldType = null; This was a cool method to get the field info. Intentionally kept here in case needed in the future.
+			FieldInfo subFieldInfo = null;
+
+			for (int i = 0; i < slices.Length; i++)
+			{
+				if (slices[i] == "Array")
+				{
+					// Skip "data[x]" part of the path.
+					i++;
+
+					if (fieldType.IsArray)
+					{
+						// This is how to get the 'array' element type
+						//parentFieldType = fieldType;
+						fieldType = fieldType.GetElementType(); //gets info on array elements
+					}
+					else
+					{
+						// This is how to get the 'list' element type
+						//parentFieldType = fieldType;
+						fieldType = fieldType.GetGenericArguments()[0];
+					}
+				}
+				else
+				{
+					//parentFieldType = fieldType;
+					subFieldInfo = fieldType.GetField(slices[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
+					fieldType = subFieldInfo.FieldType;
+				}
+			}
+
+			//var subFieldInfo = parentFieldType.GetField(fieldName);
+
+			return subFieldInfo;
+		}
+
 		public static object GetValueAsObject(this SerializedProperty property)
 		{
 			if (property == null)
@@ -64,7 +109,7 @@ namespace Extenity.UnityEditorToolbox
 			}
 		}
 
-		public static bool CheckEquals(this SerializedProperty property, object value)
+		public static bool CheckEquals(this SerializedProperty property, object value, bool useUnderlyingTypeForEnums = true)
 		{
 			if (value == null)
 			{
@@ -82,10 +127,12 @@ namespace Extenity.UnityEditorToolbox
 
 			var propertyType = propertyValue.GetType();
 			var valueType = value.GetType();
+
 			// Special care for enum types.
-			if (valueType.IsEnum)
+			if (valueType.IsEnum && useUnderlyingTypeForEnums)
 			{
 				valueType = valueType.GetEnumUnderlyingType();
+				value = Convert.ChangeType(value, valueType);
 			}
 
 			if (propertyType == valueType)
@@ -94,6 +141,30 @@ namespace Extenity.UnityEditorToolbox
 			}
 			throw new Exception(string.Format("SerializedProperty type '{0}' does not match the compared value type '{1}'.", propertyType, valueType));
 		}
+
+		#region SerializedProperty Path
+
+		/// <summary>
+		/// Gets the property path as in 'SerializedProperty.propertyPath'. Except if there is an array 
+		/// part at the end of the path, it will be stripped out.
+		/// </summary>
+		public static string GetPropertyPathWithStrippedLastArrayPart(this SerializedProperty property)
+		{
+			var path = property.propertyPath;
+
+			var dotIndex = path.LastIndexOf('.');
+			if (path.Length > dotIndex + ".data[".Length &&
+			    dotIndex > ".Array".Length &&
+			    path.Substring(dotIndex - ".Array".Length, ".Array.data[".Length) == ".Array.data[")
+			{
+				var arrayStartIndex = path.LastIndexOf(".Array.data[", StringComparison.InvariantCulture);
+				return path.Substring(0, arrayStartIndex);
+			}
+
+			return path;
+		}
+
+		#endregion
 	}
 
 }

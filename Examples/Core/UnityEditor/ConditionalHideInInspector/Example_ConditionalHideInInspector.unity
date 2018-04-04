@@ -286,23 +286,91 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ae642d60da9a743953799c89c8644d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SomeValue: 6
-  VariableShownIfValueIs1: 111
-  VariableShownIfValueIsNot2: 222
-  VariableDisabledIfValueIs5: 555111
-  VariableEnabledIfValueIs5: 555222
-  ArrayEnabledIfValueIs6: 0c0000002200000038000000
-  Container:
-    InnerValue: 5
-    InnerVariableShownIfValueIs1: 0
-    InnerVariableShownIfValueIsNot2: 0
-    InnerVariableDisabledIfValueIs5: 0
-    InnerVariableEnabledIfValueIs5: 0
-  ListWithCustomType:
-  - Value: 3
-    VariableEnabledIfValueIs3: 999
-  - Value: 5
-    VariableEnabledIfValueIs3: 888
+  IntValue: 6
+  EnumValue: 1
+  VariableShownIfValueIs1: 0
+  VariableShownIfValueIsNot2: 0
+  VariableDisabledIfValueIs5: 0
+  VariableEnabledIfValueIs5: 0
+  IntArrayEnabledIfValueIs6: 0b00000016000000
+  ObjectArrayEnabledIfValueIs6:
+  - SomeValue: 6
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  - SomeValue: 7
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  IntArrayEnabledIfValueIsNot6: 0b00000016000000
+  ObjectArrayEnabledIfValueIsNot6:
+  - SomeValue: 6
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  - SomeValue: 7
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  VariableShownIfEnumValueIsOn: 0
+  VariableShownIfEnumValueIsOff: 0
+  VariableShownIfEnumValueIsNotOn: 0
+  VariableDisabledIfEnumValueIsOff: 0
+  IntArrayEnabledIfEnumValueIsOn: 0b00000016000000
+  ObjectArrayEnabledIfEnumValueIsOn:
+  - SomeValue: 6
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  - SomeValue: 7
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  IntArrayEnabledIfEnumValueIsNotOn: 0b00000016000000
+  ObjectArrayEnabledIfEnumValueIsNotOn:
+  - SomeValue: 6
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  - SomeValue: 7
+    VariableEnabledIfValueIs3: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+  BigClass:
+    IntValue: 6
+    EnumValue: 1
+    VariableShownIfValueIs1: 0
+    VariableShownIfValueIsNot2: 0
+    VariableDisabledIfValueIs5: 0
+    VariableEnabledIfValueIs5: 0
+    IntArrayEnabledIfValueIs6: 0b00000016000000
+    ObjectArrayEnabledIfValueIs6:
+    - SomeValue: 6
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    - SomeValue: 7
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    IntArrayEnabledIfValueIsNot6: 0b00000016000000
+    ObjectArrayEnabledIfValueIsNot6:
+    - SomeValue: 6
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    - SomeValue: 7
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    VariableShownIfEnumValueIsOn: 0
+    VariableShownIfEnumValueIsOff: 0
+    VariableShownIfEnumValueIsNotOn: 0
+    VariableDisabledIfEnumValueIsOff: 0
+    IntArrayEnabledIfEnumValueIsOn: 0b00000016000000
+    ObjectArrayEnabledIfEnumValueIsOn:
+    - SomeValue: 6
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    - SomeValue: 7
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    IntArrayEnabledIfEnumValueIsNotOn: 0b00000016000000
+    ObjectArrayEnabledIfEnumValueIsNotOn:
+    - SomeValue: 6
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
+    - SomeValue: 7
+      VariableEnabledIfValueIs3: 0
+      IntArrayEnabledIfValueIs6: 0b00000016000000
 --- !u!4 &1842590339
 Transform:
   m_ObjectHideFlags: 0
