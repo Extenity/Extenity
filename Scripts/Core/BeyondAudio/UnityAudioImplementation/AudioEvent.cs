@@ -81,7 +81,7 @@ namespace Extenity.BeyondAudio
 					break;
 				case AudioEventType.WeightedGroups:
 					{
-						if (WeightedGroups == null)
+						if (WeightedGroups == null || WeightedGroups.Length == 0)
 						{
 							ClipCount = 0;
 						}
