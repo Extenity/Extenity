@@ -35,7 +35,6 @@ namespace Extenity.UnityEditorToolbox
 			}
 			else
 			{
-				return -30f;
 				// The property is not being drawn
 				// We want to undo the spacing added before and after the property
 				return -EditorGUIUtility.standardVerticalSpacing;
