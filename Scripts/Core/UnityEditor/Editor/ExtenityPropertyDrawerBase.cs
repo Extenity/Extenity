@@ -112,7 +112,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					var conditionalHideInInspectorAttribute = subFieldInfo.GetAttribute<ConditionalHideInInspectorAttribute>(true);
 					if (conditionalHideInInspectorAttribute != null)
 					{
-						var result = conditionalHideInInspectorAttribute.DecideIfEnabled(prop);
+						var result = ConditionalHideInInspectorAttributeDrawer.DecideIfEnabled(conditionalHideInInspectorAttribute, prop);
 						if (result == ConditionalHideResult.Hide)
 						{
 							display = false;
