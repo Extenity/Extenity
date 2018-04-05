@@ -65,10 +65,61 @@ namespace Extenity.UnityEditorToolbox
 			return subFieldInfo;
 		}
 
-		// TODO:
-		//public static Type GetDeclaringType(this SerializedProperty property)
-		//{
-		//}
+		public static Type GetDeclaringType(this SerializedProperty property)
+		{
+			// TODO: A proper cache mechanism would skyrocket the performance.
+
+			var objectType = property.serializedObject.targetObject.GetType();
+
+			var path = property.propertyPath;
+			if (path.IndexOf('.') < 0)
+			{
+				return objectType;
+			}
+
+			var slices = path.Split('.');
+
+			// 'objectType' is the starting point of the search.
+			var fieldType = objectType;
+			//Type parentFieldType = null; This was a cool method to get the field info. Intentionally kept here in case needed in the future.
+			FieldInfo subFieldInfo = null;
+
+			for (int i = 0; i < slices.Length; i++)
+			{
+				if (slices[i] == "Array")
+				{
+					// Skip "data[x]" or "size" part of the path.
+					if (++i >= slices.Length)
+						break;
+
+					if (fieldType != typeof(System.String))
+					{
+						if (fieldType.IsArray)
+						{
+							// This is how to get the 'array' element type
+							//parentFieldType = fieldType;
+							fieldType = fieldType.GetElementType(); //gets info on array elements
+						}
+						else
+						{
+							// This is how to get the 'list' element type
+							//parentFieldType = fieldType;
+							fieldType = fieldType.GetGenericArguments()[0];
+						}
+					}
+				}
+				else
+				{
+					//parentFieldType = fieldType;
+					subFieldInfo = fieldType.GetField(slices[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
+					fieldType = subFieldInfo.FieldType;
+				}
+			}
+
+			//var subFieldInfo = parentFieldType.GetField(fieldName);
+
+			return subFieldInfo.DeclaringType;
+		}
 
 		#endregion
 
