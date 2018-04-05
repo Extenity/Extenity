@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Text;
 using UnityEditor;
@@ -119,6 +120,95 @@ namespace Extenity.UnityEditorToolbox
 			//var subFieldInfo = parentFieldType.GetField(fieldName);
 
 			return subFieldInfo.DeclaringType;
+		}
+
+		public static void GetDeclaringTypeAndObject(this SerializedProperty property, out Type declaringType, out object declaringObject)
+		{
+			// TODO: A proper cache mechanism would skyrocket the performance.
+
+			// 'subObject' is the starting point of the search.
+			object subObject = property.serializedObject.targetObject;
+			var objectType = subObject.GetType();
+
+			var path = property.propertyPath;
+			if (path.IndexOf('.') < 0)
+			{
+				declaringType = objectType;
+				declaringObject = subObject;
+				return;
+			}
+
+			var slices = path.Split('.');
+
+			// 'objectType' is the starting point of the search.
+			var fieldType = objectType;
+			//Type parentFieldType = null; This was a cool method to get the field info. Intentionally kept here in case needed in the future.
+			FieldInfo subFieldInfo = null;
+			object parentSubObject = null;
+
+			for (int i = 0; i < slices.Length; i++)
+			{
+				if (slices[i] == "Array")
+				{
+					// Skip "size" part of the path or get index of "data[x]".
+					int index = -1;
+					if (++i >= slices.Length - 1)
+						break;
+					{
+						var slice = slices[i];
+						var bracketStartIndex = slice.IndexOf('[') + 1;
+						if (bracketStartIndex > 0)
+						{
+							var bracketEndIndex = slice.IndexOf(']', bracketStartIndex);
+							var indexString = slice.Substring(bracketStartIndex, bracketEndIndex - bracketStartIndex);
+							index = int.Parse(indexString);
+						}
+						else if (slice == "size")
+						{
+							// Do nothing.
+						}
+						else
+						{
+							throw new Exception("Internal error 59931!");
+						}
+					}
+
+					if (index >= 0 && fieldType != typeof(System.String))
+					{
+						if (fieldType.IsArray)
+						{
+							// This is how to get the 'array' element type
+							//parentFieldType = fieldType;
+							var array = (Array)subFieldInfo.GetValue(parentSubObject);
+							parentSubObject = subObject;
+							subObject = array.GetValue(index);
+							fieldType = fieldType.GetElementType(); //gets info on array elements
+						}
+						else
+						{
+							// This is how to get the 'list' element type
+							//parentFieldType = fieldType;
+							var list = (IList)subFieldInfo.GetValue(parentSubObject);
+							parentSubObject = subObject;
+							subObject = list[index];
+							fieldType = fieldType.GetGenericArguments()[0];
+						}
+					}
+				}
+				else
+				{
+					//parentFieldType = fieldType;
+					subFieldInfo = fieldType.GetField(slices[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
+					fieldType = subFieldInfo.FieldType;
+					parentSubObject = subObject;
+					subObject = subFieldInfo.GetValue(subObject);
+				}
+			}
+
+			//var subFieldInfo = parentFieldType.GetField(fieldName);
+
+			declaringType = subFieldInfo.DeclaringType;
+			declaringObject = parentSubObject;
 		}
 
 		#endregion

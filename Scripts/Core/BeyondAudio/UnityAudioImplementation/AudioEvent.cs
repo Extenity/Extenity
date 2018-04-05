@@ -24,14 +24,15 @@ namespace Extenity.BeyondAudio
 		public AudioEventType Type = AudioEventType.Regular;
 
 		// Type.Regular
-		[ConditionalHideInInspector("Type", AudioEventType.Regular)]
+		[ConditionalHideInInspector(nameof(Type), AudioEventType.Regular)]
 		public List<AudioClip> Clips; // TODO: Change type to AudioClip[]
 
 		// Type.WeightedGroups
-		[ConditionalHideInInspector("Type", AudioEventType.WeightedGroups)]
+		[ConditionalHideInInspector(nameof(Type), AudioEventType.WeightedGroups)]
 		public WeightedAudioClipGroup[] WeightedGroups;
 
-		public bool EnsureNonrecurringRandomness = true; // TODO: Show only when assigned more than one clip
+		[ConditionalHideInInspector(nameof(InternalClipCountGreaterThanZero))]
+		public bool EnsureNonrecurringRandomness = true;
 		private AudioClip LastSelectedAudioClip;
 
 		/// <summary>
@@ -39,6 +40,11 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		[NonSerialized]
 		internal int ClipCount;
+
+		private bool InternalClipCountGreaterThanZero()
+		{
+			return ClipCount > 1;
+		}
 
 		public bool HasAnyUnassignedClip
 		{

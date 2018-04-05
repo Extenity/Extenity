@@ -1875,16 +1875,25 @@ MonoBehaviour:
   Events:
   - Name: Track-1
     Output: {fileID: 0}
+    Type: 0
     Clips:
     - {fileID: 8300000, guid: 0157df60fab5c32499d10129c6a86475, type: 3}
+    WeightedGroups: []
+    EnsureNonrecurringRandomness: 1
   - Name: Track-2
     Output: {fileID: 0}
+    Type: 0
     Clips:
     - {fileID: 8300000, guid: c798b0c9bdca1cc45b7e2ee74f511eb2, type: 3}
+    WeightedGroups: []
+    EnsureNonrecurringRandomness: 1
   - Name: Track-3
     Output: {fileID: 0}
+    Type: 0
     Clips:
     - {fileID: 8300000, guid: 86a00617f3db31a43abd1a11846eca7d, type: 3}
+    WeightedGroups: []
+    EnsureNonrecurringRandomness: 1
 --- !u!4 &1167200209
 Transform:
   m_ObjectHideFlags: 0
@@ -3096,6 +3105,16 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224910917115054058, guid: cadf866e942ce304c8434e295a1405a8,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224932109890537264, guid: cadf866e942ce304c8434e295a1405a8,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.000039189614
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cadf866e942ce304c8434e295a1405a8, type: 2}
