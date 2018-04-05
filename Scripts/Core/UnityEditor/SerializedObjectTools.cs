@@ -1,12 +1,21 @@
 using System;
 using System.Reflection;
+using System.Text;
 using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
 {
 
 	public static class SerializedObjectTools
 	{
+		#region SerializedProperty Type Getters
+
+		/// <summary>
+		/// Gets the FieldInfo of the field which is the target of specified SerializedProperty.
+		/// If property points to an item of an array, resulting FieldInfo will be associated
+		/// with the array's field, not the item of the array.
+		/// </summary>
 		public static FieldInfo GetFieldInfo(this SerializedProperty property)
 		{
 			// TODO: A proper cache mechanism would skyrocket the performance.
@@ -14,7 +23,8 @@ namespace Extenity.UnityEditorToolbox
 			var slices = property.propertyPath.Split('.');
 			var objectType = property.serializedObject.targetObject.GetType();
 
-			var fieldType = objectType; // Starting point of the search.
+			// 'objectType' is the starting point of the search.
+			var fieldType = objectType;
 			//Type parentFieldType = null; This was a cool method to get the field info. Intentionally kept here in case needed in the future.
 			FieldInfo subFieldInfo = null;
 
@@ -22,20 +32,24 @@ namespace Extenity.UnityEditorToolbox
 			{
 				if (slices[i] == "Array")
 				{
-					// Skip "data[x]" part of the path.
-					i++;
+					// Skip "data[x]" or "size" part of the path.
+					if (++i >= slices.Length)
+						break;
 
-					if (fieldType.IsArray)
+					if (fieldType != typeof(System.String))
 					{
-						// This is how to get the 'array' element type
-						//parentFieldType = fieldType;
-						fieldType = fieldType.GetElementType(); //gets info on array elements
-					}
-					else
-					{
-						// This is how to get the 'list' element type
-						//parentFieldType = fieldType;
-						fieldType = fieldType.GetGenericArguments()[0];
+						if (fieldType.IsArray)
+						{
+							// This is how to get the 'array' element type
+							//parentFieldType = fieldType;
+							fieldType = fieldType.GetElementType(); //gets info on array elements
+						}
+						else
+						{
+							// This is how to get the 'list' element type
+							//parentFieldType = fieldType;
+							fieldType = fieldType.GetGenericArguments()[0];
+						}
 					}
 				}
 				else
@@ -50,6 +64,15 @@ namespace Extenity.UnityEditorToolbox
 
 			return subFieldInfo;
 		}
+
+		// TODO:
+		//public static Type GetDeclaringType(this SerializedProperty property)
+		//{
+		//}
+
+		#endregion
+
+		#region SerializedProperty Value Getters
 
 		public static object GetValueAsObject(this SerializedProperty property)
 		{
@@ -109,6 +132,10 @@ namespace Extenity.UnityEditorToolbox
 			}
 		}
 
+		#endregion
+
+		#region SerializedProperty Comparison
+
 		public static bool CheckEquals(this SerializedProperty property, object value, bool useUnderlyingTypeForEnums = true)
 		{
 			if (value == null)
@@ -142,6 +169,8 @@ namespace Extenity.UnityEditorToolbox
 			throw new Exception(string.Format("SerializedProperty type '{0}' does not match the compared value type '{1}'.", propertyType, valueType));
 		}
 
+		#endregion
+
 		#region SerializedProperty Path
 
 		/// <summary>
@@ -154,14 +183,37 @@ namespace Extenity.UnityEditorToolbox
 
 			var dotIndex = path.LastIndexOf('.');
 			if (path.Length > dotIndex + ".data[".Length &&
-			    dotIndex > ".Array".Length &&
-			    path.Substring(dotIndex - ".Array".Length, ".Array.data[".Length) == ".Array.data[")
+				dotIndex > ".Array".Length &&
+				path.Substring(dotIndex - ".Array".Length, ".Array.data[".Length) == ".Array.data[")
 			{
 				var arrayStartIndex = path.LastIndexOf(".Array.data[", StringComparison.InvariantCulture);
 				return path.Substring(0, arrayStartIndex);
 			}
 
 			return path;
+		}
+
+		public static void LogAllPropertyPaths(this SerializedObject serializedObject, string initialLine = null)
+		{
+			// Initialize
+			var stringBuilder = new StringBuilder();
+			if (!string.IsNullOrEmpty(initialLine))
+			{
+				stringBuilder.AppendLine(initialLine);
+			}
+
+			// Do logging
+			var iterator = serializedObject.GetIterator();
+			do
+			{
+				var property = (SerializedProperty)iterator;
+				stringBuilder.AppendLine(property.propertyPath);
+			}
+			while (iterator.Next(true));
+
+			// Finalize
+			var text = stringBuilder.ToString();
+			Debug.Log(text);
 		}
 
 		#endregion
