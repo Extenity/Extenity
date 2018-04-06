@@ -1843,16 +1843,16 @@ namespace Extenity.MathToolbox
 			Vector2 line1Point1, Vector2 line1Point2,
 			Vector2 line2Point1, Vector2 line2Point2)
 		{
-			Vector2 b = line1Point2 - line1Point1;
-			Vector2 d = line2Point2 - line2Point1;
-			double bDotDPerp = b.x * d.y - b.y * d.x;
+			var b = line1Point2 - line1Point1;
+			var d = line2Point2 - line2Point1;
+			var bDotDPerp = b.x * d.y - b.y * d.x;
 
 			// if b dot d == 0, it means the lines are parallel so have infinite intersection points
 			if (bDotDPerp.IsZero())
 				return false;
 
-			Vector2 c = line2Point1 - line1Point1;
-			double lineFactor = (c.x * d.y - c.y * d.x) / bDotDPerp;
+			var c = line2Point1 - line1Point1;
+			var lineFactor = (c.x * d.y - c.y * d.x) / bDotDPerp;
 			if (lineFactor < 0 || lineFactor > 1)
 				return false;
 
@@ -2497,8 +2497,7 @@ namespace Extenity.MathToolbox
 
 			for (int i = startIndex; i < values.Count; i++)
 			{
-				var value = values[i];
-				var sqrDistance = value.SqrDistanceTo(targetValue);
+				var sqrDistance = values[i].SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -2515,8 +2514,7 @@ namespace Extenity.MathToolbox
 
 			for (int i = startIndex; i < values.Length; i++)
 			{
-				var value = values[i];
-				var sqrDistance = value.SqrDistanceTo(targetValue);
+				var sqrDistance = values[i].SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -2552,8 +2550,7 @@ namespace Extenity.MathToolbox
 		{
 			for (int i = 0; i < values.Count; i++)
 			{
-				var value = values[i];
-				if (!value.IsAnyNaN())
+				if (!values[i].IsAnyNaN())
 					return i;
 			}
 			return -1;
@@ -2563,8 +2560,7 @@ namespace Extenity.MathToolbox
 		{
 			for (int i = 0; i < values.Length; i++)
 			{
-				var value = values[i];
-				if (!value.IsAnyNaN())
+				if (!values[i].IsAnyNaN())
 					return i;
 			}
 			return -1;
