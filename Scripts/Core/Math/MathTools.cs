@@ -1520,6 +1520,24 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Matrix4x4
+
+		public static void SetPosition(this Matrix4x4 matrix, Vector3 position)
+		{
+			matrix.m03 = position.x;
+			matrix.m13 = position.y;
+			matrix.m23 = position.z;
+		}
+
+		public static void SetPosition(this Matrix4x4 matrix, float x, float y, float z)
+		{
+			matrix.m03 = x;
+			matrix.m13 = y;
+			matrix.m23 = z;
+		}
+
+		#endregion
+
 		#region Find Closest Point
 
 		public static Vector2 FindClosest(this IList<Vector2> list, Vector2 toPoint)
