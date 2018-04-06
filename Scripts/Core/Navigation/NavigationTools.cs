@@ -58,6 +58,48 @@ namespace Extenity.NavigationToolbox
 			return count;
 		}
 
+		public static int GetCornersNonAllocDynamic(this NavMeshPath path, ref Vector3[] buffer, ref Vector2[] bufferXZ, int maxBufferExtensionSize = 100)
+		{
+			var count = path.GetCornersNonAlloc(buffer);
+			if (count == buffer.Length)
+			{
+				var size = buffer.Length;
+				//Debug.LogFormat("Extending the buffer size from: {0}", size);
+				while (size < maxBufferExtensionSize)
+				{
+					size = size == 0 ? 8 : Mathf.Min(size * 2, maxBufferExtensionSize);
+					//Debug.LogFormat("New buffer size: {0}", size);
+					buffer = new Vector3[size];
+					count = path.GetCornersNonAlloc(buffer);
+					if (count < buffer.Length)
+					{
+						// Copy to 2D buffer
+						bufferXZ = new Vector2[size];
+						for (var i = 0; i < buffer.Length; i++)
+						{
+							var item = buffer[i];
+							bufferXZ[i].x = item.x;
+							bufferXZ[i].y = item.z;
+						}
+
+						return count;
+					}
+				}
+			}
+
+			// Copy to 2D buffer
+			bufferXZ = new Vector2[count];
+			for (var i = 0; i < buffer.Length; i++)
+			{
+				var item = buffer[i];
+				bufferXZ[i].x = item.x;
+				bufferXZ[i].y = item.z;
+			}
+
+			//Debug.LogFormat("Buffer size: {0}    count: {1}", buffer.Length, count);
+			return count;
+		}
+
 		#endregion
 
 		#region Length

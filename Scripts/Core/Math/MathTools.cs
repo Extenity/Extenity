@@ -1202,10 +1202,24 @@ namespace Extenity.MathToolbox
 			return dx * dx + dy * dy;
 		}
 
+		public static float SqrDistanceToXY(this Vector3 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return dx * dx + dy * dy;
+		}
+
 		public static float SqrDistanceToXZ(this Vector3 a, Vector3 b)
 		{
 			var dx = b.x - a.x;
 			var dz = b.z - a.z;
+			return dx * dx + dz * dz;
+		}
+
+		public static float SqrDistanceToXZ(this Vector3 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dz = b.y - a.z;
 			return dx * dx + dz * dz;
 		}
 
@@ -1227,8 +1241,15 @@ namespace Extenity.MathToolbox
 		public static float DistanceToXY(this Vector3 a, Vector3 b)
 		{
 			var dx = b.x - a.x;
-			var xy = b.y - a.y;
-			return Mathf.Sqrt(dx * dx + xy * xy);
+			var dy = b.y - a.y;
+			return Mathf.Sqrt(dx * dx + dy * dy);
+		}
+
+		public static float DistanceToXY(this Vector3 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return Mathf.Sqrt(dx * dx + dy * dy);
 		}
 
 		public static float DistanceToXZ(this Vector3 a, Vector3 b)
@@ -1238,7 +1259,19 @@ namespace Extenity.MathToolbox
 			return Mathf.Sqrt(dx * dx + dz * dz);
 		}
 
+		public static float DistanceToXZ(this Vector3 a, Vector2 b)
+		{
+			var dx = b.x - a.x;
+			var dz = b.y - a.z;
+			return Mathf.Sqrt(dx * dx + dz * dz);
+		}
+
 		public static Vector2 Difference2ToXY(this Vector3 a, Vector3 b)
+		{
+			return new Vector2(b.x - a.x, b.y - a.y);
+		}
+
+		public static Vector2 Difference2ToXY(this Vector3 a, Vector2 b)
 		{
 			return new Vector2(b.x - a.x, b.y - a.y);
 		}
@@ -1246,6 +1279,11 @@ namespace Extenity.MathToolbox
 		public static Vector2 Difference2ToXZ(this Vector3 a, Vector3 b)
 		{
 			return new Vector2(b.x - a.x, b.z - a.z);
+		}
+
+		public static Vector2 Difference2ToXZ(this Vector3 a, Vector2 b)
+		{
+			return new Vector2(b.x - a.x, b.y - a.z);
 		}
 
 		public static Vector3 Difference3ToXY(this Vector3 a, Vector3 b)
@@ -1256,6 +1294,66 @@ namespace Extenity.MathToolbox
 		public static Vector3 Difference3ToXZ(this Vector3 a, Vector3 b)
 		{
 			return new Vector3(b.x - a.x, 0f, b.z - a.z);
+		}
+
+		#endregion
+
+		#region Inside Bounds
+
+		public static bool IsInsideBounds(this Vector3 a, Vector3 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			var dz = b.z - a.z;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dy > -maxDistance && dy < maxDistance &&
+				dz > -maxDistance && dz < maxDistance;
+		}
+
+		public static bool IsInsideBounds(this Vector2 a, Vector2 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dy > -maxDistance && dy < maxDistance;
+		}
+
+		public static bool IsInsideBoundsXY(this Vector3 a, Vector3 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dy > -maxDistance && dy < maxDistance;
+		}
+
+		public static bool IsInsideBoundsXY(this Vector3 a, Vector2 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dy > -maxDistance && dy < maxDistance;
+		}
+
+		public static bool IsInsideBoundsXZ(this Vector3 a, Vector3 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dz = b.z - a.z;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dz > -maxDistance && dz < maxDistance;
+		}
+
+		public static bool IsInsideBoundsXZ(this Vector3 a, Vector2 b, float maxDistance)
+		{
+			var dx = b.x - a.x;
+			var dz = b.y - a.z;
+			return
+				dx > -maxDistance && dx < maxDistance &&
+				dz > -maxDistance && dz < maxDistance;
 		}
 
 		#endregion
@@ -1646,7 +1744,31 @@ namespace Extenity.MathToolbox
 				distanceFromStart = 0f;
 				return lineStart;
 			}
-			float diffMagnitude = diff.magnitude;
+			var diffMagnitude = diff.magnitude;
+			if (closestPoint > diffMagnitude)
+			{
+				distanceFromStart = diffMagnitude;
+				return lineEnd;
+			}
+
+			distanceFromStart = closestPoint;
+			return lineStart + (closestPoint * lineDirection);
+		}
+
+		public static Vector2 ClosestPointOnLineSegment(Vector2 lineStart, Vector2 lineEnd, Vector2 point, out float distanceFromStart)
+		{
+			// TODO: OPTIMIZATION: This is directly copied from 3D calculations. See if there is a faster algorithm in 2D.
+			var diff = lineEnd - lineStart;
+			var lineDirection = diff.normalized;
+			var closestPoint = Vector2.Dot(point - lineStart, lineDirection);
+
+			// Clamp to line segment
+			if (closestPoint < 0f)
+			{
+				distanceFromStart = 0f;
+				return lineStart;
+			}
+			var diffMagnitude = diff.magnitude;
 			if (closestPoint > diffMagnitude)
 			{
 				distanceFromStart = diffMagnitude;
@@ -1908,7 +2030,39 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					return previousPoint + diff * ratio;
+				}
+
+				totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+
+			return previousPoint;
+		}
+
+		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, float distanceFromStart, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return Vector3NaN;
+			if (points.Count == 1 || distanceFromStart < 0f)
+				return points[0];
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -2152,7 +2306,43 @@ namespace Extenity.MathToolbox
 
 				float distanceFromStartOfCurrentSegmentClosestPoint;
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
+
+				if (closestPointSqrDistance > sqrDistance)
+				{
+					closestPointSqrDistance = sqrDistance;
+					//closestPoint = currentSegmentClosestPoint;
+					distanceFromStartOfClosestPoint = totalLength + distanceFromStartOfCurrentSegmentClosestPoint;
+				}
+
+				totalLength += currentPoint.DistanceTo(previousPoint);
+				previousPoint = currentPoint;
+			}
+
+			return distanceFromStartOfClosestPoint;
+		}
+
+		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<Vector2> points, Vector2 point, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return float.NaN;
+			if (points.Count == 1)
+				return 0f;
+
+			var previousPoint = points[0];
+			var totalLength = 0f;
+			//var closestPoint = previousPoint;
+			var distanceFromStartOfClosestPoint = 0f;
+			var closestPointSqrDistance = float.PositiveInfinity;
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+
+				float distanceFromStartOfCurrentSegmentClosestPoint;
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -2229,7 +2419,21 @@ namespace Extenity.MathToolbox
 			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
+		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
+			var resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
+		}
+
 		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector3> points, Vector3 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
+			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
+		}
+
+		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
