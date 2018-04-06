@@ -725,8 +725,11 @@ namespace Extenity.MathToolbox
 		#region Vector2 - Vector3 Conversions
 
 		public static Vector3 ToVector3XY(this Vector2 vector) { return new Vector3(vector.x, vector.y, 0f); }
+		public static Vector3 ToVector3XY(this Vector2 vector, float z) { return new Vector3(vector.x, vector.y, z); }
 		public static Vector3 ToVector3XZ(this Vector2 vector) { return new Vector3(vector.x, 0f, vector.y); }
+		public static Vector3 ToVector3XZ(this Vector2 vector, float y) { return new Vector3(vector.x, y, vector.y); }
 		public static Vector3 ToVector3YZ(this Vector2 vector) { return new Vector3(0f, vector.x, vector.y); }
+		public static Vector3 ToVector3YZ(this Vector2 vector, float x) { return new Vector3(x, vector.x, vector.y); }
 		public static Vector2 ToVector2XY(this Vector3 vector) { return new Vector2(vector.x, vector.y); }
 		public static Vector2 ToVector2XZ(this Vector3 vector) { return new Vector2(vector.x, vector.z); }
 		public static Vector2 ToVector2YZ(this Vector3 vector) { return new Vector2(vector.y, vector.z); }
@@ -2419,7 +2422,7 @@ namespace Extenity.MathToolbox
 			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
-		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
+		public static Vector2 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			var resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
@@ -2433,7 +2436,7 @@ namespace Extenity.MathToolbox
 			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
-		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
+		public static Vector2 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;

@@ -75,7 +75,7 @@ namespace Extenity.NavigationToolbox
 					{
 						// Copy to 2D buffer
 						bufferXZ = new Vector2[size];
-						for (var i = 0; i < buffer.Length; i++)
+						for (var i = 0; i < count; i++)
 						{
 							var item = buffer[i];
 							bufferXZ[i].x = item.x;
@@ -88,8 +88,7 @@ namespace Extenity.NavigationToolbox
 			}
 
 			// Copy to 2D buffer
-			bufferXZ = new Vector2[count];
-			for (var i = 0; i < buffer.Length; i++)
+			for (var i = 0; i < count; i++)
 			{
 				var item = buffer[i];
 				bufferXZ[i].x = item.x;
