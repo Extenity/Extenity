@@ -555,9 +555,9 @@ namespace Extenity.MathToolbox
 
 		public static bool IsValidTriangle(Vector3 point1, Vector3 point2, Vector3 point3)
 		{
-			var a = Vector3.Distance(point1, point2);
-			var b = Vector3.Distance(point1, point3);
-			var c = Vector3.Distance(point2, point3);
+			var a = point1.DistanceTo(point2);
+			var b = point1.DistanceTo(point3);
+			var c = point2.DistanceTo(point3);
 
 			return
 				a + b > c &&
@@ -1548,7 +1548,7 @@ namespace Extenity.MathToolbox
 			{
 				for (var i = 0; i < list.Count; i++)
 				{
-					var distanceSqr = (list[i] - toPoint).sqrMagnitude;
+					var distanceSqr = list[i].SqrDistanceTo(toPoint);
 					if (closestDistanceSqr > distanceSqr)
 					{
 						closestDistanceSqr = distanceSqr;
@@ -1603,23 +1603,23 @@ namespace Extenity.MathToolbox
 
 		public static Vector2 ClosestPointOnLine(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
 		{
-			Vector2 lineDirection = (lineEnd - lineStart).normalized;
-			float closestPoint = Vector2.Dot(point - lineStart, lineDirection) / Vector2.Dot(lineDirection, lineDirection);
+			var lineDirection = (lineEnd - lineStart).normalized;
+			var closestPoint = Vector2.Dot(point - lineStart, lineDirection) / Vector2.Dot(lineDirection, lineDirection);
 			return lineStart + (closestPoint * lineDirection);
 		}
 
 		public static Vector3 ClosestPointOnLine(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
 		{
-			Vector3 lineDirection = Vector3.Normalize(lineEnd - lineStart);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			var lineDirection = (lineEnd - lineStart).normalized;
+			var closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
 			return lineStart + (closestPoint * lineDirection);
 		}
 
 		public static Vector3 ClosestPointOnLineSegment(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
 		{
-			Vector3 diff = lineEnd - lineStart;
-			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
+			var diff = lineEnd - lineStart;
+			var lineDirection = diff.normalized;
+			var closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
@@ -1636,9 +1636,9 @@ namespace Extenity.MathToolbox
 
 		public static Vector3 ClosestPointOnLineSegment(Vector3 lineStart, Vector3 lineEnd, Vector3 point, out float distanceFromStart)
 		{
-			Vector3 diff = lineEnd - lineStart;
-			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
+			var diff = lineEnd - lineStart;
+			var lineDirection = diff.normalized;
+			var closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
@@ -1659,16 +1659,16 @@ namespace Extenity.MathToolbox
 
 		public static float DistanceFromStartOfClosestPointOnLineSegment(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
 		{
-			Vector3 diff = lineEnd - lineStart;
-			Vector3 lineDirection = Vector3.Normalize(diff);
-			float closestPoint = Vector3.Dot(point - lineStart, lineDirection);
+			var diff = lineEnd - lineStart;
+			var lineDirection = diff.normalized;
+			var closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 
 			// Clamp to line segment
 			if (closestPoint < 0f)
 			{
 				return 0f;
 			}
-			float diffMagnitude = diff.magnitude;
+			var diffMagnitude = diff.magnitude;
 			if (closestPoint > diffMagnitude)
 			{
 				return diffMagnitude;
@@ -1749,7 +1749,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < points.Count; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += Vector3.Distance(previousPoint, currentPoint);
+				totalDistance += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
 			return totalDistance;
@@ -1766,7 +1766,7 @@ namespace Extenity.MathToolbox
 			for (int i = startIndex + 1; i < endIndex; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += Vector3.Distance(previousPoint, currentPoint);
+				totalDistance += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
 			return totalDistance;
@@ -1824,7 +1824,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -1857,7 +1857,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -1875,7 +1875,7 @@ namespace Extenity.MathToolbox
 			if (loop)
 			{
 				var currentPoint = points[0];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -1940,7 +1940,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -1957,7 +1957,7 @@ namespace Extenity.MathToolbox
 			if (loop)
 			{
 				var currentPoint = points[0];
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -2968,7 +2968,7 @@ namespace Extenity.MathToolbox
 				{
 					var point = polygonPoints[i];
 					var closestPointOnLine = ClosestPointOnLine(lineStart, lineEnd, point);
-					if ((closestPointOnLine - point).sqrMagnitude > lineCheckToleranceSqr)
+					if (closestPointOnLine.SqrDistanceTo(point) > lineCheckToleranceSqr)
 					{
 						vertexFoundOutsideOfLine = true;
 						break;
