@@ -57,10 +57,13 @@ namespace Extenity.UnityEditorToolbox
 		public static string PreviousStepTitle { get; private set; }
 		private static CoroutineTask Task;
 
+		public delegate void ProcessFinishedAction(bool succeeded);
+		public static event ProcessFinishedAction OnProcessFinished;
+
 		protected abstract IEnumerator OnBeforeProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
 		protected abstract IEnumerator OnAfterProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
 
-		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges)
+		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges, ProcessFinishedAction onProcessFinished = null)
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
@@ -70,6 +73,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before processing.");
 			}
+			OnProcessFinished += onProcessFinished;
 			var processorInstance = (TBuildProcessor)Activator.CreateInstance(typeof(TBuildProcessor));
 			Task = CoroutineTask.Create(processorInstance.DoProcessScene(scene, configurationName, true, true), false);
 			Task.StartInEditorUpdate(true, true, null);
@@ -80,6 +84,8 @@ namespace Extenity.UnityEditorToolbox
 			if (IsProcessorRunning)
 				throw new Exception("Scene processor was already running.");
 			IsProcessorRunning = true;
+
+			var succeeded = false;
 
 			try
 			{
@@ -205,6 +211,7 @@ namespace Extenity.UnityEditorToolbox
 				yield return null;
 				AggressivelySaveOpenScenes();
 
+				succeeded = true;
 				Debug.LogFormat("{0} | Scene processor finished.", ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds());
 
 				ClearProgressBar();
@@ -220,6 +227,11 @@ namespace Extenity.UnityEditorToolbox
 				PreviousStepStartTime = new TimeSpan();
 				PreviousStepTitle = null;
 				CurrentStep = 0;
+			}
+
+			if (OnProcessFinished != null)
+			{
+				OnProcessFinished(succeeded);
 			}
 		}
 
