@@ -267,6 +267,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorUtility.SetDirty(Me);
 		}
 
+		protected void InvalidateModifiedPropertiesForPrefab()
+		{
+			EditorUtility.SetDirty(Me);
+		}
+
 		protected void InvalidateScene()
 		{
 			// Try to invalidate only the scene that this object is included.
