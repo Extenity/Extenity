@@ -34,8 +34,8 @@ namespace Extenity.RenderingToolbox
 
 			var isFullscreen = Screen.fullScreen ? 1 : 0;
 			if (
-				currentScreenWidth == Screen.width && 
-				currentScreenHeight == Screen.height && 
+				currentScreenWidth == Screen.width &&
+				currentScreenHeight == Screen.height &&
 				previousFullscreen == isFullscreen
 			)
 				return;
@@ -193,11 +193,19 @@ namespace Extenity.RenderingToolbox
 
 		#endregion
 
-		#region Resolution Tools
+		#region Tools
 
-		public void SwapResolution()
+		public static void SwapResolution()
 		{
 			Screen.SetResolution(Screen.height, Screen.width, false);
+		}
+
+		public static Rect GetCenteredRect(int sizeX, int sizeY)
+		{
+			return new Rect(
+				(int)((Screen.width - sizeX) / 2),
+				Screen.height - (int)((Screen.height - sizeY) / 2),
+				sizeX, sizeY);
 		}
 
 		#endregion

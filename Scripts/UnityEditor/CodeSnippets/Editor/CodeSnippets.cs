@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
+using Extenity.RenderingToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.CodeSnippetsToolbox.Editor
 {
@@ -182,18 +184,21 @@ namespace __NAMESPACE__
 		private static SnippetGroup ScriptWithInspectorGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
+			AskForNamespace = true,
 			SnippetNames = new List<string> { "NamespacedMain", "NamespacedInspector" }
 		};
 
 		private static SnippetGroup ScriptOnlyGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
+			AskForNamespace = true,
 			SnippetNames = new List<string> { "NamespacedMain" }
 		};
 
 		private static SnippetGroup InspectorOnlyGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
+			AskForNamespace = true,
 			SnippetNames = new List<string> { "NamespacedInspector" }
 		};
 
@@ -247,6 +252,7 @@ namespace __NAMESPACE__
 		{
 			public List<string> SnippetNames;
 			public string MainFileExtension;
+			public bool AskForNamespace;
 
 			public List<string> GetAllSnippetFilePaths(string baseDirectory, Dictionary<string, string> macroDefinitions)
 			{
@@ -294,12 +300,19 @@ namespace __NAMESPACE__
 
 		#region Macros
 
-		private static Dictionary<string, string> CreateMacroDefinitions(string scriptName)
+		private static Dictionary<string, string> CreateMacroDefinitions(string scriptName, string scriptNamespace)
 		{
-			return new Dictionary<string, string>
+			var definitions = new Dictionary<string, string>
 			{
-				{"__NAME__", scriptName}
+				{ "__NAME__", scriptName },
 			};
+
+			if (!string.IsNullOrEmpty(scriptNamespace))
+			{
+				definitions.Add("__NAMESPACE__", scriptNamespace);
+			}
+
+			return definitions;
 		}
 
 		private static string ProcessMacrosInText(string text, Dictionary<string, string> macroDefinitions)
@@ -341,8 +354,33 @@ namespace __NAMESPACE__
 				return;
 
 			var scriptName = Path.GetFileNameWithoutExtension(path);
+
+			if (snippetGroup.AskForNamespace)
+			{
+				var inputField = new[] { new UserInputField("Namespace", "", false) };
+				EditorMessageBox.Show(ScreenManager.GetCenteredRect(300, 200), "Enter Namespace", string.Format("Enter the namespace of class '{0}'.", scriptName), inputField, "Create Snippet", "Cancel",
+					() =>
+					{
+						var scriptNamespace = inputField[0].Value;
+						InternalCreateSnippet(snippetGroup, path, scriptName, scriptNamespace);
+
+					},
+					() =>
+					{
+						Debug.LogFormat("Cancelled snippet creation for '{0}'.", scriptName);
+					}
+				);
+			}
+			else
+			{
+				InternalCreateSnippet(snippetGroup, path, scriptName, "");
+			}
+		}
+
+		private static void InternalCreateSnippet(SnippetGroup snippetGroup, string path, string scriptName, string scriptNamespace)
+		{
 			var baseDirectory = Path.GetDirectoryName(path);
-			var macroDefinitions = CreateMacroDefinitions(scriptName);
+			var macroDefinitions = CreateMacroDefinitions(scriptName, scriptNamespace);
 			var snippetFilePaths = snippetGroup.GetAllSnippetFilePaths(baseDirectory, macroDefinitions);
 
 			if (CheckIfAnySnippetFileAlreadyExists(snippetFilePaths))
