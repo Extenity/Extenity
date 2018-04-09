@@ -357,13 +357,13 @@ namespace __NAMESPACE__
 
 			if (snippetGroup.AskForNamespace)
 			{
-				var inputField = new[] { new UserInputField("Namespace", "", false) };
+				var rootNamespace = EditorSettings.projectGenerationRootNamespace;
+				var inputField = new[] { new UserInputField("Namespace", string.IsNullOrEmpty(rootNamespace) ? "" : rootNamespace + ".", false) };
 				EditorMessageBox.Show(ScreenManager.GetCenteredRect(300, 200), "Enter Namespace", string.Format("Enter the namespace of class '{0}'.", scriptName), inputField, "Create Snippet", "Cancel",
 					() =>
 					{
 						var scriptNamespace = inputField[0].Value;
 						InternalCreateSnippet(snippetGroup, path, scriptName, scriptNamespace);
-
 					},
 					() =>
 					{
