@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Reflection;
+using Extenity.DataToolbox;
 
 namespace Extenity.GameObjectToolbox
 {
@@ -26,7 +27,10 @@ namespace Extenity.GameObjectToolbox
 					Attribute.IsDefined(field, typeof(SerializeField))
 				)
 				{
-					fields.Add(field);
+					if (!field.IsReadOnly())
+					{
+						fields.Add(field);
+					}
 				}
 			}
 

@@ -111,6 +111,11 @@ namespace Extenity.DataToolbox
 				type == typeof(System.Object);
 		}
 
+		public static bool HasAttribute<T>(this Type type)
+		{
+			return Attribute.GetCustomAttribute(type, typeof(T)) != null;
+		}
+
 		public static T GetAttribute<T>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where T : Attribute
 		{
 			if (customAttributeProvider == null)
@@ -144,6 +149,89 @@ namespace Extenity.DataToolbox
 		public static bool IsSameOrSubclassOf(this Type derivedClass, Type baseClass)
 		{
 			return derivedClass.IsSubclassOf(baseClass) || derivedClass == baseClass;
+		}
+
+		public static bool IsNumberType(this object value)
+		{
+			var type = value as Type;
+			if (type != null)
+			{
+				return type == typeof(sbyte)
+					|| type == typeof(byte)
+					|| type == typeof(short)
+					|| type == typeof(ushort)
+					|| type == typeof(int)
+					|| type == typeof(uint)
+					|| type == typeof(long)
+					|| type == typeof(ulong)
+					|| type == typeof(float)
+					|| type == typeof(double)
+					|| type == typeof(decimal);
+			}
+			return value is sbyte
+				   || value is byte
+				   || value is short
+				   || value is ushort
+				   || value is int
+				   || value is uint
+				   || value is long
+				   || value is ulong
+				   || value is float
+				   || value is double
+				   || value is decimal;
+		}
+
+		public static bool IsPrimitiveType(this object value)
+		{
+			var type = value as Type;
+			if (type != null)
+			{
+				return type == typeof(sbyte)
+					   || type == typeof(byte)
+					   || type == typeof(short)
+					   || type == typeof(ushort)
+					   || type == typeof(int)
+					   || type == typeof(uint)
+					   || type == typeof(long)
+					   || type == typeof(ulong)
+					   || type == typeof(float)
+					   || type == typeof(double)
+					   || type == typeof(decimal)
+					   || type == typeof(bool)
+					   || type == typeof(string);
+			}
+			return value is sbyte
+				   || value is byte
+				   || value is short
+				   || value is ushort
+				   || value is int
+				   || value is uint
+				   || value is long
+				   || value is ulong
+				   || value is float
+				   || value is double
+				   || value is decimal
+				   || value is bool
+				   || value is string;
+		}
+
+		public static bool IsGenericList(this object value)
+		{
+			var type = value as Type;
+			if (type == null)
+				type = value.GetType();
+			return type.GetTypeInfo().IsGenericType &&
+			       type.GetGenericTypeDefinition() == typeof(List<>);
+		}
+
+		public static bool IsReadOnly(this FieldInfo fieldInfo)
+		{
+			return fieldInfo.IsInitOnly;
+		}
+
+		public static bool IsConst(this FieldInfo fieldInfo)
+		{
+			return fieldInfo.IsLiteral;
 		}
 
 		#region Unity Serialized Fields
