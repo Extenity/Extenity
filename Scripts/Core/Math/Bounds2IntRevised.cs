@@ -5,9 +5,10 @@ using UnityEngine;
 namespace Extenity.MathToolbox
 {
 
+	// TODO: This type will be renamed as Bounds2Int in future. But first we need to make sure all projects using the current Bounds2Int should be migrated into the new type. Use a diff tool to see what has changed between the original and the revised types.
 	[Serializable]
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Bounds2Int
+	public struct Bounds2IntRevised
 	{
 		[SerializeField]
 		public Vector2Int min;
@@ -27,13 +28,13 @@ namespace Extenity.MathToolbox
 				Vector2IntTools.minValue);
 		}
 
-		public Bounds2Int(Vector2Int min, Vector2Int max)
+		public Bounds2IntRevised(Vector2Int min, Vector2Int max)
 		{
 			this.min = min;
 			this.max = max;
 		}
 
-		public Bounds2Int(int minX, int minY, int maxX, int maxY)
+		public Bounds2IntRevised(int minX, int minY, int maxX, int maxY)
 		{
 			min = new Vector2Int(minX, minY);
 			max = new Vector2Int(maxX, maxY);
@@ -52,6 +53,15 @@ namespace Extenity.MathToolbox
 				point.y >= min.y &&
 				point.x <= max.x &&
 				point.y <= max.y;
+		}
+
+		public bool Contains(Vector2 point)
+		{
+			return
+				Mathf.FloorToInt(point.x) >= min.x &&
+				Mathf.FloorToInt(point.y) >= min.y &&
+				Mathf.CeilToInt(point.x) <= max.x &&
+				Mathf.CeilToInt(point.y) <= max.y;
 		}
 
 		public void Encapsulate(Bounds2Int bounds)
@@ -113,26 +123,40 @@ namespace Extenity.MathToolbox
 		{
 			get
 			{
-				var tmp = max - min + Vector2Int.one;
-				tmp.x /= 2;
-				tmp.y /= 2;
-				return min + tmp;
+				return new Vector2Int(
+					(max.x + min.x) / 2,
+					(max.y + min.y) / 2);
 			}
 		}
 
 		public Vector2 Center
 		{
-			get { return min.ToVector2() + (max - min + Vector2Int.one).ToVector2() / 2f; }
+			get
+			{
+				return new Vector2(
+					(max.x + min.x) * 0.5f,
+					(max.y + min.y) * 0.5f);
+			}
 		}
 
 		public Vector2Int Size
 		{
-			get { return max - min + Vector2Int.one; }
+			get
+			{
+				return new Vector2Int(
+					max.x - min.x,
+					max.y - min.y);
+			}
 		}
 
 		public Vector2 SizeVector2
 		{
-			get { return (max - min + Vector2Int.one).ToVector2(); }
+			get
+			{
+				return new Vector2(
+					max.x - min.x,
+					max.y - min.y);
+			}
 		}
 
 		public float Diagonal
