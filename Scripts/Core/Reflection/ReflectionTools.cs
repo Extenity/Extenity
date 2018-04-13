@@ -5,7 +5,9 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.MathToolbox;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -670,9 +672,9 @@ namespace Extenity.ReflectionToolbox
 
 		public static void FindAllReferencedGameObjectsInSerializedFields(this Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
 		{
-			var serializedFieldType = serializedField.FieldType;
+			var type = serializedField.FieldType;
 
-			if (serializedFieldType.IsArray)
+			if (type.IsArray)
 			{
 				var array = serializedField.GetValue(unityObject) as Array;
 				if (array != null)
@@ -687,10 +689,25 @@ namespace Extenity.ReflectionToolbox
 					}
 				}
 			}
+			else if (type.IsGenericList())
+			{
+				var list = serializedField.GetValue(unityObject) as IList;
+				if (list != null)
+				{
+					foreach (var item in list)
+					{
+						var itemAsObject = item as Object;
+						if (itemAsObject)
+						{
+							itemAsObject.FindAllReferencedGameObjectsInUnityObject(result, includeChildren);
+						}
+					}
+				}
+			}
 			else
 			{
 				GameObject referencedGameObject = null;
-				if (serializedFieldType.IsSameOrSubclassOf(typeof(Component)))
+				if (type.IsSameOrSubclassOf(typeof(Component)))
 				{
 					var referencedComponent = serializedField.GetValue(unityObject) as Component;
 					if (referencedComponent)
@@ -698,33 +715,58 @@ namespace Extenity.ReflectionToolbox
 						referencedGameObject = referencedComponent.gameObject;
 					}
 				}
-				else if (serializedFieldType.IsSameOrSubclassOf(typeof(GameObject)))
+				else if (type.IsSameOrSubclassOf(typeof(GameObject)))
 				{
 					referencedGameObject = serializedField.GetValue(unityObject) as GameObject;
 				}
-				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Mesh)))
+				else if (type.IsSameOrSubclassOf(typeof(Mesh)))
 				{
 					// Does not contain any link to game objects. So we skip.
 				}
-				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Material)))
+				else if (type.IsSameOrSubclassOf(typeof(Material)))
 				{
 					// Does not contain any link to game objects. So we skip.
 				}
-				else if (serializedFieldType.IsSameOrSubclassOf(typeof(Texture)))
+				else if (type.IsSameOrSubclassOf(typeof(Texture)))
 				{
 					// Does not contain any link to game objects. So we skip.
 				}
-				else if (serializedFieldType.IsSameOrSubclassOf(typeof(TerrainData)))
+				else if (type.IsSameOrSubclassOf(typeof(TerrainData)))
 				{
 					// Does not contain any link to game objects. So we skip.
 				}
-				else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
+				else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
+				{
+					// TODO:
+					Debug.LogWarningFormat("TODO: What to do with UnityEvent type '{0}' of field '{1}'?", type.FullName, serializedField.Name);
+				}
+				//else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
+				else if (
+					// These types can't keep a reference to an object
+					type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects
+					!type.IsPrimitiveType() &&
+					!type.IsEnum &&
+					// Unity types
+					type != typeof(Vector2) &&
+					type != typeof(Vector3) &&
+					type != typeof(Vector4) &&
+					type != typeof(Quaternion) &&
+					type != typeof(Matrix4x4) &&
+					type != typeof(AnimationCurve) &&
+					type != typeof(Color) &&
+					type != typeof(Color32) &&
+					type != typeof(LayerMask) &&
+					// Extenity types
+					type != typeof(ClampedInt) &&
+					type != typeof(ClampedFloat) &&
+					type != typeof(PIDConfiguration)
+				)
 				{
 					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
 					// The commented out code below should handle serialized fields of this unknown object but it's safer 
 					// to handle the object manually. See how Component and GameObject is handled in their own way and
 					// figure out how to handle this unknown type likewise.
-					Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", serializedFieldType.FullName);
+					Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", type.FullName);
 
 					// These lines are intentionally commented out. See the comment above.
 					//var referencedObject = serializedField.GetValue(unityObject) as Object;
