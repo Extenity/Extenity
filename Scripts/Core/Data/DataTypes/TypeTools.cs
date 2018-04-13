@@ -221,7 +221,16 @@ namespace Extenity.DataToolbox
 			if (type == null)
 				type = value.GetType();
 			return type.GetTypeInfo().IsGenericType &&
-			       type.GetGenericTypeDefinition() == typeof(List<>);
+				   type.GetGenericTypeDefinition() == typeof(List<>);
+		}
+
+		public static bool IsDictionary(this object value)
+		{
+			var type = value as Type;
+			if (type == null)
+				type = value.GetType();
+			return type.GetTypeInfo().IsGenericType &&
+				   type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 		}
 
 		public static bool IsReadOnly(this FieldInfo fieldInfo)
