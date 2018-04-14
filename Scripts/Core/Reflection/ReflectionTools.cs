@@ -666,13 +666,14 @@ namespace Extenity.ReflectionToolbox
 		{
 			foreach (var serializedField in serializedFields)
 			{
-				unityObject.FindAllReferencedGameObjectsInSerializedFields(serializedField, result, includeChildren);
+				unityObject.FindAllReferencedGameObjectsInSerializedField(serializedField, result, includeChildren);
 			}
 		}
 
-		public static void FindAllReferencedGameObjectsInSerializedFields(this Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInSerializedField(this Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
 		{
 			var type = serializedField.FieldType;
+			var serializedFieldName = serializedField.Name;
 
 			if (type.IsArray)
 			{
@@ -681,10 +682,9 @@ namespace Extenity.ReflectionToolbox
 				{
 					foreach (var item in array)
 					{
-						var itemAsObject = item as Object;
-						if (itemAsObject)
+						if (item != null)
 						{
-							itemAsObject.FindAllReferencedGameObjectsInUnityObject(result, includeChildren);
+							InternalAddReferencedObjectOfType(item.GetType(), item, serializedFieldName, result, includeChildren);
 						}
 					}
 				}
@@ -696,96 +696,107 @@ namespace Extenity.ReflectionToolbox
 				{
 					foreach (var item in list)
 					{
-						var itemAsObject = item as Object;
-						if (itemAsObject)
+						if (item != null)
 						{
-							itemAsObject.FindAllReferencedGameObjectsInUnityObject(result, includeChildren);
+							InternalAddReferencedObjectOfType(item.GetType(), item, serializedFieldName, result, includeChildren);
 						}
 					}
 				}
 			}
 			else
 			{
-				GameObject referencedGameObject = null;
-				if (type.IsSameOrSubclassOf(typeof(Component)))
-				{
-					var referencedComponent = serializedField.GetValue(unityObject) as Component;
-					if (referencedComponent)
-					{
-						referencedGameObject = referencedComponent.gameObject;
-					}
-				}
-				else if (type.IsSameOrSubclassOf(typeof(GameObject)))
-				{
-					referencedGameObject = serializedField.GetValue(unityObject) as GameObject;
-				}
-				else if (type.IsSameOrSubclassOf(typeof(Mesh)))
-				{
-					// Does not contain any link to game objects. So we skip.
-				}
-				else if (type.IsSameOrSubclassOf(typeof(Material)))
-				{
-					// Does not contain any link to game objects. So we skip.
-				}
-				else if (type.IsSameOrSubclassOf(typeof(Texture)))
-				{
-					// Does not contain any link to game objects. So we skip.
-				}
-				else if (type.IsSameOrSubclassOf(typeof(TerrainData)))
-				{
-					// Does not contain any link to game objects. So we skip.
-				}
-				else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
-				{
-					// TODO:
-					Debug.LogWarningFormat("TODO: What to do with UnityEvent type '{0}' of field '{1}'?", type.FullName, serializedField.Name);
-				}
-				//else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
-				else if (
-					// These types can't keep a reference to an object
-					type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects
-					!type.IsPrimitiveType() &&
-					!type.IsEnum &&
-					// Unity types
-					type != typeof(Vector2) &&
-					type != typeof(Vector3) &&
-					type != typeof(Vector4) &&
-					type != typeof(Quaternion) &&
-					type != typeof(Matrix4x4) &&
-					type != typeof(AnimationCurve) &&
-					type != typeof(Color) &&
-					type != typeof(Color32) &&
-					type != typeof(LayerMask) &&
-					// Extenity types
-					type != typeof(ClampedInt) &&
-					type != typeof(ClampedFloat) &&
-					type != typeof(PIDConfiguration)
-				)
-				{
-					// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
-					// The commented out code below should handle serialized fields of this unknown object but it's safer 
-					// to handle the object manually. See how Component and GameObject is handled in their own way and
-					// figure out how to handle this unknown type likewise.
-					Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", type.FullName);
+				InternalAddReferencedObjectOfType(type, serializedField.GetValue(unityObject), serializedFieldName, result, includeChildren);
+			}
+		}
 
-					// These lines are intentionally commented out. See the comment above.
-					//var referencedObject = serializedField.GetValue(unityObject) as Object;
-					//if (referencedObject) 
-					//{
-					//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
-					//	return;
-					//}
-				}
+		private static void InternalAddReferencedObjectOfType(Type type, object referencedObject, string serializedFieldName, HashSet<GameObject> result, bool includeChildren)
+		{
+			if (referencedObject == null)
+				return; // Nothing to do about this object.
 
-				if (referencedGameObject)
+			if (type.IsSameOrSubclassOf(typeof(Component)))
+			{
+				var referencedComponent = referencedObject as Component;
+				if (referencedComponent)
 				{
-					var isAdded = result.Add(referencedGameObject);
-					// Check if the gameobject was added before, which means we have already processed the gameobject.
-					// This will also prevent going into an infinite loop where there are circular references.
-					if (includeChildren && isAdded)
-					{
-						referencedGameObject.FindAllReferencedGameObjectsInGameObject(result, includeChildren);
-					}
+					var referencedGameObject = referencedComponent.gameObject;
+					InternalAddReferencedGameObjectToResults(referencedGameObject, result, includeChildren);
+				}
+			}
+			else if (type.IsSameOrSubclassOf(typeof(GameObject)))
+			{
+				var referencedGameObject = referencedObject as GameObject;
+				InternalAddReferencedGameObjectToResults(referencedGameObject, result, includeChildren);
+			}
+			else if (type.IsSameOrSubclassOf(typeof(Mesh)))
+			{
+				// Does not contain any link to game objects. So we skip.
+			}
+			else if (type.IsSameOrSubclassOf(typeof(Material)))
+			{
+				// Does not contain any link to game objects. So we skip.
+			}
+			else if (type.IsSameOrSubclassOf(typeof(Texture)))
+			{
+				// Does not contain any link to game objects. So we skip.
+			}
+			else if (type.IsSameOrSubclassOf(typeof(TerrainData)))
+			{
+				// Does not contain any link to game objects. So we skip.
+			}
+			else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
+			{
+				// TODO:
+				Debug.LogWarningFormat("TODO: What to do with UnityEvent type '{0}' of field '{1}'?", type.FullName, serializedFieldName);
+			}
+			//else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
+			else if (
+				// These types can't keep a reference to an object
+				type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects
+				!type.IsPrimitiveType() &&
+				!type.IsEnum &&
+				// Unity types
+				type != typeof(Vector2) &&
+				type != typeof(Vector3) &&
+				type != typeof(Vector4) &&
+				type != typeof(Quaternion) &&
+				type != typeof(Matrix4x4) &&
+				type != typeof(AnimationCurve) &&
+				type != typeof(Color) &&
+				type != typeof(Color32) &&
+				type != typeof(LayerMask) &&
+				// Extenity types
+				type != typeof(ClampedInt) &&
+				type != typeof(ClampedFloat) &&
+				type != typeof(PIDConfiguration)
+			)
+			{
+				// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
+				// The commented out code below should handle serialized fields of this unknown object but it's safer 
+				// to handle the object manually. See how Component and GameObject is handled in their own way and
+				// figure out how to handle this unknown type likewise.
+				Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", type.FullName);
+
+				// These lines are intentionally commented out. See the comment above.
+				//var referencedObject = serializedField.GetValue(unityObject) as Object;
+				//if (referencedObject) 
+				//{
+				//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
+				//	return;
+				//}
+			}
+		}
+
+		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result, bool includeChildren)
+		{
+			if (referencedGameObject)
+			{
+				var isAdded = result.Add(referencedGameObject);
+				// Check if the gameobject was added before, which means we have already processed the gameobject.
+				// This will also prevent going into an infinite loop where there are circular references.
+				if (includeChildren && isAdded)
+				{
+					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result, includeChildren);
 				}
 			}
 		}
