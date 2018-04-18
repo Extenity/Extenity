@@ -715,6 +715,7 @@ namespace Extenity.ReflectionToolbox
 				return;
 			}
 
+
 			// Decide how to include referenced game objects based on referenced object's type
 			if (type.IsSameOrSubclassOf(typeof(Component)))
 			{
@@ -758,10 +759,10 @@ namespace Extenity.ReflectionToolbox
 				}
 			}
 			else if (
-				// These types can't keep a reference to an object
-				type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects
-				!type.IsPrimitiveType() &&
-				!type.IsEnum &&
+				// These types can't keep a reference to an object. So we skip.
+				type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects.
+				!type.IsPrimitiveType() && // Primitive types can't keep a reference to an object in any way.
+				!type.IsEnum && // Enum types can't keep a reference to an object in any way.
 				// Unity types
 				type != typeof(Vector2) &&
 				type != typeof(Vector3) &&
@@ -782,7 +783,7 @@ namespace Extenity.ReflectionToolbox
 				// The commented out code below should handle serialized fields of this unknown object but it's safer 
 				// to handle the object manually. See how Component and GameObject is handled in their own way and
 				// figure out how to handle this unknown type likewise.
-				Debug.LogWarningFormat("----- Found an unknown object of type '{0}' in one of the fields. See the code for details.", type.FullName);
+				Debug.LogWarningFormat("Unknown object of type '{0}'. See the code for details.", type.FullName);
 
 				// These lines are intentionally commented out. See the comment above.
 				//var referencedObject = serializedField.GetValue(unityObject) as Object;
