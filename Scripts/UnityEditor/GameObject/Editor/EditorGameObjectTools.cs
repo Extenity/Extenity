@@ -93,7 +93,10 @@ namespace Extenity.GameObjectToolbox.Editor
 
 			var allComponents = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Component>();
 			var allReferencedObjects = new HashSet<GameObject>();
-			allComponents.FindAllReferencedGameObjectsInComponents(allReferencedObjects, true);
+			foreach (var component in allComponents)
+			{
+				component.FindAllReferencedGameObjectsInComponent(allReferencedObjects);
+			}
 
 			// Exclude all child gameobjects of Animators.
 			{

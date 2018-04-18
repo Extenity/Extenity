@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using Extenity.GameObjectToolbox;
 using Extenity.ReflectionToolbox;
 using Extenity.ReflectionToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
@@ -31,60 +31,98 @@ namespace ExtenityExamples.Reflection
 
 		private void Log()
 		{
-			// Object
+			// Referenced dependencies in Me
 			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
 				var result = new HashSet<Object>();
-				this.FindAllReferencedObjectsInUnityObject(result);
+				Me.FindAllReferencedDependenciesInUnityObject(result);
 
-				Debug.LogFormat("================================= Found '{0}' referenced objects:", result.Count);
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'dependencies' in '{1}' that is 'Me':", result.Count, Me.FullName());
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
 				}
 			}
 
-			// GameObject
+			// Referenced dependencies in Me.gameObject
 			{
-				var result = new HashSet<GameObject>();
-				this.FindAllReferencedGameObjectsInUnityObject(result, true);
+				Debug.LogFormat(Me, "================================= Searching...");
 
-				Debug.LogFormat("================================= Found '{0}' referenced gameobjects:", result.Count);
-				foreach (var item in result)
-				{
-					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
-				}
-			}
-
-			// All objects in scene
-			{
 				var result = new HashSet<Object>();
-				SceneManager.GetActiveScene().FindAllReferencedObjectsInScene(result);
+				Me.gameObject.FindAllReferencedDependenciesInUnityObject(result);
 
-				Debug.LogFormat("================================= Found '{0}' referenced objects in scene:", result.Count);
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'dependencies' in '{1}' that is 'Me.gameObject':", result.Count, Me.gameObject.FullName());
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
 				}
 			}
 
-			// All gameobjects in scene
+			// Referenced GameObjects in Me
 			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
 				var result = new HashSet<GameObject>();
-				SceneManager.GetActiveScene().FindAllReferencedGameObjectsInScene(result, true);
+				Me.FindAllReferencedGameObjectsInUnityObject(result);
 
-				Debug.LogFormat("================================= Found '{0}' referenced gameobjects in scene:", result.Count);
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me':", result.Count, Me.FullName());
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
 				}
 			}
 
-			// All materials in scene
+			// Referenced GameObjects in Me.gameObject
 			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
+				var result = new HashSet<GameObject>();
+				Me.gameObject.FindAllReferencedGameObjectsInUnityObject(result);
+
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me.gameObject':", result.Count, Me.gameObject.FullName());
+				foreach (var item in result)
+				{
+					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
+				}
+			}
+
+			// All referenced dependencies in scene
+			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
+				var result = new HashSet<Object>();
+				SceneManager.GetActiveScene().FindAllReferencedDependenciesInScene(result);
+
+				Debug.LogFormat("================================= Found '{0}' referenced 'dependencies' in scene:", result.Count);
+				foreach (var item in result)
+				{
+					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
+				}
+			}
+
+			// All referenced gameobjects in scene
+			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
+				var result = new HashSet<GameObject>();
+				SceneManager.GetActiveScene().FindAllReferencedGameObjectsInScene(result);
+
+				Debug.LogFormat("================================= Found '{0}' referenced 'gameobjects' in scene:", result.Count);
+				foreach (var item in result)
+				{
+					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
+				}
+			}
+
+			// All referenced materials in scene
+			{
+				Debug.LogFormat(Me, "================================= Searching...");
+
 				var result = new HashSet<Material>();
-				SceneManager.GetActiveScene().FindAllReferencedObjectsInScene(result);
+				SceneManager.GetActiveScene().FindAllReferencedDependenciesInScene(result);
 
-				Debug.LogFormat("================================= Found '{0}' referenced materials in scene:", result.Count);
+				Debug.LogFormat("================================= Found '{0}' referenced 'materials' in scene:", result.Count);
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);

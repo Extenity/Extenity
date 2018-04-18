@@ -626,107 +626,109 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjects...
 
-		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result)
 		{
-			var gameObjects = scene.ListAllGameObjectsInScene();
-			for (var i = 0; i < gameObjects.Count; i++)
+			if (!scene.IsValid())
+				throw new Exception("Scene is not valid.");
+			foreach (var gameObject in scene.ListAllGameObjectsInScene())
 			{
-				gameObjects[i].FindAllReferencedGameObjectsInGameObject(result, includeChildren);
-			}
-		}
-
-		public static void FindAllReferencedGameObjectsInComponents<T>(this IEnumerable<T> components, HashSet<GameObject> result, bool includeChildren) where T : Component
-		{
-			foreach (var component in components)
-			{
-				if (component)
-					component.FindAllReferencedGameObjectsInComponent(result, includeChildren);
-			}
-		}
-
-		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result, bool includeChildren) where T : Component
-		{
-			var serializedFields = component.GetUnitySerializedFields();
-			component.FindAllReferencedGameObjectsInSerializedFields(serializedFields, result, includeChildren);
-		}
-
-		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result, bool includeChildren)
-		{
-			var components = gameObject.GetComponents<Component>();
-			components.FindAllReferencedGameObjectsInComponents(result, includeChildren);
-		}
-
-		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result, bool includeChildren)
-		{
-			var serializedFields = unityObject.GetUnitySerializedFields();
-			unityObject.FindAllReferencedGameObjectsInSerializedFields(serializedFields, result, includeChildren);
-		}
-
-		public static void FindAllReferencedGameObjectsInSerializedFields(this Object unityObject, IEnumerable<FieldInfo> serializedFields, HashSet<GameObject> result, bool includeChildren)
-		{
-			foreach (var serializedField in serializedFields)
-			{
-				unityObject.FindAllReferencedGameObjectsInSerializedField(serializedField, result, includeChildren);
-			}
-		}
-
-		public static void FindAllReferencedGameObjectsInSerializedField(this Object unityObject, FieldInfo serializedField, HashSet<GameObject> result, bool includeChildren)
-		{
-			var type = serializedField.FieldType;
-			var serializedFieldName = serializedField.Name;
-
-			if (type.IsArray)
-			{
-				var array = serializedField.GetValue(unityObject) as Array;
-				if (array != null)
+				foreach (var component in gameObject.GetComponents<Component>())
 				{
-					foreach (var item in array)
+					foreach (var serializedField in component.GetUnitySerializedFields())
 					{
-						if (item != null)
-						{
-							InternalAddReferencedObjectOfType(item.GetType(), item, serializedFieldName, result, includeChildren);
-						}
+						var referencedObject = serializedField.GetValue(component);
+						InternalAddReferencedObjectOfType(referencedObject, result);
 					}
 				}
 			}
-			else if (type.IsGenericList())
+		}
+
+		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result) where T : Component
+		{
+			if (!component)
+				throw new ArgumentNullException("component");
+			foreach (var serializedField in component.GetUnitySerializedFields())
 			{
-				var list = serializedField.GetValue(unityObject) as IList;
-				if (list != null)
-				{
-					foreach (var item in list)
-					{
-						if (item != null)
-						{
-							InternalAddReferencedObjectOfType(item.GetType(), item, serializedFieldName, result, includeChildren);
-						}
-					}
-				}
-			}
-			else
-			{
-				InternalAddReferencedObjectOfType(type, serializedField.GetValue(unityObject), serializedFieldName, result, includeChildren);
+				var referencedObject = serializedField.GetValue(component);
+				InternalAddReferencedObjectOfType(referencedObject, result);
 			}
 		}
 
-		private static void InternalAddReferencedObjectOfType(Type type, object referencedObject, string serializedFieldName, HashSet<GameObject> result, bool includeChildren)
+		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result)
+		{
+			if (!gameObject)
+				throw new ArgumentNullException("gameObject");
+			foreach (var component in gameObject.GetComponents<Component>())
+			{
+				foreach (var serializedField in component.GetUnitySerializedFields())
+				{
+					var referencedObject = serializedField.GetValue(component);
+					InternalAddReferencedObjectOfType(referencedObject, result);
+				}
+			}
+		}
+
+		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result)
+		{
+			if (unityObject == null)
+				throw new ArgumentNullException("unityObject");
+			InternalAddReferencedObjectOfType(unityObject, result);
+		}
+
+		public static void FindAllReferencedGameObjectsInObject(this object obj, HashSet<GameObject> result)
+		{
+			if (obj == null)
+				throw new ArgumentNullException("obj");
+			InternalAddReferencedObjectOfType(obj, result);
+		}
+
+		private static void InternalAddReferencedObjectOfType(object referencedObject, HashSet<GameObject> result)
 		{
 			if (referencedObject == null)
 				return; // Nothing to do about this object.
 
+			var type = referencedObject.GetType();
+
+			// See if this object is an array or a list. This method should be called for each item, that we do recursively.
+			if (type.IsArray)
+			{
+				var array = referencedObject as Array;
+				if (array != null)
+				{
+					foreach (var item in array)
+					{
+						InternalAddReferencedObjectOfType(item, result);
+					}
+				}
+				return;
+			}
+			if (type.IsGenericList())
+			{
+				var list = referencedObject as IList;
+				if (list != null)
+				{
+					foreach (var item in list)
+					{
+						InternalAddReferencedObjectOfType(item, result);
+					}
+				}
+				return;
+			}
+
+			// Decide how to include referenced game objects based on referenced object's type
 			if (type.IsSameOrSubclassOf(typeof(Component)))
 			{
 				var referencedComponent = referencedObject as Component;
 				if (referencedComponent)
 				{
 					var referencedGameObject = referencedComponent.gameObject;
-					InternalAddReferencedGameObjectToResults(referencedGameObject, result, includeChildren);
+					InternalAddReferencedGameObjectToResults(referencedGameObject, result);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(GameObject)))
 			{
 				var referencedGameObject = referencedObject as GameObject;
-				InternalAddReferencedGameObjectToResults(referencedGameObject, result, includeChildren);
+				InternalAddReferencedGameObjectToResults(referencedGameObject, result);
 			}
 			else if (type.IsSameOrSubclassOf(typeof(Mesh)))
 			{
@@ -746,10 +748,15 @@ namespace Extenity.ReflectionToolbox
 			}
 			else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
 			{
-				// TODO:
-				Debug.LogWarningFormat("TODO: What to do with UnityEvent type '{0}' of field '{1}'?", type.FullName, serializedFieldName);
+				var unityEvent = (UnityEvent)referencedObject;
+				var eventCount = unityEvent.GetPersistentEventCount();
+
+				for (int i = 0; i < eventCount; i++)
+				{
+					var eventTarget = unityEvent.GetPersistentTarget(i);
+					InternalAddReferencedObjectOfType(eventTarget, result);
+				}
 			}
-			//else if (serializedFieldType.IsSubclassOf(typeof(Object))) // Other objects
 			else if (
 				// These types can't keep a reference to an object
 				type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects
@@ -787,22 +794,21 @@ namespace Extenity.ReflectionToolbox
 			}
 		}
 
-		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result, bool includeChildren)
+		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result)
 		{
 			if (referencedGameObject)
 			{
 				var isAdded = result.Add(referencedGameObject);
 				// Check if the gameobject was added before, which means we have already processed the gameobject.
 				// This will also prevent going into an infinite loop where there are circular references.
-				if (includeChildren && isAdded)
+				if (isAdded)
 				{
-					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result, includeChildren);
+					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result);
 				}
 			}
 		}
 
 		#endregion
-
 
 		#region Referenced Object Checks
 
