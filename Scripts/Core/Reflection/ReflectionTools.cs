@@ -877,6 +877,7 @@ namespace Extenity.ReflectionToolbox
 							typeof(Bounds2IntRevised),
 							typeof(ClampedInt),
 							typeof(ClampedFloat),
+							typeof(PathPoint),
 							typeof(PIDConfiguration),
 						}
 					);
