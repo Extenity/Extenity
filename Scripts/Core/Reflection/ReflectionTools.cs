@@ -7,6 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -722,6 +723,9 @@ namespace Extenity.ReflectionToolbox
 				var referencedComponent = referencedObject as Component;
 				if (referencedComponent)
 				{
+					// Component is an inseparable part of a GameObject. A reference to a
+					// Component means it is also referencing the GameObject as a whole.
+					// So we process the GameObject that has this Component.
 					var referencedGameObject = referencedComponent.gameObject;
 					InternalAddReferencedGameObjectToResults(referencedGameObject, result);
 				}
@@ -730,6 +734,37 @@ namespace Extenity.ReflectionToolbox
 			{
 				var referencedGameObject = referencedObject as GameObject;
 				InternalAddReferencedGameObjectToResults(referencedGameObject, result);
+			}
+			else if (type.IsSameOrSubclassOf(typeof(AudioSource)))
+			{
+				var referencedAudioSource = referencedObject as AudioSource;
+				if (referencedAudioSource)
+				{
+					InternalAddReferencedObjectOfType(referencedAudioSource.clip, result);
+					InternalAddReferencedObjectOfType(referencedAudioSource.outputAudioMixerGroup, result);
+				}
+			}
+			else if (type.IsSameOrSubclassOf(typeof(AudioClip)))
+			{
+				// Does not contain any link to game objects. So we skip.
+			}
+			else if (type.IsSameOrSubclassOf(typeof(AudioMixer)))
+			{
+				var referencedAudioMixer = referencedObject as AudioMixer;
+				if (referencedAudioMixer)
+				{
+					InternalAddReferencedObjectOfType(referencedAudioMixer.outputAudioMixerGroup, result);
+				}
+			}
+			else if (type.IsSameOrSubclassOf(typeof(AudioMixerGroup)))
+			{
+				var referencedAudioMixerGroup = referencedObject as AudioMixerGroup;
+				if (referencedAudioMixerGroup)
+				{
+					// Just as the Component is an inseparable part of a GameObject, an AudioMixerGroup
+					// is a part of AudioMixer. So we include the AudioMixer too.
+					InternalAddReferencedObjectOfType(referencedAudioMixerGroup.audioMixer, result);
+				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(Mesh)))
 			{
@@ -762,36 +797,29 @@ namespace Extenity.ReflectionToolbox
 				// These types can't keep a reference to an object. So we skip.
 				type.HasAttribute<SerializableAttribute>() && // Only interested in Serializable objects.
 				!type.IsPrimitiveType() && // Primitive types can't keep a reference to an object in any way.
-				!type.IsEnum && // Enum types can't keep a reference to an object in any way.
-				// Unity types
-				type != typeof(Vector2) &&
-				type != typeof(Vector3) &&
-				type != typeof(Vector4) &&
-				type != typeof(Quaternion) &&
-				type != typeof(Matrix4x4) &&
-				type != typeof(AnimationCurve) &&
-				type != typeof(Color) &&
-				type != typeof(Color32) &&
-				type != typeof(LayerMask) &&
-				// Extenity types
-				type != typeof(ClampedInt) &&
-				type != typeof(ClampedFloat) &&
-				type != typeof(PIDConfiguration)
+				!type.IsEnum // Enum types can't keep a reference to an object in any way.
 			)
 			{
-				// If we encounter this log line, we should define another 'if' case like Component and GameObject above.
-				// The commented out code below should handle serialized fields of this unknown object but it's safer 
-				// to handle the object manually. See how Component and GameObject is handled in their own way and
-				// figure out how to handle this unknown type likewise.
-				Debug.LogWarningFormat("Unknown object of type '{0}'. See the code for details.", type.FullName);
+				// If we encounter this log line, this means we encountered a type that has never been thought of before.
+				// We should see if this class needs special care like Component, GameObject, UnityEvent above.
+				// In most cases, the class is a user defined class and most of the time it's okay to define it as
+				// a known type (See Known'TypesOfGameObjectReferenceFinder') and move on. But fore some rare types,
+				// special care needs to be taken that we should define another 'if' case like above.
+				//
+				// The code below handles all serialized fields of this unknown object but if the object keeps a reference
+				// to another object in a non-standard way, it's time to handle the object manually. See how Component,
+				// GameObject and UnityEvent is handled in their own way and figure out how to get referenced objects
+				// out of this unknown type likewise.
+				if (!KnownTypesOfGameObjectReferenceFinder.Contains(type))
+				{
+					Debug.LogWarningFormat("Unknown object of type '{0}'. See the code for details.", type.FullName);
+				}
 
-				// These lines are intentionally commented out. See the comment above.
-				//var referencedObject = serializedField.GetValue(unityObject) as Object;
-				//if (referencedObject) 
-				//{
-				//	referencedObject.FindAllReferencedObjectsInUnityObject(result, true);
-				//	return;
-				//}
+				foreach (var serializedField in referencedObject.GetUnitySerializedFields())
+				{
+					var referencedObjectInObject = serializedField.GetValue(referencedObject);
+					InternalAddReferencedObjectOfType(referencedObjectInObject, result);
+				}
 			}
 		}
 
@@ -806,6 +834,54 @@ namespace Extenity.ReflectionToolbox
 				{
 					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result);
 				}
+			}
+		}
+
+		#endregion
+
+		#region FindAllReferencedGameObjects... Unknown Type Ignore List
+
+		private static HashSet<Type> _KnownTypesOfGameObjectReferenceFinder;
+		public static HashSet<Type> KnownTypesOfGameObjectReferenceFinder
+		{
+			get
+			{
+				if (_KnownTypesOfGameObjectReferenceFinder == null)
+				{
+					_KnownTypesOfGameObjectReferenceFinder = new HashSet<Type>(
+						new[]
+						{
+							// Unity types
+							typeof(AnimationCurve),
+							typeof(Bounds),
+							typeof(Color),
+							typeof(Color32),
+							typeof(LayerMask),
+							typeof(Matrix4x4),
+							typeof(Quaternion),
+							typeof(Rect),
+							typeof(RectOffset),
+							//typeof(Texture), Commented out because let's not assume all derived classes should not have any link to an object
+							typeof(Texture2D),
+							typeof(Texture2DArray),
+							typeof(Texture3D),
+							typeof(Vector2),
+							typeof(Vector3),
+							typeof(Vector4),
+							typeof(Vector2Int),
+							typeof(Vector3Int),
+
+							// Extenity types
+							typeof(Bounds2),
+							typeof(Bounds2Int),
+							typeof(Bounds2IntRevised),
+							typeof(ClampedInt),
+							typeof(ClampedFloat),
+							typeof(PIDConfiguration),
+						}
+					);
+				}
+				return _KnownTypesOfGameObjectReferenceFinder;
 			}
 		}
 
