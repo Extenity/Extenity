@@ -5,6 +5,7 @@ namespace Extenity.MathToolbox
 
 	public static class QuaternionTools
 	{
+		public static readonly Quaternion Identity = Quaternion.identity;
 		public static readonly Quaternion NaN = new Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
 
 		#region Basic Checks

@@ -7,8 +7,14 @@ namespace Extenity.MathToolbox
 
 	public static class Vector2Tools
 	{
-		public static readonly Vector2 Infinity = new Vector2(Mathf.Infinity, Mathf.Infinity);
-		public static readonly Vector2 NegInfinity = new Vector2(Mathf.NegativeInfinity, Mathf.NegativeInfinity);
+		public static readonly Vector2 Zero = Vector2.zero;
+		public static readonly Vector2 One = Vector2.one;
+		public static readonly Vector2 Up = Vector2.up;
+		public static readonly Vector2 Down = Vector2.down;
+		public static readonly Vector2 Left = Vector2.left;
+		public static readonly Vector2 Right = Vector2.right;
+		public static readonly Vector2 PositiveInfinity = Vector2.positiveInfinity;
+		public static readonly Vector2 NegativeInfinity = Vector2.negativeInfinity;
 		public static readonly Vector2 NaN = new Vector2(float.NaN, float.NaN);
 
 		#region Basic Checks

@@ -7,8 +7,16 @@ namespace Extenity.MathToolbox
 
 	public static class Vector3Tools
 	{
-		public static readonly Vector3 Infinity = new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
-		public static readonly Vector3 NegInfinity = new Vector3(Mathf.NegativeInfinity, Mathf.NegativeInfinity, Mathf.NegativeInfinity);
+		public static readonly Vector3 Zero = Vector3.zero;
+		public static readonly Vector3 One = Vector3.one;
+		public static readonly Vector3 Forward = Vector3.forward;
+		public static readonly Vector3 Back = Vector3.back;
+		public static readonly Vector3 Up = Vector3.up;
+		public static readonly Vector3 Down = Vector3.down;
+		public static readonly Vector3 Left = Vector3.left;
+		public static readonly Vector3 Right = Vector3.right;
+		public static readonly Vector3 PositiveInfinity = Vector3.positiveInfinity;
+		public static readonly Vector3 NegativeInfinity = Vector3.negativeInfinity;
 		public static readonly Vector3 NaN = new Vector3(float.NaN, float.NaN, float.NaN);
 
 		#region Basic Checks

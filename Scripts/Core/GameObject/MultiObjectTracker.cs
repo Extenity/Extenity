@@ -302,7 +302,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			center = Vector3.zero;
 			totalVelocity = Vector3.zero;
-			bounds.SetMinMax(Vector3Tools.Infinity, Vector3Tools.NegInfinity);
+			bounds.SetMinMax(Vector3Tools.PositiveInfinity, Vector3Tools.NegativeInfinity);
 			totalCalculatedObjects = 0;
 		}
 
