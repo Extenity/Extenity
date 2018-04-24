@@ -151,6 +151,40 @@ namespace Extenity.DataToolbox
 			return derivedClass.IsSubclassOf(baseClass) || derivedClass == baseClass;
 		}
 
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class
+		/// </summary>
+		public static bool IsSubclassOfRawGeneric(this Type derived, Type generic)
+		{
+			while (derived != null && derived != typeof(object))
+			{
+				var cur = derived.IsGenericType ? derived.GetGenericTypeDefinition() : derived;
+				if (generic == cur)
+				{
+					return true;
+				}
+				derived = derived.BaseType;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class
+		/// </summary>
+		public static Type GetRawGenericSubclass(this Type derived, Type generic)
+		{
+			while (derived != null && derived != typeof(object))
+			{
+				var cur = derived.IsGenericType ? derived.GetGenericTypeDefinition() : derived;
+				if (generic == cur)
+				{
+					return derived;
+				}
+				derived = derived.BaseType;
+			}
+			return null;
+		}
+
 		public static bool IsNumberType(this object value)
 		{
 			var type = value as Type;

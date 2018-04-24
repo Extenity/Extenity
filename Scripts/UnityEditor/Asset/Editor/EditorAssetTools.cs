@@ -302,7 +302,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("CONTEXT/Component/Fill Empty References", true)]
 		private static bool FillEmptyReferences_Validate(MenuCommand menuCommand)
 		{
-			var component = (Component)menuCommand.context;
+			var component = menuCommand.context as Component;
 			if (!component)
 				return false;
 			return component.GetNotAssignedSerializedComponentFields().Count > 0;
@@ -311,7 +311,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("CONTEXT/Component/Fill Empty References", priority = 524)]
 		private static void FillEmptyReferences(MenuCommand menuCommand)
 		{
-			var component = (Component)menuCommand.context;
+			var component = menuCommand.context as Component;
 			FillEmptyReferences(component);
 		}
 
@@ -324,7 +324,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("CONTEXT/Component/Fill Empty References In All Components", priority = 526)]
 		private static void FillEmptyReferencesInAllComponents(MenuCommand menuCommand)
 		{
-			var selectedComponent = (Component)menuCommand.context;
+			var selectedComponent = menuCommand.context as Component;
 			var components = selectedComponent.gameObject.GetComponents<Component>();
 			foreach (var component in components)
 			{
@@ -390,14 +390,14 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("CONTEXT/Component/Serialize to JSON", true)]
 		private static bool SerializeToJSON_Validate(MenuCommand menuCommand)
 		{
-			var component = (Component)menuCommand.context;
+			var component = menuCommand.context as Component;
 			return component;
 		}
 
 		[MenuItem("CONTEXT/Component/Serialize to JSON", priority = 540)]
 		private static void SerializeToJSON(MenuCommand menuCommand)
 		{
-			var component = (Component)menuCommand.context;
+			var component = menuCommand.context as Component;
 			var json = EditorJsonUtility.ToJson(component, true);
 			Debug.Log(json, component);
 		}

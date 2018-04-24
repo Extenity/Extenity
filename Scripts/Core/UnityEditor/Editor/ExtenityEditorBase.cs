@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.CameraToolbox;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using UnityEditor.SceneManagement;
@@ -315,7 +316,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			difference.x = mousePosition.x - screenPosition.x;
 			difference.y = mousePosition.y - screenPosition.y;
 			if (difference.x > maximumDistanceFromMouse || difference.x < -maximumDistanceFromMouse ||
-			    difference.y > maximumDistanceFromMouse && difference.y < -maximumDistanceFromMouse)
+				difference.y > maximumDistanceFromMouse && difference.y < -maximumDistanceFromMouse)
 			{
 				return false;
 			}
@@ -497,6 +498,78 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void DisableGroundSnapping()
 		{
 			IsGroundSnappingEnabled = false;
+		}
+
+		#endregion
+	}
+
+	public static class ExtenityEditorBaseTools
+	{
+		//[MenuItem("CONTEXT/Component/Toggle Extenity Component Profiling", true)]
+		//private static bool ContextMenu_ToggleExtenityComponentProfiling_Validate(MenuCommand menuCommand)
+		//{
+		//	var component = menuCommand.context as Component;
+		//	return component && component.GetType().HasExtenityInspector();
+		//}
+
+		//[MenuItem("CONTEXT/Component/Toggle Extenity Component Profiling", priority = 1051)]
+		//private static void ContextMenu_ToggleExtenityComponentProfiling(MenuCommand menuCommand)
+		//{
+		//	var component = menuCommand.context as Component;
+		//	if (component)
+		//	{
+		//		Oops! How to get the inspector object of the component? Well done Unity!
+		//	}
+		//}
+
+		#region
+
+		/// <summary>
+		/// First Type is the object's type. Second Type is the object's inspector type that is derived from ExtenityEditorBase.
+		/// </summary>
+		private static Dictionary<Type, Type> ExtenityEditorTypes;
+
+		public static bool HasExtenityInspector(this Type type)
+		{
+			InitializeExtenityEditorTypesDictionaryIfNecessary();
+			return ExtenityEditorTypes.ContainsKey(type);
+		}
+
+		public static Type FindExtenityInspectorType(this Type type)
+		{
+			InitializeExtenityEditorTypesDictionaryIfNecessary();
+			Type inspectorType;
+			ExtenityEditorTypes.TryGetValue(type, out inspectorType);
+			return inspectorType;
+		}
+
+		private static void InitializeExtenityEditorTypesDictionaryIfNecessary()
+		{
+			if (ExtenityEditorTypes == null)
+			{
+				//Debug.Log("Searching for Extenity editor base types");
+
+				ExtenityEditorTypes = new Dictionary<Type, Type>();
+
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					foreach (var inspectorType in assembly.GetTypes())
+					{
+						var baseInspectorType = inspectorType.GetRawGenericSubclass(typeof(ExtenityEditorBase<>));
+						if (baseInspectorType != null && inspectorType != typeof(ExtenityEditorBase<>))
+						{
+							var objectType = baseInspectorType.GetGenericArguments()[0];
+							if (objectType == null)
+							{
+								throw new Exception();
+							}
+							ExtenityEditorTypes.Add(objectType, inspectorType);
+							//Debug.LogFormat("Found inspector type '{0}' of object type '{1}'.", inspectorType.FullName, objectType.FullName);
+						}
+
+					}
+				}
+			}
 		}
 
 		#endregion
