@@ -18,7 +18,7 @@ namespace Extenity.MathToolbox
 		public const float HalfPI = 0.5f * Mathf.PI;
 		public const float E = 2.7182818284590452353602874f;
 
-		private const float ZeroTolerance = 1e-5f;
+		public const float ZeroTolerance = 1e-5f;
 
 		public static bool IsZero(this float value)
 		{
@@ -117,19 +117,6 @@ namespace Extenity.MathToolbox
 		public static float MakeZeroIfNaN(this float val)
 		{
 			if (float.IsNaN(val)) return 0f;
-			return val;
-		}
-		public static Vector3 MakeZeroIfNaN(this Vector3 val)
-		{
-			if (float.IsNaN(val.x)) val.x = 0f;
-			if (float.IsNaN(val.y)) val.y = 0f;
-			if (float.IsNaN(val.z)) val.z = 0f;
-			return val;
-		}
-		public static Vector2 MakeZeroIfNaN(this Vector2 val)
-		{
-			if (float.IsNaN(val.x)) val.x = 0f;
-			if (float.IsNaN(val.y)) val.y = 0f;
 			return val;
 		}
 
@@ -573,833 +560,14 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Vector
+		#region Quaternion
 
-		public static readonly Vector2 Vector2Infinity = new Vector2(Mathf.Infinity, Mathf.Infinity);
-		public static readonly Vector2 Vector2NegInfinity = new Vector2(Mathf.NegativeInfinity, Mathf.NegativeInfinity);
-		public static readonly Vector2 Vector2NaN = new Vector2(float.NaN, float.NaN);
-		public static readonly Vector3 Vector3Infinity = new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
-		public static readonly Vector3 Vector3NegInfinity = new Vector3(Mathf.NegativeInfinity, Mathf.NegativeInfinity, Mathf.NegativeInfinity);
-		public static readonly Vector3 Vector3NaN = new Vector3(float.NaN, float.NaN, float.NaN);
+		public static readonly Quaternion QuaternionNaN = new Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
 
-		#region Basic Checks
-
-		public static bool IsZero(this Vector2 value)
-		{
-			return value.IsAllZero();
-		}
-
-		public static bool IsZero(this Vector3 value)
-		{
-			return value.IsAllZero();
-		}
-
-		public static bool IsUnit(this Vector2 value)
-		{
-			return value.magnitude.IsAlmostEqual(1f);
-		}
-
-		public static bool IsUnit(this Vector3 value)
-		{
-			return value.magnitude.IsAlmostEqual(1f);
-		}
-
-		public static bool IsAllEqual(this Vector2 value, float val)
-		{
-			return value.x == val && value.y == val;
-		}
-
-		public static bool IsAllEqual(this Vector3 value, float val)
-		{
-			return value.x == val && value.y == val && value.z == val;
-		}
-
-		public static bool IsAllBetween(this Vector2 value, float minVal, float maxVal)
-		{
-			return
-				value.x <= maxVal && value.x >= minVal &&
-				value.y <= maxVal && value.y >= minVal;
-		}
-
-		public static bool IsAllBetween(this Vector3 value, float minVal, float maxVal)
-		{
-			return
-				value.x <= maxVal && value.x >= minVal &&
-				value.y <= maxVal && value.y >= minVal &&
-				value.z <= maxVal && value.z >= minVal;
-		}
-
-		public static bool IsAlmostEqualVector2(this Vector2 value1, Vector2 value2, float precision = ZeroTolerance)
-		{
-			value1 = value1 - value2;
-			return
-				value1.x <= precision && value1.x >= -precision &&
-				value1.y <= precision && value1.y >= -precision;
-		}
-
-		public static bool IsAlmostEqualVector3(this Vector3 value1, Vector3 value2, float precision = ZeroTolerance)
-		{
-			value1 = value1 - value2;
-			return
-				value1.x <= precision && value1.x >= -precision &&
-				value1.y <= precision && value1.y >= -precision &&
-				value1.z <= precision && value1.z >= -precision;
-		}
-
-		public static bool IsAllZero(this Vector2 value)
-		{
-			return IsZero(value.x) && IsZero(value.y);
-		}
-
-		public static bool IsAllZero(this Vector3 value)
-		{
-			return IsZero(value.x) && IsZero(value.y) && IsZero(value.z);
-		}
-
-		public static bool IsAllInfinity(this Vector2 value)
-		{
-			return float.IsInfinity(value.x) && float.IsInfinity(value.y);
-		}
-
-		public static bool IsAllInfinity(this Vector3 value)
-		{
-			return float.IsInfinity(value.x) && float.IsInfinity(value.y) && float.IsInfinity(value.z);
-		}
-
-		public static bool IsAllNaN(this Vector2 value)
-		{
-			return float.IsNaN(value.x) && float.IsNaN(value.y);
-		}
-
-		public static bool IsAllNaN(this Vector3 value)
-		{
-			return float.IsNaN(value.x) && float.IsNaN(value.y) && float.IsNaN(value.z);
-		}
-
-		public static bool IsAnyEqual(this Vector2 value, float val)
-		{
-			return value.x == val || value.y == val;
-		}
-
-		public static bool IsAnyEqual(this Vector3 value, float val)
-		{
-			return value.x == val || value.y == val || value.z == val;
-		}
-
-		public static bool IsAnyAlmostEqual(this Vector2 value, float val)
-		{
-			return value.x.IsAlmostEqual(val) || value.y.IsAlmostEqual(val);
-		}
-
-		public static bool IsAnyAlmostEqual(this Vector3 value, float val)
-		{
-			return value.x.IsAlmostEqual(val) || value.y.IsAlmostEqual(val) || value.z.IsAlmostEqual(val);
-		}
-
-		public static bool IsAnyZero(this Vector2 value)
-		{
-			return IsZero(value.x) || IsZero(value.y);
-		}
-
-		public static bool IsAnyZero(this Vector3 value)
-		{
-			return IsZero(value.x) || IsZero(value.y) || IsZero(value.z);
-		}
-
-		public static bool IsAnyInfinity(this Vector2 value)
-		{
-			return float.IsInfinity(value.x) || float.IsInfinity(value.y);
-		}
-
-		public static bool IsAnyInfinity(this Vector3 value)
-		{
-			return float.IsInfinity(value.x) || float.IsInfinity(value.y) || float.IsInfinity(value.z);
-		}
-
-		public static bool IsAnyNaN(this Vector2 value)
-		{
-			return float.IsNaN(value.x) || float.IsNaN(value.y);
-		}
-
-		public static bool IsAnyNaN(this Vector3 value)
-		{
-			return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z);
-		}
-
-		#endregion
-
-		#region Vector2 - Vector3 Conversions
-
-		public static Vector3 ToVector3XY(this Vector2 vector) { return new Vector3(vector.x, vector.y, 0f); }
-		public static Vector3 ToVector3XY(this Vector2 vector, float z) { return new Vector3(vector.x, vector.y, z); }
-		public static Vector3 ToVector3XZ(this Vector2 vector) { return new Vector3(vector.x, 0f, vector.y); }
-		public static Vector3 ToVector3XZ(this Vector2 vector, float y) { return new Vector3(vector.x, y, vector.y); }
-		public static Vector3 ToVector3YZ(this Vector2 vector) { return new Vector3(0f, vector.x, vector.y); }
-		public static Vector3 ToVector3YZ(this Vector2 vector, float x) { return new Vector3(x, vector.x, vector.y); }
-		public static Vector2 ToVector2XY(this Vector3 vector) { return new Vector2(vector.x, vector.y); }
-		public static Vector2 ToVector2XZ(this Vector3 vector) { return new Vector2(vector.x, vector.z); }
-		public static Vector2 ToVector2YZ(this Vector3 vector) { return new Vector2(vector.y, vector.z); }
-
-		public static Vector2Int ToVector2IntRounded(this Vector2 vector) { return new Vector2Int(Mathf.RoundToInt(vector.x), Mathf.RoundToInt(vector.y)); }
-		public static Vector2Int ToVector2IntFloored(this Vector2 vector) { return new Vector2Int(Mathf.FloorToInt(vector.x), Mathf.FloorToInt(vector.y)); }
-		public static Vector2Int ToVector2IntCeiled(this Vector2 vector) { return new Vector2Int(Mathf.CeilToInt(vector.x), Mathf.CeilToInt(vector.y)); }
-		public static Vector3Int ToVector3IntRounded(this Vector3 vector) { return new Vector3Int(Mathf.RoundToInt(vector.x), Mathf.RoundToInt(vector.y), Mathf.RoundToInt(vector.z)); }
-		public static Vector3Int ToVector3IntFloored(this Vector3 vector) { return new Vector3Int(Mathf.FloorToInt(vector.x), Mathf.FloorToInt(vector.y), Mathf.FloorToInt(vector.z)); }
-		public static Vector3Int ToVector3IntCeiled(this Vector3 vector) { return new Vector3Int(Mathf.CeilToInt(vector.x), Mathf.CeilToInt(vector.y), Mathf.CeilToInt(vector.z)); }
-
-		#endregion
-
-		#region Vector2 - Vector4 Conversions
-
-		public static Vector4 ToVector4XY(this Vector2 vector) { return new Vector4(vector.x, vector.y, 0f, 0f); }
-		public static Vector4 ToVector4YZ(this Vector2 vector) { return new Vector4(0f, vector.x, vector.y, 0f); }
-		public static Vector4 ToVector4XZ(this Vector2 vector) { return new Vector4(vector.x, 0f, vector.y, 0f); }
-		public static Vector4 ToVector4ZW(this Vector2 vector) { return new Vector4(0f, 0f, vector.x, vector.y); }
-		public static Vector2 ToVector2XY(this Vector4 vector) { return new Vector2(vector.x, vector.y); }
-		public static Vector2 ToVector2YZ(this Vector4 vector) { return new Vector2(vector.y, vector.z); }
-		public static Vector2 ToVector2XZ(this Vector4 vector) { return new Vector2(vector.x, vector.z); }
-		public static Vector2 ToVector2ZW(this Vector4 vector) { return new Vector2(vector.z, vector.w); }
-
-		#endregion
-
-		#region Mul / Div
-
-		public static Vector2 Mul(this Vector2 va, Vector2 vb)
-		{
-			return new Vector2(va.x * vb.x, va.y * vb.y);
-		}
-
-		public static Vector3 Mul(this Vector3 va, Vector3 vb)
-		{
-			return new Vector3(va.x * vb.x, va.y * vb.y, va.z * vb.z);
-		}
-
-		public static Vector2 Mul(this Vector2 va, Vector2Int vb)
-		{
-			return new Vector2(va.x * vb.x, va.y * vb.y);
-		}
-
-		public static Vector3 Mul(this Vector3 va, Vector3Int vb)
-		{
-			return new Vector3(va.x * vb.x, va.y * vb.y, va.z * vb.z);
-		}
-
-		public static Vector2 Div(this Vector2 va, Vector2 vb)
-		{
-			return new Vector2(va.x / vb.x, va.y / vb.y);
-		}
-
-		public static Vector3 Div(this Vector3 va, Vector3 vb)
-		{
-			return new Vector3(va.x / vb.x, va.y / vb.y, va.z / vb.z);
-		}
-
-		public static Vector2 Div(this Vector2 va, Vector2Int vb)
-		{
-			return new Vector2(va.x / vb.x, va.y / vb.y);
-		}
-
-		public static Vector3 Div(this Vector3 va, Vector3Int vb)
-		{
-			return new Vector3(va.x / vb.x, va.y / vb.y, va.z / vb.z);
-		}
-
-		#endregion
-
-		#region Four Basic Math Operations on Vector Arrays
-
-		public static void Plus(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] += value;
-		}
-
-		public static void Plus(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] += value;
-		}
-
-		public static void Plus(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x += value.x;
-				array[i].y += value.y;
-			}
-		}
-
-		public static void Plus(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x += value.x;
-				array[i].y += value.y;
-				array[i].z += value.z;
-			}
-		}
-
-		public static void Minus(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] -= value;
-		}
-
-		public static void Minus(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] -= value;
-		}
-
-		public static void Minus(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x -= value.x;
-				array[i].y -= value.y;
-			}
-		}
-
-		public static void Minus(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x -= value.x;
-				array[i].y -= value.y;
-				array[i].z -= value.z;
-			}
-		}
-
-		public static void Mul(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Mul(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Mul(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Mul(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Div(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		public static void Div(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		public static void Div(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		public static void Div(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		#endregion
-
-		#region Mid
-
-		public static Vector2 Mid(this Vector2 vector1, Vector2 vector2)
-		{
-			vector2.x = (vector1.x + vector2.x) * 0.5f;
-			vector2.y = (vector1.y + vector2.y) * 0.5f;
-			return vector2;
-		}
-
-		public static Vector3 Mid(this Vector3 vector1, Vector3 vector2)
-		{
-			vector2.x = (vector1.x + vector2.x) * 0.5f;
-			vector2.y = (vector1.y + vector2.y) * 0.5f;
-			vector2.z = (vector1.z + vector2.z) * 0.5f;
-			return vector2;
-		}
-
-		#endregion
-
-		#region Clamp Components
-
-		public static Vector2 ClampComponents(this Vector2 value, float min, float max)
-		{
-			return new Vector2(
-				Mathf.Clamp(value.x, min, max),
-				Mathf.Clamp(value.y, min, max));
-		}
-
-		public static Vector3 ClampComponents(this Vector3 value, float min, float max)
-		{
-			return new Vector3(
-				Mathf.Clamp(value.x, min, max),
-				Mathf.Clamp(value.y, min, max),
-				Mathf.Clamp(value.z, min, max));
-		}
-
-		#endregion
-
-		#region Raise To Minimum
-
-		public static Vector2 RaiseToMinimum(this Vector2 value, float min)
-		{
-			if (value.x > 0f && value.x < min) value.x = min;
-			else if (value.x < 0f && value.x > -min) value.x = -min;
-			if (value.y > 0f && value.y < min) value.y = min;
-			else if (value.y < 0f && value.y > -min) value.y = -min;
-			return value;
-		}
-
-		public static Vector3 RaiseToMinimum(this Vector3 value, float min)
+		public static bool IsAnyNaN(this Quaternion value)
 		{
-			if (value.x > 0f && value.x < min) value.x = min;
-			else if (value.x < 0f && value.x > -min) value.x = -min;
-			if (value.y > 0f && value.y < min) value.y = min;
-			else if (value.y < 0f && value.y > -min) value.y = -min;
-			if (value.z > 0f && value.z < min) value.z = min;
-			else if (value.z < 0f && value.z > -min) value.z = -min;
-			return value;
+			return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z) || float.IsNaN(value.w);
 		}
-
-		#endregion
-
-		#region Clamp Length / SqrLength
-
-		public static Vector2 ClampLength01(this Vector2 value)
-		{
-			if (value.x * value.x + value.y * value.y > 1f)
-				return value.normalized;
-			return value;
-		}
-
-		public static Vector3 ClampLength01(this Vector3 value)
-		{
-			if (value.x * value.x + value.y * value.y + value.z * value.z > 1f)
-				return value.normalized;
-			return value;
-		}
-
-		public static Vector2 ClampLengthMax(this Vector2 value, float max)
-		{
-			if (value.magnitude > max)
-				return value.normalized * max;
-			return value;
-		}
-
-		public static Vector3 ClampLengthMax(this Vector3 value, float max)
-		{
-			if (value.magnitude > max)
-				return value.normalized * max;
-			return value;
-		}
-
-		public static Vector2 ClampLengthMin(this Vector2 value, float min)
-		{
-			if (value.magnitude < min)
-				return value.normalized * min;
-			return value;
-		}
-
-		public static Vector3 ClampLengthMin(this Vector3 value, float min)
-		{
-			if (value.magnitude < min)
-				return value.normalized * min;
-			return value;
-		}
-
-		public static Vector2 ClampSqrLengthMax(this Vector2 value, float sqrMax)
-		{
-			if (value.sqrMagnitude > sqrMax)
-				return value.normalized * sqrMax;
-			return value;
-		}
-
-		public static Vector3 ClampSqrLengthMax(this Vector3 value, float sqrMax)
-		{
-			if (value.sqrMagnitude > sqrMax)
-				return value.normalized * sqrMax;
-			return value;
-		}
-
-		public static Vector2 ClampSqrLengthMin(this Vector2 value, float sqrMin)
-		{
-			if (value.sqrMagnitude < sqrMin)
-				return value.normalized * sqrMin;
-			return value;
-		}
-
-		public static Vector3 ClampSqrLengthMin(this Vector3 value, float sqrMin)
-		{
-			if (value.sqrMagnitude < sqrMin)
-				return value.normalized * sqrMin;
-			return value;
-		}
-
-		#endregion
-
-		#region Abs / Sign
-
-		public static Vector2 Abs(this Vector2 value)
-		{
-			return new Vector2(
-				value.x < 0f ? -value.x : value.x,
-				value.y < 0f ? -value.y : value.y);
-		}
-
-		public static Vector3 Abs(this Vector3 value)
-		{
-			return new Vector3(
-				value.x < 0f ? -value.x : value.x,
-				value.y < 0f ? -value.y : value.y,
-				value.z < 0f ? -value.z : value.z);
-		}
-
-		public static Vector2 Sign(this Vector2 value)
-		{
-			return new Vector2(
-				value.x > 0f ? 1f : (value.x < 0f ? -1f : 0f),
-				value.y > 0f ? 1f : (value.y < 0f ? -1f : 0f));
-		}
-
-		public static Vector3 Sign(this Vector3 value)
-		{
-			return new Vector3(
-				value.x > 0f ? 1f : (value.x < 0f ? -1f : 0f),
-				value.y > 0f ? 1f : (value.y < 0f ? -1f : 0f),
-				value.z > 0f ? 1f : (value.z < 0f ? -1f : 0f));
-		}
-
-		public static Vector2Int SignInt(this Vector2 value)
-		{
-			return new Vector2Int(
-				value.x > 0 ? 1 : (value.x < 0 ? -1 : 0),
-				value.y > 0 ? 1 : (value.y < 0 ? -1 : 0));
-		}
-
-		public static Vector3Int SignInt(this Vector3 value)
-		{
-			return new Vector3Int(
-				value.x > 0 ? 1 : (value.x < 0 ? -1 : 0),
-				value.y > 0 ? 1 : (value.y < 0 ? -1 : 0),
-				value.z > 0 ? 1 : (value.z < 0 ? -1 : 0));
-		}
-
-		#endregion
-
-		#region Min / Max Component
-
-		public static float MinComponent(this Vector2 value)
-		{
-			return value.x < value.y ? value.x : value.y;
-		}
-
-		public static float MinComponent(this Vector3 value)
-		{
-			if (value.x < value.y)
-			{
-				if (value.x < value.z)
-					return value.x;
-				//else
-				return value.z;
-			}
-			//else
-			//{
-			if (value.y < value.z)
-				return value.y;
-			//else
-			return value.z;
-			//}
-		}
-
-		public static float MaxComponent(this Vector2 value)
-		{
-			return value.x > value.y ? value.x : value.y;
-		}
-
-		public static float MaxComponent(this Vector3 value)
-		{
-			if (value.x > value.y)
-			{
-				if (value.x > value.z)
-					return value.x;
-				//else
-				return value.z;
-			}
-			//else
-			//{
-			if (value.y > value.z)
-				return value.y;
-			//else
-			return value.z;
-			//}
-		}
-
-		public static float MaxComponentXY(this Vector3 value)
-		{
-			return value.x > value.y ? value.x : value.y;
-		}
-
-		public static float MaxComponentXZ(this Vector3 value)
-		{
-			return value.x > value.z ? value.x : value.z;
-		}
-
-		public static float MultiplyComponents(this Vector2 value)
-		{
-			return value.x * value.y;
-		}
-
-		public static float MultiplyComponents(this Vector3 value)
-		{
-			return value.x * value.y * value.y;
-		}
-
-		#endregion
-
-		#region Magnitude
-
-		public static float MagnitudeXY(this Vector3 value)
-		{
-			return Mathf.Sqrt(value.x * value.x + value.y * value.y);
-		}
-
-		public static float MagnitudeXZ(this Vector3 value)
-		{
-			return Mathf.Sqrt(value.x * value.x + value.z * value.z);
-		}
-
-		public static float SqrMagnitudeXY(this Vector3 value)
-		{
-			return value.x * value.x + value.y * value.y;
-		}
-
-		public static float SqrMagnitudeXZ(this Vector3 value)
-		{
-			return value.x * value.x + value.z * value.z;
-		}
-
-		#endregion
-
-		#region Distance and Difference
-
-		public static float SqrDistanceTo(this Vector2 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return dx * dx + dy * dy;
-		}
-
-		public static float SqrDistanceTo(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			var dz = b.z - a.z;
-			return dx * dx + dy * dy + dz * dz;
-		}
-
-		public static float SqrDistanceToXY(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return dx * dx + dy * dy;
-		}
-
-		public static float SqrDistanceToXY(this Vector3 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return dx * dx + dy * dy;
-		}
-
-		public static float SqrDistanceToXZ(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dz = b.z - a.z;
-			return dx * dx + dz * dz;
-		}
-
-		public static float SqrDistanceToXZ(this Vector3 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dz = b.y - a.z;
-			return dx * dx + dz * dz;
-		}
-
-		public static float DistanceTo(this Vector2 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return Mathf.Sqrt(dx * dx + dy * dy);
-		}
-
-		public static float DistanceTo(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			var dz = b.z - a.z;
-			return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
-		}
-
-		public static float DistanceToXY(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return Mathf.Sqrt(dx * dx + dy * dy);
-		}
-
-		public static float DistanceToXY(this Vector3 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return Mathf.Sqrt(dx * dx + dy * dy);
-		}
-
-		public static float DistanceToXZ(this Vector3 a, Vector3 b)
-		{
-			var dx = b.x - a.x;
-			var dz = b.z - a.z;
-			return Mathf.Sqrt(dx * dx + dz * dz);
-		}
-
-		public static float DistanceToXZ(this Vector3 a, Vector2 b)
-		{
-			var dx = b.x - a.x;
-			var dz = b.y - a.z;
-			return Mathf.Sqrt(dx * dx + dz * dz);
-		}
-
-		public static Vector2 Difference2ToXY(this Vector3 a, Vector3 b)
-		{
-			return new Vector2(b.x - a.x, b.y - a.y);
-		}
-
-		public static Vector2 Difference2ToXY(this Vector3 a, Vector2 b)
-		{
-			return new Vector2(b.x - a.x, b.y - a.y);
-		}
-
-		public static Vector2 Difference2ToXZ(this Vector3 a, Vector3 b)
-		{
-			return new Vector2(b.x - a.x, b.z - a.z);
-		}
-
-		public static Vector2 Difference2ToXZ(this Vector3 a, Vector2 b)
-		{
-			return new Vector2(b.x - a.x, b.y - a.z);
-		}
-
-		public static Vector3 Difference3ToXY(this Vector3 a, Vector3 b)
-		{
-			return new Vector3(b.x - a.x, b.y - a.y, 0f);
-		}
-
-		public static Vector3 Difference3ToXZ(this Vector3 a, Vector3 b)
-		{
-			return new Vector3(b.x - a.x, 0f, b.z - a.z);
-		}
-
-		#endregion
-
-		#region Inside Bounds
-
-		public static bool IsInsideBounds(this Vector3 a, Vector3 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			var dz = b.z - a.z;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dy > -maxDistance && dy < maxDistance &&
-				dz > -maxDistance && dz < maxDistance;
-		}
-
-		public static bool IsInsideBounds(this Vector2 a, Vector2 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dy > -maxDistance && dy < maxDistance;
-		}
-
-		public static bool IsInsideBoundsXY(this Vector3 a, Vector3 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dy > -maxDistance && dy < maxDistance;
-		}
-
-		public static bool IsInsideBoundsXY(this Vector3 a, Vector2 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dy = b.y - a.y;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dy > -maxDistance && dy < maxDistance;
-		}
-
-		public static bool IsInsideBoundsXZ(this Vector3 a, Vector3 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dz = b.z - a.z;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dz > -maxDistance && dz < maxDistance;
-		}
-
-		public static bool IsInsideBoundsXZ(this Vector3 a, Vector2 b, float maxDistance)
-		{
-			var dx = b.x - a.x;
-			var dz = b.y - a.z;
-			return
-				dx > -maxDistance && dx < maxDistance &&
-				dz > -maxDistance && dz < maxDistance;
-		}
-
-		#endregion
-
-		#region Rotation
-
-		public static Vector2 Rotate(this Vector2 vector, float angleInRadians)
-		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector2(cosa * vector.x - sina * vector.y, sina * vector.x + cosa * vector.y);
-		}
-
-		public static Vector3 RotateAroundZ(this Vector3 vector, float angleInRadians)
-		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(cosa * vector.x - sina * vector.y, sina * vector.x + cosa * vector.y, 0f);
-		}
-
-		public static Vector3 RotateAroundY(this Vector3 vector, float angleInRadians)
-		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(cosa * vector.x - sina * vector.z, 0f, sina * vector.x + cosa * vector.z);
-		}
-
-		public static Vector3 RotateAroundX(this Vector3 vector, float angleInRadians)
-		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(0f, cosa * vector.y - sina * vector.z, sina * vector.y + cosa * vector.z);
-		}
-
-		#endregion
-
-		#region Angles
 
 		public static Vector3 EulerAnglesInNeg180Pos180(this Quaternion quaternion)
 		{
@@ -1408,200 +576,6 @@ namespace Extenity.MathToolbox
 			if (angles.y > 180f) angles.y -= 360f;
 			if (angles.z > 180f) angles.z -= 360f;
 			return angles;
-		}
-
-		public static float AngleBetweenXAxis_NegPIToPI(this Vector2 vector)
-		{
-			return Mathf.Atan2(vector.y, vector.x);
-		}
-
-		public static float AngleBetweenXAxis_ZeroToTwoPI(this Vector2 vector)
-		{
-			float angle = Mathf.Atan2(vector.y, vector.x);
-			if (angle < 0f)
-				return angle + TwoPI;
-			return angle;
-		}
-
-		public static float AngleBetween(this Vector2 vector1, Vector2 vector2)
-		{
-			return Mathf.Acos(Vector2.Dot(vector1.normalized, vector2.normalized));
-		}
-
-		public static float AngleBetween(this Vector3 vector1, Vector3 vector2)
-		{
-			return Mathf.Acos(Vector3.Dot(vector1.normalized, vector2.normalized));
-		}
-
-		public static float AngleBetween_NegPIToPI(this Vector3 vector1, Vector3 vector2, Vector3 referencePlaneNormal)
-		{
-			var angle = Mathf.Acos(Vector3.Dot(vector1.normalized, vector2.normalized));
-			if (float.IsNaN(angle))
-				return 0f; // Vectors are almost in the same direction.
-
-			var cross = Vector3.Cross(vector1, vector2);
-
-			if (Vector3.Dot(referencePlaneNormal, cross) > 0f)
-			{
-				angle = -angle;
-			}
-			return angle;
-		}
-
-		public static float AngleBetween_NegPIToPI(this Vector2 vector1, Vector2 vector2)
-		{
-			float angle = Mathf.Atan2(vector2.y, vector2.x) - Mathf.Atan2(vector1.y, vector1.x);
-
-			if (angle < 0)
-				angle += TwoPI;
-
-			if (angle > PI)
-				angle -= TwoPI;
-
-			return angle;
-		}
-
-		#endregion
-
-		#region Perpendicular / Reflection
-
-		public static Vector2 Perpendicular(this Vector2 vector)
-		{
-			return new Vector2(-vector.y, vector.x);
-		}
-
-		public static Vector2 Reflect(this Vector2 vector, Vector2 normal)
-		{
-			return vector - (2 * Vector2.Dot(vector, normal) * normal);
-		}
-
-		#endregion
-
-		#region Direction / Projection On Ground Plane
-
-		public static Vector3 GetDirectionOnGroundPlane(this Vector3 vector)
-		{
-			var result = vector;
-			result.y = 0f;
-			return result.normalized;
-		}
-
-		public static Vector3 GetProjectionOnGroundPlane(this Vector3 vector)
-		{
-			var result = vector;
-			result.y = 0f;
-			return result;
-		}
-
-		#endregion
-
-		#region Swap
-
-		public static Vector2 Swap(this Vector2 vector)
-		{
-			return new Vector2(vector.y, vector.x);
-		}
-
-		public static void SwapToMakeLesserAndGreater(ref Vector3 shouldBeLesser, ref Vector3 shouldBeGreater)
-		{
-			float temp;
-
-			if (shouldBeLesser.x > shouldBeGreater.x)
-			{
-				temp = shouldBeLesser.x;
-				shouldBeLesser.x = shouldBeGreater.x;
-				shouldBeGreater.x = temp;
-			}
-
-			if (shouldBeLesser.y > shouldBeGreater.y)
-			{
-				temp = shouldBeLesser.y;
-				shouldBeLesser.y = shouldBeGreater.y;
-				shouldBeGreater.y = temp;
-			}
-
-			if (shouldBeLesser.z > shouldBeGreater.z)
-			{
-				temp = shouldBeLesser.z;
-				shouldBeLesser.z = shouldBeGreater.z;
-				shouldBeGreater.z = temp;
-			}
-		}
-
-		public static void SwapToMakeLesserAndGreater(ref Vector2 shouldBeLesser, ref Vector2 shouldBeGreater)
-		{
-			float temp;
-
-			if (shouldBeLesser.x > shouldBeGreater.x)
-			{
-				temp = shouldBeLesser.x;
-				shouldBeLesser.x = shouldBeGreater.x;
-				shouldBeGreater.x = temp;
-			}
-
-			if (shouldBeLesser.y > shouldBeGreater.y)
-			{
-				temp = shouldBeLesser.y;
-				shouldBeLesser.y = shouldBeGreater.y;
-				shouldBeGreater.y = temp;
-			}
-		}
-
-		#endregion
-
-		#region Manipulate Components
-
-		public static void ChangeZerosTo(ref Vector2 value, float changeTo)
-		{
-			if (value.x == 0f) value.x = changeTo;
-			if (value.y == 0f) value.y = changeTo;
-		}
-
-		public static void ChangeZerosTo(ref Vector3 value, float changeTo)
-		{
-			if (value.x == 0f) value.x = changeTo;
-			if (value.y == 0f) value.y = changeTo;
-			if (value.z == 0f) value.z = changeTo;
-		}
-
-		public static Vector2 ScaleX(this Vector2 vector, float scale)
-		{
-			vector.x *= scale;
-			return vector;
-		}
-		public static Vector2 ScaleY(this Vector2 vector, float scale)
-		{
-			vector.y *= scale;
-			return vector;
-		}
-
-		public static Vector3 ScaleX(this Vector3 vector, float scale)
-		{
-			vector.x *= scale;
-			return vector;
-		}
-		public static Vector3 ScaleY(this Vector3 vector, float scale)
-		{
-			vector.y *= scale;
-			return vector;
-		}
-		public static Vector3 ScaleZ(this Vector3 vector, float scale)
-		{
-			vector.z *= scale;
-			return vector;
-		}
-
-		#endregion
-
-		#endregion
-
-		#region Quaternion
-
-		public static readonly Quaternion QuaternionNaN = new Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
-
-		public static bool IsAnyNaN(this Quaternion value)
-		{
-			return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z) || float.IsNaN(value.w);
 		}
 
 		/// <summary>
@@ -1649,7 +623,7 @@ namespace Extenity.MathToolbox
 
 		public static Vector2 FindClosest(this IList<Vector2> list, Vector2 toPoint)
 		{
-			var value = Vector2NaN;
+			var value = Vector2Tools.NaN;
 			var closestDistanceSqr = float.MaxValue;
 			if (list != null)
 			{
@@ -1668,7 +642,7 @@ namespace Extenity.MathToolbox
 
 		public static Vector3 FindClosest(this IList<Vector3> list, Vector3 toPoint)
 		{
-			var value = Vector3NaN;
+			var value = Vector3Tools.NaN;
 			var closestDistanceSqr = float.MaxValue;
 			if (list != null)
 			{
@@ -1944,7 +918,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -1977,7 +951,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, bool loop, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2028,7 +1002,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2060,7 +1034,7 @@ namespace Extenity.MathToolbox
 		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2092,7 +1066,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, bool loop, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2141,7 +1115,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetLinePartAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, ref int startingPointIndexOfPart, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2175,7 +1149,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetLinePartAtDistanceFromStart(this IList<Vector3> points, bool loop, float distanceFromStart, ref int startingPointIndexOfPart, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -2227,7 +1201,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 ClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1)
 				return points[0];
 
@@ -2258,7 +1232,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 ClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1)
 				return points[0];
 
@@ -2290,7 +1264,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 ClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, bool loop, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1)
 				return points[0];
 
@@ -2336,7 +1310,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 ClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, bool loop, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Count == 1)
 				return points[0];
 
@@ -2774,7 +1748,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this PathPoint[] points, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Length == 0)
-				return MathTools.Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Length == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -2799,7 +1773,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 GetPointAtDistanceFromStart(this PathPoint[] points, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Length == 0)
-				return MathTools.Vector3NaN;
+				return Vector3Tools.NaN;
 			if (points.Length == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -2891,85 +1865,6 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Flat Check
-
-		public static bool IsFlatX(this List<Vector2> points)
-		{
-			if (points == null || points.Count == 0)
-				throw new Exception("List contains no points.");
-
-			var value = points[0].x;
-			for (int i = 1; i < points.Count; i++)
-			{
-				if (!value.IsAlmostEqual(points[i].x))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool IsFlatY(this List<Vector2> points)
-		{
-			if (points == null || points.Count == 0)
-				throw new Exception("List contains no points.");
-
-			var value = points[0].y;
-			for (int i = 1; i < points.Count; i++)
-			{
-				if (!value.IsAlmostEqual(points[i].y))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool IsFlatX(this List<Vector3> points)
-		{
-			if (points == null || points.Count == 0)
-				throw new Exception("List contains no points.");
-
-			var value = points[0].x;
-			for (int i = 1; i < points.Count; i++)
-			{
-				if (!value.IsAlmostEqual(points[i].x))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool IsFlatY(this List<Vector3> points)
-		{
-			if (points == null || points.Count == 0)
-				throw new Exception("List contains no points.");
-
-			var value = points[0].y;
-			for (int i = 1; i < points.Count; i++)
-			{
-				if (!value.IsAlmostEqual(points[i].y))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool IsFlatZ(this List<Vector3> points)
-		{
-			if (points == null || points.Count == 0)
-				throw new Exception("List contains no points.");
-
-			var value = points[0].z;
-			for (int i = 1; i < points.Count; i++)
-			{
-				if (!value.IsAlmostEqual(points[i].z))
-					return false;
-			}
-
-			return true;
-		}
-
-		#endregion
-
 		#region Spline Operations - Bezier, CatmullRom
 
 		public static Vector3 GetBezierPoint(Vector3 p1, Vector3 p2, Vector3 p3, float t)
@@ -3018,7 +1913,7 @@ namespace Extenity.MathToolbox
 
 		#region Bounds
 
-		public static Bounds BoundsNaN = new Bounds(Vector3NaN, Vector3NaN);
+		public static Bounds BoundsNaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
 
 		public static void Fix(this Bounds bounds)
 		{
@@ -3333,7 +2228,7 @@ namespace Extenity.MathToolbox
 			var notIntersected = distanceToPoint1 > 0.0 && distanceToPoint2 > 0.0 || distanceToPoint1 <= 0.0 && distanceToPoint2 <= 0.0;
 			if (notIntersected)
 			{
-				intersection = MathTools.Vector3NaN;
+				intersection = Vector3Tools.NaN;
 				return false;
 			}
 
@@ -3413,7 +2308,7 @@ namespace Extenity.MathToolbox
 		{
 			if (polygonPoints == null || polygonPoints.Count < 3)
 			{
-				return Vector3NaN;
+				return Vector3Tools.NaN;
 			}
 
 			var normal = Vector3.zero;

@@ -337,7 +337,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				return IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, maximumDistanceFromMouse, out difference);
 			}
-			difference = MathTools.Vector2Infinity;
+			difference = Vector2Tools.Infinity;
 			return false;
 		}
 

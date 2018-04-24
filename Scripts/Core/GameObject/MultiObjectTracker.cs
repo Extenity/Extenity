@@ -292,9 +292,9 @@ namespace Extenity.GameObjectToolbox
 
 		public void ResetResults()
 		{
-			center = MathTools.Vector3NaN;
-			totalVelocity = MathTools.Vector3NaN;
-			bounds = new Bounds(MathTools.Vector3NaN, MathTools.Vector3NaN);
+			center = Vector3Tools.NaN;
+			totalVelocity = Vector3Tools.NaN;
+			bounds = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
 			totalCalculatedObjects = int.MinValue;
 		}
 
@@ -302,7 +302,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			center = Vector3.zero;
 			totalVelocity = Vector3.zero;
-			bounds.SetMinMax(MathTools.Vector3Infinity, MathTools.Vector3NegInfinity);
+			bounds.SetMinMax(Vector3Tools.Infinity, Vector3Tools.NegInfinity);
 			totalCalculatedObjects = 0;
 		}
 

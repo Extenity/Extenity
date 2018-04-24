@@ -1582,8 +1582,8 @@ namespace Extenity.GameObjectToolbox
 
 			var positiveSideHit = false;
 			var negativeSideHit = false;
-			var positiveSideHitPoint = MathTools.Vector3NaN;
-			var negativeSideHitPoint = MathTools.Vector3NaN;
+			var positiveSideHitPoint = Vector3Tools.NaN;
+			var negativeSideHitPoint = Vector3Tools.NaN;
 			RaycastHit hit;
 
 			// Positive side
@@ -1666,7 +1666,7 @@ namespace Extenity.GameObjectToolbox
 					return true;
 				}
 			}
-			result = MathTools.Vector3NaN;
+			result = Vector3Tools.NaN;
 			return false;
 		}
 
