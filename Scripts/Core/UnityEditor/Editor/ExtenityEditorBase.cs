@@ -450,6 +450,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (!_IsGUIProfilingEnabled)
 				return null;
 
+			var now = Time.realtimeSinceStartup;
+
 			if (GUIProfilingTimes_ProcessBuffer == null)
 				GUIProfilingTimes_ProcessBuffer = new Dictionary<EventType, RunningHotMeanFloat>();
 			if (GUIProfilingTimes_RenderBuffer == null)
@@ -466,14 +468,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 			TickAnalyzer tickAnalyzer;
 			if (!GUIProfilingTickAnalyzer.TryGetValue(currentEventType, out tickAnalyzer))
 			{
-				tickAnalyzer = new TickAnalyzer(true);
+				tickAnalyzer = new TickAnalyzer();
+				tickAnalyzer.Reset(now);
 				GUIProfilingTickAnalyzer.Add(currentEventType, tickAnalyzer);
 			}
 
-			DrawGUIProfilingTimes();
+			DrawGUIProfilingTimes(now);
 
-			var now = Time.realtimeSinceStartup;
-			tickAnalyzer.Tick();
+			tickAnalyzer.Tick(now);
 			GUIProfilingBeginTime = now;
 			return runningMean;
 		}
@@ -489,7 +491,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
-		private void DrawGUIProfilingTimes()
+		private void DrawGUIProfilingTimes(float now)
 		{
 			if (GUIProfilingTimes_RenderBuffer == null)
 				return;
@@ -498,7 +500,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 			foreach (var item in GUIProfilingTimes_RenderBuffer)
 			{
 				var tickAnalyzer = GUIProfilingTickAnalyzer[item.Key];
-				EditorGUILayout.TextField(item.Key.ToString(), item.Value.Mean + "   \t" + tickAnalyzer.TicksPerSecond + " TPS");
+				var tps = now < 1f + tickAnalyzer.LastTickTime
+					? tickAnalyzer.TicksPerSecond
+					: 0;
+				EditorGUILayout.TextField(item.Key.ToString(), string.Format("{0:N3} sec \t {1} TPS", item.Value.Mean, tps));
 			}
 			GUILayout.Space(40f);
 		}

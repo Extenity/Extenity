@@ -1,16 +1,15 @@
-﻿using System.Diagnostics;
-using Extenity.MathToolbox;
+﻿using Extenity.MathToolbox;
 
 namespace Extenity.ProfilingToolbox
 {
 
 	public class TickAnalyzer
 	{
-		private long CurrentPeriodStartTime;
-		private long LastTickTime;
+		public double CurrentPeriodStartTime;
+		public double LastTickTime;
 
-		public int LastElapsedTime;
-		public float LastElapsedTimeDeviation
+		public double LastElapsedTime;
+		public double LastElapsedTimeDeviation
 		{
 			get { return LastElapsedTime - MeanElapsedTime; }
 		}
@@ -18,12 +17,12 @@ namespace Extenity.ProfilingToolbox
 		private int InternalTickCounter;
 		public int TicksPerSecond;
 
-		public float MeanElapsedTime
+		public double MeanElapsedTime
 		{
 			get { return ElapsedTimes.Mean; }
 		}
 
-		public RunningHotMeanInt ElapsedTimes;
+		public RunningHotMeanDouble ElapsedTimes;
 
 
 		public delegate void UpdateAction(TickAnalyzer me);
@@ -32,35 +31,17 @@ namespace Extenity.ProfilingToolbox
 		public event TickAction OnTick;
 
 
-		public TickAnalyzer(bool startImmediately = true)
+		public void Reset(double currentTime)
 		{
-			if (startImmediately)
-			{
-				Reset();
-			}
-		}
-
-		public void Reset()
-		{
-			if (stopwatch == null)
-			{
-				stopwatch = new Stopwatch();
-				stopwatch.Start();
-			}
-			CurrentPeriodStartTime = stopwatch.ElapsedMilliseconds;
+			CurrentPeriodStartTime = currentTime;
 			InternalTickCounter = 0;
 			TicksPerSecond = 0;
 			LastTickTime = 0;
 
-			ElapsedTimes = new RunningHotMeanInt(100);
+			ElapsedTimes = new RunningHotMeanDouble(100);
 		}
 
-		public void Tick()
-		{
-			Tick(stopwatch.ElapsedMilliseconds);
-		}
-
-		public void Tick(long timeMs)
+		public void Tick(double currentTime)
 		{
 			lock (this)
 			{
@@ -68,16 +49,16 @@ namespace Extenity.ProfilingToolbox
 
 				if (LastTickTime != 0) // To ignore first tick
 				{
-					var elapsedTime = (int)(timeMs - LastTickTime);
+					var elapsedTime = currentTime - LastTickTime;
 					ElapsedTimes.Push(elapsedTime);
 					LastElapsedTime = elapsedTime;
 				}
 
-				LastTickTime = timeMs;
+				LastTickTime = currentTime;
 
-				while (timeMs - CurrentPeriodStartTime >= 1000)
+				while (currentTime - CurrentPeriodStartTime >= 1.0)
 				{
-					CurrentPeriodStartTime += 1000;
+					CurrentPeriodStartTime += 1.0;
 					TicksPerSecond = InternalTickCounter;
 					InternalTickCounter = 0;
 
@@ -116,18 +97,6 @@ namespace Extenity.ProfilingToolbox
 		//		return 0;
 		//	}
 		//}
-
-		private Stopwatch stopwatch;
-
-		public Stopwatch Stopwatch
-		{
-			get { return stopwatch; }
-		}
-
-		public void SetCustomStopwatch(Stopwatch stopwatch)
-		{
-			this.stopwatch = stopwatch;
-		}
 	}
 
 }
