@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.MathToolbox;
+using Extenity.ProfilingToolbox;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -210,8 +212,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 		protected virtual void OnBeforeDefaultInspectorGUI() { }
 		protected abstract void OnAfterDefaultInspectorGUI();
 
-		public override sealed void OnInspectorGUI()
+		public sealed override void OnInspectorGUI()
 		{
+			var currentEventType = Event.current.rawType;
+			var guiProfilingRunningMean = BeginGUIProfiling(currentEventType);
+
 			Configuration.Update();
 
 			var disabled = IsInspectorDisabledWhenPlaying;
@@ -246,6 +251,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 				EditorGUI.EndDisabledGroup();
 
 			Configuration.ApplyModifiedProperties();
+
+			EndGUIProfiling(guiProfilingRunningMean);
 		}
 
 		public void DrawDefaultInspectorWithoutScriptField()
@@ -385,6 +392,111 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			GUILayout.Box("", HorizontalLineLayoutOptions);
+		}
+
+		#endregion
+
+		#region GUI Profiling
+
+		private bool _IsGUIProfilingEnabled;
+		public bool IsGUIProfilingEnabled { get { return _IsGUIProfilingEnabled; } }
+
+		private FPSAnalyzer GUIProfilingFPSAnalyzer;
+		private Dictionary<EventType, RunningHotMeanFloat> GUIProfilingTimes_ProcessBuffer;
+		private Dictionary<EventType, RunningHotMeanFloat> GUIProfilingTimes_RenderBuffer;
+		private bool IsGUIProfilingBufferSwapQueued;
+		private float GUIProfilingBeginTime = float.NaN;
+
+		private void InvokeGUIProfilingTimesBufferSwap()
+		{
+			if (IsGUIProfilingBufferSwapQueued)
+				return;
+			IsGUIProfilingBufferSwapQueued = true;
+			EditorApplication.delayCall += SwapGUIProfilingTimesBuffer;
+		}
+
+		private void SwapGUIProfilingTimesBuffer()
+		{
+			if (!IsGUIProfilingBufferSwapQueued)
+				return;
+			IsGUIProfilingBufferSwapQueued = false;
+
+			// Copy ProcessBuffer to RenderBuffer
+			GUIProfilingTimes_RenderBuffer.Clear();
+			foreach (var item in GUIProfilingTimes_ProcessBuffer)
+			{
+				GUIProfilingTimes_RenderBuffer.Add(item.Key, item.Value);
+			}
+		}
+
+		public void EnableGUIProfiling(bool enableAutoRepaintAsWell = true)
+		{
+			if (enableAutoRepaintAsWell)
+			{
+				IsAutoRepaintInspectorEnabled = true;
+				if (AutoRepaintInspectorPeriod > 1f)
+					AutoRepaintInspectorPeriod = 1f;
+			}
+			EditorApplication.delayCall += () => _IsGUIProfilingEnabled = true;
+		}
+
+		public void DisableGUIProfiling()
+		{
+			EditorApplication.delayCall += () => _IsGUIProfilingEnabled = false;
+		}
+
+		private RunningHotMeanFloat BeginGUIProfiling(EventType currentEventType)
+		{
+			if (!_IsGUIProfilingEnabled)
+				return null;
+
+			if (GUIProfilingTimes_ProcessBuffer == null)
+				GUIProfilingTimes_ProcessBuffer = new Dictionary<EventType, RunningHotMeanFloat>();
+			if (GUIProfilingTimes_RenderBuffer == null)
+				GUIProfilingTimes_RenderBuffer = new Dictionary<EventType, RunningHotMeanFloat>();
+			if (GUIProfilingFPSAnalyzer == null)
+				GUIProfilingFPSAnalyzer = new FPSAnalyzer();
+
+			RunningHotMeanFloat runningMean;
+			if (!GUIProfilingTimes_ProcessBuffer.TryGetValue(currentEventType, out runningMean))
+			{
+				runningMean = new RunningHotMeanFloat(10);
+				GUIProfilingTimes_ProcessBuffer.Add(currentEventType, runningMean);
+			}
+
+
+			DrawGUIProfilingTimes();
+
+			var now = Time.realtimeSinceStartup;
+			GUIProfilingFPSAnalyzer.Tick((long)(now * 1000f));
+			GUIProfilingBeginTime = now;
+			return runningMean;
+		}
+
+		private void EndGUIProfiling(RunningHotMeanFloat runningMean)
+		{
+			if (runningMean != null)
+			{
+				var now = Time.realtimeSinceStartup;
+				runningMean.Push(now - GUIProfilingBeginTime);
+				GUIProfilingBeginTime = float.NaN;
+				InvokeGUIProfilingTimesBufferSwap();
+			}
+		}
+
+		private void DrawGUIProfilingTimes()
+		{
+			if (GUIProfilingTimes_RenderBuffer == null)
+				return;
+
+			EditorGUILayoutTools.DrawHeader("Profiling Results");
+			EditorGUILayout.IntField("FPS", GUIProfilingFPSAnalyzer.FPS);
+			EditorGUILayout.FloatField("FPS Mean", (float)GUIProfilingFPSAnalyzer.Mean);
+			foreach (var item in GUIProfilingTimes_RenderBuffer)
+			{
+				EditorGUILayout.FloatField(item.Key.ToString(), item.Value.Mean);
+			}
+			GUILayout.Space(40f);
 		}
 
 		#endregion
