@@ -401,7 +401,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private bool _IsGUIProfilingEnabled;
 		public bool IsGUIProfilingEnabled { get { return _IsGUIProfilingEnabled; } }
 
-		private FPSAnalyzer GUIProfilingFPSAnalyzer;
+		private Dictionary<EventType, TickAnalyzer> GUIProfilingTickAnalyzer;
 		private Dictionary<EventType, RunningHotMeanFloat> GUIProfilingTimes_ProcessBuffer;
 		private Dictionary<EventType, RunningHotMeanFloat> GUIProfilingTimes_RenderBuffer;
 		private bool IsGUIProfilingBufferSwapQueued;
@@ -454,8 +454,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 				GUIProfilingTimes_ProcessBuffer = new Dictionary<EventType, RunningHotMeanFloat>();
 			if (GUIProfilingTimes_RenderBuffer == null)
 				GUIProfilingTimes_RenderBuffer = new Dictionary<EventType, RunningHotMeanFloat>();
-			if (GUIProfilingFPSAnalyzer == null)
-				GUIProfilingFPSAnalyzer = new FPSAnalyzer();
+			if (GUIProfilingTickAnalyzer == null)
+				GUIProfilingTickAnalyzer = new Dictionary<EventType, TickAnalyzer>();
 
 			RunningHotMeanFloat runningMean;
 			if (!GUIProfilingTimes_ProcessBuffer.TryGetValue(currentEventType, out runningMean))
@@ -463,12 +463,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 				runningMean = new RunningHotMeanFloat(10);
 				GUIProfilingTimes_ProcessBuffer.Add(currentEventType, runningMean);
 			}
-
+			TickAnalyzer tickAnalyzer;
+			if (!GUIProfilingTickAnalyzer.TryGetValue(currentEventType, out tickAnalyzer))
+			{
+				tickAnalyzer = new TickAnalyzer(true);
+				GUIProfilingTickAnalyzer.Add(currentEventType, tickAnalyzer);
+			}
 
 			DrawGUIProfilingTimes();
 
 			var now = Time.realtimeSinceStartup;
-			GUIProfilingFPSAnalyzer.Tick((long)(now * 1000f));
+			tickAnalyzer.Tick();
 			GUIProfilingBeginTime = now;
 			return runningMean;
 		}
@@ -490,11 +495,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 				return;
 
 			EditorGUILayoutTools.DrawHeader("Profiling Results");
-			EditorGUILayout.IntField("FPS", GUIProfilingFPSAnalyzer.FPS);
-			EditorGUILayout.FloatField("FPS Mean", (float)GUIProfilingFPSAnalyzer.Mean);
 			foreach (var item in GUIProfilingTimes_RenderBuffer)
 			{
-				EditorGUILayout.FloatField(item.Key.ToString(), item.Value.Mean);
+				var tickAnalyzer = GUIProfilingTickAnalyzer[item.Key];
+				EditorGUILayout.TextField(item.Key.ToString(), item.Value.Mean + "   \t" + tickAnalyzer.TicksPerSecond + " TPS");
 			}
 			GUILayout.Space(40f);
 		}
