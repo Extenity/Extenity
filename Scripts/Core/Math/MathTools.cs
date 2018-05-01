@@ -852,10 +852,27 @@ namespace Extenity.MathToolbox
 
 			var totalDistance = 0f;
 			var previousPoint = points[0];
-			for (int i = 0; i < points.Count; i++)
+			for (int i = 1; i < points.Count; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += Vector2.Distance(previousPoint, currentPoint);
+				totalDistance += previousPoint.DistanceTo(currentPoint);
+				previousPoint = currentPoint;
+			}
+			return totalDistance;
+		}
+
+		public static float CalculateLineStripLength(this IList<Vector2> points, int startIndex, int count)
+		{
+			if (points == null || points.Count < 2 || count < 2)
+				return 0f;
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			var endIndex = startIndex + count;
+			for (int i = startIndex + 1; i < endIndex; i++)
+			{
+				var currentPoint = points[i];
+				totalDistance += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
 			return totalDistance;
