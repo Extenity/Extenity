@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using Extenity.CryptoToolbox;
+using UnityEditor;
 
 namespace Extenity.BuildToolbox.Editor
 {
@@ -92,6 +93,96 @@ namespace Extenity.BuildToolbox.Editor
 				}
 
 				return result;
+			}
+		}
+
+		#endregion
+
+		#region Pro License
+
+		public class DisposeHandler : IDisposable
+		{
+			private bool Result;
+
+			internal DisposeHandler(bool result)
+			{
+				Result = result;
+			}
+
+			public void Dispose()
+			{
+				PlayerSettings.SplashScreen.show = Result;
+				AssetDatabase.SaveAssets();
+			}
+		}
+
+		public static IDisposable RemoveSplashIfPro()
+		{
+			if (PlayerSettings.advancedLicense)
+			{
+				if (PlayerSettings.SplashScreen.show)
+				{
+					PlayerSettings.SplashScreen.show = false;
+					return new DisposeHandler(true);
+				}
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region Increment Android Version
+
+		public static void IncrementAndroidVersion(bool alsoIncrementBundleVersion, bool saveAssets)
+		{
+			PlayerSettings.Android.bundleVersionCode++;
+			if (alsoIncrementBundleVersion)
+			{
+				IncrementBundleVersion(false);
+			}
+
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
+			}
+		}
+
+		public static void IncrementIOSVersion(bool alsoIncrementBundleVersion, bool saveAssets)
+		{
+			throw new NotImplementedException();
+			//PlayerSettings.iOS.buildNumber
+			//if (alsoIncrementBundleVersion)
+			//{
+			//	IncrementBundleVersion(false);
+			//}
+
+			//if (saveAssets)
+			//{
+			//	AssetDatabase.SaveAssets();
+			//}
+		}
+
+		public static void IncrementBundleVersion(bool saveAssets)
+		{
+			var split = PlayerSettings.bundleVersion.Split('.');
+
+			// Check if bundle version format is correct
+			int dummy;
+			if (split.Length != 2 ||
+				!int.TryParse(split[0], out dummy) ||
+				!int.TryParse(split[1], out dummy)
+			)
+			{
+				throw new FormatException($"Unknown bundle version format '{PlayerSettings.bundleVersion}' while expecting '#.#' that is being 'MAJOR.MINOR' versions.");
+			}
+
+			// Increment the version
+			split[1] = (int.Parse(split[1]) + 1).ToString();
+			PlayerSettings.bundleVersion = string.Join(".", split);
+
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
 			}
 		}
 
