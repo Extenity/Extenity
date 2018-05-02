@@ -1,4 +1,5 @@
 using Extenity.DataToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
@@ -40,8 +41,8 @@ namespace Extenity.DLLBuilder
 					GUILayout.BeginHorizontal();
 					EditorGUI.BeginChangeCheck();
 					EditorGUI.BeginDisabledGroup(variable.Value.Readonly);
-					variable.Key = EditorGUILayout.TextField(variable.Key, GUILayout.ExpandWidth(true));
-					variable.Value.Value = EditorGUILayout.TextField(variable.Value.Value, GUILayout.ExpandWidth(true));
+					variable.Key = EditorGUILayout.TextField(variable.Key, GUILayoutTools.ExpandWidth);
+					variable.Value.Value = EditorGUILayout.TextField(variable.Value.Value, GUILayoutTools.ExpandWidth);
 					EditorGUI.EndDisabledGroup();
 					if (EditorGUI.EndChangeCheck())
 					{

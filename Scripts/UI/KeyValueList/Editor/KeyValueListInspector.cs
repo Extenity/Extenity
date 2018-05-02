@@ -1,3 +1,4 @@
+using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
@@ -31,22 +32,22 @@ namespace Extenity.UIToolbox.Editor
 			{
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.BeginVertical(GUILayout.ExpandWidth(false));
+					GUILayout.BeginVertical(GUILayoutTools.DontExpandWidth);
 					{
-						GUILayout.Label("Key", GUILayout.ExpandWidth(false));
-						GUILayout.Label("Value", GUILayout.ExpandWidth(false));
+						GUILayout.Label("Key", GUILayoutTools.DontExpandWidth);
+						GUILayout.Label("Value", GUILayoutTools.DontExpandWidth);
 					}
 					GUILayout.EndVertical();
-					GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+					GUILayout.BeginVertical(GUILayoutTools.ExpandWidth);
 					{
-						_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayout.ExpandWidth(true));
-						_Tool_Value = GUILayout.TextField(_Tool_Value, GUILayout.ExpandWidth(true));
+						_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayoutTools.ExpandWidth);
+						_Tool_Value = GUILayout.TextField(_Tool_Value, GUILayoutTools.ExpandWidth);
 					}
 					GUILayout.EndVertical();
 				}
-				GUILayout.BeginVertical(GUILayout.ExpandWidth(false));
+				GUILayout.BeginVertical(GUILayoutTools.DontExpandWidth);
 				{
-					if (GUILayout.Button("Add Row", GUILayout.ExpandWidth(false)))
+					if (GUILayout.Button("Add Row", GUILayoutTools.DontExpandWidth))
 					{
 						EditorApplication.delayCall += () =>
 						{
@@ -54,11 +55,11 @@ namespace Extenity.UIToolbox.Editor
 							Me.AddRow(_Tool_Key, _Tool_Value);
 						};
 					}
-					GUILayout.BeginHorizontal(GUILayout.ExpandWidth(false));
+					GUILayout.BeginHorizontal(GUILayoutTools.DontExpandWidth);
 					{
 						var insertIndexAsText = GUILayout.TextArea(_Tool_InsertIndex.ToString());
 						int.TryParse(insertIndexAsText, out _Tool_InsertIndex);
-						if (GUILayout.Button("Insert", GUILayout.ExpandWidth(false)))
+						if (GUILayout.Button("Insert", GUILayoutTools.DontExpandWidth))
 						{
 							EditorApplication.delayCall += () =>
 							{
@@ -78,9 +79,9 @@ namespace Extenity.UIToolbox.Editor
 			// Remove Row button
 			{
 				GUILayout.BeginHorizontal();
-				GUILayout.Label("Key", GUILayout.ExpandWidth(false));
-				_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayout.ExpandWidth(true));
-				if (GUILayout.Button("Remove Row", GUILayout.ExpandWidth(false)))
+				GUILayout.Label("Key", GUILayoutTools.DontExpandWidth);
+				_Tool_Key = GUILayout.TextField(_Tool_Key, GUILayoutTools.ExpandWidth);
+				if (GUILayout.Button("Remove Row", GUILayoutTools.DontExpandWidth))
 				{
 					EditorApplication.delayCall += () =>
 					{

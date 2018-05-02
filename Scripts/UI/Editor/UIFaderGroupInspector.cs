@@ -17,7 +17,7 @@ namespace Extenity.UIToolbox.Editor
 		{
 		}
 
-		private readonly GUILayoutOption[] Cached_FaderButtonLayout = { GUILayout.ExpandWidth(true), GUILayout.Height(30) };
+		private readonly GUILayoutOption[] Cached_FaderButtonLayout = { GUILayoutTools.ExpandWidth, GUILayout.Height(30) };
 		private readonly GUILayoutOption[] Cached_FadeButtonLayout = { GUILayout.Width(80), GUILayout.Height(30) };
 		private readonly GUIContent Cached_FadeIn = new GUIContent("Fade In");
 		private readonly GUIContent Cached_FadeOut = new GUIContent("Fade Out");

@@ -81,7 +81,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			{
 				GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
-				if (GUILayout.Button("Reset", GUILayout.ExpandWidth(false), GUILayout.Height(16f)))
+				if (GUILayout.Button("Reset", GUILayoutTools.DontExpandWidth, GUILayout.Height(16f)))
 				{
 					UnityEditor.UnwrapParam.SetDefaults(out unwrapParam);
 				}

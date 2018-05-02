@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.MathToolbox;
 using Extenity.ProfilingToolbox;
@@ -388,7 +389,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			if (HorizontalLineLayoutOptions == null)
 			{
-				HorizontalLineLayoutOptions = new[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) };
+				HorizontalLineLayoutOptions = new[] { GUILayoutTools.ExpandWidth, GUILayout.Height(1) };
 			}
 
 			GUILayout.Box("", HorizontalLineLayoutOptions);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.ReflectionToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
@@ -82,9 +83,9 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Tree view
 			{
-				var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayout.ExpandWidth(true), GUILayout.Height(30f));
+				var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidth, GUILayout.Height(30f));
 				DrawSearchBar(rect);
-				rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+				rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidthAndHeight);
 				DrawTreeView(rect);
 				//DrawBottomToolBar();
 			}

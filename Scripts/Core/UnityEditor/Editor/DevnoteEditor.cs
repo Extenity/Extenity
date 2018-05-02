@@ -1,4 +1,4 @@
-using System;
+using Extenity.IMGUIToolbox;
 using Extenity.TextureToolbox;
 using UnityEditor;
 using UnityEngine;
@@ -61,7 +61,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			var rect = new Rect(objectScreenPosition.x - IconSize.x / 2f, Screen.height - objectScreenPosition.y - IconSize.y / 2f, IconSize.x, IconSize.y);
 			GUILayout.BeginArea(rect);
-			if (GUILayout.Button(objectDistanceToCamera.ToString("N2"), GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)))
+			if (GUILayout.Button(objectDistanceToCamera.ToString("N2"), GUILayoutTools.ExpandWidthAndHeight))
 			{
 				Selection.activeGameObject = Me.gameObject;
 			}
