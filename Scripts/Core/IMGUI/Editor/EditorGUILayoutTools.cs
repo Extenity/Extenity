@@ -91,6 +91,64 @@ namespace Extenity.IMGUIToolbox.Editor
 		}
 
 		#endregion
+
+		#region Search Bar
+
+		private static GUIStyle _Style_ToolbarSeachTextField;
+		public static GUIStyle Style_ToolbarSeachTextField
+		{
+			get
+			{
+				if (_Style_ToolbarSeachTextField == null)
+					_Style_ToolbarSeachTextField = GUI.skin.FindStyle("ToolbarSeachTextField");
+				return _Style_ToolbarSeachTextField;
+			}
+		}
+
+		private static GUIStyle _Style_Toolbar;
+		public static GUIStyle Style_Toolbar
+		{
+			get
+			{
+				if (_Style_Toolbar == null)
+					_Style_Toolbar = GUI.skin.FindStyle("Toolbar");
+				return _Style_Toolbar;
+			}
+		}
+
+		private static GUIStyle _Style_ToolbarSeachCancelButton;
+		public static GUIStyle Style_ToolbarSeachCancelButton
+		{
+			get
+			{
+				if (_Style_ToolbarSeachCancelButton == null)
+					_Style_ToolbarSeachCancelButton = GUI.skin.FindStyle("ToolbarSeachCancelButton");
+				return _Style_ToolbarSeachCancelButton;
+			}
+		}
+
+		/// <summary>
+		/// Draws a search bar with cancel button just like Unity's search bars.
+		///
+		/// Returns true if search input changes so that any search operation may easily be triggered by just checking the return value.
+		/// </summary>
+		public static bool SearchBar(ref string searchInput)
+		{
+			GUILayout.BeginHorizontal(Style_Toolbar);
+			var newSearchInput = GUILayout.TextField(searchInput, Style_ToolbarSeachTextField);
+			if (GUILayout.Button(GUIContent.none, Style_ToolbarSeachCancelButton))
+			{
+				newSearchInput = "";
+				GUI.FocusControl(null);
+			}
+			GUILayout.EndHorizontal();
+
+			var changed = newSearchInput != searchInput;
+			searchInput = newSearchInput;
+			return changed;
+		}
+
+		#endregion
 	}
 
 }

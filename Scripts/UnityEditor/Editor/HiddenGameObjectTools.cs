@@ -2,12 +2,20 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
+using Extenity.IMGUIToolbox.Editor;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	public class HiddenGameObjectTools : ExtenityEditorWindowBase
 	{
+		#region Configuration
+
+		private const float StringMatcherTolerance = 0.8f;
+
+		#endregion
+
 		#region Menu Command
 
 		[MenuItem("Tools/Hidden GameObject Tools")]
@@ -34,6 +42,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
 		private static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(35);
 
+		private string SearchText = "";
+
 		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(10f);
@@ -53,12 +63,21 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GUILayout.EndHorizontal();
 			GUILayout.Space(10f);
 
+			// Search bar
+			if (EditorGUILayoutTools.SearchBar(ref SearchText))
+			{
+				// TODO: Do search filtering here, rather than filtering in every draw below.
+			}
+
+			// List
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
 
 			EditorGUILayout.LabelField("Hidden Objects (" + HiddenObjects.Count + ")", EditorStyles.boldLabel);
 			for (int i = 0; i < HiddenObjects.Count; i++)
 			{
-				DrawEntry(HiddenObjects[i]);
+				var obj = HiddenObjects[i];
+				if (!obj || string.IsNullOrEmpty(SearchText) || LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance)
+					DrawEntry(obj);
 			}
 
 			GUILayout.Space(20f);
@@ -66,7 +85,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorGUILayout.LabelField("Visible Objects (" + VisibleObjects.Count + ")", EditorStyles.boldLabel);
 			for (int i = 0; i < VisibleObjects.Count; i++)
 			{
-				DrawEntry(VisibleObjects[i]);
+				var obj = VisibleObjects[i];
+				if (!obj || string.IsNullOrEmpty(SearchText) || LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance)
+					DrawEntry(obj);
 			}
 
 			GUILayout.EndScrollView();

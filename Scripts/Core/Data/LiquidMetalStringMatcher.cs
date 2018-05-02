@@ -34,7 +34,7 @@ namespace Extenity.DataToolbox
 			scoreArray = null;
 
 			// short circuits
-			if (searchPattern.Length == 0)
+			if (string.IsNullOrEmpty(searchPattern))
 				return TrailingScore;
 			if (searchPattern.Length > text.Length)
 				return NoMatchScore;
