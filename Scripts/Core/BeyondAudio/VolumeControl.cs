@@ -130,6 +130,11 @@ namespace Extenity.BeyondAudio
 			IsMuted = isMuted;
 		}
 
+		public void SetMuteInverted(bool isMuted)
+		{
+			IsMuted = !isMuted;
+		}
+
 		public float GetActualVolume()
 		{
 			float value;
