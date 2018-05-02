@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Extenity.DataToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.TextureToolbox;
 using UnityEditor.SceneManagement;
 
@@ -182,15 +183,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Layout Options
-
-		public static class LayoutOptions
-		{
-			public static readonly GUILayoutOption[] DontExpand = { GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false) };
-		}
-
-		#endregion
-
 		#region Tags
 
 		public class TagsPane
@@ -329,7 +321,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 							}
 						}
 
-						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight, LayoutOptions.DontExpand);
+						var backgroundRect = GUILayoutUtility.GetRect(totalWidth, totalHeight, GUILayoutTools.DontExpandWidthAndHeight);
 						var labelRect = backgroundRect;
 						labelRect.xMin += TagPaneThings.BackgroundPadding; // Background + left padding
 						labelRect.yMin = backgroundRect.yMin + (backgroundRect.height - labelHeight) / 2f; // Center vertically

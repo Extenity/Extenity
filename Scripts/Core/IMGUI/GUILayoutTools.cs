@@ -99,6 +99,10 @@ namespace Extenity.IMGUIToolbox
 
 		public static readonly GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true);
 		public static readonly GUILayoutOption DontExpandWidth = GUILayout.ExpandWidth(false);
+		public static readonly GUILayoutOption ExpandHeight = GUILayout.ExpandHeight(true);
+		public static readonly GUILayoutOption DontExpandHeight = GUILayout.ExpandHeight(false);
+		public static readonly GUILayoutOption[] ExpandWidthAndHeight = { GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true) };
+		public static readonly GUILayoutOption[] DontExpandWidthAndHeight = { GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false) };
 
 		#endregion
 	}
