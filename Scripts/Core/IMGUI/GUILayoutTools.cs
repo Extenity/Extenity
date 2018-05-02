@@ -94,6 +94,13 @@ namespace Extenity.IMGUIToolbox
 		}
 
 		#endregion
+
+		#region Non-Alloc Helpers
+
+		public static readonly GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true);
+		public static readonly GUILayoutOption DontExpandWidth = GUILayout.ExpandWidth(false);
+
+		#endregion
 	}
 
 }

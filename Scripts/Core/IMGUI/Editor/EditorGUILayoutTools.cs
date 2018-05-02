@@ -134,8 +134,8 @@ namespace Extenity.IMGUIToolbox.Editor
 		/// </summary>
 		public static bool SearchBar(ref string searchInput)
 		{
-			GUILayout.BeginHorizontal(Style_Toolbar);
-			var newSearchInput = GUILayout.TextField(searchInput, Style_ToolbarSeachTextField);
+			GUILayout.BeginHorizontal(Style_Toolbar, GUILayoutTools.ExpandWidth);
+			var newSearchInput = GUILayout.TextField(searchInput, Style_ToolbarSeachTextField, GUILayoutTools.ExpandWidth);
 			if (GUILayout.Button(GUIContent.none, Style_ToolbarSeachCancelButton))
 			{
 				newSearchInput = "";
