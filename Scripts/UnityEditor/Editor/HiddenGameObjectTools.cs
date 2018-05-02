@@ -66,30 +66,38 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Search bar
 			if (EditorGUILayoutTools.SearchBar(ref SearchText))
 			{
-				// TODO: Do search filtering here, rather than filtering in every draw below.
+				RefreshFilteredLists();
 			}
+			var isFiltering = !string.IsNullOrEmpty(SearchText);
 
 			// List
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
-
-			EditorGUILayout.LabelField("Hidden Objects (" + HiddenObjects.Count + ")", EditorStyles.boldLabel);
-			for (int i = 0; i < HiddenObjects.Count; i++)
 			{
-				var obj = HiddenObjects[i];
-				if (!obj || string.IsNullOrEmpty(SearchText) || LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance)
-					DrawEntry(obj);
+
+				// List hidden objects
+				EditorGUILayout.LabelField(
+					isFiltering
+						? "Hidden Objects (" + DisplayedHiddenObjects.Count + " of " + HiddenObjects.Count + ")"
+						: "Hidden Objects (" + HiddenObjects.Count + ")",
+					EditorStyles.boldLabel);
+				for (int i = 0; i < DisplayedHiddenObjects.Count; i++)
+				{
+					DrawEntry(DisplayedHiddenObjects[i]);
+				}
+
+				GUILayout.Space(20f);
+
+				// List visible objects
+				EditorGUILayout.LabelField(
+					isFiltering
+						? "Visible Objects (" + DisplayedVisibleObjects.Count + " of " + VisibleObjects.Count + ")"
+						: "Visible Objects (" + VisibleObjects.Count + ")",
+					EditorStyles.boldLabel);
+				for (int i = 0; i < DisplayedVisibleObjects.Count; i++)
+				{
+					DrawEntry(DisplayedVisibleObjects[i]);
+				}
 			}
-
-			GUILayout.Space(20f);
-
-			EditorGUILayout.LabelField("Visible Objects (" + VisibleObjects.Count + ")", EditorStyles.boldLabel);
-			for (int i = 0; i < VisibleObjects.Count; i++)
-			{
-				var obj = VisibleObjects[i];
-				if (!obj || string.IsNullOrEmpty(SearchText) || LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance)
-					DrawEntry(obj);
-			}
-
 			GUILayout.EndScrollView();
 		}
 
@@ -138,6 +146,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private List<GameObject> HiddenObjects = new List<GameObject>();
 		private List<GameObject> VisibleObjects = new List<GameObject>();
 
+		private List<GameObject> DisplayedHiddenObjects = new List<GameObject>();
+		private List<GameObject> DisplayedVisibleObjects = new List<GameObject>();
+
+
 		private void GatherHiddenObjects()
 		{
 			HiddenObjects.Clear();
@@ -158,7 +170,37 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 			}
 
+			RefreshFilteredLists();
+
 			Repaint();
+		}
+
+		private void RefreshFilteredLists()
+		{
+			DisplayedHiddenObjects.Clear();
+			DisplayedVisibleObjects.Clear();
+
+			foreach (var obj in HiddenObjects)
+			{
+				if (!obj ||
+					string.IsNullOrEmpty(SearchText) ||
+					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
+				)
+				{
+					DisplayedHiddenObjects.Add(obj);
+				}
+			}
+
+			foreach (var obj in VisibleObjects)
+			{
+				if (!obj ||
+					string.IsNullOrEmpty(SearchText) ||
+					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
+				)
+				{
+					DisplayedVisibleObjects.Add(obj);
+				}
+			}
 		}
 
 		private static bool IsHidden(GameObject go)
