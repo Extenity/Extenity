@@ -1,14 +1,12 @@
 fileFormatVersion: 2
 guid: c6f16232c81ee554a87d1a2e6c82c8b0
-timeCreated: 1455827844
-licenseType: Free
 SketchUpImporter:
   generateBackFace: 0
   mergeCoplanarFaces: 0
   selectedNodes: 0000000001000000
   assetHash:
     serializedVersion: 2
-    Hash: 4ae8e0019fbb9dc9666428bf8340f185
+    Hash: 5a18510d6367e96775cc10276540360e
   longitude: -105.242139
   latitude: 40.018309
   northCorrection: -0
@@ -51,6 +49,7 @@ SketchUpImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
