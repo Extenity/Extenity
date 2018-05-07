@@ -7,7 +7,9 @@ using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.SceneManagementToolbox.Editor;
 using Extenity.TextureToolbox;
+using UnityEditor.SceneManagement;
 
 namespace Extenity.AssetToolbox.Editor
 {
@@ -95,7 +97,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Assets Menu - Operations - Reserialize Assets
 
-		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1103)]
+		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1102)]
 		public static void ReserializeSelectedAssets()
 		{
 			var fullList = new List<string>();
@@ -107,23 +109,25 @@ namespace Extenity.AssetToolbox.Editor
 
 			Debug.Log(log.ToString());
 
-			AssetDatabase.ForceReserializeAssets(fullList);
+			ReserializeAssets(fullList);
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1104)]
+		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1103)]
 		public static void ReserializeAllAssets()
 		{
-			// This is the old way of doing it. Which somewhat worked with some flaws.
-			//MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-
-			// This is the brand new Unity's method. This works quite better.
-			AssetDatabase.ForceReserializeAssets();
+			ReserializeAssets(AssetDatabase.GetAllAssetPaths());
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Prefabs And Scenes", priority = 1105)]
-		public static void ReserializeAllPrefabsAndScenes()
+		[MenuItem("Assets/Operations/Reserialize All Scenes", priority = 1104)]
+		public static void ReserializeAllScenes()
 		{
-			ReserializeAssets(true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+		}
+
+		[MenuItem("Assets/Operations/Reserialize All Prefabs", priority = 1105)]
+		public static void ReserializeAllPrefabs()
+		{
+			ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Graphics Assets", priority = 1106)]
@@ -243,7 +247,7 @@ namespace Extenity.AssetToolbox.Editor
 			//	EditorUtility.SetDirty(asset);
 			//}
 
-			AssetDatabase.ForceReserializeAssets(fullList);
+			ReserializeAssets(fullList);
 		}
 
 		private static void InternalAddToAssetList(List<string> list, List<string> fullList, string logTitle, StringBuilder log)
@@ -258,6 +262,77 @@ namespace Extenity.AssetToolbox.Editor
 			foreach (var item in list)
 			{
 				log.AppendLine(item);
+			}
+		}
+
+		public static void ReserializeAssets(IEnumerable<string> assetPaths)
+		{
+			// This is the old way of doing it. Which somewhat worked with some flaws.
+			//MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+
+			// This is the brand new Unity's method. This works quite better.
+			// But still, we need to process scenes separately because Unity
+			// can't handle them well if the scene is not loaded. Somehow 
+			// Unity includes all prefab data in scenes.
+			{
+				var sceneAssetPaths = new List<string>();
+				var otherAssetPaths = new List<string>();
+				AssetTools.SplitSceneAndOtherAssetPaths(assetPaths, sceneAssetPaths, otherAssetPaths);
+				if (sceneAssetPaths.IsNotNullAndEmpty())
+				{
+					// Check if the current scene has modifications and warn user
+					EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("Reserialization needs to load scenes one by one. To prevent loosing any unsaved work, first you need to save current changes before reserialization.");
+				}
+
+				AssetDatabase.ForceReserializeAssets(otherAssetPaths, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
+				InternalReserializeScenes(sceneAssetPaths);
+			}
+		}
+
+		private static void InternalReserializeScenes(IEnumerable<string> sceneAssetPaths)
+		{
+			foreach (var sceneAssetPath in sceneAssetPaths)
+			{
+				InternalReserializeScene(sceneAssetPath, false);
+			}
+
+			// Make sure there is no garbage left after reserialization. 
+			EditorSceneManagerTools.UnloadAllScenes(true);
+		}
+
+		private static void InternalReserializeScene(string sceneAssetPath, bool unloadAfterwards)
+		{
+			if (string.IsNullOrEmpty(sceneAssetPath))
+				throw new ArgumentNullException(nameof(sceneAssetPath));
+
+			// Make sure there were nothing loaded before opening the scene.
+			// An already loaded asset may confuse the loading process.
+			EditorSceneManagerTools.UnloadAllScenes(true);
+
+			EditorSceneManagerTools.FailIfAnyLoadedSceneIsDirty("Internal error 105851!");
+
+			// Load the scene.
+			var openedScene = EditorSceneManager.OpenScene(sceneAssetPath, OpenSceneMode.Single);
+			if (!openedScene.IsValid())
+				throw new Exception($"Failed to load scene '{sceneAssetPath}' for reserialization.");
+
+			// Mark the scene as dirty.
+			EditorSceneManager.MarkAllScenesDirty();
+
+			// Save the scene to make it reserialize itself to file.
+			var saveResult = EditorSceneManager.SaveOpenScenes();
+			if (!saveResult)
+				throw new Exception($"Failed to save scene '{sceneAssetPath}' for reserialization.");
+
+			if (EditorSceneManagerTools.IsAnyLoadedSceneDirty())
+			{
+				Debug.LogWarning($"Scene '{sceneAssetPath}' still has unsaved changes just after it is saved. Probably a script in scene makes some changes after serialization, which is an unexpected behaviour. You may want to inspect it further, though most of the time you can safely ignore this message.");
+			}
+
+			// Make sure there is no garbage left after reserialization. 
+			if (unloadAfterwards)
+			{
+				EditorSceneManagerTools.UnloadAllScenes(true);
 			}
 		}
 

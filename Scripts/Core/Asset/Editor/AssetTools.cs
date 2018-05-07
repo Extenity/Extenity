@@ -258,6 +258,25 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Scene Path
+
+		public static void SplitSceneAndOtherAssetPaths(IEnumerable<string> assetPaths, List<string> sceneAssetPaths, List<string> otherAssetPaths)
+		{
+			foreach (var assetPath in assetPaths)
+			{
+				if (assetPath.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+				{
+					sceneAssetPaths.Add(assetPath);
+				}
+				else
+				{
+					otherAssetPaths.Add(assetPath);
+				}
+			}
+		}
+
+		#endregion
+
 		#region CreateOrReplaceAsset
 
 		public static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object

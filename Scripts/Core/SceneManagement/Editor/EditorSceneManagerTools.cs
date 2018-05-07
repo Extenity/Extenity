@@ -30,6 +30,15 @@ namespace Extenity.SceneManagementToolbox.Editor
 			}
 		}
 
+		public static void FailIfAnyLoadedSceneIsDirty(string failMessage)
+		{
+			var isAnySceneDirty = IsAnyLoadedSceneDirty();
+			if (isAnySceneDirty)
+			{
+				throw new Exception(failMessage);
+			}
+		}
+
 		public static List<SceneSetup> GetLoadedSceneSetups(bool includeActiveScene)
 		{
 			var list = new List<SceneSetup>();
@@ -63,6 +72,15 @@ namespace Extenity.SceneManagementToolbox.Editor
 				{
 					EditorSceneManager.OpenScene(loadedScene, OpenSceneMode.Additive);
 				}
+			}
+		}
+
+		public static void UnloadAllScenes(bool unloadUnusedAssets)
+		{
+			EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+			if (unloadUnusedAssets)
+			{
+				EditorUtility.UnloadUnusedAssetsImmediate(false);
 			}
 		}
 

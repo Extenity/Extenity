@@ -40,6 +40,28 @@ namespace Extenity.SceneManagementToolbox
 			return list;
 		}
 
+		public static void UnloadAllScenesAsyncExcept(string sceneName)
+		{
+			var sceneCount = SceneManager.sceneCount;
+			for (int i = sceneCount - 1; i >= 0; i--)
+			{
+				var scene = SceneManager.GetSceneAt(i);
+				if (scene.name != sceneName)
+				{
+					SceneManager.UnloadSceneAsync(scene);
+				}
+			}
+		}
+
+		public static void UnloadAllScenesAsync()
+		{
+			var sceneCount = SceneManager.sceneCount;
+			for (int i = sceneCount - 1; i >= 0; i--)
+			{
+				var scene = SceneManager.GetSceneAt(i);
+				SceneManager.UnloadSceneAsync(scene);
+			}
+		}
 	}
 
 	public static class SceneManagerToolsExtensions
