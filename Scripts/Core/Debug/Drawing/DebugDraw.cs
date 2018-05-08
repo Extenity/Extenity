@@ -289,11 +289,10 @@ namespace Extenity.DebugToolbox
 			if (DebugDrawingDisabled) return;
 
 			Vector3 start = worldPosition + new Vector3(radius, 0f, 0f);
-			Vector3 end;
 
 			for (float angle = angleStep; angle < Mathf.PI * 2f; angle += angleStep)
 			{
-				end = worldPosition + new Vector3(radius * Mathf.Cos(angle), 0f, radius * Mathf.Sin(angle));
+				var end = worldPosition + new Vector3(radius * Mathf.Cos(angle), 0f, radius * Mathf.Sin(angle));
 				Line(start, end, color, duration, depthTest);
 				start = end;
 			}
@@ -306,11 +305,10 @@ namespace Extenity.DebugToolbox
 			if (DebugDrawingDisabled) return;
 
 			Vector3 start = transform.TransformPoint(localPosition + new Vector3(radius, 0f, 0f));
-			Vector3 end;
 
 			for (float angle = angleStep; angle < Mathf.PI * 2f; angle += angleStep)
 			{
-				end = transform.TransformPoint(localPosition + new Vector3(radius * Mathf.Cos(angle), 0f, radius * Mathf.Sin(angle)));
+				var end = transform.TransformPoint(localPosition + new Vector3(radius * Mathf.Cos(angle), 0f, radius * Mathf.Sin(angle)));
 				Line(start, end, color, duration, depthTest);
 				start = end;
 			}

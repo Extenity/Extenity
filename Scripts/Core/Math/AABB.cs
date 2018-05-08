@@ -142,14 +142,13 @@ namespace Extenity.MathToolbox
 			if (points == null || points.Count == 0)
 				return;
 
-			Vector2 temp;
 			for (int i = 0; i < points.Count; i++)
 			{
-				temp = points[i];
-				if (temp.x < Min.x) Min.x = temp.x;
-				if (temp.x > Max.x) Max.x = temp.x;
-				if (temp.y < Min.y) Min.y = temp.y;
-				if (temp.y > Max.y) Max.y = temp.y;
+				var point = points[i];
+				if (point.x < Min.x) Min.x = point.x;
+				if (point.x > Max.x) Max.x = point.x;
+				if (point.y < Min.y) Min.y = point.y;
+				if (point.y > Max.y) Max.y = point.y;
 			}
 		}
 
@@ -175,15 +174,14 @@ namespace Extenity.MathToolbox
 				return;
 			}
 
-			Vector2 temp;
 			Max = Min = points[0];
 			for (int i = 1; i < points.Count; i++)
 			{
-				temp = points[i];
-				if (temp.x < Min.x) Min.x = temp.x;
-				if (temp.x > Max.x) Max.x = temp.x;
-				if (temp.y < Min.y) Min.y = temp.y;
-				if (temp.y > Max.y) Max.y = temp.y;
+				var point = points[i];
+				if (point.x < Min.x) Min.x = point.x;
+				if (point.x > Max.x) Max.x = point.x;
+				if (point.y < Min.y) Min.y = point.y;
+				if (point.y > Max.y) Max.y = point.y;
 			}
 		}
 
@@ -199,15 +197,14 @@ namespace Extenity.MathToolbox
 				return;
 			}
 
-			Vector3 temp;
 			Max = Min = points[0];
 			for (int i = 1; i < points.Count; i++)
 			{
-				temp = points[i];
-				if (temp.x < Min.x) Min.x = temp.x;
-				if (temp.x > Max.x) Max.x = temp.x;
-				if (temp.y < Min.y) Min.y = temp.y;
-				if (temp.y > Max.y) Max.y = temp.y;
+				var point = points[i];
+				if (point.x < Min.x) Min.x = point.x;
+				if (point.x > Max.x) Max.x = point.x;
+				if (point.y < Min.y) Min.y = point.y;
+				if (point.y > Max.y) Max.y = point.y;
 			}
 		}
 
@@ -223,15 +220,14 @@ namespace Extenity.MathToolbox
 				return;
 			}
 
-			Vector3 temp;
 			Max = Min = points[0];
 			for (int i = 1; i < points.Count; i++)
 			{
-				temp = points[i];
-				if (temp.x < Min.x) Min.x = temp.x;
-				if (temp.x > Max.x) Max.x = temp.x;
-				if (temp.z < Min.y) Min.y = temp.z;
-				if (temp.z > Max.y) Max.y = temp.z;
+				var point = points[i];
+				if (point.x < Min.x) Min.x = point.x;
+				if (point.x > Max.x) Max.x = point.x;
+				if (point.z < Min.y) Min.y = point.z;
+				if (point.z > Max.y) Max.y = point.z;
 			}
 		}
 

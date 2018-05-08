@@ -73,11 +73,10 @@ namespace Extenity.ResourceLoadingToolbox
 		public static LoadedAssetBundle LoadFromFile(string path)
 		{
 			LoadedAssetBundle loadedAssetBundle = null;
-			AssetBundle bundle;
 			try
 			{
 				// Load asset bundle from file
-				bundle = AssetBundle.LoadFromFile(path);
+				var bundle = AssetBundle.LoadFromFile(path);
 				try
 				{
 					loadedAssetBundle = new LoadedAssetBundle();

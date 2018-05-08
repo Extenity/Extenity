@@ -48,7 +48,7 @@ namespace Extenity.DesignPatternsToolbox
 		}
 
 		public static T Instance { get { return instance; } }
-		public static bool IsInstanceAvailable { get { return !(instance == null); } }
+		public static bool IsInstanceAvailable { get { return instance != null; } }
 	}
 
 }

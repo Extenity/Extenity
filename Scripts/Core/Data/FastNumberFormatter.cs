@@ -346,7 +346,7 @@ namespace Extenity.DataToolbox
 			_specifierIsUpper = true;
 			_precision = -1;
 
-			if (format == null || format.Length == 0)
+			if (string.IsNullOrEmpty(format))
 			{
 				_specifier = 'G';
 				return;

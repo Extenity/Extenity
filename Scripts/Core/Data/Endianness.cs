@@ -9,12 +9,11 @@ namespace Extenity.DataToolbox
 
 		public static void EndianReverseBytes(this byte[] inArray)
 		{
-			byte temp;
 			int highCtr = inArray.Length - 1;
 
 			for (int ctr = 0; ctr < inArray.Length / 2; ctr++)
 			{
-				temp = inArray[ctr];
+				var temp = inArray[ctr];
 				inArray[ctr] = inArray[highCtr];
 				inArray[highCtr] = temp;
 				highCtr -= 1;
@@ -23,12 +22,11 @@ namespace Extenity.DataToolbox
 
 		public static void EndianReverseBytes(this byte[] inArray, int length)
 		{
-			byte temp;
 			int highCtr = length - 1;
 
 			for (int ctr = 0; ctr < length / 2; ctr++)
 			{
-				temp = inArray[ctr];
+				var temp = inArray[ctr];
 				inArray[ctr] = inArray[highCtr];
 				inArray[highCtr] = temp;
 				highCtr -= 1;
@@ -37,12 +35,11 @@ namespace Extenity.DataToolbox
 
 		public static void EndianReverseBytes(this byte[] inArray, int start, int length)
 		{
-			byte temp;
 			int highCtr = start + length - 1;
 
 			for (int ctr = start; ctr < start + (length / 2); ctr++)
 			{
-				temp = inArray[ctr];
+				var temp = inArray[ctr];
 				inArray[ctr] = inArray[highCtr];
 				inArray[highCtr] = temp;
 				highCtr -= 1;
