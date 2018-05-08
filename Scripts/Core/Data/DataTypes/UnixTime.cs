@@ -24,7 +24,7 @@ namespace Extenity.DataToolbox
 			return new UnixTime(double.Parse(unixTimestampStr));
 		}
 
-		override public string ToString()
+		public override string ToString()
 		{
 			return Time.ToString();
 		}

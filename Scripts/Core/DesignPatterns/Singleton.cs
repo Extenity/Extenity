@@ -16,7 +16,7 @@ namespace Extenity.DesignPatternsToolbox
 	//   InitializeSingleton(this); must be placed on the constructor of derived class.
 	public class Singleton<T>
 	{
-		virtual protected void OnDestroySingleton() { }
+		protected virtual void OnDestroySingleton() { }
 
 		private static T instance;
 #pragma warning disable 414

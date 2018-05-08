@@ -93,13 +93,13 @@ namespace Extenity.DataToolbox
 		// digits hexadecimal representation (e.g. DecHexDigits [34] = 0x34).
 		private static readonly unsafe int* DecHexDigits;
 
-		unsafe static FastNumberFormatter()
+		static unsafe FastNumberFormatter()
 		{
 			NumberFormatter.GetFormatterTables(out MantissaBitsTable, out TensExponentTable,
 				out DigitLowerTable, out DigitUpperTable, out TenPowersList, out DecHexDigits);
 		}
 
-		unsafe static long GetTenPowerOf(int i)
+		static unsafe long GetTenPowerOf(int i)
 		{
 			return TenPowersList[i];
 		}
@@ -219,7 +219,7 @@ namespace Extenity.DataToolbox
 
 		// Helper to translate an int in the range 0 .. 9999 to its
 		// Hexadecimal digits representation.
-		unsafe private static uint FastToDecHex(int val)
+		private static unsafe uint FastToDecHex(int val)
 		{
 			if (val < 100)
 				return (uint)DecHexDigits[val];
@@ -458,7 +458,7 @@ namespace Extenity.DataToolbox
 			_decPointPos = _digitsLen = DecHexLen();
 		}
 
-		unsafe private void Init(string format, double value, int defPrecision)
+		private unsafe void Init(string format, double value, int defPrecision)
 		{
 			Init(format);
 
@@ -1165,7 +1165,7 @@ namespace Extenity.DataToolbox
 			//return new string(_cbuf, 0, _ind);
 		}
 
-		unsafe private int FormatHexadecimal(int precision, char[] buffer)
+		private unsafe int FormatHexadecimal(int precision, char[] buffer)
 		{
 			int size = Math.Max(precision, _decPointPos);
 			char* digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
