@@ -63,7 +63,7 @@ public class ImportTunnelerExample : MonoBehaviour
 			bundle.GetAllAssetNames().LogList();
 			var asset = bundle.LoadAsset(bundle.GetAllAssetNames()[0]);
 			//var asset = bundle.mainAsset;
-			GameObject.Instantiate(asset);
+			Instantiate(asset);
 		}
 		catch (Exception)
 		{

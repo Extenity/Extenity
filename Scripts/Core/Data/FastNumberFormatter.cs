@@ -43,8 +43,8 @@ namespace System
 
 	internal sealed partial class NumberFormatter
 	{
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		internal unsafe static extern void GetFormatterTables(out ulong* MantissaBitsTable, out int* TensExponentTable,
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		internal static extern unsafe void GetFormatterTables(out ulong* MantissaBitsTable, out int* TensExponentTable,
 			out char* DigitLowerTable, out char* DigitUpperTable,
 			out long* TenPowersList, out int* DecHexDigits);
 	}
