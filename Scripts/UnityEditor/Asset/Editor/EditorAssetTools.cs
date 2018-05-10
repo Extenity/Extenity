@@ -121,25 +121,31 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("Assets/Operations/Reserialize All Scenes", priority = 1104)]
 		public static void ReserializeAllScenes()
 		{
-			ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Prefabs", priority = 1105)]
 		public static void ReserializeAllPrefabs()
 		{
-			ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Graphics Assets", priority = 1106)]
 		public static void ReserializeAllGraphicsAssets()
 		{
-			ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false);
+			ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false, false);
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Audio Assets", priority = 1105)]
+		[MenuItem("Assets/Operations/Reserialize All Audio Assets", priority = 1107)]
 		public static void ReserializeAllAudioAssets()
 		{
-			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false);
+		}
+
+		[MenuItem("Assets/Operations/Reserialize All Script Assets", priority = 1108)]
+		public static void ReserializeAllScriptAssets()
+		{
+			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
 		}
 
 		public static void ReserializeAssets(
@@ -157,7 +163,8 @@ namespace Extenity.AssetToolbox.Editor
 			bool videos,
 			bool ui,
 			bool physics,
-			bool audio
+			bool audio,
+			bool script
 		)
 		{
 			var fullList = new List<string>();

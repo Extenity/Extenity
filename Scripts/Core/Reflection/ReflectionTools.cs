@@ -585,7 +585,7 @@ namespace Extenity.ReflectionToolbox
 			// Now supply the type arguments
 			MethodInfo constructedHelper = genericHelper.MakeGenericMethod(typeof(TInstance), method.GetParameters()[0].ParameterType, method.ReturnType);
 
-			// Now call it. The null argument is because it’s a static method.
+			// Now call it. The null argument is because it's a static method.
 			object ret = constructedHelper.Invoke(null, new object[] { method });
 
 			// Cast the result to the right kind of delegate and return it

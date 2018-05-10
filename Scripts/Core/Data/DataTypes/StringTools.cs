@@ -1266,11 +1266,11 @@ namespace Extenity.DataToolbox
 					var emptyCount = barLength - filledCount;
 					for (int i = 0; i < filledCount; i++)
 					{
-						PercentageBarStringBuilder.Append('█');
+						PercentageBarStringBuilder.Append('\u2588'); // A full square character
 					}
 					for (int i = 0; i < emptyCount; i++)
 					{
-						PercentageBarStringBuilder.Append('─');
+						PercentageBarStringBuilder.Append('\u2500'); // A full left-to-right stretching dash character
 					}
 					PercentageBarStringBuilder.Append("] ");
 				}

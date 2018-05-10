@@ -77,6 +77,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Layout
+
+		public static readonly GUILayoutOption SmallButtonHeight = GUILayout.Height(18);
+		public static readonly GUILayoutOption MediumButtonHeight = GUILayout.Height(24);
+		public static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(36f);
+
+		#endregion
+
 		#region Thread Safe Repaint
 
 		public void ThreadSafeRepaint()

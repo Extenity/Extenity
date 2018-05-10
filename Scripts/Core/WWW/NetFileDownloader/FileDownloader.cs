@@ -1,12 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------
-// <copyright company="Avira Operations GmbH & Co. KG and its licensors">
-// © 2016 Avira Operations GmbH & Co. KG and its licensors.  All rights reserved.
-// </copyright>
-//----------------------------------------------------------------------------------------------------
-// Heavily modified to use in Extenity
-//----------------------------------------------------------------------------------------------------
-
-/*
+﻿/*
 ## .NET File Downloader
 This is a HTTP(S) file downloader with support of caching and resuming of partially downloaded files. 
 The main goal of .NET File Downloader is to facilitate downloading of big files on bad internet connections. It supports resuming of partially downloaded files. So if the download is interrupted and restarted, only the remaining part of file would be downloaded again.

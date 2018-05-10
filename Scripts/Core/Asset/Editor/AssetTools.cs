@@ -192,6 +192,15 @@ namespace Extenity.AssetToolbox.Editor
 			}).ToList();
 		}
 
+		public static List<string> GetAllScriptAssetPaths()
+		{
+			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			{
+				var lower = item.ToLowerInvariant();
+				return lower.EndsWith(".cs", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
+		}
+
 		#endregion
 
 		#region Get Asset Path Of Selection

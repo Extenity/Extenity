@@ -41,7 +41,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region GUI
 
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
-		private static readonly GUILayoutOption BigButtonHeight = GUILayout.Height(35);
 
 		private string SearchText = "";
 

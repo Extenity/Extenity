@@ -1,11 +1,3 @@
-//----------------------------------------------------------------------------------------------------
-// <copyright company="Avira Operations GmbH & Co. KG and its licensors">
-// © 2016 Avira Operations GmbH & Co. KG and its licensors.  All rights reserved.
-// </copyright>
-//----------------------------------------------------------------------------------------------------
-// Heavily modified to use in Extenity
-//----------------------------------------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
 using System.Net;
