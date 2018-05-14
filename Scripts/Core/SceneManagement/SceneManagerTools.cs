@@ -62,6 +62,23 @@ namespace Extenity.SceneManagementToolbox
 				SceneManager.UnloadSceneAsync(scene);
 			}
 		}
+
+		public static void ReloadAllLoadedScenes()
+		{
+			var loadedScenes = GetLoadedScenes(false);
+			var loadedActiveScene = SceneManager.GetActiveScene();
+			if (!loadedActiveScene.IsValid())
+				return;
+
+			SceneManager.LoadScene(loadedActiveScene.name, LoadSceneMode.Single);
+			if (loadedScenes != null)
+			{
+				foreach (var loadedScene in loadedScenes)
+				{
+					SceneManager.LoadScene(loadedScene.name, LoadSceneMode.Additive);
+				}
+			}
+		}
 	}
 
 	public static class SceneManagerToolsExtensions
