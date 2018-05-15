@@ -34,20 +34,34 @@ namespace Extenity.BeyondAudio.Effects
 		[Serializable]
 		public class ClipConfiguration
 		{
-			public AudioSource Source;
-			public AudioSource SourceLow;
+			public bool UseOnlyHighLoad = false;
+
+			[FormerlySerializedAs("Source")]
+			public AudioSource HighLoadSource;
+			[FormerlySerializedAs("SourceLow")]
+			public AudioSource LowLoadSource;
+
 			public AnimationCurve VolumeCurve;
 			public AnimationCurve FrequencyCurve;
+
+			//[NonSerialized]
+			//public bool IsHighLoadAvailable;
+			//[NonSerialized]
+			//public bool IsLowLoadAvailable;
 		}
 
+
+		[Header("RPM")]
 		public float LoadSmoothness = 0.08f;
+		public List<ClipConfiguration> ClipConfigurations;
+
+		[Header("Gas Leaks")]
 		public AudioSource PushGasSource;
 		public AudioSource ReleaseGasSource;
 		public float MinRateOfChangeToPush = 1f;
 		public float MinRateOfChangeToRelease = 1f;
 		public float MinIntervalBetweenPushEffects = 0.3f;
 		public float MinIntervalBetweenReleaseEffects = 0.3f;
-		public List<ClipConfiguration> ClipConfigurations;
 
 		[Header("Turbo")]
 		public AudioSource TurboAudioSource;
@@ -60,15 +74,28 @@ namespace Extenity.BeyondAudio.Effects
 		private float LastPushEffectTime;
 		private float LastReleaseEffectTime;
 
+		private bool IsTurboAvailable;
+		private bool IsPushGasAvailable;
+		private bool IsReleaseGasAvailable;
+
+
+		#region Initialization
+
 		private void Start()
 		{
-			ScaleConfigurations();
+			RefreshStates();
+			//ScaleConfigurations(); Better do this only in editor.
 		}
 
-		private void OnValidate()
-		{
-			ScaleConfigurations();
-		}
+		#endregion
+
+		#region Deinitialization
+
+		//private void OnDestroy()
+		//{
+		//}
+
+		#endregion
 
 		private void FixedUpdate()
 		{
@@ -78,7 +105,7 @@ namespace Extenity.BeyondAudio.Effects
 			Load += (targetLoad - Load) * LoadSmoothness;
 
 			var diff = (GasInput - PreviousGasInput) / Time.deltaTime;
-			if (diff > MinRateOfChangeToPush && PushGasSource)
+			if (diff > MinRateOfChangeToPush && IsPushGasAvailable)
 			{
 				var now = Time.time;
 				if (now > LastPushEffectTime + MinIntervalBetweenPushEffects)
@@ -87,7 +114,7 @@ namespace Extenity.BeyondAudio.Effects
 					PushGasSource.Play();
 				}
 			}
-			if (-diff > MinRateOfChangeToRelease && ReleaseGasSource)
+			if (-diff > MinRateOfChangeToRelease && IsReleaseGasAvailable)
 			{
 				var now = Time.time;
 				if (now > LastReleaseEffectTime + MinIntervalBetweenReleaseEffects)
@@ -102,29 +129,50 @@ namespace Extenity.BeyondAudio.Effects
 
 		private void Update()
 		{
+			var rpm = RPM.Value;
+			var load = Load;
+			var inverseLoad = 1f - Load;
+
 			for (int i = 0; i < ClipConfigurations.Count; i++)
 			{
 				var clipConfiguration = ClipConfigurations[i];
-				var frequency = clipConfiguration.FrequencyCurve.Evaluate(RPM.Value);
-				var volume = clipConfiguration.VolumeCurve.Evaluate(RPM.Value);
-				clipConfiguration.Source.pitch = frequency;
-				clipConfiguration.Source.volume = volume * Load;
-				clipConfiguration.SourceLow.pitch = frequency;
-				clipConfiguration.SourceLow.volume = volume * (1f - Load);
+				var frequency = clipConfiguration.FrequencyCurve.Evaluate(rpm);
+				var volume = clipConfiguration.VolumeCurve.Evaluate(rpm);
+				clipConfiguration.HighLoadSource.pitch = frequency;
+				clipConfiguration.HighLoadSource.volume = volume * load;
+				if (!clipConfiguration.UseOnlyHighLoad)
+				{
+					clipConfiguration.LowLoadSource.pitch = frequency;
+					clipConfiguration.LowLoadSource.volume = volume * inverseLoad;
+				}
 			}
 
-			if (TurboAudioSource)
+			if (IsTurboAvailable)
 			{
 				TurboAudioSource.pitch = TurboFrequencyCurve.Evaluate(Turbo);
 				TurboAudioSource.volume = TurboVolumeCurve.Evaluate(Turbo);
 			}
 		}
 
-		public void ScaleConfigurations()
+		public void RefreshStates()
 		{
 			RPM.Min = 0f;
 			RPM.Max = MaxRPM;
 
+			IsTurboAvailable = TurboAudioSource.IsNotNullAndHasClip();
+			IsPushGasAvailable = PushGasSource.IsNotNullAndHasClip();
+			IsReleaseGasAvailable = ReleaseGasSource.IsNotNullAndHasClip();
+
+			//for (var i = 0; i < ClipConfigurations.Count; i++)
+			//{
+			//	var configuration = ClipConfigurations[i];
+			//	configuration.IsHighLoadAvailable = configuration.HighLoadSource.IsNotNullAndHasClip();
+			//	configuration.IsLowLoadAvailable = configuration.LowLoadSource.IsNotNullAndHasClip();
+			//}
+		}
+
+		public void ScaleConfigurations()
+		{
 			for (int i = 0; i < ClipConfigurations.Count; i++)
 			{
 				var clipConfiguration = ClipConfigurations[i];
@@ -134,6 +182,16 @@ namespace Extenity.BeyondAudio.Effects
 				clipConfiguration.FrequencyCurve.ClampVertical(0f, 3f);
 			}
 		}
+
+		#region Editor
+
+		private void OnValidate()
+		{
+			RefreshStates();
+			ScaleConfigurations();
+		}
+
+		#endregion
 	}
 
 }
