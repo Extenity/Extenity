@@ -138,10 +138,15 @@ namespace Extenity.BeyondAudio.Effects
 				var clipConfiguration = ClipConfigurations[i];
 				var frequency = clipConfiguration.FrequencyCurve.Evaluate(rpm);
 				var volume = clipConfiguration.VolumeCurve.Evaluate(rpm);
-				clipConfiguration.HighLoadSource.pitch = frequency;
-				clipConfiguration.HighLoadSource.volume = volume * load;
-				if (!clipConfiguration.UseOnlyHighLoad)
+				if (clipConfiguration.UseOnlyHighLoad)
 				{
+					clipConfiguration.HighLoadSource.pitch = frequency;
+					clipConfiguration.HighLoadSource.volume = volume;
+				}
+				else
+				{
+					clipConfiguration.HighLoadSource.pitch = frequency;
+					clipConfiguration.HighLoadSource.volume = volume * load;
 					clipConfiguration.LowLoadSource.pitch = frequency;
 					clipConfiguration.LowLoadSource.volume = volume * inverseLoad;
 				}
