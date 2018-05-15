@@ -330,12 +330,10 @@ namespace Extenity.IMGUIToolbox
 		{
 			// Normally the static initializer does this, but to handle texture reinitialization
 			// after editor play mode stops we need this check in the Editor.
-#if UNITY_EDITOR
 			if (!lineTex)
 			{
 				InitializeLineDrawer();
 			}
-#endif
 
 			// Note that theta = atan2(dy, dx) is the angle we want to rotate by, but instead
 			// of calculating the angle we just use the sine (dy/len) and cosine (dx/len).
@@ -389,13 +387,13 @@ namespace Extenity.IMGUIToolbox
 
 		private static void InitializeLineDrawer()
 		{
-			if (lineTex == null)
+			if (!lineTex)
 			{
 				lineTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 				lineTex.SetPixel(0, 1, Color.white);
 				lineTex.Apply();
 			}
-			if (aaLineTex == null)
+			if (!aaLineTex)
 			{
 				// TODO: better anti-aliasing of wide lines with a larger texture? or use Graphics.DrawTexture with border settings
 				aaLineTex = new Texture2D(1, 3, TextureFormat.ARGB32, false);
@@ -407,8 +405,10 @@ namespace Extenity.IMGUIToolbox
 
 			// GUI.blitMaterial and GUI.blendMaterial are used internally by GUI.DrawTexture,
 			// depending on the alphaBlend parameter. Use reflection to "borrow" these references.
-			blitMaterial = (Material)typeof(GUI).GetMethod("get_blitMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
-			blendMaterial = (Material)typeof(GUI).GetMethod("get_blendMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+			if (!blitMaterial)
+				blitMaterial = (Material)typeof(GUI).GetMethod("get_blitMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+			if (!blendMaterial)
+				blendMaterial = (Material)typeof(GUI).GetMethod("get_blendMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 		}
 
 		#endregion
