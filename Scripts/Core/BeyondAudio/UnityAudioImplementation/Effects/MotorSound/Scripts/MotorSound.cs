@@ -177,7 +177,7 @@ namespace Extenity.BeyondAudio.Effects
 			{
 				var clipConfiguration = ClipConfigurations[i];
 				clipConfiguration.VolumeCurve.AbsoluteScaleHorizontal(MaxRPM);
-				clipConfiguration.VolumeCurve.Clamp01Vertical();
+				clipConfiguration.VolumeCurve.ClampVertical(0f, 3f);
 				clipConfiguration.FrequencyCurve.AbsoluteScaleHorizontal(MaxRPM);
 				clipConfiguration.FrequencyCurve.ClampVertical(0f, 3f);
 			}

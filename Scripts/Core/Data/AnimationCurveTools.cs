@@ -54,12 +54,15 @@ namespace Extenity.DataToolbox
 				return false;
 
 			var scale = endValue / (endTime - startTime);
+			var oneOverScale = 1f / scale;
 
 			for (int i = 0; i < keys.Length; i++)
 			{
 				var keyframe = keys[i];
 				keyframe.time = (keyframe.time - startTime) * scale;
 				keys[i] = keyframe;
+				keys[i].inTangent *= oneOverScale;
+				keys[i].outTangent *= oneOverScale;
 			}
 			curve.keys = keys;
 			return true;
@@ -78,6 +81,9 @@ namespace Extenity.DataToolbox
 				}
 				else
 				{
+					// Consider using this.
+					//AnimationUtility.SetKeyLeftTangentMode(curve, i, AnimationUtility.TangentMode.Linear);
+
 					var diffX = key.time - keys[i - 1].time;
 					var diffY = key.value - keys[i - 1].value;
 					key.inTangent = diffY / diffX;
