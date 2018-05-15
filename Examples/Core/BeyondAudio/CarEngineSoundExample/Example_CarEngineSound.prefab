@@ -537,7 +537,8 @@ MonoBehaviour:
   _MaxRPM: 100
   LoadSmoothness: 0.08
   ClipConfigurations:
-  - HighLoadSource: {fileID: 8236160}
+  - UseOnlyHighLoad: 0
+    HighLoadSource: {fileID: 8236160}
     LowLoadSource: {fileID: 82530044644217846}
     VolumeCurve:
       serializedVersion: 2
@@ -614,7 +615,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - HighLoadSource: {fileID: 8250864}
+  - UseOnlyHighLoad: 0
+    HighLoadSource: {fileID: 8250864}
     LowLoadSource: {fileID: 82330536309276872}
     VolumeCurve:
       serializedVersion: 2
@@ -700,7 +702,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - HighLoadSource: {fileID: 8259620}
+  - UseOnlyHighLoad: 0
+    HighLoadSource: {fileID: 8259620}
     LowLoadSource: {fileID: 82336489833518854}
     VolumeCurve:
       serializedVersion: 2
@@ -786,7 +789,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - HighLoadSource: {fileID: 8272452}
+  - UseOnlyHighLoad: 0
+    HighLoadSource: {fileID: 8272452}
     LowLoadSource: {fileID: 82267358178636338}
     VolumeCurve:
       serializedVersion: 2
@@ -872,7 +876,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - HighLoadSource: {fileID: 8290004}
+  - UseOnlyHighLoad: 0
+    HighLoadSource: {fileID: 8290004}
     LowLoadSource: {fileID: 82520363543263778}
     VolumeCurve:
       serializedVersion: 2

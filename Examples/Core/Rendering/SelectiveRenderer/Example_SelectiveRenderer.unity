@@ -5597,37 +5597,6 @@ Material:
     m_Colors:
     - _Color: {r: 0.9411765, g: 0.11072664, b: 0.11072664, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
---- !u!84 &459783514
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_Width: 640
-  m_Height: 480
-  m_AntiAliasing: 1
-  m_DepthFormat: 2
-  m_ColorFormat: 0
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 0
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &465989356
 GameObject:
   m_ObjectHideFlags: 0
@@ -21437,8 +21406,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1.803125
-    height: 2.6437502
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 73.9
@@ -21449,7 +21418,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 2147483648
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 459783514}
+  m_TargetTexture: {fileID: 1834908798}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -23497,6 +23466,37 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1813101050}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!84 &1834908798
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 1432
+  m_Height: 1557
+  m_AntiAliasing: 1
+  m_DepthFormat: 2
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &1857573284
 GameObject:
   m_ObjectHideFlags: 0
