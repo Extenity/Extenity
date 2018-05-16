@@ -2,6 +2,7 @@
 using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 namespace Extenity.DLLBuilder
@@ -15,6 +16,9 @@ namespace Extenity.DLLBuilder
 		{
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 			InitializeStatusMessage();
+
+			CompilationPipeline.assemblyCompilationStarted += RefreshUIOnCompilationStart;
+			CompilationPipeline.assemblyCompilationFinished += RefreshUIOnCompilationEnd;
 		}
 
 		#endregion
@@ -23,6 +27,9 @@ namespace Extenity.DLLBuilder
 
 		private void OnDisable()
 		{
+			CompilationPipeline.assemblyCompilationStarted -= RefreshUIOnCompilationStart;
+			CompilationPipeline.assemblyCompilationFinished -= RefreshUIOnCompilationEnd;
+
 			DeinitializeStatusMessage();
 		}
 
@@ -48,7 +55,7 @@ namespace Extenity.DLLBuilder
 		{
 			GUILayout.Space(20f);
 
-			GUI.enabled = !DLLBuilder.IsProcessing;
+			GUI.enabled = !DLLBuilder.IsProcessing && !EditorApplication.isCompiling;
 			if (GUILayout.Button("Build Remote", ThickButtonOptions))
 			{
 				DLLBuilder.StartProcess(BuildTriggerSource.UI, null, true);
@@ -57,7 +64,6 @@ namespace Extenity.DLLBuilder
 			{
 				DLLBuilder.StartProcess(BuildTriggerSource.UI);
 			}
-			GUI.enabled = true;
 
 			GUILayout.Space(20f);
 			if (GUILayout.Button("Configuration", ThinButtonOptions))
@@ -68,6 +74,7 @@ namespace Extenity.DLLBuilder
 			{
 				Cleaner.ClearAllOutputDLLs(DLLBuilderConfiguration.Instance);
 			}
+			GUI.enabled = true;
 
 			GUILayout.Space(30f);
 
@@ -94,6 +101,18 @@ namespace Extenity.DLLBuilder
 			//{
 			//	Distributer.DistributeToAll();
 			//}
+		}
+
+		private void RefreshUIOnCompilationStart(string dummy)
+		{
+			ShowNotification(new GUIContent("COMPILING..."));
+			Repaint();
+		}
+
+		private void RefreshUIOnCompilationEnd(string dummy1, CompilerMessage[] dummy2)
+		{
+			RemoveNotification();
+			Repaint();
 		}
 
 		#endregion
