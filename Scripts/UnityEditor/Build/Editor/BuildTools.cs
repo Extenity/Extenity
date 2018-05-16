@@ -100,11 +100,11 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Pro License
 
-		public class DisposeHandler : IDisposable
+		public class SplashDisposeHandler : IDisposable
 		{
 			private bool Result;
 
-			internal DisposeHandler(bool result)
+			internal SplashDisposeHandler(bool result)
 			{
 				Result = result;
 			}
@@ -123,7 +123,7 @@ namespace Extenity.BuildToolbox.Editor
 				if (PlayerSettings.SplashScreen.show)
 				{
 					PlayerSettings.SplashScreen.show = false;
-					return new DisposeHandler(true);
+					return new SplashDisposeHandler(true);
 				}
 			}
 			return null;
@@ -131,6 +131,56 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Keys
+
+		public class KeyDisposeHandler : IDisposable
+		{
+			public string ResultingKeystoreName;
+			public string ResultingKeystorePass;
+			public string ResultingKeyaliasName;
+			public string ResultingKeyaliasPass;
+
+			internal KeyDisposeHandler(string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
+			{
+				ResultingKeystoreName = resultingKeystoreName;
+				ResultingKeystorePass = resultingKeystorePass;
+				ResultingKeyaliasName = resultingKeyaliasName;
+				ResultingKeyaliasPass = resultingKeyaliasPass;
+			}
+
+			public void Dispose()
+			{
+				PlayerSettings.Android.keystoreName = ResultingKeystoreName;
+				PlayerSettings.Android.keystorePass = ResultingKeystorePass;
+				PlayerSettings.Android.keyaliasName = ResultingKeyaliasName;
+				PlayerSettings.Android.keyaliasPass = ResultingKeyaliasPass;
+				AssetDatabase.SaveAssets();
+			}
+		}
+
+		public static IDisposable SetTemporaryKeys(
+			string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass,
+			string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
+		{
+			PlayerSettings.Android.keystoreName = setKeystoreName;
+			PlayerSettings.Android.keystorePass = setKeystorePass;
+			PlayerSettings.Android.keyaliasName = setKeyaliasName;
+			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
+			return new KeyDisposeHandler(resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
+		}
+
+		public static IDisposable SetTemporaryKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		{
+			var resultingKeystoreName = PlayerSettings.Android.keystoreName;
+			var resultingKeystorePass = PlayerSettings.Android.keystorePass;
+			var resultingKeyaliasName = PlayerSettings.Android.keyaliasName;
+			var resultingKeyaliasPass = PlayerSettings.Android.keyaliasPass;
+			return SetTemporaryKeys(
+				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
+				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
+		}
+
+		#endregion
 		#region Increment Android Version
 
 		public static void IncrementAndroidVersion(bool alsoIncrementBundleVersion, bool saveAssets)
