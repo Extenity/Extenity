@@ -941,6 +941,18 @@ namespace Extenity.GameObjectToolbox
 			return SceneManagerTools.GetLoadedScenes().FindObjectsOfTypeAll<T>();
 		}
 
+		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes)
+		{
+			var results = new List<T>();
+			for (var i = 0; i < scenes.Count; i++)
+			{
+				var list = scenes[i].FindObjectsOfTypeAll<T>();
+				results.AddRange(list);
+			}
+
+			return results;
+		}
+
 		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene)
 		{
 			var temp = new List<T>();
@@ -951,17 +963,6 @@ namespace Extenity.GameObjectToolbox
 				rootGameObjects[i].GetComponentsInChildren(true, temp);
 				results.AddRange(temp);
 				temp.Clear();
-			}
-			return results;
-		}
-
-		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes)
-		{
-			var results = new List<T>();
-			foreach (var scene in scenes)
-			{
-				var list = scene.FindObjectsOfTypeAll<T>();
-				results.AddRange(list);
 			}
 			return results;
 		}
