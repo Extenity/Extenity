@@ -83,6 +83,54 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		#region FindStaticObjectsOfTypeAll in Scene
+
+		public static List<T> FindStaticObjectsOfTypeAllInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			return SceneManager.GetActiveScene().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+		}
+
+		public static List<T> FindStaticObjectsOfTypeAllInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			return SceneManagerTools.GetLoadedScenes().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+		}
+
+		public static List<T> FindStaticObjectsOfTypeAll<T>(this IList<Scene> scenes, StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			var results = new List<T>();
+			for (var i = 0; i < scenes.Count; i++)
+			{
+				var list = scenes[i].FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+				results.AddRange(list);
+			}
+
+			return results;
+		}
+
+		public static List<T> FindStaticObjectsOfTypeAll<T>(this Scene scene, StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			var temp = new List<T>();
+			var results = new List<T>();
+			var rootGameObjects = scene.GetRootGameObjects();
+			for (int i = 0; i < rootGameObjects.Length; i++)
+			{
+				rootGameObjects[i].GetComponentsInChildren(true, temp);
+				for (int iChild = 0; iChild < temp.Count; iChild++)
+				{
+					var child = temp[iChild];
+					var flags = GameObjectUtility.GetStaticEditorFlags(child.gameObject);
+					if ((flags & leastExpectedFlags) == leastExpectedFlags)
+					{
+						results.Add(child);
+					}
+				}
+				temp.Clear();
+			}
+			return results;
+		}
+
+		#endregion
+
 		#region Delete Empty Unreferenced GameObjects
 
 		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool undoable, bool log)
