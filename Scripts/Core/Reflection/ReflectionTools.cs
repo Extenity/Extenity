@@ -647,7 +647,7 @@ namespace Extenity.ReflectionToolbox
 		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result) where T : Component
 		{
 			if (!component)
-				throw new ArgumentNullException("component");
+				throw new ArgumentNullException(nameof(component));
 			foreach (var serializedField in component.GetUnitySerializedFields())
 			{
 				var referencedObject = serializedField.GetValue(component);
@@ -658,7 +658,7 @@ namespace Extenity.ReflectionToolbox
 		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result)
 		{
 			if (!gameObject)
-				throw new ArgumentNullException("gameObject");
+				throw new ArgumentNullException(nameof(gameObject));
 			foreach (var component in gameObject.GetComponents<Component>())
 			{
 				foreach (var serializedField in component.GetUnitySerializedFields())
@@ -672,14 +672,14 @@ namespace Extenity.ReflectionToolbox
 		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result)
 		{
 			if (unityObject == null)
-				throw new ArgumentNullException("unityObject");
+				throw new ArgumentNullException(nameof(unityObject));
 			InternalAddReferencedObjectOfType(unityObject, result);
 		}
 
 		public static void FindAllReferencedGameObjectsInObject(this object obj, HashSet<GameObject> result)
 		{
 			if (obj == null)
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException(nameof(obj));
 			InternalAddReferencedObjectOfType(obj, result);
 		}
 

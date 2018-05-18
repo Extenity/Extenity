@@ -116,6 +116,7 @@ namespace Extenity.MeshToolbox
 					}
 
 					// Save mesh
+					DirectoryTools.CreateFromFilePath(outputAssetPath);
 					AssetDatabase.CreateAsset(splitSubmesh, outputAssetPath);
 
 					if (outputAssetPaths != null)
