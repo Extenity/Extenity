@@ -2,10 +2,12 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEditor;
+using Object = UnityEngine.Object;
 
 namespace Extenity.MeshToolbox
 {
@@ -14,12 +16,12 @@ namespace Extenity.MeshToolbox
 	{
 		AlwaysRename,
 		AlwaysOverwrite,
-		UseAlreadyExisting,
-		RenameIfDifferentOrUseAlreadyExisting,
 	}
 
 	public class SubmeshSplitResult
 	{
+		#region Data
+
 		public int OperationCount = 0;
 		public int CreatedSubmeshAssetCount = 0;
 
@@ -42,6 +44,8 @@ namespace Extenity.MeshToolbox
 		/// Value: Renamed output mesh asset paths.
 		/// </summary>
 		public Dictionary<string, List<string>> RenamedAssets = new Dictionary<string, List<string>>();
+
+		#endregion
 
 		#region Tools
 
@@ -90,6 +94,113 @@ namespace Extenity.MeshToolbox
 		#endregion
 	}
 
+	public class SubmeshSplitMeshDatabase
+	{
+		public class Entry
+		{
+			public readonly Mesh Mesh;
+
+			#region Initialization
+
+			public Entry(Mesh mesh)
+			{
+				if (!mesh)
+					throw new ArgumentNullException(nameof(mesh));
+
+				Mesh = mesh;
+			}
+
+			#endregion
+
+			#region Comparison
+
+			// Cached comparison data
+			private Vector3[] vertices;
+			private int[] triangles;
+			private Vector3[] normals;
+			private Color32[] colors32;
+			private Vector2[] uv;
+			private Vector2[] uv2;
+			private Vector2[] uv3;
+			private Vector2[] uv4;
+
+			private void FillCachedComparisonDataIfNeeded()
+			{
+				if (vertices != null)
+					return;
+
+				vertices = Mesh.vertices;
+				triangles = Mesh.triangles;
+				normals = Mesh.normals;
+				colors32 = Mesh.colors32;
+				uv = Mesh.uv;
+				uv2 = Mesh.uv2;
+				uv3 = Mesh.uv3;
+				uv4 = Mesh.uv4;
+			}
+
+			public bool IsMeshIdentical(Entry other)
+			{
+				FillCachedComparisonDataIfNeeded();
+				other.FillCachedComparisonDataIfNeeded();
+
+				// Quick comparison
+				if (vertices.Length != other.vertices.Length ||
+					triangles.Length != other.triangles.Length
+				)
+				{
+					return false;
+				}
+
+				return
+					vertices.SequenceEqual(other.vertices) &&
+					triangles.SequenceEqual(other.triangles) &&
+					normals.SequenceEqual(other.normals) &&
+					colors32.SequenceEqual(other.colors32) &&
+					uv.SequenceEqual(other.uv) &&
+					uv2.SequenceEqual(other.uv2) &&
+					uv3.SequenceEqual(other.uv3) &&
+					uv4.SequenceEqual(other.uv4);
+			}
+
+			#endregion
+		}
+
+		#region Entries
+
+		public List<Entry> Entries = new List<Entry>();
+
+		public void Clear()
+		{
+			Entries.Clear();
+		}
+
+		public void AddMesh(Mesh mesh)
+		{
+			if (!mesh)
+				throw new ArgumentNullException(nameof(mesh));
+
+			Entries.Add(new Entry(mesh));
+		}
+
+		public Mesh GetIdenticalMesh(Mesh mesh)
+		{
+			if (!mesh)
+				throw new ArgumentNullException(nameof(mesh));
+
+			var otherMeshEntry = new Entry(mesh);
+
+			for (var i = 0; i < Entries.Count; i++)
+			{
+				if (Entries[i].IsMeshIdentical(otherMeshEntry))
+					return Entries[i].Mesh;
+			}
+			return null;
+		}
+
+		#endregion
+	}
+
 	public static class EditorMeshTools
 	{
 		/// <summary>
@@ -97,10 +208,12 @@ namespace Extenity.MeshToolbox
 		/// </summary>
 		/// <param name="result">Detailed information about splitting operation. The same SubmeshSplitResult can be used consecutively for multiple operations, so that all results can be appended and merged together.</param>
 		/// <param name="overwriteExistingMeshAssetsRule">Whether already existing mesh assets will be overwritten. See SubmeshSplitOverwriteRule for details.</param>
+		/// <param name="database">Created mesh is first checked for duplications in database if a database is specified. The mesh in database will be used instead of creating a duplicate. Also all created meshes will be added into the database.</param>
 		/// <returns>Submesh count.</returns>
 		public static int SplitSubmeshes(this MeshRenderer meshRenderer, ref SubmeshSplitResult result,
 			string submeshNamePostfix = "_submesh-", string outputBasePath = null, string outputSubPath = null,
-			SubmeshSplitOverwriteRule overwriteExistingMeshAssetsRule = SubmeshSplitOverwriteRule.AlwaysRename)
+			SubmeshSplitOverwriteRule overwriteExistingMeshAssetsRule = SubmeshSplitOverwriteRule.AlwaysRename,
+			SubmeshSplitMeshDatabase database = null)
 		{
 			// TODO: Make sure the resulting mesh data is not kept in scene. It should refer to the created asset file.
 			// TODO: Make sure output path is selected as original Mesh asset's path if the mesh is referenced from an asset.
@@ -178,7 +291,24 @@ namespace Extenity.MeshToolbox
 				var splitSubmesh = mesh.SplitSubmesh(i);
 				var splitSubmeshName = baseFileName + submeshNamePostfix + i;
 
+				// See if database has the same mesh. Use the one in database to prevent duplications.
+				var foundInDatabase = false;
+				if (database != null)
+				{
+					var identicalMesh = database.GetIdenticalMesh(splitSubmesh);
+					if (identicalMesh)
+					{
+						foundInDatabase = true;
+
+						// Destroy the created mesh. We won't be using it anywhere.
+						Object.DestroyImmediate(splitSubmesh);
+
+						splitSubmesh = identicalMesh;
+					}
+				}
+
 				// Save mesh to file
+				if (!foundInDatabase)
 				{
 					// Create file path
 					// TODO: Filename should be checked for invalid characters.
@@ -186,7 +316,6 @@ namespace Extenity.MeshToolbox
 					var outputAssetPath = Path.Combine(outputBasePath, filename);
 
 					// Check if a file at that path already exists
-					var dontSave = false;
 					var alreadyExists = File.Exists(outputAssetPath);
 					if (alreadyExists)
 					{
@@ -205,24 +334,21 @@ namespace Extenity.MeshToolbox
 									result.OverwrittenAssets.AddOrIncrement(outputAssetPath);
 								}
 								break;
-							case SubmeshSplitOverwriteRule.UseAlreadyExisting:
-								throw new NotImplementedException();
-							case SubmeshSplitOverwriteRule.RenameIfDifferentOrUseAlreadyExisting:
-								throw new NotImplementedException();
 							default:
 								throw new ArgumentOutOfRangeException(nameof(overwriteExistingMeshAssetsRule), overwriteExistingMeshAssetsRule, null);
 						}
 					}
 
 					// Save mesh
-					if (!dontSave)
-					{
-						DirectoryTools.CreateFromFilePath(outputAssetPath);
-						AssetDatabase.CreateAsset(splitSubmesh, outputAssetPath);
-						result.CreatedSubmeshAssetCount++;
-					}
-
+					DirectoryTools.CreateFromFilePath(outputAssetPath);
+					AssetDatabase.CreateAsset(splitSubmesh, outputAssetPath);
+					splitSubmesh = AssetDatabase.LoadAssetAtPath<Mesh>(outputAssetPath);
+					if (!splitSubmesh)
+						throw new Exception($"Failed to save and load mesh asset to file at path '{outputAssetPath}'.");
+					result.CreatedSubmeshAssetCount++;
 					result.OutputAssetPaths.Add(outputAssetPath);
+					if (database != null)
+						database.AddMesh(splitSubmesh);
 				}
 
 				// Create sub objects
