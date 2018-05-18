@@ -299,9 +299,9 @@ namespace Extenity.GameObjectToolbox.Editor
 				if (!meshRenderer)
 					continue;
 				var gameObject = meshRenderer.gameObject;
-				if (gameObject.activeInHierarchy)
+				if (gameObject.activeInHierarchy && meshRenderer.enabled)
 					continue;
-				if (!gameObject.isStatic)
+				if (!gameObject.isStatic) // TODO: Check for only batch staticness, instead of any staticness.
 					continue;
 
 				var meshFilter = meshRenderer.GetComponent<MeshFilter>();
