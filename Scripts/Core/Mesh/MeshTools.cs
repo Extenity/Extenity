@@ -250,6 +250,115 @@ namespace Extenity.MeshToolbox
 		}
 
 		#endregion
+
+		#region Split Submesh
+
+		private class SubmeshSplitterData
+		{
+			private List<Vector3> vertices = null;
+			private List<Vector2> uv1 = null;
+			private List<Vector2> uv2 = null;
+			private List<Vector2> uv3 = null;
+			private List<Vector2> uv4 = null;
+			private List<Vector3> normals = null;
+			private List<Vector4> tangents = null;
+			private List<Color32> colors32 = null;
+			private List<BoneWeight> boneWeights = null;
+
+			public SubmeshSplitterData()
+			{
+				vertices = new List<Vector3>();
+			}
+
+			public SubmeshSplitterData(Mesh clonedMesh)
+			{
+				vertices = CreateList(clonedMesh.vertices);
+				uv1 = CreateList(clonedMesh.uv);
+				uv2 = CreateList(clonedMesh.uv2);
+				uv3 = CreateList(clonedMesh.uv3);
+				uv4 = CreateList(clonedMesh.uv4);
+				normals = CreateList(clonedMesh.normals);
+				tangents = CreateList(clonedMesh.tangents);
+				colors32 = CreateList(clonedMesh.colors32);
+				boneWeights = CreateList(clonedMesh.boneWeights);
+			}
+
+			private List<T> CreateList<T>(T[] source)
+			{
+				if (source == null || source.Length == 0)
+					return null;
+				return new List<T>(source);
+			}
+
+			private void AppendToList<T>(ref List<T> destination, List<T> source, int sourceIndex)
+			{
+				if (source == null)
+					return;
+				if (destination == null)
+					destination = new List<T>();
+				destination.Add(source[sourceIndex]);
+			}
+
+			public int Append(SubmeshSplitterData other, int index)
+			{
+				var i = vertices.Count;
+				AppendToList(ref vertices, other.vertices, index);
+				AppendToList(ref uv1, other.uv1, index);
+				AppendToList(ref uv2, other.uv2, index);
+				AppendToList(ref uv3, other.uv3, index);
+				AppendToList(ref uv4, other.uv4, index);
+				AppendToList(ref normals, other.normals, index);
+				AppendToList(ref tangents, other.tangents, index);
+				AppendToList(ref colors32, other.colors32, index);
+				AppendToList(ref boneWeights, other.boneWeights, index);
+				return i;
+			}
+
+			public Mesh CreateNewMesh()
+			{
+				var mesh = new Mesh();
+				mesh.SetVertices(vertices);
+				if (uv1 != null) mesh.SetUVs(0, uv1);
+				if (uv2 != null) mesh.SetUVs(1, uv2);
+				if (uv3 != null) mesh.SetUVs(2, uv3);
+				if (uv4 != null) mesh.SetUVs(3, uv4);
+				if (normals != null) mesh.SetNormals(normals);
+				if (tangents != null) mesh.SetTangents(tangents);
+				if (colors32 != null) mesh.SetColors(colors32);
+				if (boneWeights != null) mesh.boneWeights = boneWeights.ToArray();
+				return mesh;
+			}
+		}
+
+		/// <summary>
+		/// Source: https://answers.unity.com/questions/1213025/separating-submeshes-into-unique-meshes.html
+		/// </summary>
+		public static Mesh SplitSubmesh(this Mesh mesh, int submeshIndex)
+		{
+			if (submeshIndex < 0 || submeshIndex >= mesh.subMeshCount)
+				return null;
+			var submeshTriangles = mesh.GetTriangles(submeshIndex);
+			var sourceData = new SubmeshSplitterData(mesh);
+			var resultingData = new SubmeshSplitterData();
+			var indexMap = new Dictionary<int, int>();
+			var newIndices = new int[submeshTriangles.Length];
+			for (int i = 0; i < submeshTriangles.Length; i++)
+			{
+				var index = submeshTriangles[i];
+				int newIndex;
+				if (!indexMap.TryGetValue(index, out newIndex))
+				{
+					newIndex = resultingData.Append(sourceData, index);
+					indexMap.Add(index, newIndex);
+				}
+				newIndices[i] = newIndex;
+			}
+			var resultingMesh = resultingData.CreateNewMesh();
+			resultingMesh.triangles = newIndices;
+			return resultingMesh;
+		}
+
+		#endregion
 	}
 
 }
