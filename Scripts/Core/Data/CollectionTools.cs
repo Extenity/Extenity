@@ -1000,6 +1000,37 @@ namespace Extenity.DataToolbox
 			return ret;
 		}
 
+		public static void AppendOrCreate<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary,
+			TKey key,
+			TValue value)
+		{
+			List<TValue> list;
+			if (!dictionary.TryGetValue(key, out list) || list == null)
+			{
+				list = new List<TValue>();
+				dictionary.Add(key, list);
+			}
+			list.Add(value);
+		}
+
+		public static int AddOrIncrement<TKey>(this IDictionary<TKey, int> dictionary,
+			TKey key,
+			int initialValue = 1)
+		{
+			int ret;
+			if (dictionary.TryGetValue(key, out ret))
+			{
+				ret++;
+				dictionary[key] = ret;
+			}
+			else
+			{
+				ret = initialValue;
+				dictionary.Add(key, ret);
+			}
+			return ret;
+		}
+
 		#endregion
 
 		#region Search Pattern - Byte Array

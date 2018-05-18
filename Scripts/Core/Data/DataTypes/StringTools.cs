@@ -1280,6 +1280,24 @@ namespace Extenity.DataToolbox
 		}
 
 		#endregion
+
+		#region Singular/Plural
+
+		public static string ToStringWithEnglishPluralPostfix(this int value, string prefix)
+		{
+			return value == 1
+				? value.ToString() + " " + prefix
+				: value.ToString() + " " + prefix + "s";
+		}
+
+		public static string ToStringWithEnglishPluralPostfix(this int value, string prefix, char valueShell)
+		{
+			return value == 1
+				? valueShell + value.ToString() + valueShell + " " + prefix
+				: valueShell + value.ToString() + valueShell + " " + prefix + "s";
+		}
+
+		#endregion
 	}
 
 }
