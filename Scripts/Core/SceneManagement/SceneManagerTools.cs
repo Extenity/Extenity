@@ -94,6 +94,17 @@ namespace Extenity.SceneManagementToolbox
 
 			return activeScene == scene;
 		}
+
+		public static string GetSceneArtifactDirectoryPath(this Scene scene)
+		{
+			if (!scene.IsValid())
+				throw new Exception("Scene is not valid.");
+
+			var path = scene.path;
+			if (!path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+				throw new Exception("Scene is not saved to a file.");
+			return path.Substring(0, path.Length - ".unity".Length);
+		}
 	}
 
 }
