@@ -303,18 +303,22 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				var meshFilter = meshRenderer.GetComponent<MeshFilter>();
 
+				// Make sure mesh filter is not used elsewhere.
+				//var deleteMeshFilterToo = meshFilter && meshFilter.IsNotReferencedFromAnySerializedField(); // TODO: Implement this
+				var deleteMeshFilterToo = meshFilter;
+
 				if (log)
 					deletedObjectsText.AppendLine(gameObject.FullName());
 				if (undoable)
 				{
 					Undo.DestroyObjectImmediate(meshRenderer);
-					if (meshFilter)
+					if (deleteMeshFilterToo)
 						Undo.DestroyObjectImmediate(meshFilter);
 				}
 				else
 				{
 					Object.DestroyImmediate(meshRenderer);
-					if (meshFilter)
+					if (deleteMeshFilterToo)
 						Object.DestroyImmediate(meshFilter);
 				}
 			}

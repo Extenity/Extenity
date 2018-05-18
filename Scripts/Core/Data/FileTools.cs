@@ -514,7 +514,7 @@ namespace Extenity.DataToolbox
 
 		#region Unique File
 
-		public static string GenerateUniqueFilePath(this string path, string numberPrefix = " (", string numberPostfix = ")")
+		public static string GenerateUniqueFilePath(this string path, string numberPrefix = " (", string numberPostfix = ")", int maxTries = 10000)
 		{
 			var fileName = Path.GetFileNameWithoutExtension(path);
 			if (string.IsNullOrEmpty(fileName))
@@ -534,7 +534,7 @@ namespace Extenity.DataToolbox
 			return GenerateUniqueNumberedName(
 				filePathWithoutExtension,
 				checkingFilePath => File.Exists(checkingFilePath + fileExtension),
-				numberPrefix, numberPostfix) + fileExtension;
+				numberPrefix, numberPostfix, maxTries) + fileExtension;
 		}
 
 		public static string GenerateUniqueNumberedName(this string name, Predicate<string> doesExistCheck, string numberPrefix = " (", string numberPostfix = ")", int maxTries = 10000)
