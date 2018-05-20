@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
@@ -69,37 +70,45 @@ namespace Extenity.UIToolbox.Editor
 			if (selectedObjects.Length == 0)
 				throw new Exception("You should select some objects first.");
 
+			var includeInactive = true;
 			foreach (var selectedObject in selectedObjects)
 			{
-				var buttons = selectedObject.GetComponentsInChildren<Button>(true);
-				foreach (var button in buttons)
-				{
-					// Create ButtonClickSound
-					var buttonSound = button.gameObject.GetComponent<ButtonClickSound>();
-					var isCreated = false;
-					if (!buttonSound)
-					{
-						buttonSound = Undo.AddComponent<ButtonClickSound>(button.gameObject);
-						isCreated = true;
-					}
+				foreach (var clickable in selectedObject.GetComponentsInChildren<Button>(includeInactive))
+					clickable.CreateButtonClickSoundFor();
+				foreach (var clickable in selectedObject.GetComponentsInChildren<Toggle>(includeInactive))
+					clickable.CreateButtonClickSoundFor();
+			}
+		}
 
-					// Move it above Button
-					var movedBy = buttonSound.MoveComponentAbove(button);
+		public static void CreateButtonClickSoundFor<TTarget>(this TTarget clickable) where TTarget : Selectable
+		{
+			if (!ButtonClickSound.IsTypeSupported<TTarget>())
+				throw new Exception($"{typeof(ButtonClickSound).Name} does not support component {typeof(TTarget).Name}.");
 
-					// Log
-					if (isCreated)
-					{
-						Debug.Log($"{typeof(ButtonClickSound).Name} component created in object '{button.gameObject.name}'.", button.gameObject);
-					}
-					else if (movedBy != 0)
-					{
-						Debug.Log($"{typeof(ButtonClickSound).Name} component moved above {typeof(Button).Name} component in object '{button.gameObject.name}'.", button.gameObject);
-					}
-					else
-					{
-						Debug.Log($"{typeof(Button).Name} '{button.gameObject.name}' already has a {typeof(ButtonClickSound).Name}.", button.gameObject);
-					}
-				}
+			// Create ButtonClickSound
+			var buttonSound = clickable.gameObject.GetComponent<ButtonClickSound>();
+			var isCreated = false;
+			if (!buttonSound)
+			{
+				buttonSound = Undo.AddComponent<ButtonClickSound>(clickable.gameObject);
+				isCreated = true;
+			}
+
+			// Move it above Button
+			var movedBy = buttonSound.MoveComponentAbove(clickable);
+
+			// Log
+			if (isCreated)
+			{
+				Debug.Log($"{typeof(ButtonClickSound).Name} component created in object '{clickable.gameObject.name}'.", clickable.gameObject);
+			}
+			else if (movedBy != 0)
+			{
+				Debug.Log($"{typeof(ButtonClickSound).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.gameObject.name}'.", clickable.gameObject);
+			}
+			else
+			{
+				Debug.Log($"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(ButtonClickSound).Name}.", clickable.gameObject);
 			}
 		}
 	}
