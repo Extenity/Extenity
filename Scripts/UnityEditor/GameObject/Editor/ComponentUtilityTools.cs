@@ -65,12 +65,56 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 		}
 
+		public static bool IsComponentAbove(this Component me, Component target, bool acceptOnlyJustAbove = true)
+		{
+			if (!me)
+				throw new ArgumentNullException(nameof(me));
+			if (!target)
+				throw new ArgumentNullException(nameof(target));
+			if (me == target)
+				throw new Exception("Tried to check component orders between the same components.");
+			if (me.transform != target.transform)
+				throw new Exception("Tried to check component orders between different objects.");
+
+			int indexMe;
+			int indexTarget;
+			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+				throw new Exception("Internal error!"); // That's odd.
+
+			if (acceptOnlyJustAbove)
+				return indexMe == indexTarget - 1;
+			else
+				return indexMe < indexTarget;
+		}
+
+		public static bool IsComponentBelow(this Component me, Component target, bool acceptOnlyJustBelow = true)
+		{
+			if (!me)
+				throw new ArgumentNullException(nameof(me));
+			if (!target)
+				throw new ArgumentNullException(nameof(target));
+			if (me == target)
+				throw new Exception("Tried to check component orders between the same components.");
+			if (me.transform != target.transform)
+				throw new Exception("Tried to check component orders between different objects.");
+
+			int indexMe;
+			int indexTarget;
+			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+				throw new Exception("Internal error!"); // That's odd.
+
+			if (acceptOnlyJustBelow)
+				return indexMe == indexTarget + 1;
+			else
+				return indexMe > indexTarget;
+		}
+
 		public static int MoveComponentAbove(this Component me, Component target)
 		{
 			if (!me)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 			if (!target)
-				throw new ArgumentNullException("target");
+				throw new ArgumentNullException(nameof(target));
 			if (me == target)
 				return 0; // Ignore move request
 			if (me.transform != target.transform)
@@ -91,9 +135,9 @@ namespace Extenity.GameObjectToolbox.Editor
 		public static int MoveComponentBelow(this Component me, Component target)
 		{
 			if (!me)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 			if (!target)
-				throw new ArgumentNullException("target");
+				throw new ArgumentNullException(nameof(target));
 			if (me == target)
 				return 0; // Ignore move request
 			if (me.transform != target.transform)
