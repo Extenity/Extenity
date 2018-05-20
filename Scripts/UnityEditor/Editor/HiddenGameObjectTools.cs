@@ -40,6 +40,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region GUI
 
+		private static readonly GUILayoutOption BatchOperationLabelWidth = GUILayout.Width(110);
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
 
 		private string SearchText = "";
@@ -79,10 +80,30 @@ namespace Extenity.UnityEditorToolbox.Editor
 				// Batch buttons
 				{
 					GUILayout.BeginVertical();
+					// Hidden in loaded scenes
+					GUILayout.BeginHorizontal();
+					{
+						GUILayout.Label("Hidden (Loaded):", BatchOperationLabelWidth);
+						var display = isFiltering && DisplayedHiddenObjectsInLoadedScenes.IsNotNullAndEmpty();
+						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
+						{
+							Selection.objects = DisplayedHiddenObjectsInLoadedScenes.ToArray();
+						}
+						if (GUILayoutTools.Button("Reveal All", display, ButtonWidth))
+						{
+							RevealOrHideObjects(DisplayedHiddenObjectsInLoadedScenes);
+						}
+						if (GUILayoutTools.Button("Delete All", display, ButtonWidth))
+						{
+							DeleteObjects(DisplayedHiddenObjectsInLoadedScenes);
+						}
+					}
+					GUILayout.EndHorizontal();
+
 					// Hidden
 					GUILayout.BeginHorizontal();
 					{
-						GUILayout.Label("Hidden:", ButtonWidth);
+						GUILayout.Label("Hidden:", BatchOperationLabelWidth);
 						var display = isFiltering && DisplayedHiddenObjects.IsNotNullAndEmpty();
 						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
 						{
@@ -102,7 +123,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					// Visible
 					GUILayout.BeginHorizontal();
 					{
-						GUILayout.Label("Visible:", ButtonWidth);
+						GUILayout.Label("Visible:", BatchOperationLabelWidth);
 						var display = isFiltering && DisplayedVisibleObjects.IsNotNullAndEmpty();
 						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
 						{
@@ -127,6 +148,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
 			{
 				GUILayout.Space(10f);
+
+				// List hidden objects in loaded scenes
+				EditorGUILayout.LabelField(
+					isFiltering
+						? "Hidden Objects In Loaded Scenes (" + DisplayedHiddenObjectsInLoadedScenes.Count + " of " + HiddenObjectsInLoadedScenes.Count + ")"
+						: "Hidden Objects In Loaded Scenes (" + HiddenObjectsInLoadedScenes.Count + ")",
+					EditorStyles.boldLabel);
+				for (int i = 0; i < DisplayedHiddenObjectsInLoadedScenes.Count; i++)
+				{
+					DrawEntry(DisplayedHiddenObjectsInLoadedScenes[i]);
+				}
+
+				GUILayout.Space(20f);
 
 				// List hidden objects
 				EditorGUILayout.LabelField(
@@ -192,16 +226,20 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Hidden Objects
 
 		private List<GameObject> HiddenObjects = new List<GameObject>();
+		private List<GameObject> HiddenObjectsInLoadedScenes = new List<GameObject>();
 		private List<GameObject> VisibleObjects = new List<GameObject>();
 
 		private List<GameObject> DisplayedHiddenObjects = new List<GameObject>();
+		private List<GameObject> DisplayedHiddenObjectsInLoadedScenes = new List<GameObject>();
 		private List<GameObject> DisplayedVisibleObjects = new List<GameObject>();
 
 
 		private void GatherHiddenObjects()
 		{
 			HiddenObjects.Clear();
+			HiddenObjectsInLoadedScenes.Clear();
 			VisibleObjects.Clear();
+
 			//var allObjects = FindObjectsOfType<GameObject>(); This one does not reveal objects marked as DontDestroyOnLoad.
 			var allObjects = Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[];
 			for (int i = 0; i < allObjects.Length; i++)
@@ -210,7 +248,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 				if (IsHidden(go))
 				{
-					HiddenObjects.Add(go);
+					if (go.scene.isLoaded)
+					{
+						HiddenObjectsInLoadedScenes.Add(go);
+					}
+					else
+					{
+						HiddenObjects.Add(go);
+					}
 				}
 				else
 				{
@@ -226,6 +271,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private void RefreshFilteredLists()
 		{
 			DisplayedHiddenObjects.Clear();
+			DisplayedHiddenObjectsInLoadedScenes.Clear();
 			DisplayedVisibleObjects.Clear();
 
 			foreach (var obj in HiddenObjects)
@@ -236,6 +282,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 				)
 				{
 					DisplayedHiddenObjects.Add(obj);
+				}
+			}
+
+			foreach (var obj in HiddenObjectsInLoadedScenes)
+			{
+				if (!obj ||
+					string.IsNullOrEmpty(SearchText) ||
+					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
+				)
+				{
+					DisplayedHiddenObjectsInLoadedScenes.Add(obj);
 				}
 			}
 
