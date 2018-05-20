@@ -52,27 +52,27 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (moveAmount == 0)
 				return;
 
-			if (moveAmount > 0)
+			if (moveAmount < 0)
 			{
+				moveAmount = -moveAmount;
 				for (int i = 0; i < moveAmount; i++)
 					UnityEditorInternal.ComponentUtility.MoveComponentUp(me);
 			}
 			else
 			{
-				moveAmount = -moveAmount;
 				for (int i = 0; i < moveAmount; i++)
 					UnityEditorInternal.ComponentUtility.MoveComponentDown(me);
 			}
 		}
 
-		public static void MoveComponentAbove(this Component me, Component target)
+		public static int MoveComponentAbove(this Component me, Component target)
 		{
 			if (!me)
 				throw new ArgumentNullException("me");
 			if (!target)
 				throw new ArgumentNullException("target");
 			if (me == target)
-				return; // Ignore move request
+				return 0; // Ignore move request
 			if (me.transform != target.transform)
 				throw new Exception("Tried to relatively move components between different objects.");
 
@@ -80,18 +80,22 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
 				throw new Exception("Internal error!"); // That's odd.
+			int indexShouldBe = indexTarget;
 
-			MoveComponent(me, indexMe - indexTarget);
+			int upTopFactor = indexMe < indexTarget ? -1 : 0;
+			var moveAmount = indexShouldBe - indexMe + upTopFactor;
+			MoveComponent(me, moveAmount);
+			return moveAmount;
 		}
 
-		public static void MoveComponentBelow(this Component me, Component target)
+		public static int MoveComponentBelow(this Component me, Component target)
 		{
 			if (!me)
 				throw new ArgumentNullException("me");
 			if (!target)
 				throw new ArgumentNullException("target");
 			if (me == target)
-				return; // Ignore move request
+				return 0; // Ignore move request
 			if (me.transform != target.transform)
 				throw new Exception("Tried to relatively move components between different objects.");
 
@@ -99,8 +103,12 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
 				throw new Exception("Internal error!"); // That's odd.
+			int indexShouldBe = indexTarget + 1;
 
-			MoveComponent(me, indexMe - indexTarget - 1);
+			int upTopFactor = indexMe < indexTarget ? -1 : 0;
+			var moveAmount = indexShouldBe - indexMe + upTopFactor;
+			MoveComponent(me, moveAmount);
+			return moveAmount;
 		}
 
 		#endregion
