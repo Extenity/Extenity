@@ -345,40 +345,6 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Assets Menu - Operations - Set Static
-
-		[MenuItem("Assets/Operations/Set Selection As Static", priority = 804)]
-		public static void SetSelectionAsStatic()
-		{
-			var gameObjects = Selection.gameObjects;
-			foreach (var gameObject in gameObjects)
-				if (!gameObject.isStatic)
-					gameObject.isStatic = true;
-		}
-
-		[MenuItem("Assets/Operations/Set Selection As Static", validate = true)]
-		public static bool Validate_SetSelectionAsStatic()
-		{
-			return Selection.gameObjects.Length > 0;
-		}
-
-		[MenuItem("Assets/Operations/Set Selection As Non Static", priority = 805)]
-		public static void SetSelectionAsNonStatic()
-		{
-			var gameObjects = Selection.gameObjects;
-			foreach (var gameObject in gameObjects)
-				if (gameObject.isStatic)
-					gameObject.isStatic = false;
-		}
-
-		[MenuItem("Assets/Operations/Set Selection As Non Static", validate = true)]
-		public static bool Validate_SetSelectionAsNonStatic()
-		{
-			return Selection.gameObjects.Length > 0;
-		}
-
-		#endregion
-
 		#region Context Menu - Fill Empty References
 
 		[MenuItem("CONTEXT/Component/Fill Empty References", true)]
