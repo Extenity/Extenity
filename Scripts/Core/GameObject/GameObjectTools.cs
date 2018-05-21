@@ -931,36 +931,36 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindObjectsOfTypeAll in Scene
 
-		public static List<T> FindObjectsOfTypeAllInActiveScene<T>()
+		public static List<T> FindObjectsOfTypeAllInActiveScene<T>(bool includeInactive)
 		{
-			return SceneManager.GetActiveScene().FindObjectsOfTypeAll<T>();
+			return SceneManager.GetActiveScene().FindObjectsOfTypeAll<T>(includeInactive);
 		}
 
-		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>()
+		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>(bool includeInactive)
 		{
-			return SceneManagerTools.GetLoadedScenes().FindObjectsOfTypeAll<T>();
+			return SceneManagerTools.GetLoadedScenes().FindObjectsOfTypeAll<T>(includeInactive);
 		}
 
-		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes)
+		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes, bool includeInactive)
 		{
 			var results = new List<T>();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				var list = scenes[i].FindObjectsOfTypeAll<T>();
+				var list = scenes[i].FindObjectsOfTypeAll<T>(includeInactive);
 				results.AddRange(list);
 			}
 
 			return results;
 		}
 
-		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene)
+		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene, bool includeInactive)
 		{
 			var temp = new List<T>();
 			var results = new List<T>();
 			var rootGameObjects = scene.GetRootGameObjects();
 			for (int i = 0; i < rootGameObjects.Length; i++)
 			{
-				rootGameObjects[i].GetComponentsInChildren(true, temp);
+				rootGameObjects[i].GetComponentsInChildren(includeInactive, temp);
 				results.AddRange(temp);
 				temp.Clear();
 			}
@@ -1129,36 +1129,26 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region SetParent
+		#region SetParentOfAllObjectsContainingComponent
 
-		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
 		{
-			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, onlyStaticObjects);
+			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, includeInactive);
 		}
 
-		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool onlyStaticObjects) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, onlyStaticObjects));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, includeInactive));
 		}
 
-		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool onlyStaticObjects) where T : Component
+		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
 		{
-			IEnumerable<Transform> componentTransforms;
-			if (onlyStaticObjects)
-			{
-				componentTransforms = scene.FindObjectsOfTypeAll<T>()
-					.Where(item => item.gameObject.isStatic)
-					.Select(item => item.transform);
-			}
-			else
-			{
-				componentTransforms = scene.FindObjectsOfTypeAll<T>()
-					.Select(item => item.transform);
-			}
+			var componentTransforms = scene.FindObjectsOfTypeAll<T>(includeInactive)
+				.Select(item => item.transform);
 
 			foreach (var transform in componentTransforms)
 			{
-				transform.SetParent(parent, true);
+				transform.SetParent(parent, worldPositionStays);
 				transform.SetAsLastSibling();
 			}
 		}

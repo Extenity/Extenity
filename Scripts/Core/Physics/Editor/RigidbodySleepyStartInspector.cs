@@ -23,7 +23,7 @@ namespace Extenity.PhysicsToolbox
 			if (GUILayout.Button("Get All Rigidbodies In Loaded Scenes", BigButtonHeight))
 			{
 				Undo.RecordObject(Me, "Gather all rigidbodies");
-				Me.GatherAllRigidbodiesInScene(true);
+				Me.GatherAllRigidbodiesInScene(true, true);
 			}
 
 			GUILayout.Space(20f);

@@ -25,12 +25,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void OnProcessScene(Scene scene)
 #endif
 		{
-			RemoveComponentsInScene(scene, true);
+			RemoveComponentsInScene(scene, true, true);
 		}
 
-		public static void RemoveComponentsInScene(Scene scene, bool log)
+		public static void RemoveComponentsInScene(Scene scene, bool includeInactive, bool log)
 		{
-			var objects = scene.FindObjectsOfTypeAll<DontShowEditorHandler>();
+			var objects = scene.FindObjectsOfTypeAll<DontShowEditorHandler>(includeInactive);
 			if (objects.IsNotNullAndEmpty())
 			{
 				if (log)

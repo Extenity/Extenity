@@ -489,44 +489,44 @@ namespace Extenity.UnityEditorToolbox
 			AssetDatabase.SaveAssets();
 		}
 
-		protected static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>() where T : Component
+		protected static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
 		{
-			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(true, true);
+			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(includeInactive, true, true);
 		}
 
-		protected static void DeleteAllGameObjectsContainingComponentInActiveScene<T>() where T : Component
+		protected static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
 		{
-			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInActiveScene<T>(true, true);
+			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInActiveScene<T>(includeInactive, true, true);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>() where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, true);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, true, includeInactive);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>() where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, true);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, true, includeInactive);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>() where T : Component
+		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, false);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, false, includeInactive);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInActiveScene<T>() where T : Component
+		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, false);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, false, includeInactive);
 		}
 
-		protected static void DeleteEmptyUnreferencedGameObjectsInActiveScene()
+		protected static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive)
 		{
-			EditorGameObjectTools.DeleteEmptyUnreferencedGameObjectsInActiveScene(true, true);
+			EditorGameObjectTools.DeleteEmptyUnreferencedGameObjectsInActiveScene(includeInactive, true, true);
 		}
 
-		protected static void DeleteAllDisabledStaticMeshRenderersInActiveScene()
+		protected static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool includeInactive)
 		{
-			EditorGameObjectTools.DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true);
+			EditorGameObjectTools.DeleteAllDisabledStaticMeshRenderersInActiveScene(includeInactive, true, true);
 		}
 
 		public void DeleteSnapToGroundInEditorComponents()
@@ -534,7 +534,7 @@ namespace Extenity.UnityEditorToolbox
 			var scenes = SceneManagerTools.GetLoadedScenes();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				SnapToGroundInEditorSceneProcessor.RemoveComponentsInScene(scenes[i], true);
+				SnapToGroundInEditorSceneProcessor.RemoveComponentsInScene(scenes[i], true, true);
 			}
 		}
 
@@ -543,13 +543,13 @@ namespace Extenity.UnityEditorToolbox
 			var scenes = SceneManagerTools.GetLoadedScenes();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				DontShowEditorHandlerSceneProcessor.RemoveComponentsInScene(scenes[i], true);
+				DontShowEditorHandlerSceneProcessor.RemoveComponentsInScene(scenes[i], true, true);
 			}
 		}
 
-		public static void BlurReflectionProbesOfActiveScene()
+		public static void BlurReflectionProbesOfActiveScene(bool includeInactive)
 		{
-			ImageMagickCommander.BlurReflectionProbesOfActiveScene();
+			ImageMagickCommander.BlurReflectionProbesOfActiveScene(includeInactive);
 		}
 
 		#endregion

@@ -5,6 +5,7 @@ using System.Text;
 using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
 using Extenity.SceneManagementToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -51,7 +52,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 0)]
 		private static void Menu_DeleteEmptyUnreferencedGameObjectsInActiveScene()
 		{
-			DeleteEmptyUnreferencedGameObjectsInActiveScene(true, true);
+			DeleteEmptyUnreferencedGameObjectsInActiveScene(true, true, true);
 		}
 
 		#endregion
@@ -61,7 +62,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 4)]
 		private static void Menu_DeleteAllDisabledStaticMeshRenderersInActiveScene()
 		{
-			DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true);
+			DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true, true);
 		}
 
 		#endregion
@@ -85,41 +86,40 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region FindStaticObjectsOfTypeAll in Scene
 
-		public static List<T> FindStaticObjectsOfTypeAllInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		public static List<T> FindStaticObjectsOfTypeAllInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			return SceneManager.GetActiveScene().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+			return SceneManager.GetActiveScene().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, includeInactive);
 		}
 
-		public static List<T> FindStaticObjectsOfTypeAllInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		public static List<T> FindStaticObjectsOfTypeAllInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			return SceneManagerTools.GetLoadedScenes().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+			return SceneManagerTools.GetLoadedScenes().FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, includeInactive);
 		}
 
-		public static List<T> FindStaticObjectsOfTypeAll<T>(this IList<Scene> scenes, StaticEditorFlags leastExpectedFlags) where T : Component
+		public static List<T> FindStaticObjectsOfTypeAll<T>(this IList<Scene> scenes, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
 			var results = new List<T>();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				var list = scenes[i].FindStaticObjectsOfTypeAll<T>(leastExpectedFlags);
+				var list = scenes[i].FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, includeInactive);
 				results.AddRange(list);
 			}
 
 			return results;
 		}
 
-		public static List<T> FindStaticObjectsOfTypeAll<T>(this Scene scene, StaticEditorFlags leastExpectedFlags) where T : Component
+		public static List<T> FindStaticObjectsOfTypeAll<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
 			var temp = new List<T>();
 			var results = new List<T>();
 			var rootGameObjects = scene.GetRootGameObjects();
 			for (int i = 0; i < rootGameObjects.Length; i++)
 			{
-				rootGameObjects[i].GetComponentsInChildren(true, temp);
+				rootGameObjects[i].GetComponentsInChildren(includeInactive, temp);
 				for (int iChild = 0; iChild < temp.Count; iChild++)
 				{
 					var child = temp[iChild];
-					var flags = GameObjectUtility.GetStaticEditorFlags(child.gameObject);
-					if ((flags & leastExpectedFlags) == leastExpectedFlags)
+					if (child.gameObject.IsStaticEditorFlagSet(leastExpectedFlags))
 					{
 						results.Add(child);
 					}
@@ -131,15 +131,42 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		#region SetParentOfAllStaticObjectsContainingComponent
+
+		public static void SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, leastExpectedFlags, includeInactive);
+		}
+
+		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, leastExpectedFlags, includeInactive));
+		}
+
+		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			var componentTransforms = scene.FindObjectsOfTypeAll<T>(includeInactive)
+					.Where(item => item.gameObject.IsStaticEditorFlagSet(leastExpectedFlags))
+					.Select(item => item.transform);
+
+			foreach (var transform in componentTransforms)
+			{
+				transform.SetParent(parent, true);
+				transform.SetAsLastSibling();
+			}
+		}
+
+		#endregion
+
 		#region Delete Empty Unreferenced GameObjects
 
-		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool undoable, bool log)
+		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive, bool undoable, bool log)
 		{
 			var gameObjects = GameObjectTools.ListAllGameObjectsInActiveScene();
 			if (gameObjects.IsNullOrEmpty())
 				return;
 
-			var allComponents = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Component>();
+			var allComponents = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Component>(includeInactive);
 			var allReferencedObjects = new HashSet<GameObject>();
 			foreach (var component in allComponents)
 			{
@@ -149,35 +176,40 @@ namespace Extenity.GameObjectToolbox.Editor
 				}
 			}
 
-			// Exclude all child gameobjects of Animators.
+			// SPECIAL CARE
 			{
-				var animators = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Animator>();
-				if (animators.Count > 0)
+				const bool includeInactiveForSpecialCare = true;
+
+				// Exclude all child gameobjects of Animators.
 				{
-					var children = new List<GameObject>();
-					foreach (var animator in animators)
+					var animators = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Animator>(includeInactiveForSpecialCare);
+					if (animators.Count > 0)
 					{
-						children.Clear();
-						animator.gameObject.ListAllChildrenGameObjects(children, true);
-						foreach (var child in children)
+						var children = new List<GameObject>();
+						foreach (var animator in animators)
 						{
-							allReferencedObjects.Add(child);
+							children.Clear();
+							animator.gameObject.ListAllChildrenGameObjects(children, true);
+							foreach (var child in children)
+							{
+								allReferencedObjects.Add(child);
+							}
 						}
 					}
 				}
-			}
 
-			// Exclude referenced gameobjects in OffMeshLinks
-			{
-				var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<OffMeshLink>();
-				foreach (var offMeshLink in offMeshLinks)
+				// Exclude referenced gameobjects in OffMeshLinks
 				{
-					var linked = offMeshLink.startTransform;
-					if (linked)
-						allReferencedObjects.Add(linked.gameObject);
-					linked = offMeshLink.endTransform;
-					if (linked)
-						allReferencedObjects.Add(linked.gameObject);
+					var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<OffMeshLink>(includeInactiveForSpecialCare);
+					foreach (var offMeshLink in offMeshLinks)
+					{
+						var linked = offMeshLink.startTransform;
+						if (linked)
+							allReferencedObjects.Add(linked.gameObject);
+						linked = offMeshLink.endTransform;
+						if (linked)
+							allReferencedObjects.Add(linked.gameObject);
+					}
 				}
 			}
 
@@ -233,19 +265,19 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Delete All GameObjects Containing Component
 
-		public static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool undoable, bool log) where T : Component
+		public static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DeleteAllGameObjectsContainingComponent<T>(undoable, log));
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DeleteAllGameObjectsContainingComponent<T>(includeInactive, undoable, log));
 		}
 
-		public static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool undoable, bool log) where T : Component
+		public static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			SceneManager.GetActiveScene().DeleteAllGameObjectsContainingComponent<T>(undoable, log);
+			SceneManager.GetActiveScene().DeleteAllGameObjectsContainingComponent<T>(includeInactive, undoable, log);
 		}
 
-		public static void DeleteAllGameObjectsContainingComponent<T>(this Scene scene, bool undoable, bool log) where T : Component
+		public static void DeleteAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			var components = scene.FindObjectsOfTypeAll<T>();
+			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
 
 			StringBuilder deletedObjectsText = null;
 			if (log)
@@ -274,19 +306,19 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Delete All Static MeshRenderers
 
-		public static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool undoable, bool log)
+		public static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool includeInactive, bool undoable, bool log)
 		{
-			SceneManager.GetActiveScene().DeleteAllDisabledStaticMeshRenderers(undoable, log);
+			SceneManager.GetActiveScene().DeleteAllDisabledStaticMeshRenderers(includeInactive, undoable, log);
 		}
 
-		public static void DeleteAllDisabledStaticMeshRenderers(this Scene scene, bool undoable, bool log)
+		public static void DeleteAllDisabledStaticMeshRenderers(this Scene scene, bool includeInactive, bool undoable, bool log)
 		{
 			if (!scene.IsValid())
 				throw new Exception("Scene is not valid.");
 			if (!scene.isLoaded)
 				throw new Exception("Scene is not loaded.");
 
-			var meshRenderers = scene.FindObjectsOfTypeAll<MeshRenderer>();
+			var meshRenderers = scene.FindObjectsOfTypeAll<MeshRenderer>(includeInactive);
 
 			StringBuilder deletedObjectsText = null;
 			if (log)
@@ -301,7 +333,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				var gameObject = meshRenderer.gameObject;
 				if (gameObject.activeInHierarchy && meshRenderer.enabled)
 					continue;
-				if (!gameObject.isStatic) // TODO: Check for only batch staticness, instead of any staticness.
+				if (!gameObject.IsStaticEditorFlagSet(StaticEditorFlags.BatchingStatic))
 					continue;
 
 				var meshFilter = meshRenderer.GetComponent<MeshFilter>();

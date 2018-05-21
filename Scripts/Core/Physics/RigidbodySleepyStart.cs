@@ -26,9 +26,9 @@ namespace Extenity.PhysicsToolbox
 
 		public GameObject[] FilterOutGameObjects;
 
-		public void GatherAllRigidbodiesInScene(bool logFilteredOutRigidbodies)
+		public void GatherAllRigidbodiesInScene(bool includeInactive, bool logFilteredOutRigidbodies)
 		{
-			var rigidbodies = gameObject.scene.FindObjectsOfTypeAll<Rigidbody>();
+			var rigidbodies = gameObject.scene.FindObjectsOfTypeAll<Rigidbody>(includeInactive);
 			for (int i = 0; i < rigidbodies.Count; i++)
 			{
 				for (int iFilter = 0; iFilter < FilterOutGameObjects.Length; iFilter++)

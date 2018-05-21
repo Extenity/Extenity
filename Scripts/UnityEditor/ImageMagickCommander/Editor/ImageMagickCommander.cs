@@ -14,12 +14,12 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 	{
 		#region Reflection Probe Blurring
 
-		public static void BlurReflectionProbesOfActiveScene()
+		public static void BlurReflectionProbesOfActiveScene(bool includeInactive)
 		{
 			const int sizeX = 96;
 			const int sizeY = 16;
 
-			var reflectionProbes = GameObjectTools.FindObjectsOfTypeAllInActiveScene<ReflectionProbe>();
+			var reflectionProbes = GameObjectTools.FindObjectsOfTypeAllInActiveScene<ReflectionProbe>(includeInactive);
 			foreach (var reflectionProbe in reflectionProbes)
 			{
 				if (!reflectionProbe.bakedTexture)
