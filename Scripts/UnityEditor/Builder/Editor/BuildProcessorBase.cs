@@ -523,11 +523,13 @@ namespace Extenity.UnityEditorToolbox
 			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags, includeInactive);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected void MakeSureNoDisabledStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
 			EditorGameObjectTools.MakeSureNoDisabledStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected void MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
 			EditorGameObjectTools.MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags);
@@ -587,21 +589,25 @@ namespace Extenity.UnityEditorToolbox
 			EditorGameObjectTools.DestroyAllStaticComponentsInActiveScene<T>(leastExpectedFlags, includeInactive, true, true);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected static void DestroyAllDisabledStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
 			EditorGameObjectTools.DestroyAllDisabledStaticComponentsInLoadedScenes<T>(leastExpectedFlags, true, true);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected static void DestroyAllDisabledStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
 			EditorGameObjectTools.DestroyAllDisabledStaticComponentsInActiveScene<T>(leastExpectedFlags, true, true);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes()
 		{
 			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(true, true);
 		}
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		protected static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene()
 		{
 			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene(true, true);

@@ -8,6 +8,7 @@ using Extenity.SceneManagementToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -125,6 +126,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		#region MakeSureNoDisabledStaticObjectsContainingComponentExist
 
 		public static void MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
@@ -214,7 +216,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				// Exclude referenced gameobjects in OffMeshLinks
 				{
-					var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<UnityEngine.AI.OffMeshLink>(includeInactiveForSpecialCare);
+					var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<OffMeshLink>(includeInactiveForSpecialCare);
 					foreach (var offMeshLink in offMeshLinks)
 					{
 						var linked = offMeshLink.startTransform;
@@ -453,6 +455,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
 		#region Destroy All Disabled Static Components
 
 		public static void DestroyAllDisabledStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool undoable, bool log) where T : Component
@@ -500,7 +503,8 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
-		#region Destroy All Static MeshRenderers And MeshFilters
+		// TODO: Remove 'Disabled' and change all usages to InactiveOnly
+		#region Destroy All Disabled Static MeshRenderers And MeshFilters
 
 		public static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(bool undoable, bool log)
 		{

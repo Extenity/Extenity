@@ -19,6 +19,7 @@ namespace Extenity.GameObjectToolbox
 		ZX = 4,
 	}
 
+	// TODO: Check all methods and make sure if they need ActiveCheck as parameter OR if they need to be renamed to state that the method only works on active objects.
 	public static class GameObjectTools
 	{
 		#region Create
@@ -618,7 +619,7 @@ namespace Extenity.GameObjectToolbox
 		/// Check if component is inside objects list. Also check if any gameobject in objects list has the component attached to itself.
 		/// CAUTION! This is a performance heavy method because it uses HasComponent. Use it wisely.
 		/// </summary>
-		public static bool ContainsComponentAsIsOrAttachedToGameObject(this IEnumerable<UnityEngine.Object> objects, Component component)
+		public static bool ContainsComponentAsIsOrAttachedToGameObject(this IEnumerable<Object> objects, Component component)
 		{
 			if (objects == null)
 				return false;
@@ -667,20 +668,21 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindComponentInParents
 
-		public static T GetComponentInParent<T>(this Transform me, bool includingSelf, bool includingInactive) where T : Component
+		public static T GetComponentInParent<T>(this Transform me, bool includeSelf, bool includeInactive) where T : Component
 		{
-			return me.gameObject.GetComponentInParent<T>(includingSelf, includingInactive);
+			return me.gameObject.GetComponentInParent<T>(includeSelf, includeInactive);
 		}
 
-		public static T GetComponentInParent<T>(this GameObject me, bool includingSelf, bool includingInactive) where T : Component
+		// TODO: Write tests (including all ActiveCheck combinations)
+		public static T GetComponentInParent<T>(this GameObject me, bool includeSelf, bool includeInactive) where T : Component
 		{
 			if (!me)
 				return null;
 
-			if (!includingInactive && !me.activeInHierarchy)
+			if (!includeInactive && !me.activeInHierarchy)
 				return null;
 
-			if (includingSelf)
+			if (includeSelf)
 			{
 				var component = me.GetComponent<T>();
 				if (component)
@@ -953,7 +955,9 @@ namespace Extenity.GameObjectToolbox
 			return results;
 		}
 
-		// TODO: Find a way to make 'includeInactive' check more flexible, like checking for only active, only inactive, only inactiveinhierarchy, etc. Make sure to check for both component and gameobject enabled states.
+		// TODO: Find a way to make 'includeInactive' check more flexible, like checking for only active, only inactive, only inactiveinhierarchy, etc.
+		// TODO: Make sure to check for both component and gameobject enabled states.
+		// TODO: Write tests (including all ActiveCheck combinations)
 		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene, bool includeInactive)
 		{
 			var temp = new List<T>();
@@ -974,7 +978,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static object FindObjectOfTypeEnsured(Type type)
 		{
-			var obj = UnityEngine.Object.FindObjectOfType(type);
+			var obj = Object.FindObjectOfType(type);
 			if (obj == null)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			return obj;
@@ -983,7 +987,7 @@ namespace Extenity.GameObjectToolbox
 		public static T FindObjectOfTypeEnsured<T>() where T : class
 		{
 			var type = typeof(T);
-			var obj = UnityEngine.Object.FindObjectOfType(type);
+			var obj = Object.FindObjectOfType(type);
 			if (obj == null)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			return obj as T;
@@ -991,7 +995,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static object FindSingleObjectOfTypeEnsured(Type type)
 		{
-			var objs = UnityEngine.Object.FindObjectsOfType(type);
+			var objs = Object.FindObjectsOfType(type);
 			if (objs == null || objs.Length == 0)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			else if (objs.Length > 1)
@@ -1002,7 +1006,7 @@ namespace Extenity.GameObjectToolbox
 		public static T FindSingleObjectOfTypeEnsured<T>() where T : class
 		{
 			var type = typeof(T);
-			var objs = UnityEngine.Object.FindObjectsOfType(type);
+			var objs = Object.FindObjectsOfType(type);
 			if (objs == null || objs.Length == 0)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			else if (objs.Length > 1)
@@ -1238,13 +1242,13 @@ namespace Extenity.GameObjectToolbox
 
 		public static T InstantiateAndGetComponent<T>(GameObject original) where T : Component
 		{
-			var go = UnityEngine.Object.Instantiate(original) as GameObject;
+			var go = Object.Instantiate(original) as GameObject;
 			return go.GetComponent<T>();
 		}
 
 		public static T InstantiateAndGetComponent<T>(GameObject original, Vector3 position, Quaternion rotation) where T : Component
 		{
-			var go = UnityEngine.Object.Instantiate(original, position, rotation) as GameObject;
+			var go = Object.Instantiate(original, position, rotation) as GameObject;
 			return go.GetComponent<T>();
 		}
 
