@@ -1,5 +1,4 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -81,7 +80,9 @@ namespace ExtenityExamples.BeyondAudio
 		{
 			if (AudioSource)
 			{
-				EditorGUIUtility.PingObject(AudioSource);
+#if UNITY_EDITOR
+				UnityEditor.EditorGUIUtility.PingObject(AudioSource);
+#endif
 			}
 		}
 
@@ -89,7 +90,9 @@ namespace ExtenityExamples.BeyondAudio
 		{
 			if (AudioSource)
 			{
-				Selection.activeGameObject = AudioSource.gameObject;
+#if UNITY_EDITOR
+				UnityEditor.Selection.activeGameObject = AudioSource.gameObject;
+#endif
 			}
 		}
 	}
