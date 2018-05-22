@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.SceneManagementToolbox;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.UnityEditorToolbox.ImageMagick
@@ -14,12 +16,22 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 	{
 		#region Reflection Probe Blurring
 
-		public static void BlurReflectionProbesOfActiveScene(bool includeInactive)
+		public static void BlurReflectionProbesInActiveScene(bool includeInactive)
+		{
+			SceneManager.GetActiveScene().BlurReflectionProbes(includeInactive);
+		}
+
+		public static void BlurReflectionProbesInLoadedScenes(bool includeInactive)
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.BlurReflectionProbes(includeInactive));
+		}
+
+		public static void BlurReflectionProbes(this Scene scene, bool includeInactive)
 		{
 			const int sizeX = 96;
 			const int sizeY = 16;
 
-			var reflectionProbes = GameObjectTools.FindObjectsOfTypeAllInActiveScene<ReflectionProbe>(includeInactive);
+			var reflectionProbes = scene.FindObjectsOfTypeAll<ReflectionProbe>(includeInactive);
 			foreach (var reflectionProbe in reflectionProbes)
 			{
 				if (!reflectionProbe.bakedTexture)

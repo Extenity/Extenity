@@ -489,67 +489,143 @@ namespace Extenity.UnityEditorToolbox
 			AssetDatabase.SaveAssets();
 		}
 
-		protected static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		// -------------------------------------------------------------------------
+
+		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(includeInactive, true, true);
+			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, leastExpectedFlags, includeInactive);
 		}
 
-		protected static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			EditorGameObjectTools.DeleteAllGameObjectsContainingComponentInActiveScene<T>(includeInactive, true, true);
+			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, leastExpectedFlags, includeInactive);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, true, includeInactive);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, includeInactive);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, true, includeInactive);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, includeInactive);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		// -------------------------------------------------------------------------
+
+		protected void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, false, includeInactive);
+			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags, includeInactive);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		protected void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, false, includeInactive);
+			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags, includeInactive);
 		}
 
-		protected static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive)
+		protected void MakeSureNoDisabledStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
-			EditorGameObjectTools.DeleteEmptyUnreferencedGameObjectsInActiveScene(includeInactive, true, true);
+			EditorGameObjectTools.MakeSureNoDisabledStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags);
 		}
 
-		protected static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool includeInactive)
+		protected void MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
 		{
-			EditorGameObjectTools.DeleteAllDisabledStaticMeshRenderersInActiveScene(includeInactive, true, true);
+			EditorGameObjectTools.MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags);
 		}
 
-		public void DeleteSnapToGroundInEditorComponents()
+		// -------------------------------------------------------------------------
+
+		protected static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
 		{
-			var scenes = SceneManagerTools.GetLoadedScenes();
-			for (var i = 0; i < scenes.Count; i++)
-			{
-				SnapToGroundInEditorSceneProcessor.RemoveComponentsInScene(scenes[i], true, true);
-			}
+			EditorGameObjectTools.DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(includeInactive, true, true);
 		}
 
-		public void DeleteDontShowEditorHandlerComponents()
+		protected static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
 		{
-			var scenes = SceneManagerTools.GetLoadedScenes();
-			for (var i = 0; i < scenes.Count; i++)
-			{
-				DontShowEditorHandlerSceneProcessor.RemoveComponentsInScene(scenes[i], true, true);
-			}
+			EditorGameObjectTools.DestroyAllGameObjectsContainingComponentInActiveScene<T>(includeInactive, true, true);
 		}
 
-		public static void BlurReflectionProbesOfActiveScene(bool includeInactive)
+		protected static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			ImageMagickCommander.BlurReflectionProbesOfActiveScene(includeInactive);
+			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(leastExpectedFlags, includeInactive, true, true);
+		}
+
+		protected static void DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(leastExpectedFlags, includeInactive, true, true);
+		}
+
+		protected static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(bool includeInactive)
+		{
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(includeInactive, true, true);
+		}
+
+		protected static void DestroyEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive)
+		{
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(includeInactive, true, true);
+		}
+
+		// -------------------------------------------------------------------------
+
+		protected static void DestroyAllComponentsInLoadedScenes<T>(bool includeInactive) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllComponentsInLoadedScenes<T>(includeInactive, true, true);
+		}
+
+		protected static void DestroyAllComponentsInActiveScene<T>(bool includeInactive) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllComponentsInActiveScene<T>(includeInactive, true, true);
+		}
+
+		protected static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllStaticComponentsInLoadedScenes<T>(leastExpectedFlags, includeInactive, true, true);
+		}
+
+		protected static void DestroyAllStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllStaticComponentsInActiveScene<T>(leastExpectedFlags, includeInactive, true, true);
+		}
+
+		protected static void DestroyAllDisabledStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllDisabledStaticComponentsInLoadedScenes<T>(leastExpectedFlags, true, true);
+		}
+
+		protected static void DestroyAllDisabledStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			EditorGameObjectTools.DestroyAllDisabledStaticComponentsInActiveScene<T>(leastExpectedFlags, true, true);
+		}
+
+		protected static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes()
+		{
+			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(true, true);
+		}
+
+		protected static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene()
+		{
+			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene(true, true);
+		}
+
+		// -------------------------------------------------------------------------
+
+		protected void DeleteComponentsOfEditorOnlyToolsInLoadedScenes()
+		{
+			DestroyAllComponentsInLoadedScenes<SnapToGroundInEditor>(true);
+			DestroyAllComponentsInLoadedScenes<DontShowEditorHandler>(true);
+			DestroyAllComponentsInLoadedScenes<Devnote>(true);
+		}
+
+		// -------------------------------------------------------------------------
+
+		protected static void BlurReflectionProbesInLoadedScenes(bool includeInactive)
+		{
+			ImageMagickCommander.BlurReflectionProbesInLoadedScenes(includeInactive);
+		}
+
+		protected static void BlurReflectionProbesInActiveScene(bool includeInactive)
+		{
+			ImageMagickCommander.BlurReflectionProbesInActiveScene(includeInactive);
 		}
 
 		#endregion

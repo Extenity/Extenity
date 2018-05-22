@@ -8,14 +8,24 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Static Flags
 
-		public static bool IsStaticEditorFlagSet(this GameObject gameObject, StaticEditorFlags flag)
+		public static bool IsStaticEditorFlagsSetToAtLeast(this GameObject gameObject, StaticEditorFlags leastExpectedFlags)
 		{
-			return (gameObject.GetStaticEditorFlags() & flag) == flag;
+			return (GameObjectUtility.GetStaticEditorFlags(gameObject) & leastExpectedFlags) == leastExpectedFlags;
 		}
 
-		public static bool IsStaticFlagSet(this GameObject gameObject, StaticFlags flag)
+		public static bool IsStaticFlagsSetToAtLeast(this GameObject gameObject, StaticFlags leastExpectedFlags)
 		{
-			return (gameObject.GetStaticFlags() & flag) == flag;
+			return ((StaticFlags)GameObjectUtility.GetStaticEditorFlags(gameObject) & leastExpectedFlags) == leastExpectedFlags;
+		}
+
+		public static bool IsStaticEditorFlagsSetTo(this GameObject gameObject, StaticEditorFlags expectedFlags)
+		{
+			return GameObjectUtility.GetStaticEditorFlags(gameObject) == expectedFlags;
+		}
+
+		public static bool IsStaticFlagsSetTo(this GameObject gameObject, StaticFlags expectedFlags)
+		{
+			return (StaticFlags)GameObjectUtility.GetStaticEditorFlags(gameObject) == expectedFlags;
 		}
 
 		public static StaticEditorFlags GetStaticEditorFlags(this GameObject gameObject)

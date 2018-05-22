@@ -49,10 +49,16 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Delete Empty Unreferenced GameObjects
 
-		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 0)]
-		private static void Menu_DeleteEmptyUnreferencedGameObjectsInActiveScene()
+		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Loaded Scenes", priority = 0)]
+		private static void Menu_DestroyEmptyUnreferencedGameObjectsInLoadedScenes()
 		{
-			DeleteEmptyUnreferencedGameObjectsInActiveScene(true, true, true);
+			DestroyEmptyUnreferencedGameObjectsInLoadedScenes(true, true, true);
+		}
+
+		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 1)]
+		private static void Menu_DestroyEmptyUnreferencedGameObjectsInActiveScene()
+		{
+			DestroyEmptyUnreferencedGameObjectsInActiveScene(true, true, true);
 		}
 
 		#endregion
@@ -60,9 +66,15 @@ namespace Extenity.GameObjectToolbox.Editor
 		#region Hierarchy Menu - Delete All Disabled Static MeshRenderers
 
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 4)]
-		private static void Menu_DeleteAllDisabledStaticMeshRenderersInActiveScene()
+		private static void Menu_DestroyAllDisabledStaticMeshRenderersInLoadedScenes()
 		{
-			DeleteAllDisabledStaticMeshRenderersInActiveScene(true, true, true);
+			DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(true, true);
+		}
+
+		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 5)]
+		private static void Menu_DestroyAllDisabledStaticMeshRenderersInActiveScene()
+		{
+			DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene(true, true);
 		}
 
 		#endregion
@@ -119,7 +131,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				for (int iChild = 0; iChild < temp.Count; iChild++)
 				{
 					var child = temp[iChild];
-					if (child.gameObject.IsStaticEditorFlagSet(leastExpectedFlags))
+					if (child.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags))
 					{
 						results.Add(child);
 					}
@@ -133,40 +145,122 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region SetParentOfAllStaticObjectsContainingComponent
 
-		public static void SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, leastExpectedFlags, includeInactive);
+			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, includeInactive);
 		}
 
-		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, leastExpectedFlags, includeInactive));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, includeInactive));
 		}
 
-		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
 			var componentTransforms = scene.FindObjectsOfTypeAll<T>(includeInactive)
-					.Where(item => item.gameObject.IsStaticEditorFlagSet(leastExpectedFlags))
+					.Where(item => item.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags))
 					.Select(item => item.transform);
 
 			foreach (var transform in componentTransforms)
 			{
-				transform.SetParent(parent, true);
+				transform.SetParent(parent, worldPositionStays);
 				transform.SetAsLastSibling();
 			}
 		}
 
 		#endregion
 
-		#region Delete Empty Unreferenced GameObjects
+		#region MakeSureNoStaticObjectsContainingComponentExist
 
-		public static void DeleteEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive, bool undoable, bool log)
+		public static void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
 		{
-			var gameObjects = GameObjectTools.ListAllGameObjectsInActiveScene();
+			SceneManager.GetActiveScene().MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, includeInactive);
+		}
+
+		public static void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, includeInactive));
+		}
+
+		public static void MakeSureNoStaticObjectsContainingComponentExist<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, bool includeInactive) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>(includeInactive)
+				.Where(item => item.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags));
+
+			var found = false;
+			foreach (var component in components)
+			{
+				if (component)
+				{
+					// Do not merge all logs in a single log entry. Log each error in a separate entry that points to the gameobject in log's context for ease of use.
+					Debug.LogError($"Static object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
+					found = true;
+				}
+			}
+
+			// Fail by throwing an exception.
+			if (found)
+				throw new Exception($"Scene has static object(s) that contain '{typeof(T).Name}' component. See previous error logs.");
+		}
+
+		#endregion
+
+		#region MakeSureNoDisabledStaticObjectsContainingComponentExist
+
+		public static void MakeSureNoDisabledStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			SceneManager.GetActiveScene().MakeSureNoDisabledStaticObjectsContainingComponentExist<T>(leastExpectedFlags);
+		}
+
+		public static void MakeSureNoDisabledStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.MakeSureNoDisabledStaticObjectsContainingComponentExist<T>(leastExpectedFlags));
+		}
+
+		public static void MakeSureNoDisabledStaticObjectsContainingComponentExist<T>(this Scene scene, StaticEditorFlags leastExpectedFlags) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>(true) // TODO: OPTIMIZATION: Find a way to get only inactive objects
+				.Where(item => item.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags) &&
+							   //(!item.gameObject.activeInHierarchy || !item.enabled)); // TODO: Find a way to check if the component is disabled too. Better yet, implement this as a part of FindObjectsOfTypeAll like stated above which will list only disabled objects. Then we can delete this check here altogether.
+							   !item.gameObject.activeInHierarchy);
+
+			var found = false;
+			foreach (var component in components)
+			{
+				if (component)
+				{
+					// Do not merge all logs in a single log entry. Log each error in a separate entry that points to the gameobject in log's context for ease of use.
+					Debug.LogError($"Disabled static object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
+					found = true;
+				}
+			}
+
+			// Fail by throwing an exception.
+			if (found)
+				throw new Exception($"Scene has disabled static object(s) that contain '{typeof(T).Name}' component. See previous error logs.");
+		}
+
+		#endregion
+
+		#region Destroy Empty Unreferenced GameObjects
+
+		public static void DestroyEmptyUnreferencedGameObjectsInActiveScene(bool includeInactive, bool undoable, bool log)
+		{
+			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(includeInactive, undoable, log);
+		}
+
+		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(bool includeInactive, bool undoable, bool log)
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(includeInactive, undoable, log));
+		}
+
+		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, bool includeInactive, bool undoable, bool log)
+		{
+			var gameObjects = scene.ListAllGameObjectsInScene();
 			if (gameObjects.IsNullOrEmpty())
 				return;
 
-			var allComponents = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Component>(includeInactive);
+			var allComponents = scene.FindObjectsOfTypeAll<Component>(includeInactive);
 			var allReferencedObjects = new HashSet<GameObject>();
 			foreach (var component in allComponents)
 			{
@@ -221,6 +315,8 @@ namespace Extenity.GameObjectToolbox.Editor
 				skippedObjectsText = new StringBuilder();
 			}
 
+			int destroyedCount = 0;
+			int skippedCount = 0;
 			bool needsReRun;
 			do
 			{
@@ -234,6 +330,7 @@ namespace Extenity.GameObjectToolbox.Editor
 					// Check if the object referenced in any of the components in active scene
 					if (!allReferencedObjects.Contains(gameObject))
 					{
+						destroyedCount++;
 						if (log)
 							deletedObjectsText.AppendLine(gameObject.FullName());
 						if (undoable)
@@ -246,6 +343,7 @@ namespace Extenity.GameObjectToolbox.Editor
 					}
 					else
 					{
+						skippedCount++;
 						if (log)
 							skippedObjectsText.AppendLine(gameObject.FullName());
 					}
@@ -258,24 +356,24 @@ namespace Extenity.GameObjectToolbox.Editor
 			while (needsReRun);
 
 			if (log)
-				Debug.Log("<b>Deleting empty objects:</b>\n" + deletedObjectsText.ToString() + (skippedObjectsText.Length == 0 ? "" : "\n\n<b>Skipping empty objects:</b>\n" + skippedObjectsText.ToString()));
+				Debug.Log($"<b>Destroyed {destroyedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')} in scene '{scene.name}':</b>\n{deletedObjectsText}\n\n<b>Skipped {skippedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')}:</b>\n");
 		}
 
 		#endregion
 
-		#region Delete All GameObjects Containing Component
+		#region Destroy All GameObjects Containing Component
 
-		public static void DeleteAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive, bool undoable, bool log) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DeleteAllGameObjectsContainingComponent<T>(includeInactive, undoable, log));
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(includeInactive, undoable, log));
 		}
 
-		public static void DeleteAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive, bool undoable, bool log) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			SceneManager.GetActiveScene().DeleteAllGameObjectsContainingComponent<T>(includeInactive, undoable, log);
+			SceneManager.GetActiveScene().DestroyAllGameObjectsContainingComponent<T>(includeInactive, undoable, log);
 		}
 
-		public static void DeleteAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive, bool undoable, bool log) where T : Component
+		public static void DestroyAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive, bool undoable, bool log) where T : Component
 		{
 			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
 
@@ -285,11 +383,13 @@ namespace Extenity.GameObjectToolbox.Editor
 				deletedObjectsText = new StringBuilder();
 			}
 
+			int count = 0;
 			foreach (var component in components)
 			{
 				if (!component)
 					continue;
 
+				count++;
 				if (log)
 					deletedObjectsText.AppendLine(component.gameObject.FullName());
 				if (undoable)
@@ -299,26 +399,26 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.LogFormat("<b>Deleting objects containing component '{0}':</b>\n{1}", typeof(T).Name, deletedObjectsText.ToString());
+				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion
 
-		#region Delete All Static MeshRenderers
+		#region Destroy All Static GameObjects Containing Component
 
-		public static void DeleteAllDisabledStaticMeshRenderersInActiveScene(bool includeInactive, bool undoable, bool log)
+		public static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			SceneManager.GetActiveScene().DeleteAllDisabledStaticMeshRenderers(includeInactive, undoable, log);
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllStaticGameObjectsContainingComponent<T>(leastExpectedFlags, includeInactive, undoable, log));
 		}
 
-		public static void DeleteAllDisabledStaticMeshRenderers(this Scene scene, bool includeInactive, bool undoable, bool log)
+		public static void DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
 		{
-			if (!scene.IsValid())
-				throw new Exception("Scene is not valid.");
-			if (!scene.isLoaded)
-				throw new Exception("Scene is not loaded.");
+			SceneManager.GetActiveScene().DestroyAllStaticGameObjectsContainingComponent<T>(leastExpectedFlags, includeInactive, undoable, log);
+		}
 
-			var meshRenderers = scene.FindObjectsOfTypeAll<MeshRenderer>(includeInactive);
+		public static void DestroyAllStaticGameObjectsContainingComponent<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			var components = scene.FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, includeInactive);
 
 			StringBuilder deletedObjectsText = null;
 			if (log)
@@ -326,14 +426,196 @@ namespace Extenity.GameObjectToolbox.Editor
 				deletedObjectsText = new StringBuilder();
 			}
 
+			int count = 0;
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+
+				count++;
+				if (log)
+					deletedObjectsText.AppendLine(component.gameObject.FullName());
+				if (undoable)
+					Undo.DestroyObjectImmediate(component.gameObject);
+				else
+					Object.DestroyImmediate(component.gameObject);
+			}
+
+			if (log)
+				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+		}
+
+		#endregion
+
+		#region Destroy All Components
+
+		public static void DestroyAllComponentsInLoadedScenes<T>(bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllComponents<T>(includeInactive, undoable, log));
+		}
+
+		public static void DestroyAllComponentsInActiveScene<T>(bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			SceneManager.GetActiveScene().DestroyAllComponents<T>(includeInactive, undoable, log);
+		}
+
+		public static void DestroyAllComponents<T>(this Scene scene, bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			int count = 0;
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+
+				count++;
+				if (log)
+					deletedObjectsText.AppendLine(component.FullName());
+				if (undoable)
+					Undo.DestroyObjectImmediate(component);
+				else
+					Object.DestroyImmediate(component);
+			}
+
+			if (log)
+				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+		}
+
+		#endregion
+
+		#region Destroy All Static Components
+
+		public static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllStaticComponents<T>(leastExpectedFlags, includeInactive, undoable, log));
+		}
+
+		public static void DestroyAllStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			SceneManager.GetActiveScene().DestroyAllStaticComponents<T>(leastExpectedFlags, includeInactive, undoable, log);
+		}
+
+		public static void DestroyAllStaticComponents<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, bool includeInactive, bool undoable, bool log) where T : Component
+		{
+			var components = scene.FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, includeInactive);
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			int count = 0;
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+
+				count++;
+				if (log)
+					deletedObjectsText.AppendLine(component.FullName());
+				if (undoable)
+					Undo.DestroyObjectImmediate(component);
+				else
+					Object.DestroyImmediate(component);
+			}
+
+			if (log)
+				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+		}
+
+		#endregion
+
+		#region Destroy All Disabled Static Components
+
+		public static void DestroyAllDisabledStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, bool undoable, bool log) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllDisabledStaticComponents<T>(leastExpectedFlags, undoable, log));
+		}
+
+		public static void DestroyAllDisabledStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags, bool undoable, bool log) where T : Component
+		{
+			SceneManager.GetActiveScene().DestroyAllDisabledStaticComponents<T>(leastExpectedFlags, undoable, log);
+		}
+
+		public static void DestroyAllDisabledStaticComponents<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, bool undoable, bool log) where T : Component
+		{
+			var components = scene.FindStaticObjectsOfTypeAll<T>(leastExpectedFlags, true); // TODO: Find a way to only get disabled objects here
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			int count = 0;
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+				// TODO: Find a way to check if the component is disabled too. Better yet, implement this as a part of FindStaticObjectsOfTypeAll like stated above which will list only disabled objects. Then we can delete this check here altogether.
+				//if (component.gameObject.activeInHierarchy && component.enabled)
+				if (component.gameObject.activeInHierarchy)
+					continue;
+
+				count++;
+				if (log)
+					deletedObjectsText.AppendLine(component.FullName());
+				if (undoable)
+					Undo.DestroyObjectImmediate(component);
+				else
+					Object.DestroyImmediate(component);
+			}
+
+			if (log)
+				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("disabled static components", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+		}
+
+		#endregion
+
+		#region Destroy All Static MeshRenderers And MeshFilters
+
+		public static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(bool undoable, bool log)
+		{
+			SceneManager.GetActiveScene().DestroyAllDisabledStaticMeshRenderersAndMeshFilters(undoable, log);
+		}
+
+		public static void DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene(bool undoable, bool log)
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyAllDisabledStaticMeshRenderersAndMeshFilters(undoable, log));
+		}
+
+		public static void DestroyAllDisabledStaticMeshRenderersAndMeshFilters(this Scene scene, bool undoable, bool log)
+		{
+			if (!scene.IsValid())
+				throw new Exception("Scene is not valid.");
+			if (!scene.isLoaded)
+				throw new Exception("Scene is not loaded.");
+
+			var meshRenderers = scene.FindStaticObjectsOfTypeAll<MeshRenderer>(StaticEditorFlags.BatchingStatic, true); // TODO: Find a way to only get disabled objects here
+
+			StringBuilder deletedObjectsText = null;
+			if (log)
+			{
+				deletedObjectsText = new StringBuilder();
+			}
+
+			int meshRendererCount = 0;
+			int meshFilterCount = 0;
 			foreach (var meshRenderer in meshRenderers)
 			{
 				if (!meshRenderer)
 					continue;
+				// TODO: Implement this 'disabled' check as a part of FindStaticObjectsOfTypeAll like stated above which will list only disabled objects. Then we can delete this check here altogether.
 				var gameObject = meshRenderer.gameObject;
 				if (gameObject.activeInHierarchy && meshRenderer.enabled)
-					continue;
-				if (!gameObject.IsStaticEditorFlagSet(StaticEditorFlags.BatchingStatic))
 					continue;
 
 				var meshFilter = meshRenderer.GetComponent<MeshFilter>();
@@ -341,6 +623,10 @@ namespace Extenity.GameObjectToolbox.Editor
 				// Make sure mesh filter is not used elsewhere.
 				//var deleteMeshFilterToo = meshFilter && meshFilter.IsNotReferencedFromAnySerializedField(); // TODO: Implement this
 				var deleteMeshFilterToo = meshFilter;
+
+				meshRendererCount++;
+				if (deleteMeshFilterToo)
+					meshFilterCount++;
 
 				if (log)
 					deletedObjectsText.AppendLine(gameObject.FullName());
@@ -359,7 +645,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.LogFormat("<b>Deleting disabled static MeshRenderers (and their filters):</b>\n{0}", deletedObjectsText.ToString());
+				Debug.Log($"<b>Destroyed {meshRendererCount.ToStringWithEnglishPluralPostfix("disabled static MeshRenderer", '\'')} and {meshFilterCount.ToStringWithEnglishPluralPostfix("disabled static MeshFilter", '\'')} in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion

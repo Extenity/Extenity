@@ -953,6 +953,7 @@ namespace Extenity.GameObjectToolbox
 			return results;
 		}
 
+		// TODO: Find a way to make 'includeInactive' check more flexible, like checking for only active, only inactive, only inactiveinhierarchy, etc. Make sure to check for both component and gameobject enabled states.
 		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene, bool includeInactive)
 		{
 			var temp = new List<T>();
@@ -1292,6 +1293,58 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (me.GetComponentCount<T>() != 1)
 				throw new Exception();
+		}
+
+		#endregion
+
+		#region Destroy All GameObjects Containing Component
+
+		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(includeInactive));
+		}
+
+		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		{
+			SceneManager.GetActiveScene().DestroyAllGameObjectsContainingComponent<T>(includeInactive);
+		}
+
+		public static void DestroyAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
+
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+				Object.Destroy(component.gameObject);
+			}
+		}
+
+		#endregion
+
+		#region Destroy Immediate All GameObjects Containing Component
+
+		public static void DestroyImmediateAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyImmediateAllGameObjectsContainingComponent<T>(includeInactive));
+		}
+
+		public static void DestroyImmediateAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		{
+			SceneManager.GetActiveScene().DestroyImmediateAllGameObjectsContainingComponent<T>(includeInactive);
+		}
+
+		public static void DestroyImmediateAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive) where T : Component
+		{
+			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
+
+			foreach (var component in components)
+			{
+				if (!component)
+					continue;
+				Object.DestroyImmediate(component.gameObject);
+			}
 		}
 
 		#endregion
