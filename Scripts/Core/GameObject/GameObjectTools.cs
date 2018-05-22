@@ -11,6 +11,13 @@ using Object = UnityEngine.Object;
 namespace Extenity.GameObjectToolbox
 {
 
+	public enum ActiveCheck
+	{
+		ActiveOnly = 0,
+		IncludingInactive = 1,
+		InactiveOnly = 2,
+	}
+
 	public enum SnapToGroundRotationOption
 	{
 		DontRotate,
@@ -931,7 +938,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region FindObjectsOfTypeAll in Scene
+		#region FindObjectsOfTypeAll
 
 		public static List<T> FindObjectsOfTypeAllInActiveScene<T>(bool includeInactive)
 		{
@@ -969,6 +976,121 @@ namespace Extenity.GameObjectToolbox
 				results.AddRange(temp);
 				temp.Clear();
 			}
+			return results;
+		}
+
+		public static List<T> WIP_FindObjectsOfType<T>(this Scene scene, ActiveCheck activeCheck)
+		{
+			var temp = new List<T>();
+			var results = new List<T>();
+			var rootGameObjects = new List<GameObject>(scene.rootCount);
+			scene.GetRootGameObjects(rootGameObjects);
+
+			switch (activeCheck)
+			{
+				case ActiveCheck.ActiveOnly:
+					{
+						for (int i = 0; i < rootGameObjects.Count; i++)
+						{
+							if (!rootGameObjects[i] || !rootGameObjects[i].activeSelf)
+								continue;
+							rootGameObjects[i].GetComponentsInChildren(false, temp);
+							results.AddRange(temp);
+							temp.Clear();
+						}
+					}
+					break;
+				case ActiveCheck.IncludingInactive:
+					{
+						for (int i = 0; i < rootGameObjects.Count; i++)
+						{
+							if (!rootGameObjects[i])
+								continue;
+							rootGameObjects[i].GetComponentsInChildren(true, temp);
+							results.AddRange(temp);
+							temp.Clear();
+						}
+					}
+					break;
+				case ActiveCheck.InactiveOnly:
+					{
+						for (int i = 0; i < rootGameObjects.Count; i++)
+						{
+							if (!rootGameObjects[i] || rootGameObjects[i].activeSelf)
+								continue;
+							rootGameObjects[i].GetComponentsInChildren(true, temp);
+							for (var iComponent = 0; iComponent < temp.Count; iComponent++)
+							{
+								var item = temp[iComponent];
+								if (item == null)
+									continue;
+								if (!(item is Component)) // We cannot use 'as' like below for checking if the conversion is successfull, since Unity overrides == and bool operator.
+									throw new Exception($"Unknown type '{item.GetType().FullName}'. Only Component types are supported.");
+								var asComponent = item as Component;
+								if (!asComponent)
+									continue;
+
+								bool componentDisabled;
+								var gameObjectDisabled = !asComponent.gameObject.activeInHierarchy;
+
+								// These are the classes that derive from Component in Unity 2018.1.1f1
+								// Use ReSharper to get the list quickly. Right click on Component class, Inspect -> Hierarchy.
+								//    Behaviour
+								//    CanvasGroup
+								//    CanvasRenderer
+								//    Cloth
+								//    Collider
+								//    Joint
+								//    LODGroup
+								//    MeshFilter
+								//    OcclusionArea
+								//    OcclusionPortal
+								//    ParticleAnimator
+								//    ParticleEmitter
+								//    ParticleSystem
+								//    Renderer
+								//    Rigidbody
+								//    Rigidbody2D
+								//    TextMesh
+								//    Transform
+								//    Tree
+								//    WindZone
+								//    WorldAnchor
+								//
+								// From which these are the ones that has 'enabled' property that should
+								// also mean the component is meant to be disabled if set to false
+								//    Behaviour
+								//    Cloth
+								//    Collider
+								//    LODGroup
+								//    Renderer
+
+								if (item is Behaviour)
+									componentDisabled = !(item as Behaviour).enabled;
+								else if (item is Cloth)
+									componentDisabled = !(item as Cloth).enabled;
+								else if (item is Collider)
+									componentDisabled = !(item as Collider).enabled;
+								else if (item is LODGroup)
+									componentDisabled = !(item as LODGroup).enabled;
+								else if (item is Renderer)
+									componentDisabled = !(item as Renderer).enabled;
+								else
+									componentDisabled = false; // Handle all other Components as if they can't ever get disabled.
+
+								if (gameObjectDisabled || componentDisabled)
+								{
+									results.Add(item);
+								}
+							}
+							temp.Clear();
+						}
+					}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(activeCheck), activeCheck, null);
+			}
+
 			return results;
 		}
 
