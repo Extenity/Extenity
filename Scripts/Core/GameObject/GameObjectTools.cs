@@ -1033,7 +1033,8 @@ namespace Extenity.GameObjectToolbox
 								bool componentDisabled;
 								var gameObjectDisabled = !asComponent.gameObject.activeInHierarchy;
 
-								// These are the classes that derive from Component in Unity 2018.1.1f1
+								// TODO: Update that in new Unity versions.
+								// These are the classes that derive from Component (Unity version 2018.1.1f1)
 								// Use ReSharper to get the list quickly. Right click on Component class, Inspect -> Hierarchy.
 								//    Behaviour
 								//    CanvasGroup

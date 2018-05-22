@@ -82,8 +82,9 @@ namespace Extenity.IMGUIToolbox.Editor
 		#region EditorGUI Exposed Internals
 
 		// TODO: Better call internal methods with reflection, rather than copying the method here to make it future proof.
+		// TODO: Update that in new Unity versions.
 		/// <summary>
-		/// Copied directly from EditorGUI.HasVisibleChildFields at Unity version 2018.1.0b13
+		/// Copied directly from EditorGUI.HasVisibleChildFields (Unity version 2018.1.0b13)
 		/// </summary>
 		public static bool HasVisibleChildFields(SerializedProperty property)
 		{

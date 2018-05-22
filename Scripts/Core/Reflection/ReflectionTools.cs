@@ -391,8 +391,6 @@ namespace Extenity.ReflectionToolbox
 			};
 		}
 
-		// TODO: Uncomment after Unity gets Mono update.
-		/*
 		public static void GetStaticMethodAsAction<T1, T2, T3, T4, T5>(this Type type, string methodName, out Action<T1, T2, T3, T4, T5> result, Type[] overrideTypes = null)
 		{
 			var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
@@ -437,7 +435,6 @@ namespace Extenity.ReflectionToolbox
 				method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 });
 			};
 		}
-		*/
 
 		// --------------------------------------------------------------
 		// GetStaticMethodAsFunc
@@ -493,8 +490,6 @@ namespace Extenity.ReflectionToolbox
 			};
 		}
 
-		// TODO: Uncomment after Unity gets Mono update.
-		/*
 		public static void GetStaticMethodAsFunc<T1, T2, T3, T4, T5, TResult>(this Type type, string methodName, out Func<T1, T2, T3, T4, T5, TResult> result, Type[] overrideTypes = null)
 		{
 			var method = InternalGetStaticMethodInfo(type, methodName, overrideTypes != null ? overrideTypes : new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
@@ -544,7 +539,6 @@ namespace Extenity.ReflectionToolbox
 				return (TResult)ret;
 			};
 		}
-		*/
 
 		#endregion
 
