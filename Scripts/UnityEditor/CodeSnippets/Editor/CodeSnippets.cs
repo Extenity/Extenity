@@ -359,7 +359,7 @@ namespace __NAMESPACE__
 			{
 				var rootNamespace = EditorSettings.projectGenerationRootNamespace;
 				var inputField = new[] { new UserInputField("Namespace", string.IsNullOrEmpty(rootNamespace) ? "" : rootNamespace + ".", false) };
-				EditorMessageBox.Show(ScreenManager.GetCenteredRect(400, 200), "Enter Namespace", string.Format("Enter the namespace of class '{0}'.", scriptName), inputField, "Create Snippet", "Cancel",
+				EditorMessageBox.Show(ScreenManager.GetCenteredRect(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
 					() =>
 					{
 						var scriptNamespace = inputField[0].Value;

@@ -56,7 +56,7 @@ namespace Extenity.UnityEditorToolbox
 				if (Configurations[i].Name == name)
 					return Configurations[i];
 			}
-			throw new Exception(string.Format("Batch object configuration '{0}' does not exist.", name));
+			throw new Exception($"Batch object configuration '{name}' does not exist.");
 		}
 
 		#endregion

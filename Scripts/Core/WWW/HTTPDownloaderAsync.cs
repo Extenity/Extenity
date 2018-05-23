@@ -75,7 +75,7 @@ namespace Extenity.WWWToolbox
 					var fileSize = eventArgs.TotalBytesToReceive;
 					var humanReadableFileSize = fileSize.ToFileSizeString();
 
-					var message = string.Format("{0} / {1}", downloadedSize.ToFileSizeString(), humanReadableFileSize);
+					var message = $"{downloadedSize.ToFileSizeString()} / {humanReadableFileSize}";
 					var ratio = (double)downloadedSize / fileSize;
 					var progress = (int)(99f * ratio);
 					if (progress < 0) progress = 0;

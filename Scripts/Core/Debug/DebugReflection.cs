@@ -18,9 +18,7 @@ namespace Extenity.DebugToolbox
 			for (int i = 0; i < frames.Length; i++)
 			{
 				MethodBase method = frames[i].GetMethod();
-				sb.Append(string.Format("{0}::{1}\n",
-					method.ReflectedType != null ? method.ReflectedType.Name : string.Empty,
-					method.Name));
+				sb.Append($"{(method.ReflectedType != null ? method.ReflectedType.Name : string.Empty)}::{method.Name}\n");
 			}
 			return sb.ToString();
 		}

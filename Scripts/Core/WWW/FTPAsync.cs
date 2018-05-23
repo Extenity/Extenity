@@ -34,7 +34,7 @@ namespace Extenity.WWWToolbox
 				throw new Exception("Temp prefix was not defined.");
 			}
 			TempFileNamePrefix = tempFileNamePrefix;
-			BaseAddress = string.Format("ftp://{0}/{1}", Host, BaseDirectory);
+			BaseAddress = $"ftp://{Host}/{BaseDirectory}";
 		}
 
 		public DeferredExecutionController CreateDownloadJob(string remoteFileRelativePath, string localFileFullPath, bool extractCompressedFileAndDelete = false)
@@ -102,7 +102,7 @@ namespace Extenity.WWWToolbox
 						fileStream.Write(buffer, 0, read);
 
 						total += read;
-						var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
+						var message = $"{total.ToFileSizeString()} / {humanReadableFileSize}";
 						var ratio = (double)total / fileSize;
 						var progress = (int)(99f * ratio);
 						if (progress < 0) progress = 0;
@@ -193,7 +193,7 @@ namespace Extenity.WWWToolbox
 							output.Write(buffer, 0, read);
 
 							total += read;
-							var message = string.Format("{0} / {1}", total.ToFileSizeString(), humanReadableFileSize);
+							var message = $"{total.ToFileSizeString()} / {humanReadableFileSize}";
 							var ratio = (double)total / fileSize;
 							var progress = (int)(99f * ratio);
 							if (progress < 0) progress = 0;

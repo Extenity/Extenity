@@ -34,7 +34,7 @@ namespace Extenity.DLLBuilder
 			DLLBuilder.LogAndUpdateStatus("Distributing configuration '{0}'", configuration.ConfigurationName);
 
 			if (!configuration.Enabled)
-				throw new Exception(string.Format("Internal error. Tried to distribute using a disabled configuration '{0}'.", configuration.ConfigurationName));
+				throw new Exception($"Internal error. Tried to distribute using a disabled configuration '{configuration.ConfigurationName}'.");
 
 			// Check consistency first.
 			{
@@ -57,7 +57,7 @@ namespace Extenity.DLLBuilder
 				// Check that the target directory exists. We want to make sure user creates the directory first. This is more safer.
 				if (!Directory.Exists(targetDirectoryPath))
 				{
-					throw new Exception(string.Format("Distribution target directory '{0}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.", target.TargetDirectoryPath));
+					throw new Exception($"Distribution target directory '{target.TargetDirectoryPath}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.");
 				}
 
 				DLLBuilder.LogAndUpdateStatus("Distributing to '{0}'", targetDirectoryPath);

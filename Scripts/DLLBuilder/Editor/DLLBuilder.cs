@@ -79,7 +79,7 @@ namespace Extenity.DLLBuilder
 					jobStatus.IsStarted = true;
 
 					if (jobStatus.BuildTriggerSource != BuildTriggerSource.Unspecified)
-						throw new Exception(string.Format("Build trigger source was already specified as '{0}' where it was going to be set as '{1}'.", jobStatus.BuildTriggerSource, triggerSource));
+						throw new Exception($"Build trigger source was already specified as '{jobStatus.BuildTriggerSource}' where it was going to be set as '{triggerSource}'.");
 					jobStatus.BuildTriggerSource = triggerSource;
 				}
 				else

@@ -36,7 +36,7 @@ namespace Extenity.DLLBuilder
 			if (configurations.IsNullOrEmpty())
 			{
 				if (onFailed != null)
-					onFailed(string.Format("DLL Builder configuration does not have any entries. Please check your configuration at path '{0}'.", AssetDatabase.GetAssetPath(builderConfiguration)));
+					onFailed($"DLL Builder configuration does not have any entries. Please check your configuration at path '{AssetDatabase.GetAssetPath(builderConfiguration)}'.");
 				yield break;
 			}
 
@@ -47,7 +47,7 @@ namespace Extenity.DLLBuilder
 				if (errors.Count > 0)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to initialize compilation of DLL '{0}'.", configuration.DLLNameWithoutExtension));
+						onFailed($"Failed to initialize compilation of DLL '{configuration.DLLNameWithoutExtension}'.");
 					yield break;
 				}
 			}
@@ -76,7 +76,7 @@ namespace Extenity.DLLBuilder
 				{
 					Debug.LogException(exception);
 					if (onFailed != null)
-						onFailed(string.Format("Failed initialize compilation of DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						onFailed($"Failed initialize compilation of DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 					yield break;
 				}
 
@@ -89,7 +89,7 @@ namespace Extenity.DLLBuilder
 				{
 					Debug.LogException(exception);
 					if (onFailed != null)
-						onFailed(string.Format("Failed to start compilation of runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						onFailed($"Failed to start compilation of runtime DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 					yield break;
 				}
 
@@ -100,7 +100,7 @@ namespace Extenity.DLLBuilder
 				if (job.RuntimeDLLSucceeded == CompileResult.Failed)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Failed to compile runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+						onFailed($"Failed to compile runtime DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 					yield break;
 				}
 
@@ -115,7 +115,7 @@ namespace Extenity.DLLBuilder
 					{
 						Debug.LogException(exception);
 						if (onFailed != null)
-							onFailed(string.Format("Failed to obfuscate runtime DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+							onFailed($"Failed to obfuscate runtime DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 						yield break;
 					}
 					// Wait for a couple of frames for obfuscation result to settle down. This is not required. Just a precaution.
@@ -134,7 +134,7 @@ namespace Extenity.DLLBuilder
 					{
 						Debug.LogException(exception);
 						if (onFailed != null)
-							onFailed(string.Format("Failed to start compilation of editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+							onFailed($"Failed to start compilation of editor DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 						yield break;
 					}
 
@@ -145,7 +145,7 @@ namespace Extenity.DLLBuilder
 					if (job.EditorDLLSucceeded == CompileResult.Failed)
 					{
 						if (onFailed != null)
-							onFailed(string.Format("Failed to compile editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+							onFailed($"Failed to compile editor DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 						yield break;
 					}
 
@@ -160,7 +160,7 @@ namespace Extenity.DLLBuilder
 						{
 							Debug.LogException(exception);
 							if (onFailed != null)
-								onFailed(string.Format("Failed to obfuscate editor DLL '{0}'.", job.Configuration.DLLNameWithoutExtension));
+								onFailed($"Failed to obfuscate editor DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 							yield break;
 						}
 						// Wait for a couple of frames for obfuscation result to settle down. This is not required. Just a precaution.
@@ -264,7 +264,7 @@ namespace Extenity.DLLBuilder
 			for (int i = 0; i < sourceFilePaths.Count; i++)
 			{
 				if (!sourceFilePaths[i].StartsWith(sourceBasePath))
-					throw new Exception(string.Format("Source path '{0}' does not start with base path '{1}'.", sourceFilePaths[i], sourceBasePath));
+					throw new Exception($"Source path '{sourceFilePaths[i]}' does not start with base path '{sourceBasePath}'.");
 
 				var relativeDestPath = sourceFilePaths[i].Substring(sourceBasePath.Length).FixDirectorySeparatorChars();
 				if (relativeDestPath[0].IsDirectorySeparatorChar())
@@ -558,7 +558,7 @@ namespace Extenity.DLLBuilder
 				}
 
 
-				arguments.LogList(string.Format("Launching compiler '{0}' with arguments:", job.Configuration.Compiler.ToString()));
+				arguments.LogList($"Launching compiler '{job.Configuration.Compiler.ToString()}' with arguments:");
 
 				var process = new Process();
 				process.StartInfo.RedirectStandardOutput = true;
@@ -671,7 +671,7 @@ namespace Extenity.DLLBuilder
 
 			exportedFiles.Sort();
 			exportedFiles.RemoveDuplicates();
-			exportedFiles.LogList(string.Format("Source files for {0} DLL ({1}):", isEditor ? "editor" : "runtime", exportedFiles.Count));
+			exportedFiles.LogList($"Source files for {(isEditor ? "editor" : "runtime")} DLL ({exportedFiles.Count}):");
 
 			Debug.LogError("NOT IMPLEMENTED YET! Sources are not checked for precompiler directives.");
 		}

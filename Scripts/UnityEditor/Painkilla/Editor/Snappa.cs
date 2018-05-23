@@ -464,7 +464,7 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				Debug.LogFormat("Snapping objects ({0}): \n{1}", transforms.Length, transforms.Select(item => item.gameObject.FullName()).ToList().Serialize('\n'));
 
-				Undo.RecordObjects(transforms, string.Format("Snap {0} object{1}", transforms.Length, transforms.Length > 1 ? "s" : ""));
+				Undo.RecordObjects(transforms, $"Snap {transforms.Length.ToStringWithEnglishPluralPostfix("object")}");
 
 				foreach (var transform in transforms)
 				{

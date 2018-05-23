@@ -85,18 +85,12 @@ namespace Extenity.UnityEditorToolbox
 				// Make sure ExpectedValue is specified (See: 5761573)
 				if (attribute.ExpectedValue == null)
 				{
-					throw new Exception(string.Format("{0} to compare with '{1}' must be specified for '{2}' to work.",
-						nameof(attribute.ExpectedValue),
-						attribute.FieldPropertyMethodName,
-						typeof(ConditionalHideInInspectorAttribute).Name));
+					throw new Exception($"{nameof(attribute.ExpectedValue)} to compare with '{attribute.FieldPropertyMethodName}' must be specified for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 				}
 				// Make sure that 'Field' type is the same with ExpectedValue type (See: 5761574)
 				if (attribute.ExpectedValue.GetType() != targetFieldInfo.FieldType)
 				{
-					throw new Exception(string.Format("Field '{0}' must be type of '{1}' for '{2}' to work.",
-						attribute.FieldPropertyMethodName,
-						attribute.ExpectedValue.GetType(),
-						typeof(ConditionalHideInInspectorAttribute).Name));
+					throw new Exception($"Field '{attribute.FieldPropertyMethodName}' must be type of '{attribute.ExpectedValue.GetType()}' for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 				}
 				targetValue = targetFieldInfo.GetValue(declaringObject);
 				compareValues = true;
@@ -110,18 +104,12 @@ namespace Extenity.UnityEditorToolbox
 					// Make sure ExpectedValue is specified (See: 5761573)
 					if (attribute.ExpectedValue == null)
 					{
-						throw new Exception(string.Format("{0} to compare with '{1}' must be specified for '{2}' to work.",
-							nameof(attribute.ExpectedValue),
-							attribute.FieldPropertyMethodName,
-							typeof(ConditionalHideInInspectorAttribute).Name));
+						throw new Exception($"{nameof(attribute.ExpectedValue)} to compare with '{attribute.FieldPropertyMethodName}' must be specified for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 					}
 					// Make sure that 'Property' type is the same with ExpectedValue type (See: 5761574)
 					if (attribute.ExpectedValue.GetType() != targetPropertyInfo.PropertyType)
 					{
-						throw new Exception(string.Format("Property '{0}' must be type of '{1}' for '{2}' to work.",
-							attribute.FieldPropertyMethodName,
-							attribute.ExpectedValue.GetType(),
-							typeof(ConditionalHideInInspectorAttribute).Name));
+						throw new Exception($"Property '{attribute.FieldPropertyMethodName}' must be type of '{attribute.ExpectedValue.GetType()}' for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 					}
 					targetValue = targetPropertyInfo.GetValue(declaringObject);
 					compareValues = true;
@@ -135,10 +123,7 @@ namespace Extenity.UnityEditorToolbox
 						// Make sure that 'Method' return type is ConditionalHideResult (See: 5761571)
 						if (targetMethodInfo.ReturnType != typeof(bool))
 						{
-							throw new Exception(string.Format("Method '{0}' must have a return type of '{1}' for '{2}' to work.",
-								attribute.FieldPropertyMethodName,
-								typeof(bool).Name,
-								typeof(ConditionalHideInInspectorAttribute).Name));
+							throw new Exception($"Method '{attribute.FieldPropertyMethodName}' must have a return type of '{typeof(bool).Name}' for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 						}
 
 						enabled = (bool)targetMethodInfo.Invoke(declaringObject, new object[] { propertyWithAttribute.GetValueAsObject() });
@@ -153,10 +138,7 @@ namespace Extenity.UnityEditorToolbox
 							// Make sure that 'Method' return type is ConditionalHideResult (See: 5761571)
 							if (targetMethodInfo.ReturnType != typeof(bool))
 							{
-								throw new Exception(string.Format("Method '{0}' must have a return type of '{1}' for '{2}' to work.",
-									attribute.FieldPropertyMethodName,
-									typeof(bool).Name,
-									typeof(ConditionalHideInInspectorAttribute).Name));
+								throw new Exception($"Method '{attribute.FieldPropertyMethodName}' must have a return type of '{typeof(bool).Name}' for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 							}
 
 							enabled = (bool)targetMethodInfo.Invoke(declaringObject, null);
@@ -169,16 +151,11 @@ namespace Extenity.UnityEditorToolbox
 								BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 							if (targetMethodInfo != null)
 							{
-								throw new Exception(string.Format("Method '{0}' must have a parameter of type '{1}' or has no parameters for '{2}' to work.",
-									attribute.FieldPropertyMethodName,
-									propertyWithAttribute.type,
-									typeof(ConditionalHideInInspectorAttribute).Name));
+								throw new Exception($"Method '{attribute.FieldPropertyMethodName}' must have a parameter of type '{propertyWithAttribute.type}' or has no parameters for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 							}
 							else
 							{
-								throw new Exception(string.Format("There is no Field, Property or Method with the name '{0}' for '{1}' to work.",
-									attribute.FieldPropertyMethodName,
-									typeof(ConditionalHideInInspectorAttribute).Name));
+								throw new Exception($"There is no Field, Property or Method with the name '{attribute.FieldPropertyMethodName}' for '{typeof(ConditionalHideInInspectorAttribute).Name}' to work.");
 							}
 						}
 					}

@@ -107,7 +107,7 @@ namespace Extenity.IMGUIToolbox.Editor
 				int depth = list[i].depth;
 				int nextDepth = list[i + 1].depth;
 				if (nextDepth > depth && nextDepth - depth > 1)
-					throw new ArgumentException(string.Format("Invalid depth info in input list. Depth cannot increase more than 1 per row. Index {0} has depth {1} while index {2} has depth {3}", i, depth, i + 1, nextDepth));
+					throw new ArgumentException($"Invalid depth info in input list. Depth cannot increase more than 1 per row. Index {i} has depth {depth} while index {i + 1} has depth {nextDepth}.");
 			}
 
 			for (int i = 1; i < list.Count; ++i)

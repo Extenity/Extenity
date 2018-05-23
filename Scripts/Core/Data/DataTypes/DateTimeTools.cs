@@ -138,22 +138,22 @@ namespace Extenity.DataToolbox
 
 		public static string ToFullDateTimeForFilename(this DateTime datetime)
 		{
-			return String.Format("{0:yyyy.MM.dd HH.mm.ss}", datetime);
+			return $"{datetime:yyyy.MM.dd HH.mm.ss}";
 		}
 
 		public static string ToFullDateTime(this DateTime datetime)
 		{
-			return String.Format("{0:yyyy.MM.dd HH:mm:ss}", datetime);
+			return $"{datetime:yyyy.MM.dd HH:mm:ss}";
 		}
 
 		public static string ToFullDateTimeMsecForFilename(this DateTime datetime)
 		{
-			return String.Format("{0:yyyy.MM.dd HH.mm.ss.ffff}", datetime);
+			return $"{datetime:yyyy.MM.dd HH.mm.ss.ffff}";
 		}
 
 		public static string ToFullDateTimeMsec(this DateTime datetime)
 		{
-			return String.Format("{0:yyyy.MM.dd HH:mm:ss.ffff}", datetime);
+			return $"{datetime:yyyy.MM.dd HH:mm:ss.ffff}";
 		}
 
 		public static string ToStringMinutesSecondsMilliseconds(this TimeSpan timeSpan)

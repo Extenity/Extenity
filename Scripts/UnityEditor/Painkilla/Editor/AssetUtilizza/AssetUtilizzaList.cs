@@ -443,7 +443,7 @@ namespace Extenity.PainkillaTool.Editor
 				case SortOption.AssetPath:
 					return myTypes.Order(l => l.Data.AssetPath, ascending);
 				default:
-					Assert.IsTrue(false, string.Format("Unhandled enum '{0}'.", sortOption));
+					Assert.IsTrue(false, $"Unhandled enum '{sortOption}'.");
 					break;
 			}
 

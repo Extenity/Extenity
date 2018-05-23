@@ -153,7 +153,7 @@ namespace Extenity.ParallelToolbox
 
 					if (ExpectedSize > 0 && Position > ExpectedSize)
 					{
-						throw new Exception(string.Format("Stream size exceeds the expected size '{0}'.", ExpectedSize));
+						throw new Exception($"Stream size exceeds the expected size '{ExpectedSize}'.");
 					}
 				}
 
@@ -161,7 +161,7 @@ namespace Extenity.ParallelToolbox
 				{
 					if (Position != ExpectedSize)
 					{
-						throw new Exception(string.Format("Unexpected stream size '{0}' which should be '{1}'.", Position, ExpectedSize));
+						throw new Exception($"Unexpected stream size '{Position}' which should be '{ExpectedSize}'.");
 					}
 				}
 

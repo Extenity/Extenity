@@ -155,7 +155,7 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public override string ToString()
 		{
-			return string.Format("Center: {0}, Extents: {1}", m_Center, m_Extents);
+			return $"Center: {m_Center}, Extents: {m_Extents}";
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public string ToString(string format)
 		{
-			return string.Format("Center: {0}, Extents: {1}", m_Center.ToString(format), m_Extents.ToString(format));
+			return $"Center: {m_Center.ToString(format)}, Extents: {m_Extents.ToString(format)}";
 		}
 
 		/// <summary>

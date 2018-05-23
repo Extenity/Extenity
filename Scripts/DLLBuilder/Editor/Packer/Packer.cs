@@ -35,7 +35,7 @@ namespace Extenity.DLLBuilder
 			DLLBuilder.LogAndUpdateStatus("Packing configuration '{0}'", configuration.ConfigurationName);
 
 			if (!configuration.Enabled)
-				throw new Exception(string.Format("Internal error. Tried to pack using a disabled configuration '{0}'.", configuration.ConfigurationName));
+				throw new Exception($"Internal error. Tried to pack using a disabled configuration '{configuration.ConfigurationName}'.");
 
 			// Check consistency first.
 			{
@@ -55,7 +55,7 @@ namespace Extenity.DLLBuilder
 					Debug.LogWarningFormat("Skipping directory '{0}'.{1}", directoryInfo.DirectoryName,
 						string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes)
 							? ""
-							: string.Format(" Notes: '{0}'", directoryInfo.BuildEngineerNotes));
+							: $" Notes: '{directoryInfo.BuildEngineerNotes}'");
 					continue;
 				}
 				else
@@ -63,7 +63,7 @@ namespace Extenity.DLLBuilder
 					Debug.LogFormat("Processing directory '{0}'.{1}", directoryInfo.DirectoryName,
 						string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes)
 							? ""
-							: string.Format(" Notes: '{0}'", directoryInfo.BuildEngineerNotes));
+							: $" Notes: '{directoryInfo.BuildEngineerNotes}'");
 				}
 
 				var sourceDirectoryPath = Path.Combine(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.SourceDirectoryPath), directoryInfo.DirectoryName);

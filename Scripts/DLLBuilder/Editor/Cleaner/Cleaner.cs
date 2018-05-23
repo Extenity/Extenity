@@ -94,7 +94,7 @@ namespace Extenity.DLLBuilder
 
 			if (failed)
 			{
-				throw new Exception(string.Format("Failed to clear previous output files: (runtime: {0}, editor: {1})\n{2}", clearRutimeDLL, clearEditorDLL, result.Serialize('\n')));
+				throw new Exception($"Failed to clear previous output files: (runtime: {clearRutimeDLL}, editor: {clearEditorDLL})\n{result.Serialize('\n')}");
 			}
 			else
 			{

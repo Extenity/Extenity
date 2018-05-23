@@ -259,7 +259,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		private static void InternalAddToAssetList(List<string> list, List<string> fullList, string logTitle, StringBuilder log)
 		{
-			log.AppendLine(string.Format("====  ({0}) {1}  ====", list.Count, logTitle));
+			log.AppendLine($"====  ({list.Count}) {logTitle}  ====");
 
 			if (list.Count == 0)
 				return;

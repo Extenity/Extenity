@@ -91,7 +91,7 @@ namespace Extenity.ReflectionToolbox
 			var field = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 			if (field == null)
 			{
-				throw new Exception(string.Format("Type '{0}' does not have the field '{1}'.", type, fieldName));
+				throw new Exception($"Type '{type}' does not have the field '{fieldName}'.");
 			}
 			return field;
 		}
@@ -127,7 +127,7 @@ namespace Extenity.ReflectionToolbox
 				null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
-				throw new Exception(string.Format("Type '{0}' does not have the method '{1}'.", type, methodName));
+				throw new Exception($"Type '{type}' does not have the method '{methodName}'.");
 			}
 			return method;
 		}
@@ -139,7 +139,7 @@ namespace Extenity.ReflectionToolbox
 				null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
-				throw new Exception(string.Format("Type '{0}' does not have the static method '{1}'.", type, methodName));
+				throw new Exception($"Type '{type}' does not have the static method '{methodName}'.");
 			}
 			return method;
 		}

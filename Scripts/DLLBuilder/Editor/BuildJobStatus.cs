@@ -141,7 +141,7 @@ namespace Extenity.DLLBuilder
 			}
 			if (!Directory.Exists(ProjectPath))
 			{
-				errors.Add(new ConsistencyError(this, string.Format("Project Path directory '{0}' does not exist.", ProjectPath)));
+				errors.Add(new ConsistencyError(this, $"Project Path directory '{ProjectPath}' does not exist."));
 			}
 
 			//if (BuildTriggerSource == BuildTriggerSource.Unspecified)

@@ -106,7 +106,7 @@ namespace Extenity.UnityEditorToolbox
 				BuildProcessConfiguration configuration;
 				if (!Configurations.TryGetValue(configurationName, out configuration))
 				{
-					throw new Exception(string.Format("Configuration '{0}' does not exist.", configurationName));
+					throw new Exception($"Configuration '{configurationName}' does not exist.");
 				}
 
 				// See if we need to process the scene
@@ -153,7 +153,7 @@ namespace Extenity.UnityEditorToolbox
 						var processingScene = EditorSceneManager.GetSceneByPath(definition.ProcessedScenePath);
 						if (!processingScene.IsValid())
 						{
-							throw new Exception(string.Format("Processing scene could not be found at path '{0}'.", definition.ProcessedScenePath));
+							throw new Exception($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
 						}
 
 						// Merge other scenes into processing scene.
@@ -163,7 +163,7 @@ namespace Extenity.UnityEditorToolbox
 							{
 								if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
 								{
-									throw new Exception(string.Format("Merged scene could not be found at path '{0}'.", mergedScenePath));
+									throw new Exception($"Merged scene could not be found at path '{mergedScenePath}'.");
 								}
 
 								// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.

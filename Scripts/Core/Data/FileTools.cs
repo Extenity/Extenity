@@ -52,7 +52,7 @@ namespace Extenity.DataToolbox
 
 			if (string.IsNullOrEmpty(directory))
 			{
-				throw new InvalidOperationException(string.Format("There was no directory to remove from path '{0}'.", path));
+				throw new InvalidOperationException($"There was no directory to remove from path '{path}'.");
 			}
 			var index = directory.IndexOfStartingDirectorySeparatorChar();
 			if (index < 0 || index == directory.Length - 1)
@@ -77,7 +77,7 @@ namespace Extenity.DataToolbox
 
 			if (string.IsNullOrEmpty(directory))
 			{
-				throw new InvalidOperationException(string.Format("There was no directory to remove from path '{0}'.", path));
+				throw new InvalidOperationException($"There was no directory to remove from path '{path}'.");
 			}
 			var startIndex = directory.IsEndingWithDirectorySeparatorChar()
 				? directory.Length - 2

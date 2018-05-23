@@ -50,13 +50,13 @@ namespace Extenity.DLLBuilder
 					{
 						if (string.IsNullOrEmpty(target.SourceDirectoryPath))
 						{
-							errors.Add(new ConsistencyError(this, string.Format("Source Directory Path in Targets (at index '{0}') must be specified.", i)));
+							errors.Add(new ConsistencyError(this, $"Source Directory Path in Targets (at index '{i}') must be specified."));
 						}
 						DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(target.SourceDirectoryPath, ref errors);
 
 						if (string.IsNullOrEmpty(target.TargetDirectoryPath))
 						{
-							errors.Add(new ConsistencyError(this, string.Format("Target Directory Path in Targets (at index '{0}') must be specified.", i)));
+							errors.Add(new ConsistencyError(this, $"Target Directory Path in Targets (at index '{i}') must be specified."));
 						}
 						DLLBuilderConfiguration.CheckEnvironmentVariableConsistency(target.TargetDirectoryPath, ref errors);
 					}

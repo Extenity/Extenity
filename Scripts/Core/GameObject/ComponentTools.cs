@@ -29,9 +29,7 @@ namespace Extenity.GameObjectToolbox
 				var serializeFieldAttributeDefined = Attribute.IsDefined(field, typeof(SerializeField));
 				if (nonSerializedAttributeDefined && serializeFieldAttributeDefined)
 				{
-					throw new Exception(string.Format(
-						"Don't know what to do about field '{0}' that has both 'NonSerialized' and 'SerializeField' attributes.",
-						field.Name));
+					throw new Exception($"Don't know what to do about field '{field.Name}' that has both 'NonSerialized' and 'SerializeField' attributes.");
 				}
 				if (!nonSerializedAttributeDefined && // See if the field is specified as not serialized on purpose
 					!field.IsReadOnly() && // Unity won't serialize readonly fields

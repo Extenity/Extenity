@@ -73,11 +73,7 @@ namespace Extenity.DebugFlowTool.Generic
 				packetSize = writtenSize;
 				if (packetSize > MaxPacketSize)
 				{
-					throw new Exception(string.Format(
-						"Network packet of type '{0}' exceeds the maximum packet size with '{1}' which should be lesser than '{2}'.",
-						packetType.ToString(),
-						packetSize,
-						MaxPacketSize));
+					throw new Exception($"Network packet of type '{packetType.ToString()}' exceeds the maximum packet size with '{packetSize}' which should be lesser than '{MaxPacketSize}'.");
 				}
 			}
 			else
@@ -85,11 +81,7 @@ namespace Extenity.DebugFlowTool.Generic
 				packetSize = packetType.FixedPacketSize();
 				if (packetSize != writtenSize)
 				{
-					throw new Exception(string.Format(
-						"Network packet written size '{0}' differs from the expected size '{1}' for packet of type '{2}'.",
-						writtenSize,
-						packetSize,
-						packetType.ToString()));
+					throw new Exception($"Network packet written size '{writtenSize}' differs from the expected size '{packetSize}' for packet of type '{packetType.ToString()}'.");
 				}
 			}
 

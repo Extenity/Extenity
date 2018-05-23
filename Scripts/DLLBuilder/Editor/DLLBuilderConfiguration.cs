@@ -176,7 +176,7 @@ namespace Extenity.DLLBuilder
 					return environmentVariable.Value.Value;
 				}
 			}
-			throw new Exception(string.Format("Environment variable '{0}' does not exist.", variableName));
+			throw new Exception($"Environment variable '{variableName}' does not exist.");
 		}
 
 		public static string InsertEnvironmentVariables(string text)
@@ -232,7 +232,7 @@ namespace Extenity.DLLBuilder
 
 		private static string _BuildErrorMessage(string key)
 		{
-			return string.Format("Key '{0}' is not found in environment variables. You may happen to forgot to create an entry for this key in configuration?", key);
+			return $"Key '{key}' is not found in environment variables. You may happen to forgot to create an entry for this key in configuration?";
 		}
 
 		#endregion

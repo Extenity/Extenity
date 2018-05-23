@@ -504,7 +504,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var tps = now < 1f + tickAnalyzer.LastTickTime
 					? tickAnalyzer.TicksPerSecond
 					: 0;
-				EditorGUILayout.TextField(item.Key.ToString(), string.Format("{0:N3} sec \t {1} TPS", item.Value.Mean, tps));
+				EditorGUILayout.TextField(item.Key.ToString(), $"{item.Value.Mean:N3} sec \t {tps} TPS");
 			}
 			GUILayout.Space(40f);
 		}

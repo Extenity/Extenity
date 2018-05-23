@@ -269,7 +269,7 @@ namespace Extenity.UnityEditorToolbox
 				case SerializedPropertyType.BoundsInt:
 					return property.boundsIntValue;
 				default:
-					throw new Exception(string.Format("Property type '{0}' of the property '{1}' is currently not supported.", property.propertyType, property.propertyType));
+					throw new Exception($"Property type '{property.propertyType}' of the property '{property.name}' is currently not supported.");
 			}
 		}
 
@@ -307,7 +307,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				return propertyValue.Equals(value);
 			}
-			throw new Exception(string.Format("SerializedProperty type '{0}' does not match the compared value type '{1}'.", propertyType, valueType));
+			throw new Exception($"SerializedProperty type '{propertyType}' does not match the compared value type '{valueType}'.");
 		}
 
 		#endregion

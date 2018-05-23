@@ -64,7 +64,7 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 			process.StartInfo.CreateNoWindow = false;
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.FileName = "magick.exe";
-			process.StartInfo.Arguments = string.Format("\"{0}\" -resize {1}x{2} -set filename:fname \"%t\" \"{3}\"", inputFilter, sizeX, sizeY, outputFilter);
+			process.StartInfo.Arguments = $"\"{inputFilter}\" -resize {sizeX}x{sizeY} -set filename:fname \"%t\" \"{outputFilter}\"";
 
 			process.ErrorDataReceived += (sender, eventArgs) =>
 			{

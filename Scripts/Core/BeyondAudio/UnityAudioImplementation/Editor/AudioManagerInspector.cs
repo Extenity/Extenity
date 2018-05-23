@@ -25,10 +25,7 @@ namespace Extenity.BeyondAudio.Editor
 				var eventsWithUnassignedOutputs = Me.ListEventsWithUnassignedOutputs();
 				if (eventsWithUnassignedOutputs.IsNotNullAndEmpty())
 				{
-					EditorGUILayout.HelpBox(string.Format("There are '{0}' event(s) with unassigned outputs:\n\n{1}",
-							eventsWithUnassignedOutputs.Count,
-							eventsWithUnassignedOutputs.Select(item => "   " + item.Name).ToList().Serialize('\n'))
-						, MessageType.Warning);
+					EditorGUILayout.HelpBox($"There are '{eventsWithUnassignedOutputs.Count}' event(s) with unassigned outputs:\n\n{eventsWithUnassignedOutputs.Select(item => "   " + item.Name).ToList().Serialize('\n')}", MessageType.Warning);
 					GUILayout.Space(20f);
 				}
 			}
@@ -38,10 +35,7 @@ namespace Extenity.BeyondAudio.Editor
 				var eventsWithUnassignedClips = Me.ListEventsWithUnassignedClips();
 				if (eventsWithUnassignedClips.IsNotNullAndEmpty())
 				{
-					EditorGUILayout.HelpBox(string.Format("There are '{0}' event(s) with unassigned clips:\n\n{1}",
-							eventsWithUnassignedClips.Count,
-							eventsWithUnassignedClips.Select(item => "   " + item.Name).ToList().Serialize('\n'))
-						, MessageType.Warning);
+					EditorGUILayout.HelpBox($"There are '{eventsWithUnassignedClips.Count}' event(s) with unassigned clips:\n\n{eventsWithUnassignedClips.Select(item => "   " + item.Name).ToList().Serialize('\n')}", MessageType.Warning);
 					GUILayout.Space(20f);
 				}
 			}

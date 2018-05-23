@@ -159,14 +159,8 @@ namespace Extenity.ImportTunnelingToolbox
 			if (string.IsNullOrEmpty(executedMethod))
 				throw new ArgumentNullException(nameof(executedMethod));
 
-			var args = string.Format(
-				//"-createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
-				"-quit -batchmode -nographics -silent-crashes -createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
-				projectPath,
-				executedMethod,
-				sourceAssetPath,
-				outputAssetPath,
-				assetBundlePlatform.ToString());
+			//"-createProject {0} -executeMethod {1} +sourceAssetPath {2} +outputAssetPath {3} +assetBundlePlatform {4}",
+			var args = $"-quit -batchmode -nographics -silent-crashes -createProject {projectPath} -executeMethod {executedMethod} +sourceAssetPath {sourceAssetPath} +outputAssetPath {outputAssetPath} +assetBundlePlatform {assetBundlePlatform.ToString()}";
 
 			var process = new Process();
 			process.StartInfo.FileName = EnsuredUnityEditorPath;

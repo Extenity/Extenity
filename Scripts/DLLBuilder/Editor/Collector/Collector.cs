@@ -47,7 +47,7 @@ namespace Extenity.DLLBuilder
 				if (!configuration.Enabled)
 				{
 					if (onFailed != null)
-						onFailed(string.Format("Internal error. Tried to gather dependencies of a disabled configuration '{0}'.", configuration.ConfigurationName));
+						onFailed($"Internal error. Tried to gather dependencies of a disabled configuration '{configuration.ConfigurationName}'.");
 					yield break;
 				}
 
@@ -75,7 +75,7 @@ namespace Extenity.DLLBuilder
 					if (!Directory.Exists(sourceDirectoryPath))
 					{
 						if (onFailed != null)
-							onFailed(string.Format("Collector source directory '{0}' does not exist.", source.SourceDirectoryPath));
+							onFailed($"Collector source directory '{source.SourceDirectoryPath}' does not exist.");
 						yield break;
 					}
 
@@ -83,7 +83,7 @@ namespace Extenity.DLLBuilder
 					if (!Directory.Exists(targetDirectoryPath))
 					{
 						if (onFailed != null)
-							onFailed(string.Format("Collector target directory '{0}' does not exist. Please make sure the target directory is created. This is a precaution to prevent any damage caused by misconfiguration.", source.TargetDirectoryPath));
+							onFailed($"Collector target directory '{source.TargetDirectoryPath}' does not exist. Please make sure the target directory is created. This is a precaution to prevent any damage caused by misconfiguration.");
 						yield break;
 					}
 

@@ -886,7 +886,7 @@ namespace Extenity.DataToolbox
 			var minutes = (long)(totalSeconds / 60);
 			var seconds = (int)(totalSeconds % 60);
 			var milliseconds = MathTools.FastRoundToInt((totalSeconds - Math.Truncate(totalSeconds)) * 1000);
-			return string.Format("{0}:{1:00}.{2:000}", minutes, seconds, milliseconds);
+			return $"{minutes}:{seconds:00}.{milliseconds:000}";
 		}
 
 		public static string ToStringMillisecondsFromSeconds(this double totalSeconds)

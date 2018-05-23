@@ -342,7 +342,7 @@ namespace Extenity.AssetToolbox.Editor
 				}
 				else
 				{
-					Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
+					Debug.LogWarning($"{obj} is not a source asset.");
 				}
 			}
 
@@ -379,7 +379,7 @@ namespace Extenity.AssetToolbox.Editor
 				}
 				else
 				{
-					Debug.LogWarning(string.Format("{0} is not a source asset.", obj));
+					Debug.LogWarning($"{obj} is not a source asset.");
 				}
 			}
 

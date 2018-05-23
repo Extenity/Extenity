@@ -26,14 +26,14 @@ namespace Extenity.DataToolbox
 			if (reader.TokenType == JsonToken.Null)
 				return null;
 			if (reader.TokenType != JsonToken.String)
-				throw new JsonSerializationException(string.Format("Unexpected token or value when parsing Extenity.DataTypes.Guid. Token '{0}'. Value '{1}'.", reader.TokenType, reader.Value));
+				throw new JsonSerializationException($"Unexpected token or value when parsing Extenity.DataTypes.Guid. Token '{reader.TokenType}'. Value '{reader.Value}'.");
 			try
 			{
 				return new Guid((string)reader.Value);
 			}
 			catch (Exception exception)
 			{
-				throw new JsonSerializationException(string.Format("Error parsing Extenity.DataTypes.Guid string '{0}' at path '{1}'", reader.Value, reader.Path), exception);
+				throw new JsonSerializationException($"Error parsing Extenity.DataTypes.Guid string '{reader.Value}' at path '{reader.Path}'", exception);
 			}
 		}
 

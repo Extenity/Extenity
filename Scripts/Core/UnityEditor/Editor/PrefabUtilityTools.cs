@@ -88,7 +88,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						var instantiated = PrefabUtility.InstantiatePrefab(original);
 						if (!instantiated)
 						{
-							throw new Exception(string.Format("Could not instantiate prefab from reference '{0}'.", original));
+							throw new Exception($"Could not instantiate prefab from reference '{original}'.");
 						}
 						return (GameObject)instantiated;
 					}
