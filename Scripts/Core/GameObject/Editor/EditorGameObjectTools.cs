@@ -113,23 +113,23 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy Empty Unreferenced GameObjects
 
-		public static void DestroyEmptyUnreferencedGameObjectsInActiveScene(ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjectsInActiveScene(bool undoable, bool log)
 		{
-			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(activeCheck, undoable, log);
+			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(undoable, log);
 		}
 
-		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(bool undoable, bool log)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(undoable, log));
 		}
 
-		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, bool undoable, bool log)
 		{
 			var gameObjects = scene.ListAllGameObjectsInScene();
 			if (gameObjects.IsNullOrEmpty())
 				return;
 
-			var allComponents = scene.FindObjectsOfType<Component>(activeCheck);
+			var allComponents = scene.FindObjectsOfType<Component>(ActiveCheck.IncludingInactive);
 			var allReferencedObjects = new HashSet<GameObject>();
 			foreach (var component in allComponents)
 			{

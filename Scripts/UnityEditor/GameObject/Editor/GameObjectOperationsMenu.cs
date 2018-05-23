@@ -42,13 +42,13 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Loaded Scenes", priority = 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjectsInLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(ActiveCheck.IncludingInactive, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(true, true);
 		}
 
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 1)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjectsInActiveScene()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(ActiveCheck.IncludingInactive, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(true, true);
 		}
 
 		#endregion
