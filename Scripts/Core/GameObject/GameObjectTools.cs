@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.SceneManagementToolbox;
 using UnityEngine.SceneManagement;
@@ -673,7 +674,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region FindComponentInParents
+		#region GetComponentInParent
 
 		public static T GetComponentInParent<T>(this Transform me, bool includeSelf, bool includeInactive) where T : Component
 		{
@@ -707,6 +708,56 @@ namespace Extenity.GameObjectToolbox
 				parent = parent.parent;
 			}
 			return null;
+		}
+
+		#endregion
+
+		#region Find by path
+
+		public static T FindComponentByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			return components?.FirstOrDefault(component => component.gameObject.FullName() == expectedPath);
+		}
+
+		public static T FindComponentByComponentPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			return components?.FirstOrDefault(component => component.FullName() == expectedPath);
+		}
+
+		public static List<T> FindComponentsByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			return components?.Where(component => component.gameObject.FullName() == expectedPath).ToList();
+		}
+
+		public static List<T> FindComponentsByComponentPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			return components?.Where(component => component.FullName() == expectedPath).ToList();
+		}
+
+		public static T FindSingleComponentByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			var found = components.FindComponentsByGameObjectPath(expectedPath);
+			if (found.Count != 1)
+			{
+				if (found.Count > 1)
+					throw new Exception($"There are more than one '{typeof(T).Name}' components at path '{expectedPath}'.");
+				else
+					throw new Exception($"There are no '{typeof(T).Name}' components at path '{expectedPath}'.");
+			}
+			return found[0];
+		}
+
+		public static T FindSingleComponentByComponentPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
+		{
+			var found = components.FindComponentsByComponentPath(expectedPath);
+			if (found.Count != 1)
+			{
+				if (found.Count > 1)
+					throw new Exception($"There are more than one '{typeof(T).Name}' components at path '{expectedPath}'.");
+				else
+					throw new Exception($"There are no '{typeof(T).Name}' components at path '{expectedPath}'.");
+			}
+			return found[0];
 		}
 
 		#endregion
@@ -979,9 +1030,9 @@ namespace Extenity.GameObjectToolbox
 			return results;
 		}
 
-		public static List<T> WIP_FindObjectsOfType<T>(this Scene scene, ActiveCheck activeCheck)
+		public static List<T> WIP_FindObjectsOfType<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
 		{
-			var temp = new List<T>();
+			var unityReportedComponents = new List<T>();
 			var results = new List<T>();
 			var rootGameObjects = new List<GameObject>(scene.rootCount);
 			scene.GetRootGameObjects(rootGameObjects);
@@ -994,9 +1045,24 @@ namespace Extenity.GameObjectToolbox
 						{
 							if (!rootGameObjects[i] || !rootGameObjects[i].activeSelf)
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(false, temp);
-							results.AddRange(temp);
-							temp.Clear();
+							rootGameObjects[i].GetComponentsInChildren(false, unityReportedComponents);
+							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
+							{
+								var component = unityReportedComponents[iComponent];
+								if (!component)
+									continue;
+								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
+									continue;
+
+								var componentEnabled = component.IsComponentEnabled(true);
+								var gameObjectEnabled = component.gameObject.activeInHierarchy;
+
+								if (gameObjectEnabled && componentEnabled)
+								{
+									results.Add(component);
+								}
+							}
+							unityReportedComponents.Clear();
 						}
 					}
 					break;
@@ -1006,9 +1072,18 @@ namespace Extenity.GameObjectToolbox
 						{
 							if (!rootGameObjects[i])
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(true, temp);
-							results.AddRange(temp);
-							temp.Clear();
+							rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
+							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
+							{
+								var component = unityReportedComponents[iComponent];
+								if (!component)
+									continue;
+								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
+									continue;
+
+								results.Add(component);
+							}
+							unityReportedComponents.Clear();
 						}
 					}
 					break;
@@ -1016,75 +1091,26 @@ namespace Extenity.GameObjectToolbox
 					{
 						for (int i = 0; i < rootGameObjects.Count; i++)
 						{
-							if (!rootGameObjects[i] || rootGameObjects[i].activeSelf)
+							if (!rootGameObjects[i])
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(true, temp);
-							for (var iComponent = 0; iComponent < temp.Count; iComponent++)
+							rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
+							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
 							{
-								var item = temp[iComponent];
-								if (item == null)
+								var component = unityReportedComponents[iComponent];
+								if (!component)
 									continue;
-								if (!(item is Component)) // We cannot use 'as' like below for checking if the conversion is successfull, since Unity overrides == and bool operator.
-									throw new Exception($"Unknown type '{item.GetType().FullName}'. Only Component types are supported.");
-								var asComponent = item as Component;
-								if (!asComponent)
+								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
 									continue;
 
-								bool componentDisabled;
-								var gameObjectDisabled = !asComponent.gameObject.activeInHierarchy;
+								var componentEnabled = component.IsComponentEnabled(true);
+								var gameObjectEnabled = component.gameObject.activeInHierarchy;
 
-								// TODO: Update that in new Unity versions.
-								// These are the classes that derive from Component (Unity version 2018.1.1f1)
-								// Use ReSharper to get the list quickly. Right click on Component class, Inspect -> Hierarchy.
-								//    Behaviour
-								//    CanvasGroup
-								//    CanvasRenderer
-								//    Cloth
-								//    Collider
-								//    Joint
-								//    LODGroup
-								//    MeshFilter
-								//    OcclusionArea
-								//    OcclusionPortal
-								//    ParticleAnimator
-								//    ParticleEmitter
-								//    ParticleSystem
-								//    Renderer
-								//    Rigidbody
-								//    Rigidbody2D
-								//    TextMesh
-								//    Transform
-								//    Tree
-								//    WindZone
-								//    WorldAnchor
-								//
-								// From which these are the ones that has 'enabled' property that should
-								// also mean the component is meant to be disabled if set to false
-								//    Behaviour
-								//    Cloth
-								//    Collider
-								//    LODGroup
-								//    Renderer
-
-								if (item is Behaviour)
-									componentDisabled = !(item as Behaviour).enabled;
-								else if (item is Cloth)
-									componentDisabled = !(item as Cloth).enabled;
-								else if (item is Collider)
-									componentDisabled = !(item as Collider).enabled;
-								else if (item is LODGroup)
-									componentDisabled = !(item as LODGroup).enabled;
-								else if (item is Renderer)
-									componentDisabled = !(item as Renderer).enabled;
-								else
-									componentDisabled = false; // Handle all other Components as if they can't ever get disabled.
-
-								if (gameObjectDisabled || componentDisabled)
+								if (!gameObjectEnabled || !componentEnabled)
 								{
-									results.Add(item);
+									results.Add(component);
 								}
 							}
-							temp.Clear();
+							unityReportedComponents.Clear();
 						}
 					}
 					break;
@@ -1896,6 +1922,66 @@ namespace Extenity.GameObjectToolbox
 				return true;
 			}
 			return false;
+		}
+
+		#endregion
+
+		#region IsComponentEnabled
+
+		/// <summary>
+		/// Checks for 'enabled' state for those components that has an 'enabled' property.
+		/// For other types, 'defaultValueForUnknownTypes' value will be returned.
+		/// 
+		/// Note that this is a processing heavy operation.
+		/// </summary>
+		public static bool IsComponentEnabled(this Component component, bool defaultValueForUnknownTypes = true)
+		{
+			// TODO: Update that in new Unity versions.
+			// These are the classes that derive from Component (Unity version 2018.1.1f1)
+			// Use ReSharper to get the list quickly. Right click on Component class, Inspect -> Hierarchy.
+			//    Behaviour
+			//    CanvasGroup
+			//    CanvasRenderer
+			//    Cloth
+			//    Collider
+			//    Joint
+			//    LODGroup
+			//    MeshFilter
+			//    OcclusionArea
+			//    OcclusionPortal
+			//    ParticleAnimator
+			//    ParticleEmitter
+			//    ParticleSystem
+			//    Renderer
+			//    Rigidbody
+			//    Rigidbody2D
+			//    TextMesh
+			//    Transform
+			//    Tree
+			//    WindZone
+			//    WorldAnchor
+			//
+			// From which these are the ones that has 'enabled' property that should
+			// also mean the component is meant to be disabled if set to false
+			//    Behaviour
+			//    Cloth
+			//    Collider
+			//    LODGroup
+			//    Renderer
+
+			// We cannot use 'as' for checking if the conversion is successfull, since Unity overrides == and bool operator.
+			if (component is Behaviour)
+				return (component as Behaviour).enabled;
+			if (component is Renderer)
+				return (component as Renderer).enabled;
+			if (component is Collider)
+				return (component as Collider).enabled;
+			if (component is LODGroup)
+				return (component as LODGroup).enabled;
+			if (component is Cloth)
+				return (component as Cloth).enabled;
+
+			return defaultValueForUnknownTypes;
 		}
 
 		#endregion
