@@ -23,7 +23,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void OnProcessScene(Scene scene)
 #endif
 		{
-			scene.DestroyAllComponents<Devnote>(true, false, true);
+			scene.DestroyAllComponents<Devnote>(true, false, false);
 		}
 	}
 
