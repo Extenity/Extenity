@@ -347,7 +347,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 
 			var paths = stringBuilder.ToString().Trim();
-			Clipboard.SetClipboardText(paths);
+			Clipboard.SetClipboardText(paths, true);
 		}
 
 		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)

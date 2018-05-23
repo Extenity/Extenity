@@ -73,7 +73,7 @@ namespace Extenity.AssetToolbox.Editor
 			var textureName = fileName.ClearSpecialCharacters();
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
-			Clipboard.SetClipboardText(stringBuilder.ToString());
+			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
 			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
 		}
 
@@ -89,7 +89,7 @@ namespace Extenity.AssetToolbox.Editor
 			var textureName = fileName.ClearSpecialCharacters();
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
-			Clipboard.SetClipboardText(stringBuilder.ToString());
+			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
 			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
 		}
 

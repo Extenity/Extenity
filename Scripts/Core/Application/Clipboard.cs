@@ -26,12 +26,12 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
-		protected abstract void DoSetClipboardText(string text);
+		protected abstract void DoSetClipboardText(string text, bool log);
 		protected abstract string DoGetClipboardText();
 
-		public static void SetClipboardText(string text)
+		public static void SetClipboardText(string text, bool log)
 		{
-			Instance.DoSetClipboardText(text);
+			Instance.DoSetClipboardText(text, log);
 		}
 
 		public static string GetClipboardText()

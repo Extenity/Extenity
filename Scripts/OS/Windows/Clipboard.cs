@@ -72,7 +72,7 @@ namespace Extenity.OperatingSystemToolbox
 		static extern bool GlobalUnlock(IntPtr hMem);
 
 
-		protected override void DoSetClipboardText(string text)
+		protected override void DoSetClipboardText(string text, bool log)
 		{
 			if (!OpenClipboard(IntPtr.Zero))
 			{
@@ -94,6 +94,11 @@ namespace Extenity.OperatingSystemToolbox
 			if (!CloseClipboard())
 			{
 				throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to close clipboard");
+			}
+
+			if (log)
+			{
+				Debug.Log("Copied to clipboard: " + text);
 			}
 		}
 
