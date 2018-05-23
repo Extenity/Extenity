@@ -1269,6 +1269,23 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region DetachChildrenRecursive
+
+		public static void DetachChildrenRecursive(this Transform parent)
+		{
+			var childCount = parent.childCount;
+			if (childCount == 0)
+				return;
+
+			for (int i = childCount - 1; i >= 0; i--)
+			{
+				parent.GetChild(i).DetachChildrenRecursive();
+			}
+			parent.DetachChildren();
+		}
+
+		#endregion
+
 		#region SetParentOfAllObjectsContainingComponent
 
 		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
