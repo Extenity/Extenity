@@ -101,6 +101,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 			}
 
+			if (configuration.DeparentAll)
+			{
+				go.transform.DetachChildrenRecursive();
+			}
+
 			return changed;
 		}
 

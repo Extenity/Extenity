@@ -40,6 +40,9 @@ namespace Extenity.UnityEditorToolbox
 		[Header("Change Navigation")]
 		public bool ChangeNavMeshArea = false;
 		public int AreaIndex = -1;
+
+		[Header("Deparent")]
+		public bool DeparentAll = false;
 	}
 
 	public class BatchObjectProcessor : MonoBehaviour
