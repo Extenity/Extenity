@@ -681,6 +681,7 @@ namespace Extenity.GameObjectToolbox
 			return me.gameObject.GetComponentInParent<T>(includeSelf, includeInactive);
 		}
 
+		// TODO: Change 'includeInactive' to ActiveCheck
 		// TODO: Write tests (including all ActiveCheck combinations)
 		public static T GetComponentInParent<T>(this GameObject me, bool includeSelf, bool includeInactive) where T : Component
 		{
@@ -922,6 +923,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		// TODO: Are these really necessary?
 		#region Get component in children without active check
 
 		public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
@@ -961,6 +963,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		// TODO: Are these really necessary?
 		#region Get component in parent without active check
 
 		public static T GetComponentInParentRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
@@ -991,46 +994,29 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindObjectsOfTypeAll
 
-		public static List<T> FindObjectsOfTypeAllInActiveScene<T>(bool includeInactive)
+		public static List<T> FindObjectsOfTypeAllInActiveScene<T>(ActiveCheck activeCheck) where T : Component
 		{
-			return SceneManager.GetActiveScene().FindObjectsOfTypeAll<T>(includeInactive);
+			return SceneManager.GetActiveScene().FindObjectsOfType<T>(activeCheck);
 		}
 
-		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>(bool includeInactive)
+		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
 		{
-			return SceneManagerTools.GetLoadedScenes().FindObjectsOfTypeAll<T>(includeInactive);
+			return SceneManagerTools.GetLoadedScenes().FindObjectsOfType<T>(activeCheck);
 		}
 
-		public static List<T> FindObjectsOfTypeAll<T>(this IList<Scene> scenes, bool includeInactive)
+		public static List<T> FindObjectsOfType<T>(this IList<Scene> scenes, ActiveCheck activeCheck) where T : Component
 		{
 			var results = new List<T>();
 			for (var i = 0; i < scenes.Count; i++)
 			{
-				var list = scenes[i].FindObjectsOfTypeAll<T>(includeInactive);
+				var list = scenes[i].FindObjectsOfType<T>(activeCheck);
 				results.AddRange(list);
 			}
 
 			return results;
 		}
 
-		// TODO: Find a way to make 'includeInactive' check more flexible, like checking for only active, only inactive, only inactiveinhierarchy, etc.
-		// TODO: Make sure to check for both component and gameobject enabled states.
-		// TODO: Write tests (including all ActiveCheck combinations)
-		public static List<T> FindObjectsOfTypeAll<T>(this Scene scene, bool includeInactive)
-		{
-			var temp = new List<T>();
-			var results = new List<T>();
-			var rootGameObjects = scene.GetRootGameObjects();
-			for (int i = 0; i < rootGameObjects.Length; i++)
-			{
-				rootGameObjects[i].GetComponentsInChildren(includeInactive, temp);
-				results.AddRange(temp);
-				temp.Clear();
-			}
-			return results;
-		}
-
-		public static List<T> WIP_FindObjectsOfType<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
+		public static List<T> FindObjectsOfType<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
 		{
 			var unityReportedComponents = new List<T>();
 			var results = new List<T>();
@@ -1285,19 +1271,19 @@ namespace Extenity.GameObjectToolbox
 
 		#region SetParentOfAllObjectsContainingComponent
 
-		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, includeInactive);
+			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck);
 		}
 
-		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, includeInactive));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck));
 		}
 
-		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, bool includeInactive) where T : Component
+		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
 		{
-			var componentTransforms = scene.FindObjectsOfTypeAll<T>(includeInactive)
+			var componentTransforms = scene.FindObjectsOfType<T>(activeCheck)
 				.Select(item => item.transform);
 
 			foreach (var transform in componentTransforms)
@@ -1452,19 +1438,19 @@ namespace Extenity.GameObjectToolbox
 
 		#region Destroy All GameObjects Containing Component
 
-		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(includeInactive));
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(activeCheck));
 		}
 
-		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().DestroyAllGameObjectsContainingComponent<T>(includeInactive);
+			SceneManager.GetActiveScene().DestroyAllGameObjectsContainingComponent<T>(activeCheck);
 		}
 
-		public static void DestroyAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive) where T : Component
+		public static void DestroyAllGameObjectsContainingComponent<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
 		{
-			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
+			var components = scene.FindObjectsOfType<T>(activeCheck);
 
 			foreach (var component in components)
 			{
@@ -1478,19 +1464,19 @@ namespace Extenity.GameObjectToolbox
 
 		#region Destroy Immediate All GameObjects Containing Component
 
-		public static void DestroyImmediateAllGameObjectsContainingComponentInLoadedScenes<T>(bool includeInactive) where T : Component
+		public static void DestroyImmediateAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyImmediateAllGameObjectsContainingComponent<T>(includeInactive));
+			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyImmediateAllGameObjectsContainingComponent<T>(activeCheck));
 		}
 
-		public static void DestroyImmediateAllGameObjectsContainingComponentInActiveScene<T>(bool includeInactive) where T : Component
+		public static void DestroyImmediateAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().DestroyImmediateAllGameObjectsContainingComponent<T>(includeInactive);
+			SceneManager.GetActiveScene().DestroyImmediateAllGameObjectsContainingComponent<T>(activeCheck);
 		}
 
-		public static void DestroyImmediateAllGameObjectsContainingComponent<T>(this Scene scene, bool includeInactive) where T : Component
+		public static void DestroyImmediateAllGameObjectsContainingComponent<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
 		{
-			var components = scene.FindObjectsOfTypeAll<T>(includeInactive);
+			var components = scene.FindObjectsOfType<T>(activeCheck);
 
 			foreach (var component in components)
 			{

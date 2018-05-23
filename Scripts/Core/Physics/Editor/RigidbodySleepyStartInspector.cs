@@ -1,3 +1,4 @@
+using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Extenity.PhysicsToolbox
 			if (GUILayout.Button("Get All Rigidbodies In Loaded Scenes", BigButtonHeight))
 			{
 				Undo.RecordObject(Me, "Gather all rigidbodies");
-				Me.GatherAllRigidbodiesInScene(true, true);
+				Me.GatherAllRigidbodiesInScene(ActiveCheck.IncludingInactive, true);
 			}
 
 			GUILayout.Space(20f);

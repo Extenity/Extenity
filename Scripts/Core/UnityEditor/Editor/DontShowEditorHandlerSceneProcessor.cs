@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void OnProcessScene(Scene scene)
 #endif
 		{
-			scene.DestroyAllComponents<DontShowEditorHandler>(true, false, false);
+			scene.DestroyAllComponents<DontShowEditorHandler>(ActiveCheck.IncludingInactive, false, false);
 		}
 	}
 

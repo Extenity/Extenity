@@ -1,3 +1,4 @@
+using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
 using UnityEditor.Build;
 #if UNITY_2018_1_OR_NEWER
@@ -23,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void OnProcessScene(Scene scene)
 #endif
 		{
-			scene.DestroyAllComponents<SnapToGroundInEditor>(true, false, false);
+			scene.DestroyAllComponents<SnapToGroundInEditor>(ActiveCheck.IncludingInactive, false, false);
 		}
 	}
 

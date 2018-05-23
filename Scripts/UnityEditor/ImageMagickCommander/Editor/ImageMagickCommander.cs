@@ -16,22 +16,22 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 	{
 		#region Reflection Probe Blurring
 
-		public static void BlurReflectionProbesInActiveScene(bool includeInactive)
+		public static void BlurReflectionProbesInActiveScene(ActiveCheck activeCheck)
 		{
-			SceneManager.GetActiveScene().BlurReflectionProbes(includeInactive);
+			SceneManager.GetActiveScene().BlurReflectionProbes(activeCheck);
 		}
 
-		public static void BlurReflectionProbesInLoadedScenes(bool includeInactive)
+		public static void BlurReflectionProbesInLoadedScenes(ActiveCheck activeCheck)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.BlurReflectionProbes(includeInactive));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.BlurReflectionProbes(activeCheck));
 		}
 
-		public static void BlurReflectionProbes(this Scene scene, bool includeInactive)
+		public static void BlurReflectionProbes(this Scene scene, ActiveCheck activeCheck)
 		{
 			const int sizeX = 96;
 			const int sizeY = 16;
 
-			var reflectionProbes = scene.FindObjectsOfTypeAll<ReflectionProbe>(includeInactive);
+			var reflectionProbes = scene.FindObjectsOfType<ReflectionProbe>(activeCheck);
 			foreach (var reflectionProbe in reflectionProbes)
 			{
 				if (!reflectionProbe.bakedTexture)

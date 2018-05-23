@@ -42,29 +42,29 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Loaded Scenes", priority = 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjectsInLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(true, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(ActiveCheck.IncludingInactive, true, true);
 		}
 
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 1)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjectsInActiveScene()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(true, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(ActiveCheck.IncludingInactive, true, true);
 		}
 
 		#endregion
 
 		#region Hierarchy Menu - Delete All Disabled Static MeshRenderers
 
-		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 4)]
-		private static void Menu_DestroyAllDisabledStaticMeshRenderersInLoadedScenes()
+		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Loaded Scenes", priority = 4)]
+		private static void Menu_DeleteAllDisabledStaticMeshRenderersInLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInLoadedScenes(true, true);
+			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck.InactiveOnly, true, true);
 		}
 
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 5)]
-		private static void Menu_DestroyAllDisabledStaticMeshRenderersInActiveScene()
+		private static void Menu_DeleteAllDisabledStaticMeshRenderersInActiveScene()
 		{
-			EditorGameObjectTools.DestroyAllDisabledStaticMeshRenderersAndMeshFiltersInActiveScene(true, true);
+			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck.InactiveOnly, true, true);
 		}
 
 		#endregion
