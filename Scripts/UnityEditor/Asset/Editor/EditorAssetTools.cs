@@ -433,6 +433,38 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Context Menu - Copy Component/GameObject Path
+
+		[MenuItem("CONTEXT/Component/Copy Component Path", true)]
+		private static bool CopyComponentPath_Validate(MenuCommand menuCommand)
+		{
+			var component = menuCommand.context as Component;
+			return component;
+		}
+
+		[MenuItem("CONTEXT/Component/Copy Component Path", priority = 541)]
+		private static void CopyComponentPath(MenuCommand menuCommand)
+		{
+			var component = menuCommand.context as Component;
+			Clipboard.SetClipboardText(component.FullName(), true);
+		}
+
+		[MenuItem("CONTEXT/Component/Copy GameObject Path", true)]
+		private static bool CopyGameObjectPath_Validate(MenuCommand menuCommand)
+		{
+			var component = menuCommand.context as Component;
+			return component;
+		}
+
+		[MenuItem("CONTEXT/Component/Copy GameObject Path", priority = 542)]
+		private static void CopyGameObjectPath(MenuCommand menuCommand)
+		{
+			var component = menuCommand.context as Component;
+			Clipboard.SetClipboardText(component.gameObject.FullName(), true);
+		}
+
+		#endregion
+
 		#region Context Menu - Serialize to JSON
 
 		[MenuItem("CONTEXT/Component/Serialize to JSON", true)]
@@ -442,7 +474,7 @@ namespace Extenity.AssetToolbox.Editor
 			return component;
 		}
 
-		[MenuItem("CONTEXT/Component/Serialize to JSON", priority = 540)]
+		[MenuItem("CONTEXT/Component/Serialize to JSON", priority = 561)]
 		private static void SerializeToJSON(MenuCommand menuCommand)
 		{
 			var component = menuCommand.context as Component;
