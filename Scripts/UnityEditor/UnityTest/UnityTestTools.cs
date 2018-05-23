@@ -1,12 +1,31 @@
 ﻿using System;
+using Extenity.SceneManagementToolbox;
 using UnityEngine;
 
-namespace Extenity.UnityTestToolbox.Editor
+namespace Extenity.UnityTestToolbox
 {
 
 	public static class UnityTestTools
 	{
-		#region Tools - Memory Checker
+		#region Cleanup
+
+		public static void Cleanup()
+		{
+			SceneManagerTools.GetLoadedScenes().ForEach(scene =>
+			{
+				foreach (var rootObject in scene.GetRootGameObjects())
+				{
+					if (!rootObject.GetComponent("UnityEngine.TestTools.TestRunner.PlaymodeTestsController"))
+					{
+						GameObject.DestroyImmediate(rootObject);
+					}
+				}
+			});
+		}
+
+		#endregion
+
+		#region Memory Checker
 
 		private static Int64 DetectedMemoryInMemoryCheck;
 
@@ -42,7 +61,7 @@ namespace Extenity.UnityTestToolbox.Editor
 			DetectedMemoryInMemoryCheck = 0;
 			if (change != 0)
 			{
-				Debug.LogWarning(string.Format("Detected a memory change of '{0}' bytes.", change));
+				Debug.LogWarning($"Detected a memory change of '{change}' bytes.");
 			}
 			return change != 0;
 		}
