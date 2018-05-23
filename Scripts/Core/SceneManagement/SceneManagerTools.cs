@@ -7,6 +7,18 @@ namespace Extenity.SceneManagementToolbox
 
 	public class SceneManagerTools
 	{
+		public static List<Scene> GetScenes()
+		{
+			var sceneCount = SceneManager.sceneCount;
+			var list = new List<Scene>(sceneCount);
+			for (int i = 0; i < sceneCount; i++)
+			{
+				var scene = SceneManager.GetSceneAt(i);
+				list.Add(scene);
+			}
+			return list;
+		}
+
 		public static List<Scene> GetLoadedScenes()
 		{
 			var sceneCount = SceneManager.sceneCount;
