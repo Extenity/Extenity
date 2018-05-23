@@ -108,6 +108,14 @@ namespace Extenity.DataToolbox
 			return source.GetRange(0, source.Count);
 		}
 
+		public static T[] Combine<T>(this T[] thisArray, T[] appendedArray)
+		{
+			var result = new T[thisArray.Length + appendedArray.Length];
+			Array.Copy(thisArray, result, thisArray.Length);
+			Array.Copy(appendedArray, 0, result, thisArray.Length, appendedArray.Length);
+			return result;
+		}
+
 		public static void Combine<T>(this ICollection<T> thisList, IEnumerable<T> otherList)
 		{
 			if (otherList == null)
@@ -248,6 +256,43 @@ namespace Extenity.DataToolbox
 			var result = new T[length];
 			Array.Copy(source, index, result, 0, length);
 			return result;
+		}
+
+		public static int IndexOf<T>(this T[] source, T value)
+		{
+			return Array.IndexOf(source, value);
+		}
+
+		public static int IndexOf<T>(this T[] source, T value, int startIndex)
+		{
+			return Array.IndexOf(source, value, startIndex);
+		}
+
+		public static int IndexOf<T>(this T[] source, T value, int startIndex, int count)
+		{
+			return Array.IndexOf(source, value, startIndex, count);
+		}
+
+		public static T[] Remove<T>(this T[] source, T[] removedArray)
+		{
+			var array = source;
+			foreach (var removedItem in removedArray)
+			{
+				int index;
+				while ((index = array.IndexOf(removedItem)) >= 0)
+				{
+					array = array.RemoveAt(index);
+				}
+			}
+			return array;
+		}
+
+		public static T[] Remove<T>(this T[] source, T value)
+		{
+			var index = source.IndexOf(value);
+			if (index < 0)
+				return source;
+			return source.RemoveAt(index);
 		}
 
 		public static T[] RemoveAt<T>(this T[] source, int index)
