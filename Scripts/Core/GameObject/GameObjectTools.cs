@@ -994,12 +994,12 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindObjectsOfTypeAll
 
-		public static List<T> FindObjectsOfTypeAllInActiveScene<T>(ActiveCheck activeCheck) where T : Component
+		public static List<T> FindObjectsOfTypeInActiveScene<T>(ActiveCheck activeCheck) where T : Component
 		{
 			return SceneManager.GetActiveScene().FindObjectsOfType<T>(activeCheck);
 		}
 
-		public static List<T> FindObjectsOfTypeAllInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		public static List<T> FindObjectsOfTypeInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
 		{
 			return SceneManagerTools.GetLoadedScenes().FindObjectsOfType<T>(activeCheck);
 		}

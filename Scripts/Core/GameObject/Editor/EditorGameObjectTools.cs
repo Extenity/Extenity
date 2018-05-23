@@ -145,7 +145,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				// Exclude all child gameobjects of Animators.
 				{
-					var animators = GameObjectTools.FindObjectsOfTypeAllInActiveScene<Animator>(includeInactiveForSpecialCare);
+					var animators = GameObjectTools.FindObjectsOfTypeInActiveScene<Animator>(includeInactiveForSpecialCare);
 					if (animators.Count > 0)
 					{
 						var children = new List<GameObject>();
@@ -163,7 +163,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				// Exclude referenced gameobjects in OffMeshLinks
 				{
-					var offMeshLinks = GameObjectTools.FindObjectsOfTypeAllInActiveScene<OffMeshLink>(includeInactiveForSpecialCare);
+					var offMeshLinks = GameObjectTools.FindObjectsOfTypeInActiveScene<OffMeshLink>(includeInactiveForSpecialCare);
 					foreach (var offMeshLink in offMeshLinks)
 					{
 						var linked = offMeshLink.startTransform;
