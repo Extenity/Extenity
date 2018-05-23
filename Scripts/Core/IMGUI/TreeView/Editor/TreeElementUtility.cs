@@ -97,10 +97,10 @@ namespace Extenity.IMGUIToolbox.Editor
 		public static void ValidateDepthValues<T>(IList<T> list) where T : TreeElement
 		{
 			if (list.Count == 0)
-				throw new ArgumentException("list should have items, count is 0, check before calling ValidateDepthValues", "list");
+				throw new ArgumentException("list should have items, count is 0, check before calling ValidateDepthValues", nameof(list));
 
 			if (list[0].depth != -1)
-				throw new ArgumentException("list item at index 0 should have a depth of -1 (since this should be the hidden root of the tree). Depth is: " + list[0].depth, "list");
+				throw new ArgumentException("list item at index 0 should have a depth of -1 (since this should be the hidden root of the tree). Depth is: " + list[0].depth, nameof(list));
 
 			for (int i = 0; i < list.Count - 1; i++)
 			{
@@ -115,14 +115,14 @@ namespace Extenity.IMGUIToolbox.Editor
 					throw new ArgumentException("Invalid depth value for item at index " + i + ". Only the first item (the root) should have depth below 0.");
 
 			if (list.Count > 1 && list[1].depth != 0)
-				throw new ArgumentException("Input list item at index 1 is assumed to have a depth of 0", "list");
+				throw new ArgumentException("Input list item at index 1 is assumed to have a depth of 0", nameof(list));
 		}
 
 		// For updating depth values below any given element e.g after reparenting elements
 		public static void UpdateDepthValues<T>(T root) where T : TreeElement
 		{
 			if (root == null)
-				throw new ArgumentNullException("root", "The root is null");
+				throw new ArgumentNullException(nameof(root), "The root is null");
 
 			if (!root.hasChildren)
 				return;

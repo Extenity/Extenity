@@ -112,7 +112,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				//	buildTarget = BuildTarget.;
 				//	break;
 				default:
-					throw new ArgumentOutOfRangeException("desiredBuildTarget", desiredBuildTarget, null);
+					throw new ArgumentOutOfRangeException(nameof(desiredBuildTarget), desiredBuildTarget, null);
 			}
 		}
 

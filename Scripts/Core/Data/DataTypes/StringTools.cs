@@ -159,11 +159,11 @@ namespace Extenity.DataToolbox
 		public static string SubstringBetween(this string text, string startTag, string endTag, int startIndex = 0)
 		{
 			if (text == null)
-				throw new ArgumentNullException("text");
+				throw new ArgumentNullException(nameof(text));
 			if (string.IsNullOrEmpty(startTag))
-				throw new ArgumentNullException("startTag");
+				throw new ArgumentNullException(nameof(startTag));
 			if (string.IsNullOrEmpty(endTag))
-				throw new ArgumentNullException("endTag");
+				throw new ArgumentNullException(nameof(endTag));
 			if (text.Length == 0)
 				return null;
 
@@ -190,15 +190,15 @@ namespace Extenity.DataToolbox
 		public static string ReplaceBetween(this string text, string startTag, string endTag, Func<string, string> decider, bool keepTags, int startIndex = 0)
 		{
 			if (text == null)
-				throw new ArgumentNullException("text");
+				throw new ArgumentNullException(nameof(text));
 			if (string.IsNullOrEmpty(startTag))
-				throw new ArgumentNullException("startTag");
+				throw new ArgumentNullException(nameof(startTag));
 			if (string.IsNullOrEmpty(endTag))
-				throw new ArgumentNullException("endTag");
+				throw new ArgumentNullException(nameof(endTag));
 			if (text.Length == 0)
 				return text;
 			if (startIndex < 0 || startIndex >= text.Length)
-				throw new ArgumentOutOfRangeException("startIndex");
+				throw new ArgumentOutOfRangeException(nameof(startIndex));
 
 			var startTagIndex = text.IndexOf(startTag, startIndex);
 			if (startTagIndex < 0)
@@ -237,18 +237,18 @@ namespace Extenity.DataToolbox
 		public static bool ReplaceBetweenAll(this string text, string startTag, string endTag, Func<string, string> decider, bool keepTags, bool skipTagsInReplacedText, out string result, int startIndex = 0)
 		{
 			if (text == null)
-				throw new ArgumentNullException("text");
+				throw new ArgumentNullException(nameof(text));
 			if (string.IsNullOrEmpty(startTag))
-				throw new ArgumentNullException("startTag");
+				throw new ArgumentNullException(nameof(startTag));
 			if (string.IsNullOrEmpty(endTag))
-				throw new ArgumentNullException("endTag");
+				throw new ArgumentNullException(nameof(endTag));
 			if (text.Length == 0)
 			{
 				result = text;
 				return false;
 			}
 			if (startIndex < 0 || startIndex >= text.Length)
-				throw new ArgumentOutOfRangeException("startIndex");
+				throw new ArgumentOutOfRangeException(nameof(startIndex));
 
 			var changed = false;
 			while (true)

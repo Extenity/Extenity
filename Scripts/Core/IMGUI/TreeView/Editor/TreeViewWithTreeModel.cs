@@ -100,7 +100,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		private void Search(T searchFromThis, string search, List<TreeViewItem> result)
 		{
 			if (string.IsNullOrEmpty(search))
-				throw new ArgumentException("Invalid search: cannot be null or empty", "search");
+				throw new ArgumentException("Invalid search: cannot be null or empty", nameof(search));
 
 			const int kItemDepth = 0; // tree is flattened when searching
 

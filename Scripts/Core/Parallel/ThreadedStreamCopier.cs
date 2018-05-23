@@ -79,9 +79,9 @@ namespace Extenity.ParallelToolbox
 		public void CopyAsync(Stream source, Stream destination, long expectedSize = 0, bool disposeSourceStream = true, bool disposeDestinationStream = true)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException(nameof(source));
 			if (destination == null)
-				throw new ArgumentNullException("destination");
+				throw new ArgumentNullException(nameof(destination));
 
 			if (IsOngoing)
 			{

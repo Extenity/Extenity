@@ -147,7 +147,7 @@ namespace Extenity.ResourceLoadingToolbox
 			try
 			{
 				if (loadedAssetBundle == null)
-					throw new ArgumentNullException("loadedAssetBundle");
+					throw new ArgumentNullException(nameof(loadedAssetBundle));
 
 				var result = LoadedAssetBundles.Remove(loadedAssetBundle);
 				if (!result)
@@ -164,7 +164,7 @@ namespace Extenity.ResourceLoadingToolbox
 		private void InternalDestroyAssetBundle(LoadedAssetBundle loadedAssetBundle)
 		{
 			if (loadedAssetBundle == null)
-				throw new ArgumentNullException("loadedAssetBundle");
+				throw new ArgumentNullException(nameof(loadedAssetBundle));
 
 			if (loadedAssetBundle.AssetBundle == null)
 				throw new Exception("Asset bundle was not loaded");

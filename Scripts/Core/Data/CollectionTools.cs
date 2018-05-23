@@ -91,7 +91,7 @@ namespace Extenity.DataToolbox
 			if (list == null)
 				return true;
 			if (items == null)
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -119,7 +119,7 @@ namespace Extenity.DataToolbox
 		public static void Combine<T>(this ICollection<T> thisList, IEnumerable<T> otherList)
 		{
 			if (otherList == null)
-				throw new ArgumentNullException("otherList");
+				throw new ArgumentNullException(nameof(otherList));
 
 			foreach (T otherListItem in otherList)
 			{
@@ -299,7 +299,7 @@ namespace Extenity.DataToolbox
 		{
 			if (index < 0 || index >= source.Length)
 			{
-				throw new ArgumentOutOfRangeException("index", index, "Index is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
 			}
 
 			var result = new T[source.Length - 1];
@@ -313,7 +313,7 @@ namespace Extenity.DataToolbox
 		public static T[] Insert<T>(this T[] source, int index)
 		{
 			if (index < 0 || index > source.Length)
-				throw new ArgumentOutOfRangeException("index", index, "Index is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
 
 			var result = new T[source.Length + 1];
 
@@ -332,7 +332,7 @@ namespace Extenity.DataToolbox
 		public static T[] Insert<T>(this T[] source, int index, T obj)
 		{
 			if (index < 0 || index > source.Length)
-				throw new ArgumentOutOfRangeException("index", index, "Index is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
 
 			var result = new T[source.Length + 1];
 
@@ -481,9 +481,9 @@ namespace Extenity.DataToolbox
 			Action<T, T> onUnchanged = null)
 		{
 			if (thisList == null)
-				throw new ArgumentNullException("thisList");
+				throw new ArgumentNullException(nameof(thisList));
 			if (otherList == null)
-				throw new ArgumentNullException("otherList");
+				throw new ArgumentNullException(nameof(otherList));
 			if (Equals(thisList, otherList))
 				throw new ArgumentException("thisList and otherList are pointing to the same list");
 
@@ -588,13 +588,13 @@ namespace Extenity.DataToolbox
 			Action<T, T> onUnchanged = null)
 		{
 			if (thisList == null)
-				throw new ArgumentNullException("thisList");
+				throw new ArgumentNullException(nameof(thisList));
 			if (otherList == null)
-				throw new ArgumentNullException("otherList");
+				throw new ArgumentNullException(nameof(otherList));
 			if (Equals(thisList, otherList))
 				throw new ArgumentException("thisList and otherList are pointing to the same list");
 			if (comparer == null)
-				throw new ArgumentNullException("comparer");
+				throw new ArgumentNullException(nameof(comparer));
 
 			// Detect unchanged items
 			if (onUnchanged != null)
@@ -698,15 +698,15 @@ namespace Extenity.DataToolbox
 			Action<T1, T2> onUnchanged = null)
 		{
 			if (thisList == null)
-				throw new ArgumentNullException("thisList");
+				throw new ArgumentNullException(nameof(thisList));
 			if (otherList == null)
-				throw new ArgumentNullException("otherList");
+				throw new ArgumentNullException(nameof(otherList));
 			if (Equals(thisList, otherList))
 				throw new ArgumentException("thisList and otherList are pointing to the same list");
 			if (onAdd == null)
-				throw new ArgumentNullException("onAdd");
+				throw new ArgumentNullException(nameof(onAdd));
 			if (comparer == null)
-				throw new ArgumentNullException("comparer");
+				throw new ArgumentNullException(nameof(comparer));
 
 			// Detect unchanged items
 			if (onUnchanged != null)
@@ -792,9 +792,9 @@ namespace Extenity.DataToolbox
 			IEqualityComparer<T1, T2> comparer)
 		{
 			if (thisList == null)
-				throw new ArgumentNullException("thisList");
+				throw new ArgumentNullException(nameof(thisList));
 			if (otherList == null)
-				throw new ArgumentNullException("otherList");
+				throw new ArgumentNullException(nameof(otherList));
 			if (Equals(thisList, otherList))
 				throw new ArgumentException("thisList and otherList are pointing to the same list");
 
@@ -866,7 +866,7 @@ namespace Extenity.DataToolbox
 			{
 				if (!ignoreIfListIsNull)
 				{
-					throw new ArgumentNullException("list", "List is null. Could not register to list events.");
+					throw new ArgumentNullException(nameof(list), "List is null. Could not register to list events.");
 				}
 			}
 			else
@@ -887,7 +887,7 @@ namespace Extenity.DataToolbox
 		public static Dictionary<string, string> CreateDictionaryFromStringList(this ICollection<string> list, char keyValueSeparator = '=')
 		{
 			if (list == null)
-				throw new ArgumentNullException("list");
+				throw new ArgumentNullException(nameof(list));
 
 			var dictionary = new Dictionary<string, string>(list.Count);
 

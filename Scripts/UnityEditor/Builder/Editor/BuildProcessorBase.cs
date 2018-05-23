@@ -242,7 +242,7 @@ namespace Extenity.UnityEditorToolbox
 		public static List<MethodInfo> CollectProcessorMethods(string category)
 		{
 			if (string.IsNullOrEmpty(category))
-				throw new ArgumentNullException("category");
+				throw new ArgumentNullException(nameof(category));
 
 			var methods = typeof(TBuildProcessor)
 				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)

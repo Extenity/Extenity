@@ -279,7 +279,7 @@ namespace Extenity.PainkillaTool.Editor
 				case KeyAction.Up: return Vector3.up;
 				case KeyAction.Down: return Vector3.down;
 				default:
-					throw new ArgumentOutOfRangeException("action", action, null);
+					throw new ArgumentOutOfRangeException(nameof(action), action, null);
 			}
 		}
 
@@ -294,7 +294,7 @@ namespace Extenity.PainkillaTool.Editor
 				case KeyAction.Up: return Vector3.back;
 				case KeyAction.Down: return Vector3.forward;
 				default:
-					throw new ArgumentOutOfRangeException("action", action, null);
+					throw new ArgumentOutOfRangeException(nameof(action), action, null);
 			}
 		}
 

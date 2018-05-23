@@ -28,7 +28,7 @@ namespace Extenity.DataToolbox
 			CyclicHeadIndex = -1;
 
 			if (capacity <= 0)
-				throw new ArgumentOutOfRangeException("capacity", capacity, "Capacity is not allowed to be less than or equal to zero.");
+				throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "Capacity is not allowed to be less than or equal to zero.");
 
 			Items = new T[capacity];
 		}
@@ -39,7 +39,7 @@ namespace Extenity.DataToolbox
 			{
 				CyclicTailIndex = -1;
 				CyclicHeadIndex = -1;
-				throw new ArgumentNullException("collection");
+				throw new ArgumentNullException(nameof(collection));
 			}
 
 			var castCollection = collection as ICollection<T>;
@@ -408,7 +408,7 @@ namespace Extenity.DataToolbox
 		public bool Exists(Predicate<T> match)
 		{
 			if (match == null)
-				throw new ArgumentNullException("match");
+				throw new ArgumentNullException(nameof(match));
 			if (IsEmpty)
 				return false;
 
@@ -441,7 +441,7 @@ namespace Extenity.DataToolbox
 		public T Find(Predicate<T> match)
 		{
 			if (match == null)
-				throw new ArgumentNullException("match");
+				throw new ArgumentNullException(nameof(match));
 			if (IsEmpty)
 				return default(T);
 
@@ -474,7 +474,7 @@ namespace Extenity.DataToolbox
 		public List<T> FindAll(Predicate<T> match)
 		{
 			if (match == null)
-				throw new ArgumentNullException("match");
+				throw new ArgumentNullException(nameof(match));
 			var output = new List<T>();
 			if (IsEmpty)
 				return output;
@@ -524,7 +524,7 @@ namespace Extenity.DataToolbox
 		public void ForEach(Action<T> action)
 		{
 			if (action == null)
-				throw new ArgumentNullException("action");
+				throw new ArgumentNullException(nameof(action));
 
 			if (CyclicTailIndex < 0)
 				return;
@@ -538,7 +538,7 @@ namespace Extenity.DataToolbox
 		public bool TrueForAll(Predicate<T> match)
 		{
 			if (match == null)
-				throw new ArgumentNullException("match");
+				throw new ArgumentNullException(nameof(match));
 
 			for (int i = 0; i < Count; i++)
 			{
@@ -649,7 +649,7 @@ namespace Extenity.DataToolbox
 		public CircularArray<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
 		{
 			if (converter == null)
-				throw new ArgumentNullException("converter");
+				throw new ArgumentNullException(nameof(converter));
 
 			var count = Count;
 			var output = new CircularArray<TOutput>(count);

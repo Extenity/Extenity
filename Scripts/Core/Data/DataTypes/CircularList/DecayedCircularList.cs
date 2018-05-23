@@ -91,7 +91,7 @@ namespace Extenity.DataToolbox
 			if (DecayCondition == null)
 				throw new Exception("Tried to check for decay but decay condition was not specified.");
 			if (removedItems == null)
-				throw new ArgumentNullException("removedItems");
+				throw new ArgumentNullException(nameof(removedItems));
 
 			if (IsEmpty)
 				return 0;

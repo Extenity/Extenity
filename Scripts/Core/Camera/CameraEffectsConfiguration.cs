@@ -48,7 +48,7 @@ namespace Extenity.CameraToolbox
 		public void GetEffectsConfigurationFromCamera(Camera camera)
 		{
 			if (camera == null)
-				throw new ArgumentNullException("camera");
+				throw new ArgumentNullException(nameof(camera));
 
 			var effectComponents = GetEffectComponentsOfCamera(camera);
 
@@ -92,7 +92,7 @@ namespace Extenity.CameraToolbox
 		public void SetEffectsConfigurationToCamera(Camera camera)
 		{
 			if (camera == null)
-				throw new ArgumentNullException("camera");
+				throw new ArgumentNullException(nameof(camera));
 
 			// Remove all effects before starting to set new ones.
 			RemoveEffectsFromCamera(camera);

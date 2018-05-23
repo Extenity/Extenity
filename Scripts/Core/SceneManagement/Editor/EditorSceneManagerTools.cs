@@ -87,7 +87,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 		public static bool IsSceneExistsAtPath(string path)
 		{
 			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			var fullPath = path.AddFileExtension(".unity");
 			return File.Exists(fullPath);
 		}

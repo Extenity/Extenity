@@ -160,7 +160,7 @@ namespace Extenity.MeshToolbox
 		{
 			if (triangleIndex % 3 != 0)
 			{
-				throw new ArgumentException("Triangle index should be starting index of the triangle, which is always multiples of 3.", "triangleIndex");
+				throw new ArgumentException("Triangle index should be starting index of the triangle, which is always multiples of 3.", nameof(triangleIndex));
 			}
 			if (Mesh == null)
 			{
@@ -172,7 +172,7 @@ namespace Extenity.MeshToolbox
 			}
 			if (triangleIndex < 0 || triangleIndex >= Mesh.triangles.Length)
 			{
-				throw new ArgumentOutOfRangeException("triangleIndex", triangleIndex, "Triangle index '" + triangleIndex + "' is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(triangleIndex), triangleIndex, "Triangle index '" + triangleIndex + "' is out of range.");
 			}
 		}
 

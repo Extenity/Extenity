@@ -171,9 +171,9 @@ namespace Extenity.MessagingToolbox
 		public void AddListener(string messageId, Delegate listener)
 		{
 			if (listener == null)
-				throw new ArgumentNullException("listener");
+				throw new ArgumentNullException(nameof(listener));
 			if (string.IsNullOrEmpty(messageId))
-				throw new ArgumentOutOfRangeException("messageId", "Message ID should not be empty.");
+				throw new ArgumentOutOfRangeException(nameof(messageId), "Message ID should not be empty.");
 
 			// At this point, we may want to check for any return and input parameter inconsistencies in the future.
 			//listener.Method.ReturnParameter
@@ -284,9 +284,9 @@ namespace Extenity.MessagingToolbox
 		public bool RemoveListener(string messageId, Delegate listener)
 		{
 			if (listener == null)
-				throw new ArgumentNullException("listener");
+				throw new ArgumentNullException(nameof(listener));
 			if (string.IsNullOrEmpty(messageId))
-				throw new ArgumentOutOfRangeException("messageId", "Message ID should not be empty.");
+				throw new ArgumentOutOfRangeException(nameof(messageId), "Message ID should not be empty.");
 
 			ListenerInfo listenerInfo;
 			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))

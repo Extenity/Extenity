@@ -360,7 +360,7 @@ namespace Extenity.DataToolbox
 		{
 			if (!component)
 			{
-				throw new ArgumentNullException("component");
+				throw new ArgumentNullException(nameof(component));
 			}
 			return component.GetType().GetSerializedFields().Where(
 				field => !field.FieldType.IsValueType

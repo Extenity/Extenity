@@ -97,7 +97,7 @@ namespace Extenity.DataToolbox
 
 			if (hex.Length != 6 && hex.Length != 8)
 			{
-				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", "hex");
+				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
 			}
 
 			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -122,7 +122,7 @@ namespace Extenity.DataToolbox
 
 			if (hex.Length != 6 && hex.Length != 8)
 			{
-				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", "hex");
+				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
 			}
 
 			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);

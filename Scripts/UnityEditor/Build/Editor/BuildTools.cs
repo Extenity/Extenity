@@ -14,7 +14,7 @@ namespace Extenity.BuildToolbox.Editor
 		public static int RunConsoleCommandAndCaptureOutput(string filePath, string arguments, out string output)
 		{
 			if (string.IsNullOrEmpty(filePath))
-				throw new ArgumentNullException("filePath");
+				throw new ArgumentNullException(nameof(filePath));
 
 			var process = new Process();
 
@@ -39,7 +39,7 @@ namespace Extenity.BuildToolbox.Editor
 		public static int RunCommandLine(string commandLine, out string output, bool terminateWhenDone)
 		{
 			if (string.IsNullOrEmpty(commandLine))
-				throw new ArgumentNullException("commandLine");
+				throw new ArgumentNullException(nameof(commandLine));
 
 			string arguments = (terminateWhenDone ? "/C " : "/K ") + commandLine;
 			return RunConsoleCommandAndCaptureOutput("cmd.exe", arguments, out output);

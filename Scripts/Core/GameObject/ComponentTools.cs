@@ -14,7 +14,7 @@ namespace Extenity.GameObjectToolbox
 		public static List<FieldInfo> GetUnitySerializedFields(this object obj)
 		{
 			if (obj == null)
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException(nameof(obj));
 			var type = obj as Type;
 			if (type == null)
 				type = obj.GetType();

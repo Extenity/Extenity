@@ -550,9 +550,9 @@ namespace Extenity.GameObjectToolbox
 		public static bool IsChildOf(this Component me, Component suspectedParent, bool checkContainingObject = true)
 		{
 			if (me == null)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 			if (suspectedParent == null)
-				throw new ArgumentNullException("suspectedParent");
+				throw new ArgumentNullException(nameof(suspectedParent));
 
 			if (checkContainingObject)
 			{
@@ -578,9 +578,9 @@ namespace Extenity.GameObjectToolbox
 		public static bool IsParentOf(this Component me, Component suspectedChild, bool checkContainingObject = true)
 		{
 			if (me == null)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 			if (suspectedChild == null)
-				throw new ArgumentNullException("suspectedChild");
+				throw new ArgumentNullException(nameof(suspectedChild));
 
 			return suspectedChild.IsChildOf(me, checkContainingObject);
 		}
@@ -591,7 +591,7 @@ namespace Extenity.GameObjectToolbox
 		public static bool HasSiblingComponent(this Component me, Component other)
 		{
 			if (me == null)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 			if (other == null)
 				return false;
 
@@ -610,7 +610,7 @@ namespace Extenity.GameObjectToolbox
 		public static bool HasComponent(this GameObject gameObject, Component component)
 		{
 			if (gameObject == null)
-				throw new ArgumentNullException("gameObject");
+				throw new ArgumentNullException(nameof(gameObject));
 			if (component == null)
 				return false;
 
@@ -1237,14 +1237,14 @@ namespace Extenity.GameObjectToolbox
 		public static void ForeachChildren(this GameObject gameObject, ChildHandler childHandler, bool recursive)
 		{
 			if (!gameObject)
-				throw new ArgumentNullException("gameObject");
+				throw new ArgumentNullException(nameof(gameObject));
 			InternalIterateChildren(gameObject, childHandler, recursive);
 		}
 
 		private static void InternalIterateChildren(GameObject gameObject, ChildHandler childHandler, bool recursive)
 		{
 			if (!gameObject)
-				throw new ArgumentNullException("gameObject");
+				throw new ArgumentNullException(nameof(gameObject));
 			foreach (Transform child in gameObject.transform)
 			{
 				childHandler(child.gameObject);
@@ -1742,7 +1742,7 @@ namespace Extenity.GameObjectToolbox
 						}
 						break;
 					default:
-						throw new ArgumentOutOfRangeException("rotation", rotation, null);
+						throw new ArgumentOutOfRangeException(nameof(rotation), rotation, null);
 				}
 
 				transform.rotation = rotationResult;

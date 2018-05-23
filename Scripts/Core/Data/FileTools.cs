@@ -12,9 +12,9 @@ namespace Extenity.DataToolbox
 		public static string AddPrefixToFileName(this string path, string prefix)
 		{
 			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			if (string.IsNullOrEmpty(prefix))
-				throw new ArgumentNullException("prefix");
+				throw new ArgumentNullException(nameof(prefix));
 			var fileNameWithExtension = Path.GetFileName(path);
 			return path.Substring(0, path.Length - fileNameWithExtension.Length) + prefix + fileNameWithExtension;
 		}
@@ -22,9 +22,9 @@ namespace Extenity.DataToolbox
 		public static string AddSuffixToFileName(this string path, string suffix)
 		{
 			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			if (string.IsNullOrEmpty(suffix))
-				throw new ArgumentNullException("suffix");
+				throw new ArgumentNullException(nameof(suffix));
 			var fileNameWithExtension = Path.GetFileName(path);
 			var fileName = Path.GetFileNameWithoutExtension(path);
 			if (fileName.Length == fileNameWithExtension.Length)
@@ -106,8 +106,8 @@ namespace Extenity.DataToolbox
 		/// <exception cref="ArgumentNullException"></exception>
 		public static string MakeRelativePath(this string basePath, string filePath)
 		{
-			if (string.IsNullOrEmpty(basePath)) throw new ArgumentNullException("basePath");
-			if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException("filePath");
+			if (string.IsNullOrEmpty(basePath)) throw new ArgumentNullException(nameof(basePath));
+			if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
 
 			var fromUri = new Uri(basePath);
 			var toUri = new Uri(filePath);
@@ -306,7 +306,7 @@ namespace Extenity.DataToolbox
 		public static void SplitPath(this string path, out string root, out string directoryWithoutRoot, out string fileName)
 		{
 			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 
 			var rootReported = Path.GetPathRoot(path);
 			var fileNameReported = Path.GetFileName(path);
@@ -323,9 +323,9 @@ namespace Extenity.DataToolbox
 		public static string AddFileExtension(this string path, string extension, bool ignoreIfAlreadyThere = true)
 		{
 			if (string.IsNullOrEmpty(path))
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			if (string.IsNullOrEmpty(extension))
-				throw new ArgumentNullException("extension");
+				throw new ArgumentNullException(nameof(extension));
 
 			var extensionWithDot = extension[0] == '.'
 				? extension

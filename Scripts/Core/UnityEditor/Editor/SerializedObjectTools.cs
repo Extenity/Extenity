@@ -218,7 +218,7 @@ namespace Extenity.UnityEditorToolbox
 		public static object GetValueAsObject(this SerializedProperty property)
 		{
 			if (property == null)
-				throw new ArgumentNullException("property");
+				throw new ArgumentNullException(nameof(property));
 
 			switch (property.propertyType)
 			{

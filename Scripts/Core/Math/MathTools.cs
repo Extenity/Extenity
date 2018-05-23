@@ -458,7 +458,7 @@ namespace Extenity.MathToolbox
 		{
 			if (fromMin.IsAlmostEqual(fromMax))
 			{
-				throw new ArgumentException("Base value min and max should not be the same.", "fromMin");
+				throw new ArgumentException("Base value min and max should not be the same.", nameof(fromMin));
 			}
 			//if (fromMin > fromMax)
 			//{
@@ -476,7 +476,7 @@ namespace Extenity.MathToolbox
 		{
 			if (fromMin.IsAlmostEqual(fromMax))
 			{
-				throw new ArgumentException("Base value min and max should not be the same.", "fromMin");
+				throw new ArgumentException("Base value min and max should not be the same.", nameof(fromMin));
 			}
 			//if (fromMin > fromMax)
 			//{
@@ -1654,7 +1654,7 @@ namespace Extenity.MathToolbox
 			if (points == null)
 				throw new NullReferenceException("points");
 			if (pointIndex < 0 || pointIndex >= points.Length)
-				throw new ArgumentOutOfRangeException("pointIndex", pointIndex, "Index is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(pointIndex), pointIndex, "Index is out of range.");
 
 			points[pointIndex].Position = position;
 
@@ -1671,7 +1671,7 @@ namespace Extenity.MathToolbox
 			if (points == null)
 				throw new NullReferenceException("points");
 			if (pointIndex < 0 || pointIndex > points.Length)
-				throw new ArgumentOutOfRangeException("pointIndex", pointIndex, "Index is out of range.");
+				throw new ArgumentOutOfRangeException(nameof(pointIndex), pointIndex, "Index is out of range.");
 
 			var newPoints = points.Insert(pointIndex, new PathPoint(position));
 

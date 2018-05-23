@@ -97,7 +97,7 @@ namespace Extenity.DataToolbox
 		{
 			if (projection == null)
 			{
-				throw new ArgumentNullException("projection");
+				throw new ArgumentNullException(nameof(projection));
 			}
 			this.comparer = comparer ?? EqualityComparer<TKey>.Default;
 			this.projection = projection;
@@ -130,7 +130,7 @@ namespace Extenity.DataToolbox
 		{
 			if (obj == null)
 			{
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException(nameof(obj));
 			}
 			return comparer.GetHashCode(projection(obj));
 		}

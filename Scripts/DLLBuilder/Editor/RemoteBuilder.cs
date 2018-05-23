@@ -105,11 +105,11 @@ namespace Extenity.DLLBuilder
 			DLLBuilder.UpdateStatus("Creating build request file for project '{0}'.", targetProjectPath);
 
 			if (string.IsNullOrEmpty(targetProjectPath))
-				throw new ArgumentNullException("targetProjectPath");
+				throw new ArgumentNullException(nameof(targetProjectPath));
 			job.CheckConsistencyAndThrow();
 			// Make sure target project path aims at a Unity project directory.
 			if (!DirectoryTools.IsUnityProjectPath(targetProjectPath))
-				throw new ArgumentException(string.Format("Target project path '{0}' is not a Unity project path.", targetProjectPath), "targetProjectPath");
+				throw new ArgumentException(string.Format("Target project path '{0}' is not a Unity project path.", targetProjectPath), nameof(targetProjectPath));
 
 			// Remove already existing response file with the same job ID if exists.
 			var remoteProjectResponseFilePath = Path.Combine(targetProjectPath, string.Format(Constants.RemoteBuilder.ResponseFilePath, job.JobID));

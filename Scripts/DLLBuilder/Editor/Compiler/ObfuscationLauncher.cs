@@ -128,7 +128,7 @@ namespace Extenity.DLLBuilder
 					// Nothing to do.
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("type", type, null);
+					throw new ArgumentOutOfRangeException(nameof(type), type, null);
 			}
 		}
 

@@ -20,9 +20,9 @@ namespace Extenity.ReflectionToolbox
 		public static object GetFieldValue(object source, string fieldName)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException(nameof(source));
 			if (string.IsNullOrEmpty(fieldName))
-				throw new ArgumentException("fieldName");
+				throw new ArgumentNullException(nameof(fieldName));
 
 			var type = source.GetType();
 			var fieldInfo = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
@@ -39,11 +39,11 @@ namespace Extenity.ReflectionToolbox
 		public static object GetFieldValueFromArray(object source, string fieldName, int index)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException(nameof(source));
 			if (string.IsNullOrEmpty(fieldName))
-				throw new ArgumentException("fieldName");
+				throw new ArgumentNullException(nameof(fieldName));
 			if (index < 0)
-				throw new ArgumentException("index");
+				throw new ArgumentOutOfRangeException(nameof(index), index, null);
 
 			var enumerable = GetFieldValue(source, fieldName) as IEnumerable;
 			var enumerator = enumerable.GetEnumerator();
@@ -57,9 +57,9 @@ namespace Extenity.ReflectionToolbox
 		public static bool CompareMethodParameters(this ParameterInfo[] params1, ParameterInfo[] params2, bool compareParameterNames = false)
 		{
 			if (params1 == null)
-				throw new ArgumentNullException("params1");
+				throw new ArgumentNullException(nameof(params1));
 			if (params2 == null)
-				throw new ArgumentNullException("params2");
+				throw new ArgumentNullException(nameof(params2));
 
 			if (params1.Length != params2.Length)
 				return false;
@@ -887,7 +887,7 @@ namespace Extenity.ReflectionToolbox
 		public static bool IsFieldReferencesUnityObject(this Object unityObject, FieldInfo fieldOfUnityObject, Object expectedUnityObject)
 		{
 			if (!expectedUnityObject)
-				throw new ArgumentNullException("expectedUnityObject");
+				throw new ArgumentNullException(nameof(expectedUnityObject));
 
 			if (fieldOfUnityObject.FieldType.IsArray)
 			{

@@ -45,7 +45,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		private void Init(IList<T> data)
 		{
 			if (data == null)
-				throw new ArgumentNullException("data", "Input data is null. Ensure input is a non-null list.");
+				throw new ArgumentNullException(nameof(data), "Input data is null. Ensure input is a non-null list.");
 
 			m_Data = data;
 			if (m_Data.Count > 0)
@@ -134,11 +134,11 @@ namespace Extenity.IMGUIToolbox.Editor
 		public void AddElements(IList<T> elements, TreeElement parent, int insertPosition)
 		{
 			if (elements == null)
-				throw new ArgumentNullException("elements", "elements is null");
+				throw new ArgumentNullException(nameof(elements), "elements is null");
 			if (elements.Count == 0)
-				throw new ArgumentNullException("elements", "elements Count is 0: nothing to add");
+				throw new ArgumentNullException(nameof(elements), "elements Count is 0: nothing to add");
 			if (parent == null)
-				throw new ArgumentNullException("parent", "parent is null");
+				throw new ArgumentNullException(nameof(parent), "parent is null");
 
 			if (parent.children == null)
 				parent.children = new List<TreeElement>();
@@ -159,7 +159,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		public void AddRoot(T root)
 		{
 			if (root == null)
-				throw new ArgumentNullException("root", "root is null");
+				throw new ArgumentNullException(nameof(root), "root is null");
 
 			if (m_Data == null)
 				throw new InvalidOperationException("Internal Error: data list is null");
@@ -175,9 +175,9 @@ namespace Extenity.IMGUIToolbox.Editor
 		public void AddElement(T element, TreeElement parent, int insertPosition)
 		{
 			if (element == null)
-				throw new ArgumentNullException("element", "element is null");
+				throw new ArgumentNullException(nameof(element), "element is null");
 			if (parent == null)
-				throw new ArgumentNullException("parent", "parent is null");
+				throw new ArgumentNullException(nameof(parent), "parent is null");
 
 			if (parent.children == null)
 				parent.children = new List<TreeElement>();

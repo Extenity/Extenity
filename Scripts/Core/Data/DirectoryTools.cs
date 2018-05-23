@@ -83,7 +83,7 @@ namespace Extenity.DataToolbox
 			bool throwOnError = true)
 		{
 			if (sourceDirectory == null)
-				throw new ArgumentNullException("sourceDirectory");
+				throw new ArgumentNullException(nameof(sourceDirectory));
 			if (File.Exists(sourceDirectory))
 				throw new ArgumentException("Source directory points to a file.");
 			if (!Directory.Exists(sourceDirectory))
@@ -243,9 +243,9 @@ namespace Extenity.DataToolbox
 			CopyResult result = null)
 		{
 			if (sourceDirectory == null)
-				throw new ArgumentNullException("sourceDirectory");
+				throw new ArgumentNullException(nameof(sourceDirectory));
 			if (targetDirectory == null)
-				throw new ArgumentNullException("targetDirectory");
+				throw new ArgumentNullException(nameof(targetDirectory));
 			if (File.Exists(targetDirectory))
 				throw new ArgumentException("Target directory points to a file.");
 

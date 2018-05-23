@@ -11,7 +11,7 @@ namespace Extenity.NavigationToolbox
 		public static int DrawPath(this NavMeshPath path, LineRenderer lineRenderer, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
 		{
 			if (!lineRenderer)
-				throw new ArgumentNullException("lineRenderer");
+				throw new ArgumentNullException(nameof(lineRenderer));
 
 			var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
 

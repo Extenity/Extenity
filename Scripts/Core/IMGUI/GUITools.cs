@@ -159,7 +159,7 @@ namespace Extenity.IMGUIToolbox
 						return result;
 					}
 				default:
-					throw new ArgumentOutOfRangeException("enabledState", enabledState, null);
+					throw new ArgumentOutOfRangeException(nameof(enabledState), enabledState, null);
 			}
 		}
 

@@ -40,7 +40,7 @@ namespace Extenity.DebugFlowTool.Generic
 
 				case PacketType.Unspecified:
 				default:
-					throw new ArgumentOutOfRangeException("packetType", packetType, null);
+					throw new ArgumentOutOfRangeException(nameof(packetType), packetType, null);
 			}
 		}
 
@@ -61,7 +61,7 @@ namespace Extenity.DebugFlowTool.Generic
 
 				case PacketType.Unspecified:
 				default:
-					throw new ArgumentOutOfRangeException("packetType", packetType, null);
+					throw new ArgumentOutOfRangeException(nameof(packetType), packetType, null);
 			}
 		}
 	}

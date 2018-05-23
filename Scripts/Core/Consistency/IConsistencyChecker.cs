@@ -35,7 +35,7 @@ namespace Extenity.ConsistencyToolbox
 		public static List<ConsistencyError> CheckConsistency(this IConsistencyChecker me)
 		{
 			if (me == null)
-				throw new ArgumentNullException("me");
+				throw new ArgumentNullException(nameof(me));
 
 			var errors = new List<ConsistencyError>();
 			me.CheckConsistency(ref errors);

@@ -357,7 +357,7 @@ namespace Extenity.DLLBuilder
 				case StatusMessageType.Warning: Debug.LogWarning(text); break;
 				case StatusMessageType.Error: Debug.LogError(text); break;
 				default:
-					throw new ArgumentOutOfRangeException("type", type, null);
+					throw new ArgumentOutOfRangeException(nameof(type), type, null);
 			}
 			UpdateStatus(text, type);
 		}

@@ -15,7 +15,7 @@ namespace Extenity.DataToolbox
 			set
 			{
 				if (value < 0 || value > 31)
-					throw new System.ArgumentOutOfRangeException("value", value, "Layer index should be value=>0 and value<=31");
+					throw new System.ArgumentOutOfRangeException(nameof(value), value, "Layer index should be value=>0 and value<=31");
 				_LayerIndex = value;
 			}
 		}

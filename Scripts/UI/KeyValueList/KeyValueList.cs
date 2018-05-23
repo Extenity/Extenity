@@ -52,7 +52,7 @@ namespace Extenity.UIToolbox
 		public void InsertRow(string key, string value, int index)
 		{
 			if (index < -1 || index > KeyValueListRows.Count)
-				throw new ArgumentOutOfRangeException("index");
+				throw new ArgumentOutOfRangeException(nameof(index));
 
 			var row = new KeyValueListRow(
 				GameObjectTools.InstantiateAndGetComponent<Text>(TextPrefab),
