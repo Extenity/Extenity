@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Extenity.DataToolbox;
@@ -127,7 +128,7 @@ namespace Extenity.ReflectionToolbox
 				null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
-				throw new Exception($"Type '{type}' does not have the method '{methodName}'.");
+				throw new Exception($"Type '{type}' does not have the method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
 			}
 			return method;
 		}
@@ -139,7 +140,7 @@ namespace Extenity.ReflectionToolbox
 				null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
-				throw new Exception($"Type '{type}' does not have the static method '{methodName}'.");
+				throw new Exception($"Type '{type}' does not have the static method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
 			}
 			return method;
 		}
