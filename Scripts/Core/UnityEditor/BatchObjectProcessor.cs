@@ -28,6 +28,7 @@ namespace Extenity.UnityEditorToolbox
 		[Serializable]
 		public class JobDefinition
 		{
+			[FormerlySerializedAs("Name")]
 			public string JobName;
 			/// <summary>
 			/// Tags can be used for making the job launch only if the process is started with one of the tags specified here.
@@ -69,8 +70,10 @@ namespace Extenity.UnityEditorToolbox
 			{
 				if (definition.JobName == jobName)
 				{
-					if (requiredTags.IsNotNullAndEmpty())
+					if (definition.JobTags.IsNotNullAndEmpty())
 					{
+						if (requiredTags.IsNullOrEmpty())
+							return false;
 						foreach (var requiredTag in requiredTags)
 						{
 							if (definition.JobTags.Contains(requiredTag))
