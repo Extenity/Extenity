@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Extenity.DataToolbox;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -26,6 +29,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
+		public static void DeselectAll()
+		{
+			Selection.objects = new Object[0];
+		}
+
 		#endregion
 
 		#region Get Selected Objects In Scene
@@ -41,6 +49,38 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (selected == null || !selected.gameObject.scene.isLoaded)
 				return null;
 			return selected;
+		}
+
+		#endregion
+
+		#region Push/Pop Selection
+
+		private static List<int[]> SelectionStack;
+
+		public static void PushSelection(bool keepSelection = false)
+		{
+			//Debug.Log("Pushing current selection");
+			if (SelectionStack == null)
+				SelectionStack = new List<int[]>(4);
+			else if (SelectionStack.Count == 100)
+				Debug.LogWarning("Enormous amount of selection pushes detected.");
+
+			var selection = Selection.instanceIDs;
+			SelectionStack.Add(selection);
+
+			if (!keepSelection)
+				DeselectAll();
+		}
+
+		public static void PopSelection()
+		{
+			//Debug.Log("Popping selection");
+			if (SelectionStack.IsNullOrEmpty())
+				throw new Exception("Tried to pop selection while there were none in stack.");
+
+			var selection = SelectionStack[SelectionStack.Count - 1];
+			SelectionStack.RemoveAt(SelectionStack.Count - 1);
+			Selection.instanceIDs = selection;
 		}
 
 		#endregion

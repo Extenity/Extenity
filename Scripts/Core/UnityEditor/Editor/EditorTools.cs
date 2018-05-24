@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -478,7 +479,28 @@ namespace Extenity.UnityEditorToolbox.Editor
 		/// </summary>
 		public static void Duplicate()
 		{
-			SceneView.lastActiveSceneView.Focus();
+			// Need to focus a scene view first. Create one if there is none.
+			var sceneView = SceneView.lastActiveSceneView;
+			if (!sceneView)
+			{
+				sceneView = SceneView.currentDrawingSceneView;
+				if (!sceneView)
+				{
+					var allSceneViews = SceneView.sceneViews;
+					if (allSceneViews == null || allSceneViews.Count == 0)
+					{
+						// That crashes Unity so we need to figure out another way if this functionality really needed. 
+						//EditorWindow.GetWindow<SceneView>();
+						throw new Exception("There must be a visible Scene window for duplication to work.");
+					}
+					else
+					{
+						sceneView = (SceneView)allSceneViews[0];
+					}
+				}
+			}
+			sceneView.Focus();
+
 			EditorWindow.focusedWindow.SendEvent(EditorGUIUtility.CommandEvent("Duplicate"));
 		}
 
@@ -491,24 +513,23 @@ namespace Extenity.UnityEditorToolbox.Editor
 			ObjectTools.CheckNullArgument(original, "The Object you want to instantiate is null.");
 
 			// Save selection
-			int[] savedSelection = null;
 			if (keepSelectionIntact)
+				SelectionTools.PushSelection(true);
+
+			try
 			{
-				savedSelection = Selection.instanceIDs;
+				// Select the original object and tell Unity to duplicate the object.
+				Selection.activeGameObject = original;
+				Duplicate();
+				var duplicate = Selection.activeGameObject;
+				return duplicate;
 			}
-
-			// Select the original object and tell Unity to duplicate the object.
-			Selection.activeGameObject = original;
-			Duplicate();
-			var duplicate = Selection.activeGameObject;
-
-			// Restore selection
-			if (keepSelectionIntact)
+			finally
 			{
-				Selection.instanceIDs = savedSelection;
+				// Restore selection
+				if (keepSelectionIntact)
+					SelectionTools.PopSelection();
 			}
-
-			return duplicate;
 		}
 
 		#endregion
