@@ -704,7 +704,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1 });
@@ -723,7 +723,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2 });
@@ -742,7 +742,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3 });
@@ -761,7 +761,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3, arg4) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4 });
@@ -780,7 +780,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3, arg4, arg5) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5 });
@@ -799,7 +799,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3, arg4, arg5, arg6) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
@@ -818,7 +818,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
@@ -837,7 +837,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				overrideArgumentTypes = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8) };
 			}
-			var method = InternalGetMethodInfo(type, methodName, overrideArgumentTypes);
+			var method = InternalGetStaticMethodInfo(type, methodName, overrideArgumentTypes);
 			result = (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) =>
 			{
 				var ret = method.Invoke(null, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 });
