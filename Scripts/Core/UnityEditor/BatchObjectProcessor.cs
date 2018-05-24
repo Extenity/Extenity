@@ -1,65 +1,93 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Extenity.DataToolbox;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Extenity.UnityEditorToolbox
 {
 
-	[Serializable]
-	public class BatchObjectProcessorSelection
-	{
-		public GameObject Object;
-		public bool IncludeChildren;
-	}
-
-	[Serializable]
-	public class BatchObjectProcessorEntry
-	{
-		public string Configuration;
-		public BatchObjectProcessorSelection[] Objects;
-	}
-
-	[Serializable]
-	public class BatchObjectProcessorConfiguration
-	{
-		public string Name;
-
-		[Header("Change Layers")]
-		public bool ChangeLayers = false;
-		public SingleLayer Layer;
-
-		[Header("Change Tags")]
-		public bool ChangeTags = false;
-		public string Tag;
-
-		[Header("Change Static")]
-		public bool ChangeStatic = false;
-		[EnumMask]
-		public StaticFlags StaticFlags;
-
-		[Header("Change Navigation")]
-		public bool ChangeNavMeshArea = false;
-		public int AreaIndex = -1;
-
-		[Header("Deparent")]
-		public bool DeparentAll = false;
-	}
-
 	public class BatchObjectProcessor : MonoBehaviour
 	{
+		[Serializable]
+		public class ObjectReference
+		{
+			public GameObject Object;
+			public bool IncludeChildren;
+		}
+
+		[Serializable]
+		public class Entry
+		{
+			[FormerlySerializedAs("Configuration")]
+			public string AppliedJobName;
+			public ObjectReference[] Objects;
+		}
+
+		[Serializable]
+		public class JobDefinition
+		{
+			public string JobName;
+			/// <summary>
+			/// Tags can be used for making the job launch only if the process is started with one of the tags specified here.
+			/// Specifying no tags means job will be run for all processes. Specifying one or more tags means the process should
+			/// be started with at least one of the tags specified here so that the job will be run as part of that process.
+			/// </summary>
+			public string[] JobTags;
+
+			[Header("Change Layers")]
+			public bool ChangeLayers = false;
+			public SingleLayer Layer;
+
+			[Header("Change Tags")]
+			public bool ChangeTags = false;
+			public string Tag;
+
+			[Header("Change Static")]
+			public bool ChangeStatic = false;
+			[EnumMask]
+			public StaticFlags StaticFlags;
+
+			[Header("Change Navigation")]
+			public bool ChangeNavMeshArea = false;
+			public int AreaIndex = -1;
+
+			[Header("Deparent")]
+			public bool DeparentAll = false;
+		}
+
 		#region Data
 
-		public BatchObjectProcessorConfiguration[] Configurations;
-		public BatchObjectProcessorEntry[] Entries;
+		[FormerlySerializedAs("Configurations")]
+		public JobDefinition[] JobDefinitions;
+		public Entry[] Entries;
 
-		public BatchObjectProcessorConfiguration GetConfiguration(string name)
+		public List<JobDefinition> GetJobDefinitions(string jobName, string[] requiredTags)
 		{
-			for (var i = 0; i < Configurations.Length; i++)
+			var result = JobDefinitions.Where(definition =>
 			{
-				if (Configurations[i].Name == name)
-					return Configurations[i];
-			}
-			throw new Exception($"Batch object configuration '{name}' does not exist.");
+				if (definition.JobName == jobName)
+				{
+					if (requiredTags.IsNotNullAndEmpty())
+					{
+						foreach (var requiredTag in requiredTags)
+						{
+							if (definition.JobTags.Contains(requiredTag))
+								return true;
+						}
+					}
+					else
+					{
+						return true;
+					}
+				}
+				return false;
+			}).ToList();
+
+			if (result.Count == 0)
+				throw new Exception($"Batch object job definition '{jobName}' does not exist.");
+			return result;
 		}
 
 		#endregion
