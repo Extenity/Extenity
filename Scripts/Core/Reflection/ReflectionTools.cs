@@ -148,7 +148,7 @@ namespace Extenity.ReflectionToolbox
 		// GetMethodAsAction
 		// --------------------------------------------------------------
 
-		public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result, Type[] overrideTypes = null)
+		public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result)
 		{
 			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = instance =>
@@ -242,7 +242,7 @@ namespace Extenity.ReflectionToolbox
 		// GetMethodAsFunc
 		// --------------------------------------------------------------
 
-		public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result, Type[] overrideTypes = null)
+		public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result)
 		{
 			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = (instance) =>
@@ -440,7 +440,7 @@ namespace Extenity.ReflectionToolbox
 		// GetStaticMethodAsFunc
 		// --------------------------------------------------------------
 
-		public static void GetStaticMethodAsFunc<TResult>(this Type type, string methodName, out Func<TResult> result, Type[] overrideTypes = null)
+		public static void GetStaticMethodAsFunc<TResult>(this Type type, string methodName, out Func<TResult> result)
 		{
 			var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
 			result = () =>

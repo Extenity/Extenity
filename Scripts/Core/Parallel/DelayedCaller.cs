@@ -11,7 +11,7 @@ namespace Extenity.ParallelToolbox
 
 		public DelayedCaller(int capacity = 10)
 		{
-			delayedCalls = new List<Action>(10);
+			delayedCalls = new List<Action>(capacity);
 		}
 
 		#endregion

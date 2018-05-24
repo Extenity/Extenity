@@ -421,7 +421,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (!scene.isLoaded)
 				throw new Exception("Scene is not loaded.");
 
-			var meshRenderers = scene.FindStaticObjectsOfType<MeshRenderer>(StaticEditorFlags.BatchingStatic, ActiveCheck.InactiveOnly);
+			var meshRenderers = scene.FindStaticObjectsOfType<MeshRenderer>(StaticEditorFlags.BatchingStatic, activeCheck);
 
 			StringBuilder deletedObjectsText = null;
 			if (log)

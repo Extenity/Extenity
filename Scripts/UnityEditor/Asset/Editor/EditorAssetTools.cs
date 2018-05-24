@@ -244,6 +244,11 @@ namespace Extenity.AssetToolbox.Editor
 				var list = AssetTools.GetAllPhysicsAssetPaths();
 				InternalAddToAssetList(list, fullList, "Physics", log);
 			}
+			if (script)
+			{
+				var list = AssetTools.GetAllScriptAssetPaths();
+				InternalAddToAssetList(list, fullList, "Scripts", log);
+			}
 
 			Debug.Log(log.ToString());
 

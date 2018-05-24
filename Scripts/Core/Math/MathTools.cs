@@ -562,14 +562,14 @@ namespace Extenity.MathToolbox
 
 		#region Matrix4x4
 
-		public static void SetPosition(this Matrix4x4 matrix, Vector3 position)
+		public static void SetPosition(ref Matrix4x4 matrix, Vector3 position)
 		{
 			matrix.m03 = position.x;
 			matrix.m13 = position.y;
 			matrix.m23 = position.z;
 		}
 
-		public static void SetPosition(this Matrix4x4 matrix, float x, float y, float z)
+		public static void SetPosition(ref Matrix4x4 matrix, float x, float y, float z)
 		{
 			matrix.m03 = x;
 			matrix.m13 = y;
