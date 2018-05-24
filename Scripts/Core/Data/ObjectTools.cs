@@ -18,7 +18,7 @@ namespace Extenity.DataToolbox
 		}
 
 		// TODO: Update that in new Unity versions.
-		// Copied directy from UnityEngine.Object.CheckNullArgument (Unity version 2017.3.1)
+		// Originally copied from UnityEngine.Object.CheckNullArgument (Unity version 2018.1.1f1)
 		public static void CheckNullArgument(object arg, string message)
 		{
 			if (arg == null)

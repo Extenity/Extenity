@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -81,28 +82,31 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		#region EditorGUI Exposed Internals
 
-		// TODO: Better call internal methods with reflection, rather than copying the method here to make it future proof.
-		// TODO: Update that in new Unity versions.
-		/// <summary>
-		/// Copied directly from EditorGUI.HasVisibleChildFields (Unity version 2018.1.0b13)
-		/// </summary>
-		public static bool HasVisibleChildFields(SerializedProperty property)
+		static EditorGUITools()
 		{
-			switch (property.propertyType)
-			{
-				case SerializedPropertyType.Vector3:
-				case SerializedPropertyType.Vector2:
-				case SerializedPropertyType.Vector3Int:
-				case SerializedPropertyType.Vector2Int:
-				case SerializedPropertyType.Rect:
-				case SerializedPropertyType.RectInt:
-				case SerializedPropertyType.Bounds:
-				case SerializedPropertyType.BoundsInt:
-					return false;
-			}
-			return property.hasVisibleChildren;
+			// TODO: Update that in new Unity versions.
+			// Revealed internals (Unity version 2018.1.1f1)
+			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.EditorGUI");
+			if (type == null)
+				throw new Exception("Internal error 18672-1!");
+
+			type.GetStaticMethodAsFunc("GetSinglePropertyHeight", out _GetSinglePropertyHeight);
+			type.GetStaticMethodAsFunc("HasVisibleChildFields", out _HasVisibleChildFields);
+			type.GetStaticMethodAsFunc("DefaultPropertyField", out _DefaultPropertyField);
 		}
-		
+
+		//internal static float GetSinglePropertyHeight(SerializedProperty property, GUIContent label)
+		//internal static bool HasVisibleChildFields(SerializedProperty property)
+		//internal static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label)
+
+		private static readonly Func<SerializedProperty, GUIContent, float> _GetSinglePropertyHeight;
+		private static readonly Func<SerializedProperty, bool> _HasVisibleChildFields;
+		private static readonly Func<Rect, SerializedProperty, GUIContent, bool> _DefaultPropertyField;
+
+		public static float GetSinglePropertyHeight(SerializedProperty property, GUIContent label) { return _GetSinglePropertyHeight(property, label); }
+		public static bool HasVisibleChildFields(SerializedProperty property) { return _HasVisibleChildFields(property); }
+		public static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label) { return _DefaultPropertyField(position, property, label); }
+
 		#endregion
 	}
 

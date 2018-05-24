@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public abstract class ExtenityPropertyDrawerBase<T> : UnityEditor.PropertyDrawer // where T : System.Object
+	public abstract class ExtenityPropertyDrawerBase<T> : PropertyDrawer // where T : System.Object
 	{
 		#region Initialization
 
@@ -40,7 +40,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#endregion
 
 		#region Inspector GUI
-		
+
 		public bool IsDefaultInspectorDrawingEnabled = true;
 		public bool IsInspectorDisabledWhenPlaying = false;
 
@@ -74,7 +74,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public void DrawDefaultInspectorTheExtenityWay(Rect position, SerializedProperty property, GUIContent label)
 		{
 			// TODO: Update that in new Unity versions.
-			// Originally copied from PropertyHandler.OnGUI (Unity version 2018.1.0b13)
+			// Originally copied from PropertyHandler.OnGUI (Unity version 2018.1.1f1)
 			// Then modified.
 
 			// Remember state
@@ -87,11 +87,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 			SerializedProperty prop = property.Copy();
 			SerializedProperty endProperty = prop.GetEndProperty();
 
-			position.height = EditorGUI.GetPropertyHeight(prop, label, false);
+			position.height = EditorGUITools.GetSinglePropertyHeight(prop, label);
 
 			// First property with custom label
 			EditorGUI.indentLevel = prop.depth + relIndent;
-			bool childrenAreExpanded = EditorGUI.PropertyField(position, prop, label) && EditorGUITools.HasVisibleChildFields(prop);
+			bool childrenAreExpanded = EditorGUITools.DefaultPropertyField(position, prop, label) && EditorGUITools.HasVisibleChildFields(prop);
 			position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
 			// Loop through all child properties
@@ -121,21 +121,21 @@ namespace Extenity.UnityEditorToolbox.Editor
 					}
 				}
 
+				if (!display)
+					continue;
+
 				// ----- Modification End -----
 
-				if (display)
-				{
-					EditorGUI.indentLevel = prop.depth + relIndent;
-					position.height = EditorGUI.GetPropertyHeight(prop, null, false);
-					EditorGUI.BeginChangeCheck();
-					childrenAreExpanded = EditorGUI.PropertyField(position, prop, null, false) && EditorGUITools.HasVisibleChildFields(prop);
-					// Changing child properties (like array size) may invalidate the iterator,
-					// so stop now, or we may get errors.
-					if (EditorGUI.EndChangeCheck())
-						break;
+				EditorGUI.indentLevel = prop.depth + relIndent;
+				position.height = EditorGUI.GetPropertyHeight(prop, null, false);
+				EditorGUI.BeginChangeCheck();
+				childrenAreExpanded = PropertyHandlerTools.OnGUI(ScriptAttributeUtilityTools.GetHandler(prop), position, prop, null, false) && EditorGUITools.HasVisibleChildFields(prop);
+				// Changing child properties (like array size) may invalidate the iterator,
+				// so stop now, or we may get errors.
+				if (EditorGUI.EndChangeCheck())
+					break;
 
-					position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
-				}
+				position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 			}
 
 			// Restore state
