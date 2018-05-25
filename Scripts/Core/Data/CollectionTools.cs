@@ -273,6 +273,38 @@ namespace Extenity.DataToolbox
 			return Array.IndexOf(source, value, startIndex, count);
 		}
 
+		public static int IndexOf(this string[] source, string value, StringComparison comparisonType)
+		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			return source.IndexOf(value, 0, source.Length, comparisonType);
+		}
+
+		public static int IndexOf(this string[] source, string value, int startIndex, StringComparison comparisonType)
+		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			return source.IndexOf(value, startIndex, source.Length - startIndex, comparisonType);
+		}
+
+		public static int IndexOf(this string[] source, string value, int startIndex, int count, StringComparison comparisonType)
+		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			if (startIndex < 0 || startIndex > source.Length)
+				throw new ArgumentOutOfRangeException(nameof(startIndex), startIndex, "Start index is out of range.");
+			if (count < 0 || count > source.Length - startIndex)
+				throw new ArgumentOutOfRangeException(nameof(count), count, "Count is out of range.");
+
+			var endIndex = startIndex + count;
+			for (int i = startIndex; i < endIndex; i++)
+			{
+				if (source[i].Equals(value, comparisonType))
+					return i;
+			}
+			return -1;
+		}
+
 		public static T[] Remove<T>(this T[] source, T[] removedArray)
 		{
 			var array = source;

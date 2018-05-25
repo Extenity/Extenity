@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using System;
+using Extenity.DataToolbox;
+using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox.Editor
@@ -37,6 +39,51 @@ namespace Extenity.IMGUIToolbox.Editor
 		public static void ProgressBar(string title, float value)
 		{
 			ProgressBar(title, value, null);
+		}
+
+		#endregion
+
+		#region GUI Components - PopupWithInputField
+
+		public static bool PopupWithInputField(string[] displayedOptions, ref int popupIndex, ref string value, GUILayoutOption[] textFieldOptions = null, GUILayoutOption[] popupOptions = null)
+		{
+			EditorGUILayout.BeginHorizontal();
+
+			var changed = false;
+
+			EditorGUI.BeginChangeCheck();
+			value = EditorGUILayout.TextField(value, textFieldOptions);
+			if (EditorGUI.EndChangeCheck())
+			{
+				// User has changed the text of input field. Figure out what to do with popup.
+				changed = true;
+
+				// First check for exact matching value in popup list.
+				popupIndex = displayedOptions.IndexOf(value);
+
+				// Check for case invariant matching if the exact value is not found.
+				if (popupIndex < 0)
+				{
+					popupIndex = displayedOptions.IndexOf(value, StringComparison.InvariantCultureIgnoreCase);
+					if (popupIndex >= 0)
+					{
+						// User has entered an entry in popup with incorrect casing. Correct the casing of the value.
+						value = displayedOptions[popupIndex];
+					}
+				}
+			}
+
+			EditorGUI.BeginChangeCheck();
+			popupIndex = EditorGUILayout.Popup(popupIndex, displayedOptions, popupOptions);
+			if (EditorGUI.EndChangeCheck())
+			{
+				// User has changed the selection in popup. Update the value as well.
+				changed = true;
+				value = displayedOptions[popupIndex];
+			}
+
+			EditorGUILayout.EndHorizontal();
+			return changed;
 		}
 
 		#endregion
