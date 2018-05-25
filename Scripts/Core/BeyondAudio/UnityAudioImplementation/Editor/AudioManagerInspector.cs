@@ -48,7 +48,7 @@ namespace Extenity.BeyondAudio.Editor
 				// Play button
 				if (GUILayoutTools.Button("Play", PlayerPopupIndex >= 0, GUILayout.Width(80f), GUILayout.Height(80f)))
 				{
-					AudioManager.Play(PlayerEventName);
+					AudioManager.Play(PlayerEventName, PlayerPin);
 				}
 				EditorGUILayout.EndHorizontal();
 			}

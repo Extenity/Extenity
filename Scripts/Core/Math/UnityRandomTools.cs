@@ -223,6 +223,7 @@ namespace Extenity.MathToolbox
 			{
 				if (!list[i].Equals(excludeItem))
 				{
+					// Found at least one item that is not excluded. We are good to go for an infinite random trial until we find a non-excluded item.
 					while (true)
 					{
 						var item = list.RandomSelection();
@@ -263,6 +264,7 @@ namespace Extenity.MathToolbox
 			{
 				if (!list[i].Equals(excludeItem))
 				{
+					// Found at least one item that is not excluded. We are good to go for an infinite random trial until we find a non-excluded item.
 					while (true)
 					{
 						var item = list.RandomSelection(random);

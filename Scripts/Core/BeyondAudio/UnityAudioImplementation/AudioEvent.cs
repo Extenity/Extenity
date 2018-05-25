@@ -161,7 +161,7 @@ namespace Extenity.BeyondAudio
 					break;
 				case AudioEventType.WeightedGroups:
 					{
-						if (ClipCount > 0)
+						if (ClipCount > 0 && WeightedGroups.Length > 0)
 						{
 							var weightedGroupIndex = -1;
 							if (WeightedGroups.Length == 1)
@@ -180,17 +180,17 @@ namespace Extenity.BeyondAudio
 								}
 								else
 								{
-									int i;
-									for (i = WeightedGroups.Length - 2; i >= 0; i--)
+									for (int i = WeightedGroups.Length - 2; i >= 0; i--)
 									{
-										if (selectorPin > WeightedGroups[i].SeparatorPositionBetweenNextGroup)
+										if (selectorPin < WeightedGroups[i].SeparatorPositionBetweenNextGroup)
 										{
-											weightedGroupIndex = i + 1;
+											weightedGroupIndex = i;
+											break;
 										}
 									}
-									if (i < 0)
+									if (weightedGroupIndex < 0)
 									{
-										weightedGroupIndex = 0;
+										weightedGroupIndex = WeightedGroups.Length - 1;
 									}
 								}
 							}
