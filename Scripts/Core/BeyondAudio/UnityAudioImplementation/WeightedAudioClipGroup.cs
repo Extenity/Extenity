@@ -28,6 +28,9 @@ namespace Extenity.BeyondAudio
 		[NonSerialized]
 		internal int ClipCount;
 
+		[NonSerialized]
+		internal AudioClip LastSelectedAudioClip;
+
 		public void CalculateInternals()
 		{
 			ClipCount = Clips == null ? 0 : Clips.Length;

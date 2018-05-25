@@ -124,7 +124,7 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
-		public AudioClip SelectRandomClip(string eventName, float selectorPin, bool errorIfNotFound)
+		public AudioClip SelectRandomClip(float selectorPin, bool errorIfNotFound)
 		{
 			AudioClip clip;
 
@@ -144,10 +144,18 @@ namespace Extenity.BeyondAudio
 							{
 								clip = Clips[0];
 							}
+							if (errorIfNotFound && !clip)
+							{
+								Debug.LogError($"There is a null clip in sound event '{Name}'.");
+							}
 						}
 						else
 						{
 							clip = null;
+							if (errorIfNotFound)
+							{
+								Debug.LogError($"There are no clips in sound event '{Name}'.");
+							}
 						}
 					}
 					break;
@@ -155,81 +163,61 @@ namespace Extenity.BeyondAudio
 					{
 						if (ClipCount > 0)
 						{
-							if (ClipCount > 1)
+							var weightedGroupIndex = -1;
+							if (WeightedGroups.Length == 1)
 							{
-								if (WeightedGroups.Length == 1)
-								{
-									clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
-										? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
-										: WeightedGroups[0].Clips.RandomSelection();
-								}
-								else
-								{
-									if (selectorPin <= 0.001f) // Equal to zero
-									{
-										clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
-											? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
-											: WeightedGroups[0].Clips.RandomSelection();
-									}
-									else if (selectorPin >= 0.999f) // Equal to one
-									{
-										clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
-											? WeightedGroups[WeightedGroups.Length - 1].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
-											: WeightedGroups[WeightedGroups.Length - 1].Clips.RandomSelection();
-									}
-									else
-									{
-										clip = null; // This is here to make compiler happy.
-										int i;
-										for (i = WeightedGroups.Length - 2; i >= 0; i--)
-										{
-											if (selectorPin > WeightedGroups[i].SeparatorPositionBetweenNextGroup)
-											{
-												clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
-													? WeightedGroups[i + 1].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
-													: WeightedGroups[i + 1].Clips.RandomSelection();
-											}
-										}
-										if (i < 0)
-										{
-											clip = EnsureNonrecurringRandomness && LastSelectedAudioClip
-												? WeightedGroups[0].Clips.RandomSelectionFilteredSafe(LastSelectedAudioClip)
-												: WeightedGroups[0].Clips.RandomSelection();
-										}
-									}
-								}
+								weightedGroupIndex = 0;
 							}
 							else
 							{
-								// Quickly find the single clip that is out there somewhere in WeightedGroups.
-								if (WeightedGroups.Length == 1)
+								if (selectorPin <= 0.001f) // Equal to zero
 								{
-									clip = WeightedGroups[0].Clips[0];
+									weightedGroupIndex = 0;
+								}
+								else if (selectorPin >= 0.999f) // Equal to one
+								{
+									weightedGroupIndex = WeightedGroups.Length - 1;
 								}
 								else
 								{
-									clip = null; // This is here to make compiler happy.
-									for (var i = 0; i < WeightedGroups.Length; i++)
+									int i;
+									for (i = WeightedGroups.Length - 2; i >= 0; i--)
 									{
-										if (WeightedGroups[i].ClipCount > 0)
-											clip = WeightedGroups[i].Clips[0];
+										if (selectorPin > WeightedGroups[i].SeparatorPositionBetweenNextGroup)
+										{
+											weightedGroupIndex = i + 1;
+										}
+									}
+									if (i < 0)
+									{
+										weightedGroupIndex = 0;
 									}
 								}
+							}
+
+							var weightedGroup = WeightedGroups[weightedGroupIndex];
+							clip = EnsureNonrecurringRandomness && weightedGroup.LastSelectedAudioClip
+								? weightedGroup.Clips.RandomSelectionFilteredSafe(weightedGroup.LastSelectedAudioClip)
+								: weightedGroup.Clips.RandomSelection();
+							weightedGroup.LastSelectedAudioClip = clip;
+
+							if (errorIfNotFound && !clip)
+							{
+								Debug.LogError($"There is a null clip in weighted group '{weightedGroupIndex}' of sound event '{Name}'.");
 							}
 						}
 						else
 						{
 							clip = null;
+							if (errorIfNotFound)
+							{
+								Debug.LogError($"There are no clips in sound event '{Name}'.");
+							}
 						}
 					}
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
-			}
-
-			if (errorIfNotFound && !clip)
-			{
-				Debug.LogErrorFormat("There is a null clip in sound event '{0}'.", eventName);
 			}
 
 			LastSelectedAudioClip = clip;

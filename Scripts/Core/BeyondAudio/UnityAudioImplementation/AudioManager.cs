@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Extenity.DesignPatternsToolbox;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -206,7 +207,7 @@ namespace Extenity.BeyondAudio
 			var audioEvent = instance.GetEvent(eventName, errorIfNotFound);
 			if (audioEvent == null)
 				return null;
-			var clip = audioEvent.SelectRandomClip(eventName, selectorPin, errorIfNotFound);
+			var clip = audioEvent.SelectRandomClip(selectorPin, errorIfNotFound);
 			if (!clip)
 				return null;
 			var audioSource = instance.GetOrCreateAudioSource();
@@ -269,6 +270,17 @@ namespace Extenity.BeyondAudio
 		[Header("Audio Events")]
 		public List<AudioEvent> Events;
 
+		/// <summary>
+		/// Exact copy of Events list with only names. This list is automatically generated.
+		/// </summary>
+		[HideInInspector]
+		public string[] EventNames;
+
+		private void RefreshEventNamesList()
+		{
+			EventNames = Events.Select(item => item.Name).ToArray();
+		}
+
 		public AudioEvent GetEvent(string eventName, bool errorIfNotFound)
 		{
 			if (string.IsNullOrEmpty(eventName))
@@ -276,16 +288,15 @@ namespace Extenity.BeyondAudio
 
 			if (Events != null)
 			{
-				for (int i = 0; i < Events.Count; i++)
+				for (int i = 0; i < EventNames.Length; i++)
 				{
-					var audioEvent = Events[i];
-					if (audioEvent.Name == eventName)
-						return audioEvent;
+					if (EventNames[i] == eventName)
+						return Events[i];
 				}
 			}
 			if (errorIfNotFound)
 			{
-				Debug.LogErrorFormat("Failed to find sound event '{0}'.", eventName);
+				Debug.LogError($"Sound event '{eventName}' does not exist.");
 			}
 			return null;
 		}
@@ -652,6 +663,7 @@ namespace Extenity.BeyondAudio
 
 		private void OnValidate()
 		{
+			RefreshEventNamesList();
 			CalculateEventInternals();
 		}
 
@@ -661,6 +673,7 @@ namespace Extenity.BeyondAudio
 
 		public void OnBeforeSerialize()
 		{
+			RefreshEventNamesList();
 			ClearUnnecessaryReferencesInEvents();
 		}
 
