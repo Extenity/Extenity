@@ -187,7 +187,7 @@ namespace Extenity.BeyondAudio
 				if (reusedAudioSource)
 				{
 					if (EnableLogging)
-						Log($"Reusing audio source '{reusedAudioSource.gameObject.name}'.");
+						Log($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -199,7 +199,7 @@ namespace Extenity.BeyondAudio
 			DontDestroyOnLoad(go);
 			ActiveAudioSources.Add(newAudioSource);
 			if (EnableLogging)
-				Log($"Created audio source '{go.name}'.");
+				Log($"Created audio source '{go.FullName()}'.");
 			return newAudioSource;
 		}
 
@@ -224,7 +224,7 @@ namespace Extenity.BeyondAudio
 		public void ReleaseAudioSource(AudioSource audioSource)
 		{
 			if (EnableLogging)
-				Log($"Releasing audio source with clip '{audioSource.clip}'.");
+				Log($"Releasing audio source with clip '{(audioSource && audioSource.clip ? audioSource.clip.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
