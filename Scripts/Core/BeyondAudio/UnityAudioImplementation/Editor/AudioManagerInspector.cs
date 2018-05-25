@@ -1,5 +1,7 @@
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
@@ -18,8 +20,42 @@ namespace Extenity.BeyondAudio.Editor
 		{
 		}
 
+		private int PlayerPopupIndex = -1;
+		private string PlayerEventName;
+		private float PlayerPin;
+
 		protected override void OnBeforeDefaultInspectorGUI()
 		{
+			// Player
+			EditorGUILayoutTools.DrawHeader("Player");
+			EditorGUI.BeginDisabledGroup(!Application.isPlaying);
+			{
+				// Event selection
+				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+				EditorGUILayout.BeginVertical();
+				GUILayout.Label("Event Name");
+				EditorGUILayoutTools.PopupWithInputField(Me.EventNames, ref PlayerPopupIndex, ref PlayerEventName);
+
+				// Pin
+				EditorGUI.BeginDisabledGroup(PlayerPopupIndex < 0 || Me.Events[PlayerPopupIndex].Type != AudioEventType.WeightedGroups);
+				GUILayout.Label("Pin (for weighted group selection)");
+				PlayerPin = EditorGUILayout.Slider(PlayerPin, 0f, 1f);
+				EditorGUI.EndDisabledGroup();
+
+				EditorGUILayout.EndVertical();
+				GUILayout.Space(10f);
+
+				// Play button
+				if (GUILayoutTools.Button("Play", PlayerPopupIndex >= 0, GUILayout.Width(80f), GUILayout.Height(80f)))
+				{
+					AudioManager.Play(PlayerEventName);
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+			EditorGUI.EndDisabledGroup();
+
+			GUILayout.Space(30f);
+
 			// Draw warning for events with unassigned outputs
 			{
 				var eventsWithUnassignedOutputs = Me.ListEventsWithUnassignedOutputs();
