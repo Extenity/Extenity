@@ -203,47 +203,41 @@ namespace Extenity.BeyondAudio
 			return newAudioSource;
 		}
 
-		public static AudioSource AllocateAudioSourceWithClip(string eventName, float selectorPin, bool errorIfNotFound)
+		public AudioSource AllocateAudioSourceWithClip(string eventName, float selectorPin, bool errorIfNotFound)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return null;
-			if (instance.EnableLogging)
+			if (EnableLogging)
 				Log($"Allocating audio source for event '{eventName}' with pin '{selectorPin}'.");
 
-			var audioEvent = instance.GetEvent(eventName, errorIfNotFound);
+			var audioEvent = GetEvent(eventName, errorIfNotFound);
 			if (audioEvent == null)
 				return null;
 			var clip = audioEvent.SelectRandomClip(selectorPin, errorIfNotFound);
 			if (!clip)
 				return null;
-			var audioSource = instance.GetOrCreateAudioSource();
+			var audioSource = GetOrCreateAudioSource();
 			audioSource.clip = clip;
 			audioSource.outputAudioMixerGroup = audioEvent.Output;
-			instance.OnAllocatedAudioSource.Invoke(audioSource, eventName);
+			OnAllocatedAudioSource.Invoke(audioSource, eventName);
 			return audioSource;
 		}
 
-		public static void ReleaseAudioSource(AudioSource audioSource)
+		public void ReleaseAudioSource(AudioSource audioSource)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-			if (instance.EnableLogging)
+			if (EnableLogging)
 				Log($"Releasing audio source with clip '{audioSource.clip}'.");
 
 			if (!audioSource)
 			{
 				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
-				if (instance.EnableLogging)
+				if (EnableLogging)
 					Log("Clearing lost references.");
-				instance.ClearLostReferencesInActiveAudioSourcesList();
-				instance.ClearLostReferencesInFreeAudioSourcesList();
-				instance.ClearLostReferencesInReleaseTrackerList();
+				ClearLostReferencesInActiveAudioSourcesList();
+				ClearLostReferencesInFreeAudioSourcesList();
+				ClearLostReferencesInReleaseTrackerList();
 				return;
 			}
 
-			instance.OnReleasingAudioSource.Invoke(audioSource);
+			OnReleasingAudioSource.Invoke(audioSource);
 
 			audioSource.Stop();
 			audioSource.clip = null;
@@ -251,10 +245,10 @@ namespace Extenity.BeyondAudio
 			audioSource.gameObject.SetActive(false);
 			audioSource.transform.SetParent(null);
 
-			instance.ActiveAudioSources.Remove(audioSource);
-			instance.FreeAudioSources.Add(audioSource);
+			ActiveAudioSources.Remove(audioSource);
+			FreeAudioSources.Add(audioSource);
 
-			instance.InternalRemoveFromReleaseTrackerList(audioSource);
+			InternalRemoveFromReleaseTrackerList(audioSource);
 		}
 
 		private void ClearLostReferencesInActiveAudioSourcesList()
@@ -464,16 +458,19 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static AudioSource Play(string eventName, float selectorPin, bool loop = false, float volume = 1f, float pitch = 1f)
 		{
-			if (Instance.EnableLogging)
+			var instance = InstanceEnsured;
+			if (!instance)
+				return null;
+			if (instance.EnableLogging)
 				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
-			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
 			audioSource.transform.position = Vector3.zero;
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, 0f);
 			if (!loop)
 			{
-				Instance.AddToReleaseTracker(audioSource);
+				instance.AddToReleaseTracker(audioSource);
 			}
 			return audioSource;
 		}
@@ -491,16 +488,19 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static AudioSource PlayAtPosition(string eventName, float selectorPin, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
-			if (Instance.EnableLogging)
+			var instance = InstanceEnsured;
+			if (!instance)
+				return null;
+			if (instance.EnableLogging)
 				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
-			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
 			audioSource.transform.position = position;
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
 			if (!loop)
 			{
-				Instance.AddToReleaseTracker(audioSource);
+				instance.AddToReleaseTracker(audioSource);
 			}
 			return audioSource;
 		}
@@ -518,9 +518,12 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static AudioSource PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
-			if (Instance.EnableLogging)
+			var instance = InstanceEnsured;
+			if (!instance)
+				return null;
+			if (instance.EnableLogging)
 				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) attached to '{parent.FullName()}' at local position '{localPosition}'.");
-			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
 			audioSource.transform.SetParent(parent);
@@ -528,19 +531,23 @@ namespace Extenity.BeyondAudio
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
 			if (!loop)
 			{
-				Instance.AddToReleaseTracker(audioSource);
+				instance.AddToReleaseTracker(audioSource);
 			}
 			return audioSource;
 		}
 
 		public static void Stop(ref AudioSource audioSource)
 		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+
 			if (audioSource)
 			{
-				if (Instance.EnableLogging)
-					Log($"Stopping audio source with clip '{audioSource.clip}'.");
+				if (instance.EnableLogging)
+					Log($"Stopping audio source '{audioSource.gameObject.FullName()}' with clip '{audioSource.clip}'.");
 
-				ReleaseAudioSource(audioSource);
+				instance.ReleaseAudioSource(audioSource);
 				audioSource = null;
 			}
 		}
@@ -571,12 +578,15 @@ namespace Extenity.BeyondAudio
 		/// <param name="crossfadeDuration">Duration of the crossfade in seconds. Can be '0' for instantly stopping the old music and starting the new one without a crossfade.</param>
 		public static AudioSource PlayMusic(string eventName, float selectorPin, bool loop = true, float crossfadeDuration = 3f, float fadeStartVolume = 0f, float volume = 1f, float pitch = 1f)
 		{
-			if (Instance.EnableLogging)
+			var instance = InstanceEnsured;
+			if (!instance)
+				return null;
+			if (instance.EnableLogging)
 				Log($"Playing {(loop ? "looped" : "one-shot")} music '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
 
 			var doFade = crossfadeDuration > 0f;
 
-			var newAudioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
+			var newAudioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (newAudioSource)
 			{
 				newAudioSource.transform.position = Vector3.zero;
@@ -590,35 +600,38 @@ namespace Extenity.BeyondAudio
 				newAudioSource.Play();
 				if (!loop)
 				{
-					Instance.AddToReleaseTracker(newAudioSource);
+					instance.AddToReleaseTracker(newAudioSource);
 				}
 			}
 
-			var oldAudioSource = Instance.MusicAudioSource;
+			var oldAudioSource = instance.MusicAudioSource;
 
 			if (doFade)
 			{
-				Instance.StartCoroutine(DoCrossfade(oldAudioSource, newAudioSource, volume, crossfadeDuration, true));
+				instance.StartCoroutine(DoCrossfade(oldAudioSource, newAudioSource, volume, crossfadeDuration, true));
 			}
 			else
 			{
 				if (oldAudioSource)
 				{
-					ReleaseAudioSource(oldAudioSource);
+					instance.ReleaseAudioSource(oldAudioSource);
 				}
 			}
 
-			Instance.MusicAudioSource = newAudioSource;
+			instance.MusicAudioSource = newAudioSource;
 			return newAudioSource;
 		}
 
 		public static void StopMusic()
 		{
-			if (Instance.EnableLogging)
-				Log("Stopping music.");
-			if (!Instance.MusicAudioSource)
+			var instance = InstanceEnsured;
+			if (!instance)
 				return;
-			ReleaseAudioSource(Instance.MusicAudioSource);
+			if (instance.EnableLogging)
+				Log("Stopping music.");
+			if (!instance.MusicAudioSource)
+				return;
+			instance.ReleaseAudioSource(instance.MusicAudioSource);
 		}
 
 		#endregion
@@ -636,6 +649,10 @@ namespace Extenity.BeyondAudio
 
 		private static IEnumerator DoCrossfade(AudioSource fadingOutSource, AudioSource fadingInSource, float volume, float duration, bool releaseFadedOutAudioSource)
 		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				yield break;
+
 			var timeLeft = duration;
 			var oneOverDuration = 1f / duration;
 			var doFadeOut = fadingOutSource;
@@ -667,7 +684,8 @@ namespace Extenity.BeyondAudio
 			{
 				if (releaseFadedOutAudioSource)
 				{
-					ReleaseAudioSource(fadingOutSource);
+					if (instance) // Need to be sure that AudioManager still exists after time passed.
+						instance.ReleaseAudioSource(fadingOutSource);
 				}
 				else
 				{
