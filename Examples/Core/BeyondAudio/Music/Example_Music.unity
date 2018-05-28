@@ -1894,6 +1894,11 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 86a00617f3db31a43abd1a11846eca7d, type: 3}
     WeightedGroups: []
     EnsureNonrecurringRandomness: 1
+  EventNames:
+  - Track-1
+  - Track-2
+  - Track-3
+  EnableLogging: 0
 --- !u!4 &1167200209
 Transform:
   m_ObjectHideFlags: 0
