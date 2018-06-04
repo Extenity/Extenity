@@ -116,46 +116,6 @@ namespace Extenity.DataToolbox
 			return text.Length <= maxCharacters ? text : text.Substring(0, maxCharacters);
 		}
 
-		public static int GetNumberAtTheEnd(this string text)
-		{
-			var stack = new Stack<char>(10);
-
-			for (var i = text.Length - 1; i >= 0; i--)
-			{
-				if (!char.IsNumber(text[i]))
-					break;
-
-				stack.Push(text[i]);
-			}
-
-			if (stack.Count == 0)
-				return 0;
-
-			return Convert.ToInt32(new string(stack.ToArray()));
-		}
-
-		public static bool GetNumberAtTheEnd(this string text, out int value)
-		{
-			var stack = new Stack<char>(10);
-
-			for (var i = text.Length - 1; i >= 0; i--)
-			{
-				if (!char.IsNumber(text[i]))
-					break;
-
-				stack.Push(text[i]);
-			}
-
-			if (stack.Count == 0)
-			{
-				value = 0;
-				return false;
-			}
-
-			value = Convert.ToInt32(new string(stack.ToArray()));
-			return true;
-		}
-
 		public static string SubstringBetween(this string text, string startTag, string endTag, int startIndex = 0)
 		{
 			if (text == null)
@@ -378,6 +338,98 @@ namespace Extenity.DataToolbox
 			if (text.EndsWith(part, comparison))
 				return text.Substring(0, text.Length - part.Length);
 			return text;
+		}
+
+		#endregion
+
+		#region Number At The End
+
+		public static int GetNumberAtTheEnd(this string text)
+		{
+			var stack = new Stack<char>(10);
+
+			for (var i = text.Length - 1; i >= 0; i--)
+			{
+				if (!char.IsNumber(text[i]))
+					break;
+
+				stack.Push(text[i]);
+			}
+
+			if (stack.Count == 0)
+				return 0;
+
+			return Convert.ToInt32(new string(stack.ToArray()));
+		}
+
+		public static bool GetNumberAtTheEnd(this string text, out int value)
+		{
+			var stack = new Stack<char>(10);
+
+			for (var i = text.Length - 1; i >= 0; i--)
+			{
+				if (!char.IsNumber(text[i]))
+					break;
+
+				stack.Push(text[i]);
+			}
+
+			if (stack.Count == 0)
+			{
+				value = 0;
+				return false;
+			}
+
+			value = Convert.ToInt32(new string(stack.ToArray()));
+			return true;
+		}
+
+		public static int GetNumberInParenthesesAtTheEnd(this string text, char begin = '(', char end = ')', bool hasAtLeastOneSpaceBeforeBeginning = true)
+		{
+			//var index = text.IndexOfNumberedParentheses(begin, end, hasAtLeastOneSpaceBeforeBeginning);
+			throw new NotImplementedException();
+		}
+
+		public static bool GetNumberInParenthesesAtTheEnd(this string text, out int value, char begin = '(', char end = ')', bool hasAtLeastOneSpaceBeforeBeginning = true)
+		{
+			//var index = text.IndexOfNumberedParentheses(begin, end, hasAtLeastOneSpaceBeforeBeginning);
+			throw new NotImplementedException();
+		}
+
+		public static string RemoveEndingNumberedParentheses(this string text, char begin = '(', char end = ')', bool hasAtLeastOneSpaceBeforeBeginning = true)
+		{
+			var index = text.IndexOfNumberedParentheses(begin, end, hasAtLeastOneSpaceBeforeBeginning);
+			if (index > 0)
+				return text.Substring(0, index);
+			return text;
+		}
+
+		public static bool IsEndingWithNumberedParentheses(this string text, char begin = '(', char end = ')', bool hasAtLeastOneSpaceBeforeBeginning = true)
+		{
+			return -1 < text.IndexOfNumberedParentheses(begin, end, hasAtLeastOneSpaceBeforeBeginning);
+		}
+
+		public static int IndexOfNumberedParentheses(this string text, char begin = '(', char end = ')', bool hasAtLeastOneSpaceBeforeBeginning = true)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return -1;
+			var length = text.Length;
+			if (text[length - 1] != end)
+				return -1;
+
+			int indexOfBeginning;
+			if (hasAtLeastOneSpaceBeforeBeginning)
+			{
+				indexOfBeginning = text.LastIndexOf(" " + begin, length - 1, StringComparison.Ordinal);
+			}
+			else
+			{
+				indexOfBeginning = text.LastIndexOf(begin, length - 1);
+			}
+			if (indexOfBeginning < 0)
+				return -1;
+
+			return indexOfBeginning;
 		}
 
 		#endregion
