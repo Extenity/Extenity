@@ -1,4 +1,5 @@
 using System.Linq;
+using Extenity.DataToolbox;
 using UnityEditor;
 using UnityEngine;
 
@@ -74,12 +75,46 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Remove Colliders In Selection", priority = 101)]
 		public static void RemoveCollidersInSelection()
 		{
-			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Deep).Cast<GameObject>())
+			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
 			{
 				foreach (var component in go.GetComponents<Collider>())
 				{
-					Debug.Log("Removing: " + component);
+					Debug.Log($"Removing '{component.FullName()}'.", component.gameObject);
 					Undo.DestroyObjectImmediate(component);
+				}
+			}
+		}
+
+		#endregion
+
+		#region Hierarchy Menu - Remove Numbered Parentheses Postfix
+
+		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix In Selected Object Names", priority = 201)]
+		public static void RemoveNumberedParenthesesPostfixInSelectedObjectNames()
+		{
+			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().OrderBy(item => item.FullName()))
+			{
+				var newName = go.name.RemoveEndingNumberedParentheses();
+				if (newName != go.name)
+				{
+					Debug.Log($"Renaming '{go.FullName()}' to '{newName}'.", go);
+					Undo.RecordObject(go, "Remove Numbered Parentheses Postfix");
+					go.name = newName;
+				}
+			}
+		}
+
+		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix In Selected Object Names (With Children)", priority = 202)]
+		public static void RemoveNumberedParenthesesPostfixInSelectedObjectNamesWithChildren()
+		{
+			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
+			{
+				var newName = go.name.RemoveEndingNumberedParentheses();
+				if (newName != go.name)
+				{
+					Debug.Log($"Renaming '{go.FullName()}' to '{newName}'.", go);
+					Undo.RecordObject(go, "Remove Numbered Parentheses Postfix");
+					go.name = newName;
 				}
 			}
 		}
