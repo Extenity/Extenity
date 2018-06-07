@@ -1,0 +1,88 @@
+using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
+using Extenity.UnityEditorToolbox.Editor;
+using UnityEngine;
+using UnityEditor;
+
+namespace Extenity.UIToolbox
+{
+
+	[CustomEditor(typeof(UISimpleAnimation))]
+	public class UISimpleAnimationInspector : ExtenityEditorBase<UISimpleAnimation>
+	{
+		protected override void OnEnableDerived()
+		{
+		}
+
+		protected override void OnDisableDerived()
+		{
+		}
+
+		private static readonly GUIContent ImmediateToggleContent = new GUIContent("Immediate", "Animation will not be played and the object will be placed at the end position immediately if this is selected. Only available in Play mode. Behaves as if it's set to immediate in Edit mode.");
+
+		private bool IsImmediate;
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
+			var isPlaying = EditorApplication.isPlaying;
+
+			var animatedTransformAvailable = Me.AnimatedTransform;
+			var anchorAAvailable = Me.AnchorA;
+			var anchorBAvailable = Me.AnchorB;
+			var needAnchors = !anchorAAvailable || !anchorBAvailable;
+			if (GUILayoutTools.Button("Create Anchors", needAnchors, BigButtonHeight))
+			{
+				CreateAnchorsIfNeeded();
+			}
+
+			GUILayout.Space(20f);
+
+			EditorGUILayoutTools.DrawHeader("Animation Controls");
+			EditorGUI.BeginDisabledGroup(!isPlaying);
+			IsImmediate = GUILayout.Toggle(IsImmediate, ImmediateToggleContent);
+			EditorGUI.EndDisabledGroup();
+			var immediateOrEditor = IsImmediate || !isPlaying;
+			GUILayout.BeginHorizontal();
+			if (GUILayoutTools.Button("Animate To A", anchorAAvailable && animatedTransformAvailable, BigButtonHeight))
+			{
+				Undo.RecordObject(Me.AnimatedTransform, "Animate To A");
+				Me.AnimateToA(immediateOrEditor);
+			}
+			if (GUILayoutTools.Button("Animate To B", anchorBAvailable && animatedTransformAvailable, BigButtonHeight))
+			{
+				Undo.RecordObject(Me.AnimatedTransform, "Animate To B");
+				Me.AnimateToB(immediateOrEditor);
+			}
+			GUILayout.EndHorizontal();
+
+			GUILayout.Space(10f);
+		}
+
+		#region Create Anchors
+
+		private void CreateAnchorsIfNeeded()
+		{
+			Undo.RecordObject(Me, "Create Animation Anchors");
+			var animated = Me.transform.GetComponent<RectTransform>();
+			var parent = Me.transform.parent.GetComponent<RectTransform>();
+			CreateAnchor(ref Me.AnchorB, parent, animated, "B"); // B first, for correct sibling order.
+			CreateAnchor(ref Me.AnchorA, parent, animated, "A");
+		}
+
+		private void CreateAnchor(ref RectTransform anchor, RectTransform parent, RectTransform animatedObject, string namePostfix)
+		{
+			if (!anchor)
+			{
+				var go = new GameObject(animatedObject.gameObject.name + "-Anchor" + namePostfix, typeof(RectTransform));
+				Undo.RegisterCreatedObjectUndo(go, "Create Animation Anchor Object");
+				go.transform.SetParent(parent, false);
+				go.transform.SetSiblingIndex(animatedObject.GetSiblingIndex() + 1);
+				anchor = go.GetComponent<RectTransform>();
+				EditorUtility.CopySerialized(animatedObject, anchor);
+			}
+		}
+
+		#endregion
+	}
+
+}
