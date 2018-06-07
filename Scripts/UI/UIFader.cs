@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,7 +43,7 @@ namespace Extenity.UIToolbox
 			FadedOut,
 		}
 
-		private void Start()
+		protected void Start()
 		{
 			if (GetFadeInConfigurationFromInitialValue)
 			{
@@ -66,7 +67,7 @@ namespace Extenity.UIToolbox
 					AlphaFadeOut(0f, 0f);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(InitialState), (int)InitialState, "");
 			}
 		}
 
@@ -103,25 +104,21 @@ namespace Extenity.UIToolbox
 
 		public float FadeIn()
 		{
-			OnFadeIn.Invoke(this);
 			return AlphaFadeIn();
 		}
 
 		public float FadeInImmediate()
 		{
-			OnFadeIn.Invoke(this);
 			return AlphaFadeIn(0f, 0f);
 		}
 
 		public float FadeOut()
 		{
-			OnFadeOut.Invoke(this);
 			return AlphaFadeOut();
 		}
 
 		public float FadeOutImmediate()
 		{
-			OnFadeOut.Invoke(this);
 			return AlphaFadeOut(0f, 0f);
 		}
 
@@ -138,7 +135,7 @@ namespace Extenity.UIToolbox
 		{
 			if (DEBUG_ShowFadeMessages)
 			{
-				Debug.LogFormat("Fading in '{0}'", CanvasGroup.gameObject.name);
+				Debug.Log($"Fading in '{CanvasGroup.gameObject.FullName()}'");
 			}
 
 			if (delay < 0f)
@@ -147,6 +144,9 @@ namespace Extenity.UIToolbox
 				duration = 0f;
 
 			Stop();
+
+			OnFadeIn.Invoke(this);
+
 			if (CanvasGroup != null)
 			{
 				if (duration < 0.001f)
@@ -158,6 +158,7 @@ namespace Extenity.UIToolbox
 						CanvasGroup.interactable = true;
 					if (Canvas != null)
 						Canvas.enabled = true;
+					OnFinishedFadeIn.Invoke(this);
 				}
 				else
 				{
@@ -173,6 +174,11 @@ namespace Extenity.UIToolbox
 						Canvas.enabled = true;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
+						if (DEBUG_ShowFadeMessages)
+						{
+							Debug.Log($"Fade in completed for '{CanvasGroup.gameObject.FullName()}'");
+						}
+						CanvasGroupTweener = null;
 						if (BlocksRaycasts)
 							CanvasGroup.blocksRaycasts = true;
 						if (Interactable)
@@ -195,7 +201,7 @@ namespace Extenity.UIToolbox
 		{
 			if (DEBUG_ShowFadeMessages)
 			{
-				Debug.LogFormat("Fading out '{0}'", CanvasGroup.gameObject.name);
+				Debug.Log($"Fading out '{CanvasGroup.gameObject.FullName()}'");
 			}
 
 			if (delay < 0f)
@@ -204,6 +210,9 @@ namespace Extenity.UIToolbox
 				duration = 0f;
 
 			Stop();
+
+			OnFadeOut.Invoke(this);
+
 			if (CanvasGroup != null)
 			{
 				if (duration < 0.001f)
@@ -213,6 +222,7 @@ namespace Extenity.UIToolbox
 					CanvasGroup.alpha = FadeOutAlpha;
 					CanvasGroup.blocksRaycasts = false;
 					CanvasGroup.interactable = false;
+					OnFinishedFadeOut.Invoke(this);
 				}
 				else
 				{
@@ -223,6 +233,11 @@ namespace Extenity.UIToolbox
 					CanvasGroup.interactable = false;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
+						if (DEBUG_ShowFadeMessages)
+						{
+							Debug.Log($"Fade out completed for '{CanvasGroup.gameObject.FullName()}'");
+						}
+						CanvasGroupTweener = null;
 						if (Canvas != null)
 							Canvas.enabled = false;
 						CanvasGroup.blocksRaycasts = false;

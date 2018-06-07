@@ -30,10 +30,20 @@ namespace Extenity.UIToolbox
 			var anchorAAvailable = Me.AnchorA;
 			var anchorBAvailable = Me.AnchorB;
 			var needAnchors = !anchorAAvailable || !anchorBAvailable;
+
+			GUILayout.Space(20f);
+
+			EditorGUILayoutTools.DrawHeader("Tools");
+			GUILayout.BeginHorizontal();
+			if (GUILayoutTools.Button("Get Or Create Anchors", needAnchors, BigButtonHeight))
+			{
+				CreateAnchorsIfNeeded(true);
+			}
 			if (GUILayoutTools.Button("Create Anchors", needAnchors, BigButtonHeight))
 			{
-				CreateAnchorsIfNeeded();
+				CreateAnchorsIfNeeded(false);
 			}
+			GUILayout.EndHorizontal();
 
 			GUILayout.Space(20f);
 
@@ -60,24 +70,41 @@ namespace Extenity.UIToolbox
 
 		#region Create Anchors
 
-		private void CreateAnchorsIfNeeded()
+		private void CreateAnchorsIfNeeded(bool firstTryToGetAlreadyExistingAnchorsWithSameName)
 		{
 			Undo.RecordObject(Me, "Create Animation Anchors");
 			var animated = Me.transform.GetComponent<RectTransform>();
 			var parent = Me.transform.parent.GetComponent<RectTransform>();
-			CreateAnchor(ref Me.AnchorB, parent, animated, "B"); // B first, for correct sibling order.
-			CreateAnchor(ref Me.AnchorA, parent, animated, "A");
+			CreateAnchor(ref Me.AnchorB, parent, animated, "B", firstTryToGetAlreadyExistingAnchorsWithSameName); // B first, for correct sibling order.
+			CreateAnchor(ref Me.AnchorA, parent, animated, "A", firstTryToGetAlreadyExistingAnchorsWithSameName);
 		}
 
-		private void CreateAnchor(ref RectTransform anchor, RectTransform parent, RectTransform animatedObject, string namePostfix)
+		private void CreateAnchor(ref RectTransform anchor, RectTransform parent, RectTransform animatedObject, string namePostfix, bool firstTryToGetAlreadyExistingAnchorsWithSameName)
 		{
 			if (!anchor)
 			{
-				var go = new GameObject(animatedObject.gameObject.name + "-Anchor" + namePostfix, typeof(RectTransform));
-				Undo.RegisterCreatedObjectUndo(go, "Create Animation Anchor Object");
-				go.transform.SetParent(parent, false);
-				go.transform.SetSiblingIndex(animatedObject.GetSiblingIndex() + 1);
-				anchor = go.GetComponent<RectTransform>();
+				var anchorName = animatedObject.gameObject.name + "-Anchor" + namePostfix;
+
+				// First, try to find a gameobject with exact name. Maybe the user 
+				if (firstTryToGetAlreadyExistingAnchorsWithSameName)
+				{
+					var alreadyExisting = parent.Find(anchorName);
+					if (alreadyExisting)
+					{
+						anchor = alreadyExisting.GetComponent<RectTransform>();
+					}
+				}
+
+				// Create new anchor if needed
+				if (!anchor)
+				{
+					var go = new GameObject(anchorName, typeof(RectTransform));
+					Undo.RegisterCreatedObjectUndo(go, "Create Animation Anchor Object");
+					go.transform.SetParent(parent, false);
+					go.transform.SetSiblingIndex(animatedObject.GetSiblingIndex() + 1);
+					anchor = go.GetComponent<RectTransform>();
+				}
+
 				EditorUtility.CopySerialized(animatedObject, anchor);
 			}
 		}
