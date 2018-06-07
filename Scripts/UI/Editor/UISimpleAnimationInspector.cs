@@ -55,12 +55,14 @@ namespace Extenity.UIToolbox
 			GUILayout.BeginHorizontal();
 			if (GUILayoutTools.Button("Animate To A", anchorAAvailable && animatedTransformAvailable, BigButtonHeight))
 			{
-				Undo.RecordObject(Me.AnimatedTransform, "Animate To A");
+				if (!isPlaying)
+					Undo.RecordObject(Me.AnimatedTransform, "Animate To A");
 				Me.AnimateToA(immediateOrEditor);
 			}
 			if (GUILayoutTools.Button("Animate To B", anchorBAvailable && animatedTransformAvailable, BigButtonHeight))
 			{
-				Undo.RecordObject(Me.AnimatedTransform, "Animate To B");
+				if (!isPlaying)
+					Undo.RecordObject(Me.AnimatedTransform, "Animate To B");
 				Me.AnimateToB(immediateOrEditor);
 			}
 			GUILayout.EndHorizontal();
