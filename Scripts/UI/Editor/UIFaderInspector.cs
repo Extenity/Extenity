@@ -40,22 +40,28 @@ namespace Extenity.UIToolbox.Editor
 		{
 			var canvasGroupNeeds = Me.CanvasGroup == null;
 			var canvasNeeds = Me.Canvas == null;
+			var animationOrchestratorNeeds = Me.TriggeredAnimationOrchestrator == null;
 
-			if (canvasGroupNeeds || canvasNeeds)
+			if (canvasGroupNeeds || canvasNeeds || animationOrchestratorNeeds)
 			{
 				CanvasGroup foundCanvasGroup = null;
 				Canvas foundCanvas = null;
+				UISimpleAnimationOrchestrator foundAnimationOrchestrator = null;
 				if (canvasGroupNeeds)
 					foundCanvasGroup = Me.GetComponent<CanvasGroup>();
 				if (canvasNeeds)
 					foundCanvas = Me.GetComponent<Canvas>();
-				if (foundCanvasGroup || foundCanvas)
+				if (animationOrchestratorNeeds)
+					foundAnimationOrchestrator = Me.GetComponent<UISimpleAnimationOrchestrator>();
+				if (foundCanvasGroup || foundCanvas || foundAnimationOrchestrator)
 				{
 					Undo.RecordObject(Me, "Auto assign UI Fader links");
 					if (canvasGroupNeeds)
 						Me.CanvasGroup = foundCanvasGroup;
 					if (canvasNeeds)
 						Me.Canvas = foundCanvas;
+					if (animationOrchestratorNeeds)
+						Me.TriggeredAnimationOrchestrator = foundAnimationOrchestrator;
 					Undo.FlushUndoRecordObjects();
 				}
 			}
@@ -136,6 +142,19 @@ namespace Extenity.UIToolbox.Editor
 
 			EditorGUILayout.PropertyField(GetProperty("BlocksRaycasts"));
 
+			// TriggeredAnimationOrchestrator
+			GUILayout.BeginHorizontal();
+			EditorGUILayout.PropertyField(GetProperty("TriggeredAnimationOrchestrator"));
+			if (Me.TriggeredAnimationOrchestrator == null)
+			{
+				if (GUILayout.Button(Cached_Add, Cached_AddButtonLayout))
+				{
+					Me.TriggeredAnimationOrchestrator = Undo.AddComponent<UISimpleAnimationOrchestrator>(Me.gameObject);
+					Me.TriggeredAnimationOrchestrator.MoveComponentBelow(Me);
+				}
+			}
+			GUILayout.EndHorizontal();
+
 			EditorGUILayout.PropertyField(GetProperty("GetFadeInConfigurationFromInitialValue"), CachedLabel1);
 			if (!Me.GetFadeInConfigurationFromInitialValue)
 			{
@@ -174,6 +193,8 @@ namespace Extenity.UIToolbox.Editor
 			}
 			EditorGUI.EndDisabledGroup();
 			GUILayout.EndHorizontal();
+
+			GUILayout.Space(10f);
 		}
 	}
 

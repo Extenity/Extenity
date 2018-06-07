@@ -1,3 +1,5 @@
+using System.Linq;
+using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
@@ -28,6 +30,16 @@ namespace Extenity.UIToolbox
 
 			GUILayout.Space(20f);
 
+			EditorGUILayoutTools.DrawHeader("Tools");
+			GUILayout.BeginHorizontal();
+			if (GUILayoutTools.Button("Add Child Animators", true, BigButtonHeight))
+			{
+				AddChildAnimations();
+			}
+			GUILayout.EndHorizontal();
+
+			GUILayout.Space(20f);
+
 			EditorGUILayoutTools.DrawHeader("Animation Controls");
 			EditorGUI.BeginDisabledGroup(!isPlaying);
 			IsImmediate = GUILayout.Toggle(IsImmediate, ImmediateToggleContent);
@@ -47,15 +59,30 @@ namespace Extenity.UIToolbox
 				Me.AnimateToB(immediateOrEditor);
 			}
 			GUILayout.EndHorizontal();
+
+			GUILayout.Space(10f);
+		}
+
+		private void AddChildAnimations()
+		{
+			var childAnimations = Me.transform.GetComponentsInChildren<UISimpleAnimation>();
+			foreach (var childAnimation in childAnimations)
+			{
+				if (Me.Animations.All(entry => entry.Animation != childAnimation)) // Prevent adding same animation more than once
+				{
+					Undo.RecordObject(Me, "Add Child Animation");
+					Me.Animations = Me.Animations.Add(new UISimpleAnimationOrchestrator.Entry(childAnimation, false));
+				}
+			}
 		}
 
 		private void UndoRecordAllAnimatedObjects(string name)
 		{
 			foreach (var animation in Me.Animations)
 			{
-				if (animation && animation.AnimatedTransform)
+				if (animation.Animation && animation.Animation.AnimatedTransform)
 				{
-					Undo.RecordObject(animation.AnimatedTransform, name);
+					Undo.RecordObject(animation.Animation.AnimatedTransform, name);
 				}
 			}
 		}

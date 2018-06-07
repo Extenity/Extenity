@@ -38,9 +38,45 @@ namespace Extenity.UIToolbox
 
 		#region Animation
 
+		[Serializable]
+		public struct Entry
+		{
+			public UISimpleAnimation Animation;
+			public bool Inverted;
+
+			public Entry(UISimpleAnimation animation, bool inverted)
+				: this()
+			{
+				Animation = animation;
+				Inverted = inverted;
+			}
+
+			public float AnimateToA(bool immediate)
+			{
+				if (!Animation)
+					return 0f;
+
+				if (Inverted)
+					return Animation.AnimateToB(immediate);
+				else
+					return Animation.AnimateToA(immediate);
+			}
+
+			public float AnimateToB(bool immediate)
+			{
+				if (!Animation)
+					return 0f;
+
+				if (Inverted)
+					return Animation.AnimateToA(immediate);
+				else
+					return Animation.AnimateToB(immediate);
+			}
+		}
+
 		[Header("Animation")]
 		public InitialAnimationState InitialState = InitialAnimationState.Untouched;
-		public UISimpleAnimation[] Animations;
+		public Entry[] Animations;
 
 		//public class AnimationEvent : UnityEvent<UISimpleAnimationOrchestrator> { }
 
@@ -70,12 +106,9 @@ namespace Extenity.UIToolbox
 			var maxLength = 0f;
 			for (var i = 0; i < Animations.Length; i++)
 			{
-				if (Animations[i])
-				{
-					var length = Animations[i].AnimateToA(immediate);
-					if (maxLength < length)
-						maxLength = length;
-				}
+				var length = Animations[i].AnimateToA(immediate);
+				if (maxLength < length)
+					maxLength = length;
 			}
 			return maxLength;
 		}
@@ -111,12 +144,9 @@ namespace Extenity.UIToolbox
 			var maxLength = 0f;
 			for (var i = 0; i < Animations.Length; i++)
 			{
-				if (Animations[i])
-				{
-					var length = Animations[i].AnimateToB(immediate);
-					if (maxLength < length)
-						maxLength = length;
-				}
+				var length = Animations[i].AnimateToB(immediate);
+				if (maxLength < length)
+					maxLength = length;
 			}
 			return maxLength;
 		}

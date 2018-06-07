@@ -17,6 +17,8 @@ namespace Extenity.UIToolbox
 		public InitialFadeState InitialState = InitialFadeState.Untouched;
 		public bool Interactable = true;
 		public bool BlocksRaycasts = true;
+		[Tooltip("Optional orchestrator that is triggered with fading.")]
+		public UISimpleAnimationOrchestrator TriggeredAnimationOrchestrator;
 
 		[Header("Transparency")]
 		public bool GetFadeInConfigurationFromInitialValue = false;
@@ -142,14 +144,17 @@ namespace Extenity.UIToolbox
 				delay = 0f;
 			if (duration < 0f)
 				duration = 0f;
+			var immediate = duration < 0.001f;
 
 			Stop();
+			if (TriggeredAnimationOrchestrator)
+				TriggeredAnimationOrchestrator.AnimateToB(immediate);
 
 			OnFadeIn.Invoke(this);
 
 			if (CanvasGroup != null)
 			{
-				if (duration < 0.001f)
+				if (immediate)
 				{
 					CanvasGroup.alpha = FadeInAlpha;
 					if (BlocksRaycasts)
@@ -208,14 +213,17 @@ namespace Extenity.UIToolbox
 				delay = 0f;
 			if (duration < 0f)
 				duration = 0f;
+			var immediate = duration < 0.001f;
 
 			Stop();
 
 			OnFadeOut.Invoke(this);
+			if (TriggeredAnimationOrchestrator)
+				TriggeredAnimationOrchestrator.AnimateToA(immediate);
 
 			if (CanvasGroup != null)
 			{
-				if (duration < 0.001f)
+				if (immediate)
 				{
 					if (Canvas != null)
 						Canvas.enabled = false;
