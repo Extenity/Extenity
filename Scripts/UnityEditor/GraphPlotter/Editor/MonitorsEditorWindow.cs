@@ -13,8 +13,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GetWindow<MonitorsEditorWindow>();
 		}
 
-		private Monitors monitors;
-
 		private Texture2D topTexture;
 		private Texture2D leftTexture;
 
@@ -124,8 +122,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			wantsMouseMove = true;
 			width = 1000;
 			height = 900;
-
-			monitors = Monitors.Instance;
 
 			// Colors
 			backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
@@ -285,44 +281,44 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			int lineCount = 0;
 
-			List<Monitor> visibleMonitors;
+			List<Monitor> visiblePlotters;
 
 			if (gameObjectFilter != null)
 			{
-				visibleMonitors = new List<Monitor>(); // TODO: remove alloc.
-				foreach (var monitor in monitors.All)
+				visiblePlotters = new List<Monitor>(); // TODO: remove alloc.
+				foreach (var plotter in GraphPlotters.All)
 				{
-					if (monitor.GameObject == gameObjectFilter)
+					if (plotter.GameObject == gameObjectFilter)
 					{
-						visibleMonitors.Add(monitor);
+						visiblePlotters.Add(plotter);
 					}
 				}
 			}
 			else
 			{
-				visibleMonitors = monitors.All;
+				visiblePlotters = GraphPlotters.All;
 			}
 
-			float latestTime = 0f;
-			for (int i = 0; i < visibleMonitors.Count; i++)
+			var latestTime = 0f;
+			for (int i = 0; i < visiblePlotters.Count; i++)
 			{
-				latestTime = Mathf.Max(latestTime, visibleMonitors[i].latestTime);
+				latestTime = Mathf.Max(latestTime, visiblePlotters[i].latestTime);
 			}
 
-			for (int i = 0; i < visibleMonitors.Count; i++)
+			for (int i = 0; i < visiblePlotters.Count; i++)
 			{
-				Monitor monitor = visibleMonitors[i];
+				var monitor = visiblePlotters[i];
 
-				Rect monitorRect = new Rect(legendWidth, i * monitorHeight + settingsRect.height - scrollPositionY, monitorWidth, monitorHeight);
-				Rect graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5);
+				var monitorRect = new Rect(legendWidth, i * monitorHeight + settingsRect.height - scrollPositionY, monitorWidth, monitorHeight);
+				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5);
 
-				float span = monitor.Max - monitor.Min;
+				var span = monitor.Max - monitor.Min;
 
 				GUI.color = Color.white;
 				GUI.Label(new Rect(legendWidth + 10f, monitorRect.yMin + 10, 100f, 30f), monitor.Name, headerStyle);
 
-				float maxTime = latestTime + scrollPositionTime;
-				float minTime = latestTime - timeWindow + scrollPositionTime;
+				var maxTime = latestTime + scrollPositionTime;
+				var minTime = latestTime - timeWindow + scrollPositionTime;
 
 				if (monitor.Mode == ValueAxisMode.Adaptive)
 				{
@@ -346,7 +342,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				// monitor resizing.
 
-				Rect resizeRect = new Rect(0f, monitorRect.yMax - 10, width - 12, 21);
+				var resizeRect = new Rect(0f, monitorRect.yMax - 10, width - 12, 21);
 				if (!legendResize)
 				{
 					EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
@@ -406,7 +402,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (isInPauseMode)
 					{
-						float time = (maxTime - minTime) * (mousePosition.x - graphRect.xMin) / graphRect.width + minTime;
+						var time = (maxTime - minTime) * (mousePosition.x - graphRect.xMin) / graphRect.width + minTime;
 
 						if (graphRect.Contains(mousePosition))
 						{
@@ -424,17 +420,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 					}
 
-					int n = 0;
-					float startTime = Mathf.CeilToInt(minTime / subTimeTicks) * subTimeTicks;
-					float t = startTime;
+					var n = 0;
+					var startTime = Mathf.CeilToInt(minTime / subTimeTicks) * subTimeTicks;
+					var t = startTime;
 
-					float transparentTime = 3;
-					float opaqueTime = 2;
+					var transparentTime = 3f;
+					var opaqueTime = 2f;
 
 					// Sub tick lines.
 					if (timeWindow < transparentTime)
 					{
-						Color subTimeTickColorWithAlpha = subTimeTickColor;
+						var subTimeTickColorWithAlpha = subTimeTickColor;
 						subTimeTickColorWithAlpha.a = subTimeTickColor.a * Mathf.Lerp(1f, 0f, (timeWindow - opaqueTime) / (transparentTime - opaqueTime));
 
 						Handles.color = subTimeTickColorWithAlpha;
@@ -475,35 +471,35 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					foreach (MonitorInput monitorInput in monitor.inputs)
 					{
-						Color deselectedColor = monitorInput.Color;
+						var deselectedColor = monitorInput.Color;
 						deselectedColor.a = deselectionAlpha;
 
-						Color color = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
+						var color = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
 
 						Handles.color = color;
 
-						int pointIndex = 0;
+						var pointIndex = 0;
 
 						for (int j = 0; j < monitorInput.numberOfSamples - 1; j++)
 						{
-							int index_a = (monitorInput.sampleIndex + j) % monitorInput.numberOfSamples;
-							int index_b = (index_a + 1) % monitorInput.numberOfSamples;
+							var index_a = (monitorInput.sampleIndex + j) % monitorInput.numberOfSamples;
+							var index_b = (index_a + 1) % monitorInput.numberOfSamples;
 
-							float time_a = monitorInput.times[index_a];
-							float time_b = monitorInput.times[index_b];
+							var time_a = monitorInput.times[index_a];
+							var time_b = monitorInput.times[index_b];
 
 							if (float.IsNaN(time_a) || float.IsNaN(time_b))
 								continue;
 
 							if (time_b > time_a && !(time_b < minTime || time_a > maxTime))
 							{
-								float sample_a = monitorInput.samples[index_a];
-								float sample_b = monitorInput.samples[index_b];
+								var sample_a = monitorInput.samples[index_a];
+								var sample_b = monitorInput.samples[index_b];
 
 								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 									continue;
 
-								float aNormalizedSample = (sample_a - monitor.Min) / span;
+								var aNormalizedSample = (sample_a - monitor.Min) / span;
 								if (span == 0f)
 								{
 									aNormalizedSample = 0.5f;
@@ -513,7 +509,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 									aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
 								}
 
-								float bNormalizedSample = (sample_b - monitor.Min) / span;
+								var bNormalizedSample = (sample_b - monitor.Min) / span;
 								if (span == 0f)
 								{
 									bNormalizedSample = 0.5f;
@@ -538,7 +534,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						if (pointIndex > 0)
 						{
-							Vector3 lastPoint = points[pointIndex - 1];
+							var lastPoint = points[pointIndex - 1];
 
 							for (int p = pointIndex; p < points.Length; p++)
 							{
@@ -583,7 +579,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (monitor.GameObject != null)
 					{
-						Rect gameObjectNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
+						var gameObjectNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
 
 						GUI.color = monitorInputHeaderColor;
 						GUI.Label(gameObjectNameRect, monitor.GameObject.name, simpleStyle);
@@ -598,7 +594,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					// Time line.
 
-					float mouseTime = maxTime;
+					var mouseTime = maxTime;
 
 					if (isInPauseMode)
 					{
@@ -608,19 +604,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					mouseTime = Mathf.Max(mouseTime, 0f);
 
 					Handles.color = timeLineColor;
-					float x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
+					var x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
 
 					for (int j = 0; j < monitor.inputs.Count; j++)
 					{
-						MonitorInput monitorInput = monitor.inputs[j];
+						var monitorInput = monitor.inputs[j];
 
-						Color deselectedColor = monitorInput.Color;
+						var deselectedColor = monitorInput.Color;
 						deselectedColor.a = deselectionAlpha;
 
-						Color monitorInputColor = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
+						var monitorInputColor = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
 
-						int index = -1;
+						var index = -1;
 
 						for (int k = 1; k < monitorInput.samples.Length - 1; k++)
 						{
@@ -635,9 +631,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							}
 						}
 
-						float sampleValue = float.NaN;
-						float time = float.NaN;
-						int frame = -1;
+						var sampleValue = float.NaN;
+						var time = float.NaN;
+						var frame = -1;
 
 						if (index > -1)
 						{
@@ -666,17 +662,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						Handles.color = monitorInputColor;
 
-						float normalizedSampleValue = (sampleValue - monitor.Min) / span;
+						var normalizedSampleValue = (sampleValue - monitor.Min) / span;
 						if (span == 0f)
 						{
 							normalizedSampleValue = 0.5f;
 						}
 
-						float clampedNormalizedSampleValue = Mathf.Clamp01(normalizedSampleValue);
+						var clampedNormalizedSampleValue = Mathf.Clamp01(normalizedSampleValue);
 
-						Vector3 samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - minTime) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
+						var samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - minTime) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
 
-						float handleRadius = 5f;
+						var handleRadius = 5f;
 
 						if (normalizedSampleValue < 0f)
 						{
@@ -703,7 +699,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						else
 						{
 							// Draw circle.
-							float size = handleRadius * 0.75f;
+							var size = handleRadius * 0.75f;
 							diamondPoints[0] = samplePosition + new Vector3(0, size, 0);
 							diamondPoints[1] = samplePosition + new Vector3(size, 0, 0);
 							diamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
@@ -724,7 +720,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							sampleValueString = " = " + sampleValue.ToString();
 						}
 
-						string valueText = monitorInput.Description + sampleValueString;
+						var valueText = monitorInput.Description + sampleValueString;
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 						valueTextStyle.normal.textColor = Color.white;
@@ -754,8 +750,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						valueTextStyle.alignment = TextAnchor.MiddleLeft;
 						valueTextStyle.clipping = TextClipping.Clip;
 
-						float offset = 30f;
-						Rect selectionRect = new Rect(0f, monitorRect.yMin + offset + 20 * j, legendWidth, 16f);
+						var offset = 30f;
+						var selectionRect = new Rect(0f, monitorRect.yMin + offset + 20 * j, legendWidth, 16f);
 						GUI.Label(new Rect(22f, monitorRect.yMin + 30f + 20 * j, legendWidth - 30f, 16f), valueText, valueTextStyle);
 
 						EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
@@ -777,15 +773,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					}
 
-					List<MonitorEvent> monitorEvents = new List<MonitorEvent>();
+					var monitorEvents = new List<MonitorEvent>();
 					monitor.GetEvents(maxTime - timeWindow, maxTime, monitorEvents);
 
 					foreach (var monitorEvent in monitorEvents)
 					{
-						Color eventColor = Color.yellow;
+						var eventColor = Color.yellow;
 						Handles.color = eventColor;
 
-						float normalizedX = (monitorEvent.time - minTime) / timeWindow;
+						var normalizedX = (monitorEvent.time - minTime) / timeWindow;
 						if (normalizedX * graphRect.width >= 5f)
 						{
 							Handles.DrawLine(
@@ -833,7 +829,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = new Color(1f, 1f, 1f, 0.3f);
 			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 8), topTexture, ScaleMode.StretchToFill);
 
-			for (int i = 0; i < visibleMonitors.Count; i++)
+			for (int i = 0; i < visiblePlotters.Count; i++)
 			{
 				// separator line
 				Handles.color = Color.grey;
@@ -843,8 +839,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Scrollbar
-			float scrollMaxY = monitorHeight * visibleMonitors.Count + extraScrollSpace;
-			float visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
+			var scrollMaxY = monitorHeight * visiblePlotters.Count + extraScrollSpace;
+			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
 
 			GUI.color = Color.white;
 			scrollPositionY = GUI.VerticalScrollbar(new Rect(
@@ -861,10 +857,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					// Find the maximum time span in samples.
 
-					float minTime = float.PositiveInfinity;
-					float maxTime = float.NegativeInfinity;
+					var minTime = float.PositiveInfinity;
+					var maxTime = float.NegativeInfinity;
 
-					foreach (var monitor in visibleMonitors)
+					foreach (var monitor in visiblePlotters)
 					{
 						float monitorMinTime, monitorMaxTime;
 						monitor.GetMinMaxTime(out monitorMinTime, out monitorMaxTime);
@@ -893,14 +889,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.DrawTexture(settingsRect, EditorGUIUtility.whiteTexture);
 			GUI.color = Color.white;
 
-			float padding = 5f;
-			float timeWindowFloored = Mathf.RoundToInt(timeWindow * 10f) / 10f;
+			var padding = 5f;
+			var timeWindowFloored = Mathf.RoundToInt(timeWindow * 10f) / 10f;
 			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
 			// Find list of unique game objects (linked to monitors).
-			List<GameObject> gameObjects = new List<GameObject>();
-			foreach (Monitor monitor in monitors.All)
+			var gameObjects = new List<GameObject>();
+			foreach (var monitor in GraphPlotters.All)
 			{
 				if (monitor.GameObject != null)
 				{
@@ -924,7 +920,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 			});
 
-			string[] visibleGameObjectNames = new string[gameObjects.Count];
+			var visibleGameObjectNames = new string[gameObjects.Count];
 			for (int i = 0; i < visibleGameObjectNames.Length; i++)
 			{
 				visibleGameObjectNames[i] = gameObjects[i].name;
@@ -961,9 +957,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			// Game object filter.
 
-			int gameObjectFilterIndex = 0;
+			var gameObjectFilterIndex = 0;
 
-			string[] gameObjectFilterOptions = new string[gameObjects.Count + 1];
+			var gameObjectFilterOptions = new string[gameObjects.Count + 1];
 			gameObjectFilterOptions[0] = "All";
 			for (int i = 0; i < gameObjects.Count; i++)
 			{
@@ -978,7 +974,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			gameObjectFilterIndex = EditorGUILayout.Popup(gameObjectFilterIndex, gameObjectFilterOptions, GUILayout.Width(160));
 
 
-			GameObject gameObjectFilter_old = gameObjectFilter;
+			var gameObjectFilter_old = gameObjectFilter;
 
 			if (gameObjectFilterIndex == 0)
 			{
@@ -1006,8 +1002,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUILayout.EndHorizontal();
 			GUILayout.EndArea();
 
-			float splitSize = 6;
-			Rect legendResizeRect = new Rect(legendWidth - splitSize / 2, 0, splitSize, height);
+			var splitSize = 6f;
+			var legendResizeRect = new Rect(legendWidth - splitSize / 2, 0, splitSize, height);
 			EditorGUIUtility.AddCursorRect(legendResizeRect, MouseCursor.SplitResizeLeftRight);
 
 			if (e.type == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !monitorHeightResize)
@@ -1059,7 +1055,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			set
 			{
-				if (monitors.All.Exists((monitor) => monitor.GameObject == value))
+				if (GraphPlotters.IsAnyGraphForObjectExists(value))
 				{
 					gameObjectFilter = value;
 				}

@@ -70,8 +70,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_volume == null)
 				{
-					monitor_volume = new Monitor("Volume");
-					monitor_volume.GameObject = gameObject;
+					monitor_volume = new Monitor("Volume", gameObject);
 					monitor_volume.Mode = ValueAxisMode.Fixed;
 					monitor_volume.Min = 0f;
 					monitor_volume.Max = 1f;
@@ -104,8 +103,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_pitch == null)
 				{
-					monitor_pitch = new Monitor("Pitch");
-					monitor_pitch.GameObject = gameObject;
+					monitor_pitch = new Monitor("Pitch", gameObject);
 				}
 
 				monitor_pitch.Mode = pitchMode;
@@ -139,8 +137,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_isPlaying == null)
 				{
-					monitor_isPlaying = new Monitor("Is playing");
-					monitor_isPlaying.GameObject = gameObject;
+					monitor_isPlaying = new Monitor("Is playing", gameObject);
 					monitor_isPlaying.Mode = ValueAxisMode.Fixed;
 					monitor_isPlaying.Min = 0f;
 					monitor_isPlaying.Max = 1f;

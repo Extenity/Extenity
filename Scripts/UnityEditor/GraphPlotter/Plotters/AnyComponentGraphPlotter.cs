@@ -61,8 +61,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor == null)
 				{
-					monitor = new Monitor("");
-					monitor.GameObject = gameObject;
+					monitor = new Monitor("", gameObject);
 				}
 
 				monitor.Name = component.GetType().Name;
@@ -109,11 +108,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					}
 				}
 
-				if (monitor != null)
-				{
-					monitor.Close();
-					monitor = null;
-				}
+				RemoveMonitor();
 			}
 		}
 

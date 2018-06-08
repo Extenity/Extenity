@@ -101,8 +101,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_position == null)
 				{
-					monitor_position = new Monitor("Position");
-					monitor_position.GameObject = gameObject;
+					monitor_position = new Monitor("Position", gameObject);
 				}
 
 				monitor_position.Mode = positionMode;
@@ -160,8 +159,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_rotation == null)
 				{
-					monitor_rotation = new Monitor("Rotation");
-					monitor_rotation.GameObject = gameObject;
+					monitor_rotation = new Monitor("Rotation", gameObject);
 				}
 
 				monitor_rotation.Mode = rotationMode;
@@ -202,8 +200,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_velocity == null)
 				{
-					monitor_velocity = new Monitor("Velocity");
-					monitor_velocity.GameObject = gameObject;
+					monitor_velocity = new Monitor("Velocity", gameObject);
 				}
 
 				monitor_velocity.Mode = velocityMode;
@@ -261,8 +258,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_angularVelocity == null)
 				{
-					monitor_angularVelocity = new Monitor("Angular Velocity");
-					monitor_angularVelocity.GameObject = gameObject;
+					monitor_angularVelocity = new Monitor("Angular Velocity", gameObject);
 				}
 
 				monitor_angularVelocity.Mode = angularVelocityMode;

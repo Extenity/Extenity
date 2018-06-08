@@ -37,8 +37,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor == null)
 				{
-					monitor = new Monitor("Debug.Log");
-					monitor.GameObject = gameObject;
+					monitor = new Monitor("Debug.Log", gameObject);
 				}
 
 				if (filterPrefix != string.Empty)

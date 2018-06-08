@@ -6,8 +6,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	public class MonitorInput
 	{
 		private Monitor monitor;
-		private string description;
-		private Color color;
+		public string Description;
+		public Color Color;
 
 		public int sampleIndex;
 		public int numberOfSamples = 1000;
@@ -19,8 +19,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public MonitorInput(Monitor monitor, string description, Color color)
 		{
 			this.monitor = monitor;
-			this.description = description;
-			this.color = color;
+			Description = description;
+			Color = color;
 
 			sampleIndex = 0;
 			samples = new float[numberOfSamples];
@@ -98,27 +98,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public void Close()
 		{
 			monitor.Remove(this);
-		}
-
-		public string Description
-		{
-			get
-			{
-				return description;
-			}
-		}
-
-		public Color Color
-		{
-			get
-			{
-				return color;
-			}
-
-			set
-			{
-				color = value;
-			}
 		}
 	}
 

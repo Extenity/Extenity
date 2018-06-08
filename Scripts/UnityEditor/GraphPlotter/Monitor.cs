@@ -33,11 +33,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private GameObject gameObject = null;
 
-		public Monitor(string name)
+		public Monitor(string name, GameObject gameObject = null)
 		{
 			this.name = name;
+			this.GameObject = gameObject;
 
-			Monitors.Instance.Add(this);
+			GraphPlotters.Register(this);
 		}
 
 		public void Resize(float value, float time)
@@ -138,7 +139,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Close()
 		{
-			Monitors.Instance.Remove(this);
+			GraphPlotters.Deregister(this);
 		}
 
 		public float Min

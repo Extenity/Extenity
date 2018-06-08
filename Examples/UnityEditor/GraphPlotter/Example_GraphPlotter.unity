@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -250,6 +250,7 @@ GameObject:
   - component: {fileID: 890043988}
   - component: {fileID: 890043987}
   - component: {fileID: 890043991}
+  - component: {fileID: 890043992}
   m_Layer: 0
   m_Name: PLOTTED Sphere
   m_TagString: Untagged
@@ -339,6 +340,45 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &890043992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 890043986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d14d1522b63b8a24e899fb2e9bafcc13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showPosition: 1
+  showPosition_x: 1
+  showPosition_y: 1
+  showPosition_z: 1
+  positionMode: 2
+  positionMin: Infinity
+  positionMax: -Infinity
+  showRotation: 1
+  showRotation_x: 1
+  showRotation_y: 1
+  showRotation_z: 1
+  rotationMode: 0
+  rotationMin: 0
+  rotationMax: 360
+  showVelocity: 0
+  showVelocity_x: 1
+  showVelocity_y: 1
+  showVelocity_z: 1
+  velocityMode: 2
+  velocityMin: Infinity
+  velocityMax: -Infinity
+  showAngularVelocity: 0
+  showAngularVelocity_x: 1
+  showAngularVelocity_y: 1
+  showAngularVelocity_z: 1
+  angularVelocityMode: 2
+  angularVelocityMin: Infinity
+  angularVelocityMax: -Infinity
 --- !u!1 &1073055931
 GameObject:
   m_ObjectHideFlags: 0

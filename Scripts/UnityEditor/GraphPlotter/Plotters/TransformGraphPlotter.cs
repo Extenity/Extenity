@@ -84,8 +84,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_position == null)
 				{
-					monitor_position = new Monitor("");
-					monitor_position.GameObject = gameObject;
+					monitor_position = new Monitor("", gameObject);
 				}
 
 				monitor_position.Name = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
@@ -161,8 +160,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_rotation == null)
 				{
-					monitor_rotation = new Monitor("");
-					monitor_rotation.GameObject = gameObject;
+					monitor_rotation = new Monitor("", gameObject);
 				}
 
 				monitor_rotation.Name = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
@@ -238,8 +236,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (monitor_scale == null)
 				{
-					monitor_scale = new Monitor("");
-					monitor_scale.GameObject = gameObject;
+					monitor_scale = new Monitor("", gameObject);
 				}
 
 				monitor_scale.Name = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
