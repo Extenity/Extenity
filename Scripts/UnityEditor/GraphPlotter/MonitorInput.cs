@@ -84,14 +84,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			for (int i = 0; i < times.Length; i++)
 			{
-				float time = times[i];
+				var time = times[i];
 				if (float.IsNaN(time))
 				{
 					continue;
 				}
 
-				minTime = Mathf.Min(minTime, time);
-				maxTime = Mathf.Max(maxTime, time);
+				if (minTime > time)
+					minTime = time;
+				if (maxTime < time)
+					maxTime = time;
 			}
 		}
 

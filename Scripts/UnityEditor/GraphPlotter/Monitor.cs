@@ -19,36 +19,36 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public class Monitor
 	{
-		private string name;
-		private ValueAxisMode mode = ValueAxisMode.Expansive;
-		public float latestTime = 0f;
+		public string Name;
+		public ValueAxisMode Mode = ValueAxisMode.Expansive;
+		public float LatestTime = 0f;
 
-		private float min = float.PositiveInfinity;
-		private float max = float.NegativeInfinity;
+		public float Min = float.PositiveInfinity;
+		public float Max = float.NegativeInfinity;
 
-		public List<MonitorInput> inputs = new List<MonitorInput>();
-		public List<MonitorEvent> events = new List<MonitorEvent>();
+		public List<MonitorInput> Inputs = new List<MonitorInput>();
+		public List<MonitorEvent> Events = new List<MonitorEvent>();
 
-		private MonitorEventComparer monitorEventComparer = new MonitorEventComparer();
+		private MonitorEventComparer EventComparer = new MonitorEventComparer();
 
-		private GameObject gameObject = null;
+		public GameObject GameObject = null;
 
 		public Monitor(string name, GameObject gameObject = null)
 		{
-			this.name = name;
-			this.GameObject = gameObject;
+			Name = name;
+			GameObject = gameObject;
 
 			GraphPlotters.Register(this);
 		}
 
 		public void Resize(float value, float time)
 		{
-			latestTime = time;
+			LatestTime = time;
 
-			if (mode == ValueAxisMode.Expansive)
+			if (Mode == ValueAxisMode.Expansive)
 			{
-				min = Mathf.Min(min, value);
-				max = Mathf.Max(max, value);
+				Min = Mathf.Min(Min, value);
+				Max = Mathf.Max(Max, value);
 			}
 			else
 			{
@@ -58,40 +58,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Add(MonitorInput monitorInput)
 		{
-			inputs.Add(monitorInput);
+			Inputs.Add(monitorInput);
 		}
 
 		public void Add(MonitorEvent monitorEvent)
 		{
-			int index = events.BinarySearch(monitorEvent, monitorEventComparer);
+			int index = Events.BinarySearch(monitorEvent, EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
 			}
 
-			events.Insert(index, monitorEvent);
+			Events.Insert(index, monitorEvent);
 		}
 
-		private MonitorEvent lookupEvent = new MonitorEvent();
+		private MonitorEvent _LookupEvent = new MonitorEvent();
 
 		public void GetEvents(float minTime, float maxTime, List<MonitorEvent> dest)
 		{
-			if (events.Count == 0)
+			if (Events.Count == 0)
 			{
 				return;
 			}
 
-			lookupEvent.time = minTime;
-			int index = events.BinarySearch(lookupEvent, monitorEventComparer);
+			_LookupEvent.time = minTime;
+			int index = Events.BinarySearch(_LookupEvent, EventComparer);
 
 			if (index < 0)
 			{
 				index = ~index;
 			}
 
-			for (int i = index; i < events.Count; i++)
+			for (int i = index; i < Events.Count; i++)
 			{
-				MonitorEvent monitorEvent = events[i];
+				var monitorEvent = Events[i];
 
 				if (monitorEvent.time <= maxTime)
 				{
@@ -109,102 +109,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			minTime = float.PositiveInfinity;
 			maxTime = float.NegativeInfinity;
 
-			foreach (MonitorEvent monitorEvent in events)
+			foreach (var entry in Events)
 			{
-				minTime = Mathf.Min(minTime, monitorEvent.time);
-				maxTime = Mathf.Max(maxTime, monitorEvent.time);
+				if (minTime > entry.time)
+					minTime = entry.time;
+				if (maxTime < entry.time)
+					maxTime = entry.time;
 			}
 
-			foreach (MonitorInput monitorInput in inputs)
+			foreach (var entry in Inputs)
 			{
-				float monitorInputMin;
-				float monitorInputMax;
+				float entryMin;
+				float entryMax;
+				entry.GetMinMaxTime(out entryMin, out entryMax);
 
-				monitorInput.GetMinMaxTime(out monitorInputMin, out monitorInputMax);
-
-				minTime = Mathf.Min(minTime, monitorInputMin);
-				maxTime = Mathf.Max(maxTime, monitorInputMax);
+				if (minTime > entryMin)
+					minTime = entryMin;
+				if (maxTime < entryMax)
+					maxTime = entryMax;
 			}
 		}
 
 		public void MoveForward(float time)
 		{
-			latestTime = time;
+			LatestTime = time;
 		}
 
 		public void Remove(MonitorInput monitorInput)
 		{
-			inputs.Remove(monitorInput);
+			Inputs.Remove(monitorInput);
 		}
 
 		public void Close()
 		{
 			GraphPlotters.Deregister(this);
-		}
-
-		public float Min
-		{
-			get
-			{
-				return min;
-			}
-
-			set
-			{
-				min = value;
-			}
-		}
-
-		public float Max
-		{
-			get
-			{
-				return max;
-			}
-
-			set
-			{
-				max = value;
-			}
-		}
-
-		public string Name
-		{
-			get
-			{
-				return name;
-			}
-
-			set
-			{
-				name = value;
-			}
-		}
-
-		public ValueAxisMode Mode
-		{
-			get
-			{
-				return mode;
-			}
-
-			set
-			{
-				mode = value;
-			}
-		}
-
-		public GameObject GameObject
-		{
-			get
-			{
-				return gameObject;
-			}
-			set
-			{
-				gameObject = value;
-			}
-
 		}
 
 		private class MonitorEventComparer : IComparer<MonitorEvent>

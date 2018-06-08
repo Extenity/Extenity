@@ -302,7 +302,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var latestTime = 0f;
 			for (int i = 0; i < visiblePlotters.Count; i++)
 			{
-				latestTime = Mathf.Max(latestTime, visiblePlotters[i].latestTime);
+				latestTime = Mathf.Max(latestTime, visiblePlotters[i].LatestTime);
 			}
 
 			for (int i = 0; i < visiblePlotters.Count; i++)
@@ -325,7 +325,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					monitor.Min = float.PositiveInfinity;
 					monitor.Max = float.NegativeInfinity;
 
-					foreach (MonitorInput monitorInput in monitor.inputs)
+					foreach (MonitorInput monitorInput in monitor.Inputs)
 					{
 						float min, max;
 						monitorInput.GetMinMax(minTime, maxTime, out min, out max);
@@ -469,7 +469,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						t = startTime + n;
 					}
 
-					foreach (MonitorInput monitorInput in monitor.inputs)
+					foreach (MonitorInput monitorInput in monitor.Inputs)
 					{
 						var deselectedColor = monitorInput.Color;
 						deselectedColor.a = deselectionAlpha;
@@ -607,9 +607,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
 
-					for (int j = 0; j < monitor.inputs.Count; j++)
+					for (int j = 0; j < monitor.Inputs.Count; j++)
 					{
-						var monitorInput = monitor.inputs[j];
+						var monitorInput = monitor.Inputs[j];
 
 						var deselectedColor = monitorInput.Color;
 						deselectedColor.a = deselectionAlpha;
