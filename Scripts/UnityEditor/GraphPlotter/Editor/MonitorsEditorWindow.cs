@@ -11,7 +11,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private static class EditorSettings
 		{
-			public const string TimeWindowExp = "GraphPlotter.TimeWindowExp";
+			public const string TimeWindow = "GraphPlotter.TimeWindow";
 			public const string InterpolationType = "GraphPlotter.InterpolationType";
 			public const string GraphHeight = "GraphPlotter.GraphHeight";
 			public const string LegendWidth = "GraphPlotter.LegendWidth";
@@ -156,7 +156,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private GameObject gameObjectFilter = null;
 
 		// Saved editor settings.
-		private float timeWindow_exp;
+		private float timeWindow;
 		private int interpolationTypeIndex;
 		private int graphHeight;
 		private int legendWidth;
@@ -169,28 +169,49 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
+		#region Initialization
+
 		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void Init()
+		private static void CreateWindow()
 		{
 			GetWindow<MonitorsEditorWindow>();
 		}
 
-		private void Awake()
+		protected void Awake()
 		{
 			titleContent = new GUIContent("Graph Plotter");
 			wantsMouseMove = true;
 		}
 
-		private void OnEnable()
+		protected void OnEnable()
 		{
 			// Load settings
-			timeWindow_exp = EditorPrefs.GetFloat(EditorSettings.TimeWindowExp, 0.69897000433f);
+			timeWindow = EditorPrefs.GetFloat(EditorSettings.TimeWindow, 0.69897000433f);
 			interpolationTypeIndex = EditorPrefs.GetInt(EditorSettings.InterpolationType, 0);
 			graphHeight = EditorPrefs.GetInt(EditorSettings.GraphHeight, 140);
 			legendWidth = EditorPrefs.GetInt(EditorSettings.LegendWidth, 170);
 
 			CreateStyles();
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			if (topTexture != null)
+			{
+				DestroyImmediate(topTexture);
+			}
+
+			if (leftTexture != null)
+			{
+				DestroyImmediate(leftTexture);
+			}
+		}
+
+		#endregion
 
 		public void OnGUI()
 		{
@@ -225,8 +246,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			totalGraphHeight = graphHeight - headerHeight - extraSpace;
 
 			// settings header (prelude)
-			Rect settingsRect = new Rect(0f, 0f, position.width, 25f);
-			float timeWindow = Mathf.Pow(10f, timeWindow_exp);
+			var settingsRect = new Rect(0f, 0f, position.width, 25f);
 
 			// draw background.
 			GUI.color = backgroundColor;
@@ -876,7 +896,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = Color.white;
 
 			var padding = 5f;
-			var timeWindowFloored = Mathf.RoundToInt(timeWindow * 10f) / 10f;
 			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
@@ -987,12 +1006,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			EditorGUI.BeginChangeCheck();
-			timeWindow_exp = GUILayout.HorizontalSlider(timeWindow_exp, -1f, 1.30102999566f);
+			timeWindow = GUILayout.HorizontalSlider(timeWindow, 0.1f, 20f);
 			if (EditorGUI.EndChangeCheck())
 			{
-				EditorPrefs.SetFloat(EditorSettings.TimeWindowExp, timeWindow_exp);
+				EditorPrefs.SetFloat(EditorSettings.TimeWindow, timeWindow);
 			}
-			GUILayout.Label(timeWindowFloored.ToString("0.0") + " secs.", GUILayout.Width(60));
+			GUILayout.Label(timeWindow.ToString("N1") + " secs", GUILayout.Width(60));
 			GUILayout.Space(5f);
 
 			GUILayout.EndHorizontal();
@@ -1021,19 +1040,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			Repaint();
 
 			wasInPauseMode = isInPauseMode;
-		}
-
-		public void OnDestroy()
-		{
-			if (topTexture != null)
-			{
-				DestroyImmediate(topTexture);
-			}
-
-			if (leftTexture != null)
-			{
-				DestroyImmediate(leftTexture);
-			}
 		}
 
 		public GameObject Filter
