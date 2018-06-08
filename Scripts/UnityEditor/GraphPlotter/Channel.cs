@@ -3,9 +3,9 @@
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	public class MonitorInput
+	public class Channel
 	{
-		private Monitor monitor;
+		private Monitor Monitor;
 		public string Description;
 		public Color Color;
 
@@ -15,10 +15,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float[] times;
 		public int[] frames;
 
-		public MonitorInput(Monitor monitor, string description) : this(monitor, description, Color.red) { }
-		public MonitorInput(Monitor monitor, string description, Color color)
+		public Channel(Monitor monitor, string description) :
+			this(monitor, description, Color.red)
 		{
-			this.monitor = monitor;
+		}
+
+		public Channel(Monitor monitor, string description, Color color)
+		{
+			Monitor = monitor;
 			Description = description;
 			Color = color;
 
@@ -46,7 +50,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			times[sampleIndex] = time;
 			frames[sampleIndex] = frame;
 
-			monitor.Resize(value, time);
+			Monitor.Resize(value, time);
 
 			sampleIndex = (sampleIndex + 1) % numberOfSamples;
 		}
@@ -99,7 +103,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Close()
 		{
-			monitor.Remove(this);
+			Monitor.Remove(this);
 		}
 	}
 

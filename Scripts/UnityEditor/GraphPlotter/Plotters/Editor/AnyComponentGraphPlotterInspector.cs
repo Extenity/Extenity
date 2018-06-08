@@ -104,9 +104,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				EditorGUILayout.BeginHorizontal("Box");
 				EditorGUILayout.BeginVertical();
 
-				for (int j = 0; j < Me.monitorInputFields.Count; j++)
+				for (int j = 0; j < Me.channelFields.Count; j++)
 				{
-					var field = Me.monitorInputFields[j];
+					var field = Me.channelFields[j];
 
 					EditorGUILayout.BeginHorizontal();
 
@@ -123,7 +123,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					if (GUILayout.Button("remove", GUILayout.Width(60)))
 					{
 						Undo.RecordObject(Me, "Remove field");
-						Me.monitorInputFields.RemoveAt(j);
+						Me.channelFields.RemoveAt(j);
 						break;
 					}
 
@@ -180,13 +180,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				if (instanceType != null)
 				{
-					var field = new AnyComponentGraphPlotter.MonitorInputField();
+					var field = new AnyComponentGraphPlotter.ChannelField();
 					field.field = addField.ToArray();
 					field.fieldTypeName = instanceType.FullName;
-					field.color = PlotColors.AllColors[Me.monitorInputFields.Count % PlotColors.AllColors.Length];
+					field.color = PlotColors.AllColors[Me.channelFields.Count % PlotColors.AllColors.Length];
 
 					Undo.RecordObject(Me, "Add field");
-					Me.monitorInputFields.Add(field);
+					Me.channelFields.Add(field);
 
 					addField.RemoveAt(addField.Count - 1);
 				}

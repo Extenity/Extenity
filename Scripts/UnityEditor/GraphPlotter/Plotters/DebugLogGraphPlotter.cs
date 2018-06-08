@@ -74,11 +74,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 			}
 
-			MonitorEvent monitorEvent = new MonitorEvent();
-			monitorEvent.time = Time.time;
-			monitorEvent.text = logString;
+			var entry = new TagEntry
+			{
+				time = Time.time,
+				text = logString
+			};
 
-			monitor.Add(monitorEvent);
+			monitor.Add(entry);
 		}
 
 		public void OnEnable()

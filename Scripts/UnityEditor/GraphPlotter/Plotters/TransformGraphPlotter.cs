@@ -21,9 +21,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float positionMax = float.NegativeInfinity;
 
 		public Monitor monitor_position;
-		public MonitorInput monitorInput_position_x;
-		public MonitorInput monitorInput_position_y;
-		public MonitorInput monitorInput_position_z;
+		public Channel channel_position_x;
+		public Channel channel_position_y;
+		public Channel channel_position_z;
 
 		// rotation
 		public bool showRotation = false;
@@ -36,9 +36,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float rotationMax = 360f;
 
 		public Monitor monitor_rotation;
-		public MonitorInput monitorInput_rotation_x;
-		public MonitorInput monitorInput_rotation_y;
-		public MonitorInput monitorInput_rotation_z;
+		public Channel channel_rotation_x;
+		public Channel channel_rotation_y;
+		public Channel channel_rotation_z;
 
 		// scale
 		public bool showScale = false;
@@ -51,9 +51,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float scaleMax = float.NegativeInfinity;
 
 		public Monitor monitor_scale;
-		public MonitorInput monitorInput_scale_x;
-		public MonitorInput monitorInput_scale_y;
-		public MonitorInput monitorInput_scale_z;
+		public Channel channel_scale_x;
+		public Channel channel_scale_y;
+		public Channel channel_scale_z;
 
 		void Awake()
 		{
@@ -104,51 +104,51 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// position x
 			if (showPosition && showPosition_x && componentIsActive)
 			{
-				if (monitorInput_position_x == null)
+				if (channel_position_x == null)
 				{
-					monitorInput_position_x = new MonitorInput(monitor_position, "x", PlotColors.Red);
+					channel_position_x = new Channel(monitor_position, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (monitorInput_position_x != null)
+				if (channel_position_x != null)
 				{
-					monitorInput_position_x.Close();
-					monitorInput_position_x = null;
+					channel_position_x.Close();
+					channel_position_x = null;
 				}
 			}
 
 			// position y
 			if (showPosition && showPosition_y && componentIsActive)
 			{
-				if (monitorInput_position_y == null)
+				if (channel_position_y == null)
 				{
-					monitorInput_position_y = new MonitorInput(monitor_position, "y", PlotColors.Green);
+					channel_position_y = new Channel(monitor_position, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (monitorInput_position_y != null)
+				if (channel_position_y != null)
 				{
-					monitorInput_position_y.Close();
-					monitorInput_position_y = null;
+					channel_position_y.Close();
+					channel_position_y = null;
 				}
 			}
 
 			// position z
 			if (showPosition && showPosition_z && componentIsActive)
 			{
-				if (monitorInput_position_z == null)
+				if (channel_position_z == null)
 				{
-					monitorInput_position_z = new MonitorInput(monitor_position, "z", PlotColors.Blue);
+					channel_position_z = new Channel(monitor_position, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (monitorInput_position_z != null)
+				if (channel_position_z != null)
 				{
-					monitorInput_position_z.Close();
-					monitorInput_position_z = null;
+					channel_position_z.Close();
+					channel_position_z = null;
 				}
 			}
 		}
@@ -180,51 +180,51 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// rotation x
 			if (showRotation && showRotation_x && componentIsActive)
 			{
-				if (monitorInput_rotation_x == null)
+				if (channel_rotation_x == null)
 				{
-					monitorInput_rotation_x = new MonitorInput(monitor_rotation, "x", PlotColors.Red);
+					channel_rotation_x = new Channel(monitor_rotation, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (monitorInput_rotation_x != null)
+				if (channel_rotation_x != null)
 				{
-					monitorInput_rotation_x.Close();
-					monitorInput_rotation_x = null;
+					channel_rotation_x.Close();
+					channel_rotation_x = null;
 				}
 			}
 
 			// rotation y
 			if (showRotation && showRotation_y && componentIsActive)
 			{
-				if (monitorInput_rotation_y == null)
+				if (channel_rotation_y == null)
 				{
-					monitorInput_rotation_y = new MonitorInput(monitor_rotation, "y", PlotColors.Green);
+					channel_rotation_y = new Channel(monitor_rotation, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (monitorInput_rotation_y != null)
+				if (channel_rotation_y != null)
 				{
-					monitorInput_rotation_y.Close();
-					monitorInput_rotation_y = null;
+					channel_rotation_y.Close();
+					channel_rotation_y = null;
 				}
 			}
 
 			// rotation z
 			if (showRotation && showRotation_z && componentIsActive)
 			{
-				if (monitorInput_rotation_z == null)
+				if (channel_rotation_z == null)
 				{
-					monitorInput_rotation_z = new MonitorInput(monitor_rotation, "z", PlotColors.Blue);
+					channel_rotation_z = new Channel(monitor_rotation, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (monitorInput_rotation_z != null)
+				if (channel_rotation_z != null)
 				{
-					monitorInput_rotation_z.Close();
-					monitorInput_rotation_z = null;
+					channel_rotation_z.Close();
+					channel_rotation_z = null;
 				}
 			}
 		}
@@ -256,51 +256,51 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// scale x
 			if (showScale && showScale_x && componentIsActive)
 			{
-				if (monitorInput_scale_x == null)
+				if (channel_scale_x == null)
 				{
-					monitorInput_scale_x = new MonitorInput(monitor_scale, "x", PlotColors.Red);
+					channel_scale_x = new Channel(monitor_scale, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (monitorInput_scale_x != null)
+				if (channel_scale_x != null)
 				{
-					monitorInput_scale_x.Close();
-					monitorInput_scale_x = null;
+					channel_scale_x.Close();
+					channel_scale_x = null;
 				}
 			}
 
 			// scale y
 			if (showScale && showScale_y && componentIsActive)
 			{
-				if (monitorInput_scale_y == null)
+				if (channel_scale_y == null)
 				{
-					monitorInput_scale_y = new MonitorInput(monitor_scale, "y", PlotColors.Green);
+					channel_scale_y = new Channel(monitor_scale, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (monitorInput_scale_y != null)
+				if (channel_scale_y != null)
 				{
-					monitorInput_scale_y.Close();
-					monitorInput_scale_y = null;
+					channel_scale_y.Close();
+					channel_scale_y = null;
 				}
 			}
 
 			// scale z
 			if (showScale && showScale_z && componentIsActive)
 			{
-				if (monitorInput_scale_z == null)
+				if (channel_scale_z == null)
 				{
-					monitorInput_scale_z = new MonitorInput(monitor_scale, "z", PlotColors.Blue);
+					channel_scale_z = new Channel(monitor_scale, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (monitorInput_scale_z != null)
+				if (channel_scale_z != null)
 				{
-					monitorInput_scale_z.Close();
-					monitorInput_scale_z = null;
+					channel_scale_z.Close();
+					channel_scale_z = null;
 				}
 			}
 		}
@@ -320,17 +320,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showPosition_x)
 				{
-					monitorInput_position_x.Sample(position.x);
+					channel_position_x.Sample(position.x);
 				}
 
 				if (showPosition_y)
 				{
-					monitorInput_position_y.Sample(position.y);
+					channel_position_y.Sample(position.y);
 				}
 
 				if (showPosition_z)
 				{
-					monitorInput_position_z.Sample(position.z);
+					channel_position_z.Sample(position.z);
 				}
 			}
 
@@ -343,17 +343,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showRotation_x)
 				{
-					monitorInput_rotation_x.Sample(rotation.x);
+					channel_rotation_x.Sample(rotation.x);
 				}
 
 				if (showRotation_y)
 				{
-					monitorInput_rotation_y.Sample(rotation.y);
+					channel_rotation_y.Sample(rotation.y);
 				}
 
 				if (showRotation_z)
 				{
-					monitorInput_rotation_z.Sample(rotation.z);
+					channel_rotation_z.Sample(rotation.z);
 				}
 			}
 
@@ -366,17 +366,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showScale_x)
 				{
-					monitorInput_scale_x.Sample(scale.x);
+					channel_scale_x.Sample(scale.x);
 				}
 
 				if (showScale_y)
 				{
-					monitorInput_scale_y.Sample(scale.y);
+					channel_scale_y.Sample(scale.y);
 				}
 
 				if (showScale_z)
 				{
-					monitorInput_scale_z.Sample(scale.z);
+					channel_scale_z.Sample(scale.z);
 				}
 			}
 		}

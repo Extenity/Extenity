@@ -11,7 +11,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showVolume = false;
 
 		public Monitor monitor_volume;
-		private MonitorInput monitorInput_volume;
+		private Channel channel_volume;
 
 		// pitch
 		public bool showPitch = false;
@@ -21,13 +21,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float pitchMax = 2f;
 
 		public Monitor monitor_pitch;
-		private MonitorInput monitorInput_pitch;
+		private Channel channel_pitch;
 
 		// isPlaying
 		public bool showIsPlaying = false;
 
 		public Monitor monitor_isPlaying;
-		private MonitorInput monitorInput_isPlaying;
+		private Channel channel_isPlaying;
 
 		private AudioSource audioSource;
 
@@ -76,9 +76,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_volume.Max = 1f;
 				}
 
-				if (monitorInput_volume == null)
+				if (channel_volume == null)
 				{
-					monitorInput_volume = new MonitorInput(monitor_volume, "volume", PlotColors.Red);
+					channel_volume = new Channel(monitor_volume, "volume", PlotColors.Red);
 				}
 			}
 			else
@@ -89,10 +89,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_volume = null;
 				}
 
-				if (monitorInput_volume != null)
+				if (channel_volume != null)
 				{
-					monitorInput_volume.Close();
-					monitorInput_volume = null;
+					channel_volume.Close();
+					channel_volume = null;
 				}
 			}
 		}
@@ -110,9 +110,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				monitor_pitch.Min = pitchMin;
 				monitor_pitch.Max = pitchMax;
 
-				if (monitorInput_pitch == null)
+				if (channel_pitch == null)
 				{
-					monitorInput_pitch = new MonitorInput(monitor_pitch, "pitch", PlotColors.Green);
+					channel_pitch = new Channel(monitor_pitch, "pitch", PlotColors.Green);
 				}
 			}
 			else
@@ -123,10 +123,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_pitch = null;
 				}
 
-				if (monitorInput_pitch != null)
+				if (channel_pitch != null)
 				{
-					monitorInput_pitch.Close();
-					monitorInput_pitch = null;
+					channel_pitch.Close();
+					channel_pitch = null;
 				}
 			}
 		}
@@ -143,9 +143,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_isPlaying.Max = 1f;
 				}
 
-				if (monitorInput_isPlaying == null)
+				if (channel_isPlaying == null)
 				{
-					monitorInput_isPlaying = new MonitorInput(monitor_isPlaying, "isPlaying", PlotColors.Red);
+					channel_isPlaying = new Channel(monitor_isPlaying, "isPlaying", PlotColors.Red);
 				}
 			}
 			else
@@ -156,10 +156,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_isPlaying = null;
 				}
 
-				if (monitorInput_isPlaying != null)
+				if (channel_isPlaying != null)
 				{
-					monitorInput_isPlaying.Close();
-					monitorInput_isPlaying = null;
+					channel_isPlaying.Close();
+					channel_isPlaying = null;
 				}
 			}
 		}
@@ -171,7 +171,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showVolume)
 			{
-				monitorInput_volume.Sample(audioSource.volume);
+				channel_volume.Sample(audioSource.volume);
 			}
 
 			if (showPitch)
@@ -179,12 +179,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				pitchMin = monitor_pitch.Min;
 				pitchMax = monitor_pitch.Max;
 
-				monitorInput_pitch.Sample(audioSource.pitch);
+				channel_pitch.Sample(audioSource.pitch);
 			}
 
 			if (showIsPlaying)
 			{
-				monitorInput_isPlaying.Sample(audioSource.isPlaying ? 1f : 0f);
+				channel_isPlaying.Sample(audioSource.isPlaying ? 1f : 0f);
 			}
 		}
 

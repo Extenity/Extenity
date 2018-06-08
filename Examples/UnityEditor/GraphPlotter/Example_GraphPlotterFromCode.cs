@@ -7,21 +7,21 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 	public class Example_GraphPlotterFromCode : MonoBehaviour
 	{
 		private Monitor Monitor;
-		private MonitorInput MonitorInput1;
-		private MonitorInput MonitorInput2;
+		private Channel Channel1;
+		private Channel Channel2;
 
-		private void Awake()
+		private void Start()
 		{
 			Monitor = new Monitor("Two Sine Waves");
-			MonitorInput1 = new MonitorInput(Monitor, "Wavesome", Color.green);
-			MonitorInput2 = new MonitorInput(Monitor, "Bob Wave", Color.blue);
+			Channel1 = new Channel(Monitor, "Wavesome", Color.green);
+			Channel2 = new Channel(Monitor, "Bob Wave", Color.blue);
 		}
 
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				Monitor.Add(new MonitorEvent()
+				Monitor.Add(new TagEntry()
 				{
 					text = "Space",
 					time = Time.time
@@ -32,8 +32,8 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		private void FixedUpdate()
 		{
 			var time = Time.time;
-			MonitorInput1.Sample(Mathf.Sin(Mathf.PI * time));
-			MonitorInput2.Sample(Mathf.Sin(Mathf.PI * 1.5f * time));
+			Channel1.Sample(Mathf.Sin(3f * time));
+			Channel2.Sample(Mathf.Sin(4.5f * time));
 		}
 	}
 

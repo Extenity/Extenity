@@ -11,7 +11,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		Adaptive
 	};
 
-	public class MonitorEvent
+	// TODO: Move this outside.
+	public class TagEntry
 	{
 		public float time;
 		public string text;
@@ -26,10 +27,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float Min = float.PositiveInfinity;
 		public float Max = float.NegativeInfinity;
 
-		public List<MonitorInput> Inputs = new List<MonitorInput>();
-		public List<MonitorEvent> Events = new List<MonitorEvent>();
+		public List<Channel> Channels = new List<Channel>();
+		public List<TagEntry> Tags = new List<TagEntry>();
 
-		private MonitorEventComparer EventComparer = new MonitorEventComparer();
+		private TagEntryTimeComparer EventComparer = new TagEntryTimeComparer();
 
 		public GameObject GameObject = null;
 
@@ -56,46 +57,44 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void Add(MonitorInput monitorInput)
+		public void Add(Channel channel)
 		{
-			Inputs.Add(monitorInput);
+			Channels.Add(channel);
 		}
 
-		public void Add(MonitorEvent monitorEvent)
+		public void Add(TagEntry entry)
 		{
-			int index = Events.BinarySearch(monitorEvent, EventComparer);
+			int index = Tags.BinarySearch(entry, EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
 			}
 
-			Events.Insert(index, monitorEvent);
+			Tags.Insert(index, entry);
 		}
 
-		private MonitorEvent _LookupEvent = new MonitorEvent();
+		private TagEntry _LookupEvent = new TagEntry();
 
-		public void GetEvents(float minTime, float maxTime, List<MonitorEvent> dest)
+		public void GetTagEntries(float minTime, float maxTime, List<TagEntry> result)
 		{
-			if (Events.Count == 0)
-			{
+			if (Tags.Count == 0)
 				return;
-			}
 
+			// Find starting index
 			_LookupEvent.time = minTime;
-			int index = Events.BinarySearch(_LookupEvent, EventComparer);
-
+			int index = Tags.BinarySearch(_LookupEvent, EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
 			}
 
-			for (int i = index; i < Events.Count; i++)
+			for (int i = index; i < Tags.Count; i++)
 			{
-				var monitorEvent = Events[i];
+				var entry = Tags[i];
 
-				if (monitorEvent.time <= maxTime)
+				if (entry.time <= maxTime)
 				{
-					dest.Add(monitorEvent);
+					result.Add(entry);
 				}
 				else
 				{
@@ -109,7 +108,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			minTime = float.PositiveInfinity;
 			maxTime = float.NegativeInfinity;
 
-			foreach (var entry in Events)
+			foreach (var entry in Tags)
 			{
 				if (minTime > entry.time)
 					minTime = entry.time;
@@ -117,7 +116,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					maxTime = entry.time;
 			}
 
-			foreach (var entry in Inputs)
+			foreach (var entry in Channels)
 			{
 				float entryMin;
 				float entryMax;
@@ -135,9 +134,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			LatestTime = time;
 		}
 
-		public void Remove(MonitorInput monitorInput)
+		public void Remove(Channel channel)
 		{
-			Inputs.Remove(monitorInput);
+			Channels.Remove(channel);
 		}
 
 		public void Close()
@@ -145,9 +144,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			GraphPlotters.Deregister(this);
 		}
 
-		private class MonitorEventComparer : IComparer<MonitorEvent>
+		// TODO: Move this alongside with TagEntry
+		private class TagEntryTimeComparer : IComparer<TagEntry>
 		{
-			public int Compare(MonitorEvent a, MonitorEvent b)
+			public int Compare(TagEntry a, TagEntry b)
 			{
 				return a.time.CompareTo(b.time);
 			}

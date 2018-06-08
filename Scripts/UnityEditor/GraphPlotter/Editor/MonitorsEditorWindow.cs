@@ -26,7 +26,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private float legendTextOffset = 10f;
 		private float extraScrollSpace = 30f;
 
-		private MonitorInput selectedMonitorInput;
+		private Channel selectedChannel;
 
 		// static sizes.
 		private float headerHeight = 30f;
@@ -82,9 +82,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Color legendTextColorUnselected_dark;
 		private Color legendTextColorUnselected_light;
 
-		private Color monitorInputHeaderColor;
-		private Color monitorInputHeaderColor_dark;
-		private Color monitorInputHeaderColor_light;
+		private Color channelHeaderColor;
+		private Color channelHeaderColor_dark;
+		private Color channelHeaderColor_light;
 
 		private Color headerColor;
 		private Color minMaxColor;
@@ -138,8 +138,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			legendTextColorUnselected_dark = new Color(1f, 1f, 1f, 0.5f);
 			legendTextColorUnselected_light = new Color(0f, 0f, 0f, 0.5f);
 
-			monitorInputHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
-			monitorInputHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
+			channelHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
+			channelHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
 
 			headerColor = new Color(0.7f, 0.7f, 0.7f);
 			minMaxColor = new Color(1f, 1f, 1f, 0.2f);
@@ -201,7 +201,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				legendTextColorSelected = legendTextColorSelected_dark;
 				legendTextColorUnselected = legendTextColorUnselected_dark;
 				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_dark;
-				monitorInputHeaderColor = monitorInputHeaderColor_dark;
+				channelHeaderColor = channelHeaderColor_dark;
 			}
 			else
 			{
@@ -210,7 +210,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				legendTextColorSelected = legendTextColorSelected_light;
 				legendTextColorUnselected = legendTextColorUnselected_light;
 				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_light;
-				monitorInputHeaderColor = monitorInputHeaderColor_light;
+				channelHeaderColor = channelHeaderColor_light;
 			}
 
 			timeStyle.normal.textColor = timeColor;
@@ -277,9 +277,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				Debug.Break();
 			}
 
-			MonitorInput newSelectedMonitorInput = null;
+			Channel newSelectedChannel = null;
 
-			int lineCount = 0;
+			var lineCount = 0;
 
 			List<Monitor> visiblePlotters;
 
@@ -325,10 +325,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					monitor.Min = float.PositiveInfinity;
 					monitor.Max = float.NegativeInfinity;
 
-					foreach (MonitorInput monitorInput in monitor.Inputs)
+					foreach (Channel channel in monitor.Channels)
 					{
 						float min, max;
-						monitorInput.GetMinMax(minTime, maxTime, out min, out max);
+						channel.GetMinMax(minTime, maxTime, out min, out max);
 						monitor.Min = Mathf.Min(min, monitor.Min);
 						monitor.Max = Mathf.Max(max, monitor.Max);
 					}
@@ -469,32 +469,32 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						t = startTime + n;
 					}
 
-					foreach (MonitorInput monitorInput in monitor.Inputs)
+					foreach (var channel in monitor.Channels)
 					{
-						var deselectedColor = monitorInput.Color;
+						var deselectedColor = channel.Color;
 						deselectedColor.a = deselectionAlpha;
 
-						var color = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
+						var color = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
 
 						Handles.color = color;
 
 						var pointIndex = 0;
 
-						for (int j = 0; j < monitorInput.numberOfSamples - 1; j++)
+						for (int j = 0; j < channel.numberOfSamples - 1; j++)
 						{
-							var index_a = (monitorInput.sampleIndex + j) % monitorInput.numberOfSamples;
-							var index_b = (index_a + 1) % monitorInput.numberOfSamples;
+							var index_a = (channel.sampleIndex + j) % channel.numberOfSamples;
+							var index_b = (index_a + 1) % channel.numberOfSamples;
 
-							var time_a = monitorInput.times[index_a];
-							var time_b = monitorInput.times[index_b];
+							var time_a = channel.times[index_a];
+							var time_b = channel.times[index_b];
 
 							if (float.IsNaN(time_a) || float.IsNaN(time_b))
 								continue;
 
 							if (time_b > time_a && !(time_b < minTime || time_a > maxTime))
 							{
-								var sample_a = monitorInput.samples[index_a];
-								var sample_b = monitorInput.samples[index_b];
+								var sample_a = channel.samples[index_a];
+								var sample_b = channel.samples[index_b];
 
 								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 									continue;
@@ -581,7 +581,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					{
 						var gameObjectNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
 
-						GUI.color = monitorInputHeaderColor;
+						GUI.color = channelHeaderColor;
 						GUI.Label(gameObjectNameRect, monitor.GameObject.name, simpleStyle);
 
 						EditorGUIUtility.AddCursorRect(gameObjectNameRect, MouseCursor.Link);
@@ -607,26 +607,26 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
 
-					for (int j = 0; j < monitor.Inputs.Count; j++)
+					for (int j = 0; j < monitor.Channels.Count; j++)
 					{
-						var monitorInput = monitor.Inputs[j];
+						var channel = monitor.Channels[j];
 
-						var deselectedColor = monitorInput.Color;
+						var deselectedColor = channel.Color;
 						deselectedColor.a = deselectionAlpha;
 
-						var monitorInputColor = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
+						var channelColor = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
 
 						var index = -1;
 
-						for (int k = 1; k < monitorInput.samples.Length - 1; k++)
+						for (int k = 1; k < channel.samples.Length - 1; k++)
 						{
-							int sampleIndex_a = (monitorInput.sampleIndex + k) % monitorInput.samples.Length;
-							int sampleIndex_b = (sampleIndex_a + 1) % monitorInput.samples.Length;
+							int sampleIndex_a = (channel.sampleIndex + k) % channel.samples.Length;
+							int sampleIndex_b = (sampleIndex_a + 1) % channel.samples.Length;
 
-							if (mouseTime >= monitorInput.times[sampleIndex_a] &&
-							   mouseTime <= monitorInput.times[sampleIndex_b])
+							if (mouseTime >= channel.times[sampleIndex_a] &&
+							   mouseTime <= channel.times[sampleIndex_b])
 							{
-								index = Mathf.Abs(monitorInput.times[sampleIndex_a] - mouseTime) <= Mathf.Abs(monitorInput.times[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
+								index = Mathf.Abs(channel.times[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.times[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
 								break;
 							}
 						}
@@ -637,13 +637,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						if (index > -1)
 						{
-							sampleValue = monitorInput.samples[index];
-							time = monitorInput.times[index];
-							frame = monitorInput.frames[index];
+							sampleValue = channel.samples[index];
+							time = channel.times[index];
+							frame = channel.frames[index];
 						}
 
 						// Draw time marker.
-						if (j == 0 && selectedMonitorInput == null)
+						if (j == 0 && selectedChannel == null)
 						{
 							GUI.color = timeColor;
 
@@ -660,7 +660,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							}
 						}
 
-						Handles.color = monitorInputColor;
+						Handles.color = channelColor;
 
 						var normalizedSampleValue = (sampleValue - monitor.Min) / span;
 						if (span == 0f)
@@ -720,12 +720,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							sampleValueString = " = " + sampleValue.ToString();
 						}
 
-						var valueText = monitorInput.Description + sampleValueString;
+						var valueText = channel.Description + sampleValueString;
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 						valueTextStyle.normal.textColor = Color.white;
 
-						if (monitorInput == selectedMonitorInput)
+						if (channel == selectedChannel)
 						{
 							float sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
 
@@ -746,7 +746,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 
-						valueTextStyle.normal.textColor = selectedMonitorInput == null || selectedMonitorInput == monitorInput ? legendTextColorSelected : legendTextColorUnselected;
+						valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel ? legendTextColorSelected : legendTextColorUnselected;
 						valueTextStyle.alignment = TextAnchor.MiddleLeft;
 						valueTextStyle.clipping = TextClipping.Clip;
 
@@ -759,29 +759,29 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						// Selection of monitor input.
 						if (e.type == EventType.MouseDown && selectionRect.Contains(mousePosition))
 						{
-							newSelectedMonitorInput = monitorInput;
+							newSelectedChannel = channel;
 						}
 
 						// Color marker.
-						GUI.color = monitorInputColor * 0.7f;
+						GUI.color = channelColor * 0.7f;
 						GUI.DrawTexture(new Rect(10, monitorRect.yMin + offset + 20 * j + 6, 7, 7), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
-						GUI.color = monitorInputColor;
+						GUI.color = channelColor;
 						GUI.DrawTexture(new Rect(10 + 1, monitorRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 
 					}
 
-					var monitorEvents = new List<MonitorEvent>();
-					monitor.GetEvents(maxTime - timeWindow, maxTime, monitorEvents);
+					var tagEntries = new List<TagEntry>(); // TODO: Cache this
+					monitor.GetTagEntries(maxTime - timeWindow, maxTime, tagEntries);
 
-					foreach (var monitorEvent in monitorEvents)
+					foreach (var entry in tagEntries)
 					{
 						var eventColor = Color.yellow;
 						Handles.color = eventColor;
 
-						var normalizedX = (monitorEvent.time - minTime) / timeWindow;
+						var normalizedX = (entry.time - minTime) / timeWindow;
 						if (normalizedX * graphRect.width >= 5f)
 						{
 							Handles.DrawLine(
@@ -810,7 +810,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 							GUI.color = eventColor;
 							GUI.contentColor = Color.white;
-							GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), monitorEvent.text, simpleStyle);
+							GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.text, simpleStyle);
 						}
 					}
 				}
@@ -819,7 +819,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// select/deselect.
 			if (e.type == EventType.MouseDown)
 			{
-				selectedMonitorInput = newSelectedMonitorInput;
+				selectedChannel = newSelectedChannel;
 			}
 
 			// Left gradient.

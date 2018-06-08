@@ -11,8 +11,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	public class AnyComponentGraphPlotter : MonoBehaviour
 	{
 		public Component component;
-		public List<MonitorInputField> monitorInputFields = new List<MonitorInputField>();
-		private List<MonitorInputField> oldMonitorInputFields = new List<MonitorInputField>();
+		public List<ChannelField> channelFields = new List<ChannelField>();
+		private List<ChannelField> oldChannelFields = new List<ChannelField>();
 
 		public Monitor monitor;
 		public ValueAxisMode mode = ValueAxisMode.Adaptive;
@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float max = float.NegativeInfinity;
 
 		[Serializable]
-		public class MonitorInputField
+		public class ChannelField
 		{
 			public string[] field;
 
@@ -35,7 +35,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			public string fieldTypeName;
 
 			// runtime...
-			public MonitorInput monitorInput;
+			public Channel Channel;
 
 			public string FieldName { get { return String.Join(".", field); } }
 		}
@@ -55,7 +55,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void UpdateMonitors()
 		{
-			bool componentIsActive = enabled && gameObject.activeInHierarchy;
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
 			if (component != null && componentIsActive)
 			{
@@ -69,42 +69,42 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				monitor.Min = min;
 				monitor.Max = max;
 
-				foreach (var field in monitorInputFields)
+				foreach (var field in channelFields)
 				{
-					if (field.monitorInput == null)
+					if (field.Channel == null)
 					{
-						field.monitorInput = new MonitorInput(monitor, String.Join(".", field.field));
+						field.Channel = new Channel(monitor, String.Join(".", field.field));
 					}
 
-					field.monitorInput.Color = field.color;
+					field.Channel.Color = field.color;
 
-					if (oldMonitorInputFields.Contains(field))
+					if (oldChannelFields.Contains(field))
 					{
-						oldMonitorInputFields.Remove(field);
+						oldChannelFields.Remove(field);
 					}
 				}
 
-				// destroy all MonitorInput for field that was in the old collection but does not
+				// destroy all Channel for field that was in the old collection but does not
 				// appear in the new collection.
-				foreach (var field in oldMonitorInputFields)
+				foreach (var field in oldChannelFields)
 				{
-					if (field.monitorInput != null)
+					if (field.Channel != null)
 					{
-						field.monitorInput.Close();
-						field.monitorInput = null;
+						field.Channel.Close();
+						field.Channel = null;
 					}
 				}
 
-				oldMonitorInputFields = new List<MonitorInputField>(monitorInputFields);
+				oldChannelFields = new List<ChannelField>(channelFields);
 			}
 			else
 			{
-				foreach (var field in monitorInputFields)
+				foreach (var field in channelFields)
 				{
-					if (field.monitorInput != null)
+					if (field.Channel != null)
 					{
-						field.monitorInput.Close();
-						field.monitorInput = null;
+						field.Channel.Close();
+						field.Channel = null;
 					}
 				}
 
@@ -142,7 +142,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			min = monitor.Min;
 			max = monitor.Max;
 
-			foreach (var field in monitorInputFields)
+			foreach (var field in channelFields)
 			{
 				Object instance = component;
 				Type instanceType = component.GetType();
@@ -164,22 +164,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					if (instanceType == typeof(float))
 					{
-						field.monitorInput.Sample((float)instance);
+						field.Channel.Sample((float)instance);
 					}
 
 					if (instanceType == typeof(double))
 					{
-						field.monitorInput.Sample(Convert.ToSingle((double)instance));
+						field.Channel.Sample(Convert.ToSingle((double)instance));
 					}
 
 					if (instanceType == typeof(int))
 					{
-						field.monitorInput.Sample((int)instance);
+						field.Channel.Sample((int)instance);
 					}
 
 					if (instanceType == typeof(bool))
 					{
-						field.monitorInput.Sample((bool)instance ? 1f : 0f);
+						field.Channel.Sample((bool)instance ? 1f : 0f);
 					}
 				}
 			}
