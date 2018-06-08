@@ -1,18 +1,11 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
 using UnityEditor;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	[CustomEditor(typeof(MonitorTransform))]
-	public class MonitorTransformEditor : Editor
+	public class MonitorTransformEditor : UnityEditor.Editor
 	{
 		public override void OnInspectorGUI()
 		{
@@ -29,7 +22,7 @@ namespace MonitorComponents
 			}
 
 			if (monitorTransform.showPosition)
-			{	
+			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
 				bool newShowPosition_x = EditorGUILayout.Toggle(monitorTransform.showPosition_x, GUILayout.Width(14));
@@ -58,7 +51,7 @@ namespace MonitorComponents
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
-				MonitorTransform.Space newPositionSpace = (MonitorTransform.Space) EditorGUILayout.EnumPopup("Space", monitorTransform.positionSpace);
+				MonitorTransform.Space newPositionSpace = (MonitorTransform.Space)EditorGUILayout.EnumPopup("Space", monitorTransform.positionSpace);
 				if (newPositionSpace != monitorTransform.positionSpace)
 				{
 					Undo.RecordObject(target, "Changed position space");
@@ -130,7 +123,7 @@ namespace MonitorComponents
 				EditorGUILayout.EndHorizontal();
 
 				float newMin, newMax;
-				MonitorTransform.Space newRotationSpace = (MonitorTransform.Space) EditorGUILayout.EnumPopup("Space", monitorTransform.rotationSpace);
+				MonitorTransform.Space newRotationSpace = (MonitorTransform.Space)EditorGUILayout.EnumPopup("Space", monitorTransform.rotationSpace);
 				if (newRotationSpace != monitorTransform.rotationSpace)
 				{
 					Undo.RecordObject(target, "Changed rotation space");
@@ -201,7 +194,7 @@ namespace MonitorComponents
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				MonitorTransform.ScaleSpace newScaleSpace = (MonitorTransform.ScaleSpace) EditorGUILayout.EnumPopup("Space", monitorTransform.scaleSpace);
+				MonitorTransform.ScaleSpace newScaleSpace = (MonitorTransform.ScaleSpace)EditorGUILayout.EnumPopup("Space", monitorTransform.scaleSpace);
 				if (newScaleSpace != monitorTransform.scaleSpace)
 				{
 					Undo.RecordObject(target, "Change scale space");
@@ -240,7 +233,8 @@ namespace MonitorComponents
 			monitorTransform.UpdateMonitors();
 
 			if (GUI.changed)
-	            EditorUtility.SetDirty (target);
+				EditorUtility.SetDirty(target);
 		}
 	}
+
 }

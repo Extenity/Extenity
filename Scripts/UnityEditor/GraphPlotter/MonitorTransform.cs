@@ -1,16 +1,11 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
-using System.Collections;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor Transform")]
 	[ExecuteInEditMode]
-	public class MonitorTransform : MonoBehaviour 
+	public class MonitorTransform : MonoBehaviour
 	{
 		public enum Space { Local, World };
 		public enum ScaleSpace { Local, Lossy };
@@ -32,7 +27,7 @@ namespace MonitorComponents
 
 		// rotation
 		public bool showRotation = false;
-		public bool showRotation_x = true; 
+		public bool showRotation_x = true;
 		public bool showRotation_y = true;
 		public bool showRotation_z = true;
 		public Space rotationSpace = Space.World;
@@ -41,10 +36,10 @@ namespace MonitorComponents
 		public float rotationMax = 360f;
 
 		public Monitor monitor_rotation;
-		public MonitorInput monitorInput_rotation_x; 
+		public MonitorInput monitorInput_rotation_x;
 		public MonitorInput monitorInput_rotation_y;
 		public MonitorInput monitorInput_rotation_z;
-		
+
 		// scale
 		public bool showScale = false;
 		public ScaleSpace scaleSpace = ScaleSpace.Local;
@@ -112,7 +107,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_x == null)
 				{
-					monitorInput_position_x = new MonitorInput(monitor_position, "x", Colors.red);
+					monitorInput_position_x = new MonitorInput(monitor_position, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -129,7 +124,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_y == null)
 				{
-					monitorInput_position_y = new MonitorInput(monitor_position, "y", Colors.green);
+					monitorInput_position_y = new MonitorInput(monitor_position, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -146,7 +141,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_z == null)
 				{
-					monitorInput_position_z = new MonitorInput(monitor_position, "z", Colors.blue);
+					monitorInput_position_z = new MonitorInput(monitor_position, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -189,7 +184,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_x == null)
 				{
-					monitorInput_rotation_x = new MonitorInput(monitor_rotation, "x", Colors.red);
+					monitorInput_rotation_x = new MonitorInput(monitor_rotation, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -206,7 +201,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_y == null)
 				{
-					monitorInput_rotation_y = new MonitorInput(monitor_rotation, "y", Colors.green);
+					monitorInput_rotation_y = new MonitorInput(monitor_rotation, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -223,7 +218,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_z == null)
 				{
-					monitorInput_rotation_z = new MonitorInput(monitor_rotation, "z", Colors.blue);
+					monitorInput_rotation_z = new MonitorInput(monitor_rotation, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -266,7 +261,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_scale_x == null)
 				{
-					monitorInput_scale_x = new MonitorInput(monitor_scale, "x", Colors.red);
+					monitorInput_scale_x = new MonitorInput(monitor_scale, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -283,7 +278,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_scale_y == null)
 				{
-					monitorInput_scale_y = new MonitorInput(monitor_scale, "y", Colors.green);
+					monitorInput_scale_y = new MonitorInput(monitor_scale, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -300,7 +295,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_scale_z == null)
 				{
-					monitorInput_scale_z = new MonitorInput(monitor_scale, "z", Colors.blue);
+					monitorInput_scale_z = new MonitorInput(monitor_scale, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -392,7 +387,7 @@ namespace MonitorComponents
 		public void OnEnable()
 		{
 			UpdateMonitors();
-		}	
+		}
 
 		public void OnDisable()
 		{
@@ -406,23 +401,24 @@ namespace MonitorComponents
 
 		private void RemoveMonitors()
 		{
-			if(monitor_position != null)
+			if (monitor_position != null)
 			{
 				monitor_position.Close();
 				monitor_position = null;
 			}
 
-			if(monitor_rotation != null)
+			if (monitor_rotation != null)
 			{
 				monitor_rotation.Close();
 				monitor_rotation = null;
 			}
 
-			if(monitor_scale != null)
+			if (monitor_scale != null)
 			{
 				monitor_scale.Close();
 				monitor_scale = null;
 			}
 		}
 	}
+
 }

@@ -1,19 +1,14 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	public class MonitorsEditorWindow : EditorWindow
 	{
-		[MenuItem ("Window/Monitors _#%m")]
-		static void Init() 
+		[MenuItem("Window/Monitors _#%m")]
+		static void Init()
 		{
 			EditorWindow.GetWindow(typeof(MonitorsEditorWindow));
 		}
@@ -45,7 +40,7 @@ namespace MonitorComponents
 		private float monitorWidth;
 		private int monitorHeight_min = 100;
 		private int monitorHeight_max = 500;
-		
+
 		private bool monitorHeightResize = false;
 		private int monitorHeightResizeOldHeight;
 		private float monitorHeightResizeDelta = 0f;
@@ -77,9 +72,9 @@ namespace MonitorComponents
 		private Color legendBackgroundColor_light;
 		private Color legendBackgroundColor_dark;
 
-		private Color settingsHeaderBackgroundColor_light; 
-		private Color settingsHeaderBackgroundColor_dark; 
-		private Color settingsHeaderBackgroundColor; 
+		private Color settingsHeaderBackgroundColor_light;
+		private Color settingsHeaderBackgroundColor_dark;
+		private Color settingsHeaderBackgroundColor;
 
 		private Color legendTextColorSelected;
 		private Color legendTextColorSelected_dark;
@@ -92,7 +87,7 @@ namespace MonitorComponents
 		private Color monitorInputHeaderColor;
 		private Color monitorInputHeaderColor_dark;
 		private Color monitorInputHeaderColor_light;
-		
+
 		private Color headerColor;
 		private Color minMaxColor;
 		private Color timeColor;
@@ -119,11 +114,11 @@ namespace MonitorComponents
 		{
 			string titleText = "Monitors";
 
-// EditorWindow.title is deprecated from Unity 5.1 and forward.
+			// EditorWindow.title is deprecated from Unity 5.1 and forward.
 #if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0
     		title = titleText;
 #else
-    		titleContent = new GUIContent(titleText);
+			titleContent = new GUIContent(titleText);
 #endif
 
 			wantsMouseMove = true;
@@ -133,13 +128,13 @@ namespace MonitorComponents
 			monitors = Monitors.Instance;
 
 			// Colors
-			backgroundColor = new Color(32f/255f, 32f/255f, 32f/255f, 1f);
+			backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
 
-			legendBackgroundColor_light = new Color(222f/255f, 222f/255f, 222f/255f);
-			legendBackgroundColor_dark = new Color(65f/255f, 65f/255f, 65f/255f);
+			legendBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+			legendBackgroundColor_dark = new Color(65f / 255f, 65f / 255f, 65f / 255f);
 
-			settingsHeaderBackgroundColor_light = new Color(222f/255f, 222f/255f, 222f/255f); 
-			settingsHeaderBackgroundColor_dark = new Color(58f/255f, 58f/255f, 58f/255f); 
+			settingsHeaderBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+			settingsHeaderBackgroundColor_dark = new Color(58f / 255f, 58f / 255f, 58f / 255f);
 
 			legendTextColorSelected_dark = new Color(1f, 1f, 1f, 1f);
 			legendTextColorSelected_light = new Color(0f, 0f, 0f, 1f);
@@ -149,7 +144,7 @@ namespace MonitorComponents
 
 			monitorInputHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
 			monitorInputHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
-			
+
 			headerColor = new Color(0.7f, 0.7f, 0.7f);
 			minMaxColor = new Color(1f, 1f, 1f, 0.2f);
 			timeColor_dark = new Color(1f, 1f, 1f, 0.5f);
@@ -165,26 +160,26 @@ namespace MonitorComponents
 			// static styles
 			headerStyle = new GUIStyle();
 			headerStyle.normal.textColor = headerColor;
-			
+
 			maxStyle = new GUIStyle();
 			maxStyle.normal.textColor = minMaxColor;
 			maxStyle.alignment = TextAnchor.LowerRight;
-			
+
 			minStyle = new GUIStyle();
 			minStyle.normal.textColor = minMaxColor;
 			minStyle.alignment = TextAnchor.UpperRight;
-			
+
 			GUIStyle timeWindowStyle = new GUIStyle();
 			timeWindowStyle.normal.textColor = Color.grey;
 			timeWindowStyle.alignment = TextAnchor.MiddleRight;
-			
+
 			valueTextStyle = new GUIStyle();
-			
+
 			timeIntervalSelectionStyle = new GUIStyle();
 			timeIntervalSelectionStyle.clipping = TextClipping.Overflow;
 			timeIntervalSelectionStyle.alignment = TextAnchor.MiddleCenter;
 			timeIntervalSelectionStyle.normal.textColor = Color.white;
-			
+
 			timeStyle = new GUIStyle();
 
 			simpleStyle = new GUIStyle();
@@ -231,9 +226,9 @@ namespace MonitorComponents
 				topTexture = new Texture2D(1, 2);
 				topTexture.hideFlags = HideFlags.HideAndDontSave;
 				topTexture.wrapMode = TextureWrapMode.Clamp;
-				topTexture.SetPixel(0, 1, new Color(22f/255f, 22f/255f, 22f/255f, 1f));
-				topTexture.SetPixel(0, 0, new Color(32f/255f, 32f/255f, 32f/255f, 0f));
-				topTexture.Apply();	
+				topTexture.SetPixel(0, 1, new Color(22f / 255f, 22f / 255f, 22f / 255f, 1f));
+				topTexture.SetPixel(0, 0, new Color(32f / 255f, 32f / 255f, 32f / 255f, 0f));
+				topTexture.Apply();
 			}
 
 			if (leftTexture == null)
@@ -241,9 +236,9 @@ namespace MonitorComponents
 				leftTexture = new Texture2D(2, 1);
 				leftTexture.hideFlags = HideFlags.HideAndDontSave;
 				leftTexture.wrapMode = TextureWrapMode.Clamp;
-				leftTexture.SetPixel(0, 0, new Color(22f/255f, 22f/255f, 22f/255f, 1f));
-				leftTexture.SetPixel(1, 0, new Color(32f/255f, 32f/255f, 32f/255f, 0f));
-				leftTexture.Apply();	
+				leftTexture.SetPixel(0, 0, new Color(22f / 255f, 22f / 255f, 22f / 255f, 1f));
+				leftTexture.SetPixel(1, 0, new Color(32f / 255f, 32f / 255f, 32f / 255f, 0f));
+				leftTexture.Apply();
 			}
 
 			// calculate dynamic sizes.
@@ -275,12 +270,12 @@ namespace MonitorComponents
 			if (!isInPauseMode)
 			{
 				// smooth catch up. Nice!
-				scrollPositionTime = 0f;	
+				scrollPositionTime = 0f;
 			}
 
-			if (e.type == EventType.MouseDown && 
-				mousePosition.x > legendWidth && 
-				(mousePosition.x < (width - 14f)) && 
+			if (e.type == EventType.MouseDown &&
+				mousePosition.x > legendWidth &&
+				(mousePosition.x < (width - 14f)) &&
 				mousePosition.y > settingsRect.height)
 			{
 				Debug.Break();
@@ -295,7 +290,7 @@ namespace MonitorComponents
 			if (gameObjectFilter != null)
 			{
 				visibleMonitors = new List<Monitor>(); // TODO: remove alloc.
-				foreach(var monitor in monitors.All)
+				foreach (var monitor in monitors.All)
 				{
 					if (monitor.GameObject == gameObjectFilter)
 					{
@@ -319,7 +314,7 @@ namespace MonitorComponents
 				Monitor monitor = visibleMonitors[i];
 
 				Rect monitorRect = new Rect(legendWidth, i * monitorHeight + settingsRect.height - scrollPositionY, monitorWidth, monitorHeight);
-				Rect graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5); 
+				Rect graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5);
 
 				float span = monitor.Max - monitor.Min;
 
@@ -328,24 +323,24 @@ namespace MonitorComponents
 
 				float maxTime = latestTime + scrollPositionTime;
 				float minTime = latestTime - timeWindow + scrollPositionTime;
-		
-				if(monitor.Mode == ValueAxisMode.Adaptive)
+
+				if (monitor.Mode == ValueAxisMode.Adaptive)
 				{
 					monitor.Min = float.PositiveInfinity;
 					monitor.Max = float.NegativeInfinity;
 
-					foreach(MonitorInput monitorInput in monitor.inputs)
+					foreach (MonitorInput monitorInput in monitor.inputs)
 					{
 						float min, max;
 						monitorInput.GetMinMax(minTime, maxTime, out min, out max);
-						monitor.Min = Mathf.Min (min, monitor.Min);
-						monitor.Max = Mathf.Max (max, monitor.Max);
+						monitor.Min = Mathf.Min(min, monitor.Min);
+						monitor.Max = Mathf.Max(max, monitor.Max);
 					}
 				}
 
 				if (monitor.Min < float.PositiveInfinity)
 					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMax + 5f, 200f, 20f), monitor.Min.ToString(), minStyle);
-		
+
 				if (monitor.Max > float.NegativeInfinity)
 					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), monitor.Max.ToString(), maxStyle);
 
@@ -384,35 +379,35 @@ namespace MonitorComponents
 				}
 
 				// Is monitor visible? otherwise cull...
-				if (monitorRect.yMin < position.height && monitorRect.yMax > 0f)  
+				if (monitorRect.yMin < position.height && monitorRect.yMax > 0f)
 				{
 					Handles.color = zeroLineColor;
 
 					horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
 					horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
-					horizontalLines[2] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min/span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+					horizontalLines[2] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
 
-					if(monitor.Min <= 0f && monitor.Max >= 0f)
+					if (monitor.Min <= 0f && monitor.Max >= 0f)
 					{
-						horizontalLines[3] = new Vector3(graphRect.xMax, Mathf.Clamp(graphRect.height * monitor.Min/span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+						horizontalLines[3] = new Vector3(graphRect.xMax, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
 					}
 					else
 					{
-						horizontalLines[3] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min/span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+						horizontalLines[3] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
 					}
 
-					horizontalLines[4] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min/span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+					horizontalLines[4] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
 					horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
 					horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
 
 					Handles.DrawPolyLine(horizontalLines);
 
 					lineCount++;
-		
+
 					if (isInPauseMode)
 					{
-						float time = (maxTime - minTime) * (mousePosition.x - graphRect.xMin)/graphRect.width + minTime;
-						
+						float time = (maxTime - minTime) * (mousePosition.x - graphRect.xMin) / graphRect.width + minTime;
+
 						if (graphRect.Contains(mousePosition))
 						{
 							if (e.type == EventType.MouseDown)
@@ -430,24 +425,24 @@ namespace MonitorComponents
 					}
 
 					int n = 0;
-					float startTime = Mathf.CeilToInt(minTime/subTimeTicks) * subTimeTicks;
+					float startTime = Mathf.CeilToInt(minTime / subTimeTicks) * subTimeTicks;
 					float t = startTime;
 
 					float transparentTime = 3;
 					float opaqueTime = 2;
 
 					// Sub tick lines.
-					if(timeWindow < transparentTime)
+					if (timeWindow < transparentTime)
 					{
 						Color subTimeTickColorWithAlpha = subTimeTickColor;
-						subTimeTickColorWithAlpha.a = subTimeTickColor.a * Mathf.Lerp(1f, 0f, (timeWindow - opaqueTime)/(transparentTime - opaqueTime));
+						subTimeTickColorWithAlpha.a = subTimeTickColor.a * Mathf.Lerp(1f, 0f, (timeWindow - opaqueTime) / (transparentTime - opaqueTime));
 
 						Handles.color = subTimeTickColorWithAlpha;
 
-						while(t < maxTime)
+						while (t < maxTime)
 						{
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f), 
+								new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
 								new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
 							);
 
@@ -465,10 +460,10 @@ namespace MonitorComponents
 					startTime = Mathf.CeilToInt(minTime);
 					t = startTime;
 
-					while(t < maxTime)
+					while (t < maxTime)
 					{
 						Handles.DrawLine(
-							new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f), 
+							new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
 							new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
 						);
 
@@ -478,7 +473,7 @@ namespace MonitorComponents
 						t = startTime + n;
 					}
 
-					foreach(MonitorInput monitorInput in monitor.inputs)
+					foreach (MonitorInput monitorInput in monitor.inputs)
 					{
 						Color deselectedColor = monitorInput.Color;
 						deselectedColor.a = deselectionAlpha;
@@ -486,10 +481,10 @@ namespace MonitorComponents
 						Color color = (selectedMonitorInput == null) || (monitorInput == selectedMonitorInput) ? monitorInput.Color : deselectedColor;
 
 						Handles.color = color;
-						
+
 						int pointIndex = 0;
 
-						for(int j = 0; j < monitorInput.numberOfSamples-1; j++)
+						for (int j = 0; j < monitorInput.numberOfSamples - 1; j++)
 						{
 							int index_a = (monitorInput.sampleIndex + j) % monitorInput.numberOfSamples;
 							int index_b = (index_a + 1) % monitorInput.numberOfSamples;
@@ -497,7 +492,7 @@ namespace MonitorComponents
 							float time_a = monitorInput.times[index_a];
 							float time_b = monitorInput.times[index_b];
 
-							if(float.IsNaN(time_a) || float.IsNaN(time_b))
+							if (float.IsNaN(time_a) || float.IsNaN(time_b))
 								continue;
 
 							if (time_b > time_a && !(time_b < minTime || time_a > maxTime))
@@ -505,10 +500,10 @@ namespace MonitorComponents
 								float sample_a = monitorInput.samples[index_a];
 								float sample_b = monitorInput.samples[index_b];
 
-								if(float.IsNaN(sample_a) || float.IsNaN(sample_b))
+								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 									continue;
 
-								float aNormalizedSample = (sample_a - monitor.Min)/span;
+								float aNormalizedSample = (sample_a - monitor.Min) / span;
 								if (span == 0f)
 								{
 									aNormalizedSample = 0.5f;
@@ -518,7 +513,7 @@ namespace MonitorComponents
 									aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
 								}
 
-								float bNormalizedSample = (sample_b - monitor.Min)/span;
+								float bNormalizedSample = (sample_b - monitor.Min) / span;
 								if (span == 0f)
 								{
 									bNormalizedSample = 0.5f;
@@ -535,7 +530,7 @@ namespace MonitorComponents
 								}
 								else
 								{
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f); 
+									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
 									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
 								}
 							}
@@ -545,7 +540,7 @@ namespace MonitorComponents
 						{
 							Vector3 lastPoint = points[pointIndex - 1];
 
-							for(int p = pointIndex; p < points.Length; p++)
+							for (int p = pointIndex; p < points.Length; p++)
 							{
 								points[p] = lastPoint;
 							}
@@ -562,9 +557,9 @@ namespace MonitorComponents
 						float selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
 						float selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
 
-						float left = graphRect.width * (selectionTime_left - minTime)/(maxTime - minTime) + graphRect.xMin;
-						float right = graphRect.width * (selectionTime_right - minTime)/(maxTime - minTime) + graphRect.xMin;
-						
+						float left = graphRect.width * (selectionTime_left - minTime) / (maxTime - minTime) + graphRect.xMin;
+						float right = graphRect.width * (selectionTime_right - minTime) / (maxTime - minTime) + graphRect.xMin;
+
 						GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
 						Handles.color = new Color(1f, 1f, 1f, 0.3f);
@@ -603,7 +598,7 @@ namespace MonitorComponents
 
 					// Time line.
 
-					float mouseTime = maxTime; 
+					float mouseTime = maxTime;
 
 					if (isInPauseMode)
 					{
@@ -613,10 +608,10 @@ namespace MonitorComponents
 					mouseTime = Mathf.Max(mouseTime, 0f);
 
 					Handles.color = timeLineColor;
-					float x = (mouseTime - minTime)/(maxTime - minTime) * graphRect.width + graphRect.xMin;
+					float x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
-					
-					for(int j = 0; j < monitor.inputs.Count; j++)
+
+					for (int j = 0; j < monitor.inputs.Count; j++)
 					{
 						MonitorInput monitorInput = monitor.inputs[j];
 
@@ -627,15 +622,15 @@ namespace MonitorComponents
 
 						int index = -1;
 
-						for(int k = 1; k < monitorInput.samples.Length - 1; k++)
+						for (int k = 1; k < monitorInput.samples.Length - 1; k++)
 						{
 							int sampleIndex_a = (monitorInput.sampleIndex + k) % monitorInput.samples.Length;
 							int sampleIndex_b = (sampleIndex_a + 1) % monitorInput.samples.Length;
 
-							if(mouseTime >= monitorInput.times[sampleIndex_a] && 
+							if (mouseTime >= monitorInput.times[sampleIndex_a] &&
 							   mouseTime <= monitorInput.times[sampleIndex_b])
 							{
-								index = Mathf.Abs(monitorInput.times[sampleIndex_a] - mouseTime) <= Mathf.Abs(monitorInput.times[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b; 
+								index = Mathf.Abs(monitorInput.times[sampleIndex_a] - mouseTime) <= Mathf.Abs(monitorInput.times[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
 								break;
 							}
 						}
@@ -658,20 +653,20 @@ namespace MonitorComponents
 
 							if (!float.IsNaN(time))
 							{
-								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 2f, legendWidth, 20), 
+								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 2f, legendWidth, 20),
 									"t = " + time, timeStyle);
 							}
 
 							if (frame > -1)
 							{
-								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 3.5f, legendWidth, 20), 
+								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 3.5f, legendWidth, 20),
 									"frame = " + frame, timeStyle);
 							}
 						}
 
 						Handles.color = monitorInputColor;
 
-						float normalizedSampleValue = (sampleValue - monitor.Min)/span;
+						float normalizedSampleValue = (sampleValue - monitor.Min) / span;
 						if (span == 0f)
 						{
 							normalizedSampleValue = 0.5f;
@@ -684,7 +679,7 @@ namespace MonitorComponents
 						float handleRadius = 5f;
 
 						if (normalizedSampleValue < 0f)
-						{	
+						{
 							// Draw down arrow.
 							arrowPoints[0] = samplePosition + new Vector3(-handleRadius, -handleRadius, 0);
 							arrowPoints[1] = samplePosition + new Vector3(handleRadius, -handleRadius, 0);
@@ -714,7 +709,7 @@ namespace MonitorComponents
 							diamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
 							diamondPoints[3] = samplePosition + new Vector3(-size, 0, 0);
 							diamondPoints[4] = diamondPoints[0];
-							
+
 							Handles.DrawPolyLine(diamondPoints);
 							lineCount++;
 						}
@@ -724,13 +719,13 @@ namespace MonitorComponents
 						{
 							sampleValueString = "";
 						}
-						else 
+						else
 						{
 							sampleValueString = " = " + sampleValue.ToString();
 						}
 
 						string valueText = monitorInput.Description + sampleValueString;
-				
+
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 						valueTextStyle.normal.textColor = Color.white;
 
@@ -738,7 +733,7 @@ namespace MonitorComponents
 						{
 							float sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
 
-							if(samplePosition.x + sampleTextWidth + 40 > position.width)
+							if (samplePosition.x + sampleTextWidth + 40 > position.width)
 							{
 								valueTextStyle.alignment = TextAnchor.MiddleRight;
 								GUI.Label(new Rect(samplePosition.x - sampleTextWidth - 15, samplePosition.y - 20, sampleTextWidth, 20), valueText, valueTextStyle);
@@ -754,8 +749,8 @@ namespace MonitorComponents
 						}
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
-				
-						valueTextStyle.normal.textColor = selectedMonitorInput == null || selectedMonitorInput == monitorInput ? legendTextColorSelected : legendTextColorUnselected; 
+
+						valueTextStyle.normal.textColor = selectedMonitorInput == null || selectedMonitorInput == monitorInput ? legendTextColorSelected : legendTextColorUnselected;
 						valueTextStyle.alignment = TextAnchor.MiddleLeft;
 						valueTextStyle.clipping = TextClipping.Clip;
 
@@ -779,13 +774,13 @@ namespace MonitorComponents
 						GUI.DrawTexture(new Rect(10 + 1, monitorRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
-						
+
 					}
 
 					List<MonitorEvent> monitorEvents = new List<MonitorEvent>();
 					monitor.GetEvents(maxTime - timeWindow, maxTime, monitorEvents);
-				
-					foreach(var monitorEvent in monitorEvents)
+
+					foreach (var monitorEvent in monitorEvents)
 					{
 						Color eventColor = Color.yellow;
 						Handles.color = eventColor;
@@ -794,25 +789,25 @@ namespace MonitorComponents
 						if (normalizedX * graphRect.width >= 5f)
 						{
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMin, 0f), 
+								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMin, 0f),
 								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f)
 							);
 							lineCount++;
 
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f), 
+								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
 								new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
 							);
 							lineCount++;
 
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f), 
+								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
 								new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f)
 							);
 							lineCount++;
 
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f), 
+								new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f),
 								new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
 							);
 							lineCount++;
@@ -827,7 +822,7 @@ namespace MonitorComponents
 
 			// select/deselect.
 			if (e.type == EventType.MouseDown)
-			{ 
+			{
 				selectedMonitorInput = newSelectedMonitorInput;
 			}
 
@@ -843,7 +838,7 @@ namespace MonitorComponents
 				// separator line
 				Handles.color = Color.grey;
 				Handles.DrawLine(new Vector3(0f, (i + 1) * monitorHeight + settingsRect.height - scrollPositionY, 0f),
-	 			                 new Vector3(width, (i + 1) * monitorHeight + settingsRect.height - scrollPositionY, 0f));
+								  new Vector3(width, (i + 1) * monitorHeight + settingsRect.height - scrollPositionY, 0f));
 				lineCount++;
 			}
 
@@ -853,12 +848,12 @@ namespace MonitorComponents
 
 			GUI.color = Color.white;
 			scrollPositionY = GUI.VerticalScrollbar(new Rect(
-				position.width - 15, settingsRect.height, 15f, position.height - settingsRect.height), 
+				position.width - 15, settingsRect.height, 15f, position.height - settingsRect.height),
 				scrollPositionY, visibleHeightY, 0f, scrollMaxY);
 			scrollPositionY = Mathf.Max(scrollPositionY, 0f);
 
 			if (isInPauseMode)
-			{	
+			{
 				if (!wasInPauseMode)
 				{
 					// Reset scroll positionwhen going into pause mode.
@@ -868,8 +863,8 @@ namespace MonitorComponents
 
 					float minTime = float.PositiveInfinity;
 					float maxTime = float.NegativeInfinity;
-					
-					foreach(var monitor in visibleMonitors)
+
+					foreach (var monitor in visibleMonitors)
 					{
 						float monitorMinTime, monitorMaxTime;
 						monitor.GetMinMaxTime(out monitorMinTime, out monitorMaxTime);
@@ -878,15 +873,15 @@ namespace MonitorComponents
 						maxTime = Mathf.Max(maxTime, latestTime);
 					}
 
-					scrollPositionTimeMax = (maxTime - minTime) + 1f; 
+					scrollPositionTimeMax = (maxTime - minTime) + 1f;
 				}
 
 				GUI.color = Color.white;
 				scrollPositionTime = GUI.HorizontalScrollbar(
-					new Rect(legendWidth, height - 15f, width - legendWidth - 15f, 15f), 
-					scrollPositionTime, 
-					Mathf.Min(scrollPositionTimeMax, timeWindow), 
-					-scrollPositionTimeMax + timeWindow, 
+					new Rect(legendWidth, height - 15f, width - legendWidth - 15f, 15f),
+					scrollPositionTime,
+					Mathf.Min(scrollPositionTimeMax, timeWindow),
+					-scrollPositionTimeMax + timeWindow,
 					timeWindow
 				);
 
@@ -899,7 +894,7 @@ namespace MonitorComponents
 			GUI.color = Color.white;
 
 			float padding = 5f;
-			float timeWindowFloored = Mathf.RoundToInt(timeWindow * 10f)/10f;
+			float timeWindowFloored = Mathf.RoundToInt(timeWindow * 10f) / 10f;
 			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
@@ -916,7 +911,8 @@ namespace MonitorComponents
 				}
 			}
 
-			gameObjects.Sort((GameObject a, GameObject b) => {
+			gameObjects.Sort((GameObject a, GameObject b) =>
+			{
 				int nameDelta = a.name.CompareTo(b.name);
 				if (nameDelta == 0)
 				{
@@ -929,15 +925,15 @@ namespace MonitorComponents
 			});
 
 			string[] visibleGameObjectNames = new string[gameObjects.Count];
-			for(int i = 0; i < visibleGameObjectNames.Length; i++)
+			for (int i = 0; i < visibleGameObjectNames.Length; i++)
 			{
 				visibleGameObjectNames[i] = gameObjects[i].name;
 			}
 
-			for(int i = 0; i < visibleGameObjectNames.Length; i++)
+			for (int i = 0; i < visibleGameObjectNames.Length; i++)
 			{
 				int lastIndexWithSameName = i;
-				for(int j = i + 1; j < visibleGameObjectNames.Length; j++)
+				for (int j = i + 1; j < visibleGameObjectNames.Length; j++)
 				{
 					if (visibleGameObjectNames[j] == visibleGameObjectNames[i])
 					{
@@ -952,7 +948,7 @@ namespace MonitorComponents
 				if (lastIndexWithSameName > i)
 				{
 					int n = 1;
-					for(int j = i; j <= lastIndexWithSameName; j++)
+					for (int j = i; j <= lastIndexWithSameName; j++)
 					{
 						visibleGameObjectNames[j] = visibleGameObjectNames[j] + "/" + n + "";
 						n++;
@@ -960,7 +956,7 @@ namespace MonitorComponents
 
 					i = lastIndexWithSameName + 1;
 				}
-				
+
 			}
 
 			// Game object filter.
@@ -969,7 +965,7 @@ namespace MonitorComponents
 
 			string[] gameObjectFilterOptions = new string[gameObjects.Count + 1];
 			gameObjectFilterOptions[0] = "All";
-			for(int i = 0; i < gameObjects.Count; i++)
+			for (int i = 0; i < gameObjects.Count; i++)
 			{
 				gameObjectFilterOptions[i + 1] = visibleGameObjectNames[i];
 
@@ -980,7 +976,7 @@ namespace MonitorComponents
 			}
 
 			gameObjectFilterIndex = EditorGUILayout.Popup(gameObjectFilterIndex, gameObjectFilterOptions, GUILayout.Width(160));
-		
+
 
 			GameObject gameObjectFilter_old = gameObjectFilter;
 
@@ -1011,7 +1007,7 @@ namespace MonitorComponents
 			GUILayout.EndArea();
 
 			float splitSize = 6;
-			Rect legendResizeRect = new Rect(legendWidth - splitSize/2, 0, splitSize, height);
+			Rect legendResizeRect = new Rect(legendWidth - splitSize / 2, 0, splitSize, height);
 			EditorGUIUtility.AddCursorRect(legendResizeRect, MouseCursor.SplitResizeLeftRight);
 
 			if (e.type == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !monitorHeightResize)
@@ -1029,7 +1025,7 @@ namespace MonitorComponents
 				legendResize = false;
 			}
 
-			Repaint(); 
+			Repaint();
 
 			wasInPauseMode = isInPauseMode;
 
@@ -1053,21 +1049,22 @@ namespace MonitorComponents
 			}
 		}
 
-	    // Constants for saving editor settings.
+		// Constants for saving editor settings.
 		private static string TIME_WINDOW_EXP = "MONITORCOMPONENTS_TIME_WINDOW_EXP";
 		private static string INTERPOLATION_TYPE_INDEX = "MONITORCOMPONENTS_INTERPOLATION_TYPE_INDEX";
 		private static string MONITOR_HEIGHT = "MONITORCOMPONENTS_MONITOR_HEIGHT";
 		private static string LEGEND_WIDTH = "MONITORCOMPONENTS_LEGEND_WIDTH";
 
-		public GameObject Filter 
-		{ 
-			set 
+		public GameObject Filter
+		{
+			set
 			{
-				if (monitors.All.Exists((monitor) => monitor.GameObject == value)) 
+				if (monitors.All.Exists((monitor) => monitor.GameObject == value))
 				{
-					gameObjectFilter = value; 
+					gameObjectFilter = value;
 				}
 			}
 		}
 	}
+
 }

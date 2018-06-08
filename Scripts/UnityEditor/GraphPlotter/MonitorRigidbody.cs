@@ -1,21 +1,13 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
-using System.Collections;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor Rigidbody")]
 	[ExecuteInEditMode]
-	public class MonitorRigidbody : MonoBehaviour 
+	public class MonitorRigidbody : MonoBehaviour
 	{
 		public enum RotationFormat { Euler, Quaternion };
-		public enum SampleMode { Update, FixedUpdate };
-
-		public SampleMode sampleMode = SampleMode.FixedUpdate;
 
 		// position
 		public bool showPosition = false;
@@ -34,16 +26,16 @@ namespace MonitorComponents
 
 		// rotation
 		public bool showRotation = false;
-		public bool showRotation_x = true; 
+		public bool showRotation_x = true;
 		public bool showRotation_y = true;
 		public bool showRotation_z = true;
 
 		public ValueAxisMode rotationMode = ValueAxisMode.Fixed;
 		public float rotationMin = 0f;
 		public float rotationMax = 360f;
-		
+
 		public Monitor monitor_rotation;
-		private MonitorInput monitorInput_rotation_x; 
+		private MonitorInput monitorInput_rotation_x;
 		private MonitorInput monitorInput_rotation_y;
 		private MonitorInput monitorInput_rotation_z;
 
@@ -58,13 +50,13 @@ namespace MonitorComponents
 		public float velocityMax = float.NegativeInfinity;
 
 		public Monitor monitor_velocity;
-		private MonitorInput monitorInput_velocity_x; 
+		private MonitorInput monitorInput_velocity_x;
 		private MonitorInput monitorInput_velocity_y;
 		private MonitorInput monitorInput_velocity_z;
 
 		// angular velocity.
 		public bool showAngularVelocity = false;
-		public bool showAngularVelocity_x = true; 
+		public bool showAngularVelocity_x = true;
 		public bool showAngularVelocity_y = true;
 		public bool showAngularVelocity_z = true;
 
@@ -73,7 +65,7 @@ namespace MonitorComponents
 		public float angularVelocityMax = float.NegativeInfinity;
 
 		public Monitor monitor_angularVelocity;
-		private MonitorInput monitorInput_angularVelocity_x; 	
+		private MonitorInput monitorInput_angularVelocity_x;
 		private MonitorInput monitorInput_angularVelocity_y;
 		private MonitorInput monitorInput_angularVelocity_z;
 
@@ -96,7 +88,7 @@ namespace MonitorComponents
 			if (Application.isPlaying)
 			{
 				rigidbody = GetComponent<Rigidbody>();
-				
+
 				if (rigidbody == null)
 				{
 					Debug.LogWarning("MonitorAudioSource requires an Rigidbody component.", this);
@@ -144,7 +136,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_x == null)
 				{
-					monitorInput_position_x = new MonitorInput(monitor_position, "x", Colors.red);
+					monitorInput_position_x = new MonitorInput(monitor_position, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -161,7 +153,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_y == null)
 				{
-					monitorInput_position_y = new MonitorInput(monitor_position, "y", Colors.green);
+					monitorInput_position_y = new MonitorInput(monitor_position, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -178,7 +170,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_z == null)
 				{
-					monitorInput_position_z = new MonitorInput(monitor_position, "z", Colors.blue);
+					monitorInput_position_z = new MonitorInput(monitor_position, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -220,7 +212,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_x == null)
 				{
-					monitorInput_rotation_x = new MonitorInput(monitor_rotation, "x", Colors.red);
+					monitorInput_rotation_x = new MonitorInput(monitor_rotation, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -237,7 +229,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_y == null)
 				{
-					monitorInput_rotation_y = new MonitorInput(monitor_rotation, "y", Colors.green);
+					monitorInput_rotation_y = new MonitorInput(monitor_rotation, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -254,7 +246,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation_z == null)
 				{
-					monitorInput_rotation_z = new MonitorInput(monitor_rotation, "z", Colors.blue);
+					monitorInput_rotation_z = new MonitorInput(monitor_rotation, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -296,7 +288,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_velocity_x == null)
 				{
-					monitorInput_velocity_x = new MonitorInput(monitor_velocity, "x", Colors.red);
+					monitorInput_velocity_x = new MonitorInput(monitor_velocity, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -313,7 +305,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_velocity_y == null)
 				{
-					monitorInput_velocity_y = new MonitorInput(monitor_velocity, "y", Colors.green);
+					monitorInput_velocity_y = new MonitorInput(monitor_velocity, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -330,7 +322,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_velocity_z == null)
 				{
-					monitorInput_velocity_z = new MonitorInput(monitor_velocity, "z", Colors.blue);
+					monitorInput_velocity_z = new MonitorInput(monitor_velocity, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -372,7 +364,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_angularVelocity_x == null)
 				{
-					monitorInput_angularVelocity_x = new MonitorInput(monitor_angularVelocity, "x", Colors.red);
+					monitorInput_angularVelocity_x = new MonitorInput(monitor_angularVelocity, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -389,7 +381,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_angularVelocity_y == null)
 				{
-					monitorInput_angularVelocity_y = new MonitorInput(monitor_angularVelocity, "y", Colors.green);
+					monitorInput_angularVelocity_y = new MonitorInput(monitor_angularVelocity, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -406,7 +398,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_angularVelocity_z == null)
 				{
-					monitorInput_angularVelocity_z = new MonitorInput(monitor_angularVelocity, "z", Colors.blue);
+					monitorInput_angularVelocity_z = new MonitorInput(monitor_angularVelocity, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -419,27 +411,12 @@ namespace MonitorComponents
 			}
 		}
 
-
-		public void FixedUpdate () 
+		public void FixedUpdate()
 		{
 			if (!Application.isPlaying)
 				return;
-		
-			if (sampleMode == SampleMode.FixedUpdate)
-			{
-				Sample();
-			}
-		}
 
-		public void Update()
-		{
-			if (!Application.isPlaying)
-				return;
-		
-			if (sampleMode == SampleMode.Update)
-			{
-				Sample();
-			}	
+			Sample();
 		}
 
 		private void Sample()
@@ -552,7 +529,7 @@ namespace MonitorComponents
 		public void OnEnable()
 		{
 			UpdateMonitors();
-		}	
+		}
 
 		public void OnDisable()
 		{
@@ -566,29 +543,30 @@ namespace MonitorComponents
 
 		public void RemoveMonitors()
 		{
-			if(monitor_position != null)
+			if (monitor_position != null)
 			{
 				monitor_position.Close();
 				monitor_position = null;
 			}
 
-			if(monitor_rotation != null)
+			if (monitor_rotation != null)
 			{
 				monitor_rotation.Close();
 				monitor_rotation = null;
 			}
 
-			if(monitor_velocity != null)
+			if (monitor_velocity != null)
 			{
 				monitor_velocity.Close();
 				monitor_velocity = null;
 			}
 
-			if(monitor_angularVelocity != null)
+			if (monitor_angularVelocity != null)
 			{
 				monitor_angularVelocity.Close();
 				monitor_angularVelocity = null;
 			}
 		}
 	}
+
 }

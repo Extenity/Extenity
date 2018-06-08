@@ -1,28 +1,23 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
-	public enum ValueAxisMode 
+
+	public enum ValueAxisMode
 	{
 		Fixed,
-		Expansive, 
+		Expansive,
 		Adaptive
 	};
 
-	public class MonitorEvent 
+	public class MonitorEvent
 	{
 		public float time;
 		public string text;
 	}
 
-	public class Monitor 
+	public class Monitor
 	{
 		private string name;
 		private ValueAxisMode mode = ValueAxisMode.Expansive;
@@ -49,7 +44,7 @@ namespace MonitorComponents
 		{
 			latestTime = time;
 
-			if(mode == ValueAxisMode.Expansive)
+			if (mode == ValueAxisMode.Expansive)
 			{
 				min = Mathf.Min(min, value);
 				max = Mathf.Max(max, value);
@@ -113,13 +108,13 @@ namespace MonitorComponents
 			minTime = float.PositiveInfinity;
 			maxTime = float.NegativeInfinity;
 
-			foreach(MonitorEvent monitorEvent in events)
+			foreach (MonitorEvent monitorEvent in events)
 			{
 				minTime = Mathf.Min(minTime, monitorEvent.time);
-				maxTime = Mathf.Max(maxTime, monitorEvent.time);	
+				maxTime = Mathf.Max(maxTime, monitorEvent.time);
 			}
 
-			foreach(MonitorInput monitorInput in inputs)
+			foreach (MonitorInput monitorInput in inputs)
 			{
 				float monitorInputMin;
 				float monitorInputMax;
@@ -146,14 +141,14 @@ namespace MonitorComponents
 			Monitors.Instance.Remove(this);
 		}
 
-		public float Min 
+		public float Min
 		{
-			get 
+			get
 			{
 				return min;
 			}
 
-			set 
+			set
 			{
 				min = value;
 			}
@@ -161,49 +156,51 @@ namespace MonitorComponents
 
 		public float Max
 		{
-			get 
+			get
 			{
 				return max;
 			}
 
-			set 
+			set
 			{
 				max = value;
 			}
 		}
 
-		public string Name 
+		public string Name
 		{
-			get 
+			get
 			{
 				return name;
 			}
 
-			set 
+			set
 			{
 				name = value;
 			}
 		}
 
-		public ValueAxisMode Mode 
+		public ValueAxisMode Mode
 		{
-			get 
+			get
 			{
 				return mode;
 			}
 
-			set 
+			set
 			{
 				mode = value;
 			}
 		}
 
-		public GameObject GameObject 
+		public GameObject GameObject
 		{
-			get {
+			get
+			{
 				return gameObject;
 			}
-			set {
+			set
+			{
 				gameObject = value;
 			}
 
@@ -211,11 +208,12 @@ namespace MonitorComponents
 
 		private class MonitorEventComparer : IComparer<MonitorEvent>
 		{
-		    public int Compare(MonitorEvent a, MonitorEvent b)
-		    {
-		        return a.time.CompareTo(b.time);
-		    }
+			public int Compare(MonitorEvent a, MonitorEvent b)
+			{
+				return a.time.CompareTo(b.time);
+			}
 		}
 
 	}
+
 }

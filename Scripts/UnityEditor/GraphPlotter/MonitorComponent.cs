@@ -1,20 +1,14 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
-using UnityEngine;
+﻿using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using Object = System.Object;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor Component")]
 	[ExecuteInEditMode]
-	public class MonitorComponent : MonoBehaviour 
+	public class MonitorComponent : MonoBehaviour
 	{
 		public Component component;
 		public List<MonitorInputField> monitorInputFields = new List<MonitorInputField>();
@@ -23,11 +17,14 @@ namespace MonitorComponents
 		public Monitor monitor;
 		public ValueAxisMode mode = ValueAxisMode.Adaptive;
 
+		public enum SampleMode { Update, FixedUpdate }
+		public SampleMode sampleMode = SampleMode.FixedUpdate;
+
 		public float min = float.PositiveInfinity;
 		public float max = float.NegativeInfinity;
 
-		[System.Serializable]
-		public class MonitorInputField 
+		[Serializable]
+		public class MonitorInputField
 		{
 			public string[] field;
 
@@ -40,7 +37,7 @@ namespace MonitorComponents
 			// runtime...
 			public MonitorInput monitorInput;
 
-			public string FieldName { get { return String.Join(".", field); }}
+			public string FieldName { get { return String.Join(".", field); } }
 		}
 
 		void Awake()
@@ -51,7 +48,7 @@ namespace MonitorComponents
 			}
 		}
 
-		void Start () 
+		void Start()
 		{
 			UpdateMonitors();
 		}
@@ -124,51 +121,70 @@ namespace MonitorComponents
 		{
 			if (!Application.isPlaying)
 				return;
-		
-			if (component != null)
-			{
-				min = monitor.Min;
-				max = monitor.Max;
-			
-				foreach(var field in monitorInputFields)
-				{
-					System.Object instance = component;
-					Type instanceType = component.GetType();
 
-					for(int level = 0; level < field.field.Length; level++)
+			if (sampleMode == SampleMode.Update)
+			{
+				SampleFields();
+			}
+		}
+
+		public void FixedUpdate()
+		{
+			if (!Application.isPlaying)
+				return;
+
+			if (sampleMode == SampleMode.FixedUpdate)
+			{
+				SampleFields();
+			}
+		}
+
+		private void SampleFields()
+		{
+			if (component == null)
+				return;
+
+			min = monitor.Min;
+			max = monitor.Max;
+
+			foreach (var field in monitorInputFields)
+			{
+				Object instance = component;
+				Type instanceType = component.GetType();
+
+				for (int level = 0; level < field.field.Length; level++)
+				{
+					instance = TypeInspectors.Instance.GetTypeInspector(instanceType).GetValue(instance, field.field[level]);
+					if (instance == null)
 					{
-						instance = TypeInspectors.Instance.GetTypeInspector(instanceType).GetValue(instance, field.field[level]);
-						if (instance == null)
-						{
-							break;
-						}
-						else
-						{
-							instanceType = instance.GetType();
-						}
+						break;
+					}
+					else
+					{
+						instanceType = instance.GetType();
+					}
+				}
+
+				if (instance != null)
+				{
+					if (instanceType == typeof(float))
+					{
+						field.monitorInput.Sample((float)instance);
 					}
 
-					if (instance != null)
+					if (instanceType == typeof(double))
 					{
-						if(instanceType == typeof(float))
-						{
-							field.monitorInput.Sample((float) instance);
-						}
+						field.monitorInput.Sample(Convert.ToSingle((double)instance));
+					}
 
-						if(instanceType == typeof(double))
-						{
-							field.monitorInput.Sample(Convert.ToSingle((double) instance));
-						}
+					if (instanceType == typeof(int))
+					{
+						field.monitorInput.Sample((int)instance);
+					}
 
-						if(instanceType == typeof(int))
-						{
-							field.monitorInput.Sample((int) instance);
-						}
-
-						if(instanceType == typeof(bool))
-						{
-							field.monitorInput.Sample((bool) instance ? 1f : 0f);
-						}
+					if (instanceType == typeof(bool))
+					{
+						field.monitorInput.Sample((bool)instance ? 1f : 0f);
 					}
 				}
 			}
@@ -191,11 +207,12 @@ namespace MonitorComponents
 
 		private void RemoveMonitor()
 		{
-			if(monitor != null)
+			if (monitor != null)
 			{
 				monitor.Close();
 				monitor = null;
 			}
 		}
 	}
+
 }

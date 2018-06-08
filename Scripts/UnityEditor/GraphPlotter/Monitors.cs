@@ -1,23 +1,17 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
+﻿using System.Collections.Generic;
 
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	public class Monitors
 	{
 		private static Monitors instance = null;
 
 		private List<Monitor> monitors = new List<Monitor>();
 
-		public static Monitors Instance 
+		public static Monitors Instance
 		{
-			get 
+			get
 			{
 				if (instance == null)
 				{
@@ -40,10 +34,11 @@ namespace MonitorComponents
 
 		public List<Monitor> All
 		{
-			get 
+			get
 			{
 				return monitors;
 			}
 		}
 	}
+
 }

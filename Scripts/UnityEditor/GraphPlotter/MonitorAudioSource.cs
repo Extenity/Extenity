@@ -1,27 +1,21 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor AudioSource")]
 	[ExecuteInEditMode]
 	public class MonitorAudioSource : MonoBehaviour
 	{
 		// volume
 		public bool showVolume = false;
-		
+
 		public Monitor monitor_volume;
 		private MonitorInput monitorInput_volume;
 
 		// pitch
 		public bool showPitch = false;
-		
+
 		public ValueAxisMode pitchMode = ValueAxisMode.Expansive;
 		public float pitchMin = 0f;
 		public float pitchMax = 2f;
@@ -85,7 +79,7 @@ namespace MonitorComponents
 
 				if (monitorInput_volume == null)
 				{
-					monitorInput_volume = new MonitorInput(monitor_volume, "volume", Colors.red);
+					monitorInput_volume = new MonitorInput(monitor_volume, "volume", PlotColors.Red);
 				}
 			}
 			else
@@ -120,7 +114,7 @@ namespace MonitorComponents
 
 				if (monitorInput_pitch == null)
 				{
-					monitorInput_pitch = new MonitorInput(monitor_pitch, "pitch", Colors.green);
+					monitorInput_pitch = new MonitorInput(monitor_pitch, "pitch", PlotColors.Green);
 				}
 			}
 			else
@@ -154,7 +148,7 @@ namespace MonitorComponents
 
 				if (monitorInput_isPlaying == null)
 				{
-					monitorInput_isPlaying = new MonitorInput(monitor_isPlaying, "isPlaying", Colors.red);
+					monitorInput_isPlaying = new MonitorInput(monitor_isPlaying, "isPlaying", PlotColors.Red);
 				}
 			}
 			else
@@ -200,7 +194,7 @@ namespace MonitorComponents
 		public void OnEnable()
 		{
 			UpdateMonitors();
-		}	
+		}
 
 		public void OnDisable()
 		{
@@ -214,23 +208,24 @@ namespace MonitorComponents
 
 		public void RemoveMonitors()
 		{
-			if(monitor_volume != null)
+			if (monitor_volume != null)
 			{
 				monitor_volume.Close();
 				monitor_volume = null;
 			}
 
-			if(monitor_pitch != null)
+			if (monitor_pitch != null)
 			{
 				monitor_pitch.Close();
 				monitor_pitch = null;
 			}
 
-			if(monitor_isPlaying != null)
+			if (monitor_isPlaying != null)
 			{
 				monitor_isPlaying.Close();
 				monitor_isPlaying = null;
 			}
 		}
 	}
+
 }

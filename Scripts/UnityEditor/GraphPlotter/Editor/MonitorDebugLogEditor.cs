@@ -1,18 +1,11 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
 using UnityEditor;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	[CustomEditor(typeof(MonitorDebugLog))]
-	public class MonitorDebugLogEditor : Editor
+	public class MonitorDebugLogEditor : UnityEditor.Editor
 	{
 		public override void OnInspectorGUI()
 		{
@@ -32,7 +25,8 @@ namespace MonitorComponents
 			monitorDebugLog.UpdateMonitors();
 
 			if (GUI.changed)
-	            EditorUtility.SetDirty (target);
+				EditorUtility.SetDirty(target);
 		}
 	}
+
 }

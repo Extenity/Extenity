@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using MonitorComponents;
+﻿using Extenity.UnityEditorToolbox.GraphPlotting;
+using UnityEngine;
 
 namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 {

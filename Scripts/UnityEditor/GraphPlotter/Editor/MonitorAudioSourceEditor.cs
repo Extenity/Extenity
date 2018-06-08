@@ -1,18 +1,11 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
 using UnityEditor;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	[CustomEditor(typeof(MonitorAudioSource))]
-	public class MonitorAudioSourceEditor : Editor
+	public class MonitorAudioSourceEditor : UnityEditor.Editor
 	{
 		public override void OnInspectorGUI()
 		{
@@ -26,7 +19,7 @@ namespace MonitorComponents
 				Undo.RecordObject(monitorAudioSource, "Toggle volume");
 				monitorAudioSource.showVolume = newShowVolume;
 			}
-			
+
 			bool newShowPitch = EditorGUILayout.ToggleLeft(" Pitch", monitorAudioSource.showPitch);
 			if (newShowPitch != monitorAudioSource.showPitch)
 			{
@@ -69,8 +62,8 @@ namespace MonitorComponents
 			monitorAudioSource.UpdateMonitors();
 
 			if (GUI.changed)
-	            EditorUtility.SetDirty (target);
-
+				EditorUtility.SetDirty(target);
 		}
 	}
+
 }

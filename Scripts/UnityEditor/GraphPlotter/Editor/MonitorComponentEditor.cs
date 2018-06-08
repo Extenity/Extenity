@@ -1,24 +1,17 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	[CustomEditor(typeof(MonitorComponent))]
-	public class MonitorComponentEditor : Editor
+	public class MonitorComponentEditor : UnityEditor.Editor
 	{
 		private int componentIndex = -1;
 
 		private List<string> addField = new List<string>();
-
-		private Color[] colors = new Color[] { Colors.green, Colors.blue, Colors.purple, Colors.yellow, Colors.red };
 
 		private TypeInspectors inspectors;
 
@@ -29,24 +22,19 @@ namespace MonitorComponents
 
 		public override void OnInspectorGUI()
 		{
-			MonitorComponent monitorComponent = target as MonitorComponent;
-			GameObject go = monitorComponent.gameObject;
+			var monitorComponent = target as MonitorComponent;
+			var go = monitorComponent.gameObject;
 
-			List<Component> components = new List<Component>(go.GetComponents<Component>());
-
-			components.RemoveAll((Component c) => {
-				string _namespace = c.GetType().Namespace;
-				return (_namespace == "UnityEngine") || (_namespace == "MonitorComponents");
-			});
+			var components = new List<Component>(go.GetComponents<Component>());
 
 			// find index of (previously) selected component.
-			if(monitorComponent.component != null)
+			if (monitorComponent.component != null)
 			{
 				componentIndex = -1;
 
-				for(int i = 0; i < components.Count; i++)
+				for (int i = 0; i < components.Count; i++)
 				{
-					if(components[i] == monitorComponent.component)
+					if (components[i] == monitorComponent.component)
 					{
 						componentIndex = i;
 						break;
@@ -55,10 +43,10 @@ namespace MonitorComponents
 			}
 
 			// populate list of component names. 
-			string[] componentsStrings = new string[components.Count];
-			for(int i = 0; i < components.Count; i++)
+			var componentsStrings = new string[components.Count];
+			for (int i = 0; i < components.Count; i++)
 			{
-				componentsStrings[i] = components[i].GetType().Name;
+				componentsStrings[i] = i + ". " + components[i].GetType().Name;
 			}
 
 			EditorGUILayout.Space();
@@ -90,6 +78,14 @@ namespace MonitorComponents
 				}
 			}
 
+			// Sample Mode
+			var newSampleMode = (MonitorComponent.SampleMode)EditorGUILayout.EnumPopup("Sample time", monitorComponent.sampleMode);
+			if (newSampleMode != monitorComponent.sampleMode)
+			{
+				Undo.RecordObject(target, "Change sample time");
+				monitorComponent.sampleMode = newSampleMode;
+			}
+
 			EditorGUILayout.Space();
 
 			if (componentIndex > -1 && components.Count > 0)
@@ -101,27 +97,27 @@ namespace MonitorComponents
 				monitorComponent.component = null;
 			}
 
-			if(monitorComponent.component != null)
+			if (monitorComponent.component != null)
 			{
 				EditorGUILayout.LabelField("Fields");
 
-				EditorGUILayout.BeginHorizontal ("Box");
+				EditorGUILayout.BeginHorizontal("Box");
 				EditorGUILayout.BeginVertical();
 
-				for(int j = 0; j < monitorComponent.monitorInputFields.Count; j++)
+				for (int j = 0; j < monitorComponent.monitorInputFields.Count; j++)
 				{
 					var field = monitorComponent.monitorInputFields[j];
 
 					EditorGUILayout.BeginHorizontal();
-		
+
 					GUILayout.Label(field.FieldName + " : " + TypeInspectors.GetReadableName(field.fieldTypeName));
-					Color newColor = EditorGUILayout.ColorField(field.color, GUILayout.Width(40));
+					var newColor = EditorGUILayout.ColorField(field.color, GUILayout.Width(40));
 					if (newColor != field.color)
 					{
 						Undo.RecordObject(monitorComponent, "Change field color");
-						field.color = newColor; 
+						field.color = newColor;
 					}
-		
+
 					EditorGUILayout.Space();
 
 					if (GUILayout.Button("remove", GUILayout.Width(60)))
@@ -141,15 +137,15 @@ namespace MonitorComponents
 
 				EditorGUILayout.Space();
 
-				Type instanceType = monitorComponent.component.GetType();
+				var instanceType = monitorComponent.component.GetType();
 
 				int level = 0;
 
 				while (instanceType != null && !inspectors.IsSampleType(instanceType))
 				{
-					TypeInspectors.ITypeInspector inspector = inspectors.GetTypeInspector(instanceType);
-					string[] fieldNameStrings = inspector.FieldNameStrings;
-					TypeInspectors.Field[] fields = inspector.Fields;
+					var inspector = inspectors.GetTypeInspector(instanceType);
+					var fieldNameStrings = inspector.FieldNameStrings;
+					var fields = inspector.Fields;
 
 					int selectedIndex = -1;
 
@@ -173,7 +169,7 @@ namespace MonitorComponents
 						}
 
 						instanceType = fields[selectedIndex].type;
-					
+
 						level++;
 					}
 					else
@@ -187,8 +183,8 @@ namespace MonitorComponents
 					var field = new MonitorComponent.MonitorInputField();
 					field.field = addField.ToArray();
 					field.fieldTypeName = instanceType.FullName;
-					field.color = colors[monitorComponent.monitorInputFields.Count % colors.Length];
-					
+					field.color = PlotColors.AllColors[monitorComponent.monitorInputFields.Count % PlotColors.AllColors.Length];
+
 					Undo.RecordObject(monitorComponent, "Add field");
 					monitorComponent.monitorInputFields.Add(field);
 
@@ -209,7 +205,8 @@ namespace MonitorComponents
 			monitorComponent.UpdateMonitors();
 
 			if (GUI.changed)
-	            EditorUtility.SetDirty (target);
-	    }
+				EditorUtility.SetDirty(target);
+		}
 	}
+
 }

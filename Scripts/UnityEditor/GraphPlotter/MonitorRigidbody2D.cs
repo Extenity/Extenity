@@ -1,21 +1,13 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
-using System.Collections;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor Rigidbody2D")]
 	[ExecuteInEditMode]
-	public class MonitorRigidbody2D : MonoBehaviour 
+	public class MonitorRigidbody2D : MonoBehaviour
 	{
 		public enum RotationFormat { Euler, Quaternion };
-		public enum SampleMode { Update, FixedUpdate };
-
-		public SampleMode sampleMode = SampleMode.FixedUpdate;
 
 		// position
 		public bool showPosition = false;
@@ -51,7 +43,7 @@ namespace MonitorComponents
 		public float velocityMax = float.NegativeInfinity;
 
 		public Monitor monitor_velocity;
-		private MonitorInput monitorInput_velocity_x; 
+		private MonitorInput monitorInput_velocity_x;
 		private MonitorInput monitorInput_velocity_y;
 
 		// angular velocity.
@@ -83,7 +75,7 @@ namespace MonitorComponents
 			if (Application.isPlaying)
 			{
 				rigidbody2D = GetComponent<Rigidbody2D>();
-				
+
 				if (rigidbody2D == null)
 				{
 					Debug.LogWarning("MonitorAudioSource requires an Rigidbody2D component.", this);
@@ -131,7 +123,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_x == null)
 				{
-					monitorInput_position_x = new MonitorInput(monitor_position, "x", Colors.red);
+					monitorInput_position_x = new MonitorInput(monitor_position, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -148,7 +140,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_position_y == null)
 				{
-					monitorInput_position_y = new MonitorInput(monitor_position, "y", Colors.green);
+					monitorInput_position_y = new MonitorInput(monitor_position, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -190,7 +182,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_rotation == null)
 				{
-					monitorInput_rotation = new MonitorInput(monitor_rotation, "angle", Colors.red);
+					monitorInput_rotation = new MonitorInput(monitor_rotation, "angle", PlotColors.Red);
 				}
 			}
 			else
@@ -232,7 +224,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_velocity_x == null)
 				{
-					monitorInput_velocity_x = new MonitorInput(monitor_velocity, "x", Colors.red);
+					monitorInput_velocity_x = new MonitorInput(monitor_velocity, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -249,7 +241,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_velocity_y == null)
 				{
-					monitorInput_velocity_y = new MonitorInput(monitor_velocity, "y", Colors.green);
+					monitorInput_velocity_y = new MonitorInput(monitor_velocity, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -291,7 +283,7 @@ namespace MonitorComponents
 			{
 				if (monitorInput_angularVelocity == null)
 				{
-					monitorInput_angularVelocity = new MonitorInput(monitor_angularVelocity, "angular velocity", Colors.red);
+					monitorInput_angularVelocity = new MonitorInput(monitor_angularVelocity, "angular velocity", PlotColors.Red);
 				}
 			}
 			else
@@ -303,27 +295,13 @@ namespace MonitorComponents
 				}
 			}
 		}
-		
-		public void FixedUpdate () 
+
+		public void FixedUpdate()
 		{
 			if (!Application.isPlaying)
 				return;
 
-			if (sampleMode == SampleMode.FixedUpdate)
-			{
-				Sample();
-			}
-		}
-
-		public void Update()
-		{
-			if (!Application.isPlaying)
-				return;
-
-			if (sampleMode == SampleMode.Update)
-			{
-				Sample();
-			}	
+			Sample();
 		}
 
 		private void Sample()
@@ -415,7 +393,7 @@ namespace MonitorComponents
 		public void OnEnable()
 		{
 			UpdateMonitors();
-		}	
+		}
 
 		public void OnDisable()
 		{
@@ -429,29 +407,30 @@ namespace MonitorComponents
 
 		public void RemoveMonitors()
 		{
-			if(monitor_position != null)
+			if (monitor_position != null)
 			{
 				monitor_position.Close();
 				monitor_position = null;
 			}
 
-			if(monitor_rotation != null)
+			if (monitor_rotation != null)
 			{
 				monitor_rotation.Close();
 				monitor_rotation = null;
 			}
 
-			if(monitor_velocity != null)
+			if (monitor_velocity != null)
 			{
 				monitor_velocity.Close();
 				monitor_velocity = null;
 			}
 
-			if(monitor_angularVelocity != null)
+			if (monitor_angularVelocity != null)
 			{
 				monitor_angularVelocity.Close();
 				monitor_angularVelocity = null;
 			}
 		}
 	}
+
 }

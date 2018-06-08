@@ -1,32 +1,17 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
 using UnityEditor;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
+
 	[CustomEditor(typeof(MonitorRigidbody))]
-	public class MonitorRigidbodyEditor : Editor
+	public class MonitorRigidbodyEditor : UnityEditor.Editor
 	{
 		public override void OnInspectorGUI()
 		{
 			MonitorRigidbody monitorRigidbody = target as MonitorRigidbody;
 
 			EditorGUILayout.Space();
-
-			// Sample Mode
-			MonitorRigidbody.SampleMode newSampleMode = (MonitorRigidbody.SampleMode) EditorGUILayout.EnumPopup("Sample time", monitorRigidbody.sampleMode);
-			if (newSampleMode != monitorRigidbody.sampleMode)
-			{
-				Undo.RecordObject(target, "Change sample time");
-				monitorRigidbody.sampleMode = newSampleMode;
-			}
 
 			// Position
 			bool newShowPosition = EditorGUILayout.ToggleLeft(" Position", monitorRigidbody.showPosition);
@@ -127,7 +112,7 @@ namespace MonitorComponents
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
-				
+
 				float newMin, newMax;
 				Utils.AxisSettings(monitorRigidbody, ref monitorRigidbody.rotationMode, monitorRigidbody.rotationMin, out newMin, monitorRigidbody.rotationMax, out newMax);
 				if (newMin != monitorRigidbody.rotationMin)
@@ -287,7 +272,8 @@ namespace MonitorComponents
 			monitorRigidbody.UpdateMonitors();
 
 			if (GUI.changed)
-	            EditorUtility.SetDirty (target);
+				EditorUtility.SetDirty(target);
 		}
 	}
+
 }

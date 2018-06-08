@@ -1,16 +1,11 @@
-﻿// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
+﻿using UnityEngine;
 
-using UnityEngine;
-using System.Collections;
-
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
+
 	[AddComponentMenu("Monitor Components/Monitor Debug.Log")]
 	[ExecuteInEditMode]
-	public class MonitorDebugLog : MonoBehaviour 
+	public class MonitorDebugLog : MonoBehaviour
 	{
 		public string filterPrefix;
 		private Monitor monitor;
@@ -23,16 +18,17 @@ namespace MonitorComponents
 			}
 		}
 
-		void Start() 
+		void Start()
 		{
 			UpdateMonitors();
 
 			if (Application.isPlaying)
 			{
-				LogCallbackDispatcher.Instance.Add(LogCallback);
+				Application.logMessageReceived -= LogCallback;
+				Application.logMessageReceived += LogCallback;
 			}
 		}
-		
+
 		public void UpdateMonitors()
 		{
 			bool componentIsActive = enabled && gameObject.activeInHierarchy;
@@ -45,9 +41,9 @@ namespace MonitorComponents
 					monitor.GameObject = gameObject;
 				}
 
-				if(filterPrefix != string.Empty)
+				if (filterPrefix != string.Empty)
 				{
-					monitor.Name = "Debug.Log (prefix = '"+ filterPrefix + "')";
+					monitor.Name = "Debug.Log (prefix = '" + filterPrefix + "')";
 				}
 			}
 			else
@@ -65,11 +61,11 @@ namespace MonitorComponents
 		{
 			if (!Application.isPlaying)
 				return;
-				
+
 			monitor.MoveForward(Time.time);
 		}
 
-		void LogCallback(string logString, string stackTrace, LogType type) 
+		void LogCallback(string logString, string stackTrace, LogType type)
 		{
 			if (filterPrefix != string.Empty)
 			{
@@ -98,16 +94,18 @@ namespace MonitorComponents
 
 		public void OnDestroy()
 		{
+			Application.logMessageReceived -= LogCallback;
 			RemoveMonitor();
 		}
 
 		private void RemoveMonitor()
 		{
-			if(monitor != null)
+			if (monitor != null)
 			{
 				monitor.Close();
 				monitor = null;
 			}
 		}
 	}
+
 }

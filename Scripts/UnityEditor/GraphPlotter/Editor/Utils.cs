@@ -1,25 +1,21 @@
-// ============================================================================
-//   Monitor Components v. 1.04 - written by Peter Bruun (twitter.com/ptrbrn)
-//   More info on Asset Store: http://u3d.as/9MW
-// ============================================================================
-
 using UnityEngine;
 using UnityEditor;
 
-namespace MonitorComponents 
+namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
-	public class Utils 
+
+	public class Utils
 	{
 		public static void AxisSettings(Object undoObject, ref ValueAxisMode mode, float inMin, out float outMin, float inMax, out float outMax)
 		{
-			ValueAxisMode newMode = (ValueAxisMode) EditorGUILayout.EnumPopup("Axis mode ", mode);
+			var newMode = (ValueAxisMode)EditorGUILayout.EnumPopup("Axis mode ", mode);
 
 			if (newMode != mode)
 			{
 				Undo.RecordObject(undoObject, "Changed axis mode");
 				if (newMode == ValueAxisMode.Fixed &&
-					inMin == float.PositiveInfinity &&
-					inMax == float.NegativeInfinity)
+					float.IsPositiveInfinity(inMin) &&
+					float.IsNegativeInfinity(inMax))
 				{
 					inMin = -1f;
 					inMax = 1f;
@@ -31,7 +27,7 @@ namespace MonitorComponents
 			if (newMode == ValueAxisMode.Adaptive)
 			{
 				outMin = float.PositiveInfinity;
-				outMax = float.NegativeInfinity;	
+				outMax = float.NegativeInfinity;
 			}
 			else
 			{
@@ -56,17 +52,18 @@ namespace MonitorComponents
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			
-			if(GUILayout.Button("Open monitors...", GUILayout.Width(110)))
+
+			if (GUILayout.Button("Open monitors...", GUILayout.Width(110)))
 			{
-				MonitorsEditorWindow window = (MonitorsEditorWindow) EditorWindow.GetWindow(typeof(MonitorsEditorWindow));
+				MonitorsEditorWindow window = (MonitorsEditorWindow)EditorWindow.GetWindow(typeof(MonitorsEditorWindow));
 				window.Filter = gameObject;
 				window.ShowNotification(new GUIContent("Monitors for " + gameObject.name));
 			}
-			
+
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Space();
 			EditorGUILayout.Space();
 		}
 	}
+
 }
