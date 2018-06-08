@@ -17,6 +17,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			public static readonly string LegendWidth = "GraphPlotter.LegendWidth";
 		}
 
+		//private const int DefaultWindowWidth = 1200;
+		//private const int DefaultWindowHeight = 800;
+
 		private const int MinimumGraphHeight = 100;
 		private const int MaximumGraphHeight = 500;
 
@@ -25,73 +28,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private const float TimeWindowForSubSecondLinesToAppear = 3f;
 		private const float TimeWindowForSubSecondLinesToGetFullyOpaque = 2f;
 
-		#endregion
-
-		private Texture2D topTexture;
-		private Texture2D leftTexture;
-
-		private float scrollPositionY = 0f;
-		private float scrollPositionTime = 0f;
-		private float scrollPositionTimeMax = 0f;
-
-		private float totalGraphHeight;
-		private float legendTextOffset = 10f;
-		private float extraScrollSpace = 30f;
-
-		private Channel selectedChannel;
-
-		// static sizes.
-		private float headerHeight = 30f;
-		private float extraSpace = 20f;
-		private float deselectionAlpha = 0.2f;
-
-		// dynamic sizes.
-		private float width, height;
-		private float monitorWidth;
-
-		// Graph height resizing
-		private bool IsResizingGraphHeight = false;
-		private int GraphHeightBeforeResizing;
-		private float GraphHeightResizeDelta = 0f;
-		private float MouseYPositionBeforeResizingGraphHeight;
-		private int HeightResizingGraphIndex;
-
-		private bool legendResize = false;
-
-		private bool wasInPauseMode = false;
-
-		private string[] interpolationTypes = { "Linear", "Flat" };
-
-		private Monitor timeIntervalSelectionMonitor = null;
-		private float timeIntervalStartTime;
-		private float timeIntervalEndTime;
-
-		private GameObject gameObjectFilter = null;
-
-		// Saved editor settings.
-		private float timeWindow_exp;
-		private int interpolationTypeIndex;
-		private int graphHeight;
-		private int legendWidth;
-
-		// Colors
-		private Color backgroundColor;
-
-		private Color legendBackgroundColor_light;
-		private Color legendBackgroundColor_dark;
-
-		private Color settingsHeaderBackgroundColor_light;
-		private Color settingsHeaderBackgroundColor_dark;
-
-		private Color legendTextColorSelected_dark;
-		private Color legendTextColorSelected_light;
-
-		private Color legendTextColorUnselected_dark;
-		private Color legendTextColorUnselected_light;
-
-		private Color channelHeaderColor_dark;
-		private Color channelHeaderColor_light;
-
+		// Style
+		private static readonly Color backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
+		private static readonly Color legendBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+		private static readonly Color legendBackgroundColor_dark = new Color(65f / 255f, 65f / 255f, 65f / 255f);
+		private static readonly Color settingsHeaderBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+		private static readonly Color settingsHeaderBackgroundColor_dark = new Color(58f / 255f, 58f / 255f, 58f / 255f);
+		private static readonly Color legendTextColorSelected_dark = new Color(1f, 1f, 1f, 1f);
+		private static readonly Color legendTextColorSelected_light = new Color(0f, 0f, 0f, 1f);
+		private static readonly Color legendTextColorUnselected_dark = new Color(1f, 1f, 1f, 0.5f);
+		private static readonly Color legendTextColorUnselected_light = new Color(0f, 0f, 0f, 0.5f);
+		private static readonly Color channelHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
+		private static readonly Color channelHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
 		private static readonly Color headerColor = new Color(0.7f, 0.7f, 0.7f);
 		private static readonly Color minMaxColor = new Color(1f, 1f, 1f, 0.2f);
 		private static readonly Color timeColor_dark = new Color(1f, 1f, 1f, 0.5f);
@@ -102,62 +50,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private static readonly Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
 
 		private GUIStyle headerStyle;
-		private GUIStyle minStyle, maxStyle;
+		private GUIStyle minStyle;
+		private GUIStyle maxStyle;
 		private GUIStyle timeIntervalSelectionStyle;
 		private GUIStyle timeStyle;
 		private GUIStyle valueTextStyle;
 		private GUIStyle simpleStyle;
 
-		private Vector3[] points = new Vector3[2000];
-		private Vector3[] arrowPoints = new Vector3[4];
-		private Vector3[] diamondPoints = new Vector3[5];
-		private Vector3[] horizontalLines = new Vector3[7];
-
-		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
-		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
-
-		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void Init()
+		private void CreateStyles()
 		{
-			GetWindow<MonitorsEditorWindow>();
-		}
-
-		public MonitorsEditorWindow() : base()
-		{
-			titleContent = new GUIContent("Graph Plotter");
-
-			wantsMouseMove = true;
-			width = 1000;
-			height = 900;
-
-			// Colors
-			backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
-
-			legendBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-			legendBackgroundColor_dark = new Color(65f / 255f, 65f / 255f, 65f / 255f);
-
-			settingsHeaderBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-			settingsHeaderBackgroundColor_dark = new Color(58f / 255f, 58f / 255f, 58f / 255f);
-
-			legendTextColorSelected_dark = new Color(1f, 1f, 1f, 1f);
-			legendTextColorSelected_light = new Color(0f, 0f, 0f, 1f);
-
-			legendTextColorUnselected_dark = new Color(1f, 1f, 1f, 0.5f);
-			legendTextColorUnselected_light = new Color(0f, 0f, 0f, 0.5f);
-
-			channelHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
-			channelHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
-		}
-
-		void OnEnable()
-		{
-			// Load settings
-			timeWindow_exp = EditorPrefs.GetFloat(EditorSettings.TimeWindowExp, 0.69897000433f);
-			interpolationTypeIndex = EditorPrefs.GetInt(EditorSettings.InterpolationType, 0);
-			graphHeight = EditorPrefs.GetInt(EditorSettings.GraphHeight, 140);
-			legendWidth = EditorPrefs.GetInt(EditorSettings.LegendWidth, 170);
-
-			// static styles
 			headerStyle = new GUIStyle();
 			headerStyle.normal.textColor = headerColor;
 
@@ -186,6 +87,85 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			simpleStyle.normal.textColor = Color.white;
 		}
 
+		#endregion
+
+		private Texture2D topTexture;
+		private Texture2D leftTexture;
+
+		private float scrollPositionY = 0f;
+		private float scrollPositionTime = 0f;
+		private float scrollPositionTimeMax = 0f;
+
+		private float totalGraphHeight;
+		private float legendTextOffset = 10f;
+		private float extraScrollSpace = 30f;
+
+		private Channel selectedChannel;
+
+		// static sizes.
+		private float headerHeight = 30f;
+		private float extraSpace = 20f;
+		private float deselectionAlpha = 0.2f;
+
+		// dynamic sizes.
+		private float monitorWidth;
+
+		// Graph height resizing
+		private bool IsResizingGraphHeight = false;
+		private int GraphHeightBeforeResizing;
+		private float GraphHeightResizeDelta = 0f;
+		private float MouseYPositionBeforeResizingGraphHeight;
+		private int HeightResizingGraphIndex;
+
+		private bool legendResize = false;
+
+		private bool wasInPauseMode = false;
+
+		private string[] interpolationTypes = { "Linear", "Flat" };
+
+		private Monitor timeIntervalSelectionMonitor = null;
+		private float timeIntervalStartTime;
+		private float timeIntervalEndTime;
+
+		private GameObject gameObjectFilter = null;
+
+		// Saved editor settings.
+		private float timeWindow_exp;
+		private int interpolationTypeIndex;
+		private int graphHeight;
+		private int legendWidth;
+
+		private Vector3[] points = new Vector3[2000];
+		private Vector3[] arrowPoints = new Vector3[4];
+		private Vector3[] diamondPoints = new Vector3[5];
+		private Vector3[] horizontalLines = new Vector3[7];
+
+		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
+		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
+
+		[MenuItem("Window/Graph Plotter _#%g")]
+		private static void Init()
+		{
+			GetWindow<MonitorsEditorWindow>();
+		}
+
+		private void Awake()
+		{
+			titleContent = new GUIContent("Graph Plotter");
+			wantsMouseMove = true;
+		}
+
+		private void OnEnable()
+		{
+			// Load settings
+			timeWindow_exp = EditorPrefs.GetFloat(EditorSettings.TimeWindowExp, 0.69897000433f);
+			interpolationTypeIndex = EditorPrefs.GetInt(EditorSettings.InterpolationType, 0);
+			graphHeight = EditorPrefs.GetInt(EditorSettings.GraphHeight, 140);
+			legendWidth = EditorPrefs.GetInt(EditorSettings.LegendWidth, 170);
+
+			CreateStyles();
+		}
+
 		public void OnGUI()
 		{
 			// Make sure content color is sane.
@@ -196,7 +176,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			timeStyle.normal.textColor = useProSkin ? timeColor_dark : timeColor_light;
 
 			// textures (must check this in every OnGUI for some reason).
-
 			if (topTexture == null)
 			{
 				topTexture = new Texture2D(1, 2);
@@ -206,7 +185,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				topTexture.SetPixel(0, 0, new Color(32f / 255f, 32f / 255f, 32f / 255f, 0f));
 				topTexture.Apply();
 			}
-
 			if (leftTexture == null)
 			{
 				leftTexture = new Texture2D(2, 1);
@@ -218,8 +196,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// calculate dynamic sizes.
-			width = position.width;
-			height = position.height;
+			var width = position.width;
+			var height = position.height;
 			monitorWidth = width - legendWidth - 5f;
 
 			totalGraphHeight = graphHeight - headerHeight - extraSpace;
@@ -241,7 +219,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			mousePosition.x = Mathf.Min(mousePosition.x, width);
 
-			bool isInPauseMode = (EditorApplication.isPlaying && EditorApplication.isPaused);
+			var isInPauseMode = EditorApplication.isPlaying && EditorApplication.isPaused;
 
 			if (!isInPauseMode)
 			{
@@ -251,7 +229,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (e.type == EventType.MouseDown &&
 				mousePosition.x > legendWidth &&
-				(mousePosition.x < (width - 14f)) &&
+				mousePosition.x < (width - 14f) &&
 				mousePosition.y > settingsRect.height)
 			{
 				Debug.Break();
