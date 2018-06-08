@@ -17,9 +17,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			public const string LegendWidth = "GraphPlotter.LegendWidth";
 		}
 
+		private string[] InterpolationTypes = { "Linear", "Flat" };
+
 		//private const int DefaultWindowWidth = 1200;
 		//private const int DefaultWindowHeight = 800;
 
+		// Graph sizing
+		private const float SpaceAboveGraph = 30f;
+		private const float SpaceBelowGraph = 20f;
 		private const int MinimumGraphHeight = 100;
 		private const int MaximumGraphHeight = 500;
 
@@ -28,7 +33,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private const float TimeWindowForSubSecondLinesToAppear = 3f;
 		private const float TimeWindowForSubSecondLinesToGetFullyOpaque = 2f;
 
-		// Style
+		// Colors and Style
+		private const float DeselectedChannelAlpha = 0.02f;
 		private Color backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
 		private Color legendBackgroundColor;
 		private Color legendBackgroundColor_Free = new Color(222f / 255f, 222f / 255f, 222f / 255f);
@@ -128,11 +134,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private Channel selectedChannel;
 
-		// static sizes.
-		private float headerHeight = 30f;
-		private float extraSpace = 20f;
-		private float deselectionAlpha = 0.2f;
-
 		// dynamic sizes.
 		private float monitorWidth;
 
@@ -146,8 +147,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private bool legendResize = false;
 
 		private bool wasInPauseMode = false;
-
-		private string[] interpolationTypes = { "Linear", "Flat" };
 
 		private Monitor timeIntervalSelectionMonitor = null;
 		private float timeIntervalStartTime;
@@ -243,7 +242,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var height = position.height;
 			monitorWidth = width - legendWidth - 5f;
 
-			totalGraphHeight = graphHeight - headerHeight - extraSpace;
+			totalGraphHeight = graphHeight - SpaceAboveGraph - SpaceBelowGraph;
 
 			// settings header (prelude)
 			var settingsRect = new Rect(0f, 0f, position.width, 25f);
@@ -311,7 +310,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				var monitor = VisiblePlotters[i];
 
 				var monitorRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, monitorWidth, graphHeight);
-				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, totalGraphHeight - 5);
+				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + SpaceAboveGraph, monitorRect.width - 20, totalGraphHeight - 5);
 
 				var span = monitor.Max - monitor.Min;
 
@@ -475,7 +474,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					foreach (var channel in monitor.Channels)
 					{
 						var deselectedColor = channel.Color;
-						deselectedColor.a = deselectionAlpha;
+						deselectedColor.a = DeselectedChannelAlpha;
 
 						var color = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
 
@@ -615,7 +614,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						var channel = monitor.Channels[j];
 
 						var deselectedColor = channel.Color;
-						deselectedColor.a = deselectionAlpha;
+						deselectedColor.a = DeselectedChannelAlpha;
 
 						var channelColor = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
 
@@ -912,9 +911,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 			}
 
-			gameObjects.Sort((GameObject a, GameObject b) =>
+			gameObjects.Sort((a, b) =>
 			{
-				int nameDelta = a.name.CompareTo(b.name);
+				var nameDelta = a.name.CompareTo(b.name);
 				if (nameDelta == 0)
 				{
 					return a.GetInstanceID().CompareTo(b.GetInstanceID());
@@ -999,7 +998,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUILayout.Space(5f);
 			GUILayout.Label("Interpolation", GUILayout.Width(85));
 			EditorGUI.BeginChangeCheck();
-			interpolationTypeIndex = EditorGUILayout.Popup(interpolationTypeIndex, interpolationTypes, GUILayout.Width(120));
+			interpolationTypeIndex = EditorGUILayout.Popup(interpolationTypeIndex, InterpolationTypes, GUILayout.Width(120));
 			if (EditorGUI.EndChangeCheck())
 			{
 				EditorPrefs.SetInt(EditorSettings.InterpolationType, interpolationTypeIndex);
