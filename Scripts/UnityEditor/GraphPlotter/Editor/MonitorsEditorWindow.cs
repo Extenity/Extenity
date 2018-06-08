@@ -11,10 +11,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private static class EditorSettings
 		{
-			public static readonly string TimeWindowExp = "GraphPlotter.TimeWindowExp";
-			public static readonly string InterpolationType = "GraphPlotter.InterpolationType";
-			public static readonly string GraphHeight = "GraphPlotter.GraphHeight";
-			public static readonly string LegendWidth = "GraphPlotter.LegendWidth";
+			public const string TimeWindowExp = "GraphPlotter.TimeWindowExp";
+			public const string InterpolationType = "GraphPlotter.InterpolationType";
+			public const string GraphHeight = "GraphPlotter.GraphHeight";
+			public const string LegendWidth = "GraphPlotter.LegendWidth";
 		}
 
 		//private const int DefaultWindowWidth = 1200;
@@ -29,25 +29,31 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private const float TimeWindowForSubSecondLinesToGetFullyOpaque = 2f;
 
 		// Style
-		private static readonly Color backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
-		private static readonly Color legendBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-		private static readonly Color legendBackgroundColor_dark = new Color(65f / 255f, 65f / 255f, 65f / 255f);
-		private static readonly Color settingsHeaderBackgroundColor_light = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-		private static readonly Color settingsHeaderBackgroundColor_dark = new Color(58f / 255f, 58f / 255f, 58f / 255f);
-		private static readonly Color legendTextColorSelected_dark = new Color(1f, 1f, 1f, 1f);
-		private static readonly Color legendTextColorSelected_light = new Color(0f, 0f, 0f, 1f);
-		private static readonly Color legendTextColorUnselected_dark = new Color(1f, 1f, 1f, 0.5f);
-		private static readonly Color legendTextColorUnselected_light = new Color(0f, 0f, 0f, 0.5f);
-		private static readonly Color channelHeaderColor_dark = new Color(0.5f, 0.5f, 0.5f);
-		private static readonly Color channelHeaderColor_light = new Color(0.2f, 0.2f, 0.2f);
-		private static readonly Color headerColor = new Color(0.7f, 0.7f, 0.7f);
-		private static readonly Color minMaxColor = new Color(1f, 1f, 1f, 0.2f);
-		private static readonly Color timeColor_dark = new Color(1f, 1f, 1f, 0.5f);
-		private static readonly Color timeColor_light = new Color(0f, 0f, 0f, 0.5f);
-		private static readonly Color zeroLineColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
-		private static readonly Color timeLineColor = new Color(1f, 1f, 1f, 0.05f);
-		private static readonly Color SecondLinesColor = new Color(1f, 1f, 1f, 0.05f);
-		private static readonly Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
+		private Color backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
+		private Color legendBackgroundColor;
+		private Color legendBackgroundColor_Free = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+		private Color legendBackgroundColor_Pro = new Color(65f / 255f, 65f / 255f, 65f / 255f);
+		private Color settingsHeaderBackgroundColor;
+		private Color settingsHeaderBackgroundColor_Free = new Color(222f / 255f, 222f / 255f, 222f / 255f);
+		private Color settingsHeaderBackgroundColor_Pro = new Color(58f / 255f, 58f / 255f, 58f / 255f);
+		private Color legendTextColorSelected;
+		private Color legendTextColorSelected_Free = new Color(0f, 0f, 0f, 1f);
+		private Color legendTextColorSelected_Pro = new Color(1f, 1f, 1f, 1f);
+		private Color legendTextColorUnselected;
+		private Color legendTextColorUnselected_Free = new Color(0f, 0f, 0f, 0.5f);
+		private Color legendTextColorUnselected_Pro = new Color(1f, 1f, 1f, 0.5f);
+		private Color channelHeaderColor;
+		private Color channelHeaderColor_Free = new Color(0.2f, 0.2f, 0.2f);
+		private Color channelHeaderColor_Pro = new Color(0.5f, 0.5f, 0.5f);
+		private Color headerColor = new Color(0.7f, 0.7f, 0.7f);
+		private Color minMaxColor = new Color(1f, 1f, 1f, 0.2f);
+		private Color timeColor;
+		private Color timeColor_Free = new Color(0f, 0f, 0f, 0.5f);
+		private Color timeColor_Pro = new Color(1f, 1f, 1f, 0.5f);
+		private Color zeroLineColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+		private Color timeLineColor = new Color(1f, 1f, 1f, 0.05f);
+		private Color SecondLinesColor = new Color(1f, 1f, 1f, 0.05f);
+		private Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
 
 		private GUIStyle headerStyle;
 		private GUIStyle minStyle;
@@ -59,6 +65,25 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private void CreateStyles()
 		{
+			if (EditorGUIUtility.isProSkin)
+			{
+				legendBackgroundColor = legendBackgroundColor_Pro;
+				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_Pro;
+				legendTextColorSelected = legendTextColorSelected_Pro;
+				legendTextColorUnselected = legendTextColorUnselected_Pro;
+				channelHeaderColor = channelHeaderColor_Pro;
+				timeColor = timeColor_Pro;
+			}
+			else
+			{
+				legendBackgroundColor = legendBackgroundColor_Free;
+				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_Free;
+				legendTextColorSelected = legendTextColorSelected_Free;
+				legendTextColorUnselected = legendTextColorUnselected_Free;
+				channelHeaderColor = channelHeaderColor_Free;
+				timeColor = timeColor_Free;
+			}
+
 			headerStyle = new GUIStyle();
 			headerStyle.normal.textColor = headerColor;
 
@@ -82,6 +107,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			timeIntervalSelectionStyle.normal.textColor = Color.white;
 
 			timeStyle = new GUIStyle();
+			timeStyle.normal.textColor = timeColor;
 
 			simpleStyle = new GUIStyle();
 			simpleStyle.normal.textColor = Color.white;
@@ -171,10 +197,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Make sure content color is sane.
 			GUI.contentColor = Color.white;
 
-			var useProSkin = EditorGUIUtility.isProSkin;
-
-			timeStyle.normal.textColor = useProSkin ? timeColor_dark : timeColor_light;
-
 			// textures (must check this in every OnGUI for some reason).
 			if (topTexture == null)
 			{
@@ -210,7 +232,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = backgroundColor;
 			GUI.DrawTexture(new Rect(0, settingsRect.height, width, height - settingsRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
-			GUI.color = useProSkin ? legendBackgroundColor_dark : legendBackgroundColor_light;
+			GUI.color = legendBackgroundColor;
 			GUI.DrawTexture(new Rect(0f, settingsRect.height, legendWidth, height - settingsRect.height), EditorGUIUtility.whiteTexture);
 
 			Event e = Event.current;
@@ -533,7 +555,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					}
 
 
-					GUI.color = useProSkin ? legendBackgroundColor_dark : legendBackgroundColor_light;
+					GUI.color = legendBackgroundColor;
 					GUI.DrawTexture(new Rect(0f, monitorRect.yMin, legendWidth, monitorRect.height + 5), EditorGUIUtility.whiteTexture);
 
 					// Game object name label.
@@ -542,7 +564,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					{
 						var gameObjectNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
 
-						GUI.color = useProSkin ? channelHeaderColor_dark : channelHeaderColor_light;
+						GUI.color = channelHeaderColor;
 						GUI.Label(gameObjectNameRect, monitor.GameObject.name, simpleStyle);
 
 						EditorGUIUtility.AddCursorRect(gameObjectNameRect, MouseCursor.Link);
@@ -606,7 +628,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						// Draw time marker.
 						if (j == 0 && selectedChannel == null)
 						{
-							GUI.color = useProSkin ? timeColor_dark : timeColor_light;
+							GUI.color = timeColor;
 
 							if (!float.IsNaN(time))
 							{
@@ -708,8 +730,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 
 						valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel
-							? (useProSkin ? legendTextColorSelected_dark : legendTextColorSelected_light)
-							: (useProSkin ? legendTextColorUnselected_dark : legendTextColorUnselected_light);
+							? legendTextColorSelected
+							: legendTextColorUnselected;
 						valueTextStyle.alignment = TextAnchor.MiddleLeft;
 						valueTextStyle.clipping = TextClipping.Clip;
 
@@ -849,7 +871,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Top settings
-			GUI.color = useProSkin ? settingsHeaderBackgroundColor_dark : settingsHeaderBackgroundColor_light;
+			GUI.color = settingsHeaderBackgroundColor;
 			GUI.DrawTexture(settingsRect, EditorGUIUtility.whiteTexture);
 			GUI.color = Color.white;
 
