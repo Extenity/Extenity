@@ -7,22 +7,34 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 	public class MonitorsEditorWindow : EditorWindow
 	{
-		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void Init()
+		#region Configuration
+
+		private static class EditorSettings
 		{
-			GetWindow<MonitorsEditorWindow>();
+			public static readonly string TimeWindowExp = "GraphPlotter.TimeWindowExp";
+			public static readonly string InterpolationType = "GraphPlotter.InterpolationType";
+			public static readonly string GraphHeight = "GraphPlotter.GraphHeight";
+			public static readonly string LegendWidth = "GraphPlotter.LegendWidth";
 		}
+
+		private const int MinimumGraphHeight = 100;
+		private const int MaximumGraphHeight = 500;
+
+		// Sub-second lines
+		private const float SubSecondLinesInterval = 0.1f;
+		private const float TimeWindowForSubSecondLinesToAppear = 3f;
+		private const float TimeWindowForSubSecondLinesToGetFullyOpaque = 2f;
+
+		#endregion
 
 		private Texture2D topTexture;
 		private Texture2D leftTexture;
-
-		private float subTimeTicks = 0.1f;
 
 		private float scrollPositionY = 0f;
 		private float scrollPositionTime = 0f;
 		private float scrollPositionTimeMax = 0f;
 
-		private float monitorGraphHeight;
+		private float totalGraphHeight;
 		private float legendTextOffset = 10f;
 		private float extraScrollSpace = 30f;
 
@@ -36,20 +48,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		// dynamic sizes.
 		private float width, height;
 		private float monitorWidth;
-		private int monitorHeight_min = 100;
-		private int monitorHeight_max = 500;
 
-		private bool monitorHeightResize = false;
-		private int monitorHeightResizeOldHeight;
-		private float monitorHeightResizeDelta = 0f;
-		private float monitorHeightResizeYstart;
-		private int monitorHeightResizeIndex;
+		// Graph height resizing
+		private bool IsResizingGraphHeight = false;
+		private int GraphHeightBeforeResizing;
+		private float GraphHeightResizeDelta = 0f;
+		private float MouseYPositionBeforeResizingGraphHeight;
+		private int HeightResizingGraphIndex;
 
 		private bool legendResize = false;
 
 		private bool wasInPauseMode = false;
 
-		private string[] interpolationTypes = { "Linear", "Piecewise constant" };
+		private string[] interpolationTypes = { "Linear", "Flat" };
 
 		private Monitor timeIntervalSelectionMonitor = null;
 		private float timeIntervalStartTime;
@@ -60,7 +71,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		// Saved editor settings.
 		private float timeWindow_exp;
 		private int interpolationTypeIndex;
-		private int monitorHeight;
+		private int graphHeight;
 		private int legendWidth;
 
 		// Colors
@@ -94,7 +105,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Color zeroLineColor;
 		private Color timeLineColor;
 		private Color timeTickColor;
-		private Color subTimeTickColor;
+		private static readonly Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
 
 		private GUIStyle headerStyle;
 		private GUIStyle minStyle, maxStyle;
@@ -111,16 +122,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
+		[MenuItem("Window/Graph Plotter _#%g")]
+		private static void Init()
+		{
+			GetWindow<MonitorsEditorWindow>();
+		}
+
 		public MonitorsEditorWindow() : base()
 		{
-			string titleText = "Monitors";
-
-			// EditorWindow.title is deprecated from Unity 5.1 and forward.
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0
-    		title = titleText;
-#else
-			titleContent = new GUIContent(titleText);
-#endif
+			titleContent = new GUIContent("Graph Plotter");
 
 			wantsMouseMove = true;
 			width = 1000;
@@ -151,11 +161,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			zeroLineColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
 			timeLineColor = new Color(1f, 1f, 1f, 0.05f);
 			timeTickColor = new Color(1f, 1f, 1f, 0.05f);
-			subTimeTickColor = new Color(1f, 1f, 1f, 0.04f);
 		}
 
 		void OnEnable()
 		{
+			// Load settings
+			timeWindow_exp = EditorPrefs.GetFloat(EditorSettings.TimeWindowExp, 0.69897000433f);
+			interpolationTypeIndex = EditorPrefs.GetInt(EditorSettings.InterpolationType, 0);
+			graphHeight = EditorPrefs.GetInt(EditorSettings.GraphHeight, 140);
+			legendWidth = EditorPrefs.GetInt(EditorSettings.LegendWidth, 170);
+
 			// static styles
 			headerStyle = new GUIStyle();
 			headerStyle.normal.textColor = headerColor;
@@ -168,9 +183,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			minStyle.normal.textColor = minMaxColor;
 			minStyle.alignment = TextAnchor.UpperRight;
 
-			GUIStyle timeWindowStyle = new GUIStyle();
-			timeWindowStyle.normal.textColor = Color.grey;
-			timeWindowStyle.alignment = TextAnchor.MiddleRight;
+			//timeWindowStyle = new GUIStyle();
+			//timeWindowStyle.normal.textColor = Color.grey;
+			//timeWindowStyle.alignment = TextAnchor.MiddleRight;
 
 			valueTextStyle = new GUIStyle();
 
@@ -189,12 +204,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			// Make sure content color is sane.
 			GUI.contentColor = Color.white;
-
-			// Load editor settings.
-			timeWindow_exp = EditorPrefs.GetFloat(TIME_WINDOW_EXP, 0.69897000433f);
-			interpolationTypeIndex = EditorPrefs.GetInt(INTERPOLATION_TYPE_INDEX, 0);
-			monitorHeight = EditorPrefs.GetInt(MONITOR_HEIGHT, 140);
-			legendWidth = EditorPrefs.GetInt(LEGEND_WIDTH, 170);
 
 			// Dynamic colors.
 			if (EditorGUIUtility.isProSkin)
@@ -245,7 +254,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			height = position.height;
 			monitorWidth = width - legendWidth - 5f;
 
-			monitorGraphHeight = monitorHeight - headerHeight - extraSpace;
+			totalGraphHeight = graphHeight - headerHeight - extraSpace;
 
 			// settings header (prelude)
 			Rect settingsRect = new Rect(0f, 0f, position.width, 25f);
@@ -313,8 +322,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				var monitor = VisiblePlotters[i];
 
-				var monitorRect = new Rect(legendWidth, i * monitorHeight + settingsRect.height - scrollPositionY, monitorWidth, monitorHeight);
-				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5);
+				var monitorRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, monitorWidth, graphHeight);
+				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, totalGraphHeight - 5);
 
 				var span = monitor.Max - monitor.Min;
 
@@ -329,10 +338,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					monitor.Min = float.PositiveInfinity;
 					monitor.Max = float.NegativeInfinity;
 
-					foreach (Channel channel in monitor.Channels)
+					for (var iChannel = 0; iChannel < monitor.Channels.Count; iChannel++)
 					{
 						float min, max;
-						channel.GetMinMax(minTime, maxTime, out min, out max);
+						monitor.Channels[iChannel].GetMinMax(minTime, maxTime, out min, out max);
 						monitor.Min = Mathf.Min(min, monitor.Min);
 						monitor.Max = Mathf.Max(max, monitor.Max);
 					}
@@ -354,28 +363,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				if (e.type == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
 				{
-					monitorHeightResize = true;
-					monitorHeightResizeIndex = i;
-					monitorHeightResizeOldHeight = monitorHeight;
-					monitorHeightResizeYstart = mousePosition.y;
-					monitorHeightResizeDelta = 0;
+					IsResizingGraphHeight = true;
+					HeightResizingGraphIndex = i;
+					GraphHeightBeforeResizing = graphHeight;
+					MouseYPositionBeforeResizingGraphHeight = mousePosition.y;
+					GraphHeightResizeDelta = 0;
 				}
 
-				if (e.type == EventType.MouseDrag && monitorHeightResize)
+				if (e.type == EventType.MouseDrag && IsResizingGraphHeight)
 				{
-					monitorHeightResizeDelta = (mousePosition.y - monitorHeightResizeYstart);
-					monitorHeight = monitorHeightResizeOldHeight + Mathf.FloorToInt(monitorHeightResizeDelta / (monitorHeightResizeIndex + 1));
+					GraphHeightResizeDelta = (mousePosition.y - MouseYPositionBeforeResizingGraphHeight);
+					graphHeight = GraphHeightBeforeResizing + Mathf.FloorToInt(GraphHeightResizeDelta / (HeightResizingGraphIndex + 1));
 
-					if (monitorHeight < monitorHeight_min)
-						monitorHeight = monitorHeight_min;
+					if (graphHeight < MinimumGraphHeight)
+						graphHeight = MinimumGraphHeight;
 
-					if (monitorHeight > monitorHeight_max)
-						monitorHeight = monitorHeight_max;
+					if (graphHeight > MaximumGraphHeight)
+						graphHeight = MaximumGraphHeight;
+
+					EditorPrefs.SetInt(EditorSettings.GraphHeight, graphHeight);
 				}
 
-				if (e.type == EventType.MouseUp && monitorHeightResize)
+				if (e.type == EventType.MouseUp && IsResizingGraphHeight)
 				{
-					monitorHeightResize = false;
+					IsResizingGraphHeight = false;
 				}
 
 				// Is monitor visible? otherwise cull...
@@ -424,20 +435,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 					}
 
-					var n = 0;
-					var startTime = Mathf.CeilToInt(minTime / subTimeTicks) * subTimeTicks;
-					var t = startTime;
-
-					var transparentTime = 3f;
-					var opaqueTime = 2f;
-
-					// Sub tick lines.
-					if (timeWindow < transparentTime)
+					// Sub tick lines
 					{
-						var subTimeTickColorWithAlpha = subTimeTickColor;
-						subTimeTickColorWithAlpha.a = subTimeTickColor.a * Mathf.Lerp(1f, 0f, (timeWindow - opaqueTime) / (transparentTime - opaqueTime));
+						var n = 0;
+						var startTime = Mathf.CeilToInt(minTime / SubSecondLinesInterval) * SubSecondLinesInterval;
+						var t = startTime;
 
-						Handles.color = subTimeTickColorWithAlpha;
+						if (timeWindow < TimeWindowForSubSecondLinesToAppear)
+						{
+							var subTimeTickColorWithAlpha = SubSecondLinesColor;
+							subTimeTickColorWithAlpha.a *= 1f - (timeWindow - TimeWindowForSubSecondLinesToGetFullyOpaque) / (TimeWindowForSubSecondLinesToAppear - TimeWindowForSubSecondLinesToGetFullyOpaque);
+
+							Handles.color = subTimeTickColorWithAlpha;
+
+							while (t < maxTime)
+							{
+								Handles.DrawLine(
+									new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
+									new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
+								);
+
+								lineCount++;
+
+								n++;
+								t = startTime + n * 0.1f;
+							}
+						}
+					}
+
+					// Tick lines
+					{
+						Handles.color = timeTickColor;
+						var n = 0;
+						var startTime = Mathf.CeilToInt(minTime);
+						var t = startTime;
 
 						while (t < maxTime)
 						{
@@ -449,28 +480,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							lineCount++;
 
 							n++;
-							t = startTime + n * 0.1f;
+							t = startTime + n;
 						}
-					}
-
-
-					// Tick lines.
-					Handles.color = timeTickColor;
-					n = 0;
-					startTime = Mathf.CeilToInt(minTime);
-					t = startTime;
-
-					while (t < maxTime)
-					{
-						Handles.DrawLine(
-							new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
-							new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
-						);
-
-						lineCount++;
-
-						n++;
-						t = startTime + n;
 					}
 
 					foreach (var channel in monitor.Channels)
@@ -838,13 +849,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				// separator line
 				Handles.color = Color.grey;
-				Handles.DrawLine(new Vector3(0f, (i + 1) * monitorHeight + settingsRect.height - scrollPositionY, 0f),
-								  new Vector3(width, (i + 1) * monitorHeight + settingsRect.height - scrollPositionY, 0f));
+				Handles.DrawLine(new Vector3(0f, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f),
+								  new Vector3(width, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f));
 				lineCount++;
 			}
 
 			// Scrollbar
-			var scrollMaxY = monitorHeight * VisiblePlotters.Count + extraScrollSpace;
+			var scrollMaxY = graphHeight * VisiblePlotters.Count + extraScrollSpace;
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
 
 			GUI.color = Color.white;
@@ -997,10 +1008,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			// Interpolation selection.
 			GUILayout.Space(5f);
-			GUILayout.Label("Interpolation", GUILayout.Width(75));
+			GUILayout.Label("Interpolation", GUILayout.Width(85));
+			EditorGUI.BeginChangeCheck();
 			interpolationTypeIndex = EditorGUILayout.Popup(interpolationTypeIndex, interpolationTypes, GUILayout.Width(120));
+			if (EditorGUI.EndChangeCheck())
+			{
+				EditorPrefs.SetInt(EditorSettings.InterpolationType, interpolationTypeIndex);
+			}
 
+			EditorGUI.BeginChangeCheck();
 			timeWindow_exp = GUILayout.HorizontalSlider(timeWindow_exp, -1f, 1.30102999566f);
+			if (EditorGUI.EndChangeCheck())
+			{
+				EditorPrefs.SetFloat(EditorSettings.TimeWindowExp, timeWindow_exp);
+			}
 			GUILayout.Label(timeWindowFloored.ToString("0.0") + " secs.", GUILayout.Width(60));
 			GUILayout.Space(5f);
 
@@ -1011,7 +1032,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var legendResizeRect = new Rect(legendWidth - splitSize / 2, 0, splitSize, height);
 			EditorGUIUtility.AddCursorRect(legendResizeRect, MouseCursor.SplitResizeLeftRight);
 
-			if (e.type == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !monitorHeightResize)
+			if (e.type == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !IsResizingGraphHeight)
 			{
 				legendResize = true;
 			}
@@ -1019,6 +1040,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			if (e.type == EventType.MouseDrag && legendResize)
 			{
 				legendWidth = Mathf.FloorToInt(mousePosition.x);
+				EditorPrefs.SetInt(EditorSettings.LegendWidth, legendWidth);
 			}
 
 			if (e.type == EventType.MouseUp && legendResize)
@@ -1029,12 +1051,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			Repaint();
 
 			wasInPauseMode = isInPauseMode;
-
-			// Save editor settings.
-			EditorPrefs.SetFloat(TIME_WINDOW_EXP, timeWindow_exp);
-			EditorPrefs.SetInt(INTERPOLATION_TYPE_INDEX, interpolationTypeIndex);
-			EditorPrefs.SetInt(MONITOR_HEIGHT, monitorHeight);
-			EditorPrefs.SetInt(LEGEND_WIDTH, legendWidth);
 		}
 
 		public void OnDestroy()
@@ -1049,12 +1065,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				DestroyImmediate(leftTexture);
 			}
 		}
-
-		// Constants for saving editor settings.
-		private static string TIME_WINDOW_EXP = "MONITORCOMPONENTS_TIME_WINDOW_EXP";
-		private static string INTERPOLATION_TYPE_INDEX = "MONITORCOMPONENTS_INTERPOLATION_TYPE_INDEX";
-		private static string MONITOR_HEIGHT = "MONITORCOMPONENTS_MONITOR_HEIGHT";
-		private static string LEGEND_WIDTH = "MONITORCOMPONENTS_LEGEND_WIDTH";
 
 		public GameObject Filter
 		{
