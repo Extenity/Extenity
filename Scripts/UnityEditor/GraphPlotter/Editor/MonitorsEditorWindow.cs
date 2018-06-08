@@ -108,8 +108,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
 
-		private readonly List<Monitor> visiblePlotters = new List<Monitor>(10);
-
+		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
+		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
 		public MonitorsEditorWindow() : base()
 		{
@@ -287,31 +287,31 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Gather visible graphs.
 			if (gameObjectFilter != null)
 			{
-				visiblePlotters.Clear();
+				VisiblePlotters.Clear();
 				foreach (var plotter in GraphPlotters.All)
 				{
 					if (plotter.GameObject == gameObjectFilter)
 					{
-						visiblePlotters.Add(plotter);
+						VisiblePlotters.Add(plotter);
 					}
 				}
 			}
 			else
 			{
 				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
-				visiblePlotters.Clear();
-				visiblePlotters.AddRange(GraphPlotters.All);
+				VisiblePlotters.Clear();
+				VisiblePlotters.AddRange(GraphPlotters.All);
 			}
 
 			var latestTime = 0f;
-			for (int i = 0; i < visiblePlotters.Count; i++)
+			for (int i = 0; i < VisiblePlotters.Count; i++)
 			{
-				latestTime = Mathf.Max(latestTime, visiblePlotters[i].LatestTime);
+				latestTime = Mathf.Max(latestTime, VisiblePlotters[i].LatestTime);
 			}
 
-			for (int i = 0; i < visiblePlotters.Count; i++)
+			for (int i = 0; i < VisiblePlotters.Count; i++)
 			{
-				var monitor = visiblePlotters[i];
+				var monitor = VisiblePlotters[i];
 
 				var monitorRect = new Rect(legendWidth, i * monitorHeight + settingsRect.height - scrollPositionY, monitorWidth, monitorHeight);
 				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + headerHeight, monitorRect.width - 20, monitorGraphHeight - 5);
@@ -777,10 +777,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					}
 
-					var tagEntries = new List<TagEntry>(); // TODO: Cache this
-					monitor.GetTagEntries(maxTime - timeWindow, maxTime, tagEntries);
+					// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
+					TagEntries.Clear();
+					monitor.GetTagEntries(maxTime - timeWindow, maxTime, TagEntries);
 
-					foreach (var entry in tagEntries)
+					foreach (var entry in TagEntries)
 					{
 						var eventColor = Color.yellow;
 						Handles.color = eventColor;
@@ -833,7 +834,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = new Color(1f, 1f, 1f, 0.3f);
 			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 8), topTexture, ScaleMode.StretchToFill);
 
-			for (int i = 0; i < visiblePlotters.Count; i++)
+			for (int i = 0; i < VisiblePlotters.Count; i++)
 			{
 				// separator line
 				Handles.color = Color.grey;
@@ -843,7 +844,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Scrollbar
-			var scrollMaxY = monitorHeight * visiblePlotters.Count + extraScrollSpace;
+			var scrollMaxY = monitorHeight * VisiblePlotters.Count + extraScrollSpace;
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
 
 			GUI.color = Color.white;
@@ -864,7 +865,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var minTime = float.PositiveInfinity;
 					var maxTime = float.NegativeInfinity;
 
-					foreach (var monitor in visiblePlotters)
+					foreach (var monitor in VisiblePlotters)
 					{
 						float monitorMinTime, monitorMaxTime;
 						monitor.GetMinMaxTime(out monitorMinTime, out monitorMaxTime);
