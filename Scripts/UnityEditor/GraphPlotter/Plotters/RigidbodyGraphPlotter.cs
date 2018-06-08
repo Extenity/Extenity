@@ -3,11 +3,11 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	[AddComponentMenu("Monitor Components/Monitor Rigidbody")]
+	[AddComponentMenu("Graph Plotter/Plot Rigidbody")]
 	[ExecuteInEditMode]
-	public class MonitorRigidbody : MonoBehaviour
+	public class RigidbodyGraphPlotter : MonoBehaviour
 	{
-		public enum RotationFormat { Euler, Quaternion };
+		public enum RotationFormat { Euler, Quaternion }
 
 		// position
 		public bool showPosition = false;

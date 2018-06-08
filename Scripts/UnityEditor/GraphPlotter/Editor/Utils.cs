@@ -55,7 +55,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (GUILayout.Button("Open monitors...", GUILayout.Width(110)))
 			{
-				MonitorsEditorWindow window = (MonitorsEditorWindow)EditorWindow.GetWindow(typeof(MonitorsEditorWindow));
+				var window = EditorWindow.GetWindow<MonitorsEditorWindow>();
 				window.Filter = gameObject;
 				window.ShowNotification(new GUIContent("Monitors for " + gameObject.name));
 			}

@@ -3,9 +3,9 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	[AddComponentMenu("Monitor Components/Monitor AudioSource")]
+	[AddComponentMenu("Graph Plotter/Plot AudioSource")]
 	[ExecuteInEditMode]
-	public class MonitorAudioSource : MonoBehaviour
+	public class AudioSourceGraphPlotter : MonoBehaviour
 	{
 		// volume
 		public bool showVolume = false;

@@ -3,9 +3,9 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	[AddComponentMenu("Monitor Components/Monitor Transform")]
+	[AddComponentMenu("Graph Plotter/Plot Transform")]
 	[ExecuteInEditMode]
-	public class MonitorTransform : MonoBehaviour
+	public class TransformGraphPlotter : MonoBehaviour
 	{
 		public enum Space { Local, World };
 		public enum ScaleSpace { Local, Lossy };

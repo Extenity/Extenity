@@ -3,9 +3,9 @@
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	[AddComponentMenu("Monitor Components/Monitor Debug.Log")]
+	[AddComponentMenu("Graph Plotter/Plot Debug.Log Calls")]
 	[ExecuteInEditMode]
-	public class MonitorDebugLog : MonoBehaviour
+	public class DebugLogGraphPlotter : MonoBehaviour
 	{
 		public string filterPrefix;
 		private Monitor monitor;

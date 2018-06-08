@@ -6,8 +6,8 @@ using System.Collections.Generic;
 namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
-	[CustomEditor(typeof(MonitorComponent))]
-	public class MonitorComponentEditor : UnityEditor.Editor
+	[CustomEditor(typeof(AnyComponentGraphPlotter))]
+	public class AnyComponentGraphPlotterInspector : UnityEditor.Editor
 	{
 		private int componentIndex = -1;
 
@@ -15,26 +15,26 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private TypeInspectors inspectors;
 
-		public MonitorComponentEditor() : base()
+		public AnyComponentGraphPlotterInspector() : base()
 		{
 			inspectors = TypeInspectors.Instance;
 		}
 
 		public override void OnInspectorGUI()
 		{
-			var monitorComponent = target as MonitorComponent;
-			var go = monitorComponent.gameObject;
+			var Me = target as AnyComponentGraphPlotter;
+			var go = Me.gameObject;
 
 			var components = new List<Component>(go.GetComponents<Component>());
 
 			// find index of (previously) selected component.
-			if (monitorComponent.component != null)
+			if (Me.component != null)
 			{
 				componentIndex = -1;
 
 				for (int i = 0; i < components.Count; i++)
 				{
-					if (components[i] == monitorComponent.component)
+					if (components[i] == Me.component)
 					{
 						componentIndex = i;
 						break;
@@ -56,57 +56,57 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			// value axis mode.
 			float newMin, newMax;
-			Utils.AxisSettings(monitorComponent, ref monitorComponent.mode, monitorComponent.min, out newMin, monitorComponent.max, out newMax);
+			Utils.AxisSettings(Me, ref Me.mode, Me.min, out newMin, Me.max, out newMax);
 
-			if (newMin != monitorComponent.min)
+			if (newMin != Me.min)
 			{
-				monitorComponent.min = newMin;
+				Me.min = newMin;
 
-				if (monitorComponent.monitor != null)
+				if (Me.monitor != null)
 				{
-					monitorComponent.monitor.Min = monitorComponent.min;
+					Me.monitor.Min = Me.min;
 				}
 			}
 
-			if (newMax != monitorComponent.max)
+			if (newMax != Me.max)
 			{
-				monitorComponent.max = newMax;
+				Me.max = newMax;
 
-				if (monitorComponent.monitor != null)
+				if (Me.monitor != null)
 				{
-					monitorComponent.monitor.Max = monitorComponent.max;
+					Me.monitor.Max = Me.max;
 				}
 			}
 
 			// Sample Mode
-			var newSampleMode = (MonitorComponent.SampleMode)EditorGUILayout.EnumPopup("Sample time", monitorComponent.sampleMode);
-			if (newSampleMode != monitorComponent.sampleMode)
+			var newSampleMode = (AnyComponentGraphPlotter.SampleMode)EditorGUILayout.EnumPopup("Sample time", Me.sampleMode);
+			if (newSampleMode != Me.sampleMode)
 			{
 				Undo.RecordObject(target, "Change sample time");
-				monitorComponent.sampleMode = newSampleMode;
+				Me.sampleMode = newSampleMode;
 			}
 
 			EditorGUILayout.Space();
 
 			if (componentIndex > -1 && components.Count > 0)
 			{
-				monitorComponent.component = components[componentIndex];
+				Me.component = components[componentIndex];
 			}
 			else
 			{
-				monitorComponent.component = null;
+				Me.component = null;
 			}
 
-			if (monitorComponent.component != null)
+			if (Me.component != null)
 			{
 				EditorGUILayout.LabelField("Fields");
 
 				EditorGUILayout.BeginHorizontal("Box");
 				EditorGUILayout.BeginVertical();
 
-				for (int j = 0; j < monitorComponent.monitorInputFields.Count; j++)
+				for (int j = 0; j < Me.monitorInputFields.Count; j++)
 				{
-					var field = monitorComponent.monitorInputFields[j];
+					var field = Me.monitorInputFields[j];
 
 					EditorGUILayout.BeginHorizontal();
 
@@ -114,7 +114,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var newColor = EditorGUILayout.ColorField(field.color, GUILayout.Width(40));
 					if (newColor != field.color)
 					{
-						Undo.RecordObject(monitorComponent, "Change field color");
+						Undo.RecordObject(Me, "Change field color");
 						field.color = newColor;
 					}
 
@@ -122,8 +122,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (GUILayout.Button("remove", GUILayout.Width(60)))
 					{
-						Undo.RecordObject(monitorComponent, "Remove field");
-						monitorComponent.monitorInputFields.RemoveAt(j);
+						Undo.RecordObject(Me, "Remove field");
+						Me.monitorInputFields.RemoveAt(j);
 						break;
 					}
 
@@ -137,7 +137,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.Space();
 
-				var instanceType = monitorComponent.component.GetType();
+				var instanceType = Me.component.GetType();
 
 				int level = 0;
 
@@ -180,13 +180,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				if (instanceType != null)
 				{
-					var field = new MonitorComponent.MonitorInputField();
+					var field = new AnyComponentGraphPlotter.MonitorInputField();
 					field.field = addField.ToArray();
 					field.fieldTypeName = instanceType.FullName;
-					field.color = PlotColors.AllColors[monitorComponent.monitorInputFields.Count % PlotColors.AllColors.Length];
+					field.color = PlotColors.AllColors[Me.monitorInputFields.Count % PlotColors.AllColors.Length];
 
-					Undo.RecordObject(monitorComponent, "Add field");
-					monitorComponent.monitorInputFields.Add(field);
+					Undo.RecordObject(Me, "Add field");
+					Me.monitorInputFields.Add(field);
 
 					addField.RemoveAt(addField.Count - 1);
 				}
@@ -202,7 +202,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			Utils.OpenButton(go);
 
-			monitorComponent.UpdateMonitors();
+			Me.UpdateMonitors();
 
 			if (GUI.changed)
 				EditorUtility.SetDirty(target);

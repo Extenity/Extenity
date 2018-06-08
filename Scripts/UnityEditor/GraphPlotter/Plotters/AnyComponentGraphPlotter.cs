@@ -6,9 +6,9 @@ using Object = System.Object;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	[AddComponentMenu("Monitor Components/Monitor Component")]
+	[AddComponentMenu("Graph Plotter/Plot Any Component")]
 	[ExecuteInEditMode]
-	public class MonitorComponent : MonoBehaviour
+	public class AnyComponentGraphPlotter : MonoBehaviour
 	{
 		public Component component;
 		public List<MonitorInputField> monitorInputFields = new List<MonitorInputField>();

@@ -7,10 +7,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 	public class MonitorsEditorWindow : EditorWindow
 	{
-		[MenuItem("Window/Monitors _#%m")]
-		static void Init()
+		[MenuItem("Window/Graph Plotter _#%g")]
+		private static void Init()
 		{
-			EditorWindow.GetWindow(typeof(MonitorsEditorWindow));
+			GetWindow<MonitorsEditorWindow>();
 		}
 
 		private Monitors monitors;
