@@ -21,11 +21,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				Monitor.Add(new TagEntry()
-				{
-					text = "Space",
-					time = Time.time
-				});
+				Monitor.Add(new TagEntry(Time.time, "Space"));
 			}
 		}
 

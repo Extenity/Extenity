@@ -74,11 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 			}
 
-			var entry = new TagEntry
-			{
-				time = Time.time,
-				text = logString
-			};
+			var entry = new TagEntry(Time.time, logString);
 
 			monitor.Add(entry);
 		}

@@ -11,13 +11,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		Adaptive
 	};
 
-	// TODO: Move this outside.
-	public class TagEntry
-	{
-		public float time;
-		public string text;
-	}
-
 	public class Monitor
 	{
 		public string Name;
@@ -81,7 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				return;
 
 			// Find starting index
-			_LookupEvent.time = minTime;
+			_LookupEvent.Time = minTime;
 			int index = Tags.BinarySearch(_LookupEvent, EventComparer);
 			if (index < 0)
 			{
@@ -92,7 +85,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var entry = Tags[i];
 
-				if (entry.time <= maxTime)
+				if (entry.Time <= maxTime)
 				{
 					result.Add(entry);
 				}
@@ -110,10 +103,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			foreach (var entry in Tags)
 			{
-				if (minTime > entry.time)
-					minTime = entry.time;
-				if (maxTime < entry.time)
-					maxTime = entry.time;
+				if (minTime > entry.Time)
+					minTime = entry.Time;
+				if (maxTime < entry.Time)
+					maxTime = entry.Time;
 			}
 
 			foreach (var entry in Channels)
@@ -142,15 +135,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public void Close()
 		{
 			GraphPlotters.Deregister(this);
-		}
-
-		// TODO: Move this alongside with TagEntry
-		private class TagEntryTimeComparer : IComparer<TagEntry>
-		{
-			public int Compare(TagEntry a, TagEntry b)
-			{
-				return a.time.CompareTo(b.time);
-			}
 		}
 
 	}

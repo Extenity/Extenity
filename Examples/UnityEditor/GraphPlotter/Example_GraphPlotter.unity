@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 890043987}
   - component: {fileID: 890043991}
   - component: {fileID: 890043992}
+  - component: {fileID: 890043993}
   m_Layer: 0
   m_Name: PLOTTED Sphere
   m_TagString: Untagged
@@ -379,6 +380,23 @@ MonoBehaviour:
   angularVelocityMode: 2
   angularVelocityMin: Infinity
   angularVelocityMax: -Infinity
+--- !u!114 &890043993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 890043986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50d0346338f5c841ad4ee2db8fda14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  component: {fileID: 890043992}
+  channelFields: []
+  mode: 2
+  sampleMode: 1
+  min: Infinity
+  max: -Infinity
 --- !u!1 &1073055931
 GameObject:
   m_ObjectHideFlags: 0

@@ -781,7 +781,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						var eventColor = Color.yellow;
 						Handles.color = eventColor;
 
-						var normalizedX = (entry.time - minTime) / timeWindow;
+						var normalizedX = (entry.Time - minTime) / timeWindow;
 						if (normalizedX * graphRect.width >= 5f)
 						{
 							Handles.DrawLine(
@@ -810,7 +810,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 							GUI.color = eventColor;
 							GUI.contentColor = Color.white;
-							GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.text, simpleStyle);
+							GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.Text, simpleStyle);
 						}
 					}
 				}
