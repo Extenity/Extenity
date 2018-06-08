@@ -108,6 +108,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
 
+		private readonly List<Monitor> visiblePlotters = new List<Monitor>(10);
+
+
 		public MonitorsEditorWindow() : base()
 		{
 			string titleText = "Monitors";
@@ -281,11 +284,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			var lineCount = 0;
 
-			List<Monitor> visiblePlotters;
-
+			// Gather visible graphs.
 			if (gameObjectFilter != null)
 			{
-				visiblePlotters = new List<Monitor>(); // TODO: remove alloc.
+				visiblePlotters.Clear();
 				foreach (var plotter in GraphPlotters.All)
 				{
 					if (plotter.GameObject == gameObjectFilter)
@@ -296,7 +298,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 			else
 			{
-				visiblePlotters = GraphPlotters.All;
+				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
+				visiblePlotters.Clear();
+				visiblePlotters.AddRange(GraphPlotters.All);
 			}
 
 			var latestTime = 0f;

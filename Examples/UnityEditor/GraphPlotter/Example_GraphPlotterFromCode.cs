@@ -10,6 +10,8 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		private Channel Channel1;
 		private Channel Channel2;
 
+		public float SomeRandomNumber;
+
 		private void Start()
 		{
 			Monitor = new Monitor("Two Sine Waves");
@@ -30,6 +32,8 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 			var time = Time.time;
 			Channel1.Sample(Mathf.Sin(3f * time));
 			Channel2.Sample(Mathf.Sin(4.5f * time));
+
+			SomeRandomNumber = Random.value;
 		}
 	}
 

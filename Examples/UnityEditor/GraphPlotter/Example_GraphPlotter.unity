@@ -207,6 +207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 724163780}
   - component: {fileID: 724163779}
+  - component: {fileID: 724163781}
   m_Layer: 0
   m_Name: PLOTTED From Code
   m_TagString: Untagged
@@ -225,6 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3904340b7ba2b5f4a9e2c048f56c21e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SomeRandomNumber: 0
 --- !u!4 &724163780
 Transform:
   m_ObjectHideFlags: 0
@@ -238,6 +240,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &724163781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 724163778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50d0346338f5c841ad4ee2db8fda14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  component: {fileID: 724163779}
+  channelFields:
+  - field:
+    - SomeRandomNumber
+    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
+    fieldTypeName: System.Single
+  mode: 2
+  sampleMode: 1
+  min: Infinity
+  max: -Infinity
 --- !u!1 &890043986
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,7 +274,6 @@ GameObject:
   - component: {fileID: 890043987}
   - component: {fileID: 890043991}
   - component: {fileID: 890043992}
-  - component: {fileID: 890043993}
   m_Layer: 0
   m_Name: PLOTTED Sphere
   m_TagString: Untagged
@@ -380,23 +402,6 @@ MonoBehaviour:
   angularVelocityMode: 2
   angularVelocityMin: Infinity
   angularVelocityMax: -Infinity
---- !u!114 &890043993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 890043986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f50d0346338f5c841ad4ee2db8fda14b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 890043992}
-  channelFields: []
-  mode: 2
-  sampleMode: 1
-  min: Infinity
-  max: -Infinity
 --- !u!1 &1073055931
 GameObject:
   m_ObjectHideFlags: 0
