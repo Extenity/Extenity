@@ -34,8 +34,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public float LatestTime = 0f;
 
-		public readonly List<TagEntry> Tags = new List<TagEntry>();
-
 		private readonly TagEntryTimeComparer _EventComparer = new TagEntryTimeComparer();
 
 		#region Initialization
@@ -75,20 +73,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
-		public void Resize(float value, float time)
-		{
-			LatestTime = time;
+		#region Tags
 
-			if (Mode == ValueAxisMode.Expansive)
-			{
-				Min = Mathf.Min(Min, value);
-				Max = Mathf.Max(Max, value);
-			}
-			else
-			{
-				// Do nothing - stay fixed.
-			}
-		}
+		public readonly List<TagEntry> Tags = new List<TagEntry>();
+
+		private TagEntry _LookupEvent = new TagEntry();
 
 		public void Add(TagEntry entry)
 		{
@@ -100,8 +89,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			Tags.Insert(index, entry);
 		}
-
-		private TagEntry _LookupEvent = new TagEntry();
 
 		public void GetTagEntries(float minTime, float maxTime, List<TagEntry> result)
 		{
@@ -129,6 +116,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					break;
 				}
+			}
+		}
+
+		#endregion
+
+		public void Resize(float value, float time)
+		{
+			LatestTime = time;
+
+			if (Mode == ValueAxisMode.Expansive)
+			{
+				Min = Mathf.Min(Min, value);
+				Max = Mathf.Max(Max, value);
+			}
+			else
+			{
+				// Do nothing - stay fixed.
 			}
 		}
 
