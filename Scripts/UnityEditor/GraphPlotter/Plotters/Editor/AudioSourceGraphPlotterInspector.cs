@@ -1,3 +1,4 @@
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
@@ -5,12 +6,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
 	[CustomEditor(typeof(AudioSourceGraphPlotter))]
-	public class AudioSourceGraphPlotterInspector : UnityEditor.Editor
+	public class AudioSourceGraphPlotterInspector : ExtenityEditorBase<AudioSourceGraphPlotter>
 	{
-		public override void OnInspectorGUI()
+		protected override void OnEnableDerived()
 		{
-			var Me = target as AudioSourceGraphPlotter;
+			IsDefaultInspectorDrawingEnabled = false;
+		}
 
+		protected override void OnDisableDerived()
+		{
+		}
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
 			EditorGUILayout.Space();
 
 			var newShowVolume = EditorGUILayout.ToggleLeft(" Volume", Me.showVolume);
@@ -59,10 +67,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			Utils.OpenButton(Me.gameObject);
 
-			Me.UpdateMonitors();
-
 			if (GUI.changed)
-				EditorUtility.SetDirty(target);
+				Me.UpdateMonitors();
 		}
 	}
 

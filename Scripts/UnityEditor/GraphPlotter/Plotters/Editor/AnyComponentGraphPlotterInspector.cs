@@ -2,12 +2,13 @@
 using UnityEditor;
 using System;
 using System.Collections.Generic;
+using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
 	[CustomEditor(typeof(AnyComponentGraphPlotter))]
-	public class AnyComponentGraphPlotterInspector : UnityEditor.Editor
+	public class AnyComponentGraphPlotterInspector : ExtenityEditorBase<AnyComponentGraphPlotter>
 	{
 		private int componentIndex = -1;
 
@@ -20,12 +21,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			inspectors = TypeInspectors.Instance;
 		}
 
-		public override void OnInspectorGUI()
+		protected override void OnEnableDerived()
 		{
-			var Me = target as AnyComponentGraphPlotter;
-			var go = Me.gameObject;
+			IsDefaultInspectorDrawingEnabled = false;
+		}
 
-			var components = new List<Component>(go.GetComponents<Component>());
+		protected override void OnDisableDerived()
+		{
+		}
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
+			var components = new List<Component>(Me.GetComponents<Component>());
 
 			// find index of (previously) selected component.
 			if (Me.component != null)
@@ -151,7 +158,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (level < addField.Count)
 					{
-						string previouslySelectedFieldName = addField[level];
+						var previouslySelectedFieldName = addField[level];
 						selectedIndex = Array.FindIndex(fields, field => (field.name == previouslySelectedFieldName));
 					}
 
@@ -200,12 +207,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 			}
 
-			Utils.OpenButton(go);
-
-			Me.UpdateMonitors();
+			Utils.OpenButton(Me.gameObject);
 
 			if (GUI.changed)
-				EditorUtility.SetDirty(target);
+				Me.UpdateMonitors();
 		}
 	}
 

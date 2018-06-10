@@ -1,3 +1,4 @@
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
@@ -5,12 +6,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
 	[CustomEditor(typeof(DebugLogGraphPlotter))]
-	public class DebugLogGraphPlotterInspector : UnityEditor.Editor
+	public class DebugLogGraphPlotterInspector : ExtenityEditorBase<DebugLogGraphPlotter>
 	{
-		public override void OnInspectorGUI()
+		protected override void OnEnableDerived()
 		{
-			var Me = target as DebugLogGraphPlotter;
+			IsDefaultInspectorDrawingEnabled = false;
+		}
 
+		protected override void OnDisableDerived()
+		{
+		}
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
 			EditorGUILayout.Space();
 
 			string newFilterPrefix = EditorGUILayout.TextField("Filter prefix", Me.filterPrefix);
@@ -22,10 +30,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			Utils.OpenButton(Me.gameObject);
 
-			Me.UpdateMonitors();
-
 			if (GUI.changed)
-				EditorUtility.SetDirty(target);
+				Me.UpdateMonitors();
 		}
 	}
 

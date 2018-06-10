@@ -1,3 +1,4 @@
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
@@ -5,12 +6,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
 	[CustomEditor(typeof(Rigidbody2DGraphPlotter))]
-	public class Rigidbody2DGraphPlotterInspector : UnityEditor.Editor
+	public class Rigidbody2DGraphPlotterInspector : ExtenityEditorBase<Rigidbody2DGraphPlotter>
 	{
-		public override void OnInspectorGUI()
+		protected override void OnEnableDerived()
 		{
-			var Me = target as Rigidbody2DGraphPlotter;
+			IsDefaultInspectorDrawingEnabled = false;
+		}
 
+		protected override void OnDisableDerived()
+		{
+		}
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
 			EditorGUILayout.Space();
 
 			// Position
@@ -206,12 +214,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				EditorGUILayout.Space();
 			}
 
-			EditorGUILayout.Space();
-
-			Me.UpdateMonitors();
+			Utils.OpenButton(Me.gameObject);
 
 			if (GUI.changed)
-				EditorUtility.SetDirty(target);
+				Me.UpdateMonitors();
 		}
 	}
 
