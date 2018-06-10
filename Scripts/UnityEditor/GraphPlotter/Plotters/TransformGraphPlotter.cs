@@ -18,9 +18,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showPosition_y = true;
 		public bool showPosition_z = true;
 		public Space positionSpace = Space.World;
-		public ValueAxisMode positionMode = ValueAxisMode.Adaptive;
-		public float positionMin = float.PositiveInfinity;
-		public float positionMax = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		public Monitor monitor_position;
 		public Channel channel_position_x;
@@ -34,9 +32,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showRotation_y = true;
 		public bool showRotation_z = true;
 		public Space rotationSpace = Space.World;
-		public ValueAxisMode rotationMode = ValueAxisMode.Fixed;
-		public float rotationMin = 0f;
-		public float rotationMax = 360f;
+		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 
 		public Monitor monitor_rotation;
 		public Channel channel_rotation_x;
@@ -50,9 +46,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showScale_y = true;
 		public bool showScale_z = true;
 		public ScaleSpace scaleSpace = ScaleSpace.Local;
-		public ValueAxisMode scaleMode = ValueAxisMode.Adaptive;
-		public float scaleMin = float.PositiveInfinity;
-		public float scaleMax = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration ScaleRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		public Monitor monitor_scale;
 		public Channel channel_scale_x;
@@ -95,9 +89,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 
 				monitor_position.Name = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
-				monitor_position.Mode = positionMode;
-				monitor_position.Min = positionMin;
-				monitor_position.Max = positionMax;
+				monitor_position.SetRangeConfiguration(PositionRange);
 			}
 			else
 			{
@@ -171,9 +163,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 
 				monitor_rotation.Name = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
-				monitor_rotation.Mode = rotationMode;
-				monitor_rotation.Min = rotationMin;
-				monitor_rotation.Max = rotationMax;
+				monitor_rotation.SetRangeConfiguration(RotationRange);
 			}
 			else
 			{
@@ -247,9 +237,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 
 				monitor_scale.Name = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
-				monitor_scale.Mode = scaleMode;
-				monitor_scale.Min = scaleMin;
-				monitor_scale.Max = scaleMax;
+				monitor_scale.SetRangeConfiguration(ScaleRange);
 			}
 			else
 			{
@@ -337,8 +325,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var position = positionSpace == Space.Local ? transform.localPosition : transform.position;
 
-				positionMin = monitor_position.Min;
-				positionMax = monitor_position.Max;
+				PositionRange.CopyFrom(monitor_position.Range);
 
 				if (showPosition_x)
 				{
@@ -360,8 +347,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var euler = (rotationSpace == Space.Local ? transform.localRotation : transform.rotation).eulerAngles;
 
-				rotationMin = monitor_rotation.Min;
-				rotationMax = monitor_rotation.Max;
+				RotationRange.CopyFrom(monitor_rotation.Range);
 
 				if (showRotation_x)
 				{
@@ -383,8 +369,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var scale = scaleSpace == ScaleSpace.Local ? transform.localScale : transform.lossyScale;
 
-				scaleMin = monitor_scale.Min;
-				scaleMax = monitor_scale.Max;
+				ScaleRange.CopyFrom(monitor_scale.Range);
 
 				if (showScale_x)
 				{

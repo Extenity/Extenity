@@ -308,37 +308,29 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			for (int i = 0; i < VisiblePlotters.Count; i++)
 			{
 				var monitor = VisiblePlotters[i];
+				var range = monitor.Range;
 
 				var monitorRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, monitorWidth, graphHeight);
 				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + SpaceAboveGraph, monitorRect.width - 20, totalGraphHeight - 5);
 
-				var span = monitor.Max - monitor.Min;
+				var span = range.Span;
 
 				GUI.color = Color.white;
 				GUI.Label(new Rect(legendWidth + 10f, monitorRect.yMin + 10, 100f, 30f), monitor.Name, headerStyle);
 
-				var maxTime = latestTime + scrollPositionTime;
-				var minTime = latestTime - timeWindow + scrollPositionTime;
+				var timeEnd = latestTime + scrollPositionTime;
+				var timeStart = latestTime - timeWindow + scrollPositionTime;
 
-				if (monitor.Mode == ValueAxisMode.Adaptive)
+				if (range.Sizing == ValueAxisSizing.Adaptive)
 				{
-					monitor.Min = float.PositiveInfinity;
-					monitor.Max = float.NegativeInfinity;
-
-					for (var iChannel = 0; iChannel < monitor.Channels.Count; iChannel++)
-					{
-						float min, max;
-						monitor.Channels[iChannel].GetMinMax(minTime, maxTime, out min, out max);
-						monitor.Min = Mathf.Min(min, monitor.Min);
-						monitor.Max = Mathf.Max(max, monitor.Max);
-					}
+					monitor.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd);
 				}
 
-				if (monitor.Min < float.PositiveInfinity)
-					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMax + 5f, 200f, 20f), monitor.Min.ToString(), minStyle);
+				if (range.Min < float.PositiveInfinity)
+					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMax + 5f, 200f, 20f), range.Min.ToString(), minStyle);
 
-				if (monitor.Max > float.NegativeInfinity)
-					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), monitor.Max.ToString(), maxStyle);
+				if (range.Max > float.NegativeInfinity)
+					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), range.Max.ToString(), maxStyle);
 
 				// monitor resizing.
 
@@ -380,21 +372,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				if (monitorRect.yMin < position.height && monitorRect.yMax > 0f)
 				{
 					Handles.color = zeroLineColor;
+					var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
 
 					horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
 					horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
-					horizontalLines[2] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+					horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
 
-					if (monitor.Min <= 0f && monitor.Max >= 0f)
+					if (range.Min <= 0f && range.Max >= 0f)
 					{
-						horizontalLines[3] = new Vector3(graphRect.xMax, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+						horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
 					}
 					else
 					{
-						horizontalLines[3] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+						horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
 					}
 
-					horizontalLines[4] = new Vector3(graphRect.xMin, Mathf.Clamp(graphRect.height * monitor.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax));
+					horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
 					horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
 					horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
 
@@ -404,7 +397,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (isInPauseMode)
 					{
-						var time = (maxTime - minTime) * (mousePosition.x - graphRect.xMin) / graphRect.width + minTime;
+						var time = (timeEnd - timeStart) * (mousePosition.x - graphRect.xMin) / graphRect.width + timeStart;
 
 						if (graphRect.Contains(mousePosition))
 						{
@@ -425,7 +418,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					// Sub tick lines
 					{
 						var n = 0;
-						var startTime = Mathf.CeilToInt(minTime / SubSecondLinesInterval) * SubSecondLinesInterval;
+						var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
 						var t = startTime;
 
 						if (timeWindow < TimeWindowForSubSecondLinesToAppear)
@@ -435,11 +428,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 							Handles.color = subTimeTickColorWithAlpha;
 
-							while (t < maxTime)
+							while (t < timeEnd)
 							{
 								Handles.DrawLine(
-									new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
-									new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
+									new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
+									new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
 								);
 
 								lineCount++;
@@ -454,14 +447,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					{
 						Handles.color = SecondLinesColor;
 						var n = 0;
-						var startTime = Mathf.CeilToInt(minTime);
+						var startTime = Mathf.CeilToInt(timeStart);
 						var t = startTime;
 
-						while (t < maxTime)
+						while (t < timeEnd)
 						{
 							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * (t - minTime) / timeWindow, graphRect.yMax - graphRect.height, 0f)
+								new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
+								new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
 							);
 
 							lineCount++;
@@ -493,7 +486,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							if (float.IsNaN(time_a) || float.IsNaN(time_b))
 								continue;
 
-							if (time_b > time_a && !(time_b < minTime || time_a > maxTime))
+							if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
 							{
 								var sample_a = channel.samples[index_a];
 								var sample_b = channel.samples[index_b];
@@ -501,7 +494,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 									continue;
 
-								var aNormalizedSample = (sample_a - monitor.Min) / span;
+								var aNormalizedSample = (sample_a - range.Min) / span;
 								if (span == 0f)
 								{
 									aNormalizedSample = 0.5f;
@@ -511,7 +504,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 									aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
 								}
 
-								var bNormalizedSample = (sample_b - monitor.Min) / span;
+								var bNormalizedSample = (sample_b - range.Min) / span;
 								if (span == 0f)
 								{
 									bNormalizedSample = 0.5f;
@@ -524,12 +517,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 								// Draw graph step.
 								if (interpolationTypeIndex == 0)
 								{
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
 								}
 								else
 								{
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - minTime) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
+									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
 								}
 							}
 						}
@@ -555,8 +548,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						float selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
 						float selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
 
-						float left = graphRect.width * (selectionTime_left - minTime) / (maxTime - minTime) + graphRect.xMin;
-						float right = graphRect.width * (selectionTime_right - minTime) / (maxTime - minTime) + graphRect.xMin;
+						float left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+						float right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
 
 						GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
@@ -596,17 +589,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					// Time line.
 
-					var mouseTime = maxTime;
+					var mouseTime = timeEnd;
 
 					if (isInPauseMode)
 					{
-						mouseTime = Mathf.Lerp(minTime, maxTime, (mousePosition.x - graphRect.xMin) / graphRect.width);
+						mouseTime = Mathf.Lerp(timeStart, timeEnd, (mousePosition.x - graphRect.xMin) / graphRect.width);
 					}
 
 					mouseTime = Mathf.Max(mouseTime, 0f);
 
 					Handles.color = timeLineColor;
-					var x = (mouseTime - minTime) / (maxTime - minTime) * graphRect.width + graphRect.xMin;
+					var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
 
 					for (int j = 0; j < monitor.Channels.Count; j++)
@@ -664,7 +657,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						Handles.color = channelColor;
 
-						var normalizedSampleValue = (sampleValue - monitor.Min) / span;
+						var normalizedSampleValue = (sampleValue - range.Min) / span;
 						if (span == 0f)
 						{
 							normalizedSampleValue = 0.5f;
@@ -672,7 +665,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						var clampedNormalizedSampleValue = Mathf.Clamp01(normalizedSampleValue);
 
-						var samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - minTime) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
+						var samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - timeStart) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
 
 						var handleRadius = 5f;
 
@@ -779,14 +772,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
 					TagEntries.Clear();
-					monitor.GetTagEntries(maxTime - timeWindow, maxTime, TagEntries);
+					monitor.GetTagEntries(timeEnd - timeWindow, timeEnd, TagEntries);
 
 					foreach (var entry in TagEntries)
 					{
 						var eventColor = Color.yellow;
 						Handles.color = eventColor;
 
-						var normalizedX = (entry.Time - minTime) / timeWindow;
+						var normalizedX = (entry.Time - timeStart) / timeWindow;
 						if (normalizedX * graphRect.width >= 5f)
 						{
 							Handles.DrawLine(
@@ -1041,15 +1034,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			wasInPauseMode = isInPauseMode;
 		}
 
-		public GameObject Filter
+		public bool SetFilter(GameObject filteredObject)
 		{
-			set
+			if (!filteredObject)
 			{
-				if (GraphPlotters.IsAnyGraphForObjectExists(value))
-				{
-					gameObjectFilter = value;
-				}
+				gameObjectFilter = null;
+				return true;
 			}
+
+			if (GraphPlotters.IsAnyGraphForObjectExists(filteredObject))
+			{
+				gameObjectFilter = filteredObject;
+				return true;
+			}
+			return false;
 		}
 	}
 

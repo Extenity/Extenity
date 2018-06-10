@@ -63,33 +63,26 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			times[sampleIndex] = time;
 			frames[sampleIndex] = frame;
 
-			Monitor.Resize(value, time);
+			Monitor.InformNewEntry(value, time);
 
 			sampleIndex = (sampleIndex + 1) % numberOfSamples;
 		}
 
-		public void GetMinMax(float minTime, float maxTime, out float min, out float max)
+		public void GetValueRangeInTimeWindow(float timeStart, float timeEnd, out float min, out float max)
 		{
 			min = float.PositiveInfinity;
 			max = float.NegativeInfinity;
 
 			for (int i = 0; i < samples.Length; i++)
 			{
-				float time = times[i];
-
-				if (time >= minTime && time <= maxTime)
+				var time = times[i];
+				if (time >= timeStart && time <= timeEnd)
 				{
-					float value = samples[i];
-
-					if (value < min)
-					{
+					var value = samples[i];
+					if (min > value)
 						min = value;
-					}
-
-					if (value > max)
-					{
+					if (max < value)
 						max = value;
-					}
 				}
 			}
 		}
@@ -103,9 +96,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var time = times[i];
 				if (float.IsNaN(time))
-				{
 					continue;
-				}
 
 				if (minTime > time)
 					minTime = time;

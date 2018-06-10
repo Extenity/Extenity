@@ -67,25 +67,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 				EditorGUILayout.EndHorizontal();
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.positionMode, Me.positionMin, out newMin, Me.positionMax, out newMax);
-				if (newMin != Me.positionMin)
-				{
-					Me.positionMin = newMin;
-					if (Me.monitor_position != null)
-					{
-						Me.monitor_position.Min = Me.positionMin;
-					}
-				}
-
-				if (newMax != Me.positionMax)
-				{
-					Me.positionMax = newMax;
-					if (Me.monitor_position != null)
-					{
-						Me.monitor_position.Max = Me.positionMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -130,7 +112,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				float newMin, newMax;
 				TransformGraphPlotter.Space newRotationSpace = (TransformGraphPlotter.Space)EditorGUILayout.EnumPopup("Space", Me.rotationSpace);
 				if (newRotationSpace != Me.rotationSpace)
 				{
@@ -138,24 +119,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.rotationSpace = newRotationSpace;
 				}
 
-				Utils.AxisSettings(Me, ref Me.rotationMode, Me.rotationMin, out newMin, Me.rotationMax, out newMax);
-				if (newMin != Me.rotationMin)
-				{
-					Me.rotationMin = newMin;
-					if (Me.monitor_rotation != null)
-					{
-						Me.monitor_rotation.Min = Me.rotationMin;
-					}
-				}
-
-				if (newMax != Me.rotationMax)
-				{
-					Me.rotationMax = newMax;
-					if (Me.monitor_rotation != null)
-					{
-						Me.monitor_rotation.Max = Me.rotationMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -209,25 +173,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.scaleSpace = newScaleSpace;
 				}
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.scaleMode, Me.scaleMin, out newMin, Me.scaleMax, out newMax);
-				if (newMin != Me.scaleMin)
-				{
-					Me.scaleMin = newMin;
-					if (Me.monitor_scale != null)
-					{
-						Me.monitor_scale.Min = Me.scaleMin;
-					}
-				}
-
-				if (newMax != Me.scaleMax)
-				{
-					Me.scaleMax = newMax;
-					if (Me.monitor_scale != null)
-					{
-						Me.monitor_scale.Max = Me.scaleMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_scale, ref Me.ScaleRange);
 
 				EditorGUILayout.EndVertical();
 

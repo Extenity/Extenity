@@ -62,28 +62,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentsStrings);
 
 			// value axis mode.
-			float newMin, newMax;
-			Utils.AxisSettings(Me, ref Me.mode, Me.min, out newMin, Me.max, out newMax);
-
-			if (newMin != Me.min)
-			{
-				Me.min = newMin;
-
-				if (Me.monitor != null)
-				{
-					Me.monitor.Min = Me.min;
-				}
-			}
-
-			if (newMax != Me.max)
-			{
-				Me.max = newMax;
-
-				if (Me.monitor != null)
-				{
-					Me.monitor.Max = Me.max;
-				}
-			}
+			Utils.DrawAxisRangeConfiguration(Me, Me.monitor, ref Me.Range);
 
 			// Sample Time
 			var newSampleTime = (SampleTime)EditorGUILayout.EnumPopup("Sample time", Me.SampleTime);

@@ -20,10 +20,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// Input - Scale
 		// -----------------------------------------------------
 		public Monitor monitor;
-		public ValueAxisMode mode = ValueAxisMode.Adaptive;
-
-		public float min = float.PositiveInfinity;
-		public float max = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		// -----------------------------------------------------
 
 		[Serializable]
@@ -68,9 +65,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 
 				monitor.Name = component.GetType().Name;
-				monitor.Mode = mode;
-				monitor.Min = min;
-				monitor.Max = max;
+				monitor.SetRangeConfiguration(Range);
 
 				foreach (var field in channelFields)
 				{
@@ -139,8 +134,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (component == null)
 				return;
 
-			min = monitor.Min;
-			max = monitor.Max;
+			Range.CopyFrom(monitor.Range);
 
 			foreach (var field in channelFields)
 			{

@@ -28,6 +28,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				Me.showVolume = newShowVolume;
 			}
 
+			if (Me.showVolume)
+			{
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_volume, ref Me.VolumeRange);
+			}
+
 			var newShowPitch = EditorGUILayout.ToggleLeft(" Pitch", Me.showPitch);
 			if (newShowPitch != Me.showPitch)
 			{
@@ -37,25 +42,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (Me.showPitch)
 			{
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.pitchMode, Me.pitchMin, out newMin, Me.pitchMax, out newMax);
-				if (newMin != Me.pitchMin)
-				{
-					Me.pitchMin = newMin;
-					if (Me.monitor_pitch != null)
-					{
-						Me.monitor_pitch.Min = Me.pitchMin;
-					}
-				}
-
-				if (newMax != Me.pitchMax)
-				{
-					Me.pitchMax = newMax;
-					if (Me.monitor_pitch != null)
-					{
-						Me.monitor_pitch.Max = Me.pitchMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_pitch, ref Me.PitchRange);
 			}
 
 			var newShowIsPlaying = EditorGUILayout.ToggleLeft(" Is playing", Me.showIsPlaying);

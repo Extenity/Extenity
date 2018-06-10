@@ -15,9 +15,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showPosition_y = true;
 		public bool showPosition_z = true;
 
-		public ValueAxisMode positionMode = ValueAxisMode.Adaptive;
-		public float positionMin = float.PositiveInfinity;
-		public float positionMax = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		public Monitor monitor_position;
 		private Channel channel_position_x;
@@ -31,9 +29,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showRotation_y = true;
 		public bool showRotation_z = true;
 
-		public ValueAxisMode rotationMode = ValueAxisMode.Fixed;
-		public float rotationMin = 0f;
-		public float rotationMax = 360f;
+		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 
 		public Monitor monitor_rotation;
 		private Channel channel_rotation_x;
@@ -47,9 +43,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showVelocity_y = true;
 		public bool showVelocity_z = true;
 
-		public ValueAxisMode velocityMode = ValueAxisMode.Adaptive;
-		public float velocityMin = float.PositiveInfinity;
-		public float velocityMax = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		public Monitor monitor_velocity;
 		private Channel channel_velocity_x;
@@ -63,9 +57,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool showAngularVelocity_y = true;
 		public bool showAngularVelocity_z = true;
 
-		public ValueAxisMode angularVelocityMode = ValueAxisMode.Adaptive;
-		public float angularVelocityMin = float.PositiveInfinity;
-		public float angularVelocityMax = float.NegativeInfinity;
+		public ValueAxisRangeConfiguration AngularVelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		public Monitor monitor_angularVelocity;
 		private Channel channel_angularVelocity_x;
@@ -123,9 +115,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_position = new Monitor("Position", gameObject);
 				}
 
-				monitor_position.Mode = positionMode;
-				monitor_position.Min = positionMin;
-				monitor_position.Max = positionMax;
+				monitor_position.SetRangeConfiguration(PositionRange);
 			}
 			else
 			{
@@ -198,9 +188,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_rotation = new Monitor("Rotation", gameObject);
 				}
 
-				monitor_rotation.Mode = rotationMode;
-				monitor_rotation.Min = rotationMin;
-				monitor_rotation.Max = rotationMax;
+				monitor_rotation.SetRangeConfiguration(RotationRange);
 			}
 			else
 			{
@@ -273,9 +261,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_velocity = new Monitor("Velocity", gameObject);
 				}
 
-				monitor_velocity.Mode = velocityMode;
-				monitor_velocity.Min = velocityMin;
-				monitor_velocity.Max = velocityMax;
+				monitor_velocity.SetRangeConfiguration(VelocityRange);
 			}
 			else
 			{
@@ -348,9 +334,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_angularVelocity = new Monitor("Angular Velocity", gameObject);
 				}
 
-				monitor_angularVelocity.Mode = angularVelocityMode;
-				monitor_angularVelocity.Min = angularVelocityMin;
-				monitor_angularVelocity.Max = angularVelocityMax;
+				monitor_angularVelocity.SetRangeConfiguration(AngularVelocityRange);
 			}
 			else
 			{
@@ -449,8 +433,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var position = rigidbody.position;
 
-				positionMin = monitor_position.Min;
-				positionMax = monitor_position.Max;
+				PositionRange.CopyFrom(monitor_position.Range);
 
 				if (showPosition_x)
 				{
@@ -472,8 +455,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var euler = rigidbody.rotation.eulerAngles;
 
-				rotationMin = monitor_rotation.Min;
-				rotationMax = monitor_rotation.Max;
+				RotationRange.CopyFrom(monitor_rotation.Range);
 
 				if (showRotation_x)
 				{
@@ -495,8 +477,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var velocity = rigidbody.velocity;
 
-				velocityMin = monitor_velocity.Min;
-				velocityMax = monitor_velocity.Max;
+				VelocityRange.CopyFrom(monitor_velocity.Range);
 
 				if (showVelocity_x)
 				{
@@ -518,9 +499,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var angularVelocity = rigidbody.angularVelocity;
 
-				angularVelocityMin = monitor_angularVelocity.Min;
-				angularVelocityMax = monitor_angularVelocity.Max;
-
+				AngularVelocityRange.CopyFrom(monitor_angularVelocity.Range);
 
 				if (showAngularVelocity_x)
 				{

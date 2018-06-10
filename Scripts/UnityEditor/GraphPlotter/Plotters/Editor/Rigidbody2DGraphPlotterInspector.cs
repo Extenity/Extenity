@@ -50,25 +50,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("y", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.positionMode, Me.positionMin, out newMin, Me.positionMax, out newMax);
-				if (newMin != Me.positionMin)
-				{
-					Me.positionMin = newMin;
-					if (Me.monitor_position != null)
-					{
-						Me.monitor_position.Min = Me.positionMin;
-					}
-				}
-
-				if (newMax != Me.positionMax)
-				{
-					Me.positionMax = newMax;
-					if (Me.monitor_position != null)
-					{
-						Me.monitor_position.Max = Me.positionMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -92,25 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.rotationClamp = newRotationClamp;
 				}
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.rotationMode, Me.rotationMin, out newMin, Me.rotationMax, out newMax);
-				if (newMin != Me.rotationMin)
-				{
-					Me.rotationMin = newMin;
-					if (Me.monitor_rotation != null)
-					{
-						Me.monitor_rotation.Min = Me.rotationMin;
-					}
-				}
-
-				if (newMax != Me.rotationMax)
-				{
-					Me.rotationMax = newMax;
-					if (Me.monitor_rotation != null)
-					{
-						Me.monitor_rotation.Max = Me.rotationMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -151,25 +115,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.EndHorizontal();
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.velocityMode, Me.velocityMin, out newMin, Me.velocityMax, out newMax);
-				if (newMin != Me.velocityMin)
-				{
-					Me.velocityMin = newMin;
-					if (Me.monitor_velocity != null)
-					{
-						Me.monitor_velocity.Min = Me.velocityMin;
-					}
-				}
-
-				if (newMax != Me.velocityMax)
-				{
-					Me.velocityMax = newMax;
-					if (Me.monitor_velocity != null)
-					{
-						Me.monitor_velocity.Max = Me.velocityMax;
-					}
-				}
+				Utils.DrawAxisRangeConfiguration(Me,Me.monitor_velocity, ref Me.VelocityRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -188,26 +134,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				EditorGUILayout.BeginVertical();
 
-				float newMin, newMax;
-				Utils.AxisSettings(Me, ref Me.angularVelocityMode, Me.angularVelocityMin, out newMin, Me.angularVelocityMax, out newMax);
-				if (newMin != Me.angularVelocityMin)
-				{
-					Me.angularVelocityMin = newMin;
-					if (Me.monitor_angularVelocity != null)
-					{
-						Me.monitor_angularVelocity.Min = Me.angularVelocityMin;
-					}
-				}
-
-				if (newMax != Me.angularVelocityMax)
-				{
-					Me.angularVelocityMax = newMax;
-					if (Me.monitor_angularVelocity != null)
-					{
-						Me.monitor_angularVelocity.Max = Me.angularVelocityMax;
-					}
-				}
-
+				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_angularVelocity, ref Me.AngularVelocityRange);
 
 				EditorGUILayout.EndVertical();
 

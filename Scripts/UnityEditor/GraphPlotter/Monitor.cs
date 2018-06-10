@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
@@ -6,35 +7,62 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public enum SampleTime
 	{
-		FixedUpdate,
-		Update,
+		FixedUpdate = 0,
+		Update = 1,
+		// TODO:
+		//LateUpdate = 2,
 
 		/// <summary>
 		/// Need to manually call Sample.
 		/// </summary>
-		Custom
+		Custom = 7,
 	}
 
-	// TODO: Rename to ValueAxisRange
-	public enum ValueAxisMode
+	public enum ValueAxisSizing
 	{
 		Fixed,
 		Expansive,
 		Adaptive
 	};
 
+	[Serializable]
+	public class ValueAxisRangeConfiguration
+	{
+		public ValueAxisSizing Sizing;
+		public float Min;
+		public float Max;
+
+		public float Span => Max - Min;
+
+		public ValueAxisRangeConfiguration(ValueAxisSizing sizing, float min, float max)
+		{
+			Sizing = sizing;
+			Min = min;
+			Max = max;
+		}
+
+		public void CopyFrom(ValueAxisRangeConfiguration other)
+		{
+			Sizing = other.Sizing;
+			Min = other.Min;
+			Max = other.Max;
+		}
+
+		public void Expand(float value)
+		{
+			if (Min > value)
+				Min = value;
+			if (Max < value)
+				Max = value;
+		}
+	}
+
 	public class Monitor
 	{
 		public string Name;
 		public GameObject GameObject = null;
 
-		public ValueAxisMode Mode = ValueAxisMode.Expansive;
-		public float Min = float.PositiveInfinity;
-		public float Max = float.NegativeInfinity;
-
-		public float LatestTime = 0f;
-
-		private readonly TagEntryTimeComparer _EventComparer = new TagEntryTimeComparer();
+		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		#region Initialization
 
@@ -77,11 +105,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public readonly List<TagEntry> Tags = new List<TagEntry>();
 
-		private TagEntry _LookupEvent = new TagEntry();
+		private readonly TagEntry _LookupEvent = new TagEntry();
+		private readonly TagEntryTimeComparer _EventComparer = new TagEntryTimeComparer();
 
 		public void Add(TagEntry entry)
 		{
-			int index = Tags.BinarySearch(entry, _EventComparer);
+			var index = Tags.BinarySearch(entry, _EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
@@ -104,7 +133,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// Add all entries until maxTime
-			for (int i = index; i < Tags.Count; i++)
+			for (var i = index; i < Tags.Count; i++)
 			{
 				var entry = Tags[i];
 
@@ -121,18 +150,32 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
-		public void Resize(float value, float time)
+		#region Timing
+
+		public float LatestTime = 0f;
+
+		public void SetTimeCursor(float time)
 		{
 			LatestTime = time;
+		}
 
-			if (Mode == ValueAxisMode.Expansive)
+		#endregion
+
+		internal void InformNewEntry(float value, float time)
+		{
+			SetTimeCursor(time);
+
+			switch (Range.Sizing)
 			{
-				Min = Mathf.Min(Min, value);
-				Max = Mathf.Max(Max, value);
-			}
-			else
-			{
-				// Do nothing - stay fixed.
+				case ValueAxisSizing.Expansive:
+					Range.Expand(value);
+					break;
+				case ValueAxisSizing.Fixed:
+				case ValueAxisSizing.Adaptive:
+					// Nothing to do.
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
@@ -141,19 +184,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			minTime = float.PositiveInfinity;
 			maxTime = float.NegativeInfinity;
 
-			foreach (var entry in Tags)
+			for (var i = 0; i < Tags.Count; i++)
 			{
+				var entry = Tags[i];
 				if (minTime > entry.Time)
 					minTime = entry.Time;
 				if (maxTime < entry.Time)
 					maxTime = entry.Time;
 			}
 
-			foreach (var entry in Channels)
+			for (var i = 0; i < Channels.Count; i++)
 			{
 				float entryMin;
 				float entryMax;
-				entry.GetMinMaxTime(out entryMin, out entryMax);
+				Channels[i].GetMinMaxTime(out entryMin, out entryMax);
 
 				if (minTime > entryMin)
 					minTime = entryMin;
@@ -162,9 +206,25 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void MoveForward(float time)
+		public void CalculateValueAxisRangeInTimeWindow(float timeStart, float timeEnd)
 		{
-			LatestTime = time;
+			var min = float.PositiveInfinity;
+			var max = float.NegativeInfinity;
+
+			for (var i = 0; i < Channels.Count; i++)
+			{
+				float channelMin, channelMax;
+				Channels[i].GetValueRangeInTimeWindow(timeStart, timeEnd, out channelMin, out channelMax);
+				if (min > channelMin)
+					min = channelMin;
+				if (max < channelMax)
+					max = channelMax;
+			}
+		}
+
+		public void SetRangeConfiguration(ValueAxisRangeConfiguration range)
+		{
+			Range.CopyFrom(range);
 		}
 	}
 

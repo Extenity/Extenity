@@ -1,3 +1,4 @@
+using Extenity.IMGUIToolbox;
 using UnityEngine;
 using UnityEditor;
 
@@ -6,58 +7,96 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 	public class Utils
 	{
-		public static void AxisSettings(Object undoObject, ref ValueAxisMode mode, float inMin, out float outMin, float inMax, out float outMax)
+		public static void DrawAxisRangeConfiguration(Object undoObject, Monitor monitor, ref ValueAxisRangeConfiguration range)
 		{
-			var newMode = (ValueAxisMode)EditorGUILayout.EnumPopup("Axis mode ", mode);
+			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis sizing ", range.Sizing);
 
-			if (newMode != mode)
+			if (newSizing != range.Sizing)
 			{
-				Undo.RecordObject(undoObject, "Changed axis mode");
-				if (newMode == ValueAxisMode.Fixed &&
-					float.IsPositiveInfinity(inMin) &&
-					float.IsNegativeInfinity(inMax))
+				Undo.RecordObject(undoObject, "Changed axis sizing");
+				if (newSizing == ValueAxisSizing.Fixed &&
+					float.IsPositiveInfinity(range.Min) &&
+					float.IsNegativeInfinity(range.Max))
 				{
-					inMin = -1f;
-					inMax = 1f;
+					range.Min = -1f;
+					range.Max = 1f;
 				}
 
-				mode = newMode;
+				range.Sizing = newSizing;
 			}
 
-			if (newMode == ValueAxisMode.Adaptive)
+			float newMinimum;
+			float newMaximum;
+
+			if (newSizing == ValueAxisSizing.Adaptive)
 			{
-				outMin = float.PositiveInfinity;
-				outMax = float.NegativeInfinity;
+				newMinimum = float.PositiveInfinity;
+				newMaximum = float.NegativeInfinity;
 			}
 			else
 			{
-				outMin = EditorGUILayout.FloatField("Axis min", inMin);
-				outMax = EditorGUILayout.FloatField("Axis max", inMax);
+				newMinimum = EditorGUILayout.FloatField("Axis min", range.Min);
+				newMaximum = EditorGUILayout.FloatField("Axis max", range.Max);
 
-				if (outMin != inMin)
+				if (newMinimum != range.Min)
 				{
-					Undo.RecordObject(undoObject, "Changed axis min");
+					Undo.RecordObject(undoObject, "Changed axis range minimum");
 				}
 
-				if (outMax != inMax)
+				if (newMaximum != range.Max)
 				{
-					Undo.RecordObject(undoObject, "Changed axis min");
+					Undo.RecordObject(undoObject, "Changed axis range maximum");
 				}
+			}
 
+			if (newMinimum != range.Min)
+			{
+				range.Min = newMinimum;
+
+				if (monitor != null)
+				{
+					monitor.Range.Min = newMinimum;
+				}
+			}
+
+			if (newMaximum != range.Max)
+			{
+				range.Max = newMaximum;
+
+				if (monitor != null)
+				{
+					monitor.Range.Max = newMaximum;
+				}
 			}
 		}
 
 		public static void OpenButton(GameObject gameObject)
 		{
+			if (!gameObject)
+				return;
+
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
 
-			if (GUILayout.Button("Open monitors...", GUILayout.Width(110)))
+			if (GUILayout.Button("Open Graph Plotter", GUILayout.ExpandWidth(false)))
 			{
 				var window = EditorWindow.GetWindow<MonitorsEditorWindow>();
-				window.Filter = gameObject;
-				window.ShowNotification(new GUIContent("Monitors for " + gameObject.name));
+				window.RemoveNotification();
+				window.SetFilter(null);
+			}
+			if (GUILayoutTools.Button("Filtered", GraphPlotters.IsAnyGraphForObjectExists(gameObject), GUILayout.ExpandWidth(false)))
+			{
+				var window = EditorWindow.GetWindow<MonitorsEditorWindow>();
+				window.RemoveNotification();
+				if (window.SetFilter(gameObject))
+				{
+					window.ShowNotification(new GUIContent($"Filtering only for '{gameObject.name}'"));
+				}
+				else
+				{
+					window.ShowNotification(new GUIContent($"No graph to filter for '{gameObject.name}'!"));
+				}
 			}
 
 			EditorGUILayout.EndHorizontal();

@@ -12,6 +12,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool showVolume = false;
 
+		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
+
 		public Monitor monitor_volume;
 		private Channel channel_volume;
 		// -----------------------------------------------------
@@ -19,9 +21,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool showPitch = false;
 
-		public ValueAxisMode pitchMode = ValueAxisMode.Expansive;
-		public float pitchMin = 0f;
-		public float pitchMax = 2f;
+		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
 
 		public Monitor monitor_pitch;
 		private Channel channel_pitch;
@@ -77,9 +77,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (monitor_volume == null)
 				{
 					monitor_volume = new Monitor("Volume", gameObject);
-					monitor_volume.Mode = ValueAxisMode.Fixed;
-					monitor_volume.Min = 0f;
-					monitor_volume.Max = 1f;
+					monitor_volume.SetRangeConfiguration(VolumeRange);
 				}
 
 				if (channel_volume == null)
@@ -112,9 +110,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					monitor_pitch = new Monitor("Pitch", gameObject);
 				}
 
-				monitor_pitch.Mode = pitchMode;
-				monitor_pitch.Min = pitchMin;
-				monitor_pitch.Max = pitchMax;
+				monitor_pitch.SetRangeConfiguration(PitchRange);
 
 				if (channel_pitch == null)
 				{
@@ -144,9 +140,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (monitor_isPlaying == null)
 				{
 					monitor_isPlaying = new Monitor("Is playing", gameObject);
-					monitor_isPlaying.Mode = ValueAxisMode.Fixed;
-					monitor_isPlaying.Min = 0f;
-					monitor_isPlaying.Max = 1f;
+					monitor_isPlaying.SetRangeConfiguration(new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f));
 				}
 
 				if (channel_isPlaying == null)
@@ -193,14 +187,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showVolume)
 			{
+				VolumeRange.CopyFrom(monitor_volume.Range);
 				channel_volume.Sample(audioSource.volume);
 			}
 
 			if (showPitch)
 			{
-				pitchMin = monitor_pitch.Min;
-				pitchMax = monitor_pitch.Max;
-
+				PitchRange.CopyFrom(monitor_pitch.Range);
 				channel_pitch.Sample(audioSource.pitch);
 			}
 

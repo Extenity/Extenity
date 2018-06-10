@@ -61,7 +61,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
-			monitor.MoveForward(Time.time);
+			monitor.SetTimeCursor(Time.time);
 		}
 
 		private void LogCallback(string logString, string stackTrace, LogType type)
