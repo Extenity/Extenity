@@ -10,7 +10,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public string filterPrefix;
 		private Monitor monitor;
 
-		void Awake()
+		protected void Awake()
 		{
 			if (Application.isPlaying && !Application.isEditor)
 			{
@@ -18,7 +18,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		void Start()
+		protected void Start()
 		{
 			UpdateMonitors();
 
@@ -56,7 +56,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void Update()
+		protected void Update()
 		{
 			if (!Application.isPlaying)
 				return;
@@ -64,7 +64,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			monitor.MoveForward(Time.time);
 		}
 
-		void LogCallback(string logString, string stackTrace, LogType type)
+		private void LogCallback(string logString, string stackTrace, LogType type)
 		{
 			if (filterPrefix != string.Empty)
 			{
@@ -79,17 +79,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			monitor.Add(entry);
 		}
 
-		public void OnEnable()
+		protected void OnEnable()
 		{
 			UpdateMonitors();
 		}
 
-		public void OnDisable()
+		protected void OnDisable()
 		{
 			UpdateMonitors();
 		}
 
-		public void OnDestroy()
+		protected void OnDestroy()
 		{
 			Application.logMessageReceived -= LogCallback;
 			RemoveMonitor();

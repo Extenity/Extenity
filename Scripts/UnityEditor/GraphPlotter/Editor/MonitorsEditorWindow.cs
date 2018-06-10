@@ -212,7 +212,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		#endregion
 
-		public void OnGUI()
+		protected void OnGUI()
 		{
 			// Make sure content color is sane.
 			GUI.contentColor = Color.white;

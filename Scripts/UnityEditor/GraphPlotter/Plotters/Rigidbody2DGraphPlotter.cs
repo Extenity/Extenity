@@ -66,7 +66,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private new Rigidbody2D rigidbody2D;
 
-		void Awake()
+		protected void Awake()
 		{
 			if (Application.isPlaying && !Application.isEditor)
 			{
@@ -74,7 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		void Start()
+		protected void Start()
 		{
 			UpdateMonitors();
 
@@ -403,17 +403,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void OnEnable()
+		protected void OnEnable()
 		{
 			UpdateMonitors();
 		}
 
-		public void OnDisable()
+		protected void OnDisable()
 		{
 			UpdateMonitors();
 		}
 
-		public void OnDestroy()
+		protected void OnDestroy()
 		{
 			RemoveMonitors();
 		}
