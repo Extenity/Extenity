@@ -7,8 +7,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class RigidbodyGraphPlotter : MonoBehaviour
 	{
-		public enum RotationFormat { Euler, Quaternion }
-
 		// position
 		public bool showPosition = false;
 		public bool showPosition_x = true;
@@ -91,7 +89,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (rigidbody == null)
 				{
-					Debug.LogWarning("MonitorAudioSource requires an Rigidbody component.", this);
+					Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
 					enabled = false;
 				}
 			}
@@ -421,7 +419,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (!missingRigidbodyWarning)
 				{
-					Debug.LogWarning("MonitorRigidbody requires a Rigidbody component.", this);
+					Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
 					missingRigidbodyWarning = true;
 				}
 
@@ -430,7 +428,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showPosition)
 			{
-				Vector3 position = rigidbody.position;
+				var position = rigidbody.position;
 
 				positionMin = monitor_position.Min;
 				positionMax = monitor_position.Max;
@@ -453,30 +451,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showRotation)
 			{
-				Vector3 rotation = rigidbody.rotation.eulerAngles;
+				var euler = rigidbody.rotation.eulerAngles;
 
 				rotationMin = monitor_rotation.Min;
 				rotationMax = monitor_rotation.Max;
 
 				if (showRotation_x)
 				{
-					channel_rotation_x.Sample(rotation.x);
+					channel_rotation_x.Sample(euler.x);
 				}
 
 				if (showRotation_y)
 				{
-					channel_rotation_y.Sample(rotation.y);
+					channel_rotation_y.Sample(euler.y);
 				}
 
 				if (showRotation_z)
 				{
-					channel_rotation_z.Sample(rotation.z);
+					channel_rotation_z.Sample(euler.z);
 				}
 			}
 
 			if (showVelocity)
 			{
-				Vector3 velocity = rigidbody.velocity;
+				var velocity = rigidbody.velocity;
 
 				velocityMin = monitor_velocity.Min;
 				velocityMax = monitor_velocity.Max;
@@ -499,7 +497,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showAngularVelocity)
 			{
-				Vector3 angularVelocity = rigidbody.angularVelocity;
+				var angularVelocity = rigidbody.angularVelocity;
 
 				angularVelocityMin = monitor_angularVelocity.Min;
 				angularVelocityMax = monitor_angularVelocity.Max;

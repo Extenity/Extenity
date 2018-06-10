@@ -7,8 +7,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class Rigidbody2DGraphPlotter : MonoBehaviour
 	{
-		public enum RotationFormat { Euler, Quaternion }
-
 		// position
 		public bool showPosition = false;
 		public bool showPosition_x = true;
@@ -78,7 +76,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (rigidbody2D == null)
 				{
-					Debug.LogWarning("MonitorAudioSource requires an Rigidbody2D component.", this);
+					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(Rigidbody2D) + " component.", this);
 					enabled = false;
 				}
 			}
@@ -306,7 +304,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (!missingRigidbodyWarning)
 				{
-					Debug.LogWarning("MonitorRigidbody requires a Rigidbody2D component.", this);
+					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(Rigidbody2D) + " component.", this);
 					missingRigidbodyWarning = true;
 				}
 

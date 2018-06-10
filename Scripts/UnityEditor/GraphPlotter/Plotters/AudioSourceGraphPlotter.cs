@@ -49,7 +49,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (audioSource == null)
 				{
-					Debug.LogWarning("MonitorAudioSource requires an AudioSource component.", this);
+					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(AudioSource) + " component.", this);
 					enabled = false;
 				}
 			}

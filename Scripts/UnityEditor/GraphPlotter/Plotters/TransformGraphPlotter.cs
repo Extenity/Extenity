@@ -306,14 +306,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		}
 
 
-		public void Update()
+		public void FixedUpdate()
 		{
 			if (!Application.isPlaying)
 				return;
 
 			if (showPosition)
 			{
-				Vector3 position = positionSpace == Space.Local ? transform.localPosition : transform.position;
+				var position = positionSpace == Space.Local ? transform.localPosition : transform.position;
 
 				positionMin = monitor_position.Min;
 				positionMax = monitor_position.Max;
@@ -336,30 +336,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showRotation)
 			{
-				Vector3 rotation = (rotationSpace == Space.Local ? transform.localRotation : transform.rotation).eulerAngles;
+				var euler = (rotationSpace == Space.Local ? transform.localRotation : transform.rotation).eulerAngles;
 
 				rotationMin = monitor_rotation.Min;
 				rotationMax = monitor_rotation.Max;
 
 				if (showRotation_x)
 				{
-					channel_rotation_x.Sample(rotation.x);
+					channel_rotation_x.Sample(euler.x);
 				}
 
 				if (showRotation_y)
 				{
-					channel_rotation_y.Sample(rotation.y);
+					channel_rotation_y.Sample(euler.y);
 				}
 
 				if (showRotation_z)
 				{
-					channel_rotation_z.Sample(rotation.z);
+					channel_rotation_z.Sample(euler.z);
 				}
 			}
 
 			if (showScale)
 			{
-				Vector3 scale = scaleSpace == ScaleSpace.Local ? transform.localScale : transform.lossyScale;
+				var scale = scaleSpace == ScaleSpace.Local ? transform.localScale : transform.lossyScale;
 
 				scaleMin = monitor_scale.Min;
 				scaleMax = monitor_scale.Max;
