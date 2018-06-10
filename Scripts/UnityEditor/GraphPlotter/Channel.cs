@@ -15,6 +15,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public float[] times;
 		public int[] frames;
 
+		#region Initialization
+
 		public Channel(Monitor monitor, string description) :
 			this(monitor, description, Color.red)
 		{
@@ -38,8 +40,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				frames[i] = -1;
 			}
 
-			monitor.Add(this);
+			monitor.RegisterChannel(this);
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		public void Close()
+		{
+			Monitor.DeregisterChannel(this);
+		}
+
+		#endregion
 
 		public void Sample(float value)
 		{
@@ -99,11 +112,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (maxTime < time)
 					maxTime = time;
 			}
-		}
-
-		public void Close()
-		{
-			Monitor.Remove(this);
 		}
 	}
 

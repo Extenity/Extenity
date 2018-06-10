@@ -26,18 +26,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	public class Monitor
 	{
 		public string Name;
-		public ValueAxisMode Mode = ValueAxisMode.Expansive;
-		public float LatestTime = 0f;
+		public GameObject GameObject = null;
 
+		public ValueAxisMode Mode = ValueAxisMode.Expansive;
 		public float Min = float.PositiveInfinity;
 		public float Max = float.NegativeInfinity;
 
-		public List<Channel> Channels = new List<Channel>();
-		public List<TagEntry> Tags = new List<TagEntry>();
+		public float LatestTime = 0f;
 
-		private TagEntryTimeComparer EventComparer = new TagEntryTimeComparer();
+		public readonly List<TagEntry> Tags = new List<TagEntry>();
 
-		public GameObject GameObject = null;
+		private readonly TagEntryTimeComparer _EventComparer = new TagEntryTimeComparer();
+
+		#region Initialization
 
 		public Monitor(string name, GameObject gameObject = null)
 		{
@@ -46,6 +47,33 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			GraphPlotters.Register(this);
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		public void Close()
+		{
+			GraphPlotters.Deregister(this);
+		}
+
+		#endregion
+
+		#region Channels
+
+		public readonly List<Channel> Channels = new List<Channel>();
+
+		internal void RegisterChannel(Channel channel)
+		{
+			Channels.Add(channel);
+		}
+
+		internal void DeregisterChannel(Channel channel)
+		{
+			Channels.Remove(channel);
+		}
+
+		#endregion
 
 		public void Resize(float value, float time)
 		{
@@ -62,14 +90,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void Add(Channel channel)
-		{
-			Channels.Add(channel);
-		}
-
 		public void Add(TagEntry entry)
 		{
-			int index = Tags.BinarySearch(entry, EventComparer);
+			int index = Tags.BinarySearch(entry, _EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
@@ -87,12 +110,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			// Find starting index
 			_LookupEvent.Time = minTime;
-			int index = Tags.BinarySearch(_LookupEvent, EventComparer);
+			var index = Tags.BinarySearch(_LookupEvent, _EventComparer);
 			if (index < 0)
 			{
 				index = ~index;
 			}
 
+			// Add all entries until maxTime
 			for (int i = index; i < Tags.Count; i++)
 			{
 				var entry = Tags[i];
@@ -138,17 +162,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			LatestTime = time;
 		}
-
-		public void Remove(Channel channel)
-		{
-			Channels.Remove(channel);
-		}
-
-		public void Close()
-		{
-			GraphPlotters.Deregister(this);
-		}
-
 	}
 
 }

@@ -19,6 +19,13 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 			Channel2 = new Channel(Monitor, "Bob Wave", Color.blue);
 		}
 
+		private void OnDestroy()
+		{
+			Channel1.Close();
+			Channel2.Close();
+			Monitor.Close();
+		}
+
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
