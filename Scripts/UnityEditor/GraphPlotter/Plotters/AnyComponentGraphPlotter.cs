@@ -14,14 +14,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public List<ChannelField> channelFields = new List<ChannelField>();
 		private List<ChannelField> oldChannelFields = new List<ChannelField>();
 
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
+		// -----------------------------------------------------
+		// Input - Scale
+		// -----------------------------------------------------
 		public Monitor monitor;
 		public ValueAxisMode mode = ValueAxisMode.Adaptive;
 
-		public enum SampleMode { Update, FixedUpdate }
-		public SampleMode sampleMode = SampleMode.FixedUpdate;
-
 		public float min = float.PositiveInfinity;
 		public float max = float.NegativeInfinity;
+		// -----------------------------------------------------
 
 		[Serializable]
 		public class ChannelField
@@ -112,30 +115,27 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void Update()
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		public void Sample()
 		{
 			if (!Application.isPlaying)
 				return;
 
-			if (sampleMode == SampleMode.Update)
-			{
-				SampleFields();
-			}
-		}
-
-		public void FixedUpdate()
-		{
-			if (!Application.isPlaying)
-				return;
-
-			if (sampleMode == SampleMode.FixedUpdate)
-			{
-				SampleFields();
-			}
-		}
-
-		private void SampleFields()
-		{
 			if (component == null)
 				return;
 
@@ -144,8 +144,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			foreach (var field in channelFields)
 			{
+				// ReSharper disable once BuiltInTypeReferenceStyle
 				Object instance = component;
-				Type instanceType = component.GetType();
+				var instanceType = component.GetType();
 
 				for (int level = 0; level < field.field.Length; level++)
 				{

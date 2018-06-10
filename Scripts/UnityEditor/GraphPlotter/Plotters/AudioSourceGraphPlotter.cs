@@ -7,13 +7,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class AudioSourceGraphPlotter : MonoBehaviour
 	{
-		// volume
+		// -----------------------------------------------------
+		// Input - Volume
+		// -----------------------------------------------------
 		public bool showVolume = false;
 
 		public Monitor monitor_volume;
 		private Channel channel_volume;
-
-		// pitch
+		// -----------------------------------------------------
+		// Input - Pitch
+		// -----------------------------------------------------
 		public bool showPitch = false;
 
 		public ValueAxisMode pitchMode = ValueAxisMode.Expansive;
@@ -22,14 +25,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public Monitor monitor_pitch;
 		private Channel channel_pitch;
-
-		// isPlaying
+		// -----------------------------------------------------
+		// Input - IsPlaying
+		// -----------------------------------------------------
 		public bool showIsPlaying = false;
 
 		public Monitor monitor_isPlaying;
 		private Channel channel_isPlaying;
+		// -----------------------------------------------------
 
 		private AudioSource audioSource;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
 		void Awake()
 		{
@@ -164,7 +170,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void Update()
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		public void Sample()
 		{
 			if (!Application.isPlaying)
 				return;

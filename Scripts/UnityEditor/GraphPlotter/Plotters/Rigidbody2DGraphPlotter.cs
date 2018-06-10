@@ -7,7 +7,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class Rigidbody2DGraphPlotter : MonoBehaviour
 	{
-		// position
+		// -----------------------------------------------------
+		// Input - Position
+		// -----------------------------------------------------
 		public bool showPosition = false;
 		public bool showPosition_x = true;
 		public bool showPosition_y = true;
@@ -19,8 +21,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Monitor monitor_position;
 		private Channel channel_position_x;
 		private Channel channel_position_y;
-
-		// rotation
+		// -----------------------------------------------------
+		// Input - Rotation
+		// -----------------------------------------------------
 		public bool showRotation = false;
 		public bool rotationClamp = true;
 
@@ -30,8 +33,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public Monitor monitor_rotation;
 		private Channel channel_rotation;
-
-		// velocity
+		// -----------------------------------------------------
+		// Input - Velocity
+		// -----------------------------------------------------
 		public bool showVelocity = false;
 		public bool showVelocity_x = true;
 		public bool showVelocity_y = true;
@@ -43,8 +47,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Monitor monitor_velocity;
 		private Channel channel_velocity_x;
 		private Channel channel_velocity_y;
-
-		// angular velocity.
+		// -----------------------------------------------------
+		// Input - Angular Velocity
+		// -----------------------------------------------------
 		public bool showAngularVelocity = false;
 
 		public ValueAxisMode angularVelocityMode = ValueAxisMode.Adaptive;
@@ -53,6 +58,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public Monitor monitor_angularVelocity;
 		private Channel channel_angularVelocity;
+		// -----------------------------------------------------
+
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
 		private bool missingRigidbodyWarning = false;
 
@@ -290,16 +298,27 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void FixedUpdate()
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		public void Sample()
 		{
 			if (!Application.isPlaying)
 				return;
 
-			Sample();
-		}
-
-		private void Sample()
-		{
 			if (rigidbody2D == null)
 			{
 				if (!missingRigidbodyWarning)

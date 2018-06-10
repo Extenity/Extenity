@@ -10,7 +10,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public enum Space { Local, World };
 		public enum ScaleSpace { Local, Lossy };
 
-		// position
+		// -----------------------------------------------------
+		// Input - Position
+		// -----------------------------------------------------
 		public bool showPosition = false;
 		public bool showPosition_x = true;
 		public bool showPosition_y = true;
@@ -24,8 +26,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel channel_position_x;
 		public Channel channel_position_y;
 		public Channel channel_position_z;
-
-		// rotation
+		// -----------------------------------------------------
+		// Input - Rotation
+		// -----------------------------------------------------
 		public bool showRotation = false;
 		public bool showRotation_x = true;
 		public bool showRotation_y = true;
@@ -39,13 +42,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel channel_rotation_x;
 		public Channel channel_rotation_y;
 		public Channel channel_rotation_z;
-
-		// scale
+		// -----------------------------------------------------
+		// Input - Scale
+		// -----------------------------------------------------
 		public bool showScale = false;
-		public ScaleSpace scaleSpace = ScaleSpace.Local;
 		public bool showScale_x = true;
 		public bool showScale_y = true;
 		public bool showScale_z = true;
+		public ScaleSpace scaleSpace = ScaleSpace.Local;
 		public ValueAxisMode scaleMode = ValueAxisMode.Adaptive;
 		public float scaleMin = float.PositiveInfinity;
 		public float scaleMax = float.NegativeInfinity;
@@ -54,6 +58,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel channel_scale_x;
 		public Channel channel_scale_y;
 		public Channel channel_scale_z;
+		// -----------------------------------------------------
+
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
 		void Awake()
 		{
@@ -305,8 +312,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
 
-		public void FixedUpdate()
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		public void Sample()
 		{
 			if (!Application.isPlaying)
 				return;

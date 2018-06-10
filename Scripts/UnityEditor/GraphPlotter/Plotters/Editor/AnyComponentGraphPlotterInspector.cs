@@ -85,12 +85,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 			}
 
-			// Sample Mode
-			var newSampleMode = (AnyComponentGraphPlotter.SampleMode)EditorGUILayout.EnumPopup("Sample time", Me.sampleMode);
-			if (newSampleMode != Me.sampleMode)
+			// Sample Time
+			var newSampleTime = (SampleTime)EditorGUILayout.EnumPopup("Sample time", Me.SampleTime);
+			if (newSampleTime != Me.SampleTime)
 			{
 				Undo.RecordObject(target, "Change sample time");
-				Me.sampleMode = newSampleMode;
+				Me.SampleTime = newSampleTime;
 			}
 
 			EditorGUILayout.Space();

@@ -4,6 +4,18 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
+	public enum SampleTime
+	{
+		FixedUpdate,
+		Update,
+
+		/// <summary>
+		/// Need to manually call Sample.
+		/// </summary>
+		Custom
+	}
+
+	// TODO: Rename to ValueAxisRange
 	public enum ValueAxisMode
 	{
 		Fixed,
