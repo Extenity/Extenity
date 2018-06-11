@@ -11,6 +11,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		protected override void OnEnableDerived()
 		{
 			IsDefaultInspectorDrawingEnabled = false;
+
+			// Try to connect the link automatically
+			if (!Me.Rigidbody)
+			{
+				Undo.RecordObject(Me, "Automatic linking");
+				Me.Rigidbody = Me.GetComponent<Rigidbody>();
+			}
 		}
 
 		protected override void OnDisableDerived()
@@ -19,6 +26,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
+			EditorGUILayout.Space();
+
+			EditorGUILayout.PropertyField(GetProperty("Rigidbody"));
+
 			EditorGUILayout.Space();
 
 			// Position

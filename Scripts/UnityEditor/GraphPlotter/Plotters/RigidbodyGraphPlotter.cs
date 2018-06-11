@@ -7,6 +7,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class RigidbodyGraphPlotter : MonoBehaviour
 	{
+		public Rigidbody Rigidbody;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
 		// -----------------------------------------------------
 		// Input - Position
 		// -----------------------------------------------------
@@ -65,12 +68,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel channel_angularVelocity_z;
 		// -----------------------------------------------------
 
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
-
-		private bool missingRigidbodyWarning = false;
-
-		private new Rigidbody rigidbody;
-
 		protected void Awake()
 		{
 			if (Application.isPlaying && !Application.isEditor)
@@ -82,17 +79,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		protected void Start()
 		{
 			UpdateMonitors();
-
-			if (Application.isPlaying)
-			{
-				rigidbody = GetComponent<Rigidbody>();
-
-				if (rigidbody == null)
-				{
-					Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
-					enabled = false;
-				}
-			}
 		}
 
 		public void UpdateMonitors()
@@ -426,14 +412,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
-			if (rigidbody == null)
+			if (!Rigidbody)
 			{
-				if (!missingRigidbodyWarning)
-				{
-					Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
-					missingRigidbodyWarning = true;
-				}
-
+				Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
 				return;
 			}
 
@@ -442,7 +423,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showPosition)
 			{
-				var position = rigidbody.position;
+				var position = Rigidbody.position;
 
 				PositionRange.CopyFrom(monitor_position.Range);
 
@@ -464,7 +445,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showRotation)
 			{
-				var euler = rigidbody.rotation.eulerAngles;
+				var euler = Rigidbody.rotation.eulerAngles;
 
 				RotationRange.CopyFrom(monitor_rotation.Range);
 
@@ -486,7 +467,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showVelocity)
 			{
-				var velocity = rigidbody.velocity;
+				var velocity = Rigidbody.velocity;
 
 				VelocityRange.CopyFrom(monitor_velocity.Range);
 
@@ -508,7 +489,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showAngularVelocity)
 			{
-				var angularVelocity = rigidbody.angularVelocity;
+				var angularVelocity = Rigidbody.angularVelocity;
 
 				AngularVelocityRange.CopyFrom(monitor_angularVelocity.Range);
 

@@ -11,6 +11,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		protected override void OnEnableDerived()
 		{
 			IsDefaultInspectorDrawingEnabled = false;
+
+			// Try to connect the link automatically
+			if (!Me.AudioSource)
+			{
+				Undo.RecordObject(Me, "Automatic linking");
+				Me.AudioSource = Me.GetComponent<AudioSource>();
+			}
 		}
 
 		protected override void OnDisableDerived()
@@ -19,6 +26,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
+			EditorGUILayout.Space();
+
+			EditorGUILayout.PropertyField(GetProperty("AudioSource"));
+
 			EditorGUILayout.Space();
 
 			var newShowVolume = EditorGUILayout.ToggleLeft(" Volume", Me.showVolume);

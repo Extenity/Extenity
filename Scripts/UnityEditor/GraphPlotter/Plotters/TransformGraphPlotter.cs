@@ -10,6 +10,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public enum Space { Local, World };
 		public enum ScaleSpace { Local, Lossy };
 
+		public Transform Transform;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
 		// -----------------------------------------------------
 		// Input - Position
 		// -----------------------------------------------------
@@ -53,8 +56,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel channel_scale_y;
 		public Channel channel_scale_z;
 		// -----------------------------------------------------
-
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
 		protected void Awake()
 		{
@@ -334,7 +335,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showPosition)
 			{
-				var position = positionSpace == Space.Local ? transform.localPosition : transform.position;
+				var position = positionSpace == Space.Local ? Transform.localPosition : Transform.position;
 
 				PositionRange.CopyFrom(monitor_position.Range);
 
@@ -356,7 +357,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showRotation)
 			{
-				var euler = (rotationSpace == Space.Local ? transform.localRotation : transform.rotation).eulerAngles;
+				var euler = (rotationSpace == Space.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
 
 				RotationRange.CopyFrom(monitor_rotation.Range);
 
@@ -378,7 +379,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showScale)
 			{
-				var scale = scaleSpace == ScaleSpace.Local ? transform.localScale : transform.lossyScale;
+				var scale = scaleSpace == ScaleSpace.Local ? Transform.localScale : Transform.lossyScale;
 
 				ScaleRange.CopyFrom(monitor_scale.Range);
 

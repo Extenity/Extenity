@@ -7,6 +7,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class Rigidbody2DGraphPlotter : MonoBehaviour
 	{
+		public Rigidbody2D Rigidbody2D;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
 		// -----------------------------------------------------
 		// Input - Position
 		// -----------------------------------------------------
@@ -52,12 +55,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel channel_angularVelocity;
 		// -----------------------------------------------------
 
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
-
-		private bool missingRigidbodyWarning = false;
-
-		private new Rigidbody2D rigidbody2D;
-
 		protected void Awake()
 		{
 			if (Application.isPlaying && !Application.isEditor)
@@ -69,17 +66,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		protected void Start()
 		{
 			UpdateMonitors();
-
-			if (Application.isPlaying)
-			{
-				rigidbody2D = GetComponent<Rigidbody2D>();
-
-				if (rigidbody2D == null)
-				{
-					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(Rigidbody2D) + " component.", this);
-					enabled = false;
-				}
-			}
 		}
 
 		public void UpdateMonitors()
@@ -311,14 +297,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
-			if (rigidbody2D == null)
+			if (Rigidbody2D == null)
 			{
-				if (!missingRigidbodyWarning)
-				{
-					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(Rigidbody2D) + " component.", this);
-					missingRigidbodyWarning = true;
-				}
-
+				Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(UnityEngine.Rigidbody2D) + " component.", this);
 				return;
 			}
 
@@ -327,7 +308,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showPosition)
 			{
-				var position = rigidbody2D.position;
+				var position = Rigidbody2D.position;
 
 				PositionRange.CopyFrom(monitor_position.Range);
 
@@ -348,7 +329,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showRotation)
 				{
-					var rotation = rigidbody2D.rotation;
+					var rotation = Rigidbody2D.rotation;
 					if (rotationClamp)
 					{
 						if (rotation > 0)
@@ -367,7 +348,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showVelocity)
 			{
-				var velocity = rigidbody2D.velocity;
+				var velocity = Rigidbody2D.velocity;
 
 				VelocityRange.CopyFrom(monitor_angularVelocity.Range);
 
@@ -388,7 +369,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showAngularVelocity)
 				{
-					channel_angularVelocity.Sample(rigidbody2D.angularVelocity, time, frame);
+					channel_angularVelocity.Sample(Rigidbody2D.angularVelocity, time, frame);
 				}
 			}
 		}

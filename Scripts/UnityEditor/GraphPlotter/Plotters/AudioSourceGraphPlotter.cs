@@ -7,6 +7,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class AudioSourceGraphPlotter : MonoBehaviour
 	{
+		public AudioSource AudioSource;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
 		// -----------------------------------------------------
 		// Input - Volume
 		// -----------------------------------------------------
@@ -34,9 +37,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel channel_isPlaying;
 		// -----------------------------------------------------
 
-		private AudioSource audioSource;
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
-
 		protected void Awake()
 		{
 			if (Application.isPlaying && !Application.isEditor)
@@ -48,17 +48,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		protected void Start()
 		{
 			UpdateMonitors();
-
-			if (Application.isPlaying)
-			{
-				audioSource = GetComponent<AudioSource>();
-
-				if (audioSource == null)
-				{
-					Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(AudioSource) + " component.", this);
-					enabled = false;
-				}
-			}
 		}
 
 		public void UpdateMonitors()
@@ -193,24 +182,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
+			if (!AudioSource)
+			{
+				Debug.LogWarning(nameof(AudioSourceGraphPlotter) + " requires " + nameof(AudioSource) + " component.", this);
+				return;
+			}
+
 			var time = Time.time;
 			var frame = Time.frameCount;
 
 			if (showVolume)
 			{
 				VolumeRange.CopyFrom(monitor_volume.Range);
-				channel_volume.Sample(audioSource.volume, time, frame);
+				channel_volume.Sample(AudioSource.volume, time, frame);
 			}
 
 			if (showPitch)
 			{
 				PitchRange.CopyFrom(monitor_pitch.Range);
-				channel_pitch.Sample(audioSource.pitch, time, frame);
+				channel_pitch.Sample(AudioSource.pitch, time, frame);
 			}
 
 			if (showIsPlaying)
 			{
-				channel_isPlaying.Sample(audioSource.isPlaying ? 1f : 0f, time, frame);
+				channel_isPlaying.Sample(AudioSource.isPlaying ? 1f : 0f, time, frame);
 			}
 		}
 

@@ -257,10 +257,11 @@ MonoBehaviour:
     - SomeRandomNumber
     color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
     fieldTypeName: System.Single
-  mode: 2
-  sampleMode: 1
-  min: Infinity
-  max: -Infinity
+  SampleTime: 0
+  Range:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
 --- !u!1 &890043986
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +275,7 @@ GameObject:
   - component: {fileID: 890043987}
   - component: {fileID: 890043991}
   - component: {fileID: 890043992}
+  - component: {fileID: 890043993}
   m_Layer: 0
   m_Name: PLOTTED Sphere
   m_TagString: Untagged
@@ -374,34 +376,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d14d1522b63b8a24e899fb2e9bafcc13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Rigidbody: {fileID: 890043991}
+  SampleTime: 0
   showPosition: 1
   showPosition_x: 1
   showPosition_y: 1
   showPosition_z: 1
-  positionMode: 2
-  positionMin: Infinity
-  positionMax: -Infinity
+  PositionRange:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
   showRotation: 1
   showRotation_x: 1
   showRotation_y: 1
   showRotation_z: 1
-  rotationMode: 0
-  rotationMin: 0
-  rotationMax: 360
+  RotationRange:
+    Sizing: 0
+    Min: 0
+    Max: 360
   showVelocity: 0
   showVelocity_x: 1
   showVelocity_y: 1
   showVelocity_z: 1
-  velocityMode: 2
-  velocityMin: Infinity
-  velocityMax: -Infinity
+  VelocityRange:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
   showAngularVelocity: 0
   showAngularVelocity_x: 1
   showAngularVelocity_y: 1
   showAngularVelocity_z: 1
-  angularVelocityMode: 2
-  angularVelocityMin: Infinity
-  angularVelocityMax: -Infinity
+  AngularVelocityRange:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
+--- !u!114 &890043993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 890043986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b083b6d6d6419ca43ae60f72d58f5598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 890043990}
+  SampleTime: 0
+  showPosition: 0
+  showPosition_x: 1
+  showPosition_y: 1
+  showPosition_z: 1
+  positionSpace: 0
+  PositionRange:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
+  showRotation: 0
+  showRotation_x: 1
+  showRotation_y: 1
+  showRotation_z: 1
+  rotationSpace: 1
+  RotationRange:
+    Sizing: 0
+    Min: 0
+    Max: 360
+  showScale: 0
+  showScale_x: 1
+  showScale_y: 1
+  showScale_z: 1
+  scaleSpace: 0
+  ScaleRange:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
 --- !u!1 &1073055931
 GameObject:
   m_ObjectHideFlags: 0
