@@ -321,6 +321,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
+			var time = Time.time;
+			var frame = Time.frameCount;
+
 			if (showPosition)
 			{
 				var position = positionSpace == Space.Local ? transform.localPosition : transform.position;
@@ -329,17 +332,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showPosition_x)
 				{
-					channel_position_x.Sample(position.x);
+					channel_position_x.Sample(position.x, time, frame);
 				}
 
 				if (showPosition_y)
 				{
-					channel_position_y.Sample(position.y);
+					channel_position_y.Sample(position.y, time, frame);
 				}
 
 				if (showPosition_z)
 				{
-					channel_position_z.Sample(position.z);
+					channel_position_z.Sample(position.z, time, frame);
 				}
 			}
 
@@ -351,17 +354,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showRotation_x)
 				{
-					channel_rotation_x.Sample(euler.x);
+					channel_rotation_x.Sample(euler.x, time, frame);
 				}
 
 				if (showRotation_y)
 				{
-					channel_rotation_y.Sample(euler.y);
+					channel_rotation_y.Sample(euler.y, time, frame);
 				}
 
 				if (showRotation_z)
 				{
-					channel_rotation_z.Sample(euler.z);
+					channel_rotation_z.Sample(euler.z, time, frame);
 				}
 			}
 
@@ -373,17 +376,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showScale_x)
 				{
-					channel_scale_x.Sample(scale.x);
+					channel_scale_x.Sample(scale.x, time, frame);
 				}
 
 				if (showScale_y)
 				{
-					channel_scale_y.Sample(scale.y);
+					channel_scale_y.Sample(scale.y, time, frame);
 				}
 
 				if (showScale_z)
 				{
-					channel_scale_z.Sample(scale.z);
+					channel_scale_z.Sample(scale.z, time, frame);
 				}
 			}
 		}

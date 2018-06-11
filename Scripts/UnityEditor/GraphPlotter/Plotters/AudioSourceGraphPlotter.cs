@@ -185,21 +185,24 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
+			var time = Time.time;
+			var frame = Time.frameCount;
+
 			if (showVolume)
 			{
 				VolumeRange.CopyFrom(monitor_volume.Range);
-				channel_volume.Sample(audioSource.volume);
+				channel_volume.Sample(audioSource.volume, time, frame);
 			}
 
 			if (showPitch)
 			{
 				PitchRange.CopyFrom(monitor_pitch.Range);
-				channel_pitch.Sample(audioSource.pitch);
+				channel_pitch.Sample(audioSource.pitch, time, frame);
 			}
 
 			if (showIsPlaying)
 			{
-				channel_isPlaying.Sample(audioSource.isPlaying ? 1f : 0f);
+				channel_isPlaying.Sample(audioSource.isPlaying ? 1f : 0f, time, frame);
 			}
 		}
 

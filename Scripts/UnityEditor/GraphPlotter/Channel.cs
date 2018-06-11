@@ -56,9 +56,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Sample(float value)
 		{
-			float time = Time.time;
-			int frame = Time.frameCount;
+			Sample(value, Time.time, Time.frameCount);
+		}
 
+		public void Sample(float value, float time, int frame)
+		{
 			samples[sampleIndex] = value;
 			times[sampleIndex] = time;
 			frames[sampleIndex] = frame;

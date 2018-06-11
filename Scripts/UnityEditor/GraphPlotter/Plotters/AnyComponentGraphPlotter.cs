@@ -136,6 +136,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			Range.CopyFrom(monitor.Range);
 
+			var time = Time.time;
+			var frame = Time.frameCount;
+
 			foreach (var field in channelFields)
 			{
 				// ReSharper disable once BuiltInTypeReferenceStyle
@@ -159,22 +162,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					if (instanceType == typeof(float))
 					{
-						field.Channel.Sample((float)instance);
+						field.Channel.Sample((float)instance, time, frame);
 					}
 
 					if (instanceType == typeof(double))
 					{
-						field.Channel.Sample(Convert.ToSingle((double)instance));
+						field.Channel.Sample(Convert.ToSingle((double)instance), time, frame);
 					}
 
 					if (instanceType == typeof(int))
 					{
-						field.Channel.Sample((int)instance);
+						field.Channel.Sample((int)instance, time, frame);
 					}
 
 					if (instanceType == typeof(bool))
 					{
-						field.Channel.Sample((bool)instance ? 1f : 0f);
+						field.Channel.Sample((bool)instance ? 1f : 0f, time, frame);
 					}
 				}
 			}

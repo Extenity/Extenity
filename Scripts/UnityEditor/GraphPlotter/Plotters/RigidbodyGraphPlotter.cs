@@ -429,6 +429,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				return;
 			}
 
+			var time = Time.time;
+			var frame = Time.frameCount;
+
 			if (showPosition)
 			{
 				var position = rigidbody.position;
@@ -437,17 +440,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showPosition_x)
 				{
-					channel_position_x.Sample(position.x);
+					channel_position_x.Sample(position.x, time, frame);
 				}
 
 				if (showPosition_y)
 				{
-					channel_position_y.Sample(position.y);
+					channel_position_y.Sample(position.y, time, frame);
 				}
 
 				if (showPosition_z)
 				{
-					channel_position_z.Sample(position.z);
+					channel_position_z.Sample(position.z, time, frame);
 				}
 			}
 
@@ -459,17 +462,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showRotation_x)
 				{
-					channel_rotation_x.Sample(euler.x);
+					channel_rotation_x.Sample(euler.x, time, frame);
 				}
 
 				if (showRotation_y)
 				{
-					channel_rotation_y.Sample(euler.y);
+					channel_rotation_y.Sample(euler.y, time, frame);
 				}
 
 				if (showRotation_z)
 				{
-					channel_rotation_z.Sample(euler.z);
+					channel_rotation_z.Sample(euler.z, time, frame);
 				}
 			}
 
@@ -481,17 +484,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showVelocity_x)
 				{
-					channel_velocity_x.Sample(velocity.x);
+					channel_velocity_x.Sample(velocity.x, time, frame);
 				}
 
 				if (showVelocity_y)
 				{
-					channel_velocity_y.Sample(velocity.y);
+					channel_velocity_y.Sample(velocity.y, time, frame);
 				}
 
 				if (showVelocity_z)
 				{
-					channel_velocity_z.Sample(velocity.z);
+					channel_velocity_z.Sample(velocity.z, time, frame);
 				}
 			}
 
@@ -503,17 +506,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showAngularVelocity_x)
 				{
-					channel_angularVelocity_x.Sample(angularVelocity.x);
+					channel_angularVelocity_x.Sample(angularVelocity.x, time, frame);
 				}
 
 				if (showAngularVelocity_y)
 				{
-					channel_angularVelocity_y.Sample(angularVelocity.y);
+					channel_angularVelocity_y.Sample(angularVelocity.y, time, frame);
 				}
 
 				if (showAngularVelocity_z)
 				{
-					channel_angularVelocity_z.Sample(angularVelocity.z);
+					channel_angularVelocity_z.Sample(angularVelocity.z, time, frame);
 				}
 			}
 		}

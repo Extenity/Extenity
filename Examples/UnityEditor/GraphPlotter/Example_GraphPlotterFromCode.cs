@@ -37,8 +37,9 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		private void FixedUpdate()
 		{
 			var time = Time.time;
-			Channel1.Sample(Mathf.Sin(3f * time));
-			Channel2.Sample(Mathf.Sin(4.5f * time));
+			var frame = Time.frameCount;
+			Channel1.Sample(Mathf.Sin(3f * time), time, frame);
+			Channel2.Sample(Mathf.Sin(4.5f * time), time, frame);
 
 			SomeRandomNumber = Random.value;
 		}

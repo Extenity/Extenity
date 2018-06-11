@@ -314,6 +314,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				return;
 			}
 
+			var time = Time.time;
+			var frame = Time.frameCount;
+
 			if (showPosition)
 			{
 				var position = rigidbody2D.position;
@@ -322,12 +325,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showPosition_x)
 				{
-					channel_position_x.Sample(position.x);
+					channel_position_x.Sample(position.x, time, frame);
 				}
 
 				if (showPosition_y)
 				{
-					channel_position_y.Sample(position.y);
+					channel_position_y.Sample(position.y, time, frame);
 				}
 			}
 
@@ -350,7 +353,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 						}
 					}
 
-					channel_rotation.Sample(rotation);
+					channel_rotation.Sample(rotation, time, frame);
 				}
 			}
 
@@ -362,12 +365,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showVelocity_x)
 				{
-					channel_velocity_x.Sample(velocity.x);
+					channel_velocity_x.Sample(velocity.x, time, frame);
 				}
 
 				if (showVelocity_y)
 				{
-					channel_velocity_y.Sample(velocity.y);
+					channel_velocity_y.Sample(velocity.y, time, frame);
 				}
 			}
 
@@ -377,7 +380,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (showAngularVelocity)
 				{
-					channel_angularVelocity.Sample(rigidbody2D.angularVelocity);
+					channel_angularVelocity.Sample(rigidbody2D.angularVelocity, time, frame);
 				}
 			}
 		}
