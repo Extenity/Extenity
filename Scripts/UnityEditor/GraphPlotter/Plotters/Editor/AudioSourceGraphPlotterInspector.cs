@@ -30,7 +30,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (Me.showVolume)
 			{
-				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_volume, ref Me.VolumeRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_volume, ref Me.VolumeRange);
 			}
 
 			var newShowPitch = EditorGUILayout.ToggleLeft(" Pitch", Me.showPitch);
@@ -42,7 +42,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (Me.showPitch)
 			{
-				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_pitch, ref Me.PitchRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_pitch, ref Me.PitchRange);
 			}
 
 			var newShowIsPlaying = EditorGUILayout.ToggleLeft(" Is playing", Me.showIsPlaying);
@@ -52,7 +52,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				Me.showIsPlaying = newShowIsPlaying;
 			}
 
-			Utils.OpenButton(Me.gameObject);
+			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
 				Me.UpdateMonitors();

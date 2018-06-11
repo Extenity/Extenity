@@ -62,7 +62,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentsStrings);
 
 			// value axis mode.
-			Utils.DrawAxisRangeConfiguration(Me, Me.monitor, ref Me.Range);
+			CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor, ref Me.Range);
 
 			// Sample Time
 			var newSampleTime = (SampleTime)EditorGUILayout.EnumPopup("Sample time", Me.SampleTime);
@@ -186,7 +186,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 			}
 
-			Utils.OpenButton(Me.gameObject);
+			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
 				Me.UpdateMonitors();

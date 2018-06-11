@@ -5,58 +5,6 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	public enum SampleTime
-	{
-		FixedUpdate = 0,
-		Update = 1,
-		// TODO:
-		//LateUpdate = 2,
-
-		/// <summary>
-		/// Need to manually call Sample.
-		/// </summary>
-		Custom = 7,
-	}
-
-	public enum ValueAxisSizing
-	{
-		Fixed,
-		Expansive,
-		Adaptive
-	};
-
-	[Serializable]
-	public class ValueAxisRangeConfiguration
-	{
-		public ValueAxisSizing Sizing;
-		public float Min;
-		public float Max;
-
-		public float Span => Max - Min;
-
-		public ValueAxisRangeConfiguration(ValueAxisSizing sizing, float min, float max)
-		{
-			Sizing = sizing;
-			Min = min;
-			Max = max;
-		}
-
-		public void CopyFrom(ValueAxisRangeConfiguration other)
-		{
-			Sizing = other.Sizing;
-			Min = other.Min;
-			Max = other.Max;
-		}
-
-		public void Expand(float value)
-		{
-			if (Min > value)
-				Min = value;
-			if (Max < value)
-				Max = value;
-		}
-	}
-
 	public class Monitor
 	{
 		public string Name;

@@ -5,7 +5,7 @@ using UnityEditor;
 namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
-	public class Utils
+	public class CommonEditor
 	{
 		public static void DrawAxisRangeConfiguration(Object undoObject, Monitor monitor, ref ValueAxisRangeConfiguration range)
 		{
@@ -70,7 +70,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 		}
 
-		public static void OpenButton(GameObject gameObject)
+		public static void OpenGraphPlotterButton(GameObject gameObject)
 		{
 			if (!gameObject)
 				return;
@@ -100,7 +100,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
 			EditorGUILayout.Space();
 		}
 	}

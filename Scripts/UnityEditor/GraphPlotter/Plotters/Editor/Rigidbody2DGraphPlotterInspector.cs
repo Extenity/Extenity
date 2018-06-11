@@ -50,7 +50,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("y", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -74,7 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.rotationClamp = newRotationClamp;
 				}
 
-				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -115,7 +115,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.EndHorizontal();
 
-				Utils.DrawAxisRangeConfiguration(Me,Me.monitor_velocity, ref Me.VelocityRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me,Me.monitor_velocity, ref Me.VelocityRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -134,14 +134,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				EditorGUILayout.BeginVertical();
 
-				Utils.DrawAxisRangeConfiguration(Me, Me.monitor_angularVelocity, ref Me.AngularVelocityRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_angularVelocity, ref Me.AngularVelocityRange);
 
 				EditorGUILayout.EndVertical();
 
 				EditorGUILayout.Space();
 			}
 
-			Utils.OpenButton(Me.gameObject);
+			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
 				Me.UpdateMonitors();

@@ -28,7 +28,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				Me.filterPrefix = newFilterPrefix;
 			}
 
-			Utils.OpenButton(Me.gameObject);
+			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
 				Me.UpdateMonitors();
