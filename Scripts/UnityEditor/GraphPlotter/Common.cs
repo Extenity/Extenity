@@ -8,8 +8,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	{
 		FixedUpdate = 0,
 		Update = 1,
-		// TODO:
-		//LateUpdate = 2,
+		LateUpdate = 2,
 
 		/// <summary>
 		/// Need to manually call Sample.

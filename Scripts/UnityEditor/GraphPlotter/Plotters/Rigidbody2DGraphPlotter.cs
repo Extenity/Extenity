@@ -290,6 +290,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
+		protected void LateUpdate()
+		{
+			if (SampleTime == SampleTime.LateUpdate)
+			{
+				Sample();
+			}
+		}
+
 		protected void FixedUpdate()
 		{
 			if (SampleTime == SampleTime.FixedUpdate)
