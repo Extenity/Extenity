@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
@@ -27,9 +28,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#region Deinitialization
 
+		private bool _IsClosed;
+		public bool IsClosed => _IsClosed;
+
 		public void Close()
 		{
+			if (_IsClosed)
+				return;
+			_IsClosed = true;
 			Graph.DeregisterChannel(this);
+			Graph = null;
 		}
 
 		public static void SafeClose(ref Channel channel)
@@ -51,7 +59,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public static void SafeClose(ref IList<Channel> channels)
+		public static void SafeClose(IList<Channel> channels)
 		{
 			if (channels != null)
 			{
@@ -61,9 +69,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
+		public void CheckClosed()
+		{
+			if (_IsClosed)
+			{
+				throw new Exception($"Tried to do an operation on closed channel '{Description}'.");
+			}
+		}
+
 		#endregion
 
-		#region Monitor
+		#region Graph
 
 		private Graph Graph;
 
@@ -116,6 +132,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Sample(float value, float time, int frame)
 		{
+			CheckClosed();
+
 			SampleAxisY[CurrentSampleIndex] = value;
 			SampleAxisX[CurrentSampleIndex] = time;
 			SampleFrames[CurrentSampleIndex] = frame;
@@ -131,6 +149,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void GetValueRangeInTimeWindow(float timeStart, float timeEnd, out float min, out float max)
 		{
+			CheckClosed();
+
 			min = float.PositiveInfinity;
 			max = float.NegativeInfinity;
 
@@ -150,6 +170,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void GetMinMaxTime(out float timeStart, out float timeEnd)
 		{
+			CheckClosed();
+
 			var start = float.PositiveInfinity;
 			var end = float.NegativeInfinity;
 

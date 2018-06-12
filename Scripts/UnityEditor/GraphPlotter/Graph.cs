@@ -26,9 +26,56 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#region Deinitialization
 
+		private bool _IsClosed;
+		public bool IsClosed => _IsClosed;
+
 		public void Close()
 		{
+			if (_IsClosed)
+				return;
+			_IsClosed = true;
+
+			// Close all channels first.
+			Channel.SafeClose(Channels);
+
 			Graphs.Deregister(this);
+		}
+
+		public static void SafeClose(ref Graph graph)
+		{
+			if (graph != null)
+			{
+				graph.Close();
+				graph = null;
+			}
+		}
+
+		public static void SafeClose(ref Graph[] graphs)
+		{
+			if (graphs != null)
+			{
+				for (int i = 0; i < graphs.Length; i++)
+					graphs[i].Close();
+				graphs = null;
+			}
+		}
+
+		public static void SafeClose(IList<Graph> graphs)
+		{
+			if (graphs != null)
+			{
+				for (int i = 0; i < graphs.Count; i++)
+					graphs[i].Close();
+				graphs.Clear();
+			}
+		}
+
+		public void CheckClosed()
+		{
+			if (_IsClosed)
+			{
+				throw new Exception($"Tried to do an operation on closed graph '{Title}'.");
+			}
 		}
 
 		#endregion
@@ -58,6 +105,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Add(TagEntry entry)
 		{
+			CheckClosed();
+
 			var index = Tags.BinarySearch(entry, _EventComparer);
 			if (index < 0)
 			{
@@ -69,6 +118,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void GetTagEntries(float minTime, float maxTime, List<TagEntry> result)
 		{
+			CheckClosed();
+
 			if (Tags.Count == 0)
 				return;
 
@@ -104,6 +155,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void SetTimeCursor(float time)
 		{
+			CheckClosed();
+
 			LatestTime = time;
 		}
 
@@ -111,6 +164,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		internal void InformNewEntry(float value, float time)
 		{
+			CheckClosed();
+
 			SetTimeCursor(time);
 
 			switch (Range.Sizing)
@@ -129,6 +184,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void GetMinMaxTime(out float minTime, out float maxTime)
 		{
+			CheckClosed();
+
 			minTime = float.PositiveInfinity;
 			maxTime = float.NegativeInfinity;
 
@@ -156,6 +213,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void CalculateValueAxisRangeInTimeWindow(float timeStart, float timeEnd)
 		{
+			CheckClosed();
+
 			var min = float.PositiveInfinity;
 			var max = float.NegativeInfinity;
 
@@ -175,6 +234,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void SetRangeConfiguration(ValueAxisRangeConfiguration range)
 		{
+			CheckClosed();
+
 			Range.CopyFrom(range);
 		}
 	}

@@ -93,7 +93,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 				OldChannelFields.Clear();
 
-				RemoveGraph();
+				Graph.SafeClose(ref Graph);
 			}
 		}
 
@@ -190,16 +190,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDestroy()
 		{
-			RemoveGraph();
-		}
-
-		private void RemoveGraph()
-		{
-			if (Graph != null)
-			{
-				Graph.Close();
-				Graph = null;
-			}
+			Graph.SafeClose(ref Graph);
 		}
 	}
 

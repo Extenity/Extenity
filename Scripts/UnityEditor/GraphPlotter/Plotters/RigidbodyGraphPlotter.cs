@@ -89,11 +89,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionGraph != null)
-				{
-					PositionGraph.Close();
-					PositionGraph = null;
-				}
+				Graph.SafeClose(ref PositionGraph);
 			}
 
 			// position x
@@ -150,11 +146,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationGraph != null)
-				{
-					RotationGraph.Close();
-					RotationGraph = null;
-				}
+				Graph.SafeClose(ref RotationGraph);
 			}
 
 			// rotation x
@@ -211,11 +203,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (VelocityGraph != null)
-				{
-					VelocityGraph.Close();
-					VelocityGraph = null;
-				}
+				Graph.SafeClose(ref VelocityGraph);
 			}
 
 			// velocity x
@@ -272,11 +260,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (AngularVelocityGraph != null)
-				{
-					AngularVelocityGraph.Close();
-					AngularVelocityGraph = null;
-				}
+				Graph.SafeClose(ref AngularVelocityGraph);
 			}
 
 			// angularVelocity x
@@ -458,34 +442,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDestroy()
 		{
-			RemoveGraph();
-		}
-
-		public void RemoveGraph()
-		{
-			if (PositionGraph != null)
-			{
-				PositionGraph.Close();
-				PositionGraph = null;
-			}
-
-			if (RotationGraph != null)
-			{
-				RotationGraph.Close();
-				RotationGraph = null;
-			}
-
-			if (VelocityGraph != null)
-			{
-				VelocityGraph.Close();
-				VelocityGraph = null;
-			}
-
-			if (AngularVelocityGraph != null)
-			{
-				AngularVelocityGraph.Close();
-				AngularVelocityGraph = null;
-			}
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref VelocityGraph);
+			Graph.SafeClose(ref AngularVelocityGraph);
 		}
 	}
 

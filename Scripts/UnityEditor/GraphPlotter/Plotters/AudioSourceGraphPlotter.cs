@@ -63,13 +63,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (VolumeGraph != null)
-				{
-					VolumeGraph.Close();
-					VolumeGraph = null;
-				}
-
 				Channel.SafeClose(ref VolumeChannel);
+				Graph.SafeClose(ref VolumeGraph);
 			}
 		}
 
@@ -91,13 +86,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PitchGraph != null)
-				{
-					PitchGraph.Close();
-					PitchGraph = null;
-				}
-
 				Channel.SafeClose(ref PitchChannel);
+				Graph.SafeClose(ref PitchGraph);
 			}
 		}
 
@@ -118,13 +108,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (IsPlayingGraph != null)
-				{
-					IsPlayingGraph.Close();
-					IsPlayingGraph = null;
-				}
-
 				Channel.SafeClose(ref IsPlayingChannel);
+				Graph.SafeClose(ref IsPlayingGraph);
 			}
 		}
 
@@ -196,28 +181,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDestroy()
 		{
-			RemoveGraph();
-		}
-
-		public void RemoveGraph()
-		{
-			if (VolumeGraph != null)
-			{
-				VolumeGraph.Close();
-				VolumeGraph = null;
-			}
-
-			if (PitchGraph != null)
-			{
-				PitchGraph.Close();
-				PitchGraph = null;
-			}
-
-			if (IsPlayingGraph != null)
-			{
-				IsPlayingGraph.Close();
-				IsPlayingGraph = null;
-			}
+			Graph.SafeClose(ref VolumeGraph);
+			Graph.SafeClose(ref PitchGraph);
+			Graph.SafeClose(ref IsPlayingGraph);
 		}
 	}
 

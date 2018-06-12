@@ -80,11 +80,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionGraph != null)
-				{
-					PositionGraph.Close();
-					PositionGraph = null;
-				}
+				Graph.SafeClose(ref PositionGraph);
 			}
 
 			// position x
@@ -142,11 +138,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationGraph != null)
-				{
-					RotationGraph.Close();
-					RotationGraph = null;
-				}
+				Graph.SafeClose(ref RotationGraph);
 			}
 
 			// rotation x
@@ -204,11 +196,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (ScaleGraph != null)
-				{
-					ScaleGraph.Close();
-					ScaleGraph = null;
-				}
+				Graph.SafeClose(ref ScaleGraph);
 			}
 
 			// scale x
@@ -362,28 +350,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDestroy()
 		{
-			RemoveGraph();
-		}
-
-		private void RemoveGraph()
-		{
-			if (PositionGraph != null)
-			{
-				PositionGraph.Close();
-				PositionGraph = null;
-			}
-
-			if (RotationGraph != null)
-			{
-				RotationGraph.Close();
-				RotationGraph = null;
-			}
-
-			if (ScaleGraph != null)
-			{
-				ScaleGraph.Close();
-				ScaleGraph = null;
-			}
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref ScaleGraph);
 		}
 	}
 

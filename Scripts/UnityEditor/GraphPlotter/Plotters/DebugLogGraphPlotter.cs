@@ -37,11 +37,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (Graph != null)
-				{
-					Graph.Close();
-					Graph = null;
-				}
+				Graph.SafeClose(ref Graph);
 			}
 		}
 
@@ -78,16 +74,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		protected void OnDestroy()
 		{
 			Application.logMessageReceived -= LogCallback;
-			RemoveGraph();
-		}
-
-		private void RemoveGraph()
-		{
-			if (Graph != null)
-			{
-				Graph.Close();
-				Graph = null;
-			}
+			Graph.SafeClose(ref Graph);
 		}
 	}
 
