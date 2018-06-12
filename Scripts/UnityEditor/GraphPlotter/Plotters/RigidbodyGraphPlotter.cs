@@ -13,59 +13,51 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		// Input - Position
 		// -----------------------------------------------------
-		public bool showPosition = false;
-		public bool showPosition_x = true;
-		public bool showPosition_y = true;
-		public bool showPosition_z = true;
-
+		public bool PlotPosition = false;
+		public bool PlotPositionX = true;
+		public bool PlotPositionT = true;
+		public bool PlotPositionZ = true;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		public Graph PositionGraph;
-		private Channel channel_position_x;
-		private Channel channel_position_y;
-		private Channel channel_position_z;
+		private Channel PositionChannelX;
+		private Channel PositionChannelY;
+		private Channel PositionChannelZ;
 		// -----------------------------------------------------
 		// Input - Rotation
 		// -----------------------------------------------------
-		public bool showRotation = false;
-		public bool showRotation_x = true;
-		public bool showRotation_y = true;
-		public bool showRotation_z = true;
-
+		public bool PlotRotation = false;
+		public bool PlotRotationX = true;
+		public bool PlotRotationY = true;
+		public bool PlotRotationZ = true;
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
-
 		public Graph RotationGraph;
-		private Channel channel_rotation_x;
-		private Channel channel_rotation_y;
-		private Channel channel_rotation_z;
+		private Channel RotationChannelX;
+		private Channel RotationChannelY;
+		private Channel RotationChannelZ;
 		// -----------------------------------------------------
 		// Input - Velocity
 		// -----------------------------------------------------
-		public bool showVelocity = false;
-		public bool showVelocity_x = true;
-		public bool showVelocity_y = true;
-		public bool showVelocity_z = true;
-
+		public bool PlotVelocity = false;
+		public bool PlotVelocityX = true;
+		public bool PlotVelocityY = true;
+		public bool PlotVelocityZ = true;
 		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		public Graph VelocityGraph;
-		private Channel channel_velocity_x;
-		private Channel channel_velocity_y;
-		private Channel channel_velocity_z;
+		private Channel VelocityChannelX;
+		private Channel VelocityChannelY;
+		private Channel VelocityChannelZ;
 		// -----------------------------------------------------
 		// Input - Angular Velocity
 		// -----------------------------------------------------
-		public bool showAngularVelocity = false;
-		public bool showAngularVelocity_x = true;
-		public bool showAngularVelocity_y = true;
-		public bool showAngularVelocity_z = true;
-
+		public bool PlotAngularVelocity = false;
+		public bool PlotAngularVelocityX = true;
+		public bool PlotAngularVelocityY = true;
+		public bool PlotAngularVelocityZ = true;
 		public ValueAxisRangeConfiguration AngularVelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		public Graph AngularVelocityGraph;
-		private Channel channel_angularVelocity_x;
-		private Channel channel_angularVelocity_y;
-		private Channel channel_angularVelocity_z;
+		private Channel AngularVelocityChannelX;
+		private Channel AngularVelocityChannelY;
+		private Channel AngularVelocityChannelZ;
 		// -----------------------------------------------------
 
 		protected void Start()
@@ -86,7 +78,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdatePositionGraph(bool componentIsActive)
 		{
 			// position
-			if (showPosition && componentIsActive)
+			if (PlotPosition && componentIsActive)
 			{
 				if (PositionGraph == null)
 				{
@@ -105,53 +97,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// position x
-			if (showPosition && showPosition_x && componentIsActive)
+			if (PlotPosition && PlotPositionX && componentIsActive)
 			{
-				if (channel_position_x == null)
+				if (PositionChannelX == null)
 				{
-					channel_position_x = new Channel(PositionGraph, "x", PlotColors.Red);
+					PositionChannelX = new Channel(PositionGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_position_x != null)
+				if (PositionChannelX != null)
 				{
-					channel_position_x.Close();
-					channel_position_x = null;
+					PositionChannelX.Close();
+					PositionChannelX = null;
 				}
 			}
 
 			// position y
-			if (showPosition && showPosition_y && componentIsActive)
+			if (PlotPosition && PlotPositionT && componentIsActive)
 			{
-				if (channel_position_y == null)
+				if (PositionChannelY == null)
 				{
-					channel_position_y = new Channel(PositionGraph, "y", PlotColors.Green);
+					PositionChannelY = new Channel(PositionGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_position_y != null)
+				if (PositionChannelY != null)
 				{
-					channel_position_y.Close();
-					channel_position_y = null;
+					PositionChannelY.Close();
+					PositionChannelY = null;
 				}
 			}
 
 			// position z
-			if (showPosition && showPosition_z && componentIsActive)
+			if (PlotPosition && PlotPositionZ && componentIsActive)
 			{
-				if (channel_position_z == null)
+				if (PositionChannelZ == null)
 				{
-					channel_position_z = new Channel(PositionGraph, "z", PlotColors.Blue);
+					PositionChannelZ = new Channel(PositionGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_position_z != null)
+				if (PositionChannelZ != null)
 				{
-					channel_position_z.Close();
-					channel_position_z = null;
+					PositionChannelZ.Close();
+					PositionChannelZ = null;
 				}
 			}
 		}
@@ -159,7 +151,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdateRotationGraph(bool componentIsActive)
 		{
 			// rotation
-			if (showRotation && componentIsActive)
+			if (PlotRotation && componentIsActive)
 			{
 				if (RotationGraph == null)
 				{
@@ -178,53 +170,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// rotation x
-			if (showRotation && showRotation_x && componentIsActive)
+			if (PlotRotation && PlotRotationX && componentIsActive)
 			{
-				if (channel_rotation_x == null)
+				if (RotationChannelX == null)
 				{
-					channel_rotation_x = new Channel(RotationGraph, "x", PlotColors.Red);
+					RotationChannelX = new Channel(RotationGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_rotation_x != null)
+				if (RotationChannelX != null)
 				{
-					channel_rotation_x.Close();
-					channel_rotation_x = null;
+					RotationChannelX.Close();
+					RotationChannelX = null;
 				}
 			}
 
 			// rotation y
-			if (showRotation && showRotation_y && componentIsActive)
+			if (PlotRotation && PlotRotationY && componentIsActive)
 			{
-				if (channel_rotation_y == null)
+				if (RotationChannelY == null)
 				{
-					channel_rotation_y = new Channel(RotationGraph, "y", PlotColors.Green);
+					RotationChannelY = new Channel(RotationGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_rotation_y != null)
+				if (RotationChannelY != null)
 				{
-					channel_rotation_y.Close();
-					channel_rotation_y = null;
+					RotationChannelY.Close();
+					RotationChannelY = null;
 				}
 			}
 
 			// rotation z
-			if (showRotation && showRotation_z && componentIsActive)
+			if (PlotRotation && PlotRotationZ && componentIsActive)
 			{
-				if (channel_rotation_z == null)
+				if (RotationChannelZ == null)
 				{
-					channel_rotation_z = new Channel(RotationGraph, "z", PlotColors.Blue);
+					RotationChannelZ = new Channel(RotationGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_rotation_z != null)
+				if (RotationChannelZ != null)
 				{
-					channel_rotation_z.Close();
-					channel_rotation_z = null;
+					RotationChannelZ.Close();
+					RotationChannelZ = null;
 				}
 			}
 		}
@@ -232,7 +224,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdateVelocityGraph(bool componentIsActive)
 		{
 			// velocity
-			if (showVelocity && componentIsActive)
+			if (PlotVelocity && componentIsActive)
 			{
 				if (VelocityGraph == null)
 				{
@@ -251,53 +243,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// velocity x
-			if (showVelocity && showVelocity_x && componentIsActive)
+			if (PlotVelocity && PlotVelocityX && componentIsActive)
 			{
-				if (channel_velocity_x == null)
+				if (VelocityChannelX == null)
 				{
-					channel_velocity_x = new Channel(VelocityGraph, "x", PlotColors.Red);
+					VelocityChannelX = new Channel(VelocityGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_velocity_x != null)
+				if (VelocityChannelX != null)
 				{
-					channel_velocity_x.Close();
-					channel_velocity_x = null;
+					VelocityChannelX.Close();
+					VelocityChannelX = null;
 				}
 			}
 
 			// velocity y
-			if (showVelocity && showVelocity_y && componentIsActive)
+			if (PlotVelocity && PlotVelocityY && componentIsActive)
 			{
-				if (channel_velocity_y == null)
+				if (VelocityChannelY == null)
 				{
-					channel_velocity_y = new Channel(VelocityGraph, "y", PlotColors.Green);
+					VelocityChannelY = new Channel(VelocityGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_velocity_y != null)
+				if (VelocityChannelY != null)
 				{
-					channel_velocity_y.Close();
-					channel_velocity_y = null;
+					VelocityChannelY.Close();
+					VelocityChannelY = null;
 				}
 			}
 
 			// velocity z
-			if (showVelocity && showVelocity_z && componentIsActive)
+			if (PlotVelocity && PlotVelocityZ && componentIsActive)
 			{
-				if (channel_velocity_z == null)
+				if (VelocityChannelZ == null)
 				{
-					channel_velocity_z = new Channel(VelocityGraph, "z", PlotColors.Blue);
+					VelocityChannelZ = new Channel(VelocityGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_velocity_z != null)
+				if (VelocityChannelZ != null)
 				{
-					channel_velocity_z.Close();
-					channel_velocity_z = null;
+					VelocityChannelZ.Close();
+					VelocityChannelZ = null;
 				}
 			}
 		}
@@ -305,7 +297,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdateAngularVelocityGraph(bool componentIsActive)
 		{
 			// angularVelocity
-			if (showAngularVelocity && componentIsActive)
+			if (PlotAngularVelocity && componentIsActive)
 			{
 				if (AngularVelocityGraph == null)
 				{
@@ -324,53 +316,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// angularVelocity x
-			if (showAngularVelocity && showAngularVelocity_x && componentIsActive)
+			if (PlotAngularVelocity && PlotAngularVelocityX && componentIsActive)
 			{
-				if (channel_angularVelocity_x == null)
+				if (AngularVelocityChannelX == null)
 				{
-					channel_angularVelocity_x = new Channel(AngularVelocityGraph, "x", PlotColors.Red);
+					AngularVelocityChannelX = new Channel(AngularVelocityGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_angularVelocity_x != null)
+				if (AngularVelocityChannelX != null)
 				{
-					channel_angularVelocity_x.Close();
-					channel_angularVelocity_x = null;
+					AngularVelocityChannelX.Close();
+					AngularVelocityChannelX = null;
 				}
 			}
 
 			// angularVelocity y
-			if (showAngularVelocity && showAngularVelocity_y && componentIsActive)
+			if (PlotAngularVelocity && PlotAngularVelocityY && componentIsActive)
 			{
-				if (channel_angularVelocity_y == null)
+				if (AngularVelocityChannelY == null)
 				{
-					channel_angularVelocity_y = new Channel(AngularVelocityGraph, "y", PlotColors.Green);
+					AngularVelocityChannelY = new Channel(AngularVelocityGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_angularVelocity_y != null)
+				if (AngularVelocityChannelY != null)
 				{
-					channel_angularVelocity_y.Close();
-					channel_angularVelocity_y = null;
+					AngularVelocityChannelY.Close();
+					AngularVelocityChannelY = null;
 				}
 			}
 
 			// angularVelocity z
-			if (showAngularVelocity && showAngularVelocity_z && componentIsActive)
+			if (PlotAngularVelocity && PlotAngularVelocityZ && componentIsActive)
 			{
-				if (channel_angularVelocity_z == null)
+				if (AngularVelocityChannelZ == null)
 				{
-					channel_angularVelocity_z = new Channel(AngularVelocityGraph, "z", PlotColors.Blue);
+					AngularVelocityChannelZ = new Channel(AngularVelocityGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_angularVelocity_z != null)
+				if (AngularVelocityChannelZ != null)
 				{
-					channel_angularVelocity_z.Close();
-					channel_angularVelocity_z = null;
+					AngularVelocityChannelZ.Close();
+					AngularVelocityChannelZ = null;
 				}
 			}
 		}
@@ -413,91 +405,91 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			var time = Time.time;
 			var frame = Time.frameCount;
 
-			if (showPosition)
+			if (PlotPosition)
 			{
 				var position = Rigidbody.position;
 
 				PositionRange.CopyFrom(PositionGraph.Range);
 
-				if (showPosition_x)
+				if (PlotPositionX)
 				{
-					channel_position_x.Sample(position.x, time, frame);
+					PositionChannelX.Sample(position.x, time, frame);
 				}
 
-				if (showPosition_y)
+				if (PlotPositionT)
 				{
-					channel_position_y.Sample(position.y, time, frame);
+					PositionChannelY.Sample(position.y, time, frame);
 				}
 
-				if (showPosition_z)
+				if (PlotPositionZ)
 				{
-					channel_position_z.Sample(position.z, time, frame);
+					PositionChannelZ.Sample(position.z, time, frame);
 				}
 			}
 
-			if (showRotation)
+			if (PlotRotation)
 			{
 				var euler = Rigidbody.rotation.eulerAngles;
 
 				RotationRange.CopyFrom(RotationGraph.Range);
 
-				if (showRotation_x)
+				if (PlotRotationX)
 				{
-					channel_rotation_x.Sample(euler.x, time, frame);
+					RotationChannelX.Sample(euler.x, time, frame);
 				}
 
-				if (showRotation_y)
+				if (PlotRotationY)
 				{
-					channel_rotation_y.Sample(euler.y, time, frame);
+					RotationChannelY.Sample(euler.y, time, frame);
 				}
 
-				if (showRotation_z)
+				if (PlotRotationZ)
 				{
-					channel_rotation_z.Sample(euler.z, time, frame);
+					RotationChannelZ.Sample(euler.z, time, frame);
 				}
 			}
 
-			if (showVelocity)
+			if (PlotVelocity)
 			{
 				var velocity = Rigidbody.velocity;
 
 				VelocityRange.CopyFrom(VelocityGraph.Range);
 
-				if (showVelocity_x)
+				if (PlotVelocityX)
 				{
-					channel_velocity_x.Sample(velocity.x, time, frame);
+					VelocityChannelX.Sample(velocity.x, time, frame);
 				}
 
-				if (showVelocity_y)
+				if (PlotVelocityY)
 				{
-					channel_velocity_y.Sample(velocity.y, time, frame);
+					VelocityChannelY.Sample(velocity.y, time, frame);
 				}
 
-				if (showVelocity_z)
+				if (PlotVelocityZ)
 				{
-					channel_velocity_z.Sample(velocity.z, time, frame);
+					VelocityChannelZ.Sample(velocity.z, time, frame);
 				}
 			}
 
-			if (showAngularVelocity)
+			if (PlotAngularVelocity)
 			{
 				var angularVelocity = Rigidbody.angularVelocity;
 
 				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
-				if (showAngularVelocity_x)
+				if (PlotAngularVelocityX)
 				{
-					channel_angularVelocity_x.Sample(angularVelocity.x, time, frame);
+					AngularVelocityChannelX.Sample(angularVelocity.x, time, frame);
 				}
 
-				if (showAngularVelocity_y)
+				if (PlotAngularVelocityY)
 				{
-					channel_angularVelocity_y.Sample(angularVelocity.y, time, frame);
+					AngularVelocityChannelY.Sample(angularVelocity.y, time, frame);
 				}
 
-				if (showAngularVelocity_z)
+				if (PlotAngularVelocityZ)
 				{
-					channel_angularVelocity_z.Sample(angularVelocity.z, time, frame);
+					AngularVelocityChannelZ.Sample(angularVelocity.z, time, frame);
 				}
 			}
 		}

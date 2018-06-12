@@ -13,28 +13,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		// Input - Volume
 		// -----------------------------------------------------
-		public bool showVolume = false;
-
+		public bool PlotVolume = false;
 		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
-
 		public Graph VolumeGraph;
-		private Channel channel_volume;
+		private Channel VolumeChannel;
 		// -----------------------------------------------------
 		// Input - Pitch
 		// -----------------------------------------------------
-		public bool showPitch = false;
-
+		public bool PlotPitch = false;
 		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
-
 		public Graph PitchGraph;
-		private Channel channel_pitch;
+		private Channel PitchChannel;
 		// -----------------------------------------------------
 		// Input - IsPlaying
 		// -----------------------------------------------------
-		public bool showIsPlaying = false;
-
+		public bool PlotIsPlaying = false;
 		public Graph IsPlayingGraph;
-		private Channel channel_isPlaying;
+		private Channel IsPlayingChannel;
 		// -----------------------------------------------------
 
 		protected void Start()
@@ -53,7 +48,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private void UpdateVolumeGraph(bool componentIsActive)
 		{
-			if (showVolume && componentIsActive)
+			if (PlotVolume && componentIsActive)
 			{
 				if (VolumeGraph == null)
 				{
@@ -61,9 +56,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					VolumeGraph.SetRangeConfiguration(VolumeRange);
 				}
 
-				if (channel_volume == null)
+				if (VolumeChannel == null)
 				{
-					channel_volume = new Channel(VolumeGraph, "volume", PlotColors.Red);
+					VolumeChannel = new Channel(VolumeGraph, "volume", PlotColors.Red);
 				}
 			}
 			else
@@ -74,17 +69,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					VolumeGraph = null;
 				}
 
-				if (channel_volume != null)
+				if (VolumeChannel != null)
 				{
-					channel_volume.Close();
-					channel_volume = null;
+					VolumeChannel.Close();
+					VolumeChannel = null;
 				}
 			}
 		}
 
 		private void UpdatePitchGraph(bool componentIsActive)
 		{
-			if (showPitch && componentIsActive)
+			if (PlotPitch && componentIsActive)
 			{
 				if (PitchGraph == null)
 				{
@@ -93,9 +88,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				PitchGraph.SetRangeConfiguration(PitchRange);
 
-				if (channel_pitch == null)
+				if (PitchChannel == null)
 				{
-					channel_pitch = new Channel(PitchGraph, "pitch", PlotColors.Green);
+					PitchChannel = new Channel(PitchGraph, "pitch", PlotColors.Green);
 				}
 			}
 			else
@@ -106,17 +101,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					PitchGraph = null;
 				}
 
-				if (channel_pitch != null)
+				if (PitchChannel != null)
 				{
-					channel_pitch.Close();
-					channel_pitch = null;
+					PitchChannel.Close();
+					PitchChannel = null;
 				}
 			}
 		}
 
 		private void UpdateIsPlayingGraph(bool componentIsActive)
 		{
-			if (showIsPlaying && componentIsActive)
+			if (PlotIsPlaying && componentIsActive)
 			{
 				if (IsPlayingGraph == null)
 				{
@@ -124,9 +119,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					IsPlayingGraph.SetRangeConfiguration(new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f));
 				}
 
-				if (channel_isPlaying == null)
+				if (IsPlayingChannel == null)
 				{
-					channel_isPlaying = new Channel(IsPlayingGraph, "isPlaying", PlotColors.Red);
+					IsPlayingChannel = new Channel(IsPlayingGraph, "isPlaying", PlotColors.Red);
 				}
 			}
 			else
@@ -137,10 +132,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					IsPlayingGraph = null;
 				}
 
-				if (channel_isPlaying != null)
+				if (IsPlayingChannel != null)
 				{
-					channel_isPlaying.Close();
-					channel_isPlaying = null;
+					IsPlayingChannel.Close();
+					IsPlayingChannel = null;
 				}
 			}
 		}
@@ -183,21 +178,21 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			var time = Time.time;
 			var frame = Time.frameCount;
 
-			if (showVolume)
+			if (PlotVolume)
 			{
 				VolumeRange.CopyFrom(VolumeGraph.Range);
-				channel_volume.Sample(AudioSource.volume, time, frame);
+				VolumeChannel.Sample(AudioSource.volume, time, frame);
 			}
 
-			if (showPitch)
+			if (PlotPitch)
 			{
 				PitchRange.CopyFrom(PitchGraph.Range);
-				channel_pitch.Sample(AudioSource.pitch, time, frame);
+				PitchChannel.Sample(AudioSource.pitch, time, frame);
 			}
 
-			if (showIsPlaying)
+			if (PlotIsPlaying)
 			{
-				channel_isPlaying.Sample(AudioSource.isPlaying ? 1f : 0f, time, frame);
+				IsPlayingChannel.Sample(AudioSource.isPlaying ? 1f : 0f, time, frame);
 			}
 		}
 

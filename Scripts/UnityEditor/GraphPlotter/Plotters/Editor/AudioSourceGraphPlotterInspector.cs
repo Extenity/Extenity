@@ -32,35 +32,35 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			EditorGUILayout.Space();
 
-			var newShowVolume = EditorGUILayout.ToggleLeft(" Volume", Me.showVolume);
-			if (newShowVolume != Me.showVolume)
+			var newShowVolume = EditorGUILayout.ToggleLeft(" Volume", Me.PlotVolume);
+			if (newShowVolume != Me.PlotVolume)
 			{
 				Undo.RecordObject(Me, "Toggle volume");
-				Me.showVolume = newShowVolume;
+				Me.PlotVolume = newShowVolume;
 			}
 
-			if (Me.showVolume)
+			if (Me.PlotVolume)
 			{
 				CommonEditor.DrawAxisRangeConfiguration(Me, Me.VolumeGraph, ref Me.VolumeRange);
 			}
 
-			var newShowPitch = EditorGUILayout.ToggleLeft(" Pitch", Me.showPitch);
-			if (newShowPitch != Me.showPitch)
+			var newShowPitch = EditorGUILayout.ToggleLeft(" Pitch", Me.PlotPitch);
+			if (newShowPitch != Me.PlotPitch)
 			{
 				Undo.RecordObject(Me, "Toggle pitch");
-				Me.showPitch = newShowPitch;
+				Me.PlotPitch = newShowPitch;
 			}
 
-			if (Me.showPitch)
+			if (Me.PlotPitch)
 			{
 				CommonEditor.DrawAxisRangeConfiguration(Me, Me.PitchGraph, ref Me.PitchRange);
 			}
 
-			var newShowIsPlaying = EditorGUILayout.ToggleLeft(" Is playing", Me.showIsPlaying);
-			if (newShowIsPlaying != Me.showIsPlaying)
+			var newShowIsPlaying = EditorGUILayout.ToggleLeft(" Is playing", Me.PlotIsPlaying);
+			if (newShowIsPlaying != Me.PlotIsPlaying)
 			{
 				Undo.RecordObject(Me, "Toggle Is playing");
-				Me.showIsPlaying = newShowIsPlaying;
+				Me.PlotIsPlaying = newShowIsPlaying;
 			}
 
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);

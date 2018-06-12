@@ -16,45 +16,42 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		// Input - Position
 		// -----------------------------------------------------
-		public bool showPosition = false;
-		public bool showPosition_x = true;
-		public bool showPosition_y = true;
-		public bool showPosition_z = true;
-		public Space positionSpace = Space.World;
+		public bool PlotPosition = false;
+		public bool PlotPositionX = true;
+		public bool PlotPositionY = true;
+		public bool PlotPositionZ = true;
+		public Space PositionSpace = Space.World;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		public Graph PositionGraph;
-		public Channel channel_position_x;
-		public Channel channel_position_y;
-		public Channel channel_position_z;
+		public Channel PositionChannelX;
+		public Channel PositionChannelY;
+		public Channel PositionChannelZ;
 		// -----------------------------------------------------
 		// Input - Rotation
 		// -----------------------------------------------------
-		public bool showRotation = false;
-		public bool showRotation_x = true;
-		public bool showRotation_y = true;
-		public bool showRotation_z = true;
-		public Space rotationSpace = Space.World;
+		public bool PlotRotation = false;
+		public bool PlotRotationX = true;
+		public bool PlotRotationY = true;
+		public bool PlotRotationZ = true;
+		public Space RotationSpace = Space.World;
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
-
 		public Graph RotationGraph;
-		public Channel channel_rotation_x;
-		public Channel channel_rotation_y;
-		public Channel channel_rotation_z;
+		public Channel RotationChannelX;
+		public Channel RotationChannelY;
+		public Channel RotationChannelZ;
 		// -----------------------------------------------------
 		// Input - Scale
 		// -----------------------------------------------------
-		public bool showScale = false;
-		public bool showScale_x = true;
-		public bool showScale_y = true;
-		public bool showScale_z = true;
-		public ScaleSpace scaleSpace = ScaleSpace.Local;
+		public bool PlotScale = false;
+		public bool PlotScaleX = true;
+		public bool PlotScaleY = true;
+		public bool PlotScaleZ = true;
+		public ScaleSpace scaleSpace = ScaleSpace.Local; // TODO: Rename
 		public ValueAxisRangeConfiguration ScaleRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		public Graph ScaleGraph;
-		public Channel channel_scale_x;
-		public Channel channel_scale_y;
-		public Channel channel_scale_z;
+		public Channel ScaleChannelX;
+		public Channel ScaleChannelY;
+		public Channel ScaleChannelZ;
 		// -----------------------------------------------------
 
 		protected void Start()
@@ -74,14 +71,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdatePositionGraph(bool componentIsActive)
 		{
 			// position
-			if (showPosition && componentIsActive)
+			if (PlotPosition && componentIsActive)
 			{
 				if (PositionGraph == null)
 				{
 					PositionGraph = new Graph("", gameObject);
 				}
 
-				PositionGraph.Title = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
+				PositionGraph.Title = "Position (" + (PositionSpace == Space.World ? "world" : "local") + ")";
 				PositionGraph.SetRangeConfiguration(PositionRange);
 			}
 			else
@@ -94,53 +91,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// position x
-			if (showPosition && showPosition_x && componentIsActive)
+			if (PlotPosition && PlotPositionX && componentIsActive)
 			{
-				if (channel_position_x == null)
+				if (PositionChannelX == null)
 				{
-					channel_position_x = new Channel(PositionGraph, "x", PlotColors.Red);
+					PositionChannelX = new Channel(PositionGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_position_x != null)
+				if (PositionChannelX != null)
 				{
-					channel_position_x.Close();
-					channel_position_x = null;
+					PositionChannelX.Close();
+					PositionChannelX = null;
 				}
 			}
 
 			// position y
-			if (showPosition && showPosition_y && componentIsActive)
+			if (PlotPosition && PlotPositionY && componentIsActive)
 			{
-				if (channel_position_y == null)
+				if (PositionChannelY == null)
 				{
-					channel_position_y = new Channel(PositionGraph, "y", PlotColors.Green);
+					PositionChannelY = new Channel(PositionGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_position_y != null)
+				if (PositionChannelY != null)
 				{
-					channel_position_y.Close();
-					channel_position_y = null;
+					PositionChannelY.Close();
+					PositionChannelY = null;
 				}
 			}
 
 			// position z
-			if (showPosition && showPosition_z && componentIsActive)
+			if (PlotPosition && PlotPositionZ && componentIsActive)
 			{
-				if (channel_position_z == null)
+				if (PositionChannelZ == null)
 				{
-					channel_position_z = new Channel(PositionGraph, "z", PlotColors.Blue);
+					PositionChannelZ = new Channel(PositionGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_position_z != null)
+				if (PositionChannelZ != null)
 				{
-					channel_position_z.Close();
-					channel_position_z = null;
+					PositionChannelZ.Close();
+					PositionChannelZ = null;
 				}
 			}
 		}
@@ -148,14 +145,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdateRotationGraph(bool componentIsActive)
 		{
 			// rotation
-			if (showRotation && componentIsActive)
+			if (PlotRotation && componentIsActive)
 			{
 				if (RotationGraph == null)
 				{
 					RotationGraph = new Graph("", gameObject);
 				}
 
-				RotationGraph.Title = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
+				RotationGraph.Title = "Rotation (" + (RotationSpace == Space.World ? "world" : "local") + ")";
 				RotationGraph.SetRangeConfiguration(RotationRange);
 			}
 			else
@@ -168,53 +165,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// rotation x
-			if (showRotation && showRotation_x && componentIsActive)
+			if (PlotRotation && PlotRotationX && componentIsActive)
 			{
-				if (channel_rotation_x == null)
+				if (RotationChannelX == null)
 				{
-					channel_rotation_x = new Channel(RotationGraph, "x", PlotColors.Red);
+					RotationChannelX = new Channel(RotationGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_rotation_x != null)
+				if (RotationChannelX != null)
 				{
-					channel_rotation_x.Close();
-					channel_rotation_x = null;
+					RotationChannelX.Close();
+					RotationChannelX = null;
 				}
 			}
 
 			// rotation y
-			if (showRotation && showRotation_y && componentIsActive)
+			if (PlotRotation && PlotRotationY && componentIsActive)
 			{
-				if (channel_rotation_y == null)
+				if (RotationChannelY == null)
 				{
-					channel_rotation_y = new Channel(RotationGraph, "y", PlotColors.Green);
+					RotationChannelY = new Channel(RotationGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_rotation_y != null)
+				if (RotationChannelY != null)
 				{
-					channel_rotation_y.Close();
-					channel_rotation_y = null;
+					RotationChannelY.Close();
+					RotationChannelY = null;
 				}
 			}
 
 			// rotation z
-			if (showRotation && showRotation_z && componentIsActive)
+			if (PlotRotation && PlotRotationZ && componentIsActive)
 			{
-				if (channel_rotation_z == null)
+				if (RotationChannelZ == null)
 				{
-					channel_rotation_z = new Channel(RotationGraph, "z", PlotColors.Blue);
+					RotationChannelZ = new Channel(RotationGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_rotation_z != null)
+				if (RotationChannelZ != null)
 				{
-					channel_rotation_z.Close();
-					channel_rotation_z = null;
+					RotationChannelZ.Close();
+					RotationChannelZ = null;
 				}
 			}
 		}
@@ -222,7 +219,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private void UpdateScaleGraph(bool componentIsActive)
 		{
 			// scale
-			if (showScale && componentIsActive)
+			if (PlotScale && componentIsActive)
 			{
 				if (ScaleGraph == null)
 				{
@@ -242,53 +239,53 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 
 			// scale x
-			if (showScale && showScale_x && componentIsActive)
+			if (PlotScale && PlotScaleX && componentIsActive)
 			{
-				if (channel_scale_x == null)
+				if (ScaleChannelX == null)
 				{
-					channel_scale_x = new Channel(ScaleGraph, "x", PlotColors.Red);
+					ScaleChannelX = new Channel(ScaleGraph, "x", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (channel_scale_x != null)
+				if (ScaleChannelX != null)
 				{
-					channel_scale_x.Close();
-					channel_scale_x = null;
+					ScaleChannelX.Close();
+					ScaleChannelX = null;
 				}
 			}
 
 			// scale y
-			if (showScale && showScale_y && componentIsActive)
+			if (PlotScale && PlotScaleY && componentIsActive)
 			{
-				if (channel_scale_y == null)
+				if (ScaleChannelY == null)
 				{
-					channel_scale_y = new Channel(ScaleGraph, "y", PlotColors.Green);
+					ScaleChannelY = new Channel(ScaleGraph, "y", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (channel_scale_y != null)
+				if (ScaleChannelY != null)
 				{
-					channel_scale_y.Close();
-					channel_scale_y = null;
+					ScaleChannelY.Close();
+					ScaleChannelY = null;
 				}
 			}
 
 			// scale z
-			if (showScale && showScale_z && componentIsActive)
+			if (PlotScale && PlotScaleZ && componentIsActive)
 			{
-				if (channel_scale_z == null)
+				if (ScaleChannelZ == null)
 				{
-					channel_scale_z = new Channel(ScaleGraph, "z", PlotColors.Blue);
+					ScaleChannelZ = new Channel(ScaleGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
 			{
-				if (channel_scale_z != null)
+				if (ScaleChannelZ != null)
 				{
-					channel_scale_z.Close();
-					channel_scale_z = null;
+					ScaleChannelZ.Close();
+					ScaleChannelZ = null;
 				}
 			}
 		}
@@ -325,69 +322,69 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			var time = Time.time;
 			var frame = Time.frameCount;
 
-			if (showPosition)
+			if (PlotPosition)
 			{
-				var position = positionSpace == Space.Local ? Transform.localPosition : Transform.position;
+				var position = PositionSpace == Space.Local ? Transform.localPosition : Transform.position;
 
 				PositionRange.CopyFrom(PositionGraph.Range);
 
-				if (showPosition_x)
+				if (PlotPositionX)
 				{
-					channel_position_x.Sample(position.x, time, frame);
+					PositionChannelX.Sample(position.x, time, frame);
 				}
 
-				if (showPosition_y)
+				if (PlotPositionY)
 				{
-					channel_position_y.Sample(position.y, time, frame);
+					PositionChannelY.Sample(position.y, time, frame);
 				}
 
-				if (showPosition_z)
+				if (PlotPositionZ)
 				{
-					channel_position_z.Sample(position.z, time, frame);
+					PositionChannelZ.Sample(position.z, time, frame);
 				}
 			}
 
-			if (showRotation)
+			if (PlotRotation)
 			{
-				var euler = (rotationSpace == Space.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
+				var euler = (RotationSpace == Space.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
 
 				RotationRange.CopyFrom(RotationGraph.Range);
 
-				if (showRotation_x)
+				if (PlotRotationX)
 				{
-					channel_rotation_x.Sample(euler.x, time, frame);
+					RotationChannelX.Sample(euler.x, time, frame);
 				}
 
-				if (showRotation_y)
+				if (PlotRotationY)
 				{
-					channel_rotation_y.Sample(euler.y, time, frame);
+					RotationChannelY.Sample(euler.y, time, frame);
 				}
 
-				if (showRotation_z)
+				if (PlotRotationZ)
 				{
-					channel_rotation_z.Sample(euler.z, time, frame);
+					RotationChannelZ.Sample(euler.z, time, frame);
 				}
 			}
 
-			if (showScale)
+			if (PlotScale)
 			{
 				var scale = scaleSpace == ScaleSpace.Local ? Transform.localScale : Transform.lossyScale;
 
 				ScaleRange.CopyFrom(ScaleGraph.Range);
 
-				if (showScale_x)
+				if (PlotScaleX)
 				{
-					channel_scale_x.Sample(scale.x, time, frame);
+					ScaleChannelX.Sample(scale.x, time, frame);
 				}
 
-				if (showScale_y)
+				if (PlotScaleY)
 				{
-					channel_scale_y.Sample(scale.y, time, frame);
+					ScaleChannelY.Sample(scale.y, time, frame);
 				}
 
-				if (showScale_z)
+				if (PlotScaleZ)
 				{
-					channel_scale_z.Sample(scale.z, time, frame);
+					ScaleChannelZ.Sample(scale.z, time, frame);
 				}
 			}
 		}

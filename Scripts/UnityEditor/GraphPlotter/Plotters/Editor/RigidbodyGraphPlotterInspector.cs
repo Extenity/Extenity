@@ -33,39 +33,39 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			EditorGUILayout.Space();
 
 			// Position
-			bool newShowPosition = EditorGUILayout.ToggleLeft(" Position", Me.showPosition);
-			if (newShowPosition != Me.showPosition)
+			bool newShowPosition = EditorGUILayout.ToggleLeft(" Position", Me.PlotPosition);
+			if (newShowPosition != Me.PlotPosition)
 			{
 				Undo.RecordObject(target, "Toggle position");
-				Me.showPosition = newShowPosition;
+				Me.PlotPosition = newShowPosition;
 			}
 
-			if (Me.showPosition)
+			if (Me.PlotPosition)
 			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
 
-				bool newShowPosition_x = EditorGUILayout.Toggle(Me.showPosition_x, GUILayout.Width(14));
-				if (newShowPosition_x != Me.showPosition_x)
+				bool newShowPosition_x = EditorGUILayout.Toggle(Me.PlotPositionX, GUILayout.Width(14));
+				if (newShowPosition_x != Me.PlotPositionX)
 				{
 					Undo.RecordObject(target, "Toggle position x");
-					Me.showPosition_x = newShowPosition_x;
+					Me.PlotPositionX = newShowPosition_x;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowPosition_y = EditorGUILayout.Toggle(Me.showPosition_y, GUILayout.Width(14));
-				if (newShowPosition_y != Me.showPosition_y)
+				bool newShowPosition_y = EditorGUILayout.Toggle(Me.PlotPositionT, GUILayout.Width(14));
+				if (newShowPosition_y != Me.PlotPositionT)
 				{
 					Undo.RecordObject(target, "Toggle position y");
-					Me.showPosition_y = newShowPosition_y;
+					Me.PlotPositionT = newShowPosition_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowPosition_z = EditorGUILayout.Toggle(Me.showPosition_z, GUILayout.Width(14));
-				if (newShowPosition_z != Me.showPosition_z)
+				bool newShowPosition_z = EditorGUILayout.Toggle(Me.PlotPositionZ, GUILayout.Width(14));
+				if (newShowPosition_z != Me.PlotPositionZ)
 				{
 					Undo.RecordObject(target, "Toggle position z");
-					Me.showPosition_z = newShowPosition_z;
+					Me.PlotPositionZ = newShowPosition_z;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
@@ -76,40 +76,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Rotation
-			bool newShowRotation = EditorGUILayout.ToggleLeft(" Rotation", Me.showRotation);
-			if (newShowRotation != Me.showRotation)
+			bool newShowRotation = EditorGUILayout.ToggleLeft(" Rotation", Me.PlotRotation);
+			if (newShowRotation != Me.PlotRotation)
 			{
 				Undo.RecordObject(target, "Toggle rotation");
-				Me.showRotation = newShowRotation;
+				Me.PlotRotation = newShowRotation;
 			}
 
-			if (Me.showRotation)
+			if (Me.PlotRotation)
 			{
 				EditorGUILayout.BeginVertical();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowRotation_x = EditorGUILayout.Toggle(Me.showRotation_x, GUILayout.Width(14));
-				if (newShowRotation_x != Me.showRotation_x)
+				bool newShowRotation_x = EditorGUILayout.Toggle(Me.PlotRotationX, GUILayout.Width(14));
+				if (newShowRotation_x != Me.PlotRotationX)
 				{
 					Undo.RecordObject(target, "Toggle rotation x");
-					Me.showRotation_x = newShowRotation_x;
+					Me.PlotRotationX = newShowRotation_x;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowRotation_y = EditorGUILayout.Toggle(Me.showRotation_y, GUILayout.Width(14));
-				if (newShowRotation_y != Me.showRotation_y)
+				bool newShowRotation_y = EditorGUILayout.Toggle(Me.PlotRotationY, GUILayout.Width(14));
+				if (newShowRotation_y != Me.PlotRotationY)
 				{
 					Undo.RecordObject(target, "Toggle rotation y");
-					Me.showRotation_y = newShowRotation_y;
+					Me.PlotRotationY = newShowRotation_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowRotation_z = EditorGUILayout.Toggle(Me.showRotation_z, GUILayout.Width(14));
-				if (newShowRotation_z != Me.showRotation_z)
+				bool newShowRotation_z = EditorGUILayout.Toggle(Me.PlotRotationZ, GUILayout.Width(14));
+				if (newShowRotation_z != Me.PlotRotationZ)
 				{
 					Undo.RecordObject(target, "Toggle rotation z");
-					Me.showRotation_z = newShowRotation_z;
+					Me.PlotRotationZ = newShowRotation_z;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
@@ -122,41 +122,41 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Velocity
-			bool newShowVelocity = EditorGUILayout.ToggleLeft(" Velocity", Me.showVelocity);
-			if (newShowVelocity != Me.showVelocity)
+			bool newShowVelocity = EditorGUILayout.ToggleLeft(" Velocity", Me.PlotVelocity);
+			if (newShowVelocity != Me.PlotVelocity)
 			{
 				Undo.RecordObject(target, "Toggle velocity");
-				Me.showVelocity = newShowVelocity;
+				Me.PlotVelocity = newShowVelocity;
 			}
 
-			if (Me.showVelocity)
+			if (Me.PlotVelocity)
 			{
 				EditorGUILayout.BeginVertical();
 
 				EditorGUILayout.BeginHorizontal();
 
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowVelocity_x = EditorGUILayout.Toggle(Me.showVelocity_x, GUILayout.Width(14));
-				if (newShowVelocity_x != Me.showVelocity_x)
+				bool newShowVelocity_x = EditorGUILayout.Toggle(Me.PlotVelocityX, GUILayout.Width(14));
+				if (newShowVelocity_x != Me.PlotVelocityX)
 				{
 					Undo.RecordObject(target, "Toggle velocity x");
-					Me.showVelocity_x = newShowVelocity_x;
+					Me.PlotVelocityX = newShowVelocity_x;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowVelocity_y = EditorGUILayout.Toggle(Me.showVelocity_y, GUILayout.Width(14));
-				if (newShowVelocity_y != Me.showVelocity_y)
+				bool newShowVelocity_y = EditorGUILayout.Toggle(Me.PlotVelocityY, GUILayout.Width(14));
+				if (newShowVelocity_y != Me.PlotVelocityY)
 				{
 					Undo.RecordObject(target, "Toggle velocity y");
-					Me.showVelocity_y = newShowVelocity_y;
+					Me.PlotVelocityY = newShowVelocity_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowVelocity_z = EditorGUILayout.Toggle(Me.showVelocity_z, GUILayout.Width(14));
-				if (newShowVelocity_z != Me.showVelocity_z)
+				bool newShowVelocity_z = EditorGUILayout.Toggle(Me.PlotVelocityZ, GUILayout.Width(14));
+				if (newShowVelocity_z != Me.PlotVelocityZ)
 				{
 					Undo.RecordObject(target, "Toggle velocity z");
-					Me.showVelocity_z = newShowVelocity_z;
+					Me.PlotVelocityZ = newShowVelocity_z;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 
@@ -170,40 +170,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Angular velocity
-			bool newShowAngularVelocity = EditorGUILayout.ToggleLeft(" Angular velocity", Me.showAngularVelocity);
-			if (newShowAngularVelocity != Me.showAngularVelocity)
+			bool newShowAngularVelocity = EditorGUILayout.ToggleLeft(" Angular velocity", Me.PlotAngularVelocity);
+			if (newShowAngularVelocity != Me.PlotAngularVelocity)
 			{
 				Undo.RecordObject(target, "Toggle angular velocity");
-				Me.showAngularVelocity = newShowAngularVelocity;
+				Me.PlotAngularVelocity = newShowAngularVelocity;
 			}
 
-			if (Me.showAngularVelocity)
+			if (Me.PlotAngularVelocity)
 			{
 				EditorGUILayout.BeginVertical();
 
 				EditorGUILayout.BeginHorizontal();
 
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowAngularVelocity_x = EditorGUILayout.Toggle(Me.showAngularVelocity_x, GUILayout.Width(14));
-				if (newShowAngularVelocity_x != Me.showAngularVelocity_x)
+				bool newShowAngularVelocity_x = EditorGUILayout.Toggle(Me.PlotAngularVelocityX, GUILayout.Width(14));
+				if (newShowAngularVelocity_x != Me.PlotAngularVelocityX)
 				{
 					Undo.RecordObject(target, "Toggle angular velocity x");
-					Me.showAngularVelocity_x = newShowAngularVelocity_x;
+					Me.PlotAngularVelocityX = newShowAngularVelocity_x;
 				}
 
 				GUILayout.Label("x", GUILayout.Width(18));
-				bool newShowAngularVelocity_y = EditorGUILayout.Toggle(Me.showAngularVelocity_y, GUILayout.Width(14));
-				if (newShowAngularVelocity_y != Me.showAngularVelocity_y)
+				bool newShowAngularVelocity_y = EditorGUILayout.Toggle(Me.PlotAngularVelocityY, GUILayout.Width(14));
+				if (newShowAngularVelocity_y != Me.PlotAngularVelocityY)
 				{
 					Undo.RecordObject(target, "Toggle angular velocity y");
-					Me.showAngularVelocity_y = newShowAngularVelocity_y;
+					Me.PlotAngularVelocityY = newShowAngularVelocity_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
-				bool newShowAngularVelocity_z = EditorGUILayout.Toggle(Me.showAngularVelocity_z, GUILayout.Width(14));
-				if (newShowAngularVelocity_z != Me.showAngularVelocity_z)
+				bool newShowAngularVelocity_z = EditorGUILayout.Toggle(Me.PlotAngularVelocityZ, GUILayout.Width(14));
+				if (newShowAngularVelocity_z != Me.PlotAngularVelocityZ)
 				{
 					Undo.RecordObject(target, "Toggle angular velocity z");
-					Me.showAngularVelocity_z = newShowAngularVelocity_z;
+					Me.PlotAngularVelocityZ = newShowAngularVelocity_z;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 
