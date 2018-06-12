@@ -41,73 +41,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdateVolumeGraph(componentIsActive);
-			UpdatePitchGraph(componentIsActive);
-			UpdateIsPlayingGraph(componentIsActive);
-		}
-
-		private void UpdateVolumeGraph(bool componentIsActive)
-		{
-			if (PlotVolume && componentIsActive)
-			{
-				if (VolumeGraph == null)
-				{
-					VolumeGraph = new Graph("Volume", gameObject);
-					VolumeGraph.SetRangeConfiguration(VolumeRange);
-				}
-
-				if (VolumeChannel == null)
-				{
-					VolumeChannel = new Channel(VolumeGraph, "volume", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Graph.SafeClose(ref VolumeGraph);
-			}
-		}
-
-		private void UpdatePitchGraph(bool componentIsActive)
-		{
-			if (PlotPitch && componentIsActive)
-			{
-				if (PitchGraph == null)
-				{
-					PitchGraph = new Graph("Pitch", gameObject);
-				}
-
-				PitchGraph.SetRangeConfiguration(PitchRange);
-
-				if (PitchChannel == null)
-				{
-					PitchChannel = new Channel(PitchGraph, "pitch", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Graph.SafeClose(ref PitchGraph);
-			}
-		}
-
-		private void UpdateIsPlayingGraph(bool componentIsActive)
-		{
-			if (PlotIsPlaying && componentIsActive)
-			{
-				if (IsPlayingGraph == null)
-				{
-					IsPlayingGraph = new Graph("Is playing", gameObject);
-					IsPlayingGraph.SetRangeConfiguration(new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f));
-				}
-
-				if (IsPlayingChannel == null)
-				{
-					IsPlayingChannel = new Channel(IsPlayingGraph, "isPlaying", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Graph.SafeClose(ref IsPlayingGraph);
-			}
+			Graph.SetupGraphWithSingleChannel(PlotVolume && componentIsActive, ref VolumeGraph, "Volume", gameObject, VolumeRange, ref VolumeChannel, "volume", PlotColors.Red);
+			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
+			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
 		}
 
 		protected void Update()

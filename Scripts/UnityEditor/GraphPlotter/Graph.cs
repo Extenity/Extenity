@@ -238,6 +238,34 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			Range.CopyFrom(range);
 		}
+
+		#region Tools
+
+		public static void SetupGraphWithSingleChannel(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel channel, string channelName, Color channelColor)
+		{
+			if (activeCondition)
+			{
+				if (graph == null)
+				{
+					graph = new Graph(graphTitle, graphContext);
+					graph.SetRangeConfiguration(rangeConfiguration);
+				}
+
+				if (channel == null)
+				{
+					channel = new Channel(graph, channelName, channelColor);
+				}
+			}
+			else
+			{
+				channel = null;
+				Graph.SafeClose(ref graph);
+			}
+		}
+
+		#endregion
 	}
 
 }
