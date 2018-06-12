@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Component Component;
 		[HideInInspector] // Not meant to be shown in raw format
 		public List<ChannelField> ChannelFields = new List<ChannelField>();
-		private List<ChannelField> OldChannelFields = new List<ChannelField>();
+		private readonly List<ChannelField> OldChannelFields = new List<ChannelField>();
 
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
@@ -86,7 +86,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					}
 				}
 
-				OldChannelFields = new List<ChannelField>(ChannelFields);
+				OldChannelFields.Clear();
+				OldChannelFields.AddRange(ChannelFields);
 			}
 			else
 			{
@@ -98,6 +99,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 						field.Channel = null;
 					}
 				}
+				OldChannelFields.Clear();
 
 				RemoveGraph();
 			}
