@@ -260,7 +260,10 @@ namespace Extenity.IMGUIToolbox
 		public static void DrawRect(Rect rect, float width) { DrawRect(rect, GUI.contentColor, width); }
 		public static void DrawRect(Rect rect, Color color, float width)
 		{
-			DrawLine(new Vector2(rect.x, rect.y), new Vector2(rect.x + rect.width, rect.y + rect.height), color, width);
+			DrawLine(new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMax, rect.yMin), color, width);
+			DrawLine(new Vector2(rect.xMax, rect.yMin), new Vector2(rect.xMax, rect.yMax), color, width);
+			DrawLine(new Vector2(rect.xMax, rect.yMax), new Vector2(rect.xMin, rect.yMax), color, width);
+			DrawLine(new Vector2(rect.xMin, rect.yMax), new Vector2(rect.xMin, rect.yMin), color, width);
 		}
 
 		#endregion
