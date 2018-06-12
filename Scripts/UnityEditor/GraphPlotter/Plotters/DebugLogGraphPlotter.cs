@@ -10,14 +10,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public string filterPrefix;
 		private Monitor monitor;
 
-		protected void Awake()
-		{
-			if (Application.isPlaying && !Application.isEditor)
-			{
-				Destroy(this);
-			}
-		}
-
 		protected void Start()
 		{
 			UpdateMonitors();

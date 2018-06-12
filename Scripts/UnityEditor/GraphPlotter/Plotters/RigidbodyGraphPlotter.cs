@@ -68,14 +68,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel channel_angularVelocity_z;
 		// -----------------------------------------------------
 
-		protected void Awake()
-		{
-			if (Application.isPlaying && !Application.isEditor)
-			{
-				Destroy(this);
-			}
-		}
-
 		protected void Start()
 		{
 			UpdateMonitors();

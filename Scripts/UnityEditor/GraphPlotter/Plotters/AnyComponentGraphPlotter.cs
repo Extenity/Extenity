@@ -40,14 +40,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			public string FieldName { get { return String.Join(".", field); } }
 		}
 
-		protected void Awake()
-		{
-			if (Application.isPlaying && !Application.isEditor)
-			{
-				Destroy(this);
-			}
-		}
-
 		protected void Start()
 		{
 			UpdateMonitors();

@@ -37,14 +37,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel channel_isPlaying;
 		// -----------------------------------------------------
 
-		protected void Awake()
-		{
-			if (Application.isPlaying && !Application.isEditor)
-			{
-				Destroy(this);
-			}
-		}
-
 		protected void Start()
 		{
 			UpdateMonitors();

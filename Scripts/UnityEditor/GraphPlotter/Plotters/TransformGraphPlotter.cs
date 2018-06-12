@@ -57,14 +57,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel channel_scale_z;
 		// -----------------------------------------------------
 
-		protected void Awake()
-		{
-			if (Application.isPlaying && !Application.isEditor)
-			{
-				Destroy(this);
-			}
-		}
-
 		protected void Start()
 		{
 			UpdateMonitors();
