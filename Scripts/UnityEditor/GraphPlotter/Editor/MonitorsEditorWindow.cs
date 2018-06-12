@@ -165,7 +165,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
 
-		private readonly List<Graph> VisiblePlotters = new List<Graph>(10);
+		private readonly List<Graph> VisibleGraphs = new List<Graph>(10);
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
 		#region Initialization
@@ -282,31 +282,31 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Gather visible graphs.
 			if (ContextFilter != null)
 			{
-				VisiblePlotters.Clear();
-				foreach (var plotter in GraphPlotters.All)
+				VisibleGraphs.Clear();
+				foreach (var graph in Graphs.All)
 				{
-					if (plotter.Context == ContextFilter)
+					if (graph.Context == ContextFilter)
 					{
-						VisiblePlotters.Add(plotter);
+						VisibleGraphs.Add(graph);
 					}
 				}
 			}
 			else
 			{
 				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
-				VisiblePlotters.Clear();
-				VisiblePlotters.AddRange(GraphPlotters.All);
+				VisibleGraphs.Clear();
+				VisibleGraphs.AddRange(Graphs.All);
 			}
 
 			var latestTime = 0f;
-			for (int i = 0; i < VisiblePlotters.Count; i++)
+			for (int i = 0; i < VisibleGraphs.Count; i++)
 			{
-				latestTime = Mathf.Max(latestTime, VisiblePlotters[i].LatestTime);
+				latestTime = Mathf.Max(latestTime, VisibleGraphs[i].LatestTime);
 			}
 
-			for (int i = 0; i < VisiblePlotters.Count; i++)
+			for (int i = 0; i < VisibleGraphs.Count; i++)
 			{
-				var monitor = VisiblePlotters[i];
+				var monitor = VisibleGraphs[i];
 				var range = monitor.Range;
 
 				var monitorRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, monitorWidth, graphHeight);
@@ -825,7 +825,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = new Color(1f, 1f, 1f, 0.3f);
 			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 8), topTexture, ScaleMode.StretchToFill);
 
-			for (int i = 0; i < VisiblePlotters.Count; i++)
+			for (int i = 0; i < VisibleGraphs.Count; i++)
 			{
 				// separator line
 				Handles.color = Color.grey;
@@ -835,7 +835,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Scrollbar
-			var scrollMaxY = graphHeight * VisiblePlotters.Count + extraScrollSpace;
+			var scrollMaxY = graphHeight * VisibleGraphs.Count + extraScrollSpace;
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
 
 			GUI.color = Color.white;
@@ -856,7 +856,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var minTime = float.PositiveInfinity;
 					var maxTime = float.NegativeInfinity;
 
-					foreach (var monitor in VisiblePlotters)
+					foreach (var monitor in VisibleGraphs)
 					{
 						float monitorMinTime, monitorMaxTime;
 						monitor.GetMinMaxTime(out monitorMinTime, out monitorMaxTime);
@@ -892,7 +892,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Gather context object names
 			var contextObjects = new List<GameObject>();
 			{
-				foreach (var monitor in GraphPlotters.All)
+				foreach (var monitor in Graphs.All)
 				{
 					if (monitor.Context != null)
 					{
@@ -1043,7 +1043,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				return true;
 			}
 
-			if (GraphPlotters.IsAnyGraphForObjectExists(filteredObject))
+			if (Graphs.IsAnyGraphForObjectExists(filteredObject))
 			{
 				ContextFilter = filteredObject;
 				return true;

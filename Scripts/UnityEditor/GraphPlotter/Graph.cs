@@ -19,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			Title = title;
 			Context = context;
 
-			GraphPlotters.Register(this);
+			Graphs.Register(this);
 		}
 
 		#endregion
@@ -28,7 +28,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Close()
 		{
-			GraphPlotters.Deregister(this);
+			Graphs.Deregister(this);
 		}
 
 		#endregion
