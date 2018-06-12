@@ -475,21 +475,21 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						var pointIndex = 0;
 
-						for (int j = 0; j < channel.numberOfSamples - 1; j++)
+						for (int j = 0; j < channel.SampleBufferSize - 1; j++)
 						{
-							var index_a = (channel.sampleIndex + j) % channel.numberOfSamples;
-							var index_b = (index_a + 1) % channel.numberOfSamples;
+							var index_a = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
+							var index_b = (index_a + 1) % channel.SampleBufferSize;
 
-							var time_a = channel.times[index_a];
-							var time_b = channel.times[index_b];
+							var time_a = channel.SampleAxisX[index_a];
+							var time_b = channel.SampleAxisX[index_b];
 
 							if (float.IsNaN(time_a) || float.IsNaN(time_b))
 								continue;
 
 							if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
 							{
-								var sample_a = channel.samples[index_a];
-								var sample_b = channel.samples[index_b];
+								var sample_a = channel.SampleAxisY[index_a];
+								var sample_b = channel.SampleAxisY[index_b];
 
 								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 									continue;
@@ -613,15 +613,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						var index = -1;
 
-						for (int k = 1; k < channel.samples.Length - 1; k++)
+						for (int k = 1; k < channel.SampleAxisY.Length - 1; k++)
 						{
-							int sampleIndex_a = (channel.sampleIndex + k) % channel.samples.Length;
-							int sampleIndex_b = (sampleIndex_a + 1) % channel.samples.Length;
+							int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.SampleAxisY.Length;
+							int sampleIndex_b = (sampleIndex_a + 1) % channel.SampleAxisY.Length;
 
-							if (mouseTime >= channel.times[sampleIndex_a] &&
-							   mouseTime <= channel.times[sampleIndex_b])
+							if (mouseTime >= channel.SampleAxisX[sampleIndex_a] &&
+							   mouseTime <= channel.SampleAxisX[sampleIndex_b])
 							{
-								index = Mathf.Abs(channel.times[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.times[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
+								index = Mathf.Abs(channel.SampleAxisX[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.SampleAxisX[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
 								break;
 							}
 						}
@@ -632,9 +632,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						if (index > -1)
 						{
-							sampleValue = channel.samples[index];
-							time = channel.times[index];
-							frame = channel.frames[index];
+							sampleValue = channel.SampleAxisY[index];
+							time = channel.SampleAxisX[index];
+							frame = channel.SampleFrames[index];
 						}
 
 						// Draw time marker.

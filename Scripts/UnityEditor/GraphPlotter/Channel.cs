@@ -54,24 +54,24 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#region Data
 
-		public int sampleIndex;
-		public int numberOfSamples = 1000;
-		public float[] samples;
-		public float[] times;
-		public int[] frames;
+		public int CurrentSampleIndex;
+		public int SampleBufferSize = 1000;
+		public float[] SampleAxisY;
+		public float[] SampleAxisX;
+		public int[] SampleFrames;
 
 		private void InitializeData()
 		{
-			sampleIndex = 0;
-			samples = new float[numberOfSamples];
-			times = new float[numberOfSamples];
-			frames = new int[numberOfSamples];
+			CurrentSampleIndex = 0;
+			SampleAxisY = new float[SampleBufferSize];
+			SampleAxisX = new float[SampleBufferSize];
+			SampleFrames = new int[SampleBufferSize];
 
-			for (int i = 0; i < samples.Length; i++)
+			for (int i = 0; i < SampleAxisY.Length; i++)
 			{
-				samples[i] = float.NaN;
-				times[i] = float.NaN;
-				frames[i] = -1;
+				SampleAxisY[i] = float.NaN;
+				SampleAxisX[i] = float.NaN;
+				SampleFrames[i] = -1;
 			}
 		}
 
@@ -86,13 +86,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Sample(float value, float time, int frame)
 		{
-			samples[sampleIndex] = value;
-			times[sampleIndex] = time;
-			frames[sampleIndex] = frame;
+			SampleAxisY[CurrentSampleIndex] = value;
+			SampleAxisX[CurrentSampleIndex] = time;
+			SampleFrames[CurrentSampleIndex] = frame;
 
 			Monitor.InformNewEntry(value, time);
 
-			sampleIndex = (sampleIndex + 1) % numberOfSamples;
+			CurrentSampleIndex = (CurrentSampleIndex + 1) % SampleBufferSize;
 		}
 
 		#endregion
@@ -104,12 +104,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			min = float.PositiveInfinity;
 			max = float.NegativeInfinity;
 
-			for (int i = 0; i < samples.Length; i++)
+			for (int i = 0; i < SampleAxisX.Length; i++)
 			{
-				var time = times[i];
+				var time = SampleAxisX[i];
 				if (time >= timeStart && time <= timeEnd)
 				{
-					var value = samples[i];
+					var value = SampleAxisY[i];
 					if (min > value)
 						min = value;
 					if (max < value)
@@ -123,9 +123,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			var start = float.PositiveInfinity;
 			var end = float.NegativeInfinity;
 
-			for (int i = 0; i < times.Length; i++)
+			for (int i = 0; i < SampleAxisX.Length; i++)
 			{
-				var time = times[i];
+				var time = SampleAxisX[i];
 				if (float.IsNaN(time))
 					continue;
 
