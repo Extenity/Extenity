@@ -328,8 +328,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				if (range.Max > float.NegativeInfinity)
 					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), range.Max.ToString(), maxStyle);
 
-				// monitor resizing.
-
+				// Graph resizing
 				var resizeRect = new Rect(0f, graphAreaRect.yMax - 10, width - 12, 21);
 				if (!legendResize)
 				{
@@ -364,7 +363,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					IsResizingGraphHeight = false;
 				}
 
-				// Is monitor visible? otherwise cull...
+				// Do not draw graphs that is currently outside of display area.
 				if (graphAreaRect.yMin < position.height && graphAreaRect.yMax > 0f)
 				{
 					Handles.color = zeroLineColor;
@@ -748,7 +747,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
 
-						// Selection of monitor input.
+						// Selection of channel.
 						if (currentEventType == EventType.MouseDown && selectionRect.Contains(mousePosition))
 						{
 							newSelectedChannel = channel;
@@ -888,13 +887,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Gather context object names
 			var contextObjects = new List<GameObject>();
 			{
-				foreach (var monitor in Graphs.All)
+				foreach (var graph in Graphs.All)
 				{
-					if (monitor.Context != null)
+					if (graph.Context != null)
 					{
-						if (!contextObjects.Contains(monitor.Context))
+						if (!contextObjects.Contains(graph.Context))
 						{
-							contextObjects.Add(monitor.Context);
+							contextObjects.Add(graph.Context);
 						}
 					}
 				}
