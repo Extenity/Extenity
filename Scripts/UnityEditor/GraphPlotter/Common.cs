@@ -4,6 +4,9 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
+	public enum CoordinateSystem { Local, World };
+	public enum ScaleCoordinateSystem { Local, Lossy };
+
 	public enum SampleTime
 	{
 		FixedUpdate = 0,

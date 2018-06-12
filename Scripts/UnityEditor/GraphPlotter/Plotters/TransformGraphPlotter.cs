@@ -7,9 +7,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class TransformGraphPlotter : MonoBehaviour
 	{
-		public enum Space { Local, World };
-		public enum ScaleSpace { Local, Lossy };
-
 		public Transform Transform;
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
@@ -20,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotPositionX = true;
 		public bool PlotPositionY = true;
 		public bool PlotPositionZ = true;
-		public Space PositionSpace = Space.World;
+		public CoordinateSystem PositionSpace = CoordinateSystem.World;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph PositionGraph;
 		public Channel PositionChannelX;
@@ -33,7 +30,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotRotationX = true;
 		public bool PlotRotationY = true;
 		public bool PlotRotationZ = true;
-		public Space RotationSpace = Space.World;
+		public CoordinateSystem RotationSpace = CoordinateSystem.World;
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 		public Graph RotationGraph;
 		public Channel RotationChannelX;
@@ -46,7 +43,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotScaleX = true;
 		public bool PlotScaleY = true;
 		public bool PlotScaleZ = true;
-		public ScaleSpace scaleSpace = ScaleSpace.Local; // TODO: Rename
+		public ScaleCoordinateSystem ScaleSpace = ScaleCoordinateSystem.Local;
 		public ValueAxisRangeConfiguration ScaleRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph ScaleGraph;
 		public Channel ScaleChannelX;
@@ -78,7 +75,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					PositionGraph = new Graph("", gameObject);
 				}
 
-				PositionGraph.Title = "Position (" + (PositionSpace == Space.World ? "world" : "local") + ")";
+				PositionGraph.Title = "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")";
 				PositionGraph.SetRangeConfiguration(PositionRange);
 			}
 			else
@@ -152,7 +149,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					RotationGraph = new Graph("", gameObject);
 				}
 
-				RotationGraph.Title = "Rotation (" + (RotationSpace == Space.World ? "world" : "local") + ")";
+				RotationGraph.Title = "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")";
 				RotationGraph.SetRangeConfiguration(RotationRange);
 			}
 			else
@@ -226,7 +223,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					ScaleGraph = new Graph("", gameObject);
 				}
 
-				ScaleGraph.Title = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
+				ScaleGraph.Title = "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")";
 				ScaleGraph.SetRangeConfiguration(ScaleRange);
 			}
 			else
@@ -324,7 +321,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (PlotPosition)
 			{
-				var position = PositionSpace == Space.Local ? Transform.localPosition : Transform.position;
+				var position = PositionSpace == CoordinateSystem.Local ? Transform.localPosition : Transform.position;
 
 				PositionRange.CopyFrom(PositionGraph.Range);
 
@@ -346,7 +343,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (PlotRotation)
 			{
-				var euler = (RotationSpace == Space.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
+				var euler = (RotationSpace == CoordinateSystem.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
 
 				RotationRange.CopyFrom(RotationGraph.Range);
 
@@ -368,7 +365,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (PlotScale)
 			{
-				var scale = scaleSpace == ScaleSpace.Local ? Transform.localScale : Transform.lossyScale;
+				var scale = ScaleSpace == ScaleCoordinateSystem.Local ? Transform.localScale : Transform.lossyScale;
 
 				ScaleRange.CopyFrom(ScaleGraph.Range);
 

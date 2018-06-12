@@ -70,7 +70,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
-				TransformGraphPlotter.Space newPositionSpace = (TransformGraphPlotter.Space)EditorGUILayout.EnumPopup("Space", Me.PositionSpace);
+				CoordinateSystem newPositionSpace = (CoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.PositionSpace);
 				if (newPositionSpace != Me.PositionSpace)
 				{
 					Undo.RecordObject(target, "Changed position space");
@@ -123,7 +123,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				TransformGraphPlotter.Space newRotationSpace = (TransformGraphPlotter.Space)EditorGUILayout.EnumPopup("Space", Me.RotationSpace);
+				CoordinateSystem newRotationSpace = (CoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.RotationSpace);
 				if (newRotationSpace != Me.RotationSpace)
 				{
 					Undo.RecordObject(target, "Changed rotation space");
@@ -177,11 +177,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				TransformGraphPlotter.ScaleSpace newScaleSpace = (TransformGraphPlotter.ScaleSpace)EditorGUILayout.EnumPopup("Space", Me.scaleSpace);
-				if (newScaleSpace != Me.scaleSpace)
+				ScaleCoordinateSystem newScaleSpace = (ScaleCoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.ScaleSpace);
+				if (newScaleSpace != Me.ScaleSpace)
 				{
 					Undo.RecordObject(target, "Change scale space");
-					Me.scaleSpace = newScaleSpace;
+					Me.ScaleSpace = newScaleSpace;
 				}
 
 				CommonEditor.DrawAxisRangeConfiguration(Me, Me.ScaleGraph, ref Me.ScaleRange);
