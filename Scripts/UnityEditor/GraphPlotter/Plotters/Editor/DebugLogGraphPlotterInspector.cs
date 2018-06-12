@@ -21,12 +21,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			EditorGUILayout.Space();
 
-			string newFilterPrefix = EditorGUILayout.TextField("Filter prefix", Me.filterPrefix);
-			if (newFilterPrefix != Me.filterPrefix)
-			{
-				Undo.RecordObject(target, "Change filter prefix");
-				Me.filterPrefix = newFilterPrefix;
-			}
+			EditorGUILayout.PropertyField(GetProperty("Filter.Filters"), true);
 
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 

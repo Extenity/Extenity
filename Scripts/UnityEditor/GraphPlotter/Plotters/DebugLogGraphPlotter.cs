@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Extenity.DataToolbox;
+using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
@@ -7,7 +9,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class DebugLogGraphPlotter : MonoBehaviour
 	{
-		public string filterPrefix;
+		public StringFilter Filter;
 		private Graph Graph;
 
 		protected void Start()
@@ -32,10 +34,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					Graph = new Graph("Debug.Log", gameObject);
 				}
 
-				if (filterPrefix != string.Empty)
-				{
-					Graph.Title = "Debug.Log (prefix = '" + filterPrefix + "')";
-				}
+				Graph.Title = "Debug.Log";
 			}
 			else
 			{
@@ -57,12 +56,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private void LogCallback(string logString, string stackTrace, LogType type)
 		{
-			if (filterPrefix != string.Empty)
+			if (!Filter.IsMatching(logString))
 			{
-				if (!logString.StartsWith(filterPrefix))
-				{
-					return;
-				}
+				return;
 			}
 
 			var entry = new TagEntry(Time.time, logString);

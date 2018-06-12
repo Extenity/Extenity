@@ -12,7 +12,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 		private void Start()
 		{
-			Graph = new Graph("Two Sine Waves");
+			Graph = new Graph("Two Sine Waves", gameObject);
 			Channel1 = new Channel(Graph, "Wavesome", Color.green);
 			Channel2 = new Channel(Graph, "Bob Wave", Color.blue);
 		}

@@ -370,7 +370,7 @@ MonoBehaviour:
     Sizing: 0
     Min: 0
     Max: 360
-  PlotVelocity: 0
+  PlotVelocity: 1
   PlotVelocityX: 1
   PlotVelocityY: 1
   PlotVelocityZ: 1
@@ -378,7 +378,7 @@ MonoBehaviour:
     Sizing: 2
     Min: Infinity
     Max: -Infinity
-  PlotAngularVelocity: 0
+  PlotAngularVelocity: 1
   PlotAngularVelocityX: 1
   PlotAngularVelocityY: 1
   PlotAngularVelocityZ: 1
@@ -399,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Transform: {fileID: 890043990}
   SampleTime: 0
-  PlotPosition: 0
+  PlotPosition: 1
   PlotPositionX: 1
   PlotPositionY: 1
   PlotPositionZ: 1
@@ -645,6 +645,74 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1558310856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1558310857}
+  - component: {fileID: 1558310859}
+  - component: {fileID: 1558310858}
+  m_Layer: 0
+  m_Name: PLOTTED DebugLog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1558310857
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1558310856}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1558310858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1558310856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ccf0214337b9a49a4a7be528f981f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Filter:
+    Filters:
+    - FilterType: 0
+      Filter: log
+      ComparisonType: 3
+      Inverted: 0
+      MustMatch: 0
+    - FilterType: 2
+      Filter: it
+      ComparisonType: 3
+      Inverted: 0
+      MustMatch: 1
+--- !u!114 &1558310859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1558310856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34ed0b83e08456f49a1c6fbc046aa622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LogInterval: 1
+  Logs:
+  - Not cought console log
+  - Log it
 --- !u!1 &2047998970
 GameObject:
   m_ObjectHideFlags: 0
