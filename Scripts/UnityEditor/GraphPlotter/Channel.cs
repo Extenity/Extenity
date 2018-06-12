@@ -211,7 +211,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				Channel.SafeClose(ref channel);
+				SafeClose(ref channel);
 			}
 		}
 

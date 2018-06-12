@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Component Component;
 		[HideInInspector] // Not meant to be shown in raw format
 		public List<ChannelField> ChannelFields = new List<ChannelField>();
-		private readonly List<ChannelField> OldChannelFields = new List<ChannelField>();
+		private readonly List<ChannelField> RemovedChannelFieldTracker = new List<ChannelField>();
 
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
@@ -49,51 +49,46 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public void UpdateGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
+			var graphIsActive = componentIsActive && Component != null;
 
-			if (Component != null && componentIsActive)
+			Graph.SetupGraph(graphIsActive, ref Graph, Component?.GetType().Name, gameObject, Range);
+
+			if (graphIsActive)
 			{
-				if (Graph == null)
-				{
-					Graph = new Graph("", gameObject);
-				}
-
-				Graph.Title = Component.GetType().Name;
-				Graph.SetRangeConfiguration(Range);
-
 				foreach (var field in ChannelFields)
 				{
-					if (field.Channel == null)
-					{
-						field.Channel = new Channel(Graph, field.FieldName);
-					}
+					Channel.SetupChannel(true, Graph, ref field.Channel, field.FieldName, field.Color);
 
-					field.Channel.Color = field.Color;
-
-					if (OldChannelFields.Contains(field))
+					// Remove from tracker list. After that, the list will only contain channels that were previously used but not used anymore.
+					if (RemovedChannelFieldTracker.Contains(field))
 					{
-						OldChannelFields.Remove(field);
+						RemovedChannelFieldTracker.Remove(field);
 					}
 				}
 
-				// destroy all Channel for field that was in the old collection but does not
-				// appear in the new collection.
-				foreach (var field in OldChannelFields)
+				// Close previously created but recently removed channels. Channels in use were removed from tracker list above.
+				foreach (var field in RemovedChannelFieldTracker)
 				{
 					Channel.SafeClose(ref field.Channel);
 				}
+				RemovedChannelFieldTracker.Clear();
 
-				OldChannelFields.Clear();
-				OldChannelFields.AddRange(ChannelFields);
+				// Rebuild the tracker list. We will need it next time we call 'UpdateGraph'.
+				RemovedChannelFieldTracker.AddRange(ChannelFields);
 			}
 			else
 			{
+				// Channels should already be closed by now. But there may be dangling references to them. So do a safe close.
 				foreach (var field in ChannelFields)
 				{
 					Channel.SafeClose(ref field.Channel);
 				}
-				OldChannelFields.Clear();
-
-				Graph.SafeClose(ref Graph);
+				// Close previously created but recently removed channels.
+				foreach (var field in RemovedChannelFieldTracker)
+				{
+					Channel.SafeClose(ref field.Channel);
+				}
+				RemovedChannelFieldTracker.Clear();
 			}
 		}
 
