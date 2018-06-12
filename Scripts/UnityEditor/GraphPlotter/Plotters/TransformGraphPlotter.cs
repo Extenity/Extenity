@@ -20,9 +20,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public CoordinateSystem PositionSpace = CoordinateSystem.World;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph PositionGraph;
-		public Channel PositionChannelX;
-		public Channel PositionChannelY;
-		public Channel PositionChannelZ;
+		public Channel[] PositionChannels;
 		// -----------------------------------------------------
 		// Input - Rotation
 		// -----------------------------------------------------
@@ -33,9 +31,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public CoordinateSystem RotationSpace = CoordinateSystem.World;
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 		public Graph RotationGraph;
-		public Channel RotationChannelX;
-		public Channel RotationChannelY;
-		public Channel RotationChannelZ;
+		public Channel[] RotationChannels;
 		// -----------------------------------------------------
 		// Input - Scale
 		// -----------------------------------------------------
@@ -46,9 +42,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public ScaleCoordinateSystem ScaleSpace = ScaleCoordinateSystem.Local;
 		public ValueAxisRangeConfiguration ScaleRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph ScaleGraph;
-		public Channel ScaleChannelX;
-		public Channel ScaleChannelY;
-		public Channel ScaleChannelZ;
+		public Channel[] ScaleChannels;
 		// -----------------------------------------------------
 
 		protected void Start()
@@ -60,183 +54,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdatePositionGraph(componentIsActive);
-			UpdateRotationGraph(componentIsActive);
-			UpdateScaleGraph(componentIsActive);
-		}
+			Graph.SetupGraphWithXYZChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY, PlotPositionZ);
+			Graph.SetupGraphWithXYZChannels(PlotRotation && componentIsActive, ref RotationGraph, "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, RotationRange, ref RotationChannels, PlotRotationX, PlotRotationY, PlotRotationZ);
+			Graph.SetupGraphWithXYZChannels(PlotScale && componentIsActive, ref ScaleGraph, "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")", gameObject, ScaleRange, ref ScaleChannels, PlotScaleX, PlotScaleY, PlotScaleZ);
 
-		private void UpdatePositionGraph(bool componentIsActive)
-		{
-			// position
-			if (PlotPosition && componentIsActive)
-			{
-				if (PositionGraph == null)
-				{
-					PositionGraph = new Graph("", gameObject);
-				}
-
-				PositionGraph.Title = "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")";
-				PositionGraph.SetRangeConfiguration(PositionRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref PositionGraph);
-			}
-
-			// position x
-			if (PlotPosition && PlotPositionX && componentIsActive)
-			{
-				if (PositionChannelX == null)
-				{
-					PositionChannelX = new Channel(PositionGraph, "x", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref PositionChannelX);
-			}
-
-			// position y
-			if (PlotPosition && PlotPositionY && componentIsActive)
-			{
-				if (PositionChannelY == null)
-				{
-					PositionChannelY = new Channel(PositionGraph, "y", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref PositionChannelY);
-			}
-
-			// position z
-			if (PlotPosition && PlotPositionZ && componentIsActive)
-			{
-				if (PositionChannelZ == null)
-				{
-					PositionChannelZ = new Channel(PositionGraph, "z", PlotColors.Blue);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref PositionChannelZ);
-			}
-		}
-
-		private void UpdateRotationGraph(bool componentIsActive)
-		{
-			// rotation
-			if (PlotRotation && componentIsActive)
-			{
-				if (RotationGraph == null)
-				{
-					RotationGraph = new Graph("", gameObject);
-				}
-
-				RotationGraph.Title = "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")";
-				RotationGraph.SetRangeConfiguration(RotationRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref RotationGraph);
-			}
-
-			// rotation x
-			if (PlotRotation && PlotRotationX && componentIsActive)
-			{
-				if (RotationChannelX == null)
-				{
-					RotationChannelX = new Channel(RotationGraph, "x", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref RotationChannelX);
-			}
-
-			// rotation y
-			if (PlotRotation && PlotRotationY && componentIsActive)
-			{
-				if (RotationChannelY == null)
-				{
-					RotationChannelY = new Channel(RotationGraph, "y", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref RotationChannelY);
-			}
-
-			// rotation z
-			if (PlotRotation && PlotRotationZ && componentIsActive)
-			{
-				if (RotationChannelZ == null)
-				{
-					RotationChannelZ = new Channel(RotationGraph, "z", PlotColors.Blue);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref RotationChannelZ);
-			}
-		}
-
-		private void UpdateScaleGraph(bool componentIsActive)
-		{
-			// scale
-			if (PlotScale && componentIsActive)
-			{
-				if (ScaleGraph == null)
-				{
-					ScaleGraph = new Graph("", gameObject);
-				}
-
-				ScaleGraph.Title = "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")";
-				ScaleGraph.SetRangeConfiguration(ScaleRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref ScaleGraph);
-			}
-
-			// scale x
-			if (PlotScale && PlotScaleX && componentIsActive)
-			{
-				if (ScaleChannelX == null)
-				{
-					ScaleChannelX = new Channel(ScaleGraph, "x", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref ScaleChannelX);
-			}
-
-			// scale y
-			if (PlotScale && PlotScaleY && componentIsActive)
-			{
-				if (ScaleChannelY == null)
-				{
-					ScaleChannelY = new Channel(ScaleGraph, "y", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref ScaleChannelY);
-			}
-
-			// scale z
-			if (PlotScale && PlotScaleZ && componentIsActive)
-			{
-				if (ScaleChannelZ == null)
-				{
-					ScaleChannelZ = new Channel(ScaleGraph, "z", PlotColors.Blue);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref ScaleChannelZ);
-			}
 		}
 
 		protected void Update()
@@ -278,19 +99,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (PlotPositionX)
-				{
-					PositionChannelX.Sample(position.x, time, frame);
-				}
-
+					PositionChannels[0].Sample(position.x, time, frame);
 				if (PlotPositionY)
-				{
-					PositionChannelY.Sample(position.y, time, frame);
-				}
-
+					PositionChannels[1].Sample(position.y, time, frame);
 				if (PlotPositionZ)
-				{
-					PositionChannelZ.Sample(position.z, time, frame);
-				}
+					PositionChannels[2].Sample(position.z, time, frame);
 			}
 
 			if (PlotRotation)
@@ -300,19 +113,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				RotationRange.CopyFrom(RotationGraph.Range);
 
 				if (PlotRotationX)
-				{
-					RotationChannelX.Sample(euler.x, time, frame);
-				}
-
+					RotationChannels[0].Sample(euler.x, time, frame);
 				if (PlotRotationY)
-				{
-					RotationChannelY.Sample(euler.y, time, frame);
-				}
-
+					RotationChannels[1].Sample(euler.y, time, frame);
 				if (PlotRotationZ)
-				{
-					RotationChannelZ.Sample(euler.z, time, frame);
-				}
+					RotationChannels[2].Sample(euler.z, time, frame);
 			}
 
 			if (PlotScale)
@@ -322,19 +127,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				ScaleRange.CopyFrom(ScaleGraph.Range);
 
 				if (PlotScaleX)
-				{
-					ScaleChannelX.Sample(scale.x, time, frame);
-				}
-
+					ScaleChannels[0].Sample(scale.x, time, frame);
 				if (PlotScaleY)
-				{
-					ScaleChannelY.Sample(scale.y, time, frame);
-				}
-
+					ScaleChannels[1].Sample(scale.y, time, frame);
 				if (PlotScaleZ)
-				{
-					ScaleChannelZ.Sample(scale.z, time, frame);
-				}
+					ScaleChannels[2].Sample(scale.z, time, frame);
 			}
 		}
 

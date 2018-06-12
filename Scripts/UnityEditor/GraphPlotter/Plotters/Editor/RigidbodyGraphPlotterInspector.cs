@@ -53,11 +53,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowPosition_y = EditorGUILayout.Toggle(Me.PlotPositionT, GUILayout.Width(14));
-				if (newShowPosition_y != Me.PlotPositionT)
+				bool newShowPosition_y = EditorGUILayout.Toggle(Me.PlotPositionY, GUILayout.Width(14));
+				if (newShowPosition_y != Me.PlotPositionY)
 				{
 					Undo.RecordObject(target, "Toggle position y");
-					Me.PlotPositionT = newShowPosition_y;
+					Me.PlotPositionY = newShowPosition_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 

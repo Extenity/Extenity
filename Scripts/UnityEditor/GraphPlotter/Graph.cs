@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
@@ -241,28 +242,88 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#region Tools
 
-		public static void SetupGraphWithSingleChannel(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
-			ref Channel channel, string channelName, Color channelColor)
+		public static void SetupGraph(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration)
 		{
 			if (activeCondition)
 			{
 				if (graph == null)
 				{
 					graph = new Graph(graphTitle, graphContext);
-					graph.SetRangeConfiguration(rangeConfiguration);
+				}
+				else
+				{
+					graph.Title = graphTitle;
+					graph.Context = graphContext;
 				}
 
-				if (channel == null)
-				{
-					channel = new Channel(graph, channelName, channelColor);
-				}
+				graph.SetRangeConfiguration(rangeConfiguration);
 			}
 			else
 			{
-				channel = null;
-				Graph.SafeClose(ref graph);
+				SafeClose(ref graph);
 			}
+		}
+
+		public static void SetupGraphWithSingleChannel(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel channel, string channelName, Color channelColor)
+		{
+			SetupGraph(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration);
+			Channel.SetupChannel(activeCondition, graph, ref channel, channelName, channelColor);
+		}
+
+		public static void SetupGraphWithXYZChannels(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel[] channels, bool channelActiveX, bool channelActiveY, bool channelActiveZ,
+			string channelNameX, string channelNameY, string channelNameZ, Color channelColorX, Color channelColorY, Color channelColorZ)
+		{
+			SetupGraphWithXYZChannels(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration, ref channels, channelActiveX, channelActiveY, channelActiveZ);
+			if (activeCondition)
+			{
+				channels[0].Description = channelNameX;
+				channels[1].Description = channelNameY;
+				channels[2].Description = channelNameZ;
+				channels[0].Color = channelColorX;
+				channels[1].Color = channelColorY;
+				channels[2].Color = channelColorZ;
+			}
+		}
+
+		public static void SetupGraphWithXYZChannels(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel[] channels, bool channelActiveX, bool channelActiveY, bool channelActiveZ)
+		{
+			CollectionTools.ResizeIfRequired(ref channels, 3);
+			SetupGraph(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration);
+			Channel.SetupChannel(activeCondition && channelActiveX, graph, ref channels[0], "x", PlotColors.Red);
+			Channel.SetupChannel(activeCondition && channelActiveY, graph, ref channels[1], "y", PlotColors.Green);
+			Channel.SetupChannel(activeCondition && channelActiveZ, graph, ref channels[2], "z", PlotColors.Blue);
+		}
+
+		public static void SetupGraphWithXYChannels(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel[] channels, bool channelActiveX, bool channelActiveY,
+			string channelNameX, string channelNameY, Color channelColorX, Color channelColorY)
+		{
+			SetupGraphWithXYChannels(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration, ref channels, channelActiveX, channelActiveY);
+			if (activeCondition)
+			{
+				channels[0].Description = channelNameX;
+				channels[1].Description = channelNameY;
+				channels[0].Color = channelColorX;
+				channels[1].Color = channelColorY;
+			}
+		}
+
+		public static void SetupGraphWithXYChannels(bool activeCondition,
+			ref Graph graph, string graphTitle, GameObject graphContext, ValueAxisRangeConfiguration rangeConfiguration,
+			ref Channel[] channels, bool channelActiveX, bool channelActiveY)
+		{
+			CollectionTools.ResizeIfRequired(ref channels, 2);
+			SetupGraph(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration);
+			Channel.SetupChannel(activeCondition && channelActiveX, graph, ref channels[0], "x", PlotColors.Red);
+			Channel.SetupChannel(activeCondition && channelActiveY, graph, ref channels[1], "y", PlotColors.Green);
 		}
 
 		#endregion

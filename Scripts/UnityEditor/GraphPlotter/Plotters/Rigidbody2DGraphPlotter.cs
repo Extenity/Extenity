@@ -18,8 +18,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotPositionY = true;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph PositionGraph;
-		private Channel PositionChannelX;
-		private Channel PositionChannelY;
+		private Channel[] PositionChannels;
 		// -----------------------------------------------------
 		// Input - Rotation
 		// -----------------------------------------------------
@@ -36,8 +35,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotVelocityY = true;
 		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph VelocityGraph;
-		private Channel VelocityChannelX;
-		private Channel VelocityChannelY;
+		private Channel[] VelocityChannels;
 		// -----------------------------------------------------
 		// Input - Angular Velocity
 		// -----------------------------------------------------
@@ -56,160 +54,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdatePositionGraph(componentIsActive);
-			UpdateRotationGraph(componentIsActive);
-			UpdateVelocityGraph(componentIsActive);
-			UpdateAngularVelocityGraph(componentIsActive);
-		}
-
-		private void UpdatePositionGraph(bool componentIsActive)
-		{
-			// position
-			if (PlotPosition && componentIsActive)
-			{
-				if (PositionGraph == null)
-				{
-					PositionGraph = new Graph("Position", gameObject);
-				}
-
-				PositionGraph.SetRangeConfiguration(PositionRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref PositionGraph);
-			}
-
-			// position x
-			if (PlotPosition && PlotPositionX && componentIsActive)
-			{
-				if (PositionChannelX == null)
-				{
-					PositionChannelX = new Channel(PositionGraph, "x", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref PositionChannelX);
-			}
-
-			// position y
-			if (PlotPosition && PlotPositionY && componentIsActive)
-			{
-				if (PositionChannelY == null)
-				{
-					PositionChannelY = new Channel(PositionGraph, "y", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref PositionChannelY);
-			}
-		}
-
-		private void UpdateRotationGraph(bool componentIsActive)
-		{
-			// rotation
-			if (PlotRotation && componentIsActive)
-			{
-				if (RotationGraph == null)
-				{
-					RotationGraph = new Graph("Rotation", gameObject);
-				}
-
-				RotationGraph.SetRangeConfiguration(RotationRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref RotationGraph);
-			}
-
-			// rotation 
-			if (PlotRotation)
-			{
-				if (RotationChannel == null)
-				{
-					RotationChannel = new Channel(RotationGraph, "angle", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref RotationChannel);
-			}
-		}
-
-		private void UpdateVelocityGraph(bool componentIsActive)
-		{
-			// velocity
-			if (PlotVelocity && componentIsActive)
-			{
-				if (VelocityGraph == null)
-				{
-					VelocityGraph = new Graph("Velocity", gameObject);
-				}
-
-				VelocityGraph.SetRangeConfiguration(VelocityRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref VelocityGraph);
-			}
-
-			// velocity x
-			if (PlotVelocity && PlotVelocityX && componentIsActive)
-			{
-				if (VelocityChannelX == null)
-				{
-					VelocityChannelX = new Channel(VelocityGraph, "x", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref VelocityChannelX);
-			}
-
-			// velocity y
-			if (PlotVelocity && PlotVelocityY && componentIsActive)
-			{
-				if (VelocityChannelY == null)
-				{
-					VelocityChannelY = new Channel(VelocityGraph, "y", PlotColors.Green);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref VelocityChannelY);
-			}
-		}
-
-		private void UpdateAngularVelocityGraph(bool componentIsActive)
-		{
-			// angularVelocity
-			if (PlotAngularVelocity && componentIsActive)
-			{
-				if (AngularVelocityGraph == null)
-				{
-					AngularVelocityGraph = new Graph("Angular Velocity", gameObject);
-				}
-
-				AngularVelocityGraph.SetRangeConfiguration(AngularVelocityRange);
-			}
-			else
-			{
-				Graph.SafeClose(ref AngularVelocityGraph);
-			}
-
-			// angularVelocity x
-			if (PlotAngularVelocity && componentIsActive)
-			{
-				if (AngularVelocityChannel == null)
-				{
-					AngularVelocityChannel = new Channel(AngularVelocityGraph, "angular velocity", PlotColors.Red);
-				}
-			}
-			else
-			{
-				Channel.SafeClose(ref AngularVelocityChannel);
-			}
+			Graph.SetupGraphWithXYChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY);
+			Graph.SetupGraphWithSingleChannel(PlotRotation && componentIsActive, ref RotationGraph, "Rotation", gameObject, RotationRange, ref RotationChannel, "angle", PlotColors.Red);
+			Graph.SetupGraphWithXYChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY);
+			Graph.SetupGraphWithSingleChannel(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannel, "angular velocity", PlotColors.Red);
 		}
 
 		protected void Update()
@@ -257,14 +105,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (PlotPositionX)
-				{
-					PositionChannelX.Sample(position.x, time, frame);
-				}
-
+					PositionChannels[0].Sample(position.x, time, frame);
 				if (PlotPositionY)
-				{
-					PositionChannelY.Sample(position.y, time, frame);
-				}
+					PositionChannels[1].Sample(position.y, time, frame);
 			}
 
 			if (PlotRotation)
@@ -297,14 +140,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				VelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (PlotVelocityX)
-				{
-					VelocityChannelX.Sample(velocity.x, time, frame);
-				}
-
+					VelocityChannels[0].Sample(velocity.x, time, frame);
 				if (PlotVelocityY)
-				{
-					VelocityChannelY.Sample(velocity.y, time, frame);
-				}
+					VelocityChannels[1].Sample(velocity.y, time, frame);
 			}
 
 			if (PlotAngularVelocity)
@@ -312,9 +150,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (PlotAngularVelocity)
-				{
 					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time, frame);
-				}
 			}
 		}
 

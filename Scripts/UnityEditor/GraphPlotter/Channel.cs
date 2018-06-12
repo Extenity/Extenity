@@ -192,6 +192,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		}
 
 		#endregion
+
+		#region Tools
+
+		public static void SetupChannel(bool activeCondition, Graph graph, ref Channel channel, string channelName, Color channelColor)
+		{
+			if (activeCondition)
+			{
+				if (channel == null)
+				{
+					channel = new Channel(graph, channelName, channelColor);
+				}
+				else
+				{
+					channel.Description = channelName;
+					channel.Color = channelColor;
+				}
+			}
+			else
+			{
+				Channel.SafeClose(ref channel);
+			}
+		}
+
+		#endregion
 	}
 
 }
