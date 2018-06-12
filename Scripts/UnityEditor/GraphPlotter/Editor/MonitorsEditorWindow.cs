@@ -134,9 +134,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private Channel selectedChannel;
 
-		// dynamic sizes.
-		private float monitorWidth;
-
 		// Graph height resizing
 		private bool IsResizingGraphHeight = false;
 		private int GraphHeightBeforeResizing;
@@ -240,7 +237,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// calculate dynamic sizes.
 			var width = position.width;
 			var height = position.height;
-			monitorWidth = width - legendWidth - 5f;
+			var graphWidth = width - legendWidth - 5f;
 
 			totalGraphHeight = graphHeight - SpaceAboveGraph - SpaceBelowGraph;
 
@@ -309,13 +306,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				var monitor = VisibleGraphs[i];
 				var range = monitor.Range;
 
-				var monitorRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, monitorWidth, graphHeight);
-				var graphRect = new Rect(monitorRect.xMin, monitorRect.yMin + SpaceAboveGraph, monitorRect.width - 20, totalGraphHeight - 5);
+				var graphAreaRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, graphWidth, graphHeight);
+				var graphRect = new Rect(graphAreaRect.xMin, graphAreaRect.yMin + SpaceAboveGraph, graphAreaRect.width - 20, totalGraphHeight - 5);
 
 				var span = range.Span;
 
 				GUI.color = Color.white;
-				GUI.Label(new Rect(legendWidth + 10f, monitorRect.yMin + 10, 100f, 30f), monitor.Title, headerStyle);
+				GUI.Label(new Rect(legendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), monitor.Title, headerStyle);
 
 				var timeEnd = latestTime + scrollPositionTime;
 				var timeStart = latestTime - timeWindow + scrollPositionTime;
@@ -333,7 +330,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				// monitor resizing.
 
-				var resizeRect = new Rect(0f, monitorRect.yMax - 10, width - 12, 21);
+				var resizeRect = new Rect(0f, graphAreaRect.yMax - 10, width - 12, 21);
 				if (!legendResize)
 				{
 					EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
@@ -368,7 +365,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 
 				// Is monitor visible? otherwise cull...
-				if (monitorRect.yMin < position.height && monitorRect.yMax > 0f)
+				if (graphAreaRect.yMin < position.height && graphAreaRect.yMax > 0f)
 				{
 					Handles.color = zeroLineColor;
 					var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
@@ -567,12 +564,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 
 					GUI.color = legendBackgroundColor;
-					GUI.DrawTexture(new Rect(0f, monitorRect.yMin, legendWidth, monitorRect.height + 5), EditorGUIUtility.whiteTexture);
+					GUI.DrawTexture(new Rect(0f, graphAreaRect.yMin, legendWidth, graphAreaRect.height + 5), EditorGUIUtility.whiteTexture);
 
 					// Draw context object name (with hyperlink to the object)
 					if (monitor.Context != null)
 					{
-						var contextNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
+						var contextNameRect = new Rect(22f, graphAreaRect.yMin + 10f, legendWidth - 30f, 16f);
 
 						GUI.color = channelHeaderColor;
 						GUI.Label(contextNameRect, monitor.Context.name, simpleStyle);
@@ -642,13 +639,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 							if (!float.IsNaN(time))
 							{
-								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 2f, legendWidth, 20),
+								GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 2f, legendWidth, 20),
 									"t = " + time, timeStyle);
 							}
 
 							if (frame > -1)
 							{
-								GUI.Label(new Rect(legendTextOffset, monitorRect.yMax - legendTextOffset * 3.5f, legendWidth, 20),
+								GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 3.5f, legendWidth, 20),
 									"frame = " + frame, timeStyle);
 							}
 						}
@@ -746,8 +743,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						valueTextStyle.clipping = TextClipping.Clip;
 
 						var offset = 30f;
-						var selectionRect = new Rect(0f, monitorRect.yMin + offset + 20 * j, legendWidth, 16f);
-						GUI.Label(new Rect(22f, monitorRect.yMin + 30f + 20 * j, legendWidth - 30f, 16f), valueText, valueTextStyle);
+						var selectionRect = new Rect(0f, graphAreaRect.yMin + offset + 20 * j, legendWidth, 16f);
+						GUI.Label(new Rect(22f, graphAreaRect.yMin + 30f + 20 * j, legendWidth - 30f, 16f), valueText, valueTextStyle);
 
 						EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
 
@@ -759,10 +756,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						// Color marker.
 						GUI.color = channelColor * 0.7f;
-						GUI.DrawTexture(new Rect(10, monitorRect.yMin + offset + 20 * j + 6, 7, 7), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+						GUI.DrawTexture(new Rect(10, graphAreaRect.yMin + offset + 20 * j + 6, 7, 7), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
 						GUI.color = channelColor;
-						GUI.DrawTexture(new Rect(10 + 1, monitorRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+						GUI.DrawTexture(new Rect(10 + 1, graphAreaRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
 						GUI.color = new Color(1f, 1f, 1f, 1f);
 
