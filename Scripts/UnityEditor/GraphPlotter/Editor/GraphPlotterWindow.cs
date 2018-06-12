@@ -303,8 +303,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			for (int i = 0; i < VisibleGraphs.Count; i++)
 			{
-				var monitor = VisibleGraphs[i];
-				var range = monitor.Range;
+				var graph = VisibleGraphs[i];
+				var range = graph.Range;
 
 				var graphAreaRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, graphWidth, graphHeight);
 				var graphRect = new Rect(graphAreaRect.xMin, graphAreaRect.yMin + SpaceAboveGraph, graphAreaRect.width - 20, totalGraphHeight - 5);
@@ -312,14 +312,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				var span = range.Span;
 
 				GUI.color = Color.white;
-				GUI.Label(new Rect(legendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), monitor.Title, headerStyle);
+				GUI.Label(new Rect(legendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), graph.Title, headerStyle);
 
 				var timeEnd = latestTime + scrollPositionTime;
 				var timeStart = latestTime - timeWindow + scrollPositionTime;
 
 				if (range.Sizing == ValueAxisSizing.Adaptive)
 				{
-					monitor.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd);
+					graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd);
 				}
 
 				if (range.Min < float.PositiveInfinity)
@@ -401,11 +401,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							{
 								timeIntervalStartTime = Mathf.Max(0f, time);
 								timeIntervalEndTime = timeIntervalStartTime;
-								timeIntervalSelectionGraph = monitor;
+								timeIntervalSelectionGraph = graph;
 							}
 						}
 
-						if (timeIntervalSelectionGraph == monitor && currentEventType == EventType.MouseDrag)
+						if (timeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
 						{
 							timeIntervalEndTime = Mathf.Max(0f, time);
 						}
@@ -460,7 +460,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 					}
 
-					foreach (var channel in monitor.Channels)
+					foreach (var channel in graph.Channels)
 					{
 						var deselectedColor = channel.Color;
 						deselectedColor.a = DeselectedChannelAlpha;
@@ -537,7 +537,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 					}
 
-					if (timeIntervalSelectionGraph == monitor && timeIntervalStartTime != timeIntervalEndTime)
+					if (timeIntervalSelectionGraph == graph && timeIntervalStartTime != timeIntervalEndTime)
 					{
 						GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
 
@@ -567,18 +567,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					GUI.DrawTexture(new Rect(0f, graphAreaRect.yMin, legendWidth, graphAreaRect.height + 5), EditorGUIUtility.whiteTexture);
 
 					// Draw context object name (with hyperlink to the object)
-					if (monitor.Context != null)
+					if (graph.Context != null)
 					{
 						var contextNameRect = new Rect(22f, graphAreaRect.yMin + 10f, legendWidth - 30f, 16f);
 
 						GUI.color = channelHeaderColor;
-						GUI.Label(contextNameRect, monitor.Context.name, simpleStyle);
+						GUI.Label(contextNameRect, graph.Context.name, simpleStyle);
 
 						EditorGUIUtility.AddCursorRect(contextNameRect, MouseCursor.Link);
 
 						if (currentEventType == EventType.MouseDown && contextNameRect.Contains(mousePosition))
 						{
-							EditorGUIUtility.PingObject(monitor.Context);
+							EditorGUIUtility.PingObject(graph.Context);
 						}
 					}
 
@@ -597,9 +597,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
 					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
 
-					for (int j = 0; j < monitor.Channels.Count; j++)
+					for (int j = 0; j < graph.Channels.Count; j++)
 					{
-						var channel = monitor.Channels[j];
+						var channel = graph.Channels[j];
 
 						var deselectedColor = channel.Color;
 						deselectedColor.a = DeselectedChannelAlpha;
@@ -767,7 +767,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
 					TagEntries.Clear();
-					monitor.GetTagEntries(timeEnd - timeWindow, timeEnd, TagEntries);
+					graph.GetTagEntries(timeEnd - timeWindow, timeEnd, TagEntries);
 
 					foreach (var entry in TagEntries)
 					{
@@ -853,12 +853,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var minTime = float.PositiveInfinity;
 					var maxTime = float.NegativeInfinity;
 
-					foreach (var monitor in VisibleGraphs)
+					foreach (var graph in VisibleGraphs)
 					{
-						float monitorMinTime, monitorMaxTime;
-						monitor.GetMinMaxTime(out monitorMinTime, out monitorMaxTime);
+						float graphMinTime, graphMaxTime;
+						graph.GetMinMaxTime(out graphMinTime, out graphMaxTime);
 
-						minTime = Mathf.Min(minTime, monitorMinTime);
+						minTime = Mathf.Min(minTime, graphMinTime);
 						maxTime = Mathf.Max(maxTime, latestTime);
 					}
 
