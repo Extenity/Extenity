@@ -207,7 +207,6 @@ GameObject:
   m_Component:
   - component: {fileID: 724163780}
   - component: {fileID: 724163779}
-  - component: {fileID: 724163781}
   m_Layer: 0
   m_Name: PLOTTED From Code
   m_TagString: Untagged
@@ -226,7 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3904340b7ba2b5f4a9e2c048f56c21e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SomeRandomNumber: 0
 --- !u!4 &724163780
 Transform:
   m_ObjectHideFlags: 0
@@ -240,28 +238,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &724163781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 724163778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f50d0346338f5c841ad4ee2db8fda14b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 724163779}
-  channelFields:
-  - field:
-    - SomeRandomNumber
-    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
-    fieldTypeName: System.Single
-  SampleTime: 0
-  Range:
-    Sizing: 2
-    Min: Infinity
-    Max: -Infinity
 --- !u!1 &890043986
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,34 +354,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rigidbody: {fileID: 890043991}
   SampleTime: 0
-  showPosition: 1
-  showPosition_x: 1
-  showPosition_y: 1
-  showPosition_z: 1
+  PlotPosition: 0
+  PlotPositionX: 1
+  PlotPositionT: 1
+  PlotPositionZ: 1
   PositionRange:
     Sizing: 2
     Min: Infinity
     Max: -Infinity
-  showRotation: 1
-  showRotation_x: 1
-  showRotation_y: 1
-  showRotation_z: 1
+  PlotRotation: 0
+  PlotRotationX: 1
+  PlotRotationY: 1
+  PlotRotationZ: 1
   RotationRange:
     Sizing: 0
     Min: 0
     Max: 360
-  showVelocity: 0
-  showVelocity_x: 1
-  showVelocity_y: 1
-  showVelocity_z: 1
+  PlotVelocity: 0
+  PlotVelocityX: 1
+  PlotVelocityY: 1
+  PlotVelocityZ: 1
   VelocityRange:
     Sizing: 2
     Min: Infinity
     Max: -Infinity
-  showAngularVelocity: 0
-  showAngularVelocity_x: 1
-  showAngularVelocity_y: 1
-  showAngularVelocity_z: 1
+  PlotAngularVelocity: 0
+  PlotAngularVelocityX: 1
+  PlotAngularVelocityY: 1
+  PlotAngularVelocityZ: 1
   AngularVelocityRange:
     Sizing: 2
     Min: Infinity
@@ -423,29 +399,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Transform: {fileID: 890043990}
   SampleTime: 0
-  showPosition: 0
-  showPosition_x: 1
-  showPosition_y: 1
-  showPosition_z: 1
-  positionSpace: 0
+  PlotPosition: 0
+  PlotPositionX: 1
+  PlotPositionY: 1
+  PlotPositionZ: 1
+  PositionSpace: 1
   PositionRange:
     Sizing: 2
     Min: Infinity
     Max: -Infinity
-  showRotation: 0
-  showRotation_x: 1
-  showRotation_y: 1
-  showRotation_z: 1
-  rotationSpace: 1
+  PlotRotation: 0
+  PlotRotationX: 1
+  PlotRotationY: 1
+  PlotRotationZ: 1
+  RotationSpace: 1
   RotationRange:
     Sizing: 0
     Min: 0
     Max: 360
-  showScale: 0
-  showScale_x: 1
-  showScale_y: 1
-  showScale_z: 1
-  scaleSpace: 0
+  PlotScale: 0
+  PlotScaleX: 1
+  PlotScaleY: 1
+  PlotScaleZ: 1
+  ScaleSpace: 0
   ScaleRange:
     Sizing: 2
     Min: Infinity
@@ -595,6 +571,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1218127745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1218127748}
+  - component: {fileID: 1218127746}
+  - component: {fileID: 1218127747}
+  m_Layer: 0
+  m_Name: PLOTTED Any Component
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1218127746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1218127745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc213f80966dbc46bd9114c5176c1e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SomeRandomNumber: 0
+--- !u!114 &1218127747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1218127745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50d0346338f5c841ad4ee2db8fda14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  component: {fileID: 1218127746}
+  channelFields:
+  - field:
+    - SomeRandomNumber
+    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
+    fieldTypeName: System.Single
+  - field:
+    - SomeHiddenRandomNumber
+    color: {r: 0.2509804, g: 0.91764706, b: 1, a: 1}
+    fieldTypeName: System.Single
+  - field:
+    - HiddenSubobject
+    - SomeRandomNumberInSubclass
+    color: {r: 0.6886792, g: 0.6418078, b: 0.5230064, a: 1}
+    fieldTypeName: System.Single
+  SampleTime: 0
+  Range:
+    Sizing: 2
+    Min: Infinity
+    Max: -Infinity
+--- !u!4 &1218127748
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1218127745}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2047998970
 GameObject:
