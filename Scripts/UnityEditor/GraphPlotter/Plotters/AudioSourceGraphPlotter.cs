@@ -39,19 +39,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void Start()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
-		public void UpdateMonitors()
+		public void UpdateGraph()
 		{
-			bool componentIsActive = enabled && gameObject.activeInHierarchy;
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdateVolumeMonitor(componentIsActive);
-			UpdatePitchMonitor(componentIsActive);
-			UpdateIsPlayingMonitor(componentIsActive);
+			UpdateVolumeGraph(componentIsActive);
+			UpdatePitchGraph(componentIsActive);
+			UpdateIsPlayingGraph(componentIsActive);
 		}
 
-		private void UpdateVolumeMonitor(bool componentIsActive)
+		private void UpdateVolumeGraph(bool componentIsActive)
 		{
 			if (showVolume && componentIsActive)
 			{
@@ -82,7 +82,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdatePitchMonitor(bool componentIsActive)
+		private void UpdatePitchGraph(bool componentIsActive)
 		{
 			if (showPitch && componentIsActive)
 			{
@@ -114,7 +114,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateIsPlayingMonitor(bool componentIsActive)
+		private void UpdateIsPlayingGraph(bool componentIsActive)
 		{
 			if (showIsPlaying && componentIsActive)
 			{
@@ -203,20 +203,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnEnable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDisable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDestroy()
 		{
-			RemoveMonitors();
+			RemoveGraph();
 		}
 
-		public void RemoveMonitors()
+		public void RemoveGraph()
 		{
 			if (VolumeGraph != null)
 			{

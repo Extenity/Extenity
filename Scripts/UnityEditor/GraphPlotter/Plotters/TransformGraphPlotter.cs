@@ -59,19 +59,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void Start()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
-		public void UpdateMonitors()
+		public void UpdateGraph()
 		{
-			bool componentIsActive = enabled && gameObject.activeInHierarchy;
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdatePositionMonitor(componentIsActive);
-			UpdateRotationMonitor(componentIsActive);
-			UpdateScaleMonitor(componentIsActive);
+			UpdatePositionGraph(componentIsActive);
+			UpdateRotationGraph(componentIsActive);
+			UpdateScaleGraph(componentIsActive);
 		}
 
-		private void UpdatePositionMonitor(bool componentIsActive)
+		private void UpdatePositionGraph(bool componentIsActive)
 		{
 			// position
 			if (showPosition && componentIsActive)
@@ -145,7 +145,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateRotationMonitor(bool componentIsActive)
+		private void UpdateRotationGraph(bool componentIsActive)
 		{
 			// rotation
 			if (showRotation && componentIsActive)
@@ -219,7 +219,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateScaleMonitor(bool componentIsActive)
+		private void UpdateScaleGraph(bool componentIsActive)
 		{
 			// scale
 			if (showScale && componentIsActive)
@@ -394,20 +394,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnEnable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDisable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDestroy()
 		{
-			RemoveMonitors();
+			RemoveGraph();
 		}
 
-		private void RemoveMonitors()
+		private void RemoveGraph()
 		{
 			if (PositionGraph != null)
 			{

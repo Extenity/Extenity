@@ -12,7 +12,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void Start()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 
 			if (Application.isPlaying)
 			{
@@ -21,9 +21,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void UpdateMonitors()
+		public void UpdateGraph()
 		{
-			bool componentIsActive = enabled && gameObject.activeInHierarchy;
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
 			if (componentIsActive)
 			{
@@ -44,7 +44,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					Graph.Close();
 					Graph = null;
 				}
-
 			}
 		}
 
@@ -73,21 +72,21 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnEnable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDisable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDestroy()
 		{
 			Application.logMessageReceived -= LogCallback;
-			RemoveMonitor();
+			RemoveGraph();
 		}
 
-		private void RemoveMonitor()
+		private void RemoveGraph()
 		{
 			if (Graph != null)
 			{

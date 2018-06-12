@@ -189,7 +189,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
-				Me.UpdateMonitors();
+				Me.UpdateGraph();
 		}
 	}
 

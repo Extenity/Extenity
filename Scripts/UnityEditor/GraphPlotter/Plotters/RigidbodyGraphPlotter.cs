@@ -70,20 +70,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void Start()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
-		public void UpdateMonitors()
+		public void UpdateGraph()
 		{
-			bool componentIsActive = enabled && gameObject.activeInHierarchy;
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			UpdatePositionMonitor(componentIsActive);
-			UpdateRotationMonitor(componentIsActive);
-			UpdateVelocityMonitor(componentIsActive);
-			UpdateAngularVelocityMonitor(componentIsActive);
+			UpdatePositionGraph(componentIsActive);
+			UpdateRotationGraph(componentIsActive);
+			UpdateVelocityGraph(componentIsActive);
+			UpdateAngularVelocityGraph(componentIsActive);
 		}
 
-		private void UpdatePositionMonitor(bool componentIsActive)
+		private void UpdatePositionGraph(bool componentIsActive)
 		{
 			// position
 			if (showPosition && componentIsActive)
@@ -156,7 +156,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateRotationMonitor(bool componentIsActive)
+		private void UpdateRotationGraph(bool componentIsActive)
 		{
 			// rotation
 			if (showRotation && componentIsActive)
@@ -229,7 +229,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateVelocityMonitor(bool componentIsActive)
+		private void UpdateVelocityGraph(bool componentIsActive)
 		{
 			// velocity
 			if (showVelocity && componentIsActive)
@@ -302,7 +302,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		private void UpdateAngularVelocityMonitor(bool componentIsActive)
+		private void UpdateAngularVelocityGraph(bool componentIsActive)
 		{
 			// angularVelocity
 			if (showAngularVelocity && componentIsActive)
@@ -504,20 +504,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnEnable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDisable()
 		{
-			UpdateMonitors();
+			UpdateGraph();
 		}
 
 		protected void OnDestroy()
 		{
-			RemoveMonitors();
+			RemoveGraph();
 		}
 
-		public void RemoveMonitors()
+		public void RemoveGraph()
 		{
 			if (PositionGraph != null)
 			{
