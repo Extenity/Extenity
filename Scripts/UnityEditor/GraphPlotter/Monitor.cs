@@ -168,6 +168,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (max < channelMax)
 					max = channelMax;
 			}
+
+			Range.Min = min;
+			Range.Max = max;
 		}
 
 		public void SetRangeConfiguration(ValueAxisRangeConfiguration range)
