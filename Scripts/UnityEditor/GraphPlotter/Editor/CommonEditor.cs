@@ -81,13 +81,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (GUILayout.Button("Open Graph Plotter", GUILayout.ExpandWidth(false)))
 			{
-				var window = EditorWindow.GetWindow<MonitorsEditorWindow>();
+				var window = EditorWindow.GetWindow<GraphPlotterWindow>();
 				window.RemoveNotification();
 				window.SetFilter(null);
 			}
 			if (GUILayoutTools.Button("Filtered", Graphs.IsAnyGraphForObjectExists(gameObject), GUILayout.ExpandWidth(false)))
 			{
-				var window = EditorWindow.GetWindow<MonitorsEditorWindow>();
+				var window = EditorWindow.GetWindow<GraphPlotterWindow>();
 				window.RemoveNotification();
 				if (window.SetFilter(gameObject))
 				{

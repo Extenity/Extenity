@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 {
 
-	public class MonitorsEditorWindow : EditorWindow
+	public class GraphPlotterWindow : EditorWindow
 	{
 		#region Configuration
 
@@ -170,7 +170,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		[MenuItem("Window/Graph Plotter _#%g")]
 		private static void CreateWindow()
 		{
-			GetWindow<MonitorsEditorWindow>();
+			GetWindow<GraphPlotterWindow>();
 		}
 
 		protected void Awake()
