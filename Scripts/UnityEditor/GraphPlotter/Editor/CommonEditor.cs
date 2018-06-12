@@ -25,47 +25,47 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				range.Sizing = newSizing;
 			}
 
-			float newMinimum;
-			float newMaximum;
+			float newMin;
+			float newMax;
 
 			if (newSizing == ValueAxisSizing.Adaptive)
 			{
-				newMinimum = float.PositiveInfinity;
-				newMaximum = float.NegativeInfinity;
+				newMin = float.PositiveInfinity;
+				newMax = float.NegativeInfinity;
 			}
 			else
 			{
-				newMinimum = EditorGUILayout.FloatField("Axis min", range.Min);
-				newMaximum = EditorGUILayout.FloatField("Axis max", range.Max);
+				newMin = EditorGUILayout.FloatField("Axis min", range.Min);
+				newMax = EditorGUILayout.FloatField("Axis max", range.Max);
 
-				if (newMinimum != range.Min)
+				if (newMin != range.Min)
 				{
 					Undo.RecordObject(undoObject, "Changed axis range minimum");
 				}
 
-				if (newMaximum != range.Max)
+				if (newMax != range.Max)
 				{
 					Undo.RecordObject(undoObject, "Changed axis range maximum");
 				}
 			}
 
-			if (newMinimum != range.Min)
+			if (range.Min != newMin)
 			{
-				range.Min = newMinimum;
+				range.Min = newMin;
 
 				if (graph != null)
 				{
-					graph.Range.Min = newMinimum;
+					graph.Range.Min = newMin;
 				}
 			}
 
-			if (newMaximum != range.Max)
+			if (range.Max != newMax)
 			{
-				range.Max = newMaximum;
+				range.Max = newMax;
 
 				if (graph != null)
 				{
-					graph.Range.Max = newMaximum;
+					graph.Range.Max = newMax;
 				}
 			}
 		}
