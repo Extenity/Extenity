@@ -81,7 +81,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					PositionGraph = new Graph("", gameObject);
 				}
 
-				PositionGraph.Name = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
+				PositionGraph.Title = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
 				PositionGraph.SetRangeConfiguration(PositionRange);
 			}
 			else
@@ -155,7 +155,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					RotationGraph = new Graph("", gameObject);
 				}
 
-				RotationGraph.Name = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
+				RotationGraph.Title = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
 				RotationGraph.SetRangeConfiguration(RotationRange);
 			}
 			else
@@ -229,7 +229,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					ScaleGraph = new Graph("", gameObject);
 				}
 
-				ScaleGraph.Name = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
+				ScaleGraph.Title = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
 				ScaleGraph.SetRangeConfiguration(ScaleRange);
 			}
 			else

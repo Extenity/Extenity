@@ -7,16 +7,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public class Graph
 	{
-		public string Name; // TODO: Rename to Title
+		public string Title;
 		public GameObject GameObject = null;
 
 		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		#region Initialization
 
-		public Graph(string name, GameObject gameObject = null)
+		public Graph(string title, GameObject gameObject = null)
 		{
-			Name = name;
+			Title = title;
 			GameObject = gameObject;
 
 			GraphPlotters.Register(this);

@@ -315,7 +315,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				var span = range.Span;
 
 				GUI.color = Color.white;
-				GUI.Label(new Rect(legendWidth + 10f, monitorRect.yMin + 10, 100f, 30f), monitor.Name, headerStyle);
+				GUI.Label(new Rect(legendWidth + 10f, monitorRect.yMin + 10, 100f, 30f), monitor.Title, headerStyle);
 
 				var timeEnd = latestTime + scrollPositionTime;
 				var timeStart = latestTime - timeWindow + scrollPositionTime;

@@ -34,7 +34,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				if (filterPrefix != string.Empty)
 				{
-					Graph.Name = "Debug.Log (prefix = '" + filterPrefix + "')";
+					Graph.Title = "Debug.Log (prefix = '" + filterPrefix + "')";
 				}
 			}
 			else

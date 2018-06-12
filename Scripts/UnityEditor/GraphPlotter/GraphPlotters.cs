@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (plotter == null)
 				throw new ArgumentNullException(nameof(plotter));
 			if (All.Contains(plotter))
-				throw new Exception($"Graph plotter '{plotter.Name}' was already registered.");
+				throw new Exception($"Graph plotter '{plotter.Title}' was already registered.");
 
 			All.Add(plotter);
 		}
@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (plotter == null)
 				throw new ArgumentNullException(nameof(plotter));
 			if (!All.Contains(plotter))
-				throw new Exception($"Graph plotter '{plotter.Name}' was not registered.");
+				throw new Exception($"Graph plotter '{plotter.Title}' was not registered.");
 
 			All.Remove(plotter);
 		}

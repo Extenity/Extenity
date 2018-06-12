@@ -56,7 +56,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					Graph = new Graph("", gameObject);
 				}
 
-				Graph.Name = component.GetType().Name;
+				Graph.Title = component.GetType().Name;
 				Graph.SetRangeConfiguration(Range);
 
 				foreach (var field in channelFields)
