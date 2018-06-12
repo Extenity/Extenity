@@ -35,13 +35,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var components = new List<Component>(Me.GetComponents<Component>());
 
 			// find index of (previously) selected component.
-			if (Me.component != null)
+			if (Me.Component != null)
 			{
 				componentIndex = -1;
 
 				for (int i = 0; i < components.Count; i++)
 				{
-					if (components[i] == Me.component)
+					if (components[i] == Me.Component)
 					{
 						componentIndex = i;
 						break;
@@ -76,23 +76,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (componentIndex > -1 && components.Count > 0)
 			{
-				Me.component = components[componentIndex];
+				Me.Component = components[componentIndex];
 			}
 			else
 			{
-				Me.component = null;
+				Me.Component = null;
 			}
 
-			if (Me.component != null)
+			if (Me.Component != null)
 			{
 				EditorGUILayout.LabelField("Fields");
 
 				EditorGUILayout.BeginHorizontal("Box");
 				EditorGUILayout.BeginVertical();
 
-				for (int j = 0; j < Me.channelFields.Count; j++)
+				for (int j = 0; j < Me.ChannelFields.Count; j++)
 				{
-					var field = Me.channelFields[j];
+					var field = Me.ChannelFields[j];
 
 					EditorGUILayout.BeginHorizontal();
 
@@ -109,7 +109,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					if (GUILayout.Button("remove", GUILayout.Width(60)))
 					{
 						Undo.RecordObject(Me, "Remove field");
-						Me.channelFields.RemoveAt(j);
+						Me.ChannelFields.RemoveAt(j);
 						break;
 					}
 
@@ -123,7 +123,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.Space();
 
-				var instanceType = Me.component.GetType();
+				var instanceType = Me.Component.GetType();
 
 				int level = 0;
 
@@ -170,11 +170,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					{
 						Field = addField.ToArray(),
 						FieldTypeName = instanceType.FullName,
-						Color = PlotColors.AllColors[Me.channelFields.Count % PlotColors.AllColors.Length]
+						Color = PlotColors.AllColors[Me.ChannelFields.Count % PlotColors.AllColors.Length]
 					};
 
 					Undo.RecordObject(Me, "Add field");
-					Me.channelFields.Add(field);
+					Me.ChannelFields.Add(field);
 
 					addField.RemoveAt(addField.Count - 1);
 				}
