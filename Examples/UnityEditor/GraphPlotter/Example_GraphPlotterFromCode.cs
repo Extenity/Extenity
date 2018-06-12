@@ -19,8 +19,8 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 		private void OnDestroy()
 		{
-			Channel1.Close();
-			Channel2.Close();
+			Channel.SafeClose(ref Channel1);
+			Channel.SafeClose(ref Channel2);
 			Graph.Close();
 		}
 

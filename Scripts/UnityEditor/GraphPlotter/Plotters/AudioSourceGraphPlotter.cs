@@ -69,11 +69,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					VolumeGraph = null;
 				}
 
-				if (VolumeChannel != null)
-				{
-					VolumeChannel.Close();
-					VolumeChannel = null;
-				}
+				Channel.SafeClose(ref VolumeChannel);
 			}
 		}
 
@@ -101,11 +97,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					PitchGraph = null;
 				}
 
-				if (PitchChannel != null)
-				{
-					PitchChannel.Close();
-					PitchChannel = null;
-				}
+				Channel.SafeClose(ref PitchChannel);
 			}
 		}
 
@@ -132,11 +124,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					IsPlayingGraph = null;
 				}
 
-				if (IsPlayingChannel != null)
-				{
-					IsPlayingChannel.Close();
-					IsPlayingChannel = null;
-				}
+				Channel.SafeClose(ref IsPlayingChannel);
 			}
 		}
 

@@ -79,11 +79,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				// appear in the new collection.
 				foreach (var field in OldChannelFields)
 				{
-					if (field.Channel != null)
-					{
-						field.Channel.Close();
-						field.Channel = null;
-					}
+					Channel.SafeClose(ref field.Channel);
 				}
 
 				OldChannelFields.Clear();
@@ -93,11 +89,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				foreach (var field in ChannelFields)
 				{
-					if (field.Channel != null)
-					{
-						field.Channel.Close();
-						field.Channel = null;
-					}
+					Channel.SafeClose(ref field.Channel);
 				}
 				OldChannelFields.Clear();
 

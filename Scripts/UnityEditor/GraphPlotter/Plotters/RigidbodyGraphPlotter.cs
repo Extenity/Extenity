@@ -106,11 +106,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelX != null)
-				{
-					PositionChannelX.Close();
-					PositionChannelX = null;
-				}
+				Channel.SafeClose(ref PositionChannelX);
 			}
 
 			// position y
@@ -123,11 +119,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelY != null)
-				{
-					PositionChannelY.Close();
-					PositionChannelY = null;
-				}
+				Channel.SafeClose(ref PositionChannelY);
 			}
 
 			// position z
@@ -140,11 +132,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelZ != null)
-				{
-					PositionChannelZ.Close();
-					PositionChannelZ = null;
-				}
+				Channel.SafeClose(ref PositionChannelZ);
 			}
 		}
 
@@ -179,11 +167,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelX != null)
-				{
-					RotationChannelX.Close();
-					RotationChannelX = null;
-				}
+				Channel.SafeClose(ref RotationChannelX);
 			}
 
 			// rotation y
@@ -196,11 +180,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelY != null)
-				{
-					RotationChannelY.Close();
-					RotationChannelY = null;
-				}
+				Channel.SafeClose(ref RotationChannelY);
 			}
 
 			// rotation z
@@ -213,11 +193,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelZ != null)
-				{
-					RotationChannelZ.Close();
-					RotationChannelZ = null;
-				}
+				Channel.SafeClose(ref RotationChannelZ);
 			}
 		}
 
@@ -252,11 +228,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (VelocityChannelX != null)
-				{
-					VelocityChannelX.Close();
-					VelocityChannelX = null;
-				}
+				Channel.SafeClose(ref VelocityChannelX);
 			}
 
 			// velocity y
@@ -269,11 +241,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (VelocityChannelY != null)
-				{
-					VelocityChannelY.Close();
-					VelocityChannelY = null;
-				}
+				Channel.SafeClose(ref VelocityChannelY);
 			}
 
 			// velocity z
@@ -286,11 +254,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (VelocityChannelZ != null)
-				{
-					VelocityChannelZ.Close();
-					VelocityChannelZ = null;
-				}
+				Channel.SafeClose(ref VelocityChannelZ);
 			}
 		}
 
@@ -325,11 +289,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (AngularVelocityChannelX != null)
-				{
-					AngularVelocityChannelX.Close();
-					AngularVelocityChannelX = null;
-				}
+				Channel.SafeClose(ref AngularVelocityChannelX);
 			}
 
 			// angularVelocity y
@@ -342,11 +302,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (AngularVelocityChannelY != null)
-				{
-					AngularVelocityChannelY.Close();
-					AngularVelocityChannelY = null;
-				}
+				Channel.SafeClose(ref AngularVelocityChannelY);
 			}
 
 			// angularVelocity z
@@ -359,11 +315,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (AngularVelocityChannelZ != null)
-				{
-					AngularVelocityChannelZ.Close();
-					AngularVelocityChannelZ = null;
-				}
+				Channel.SafeClose(ref AngularVelocityChannelZ);
 			}
 		}
 

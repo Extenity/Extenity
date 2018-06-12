@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
@@ -29,6 +30,35 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public void Close()
 		{
 			Graph.DeregisterChannel(this);
+		}
+
+		public static void SafeClose(ref Channel channel)
+		{
+			if (channel != null)
+			{
+				channel.Close();
+				channel = null;
+			}
+		}
+
+		public static void SafeClose(ref Channel[] channels)
+		{
+			if (channels != null)
+			{
+				for (int i = 0; i < channels.Length; i++)
+					channels[i].Close();
+				channels = null;
+			}
+		}
+
+		public static void SafeClose(ref IList<Channel> channels)
+		{
+			if (channels != null)
+			{
+				for (int i = 0; i < channels.Count; i++)
+					channels[i].Close();
+				channels.Clear();
+			}
 		}
 
 		#endregion

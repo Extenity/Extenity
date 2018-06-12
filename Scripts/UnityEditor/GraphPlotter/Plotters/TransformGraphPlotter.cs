@@ -97,11 +97,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelX != null)
-				{
-					PositionChannelX.Close();
-					PositionChannelX = null;
-				}
+				Channel.SafeClose(ref PositionChannelX);
 			}
 
 			// position y
@@ -114,11 +110,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelY != null)
-				{
-					PositionChannelY.Close();
-					PositionChannelY = null;
-				}
+				Channel.SafeClose(ref PositionChannelY);
 			}
 
 			// position z
@@ -131,11 +123,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (PositionChannelZ != null)
-				{
-					PositionChannelZ.Close();
-					PositionChannelZ = null;
-				}
+				Channel.SafeClose(ref PositionChannelZ);
 			}
 		}
 
@@ -171,11 +159,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelX != null)
-				{
-					RotationChannelX.Close();
-					RotationChannelX = null;
-				}
+				Channel.SafeClose(ref RotationChannelX);
 			}
 
 			// rotation y
@@ -188,11 +172,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelY != null)
-				{
-					RotationChannelY.Close();
-					RotationChannelY = null;
-				}
+				Channel.SafeClose(ref RotationChannelY);
 			}
 
 			// rotation z
@@ -205,11 +185,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (RotationChannelZ != null)
-				{
-					RotationChannelZ.Close();
-					RotationChannelZ = null;
-				}
+				Channel.SafeClose(ref RotationChannelZ);
 			}
 		}
 
@@ -245,11 +221,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (ScaleChannelX != null)
-				{
-					ScaleChannelX.Close();
-					ScaleChannelX = null;
-				}
+				Channel.SafeClose(ref ScaleChannelX);
 			}
 
 			// scale y
@@ -262,11 +234,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (ScaleChannelY != null)
-				{
-					ScaleChannelY.Close();
-					ScaleChannelY = null;
-				}
+				Channel.SafeClose(ref ScaleChannelY);
 			}
 
 			// scale z
@@ -279,11 +247,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				if (ScaleChannelZ != null)
-				{
-					ScaleChannelZ.Close();
-					ScaleChannelZ = null;
-				}
+				Channel.SafeClose(ref ScaleChannelZ);
 			}
 		}
 
