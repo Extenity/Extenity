@@ -96,12 +96,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					EditorGUILayout.BeginHorizontal();
 
-					GUILayout.Label(field.FieldName + " : " + TypeInspectors.GetReadableName(field.fieldTypeName));
-					var newColor = EditorGUILayout.ColorField(field.color, GUILayout.Width(40));
-					if (newColor != field.color)
+					GUILayout.Label(field.FieldName + " : " + TypeInspectors.GetReadableName(field.FieldTypeName));
+					var newColor = EditorGUILayout.ColorField(field.Color, GUILayout.Width(40));
+					if (newColor != field.Color)
 					{
 						Undo.RecordObject(Me, "Change field color");
-						field.color = newColor;
+						field.Color = newColor;
 					}
 
 					EditorGUILayout.Space();
@@ -166,10 +166,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				if (instanceType != null)
 				{
-					var field = new AnyComponentGraphPlotter.ChannelField();
-					field.field = addField.ToArray();
-					field.fieldTypeName = instanceType.FullName;
-					field.color = PlotColors.AllColors[Me.channelFields.Count % PlotColors.AllColors.Length];
+					var field = new AnyComponentGraphPlotter.ChannelField
+					{
+						Field = addField.ToArray(),
+						FieldTypeName = instanceType.FullName,
+						Color = PlotColors.AllColors[Me.channelFields.Count % PlotColors.AllColors.Length]
+					};
 
 					Undo.RecordObject(Me, "Add field");
 					Me.channelFields.Add(field);

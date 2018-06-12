@@ -614,19 +614,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 1218127746}
   channelFields:
-  - field:
+  - Field:
     - SomeRandomNumber
-    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
-    fieldTypeName: System.Single
-  - field:
+    FieldTypeName: System.Single
+    Color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
+  - Field:
     - SomeHiddenRandomNumber
-    color: {r: 0.2509804, g: 0.91764706, b: 1, a: 1}
-    fieldTypeName: System.Single
-  - field:
+    FieldTypeName: System.Single
+    Color: {r: 0.2509804, g: 0.91764706, b: 1, a: 1}
+  - Field:
     - HiddenSubobject
     - SomeRandomNumberInSubclass
-    color: {r: 0.6886792, g: 0.6418078, b: 0.5230064, a: 1}
-    fieldTypeName: System.Single
+    FieldTypeName: System.Single
+    Color: {r: 0.6886792, g: 0.6418078, b: 0.5230064, a: 1}
   SampleTime: 0
   Range:
     Sizing: 2

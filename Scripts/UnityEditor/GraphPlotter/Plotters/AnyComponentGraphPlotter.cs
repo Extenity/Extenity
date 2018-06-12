@@ -26,18 +26,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		[Serializable]
 		public class ChannelField
 		{
-			public string[] field;
+			[HideInInspector] // Not meant to be shown in raw format
+			public string[] Field;
+			[HideInInspector] // Not meant to be shown in raw format
+			public string FieldTypeName;
 
-			// user settings
-			public Color color = Color.red;
+			public Color Color = Color.red;
 
-			// not serialized. 
-			public string fieldTypeName;
-
-			// runtime...
+			[NonSerialized]
 			public Channel Channel;
 
-			public string FieldName { get { return String.Join(".", field); } }
+			public string FieldName { get { return String.Join(".", Field); } }
 		}
 
 		protected void Start()
@@ -63,10 +62,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					if (field.Channel == null)
 					{
-						field.Channel = new Channel(Graph, String.Join(".", field.field));
+						field.Channel = new Channel(Graph, field.FieldName);
 					}
 
-					field.Channel.Color = field.color;
+					field.Channel.Color = field.Color;
 
 					if (oldChannelFields.Contains(field))
 					{
@@ -145,9 +144,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				Object instance = component;
 				var instanceType = component.GetType();
 
-				for (int level = 0; level < field.field.Length; level++)
+				for (int level = 0; level < field.Field.Length; level++)
 				{
-					instance = TypeInspectors.Instance.GetTypeInspector(instanceType).GetValue(instance, field.field[level]);
+					instance = TypeInspectors.Instance.GetTypeInspector(instanceType).GetValue(instance, field.Field[level]);
 					if (instance == null)
 					{
 						break;
