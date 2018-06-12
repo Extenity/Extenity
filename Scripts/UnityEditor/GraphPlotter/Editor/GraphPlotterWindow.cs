@@ -308,6 +308,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				var graphAreaRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, graphWidth, graphHeight);
 				var graphRect = new Rect(graphAreaRect.xMin, graphAreaRect.yMin + SpaceAboveGraph, graphAreaRect.width - 20, totalGraphHeight - 5);
+				//GUITools.DrawRect(graphAreaRect, Color.red, 2f);
+				//GUITools.DrawRect(graphRect, Color.blue, 2f);
 
 				var span = range.Span;
 
@@ -329,121 +331,102 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), range.Max.ToString(), maxStyle);
 
 				// Graph resizing
-				var resizeRect = new Rect(0f, graphAreaRect.yMax - 10, width - 12, 21);
-				if (!legendResize)
 				{
-					EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
-				}
+					var resizeRect = new Rect(0f, graphAreaRect.yMax - 10, width - 12, 21);
+					if (!legendResize)
+					{
+						EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
+					}
 
-				if (currentEventType == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
-				{
-					IsResizingGraphHeight = true;
-					HeightResizingGraphIndex = i;
-					GraphHeightBeforeResizing = graphHeight;
-					MouseYPositionBeforeResizingGraphHeight = mousePosition.y;
-					GraphHeightResizeDelta = 0;
-				}
+					if (currentEventType == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
+					{
+						IsResizingGraphHeight = true;
+						HeightResizingGraphIndex = i;
+						GraphHeightBeforeResizing = graphHeight;
+						MouseYPositionBeforeResizingGraphHeight = mousePosition.y;
+						GraphHeightResizeDelta = 0;
+					}
 
-				if (currentEventType == EventType.MouseDrag && IsResizingGraphHeight)
-				{
-					GraphHeightResizeDelta = (mousePosition.y - MouseYPositionBeforeResizingGraphHeight);
-					graphHeight = GraphHeightBeforeResizing + Mathf.FloorToInt(GraphHeightResizeDelta / (HeightResizingGraphIndex + 1));
+					if (currentEventType == EventType.MouseDrag && IsResizingGraphHeight)
+					{
+						GraphHeightResizeDelta = (mousePosition.y - MouseYPositionBeforeResizingGraphHeight);
+						graphHeight = GraphHeightBeforeResizing + Mathf.FloorToInt(GraphHeightResizeDelta / (HeightResizingGraphIndex + 1));
 
-					if (graphHeight < MinimumGraphHeight)
-						graphHeight = MinimumGraphHeight;
+						if (graphHeight < MinimumGraphHeight)
+							graphHeight = MinimumGraphHeight;
 
-					if (graphHeight > MaximumGraphHeight)
-						graphHeight = MaximumGraphHeight;
+						if (graphHeight > MaximumGraphHeight)
+							graphHeight = MaximumGraphHeight;
 
-					EditorPrefs.SetInt(EditorSettings.GraphHeight, graphHeight);
-				}
+						EditorPrefs.SetInt(EditorSettings.GraphHeight, graphHeight);
+					}
 
-				if (currentEventType == EventType.MouseUp && IsResizingGraphHeight)
-				{
-					IsResizingGraphHeight = false;
+					if (currentEventType == EventType.MouseUp && IsResizingGraphHeight)
+					{
+						IsResizingGraphHeight = false;
+					}
 				}
 
 				// Do not draw graphs that is currently outside of display area.
-				if (graphAreaRect.yMin < position.height && graphAreaRect.yMax > 0f)
+				if (graphAreaRect.yMin > position.height || graphAreaRect.yMax < 0f)
+					continue;
+
+				Handles.color = zeroLineColor;
+				var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
+
+				horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
+				horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
+				horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
+
+				if (range.Min <= 0f && range.Max >= 0f)
 				{
-					Handles.color = zeroLineColor;
-					var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
+					horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
+				}
+				else
+				{
+					horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
+				}
 
-					horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
-					horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
-					horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
+				horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
+				horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
+				horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
 
-					if (range.Min <= 0f && range.Max >= 0f)
+				Handles.DrawPolyLine(horizontalLines);
+
+				lineCount++;
+
+				if (isInPauseMode)
+				{
+					var time = (timeEnd - timeStart) * (mousePosition.x - graphRect.xMin) / graphRect.width + timeStart;
+
+					if (graphRect.Contains(mousePosition))
 					{
-						horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
-					}
-					else
-					{
-						horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
-					}
-
-					horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
-					horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
-					horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
-
-					Handles.DrawPolyLine(horizontalLines);
-
-					lineCount++;
-
-					if (isInPauseMode)
-					{
-						var time = (timeEnd - timeStart) * (mousePosition.x - graphRect.xMin) / graphRect.width + timeStart;
-
-						if (graphRect.Contains(mousePosition))
+						if (currentEventType == EventType.MouseDown)
 						{
-							if (currentEventType == EventType.MouseDown)
-							{
-								timeIntervalStartTime = Mathf.Max(0f, time);
-								timeIntervalEndTime = timeIntervalStartTime;
-								timeIntervalSelectionGraph = graph;
-							}
-						}
-
-						if (timeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
-						{
-							timeIntervalEndTime = Mathf.Max(0f, time);
+							timeIntervalStartTime = Mathf.Max(0f, time);
+							timeIntervalEndTime = timeIntervalStartTime;
+							timeIntervalSelectionGraph = graph;
 						}
 					}
 
-					// Sub tick lines
+					if (timeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
 					{
-						var n = 0;
-						var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
-						var t = startTime;
-
-						if (timeWindow < TimeWindowForSubSecondLinesToAppear)
-						{
-							var subTimeTickColorWithAlpha = SubSecondLinesColor;
-							subTimeTickColorWithAlpha.a *= 1f - (timeWindow - TimeWindowForSubSecondLinesToGetFullyOpaque) / (TimeWindowForSubSecondLinesToAppear - TimeWindowForSubSecondLinesToGetFullyOpaque);
-
-							Handles.color = subTimeTickColorWithAlpha;
-
-							while (t < timeEnd)
-							{
-								Handles.DrawLine(
-									new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
-									new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
-								);
-
-								lineCount++;
-
-								n++;
-								t = startTime + n * 0.1f;
-							}
-						}
+						timeIntervalEndTime = Mathf.Max(0f, time);
 					}
+				}
 
-					// Tick lines
+				// Sub tick lines
+				{
+					var n = 0;
+					var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
+					var t = startTime;
+
+					if (timeWindow < TimeWindowForSubSecondLinesToAppear)
 					{
-						Handles.color = SecondLinesColor;
-						var n = 0;
-						var startTime = Mathf.CeilToInt(timeStart);
-						var t = startTime;
+						var subTimeTickColorWithAlpha = SubSecondLinesColor;
+						subTimeTickColorWithAlpha.a *= 1f - (timeWindow - TimeWindowForSubSecondLinesToGetFullyOpaque) / (TimeWindowForSubSecondLinesToAppear - TimeWindowForSubSecondLinesToGetFullyOpaque);
+
+						Handles.color = subTimeTickColorWithAlpha;
 
 						while (t < timeEnd)
 						{
@@ -455,355 +438,376 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							lineCount++;
 
 							n++;
-							t = startTime + n;
+							t = startTime + n * 0.1f;
 						}
 					}
+				}
 
-					foreach (var channel in graph.Channels)
+				// Tick lines
+				{
+					Handles.color = SecondLinesColor;
+					var n = 0;
+					var startTime = Mathf.CeilToInt(timeStart);
+					var t = startTime;
+
+					while (t < timeEnd)
 					{
-						var deselectedColor = channel.Color;
-						deselectedColor.a = DeselectedChannelAlpha;
+						Handles.DrawLine(
+							new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
+							new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
+						);
 
-						var color = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
+						lineCount++;
 
-						Handles.color = color;
+						n++;
+						t = startTime + n;
+					}
+				}
 
-						var pointIndex = 0;
+				foreach (var channel in graph.Channels)
+				{
+					var deselectedColor = channel.Color;
+					deselectedColor.a = DeselectedChannelAlpha;
 
-						for (int j = 0; j < channel.SampleBufferSize - 1; j++)
+					var color = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
+
+					Handles.color = color;
+
+					var pointIndex = 0;
+
+					for (int j = 0; j < channel.SampleBufferSize - 1; j++)
+					{
+						var index_a = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
+						var index_b = (index_a + 1) % channel.SampleBufferSize;
+
+						var time_a = channel.SampleAxisX[index_a];
+						var time_b = channel.SampleAxisX[index_b];
+
+						if (float.IsNaN(time_a) || float.IsNaN(time_b))
+							continue;
+
+						if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
 						{
-							var index_a = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
-							var index_b = (index_a + 1) % channel.SampleBufferSize;
+							var sample_a = channel.SampleAxisY[index_a];
+							var sample_b = channel.SampleAxisY[index_b];
 
-							var time_a = channel.SampleAxisX[index_a];
-							var time_b = channel.SampleAxisX[index_b];
-
-							if (float.IsNaN(time_a) || float.IsNaN(time_b))
+							if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 								continue;
 
-							if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
+							var aNormalizedSample = (sample_a - range.Min) / span;
+							if (span == 0f)
 							{
-								var sample_a = channel.SampleAxisY[index_a];
-								var sample_b = channel.SampleAxisY[index_b];
-
-								if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
-									continue;
-
-								var aNormalizedSample = (sample_a - range.Min) / span;
-								if (span == 0f)
-								{
-									aNormalizedSample = 0.5f;
-								}
-								else
-								{
-									aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
-								}
-
-								var bNormalizedSample = (sample_b - range.Min) / span;
-								if (span == 0f)
-								{
-									bNormalizedSample = 0.5f;
-								}
-								else
-								{
-									bNormalizedSample = Mathf.Clamp01(bNormalizedSample);
-								}
-
-								// Draw graph step.
-								if (interpolationTypeIndex == 0)
-								{
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
-								}
-								else
-								{
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
-									points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
-								}
-							}
-						}
-
-						if (pointIndex > 0)
-						{
-							var lastPoint = points[pointIndex - 1];
-
-							for (int p = pointIndex; p < points.Length; p++)
-							{
-								points[p] = lastPoint;
-							}
-
-							Handles.DrawPolyLine(points);
-							lineCount++;
-						}
-					}
-
-					if (timeIntervalSelectionGraph == graph && timeIntervalStartTime != timeIntervalEndTime)
-					{
-						GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
-
-						var selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
-						var selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
-
-						var left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
-						var right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
-
-						GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
-
-						Handles.color = new Color(1f, 1f, 1f, 0.3f);
-						Handles.DrawLine(new Vector3(left, 0, 0), new Vector3(left, height, 0));
-						Handles.DrawLine(new Vector3(right, 0, 0), new Vector3(right, height, 0));
-
-						GUI.color = Color.white;
-						Handles.color = Color.white;
-						Handles.DrawLine(new Vector3(left, graphRect.yMin, 0), new Vector3(left, graphRect.yMax, 0));
-						Handles.DrawLine(new Vector3(right, graphRect.yMin, 0), new Vector3(right, graphRect.yMax, 0));
-						Handles.DrawLine(new Vector3(left, (graphRect.yMin + graphRect.yMax) * 0.5f, 0), new Vector3(right, (graphRect.yMin + graphRect.yMax) * 0.5f, 0));
-
-						GUI.Label(new Rect(left, graphRect.yMax, right - left, 20), (selectionTime_right - selectionTime_left) + " secs", timeIntervalSelectionStyle);
-					}
-
-
-					GUI.color = legendBackgroundColor;
-					GUI.DrawTexture(new Rect(0f, graphAreaRect.yMin, legendWidth, graphAreaRect.height + 5), EditorGUIUtility.whiteTexture);
-
-					// Draw context object name (with hyperlink to the object)
-					if (graph.Context != null)
-					{
-						var contextNameRect = new Rect(22f, graphAreaRect.yMin + 10f, legendWidth - 30f, 16f);
-
-						GUI.color = channelHeaderColor;
-						GUI.Label(contextNameRect, graph.Context.name, simpleStyle);
-
-						EditorGUIUtility.AddCursorRect(contextNameRect, MouseCursor.Link);
-
-						if (currentEventType == EventType.MouseDown && contextNameRect.Contains(mousePosition))
-						{
-							EditorGUIUtility.PingObject(graph.Context);
-						}
-					}
-
-					// Time line.
-
-					var mouseTime = timeEnd;
-
-					if (isInPauseMode)
-					{
-						mouseTime = Mathf.Lerp(timeStart, timeEnd, (mousePosition.x - graphRect.xMin) / graphRect.width);
-					}
-
-					mouseTime = Mathf.Max(mouseTime, 0f);
-
-					Handles.color = timeLineColor;
-					var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
-					Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
-
-					for (int j = 0; j < graph.Channels.Count; j++)
-					{
-						var channel = graph.Channels[j];
-
-						var deselectedColor = channel.Color;
-						deselectedColor.a = DeselectedChannelAlpha;
-
-						var channelColor = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
-
-						var index = -1;
-
-						for (int k = 1; k < channel.SampleAxisY.Length - 1; k++)
-						{
-							int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.SampleAxisY.Length;
-							int sampleIndex_b = (sampleIndex_a + 1) % channel.SampleAxisY.Length;
-
-							if (mouseTime >= channel.SampleAxisX[sampleIndex_a] &&
-							   mouseTime <= channel.SampleAxisX[sampleIndex_b])
-							{
-								index = Mathf.Abs(channel.SampleAxisX[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.SampleAxisX[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
-								break;
-							}
-						}
-
-						var sampleValue = float.NaN;
-						var time = float.NaN;
-						var frame = -1;
-
-						if (index > -1)
-						{
-							sampleValue = channel.SampleAxisY[index];
-							time = channel.SampleAxisX[index];
-							frame = channel.SampleFrames[index];
-						}
-
-						// Draw time marker.
-						if (j == 0 && selectedChannel == null)
-						{
-							GUI.color = timeColor;
-
-							if (!float.IsNaN(time))
-							{
-								GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 2f, legendWidth, 20),
-									"t = " + time, timeStyle);
-							}
-
-							if (frame > -1)
-							{
-								GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 3.5f, legendWidth, 20),
-									"frame = " + frame, timeStyle);
-							}
-						}
-
-						Handles.color = channelColor;
-
-						var normalizedSampleValue = (sampleValue - range.Min) / span;
-						if (span == 0f)
-						{
-							normalizedSampleValue = 0.5f;
-						}
-
-						var clampedNormalizedSampleValue = Mathf.Clamp01(normalizedSampleValue);
-
-						var samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - timeStart) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
-
-						var handleRadius = 5f;
-
-						if (normalizedSampleValue < 0f)
-						{
-							// Draw down arrow.
-							arrowPoints[0] = samplePosition + new Vector3(-handleRadius, -handleRadius, 0);
-							arrowPoints[1] = samplePosition + new Vector3(handleRadius, -handleRadius, 0);
-							arrowPoints[2] = samplePosition + new Vector3(0, handleRadius, 0);
-							arrowPoints[3] = arrowPoints[0];
-
-							Handles.DrawPolyLine(arrowPoints);
-							lineCount++;
-						}
-						else if (normalizedSampleValue > 1f)
-						{
-							// Draw up arrow.
-							arrowPoints[0] = samplePosition + new Vector3(-handleRadius, handleRadius, 0);
-							arrowPoints[1] = samplePosition + new Vector3(handleRadius, handleRadius, 0);
-							arrowPoints[2] = samplePosition + new Vector3(0, -handleRadius, 0);
-							arrowPoints[3] = arrowPoints[0];
-
-							Handles.DrawPolyLine(arrowPoints);
-							lineCount++;
-						}
-						else
-						{
-							// Draw circle.
-							var size = handleRadius * 0.75f;
-							diamondPoints[0] = samplePosition + new Vector3(0, size, 0);
-							diamondPoints[1] = samplePosition + new Vector3(size, 0, 0);
-							diamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
-							diamondPoints[3] = samplePosition + new Vector3(-size, 0, 0);
-							diamondPoints[4] = diamondPoints[0];
-
-							Handles.DrawPolyLine(diamondPoints);
-							lineCount++;
-						}
-
-						string sampleValueString;
-						if (float.IsNaN(sampleValue))
-						{
-							sampleValueString = "";
-						}
-						else
-						{
-							sampleValueString = " = " + sampleValue.ToString();
-						}
-
-						var valueText = channel.Description + sampleValueString;
-
-						GUI.color = new Color(1f, 1f, 1f, 1f);
-						valueTextStyle.normal.textColor = Color.white;
-
-						if (channel == selectedChannel)
-						{
-							var sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
-
-							if (samplePosition.x + sampleTextWidth + 40 > position.width)
-							{
-								valueTextStyle.alignment = TextAnchor.MiddleRight;
-								GUI.Label(new Rect(samplePosition.x - sampleTextWidth - 15, samplePosition.y - 20, sampleTextWidth, 20), valueText, valueTextStyle);
+								aNormalizedSample = 0.5f;
 							}
 							else
 							{
-								valueTextStyle.alignment = TextAnchor.MiddleLeft;
-								GUI.Label(new Rect(samplePosition.x + 15, samplePosition.y, sampleTextWidth, 20), valueText, valueTextStyle);
+								aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
 							}
 
-							GUI.color = new Color(1f, 1f, 1f, 0.5f);
-							GUI.Label(new Rect(10, graphRect.yMax - 10, legendWidth, 20), "Time = " + time, timeStyle);
+							var bNormalizedSample = (sample_b - range.Min) / span;
+							if (span == 0f)
+							{
+								bNormalizedSample = 0.5f;
+							}
+							else
+							{
+								bNormalizedSample = Mathf.Clamp01(bNormalizedSample);
+							}
+
+							// Draw graph step.
+							if (interpolationTypeIndex == 0)
+							{
+								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+							}
+							else
+							{
+								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
+								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / timeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+							}
 						}
-
-						GUI.color = new Color(1f, 1f, 1f, 1f);
-
-						valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel
-							? legendTextColorSelected
-							: legendTextColorUnselected;
-						valueTextStyle.alignment = TextAnchor.MiddleLeft;
-						valueTextStyle.clipping = TextClipping.Clip;
-
-						var offset = 30f;
-						var selectionRect = new Rect(0f, graphAreaRect.yMin + offset + 20 * j, legendWidth, 16f);
-						GUI.Label(new Rect(22f, graphAreaRect.yMin + 30f + 20 * j, legendWidth - 30f, 16f), valueText, valueTextStyle);
-
-						EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
-
-						// Selection of channel.
-						if (currentEventType == EventType.MouseDown && selectionRect.Contains(mousePosition))
-						{
-							newSelectedChannel = channel;
-						}
-
-						// Color marker.
-						GUI.color = channelColor * 0.7f;
-						GUI.DrawTexture(new Rect(10, graphAreaRect.yMin + offset + 20 * j + 6, 7, 7), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
-
-						GUI.color = channelColor;
-						GUI.DrawTexture(new Rect(10 + 1, graphAreaRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
-
-						GUI.color = new Color(1f, 1f, 1f, 1f);
-
 					}
 
-					// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
-					TagEntries.Clear();
-					graph.GetTagEntries(timeEnd - timeWindow, timeEnd, TagEntries);
-
-					foreach (var entry in TagEntries)
+					if (pointIndex > 0)
 					{
-						var eventColor = Color.yellow;
-						Handles.color = eventColor;
+						var lastPoint = points[pointIndex - 1];
 
-						var normalizedX = (entry.Time - timeStart) / timeWindow;
-						if (normalizedX * graphRect.width >= 5f)
+						for (int p = pointIndex; p < points.Length; p++)
 						{
-							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMin, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f)
-							);
-							lineCount++;
-
-							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
-							);
-							lineCount++;
-
-							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f)
-							);
-							lineCount++;
-
-							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
-							);
-							lineCount++;
-
-							GUI.color = eventColor;
-							GUI.contentColor = Color.white;
-							GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.Text, simpleStyle);
+							points[p] = lastPoint;
 						}
+
+						Handles.DrawPolyLine(points);
+						lineCount++;
+					}
+				}
+
+				if (timeIntervalSelectionGraph == graph && timeIntervalStartTime != timeIntervalEndTime)
+				{
+					GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
+
+					var selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
+					var selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
+
+					var left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+					var right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+
+					GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+
+					Handles.color = new Color(1f, 1f, 1f, 0.3f);
+					Handles.DrawLine(new Vector3(left, 0, 0), new Vector3(left, height, 0));
+					Handles.DrawLine(new Vector3(right, 0, 0), new Vector3(right, height, 0));
+
+					GUI.color = Color.white;
+					Handles.color = Color.white;
+					Handles.DrawLine(new Vector3(left, graphRect.yMin, 0), new Vector3(left, graphRect.yMax, 0));
+					Handles.DrawLine(new Vector3(right, graphRect.yMin, 0), new Vector3(right, graphRect.yMax, 0));
+					Handles.DrawLine(new Vector3(left, (graphRect.yMin + graphRect.yMax) * 0.5f, 0), new Vector3(right, (graphRect.yMin + graphRect.yMax) * 0.5f, 0));
+
+					GUI.Label(new Rect(left, graphRect.yMax, right - left, 20), (selectionTime_right - selectionTime_left) + " secs", timeIntervalSelectionStyle);
+				}
+
+
+				GUI.color = legendBackgroundColor;
+				GUI.DrawTexture(new Rect(0f, graphAreaRect.yMin, legendWidth, graphAreaRect.height + 5), EditorGUIUtility.whiteTexture);
+
+				// Draw context object name (with hyperlink to the object)
+				if (graph.Context != null)
+				{
+					var contextNameRect = new Rect(22f, graphAreaRect.yMin + 10f, legendWidth - 30f, 16f);
+
+					GUI.color = channelHeaderColor;
+					GUI.Label(contextNameRect, graph.Context.name, simpleStyle);
+
+					EditorGUIUtility.AddCursorRect(contextNameRect, MouseCursor.Link);
+
+					if (currentEventType == EventType.MouseDown && contextNameRect.Contains(mousePosition))
+					{
+						EditorGUIUtility.PingObject(graph.Context);
+					}
+				}
+
+				// Time line.
+
+				var mouseTime = timeEnd;
+
+				if (isInPauseMode)
+				{
+					mouseTime = Mathf.Lerp(timeStart, timeEnd, (mousePosition.x - graphRect.xMin) / graphRect.width);
+				}
+
+				mouseTime = Mathf.Max(mouseTime, 0f);
+
+				Handles.color = timeLineColor;
+				var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
+				Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
+
+				for (int j = 0; j < graph.Channels.Count; j++)
+				{
+					var channel = graph.Channels[j];
+
+					var deselectedColor = channel.Color;
+					deselectedColor.a = DeselectedChannelAlpha;
+
+					var channelColor = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
+
+					var index = -1;
+
+					for (int k = 1; k < channel.SampleAxisY.Length - 1; k++)
+					{
+						int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.SampleAxisY.Length;
+						int sampleIndex_b = (sampleIndex_a + 1) % channel.SampleAxisY.Length;
+
+						if (mouseTime >= channel.SampleAxisX[sampleIndex_a] &&
+						    mouseTime <= channel.SampleAxisX[sampleIndex_b])
+						{
+							index = Mathf.Abs(channel.SampleAxisX[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.SampleAxisX[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
+							break;
+						}
+					}
+
+					var sampleValue = float.NaN;
+					var time = float.NaN;
+					var frame = -1;
+
+					if (index > -1)
+					{
+						sampleValue = channel.SampleAxisY[index];
+						time = channel.SampleAxisX[index];
+						frame = channel.SampleFrames[index];
+					}
+
+					// Draw time marker.
+					if (j == 0 && selectedChannel == null)
+					{
+						GUI.color = timeColor;
+
+						if (!float.IsNaN(time))
+						{
+							GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 2f, legendWidth, 20),
+								"t = " + time, timeStyle);
+						}
+
+						if (frame > -1)
+						{
+							GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 3.5f, legendWidth, 20),
+								"frame = " + frame, timeStyle);
+						}
+					}
+
+					Handles.color = channelColor;
+
+					var normalizedSampleValue = (sampleValue - range.Min) / span;
+					if (span == 0f)
+					{
+						normalizedSampleValue = 0.5f;
+					}
+
+					var clampedNormalizedSampleValue = Mathf.Clamp01(normalizedSampleValue);
+
+					var samplePosition = new Vector3(graphRect.xMin + graphRect.width * (time - timeStart) / timeWindow, graphRect.yMax - graphRect.height * clampedNormalizedSampleValue, 0f);
+
+					var handleRadius = 5f;
+
+					if (normalizedSampleValue < 0f)
+					{
+						// Draw down arrow.
+						arrowPoints[0] = samplePosition + new Vector3(-handleRadius, -handleRadius, 0);
+						arrowPoints[1] = samplePosition + new Vector3(handleRadius, -handleRadius, 0);
+						arrowPoints[2] = samplePosition + new Vector3(0, handleRadius, 0);
+						arrowPoints[3] = arrowPoints[0];
+
+						Handles.DrawPolyLine(arrowPoints);
+						lineCount++;
+					}
+					else if (normalizedSampleValue > 1f)
+					{
+						// Draw up arrow.
+						arrowPoints[0] = samplePosition + new Vector3(-handleRadius, handleRadius, 0);
+						arrowPoints[1] = samplePosition + new Vector3(handleRadius, handleRadius, 0);
+						arrowPoints[2] = samplePosition + new Vector3(0, -handleRadius, 0);
+						arrowPoints[3] = arrowPoints[0];
+
+						Handles.DrawPolyLine(arrowPoints);
+						lineCount++;
+					}
+					else
+					{
+						// Draw circle.
+						var size = handleRadius * 0.75f;
+						diamondPoints[0] = samplePosition + new Vector3(0, size, 0);
+						diamondPoints[1] = samplePosition + new Vector3(size, 0, 0);
+						diamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
+						diamondPoints[3] = samplePosition + new Vector3(-size, 0, 0);
+						diamondPoints[4] = diamondPoints[0];
+
+						Handles.DrawPolyLine(diamondPoints);
+						lineCount++;
+					}
+
+					string sampleValueString;
+					if (float.IsNaN(sampleValue))
+					{
+						sampleValueString = "";
+					}
+					else
+					{
+						sampleValueString = " = " + sampleValue.ToString();
+					}
+
+					var valueText = channel.Description + sampleValueString;
+
+					GUI.color = new Color(1f, 1f, 1f, 1f);
+					valueTextStyle.normal.textColor = Color.white;
+
+					if (channel == selectedChannel)
+					{
+						var sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
+
+						if (samplePosition.x + sampleTextWidth + 40 > position.width)
+						{
+							valueTextStyle.alignment = TextAnchor.MiddleRight;
+							GUI.Label(new Rect(samplePosition.x - sampleTextWidth - 15, samplePosition.y - 20, sampleTextWidth, 20), valueText, valueTextStyle);
+						}
+						else
+						{
+							valueTextStyle.alignment = TextAnchor.MiddleLeft;
+							GUI.Label(new Rect(samplePosition.x + 15, samplePosition.y, sampleTextWidth, 20), valueText, valueTextStyle);
+						}
+
+						GUI.color = new Color(1f, 1f, 1f, 0.5f);
+						GUI.Label(new Rect(10, graphRect.yMax - 10, legendWidth, 20), "Time = " + time, timeStyle);
+					}
+
+					GUI.color = new Color(1f, 1f, 1f, 1f);
+
+					valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel
+						? legendTextColorSelected
+						: legendTextColorUnselected;
+					valueTextStyle.alignment = TextAnchor.MiddleLeft;
+					valueTextStyle.clipping = TextClipping.Clip;
+
+					var offset = 30f;
+					var selectionRect = new Rect(0f, graphAreaRect.yMin + offset + 20 * j, legendWidth, 16f);
+					GUI.Label(new Rect(22f, graphAreaRect.yMin + 30f + 20 * j, legendWidth - 30f, 16f), valueText, valueTextStyle);
+
+					EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
+
+					// Selection of channel.
+					if (currentEventType == EventType.MouseDown && selectionRect.Contains(mousePosition))
+					{
+						newSelectedChannel = channel;
+					}
+
+					// Color marker.
+					GUI.color = channelColor * 0.7f;
+					GUI.DrawTexture(new Rect(10, graphAreaRect.yMin + offset + 20 * j + 6, 7, 7), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+
+					GUI.color = channelColor;
+					GUI.DrawTexture(new Rect(10 + 1, graphAreaRect.yMin + offset + 20 * j + 7, 5, 5), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+
+					GUI.color = new Color(1f, 1f, 1f, 1f);
+
+				}
+
+				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
+				TagEntries.Clear();
+				graph.GetTagEntries(timeEnd - timeWindow, timeEnd, TagEntries);
+
+				foreach (var entry in TagEntries)
+				{
+					var eventColor = Color.yellow;
+					Handles.color = eventColor;
+
+					var normalizedX = (entry.Time - timeStart) / timeWindow;
+					if (normalizedX * graphRect.width >= 5f)
+					{
+						Handles.DrawLine(
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMin, 0f),
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f)
+						);
+						lineCount++;
+
+						Handles.DrawLine(
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
+						);
+						lineCount++;
+
+						Handles.DrawLine(
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f)
+						);
+						lineCount++;
+
+						Handles.DrawLine(
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f),
+							new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
+						);
+						lineCount++;
+
+						GUI.color = eventColor;
+						GUI.contentColor = Color.white;
+						GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.Text, simpleStyle);
 					}
 				}
 			}
