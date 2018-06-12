@@ -254,9 +254,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = legendBackgroundColor;
 			GUI.DrawTexture(new Rect(0f, settingsRect.height, legendWidth, height - settingsRect.height), EditorGUIUtility.whiteTexture);
 
-			Event e = Event.current;
-
-			Vector2 mousePosition = e.mousePosition;
+			var currentEventType = Event.current.type;
+			var mousePosition = Event.current.mousePosition;
 
 			mousePosition.x = Mathf.Min(mousePosition.x, width);
 
@@ -268,7 +267,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				scrollPositionTime = 0f;
 			}
 
-			if (e.type == EventType.MouseDown &&
+			if (currentEventType == EventType.MouseDown &&
 				mousePosition.x > legendWidth &&
 				mousePosition.x < (width - 14f) &&
 				mousePosition.y > settingsRect.height)
@@ -340,7 +339,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
 				}
 
-				if (e.type == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
+				if (currentEventType == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
 				{
 					IsResizingGraphHeight = true;
 					HeightResizingGraphIndex = i;
@@ -349,7 +348,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					GraphHeightResizeDelta = 0;
 				}
 
-				if (e.type == EventType.MouseDrag && IsResizingGraphHeight)
+				if (currentEventType == EventType.MouseDrag && IsResizingGraphHeight)
 				{
 					GraphHeightResizeDelta = (mousePosition.y - MouseYPositionBeforeResizingGraphHeight);
 					graphHeight = GraphHeightBeforeResizing + Mathf.FloorToInt(GraphHeightResizeDelta / (HeightResizingGraphIndex + 1));
@@ -363,7 +362,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					EditorPrefs.SetInt(EditorSettings.GraphHeight, graphHeight);
 				}
 
-				if (e.type == EventType.MouseUp && IsResizingGraphHeight)
+				if (currentEventType == EventType.MouseUp && IsResizingGraphHeight)
 				{
 					IsResizingGraphHeight = false;
 				}
@@ -401,7 +400,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						if (graphRect.Contains(mousePosition))
 						{
-							if (e.type == EventType.MouseDown)
+							if (currentEventType == EventType.MouseDown)
 							{
 								timeIntervalStartTime = Mathf.Max(0f, time);
 								timeIntervalEndTime = timeIntervalStartTime;
@@ -409,7 +408,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							}
 						}
 
-						if (timeIntervalSelectionMonitor == monitor && e.type == EventType.MouseDrag)
+						if (timeIntervalSelectionMonitor == monitor && currentEventType == EventType.MouseDrag)
 						{
 							timeIntervalEndTime = Mathf.Max(0f, time);
 						}
@@ -545,11 +544,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					{
 						GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
 
-						float selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
-						float selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
+						var selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
+						var selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
 
-						float left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
-						float right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+						var left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+						var right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
 
 						GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
@@ -581,7 +580,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						EditorGUIUtility.AddCursorRect(gameObjectNameRect, MouseCursor.Link);
 
-						if (e.type == EventType.MouseDown && gameObjectNameRect.Contains(mousePosition))
+						if (currentEventType == EventType.MouseDown && gameObjectNameRect.Contains(mousePosition))
 						{
 							EditorGUIUtility.PingObject(monitor.GameObject);
 						}
@@ -722,7 +721,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 						if (channel == selectedChannel)
 						{
-							float sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
+							var sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
 
 							if (samplePosition.x + sampleTextWidth + 40 > position.width)
 							{
@@ -754,7 +753,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
 
 						// Selection of monitor input.
-						if (e.type == EventType.MouseDown && selectionRect.Contains(mousePosition))
+						if (currentEventType == EventType.MouseDown && selectionRect.Contains(mousePosition))
 						{
 							newSelectedChannel = channel;
 						}
@@ -815,7 +814,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// select/deselect.
-			if (e.type == EventType.MouseDown)
+			if (currentEventType == EventType.MouseDown)
 			{
 				selectedChannel = newSelectedChannel;
 			}
@@ -1013,18 +1012,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var legendResizeRect = new Rect(legendWidth - splitSize / 2, 0, splitSize, height);
 			EditorGUIUtility.AddCursorRect(legendResizeRect, MouseCursor.SplitResizeLeftRight);
 
-			if (e.type == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !IsResizingGraphHeight)
+			if (currentEventType == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !IsResizingGraphHeight)
 			{
 				legendResize = true;
 			}
 
-			if (e.type == EventType.MouseDrag && legendResize)
+			if (currentEventType == EventType.MouseDrag && legendResize)
 			{
 				legendWidth = Mathf.FloorToInt(mousePosition.x);
 				EditorPrefs.SetInt(EditorSettings.LegendWidth, legendWidth);
 			}
 
-			if (e.type == EventType.MouseUp && legendResize)
+			if (currentEventType == EventType.MouseUp && legendResize)
 			{
 				legendResize = false;
 			}
