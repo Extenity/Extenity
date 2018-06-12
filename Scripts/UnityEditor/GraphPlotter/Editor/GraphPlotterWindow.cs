@@ -845,21 +845,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				if (!wasInPauseMode)
 				{
-					// Reset scroll positionwhen going into pause mode.
+					// Reset scroll position when going into pause mode.
 					scrollPositionTime = 0f;
 
 					// Find the maximum time span in samples.
-
-					var minTime = float.PositiveInfinity;
-					var maxTime = float.NegativeInfinity;
-
+					var minTime = latestTime;
+					var maxTime = latestTime;
 					foreach (var graph in VisibleGraphs)
 					{
 						float graphMinTime, graphMaxTime;
 						graph.GetMinMaxTime(out graphMinTime, out graphMaxTime);
-
-						minTime = Mathf.Min(minTime, graphMinTime);
-						maxTime = Mathf.Max(maxTime, latestTime);
+						if (minTime > graphMinTime)
+							minTime = graphMinTime;
+						if (maxTime < graphMaxTime)
+							maxTime = graphMaxTime;
 					}
 
 					scrollPositionTimeMax = (maxTime - minTime) + 1f;
