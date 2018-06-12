@@ -19,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
-		public Monitor monitor_position;
+		public Graph PositionGraph;
 		private Channel channel_position_x;
 		private Channel channel_position_y;
 		// -----------------------------------------------------
@@ -30,7 +30,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 360f);
 
-		public Monitor monitor_rotation;
+		public Graph RotationGraph;
 		private Channel channel_rotation;
 		// -----------------------------------------------------
 		// Input - Velocity
@@ -41,7 +41,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
-		public Monitor monitor_velocity;
+		public Graph VelocityGraph;
 		private Channel channel_velocity_x;
 		private Channel channel_velocity_y;
 		// -----------------------------------------------------
@@ -51,7 +51,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration AngularVelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
-		public Monitor monitor_angularVelocity;
+		public Graph AngularVelocityGraph;
 		private Channel channel_angularVelocity;
 		// -----------------------------------------------------
 
@@ -75,19 +75,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// position
 			if (showPosition && componentIsActive)
 			{
-				if (monitor_position == null)
+				if (PositionGraph == null)
 				{
-					monitor_position = new Monitor("Position", gameObject);
+					PositionGraph = new Graph("Position", gameObject);
 				}
 
-				monitor_position.SetRangeConfiguration(PositionRange);
+				PositionGraph.SetRangeConfiguration(PositionRange);
 			}
 			else
 			{
-				if (monitor_position != null)
+				if (PositionGraph != null)
 				{
-					monitor_position.Close();
-					monitor_position = null;
+					PositionGraph.Close();
+					PositionGraph = null;
 				}
 			}
 
@@ -96,7 +96,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_position_x == null)
 				{
-					channel_position_x = new Channel(monitor_position, "x", PlotColors.Red);
+					channel_position_x = new Channel(PositionGraph, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -113,7 +113,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_position_y == null)
 				{
-					channel_position_y = new Channel(monitor_position, "y", PlotColors.Green);
+					channel_position_y = new Channel(PositionGraph, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -131,19 +131,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// rotation
 			if (showRotation && componentIsActive)
 			{
-				if (monitor_rotation == null)
+				if (RotationGraph == null)
 				{
-					monitor_rotation = new Monitor("Rotation", gameObject);
+					RotationGraph = new Graph("Rotation", gameObject);
 				}
 
-				monitor_rotation.SetRangeConfiguration(RotationRange);
+				RotationGraph.SetRangeConfiguration(RotationRange);
 			}
 			else
 			{
-				if (monitor_rotation != null)
+				if (RotationGraph != null)
 				{
-					monitor_rotation.Close();
-					monitor_rotation = null;
+					RotationGraph.Close();
+					RotationGraph = null;
 				}
 			}
 
@@ -152,7 +152,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_rotation == null)
 				{
-					channel_rotation = new Channel(monitor_rotation, "angle", PlotColors.Red);
+					channel_rotation = new Channel(RotationGraph, "angle", PlotColors.Red);
 				}
 			}
 			else
@@ -170,19 +170,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// velocity
 			if (showVelocity && componentIsActive)
 			{
-				if (monitor_velocity == null)
+				if (VelocityGraph == null)
 				{
-					monitor_velocity = new Monitor("Velocity", gameObject);
+					VelocityGraph = new Graph("Velocity", gameObject);
 				}
 
-				monitor_velocity.SetRangeConfiguration(VelocityRange);
+				VelocityGraph.SetRangeConfiguration(VelocityRange);
 			}
 			else
 			{
-				if (monitor_velocity != null)
+				if (VelocityGraph != null)
 				{
-					monitor_velocity.Close();
-					monitor_velocity = null;
+					VelocityGraph.Close();
+					VelocityGraph = null;
 				}
 			}
 
@@ -191,7 +191,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_velocity_x == null)
 				{
-					channel_velocity_x = new Channel(monitor_velocity, "x", PlotColors.Red);
+					channel_velocity_x = new Channel(VelocityGraph, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -208,7 +208,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_velocity_y == null)
 				{
-					channel_velocity_y = new Channel(monitor_velocity, "y", PlotColors.Green);
+					channel_velocity_y = new Channel(VelocityGraph, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -226,19 +226,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// angularVelocity
 			if (showAngularVelocity && componentIsActive)
 			{
-				if (monitor_angularVelocity == null)
+				if (AngularVelocityGraph == null)
 				{
-					monitor_angularVelocity = new Monitor("Angular Velocity", gameObject);
+					AngularVelocityGraph = new Graph("Angular Velocity", gameObject);
 				}
 
-				monitor_angularVelocity.SetRangeConfiguration(AngularVelocityRange);
+				AngularVelocityGraph.SetRangeConfiguration(AngularVelocityRange);
 			}
 			else
 			{
-				if (monitor_angularVelocity != null)
+				if (AngularVelocityGraph != null)
 				{
-					monitor_angularVelocity.Close();
-					monitor_angularVelocity = null;
+					AngularVelocityGraph.Close();
+					AngularVelocityGraph = null;
 				}
 			}
 
@@ -247,7 +247,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_angularVelocity == null)
 				{
-					channel_angularVelocity = new Channel(monitor_angularVelocity, "angular velocity", PlotColors.Red);
+					channel_angularVelocity = new Channel(AngularVelocityGraph, "angular velocity", PlotColors.Red);
 				}
 			}
 			else
@@ -302,7 +302,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var position = Rigidbody2D.position;
 
-				PositionRange.CopyFrom(monitor_position.Range);
+				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (showPosition_x)
 				{
@@ -317,7 +317,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showRotation)
 			{
-				RotationRange.CopyFrom(monitor_rotation.Range);
+				RotationRange.CopyFrom(RotationGraph.Range);
 
 				if (showRotation)
 				{
@@ -342,7 +342,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var velocity = Rigidbody2D.velocity;
 
-				VelocityRange.CopyFrom(monitor_angularVelocity.Range);
+				VelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (showVelocity_x)
 				{
@@ -357,7 +357,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showAngularVelocity)
 			{
-				AngularVelocityRange.CopyFrom(monitor_angularVelocity.Range);
+				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (showAngularVelocity)
 				{
@@ -383,28 +383,28 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void RemoveMonitors()
 		{
-			if (monitor_position != null)
+			if (PositionGraph != null)
 			{
-				monitor_position.Close();
-				monitor_position = null;
+				PositionGraph.Close();
+				PositionGraph = null;
 			}
 
-			if (monitor_rotation != null)
+			if (RotationGraph != null)
 			{
-				monitor_rotation.Close();
-				monitor_rotation = null;
+				RotationGraph.Close();
+				RotationGraph = null;
 			}
 
-			if (monitor_velocity != null)
+			if (VelocityGraph != null)
 			{
-				monitor_velocity.Close();
-				monitor_velocity = null;
+				VelocityGraph.Close();
+				VelocityGraph = null;
 			}
 
-			if (monitor_angularVelocity != null)
+			if (AngularVelocityGraph != null)
 			{
-				monitor_angularVelocity.Close();
-				monitor_angularVelocity = null;
+				AngularVelocityGraph.Close();
+				AngularVelocityGraph = null;
 			}
 		}
 	}

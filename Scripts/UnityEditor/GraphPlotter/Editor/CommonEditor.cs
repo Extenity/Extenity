@@ -7,7 +7,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 	public class CommonEditor
 	{
-		public static void DrawAxisRangeConfiguration(Object undoObject, Monitor monitor, ref ValueAxisRangeConfiguration range)
+		public static void DrawAxisRangeConfiguration(Object undoObject, Graph graph, ref ValueAxisRangeConfiguration range)
 		{
 			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis sizing ", range.Sizing);
 
@@ -53,9 +53,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				range.Min = newMinimum;
 
-				if (monitor != null)
+				if (graph != null)
 				{
-					monitor.Range.Min = newMinimum;
+					graph.Range.Min = newMinimum;
 				}
 			}
 
@@ -63,9 +63,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				range.Max = newMaximum;
 
-				if (monitor != null)
+				if (graph != null)
 				{
-					monitor.Range.Max = newMaximum;
+					graph.Range.Max = newMaximum;
 				}
 			}
 		}

@@ -7,19 +7,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	{
 		#region Initialization
 
-		public Channel(Monitor monitor, string description) :
-			this(monitor, description, Color.red)
+		public Channel(Graph graph, string description) :
+			this(graph, description, Color.red)
 		{
 		}
 
-		public Channel(Monitor monitor, string description, Color color)
+		public Channel(Graph graph, string description, Color color)
 		{
-			Monitor = monitor;
+			Graph = graph;
 
 			InitializeMetadata(description, color);
 			InitializeData();
 
-			Monitor.RegisterChannel(this);
+			Graph.RegisterChannel(this);
 		}
 
 		#endregion
@@ -28,14 +28,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void Close()
 		{
-			Monitor.DeregisterChannel(this);
+			Graph.DeregisterChannel(this);
 		}
 
 		#endregion
 
 		#region Monitor
 
-		private Monitor Monitor;
+		private Graph Graph;
 
 		#endregion
 
@@ -90,7 +90,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			SampleAxisX[CurrentSampleIndex] = time;
 			SampleFrames[CurrentSampleIndex] = frame;
 
-			Monitor.InformNewEntry(value, time);
+			Graph.InformNewEntry(value, time);
 
 			CurrentSampleIndex = (CurrentSampleIndex + 1) % SampleBufferSize;
 		}

@@ -7,9 +7,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public static class GraphPlotters
 	{
-		public static readonly List<Monitor> All = new List<Monitor>();
+		public static readonly List<Graph> All = new List<Graph>();
 
-		public static void Register(Monitor plotter)
+		public static void Register(Graph plotter)
 		{
 			if (plotter == null)
 				throw new ArgumentNullException(nameof(plotter));
@@ -19,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			All.Add(plotter);
 		}
 
-		public static void Deregister(Monitor plotter)
+		public static void Deregister(Graph plotter)
 		{
 			if (plotter == null)
 				throw new ArgumentNullException(nameof(plotter));

@@ -6,7 +6,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 	public class Example_GraphPlotterFromCode : MonoBehaviour
 	{
-		private Monitor Monitor;
+		private Graph Graph;
 		private Channel Channel1;
 		private Channel Channel2;
 
@@ -14,23 +14,23 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 		private void Start()
 		{
-			Monitor = new Monitor("Two Sine Waves");
-			Channel1 = new Channel(Monitor, "Wavesome", Color.green);
-			Channel2 = new Channel(Monitor, "Bob Wave", Color.blue);
+			Graph = new Graph("Two Sine Waves");
+			Channel1 = new Channel(Graph, "Wavesome", Color.green);
+			Channel2 = new Channel(Graph, "Bob Wave", Color.blue);
 		}
 
 		private void OnDestroy()
 		{
 			Channel1.Close();
 			Channel2.Close();
-			Monitor.Close();
+			Graph.Close();
 		}
 
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				Monitor.Add(new TagEntry(Time.time, "Space"));
+				Graph.Add(new TagEntry(Time.time, "Space"));
 			}
 		}
 

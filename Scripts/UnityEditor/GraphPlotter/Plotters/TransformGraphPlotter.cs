@@ -23,7 +23,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Space positionSpace = Space.World;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
-		public Monitor monitor_position;
+		public Graph PositionGraph;
 		public Channel channel_position_x;
 		public Channel channel_position_y;
 		public Channel channel_position_z;
@@ -37,7 +37,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Space rotationSpace = Space.World;
 		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 
-		public Monitor monitor_rotation;
+		public Graph RotationGraph;
 		public Channel channel_rotation_x;
 		public Channel channel_rotation_y;
 		public Channel channel_rotation_z;
@@ -51,7 +51,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public ScaleSpace scaleSpace = ScaleSpace.Local;
 		public ValueAxisRangeConfiguration ScaleRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
-		public Monitor monitor_scale;
+		public Graph ScaleGraph;
 		public Channel channel_scale_x;
 		public Channel channel_scale_y;
 		public Channel channel_scale_z;
@@ -76,20 +76,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// position
 			if (showPosition && componentIsActive)
 			{
-				if (monitor_position == null)
+				if (PositionGraph == null)
 				{
-					monitor_position = new Monitor("", gameObject);
+					PositionGraph = new Graph("", gameObject);
 				}
 
-				monitor_position.Name = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
-				monitor_position.SetRangeConfiguration(PositionRange);
+				PositionGraph.Name = "Position (" + (positionSpace == Space.World ? "world" : "local") + ")";
+				PositionGraph.SetRangeConfiguration(PositionRange);
 			}
 			else
 			{
-				if (monitor_position != null)
+				if (PositionGraph != null)
 				{
-					monitor_position.Close();
-					monitor_position = null;
+					PositionGraph.Close();
+					PositionGraph = null;
 				}
 			}
 
@@ -98,7 +98,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_position_x == null)
 				{
-					channel_position_x = new Channel(monitor_position, "x", PlotColors.Red);
+					channel_position_x = new Channel(PositionGraph, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -115,7 +115,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_position_y == null)
 				{
-					channel_position_y = new Channel(monitor_position, "y", PlotColors.Green);
+					channel_position_y = new Channel(PositionGraph, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -132,7 +132,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_position_z == null)
 				{
-					channel_position_z = new Channel(monitor_position, "z", PlotColors.Blue);
+					channel_position_z = new Channel(PositionGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -150,20 +150,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// rotation
 			if (showRotation && componentIsActive)
 			{
-				if (monitor_rotation == null)
+				if (RotationGraph == null)
 				{
-					monitor_rotation = new Monitor("", gameObject);
+					RotationGraph = new Graph("", gameObject);
 				}
 
-				monitor_rotation.Name = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
-				monitor_rotation.SetRangeConfiguration(RotationRange);
+				RotationGraph.Name = "Rotation (" + (rotationSpace == Space.World ? "world" : "local") + ")";
+				RotationGraph.SetRangeConfiguration(RotationRange);
 			}
 			else
 			{
-				if (monitor_rotation != null)
+				if (RotationGraph != null)
 				{
-					monitor_rotation.Close();
-					monitor_rotation = null;
+					RotationGraph.Close();
+					RotationGraph = null;
 				}
 			}
 
@@ -172,7 +172,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_rotation_x == null)
 				{
-					channel_rotation_x = new Channel(monitor_rotation, "x", PlotColors.Red);
+					channel_rotation_x = new Channel(RotationGraph, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -189,7 +189,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_rotation_y == null)
 				{
-					channel_rotation_y = new Channel(monitor_rotation, "y", PlotColors.Green);
+					channel_rotation_y = new Channel(RotationGraph, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -206,7 +206,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_rotation_z == null)
 				{
-					channel_rotation_z = new Channel(monitor_rotation, "z", PlotColors.Blue);
+					channel_rotation_z = new Channel(RotationGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -224,20 +224,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			// scale
 			if (showScale && componentIsActive)
 			{
-				if (monitor_scale == null)
+				if (ScaleGraph == null)
 				{
-					monitor_scale = new Monitor("", gameObject);
+					ScaleGraph = new Graph("", gameObject);
 				}
 
-				monitor_scale.Name = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
-				monitor_scale.SetRangeConfiguration(ScaleRange);
+				ScaleGraph.Name = "Scale (" + (scaleSpace == ScaleSpace.Local ? "local" : "lossy") + ")";
+				ScaleGraph.SetRangeConfiguration(ScaleRange);
 			}
 			else
 			{
-				if (monitor_scale != null)
+				if (ScaleGraph != null)
 				{
-					monitor_scale.Close();
-					monitor_scale = null;
+					ScaleGraph.Close();
+					ScaleGraph = null;
 				}
 			}
 
@@ -246,7 +246,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_scale_x == null)
 				{
-					channel_scale_x = new Channel(monitor_scale, "x", PlotColors.Red);
+					channel_scale_x = new Channel(ScaleGraph, "x", PlotColors.Red);
 				}
 			}
 			else
@@ -263,7 +263,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_scale_y == null)
 				{
-					channel_scale_y = new Channel(monitor_scale, "y", PlotColors.Green);
+					channel_scale_y = new Channel(ScaleGraph, "y", PlotColors.Green);
 				}
 			}
 			else
@@ -280,7 +280,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				if (channel_scale_z == null)
 				{
-					channel_scale_z = new Channel(monitor_scale, "z", PlotColors.Blue);
+					channel_scale_z = new Channel(ScaleGraph, "z", PlotColors.Blue);
 				}
 			}
 			else
@@ -329,7 +329,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var position = positionSpace == Space.Local ? Transform.localPosition : Transform.position;
 
-				PositionRange.CopyFrom(monitor_position.Range);
+				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (showPosition_x)
 				{
@@ -351,7 +351,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var euler = (rotationSpace == Space.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
 
-				RotationRange.CopyFrom(monitor_rotation.Range);
+				RotationRange.CopyFrom(RotationGraph.Range);
 
 				if (showRotation_x)
 				{
@@ -373,7 +373,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				var scale = scaleSpace == ScaleSpace.Local ? Transform.localScale : Transform.lossyScale;
 
-				ScaleRange.CopyFrom(monitor_scale.Range);
+				ScaleRange.CopyFrom(ScaleGraph.Range);
 
 				if (showScale_x)
 				{
@@ -409,22 +409,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private void RemoveMonitors()
 		{
-			if (monitor_position != null)
+			if (PositionGraph != null)
 			{
-				monitor_position.Close();
-				monitor_position = null;
+				PositionGraph.Close();
+				PositionGraph = null;
 			}
 
-			if (monitor_rotation != null)
+			if (RotationGraph != null)
 			{
-				monitor_rotation.Close();
-				monitor_rotation = null;
+				RotationGraph.Close();
+				RotationGraph = null;
 			}
 
-			if (monitor_scale != null)
+			if (ScaleGraph != null)
 			{
-				monitor_scale.Close();
-				monitor_scale = null;
+				ScaleGraph.Close();
+				ScaleGraph = null;
 			}
 		}
 	}

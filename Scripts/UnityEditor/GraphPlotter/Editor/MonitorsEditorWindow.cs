@@ -148,7 +148,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private bool wasInPauseMode = false;
 
-		private Monitor timeIntervalSelectionMonitor = null;
+		private Graph timeIntervalSelectionGraph = null;
 		private float timeIntervalStartTime;
 		private float timeIntervalEndTime;
 
@@ -165,7 +165,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
 
-		private readonly List<Monitor> VisiblePlotters = new List<Monitor>(10);
+		private readonly List<Graph> VisiblePlotters = new List<Graph>(10);
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
 		#region Initialization
@@ -404,11 +404,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							{
 								timeIntervalStartTime = Mathf.Max(0f, time);
 								timeIntervalEndTime = timeIntervalStartTime;
-								timeIntervalSelectionMonitor = monitor;
+								timeIntervalSelectionGraph = monitor;
 							}
 						}
 
-						if (timeIntervalSelectionMonitor == monitor && currentEventType == EventType.MouseDrag)
+						if (timeIntervalSelectionGraph == monitor && currentEventType == EventType.MouseDrag)
 						{
 							timeIntervalEndTime = Mathf.Max(0f, time);
 						}
@@ -540,7 +540,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 					}
 
-					if (timeIntervalSelectionMonitor == monitor && timeIntervalStartTime != timeIntervalEndTime)
+					if (timeIntervalSelectionGraph == monitor && timeIntervalStartTime != timeIntervalEndTime)
 					{
 						GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
 

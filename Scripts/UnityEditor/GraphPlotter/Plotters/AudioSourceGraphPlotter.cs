@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
 
-		public Monitor monitor_volume;
+		public Graph VolumeGraph;
 		private Channel channel_volume;
 		// -----------------------------------------------------
 		// Input - Pitch
@@ -26,14 +26,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
 
-		public Monitor monitor_pitch;
+		public Graph PitchGraph;
 		private Channel channel_pitch;
 		// -----------------------------------------------------
 		// Input - IsPlaying
 		// -----------------------------------------------------
 		public bool showIsPlaying = false;
 
-		public Monitor monitor_isPlaying;
+		public Graph IsPlayingGraph;
 		private Channel channel_isPlaying;
 		// -----------------------------------------------------
 
@@ -55,23 +55,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			if (showVolume && componentIsActive)
 			{
-				if (monitor_volume == null)
+				if (VolumeGraph == null)
 				{
-					monitor_volume = new Monitor("Volume", gameObject);
-					monitor_volume.SetRangeConfiguration(VolumeRange);
+					VolumeGraph = new Graph("Volume", gameObject);
+					VolumeGraph.SetRangeConfiguration(VolumeRange);
 				}
 
 				if (channel_volume == null)
 				{
-					channel_volume = new Channel(monitor_volume, "volume", PlotColors.Red);
+					channel_volume = new Channel(VolumeGraph, "volume", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (monitor_volume != null)
+				if (VolumeGraph != null)
 				{
-					monitor_volume.Close();
-					monitor_volume = null;
+					VolumeGraph.Close();
+					VolumeGraph = null;
 				}
 
 				if (channel_volume != null)
@@ -86,24 +86,24 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			if (showPitch && componentIsActive)
 			{
-				if (monitor_pitch == null)
+				if (PitchGraph == null)
 				{
-					monitor_pitch = new Monitor("Pitch", gameObject);
+					PitchGraph = new Graph("Pitch", gameObject);
 				}
 
-				monitor_pitch.SetRangeConfiguration(PitchRange);
+				PitchGraph.SetRangeConfiguration(PitchRange);
 
 				if (channel_pitch == null)
 				{
-					channel_pitch = new Channel(monitor_pitch, "pitch", PlotColors.Green);
+					channel_pitch = new Channel(PitchGraph, "pitch", PlotColors.Green);
 				}
 			}
 			else
 			{
-				if (monitor_pitch != null)
+				if (PitchGraph != null)
 				{
-					monitor_pitch.Close();
-					monitor_pitch = null;
+					PitchGraph.Close();
+					PitchGraph = null;
 				}
 
 				if (channel_pitch != null)
@@ -118,23 +118,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			if (showIsPlaying && componentIsActive)
 			{
-				if (monitor_isPlaying == null)
+				if (IsPlayingGraph == null)
 				{
-					monitor_isPlaying = new Monitor("Is playing", gameObject);
-					monitor_isPlaying.SetRangeConfiguration(new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f));
+					IsPlayingGraph = new Graph("Is playing", gameObject);
+					IsPlayingGraph.SetRangeConfiguration(new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f));
 				}
 
 				if (channel_isPlaying == null)
 				{
-					channel_isPlaying = new Channel(monitor_isPlaying, "isPlaying", PlotColors.Red);
+					channel_isPlaying = new Channel(IsPlayingGraph, "isPlaying", PlotColors.Red);
 				}
 			}
 			else
 			{
-				if (monitor_isPlaying != null)
+				if (IsPlayingGraph != null)
 				{
-					monitor_isPlaying.Close();
-					monitor_isPlaying = null;
+					IsPlayingGraph.Close();
+					IsPlayingGraph = null;
 				}
 
 				if (channel_isPlaying != null)
@@ -185,13 +185,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (showVolume)
 			{
-				VolumeRange.CopyFrom(monitor_volume.Range);
+				VolumeRange.CopyFrom(VolumeGraph.Range);
 				channel_volume.Sample(AudioSource.volume, time, frame);
 			}
 
 			if (showPitch)
 			{
-				PitchRange.CopyFrom(monitor_pitch.Range);
+				PitchRange.CopyFrom(PitchGraph.Range);
 				channel_pitch.Sample(AudioSource.pitch, time, frame);
 			}
 
@@ -218,22 +218,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void RemoveMonitors()
 		{
-			if (monitor_volume != null)
+			if (VolumeGraph != null)
 			{
-				monitor_volume.Close();
-				monitor_volume = null;
+				VolumeGraph.Close();
+				VolumeGraph = null;
 			}
 
-			if (monitor_pitch != null)
+			if (PitchGraph != null)
 			{
-				monitor_pitch.Close();
-				monitor_pitch = null;
+				PitchGraph.Close();
+				PitchGraph = null;
 			}
 
-			if (monitor_isPlaying != null)
+			if (IsPlayingGraph != null)
 			{
-				monitor_isPlaying.Close();
-				monitor_isPlaying = null;
+				IsPlayingGraph.Close();
+				IsPlayingGraph = null;
 			}
 		}
 	}

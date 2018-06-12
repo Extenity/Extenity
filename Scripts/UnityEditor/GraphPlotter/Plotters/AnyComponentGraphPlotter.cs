@@ -19,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// -----------------------------------------------------
 		// Input - Scale
 		// -----------------------------------------------------
-		public Monitor monitor;
+		public Graph Graph;
 		public ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		// -----------------------------------------------------
 
@@ -51,19 +51,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (component != null && componentIsActive)
 			{
-				if (monitor == null)
+				if (Graph == null)
 				{
-					monitor = new Monitor("", gameObject);
+					Graph = new Graph("", gameObject);
 				}
 
-				monitor.Name = component.GetType().Name;
-				monitor.SetRangeConfiguration(Range);
+				Graph.Name = component.GetType().Name;
+				Graph.SetRangeConfiguration(Range);
 
 				foreach (var field in channelFields)
 				{
 					if (field.Channel == null)
 					{
-						field.Channel = new Channel(monitor, String.Join(".", field.field));
+						field.Channel = new Channel(Graph, String.Join(".", field.field));
 					}
 
 					field.Channel.Color = field.color;
@@ -134,7 +134,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (component == null)
 				return;
 
-			Range.CopyFrom(monitor.Range);
+			Range.CopyFrom(Graph.Range);
 
 			var time = Time.time;
 			var frame = Time.frameCount;
@@ -200,10 +200,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private void RemoveMonitor()
 		{
-			if (monitor != null)
+			if (Graph != null)
 			{
-				monitor.Close();
-				monitor = null;
+				Graph.Close();
+				Graph = null;
 			}
 		}
 	}

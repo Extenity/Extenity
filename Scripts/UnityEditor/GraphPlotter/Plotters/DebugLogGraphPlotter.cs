@@ -8,7 +8,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	public class DebugLogGraphPlotter : MonoBehaviour
 	{
 		public string filterPrefix;
-		private Monitor monitor;
+		private Graph Graph;
 
 		protected void Start()
 		{
@@ -27,22 +27,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (componentIsActive)
 			{
-				if (monitor == null)
+				if (Graph == null)
 				{
-					monitor = new Monitor("Debug.Log", gameObject);
+					Graph = new Graph("Debug.Log", gameObject);
 				}
 
 				if (filterPrefix != string.Empty)
 				{
-					monitor.Name = "Debug.Log (prefix = '" + filterPrefix + "')";
+					Graph.Name = "Debug.Log (prefix = '" + filterPrefix + "')";
 				}
 			}
 			else
 			{
-				if (monitor != null)
+				if (Graph != null)
 				{
-					monitor.Close();
-					monitor = null;
+					Graph.Close();
+					Graph = null;
 				}
 
 			}
@@ -53,7 +53,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
-			monitor.SetTimeCursor(Time.time);
+			Graph.SetTimeCursor(Time.time);
 		}
 
 		private void LogCallback(string logString, string stackTrace, LogType type)
@@ -68,7 +68,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			var entry = new TagEntry(Time.time, logString);
 
-			monitor.Add(entry);
+			Graph.Add(entry);
 		}
 
 		protected void OnEnable()
@@ -89,10 +89,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private void RemoveMonitor()
 		{
-			if (monitor != null)
+			if (Graph != null)
 			{
-				monitor.Close();
-				monitor = null;
+				Graph.Close();
+				Graph = null;
 			}
 		}
 	}

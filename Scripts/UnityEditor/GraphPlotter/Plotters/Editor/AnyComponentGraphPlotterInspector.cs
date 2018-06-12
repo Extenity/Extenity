@@ -62,7 +62,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentsStrings);
 
 			// value axis mode.
-			CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor, ref Me.Range);
+			CommonEditor.DrawAxisRangeConfiguration(Me, Me.Graph, ref Me.Range);
 
 			// Sample Time
 			var newSampleTime = (SampleTime)EditorGUILayout.EnumPopup("Sample time", Me.SampleTime);

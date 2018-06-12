@@ -78,7 +78,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.PositionGraph, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -130,7 +130,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.rotationSpace = newRotationSpace;
 				}
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.RotationGraph, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -184,7 +184,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Me.scaleSpace = newScaleSpace;
 				}
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_scale, ref Me.ScaleRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.ScaleGraph, ref Me.ScaleRange);
 
 				EditorGUILayout.EndVertical();
 

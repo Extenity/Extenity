@@ -5,16 +5,16 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
 
-	public class Monitor
+	public class Graph
 	{
-		public string Name;
+		public string Name; // TODO: Rename to Title
 		public GameObject GameObject = null;
 
 		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		#region Initialization
 
-		public Monitor(string name, GameObject gameObject = null)
+		public Graph(string name, GameObject gameObject = null)
 		{
 			Name = name;
 			GameObject = gameObject;

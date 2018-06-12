@@ -70,7 +70,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_position, ref Me.PositionRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.PositionGraph, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -114,7 +114,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_rotation, ref Me.RotationRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.RotationGraph, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -162,7 +162,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_velocity, ref Me.VelocityRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.VelocityGraph, ref Me.VelocityRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -209,7 +209,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.monitor_angularVelocity, ref Me.AngularVelocityRange);
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.AngularVelocityGraph, ref Me.AngularVelocityRange);
 
 				EditorGUILayout.EndVertical();
 			}
