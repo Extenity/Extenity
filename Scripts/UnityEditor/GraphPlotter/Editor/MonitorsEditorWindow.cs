@@ -152,7 +152,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private float timeIntervalStartTime;
 		private float timeIntervalEndTime;
 
-		private GameObject gameObjectFilter = null;
+		private GameObject ContextFilter = null;
 
 		// Saved editor settings.
 		private float timeWindow;
@@ -280,12 +280,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			var lineCount = 0;
 
 			// Gather visible graphs.
-			if (gameObjectFilter != null)
+			if (ContextFilter != null)
 			{
 				VisiblePlotters.Clear();
 				foreach (var plotter in GraphPlotters.All)
 				{
-					if (plotter.GameObject == gameObjectFilter)
+					if (plotter.Context == ContextFilter)
 					{
 						VisiblePlotters.Add(plotter);
 					}
@@ -569,20 +569,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					GUI.color = legendBackgroundColor;
 					GUI.DrawTexture(new Rect(0f, monitorRect.yMin, legendWidth, monitorRect.height + 5), EditorGUIUtility.whiteTexture);
 
-					// Game object name label.
-
-					if (monitor.GameObject != null)
+					// Draw context object name (with hyperlink to the object)
+					if (monitor.Context != null)
 					{
-						var gameObjectNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
+						var contextNameRect = new Rect(22f, monitorRect.yMin + 10f, legendWidth - 30f, 16f);
 
 						GUI.color = channelHeaderColor;
-						GUI.Label(gameObjectNameRect, monitor.GameObject.name, simpleStyle);
+						GUI.Label(contextNameRect, monitor.Context.name, simpleStyle);
 
-						EditorGUIUtility.AddCursorRect(gameObjectNameRect, MouseCursor.Link);
+						EditorGUIUtility.AddCursorRect(contextNameRect, MouseCursor.Link);
 
-						if (currentEventType == EventType.MouseDown && gameObjectNameRect.Contains(mousePosition))
+						if (currentEventType == EventType.MouseDown && contextNameRect.Contains(mousePosition))
 						{
-							EditorGUIUtility.PingObject(monitor.GameObject);
+							EditorGUIUtility.PingObject(monitor.Context);
 						}
 					}
 
@@ -890,100 +889,103 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
-			// Find list of unique game objects (linked to monitors).
-			var gameObjects = new List<GameObject>();
-			foreach (var monitor in GraphPlotters.All)
+			// Gather context object names
+			var contextObjects = new List<GameObject>();
 			{
-				if (monitor.GameObject != null)
+				foreach (var monitor in GraphPlotters.All)
 				{
-					if (!gameObjects.Contains(monitor.GameObject))
+					if (monitor.Context != null)
 					{
-						gameObjects.Add(monitor.GameObject);
+						if (!contextObjects.Contains(monitor.Context))
+						{
+							contextObjects.Add(monitor.Context);
+						}
 					}
 				}
-			}
 
-			gameObjects.Sort((a, b) =>
-			{
-				var nameDelta = a.name.CompareTo(b.name);
-				if (nameDelta == 0)
+				contextObjects.Sort((a, b) =>
 				{
-					return a.GetInstanceID().CompareTo(b.GetInstanceID());
-				}
-				else
-				{
-					return nameDelta;
-				}
-			});
-
-			var visibleGameObjectNames = new string[gameObjects.Count];
-			for (int i = 0; i < visibleGameObjectNames.Length; i++)
-			{
-				visibleGameObjectNames[i] = gameObjects[i].name;
-			}
-
-			for (int i = 0; i < visibleGameObjectNames.Length; i++)
-			{
-				int lastIndexWithSameName = i;
-				for (int j = i + 1; j < visibleGameObjectNames.Length; j++)
-				{
-					if (visibleGameObjectNames[j] == visibleGameObjectNames[i])
+					var nameDelta = a.name.CompareTo(b.name);
+					if (nameDelta == 0)
 					{
-						lastIndexWithSameName = j;
+						return a.GetInstanceID().CompareTo(b.GetInstanceID());
 					}
 					else
 					{
-						break;
+						return nameDelta;
 					}
+				});
+			}
+
+			// Gather visible context object names
+			var visibleContextNames = new string[contextObjects.Count];
+			{
+				for (int i = 0; i < visibleContextNames.Length; i++)
+				{
+					visibleContextNames[i] = contextObjects[i].name;
 				}
 
-				if (lastIndexWithSameName > i)
+				// Rename objects with same name
+				for (int i = 0; i < visibleContextNames.Length; i++)
 				{
-					int n = 1;
-					for (int j = i; j <= lastIndexWithSameName; j++)
+					var lastIndexWithSameName = i;
+					for (int j = i + 1; j < visibleContextNames.Length; j++)
 					{
-						visibleGameObjectNames[j] = visibleGameObjectNames[j] + "/" + n + "";
-						n++;
+						if (visibleContextNames[j] == visibleContextNames[i])
+						{
+							lastIndexWithSameName = j;
+						}
+						else
+						{
+							break;
+						}
 					}
-
-					i = lastIndexWithSameName + 1;
+					if (lastIndexWithSameName > i)
+					{
+						int n = 1;
+						for (int j = i; j <= lastIndexWithSameName; j++)
+						{
+							visibleContextNames[j] = visibleContextNames[j] + "/" + n + "";
+							n++;
+						}
+						i = lastIndexWithSameName + 1;
+					}
 				}
-
 			}
 
-			// Game object filter.
-
-			var gameObjectFilterIndex = 0;
-
-			var gameObjectFilterOptions = new string[gameObjects.Count + 1];
-			gameObjectFilterOptions[0] = "All";
-			for (int i = 0; i < gameObjects.Count; i++)
+			// Draw context filter dropdown
 			{
-				gameObjectFilterOptions[i + 1] = visibleGameObjectNames[i];
+				var contextFilterIndex = 0;
 
-				if (gameObjectFilter == gameObjects[i])
+				var contextFilterOptions = new string[contextObjects.Count + 1];
+				contextFilterOptions[0] = "All";
+				for (int i = 0; i < contextObjects.Count; i++)
 				{
-					gameObjectFilterIndex = i + 1;
+					contextFilterOptions[i + 1] = visibleContextNames[i];
+
+					if (ContextFilter == contextObjects[i])
+					{
+						contextFilterIndex = i + 1;
+					}
 				}
-			}
 
-			gameObjectFilterIndex = EditorGUILayout.Popup(gameObjectFilterIndex, gameObjectFilterOptions, GUILayout.Width(160));
+				contextFilterIndex = EditorGUILayout.Popup(contextFilterIndex, contextFilterOptions, GUILayout.Width(160));
 
+				var oldContextFilter = ContextFilter;
 
-			var gameObjectFilter_old = gameObjectFilter;
+				if (contextFilterIndex == 0)
+				{
+					ContextFilter = null;
+				}
+				else
+				{
+					ContextFilter = contextObjects[contextFilterIndex - 1];
+				}
 
-			if (gameObjectFilterIndex == 0)
-			{
-				gameObjectFilter = null;
-			}
-			else
-			{
-				gameObjectFilter = gameObjects[gameObjectFilterIndex - 1];
-			}
-
-			if (gameObjectFilter != gameObjectFilter_old)
-			{
-				scrollPositionY = 0;
+				if (ContextFilter != oldContextFilter)
+				{
+					scrollPositionY = 0;
+				}
 			}
 
 			// Interpolation selection.
@@ -1037,13 +1039,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			if (!filteredObject)
 			{
-				gameObjectFilter = null;
+				ContextFilter = null;
 				return true;
 			}
 
 			if (GraphPlotters.IsAnyGraphForObjectExists(filteredObject))
 			{
-				gameObjectFilter = filteredObject;
+				ContextFilter = filteredObject;
 				return true;
 			}
 			return false;

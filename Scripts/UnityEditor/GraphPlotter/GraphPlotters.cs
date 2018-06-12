@@ -33,7 +33,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			for (var i = 0; i < All.Count; i++)
 			{
-				if (All[i].GameObject == go)
+				if (All[i].Context == go)
 					return true;
 			}
 			return false;
