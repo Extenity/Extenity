@@ -5,16 +5,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public class Channel
 	{
-		private Monitor Monitor;
-		public string Description;
-		public Color Color;
-
-		public int sampleIndex;
-		public int numberOfSamples = 1000;
-		public float[] samples;
-		public float[] times;
-		public int[] frames;
-
 		#region Initialization
 
 		public Channel(Monitor monitor, string description) :
@@ -25,22 +15,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel(Monitor monitor, string description, Color color)
 		{
 			Monitor = monitor;
-			Description = description;
-			Color = color;
 
-			sampleIndex = 0;
-			samples = new float[numberOfSamples];
-			times = new float[numberOfSamples];
-			frames = new int[numberOfSamples];
+			InitializeMetadata(description, color);
+			InitializeData();
 
-			for (int i = 0; i < samples.Length; i++)
-			{
-				samples[i] = float.NaN;
-				times[i] = float.NaN;
-				frames[i] = -1;
-			}
-
-			monitor.RegisterChannel(this);
+			Monitor.RegisterChannel(this);
 		}
 
 		#endregion
@@ -53,6 +32,52 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		}
 
 		#endregion
+
+		#region Monitor
+
+		private Monitor Monitor;
+
+		#endregion
+
+		#region Metadata
+
+		public string Description;
+		public Color Color;
+
+		private void InitializeMetadata(string description, Color color)
+		{
+			Description = description;
+			Color = color;
+		}
+
+		#endregion
+
+		#region Data
+
+		public int sampleIndex;
+		public int numberOfSamples = 1000;
+		public float[] samples;
+		public float[] times;
+		public int[] frames;
+
+		private void InitializeData()
+		{
+			sampleIndex = 0;
+			samples = new float[numberOfSamples];
+			times = new float[numberOfSamples];
+			frames = new int[numberOfSamples];
+
+			for (int i = 0; i < samples.Length; i++)
+			{
+				samples[i] = float.NaN;
+				times[i] = float.NaN;
+				frames[i] = -1;
+			}
+		}
+
+		#endregion
+
+		#region Data - Add
 
 		public void Sample(float value)
 		{
@@ -69,6 +94,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			sampleIndex = (sampleIndex + 1) % numberOfSamples;
 		}
+
+		#endregion
+
+		#region Data - Get
 
 		public void GetValueRangeInTimeWindow(float timeStart, float timeEnd, out float min, out float max)
 		{
@@ -89,10 +118,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		public void GetMinMaxTime(out float minTime, out float maxTime)
+		public void GetMinMaxTime(out float timeStart, out float timeEnd)
 		{
-			minTime = float.PositiveInfinity;
-			maxTime = float.NegativeInfinity;
+			var start = float.PositiveInfinity;
+			var end = float.NegativeInfinity;
 
 			for (int i = 0; i < times.Length; i++)
 			{
@@ -100,12 +129,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (float.IsNaN(time))
 					continue;
 
-				if (minTime > time)
-					minTime = time;
-				if (maxTime < time)
-					maxTime = time;
+				if (start > time)
+					start = time;
+				if (end < time)
+					end = time;
 			}
+
+			timeStart = start;
+			timeEnd = end;
 		}
+
+		#endregion
 	}
 
 }
