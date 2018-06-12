@@ -63,7 +63,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				Channel.SafeClose(ref VolumeChannel);
 				Graph.SafeClose(ref VolumeGraph);
 			}
 		}
@@ -86,7 +85,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				Channel.SafeClose(ref PitchChannel);
 				Graph.SafeClose(ref PitchGraph);
 			}
 		}
@@ -108,7 +106,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			else
 			{
-				Channel.SafeClose(ref IsPlayingChannel);
 				Graph.SafeClose(ref IsPlayingGraph);
 			}
 		}
