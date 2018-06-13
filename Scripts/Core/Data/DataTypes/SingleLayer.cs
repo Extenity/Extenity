@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
 
-	[System.Serializable]
+	[Serializable]
 	public class SingleLayer
 	{
 		[SerializeField]
@@ -15,7 +16,7 @@ namespace Extenity.DataToolbox
 			set
 			{
 				if (value < 0 || value > 31)
-					throw new System.ArgumentOutOfRangeException(nameof(value), value, "Layer index should be value=>0 and value<=31");
+					throw new ArgumentOutOfRangeException(nameof(value), value, "Layer index should be value=>0 and value<=31");
 				_LayerIndex = value;
 			}
 		}

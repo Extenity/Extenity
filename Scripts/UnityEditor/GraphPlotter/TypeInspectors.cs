@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Extenity.UnityEditorToolbox.GraphPlotting
 {
@@ -105,7 +106,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				}
 			}
 
-			public System.Object GetValue(System.Object instance, string fieldName)
+			public Object GetValue(Object instance, string fieldName)
 			{
 				FieldInfo fieldInfo;
 				if (!nameToFieldInfo.TryGetValue(fieldName, out fieldInfo))
@@ -150,7 +151,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			public string[] FieldNameStrings { get { return fieldNameStrings; } }
 			public Field[] Fields { get { return fields; } }
 
-			public System.Object GetValue(System.Object instance, string fieldName)
+			public Object GetValue(Object instance, string fieldName)
 			{
 				var quaternion = (Quaternion)instance;
 				if (fieldName == "x (euler)")
@@ -217,7 +218,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public interface ITypeInspector
 		{
-			System.Object GetValue(System.Object instance, string fieldName);
+			Object GetValue(Object instance, string fieldName);
 			string[] FieldNameStrings { get; }
 			Field[] Fields { get; }
 		}
