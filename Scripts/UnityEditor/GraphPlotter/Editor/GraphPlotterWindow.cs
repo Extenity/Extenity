@@ -273,8 +273,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			Channel newSelectedChannel = null;
 
-			var lineCount = 0;
-
 			GatherContextFilteredGraphs(currentEventType);
 
 			for (int i = 0; i < FilteredGraphs.Count; i++)
@@ -369,8 +367,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				Handles.DrawPolyLine(horizontalLines);
 
-				lineCount++;
-
 				if (isInPauseMode)
 				{
 					var time = (timeEnd - timeStart) * (mousePosition.x - graphRect.xMin) / graphRect.width + timeStart;
@@ -391,54 +387,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					}
 				}
 
-				// Sub tick lines
-				{
-					var n = 0;
-					var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
-					var t = startTime;
-
-					if (timeWindow < TimeWindowForSubSecondLinesToAppear)
-					{
-						var subTimeTickColorWithAlpha = SubSecondLinesColor;
-						subTimeTickColorWithAlpha.a *= 1f - (timeWindow - TimeWindowForSubSecondLinesToGetFullyOpaque) / (TimeWindowForSubSecondLinesToAppear - TimeWindowForSubSecondLinesToGetFullyOpaque);
-
-						Handles.color = subTimeTickColorWithAlpha;
-
-						while (t < timeEnd)
-						{
-							Handles.DrawLine(
-								new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
-								new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
-							);
-
-							lineCount++;
-
-							n++;
-							t = startTime + n * 0.1f;
-						}
-					}
-				}
-
-				// Tick lines
-				{
-					Handles.color = SecondLinesColor;
-					var n = 0;
-					var startTime = Mathf.CeilToInt(timeStart);
-					var t = startTime;
-
-					while (t < timeEnd)
-					{
-						Handles.DrawLine(
-							new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax, 0f),
-							new Vector3(graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow, graphRect.yMax - graphRect.height, 0f)
-						);
-
-						lineCount++;
-
-						n++;
-						t = startTime + n;
-					}
-				}
+				DrawTickLines(graphRect, timeStart, timeEnd);
 
 				foreach (var channel in graph.Channels)
 				{
@@ -513,7 +462,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						}
 
 						Handles.DrawPolyLine(points);
-						lineCount++;
 					}
 				}
 
@@ -653,7 +601,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						arrowPoints[3] = arrowPoints[0];
 
 						Handles.DrawPolyLine(arrowPoints);
-						lineCount++;
 					}
 					else if (normalizedSampleValue > 1f)
 					{
@@ -664,7 +611,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						arrowPoints[3] = arrowPoints[0];
 
 						Handles.DrawPolyLine(arrowPoints);
-						lineCount++;
 					}
 					else
 					{
@@ -677,7 +623,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						diamondPoints[4] = diamondPoints[0];
 
 						Handles.DrawPolyLine(diamondPoints);
-						lineCount++;
 					}
 
 					string sampleValueString;
@@ -761,25 +706,21 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMin, 0f),
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f)
 						);
-						lineCount++;
 
 						Handles.DrawLine(
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
 						);
-						lineCount++;
 
 						Handles.DrawLine(
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX, graphRect.yMax, 0f),
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f)
 						);
-						lineCount++;
 
 						Handles.DrawLine(
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5, 0f),
 							new Vector3(graphRect.xMin + graphRect.width * normalizedX + 5, graphRect.yMax + 5, 0f)
 						);
-						lineCount++;
 
 						GUI.color = eventColor;
 						GUI.contentColor = Color.white;
@@ -807,7 +748,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				Handles.color = Color.grey;
 				Handles.DrawLine(new Vector3(0f, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f),
 								  new Vector3(width, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f));
-				lineCount++;
 			}
 
 			// Scrollbar
@@ -912,6 +852,60 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			Repaint();
 
 			wasInPauseMode = isInPauseMode;
+		}
+
+		#endregion
+
+		#region GUI - Tick Lines
+
+		private void DrawTickLines(Rect graphRect, float timeStart, float timeEnd)
+		{
+			// Sub tick lines
+			{
+				var n = 0;
+				var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
+				var t = startTime;
+
+				if (timeWindow < TimeWindowForSubSecondLinesToAppear)
+				{
+					var subTimeTickColorWithAlpha = SubSecondLinesColor;
+					subTimeTickColorWithAlpha.a *= 1f - (timeWindow - TimeWindowForSubSecondLinesToGetFullyOpaque) / (TimeWindowForSubSecondLinesToAppear - TimeWindowForSubSecondLinesToGetFullyOpaque);
+
+					Handles.color = subTimeTickColorWithAlpha;
+
+					while (t < timeEnd)
+					{
+						var x = graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow;
+						Handles.DrawLine(
+							new Vector3(x, graphRect.yMax, 0f),
+							new Vector3(x, graphRect.yMax - graphRect.height, 0f)
+						);
+
+						n++;
+						t = startTime + n * 0.1f;
+					}
+				}
+			}
+
+			// Tick lines
+			{
+				Handles.color = SecondLinesColor;
+				var n = 0;
+				var startTime = Mathf.CeilToInt(timeStart);
+				var t = startTime;
+
+				while (t < timeEnd)
+				{
+					var x = graphRect.xMin + graphRect.width * (t - timeStart) / timeWindow;
+					Handles.DrawLine(
+						new Vector3(x, graphRect.yMax, 0f),
+						new Vector3(x, graphRect.yMax - graphRect.height, 0f)
+					);
+
+					n++;
+					t = startTime + n;
+				}
+			}
 		}
 
 		#endregion
