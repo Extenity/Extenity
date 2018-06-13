@@ -149,8 +149,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private float timeIntervalStartTime;
 		private float timeIntervalEndTime;
 
-		private GameObject ContextFilter = null;
-
 		// Saved editor settings.
 		private float timeWindow;
 		private int interpolationTypeIndex;
@@ -208,6 +206,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		}
 
 		#endregion
+
+		#region GUI
 
 		protected void OnGUI()
 		{
@@ -618,7 +618,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						int sampleIndex_b = (sampleIndex_a + 1) % channel.SampleAxisY.Length;
 
 						if (mouseTime >= channel.SampleAxisX[sampleIndex_a] &&
-						    mouseTime <= channel.SampleAxisX[sampleIndex_b])
+							mouseTime <= channel.SampleAxisX[sampleIndex_b])
 						{
 							index = Mathf.Abs(channel.SampleAxisX[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.SampleAxisX[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
 							break;
@@ -888,104 +888,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
-			// Gather context object names
-			var contextObjects = new List<GameObject>();
-			{
-				foreach (var graph in Graphs.All)
-				{
-					if (graph.Context != null)
-					{
-						if (!contextObjects.Contains(graph.Context))
-						{
-							contextObjects.Add(graph.Context);
-						}
-					}
-				}
-
-				contextObjects.Sort((a, b) =>
-				{
-					var nameDelta = a.name.CompareTo(b.name);
-					if (nameDelta == 0)
-					{
-						return a.GetInstanceID().CompareTo(b.GetInstanceID());
-					}
-					else
-					{
-						return nameDelta;
-					}
-				});
-			}
-
-			// Gather visible context object names
-			var visibleContextNames = new string[contextObjects.Count];
-			{
-				for (int i = 0; i < visibleContextNames.Length; i++)
-				{
-					visibleContextNames[i] = contextObjects[i].name;
-				}
-
-				// Rename objects with same name
-				for (int i = 0; i < visibleContextNames.Length; i++)
-				{
-					var lastIndexWithSameName = i;
-					for (int j = i + 1; j < visibleContextNames.Length; j++)
-					{
-						if (visibleContextNames[j] == visibleContextNames[i])
-						{
-							lastIndexWithSameName = j;
-						}
-						else
-						{
-							break;
-						}
-					}
-					if (lastIndexWithSameName > i)
-					{
-						int n = 1;
-						for (int j = i; j <= lastIndexWithSameName; j++)
-						{
-							visibleContextNames[j] = visibleContextNames[j] + "/" + n + "";
-							n++;
-						}
-						i = lastIndexWithSameName + 1;
-					}
-				}
-			}
-
 			// Draw context filter dropdown
-			{
-				var contextFilterIndex = 0;
-
-				var contextFilterOptions = new string[contextObjects.Count + 1];
-				contextFilterOptions[0] = "All";
-				for (int i = 0; i < contextObjects.Count; i++)
-				{
-					contextFilterOptions[i + 1] = visibleContextNames[i];
-
-					if (ContextFilter == contextObjects[i])
-					{
-						contextFilterIndex = i + 1;
-					}
-				}
-
-				contextFilterIndex = EditorGUILayout.Popup(contextFilterIndex, contextFilterOptions, GUILayout.Width(160));
-
-				var oldContextFilter = ContextFilter;
-
-				if (contextFilterIndex == 0)
-				{
-					ContextFilter = null;
-				}
-				else
-				{
-					ContextFilter = contextObjects[contextFilterIndex - 1];
-				}
-
-				if (ContextFilter != oldContextFilter)
-				{
-					scrollPositionY = 0;
-				}
-			}
+			DrawContextFilterDropdown();
 
 			// Interpolation selection.
 			GUILayout.Space(5f);
@@ -1034,6 +938,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			wasInPauseMode = isInPauseMode;
 		}
 
+		#endregion
+
+		#region Context Filtering
+
+		private GameObject ContextFilter = null;
+
 		public bool SetFilter(GameObject filteredObject)
 		{
 			if (!filteredObject)
@@ -1049,6 +959,110 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 			return false;
 		}
+
+		private void DrawContextFilterDropdown()
+		{
+			// Gather context object names
+			var contextObjects = new List<GameObject>();
+			{
+				foreach (var graph in Graphs.All)
+				{
+					if (graph.Context != null)
+					{
+						if (!contextObjects.Contains(graph.Context))
+						{
+							contextObjects.Add(graph.Context);
+						}
+					}
+				}
+
+				contextObjects.Sort((a, b) =>
+				{
+					var nameDelta = a.name.CompareTo(b.name);
+					if (nameDelta == 0)
+					{
+						return a.GetInstanceID().CompareTo(b.GetInstanceID());
+					}
+					else
+					{
+						return nameDelta;
+					}
+				});
+			}
+
+			// Gather visible context object names
+			var displayedContextNames = new string[contextObjects.Count];
+			{
+				for (int i = 0; i < displayedContextNames.Length; i++)
+				{
+					displayedContextNames[i] = contextObjects[i].name;
+				}
+
+				// Rename objects with the same name
+				for (int i = 0; i < displayedContextNames.Length; i++)
+				{
+					var lastIndexWithSameName = i;
+					for (int j = i + 1; j < displayedContextNames.Length; j++)
+					{
+						if (displayedContextNames[j] == displayedContextNames[i])
+						{
+							lastIndexWithSameName = j;
+						}
+						else
+						{
+							break;
+						}
+					}
+					if (lastIndexWithSameName > i)
+					{
+						int n = 1;
+						for (int j = i; j <= lastIndexWithSameName; j++)
+						{
+							displayedContextNames[j] = displayedContextNames[j] + "/" + n + "";
+							n++;
+						}
+						i = lastIndexWithSameName + 1;
+					}
+				}
+			}
+
+			// Draw dropdown
+			{
+				var contextFilterIndex = 0;
+
+				var contextFilterOptions = new string[contextObjects.Count + 1];
+				contextFilterOptions[0] = "All";
+				for (int i = 0; i < contextObjects.Count; i++)
+				{
+					contextFilterOptions[i + 1] = displayedContextNames[i];
+
+					if (ContextFilter == contextObjects[i])
+					{
+						contextFilterIndex = i + 1;
+					}
+				}
+
+				contextFilterIndex = EditorGUILayout.Popup(contextFilterIndex, contextFilterOptions, GUILayout.Width(160));
+
+				var oldContextFilter = ContextFilter;
+
+				if (contextFilterIndex == 0)
+				{
+					ContextFilter = null;
+				}
+				else
+				{
+					ContextFilter = contextObjects[contextFilterIndex - 1];
+				}
+
+				if (ContextFilter != oldContextFilter)
+				{
+					scrollPositionY = 0;
+				}
+			}
+		}
+
+		#endregion
 	}
 
 }
