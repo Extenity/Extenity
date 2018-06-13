@@ -33,9 +33,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private readonly Dictionary<Type, string> valueTypes = new Dictionary<Type, string>
 		{
 			{ typeof(Single), "float" },
+			{ typeof(Double), "double" },
+			{ typeof(Int16), "short" },
 			{ typeof(Int32), "int" },
+			{ typeof(Int64), "long" },
+			{ typeof(UInt16), "ushort" },
+			{ typeof(UInt32), "uint" },
+			{ typeof(UInt64), "ulong" },
 			{ typeof(Boolean), "bool" },
-			{ typeof(Double), "double" } ,
+			{ typeof(Byte), "byte" },
+			{ typeof(SByte), "sbyte" },
 		};
 
 		private readonly Dictionary<Type, ITypeInspector> inspectors = new Dictionary<Type, ITypeInspector>
@@ -50,7 +57,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			ITypeInspector inspector = null;
 			if (!inspectors.TryGetValue(type, out inspector))
 			{
-				inspector = new DefaultTypeInspector(this, type);
+				inspector = new DefaultTypeInspector(type);
 				inspectors.Add(type, inspector);
 			}
 			return inspector;
@@ -62,14 +69,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			private Field[] fields;
 			private Dictionary<string, FieldInfo> nameToFieldInfo;
 
-			public DefaultTypeInspector(TypeInspectors typeInspectors, Type type)
+			public DefaultTypeInspector(Type type)
 			{
 				var fieldInfos = new List<FieldInfo>();
 
 				var currentType = type;
 				while (currentType != null && currentType != typeof(UnityEngine.Object))
 				{
-					fieldInfos.AddRange(currentType.GetFields(Flags).Where(field => typeInspectors.IsAcceptableType(field.FieldType)));
+					fieldInfos.AddRange(currentType.GetFields(Flags).Where(field => Instance.IsAcceptableType(field.FieldType)));
 					currentType = currentType.BaseType;
 				}
 
@@ -81,11 +88,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					var fieldInfo = fieldInfos[i];
 
-					fieldNameStrings[i] = fieldInfo.Name + " : " + typeInspectors.GetReadableName(fieldInfo.FieldType);
+					fieldNameStrings[i] = fieldInfo.Name + " : " + Instance.GetReadableName(fieldInfo.FieldType);
 
-					var field = new Field();
-					field.name = fieldInfo.Name;
-					field.type = fieldInfo.FieldType;
+					var field = new Field(fieldInfo.Name, fieldInfo.FieldType);
 
 					nameToFieldInfo.Add(field.name, fieldInfo);
 
@@ -112,25 +117,31 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			public string name;
 			public Type type;
+
+			public Field(string name, Type type)
+			{
+				this.name = name;
+				this.type = type;
+			}
 		}
 
 		private class QuaternionTypeInspector : ITypeInspector
 		{
-			private readonly string[] _FieldNameStrings =
+			private readonly string[] fieldNameStrings =
 			{
 				"x (euler) : float",
 				"y (euler) : float",
 				"z (euler) : float"
 			};
-			private readonly Field[] _Fields =
+			private readonly Field[] fields =
 			{
-				new Field() { name = "x (euler)", type = typeof(float) },
-				new Field() { name = "y (euler)", type = typeof(float) },
-				new Field() { name = "z (euler)", type = typeof(float) },
+				new Field("x (euler)", typeof(float)),
+				new Field("y (euler)", typeof(float)),
+				new Field("z (euler)", typeof(float)),
 			};
 
-			public string[] FieldNameStrings { get { return _FieldNameStrings; } }
-			public Field[] Fields { get { return _Fields; } }
+			public string[] FieldNameStrings { get { return fieldNameStrings; } }
+			public Field[] Fields { get { return fields; } }
 
 			public System.Object GetValue(System.Object instance, string fieldName)
 			{
