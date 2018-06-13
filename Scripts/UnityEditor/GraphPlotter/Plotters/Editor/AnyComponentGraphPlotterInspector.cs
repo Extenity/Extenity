@@ -96,7 +96,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					EditorGUILayout.BeginHorizontal();
 
-					GUILayout.Label(field.FieldName + " : " + inspectors.GetPrettyName(field.FieldTypeName));
 					var newColor = EditorGUILayout.ColorField(field.Color, GUILayout.Width(40));
 					if (newColor != field.Color)
 					{
@@ -104,9 +103,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						field.Color = newColor;
 					}
 
+					GUILayout.Label(field.FieldName + " : " + inspectors.GetPrettyName(field.FieldTypeName));
+
 					EditorGUILayout.Space();
 
-					if (GUILayout.Button("remove", GUILayout.Width(60)))
+					if (GUILayout.Button("x", GUILayout.Width(20)))
 					{
 						Undo.RecordObject(Me, "Remove field");
 						Me.ChannelFields.RemoveAt(j);
