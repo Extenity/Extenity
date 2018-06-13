@@ -59,13 +59,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Color channelHeaderColor;
 		private Color channelHeaderColor_Free = new Color(0.2f, 0.2f, 0.2f);
 		private Color channelHeaderColor_Pro = new Color(0.5f, 0.5f, 0.5f);
-		private Color headerColor = new Color(0.7f, 0.7f, 0.7f);
-		private Color minMaxColor = new Color(1f, 1f, 1f, 0.2f);
-		private Color timeColor;
-		private Color timeColor_Free = new Color(0f, 0f, 0f, 0.5f);
-		private Color timeColor_Pro = new Color(1f, 1f, 1f, 0.5f);
-		private Color zeroLineColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
-		private Color timeLineColor = new Color(1f, 1f, 1f, 0.05f);
+		private Color GraphTitleColor = new Color(0.7f, 0.7f, 0.7f);
+		private Color GraphMinMaxTextColor = new Color(0f, 1f, 0f, 0.7f);
+		private Color TimeTextColor;
+		private Color TimeTextColor_Free = new Color(0f, 0f, 0f, 0.6f);
+		private Color TimeTextColor_Pro = new Color(1f, 1f, 1f, 0.6f);
+		private Color GraphBoundsLineColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+		private Color TimeCursorLineColor = new Color(1f, 1f, 1f, 0.05f);
 		private Color SecondLinesColor = new Color(1f, 1f, 1f, 0.05f);
 		private Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
 		private Color32[] TitleBarGradientShadowTextureColors =
@@ -96,7 +96,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				LegendTextColor = LegendTextColor_Pro;
 				LegendHiddenTextColor = LegendHiddenTextColor_Pro;
 				channelHeaderColor = channelHeaderColor_Pro;
-				timeColor = timeColor_Pro;
+				TimeTextColor = TimeTextColor_Pro;
 			}
 			else
 			{
@@ -105,18 +105,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				LegendTextColor = LegendTextColor_Free;
 				LegendHiddenTextColor = LegendHiddenTextColor_Free;
 				channelHeaderColor = channelHeaderColor_Free;
-				timeColor = timeColor_Free;
+				TimeTextColor = TimeTextColor_Free;
 			}
 
 			headerStyle = new GUIStyle();
-			headerStyle.normal.textColor = headerColor;
+			headerStyle.normal.textColor = GraphTitleColor;
 
 			maxStyle = new GUIStyle();
-			maxStyle.normal.textColor = minMaxColor;
+			maxStyle.normal.textColor = GraphMinMaxTextColor;
 			maxStyle.alignment = TextAnchor.LowerRight;
 
 			minStyle = new GUIStyle();
-			minStyle.normal.textColor = minMaxColor;
+			minStyle.normal.textColor = GraphMinMaxTextColor;
 			minStyle.alignment = TextAnchor.UpperRight;
 
 			//timeWindowStyle = new GUIStyle();
@@ -131,7 +131,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			timeIntervalSelectionStyle.normal.textColor = Color.white;
 
 			timeStyle = new GUIStyle();
-			timeStyle.normal.textColor = timeColor;
+			timeStyle.normal.textColor = TimeTextColor;
 
 			simpleStyle = new GUIStyle();
 			simpleStyle.normal.textColor = Color.white;
@@ -332,7 +332,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				if (graphAreaRect.yMin > position.height || graphAreaRect.yMax < 0f)
 					continue;
 
-				Handles.color = zeroLineColor;
+				Handles.color = GraphBoundsLineColor;
 				var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
 
 				horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
@@ -497,8 +497,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					}
 				}
 
-				// Time line.
-
+				// Draw time cursor line
 				var mouseTime = timeEnd;
 
 				if (isInPauseMode)
@@ -508,7 +507,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				mouseTime = Mathf.Max(mouseTime, 0f);
 
-				Handles.color = timeLineColor;
+				Handles.color = TimeCursorLineColor;
 				var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
 				Handles.DrawLine(new Vector3(x, topBarRect.height), new Vector3(x, position.height));
 
@@ -550,7 +549,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					// Draw time marker.
 					if (j == 0 && selectedChannel == null)
 					{
-						GUI.color = timeColor;
+						GUI.color = TimeTextColor;
 
 						if (!float.IsNaN(time))
 						{
