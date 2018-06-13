@@ -160,7 +160,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
 
-		private readonly List<Graph> VisibleGraphs = new List<Graph>(10);
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
 		#region Initialization
@@ -276,34 +275,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			var lineCount = 0;
 
-			// Gather visible graphs.
-			if (ContextFilter != null)
-			{
-				VisibleGraphs.Clear();
-				foreach (var graph in Graphs.All)
-				{
-					if (graph.Context == ContextFilter)
-					{
-						VisibleGraphs.Add(graph);
-					}
-				}
-			}
-			else
-			{
-				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
-				VisibleGraphs.Clear();
-				VisibleGraphs.AddRange(Graphs.All);
-			}
+			GatherContextFilteredGraphs(currentEventType);
 
-			var latestTime = 0f;
-			for (int i = 0; i < VisibleGraphs.Count; i++)
+			for (int i = 0; i < FilteredGraphs.Count; i++)
 			{
-				latestTime = Mathf.Max(latestTime, VisibleGraphs[i].LatestTime);
-			}
-
-			for (int i = 0; i < VisibleGraphs.Count; i++)
-			{
-				var graph = VisibleGraphs[i];
+				var graph = FilteredGraphs[i];
 				var range = graph.Range;
 
 				var graphAreaRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, graphWidth, graphHeight);
@@ -316,8 +292,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUI.color = Color.white;
 				GUI.Label(new Rect(legendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), graph.Title, headerStyle);
 
-				var timeEnd = latestTime + scrollPositionTime;
-				var timeStart = latestTime - timeWindow + scrollPositionTime;
+				var timeEnd = LatestTimeOfFilteredGraphs + scrollPositionTime;
+				var timeStart = LatestTimeOfFilteredGraphs - timeWindow + scrollPositionTime;
 
 				if (range.Sizing == ValueAxisSizing.Adaptive)
 				{
@@ -825,7 +801,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUI.color = new Color(1f, 1f, 1f, 0.3f);
 			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 8), topTexture, ScaleMode.StretchToFill);
 
-			for (int i = 0; i < VisibleGraphs.Count; i++)
+			for (int i = 0; i < FilteredGraphs.Count; i++)
 			{
 				// separator line
 				Handles.color = Color.grey;
@@ -835,7 +811,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Scrollbar
-			var scrollMaxY = graphHeight * VisibleGraphs.Count + extraScrollSpace;
+			var scrollMaxY = graphHeight * FilteredGraphs.Count + extraScrollSpace;
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
 
 			GUI.color = Color.white;
@@ -852,9 +828,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					scrollPositionTime = 0f;
 
 					// Find the maximum time span in samples.
-					var minTime = latestTime;
-					var maxTime = latestTime;
-					foreach (var graph in VisibleGraphs)
+					var minTime = LatestTimeOfFilteredGraphs;
+					var maxTime = LatestTimeOfFilteredGraphs;
+					foreach (var graph in FilteredGraphs)
 					{
 						float graphMinTime, graphMaxTime;
 						graph.GetMinMaxTime(out graphMinTime, out graphMaxTime);
@@ -943,6 +919,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		#region Context Filtering
 
 		private GameObject ContextFilter = null;
+		private readonly List<Graph> FilteredGraphs = new List<Graph>(10);
+		private float LatestTimeOfFilteredGraphs;
 
 		private List<GameObject> ContextObjects = new List<GameObject>(20);
 		private string[] DisplayedContextNames;
@@ -974,6 +952,38 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				ShowNotification(new GUIContent($"No graph to filter for '{filteredObject.name}'!"));
 				return false;
+			}
+		}
+
+		private void GatherContextFilteredGraphs(EventType currentEventType)
+		{
+			if (currentEventType != EventType.Layout)
+				return;
+
+			if (ContextFilter != null)
+			{
+				FilteredGraphs.Clear();
+				foreach (var graph in Graphs.All)
+				{
+					if (graph.Context == ContextFilter)
+					{
+						FilteredGraphs.Add(graph);
+					}
+				}
+			}
+			else
+			{
+				// Not cool to copy the list in every GUI call. But simplifies the design, and the list is not too big anyway.
+				FilteredGraphs.Clear();
+				FilteredGraphs.AddRange(Graphs.All);
+			}
+
+			LatestTimeOfFilteredGraphs = 0f;
+			for (int i = 0; i < FilteredGraphs.Count; i++)
+			{
+				var time = FilteredGraphs[i].LatestTime;
+				if (LatestTimeOfFilteredGraphs < time)
+					LatestTimeOfFilteredGraphs = time;
 			}
 		}
 
