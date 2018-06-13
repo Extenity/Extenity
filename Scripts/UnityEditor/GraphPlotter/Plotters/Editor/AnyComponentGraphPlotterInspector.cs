@@ -10,16 +10,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 	[CustomEditor(typeof(AnyComponentGraphPlotter))]
 	public class AnyComponentGraphPlotterInspector : ExtenityEditorBase<AnyComponentGraphPlotter>
 	{
-		private int componentIndex = -1;
+		private int SelectedComponentIndex = -1;
+		private List<string> NewChannelSelectionLevels = new List<string>();
 
-		private List<string> addField = new List<string>();
-
-		private TypeInspectors inspectors;
-
-		public AnyComponentGraphPlotterInspector() : base()
-		{
-			inspectors = TypeInspectors.Instance;
-		}
 
 		protected override void OnEnableDerived()
 		{
@@ -32,36 +25,36 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
-			var components = new List<Component>(Me.GetComponents<Component>());
+			var components = Me.GetComponents<Component>();
 
-			// find index of (previously) selected component.
+			// Find selected component index
 			if (Me.Component != null)
 			{
-				componentIndex = -1;
+				SelectedComponentIndex = -1;
 
-				for (int i = 0; i < components.Count; i++)
+				for (int i = 0; i < components.Length; i++)
 				{
 					if (components[i] == Me.Component)
 					{
-						componentIndex = i;
+						SelectedComponentIndex = i;
 						break;
 					}
 				}
 			}
 
-			// populate list of component names. 
-			var componentsStrings = new string[components.Count];
-			for (int i = 0; i < components.Count; i++)
+			// Create popup names list
+			var componentPopupNames = new string[components.Length];
+			for (int i = 0; i < components.Length; i++)
 			{
-				componentsStrings[i] = i + ". " + components[i].GetType().Name;
+				componentPopupNames[i] = i + ". " + components[i].GetType().Name;
 			}
 
 			EditorGUILayout.Space();
 
-			// component selection.
-			componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentsStrings);
+			// Component selection
+			SelectedComponentIndex = EditorGUILayout.Popup("Component", SelectedComponentIndex, componentPopupNames);
 
-			// value axis mode.
+			// Axis range configuration
 			CommonEditor.DrawAxisRangeConfiguration(Me, Me.Graph, ref Me.Range);
 
 			// Sample Time
@@ -74,9 +67,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			EditorGUILayout.Space();
 
-			if (componentIndex > -1 && components.Count > 0)
+			if (SelectedComponentIndex > -1 && components.Length > 0)
 			{
-				Me.Component = components[componentIndex];
+				Me.Component = components[SelectedComponentIndex];
 			}
 			else
 			{
@@ -125,17 +118,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				var level = 0;
 
-				while (instanceType != null && !inspectors.IsKnownType(instanceType))
+				while (instanceType != null && !TypeInspectors.Instance.IsKnownType(instanceType))
 				{
-					var inspector = inspectors.GetTypeInspector(instanceType);
+					var inspector = TypeInspectors.Instance.GetTypeInspector(instanceType);
 					var fieldNameStrings = inspector.FieldNameStrings;
 					var fields = inspector.Fields;
 
 					var selectedIndex = -1;
 
-					if (level < addField.Count)
+					if (level < NewChannelSelectionLevels.Count)
 					{
-						var previouslySelectedFieldName = addField[level];
+						var previouslySelectedFieldName = NewChannelSelectionLevels[level];
 						selectedIndex = Array.FindIndex(fields, field => (field.name == previouslySelectedFieldName));
 					}
 
@@ -143,13 +136,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					if (selectedIndex > -1)
 					{
 						var fieldName = fields[selectedIndex].name;
-						if (level < addField.Count)
+						if (level < NewChannelSelectionLevels.Count)
 						{
-							addField[level] = fieldName;
+							NewChannelSelectionLevels[level] = fieldName;
 						}
 						else
 						{
-							addField.Add(fieldName);
+							NewChannelSelectionLevels.Add(fieldName);
 						}
 
 						instanceType = fields[selectedIndex].type;
@@ -166,14 +159,14 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				{
 					var field = new AnyComponentGraphPlotter.ChannelField
 					{
-						Field = addField.ToArray(),
+						Field = NewChannelSelectionLevels.ToArray(),
 						Color = PlotColors.AllColors[Me.ChannelFields.Count % PlotColors.AllColors.Length]
 					};
 
 					Undo.RecordObject(Me, "New channel");
 					Me.ChannelFields.Add(field);
 
-					addField.RemoveAt(addField.Count - 1);
+					NewChannelSelectionLevels.RemoveAt(NewChannelSelectionLevels.Count - 1);
 				}
 				else
 				{
