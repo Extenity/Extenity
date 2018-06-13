@@ -36,13 +36,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		// Colors and Style
 		private const float DeselectedChannelAlpha = 0.02f;
-		private Color backgroundColor = new Color(32f / 255f, 32f / 255f, 32f / 255f, 1f);
+		private Color backgroundColor = new Color(0.12f, 0.12f, 0.12f, 1f);
 		private Color legendBackgroundColor;
-		private Color legendBackgroundColor_Free = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-		private Color legendBackgroundColor_Pro = new Color(65f / 255f, 65f / 255f, 65f / 255f);
+		private Color legendBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
+		private Color legendBackgroundColor_Pro = new Color(0.25f, 0.25f, 0.25f);
 		private Color settingsHeaderBackgroundColor;
-		private Color settingsHeaderBackgroundColor_Free = new Color(222f / 255f, 222f / 255f, 222f / 255f);
-		private Color settingsHeaderBackgroundColor_Pro = new Color(58f / 255f, 58f / 255f, 58f / 255f);
+		private Color settingsHeaderBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
+		private Color settingsHeaderBackgroundColor_Pro = new Color(0.22f, 0.22f, 0.22f);
 		private Color legendTextColorSelected;
 		private Color legendTextColorSelected_Free = new Color(0f, 0f, 0f, 1f);
 		private Color legendTextColorSelected_Pro = new Color(1f, 1f, 1f, 1f);
