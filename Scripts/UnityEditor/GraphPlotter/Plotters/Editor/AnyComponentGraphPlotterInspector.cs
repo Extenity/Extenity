@@ -85,21 +85,21 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			if (Me.Component != null)
 			{
-				EditorGUILayout.LabelField("Fields");
+				EditorGUILayout.LabelField("Channels");
 
 				EditorGUILayout.BeginHorizontal("Box");
 				EditorGUILayout.BeginVertical();
 
-				for (int j = 0; j < Me.ChannelFields.Count; j++)
+				for (int i = 0; i < Me.ChannelFields.Count; i++)
 				{
-					var field = Me.ChannelFields[j];
+					var field = Me.ChannelFields[i];
 
 					EditorGUILayout.BeginHorizontal();
 
 					var newColor = EditorGUILayout.ColorField(field.Color, GUILayout.Width(40));
 					if (newColor != field.Color)
 					{
-						Undo.RecordObject(Me, "Change field color");
+						Undo.RecordObject(Me, "Change channel color");
 						field.Color = newColor;
 					}
 
@@ -109,8 +109,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					if (GUILayout.Button("x", GUILayout.Width(20)))
 					{
-						Undo.RecordObject(Me, "Remove field");
-						Me.ChannelFields.RemoveAt(j);
+						Undo.RecordObject(Me, "Remove channel");
+						Me.ChannelFields.RemoveAt(i);
 						break;
 					}
 
@@ -119,14 +119,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					EditorGUILayout.Space();
 				}
 
-				EditorGUILayout.EndVertical();
-				EditorGUILayout.EndHorizontal();
-
 				EditorGUILayout.Space();
 
 				var instanceType = Me.Component.GetType();
 
-				int level = 0;
+				var level = 0;
 
 				while (instanceType != null && !inspectors.IsKnownType(instanceType))
 				{
@@ -134,7 +131,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var fieldNameStrings = inspector.FieldNameStrings;
 					var fields = inspector.Fields;
 
-					int selectedIndex = -1;
+					var selectedIndex = -1;
 
 					if (level < addField.Count)
 					{
@@ -142,10 +139,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						selectedIndex = Array.FindIndex(fields, field => (field.name == previouslySelectedFieldName));
 					}
 
-					selectedIndex = EditorGUILayout.Popup(level == 0 ? "Add field" : "...", selectedIndex, fieldNameStrings);
+					selectedIndex = EditorGUILayout.Popup(level == 0 ? "New channel" : "...", selectedIndex, fieldNameStrings);
 					if (selectedIndex > -1)
 					{
-						string fieldName = fields[selectedIndex].name;
+						var fieldName = fields[selectedIndex].name;
 						if (level < addField.Count)
 						{
 							addField[level] = fieldName;
@@ -173,7 +170,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						Color = PlotColors.AllColors[Me.ChannelFields.Count % PlotColors.AllColors.Length]
 					};
 
-					Undo.RecordObject(Me, "Add field");
+					Undo.RecordObject(Me, "New channel");
 					Me.ChannelFields.Add(field);
 
 					addField.RemoveAt(addField.Count - 1);
@@ -182,10 +179,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				{
 					if (level > 1)
 					{
-						EditorGUILayout.HelpBox("Using many levels of reflection can have a significant impact on runtime performance.", MessageType.Warning);
+						EditorGUILayout.HelpBox("Using many levels of reflection may have significant impact on performance.", MessageType.Warning);
 					}
 
 				}
+
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.EndHorizontal();
 			}
 
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
