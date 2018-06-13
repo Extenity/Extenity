@@ -889,7 +889,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			GUILayout.BeginHorizontal();
 
 			// Draw context filter dropdown
-			DrawContextFilterDropdown();
+			DrawContextFilterDropdown(currentEventType);
 
 			// Interpolation selection.
 			GUILayout.Space(5f);
@@ -944,6 +944,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private GameObject ContextFilter = null;
 
+		private List<GameObject> ContextObjects = new List<GameObject>(20);
+		private string[] DisplayedContextNames;
+
 		public bool SetContextFilter(GameObject filteredObject)
 		{
 			if (ContextFilter == filteredObject)
@@ -974,87 +977,28 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 		}
 
-		private void DrawContextFilterDropdown()
+		private void DrawContextFilterDropdown(EventType currentEventType)
 		{
-			// Gather context object names
-			var contextObjects = new List<GameObject>();
-			{
-				foreach (var graph in Graphs.All)
-				{
-					if (graph.Context != null)
-					{
-						if (!contextObjects.Contains(graph.Context))
-						{
-							contextObjects.Add(graph.Context);
-						}
-					}
-				}
-
-				contextObjects.Sort((a, b) =>
-				{
-					var nameDelta = a.name.CompareTo(b.name);
-					if (nameDelta == 0)
-					{
-						return a.GetInstanceID().CompareTo(b.GetInstanceID());
-					}
-					else
-					{
-						return nameDelta;
-					}
-				});
-			}
-
 			// Gather visible context object names
-			var displayedContextNames = new string[contextObjects.Count + 1];
+			if (currentEventType == EventType.Layout)
 			{
-				displayedContextNames[0] = "All";
-
-				for (int i = 0; i < contextObjects.Count; i++)
-				{
-					displayedContextNames[i + 1] = contextObjects[i].name;
-				}
-
-				// Rename objects with the same name
-				for (int i = 1; i < displayedContextNames.Length; i++)
-				{
-					var lastIndexWithSameName = i;
-					for (int j = i + 1; j < displayedContextNames.Length; j++)
-					{
-						if (displayedContextNames[j] == displayedContextNames[i])
-						{
-							lastIndexWithSameName = j;
-						}
-						else
-						{
-							break;
-						}
-					}
-					if (lastIndexWithSameName > i)
-					{
-						int n = 1;
-						for (int j = i; j <= lastIndexWithSameName; j++)
-						{
-							displayedContextNames[j] = displayedContextNames[j] + "/" + n + "";
-							n++;
-						}
-						i = lastIndexWithSameName + 1;
-					}
-				}
+				ContextObjects.Clear();
+				Graphs.GatherDisplayedContextObjectNames(ContextObjects, ref DisplayedContextNames);
 			}
 
 			// Draw dropdown
 			{
+				// Find current context filter index
 				var currentContextFilterIndex = 0; // This is the 'All' option.
-
-				for (int i = 0; i < contextObjects.Count; i++)
+				for (int i = 0; i < ContextObjects.Count; i++)
 				{
-					if (ContextFilter == contextObjects[i])
+					if (ContextFilter == ContextObjects[i])
 					{
 						currentContextFilterIndex = i + 1;
 					}
 				}
 
-				var newContextFilterIndex = EditorGUILayout.Popup(currentContextFilterIndex, displayedContextNames, GUILayout.Width(160));
+				var newContextFilterIndex = EditorGUILayout.Popup(currentContextFilterIndex, DisplayedContextNames, GUILayout.Width(160));
 
 				if (currentContextFilterIndex != newContextFilterIndex)
 				{
@@ -1066,7 +1010,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					}
 					else
 					{
-						SetContextFilter(contextObjects[newContextFilterIndex - 1]);
+						SetContextFilter(ContextObjects[newContextFilterIndex - 1]);
 					}
 				}
 			}
