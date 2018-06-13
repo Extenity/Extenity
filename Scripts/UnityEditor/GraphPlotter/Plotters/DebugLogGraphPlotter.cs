@@ -11,6 +11,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public StringFilter Filter;
 		private Graph Graph;
 
+		#region Initialization
+
 		protected void Start()
 		{
 			UpdateGraph();
@@ -21,6 +23,40 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				Application.logMessageReceived += LogCallback;
 			}
 		}
+
+		protected void OnEnable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Application.logMessageReceived -= LogCallback;
+			Graph.SafeClose(ref Graph);
+		}
+
+		protected void OnDisable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected void Update()
+		{
+			if (!Application.isPlaying)
+				return;
+
+			Graph.SetTimeCursor(Time.time);
+		}
+
+		#endregion
 
 		public void UpdateGraph()
 		{
@@ -41,14 +77,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 		}
 
-		protected void Update()
-		{
-			if (!Application.isPlaying)
-				return;
-
-			Graph.SetTimeCursor(Time.time);
-		}
-
 		private void LogCallback(string logString, string stackTrace, LogType type)
 		{
 			if (!Filter.IsMatching(logString))
@@ -59,22 +87,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			var entry = new TagEntry(Time.time, logString);
 
 			Graph.Add(entry);
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDestroy()
-		{
-			Application.logMessageReceived -= LogCallback;
-			Graph.SafeClose(ref Graph);
 		}
 	}
 

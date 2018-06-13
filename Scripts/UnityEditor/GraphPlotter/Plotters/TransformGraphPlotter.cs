@@ -45,20 +45,37 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel[] ScaleChannels;
 		// -----------------------------------------------------
 
+		#region Initialization
+
 		protected void Start()
 		{
 			UpdateGraph();
 		}
 
-		public void UpdateGraph()
+		protected void OnEnable()
 		{
-			var componentIsActive = enabled && gameObject.activeInHierarchy;
-
-			Graph.SetupGraphWithXYZChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY, PlotPositionZ);
-			Graph.SetupGraphWithXYZChannels(PlotRotation && componentIsActive, ref RotationGraph, "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, RotationRange, ref RotationChannels, PlotRotationX, PlotRotationY, PlotRotationZ);
-			Graph.SetupGraphWithXYZChannels(PlotScale && componentIsActive, ref ScaleGraph, "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")", gameObject, ScaleRange, ref ScaleChannels, PlotScaleX, PlotScaleY, PlotScaleZ);
-
+			UpdateGraph();
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref ScaleGraph);
+		}
+
+		protected void OnDisable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Update
 
 		protected void Update()
 		{
@@ -82,6 +99,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				Sample();
 			}
+		}
+
+		#endregion
+
+		public void UpdateGraph()
+		{
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
+
+			Graph.SetupGraphWithXYZChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY, PlotPositionZ);
+			Graph.SetupGraphWithXYZChannels(PlotRotation && componentIsActive, ref RotationGraph, "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, RotationRange, ref RotationChannels, PlotRotationX, PlotRotationY, PlotRotationZ);
+			Graph.SetupGraphWithXYZChannels(PlotScale && componentIsActive, ref ScaleGraph, "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")", gameObject, ScaleRange, ref ScaleChannels, PlotScaleX, PlotScaleY, PlotScaleZ);
+
 		}
 
 		public void Sample()
@@ -133,23 +162,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (PlotScaleZ)
 					ScaleChannels[2].Sample(scale.z, time, frame);
 			}
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref PositionGraph);
-			Graph.SafeClose(ref RotationGraph);
-			Graph.SafeClose(ref ScaleGraph);
 		}
 	}
 

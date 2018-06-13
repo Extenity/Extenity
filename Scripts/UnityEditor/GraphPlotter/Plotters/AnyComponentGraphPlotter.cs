@@ -39,10 +39,61 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			public string FieldName { get { return String.Join(".", Field); } }
 		}
 
+		#region Initialization
+
 		protected void Start()
 		{
 			UpdateGraph();
 		}
+
+		protected void OnEnable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref Graph);
+		}
+
+		protected void OnDisable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void LateUpdate()
+		{
+			if (SampleTime == SampleTime.LateUpdate)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		#endregion
 
 		public void UpdateGraph()
 		{
@@ -87,30 +138,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					Channel.SafeClose(ref field.Channel);
 				}
 				RemovedChannelFieldTracker.Clear();
-			}
-		}
-
-		protected void Update()
-		{
-			if (SampleTime == SampleTime.Update)
-			{
-				Sample();
-			}
-		}
-
-		protected void LateUpdate()
-		{
-			if (SampleTime == SampleTime.LateUpdate)
-			{
-				Sample();
-			}
-		}
-
-		protected void FixedUpdate()
-		{
-			if (SampleTime == SampleTime.FixedUpdate)
-			{
-				Sample();
 			}
 		}
 
@@ -166,21 +193,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					}
 				}
 			}
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref Graph);
 		}
 	}
 

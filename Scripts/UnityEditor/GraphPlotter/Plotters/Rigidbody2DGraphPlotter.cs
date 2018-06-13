@@ -45,20 +45,38 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel AngularVelocityChannel;
 		// -----------------------------------------------------
 
+		#region Initialization
+
 		protected void Start()
 		{
 			UpdateGraph();
 		}
 
-		public void UpdateGraph()
+		protected void OnEnable()
 		{
-			var componentIsActive = enabled && gameObject.activeInHierarchy;
-
-			Graph.SetupGraphWithXYChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY);
-			Graph.SetupGraphWithSingleChannel(PlotRotation && componentIsActive, ref RotationGraph, "Rotation", gameObject, RotationRange, ref RotationChannel, "angle", PlotColors.Red);
-			Graph.SetupGraphWithXYChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY);
-			Graph.SetupGraphWithSingleChannel(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannel, "angular velocity", PlotColors.Red);
+			UpdateGraph();
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref VelocityGraph);
+			Graph.SafeClose(ref AngularVelocityGraph);
+		}
+
+		protected void OnDisable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Update
 
 		protected void Update()
 		{
@@ -82,6 +100,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				Sample();
 			}
+		}
+
+		#endregion
+
+		public void UpdateGraph()
+		{
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
+
+			Graph.SetupGraphWithXYChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY);
+			Graph.SetupGraphWithSingleChannel(PlotRotation && componentIsActive, ref RotationGraph, "Rotation", gameObject, RotationRange, ref RotationChannel, "angle", PlotColors.Red);
+			Graph.SetupGraphWithXYChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY);
+			Graph.SetupGraphWithSingleChannel(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannel, "angular velocity", PlotColors.Red);
 		}
 
 		public void Sample()
@@ -152,24 +182,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				if (PlotAngularVelocity)
 					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time, frame);
 			}
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref PositionGraph);
-			Graph.SafeClose(ref RotationGraph);
-			Graph.SafeClose(ref VelocityGraph);
-			Graph.SafeClose(ref AngularVelocityGraph);
 		}
 	}
 

@@ -32,19 +32,37 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel IsPlayingChannel;
 		// -----------------------------------------------------
 
+		#region Initialization
+
 		protected void Start()
 		{
 			UpdateGraph();
 		}
 
-		public void UpdateGraph()
+		protected void OnEnable()
 		{
-			var componentIsActive = enabled && gameObject.activeInHierarchy;
-
-			Graph.SetupGraphWithSingleChannel(PlotVolume && componentIsActive, ref VolumeGraph, "Volume", gameObject, VolumeRange, ref VolumeChannel, "volume", PlotColors.Red);
-			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
-			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
+			UpdateGraph();
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref VolumeGraph);
+			Graph.SafeClose(ref PitchGraph);
+			Graph.SafeClose(ref IsPlayingGraph);
+		}
+
+		protected void OnDisable()
+		{
+			UpdateGraph();
+		}
+
+		#endregion
+
+		#region Update
 
 		protected void Update()
 		{
@@ -68,6 +86,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				Sample();
 			}
+		}
+
+		#endregion
+
+		public void UpdateGraph()
+		{
+			var componentIsActive = enabled && gameObject.activeInHierarchy;
+
+			Graph.SetupGraphWithSingleChannel(PlotVolume && componentIsActive, ref VolumeGraph, "Volume", gameObject, VolumeRange, ref VolumeChannel, "volume", PlotColors.Red);
+			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
+			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
 		}
 
 		public void Sample()
@@ -100,23 +129,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{
 				IsPlayingChannel.Sample(AudioSource.isPlaying ? 1f : 0f, time, frame);
 			}
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref VolumeGraph);
-			Graph.SafeClose(ref PitchGraph);
-			Graph.SafeClose(ref IsPlayingGraph);
 		}
 	}
 
