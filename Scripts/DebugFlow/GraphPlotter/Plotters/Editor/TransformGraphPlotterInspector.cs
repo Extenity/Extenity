@@ -2,21 +2,21 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
+namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 {
 
-	[CustomEditor(typeof(RigidbodyGraphPlotter))]
-	public class RigidbodyGraphPlotterInspector : ExtenityEditorBase<RigidbodyGraphPlotter>
+	[CustomEditor(typeof(TransformGraphPlotter))]
+	public class TransformGraphPlotterInspector : ExtenityEditorBase<TransformGraphPlotter>
 	{
 		protected override void OnEnableDerived()
 		{
 			IsDefaultInspectorDrawingEnabled = false;
 
 			// Try to connect the link automatically
-			if (!Me.Rigidbody)
+			if (!Me.Transform)
 			{
 				Undo.RecordObject(Me, "Automatic linking");
-				Me.Rigidbody = Me.GetComponent<Rigidbody>();
+				Me.Transform = Me.GetComponent<Transform>();
 			}
 		}
 
@@ -28,12 +28,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			EditorGUILayout.Space();
 
-			EditorGUILayout.PropertyField(GetProperty("Rigidbody"));
+			EditorGUILayout.PropertyField(GetProperty("Transform"));
 
 			EditorGUILayout.Space();
 
 			// Position
-			bool newShowPosition = EditorGUILayout.ToggleLeft(" Position", Me.PlotPosition);
+			bool newShowPosition = EditorGUILayout.ToggleLeft("Position", Me.PlotPosition);
 			if (newShowPosition != Me.PlotPosition)
 			{
 				Undo.RecordObject(target, "Toggle position");
@@ -44,7 +44,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
-
 				bool newShowPosition_x = EditorGUILayout.Toggle(Me.PlotPositionX, GUILayout.Width(14));
 				if (newShowPosition_x != Me.PlotPositionX)
 				{
@@ -70,13 +69,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
+				EditorGUILayout.BeginHorizontal();
+				CoordinateSystem newPositionSpace = (CoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.PositionSpace);
+				if (newPositionSpace != Me.PositionSpace)
+				{
+					Undo.RecordObject(target, "Changed position space");
+					Me.PositionSpace = newPositionSpace;
+				}
+				EditorGUILayout.EndHorizontal();
+
 				CommonEditor.DrawAxisRangeConfiguration(Me, Me.PositionGraph, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
 
 			// Rotation
-			bool newShowRotation = EditorGUILayout.ToggleLeft(" Rotation", Me.PlotRotation);
+			bool newShowRotation = EditorGUILayout.ToggleLeft("Rotation", Me.PlotRotation);
 			if (newShowRotation != Me.PlotRotation)
 			{
 				Undo.RecordObject(target, "Toggle rotation");
@@ -111,8 +119,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					Undo.RecordObject(target, "Toggle rotation z");
 					Me.PlotRotationZ = newShowRotation_z;
 				}
+
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
+
+				CoordinateSystem newRotationSpace = (CoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.RotationSpace);
+				if (newRotationSpace != Me.RotationSpace)
+				{
+					Undo.RecordObject(target, "Changed rotation space");
+					Me.RotationSpace = newRotationSpace;
+				}
 
 				CommonEditor.DrawAxisRangeConfiguration(Me, Me.RotationGraph, ref Me.RotationRange);
 
@@ -121,97 +137,58 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				EditorGUILayout.Space();
 			}
 
-			// Velocity
-			bool newShowVelocity = EditorGUILayout.ToggleLeft(" Velocity", Me.PlotVelocity);
-			if (newShowVelocity != Me.PlotVelocity)
+
+			// Scale
+			bool newShowScale = EditorGUILayout.ToggleLeft("Scale", Me.PlotScale);
+			if (newShowScale != Me.PlotScale)
 			{
-				Undo.RecordObject(target, "Toggle velocity");
-				Me.PlotVelocity = newShowVelocity;
+				Undo.RecordObject(target, "Toggle scale");
+				Me.PlotScale = newShowScale;
 			}
 
-			if (Me.PlotVelocity)
+			if (Me.PlotScale)
 			{
 				EditorGUILayout.BeginVertical();
 
 				EditorGUILayout.BeginHorizontal();
-
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowVelocity_x = EditorGUILayout.Toggle(Me.PlotVelocityX, GUILayout.Width(14));
-				if (newShowVelocity_x != Me.PlotVelocityX)
+				bool newShowScale_x = EditorGUILayout.Toggle(Me.PlotScaleX, GUILayout.Width(14));
+				if (newShowScale_x != Me.PlotScaleX)
 				{
-					Undo.RecordObject(target, "Toggle velocity x");
-					Me.PlotVelocityX = newShowVelocity_x;
+					Undo.RecordObject(target, "Toggle scale x");
+					Me.PlotScaleX = newShowScale_x;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowVelocity_y = EditorGUILayout.Toggle(Me.PlotVelocityY, GUILayout.Width(14));
-				if (newShowVelocity_y != Me.PlotVelocityY)
+				bool newShowScale_y = EditorGUILayout.Toggle(Me.PlotScaleY, GUILayout.Width(14));
+				if (newShowScale_y != Me.PlotScaleY)
 				{
-					Undo.RecordObject(target, "Toggle velocity y");
-					Me.PlotVelocityY = newShowVelocity_y;
+					Undo.RecordObject(target, "Toggle scale y");
+					Me.PlotScaleY = newShowScale_y;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowVelocity_z = EditorGUILayout.Toggle(Me.PlotVelocityZ, GUILayout.Width(14));
-				if (newShowVelocity_z != Me.PlotVelocityZ)
+				bool newShowScale_z = EditorGUILayout.Toggle(Me.PlotScaleZ, GUILayout.Width(14));
+				if (newShowScale_z != Me.PlotScaleZ)
 				{
-					Undo.RecordObject(target, "Toggle velocity z");
-					Me.PlotVelocityZ = newShowVelocity_z;
+					Undo.RecordObject(target, "Toggle scale z");
+					Me.PlotScaleZ = newShowScale_z;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
-
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.VelocityGraph, ref Me.VelocityRange);
+				ScaleCoordinateSystem newScaleSpace = (ScaleCoordinateSystem)EditorGUILayout.EnumPopup("Space", Me.ScaleSpace);
+				if (newScaleSpace != Me.ScaleSpace)
+				{
+					Undo.RecordObject(target, "Change scale space");
+					Me.ScaleSpace = newScaleSpace;
+				}
+
+				CommonEditor.DrawAxisRangeConfiguration(Me, Me.ScaleGraph, ref Me.ScaleRange);
 
 				EditorGUILayout.EndVertical();
 
 				EditorGUILayout.Space();
-			}
-
-			// Angular velocity
-			bool newShowAngularVelocity = EditorGUILayout.ToggleLeft(" Angular velocity", Me.PlotAngularVelocity);
-			if (newShowAngularVelocity != Me.PlotAngularVelocity)
-			{
-				Undo.RecordObject(target, "Toggle angular velocity");
-				Me.PlotAngularVelocity = newShowAngularVelocity;
-			}
-
-			if (Me.PlotAngularVelocity)
-			{
-				EditorGUILayout.BeginVertical();
-
-				EditorGUILayout.BeginHorizontal();
-
-				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowAngularVelocity_x = EditorGUILayout.Toggle(Me.PlotAngularVelocityX, GUILayout.Width(14));
-				if (newShowAngularVelocity_x != Me.PlotAngularVelocityX)
-				{
-					Undo.RecordObject(target, "Toggle angular velocity x");
-					Me.PlotAngularVelocityX = newShowAngularVelocity_x;
-				}
-
-				GUILayout.Label("x", GUILayout.Width(18));
-				bool newShowAngularVelocity_y = EditorGUILayout.Toggle(Me.PlotAngularVelocityY, GUILayout.Width(14));
-				if (newShowAngularVelocity_y != Me.PlotAngularVelocityY)
-				{
-					Undo.RecordObject(target, "Toggle angular velocity y");
-					Me.PlotAngularVelocityY = newShowAngularVelocity_y;
-				}
-				GUILayout.Label("y", GUILayout.Width(18));
-				bool newShowAngularVelocity_z = EditorGUILayout.Toggle(Me.PlotAngularVelocityZ, GUILayout.Width(14));
-				if (newShowAngularVelocity_z != Me.PlotAngularVelocityZ)
-				{
-					Undo.RecordObject(target, "Toggle angular velocity z");
-					Me.PlotAngularVelocityZ = newShowAngularVelocity_z;
-				}
-				GUILayout.Label("z", GUILayout.Width(18));
-
-				EditorGUILayout.EndHorizontal();
-
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.AngularVelocityGraph, ref Me.AngularVelocityRange);
-
-				EditorGUILayout.EndVertical();
 			}
 
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);

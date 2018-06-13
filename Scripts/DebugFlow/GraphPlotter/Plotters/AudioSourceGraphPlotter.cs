@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	[AddComponentMenu("Graph Plotter/Plot AudioSource")]

@@ -1,4 +1,4 @@
-﻿using Extenity.UnityEditorToolbox.GraphPlotting;
+﻿using Extenity.DebugFlowTool.GraphPlotting;
 using UnityEngine;
 
 namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting

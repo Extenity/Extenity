@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	public class Channel

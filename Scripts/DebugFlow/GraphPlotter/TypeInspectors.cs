@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using Object = System.Object;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	public class TypeInspectors

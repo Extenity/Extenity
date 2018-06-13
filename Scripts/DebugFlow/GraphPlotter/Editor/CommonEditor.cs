@@ -2,7 +2,7 @@ using Extenity.IMGUIToolbox;
 using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
+namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 {
 
 	public class CommonEditor

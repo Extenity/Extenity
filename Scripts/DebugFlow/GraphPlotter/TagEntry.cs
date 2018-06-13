@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	public class TagEntry

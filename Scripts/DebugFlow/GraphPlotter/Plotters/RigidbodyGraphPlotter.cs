@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
-	[AddComponentMenu("Graph Plotter/Plot Rigidbody2D")]
+	[AddComponentMenu("Graph Plotter/Plot Rigidbody")]
 	[ExecuteInEditMode]
-	public class Rigidbody2DGraphPlotter : MonoBehaviour
+	public class RigidbodyGraphPlotter : MonoBehaviour
 	{
 		#region Initialization
 
@@ -30,7 +30,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			Graph.SafeClose(ref VelocityGraph);
 			Graph.SafeClose(ref AngularVelocityGraph);
 		}
-
+		
 		protected void OnDisable()
 		{
 			SetupGraph();
@@ -68,7 +68,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#region Metadata and Configuration
 
-		public Rigidbody2D Rigidbody2D;
+		public Rigidbody Rigidbody;
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
 		// -----------------------------------------------------
@@ -77,6 +77,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public bool PlotPosition = false;
 		public bool PlotPositionX = true;
 		public bool PlotPositionY = true;
+		public bool PlotPositionZ = true;
 		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph PositionGraph;
 		private Channel[] PositionChannels;
@@ -84,16 +85,19 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// Input - Rotation
 		// -----------------------------------------------------
 		public bool PlotRotation = false;
-		public bool ClampRotation = true;
-		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 360f);
+		public bool PlotRotationX = true;
+		public bool PlotRotationY = true;
+		public bool PlotRotationZ = true;
+		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
 		public Graph RotationGraph;
-		private Channel RotationChannel;
+		private Channel[] RotationChannels;
 		// -----------------------------------------------------
 		// Input - Velocity
 		// -----------------------------------------------------
 		public bool PlotVelocity = false;
 		public bool PlotVelocityX = true;
 		public bool PlotVelocityY = true;
+		public bool PlotVelocityZ = true;
 		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph VelocityGraph;
 		private Channel[] VelocityChannels;
@@ -101,19 +105,22 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		// Input - Angular Velocity
 		// -----------------------------------------------------
 		public bool PlotAngularVelocity = false;
+		public bool PlotAngularVelocityX = true;
+		public bool PlotAngularVelocityY = true;
+		public bool PlotAngularVelocityZ = true;
 		public ValueAxisRangeConfiguration AngularVelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		public Graph AngularVelocityGraph;
-		private Channel AngularVelocityChannel;
+		private Channel[] AngularVelocityChannels;
 		// -----------------------------------------------------
 
 		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			Graph.SetupGraphWithXYChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY);
-			Graph.SetupGraphWithSingleChannel(PlotRotation && componentIsActive, ref RotationGraph, "Rotation", gameObject, RotationRange, ref RotationChannel, "angle", PlotColors.Red);
-			Graph.SetupGraphWithXYChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY);
-			Graph.SetupGraphWithSingleChannel(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannel, "angular velocity", PlotColors.Red);
+			Graph.SetupGraphWithXYZChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY, PlotPositionZ);
+			Graph.SetupGraphWithXYZChannels(PlotRotation && componentIsActive, ref RotationGraph, "Rotation", gameObject, RotationRange, ref RotationChannels, PlotRotationX, PlotRotationY, PlotRotationZ);
+			Graph.SetupGraphWithXYZChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY, PlotVelocityZ);
+			Graph.SetupGraphWithXYZChannels(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannels, PlotAngularVelocityX, PlotAngularVelocityY, PlotAngularVelocityZ);
 		}
 
 		#endregion
@@ -125,9 +132,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			if (!Application.isPlaying)
 				return;
 
-			if (Rigidbody2D == null)
+			if (!Rigidbody)
 			{
-				Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(UnityEngine.Rigidbody2D) + " component.", this);
+				Debug.LogWarning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
 				return;
 			}
 
@@ -136,7 +143,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			if (PlotPosition)
 			{
-				var position = Rigidbody2D.position;
+				var position = Rigidbody.position;
 
 				PositionRange.CopyFrom(PositionGraph.Range);
 
@@ -144,49 +151,50 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					PositionChannels[0].Sample(position.x, time, frame);
 				if (PlotPositionY)
 					PositionChannels[1].Sample(position.y, time, frame);
+				if (PlotPositionZ)
+					PositionChannels[2].Sample(position.z, time, frame);
 			}
 
 			if (PlotRotation)
 			{
+				var euler = Rigidbody.rotation.eulerAngles;
+
 				RotationRange.CopyFrom(RotationGraph.Range);
 
-				if (PlotRotation)
-				{
-					var rotation = Rigidbody2D.rotation;
-					if (ClampRotation)
-					{
-						if (rotation > 0)
-						{
-							rotation = rotation % 360f;
-						}
-						else
-						{
-							rotation = rotation - 360f * Mathf.FloorToInt(rotation / 360f);
-						}
-					}
-
-					RotationChannel.Sample(rotation, time, frame);
-				}
+				if (PlotRotationX)
+					RotationChannels[0].Sample(euler.x, time, frame);
+				if (PlotRotationY)
+					RotationChannels[1].Sample(euler.y, time, frame);
+				if (PlotRotationZ)
+					RotationChannels[2].Sample(euler.z, time, frame);
 			}
 
 			if (PlotVelocity)
 			{
-				var velocity = Rigidbody2D.velocity;
+				var velocity = Rigidbody.velocity;
 
-				VelocityRange.CopyFrom(AngularVelocityGraph.Range);
+				VelocityRange.CopyFrom(VelocityGraph.Range);
 
 				if (PlotVelocityX)
 					VelocityChannels[0].Sample(velocity.x, time, frame);
 				if (PlotVelocityY)
 					VelocityChannels[1].Sample(velocity.y, time, frame);
+				if (PlotVelocityZ)
+					VelocityChannels[2].Sample(velocity.z, time, frame);
 			}
 
 			if (PlotAngularVelocity)
 			{
+				var angularVelocity = Rigidbody.angularVelocity;
+
 				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
-				if (PlotAngularVelocity)
-					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time, frame);
+				if (PlotAngularVelocityX)
+					AngularVelocityChannels[0].Sample(angularVelocity.x, time, frame);
+				if (PlotAngularVelocityY)
+					AngularVelocityChannels[1].Sample(angularVelocity.y, time, frame);
+				if (PlotAngularVelocityZ)
+					AngularVelocityChannels[2].Sample(angularVelocity.z, time, frame);
 			}
 		}
 

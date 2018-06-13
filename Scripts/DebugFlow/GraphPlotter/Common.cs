@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	public enum CoordinateSystem { Local, World };

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Extenity.DataToolbox;
 using UnityEngine;
 
-namespace Extenity.UnityEditorToolbox.GraphPlotting
+namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
 	public static class Graphs
