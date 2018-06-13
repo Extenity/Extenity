@@ -9,7 +9,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 	{
 		public static void DrawAxisRangeConfiguration(Object undoObject, Graph graph, ref ValueAxisRangeConfiguration range)
 		{
-			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis sizing ", range.Sizing);
+			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis Sizing", range.Sizing);
 
 			if (newSizing != range.Sizing)
 			{
@@ -35,8 +35,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 			else
 			{
-				newMin = EditorGUILayout.FloatField("Axis min", range.Min);
-				newMax = EditorGUILayout.FloatField("Axis max", range.Max);
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Axis Range");
+				var position = EditorGUILayout.GetControlRect(false, 20f);
+				const float labelWidth = 40f;
+				var halfWidth = position.width * 0.5f;
+				var inputFieldWidth = Mathf.Max(0f, halfWidth - labelWidth);
+				var height = position.height;
+				GUI.Label(new Rect(position.x, position.y, labelWidth, height), "Min:");
+				newMin = EditorGUI.FloatField(new Rect(position.x + labelWidth, position.y, inputFieldWidth, height), range.Min);
+				GUI.Label(new Rect(position.x + halfWidth, position.y, labelWidth, height), "Max:");
+				newMax = EditorGUI.FloatField(new Rect(position.x + halfWidth + labelWidth, position.y, inputFieldWidth, height), range.Max);
+				EditorGUILayout.EndHorizontal();
 
 				if (newMin != range.Min)
 				{

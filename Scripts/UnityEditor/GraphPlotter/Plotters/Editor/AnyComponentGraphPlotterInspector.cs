@@ -32,12 +32,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			CommonEditor.DrawAxisRangeConfiguration(Me, Me.Graph, ref Me.Range);
 
 			// Sample Time
-			var newSampleTime = (SampleTime)EditorGUILayout.EnumPopup("Sample time", Me.SampleTime);
-			if (newSampleTime != Me.SampleTime)
-			{
-				Undo.RecordObject(target, "Change sample time");
-				Me.SampleTime = newSampleTime;
-			}
+			EditorGUILayout.PropertyField(GetProperty("SampleTime"));
 
 			EditorGUILayout.Space();
 
