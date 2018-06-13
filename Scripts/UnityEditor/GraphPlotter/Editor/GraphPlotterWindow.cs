@@ -1005,15 +1005,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			// Gather visible context object names
-			var displayedContextNames = new string[contextObjects.Count];
+			var displayedContextNames = new string[contextObjects.Count + 1];
 			{
-				for (int i = 0; i < displayedContextNames.Length; i++)
+				displayedContextNames[0] = "All";
+
+				for (int i = 0; i < contextObjects.Count; i++)
 				{
-					displayedContextNames[i] = contextObjects[i].name;
+					displayedContextNames[i + 1] = contextObjects[i].name;
 				}
 
 				// Rename objects with the same name
-				for (int i = 0; i < displayedContextNames.Length; i++)
+				for (int i = 1; i < displayedContextNames.Length; i++)
 				{
 					var lastIndexWithSameName = i;
 					for (int j = i + 1; j < displayedContextNames.Length; j++)
@@ -1042,36 +1044,30 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			// Draw dropdown
 			{
-				var contextFilterIndex = 0;
+				var currentContextFilterIndex = 0; // This is the 'All' option.
 
-				var contextFilterOptions = new string[contextObjects.Count + 1];
-				contextFilterOptions[0] = "All";
 				for (int i = 0; i < contextObjects.Count; i++)
 				{
-					contextFilterOptions[i + 1] = displayedContextNames[i];
-
 					if (ContextFilter == contextObjects[i])
 					{
-						contextFilterIndex = i + 1;
+						currentContextFilterIndex = i + 1;
 					}
 				}
 
-				contextFilterIndex = EditorGUILayout.Popup(contextFilterIndex, contextFilterOptions, GUILayout.Width(160));
+				var newContextFilterIndex = EditorGUILayout.Popup(currentContextFilterIndex, displayedContextNames, GUILayout.Width(160));
 
-				var oldContextFilter = ContextFilter;
-
-				if (contextFilterIndex == 0)
-				{
-					SetContextFilter(null);
-				}
-				else
-				{
-					SetContextFilter(contextObjects[contextFilterIndex - 1]);
-				}
-
-				if (ContextFilter != oldContextFilter)
+				if (currentContextFilterIndex != newContextFilterIndex)
 				{
 					scrollPositionY = 0;
+
+					if (newContextFilterIndex == 0)
+					{
+						SetContextFilter(null);
+					}
+					else
+					{
+						SetContextFilter(contextObjects[newContextFilterIndex - 1]);
+					}
 				}
 			}
 		}
