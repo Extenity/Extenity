@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Extenity.IMGUIToolbox;
 using Extenity.TextureToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -173,9 +174,17 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		#region Initialization
 
 		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void CreateWindow()
+		private static void ToggleWindow()
 		{
-			GetWindow<GraphPlotterWindow>();
+			if (EditorTools.IsWindowOpen<GraphPlotterWindow>())
+			{
+				var window = GetWindow<GraphPlotterWindow>();
+				window.Close();
+			}
+			else
+			{
+				GetWindow<GraphPlotterWindow>();
+			}
 		}
 
 		protected void Awake()

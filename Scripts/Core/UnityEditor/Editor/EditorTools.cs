@@ -458,6 +458,20 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region IsWindowOpen
+
+		/// <summary>
+		/// Check if there is at least one window of type T open. Checking method is directly copied from 'EditorWindow.GetWindow'.
+		/// </summary>
+		public static bool IsWindowOpen<T>() where T : EditorWindow
+		{
+			var objects = Resources.FindObjectsOfTypeAll<T>();
+			var window = objects.Length > 0 ? (EditorWindow)objects[0] : null;
+			return window;
+		}
+
+		#endregion
+
 		#region Project Metadata
 
 		public static string ProjectName
