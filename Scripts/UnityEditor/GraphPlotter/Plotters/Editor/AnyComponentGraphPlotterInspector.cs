@@ -96,7 +96,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					EditorGUILayout.BeginHorizontal();
 
-					GUILayout.Label(field.FieldName + " : " + inspectors.GetReadableName(field.FieldTypeName));
+					GUILayout.Label(field.FieldName + " : " + inspectors.GetPrettyName(field.FieldTypeName));
 					var newColor = EditorGUILayout.ColorField(field.Color, GUILayout.Width(40));
 					if (newColor != field.Color)
 					{
@@ -127,7 +127,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				int level = 0;
 
-				while (instanceType != null && !inspectors.IsSampleType(instanceType))
+				while (instanceType != null && !inspectors.IsKnownType(instanceType))
 				{
 					var inspector = inspectors.GetTypeInspector(instanceType);
 					var fieldNameStrings = inspector.FieldNameStrings;
@@ -182,7 +182,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				{
 					if (level > 1)
 					{
-						EditorGUILayout.HelpBox("Using many levels of reflection can have a significant impact on runtime-time performance.", MessageType.Warning);
+						EditorGUILayout.HelpBox("Using many levels of reflection can have a significant impact on runtime performance.", MessageType.Warning);
 					}
 
 				}

@@ -30,7 +30,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private const BindingFlags Flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-		private readonly Dictionary<Type, string> valueTypes = new Dictionary<Type, string>
+		private readonly Dictionary<Type, string> PrettyTypeNames = new Dictionary<Type, string>
 		{
 			{ typeof(Single), "float" },
 			{ typeof(Double), "double" },
@@ -45,20 +45,27 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			{ typeof(SByte), "sbyte" },
 		};
 
-		private readonly Dictionary<Type, ITypeInspector> inspectors = new Dictionary<Type, ITypeInspector>
+		private readonly Dictionary<Type, ITypeInspector> Inspectors = new Dictionary<Type, ITypeInspector>
 		{
 			{ typeof(Quaternion), new QuaternionTypeInspector() }
 		};
 
 		#endregion
 
+		public void AddTypeInspector(Type type, ITypeInspector typeInspector)
+		{
+			if (Inspectors.ContainsKey(type))
+				return; // Ignore.
+			Inspectors.Add(type, typeInspector);
+		}
+
 		public ITypeInspector GetTypeInspector(Type type)
 		{
 			ITypeInspector inspector = null;
-			if (!inspectors.TryGetValue(type, out inspector))
+			if (!Inspectors.TryGetValue(type, out inspector))
 			{
 				inspector = new DefaultTypeInspector(type);
-				inspectors.Add(type, inspector);
+				Inspectors.Add(type, inspector);
 			}
 			return inspector;
 		}
@@ -88,7 +95,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					var fieldInfo = fieldInfos[i];
 
-					fieldNameStrings[i] = fieldInfo.Name + " : " + Instance.GetReadableName(fieldInfo.FieldType);
+					fieldNameStrings[i] = fieldInfo.Name + " : " + Instance.GetPrettyName(fieldInfo.FieldType);
 
 					var field = new Field(fieldInfo.Name, fieldInfo.FieldType);
 
@@ -150,29 +157,26 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				{
 					return quaternion.eulerAngles.x;
 				}
-				else if (fieldName == "y (euler)")
+				if (fieldName == "y (euler)")
 				{
 					return quaternion.eulerAngles.y;
 				}
-				else if (fieldName == "z (euler)")
+				if (fieldName == "z (euler)")
 				{
 					return quaternion.eulerAngles.z;
 				}
-				else
-				{
-					return null;
-				}
+				return null;
 			}
 		}
 
-		public bool IsSampleType(Type type)
+		public bool IsKnownType(Type type)
 		{
-			return valueTypes.ContainsKey(type);
+			return PrettyTypeNames.ContainsKey(type);
 		}
 
 		public bool IsAcceptableType(Type type)
 		{
-			if (IsSampleType(type))
+			if (IsKnownType(type))
 			{
 				return true;
 			}
@@ -195,20 +199,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			return true;
 		}
 
-		private string GetReadableName(Type type)
+		private string GetPrettyName(Type type)
 		{
 			string readable;
-			if (!valueTypes.TryGetValue(type, out readable))
+			if (!PrettyTypeNames.TryGetValue(type, out readable))
 			{
 				readable = type.Name;
 			}
 			return readable;
 		}
 
-		public string GetReadableName(string typeName)
+		public string GetPrettyName(string typeName)
 		{
 			var type = Type.GetType(typeName);
-			return GetReadableName(type);
+			return GetPrettyName(type);
 		}
 
 		public interface ITypeInspector
