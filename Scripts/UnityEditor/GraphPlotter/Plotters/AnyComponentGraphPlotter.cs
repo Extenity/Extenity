@@ -10,21 +10,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class AnyComponentGraphPlotter : MonoBehaviour
 	{
-		[HideInInspector] // Not meant to be shown in raw format
-		public Component Component;
-		[HideInInspector] // Not meant to be shown in raw format
-		public List<ChannelField> ChannelFields = new List<ChannelField>();
-		private readonly List<ChannelField> RemovedChannelFieldTracker = new List<ChannelField>();
-
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
-
-		// -----------------------------------------------------
-		// Input - Scale
-		// -----------------------------------------------------
-		public Graph Graph;
-		public ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-		// -----------------------------------------------------
-
 		[Serializable]
 		public class ChannelField
 		{
@@ -43,12 +28,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void Start()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		protected void OnEnable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -62,7 +47,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDisable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -95,7 +80,27 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
-		public void UpdateGraph()
+		#region Metadata and Configuration
+
+		public Component Component;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
+		// -----------------------------------------------------
+		// Input - Any Value
+		// -----------------------------------------------------
+		[HideInInspector] // Not meant to be shown in raw format
+		public List<ChannelField> ChannelFields = new List<ChannelField>();
+		public ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public Graph Graph;
+		// -----------------------------------------------------
+
+		#endregion
+
+		#region Setup Graph Dynamically
+
+		private readonly List<ChannelField> RemovedChannelFieldTracker = new List<ChannelField>();
+
+		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 			var graphIsActive = componentIsActive && Component != null;
@@ -140,6 +145,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				RemovedChannelFieldTracker.Clear();
 			}
 		}
+
+		#endregion
 
 		public void Sample()
 		{

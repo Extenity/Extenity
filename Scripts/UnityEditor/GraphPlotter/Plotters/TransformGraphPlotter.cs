@@ -7,6 +7,66 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class TransformGraphPlotter : MonoBehaviour
 	{
+		#region Initialization
+
+		protected void Start()
+		{
+			SetupGraph();
+		}
+
+		protected void OnEnable()
+		{
+			SetupGraph();
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref ScaleGraph);
+		}
+
+		protected void OnDisable()
+		{
+			SetupGraph();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void LateUpdate()
+		{
+			if (SampleTime == SampleTime.LateUpdate)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		#endregion
+
+		#region Metadata and Configuration
+
 		public Transform Transform;
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
@@ -45,73 +105,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		public Channel[] ScaleChannels;
 		// -----------------------------------------------------
 
-		#region Initialization
-
-		protected void Start()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref PositionGraph);
-			Graph.SafeClose(ref RotationGraph);
-			Graph.SafeClose(ref ScaleGraph);
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		#endregion
-
-		#region Update
-
-		protected void Update()
-		{
-			if (SampleTime == SampleTime.Update)
-			{
-				Sample();
-			}
-		}
-
-		protected void LateUpdate()
-		{
-			if (SampleTime == SampleTime.LateUpdate)
-			{
-				Sample();
-			}
-		}
-
-		protected void FixedUpdate()
-		{
-			if (SampleTime == SampleTime.FixedUpdate)
-			{
-				Sample();
-			}
-		}
-
-		#endregion
-
-		public void UpdateGraph()
+		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
 			Graph.SetupGraphWithXYZChannels(PlotPosition && componentIsActive, ref PositionGraph, "Position (" + (PositionSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, PositionRange, ref PositionChannels, PlotPositionX, PlotPositionY, PlotPositionZ);
 			Graph.SetupGraphWithXYZChannels(PlotRotation && componentIsActive, ref RotationGraph, "Rotation (" + (RotationSpace == CoordinateSystem.World ? "world" : "local") + ")", gameObject, RotationRange, ref RotationChannels, PlotRotationX, PlotRotationY, PlotRotationZ);
 			Graph.SetupGraphWithXYZChannels(PlotScale && componentIsActive, ref ScaleGraph, "Scale (" + (ScaleSpace == ScaleCoordinateSystem.Local ? "local" : "lossy") + ")", gameObject, ScaleRange, ref ScaleChannels, PlotScaleX, PlotScaleY, PlotScaleZ);
-
 		}
+
+		#endregion
 
 		public void Sample()
 		{

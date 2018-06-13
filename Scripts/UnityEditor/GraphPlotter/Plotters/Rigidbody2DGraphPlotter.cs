@@ -7,6 +7,67 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class Rigidbody2DGraphPlotter : MonoBehaviour
 	{
+		#region Initialization
+
+		protected void Start()
+		{
+			SetupGraph();
+		}
+
+		protected void OnEnable()
+		{
+			SetupGraph();
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Graph.SafeClose(ref PositionGraph);
+			Graph.SafeClose(ref RotationGraph);
+			Graph.SafeClose(ref VelocityGraph);
+			Graph.SafeClose(ref AngularVelocityGraph);
+		}
+
+		protected void OnDisable()
+		{
+			SetupGraph();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected void Update()
+		{
+			if (SampleTime == SampleTime.Update)
+			{
+				Sample();
+			}
+		}
+
+		protected void LateUpdate()
+		{
+			if (SampleTime == SampleTime.LateUpdate)
+			{
+				Sample();
+			}
+		}
+
+		protected void FixedUpdate()
+		{
+			if (SampleTime == SampleTime.FixedUpdate)
+			{
+				Sample();
+			}
+		}
+
+		#endregion
+
+		#region Metadata and Configuration
+
 		public Rigidbody2D Rigidbody2D;
 		public SampleTime SampleTime = SampleTime.FixedUpdate;
 
@@ -45,66 +106,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		private Channel AngularVelocityChannel;
 		// -----------------------------------------------------
 
-		#region Initialization
-
-		protected void Start()
-		{
-			UpdateGraph();
-		}
-
-		protected void OnEnable()
-		{
-			UpdateGraph();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected void OnDestroy()
-		{
-			Graph.SafeClose(ref PositionGraph);
-			Graph.SafeClose(ref RotationGraph);
-			Graph.SafeClose(ref VelocityGraph);
-			Graph.SafeClose(ref AngularVelocityGraph);
-		}
-
-		protected void OnDisable()
-		{
-			UpdateGraph();
-		}
-
-		#endregion
-
-		#region Update
-
-		protected void Update()
-		{
-			if (SampleTime == SampleTime.Update)
-			{
-				Sample();
-			}
-		}
-
-		protected void LateUpdate()
-		{
-			if (SampleTime == SampleTime.LateUpdate)
-			{
-				Sample();
-			}
-		}
-
-		protected void FixedUpdate()
-		{
-			if (SampleTime == SampleTime.FixedUpdate)
-			{
-				Sample();
-			}
-		}
-
-		#endregion
-
-		public void UpdateGraph()
+		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
@@ -113,6 +115,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			Graph.SetupGraphWithXYChannels(PlotVelocity && componentIsActive, ref VelocityGraph, "Velocity", gameObject, VelocityRange, ref VelocityChannels, PlotVelocityX, PlotVelocityY);
 			Graph.SetupGraphWithSingleChannel(PlotAngularVelocity && componentIsActive, ref AngularVelocityGraph, "Angular Velocity", gameObject, AngularVelocityRange, ref AngularVelocityChannel, "angular velocity", PlotColors.Red);
 		}
+
+		#endregion
 
 		public void Sample()
 		{

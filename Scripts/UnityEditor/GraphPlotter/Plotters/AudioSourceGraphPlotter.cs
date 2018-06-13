@@ -7,41 +7,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class AudioSourceGraphPlotter : MonoBehaviour
 	{
-		public AudioSource AudioSource;
-		public SampleTime SampleTime = SampleTime.FixedUpdate;
-
-		// -----------------------------------------------------
-		// Input - Volume
-		// -----------------------------------------------------
-		public bool PlotVolume = false;
-		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
-		public Graph VolumeGraph;
-		private Channel VolumeChannel;
-		// -----------------------------------------------------
-		// Input - Pitch
-		// -----------------------------------------------------
-		public bool PlotPitch = false;
-		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
-		public Graph PitchGraph;
-		private Channel PitchChannel;
-		// -----------------------------------------------------
-		// Input - IsPlaying
-		// -----------------------------------------------------
-		public bool PlotIsPlaying = false;
-		public Graph IsPlayingGraph;
-		private Channel IsPlayingChannel;
-		// -----------------------------------------------------
-
 		#region Initialization
 
 		protected void Start()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		protected void OnEnable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -57,7 +32,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDisable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -90,7 +65,34 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
-		public void UpdateGraph()
+		#region Metadata and Configuration
+
+		public AudioSource AudioSource;
+		public SampleTime SampleTime = SampleTime.FixedUpdate;
+
+		// -----------------------------------------------------
+		// Input - Volume
+		// -----------------------------------------------------
+		public bool PlotVolume = false;
+		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
+		public Graph VolumeGraph;
+		private Channel VolumeChannel;
+		// -----------------------------------------------------
+		// Input - Pitch
+		// -----------------------------------------------------
+		public bool PlotPitch = false;
+		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
+		public Graph PitchGraph;
+		private Channel PitchChannel;
+		// -----------------------------------------------------
+		// Input - IsPlaying
+		// -----------------------------------------------------
+		public bool PlotIsPlaying = false;
+		public Graph IsPlayingGraph;
+		private Channel IsPlayingChannel;
+		// -----------------------------------------------------
+
+		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
@@ -98,6 +100,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
 			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
 		}
+
+		#endregion
 
 		public void Sample()
 		{

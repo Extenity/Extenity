@@ -66,7 +66,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			CommonEditor.OpenGraphPlotterButton(Me.gameObject);
 
 			if (GUI.changed)
-				Me.UpdateGraph();
+				Me.SetupGraph();
 		}
 	}
 

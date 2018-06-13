@@ -8,14 +8,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 	[ExecuteInEditMode]
 	public class DebugLogGraphPlotter : MonoBehaviour
 	{
-		public StringFilter Filter;
-		private Graph Graph;
-
 		#region Initialization
 
 		protected void Start()
 		{
-			UpdateGraph();
+			SetupGraph();
 
 			if (Application.isPlaying)
 			{
@@ -26,7 +23,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnEnable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -41,7 +38,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		protected void OnDisable()
 		{
-			UpdateGraph();
+			SetupGraph();
 		}
 
 		#endregion
@@ -58,12 +55,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
-		public void UpdateGraph()
+		#region Metadata and Configuration
+
+		// -----------------------------------------------------
+		// Input - No value other than Debug log calls
+		// -----------------------------------------------------
+		public StringFilter Filter;
+		public Graph Graph;
+		// -----------------------------------------------------
+
+		public void SetupGraph()
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
 			Graph.SetupGraph(componentIsActive, ref Graph, "Debug.Log", gameObject, null);
 		}
+
+		#endregion
 
 		private void LogCallback(string logString, string stackTrace, LogType type)
 		{

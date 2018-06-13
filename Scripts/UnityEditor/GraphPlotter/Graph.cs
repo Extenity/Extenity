@@ -8,11 +8,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public class Graph
 	{
-		public string Title;
-		public GameObject Context = null;
-
-		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
-
 		#region Initialization
 
 		public Graph(string title, GameObject context = null)
@@ -78,6 +73,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				throw new Exception($"Tried to do an operation on closed graph '{Title}'.");
 			}
 		}
+
+		#endregion
+
+		#region Metadata and Configuration
+
+		public string Title;
+		public GameObject Context = null;
+		
+		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 
 		#endregion
 
