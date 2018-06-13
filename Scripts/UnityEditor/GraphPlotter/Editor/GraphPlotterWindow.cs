@@ -49,12 +49,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Color TopBarBackgroundColor;
 		private Color TopBarBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
 		private Color TopBarBackgroundColor_Pro = new Color(0.22f, 0.22f, 0.22f);
-		private Color legendTextColorSelected;
-		private Color legendTextColorSelected_Free = new Color(0f, 0f, 0f, 1f);
-		private Color legendTextColorSelected_Pro = new Color(1f, 1f, 1f, 1f);
-		private Color legendTextColorUnselected;
-		private Color legendTextColorUnselected_Free = new Color(0f, 0f, 0f, 0.5f);
-		private Color legendTextColorUnselected_Pro = new Color(1f, 1f, 1f, 0.5f);
+		private Color LegendTextColor;
+		private Color LegendTextColor_Free = new Color(0f, 0f, 0f, 1f);
+		private Color LegendTextColor_Pro = new Color(0.9f, 0.9f, 0.9f, 1f);
+		private Color LegendHiddenTextColor;
+		private Color LegendHiddenTextColor_Free = new Color(0f, 0f, 0f, 0.5f);
+		private Color LegendHiddenTextColor_Pro = new Color(1f, 1f, 1f, 0.5f);
 		private Color channelHeaderColor;
 		private Color channelHeaderColor_Free = new Color(0.2f, 0.2f, 0.2f);
 		private Color channelHeaderColor_Pro = new Color(0.5f, 0.5f, 0.5f);
@@ -92,8 +92,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				LegendBarBackgroundColor = LegendBarBackgroundColor_Pro;
 				TopBarBackgroundColor = TopBarBackgroundColor_Pro;
-				legendTextColorSelected = legendTextColorSelected_Pro;
-				legendTextColorUnselected = legendTextColorUnselected_Pro;
+				LegendTextColor = LegendTextColor_Pro;
+				LegendHiddenTextColor = LegendHiddenTextColor_Pro;
 				channelHeaderColor = channelHeaderColor_Pro;
 				timeColor = timeColor_Pro;
 			}
@@ -101,8 +101,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				LegendBarBackgroundColor = LegendBarBackgroundColor_Free;
 				TopBarBackgroundColor = TopBarBackgroundColor_Free;
-				legendTextColorSelected = legendTextColorSelected_Free;
-				legendTextColorUnselected = legendTextColorUnselected_Free;
+				LegendTextColor = LegendTextColor_Free;
+				LegendHiddenTextColor = LegendHiddenTextColor_Free;
 				channelHeaderColor = channelHeaderColor_Free;
 				timeColor = timeColor_Free;
 			}
@@ -640,8 +640,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					GUI.color = new Color(1f, 1f, 1f, 1f);
 
 					valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel
-						? legendTextColorSelected
-						: legendTextColorUnselected;
+						? LegendTextColor
+						: LegendHiddenTextColor;
 					valueTextStyle.alignment = TextAnchor.MiddleLeft;
 					valueTextStyle.clipping = TextClipping.Clip;
 
