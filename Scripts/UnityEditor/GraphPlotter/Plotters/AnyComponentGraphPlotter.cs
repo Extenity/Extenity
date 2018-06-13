@@ -154,18 +154,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					{
 						field.Channel.Sample((float)instance, time, frame);
 					}
-
-					if (instanceType == typeof(double))
+					else if (instanceType == typeof(double))
 					{
 						field.Channel.Sample(Convert.ToSingle((double)instance), time, frame);
 					}
-
-					if (instanceType == typeof(int))
+					else if (instanceType == typeof(int))
 					{
 						field.Channel.Sample((int)instance, time, frame);
 					}
-
-					if (instanceType == typeof(bool))
+					else if (instanceType == typeof(bool))
 					{
 						field.Channel.Sample((bool)instance ? 1f : 0f, time, frame);
 					}

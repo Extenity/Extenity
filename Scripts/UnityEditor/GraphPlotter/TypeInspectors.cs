@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -28,14 +29,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		#region Configuration
 
 		private const BindingFlags Flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-
-		private readonly HashSet<Type> sampleTypes = new HashSet<Type>
-		{
-			typeof(int),
-			typeof(float),
-			typeof(double),
-			typeof(bool)
-		};
 
 		private readonly Dictionary<Type, string> valueTypes = new Dictionary<Type, string>
 		{
@@ -76,11 +69,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				var currentType = type;
 				while (currentType != null && currentType != typeof(UnityEngine.Object))
 				{
-					fieldInfos.AddRange(currentType.GetFields(Flags));
+					fieldInfos.AddRange(currentType.GetFields(Flags).Where(field => typeInspectors.IsAcceptableType(field.FieldType)));
 					currentType = currentType.BaseType;
 				}
-
-				fieldInfos.RemoveAll(f => !typeInspectors.IsAcceptableType(f.FieldType));
 
 				fieldNameStrings = new string[fieldInfos.Count];
 				fields = new Field[fieldInfos.Count];
@@ -165,7 +156,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public bool IsSampleType(Type type)
 		{
-			return sampleTypes.Contains(type);
+			return valueTypes.ContainsKey(type);
 		}
 
 		public bool IsAcceptableType(Type type)
