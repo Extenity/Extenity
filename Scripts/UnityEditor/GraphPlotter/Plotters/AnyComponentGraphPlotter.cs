@@ -30,8 +30,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			[HideInInspector] // Not meant to be shown in raw format
 			public string[] Field;
-			[HideInInspector] // Not meant to be shown in raw format
-			public string FieldTypeName;
 
 			public Color Color = Color.red;
 

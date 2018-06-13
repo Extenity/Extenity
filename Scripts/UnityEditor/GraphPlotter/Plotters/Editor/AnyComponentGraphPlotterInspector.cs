@@ -103,7 +103,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 						field.Color = newColor;
 					}
 
-					GUILayout.Label(field.FieldName + " : " + inspectors.GetPrettyName(field.FieldTypeName));
+					GUILayout.Label(field.FieldName);
 
 					EditorGUILayout.Space();
 
@@ -170,7 +170,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 					var field = new AnyComponentGraphPlotter.ChannelField
 					{
 						Field = addField.ToArray(),
-						FieldTypeName = instanceType.FullName,
 						Color = PlotColors.AllColors[Me.ChannelFields.Count % PlotColors.AllColors.Length]
 					};
 
