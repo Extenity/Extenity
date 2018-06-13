@@ -10,9 +10,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 	[CustomEditor(typeof(AnyComponentGraphPlotter))]
 	public class AnyComponentGraphPlotterInspector : ExtenityEditorBase<AnyComponentGraphPlotter>
 	{
-		private int SelectedComponentIndex = -1;
 		private List<string> NewChannelSelectionLevels = new List<string>();
-
 
 		protected override void OnEnableDerived()
 		{
@@ -25,34 +23,10 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
-			var components = Me.GetComponents<Component>();
-
-			// Find selected component index
-			if (Me.Component != null)
-			{
-				SelectedComponentIndex = -1;
-
-				for (int i = 0; i < components.Length; i++)
-				{
-					if (components[i] == Me.Component)
-					{
-						SelectedComponentIndex = i;
-						break;
-					}
-				}
-			}
-
-			// Create popup names list
-			var componentPopupNames = new string[components.Length];
-			for (int i = 0; i < components.Length; i++)
-			{
-				componentPopupNames[i] = i + ". " + components[i].GetType().Name;
-			}
-
 			EditorGUILayout.Space();
 
-			// Component selection
-			SelectedComponentIndex = EditorGUILayout.Popup("Component", SelectedComponentIndex, componentPopupNames);
+			// Component link
+			EditorGUILayout.PropertyField(GetProperty("Component"));
 
 			// Axis range configuration
 			CommonEditor.DrawAxisRangeConfiguration(Me, Me.Graph, ref Me.Range);
@@ -66,15 +40,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			EditorGUILayout.Space();
-
-			if (SelectedComponentIndex > -1 && components.Length > 0)
-			{
-				Me.Component = components[SelectedComponentIndex];
-			}
-			else
-			{
-				Me.Component = null;
-			}
 
 			if (Me.Component != null)
 			{
