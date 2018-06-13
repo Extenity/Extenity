@@ -356,7 +356,7 @@ MonoBehaviour:
   SampleTime: 0
   PlotPosition: 0
   PlotPositionX: 1
-  PlotPositionT: 1
+  PlotPositionY: 1
   PlotPositionZ: 1
   PositionRange:
     Sizing: 2
@@ -627,6 +627,11 @@ MonoBehaviour:
     - SomeRandomNumberInSubclass
     FieldTypeName: System.Single
     Color: {r: 0.6886792, g: 0.6418078, b: 0.5230064, a: 1}
+  - Field:
+    - SomeRotation
+    - x (euler)
+    FieldTypeName: System.Single
+    Color: {r: 1, g: 0.8627451, b: 0.30588236, a: 1}
   SampleTime: 0
   Range:
     Sizing: 2

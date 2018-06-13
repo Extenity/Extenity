@@ -96,7 +96,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 					EditorGUILayout.BeginHorizontal();
 
-					GUILayout.Label(field.FieldName + " : " + TypeInspectors.GetReadableName(field.FieldTypeName));
+					GUILayout.Label(field.FieldName + " : " + inspectors.GetReadableName(field.FieldTypeName));
 					var newColor = EditorGUILayout.ColorField(field.Color, GUILayout.Width(40));
 					if (newColor != field.Color)
 					{

@@ -8,24 +8,49 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public class TypeInspectors
 	{
-		private HashSet<Type> sampleTypes;
+		#region Singleton
 
-		private static BindingFlags flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-		private static TypeInspectors instance = null;
-
-		private Dictionary<Type, ITypeInspector> inspectors = new Dictionary<Type, ITypeInspector>();
-
-		public TypeInspectors()
+		private static TypeInspectors _Instance = null;
+		public static TypeInspectors Instance
 		{
-			sampleTypes = new HashSet<Type>() {
-				typeof(int),
-				typeof(float),
-				typeof(double),
-				typeof(bool)
-			};
-
-			inspectors.Add(typeof(Quaternion), new QuaternionTypeInspector());
+			get
+			{
+				if (_Instance == null)
+				{
+					_Instance = new TypeInspectors();
+				}
+				return _Instance;
+			}
 		}
+
+		#endregion
+
+		#region Configuration
+
+		private const BindingFlags Flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+
+		private readonly HashSet<Type> sampleTypes = new HashSet<Type>
+		{
+			typeof(int),
+			typeof(float),
+			typeof(double),
+			typeof(bool)
+		};
+
+		private readonly Dictionary<Type, string> valueTypes = new Dictionary<Type, string>
+		{
+			{ typeof(Single), "float" },
+			{ typeof(Int32), "int" },
+			{ typeof(Boolean), "bool" },
+			{ typeof(Double), "double" } ,
+		};
+
+		private readonly Dictionary<Type, ITypeInspector> inspectors = new Dictionary<Type, ITypeInspector>
+		{
+			{ typeof(Quaternion), new QuaternionTypeInspector() }
+		};
+
+		#endregion
 
 		public ITypeInspector GetTypeInspector(Type type)
 		{
@@ -35,7 +60,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 				inspector = new DefaultTypeInspector(this, type);
 				inspectors.Add(type, inspector);
 			}
-
 			return inspector;
 		}
 
@@ -47,12 +71,12 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 			public DefaultTypeInspector(TypeInspectors typeInspectors, Type type)
 			{
-				List<FieldInfo> fieldInfos = new List<FieldInfo>();
+				var fieldInfos = new List<FieldInfo>();
 
-				Type currentType = type;
+				var currentType = type;
 				while (currentType != null && currentType != typeof(UnityEngine.Object))
 				{
-					fieldInfos.AddRange(currentType.GetFields(flags));
+					fieldInfos.AddRange(currentType.GetFields(Flags));
 					currentType = currentType.BaseType;
 				}
 
@@ -64,11 +88,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 				for (int i = 0; i < fieldInfos.Count; i++)
 				{
-					FieldInfo fieldInfo = fieldInfos[i];
+					var fieldInfo = fieldInfos[i];
 
-					fieldNameStrings[i] = fieldInfo.Name + " : " + GetReadableName(fieldInfo.FieldType);
+					fieldNameStrings[i] = fieldInfo.Name + " : " + typeInspectors.GetReadableName(fieldInfo.FieldType);
 
-					Field field = new Field();
+					var field = new Field();
 					field.name = fieldInfo.Name;
 					field.type = fieldInfo.FieldType;
 
@@ -101,19 +125,25 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		private class QuaternionTypeInspector : ITypeInspector
 		{
-			private string[] fieldNameStrings = new string[] { "x (euler) : float", "y (euler) : float", "z (euler) : float" };
-			private Field[] fields = new Field[] {
+			private readonly string[] _FieldNameStrings =
+			{
+				"x (euler) : float",
+				"y (euler) : float",
+				"z (euler) : float"
+			};
+			private readonly Field[] _Fields =
+			{
 				new Field() { name = "x (euler)", type = typeof(float) },
 				new Field() { name = "y (euler)", type = typeof(float) },
 				new Field() { name = "z (euler)", type = typeof(float) },
 			};
 
-			public string[] FieldNameStrings { get { return fieldNameStrings; } }
-			public Field[] Fields { get { return fields; } }
+			public string[] FieldNameStrings { get { return _FieldNameStrings; } }
+			public Field[] Fields { get { return _Fields; } }
 
 			public System.Object GetValue(System.Object instance, string fieldName)
 			{
-				Quaternion quaternion = (Quaternion)instance;
+				var quaternion = (Quaternion)instance;
 				if (fieldName == "x (euler)")
 				{
 					return quaternion.eulerAngles.x;
@@ -163,44 +193,20 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			return true;
 		}
 
-		private static string GetReadableName(Type type)
+		private string GetReadableName(Type type)
 		{
 			string readable;
 			if (!valueTypes.TryGetValue(type, out readable))
 			{
 				readable = type.Name;
 			}
-
 			return readable;
 		}
 
-		public static string GetReadableName(string typeName)
+		public string GetReadableName(string typeName)
 		{
-			Type type = Type.GetType(typeName);
+			var type = Type.GetType(typeName);
 			return GetReadableName(type);
-		}
-
-		private static Dictionary<Type, string> valueTypes = new Dictionary<Type, string>() {
-			{ typeof(System.Single), "float" },
-			{ typeof(System.Int32), "int" },
-			{ typeof(System.Boolean), "bool" },
-			{ typeof(System.Double), "double" } ,
-		};
-
-
-		// Singleton stuff.
-
-		public static TypeInspectors Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new TypeInspectors();
-				}
-
-				return instance;
-			}
 		}
 
 		public interface ITypeInspector

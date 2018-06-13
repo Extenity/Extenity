@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Extenity.MathToolbox;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
@@ -8,6 +10,8 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 	{
 		public float SomeRandomNumber;
 		private float SomeHiddenRandomNumber;
+		[NonSerialized]
+		public Quaternion SomeRotation;
 
 		private Example_Subclass HiddenSubobject = new Example_Subclass();
 
@@ -18,9 +22,10 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 		private void FixedUpdate()
 		{
-			SomeRandomNumber = Random.value * 0.5f;
-			SomeHiddenRandomNumber = Random.value * 0.5f + 0.5f;
-			HiddenSubobject.SomeRandomNumberInSubclass = Random.value;
+			SomeRandomNumber = Random.value.Remap(0f, 1f, 0.00f, 0.25f);
+			SomeHiddenRandomNumber = Random.value.Remap(0f, 1f, 0.25f, 0.50f);
+			HiddenSubobject.SomeRandomNumberInSubclass = Random.value.Remap(0f, 1f, 0.50f, 0.75f);
+			SomeRotation = Quaternion.Euler(Mathf.Sin(Time.time).Remap(-1, 1f, 0.75f, 1.00f), 0f, 0f);
 		}
 	}
 
