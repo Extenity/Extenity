@@ -125,6 +125,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
+		#region Sample
+
 		public void Sample()
 		{
 			if (!Application.isPlaying)
@@ -195,6 +197,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					AngularVelocityChannels[2].Sample(angularVelocity.z, time, frame);
 			}
 		}
+
+		#endregion
 	}
 
 }

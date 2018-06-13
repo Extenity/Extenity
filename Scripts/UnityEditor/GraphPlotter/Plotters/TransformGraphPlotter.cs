@@ -116,6 +116,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		#endregion
 
+		#region Sample
+
 		public void Sample()
 		{
 			if (!Application.isPlaying)
@@ -166,6 +168,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 					ScaleChannels[2].Sample(scale.z, time, frame);
 			}
 		}
+
+		#endregion
 	}
 
 }
