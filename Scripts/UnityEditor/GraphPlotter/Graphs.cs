@@ -7,9 +7,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 	public static class Graphs
 	{
+		#region All Graphs
+
 		public static readonly List<Graph> All = new List<Graph>();
 
-		public static void Register(Graph graph)
+		#endregion
+
+		#region Register / Deregister
+
+		internal static void Register(Graph graph)
 		{
 			if (graph == null)
 				throw new ArgumentNullException(nameof(graph));
@@ -19,7 +25,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			All.Add(graph);
 		}
 
-		public static void Deregister(Graph graph)
+		internal static void Deregister(Graph graph)
 		{
 			if (graph == null)
 				throw new ArgumentNullException(nameof(graph));
@@ -29,7 +35,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			All.Remove(graph);
 		}
 
-		public static bool IsAnyGraphForObjectExists(GameObject go)
+		#endregion
+
+		#region Queries
+
+		public static bool IsAnyGraphForContextExists(GameObject go)
 		{
 			for (var i = 0; i < All.Count; i++)
 			{
@@ -38,6 +48,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 			}
 			return false;
 		}
+
+		#endregion
 	}
 
 }

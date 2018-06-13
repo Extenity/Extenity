@@ -95,7 +95,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				window.RemoveNotification();
 				window.SetFilter(null);
 			}
-			if (GUILayoutTools.Button("Filtered", Graphs.IsAnyGraphForObjectExists(gameObject), GUILayout.ExpandWidth(false)))
+			if (GUILayoutTools.Button("Filtered", Graphs.IsAnyGraphForContextExists(gameObject), GUILayout.ExpandWidth(false)))
 			{
 				var window = EditorWindow.GetWindow<GraphPlotterWindow>();
 				window.RemoveNotification();

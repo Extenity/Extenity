@@ -1042,7 +1042,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				return true;
 			}
 
-			if (Graphs.IsAnyGraphForObjectExists(filteredObject))
+			if (Graphs.IsAnyGraphForContextExists(filteredObject))
 			{
 				ContextFilter = filteredObject;
 				return true;
