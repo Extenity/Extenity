@@ -613,6 +613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Component: {fileID: 1218127746}
+  SampleTime: 0
   ChannelFields:
   - Field:
     - SomeRandomNumber
@@ -628,7 +629,6 @@ MonoBehaviour:
     - SomeRotation
     - x (euler)
     Color: {r: 1, g: 0.8627451, b: 0.30588236, a: 1}
-  SampleTime: 0
   Range:
     Sizing: 2
     Min: Infinity

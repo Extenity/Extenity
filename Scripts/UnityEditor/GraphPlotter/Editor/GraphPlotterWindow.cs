@@ -944,10 +944,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		private GameObject ContextFilter = null;
 
-		public bool SetFilter(GameObject filteredObject)
+		public bool SetContextFilter(GameObject filteredObject)
 		{
+			if (ContextFilter == filteredObject)
+				return true; // Ignore
+
 			if (!filteredObject)
 			{
+				ShowNotification(new GUIContent("Displaying all objects"));
+
 				ContextFilter = null;
 				return true;
 			}
@@ -955,9 +960,18 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			if (Graphs.IsAnyGraphForContextExists(filteredObject))
 			{
 				ContextFilter = filteredObject;
+
+				EditorGUIUtility.PingObject(ContextFilter);
+				ShowNotification(new GUIContent($"Displaying only object '{filteredObject.name}'"));
 				return true;
 			}
-			return false;
+			else
+			{
+				ContextFilter = null;
+
+				ShowNotification(new GUIContent($"No graph to filter for '{filteredObject.name}'!"));
+				return false;
+			}
 		}
 
 		private void DrawContextFilterDropdown()
@@ -1048,11 +1062,11 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				if (contextFilterIndex == 0)
 				{
-					ContextFilter = null;
+					SetContextFilter(null);
 				}
 				else
 				{
-					ContextFilter = contextObjects[contextFilterIndex - 1];
+					SetContextFilter(contextObjects[contextFilterIndex - 1]);
 				}
 
 				if (ContextFilter != oldContextFilter)

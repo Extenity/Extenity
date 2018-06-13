@@ -93,20 +93,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			{
 				var window = EditorWindow.GetWindow<GraphPlotterWindow>();
 				window.RemoveNotification();
-				window.SetFilter(null);
+				window.SetContextFilter(null);
 			}
 			if (GUILayoutTools.Button("Filtered", Graphs.IsAnyGraphForContextExists(gameObject), GUILayout.ExpandWidth(false)))
 			{
 				var window = EditorWindow.GetWindow<GraphPlotterWindow>();
 				window.RemoveNotification();
-				if (window.SetFilter(gameObject))
-				{
-					window.ShowNotification(new GUIContent($"Filtering only for '{gameObject.name}'"));
-				}
-				else
-				{
-					window.ShowNotification(new GUIContent($"No graph to filter for '{gameObject.name}'!"));
-				}
+				window.SetContextFilter(gameObject);
 			}
 
 			EditorGUILayout.EndHorizontal();
