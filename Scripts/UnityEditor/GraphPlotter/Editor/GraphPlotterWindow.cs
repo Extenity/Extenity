@@ -36,13 +36,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		// Colors and Style
 		private const float DeselectedChannelAlpha = 0.02f;
-		private Color backgroundColor = new Color(0.12f, 0.12f, 0.12f, 1f);
-		private Color legendBackgroundColor;
-		private Color legendBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
-		private Color legendBackgroundColor_Pro = new Color(0.25f, 0.25f, 0.25f);
-		private Color settingsHeaderBackgroundColor;
-		private Color settingsHeaderBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
-		private Color settingsHeaderBackgroundColor_Pro = new Color(0.22f, 0.22f, 0.22f);
+		private Color BackgroundColor = new Color(0.12f, 0.12f, 0.12f, 1f);
+		private Color LegendBarBackgroundColor;
+		private Color LegendBarBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
+		private Color LegendBarBackgroundColor_Pro = new Color(0.25f, 0.25f, 0.25f);
+		private Color TopBarBackgroundColor;
+		private Color TopBarBackgroundColor_Free = new Color(0.87f, 0.87f, 0.87f);
+		private Color TopBarBackgroundColor_Pro = new Color(0.22f, 0.22f, 0.22f);
 		private Color legendTextColorSelected;
 		private Color legendTextColorSelected_Free = new Color(0f, 0f, 0f, 1f);
 		private Color legendTextColorSelected_Pro = new Color(1f, 1f, 1f, 1f);
@@ -84,8 +84,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		{
 			if (EditorGUIUtility.isProSkin)
 			{
-				legendBackgroundColor = legendBackgroundColor_Pro;
-				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_Pro;
+				LegendBarBackgroundColor = LegendBarBackgroundColor_Pro;
+				TopBarBackgroundColor = TopBarBackgroundColor_Pro;
 				legendTextColorSelected = legendTextColorSelected_Pro;
 				legendTextColorUnselected = legendTextColorUnselected_Pro;
 				channelHeaderColor = channelHeaderColor_Pro;
@@ -93,8 +93,8 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 			else
 			{
-				legendBackgroundColor = legendBackgroundColor_Free;
-				settingsHeaderBackgroundColor = settingsHeaderBackgroundColor_Free;
+				LegendBarBackgroundColor = LegendBarBackgroundColor_Free;
+				TopBarBackgroundColor = TopBarBackgroundColor_Free;
 				legendTextColorSelected = legendTextColorSelected_Free;
 				legendTextColorUnselected = legendTextColorUnselected_Free;
 				channelHeaderColor = channelHeaderColor_Free;
@@ -222,15 +222,15 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 			totalGraphHeight = graphHeight - SpaceAboveGraph - SpaceBelowGraph;
 
-			// settings header (prelude)
-			var settingsRect = new Rect(0f, 0f, position.width, 25f);
+			// Top bar
+			var topBarRect = new Rect(0f, 0f, position.width, 32f);
 
-			// draw background.
-			GUI.color = backgroundColor;
-			GUI.DrawTexture(new Rect(0, settingsRect.height, width, height - settingsRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
+			// Background
+			GUI.color = BackgroundColor;
+			GUI.DrawTexture(new Rect(0, topBarRect.height, width, height - topBarRect.height), EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill);
 
-			GUI.color = legendBackgroundColor;
-			GUI.DrawTexture(new Rect(0f, settingsRect.height, legendWidth, height - settingsRect.height), EditorGUIUtility.whiteTexture);
+			GUI.color = LegendBarBackgroundColor;
+			GUI.DrawTexture(new Rect(0f, topBarRect.height, legendWidth, height - topBarRect.height), EditorGUIUtility.whiteTexture);
 
 			var currentEventType = Event.current.type;
 			var mousePosition = Event.current.mousePosition;
@@ -248,7 +248,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			if (currentEventType == EventType.MouseDown &&
 				mousePosition.x > legendWidth &&
 				mousePosition.x < (width - 14f) &&
-				mousePosition.y > settingsRect.height)
+				mousePosition.y > topBarRect.height)
 			{
 				Debug.Break();
 			}
@@ -262,7 +262,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				var graph = FilteredGraphs[i];
 				var range = graph.Range;
 
-				var graphAreaRect = new Rect(legendWidth, i * graphHeight + settingsRect.height - scrollPositionY, graphWidth, graphHeight);
+				var graphAreaRect = new Rect(legendWidth, i * graphHeight + topBarRect.height - scrollPositionY, graphWidth, graphHeight);
 				var graphRect = new Rect(graphAreaRect.xMin, graphAreaRect.yMin + SpaceAboveGraph, graphAreaRect.width - 20, totalGraphHeight - 5);
 				//GUITools.DrawRect(graphAreaRect, Color.red, 2f);
 				//GUITools.DrawRect(graphRect, Color.blue, 2f);
@@ -473,7 +473,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				}
 
 
-				GUI.color = legendBackgroundColor;
+				GUI.color = LegendBarBackgroundColor;
 				GUI.DrawTexture(new Rect(0f, graphAreaRect.yMin, legendWidth, graphAreaRect.height + 5), EditorGUIUtility.whiteTexture);
 
 				// Draw context object name (with hyperlink to the object)
@@ -505,7 +505,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 				Handles.color = timeLineColor;
 				var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
-				Handles.DrawLine(new Vector3(x, settingsRect.height), new Vector3(x, position.height));
+				Handles.DrawLine(new Vector3(x, topBarRect.height), new Vector3(x, position.height));
 
 				for (int j = 0; j < graph.Channels.Count; j++)
 				{
@@ -718,24 +718,24 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			}
 
 			GUI.color = new Color(1f, 1f, 1f, 1f);
-			GUI.DrawTexture(new Rect(legendWidth, settingsRect.height, 20f, position.height - settingsRect.height), GraphAreaGradientShadowTexture, ScaleMode.StretchToFill, true);
-			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 10), TitleBarGradientShadowTexture, ScaleMode.StretchToFill, true);
+			GUI.DrawTexture(new Rect(legendWidth, topBarRect.height, 20f, position.height - topBarRect.height), GraphAreaGradientShadowTexture, ScaleMode.StretchToFill, true);
+			GUI.DrawTexture(new Rect(0, topBarRect.height, width, 10), TitleBarGradientShadowTexture, ScaleMode.StretchToFill, true);
 
 			for (int i = 0; i < FilteredGraphs.Count; i++)
 			{
 				// separator line
 				Handles.color = Color.grey;
-				Handles.DrawLine(new Vector3(0f, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f),
-								  new Vector3(width, (i + 1) * graphHeight + settingsRect.height - scrollPositionY, 0f));
+				Handles.DrawLine(new Vector3(0f, (i + 1) * graphHeight + topBarRect.height - scrollPositionY, 0f),
+								  new Vector3(width, (i + 1) * graphHeight + topBarRect.height - scrollPositionY, 0f));
 			}
 
 			// Scrollbar
 			var scrollMaxY = graphHeight * FilteredGraphs.Count + extraScrollSpace;
-			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - settingsRect.height);
+			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - topBarRect.height);
 
 			GUI.color = Color.white;
 			scrollPositionY = GUI.VerticalScrollbar(new Rect(
-				position.width - 15, settingsRect.height, 15f, position.height - settingsRect.height),
+				position.width - 15, topBarRect.height, 15f, position.height - topBarRect.height),
 				scrollPositionY, visibleHeightY, 0f, scrollMaxY);
 			scrollPositionY = Mathf.Max(scrollPositionY, 0f);
 
@@ -774,13 +774,13 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				scrollPositionTime = Mathf.Min(0f, scrollPositionTime);
 			}
 
-			// Top settings
-			GUI.color = settingsHeaderBackgroundColor;
-			GUI.DrawTexture(settingsRect, EditorGUIUtility.whiteTexture);
+			// Top bar
+			GUI.color = TopBarBackgroundColor;
+			GUI.DrawTexture(topBarRect, EditorGUIUtility.whiteTexture);
 			GUI.color = Color.white;
 
 			var padding = 5f;
-			GUILayout.BeginArea(new Rect(settingsRect.xMin + padding, settingsRect.yMin + padding, settingsRect.width - 2 * padding, settingsRect.height - 2 * padding));
+			GUILayout.BeginArea(new Rect(topBarRect.xMin + padding, topBarRect.yMin + padding, topBarRect.width - 2 * padding, topBarRect.height - 2 * padding));
 			GUILayout.BeginHorizontal();
 
 			// Draw context filter dropdown
