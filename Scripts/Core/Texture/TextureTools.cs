@@ -56,9 +56,10 @@ namespace Extenity.TextureToolbox
 		{
 			var width = 2;
 			var height = colors.Length;
-			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
+			texture.hideFlags = HideFlags.DontSave;
+			texture.wrapMode = TextureWrapMode.Clamp;
 			var pixels = texture.GetPixels32();
-
 			var i = 0;
 			for (int y = 0; y < height; y++)
 			{
@@ -68,10 +69,29 @@ namespace Extenity.TextureToolbox
 					pixels[i++] = color;
 				}
 			}
-
 			texture.SetPixels32(pixels);
 			texture.Apply(false);
+			return texture;
+		}
+
+		public static Texture2D CreateHorizontalGradientTexture(params Color32[] colors)
+		{
+			var height = 2;
+			var width = colors.Length;
+			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
 			texture.hideFlags = HideFlags.DontSave;
+			texture.wrapMode = TextureWrapMode.Clamp;
+			var pixels = texture.GetPixels32();
+			var i = 0;
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					pixels[i++] = colors[x];
+				}
+			}
+			texture.SetPixels32(pixels);
+			texture.Apply(false);
 			return texture;
 		}
 

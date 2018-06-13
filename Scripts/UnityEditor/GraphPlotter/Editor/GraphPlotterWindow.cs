@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Extenity.TextureToolbox;
 using UnityEditor;
 using UnityEngine;
 
@@ -60,6 +61,16 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		private Color timeLineColor = new Color(1f, 1f, 1f, 0.05f);
 		private Color SecondLinesColor = new Color(1f, 1f, 1f, 0.05f);
 		private Color SubSecondLinesColor = new Color(1f, 1f, 1f, 0.04f);
+		private Color32[] TitleBarGradientShadowTextureColors =
+		{
+			new Color(0.1f, 0.1f, 0.1f, 0.3f),
+			new Color(0.12f, 0.12f, 0.12f, 0f)
+		};
+		private Color32[] GraphAreaGradientShadowTextureColors =
+		{
+			new Color(0.1f, 0.1f, 0.1f, 0.7f),
+			new Color(0.12f, 0.12f, 0.12f, 0f)
+		};
 
 		private GUIStyle headerStyle;
 		private GUIStyle minStyle;
@@ -120,9 +131,6 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 		}
 
 		#endregion
-
-		private Texture2D topTexture;
-		private Texture2D leftTexture;
 
 		private float scrollPositionY = 0f;
 		private float scrollPositionTime = 0f;
@@ -193,15 +201,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 
 		protected void OnDestroy()
 		{
-			if (topTexture != null)
-			{
-				DestroyImmediate(topTexture);
-			}
-
-			if (leftTexture != null)
-			{
-				DestroyImmediate(leftTexture);
-			}
+			DestroyTextures();
 		}
 
 		#endregion
@@ -213,25 +213,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			// Make sure content color is sane.
 			GUI.contentColor = Color.white;
 
-			// textures (must check this in every OnGUI for some reason).
-			if (topTexture == null)
-			{
-				topTexture = new Texture2D(1, 2);
-				topTexture.hideFlags = HideFlags.HideAndDontSave;
-				topTexture.wrapMode = TextureWrapMode.Clamp;
-				topTexture.SetPixel(0, 1, new Color(22f / 255f, 22f / 255f, 22f / 255f, 1f));
-				topTexture.SetPixel(0, 0, new Color(32f / 255f, 32f / 255f, 32f / 255f, 0f));
-				topTexture.Apply();
-			}
-			if (leftTexture == null)
-			{
-				leftTexture = new Texture2D(2, 1);
-				leftTexture.hideFlags = HideFlags.HideAndDontSave;
-				leftTexture.wrapMode = TextureWrapMode.Clamp;
-				leftTexture.SetPixel(0, 0, new Color(22f / 255f, 22f / 255f, 22f / 255f, 1f));
-				leftTexture.SetPixel(1, 0, new Color(32f / 255f, 32f / 255f, 32f / 255f, 0f));
-				leftTexture.Apply();
-			}
+			CreateTexturesIfRequired();
 
 			// calculate dynamic sizes.
 			var width = position.width;
@@ -735,12 +717,9 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 				selectedChannel = newSelectedChannel;
 			}
 
-			// Left gradient.
-			GUI.DrawTexture(new Rect(legendWidth, settingsRect.height, 10f, position.height - settingsRect.height), leftTexture, ScaleMode.StretchToFill, true);
-
-			// Draw top gradient.	
-			GUI.color = new Color(1f, 1f, 1f, 0.3f);
-			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 8), topTexture, ScaleMode.StretchToFill);
+			GUI.color = new Color(1f, 1f, 1f, 1f);
+			GUI.DrawTexture(new Rect(legendWidth, settingsRect.height, 20f, position.height - settingsRect.height), GraphAreaGradientShadowTexture, ScaleMode.StretchToFill, true);
+			GUI.DrawTexture(new Rect(0, settingsRect.height, width, 10), TitleBarGradientShadowTexture, ScaleMode.StretchToFill, true);
 
 			for (int i = 0; i < FilteredGraphs.Count; i++)
 			{
@@ -852,6 +831,37 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting.Editor
 			Repaint();
 
 			wasInPauseMode = isInPauseMode;
+		}
+
+		#endregion
+
+		#region GUI - Textures
+
+		private Texture2D TitleBarGradientShadowTexture;
+		private Texture2D GraphAreaGradientShadowTexture;
+
+		private void CreateTexturesIfRequired()
+		{
+			if (TitleBarGradientShadowTexture == null)
+			{
+				TitleBarGradientShadowTexture = TextureTools.CreateVerticalGradientTexture(TitleBarGradientShadowTextureColors);
+			}
+			if (GraphAreaGradientShadowTexture == null)
+			{
+				GraphAreaGradientShadowTexture = TextureTools.CreateHorizontalGradientTexture(GraphAreaGradientShadowTextureColors);
+			}
+		}
+
+		private void DestroyTextures()
+		{
+			if (TitleBarGradientShadowTexture != null)
+			{
+				DestroyImmediate(TitleBarGradientShadowTexture);
+			}
+			if (GraphAreaGradientShadowTexture != null)
+			{
+				DestroyImmediate(GraphAreaGradientShadowTexture);
+			}
 		}
 
 		#endregion
