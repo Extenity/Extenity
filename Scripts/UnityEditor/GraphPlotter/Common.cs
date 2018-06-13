@@ -46,9 +46,23 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 
 		public void CopyFrom(ValueAxisRangeConfiguration other)
 		{
-			Sizing = other.Sizing;
-			Min = other.Min;
-			Max = other.Max;
+			if (other == null)
+			{
+				SetToDefault();
+			}
+			else
+			{
+				Sizing = other.Sizing;
+				Min = other.Min;
+				Max = other.Max;
+			}
+		}
+
+		public void SetToDefault()
+		{
+			Sizing = ValueAxisSizing.Adaptive;
+			Min = float.PositiveInfinity;
+			Max = float.NegativeInfinity;
 		}
 
 		#endregion

@@ -62,19 +62,7 @@ namespace Extenity.UnityEditorToolbox.GraphPlotting
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			if (componentIsActive)
-			{
-				if (Graph == null)
-				{
-					Graph = new Graph("Debug.Log", gameObject);
-				}
-
-				Graph.Title = "Debug.Log";
-			}
-			else
-			{
-				Graph.SafeClose(ref Graph);
-			}
+			Graph.SetupGraph(componentIsActive, ref Graph, "Debug.Log", gameObject, null);
 		}
 
 		private void LogCallback(string logString, string stackTrace, LogType type)
