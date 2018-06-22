@@ -220,9 +220,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			Configuration.Update();
 
-			var disabled = IsInspectorDisabledWhenPlaying;
+			var disabled = IsInspectorDisabledWhenPlaying && Application.isPlaying;
 			if (disabled)
-				EditorGUI.BeginDisabledGroup(Application.isPlaying);
+				EditorGUI.BeginDisabledGroup(true);
 
 			OnBeforeDefaultInspectorGUI();
 
