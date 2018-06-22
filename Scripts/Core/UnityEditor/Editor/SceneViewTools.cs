@@ -24,6 +24,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GUIUtility.hotControl = passiveControlId;
 			currentEvent.Use();
 		}
+
+		public static void MoveObjectToView(Transform transform)
+		{
+			var view = SceneView.lastActiveSceneView;
+			if (view != null)
+				view.MoveToView(transform);
+		}
 	}
 
 }
