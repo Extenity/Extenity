@@ -8,12 +8,16 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 
 	public class Example_AnyComponentGraphPlotter : MonoBehaviour
 	{
+#pragma warning disable 414
+
 		public float SomeRandomNumber;
 		private float SomeHiddenRandomNumber;
 		[NonSerialized]
 		public Quaternion SomeRotation;
 
 		private Example_Subclass HiddenSubobject = new Example_Subclass();
+
+#pragma warning restore 414
 
 		public class Example_Subclass
 		{
