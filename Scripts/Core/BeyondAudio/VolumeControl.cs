@@ -120,6 +120,16 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
+		public float MuteAppliedVolume
+		{
+			get
+			{
+				if (IsMuted)
+					return 0f;
+				return Volume;
+			}
+		}
+
 		public void SetVolume(float value)
 		{
 			Volume = value;
