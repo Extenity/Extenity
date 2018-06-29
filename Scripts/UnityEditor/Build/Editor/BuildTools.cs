@@ -116,15 +116,24 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static IDisposable RemoveSplashIfPro()
+		public static bool RemoveSplashIfPro()
 		{
 			if (PlayerSettings.advancedLicense)
 			{
 				if (PlayerSettings.SplashScreen.show)
 				{
 					PlayerSettings.SplashScreen.show = false;
-					return new SplashDisposeHandler(true);
+					return true;
 				}
+			}
+			return false;
+		}
+
+		public static IDisposable TemporarilyRemoveSplashIfPro()
+		{
+			if (RemoveSplashIfPro())
+			{
+				return new SplashDisposeHandler(true);
 			}
 			return null;
 		}
@@ -158,7 +167,15 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static IDisposable SetTemporaryKeys(
+		public static void SetKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		{
+			PlayerSettings.Android.keystoreName = setKeystoreName;
+			PlayerSettings.Android.keystorePass = setKeystorePass;
+			PlayerSettings.Android.keyaliasName = setKeyaliasName;
+			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
+		}
+
+		public static IDisposable TemporarilySetKeys(
 			string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass,
 			string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
 		{
@@ -169,19 +186,20 @@ namespace Extenity.BuildToolbox.Editor
 			return new KeyDisposeHandler(resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
 		}
 
-		public static IDisposable SetTemporaryKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		public static IDisposable TemporarilySetKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
 		{
 			var resultingKeystoreName = PlayerSettings.Android.keystoreName;
 			var resultingKeystorePass = PlayerSettings.Android.keystorePass;
 			var resultingKeyaliasName = PlayerSettings.Android.keyaliasName;
 			var resultingKeyaliasPass = PlayerSettings.Android.keyaliasPass;
-			return SetTemporaryKeys(
+			return TemporarilySetKeys(
 				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
 				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
 		}
 
 		#endregion
-		#region Increment Android Version
+
+		#region Increment Android/iOS/Bundle Version
 
 		public static void IncrementAndroidVersion(bool alsoIncrementBundleVersion, bool saveAssets)
 		{
