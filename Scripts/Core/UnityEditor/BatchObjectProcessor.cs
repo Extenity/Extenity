@@ -66,6 +66,8 @@ namespace Extenity.UnityEditorToolbox
 
 		public List<JobDefinition> GetJobDefinitions(string jobName, string[] requiredTags)
 		{
+			var skippedSomething = false;
+
 			var result = JobDefinitions.Where(definition =>
 			{
 				if (definition.JobName == jobName)
@@ -79,6 +81,13 @@ namespace Extenity.UnityEditorToolbox
 							if (definition.JobTags.Contains(requiredTag))
 								return true;
 						}
+						Debug.Log($"Skipping job '{jobName}' because it does not have "+ 
+						          (requiredTags.Length > 1 
+							          ? $"any of the tags '{string.Join(", ", requiredTags)}'." 
+							          : $"the tag '{requiredTags[0]}'."
+						          )
+						);
+						skippedSomething = true;
 					}
 					else
 					{
@@ -88,7 +97,7 @@ namespace Extenity.UnityEditorToolbox
 				return false;
 			}).ToList();
 
-			if (result.Count == 0)
+			if (!skippedSomething && result.Count == 0) // Need to check if we have skipped a definition. So that we know the job actually exists but the tags does not match, which is okay.
 				throw new Exception($"Batch object job definition '{jobName}' does not exist.");
 			return result;
 		}
