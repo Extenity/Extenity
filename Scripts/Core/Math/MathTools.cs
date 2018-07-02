@@ -562,6 +562,11 @@ namespace Extenity.MathToolbox
 
 		#region Matrix4x4
 
+		public static Matrix4x4 UnscaledLocalToWorldMatrix(this Transform transform)
+		{
+			return Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+		}
+
 		public static void SetPosition(ref Matrix4x4 matrix, Vector3 position)
 		{
 			matrix.m03 = position.x;
