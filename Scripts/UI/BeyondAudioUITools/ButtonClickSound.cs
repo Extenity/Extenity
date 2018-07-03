@@ -1,3 +1,4 @@
+using Extenity.FlowToolbox;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,13 @@ namespace Extenity.BeyondAudio.UI
 				typeof(T) == typeof(Toggle);
 		}
 
-		private void OnEnable()
+		protected void OnEnable()
+		{
+			// Allow everything to be initialized first. The user would not likely press the button in 100 ms.
+			this.FastInvoke(OnEnableDelayed, 0.1);
+		}
+
+		private void OnEnableDelayed()
 		{
 			if (Button)
 			{
@@ -35,7 +42,7 @@ namespace Extenity.BeyondAudio.UI
 			}
 		}
 
-		private void OnDisable()
+		protected void OnDisable()
 		{
 			if (Button)
 			{
@@ -65,7 +72,7 @@ namespace Extenity.BeyondAudio.UI
 			AudioManager.Play(EventName);
 		}
 
-		private void OnValidate()
+		protected void OnValidate()
 		{
 			// Need to check for both at the same time. We are interested in triggering
 			// a heavy GetComponent check only if all of the references are missing.

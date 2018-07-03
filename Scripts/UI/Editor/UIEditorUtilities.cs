@@ -62,7 +62,7 @@ namespace Extenity.UIToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Add Button Click Sound To Selection")]
+		[MenuItem(Menu + "Add Button Click Sound To Selection", priority = 200)]
 		public static void AddButtonClickSoundsToSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;
@@ -77,6 +77,13 @@ namespace Extenity.UIToolbox.Editor
 				foreach (var clickable in selectedObject.GetComponentsInChildren<Toggle>(includeInactive))
 					clickable.CreateButtonClickSoundFor();
 			}
+		}
+
+		[MenuItem(Menu + "Toggle Global Button Click Sound Logging", priority = 203)]
+		public static void ToggleGlobalButtonClickSoundLogging()
+		{
+			ButtonClickSound.IsLoggingEnabled = !ButtonClickSound.IsLoggingEnabled;
+			Debug.Log("Global Button Click Sound logging " + (ButtonClickSound.IsLoggingEnabled ? "enabled" : "disabled"));
 		}
 
 		public static void CreateButtonClickSoundFor<TTarget>(this TTarget clickable) where TTarget : Selectable

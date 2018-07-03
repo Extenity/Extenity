@@ -40,7 +40,7 @@ namespace Extenity.FlowToolbox
 
 		public static void FastInvoke(this Behaviour behaviour, Action action, double time, bool unscaledTime = false)
 		{
-			Handler.Invoke(behaviour, action, time, 0f, unscaledTime);
+			Handler.Invoke(behaviour, action, time, 0.0, unscaledTime);
 		}
 
 		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double repeatRate, bool unscaledTime = false)

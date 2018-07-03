@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.FlowToolbox;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -62,14 +63,25 @@ namespace Extenity.UIToolbox
 			}
 		}
 
-		private void LoseFocus(bool arg1)
+		private void LoseFocus(bool dummy)
 		{
-			LoseFocus();
+			this.FastInvoke(LoseFocusDelayed, 0, true);
 		}
 
 		private void LoseFocus()
 		{
-			EventSystem.current.SetSelectedGameObject(null);
+			this.FastInvoke(LoseFocusDelayed, 0, true);
+		}
+
+		private void LoseFocusDelayed()
+		{
+			// Delayed call is needed because immediately setting selected object to null
+			// prevents calling other methods registered to button click event.
+			// But now we need to check if the currently selected object is still this object.
+			if (EventSystem.current.currentSelectedGameObject == gameObject)
+			{
+				EventSystem.current.SetSelectedGameObject(null);
+			}
 		}
 	}
 
