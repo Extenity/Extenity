@@ -76,6 +76,40 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		#region MakeSureNoObjectsContainingComponentExist
+
+		public static void MakeSureNoObjectsContainingComponentExistInActiveScene<T>(ActiveCheck activeCheck) where T : Component
+		{
+			SceneManager.GetActiveScene().MakeSureNoObjectsContainingComponentExist<T>(activeCheck);
+		}
+
+		public static void MakeSureNoObjectsContainingComponentExistInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.MakeSureNoObjectsContainingComponentExist<T>(activeCheck));
+		}
+
+		public static void MakeSureNoObjectsContainingComponentExist<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
+		{
+			var components = scene.FindObjectsOfType<T>(activeCheck);
+
+			var found = false;
+			foreach (var component in components)
+			{
+				if (component)
+				{
+					// Do not merge all logs in a single log entry. Log each error in a separate entry that points to the gameobject in log's context for ease of use.
+					Debug.LogError($"Object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
+					found = true;
+				}
+			}
+
+			// Fail by throwing an exception.
+			if (found)
+				throw new Exception($"Scene has object(s) that contain '{typeof(T).Name}' component. See previous error logs.");
+		}
+
+		#endregion
+
 		#region MakeSureNoStaticObjectsContainingComponentExist
 
 		public static void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
