@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
@@ -14,7 +13,7 @@ namespace Extenity.UIToolbox.Editor
 	{
 		private const string Menu = "Tools/UI/";
 
-		[MenuItem(Menu + "Disable All Navigation")]
+		[MenuItem(Menu + "Disable All Navigation In Selection")]
 		public static void DisableAllNavigationInSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;
@@ -33,8 +32,8 @@ namespace Extenity.UIToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Reset All Scales")]
-		public static void DisableResetAllScalesInSelectedObjectAndChildren()
+		[MenuItem(Menu + "Reset All Scales In Selection")]
+		public static void ResetAllScalesInSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;
 			if (selectedObjects.Length == 0)
@@ -63,7 +62,7 @@ namespace Extenity.UIToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Add Button Click Sound")]
+		[MenuItem(Menu + "Add Button Click Sound To Selection")]
 		public static void AddButtonClickSoundsToSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;
