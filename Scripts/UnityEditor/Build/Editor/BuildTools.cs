@@ -199,54 +199,55 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
-		#region Increment Android/iOS/Bundle Version
+		#region Increment Mobile Version (Android/iOS/Bundle)
 
-		public static void IncrementAndroidVersion(bool alsoIncrementBundleVersion, bool saveAssets)
+		public static void IncrementMobileVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
 		{
-			PlayerSettings.Android.bundleVersionCode++;
-			if (alsoIncrementBundleVersion)
-			{
-				IncrementBundleVersion(false);
-			}
+			var androidCode = PlayerSettings.Android.bundleVersionCode;
 
-			if (saveAssets)
-			{
-				AssetDatabase.SaveAssets();
-			}
-		}
+			// TODO: Check if Android and iOS codes match. If not, throw exception and ask user to correct it first.
 
-		public static void IncrementIOSVersion(bool alsoIncrementBundleVersion, bool saveAssets)
-		{
-			throw new NotImplementedException();
-			//PlayerSettings.iOS.buildNumber
-			//if (alsoIncrementBundleVersion)
-			//{
-			//	IncrementBundleVersion(false);
-			//}
+			var code = androidCode;
 
-			//if (saveAssets)
-			//{
-			//	AssetDatabase.SaveAssets();
-			//}
-		}
+			const int MajorDigits = 10000;
+			const int MinorDigits = 100;
 
-		public static void IncrementBundleVersion(bool saveAssets)
-		{
-			var split = PlayerSettings.bundleVersion.Split('.');
+			// Get version details
+			var major = code / 10000;
+			var minor = (code - major * 10000) / 100;
+			var build = code - major * 10000 - minor * 100;
 
-			// Check if bundle version format is correct
-			int dummy;
-			if (split.Length != 2 ||
-				!int.TryParse(split[0], out dummy) ||
-				!int.TryParse(split[1], out dummy)
+			// Increment
+			major += addMajor;
+			minor += addMinor;
+			build += addBuild;
+			if (
+				(major < 0) ||
+				(minor < 0 || minor >= (MajorDigits / MinorDigits)) ||
+				(build < 0 || build >= MinorDigits)
 			)
 			{
-				throw new FormatException($"Unknown bundle version format '{PlayerSettings.bundleVersion}' while expecting '#.#' that is being 'MAJOR.MINOR' versions.");
+				throw new Exception($"Version change makes the version go out of range. New version is: {major}.{minor}.{build}");
 			}
 
-			// Increment the version
-			split[1] = (int.Parse(split[1]) + 1).ToString();
-			PlayerSettings.bundleVersion = string.Join(".", split);
+			// Calculate new code and version
+			code = major * 10000 + minor * 100 + build;
+			var version = major + "." + minor + "." + build;
+
+			UnityEngine.Debug.Log($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+
+			// Android
+			{
+				PlayerSettings.Android.bundleVersionCode = code;
+				PlayerSettings.bundleVersion = version;
+			}
+
+			// iOS
+			{
+				// TODO: Set code and version for iOS.
+				//PlayerSettings.iOS.bundleVersionCode or something
+				//PlayerSettings.iOS.buildNumber
+			}
 
 			if (saveAssets)
 			{
