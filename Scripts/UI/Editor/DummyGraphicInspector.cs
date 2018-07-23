@@ -1,7 +1,7 @@
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 
-namespace Extenity.UIToolbox
+namespace Extenity.UIToolbox.Editor
 {
 
 	[CustomEditor(typeof(DummyGraphic))]

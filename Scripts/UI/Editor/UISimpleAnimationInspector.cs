@@ -4,7 +4,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.UIToolbox
+namespace Extenity.UIToolbox.Editor
 {
 
 	[CustomEditor(typeof(UISimpleAnimation))]
