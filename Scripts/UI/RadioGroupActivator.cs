@@ -1,10 +1,21 @@
 using System;
+using System.Linq;
+using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace Extenity.UIToolbox
 {
+
+	public enum RadioGroupActivatorMode
+	{
+		ActivateIfAnythingSelected,
+		ActivateIfNothingSelected,
+		ActivateIfSelectedAnExpectedObject,
+	}
 
 	public class RadioGroupActivator : MonoBehaviour
 	{
@@ -45,16 +56,31 @@ namespace Extenity.UIToolbox
 			{
 				case RadioGroupActivatorMode.ActivateIfAnythingSelected:
 					{
-						isActive = RadioGroup.SelectedButton != null;
+						isActive = RadioGroup && RadioGroup.SelectedButton != null;
 					}
 					break;
 				case RadioGroupActivatorMode.ActivateIfNothingSelected:
 					{
-						isActive = RadioGroup.SelectedButton == null;
+						isActive = RadioGroup && RadioGroup.SelectedButton == null;
+					}
+					break;
+				case RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject:
+					{
+						if (ExpectedObjects.IsNullOrEmpty())
+						{
+							Debug.LogError($"No expected object specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}',");
+							break;
+						}
+
+						if (RadioGroup && RadioGroup.SelectedButton)
+						{
+							isActive = ExpectedObjects.Contains(RadioGroup.SelectedButton) ||
+									   ExpectedObjects.Contains(RadioGroup.SelectedButton.gameObject);
+						}
 					}
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("Mode");
+					throw new ArgumentOutOfRangeException();
 			}
 
 			SetTargetActivation(isActive);
@@ -64,12 +90,14 @@ namespace Extenity.UIToolbox
 
 		#region Radio Group
 
+		[Tooltip("The radio group that it's activities will be checked for. If the configured criteria is met, 'Target' object will be enabled.")]
 		public RadioGroup RadioGroup;
 
 		#endregion
 
 		#region Target
 
+		[Tooltip("Object to be activated when criteria is met.")]
 		public Object Target;
 
 		private void SetTargetActivation(bool isActive)
@@ -106,13 +134,15 @@ namespace Extenity.UIToolbox
 
 		#region Mode
 
-		public enum RadioGroupActivatorMode
-		{
-			ActivateIfAnythingSelected,
-			ActivateIfNothingSelected,
-		}
+		[Header("Criteria")]
+		public RadioGroupActivatorMode Mode = RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject;
 
-		public RadioGroupActivatorMode Mode;
+		#endregion
+
+		#region Expected Objects
+
+		[ConditionalHideInInspector("Mode", RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject, false, HideOrDisable.Hide)]
+		public Object[] ExpectedObjects;
 
 		#endregion
 
@@ -122,11 +152,12 @@ namespace Extenity.UIToolbox
 		{
 			if (RadioGroup)
 			{
+				RadioGroup.OnButtonSelected.RemoveListener(OnRadioButtonSelectionChanged); // Just in case.
 				RadioGroup.OnButtonSelected.AddListener(OnRadioButtonSelectionChanged);
 			}
 			else
 			{
-				Debug.LogError("Radio group was not specified for activator.", this);
+				Debug.LogError($"{nameof(RadioGroup)} was not specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}'.", this);
 			}
 		}
 
@@ -141,6 +172,27 @@ namespace Extenity.UIToolbox
 		private void OnRadioButtonSelectionChanged(Toggle toggle)
 		{
 			Refresh();
+		}
+
+		#endregion
+
+		#region Validate
+
+		private void OnValidate()
+		{
+			if (!RadioGroup)
+			{
+				RadioGroup = GetComponentInParent<RadioGroup>();
+			}
+
+			if (Mode != RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject)
+			{
+				if (ExpectedObjects.IsNotNullAndEmpty())
+				{
+					Debug.Log($"Clearing '{nameof(ExpectedObjects)}' as it is not needed and would leave unused references.");
+					ExpectedObjects = new Object[0];
+				}
+			}
 		}
 
 		#endregion
