@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -15,7 +17,7 @@ namespace Extenity.UIToolbox
 		protected void Start()
 		{
 			InitializeRadioButtons();
-			SelectButton(DefaultButton);
+			InitializeDefaultSelection();
 		}
 
 		#endregion
@@ -33,7 +35,7 @@ namespace Extenity.UIToolbox
 
 		protected void LateUpdate()
 		{
-			if (ChildrenInvalidated)
+			if (ChildrenInvalidated && AutoFindChildButtons)
 			{
 				InitializeRadioButtons();
 			}
@@ -54,30 +56,41 @@ namespace Extenity.UIToolbox
 
 		#region Buttons
 
-		private List<Toggle> Buttons;
+		[Header("Buttons")]
+		public bool AutoFindChildButtons = true;
+		public Toggle[] ToggleButtons;
+
+		private List<Toggle> RegisteredToggleButtons;
 
 		private void InitializeRadioButtons()
 		{
-			var newButtons = transform.GetComponentsInChildren<Toggle>();
-
-			if (Buttons == null)
+			Toggle[] newButtons;
+			if (AutoFindChildButtons)
 			{
-				Buttons = new List<Toggle>(newButtons.Length);
+				newButtons = transform.GetComponentsInChildren<Toggle>();
+			}
+			else
+			{
+				newButtons = ToggleButtons;
 			}
 
-			Buttons.EqualizeTo(newButtons,
+			if (RegisteredToggleButtons == null)
+			{
+				RegisteredToggleButtons = new List<Toggle>(newButtons.Length);
+			}
+
+			RegisteredToggleButtons.EqualizeTo(newButtons,
 				button =>
 				{
 					var cachedButton = button;
-					button.isOn = false;
 					button.onValueChanged.AddListener(toggleValue => OnToggleChanged(cachedButton, toggleValue));
-					Buttons.Add(button);
+					RegisteredToggleButtons.Add(button);
 				},
 				(toggle, i) =>
 				{
-					Buttons.RemoveAt(i);
-				// TODO: Find a way to use RemoveListener to remove the event registered above.
-			}
+					RegisteredToggleButtons.RemoveAt(i);
+					// TODO: Find a way to use RemoveListener to remove the event registered above.
+				}
 			);
 		}
 
@@ -97,9 +110,77 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Default Button
+		#region Default Selection
 
-		public Toggle DefaultButton = null;
+		public enum DefaultSelection
+		{
+			Untouched,
+			SelectSpecifiedButton,
+			FindAndSelectTheActiveButton,
+			AllDeselected,
+		}
+
+		[Header("Default Selection")]
+		public DefaultSelection DefaultSelectionBehaviour = DefaultSelection.SelectSpecifiedButton;
+		[ConditionalHideInInspector("DefaultSelectionBehaviour", DefaultSelection.SelectSpecifiedButton, HideOrDisable.Hide)]
+		public Toggle DefaultSelectedButton = null;
+
+		private void InitializeDefaultSelection()
+		{
+			switch (DefaultSelectionBehaviour)
+			{
+				case DefaultSelection.Untouched:
+					break;
+				case DefaultSelection.SelectSpecifiedButton:
+					{
+						if (DefaultSelectedButton)
+						{
+							SelectButton(DefaultSelectedButton);
+						}
+						else
+						{
+							Debug.LogError($"Failed to make the default selection. There is no button specified in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+						}
+					}
+					break;
+				case DefaultSelection.FindAndSelectTheActiveButton:
+					{
+						if (RegisteredToggleButtons.IsNullOrEmpty())
+						{
+							Debug.LogError($"Failed to make the default selection. There is no registered button in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+							break;
+						}
+
+						int activeButtonCount = 0;
+						Toggle activeButton = null;
+						for (int i = 0; i < RegisteredToggleButtons.Count; i++)
+						{
+							if (RegisteredToggleButtons[i].isOn)
+							{
+								activeButton = RegisteredToggleButtons[i];
+								activeButtonCount++;
+							}
+						}
+
+						if (activeButtonCount == 1)
+						{
+							SelectButton(activeButton);
+						}
+						else
+						{
+							Debug.LogError($"Failed to make the default selection. There are '{activeButtonCount}' active buttons while expected only one in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+						}
+					}
+					break;
+				case DefaultSelection.AllDeselected:
+					{
+						SelectButton(null);
+					}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
 
 		#endregion
 
@@ -109,9 +190,9 @@ namespace Extenity.UIToolbox
 
 		public void SelectButton(Toggle toggle)
 		{
-			for (int i = 0; i < Buttons.Count; i++)
+			for (int i = 0; i < RegisteredToggleButtons.Count; i++)
 			{
-				var button = Buttons[i];
+				var button = RegisteredToggleButtons[i];
 				var enable = button == toggle;
 				if (enable)
 				{
@@ -152,7 +233,24 @@ namespace Extenity.UIToolbox
 
 		[Serializable]
 		public class RadioGroupSelectionEvent : UnityEvent<Toggle> { }
+		[Header("Events")]
 		public RadioGroupSelectionEvent OnButtonSelected = new RadioGroupSelectionEvent();
+
+		#endregion
+
+		#region Editor
+
+		protected void OnValidate()
+		{
+			if (DefaultSelectionBehaviour != DefaultSelection.SelectSpecifiedButton)
+			{
+				if (DefaultSelectedButton)
+				{
+					Debug.Log($"Clearing '{nameof(DefaultSelectedButton)}' as it is not needed and would leave unused references.");
+					DefaultSelectedButton = null;
+				}
+			}
+		}
 
 		#endregion
 	}

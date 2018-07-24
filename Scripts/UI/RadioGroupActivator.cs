@@ -21,9 +21,13 @@ namespace Extenity.UIToolbox
 	{
 		#region Initialization
 
-		protected void Start()
+		protected void Awake()
 		{
 			RegisterRadioGroupEvents();
+		}
+
+		protected void Start()
+		{
 			Refresh();
 		}
 
@@ -111,18 +115,26 @@ namespace Extenity.UIToolbox
 			if (Target is GameObject)
 			{
 				((GameObject)Target).SetActive(isActive);
+				if (RebuildLayoutOnActivation)
+					LayoutRebuilder.MarkLayoutForRebuild(((GameObject)Target).GetComponent<RectTransform>());
 			}
 			else if (Target is Button)
 			{
 				((Button)Target).interactable = isActive;
+				if (RebuildLayoutOnActivation)
+					LayoutRebuilder.MarkLayoutForRebuild(((Component)Target).GetComponent<RectTransform>());
 			}
 			else if (Target is Image)
 			{
 				((Image)Target).enabled = isActive;
+				if (RebuildLayoutOnActivation)
+					LayoutRebuilder.MarkLayoutForRebuild(((Component)Target).GetComponent<RectTransform>());
 			}
 			else if (Target is Behaviour)
 			{
 				((Behaviour)Target).enabled = isActive;
+				if (RebuildLayoutOnActivation)
+					LayoutRebuilder.MarkLayoutForRebuild(((Component)Target).GetComponent<RectTransform>());
 			}
 			else
 			{
@@ -143,6 +155,13 @@ namespace Extenity.UIToolbox
 
 		[ConditionalHideInInspector("Mode", RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject, false, HideOrDisable.Hide)]
 		public Object[] ExpectedObjects;
+
+		#endregion
+
+		#region Additional Options
+
+		[Header("Additional Options")]
+		public bool RebuildLayoutOnActivation = false;
 
 		#endregion
 
