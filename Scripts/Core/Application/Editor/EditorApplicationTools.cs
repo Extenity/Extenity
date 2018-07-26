@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.IO;
+using System.Reflection;
 using Extenity.DataToolbox;
 using UnityEditor;
 
@@ -79,6 +80,17 @@ namespace Extenity.ApplicationToolbox.Editor
 			{
 				EditorApplication.update.Invoke();
 			};
+		}
+
+		#endregion
+
+		#region Sync And Open C# Project
+
+		public static void SyncAndOpenSolution()
+		{
+			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.SyncVS", true, true);
+			var method = type.GetMethod("SyncAndOpenSolution", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+			method.Invoke(null, null);
 		}
 
 		#endregion
