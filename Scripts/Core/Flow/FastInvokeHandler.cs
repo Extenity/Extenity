@@ -61,7 +61,14 @@ namespace Extenity.FlowToolbox
 					// It's time to do the action
 					if (entry.Behaviour.isActiveAndEnabled)
 					{
-						entry.Action();
+						try
+						{
+							entry.Action();
+						}
+						catch (Exception exception)
+						{
+							Debug.LogException(exception);
+						}
 					}
 
 					// Remove from queue. But first check if the user manually removed it or not.
@@ -101,7 +108,14 @@ namespace Extenity.FlowToolbox
 					// It's time to do the action
 					if (entry.Behaviour.isActiveAndEnabled)
 					{
-						entry.Action();
+						try
+						{
+							entry.Action();
+						}
+						catch (Exception exception)
+						{
+							Debug.LogException(exception);
+						}
 					}
 
 					// Remove from queue. But first check if the user manually removed it or not.
