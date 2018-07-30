@@ -8,6 +8,7 @@ using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -1033,28 +1034,12 @@ namespace Extenity.ReflectionToolbox
 				return;
 
 			// Decide how to include referenced game objects based on referenced object's type
-			if (type.IsSameOrSubclassOf(typeof(Component)))
-			{
-				var referencedComponent = referencedObject as Component;
-				if (referencedComponent)
-				{
-					// Component is an inseparable part of a GameObject. A reference to a
-					// Component means it is also referencing the GameObject as a whole.
-					// So we process the GameObject that has this Component.
-					var referencedGameObject = referencedComponent.gameObject;
-					InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
-				}
-			}
-			else if (type.IsSameOrSubclassOf(typeof(GameObject)))
-			{
-				var referencedGameObject = referencedObject as GameObject;
-				InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
-			}
-			else if (type.IsSameOrSubclassOf(typeof(AudioSource)))
+			if (type.IsSameOrSubclassOf(typeof(AudioSource)))
 			{
 				var referencedAudioSource = referencedObject as AudioSource;
 				if (referencedAudioSource)
 				{
+					InternalAddReferencedGameObjectToResults(referencedAudioSource.gameObject, result, excludedTypes); // See 57182.
 					InternalAddReferencedObjectOfType(referencedAudioSource.clip, result, excludedTypes);
 					InternalAddReferencedObjectOfType(referencedAudioSource.outputAudioMixerGroup, result, excludedTypes);
 				}
@@ -1081,6 +1066,22 @@ namespace Extenity.ReflectionToolbox
 					InternalAddReferencedObjectOfType(referencedAudioMixerGroup.audioMixer, result, excludedTypes);
 				}
 			}
+			else if (type.IsSameOrSubclassOf(typeof(Animator)))
+			{
+				var referencedAnimator = referencedObject as Animator;
+				if (referencedAnimator)
+				{
+					// An Animator may use it's children without keeping any references to them.
+					// So we need to assume they are referenced.
+					InternalAddReferencedGameObjectToResults(referencedAnimator.gameObject, result, excludedTypes); // See 57182.
+					var children = new List<GameObject>();
+					referencedAnimator.gameObject.ListAllChildrenGameObjects(children, false);
+					foreach (var childGO in children)
+					{
+						InternalAddReferencedGameObjectToResults(childGO, result, excludedTypes);
+					}
+				}
+			}
 			else if (type.IsSameOrSubclassOf(typeof(Mesh)))
 			{
 				// Does not contain any link to game objects. So we skip.
@@ -1097,6 +1098,16 @@ namespace Extenity.ReflectionToolbox
 			{
 				// Does not contain any link to game objects. So we skip.
 			}
+			else if (type.IsSameOrSubclassOf(typeof(OffMeshLink)))
+			{
+				var referencedOffMeshLink = referencedObject as OffMeshLink;
+				if (referencedOffMeshLink)
+				{
+					InternalAddReferencedGameObjectToResults(referencedOffMeshLink.gameObject, result, excludedTypes); // See 57182.
+					InternalAddReferencedGameObjectToResults(referencedOffMeshLink.startTransform.gameObject, result, excludedTypes);
+					InternalAddReferencedGameObjectToResults(referencedOffMeshLink.endTransform.gameObject, result, excludedTypes);
+				}
+			}
 			else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
 			{
 				var unityEvent = (UnityEvent)referencedObject;
@@ -1107,6 +1118,23 @@ namespace Extenity.ReflectionToolbox
 					var eventTarget = unityEvent.GetPersistentTarget(i);
 					InternalAddReferencedObjectOfType(eventTarget, result, excludedTypes);
 				}
+			}
+			else if (type.IsSameOrSubclassOf(typeof(Component)))
+			{
+				var referencedComponent = referencedObject as Component;
+				if (referencedComponent)
+				{
+					// Component is an inseparable part of a GameObject. A reference to a
+					// Component means it is also referencing the GameObject as a whole.
+					// So we process the GameObject that has this Component. See 57182.
+					var referencedGameObject = referencedComponent.gameObject;
+					InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
+				}
+			}
+			else if (type.IsSameOrSubclassOf(typeof(GameObject)))
+			{
+				var referencedGameObject = referencedObject as GameObject;
+				InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
 			}
 			else if (
 				// These types can't keep a reference to an object. So we skip.

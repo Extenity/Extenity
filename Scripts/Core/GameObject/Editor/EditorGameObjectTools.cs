@@ -8,7 +8,6 @@ using Extenity.SceneManagementToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -175,43 +174,6 @@ namespace Extenity.GameObjectToolbox.Editor
 				}
 			}
 
-			// SPECIAL CARE
-			{
-				const ActiveCheck includeInactiveForSpecialCare = ActiveCheck.IncludingInactive;
-
-				// Exclude all child gameobjects of Animators.
-				{
-					var animators = GameObjectTools.FindObjectsOfTypeInActiveScene<Animator>(includeInactiveForSpecialCare);
-					if (animators.Count > 0)
-					{
-						var children = new List<GameObject>();
-						foreach (var animator in animators)
-						{
-							children.Clear();
-							animator.gameObject.ListAllChildrenGameObjects(children, true);
-							foreach (var child in children)
-							{
-								allReferencedObjects.Add(child);
-							}
-						}
-					}
-				}
-
-				// Exclude referenced gameobjects in OffMeshLinks
-				{
-					var offMeshLinks = GameObjectTools.FindObjectsOfTypeInActiveScene<OffMeshLink>(includeInactiveForSpecialCare);
-					foreach (var offMeshLink in offMeshLinks)
-					{
-						var linked = offMeshLink.startTransform;
-						if (linked)
-							allReferencedObjects.Add(linked.gameObject);
-						linked = offMeshLink.endTransform;
-						if (linked)
-							allReferencedObjects.Add(linked.gameObject);
-					}
-				}
-			}
-
 			StringBuilder deletedObjectsText = null;
 			StringBuilder skippedObjectsText = null;
 			if (log)
@@ -261,7 +223,11 @@ namespace Extenity.GameObjectToolbox.Editor
 			while (needsReRun);
 
 			if (log)
-				Debug.Log($"<b>Destroyed {destroyedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')} in scene '{scene.name}':</b>\n{deletedObjectsText}\n\n<b>Skipped {skippedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')}:</b>\n");
+				Debug.Log(
+					$"<b>Destroyed {destroyedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')} in scene '{scene.name}':</b>\n" +
+					$"{deletedObjectsText}\n\n" +
+					$"<b>Skipped {skippedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')}:</b>\n" +
+					$"{skippedObjectsText}");
 		}
 
 		#endregion
