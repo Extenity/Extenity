@@ -946,63 +946,56 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjects...
 
-		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result)
+		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (!scene.IsValid())
 				throw new Exception("Scene is not valid.");
 			foreach (var gameObject in scene.ListAllGameObjectsInScene())
 			{
-				foreach (var component in gameObject.GetComponents<Component>())
-				{
-					foreach (var serializedField in component.GetUnitySerializedFields())
-					{
-						var referencedObject = serializedField.GetValue(component);
-						InternalAddReferencedObjectOfType(referencedObject, result);
-					}
-				}
+				FindAllReferencedGameObjectsInGameObject(gameObject, result, excludedTypes);
 			}
 		}
 
-		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result) where T : Component
+		public static void FindAllReferencedGameObjectsInComponent<T>(this T component, HashSet<GameObject> result, Type[] excludedTypes) where T : Component
 		{
 			if (!component)
 				throw new ArgumentNullException(nameof(component));
+			if (CheckIfTypeExcluded(component.GetType(), excludedTypes))
+				return;
 			foreach (var serializedField in component.GetUnitySerializedFields())
 			{
 				var referencedObject = serializedField.GetValue(component);
-				InternalAddReferencedObjectOfType(referencedObject, result);
+				InternalAddReferencedObjectOfType(referencedObject, result, excludedTypes);
 			}
 		}
 
-		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result)
+		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (!gameObject)
 				throw new ArgumentNullException(nameof(gameObject));
+			if (CheckIfTypeExcluded(gameObject.GetType(), excludedTypes)) // It's unlikely that an object will derive from GameObject, but here we check for this anyway.
+				return;
 			foreach (var component in gameObject.GetComponents<Component>())
 			{
-				foreach (var serializedField in component.GetUnitySerializedFields())
-				{
-					var referencedObject = serializedField.GetValue(component);
-					InternalAddReferencedObjectOfType(referencedObject, result);
-				}
+				FindAllReferencedGameObjectsInComponent(component, result, excludedTypes);
 			}
 		}
 
-		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result)
+		public static void FindAllReferencedGameObjectsInUnityObject(this Object unityObject, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (unityObject == null)
 				throw new ArgumentNullException(nameof(unityObject));
-			InternalAddReferencedObjectOfType(unityObject, result);
+			InternalAddReferencedObjectOfType(unityObject, result, excludedTypes);
 		}
 
-		public static void FindAllReferencedGameObjectsInObject(this object obj, HashSet<GameObject> result)
+		public static void FindAllReferencedGameObjectsInObject(this object obj, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
-			InternalAddReferencedObjectOfType(obj, result);
+			InternalAddReferencedObjectOfType(obj, result, excludedTypes);
 		}
 
-		private static void InternalAddReferencedObjectOfType(object referencedObject, HashSet<GameObject> result)
+		private static void InternalAddReferencedObjectOfType(object referencedObject, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (referencedObject == null)
 				return; // Nothing to do about this object.
@@ -1017,7 +1010,7 @@ namespace Extenity.ReflectionToolbox
 				{
 					foreach (var item in array)
 					{
-						InternalAddReferencedObjectOfType(item, result);
+						InternalAddReferencedObjectOfType(item, result, excludedTypes);
 					}
 				}
 				return;
@@ -1029,12 +1022,15 @@ namespace Extenity.ReflectionToolbox
 				{
 					foreach (var item in list)
 					{
-						InternalAddReferencedObjectOfType(item, result);
+						InternalAddReferencedObjectOfType(item, result, excludedTypes);
 					}
 				}
 				return;
 			}
 
+			// See if the type is excluded
+			if (CheckIfTypeExcluded(type, excludedTypes))
+				return;
 
 			// Decide how to include referenced game objects based on referenced object's type
 			if (type.IsSameOrSubclassOf(typeof(Component)))
@@ -1046,21 +1042,21 @@ namespace Extenity.ReflectionToolbox
 					// Component means it is also referencing the GameObject as a whole.
 					// So we process the GameObject that has this Component.
 					var referencedGameObject = referencedComponent.gameObject;
-					InternalAddReferencedGameObjectToResults(referencedGameObject, result);
+					InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(GameObject)))
 			{
 				var referencedGameObject = referencedObject as GameObject;
-				InternalAddReferencedGameObjectToResults(referencedGameObject, result);
+				InternalAddReferencedGameObjectToResults(referencedGameObject, result, excludedTypes);
 			}
 			else if (type.IsSameOrSubclassOf(typeof(AudioSource)))
 			{
 				var referencedAudioSource = referencedObject as AudioSource;
 				if (referencedAudioSource)
 				{
-					InternalAddReferencedObjectOfType(referencedAudioSource.clip, result);
-					InternalAddReferencedObjectOfType(referencedAudioSource.outputAudioMixerGroup, result);
+					InternalAddReferencedObjectOfType(referencedAudioSource.clip, result, excludedTypes);
+					InternalAddReferencedObjectOfType(referencedAudioSource.outputAudioMixerGroup, result, excludedTypes);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(AudioClip)))
@@ -1072,7 +1068,7 @@ namespace Extenity.ReflectionToolbox
 				var referencedAudioMixer = referencedObject as AudioMixer;
 				if (referencedAudioMixer)
 				{
-					InternalAddReferencedObjectOfType(referencedAudioMixer.outputAudioMixerGroup, result);
+					InternalAddReferencedObjectOfType(referencedAudioMixer.outputAudioMixerGroup, result, excludedTypes);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(AudioMixerGroup)))
@@ -1082,7 +1078,7 @@ namespace Extenity.ReflectionToolbox
 				{
 					// Just as the Component is an inseparable part of a GameObject, an AudioMixerGroup
 					// is a part of AudioMixer. So we include the AudioMixer too.
-					InternalAddReferencedObjectOfType(referencedAudioMixerGroup.audioMixer, result);
+					InternalAddReferencedObjectOfType(referencedAudioMixerGroup.audioMixer, result, excludedTypes);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(Mesh)))
@@ -1109,7 +1105,7 @@ namespace Extenity.ReflectionToolbox
 				for (int i = 0; i < eventCount; i++)
 				{
 					var eventTarget = unityEvent.GetPersistentTarget(i);
-					InternalAddReferencedObjectOfType(eventTarget, result);
+					InternalAddReferencedObjectOfType(eventTarget, result, excludedTypes);
 				}
 			}
 			else if (
@@ -1137,12 +1133,12 @@ namespace Extenity.ReflectionToolbox
 				foreach (var serializedField in referencedObject.GetUnitySerializedFields())
 				{
 					var referencedObjectInObject = serializedField.GetValue(referencedObject);
-					InternalAddReferencedObjectOfType(referencedObjectInObject, result);
+					InternalAddReferencedObjectOfType(referencedObjectInObject, result, excludedTypes);
 				}
 			}
 		}
 
-		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result)
+		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result, Type[] excludedTypes)
 		{
 			if (referencedGameObject)
 			{
@@ -1151,9 +1147,24 @@ namespace Extenity.ReflectionToolbox
 				// This will also prevent going into an infinite loop where there are circular references.
 				if (isAdded)
 				{
-					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result);
+					referencedGameObject.FindAllReferencedGameObjectsInGameObject(result, excludedTypes);
 				}
 			}
+		}
+
+		private static bool CheckIfTypeExcluded(Type type, Type[] excludedTypes)
+		{
+			if (excludedTypes != null)
+			{
+				for (int i = 0; i < excludedTypes.Length; i++)
+				{
+					if (type.IsSameOrSubclassOf(excludedTypes[i]))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		#endregion

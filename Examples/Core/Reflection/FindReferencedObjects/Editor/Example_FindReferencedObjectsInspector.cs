@@ -64,7 +64,7 @@ namespace ExtenityExamples.Reflection
 				Debug.LogFormat(Me, "================================= Searching...");
 
 				var result = new HashSet<GameObject>();
-				Me.FindAllReferencedGameObjectsInUnityObject(result);
+				Me.FindAllReferencedGameObjectsInUnityObject(result, null);
 
 				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me':", result.Count, Me.FullName());
 				foreach (var item in result)
@@ -78,7 +78,7 @@ namespace ExtenityExamples.Reflection
 				Debug.LogFormat(Me, "================================= Searching...");
 
 				var result = new HashSet<GameObject>();
-				Me.gameObject.FindAllReferencedGameObjectsInUnityObject(result);
+				Me.gameObject.FindAllReferencedGameObjectsInUnityObject(result, null);
 
 				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me.gameObject':", result.Count, Me.gameObject.FullName());
 				foreach (var item in result)
@@ -106,7 +106,7 @@ namespace ExtenityExamples.Reflection
 				Debug.LogFormat(Me, "================================= Searching...");
 
 				var result = new HashSet<GameObject>();
-				SceneManager.GetActiveScene().FindAllReferencedGameObjectsInScene(result);
+				SceneManager.GetActiveScene().FindAllReferencedGameObjectsInScene(result, null);
 
 				Debug.LogFormat("================================= Found '{0}' referenced 'gameobjects' in scene:", result.Count);
 				foreach (var item in result)

@@ -544,14 +544,14 @@ namespace Extenity.UnityEditorToolbox
 			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(leastExpectedFlags, activeCheck, true, true);
 		}
 
-		protected static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes()
+		protected static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(Type[] excludedTypes = null)
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(excludedTypes, true, true);
 		}
 
-		protected static void DestroyEmptyUnreferencedGameObjectsInActiveScene()
+		protected static void DestroyEmptyUnreferencedGameObjectsInActiveScene(Type[] excludedTypes = null)
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(excludedTypes, true, true);
 		}
 
 		// -------------------------------------------------------------------------

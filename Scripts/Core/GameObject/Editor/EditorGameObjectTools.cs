@@ -147,17 +147,17 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy Empty Unreferenced GameObjects
 
-		public static void DestroyEmptyUnreferencedGameObjectsInActiveScene(bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjectsInActiveScene(Type[] excludedTypes, bool undoable, bool log)
 		{
-			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(undoable, log);
+			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(excludedTypes, undoable, log);
 		}
 
-		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(Type[] excludedTypes, bool undoable, bool log)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(undoable, log));
+			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(excludedTypes, undoable, log));
 		}
 
-		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, Type[] excludedTypes, bool undoable, bool log)
 		{
 			var gameObjects = scene.ListAllGameObjectsInScene();
 			if (gameObjects.IsNullOrEmpty())
@@ -171,7 +171,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			{
 				if (component)
 				{
-					component.FindAllReferencedGameObjectsInComponent(allReferencedObjects);
+					component.FindAllReferencedGameObjectsInComponent(allReferencedObjects, excludedTypes);
 				}
 			}
 
