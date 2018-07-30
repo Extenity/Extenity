@@ -232,6 +232,7 @@ namespace Extenity.DataToolbox
 					   || type == typeof(double)
 					   || type == typeof(decimal)
 					   || type == typeof(bool)
+					   || type == typeof(char)
 					   || type == typeof(string);
 			}
 			return value is sbyte
@@ -246,6 +247,7 @@ namespace Extenity.DataToolbox
 				   || value is double
 				   || value is decimal
 				   || value is bool
+				   || value is char
 				   || value is string;
 		}
 

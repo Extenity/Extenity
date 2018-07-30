@@ -1173,9 +1173,6 @@ namespace Extenity.ReflectionToolbox
 					_KnownTypesOfGameObjectReferenceFinder = new HashSet<Type>(
 						new[]
 						{
-							// Base types
-							typeof(Char),
-
 							// Unity types
 							typeof(AnimationCurve),
 							typeof(Bounds),

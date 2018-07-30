@@ -163,6 +163,8 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (gameObjects.IsNullOrEmpty())
 				return;
 
+			// Get all components in scene, then get a list of what other scene components and gameobjects they keep references to.
+			// We will destroy all gameobjects in scene those are not put into the list.
 			var allComponents = scene.FindObjectsOfType<Component>(ActiveCheck.IncludingInactive);
 			var allReferencedObjects = new HashSet<GameObject>();
 			foreach (var component in allComponents)
