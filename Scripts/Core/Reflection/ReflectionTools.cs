@@ -1161,6 +1161,9 @@ namespace Extenity.ReflectionToolbox
 		#region FindAllReferencedGameObjects... Unknown Type Ignore List
 
 		private static HashSet<Type> _KnownTypesOfGameObjectReferenceFinder;
+		/// <summary>
+		/// For detailed explanation, see where it's used in ReflectionTools.cs.
+		/// </summary>
 		public static HashSet<Type> KnownTypesOfGameObjectReferenceFinder
 		{
 			get
@@ -1170,6 +1173,9 @@ namespace Extenity.ReflectionToolbox
 					_KnownTypesOfGameObjectReferenceFinder = new HashSet<Type>(
 						new[]
 						{
+							// Base types
+							typeof(Char),
+
 							// Unity types
 							typeof(AnimationCurve),
 							typeof(Bounds),
