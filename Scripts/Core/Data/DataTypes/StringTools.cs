@@ -992,6 +992,29 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Conversions - Dictionary
+
+		public static string ToJoinedString<TKey, TValue>(this ICollection<KeyValuePair<TKey, TValue>> dictionary, string itemSeparator = "\n", string keyValueSeparator = ": ")
+		{
+			var stringBuilder = new StringBuilder();
+			var first = true;
+			foreach (var item in dictionary)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					stringBuilder.Append(itemSeparator);
+				}
+				stringBuilder.Append(item.Key + keyValueSeparator + item.Value);
+			}
+			return stringBuilder.ToString();
+		}
+
+		#endregion
+
 		#region Whitespaces
 
 		/// <summary>
