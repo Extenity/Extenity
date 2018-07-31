@@ -44,6 +44,9 @@ namespace Extenity.BeyondAudio.UI
 
 		private void RegisterEvents()
 		{
+			if (string.IsNullOrEmpty(EventName))
+				return; // Do not even bother registering to events.
+
 			if (Button)
 			{
 				if (IsLoggingEnabled)
