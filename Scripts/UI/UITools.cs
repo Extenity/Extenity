@@ -1,7 +1,9 @@
 using System.Collections;
+using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -19,34 +21,47 @@ namespace Extenity.UIToolbox
 
 		#region Simulate Button Click
 
-		public static void SimulateButtonClick(this Button button)
+		public static void SimulateButtonClick(this Selectable selectable)
 		{
-			CoroutineTask.Create(DoSimulateButtonClick(button));
+			CoroutineTask.Create(DoSimulateButtonClick(selectable));
 		}
 
-		private static IEnumerator DoSimulateButtonClick(Button button)
+		private static IEnumerator DoSimulateButtonClick(Selectable selectable)
 		{
-			if (!button)
+			if (!selectable)
 				yield break;
-			var go = button.gameObject;
+			var go = selectable.gameObject;
 			var pointer = new PointerEventData(EventSystem.current);
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerEnterHandler);
-			if (!button || !go)
+			if (!selectable || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerDownHandler);
-			if (!button || !go)
+			if (!selectable || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.submitHandler);
-			if (!button || !go)
+			if (!selectable || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerUpHandler);
-			if (!button || !go)
+			if (!selectable || !go)
 				yield break;
 			yield return new WaitForEndOfFrame();
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerExitHandler);
+		}
+
+		#endregion
+
+		#region Register To Events
+
+		public static void RegisterToEvent(this Selectable me, EventTriggerType eventTriggerType, UnityAction<BaseEventData> callback)
+		{
+			var trigger = me.gameObject.GetSingleOrAddComponent<EventTrigger>();
+			var entry = new EventTrigger.Entry();
+			entry.eventID = eventTriggerType;
+			entry.callback.AddListener(callback);
+			trigger.triggers.Add(entry);
 		}
 
 		#endregion
