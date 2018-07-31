@@ -64,6 +64,20 @@ namespace Extenity.UIToolbox
 			trigger.triggers.Add(entry);
 		}
 
+		public static void DeregisterFromEvent(this Selectable me, EventTriggerType eventTriggerType, UnityAction<BaseEventData> callback)
+		{
+			var trigger = me.gameObject.GetComponent<EventTrigger>();
+			if (!trigger)
+				return;
+			foreach (var entry in trigger.triggers)
+			{
+				if (entry.eventID == eventTriggerType)
+				{
+					entry.callback.RemoveListener(callback);
+				}
+			}
+		}
+
 		#endregion
 
 		#region Input

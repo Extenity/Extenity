@@ -1,15 +1,25 @@
+using System;
 using Extenity.DataToolbox;
+using Extenity.UIToolbox;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Extenity.BeyondAudio.UI
 {
+
+	public enum ButtonClickSoundAction
+	{
+		Up,
+		Down,
+	}
 
 	public class ButtonClickSound : MonoBehaviour
 	{
 		public Button Button;
 		public Toggle Toggle;
 		public string EventName = "ButtonClick";
+		public ButtonClickSoundAction Action = ButtonClickSoundAction.Up;
 
 		public static bool IsTypeSupported<T>()
 		{
@@ -38,15 +48,37 @@ namespace Extenity.BeyondAudio.UI
 			{
 				if (IsLoggingEnabled)
 					Debug.Log($"Registering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
-				Button.onClick.RemoveListener(OnClick);
-				Button.onClick.AddListener(OnClick);
+				switch (Action)
+				{
+					case ButtonClickSoundAction.Up:
+						Button.onClick.RemoveListener(OnClick);
+						Button.onClick.AddListener(OnClick);
+						break;
+					case ButtonClickSoundAction.Down:
+						Button.DeregisterFromEvent(EventTriggerType.PointerDown, OnCustom);
+						Button.RegisterToEvent(EventTriggerType.PointerDown, OnCustom);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 			else if (Toggle)
 			{
 				if (IsLoggingEnabled)
 					Debug.Log($"Registering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
-				Toggle.onValueChanged.RemoveListener(OnValueChanged);
-				Toggle.onValueChanged.AddListener(OnValueChanged);
+				switch (Action)
+				{
+					case ButtonClickSoundAction.Up:
+						Toggle.onValueChanged.RemoveListener(OnValueChanged);
+						Toggle.onValueChanged.AddListener(OnValueChanged);
+						break;
+					case ButtonClickSoundAction.Down:
+						Toggle.DeregisterFromEvent(EventTriggerType.PointerDown, OnCustom);
+						Toggle.RegisterToEvent(EventTriggerType.PointerDown, OnCustom);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -56,24 +88,52 @@ namespace Extenity.BeyondAudio.UI
 			{
 				if (IsLoggingEnabled)
 					Debug.Log($"Deregistering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
-				Button.onClick.RemoveListener(OnClick);
+				switch (Action)
+				{
+					case ButtonClickSoundAction.Up:
+						Button.onClick.RemoveListener(OnClick);
+						break;
+					case ButtonClickSoundAction.Down:
+						Button.DeregisterFromEvent(EventTriggerType.PointerDown, OnCustom);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 			else if (Toggle)
 			{
 				if (IsLoggingEnabled)
 					Debug.Log($"Deregistering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
-				Toggle.onValueChanged.RemoveListener(OnValueChanged);
+				switch (Action)
+				{
+					case ButtonClickSoundAction.Up:
+						Toggle.onValueChanged.RemoveListener(OnValueChanged);
+						break;
+					case ButtonClickSoundAction.Down:
+						Toggle.DeregisterFromEvent(EventTriggerType.PointerDown, OnCustom);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
 		private void OnValueChanged(bool dummy)
 		{
-			if (IsLoggingEnabled)
-				Debug.Log($"Playing click sound of '{gameObject.name}'.", this);
-			AudioManager.Play(EventName);
+			Play();
 		}
 
 		private void OnClick()
+		{
+			Play();
+		}
+
+		private void OnCustom(BaseEventData dummy)
+		{
+			Play();
+		}
+
+		public void Play()
 		{
 			if (IsLoggingEnabled)
 				Debug.Log($"Playing click sound of '{gameObject.name}'.", this);
