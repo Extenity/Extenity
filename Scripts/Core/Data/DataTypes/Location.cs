@@ -1,3 +1,4 @@
+using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -7,6 +8,8 @@ namespace Extenity.DataToolbox
 	{
 		public Vector3 Position;
 		public Quaternion Rotation;
+
+		public static readonly Location NaN = new Location(new Vector3(float.NaN, float.NaN, float.NaN), new Quaternion(float.NaN, float.NaN, float.NaN, float.NaN));
 
 		public Location(Vector3 position, Quaternion rotation)
 		{
