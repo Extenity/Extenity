@@ -210,7 +210,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					return false;
 				}
 
-				if (PrefabUtility.GetPrefabParent(draggedGameObject) != null || PrefabUtility.GetPrefabObject(draggedGameObject) == null)
+				if (PrefabUtility.GetCorrespondingObjectFromSource(draggedGameObject) != null || PrefabUtility.GetPrefabObject(draggedGameObject) == null)
 				{
 					return false;
 				}
