@@ -1,0 +1,14 @@
+{
+    "name": "Extenity.Editor",
+    "references": [
+        "Extenity",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
