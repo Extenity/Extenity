@@ -1,3 +1,4 @@
+#if !DisablePhysics2D
 using UnityEngine;
 
 namespace Extenity.DebugFlowTool.GraphPlotting
@@ -194,3 +195,4 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 	}
 
 }
+#endif

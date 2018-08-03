@@ -1,3 +1,4 @@
+#if !DisablePhysics2D
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
@@ -160,3 +161,4 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 	}
 
 }
+#endif

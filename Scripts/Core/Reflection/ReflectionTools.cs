@@ -1094,10 +1094,12 @@ namespace Extenity.ReflectionToolbox
 			{
 				// Does not contain any link to game objects. So we skip.
 			}
+#if !DisableTerrain
 			else if (type.IsSameOrSubclassOf(typeof(TerrainData)))
 			{
 				// Does not contain any link to game objects. So we skip.
 			}
+#endif
 			else if (type.IsSameOrSubclassOf(typeof(OffMeshLink)))
 			{
 				var referencedOffMeshLink = referencedObject as OffMeshLink;

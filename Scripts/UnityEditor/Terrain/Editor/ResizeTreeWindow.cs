@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if !DisableTerrain
+using UnityEngine;
 using UnityEditor;
 
 namespace Extenity.TerrainToolbox.Editor
@@ -45,3 +46,4 @@ namespace Extenity.TerrainToolbox.Editor
 	}
 
 }
+#endif
