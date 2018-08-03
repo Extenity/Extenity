@@ -6,7 +6,9 @@
     "description": "A delicious common utilities library, best served cold. Years of Unity experience blended into a triple-berry smoothie.",
     "keywords": [
         "common",
-        "unity"
+        "utility",
+        "tool",
+        "library"
     ],
-    "category": "Unity"
+    "category": "Utility"
 }
