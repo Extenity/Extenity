@@ -31,17 +31,19 @@ namespace Extenity.RenderingToolbox
 
 		#region Render Events
 
-		protected void OnPreCull()
-		{
-			ChangeAllRenderedObjectLayers();
-			//LayerHistory.LogDump();
-		}
+		// TODO: These won't work in SRP anymore. Find a better approach.
 
-		protected void OnPostRender()
-		{
-			RestoreAllRenderedObjectLayers();
-			//LayerHistory.LogDump();
-		}
+		//protected void OnPreCull()
+		//{
+		//	ChangeAllRenderedObjectLayers();
+		//	//LayerHistory.LogDump();
+		//}
+
+		//protected void OnPostRender()
+		//{
+		//	RestoreAllRenderedObjectLayers();
+		//	//LayerHistory.LogDump();
+		//}
 
 		#endregion
 
@@ -194,18 +196,29 @@ namespace Extenity.RenderingToolbox
 
 		#region Rendered Objects
 
-		public List<GameObject> RenderedObjects = new List<GameObject>();
+		[NonSerialized]
+		private List<GameObject> RenderedObjects = new List<GameObject>();
 
-		public void ChangeAllRenderedObjectLayers()
+		public void AddRenderedObject(GameObject go)
 		{
-			if (RenderedObjects == null || RenderedObjects.Count == 0)
+			if (RenderedObjects.Contains(go))
 				return;
 
-			for (int i = 0; i < RenderedObjects.Count; i++)
+			var historyEntry = LayerHistory.GetCleanHistoryEntry();
+			historyEntry.SetLayerAndStore(go, RenderLayer);
+		}
+
+		public void RemoveRenderedObject(GameObject go)
+		{
+			for (var i = 0; i < LayerHistory.Entries.Count; i++)
 			{
-				var renderedObject = RenderedObjects[i];
-				var historyEntry = LayerHistory.GetCleanHistoryEntry();
-				historyEntry.SetLayerAndStore(renderedObject, RenderLayer);
+				var historyEntry = LayerHistory.Entries[i];
+				if (historyEntry.GameObject == go)
+				{
+					historyEntry.ClearAndRestore();
+					LayerHistory.Entries.RemoveAt(i);
+					i--;
+				}
 			}
 		}
 
@@ -213,6 +226,23 @@ namespace Extenity.RenderingToolbox
 		{
 			LayerHistory.ClearAndRestore();
 		}
+
+		//public void ChangeAllRenderedObjectLayers()
+		//{
+		//	if (RenderedObjects == null || RenderedObjects.Count == 0)
+		//		return;
+		//	for (int i = 0; i < RenderedObjects.Count; i++)
+		//	{
+		//		var renderedObject = RenderedObjects[i];
+		//		var historyEntry = LayerHistory.GetCleanHistoryEntry();
+		//		historyEntry.SetLayerAndStore(renderedObject, RenderLayer);
+		//	}
+		//}
+
+		//public void RestoreAllRenderedObjectLayers()
+		//{
+		//	LayerHistory.ClearAndRestore();
+		//}
 
 		#endregion
 	}
