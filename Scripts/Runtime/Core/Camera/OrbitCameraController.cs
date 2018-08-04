@@ -81,9 +81,12 @@ namespace Extenity.CameraToolbox
 				if (Input.GetMouseButton(RotationMouseButton))
 				{
 					BreakIdle();
-					InputRotate.y += Input.GetAxis("Mouse X") * MouseSensitivity;
-					InputRotate.x += -Input.GetAxis("Mouse Y") * MouseSensitivity;
-
+					if (IgnoreInitialDragOnClick && IsDragging)
+					{
+						InputRotate.y += Input.GetAxis("Mouse X") * MouseSensitivity;
+						InputRotate.x += -Input.GetAxis("Mouse Y") * MouseSensitivity;
+					}
+					IsDragging = true;
 					MouseCursor.HideCursor();
 				}
 				else
@@ -93,8 +96,16 @@ namespace Extenity.CameraToolbox
 					if (Input.GetMouseButton(MovementMouseButton))
 					{
 						BreakIdle();
-						InputShift.x += -Input.GetAxis("Mouse X") * MouseSensitivity;
-						InputShift.z += -Input.GetAxis("Mouse Y") * MouseSensitivity;
+						if (IgnoreInitialDragOnClick && IsDragging)
+						{
+							InputShift.x += -Input.GetAxis("Mouse X") * MouseSensitivity;
+							InputShift.z += -Input.GetAxis("Mouse Y") * MouseSensitivity;
+						}
+						IsDragging = true;
+					}
+					else
+					{
+						IsDragging = false;
 					}
 				}
 				InputZoom += -Input.mouseScrollDelta.y;
