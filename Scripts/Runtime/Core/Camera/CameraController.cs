@@ -1,4 +1,8 @@
+using System;
+using Extenity.FlowToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Extenity.CameraToolbox
 {
@@ -7,9 +11,10 @@ namespace Extenity.CameraToolbox
 	{
 		#region Initialization
 
-		//protected void Awake()
-		//{
-		//}
+		protected virtual void OnEnable()
+		{
+			BreakIdle(); // This is here to initialize idle calculations.
+		}
 
 		#endregion
 
@@ -39,6 +44,42 @@ namespace Extenity.CameraToolbox
 
 		public abstract bool IsAxisActive { get; set; }
 		public abstract bool IsMouseActive { get; set; }
+
+		#endregion
+
+		#region Idle
+
+		[Header("Idle")]
+		public float RequiredTimeToGoIntoIdle = 5f;
+		[ReadOnlyInInspector]
+		public bool IsIdle;
+
+		public class IdleEvent : UnityEvent<bool> { }
+		[NonSerialized]
+		public IdleEvent OnIdleChanged = new IdleEvent();
+
+		public void BreakIdle()
+		{
+			InternalChangeIdle(false);
+
+			this.CancelFastInvoke(GoIntoIdle);
+			this.FastInvoke(GoIntoIdle, RequiredTimeToGoIntoIdle, true);
+		}
+
+		private void GoIntoIdle()
+		{
+			this.CancelFastInvoke(GoIntoIdle);
+			InternalChangeIdle(true);
+		}
+
+		private void InternalChangeIdle(bool value)
+		{
+			if (IsIdle != value)
+			{
+				IsIdle = value;
+				OnIdleChanged.Invoke(IsIdle);
+			}
+		}
 
 		#endregion
 

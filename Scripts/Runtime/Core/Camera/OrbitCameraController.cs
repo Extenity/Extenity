@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Extenity.DebugToolbox;
 using Extenity.InputToolbox;
@@ -9,8 +10,10 @@ namespace Extenity.CameraToolbox
 	{
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+
 			ResetDynamics();
 		}
 
@@ -41,13 +44,17 @@ namespace Extenity.CameraToolbox
 
 		#region Input
 
+		[Header("Input")]
 		public int MovementMouseButton = 0;
 		public int RotationMouseButton = 1;
 		public float MouseSensitivity = 1f;
 		public float AxisSensitivity = 1f;
-		private Vector3 InputShift;
-		private Vector3 InputRotate;
-		private float InputZoom;
+		[NonSerialized]
+		public Vector3 InputShift;
+		[NonSerialized]
+		public Vector3 InputRotate;
+		[NonSerialized]
+		public float InputZoom;
 
 		public override bool IsAxisActive { get; set; }
 		public override bool IsMouseActive { get; set; }
@@ -73,6 +80,7 @@ namespace Extenity.CameraToolbox
 			{
 				if (Input.GetMouseButton(RotationMouseButton))
 				{
+					BreakIdle();
 					InputRotate.y += Input.GetAxis("Mouse X") * MouseSensitivity;
 					InputRotate.x += -Input.GetAxis("Mouse Y") * MouseSensitivity;
 
@@ -84,6 +92,7 @@ namespace Extenity.CameraToolbox
 
 					if (Input.GetMouseButton(MovementMouseButton))
 					{
+						BreakIdle();
 						InputShift.x += -Input.GetAxis("Mouse X") * MouseSensitivity;
 						InputShift.z += -Input.GetAxis("Mouse Y") * MouseSensitivity;
 					}
@@ -101,14 +110,9 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
-		#region Orbit
-
-		public Transform OrbitCenter;
-
-		#endregion
-
 		#region Dynamics
 
+		[Header("Dynamics")]
 		public float MovementSpeed = 0.05f;
 		public float RotationSpeed = 0.3f;
 		public float ZoomSpeed = 0.01f;
@@ -116,10 +120,14 @@ namespace Extenity.CameraToolbox
 		public float RotationSmoothingFactor = 0.04f;
 		public float ZoomSmoothingFactor = 0.04f;
 
-		private Vector3 TargetOrbitPosition;
-		private Quaternion TargetRotation;
-		private float TargetZoom;
-		private float CurrentZoom;
+		[NonSerialized]
+		public Vector3 TargetOrbitPosition;
+		[NonSerialized]
+		public Quaternion TargetRotation;
+		[NonSerialized]
+		public float TargetZoom;
+		[NonSerialized]
+		public float CurrentZoom;
 
 		private void ResetDynamics()
 		{
@@ -177,6 +185,8 @@ namespace Extenity.CameraToolbox
 
 		#region Movement Area
 
+		[Header("Movement Area")]
+		public Transform OrbitCenter;
 		//public Bounds MovementArea;
 		public float MaxDistanceFromOrbitCenter = 0.5f;
 
