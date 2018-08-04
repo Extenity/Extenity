@@ -11,13 +11,6 @@ namespace Extenity.UIToolbox
 	{
 		#region Initialization
 
-		public enum InitialAnimationState
-		{
-			Untouched,
-			PlaceToA,
-			PlaceToB,
-		}
-
 		protected void Start()
 		{
 			switch (InitialState)
@@ -44,7 +37,73 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
+		#region Triggered Faders
+
+		[Serializable]
+		public class TriggeredFaderEntry
+		{
+			public UIFader Fader;
+			public bool Inverted = false;
+
+			public Func<float> GetFaderMethod(AnimationState targetState)
+			{
+				if (!Fader)
+					return null;
+				switch (targetState)
+				{
+					case AnimationState.PlaceToA:
+						if (Inverted)
+							return Fader.FadeIn;
+						else
+							return Fader.FadeOut;
+					case AnimationState.PlaceToB:
+						if (Inverted)
+							return Fader.FadeOut;
+						else
+							return Fader.FadeIn;
+				}
+				return null;
+			}
+		}
+
+		[Tooltip("Optional faders that is triggered with animation.")]
+		public TriggeredFaderEntry[] TriggeredFaders;
+
+		public float TriggerFaders(AnimationState targetState)
+		{
+			if (TriggeredFaders == null)
+				return 0f;
+			var maxDelayAndDuration = float.MaxValue;
+			for (var i = 0; i < TriggeredFaders.Length; i++)
+			{
+				var action = TriggeredFaders[i].GetFaderMethod(targetState);
+				if (action != null)
+				{
+					var delayAndDuration = action();
+					if (maxDelayAndDuration > delayAndDuration)
+						maxDelayAndDuration = delayAndDuration;
+				}
+			}
+			return maxDelayAndDuration;
+		}
+
+		#endregion
+
 		#region Animation
+
+		public enum AnimationState
+		{
+			Untouched,
+			PlaceToA,
+			PlaceToB,
+		}
+
+		public enum InitialAnimationState
+		{
+			Untouched,
+			PlaceToA,
+			PlaceToB,
+		}
 
 		[Header("Animation")]
 		public InitialAnimationState InitialState = InitialAnimationState.Untouched;
@@ -84,7 +143,7 @@ namespace Extenity.UIToolbox
 				}
 				return 0f;
 			}
-			return AnimateTo(AnchorA.anchoredPosition, EasingToA, 0f, 0f);
+			return AnimateTo(AnchorA.anchoredPosition, EasingToA, 0f, 0f, AnimationState.PlaceToA);
 		}
 
 		public float AnimateToA()
@@ -97,7 +156,7 @@ namespace Extenity.UIToolbox
 				}
 				return 0f;
 			}
-			return AnimateTo(AnchorA.anchoredPosition, EasingToA, DelayToA, DurationToA);
+			return AnimateTo(AnchorA.anchoredPosition, EasingToA, DelayToA, DurationToA, AnimationState.PlaceToA);
 		}
 
 		/// ----------------------------------------------------------------------------------------
@@ -120,7 +179,7 @@ namespace Extenity.UIToolbox
 				}
 				return 0f;
 			}
-			return AnimateTo(AnchorB.anchoredPosition, EasingToB, 0f, 0f);
+			return AnimateTo(AnchorB.anchoredPosition, EasingToB, 0f, 0f, AnimationState.PlaceToB);
 		}
 
 		public float AnimateToB()
@@ -133,12 +192,12 @@ namespace Extenity.UIToolbox
 				}
 				return 0f;
 			}
-			return AnimateTo(AnchorB.anchoredPosition, EasingToB, DelayToB, DurationToB);
+			return AnimateTo(AnchorB.anchoredPosition, EasingToB, DelayToB, DurationToB, AnimationState.PlaceToB);
 		}
 
 		/// ----------------------------------------------------------------------------------------
 
-		public float AnimateTo(Vector2 position, Ease easing, float delay, float duration)
+		public float AnimateTo(Vector2 position, Ease easing, float delay, float duration, AnimationState targetState)
 		{
 			if (!AnimatedTransform) // Ignore if not set.
 			{
@@ -162,6 +221,7 @@ namespace Extenity.UIToolbox
 			Stop();
 
 			OnAnimationStarted.Invoke(this);
+			var maxFaderDelayAndDuration = TriggerFaders(targetState);
 
 			if (duration < 0.001f)
 			{
@@ -176,7 +236,7 @@ namespace Extenity.UIToolbox
 					OnAnimationFinished.Invoke(this);
 				});
 			}
-			return duration + delay;
+			return Mathf.Max(duration + delay, maxFaderDelayAndDuration);
 		}
 
 		#endregion
