@@ -44,11 +44,11 @@ namespace Extenity.CameraToolbox
 
 		#region Input
 
-		[Header("Input")]
+		[Header("Input - Orbit")]
 		public int MovementMouseButton = 0;
 		public int RotationMouseButton = 1;
 		public float MouseSensitivity = 1f;
-		public float AxisSensitivity = 1f;
+		//public float AxisSensitivity = 1f;
 		[NonSerialized]
 		public Vector3 InputShift;
 		[NonSerialized]
@@ -109,6 +109,13 @@ namespace Extenity.CameraToolbox
 					}
 				}
 				InputZoom += -Input.mouseScrollDelta.y;
+				if (InputZoom != 0f)
+				{
+					if (ZoomOnlyBreaksIdlingWhenNotIdle && !IsIdle)
+					{
+						BreakIdle();
+					}
+				}
 			}
 		}
 
@@ -121,12 +128,25 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
+		#region IDle
+
+		[Header("Idle - Orbit")]
+		public bool ZoomOnlyBreaksIdlingWhenNotIdle = true;
+
+		#endregion
+
 		#region Dynamics
 
-		[Header("Dynamics")]
+		[Header("Dynamics - Orbit")]
 		public float MovementSpeed = 0.05f;
 		public float RotationSpeed = 0.3f;
+		[Range(-90f, 90f)]
+		public float MinimumPitch = -90f;
+		[Range(-90f, 90f)]
+		public float MaximumPitch = 90f;
 		public float ZoomSpeed = 0.01f;
+		public float MinimumZoom = 2f;
+		public float MaximumZoom = 30f;
 		public float MovementSmoothingFactor = 0.04f;
 		public float RotationSmoothingFactor = 0.04f;
 		public float ZoomSmoothingFactor = 0.04f;
@@ -158,21 +178,22 @@ namespace Extenity.CameraToolbox
 
 			var newRotationY = targetRotationEuler.y + appliedRotation.y;
 			var newRotationX = targetRotationEuler.x + appliedRotation.x;
-			// Clip rotation to prevent gimbal locks
 			if (newRotationX > 180f)
-			{
-				if (newRotationX < 270.1f) // 270 + tolerance
-					newRotationX = 270.1f;
-			}
-			else
-			{
-				if (newRotationX > 89.9f) // 90 + tolerance
-					newRotationX = 89.9f;
-			}
+				newRotationX -= 360f;
+			// Clip rotation to prevent gimbal locks
+			const float tolerance = 0.01f;
+			if (newRotationX < MinimumPitch + tolerance)
+				newRotationX = MinimumPitch + tolerance;
+			if (newRotationX > MaximumPitch - tolerance)
+				newRotationX = MaximumPitch - tolerance;
 
 			TargetOrbitPosition += Quaternion.Euler(0f, Camera.transform.rotation.eulerAngles.y, 0f) * appliedMovement;
 			TargetRotation = Quaternion.Euler(0f, newRotationY, 0f) * Quaternion.Euler(newRotationX, 0f, 0f);
 			TargetZoom += appliedZoom;
+			if (TargetZoom > MaximumZoom)
+				TargetZoom = MaximumZoom;
+			if (TargetZoom < MinimumZoom)
+				TargetZoom = MinimumZoom;
 
 			var differenceToOrbitCenter = TargetOrbitPosition - OrbitCenter.position;
 			if (differenceToOrbitCenter.magnitude > MaxDistanceFromOrbitCenter)
@@ -196,7 +217,7 @@ namespace Extenity.CameraToolbox
 
 		#region Movement Area
 
-		[Header("Movement Area")]
+		[Header("Movement Area - Orbit")]
 		public Transform OrbitCenter;
 		//public Bounds MovementArea;
 		public float MaxDistanceFromOrbitCenter = 0.5f;
