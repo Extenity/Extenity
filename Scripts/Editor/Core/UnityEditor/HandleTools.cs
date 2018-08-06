@@ -40,7 +40,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		/// <summary>
 		/// Based on: https://answers.unity.com/questions/463207/how-do-you-make-a-custom-handle-respond-to-the-mou.html
 		/// </summary>
-		public static Vector3 DragHandle(Vector3 position, float handleSize, Handles.CapFunction capFunc, Color color, Color selectedColor, out DragHandleResult result)
+		public static Vector3 DragHandle(Vector3 position, Quaternion rotation, float handleSize, Handles.CapFunction capFunc, Color color, Color selectedColor, out DragHandleResult result)
 		{
 			var currentEvent = Event.current;
 			var button = currentEvent.button;
@@ -135,7 +135,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 							: color;
 
 						Handles.matrix = Matrix4x4.identity;
-						capFunc(id, screenPosition, Quaternion.identity, handleSize, currentEvent.type);
+						capFunc(id, screenPosition, rotation, handleSize, currentEvent.type);
 						Handles.matrix = cachedMatrix;
 
 						Handles.color = currentColour;
