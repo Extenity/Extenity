@@ -7,8 +7,16 @@ using UnityEngine.UI;
 namespace Extenity.UIToolbox
 {
 
+	public enum BlinkerColor
+	{
+		Nothing,
+		OnColor,
+		OffColor,
+	}
+
 	public class Blinker : MonoBehaviour
 	{
+		public BlinkerColor SetToStateAtStart = BlinkerColor.OffColor;
 		[Header("Timing")]
 		public float BlinkInterval = 0.4f;
 		public float BlinkOnPercentage = 0.8f;
@@ -30,14 +38,24 @@ namespace Extenity.UIToolbox
 		public float BlinkOffDuration { get { return BlinkInterval * (1f - BlinkOnPercentage); } }
 
 		[NonSerialized]
-		public bool IsBlinking;
-		private bool BlinkState;
+		public bool IsBlinking = false;
+		private bool BlinkState = false;
 		private float StartTime = -1f;
 		private float NextActionTime = -1f;
 
 		private void Start()
 		{
-			StopBlinking();
+			switch (SetToStateAtStart)
+			{
+				case BlinkerColor.Nothing:
+					break;
+				case BlinkerColor.OnColor:
+					SwitchState(true, false);
+					break;
+				case BlinkerColor.OffColor:
+					SwitchState(false, false);
+					break;
+			}
 		}
 
 		private void FixedUpdate()
@@ -56,7 +74,7 @@ namespace Extenity.UIToolbox
 			}
 
 			BlinkState = !BlinkState;
-			SwitchState(BlinkState);
+			SwitchState(BlinkState, true);
 			NextActionTime += (BlinkState ? BlinkOnDuration : BlinkOffDuration);
 		}
 
@@ -64,7 +82,7 @@ namespace Extenity.UIToolbox
 		{
 			IsBlinking = true;
 			BlinkState = true;
-			SwitchState(BlinkState);
+			SwitchState(BlinkState, true);
 			StartTime = Time.time;
 			NextActionTime = StartTime + BlinkOnDuration;
 		}
@@ -73,12 +91,12 @@ namespace Extenity.UIToolbox
 		{
 			IsBlinking = false;
 			BlinkState = false;
-			SwitchState(BlinkState);
+			SwitchState(BlinkState, false);
 			StartTime = -1f;
 			NextActionTime = -1f;
 		}
 
-		private void SwitchState(bool blinkState)
+		private void SwitchState(bool blinkState, bool playAudio)
 		{
 			if (ActivatedObject)
 				ActivatedObject.enabled = blinkState;
@@ -100,13 +118,16 @@ namespace Extenity.UIToolbox
 			if (ColoredTextMeshProUGUI)
 				ColoredTextMeshProUGUI.color = blinkState ? OnColor : OffColor;
 
-			if (blinkState)
+			if (playAudio)
 			{
-				AudioManager.Play(HideAudio);
-			}
-			else
-			{
-				AudioManager.Play(BlinkAudio);
+				if (blinkState)
+				{
+					AudioManager.Play(HideAudio);
+				}
+				else
+				{
+					AudioManager.Play(BlinkAudio);
+				}
 			}
 		}
 	}
