@@ -1,3 +1,4 @@
+using System;
 using Extenity.BeyondAudio;
 using TMPro;
 using UnityEngine;
@@ -28,7 +29,8 @@ namespace Extenity.UIToolbox
 		public float BlinkOnDuration { get { return BlinkInterval * BlinkOnPercentage; } }
 		public float BlinkOffDuration { get { return BlinkInterval * (1f - BlinkOnPercentage); } }
 
-		private bool IsBlinking;
+		[NonSerialized]
+		public bool IsBlinking;
 		private bool BlinkState;
 		private float StartTime = -1f;
 		private float NextActionTime = -1f;

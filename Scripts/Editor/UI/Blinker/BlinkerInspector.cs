@@ -1,5 +1,7 @@
+using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
@@ -26,6 +28,24 @@ namespace Extenity.UIToolbox.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
+			GUILayout.Space(30f);
+
+			GUILayout.BeginHorizontal();
+			EditorGUI.BeginDisabledGroup(!Application.isPlaying);
+			{
+				if (GUILayoutTools.Button("Blink", !Me.IsBlinking, BigButtonHeight))
+				{
+					Me.StartBlinking();
+				}
+				if (GUILayoutTools.Button("Stop", Me.IsBlinking, BigButtonHeight))
+				{
+					Me.StopBlinking();
+				}
+			}
+			EditorGUI.EndDisabledGroup();
+			GUILayout.EndHorizontal();
+
+			GUILayout.Space(10f);
 		}
 	}
 
