@@ -57,13 +57,13 @@ namespace Extenity.UIToolbox
 
 			BlinkState = !BlinkState;
 			SwitchState(BlinkState);
-			NextActionTime = now + (BlinkState ? BlinkOnDuration : BlinkOffDuration);
+			NextActionTime += (BlinkState ? BlinkOnDuration : BlinkOffDuration);
 		}
 
 		public void StartBlinking()
 		{
 			IsBlinking = true;
-			BlinkState = false;
+			BlinkState = true;
 			SwitchState(BlinkState);
 			StartTime = Time.time;
 			NextActionTime = StartTime + BlinkOnDuration;
