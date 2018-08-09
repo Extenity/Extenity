@@ -31,6 +31,18 @@ namespace Extenity.DataToolbox
 			return str1.Equals(str2);
 		}
 
+		public static bool IsAllZeros(this string str)
+		{
+			if (string.IsNullOrEmpty(str))
+				return false;
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (str[i] != '0')
+					return false;
+			}
+			return true;
+		}
+
 		#endregion
 
 		#region String Operations

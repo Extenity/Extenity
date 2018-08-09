@@ -12,6 +12,35 @@ namespace ExtenityTests.DataToolbox
 
 	public class Test_StringTools : AssertionHelper
 	{
+		#region Equals
+
+		[Test]
+		public static void IsAllZeros()
+		{
+			Assert.IsFalse(((string)null).IsAllZeros());
+			Assert.IsFalse("".IsAllZeros());
+			Assert.IsFalse(string.Empty.IsAllZeros());
+			Assert.IsFalse(" ".IsAllZeros());
+			Assert.IsFalse("\t".IsAllZeros());
+			Assert.IsFalse(" 0".IsAllZeros());
+			Assert.IsFalse(" 00".IsAllZeros());
+			Assert.IsFalse("a00".IsAllZeros());
+			Assert.IsFalse("0 ".IsAllZeros());
+			Assert.IsFalse("00 ".IsAllZeros());
+			Assert.IsFalse("00a".IsAllZeros());
+			Assert.IsFalse("00a00".IsAllZeros());
+			Assert.IsTrue("0".IsAllZeros());
+			Assert.IsTrue("00".IsAllZeros());
+			Assert.IsTrue("000".IsAllZeros());
+			Assert.IsTrue("0000".IsAllZeros());
+			Assert.IsTrue("00000".IsAllZeros());
+			Assert.IsTrue("000000".IsAllZeros());
+			Assert.IsTrue("0000000000000000000000000".IsAllZeros());
+			Assert.IsTrue("0000000000000000000000000000000000000000000000000000000".IsAllZeros());
+		}
+
+		#endregion
+
 		#region String Operations
 
 		[Test]
