@@ -17,23 +17,13 @@ namespace Extenity.ApplicationToolbox
 			{
 				switch (Application.platform)
 				{
-					//case RuntimePlatform.OSXEditor: throw new NotImplementedException();
-					case RuntimePlatform.OSXPlayer:
-						throw new NotImplementedException();
-					case RuntimePlatform.IPhonePlayer:
-						throw new NotImplementedException();
-					case RuntimePlatform.Android:
-						throw new NotImplementedException();
-					case RuntimePlatform.LinuxPlayer:
-						throw new NotImplementedException();
-
 					case RuntimePlatform.OSXEditor:
 					case RuntimePlatform.WindowsPlayer:
 					case RuntimePlatform.WindowsEditor:
 						return Application.dataPath.RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
 					default:
-						throw new ArgumentOutOfRangeException("platform");
+						throw new NotImplementedException();
 				}
 			}
 		}
