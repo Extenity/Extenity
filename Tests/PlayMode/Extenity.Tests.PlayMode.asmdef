@@ -1,0 +1,13 @@
+{
+    "name": "Extenity.Tests.PlayMode",
+    "references": [
+        "Extenity",
+        "Extenity.Tests.Common"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

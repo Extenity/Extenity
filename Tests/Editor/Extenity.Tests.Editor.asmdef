@@ -1,0 +1,16 @@
+{
+    "name": "Extenity.Tests.Editor",
+    "references": [
+        "Extenity",
+        "Extenity.Editor",
+        "Extenity.Tests.Common"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
