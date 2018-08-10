@@ -50,12 +50,7 @@ namespace ExtenityTests.MathToolbox
 			// This gives a rough percentage of how seed generation algorithm is likely to succeed
 			// when it is given a task to generate rapid consecutive seeds "generationCount" times.
 			//
-			// When the algorithm tried to generate 10.000 consecutive seeds, it performed 99.25%
-			// average completion rate. In real world, there would be none, or only rare use cases that
-			// an application would want to reset RNG generator 10.000 times in fraction of a second.
-			// So we may assume this ratio is more than enough.
-			//
-			// Heck, even 10 times without a collision in a whole second would be more than enough.
+			// See UnityRandomTools.GenerateTimestampedSeed for detailed test results.
 			Assert.Greater(averageCompletionRatioAtFailTime, 0.95f);
 		}
 

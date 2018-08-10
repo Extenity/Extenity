@@ -11,6 +11,14 @@ namespace Extenity.MathToolbox
 	{
 		#region Randomize Generator
 
+		// Randomize Unity's random number generator by giving it a seed that is created
+		// using system's current timestamp. The algorithm will fall back to alternative
+		// timestamp options if required. Also it's safe to call this method rapidly
+		// without worrying about getting the same timestamp value because of timestamp
+		// resolution. Thanks to the extra added parameter that changes every time a
+		// randomization request is made.
+		//
+		// See the description of GenerateTimestampedSeed for how it performs.
 		public static void RandomizeGenerator()
 		{
 			var seed = GenerateTimestampedSeed();
@@ -18,6 +26,23 @@ namespace Extenity.MathToolbox
 		}
 
 		private static int _Lubricant = 8156491; // It's named lubricant, because why not. The value is just a random value which does not mean anything.
+
+		// Generates a seed using system's timestamp that can be used to initialize a
+		// random number generator. It has a robust, yet simple algorithm for picking
+		// the best available timestamp method on the platform that the application is
+		// running on. Also do not fear calling this method rapidly for the fact that
+		// timestamp methods tend to return the same value for rapid consecutive calls.
+		// The algorithm prevents that by adding an extra parameter to the seed that
+		// changes every time a call to this method is made.
+		//
+		// Tests show that, on a decent Windows machine, when the algorithm tries to
+		// generate 10.000 consecutive seeds rapidly, it generates 99.25% of these seeds
+		// until it generates a previously generated seed again twice. In real world,
+		// there would be no, or only rare use cases that an application would want to
+		// reset RNG generator 10.000 times in fraction of a second. So we may assume
+		// this ratio is more than enough.
+		//
+		// Heck, even 10 times without a collision in a second would be more than enough.
 		public static int GenerateTimestampedSeed()
 		{
 			// Stopwatch.GetTimestamp will try to use QueryPerformanceCounter if available,
