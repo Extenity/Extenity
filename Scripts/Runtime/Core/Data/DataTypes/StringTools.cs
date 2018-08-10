@@ -78,11 +78,23 @@ namespace Extenity.DataToolbox
 					return false;
 			}
 
-			for (int i = 0; i < str.Length; i++)
+			if (allowSpace)
 			{
-				if (char.IsLetter(str[i]) || char.IsNumber(str[i]) || (allowSpace && str[i] == ' '))
-					continue;
-				return false;
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (char.IsLetter(str[i]) || char.IsNumber(str[i]) || str[i] == ' ')
+						continue;
+					return false;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (char.IsLetter(str[i]) || char.IsNumber(str[i]))
+						continue;
+					return false;
+				}
 			}
 
 			return true;
