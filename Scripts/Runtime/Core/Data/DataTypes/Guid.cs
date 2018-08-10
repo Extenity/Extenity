@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.MathToolbox;
 using Newtonsoft.Json;
 using Random = UnityEngine.Random;
 
@@ -117,19 +118,27 @@ namespace Extenity.DataToolbox
 		/// representation of that 32 bit RNG seed.
 		/// 
 		/// If you want to generate a somewhat more unpredictable pseudo-GUID, you may want to
-		/// first randomize the RNG by calling UnityRandomTools.RandomizeGenerator.
+		/// first randomize the RNG by setting randomizeBeforehand true. Also if you want to
+		/// leave no marks, you may want to set randomizeAfterwards to true too.
 		///
 		/// Note that Unity's RNG implementation may change in future Unity updates. So consider
 		/// implementing your own RNG if your use case requires absolute consistency when
 		/// converting seeds into pseudo-GUIDs.
 		/// </summary>
-		public static Guid NewPseudoGuid()
+		public static Guid NewPseudoGuid(bool randomizeBeforehand = false, bool randomizeAfterwards = false)
 		{
+			if (randomizeBeforehand)
+				UnityRandomTools.RandomizeGenerator();
+
 			var data = new byte[16];
 			for (int i = 0; i < 16; i++)
 			{
 				data[i] = (byte)(Random.value * 256f);
 			}
+
+			if (randomizeAfterwards)
+				UnityRandomTools.RandomizeGenerator();
+
 			return new Guid { Data = data };
 		}
 
