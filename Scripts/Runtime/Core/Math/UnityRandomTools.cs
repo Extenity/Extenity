@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Random = UnityEngine.Random;
 
 namespace Extenity.MathToolbox
@@ -8,10 +9,70 @@ namespace Extenity.MathToolbox
 
 	public static class UnityRandomTools
 	{
+		#region Randomize Generator
+
 		public static void RandomizeGenerator()
 		{
-			Random.InitState((int)(Time.realtimeSinceStartup * 1000f));
+			var seed = GenerateTimestampedSeed();
+			Random.InitState(seed);
 		}
+
+		private static int _Lubricant = 8156491; // It's named lubricant, because why not. The value is just a random value which does not mean anything.
+		public static int GenerateTimestampedSeed()
+		{
+			// Stopwatch.GetTimestamp will try to use QueryPerformanceCounter if available,
+			// and fall back to DateTime.UtcNow.Ticks.
+			int seed = (int)Stopwatch.GetTimestamp();
+			if (seed > -100 && seed < 100)
+			{
+				// It is so unlikely the code will ever get here. But in case we are here, let's try to use
+				// Environment.TickCount for one more chance. It's not precise as performance counters
+				// but it will do okay.
+				seed = Environment.TickCount;
+
+				if (seed > -100 && seed < 100)
+				{
+					// Alright. Something fishy going on, but we won't stop trying.
+					seed = (int)(Time.realtimeSinceStartup * 100000f);
+
+					if (seed > -100 && seed < 100)
+					{
+						// Don't know what to do anymore. Just fail miserably.
+						throw new Exception("Failed to initialize RNG.");
+					}
+				}
+			}
+
+			// There is a possibility of two quick consecutive calls to timestamp method might get the same
+			// value for both calls. So we pour an additional value into the mix, that increments everytime
+			// the user randomizes the generator. So even if we get the same timestamp for both consecutive
+			// calls, adding that incremented value to the seed makes it unlikely to collide with previously
+			// generated seeds.
+			//
+			// Even better, rather than adding a simple value to the timestamp, it gets harder to tamper with
+			// when the extra added value is another randomly generated value. Helps preventing possible hack
+			// attempts. Also makes the seed more garbled, rather than looking like a simple timestamp value.
+			//
+			// Appreciate coding at fabulous level with this whole comment block being extraordinarily neat!
+			{
+				// Lehmer Algorithm. Grabbed from https://msdn.microsoft.com/en-us/magazine/mt767700.aspx
+				const int a = 16807;
+				const int m = 2147483647;
+				const int q = 127773;
+				const int r = 2836;
+				int hi = _Lubricant / q;
+				int lo = _Lubricant % q;
+				_Lubricant = (a * lo) - (r * hi);
+				if (_Lubricant <= 0)
+					_Lubricant = _Lubricant + m;
+				// Apply lubricant to the seed.
+				seed ^= _Lubricant;
+			}
+
+			return seed;
+		}
+
+		#endregion
 
 		public static int RandomRange(int min, int max)
 		{
