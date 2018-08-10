@@ -30,6 +30,29 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
+		#region Path Hash
+
+		private static string _PathHash;
+		public static string PathHash
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_PathHash))
+				{
+					// CAUTION! DO NOT CHANGE HASH ALGORITHM OR PATH!
+					// We need consistency, rather than better hash algorithms.
+					// That's why GetHashCodeGuaranteed is used because it will
+					// stay here, guaranteed to be never modified forever.
+					var path = Application.dataPath;
+					var hash = path.GetHashCodeGuaranteed();
+					_PathHash = hash.ToHexString(false);
+				}
+				return _PathHash;
+			}
+		}
+
+		#endregion
+
 		#region Company And Product Name
 
 		private static string _AsciiCompanyName;
