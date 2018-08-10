@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Extenity.MathToolbox;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -1260,6 +1261,72 @@ namespace Extenity.DataToolbox
 			//Int64 hashCodeMedium = BitConverter.ToInt64(hashText, 8);
 			//Int64 hashCodeEnd = BitConverter.ToInt64(hashText, 24);
 			//return hashCodeStart ^ hashCodeMedium ^ hashCodeEnd;
+		}
+
+		// A hash algorithm that is guaranteed to be never modified in future.
+		// The algorithm is the exact copy of string.GetHashCode() grabbed from
+		// Reference Source Codes for .NET 4.7.2.
+		// https://referencesource.microsoft.com/#mscorlib/system/string.cs
+		//
+		// Note that .NET implementation may change in future, as it has before.
+		// But GetHashCodeGuaranteed is here to stay.
+		public static int GetHashCodeGuaranteed([NotNull] this string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException(nameof(str));
+			unsafe
+			{
+				fixed (char* src = str)
+				{
+					//Contract.Assert(src[this.Length] == '\0', "src[this.Length] == '\\0'");
+					//Contract.Assert( ((int)src)%4 == 0, "Managed string should start at 4 bytes boundary");
+
+					//#if WIN32
+					int hash1 = (5381 << 16) + 5381;
+					//#else
+					//int hash1 = 5381;
+					//#endif
+					int hash2 = hash1;
+
+					//#if WIN32
+					// 32 bit machines. 
+					int* pint = (int*)src;
+					int len = str.Length;
+					while (len > 2)
+					{
+						hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
+						hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
+						pint += 2;
+						len -= 4;
+					}
+
+					if (len > 0)
+					{
+						hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
+					}
+					//#else
+					//int c;
+					//char* s = src;
+					//while ((c = s[0]) != 0)
+					//{
+					//	hash1 = ((hash1 << 5) + hash1) ^ c;
+					//	c = s[1];
+					//	if (c == 0)
+					//		break;
+					//	hash2 = ((hash2 << 5) + hash2) ^ c;
+					//	s += 2;
+					//}
+					//#endif
+					//#if DEBUG
+					//// We want to ensure we can change our hash function daily.
+					//// This is perfectly fine as long as you don't persist the
+					//// value from GetHashCode to disk or count on String A 
+					//// hashing before string B.  Those are bugs in your code.
+					//hash1 ^= ThisAssembly.DailyBuildNumber;
+					//#endif
+					return hash1 + (hash2 * 1566083941);
+				}
+			}
 		}
 
 		#endregion
