@@ -233,7 +233,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool ExpandIfRequired<T>(ref T[] thisList, int length)
+		public static bool ExpandIfRequired<T>(ref T[] thisList, int length, bool expandToDoubleSize = false)
 		{
 			if (length < 0)
 				return false; // Ignored.
@@ -245,7 +245,18 @@ namespace Extenity.DataToolbox
 			}
 			else if (thisList.Length < length)
 			{
-				Array.Resize(ref thisList, length);
+				int expandedSize;
+				if (expandToDoubleSize)
+				{
+					expandedSize = thisList.Length * 2;
+					if (expandedSize < length)
+						expandedSize = length;
+				}
+				else
+				{
+					expandedSize = length;
+				}
+				Array.Resize(ref thisList, expandedSize);
 				return true;
 			}
 			return false;
