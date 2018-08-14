@@ -1,11 +1,11 @@
 using UnityEditor;
 
-namespace Extenity.UnityEditorToolbox.Editor
+namespace Extenity.DataToolbox.Editor
 {
 
-	public class BoolEditorOption
+	public class BoolEditorPref
 	{
-		public BoolEditorOption(string prefsKey, bool defaultValue)
+		public BoolEditorPref(string prefsKey, bool defaultValue)
 		{
 			PrefsKey = prefsKey;
 			_Value = defaultValue;
