@@ -7,13 +7,13 @@ namespace Extenity.DataToolbox
 
 	public class FloatPlayerPref : PlayerPref<float>
 	{
-		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, float defaultValue)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null)
+		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, float defaultValue, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null, saveDelay)
 		{
 		}
 
-		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Action<PlayerPref<float>> defaultValueOverride)
-			: base(prefsKey, appendPathHashToKey, default(float), defaultValueOverride)
+		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Action<PlayerPref<float>> defaultValueOverride, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, default(float), defaultValueOverride, saveDelay)
 		{
 		}
 

@@ -1,5 +1,7 @@
 using System;
 using Extenity.ApplicationToolbox;
+using Extenity.DesignPatternsToolbox;
+using Extenity.FlowToolbox;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -10,6 +12,37 @@ namespace Extenity.DataToolbox
 		No = 0,
 		Yes = 1,
 		OnlyInEditor = 2,
+	}
+
+	public class DeferredSaveHelper : AutoSingletonUnity<DeferredSaveHelper>
+	{
+		protected void Awake()
+		{
+			InitializeSingleton(this, true);
+		}
+
+		#region Test
+
+		// Test tools. Keep them here commented out for future needs.
+		/*
+		protected void Update()
+		{
+			if (Input.GetKeyDown(KeyCode.Alpha2))
+			{
+				DeferredSave(2f);
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha5))
+			{
+				DeferredSave(5f);
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha9))
+			{
+				DeferredSave(9f);
+			}
+		}
+		*/
+
+		#endregion
 	}
 
 	public static class PlayerPrefsTools
@@ -59,6 +92,42 @@ namespace Extenity.DataToolbox
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		#endregion
+
+		#region Deferred Save
+
+		private static float DeferredSaveTriggerTime = -1f;
+
+		/// <summary>
+		/// Triggers a delayed save operation. If triggered again consecutively, the delay will be set to the closest time.
+		/// </summary>
+		/// <param name="delay"></param>
+		public static void DeferredSave(float delay)
+		{
+			if (DeferredSaveTriggerTime > 0f)
+			{
+				// See if which one is bigger and choose the closest one.
+				var remainingTimeOfOngoingOperation = DeferredSaveTriggerTime - Time.unscaledTime;
+				if (delay < remainingTimeOfOngoingOperation)
+				{
+					DeferredSaveHelper.Instance.CancelFastInvoke(OnTimeToSave); // Cancel the previous call first.
+				}
+				else
+				{
+					// No need to do anything. Ignore current deferred save request because the ongoing operation is expected to be completed even sooner.
+					return;
+				}
+			}
+			DeferredSaveTriggerTime = Time.unscaledTime + delay;
+			DeferredSaveHelper.Instance.FastInvoke(OnTimeToSave, delay, true);
+		}
+
+		private static void OnTimeToSave()
+		{
+			DeferredSaveTriggerTime = -1f;
+			PlayerPrefs.Save();
 		}
 
 		#endregion

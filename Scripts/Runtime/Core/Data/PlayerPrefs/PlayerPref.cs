@@ -10,12 +10,13 @@ namespace Extenity.DataToolbox
 	{
 		#region Initialization
 
-		public PlayerPref([NotNull]string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Action<PlayerPref<T>> defaultValueOverride)
+		public PlayerPref([NotNull]string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Action<PlayerPref<T>> defaultValueOverride, float saveDelay)
 		{
 			PrefsKey = prefsKey;
 			_AppendPathHashToKey = appendPathHashToKey;
 			_Value = defaultValue;
 			_DefaultValueOverride = defaultValueOverride;
+			SaveDelay = saveDelay;
 		}
 
 		#endregion
@@ -81,11 +82,20 @@ namespace Extenity.DataToolbox
 				if (IsSame(Value, value))
 					return;
 				InternalSetValue(value);
-				PlayerPrefs.Save();
-				if (!_DontEmitNextValueChangedEvent)
-					OnValueChanged.Invoke(value);
+
+				if (SaveDelay > 0f)
+				{
+					PlayerPrefsTools.DeferredSave(SaveDelay);
+				}
 				else
+				{
+					PlayerPrefs.Save();
+				}
+
+				if (_DontEmitNextValueChangedEvent)
 					_DontEmitNextValueChangedEvent = false;
+				else
+					OnValueChanged.Invoke(value);
 			}
 		}
 
@@ -116,6 +126,12 @@ namespace Extenity.DataToolbox
 		protected abstract object InternalGetValue();
 		protected abstract void InternalSetValue(object value);
 		protected abstract bool IsSame(T oldValue, T newValue);
+
+		#endregion
+
+		#region Deferred Saving
+
+		public float SaveDelay = 0f;
 
 		#endregion
 	}
