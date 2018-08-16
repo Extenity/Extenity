@@ -12,19 +12,19 @@ namespace Extenity.DataToolbox
 		{
 		}
 
-		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Action<PlayerPref<float>> defaultValueOverride, float saveDelay = 0f)
+		public FloatPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<PlayerPref<float>, float> defaultValueOverride, float saveDelay = 0f)
 			: base(prefsKey, appendPathHashToKey, default(float), defaultValueOverride, saveDelay)
 		{
 		}
 
-		protected override object InternalGetValue()
+		protected override float InternalGetValue()
 		{
 			return PlayerPrefs.GetFloat(ProcessedPrefsKey, _Value);
 		}
 
-		protected override void InternalSetValue(object value)
+		protected override void InternalSetValue(float value)
 		{
-			PlayerPrefs.SetFloat(ProcessedPrefsKey, (float)value);
+			PlayerPrefs.SetFloat(ProcessedPrefsKey, value);
 		}
 
 		protected override bool IsSame(float oldValue, float newValue)
