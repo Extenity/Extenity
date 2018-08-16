@@ -175,11 +175,11 @@ namespace Extenity.SystemToolbox
 			// That may possibly end up unexpectedly changing a user's device ID with an update to the application
 			// in which the application incorporates a newer Unity version. Looks like so many users have lost
 			// their game accounts in the past because of their device IDs changed after updating the game.
-			var storedID = GetStoredID();
+			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
 			var id = GenerateGUIDIfDeviceIDIsInvalid(SystemInfo.deviceUniqueIdentifier);
-			StoreID(id);
+			_StoreID(id);
 			return id;
 
 #elif UNITY_IOS
