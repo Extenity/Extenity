@@ -106,10 +106,12 @@ namespace Extenity.DataToolbox
 		/// <param name="delay"></param>
 		public static void DeferredSave(float delay)
 		{
+			var now = Time.unscaledTime;
+
 			if (DeferredSaveTriggerTime > 0f)
 			{
 				// See if which one is bigger and choose the closest one.
-				var remainingTimeOfOngoingOperation = DeferredSaveTriggerTime - Time.unscaledTime;
+				var remainingTimeOfOngoingOperation = DeferredSaveTriggerTime - now;
 				if (delay < remainingTimeOfOngoingOperation)
 				{
 					DeferredSaveHelper.Instance.CancelFastInvoke(OnTimeToSave); // Cancel the previous call first.
@@ -120,12 +122,15 @@ namespace Extenity.DataToolbox
 					return;
 				}
 			}
-			DeferredSaveTriggerTime = Time.unscaledTime + delay;
+
+			DeferredSaveTriggerTime = now + delay;
+			//Debug.Log($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
 			DeferredSaveHelper.Instance.FastInvoke(OnTimeToSave, delay, true);
 		}
 
 		private static void OnTimeToSave()
 		{
+			//Debug.Log($"On time to save called at '{Time.unscaledTime}'");
 			DeferredSaveTriggerTime = -1f;
 			PlayerPrefs.Save();
 		}
