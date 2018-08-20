@@ -29,6 +29,19 @@ namespace Extenity.DataToolbox
 		{
 			return Enum.GetValues(typeof(T)).Cast<T>();
 		}
+
+		public static Dictionary<int, string> GetIntValuesAndNames<T>()
+		{
+			var enumEntries = Enum.GetValues(typeof(T));
+			var dictionary = new Dictionary<int, string>(enumEntries.Length);
+			foreach (var enumEntry in enumEntries)
+			{
+				var value = (int)enumEntry;
+				var name = enumEntry.ToString();
+				dictionary.Add(value, name);
+			}
+			return dictionary;
+		}
 	}
 
 }
