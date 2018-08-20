@@ -13,6 +13,8 @@ using UnityEngine;
 namespace Extenity.PainkillaTool.Editor
 {
 
+	// TODO: Implement a tool that checks all runtime scripts for OnGUI methods and throws error if any exists. All OnGUI methods should be killed with fire.
+
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
 		#region Configuration
