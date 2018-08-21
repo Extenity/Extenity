@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Extenity.ApplicationToolbox;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Extenity.ProfilingToolbox
 {
@@ -11,13 +12,50 @@ namespace Extenity.ProfilingToolbox
 		public static readonly CodeProfilerEntry BaseEntry = new CodeProfilerEntry();
 		public static CodeProfilerEntry CurrentEntry = BaseEntry;
 
+		public class EntryEvent : UnityEvent<CodeProfilerEntry> { }
+		public static readonly EntryEvent OnEntryCreated = new EntryEvent();
+
+		public static void ForeachChildren(CodeProfilerEntry parentEntry, Action<CodeProfilerEntry> onItem)
+		{
+			var children = parentEntry.Children;
+			if (children != null)
+			{
+				for (int i = 0; i < children.Count; i++)
+				{
+					onItem(children[i]);
+				}
+			}
+		}
+
+		public static void ForeachChildrenRecursive(CodeProfilerEntry parentEntry, Action<CodeProfilerEntry> onItem)
+		{
+			var children = parentEntry.Children;
+			if (children != null)
+			{
+				for (int i = 0; i < children.Count; i++)
+				{
+					onItem(children[i]);
+					ForeachChildrenRecursive(children[i], onItem);
+				}
+			}
+		}
+
+		public static void ForeachAllEntries(Action<CodeProfilerEntry> onItem)
+		{
+			ForeachChildrenRecursive(BaseEntry, onItem);
+		}
+
+
 		public static void BeginSample(int id)
 		{
 			if (!IsProfilingActive)
 				return;
 
 			// Set current entry as the child.
-			CurrentEntry = CurrentEntry.GetOrAddChild(id);
+			if (CurrentEntry.GetOrAddChild(id, out CurrentEntry))
+			{
+				OnEntryCreated.Invoke(CurrentEntry);
+			}
 
 			//Profiler.BeginSample(title);
 			var now = PrecisionTiming.PreciseTime;
@@ -67,7 +105,7 @@ namespace Extenity.ProfilingToolbox
 
 		#endregion
 
-		#region Register Names
+		#region Register Labels
 
 		public static readonly Dictionary<int, string> Labels = new Dictionary<int, string>(50);
 
@@ -98,6 +136,22 @@ namespace Extenity.ProfilingToolbox
 		public static void DeregisterLabel(int id)
 		{
 			Labels.Remove(id);
+		}
+
+		public static string GetLabelOrID(int id, bool automaticallyRegisterIfNotFound = true)
+		{
+			string label;
+			if (Labels.TryGetValue(id, out label))
+			{
+				return label;
+			}
+			label = id.ToString();
+			if (automaticallyRegisterIfNotFound)
+			{
+				const bool errorOnOverwrite = false; // We already know the label does not exist.
+				RegisterLabel(id, label, errorOnOverwrite);
+			}
+			return label;
 		}
 
 		#endregion

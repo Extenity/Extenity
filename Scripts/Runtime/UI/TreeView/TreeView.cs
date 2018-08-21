@@ -106,9 +106,13 @@ namespace Extenity.UIToolbox
 		#region Nodes
 
 		/// <summary>
-		/// All existing nodes indexed by IDs. Do not modify this dictionary.
+		/// All existing nodes indexed by IDs. Do not modify.
 		/// </summary>
-		public Dictionary<int, Node> Nodes = new Dictionary<int, Node>();
+		public Dictionary<int, Node> NodeDictionary = new Dictionary<int, Node>();
+		/// <summary>
+		/// All existing nodes as a list. Do not modify.
+		/// </summary>
+		public List<Node> NodeList = new List<Node>();
 
 		private Node RootNode;
 
@@ -131,7 +135,8 @@ namespace Extenity.UIToolbox
 					Data = default(TData),
 				};
 
-				Nodes.Add(RootNode.ID, RootNode);
+				NodeDictionary.Add(RootNode.ID, RootNode);
+				NodeList.Add(RootNode);
 			}
 		}
 
@@ -148,9 +153,29 @@ namespace Extenity.UIToolbox
 			}
 		}
 
+		public Node GetNodeByData(TData data)
+		{
+			for (var i = 0; i < NodeList.Count; i++)
+			{
+				if (NodeList[i].Data.Equals(data))
+				{
+					return NodeList[i];
+				}
+			}
+			return null;
+		}
+
 		#endregion
 
 		#region Nodes - Add / Remove
+
+		public Node AddNode(TData data, TData parentData)
+		{
+			var parentNode = GetNodeByData(parentData);
+			if (parentNode == null)
+				throw new Exception("Failed to find parent node.");
+			return AddNode(data, parentNode);
+		}
 
 		public virtual Node AddNode(TData data, Node parent = null)
 		{
@@ -183,7 +208,8 @@ namespace Extenity.UIToolbox
 				CanvasGroup = itemCanvasGroup,
 				Data = data,
 			};
-			Nodes.Add(newNode.ID, newNode);
+			NodeDictionary.Add(newNode.ID, newNode);
+			NodeList.Add(newNode);
 
 			var eventHandler = itemGO.GetSingleOrAddComponent<TreeViewItemEventHandler>();
 			eventHandler.onBeginDrag = (evt) => OnBeginDrag(evt, newNode);
@@ -242,7 +268,8 @@ namespace Extenity.UIToolbox
 			{
 				var node = nodes[i];
 
-				Nodes.Remove(node.ID);
+				NodeDictionary.Remove(node.ID);
+				NodeList.Remove(node);
 
 				if (node.Component)
 				{

@@ -1,5 +1,5 @@
 using System;
-using Extenity.DataToolbox;
+using System.Collections.Generic;
 
 namespace Extenity.ProfilingToolbox
 {
@@ -19,7 +19,9 @@ namespace Extenity.ProfilingToolbox
 		{
 			ID = id;
 			Parent = parent;
-			Parent.Children = Parent.Children.Add(this);
+			if (Parent.Children == null)
+				Parent.Children = new List<CodeProfilerEntry>(20); // Allocate some, but not too much
+			Parent.Children.Add(this);
 		}
 
 		/// <summary>
@@ -29,7 +31,7 @@ namespace Extenity.ProfilingToolbox
 		{
 			ID = 0;
 			Parent = null;
-			CollectionTools.ResizeIfRequired(ref Children, 20); // Preallocate some
+			Children = new List<CodeProfilerEntry>(20); // Preallocate some, but not too much
 		}
 
 		#endregion
@@ -39,14 +41,13 @@ namespace Extenity.ProfilingToolbox
 		[NonSerialized]
 		public readonly CodeProfilerEntry Parent;
 
-		// The array size does not change so often, so it will better be an array instead of a list for performance concerns.
-		public CodeProfilerEntry[] Children;
+		public List<CodeProfilerEntry> Children;
 
 		public bool IsChildExists(int id)
 		{
 			if (Children != null)
 			{
-				for (int i = 0; i < Children.Length; i++)
+				for (int i = 0; i < Children.Count; i++)
 				{
 					if (Children[i].ID == id)
 						return true;
@@ -55,19 +56,25 @@ namespace Extenity.ProfilingToolbox
 			return false;
 		}
 
-		public CodeProfilerEntry GetOrAddChild(int id)
+		/// <summary>
+		/// Returns true if the child is just created.
+		/// </summary>
+		internal bool GetOrAddChild(int id, out CodeProfilerEntry entry)
 		{
 			if (Children != null)
 			{
-				for (int i = 0; i < Children.Length; i++)
+				for (int i = 0; i < Children.Count; i++)
 				{
 					if (Children[i].ID == id)
-						return Children[i];
+					{
+						entry = Children[i];
+						return false;
+					}
 				}
 			}
-			var newEntry = new CodeProfilerEntry(id, this);
-			Children = Children.Add(newEntry);
-			return newEntry;
+			entry = new CodeProfilerEntry(id, this);
+			Children.Add(entry);
+			return true;
 		}
 
 		#endregion
