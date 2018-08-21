@@ -10,6 +10,7 @@ namespace Extenity.UIToolbox
 		public virtual void OnItemDeselected() { }
 		public virtual void OnItemExpanded() { }
 		public virtual void OnItemCollapsed() { }
+		public virtual void OnLeafStateChanged(bool isLeaf) { }
 	}
 
 }

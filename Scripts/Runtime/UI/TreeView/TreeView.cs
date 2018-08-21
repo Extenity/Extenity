@@ -42,6 +42,7 @@ namespace Extenity.UIToolbox
 			}
 
 			public bool IsRoot { get { return Parent == null; } }
+			public bool IsLeaf { get { return !HasChild; } }
 
 			#region Initialization
 
@@ -134,10 +135,6 @@ namespace Extenity.UIToolbox
 
 			var isRoot = parent == null;
 
-			if (!isRoot && parent.ChildrenIDs == null)
-			{
-				parent.ChildrenIDs = new List<int>();
-			}
 			var itemGO = Instantiate(ItemTemplate);
 			var itemComponent = itemGO.GetComponent<TreeViewItem<TData>>();
 			if (!itemComponent)
@@ -172,11 +169,21 @@ namespace Extenity.UIToolbox
 
 			if (!isRoot)
 			{
+				var parentWasLeaf = parent.IsLeaf;
+				if (parent.ChildrenIDs == null)
+				{
+					parent.ChildrenIDs = new List<int>();
+				}
 				parent.ChildrenIDs.Add(newNode.ID);
+				if ((parentWasLeaf != parent.IsLeaf) && parent.Component)
+				{
+					parent.Component.OnLeafStateChanged(false);
+				}
 			}
 			itemGO.transform.SetParent(Container, false);
 			itemGO.SetActive(true);
 			itemComponent.OnItemCreated(newNode);
+			itemComponent.OnLeafStateChanged(true);
 			return newNode;
 		}
 
