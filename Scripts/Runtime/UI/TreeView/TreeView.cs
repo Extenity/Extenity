@@ -25,24 +25,13 @@ namespace Extenity.UIToolbox
 		{
 			public readonly int ID;
 			public Node Parent;
-			public List<int> ChildrenIDs;
+			public List<Node> Children;
 			public int Indentation;
 			public bool Collapsed = false;
 			public TreeViewItem<TData> Component;
 			public CanvasGroup CanvasGroup;
 
 			public TData Data;
-
-			public bool HasChild
-			{
-				get
-				{
-					return ChildrenIDs != null && ChildrenIDs.Count > 0;
-				}
-			}
-
-			public bool IsRoot { get { return Parent == null; } }
-			public bool IsLeaf { get { return !HasChild; } }
 
 			#region Initialization
 
@@ -56,6 +45,44 @@ namespace Extenity.UIToolbox
 			#region ID
 
 			private static int LastGivenNodeID = 0;
+
+			#endregion
+
+			#region Parent / Child
+
+			public bool IsRoot { get { return Parent == null; } }
+			public bool IsLeaf { get { return !HasChild; } }
+			public bool HasChild { get { return Children != null && Children.Count > 0; } }
+
+			public Node LastChild
+			{
+				get
+				{
+					return Children != null && Children.Count > 0
+						? Children[Children.Count - 1]
+						: null;
+				}
+			}
+
+			public int GetLastGrandchildOrSelfSiblingIndex()
+			{
+				var node = LastChild;
+				if (node == null)
+				{
+					node = this;
+				}
+				else
+				{
+					// Go deeper until no grandchild is left.
+					var child = node.LastChild;
+					while (child != null)
+					{
+						node = child;
+						child = node.LastChild;
+					}
+				}
+				return node.Component.transform.GetSiblingIndex();
+			}
 
 			#endregion
 		}
@@ -96,7 +123,7 @@ namespace Extenity.UIToolbox
 				RootNode = new Node
 				{
 					Parent = null,
-					ChildrenIDs = new List<int>(),
+					Children = null,
 					Indentation = -1, // Root should be invisible. Give it a negative indentation so the children will have 0 indentation.
 					Collapsed = false,
 					Component = null,
@@ -110,14 +137,13 @@ namespace Extenity.UIToolbox
 
 		public void GatherAllChildren(Node target, List<Node> list)
 		{
-			if (target.ChildrenIDs != null && target.ChildrenIDs.Count > 0)
+			if (target.Children != null && target.Children.Count > 0)
 			{
-				for (int i = 0; i < target.ChildrenIDs.Count; ++i)
+				for (int i = 0; i < target.Children.Count; ++i)
 				{
-					var childID = target.ChildrenIDs[i];
-					var node = Nodes[childID];
-					GatherAllChildren(node, list);
-					list.Add(node);
+					var child = target.Children[i];
+					GatherAllChildren(child, list);
+					list.Add(child);
 				}
 			}
 		}
@@ -150,7 +176,7 @@ namespace Extenity.UIToolbox
 			var newNode = new Node
 			{
 				Parent = parent,
-				ChildrenIDs = null,
+				Children = null,
 				Collapsed = false,
 				Indentation = isRoot ? 0 : parent.Indentation + 1,
 				Component = itemComponent,
@@ -167,20 +193,29 @@ namespace Extenity.UIToolbox
 			eventHandler.onPointerEnter = (evt) => OnPointerEnter(evt, newNode);
 			eventHandler.onPointerExit = (evt) => OnPointerExit(evt, newNode);
 
+			// Set transform parent and order.
+			itemGO.transform.SetParent(Container, false);
+			if (!isRoot)
+			{
+				var siblingIndexOfLastNodeInParent = parent.GetLastGrandchildOrSelfSiblingIndex();
+				itemGO.transform.SetSiblingIndex(siblingIndexOfLastNodeInParent + 1);
+			}
+
+			// Add this node into parent's children list.
 			if (!isRoot)
 			{
 				var parentWasLeaf = parent.IsLeaf;
-				if (parent.ChildrenIDs == null)
+				if (parent.Children == null)
 				{
-					parent.ChildrenIDs = new List<int>();
+					parent.Children = new List<Node>();
 				}
-				parent.ChildrenIDs.Add(newNode.ID);
+				parent.Children.Add(newNode);
 				if ((parentWasLeaf != parent.IsLeaf) && parent.Component)
 				{
 					parent.Component.OnLeafStateChanged(false);
 				}
 			}
-			itemGO.transform.SetParent(Container, false);
+
 			itemGO.SetActive(true);
 			itemComponent.OnItemCreated(newNode);
 			itemComponent.OnLeafStateChanged(true);
@@ -390,16 +425,15 @@ namespace Extenity.UIToolbox
 
 		private void GatherExpandingNodes(Node target, List<Node> list)
 		{
-			if (target.ChildrenIDs != null && target.ChildrenIDs.Count > 0)
+			if (target.Children != null && target.Children.Count > 0)
 			{
-				for (int i = 0; i < target.ChildrenIDs.Count; ++i)
+				for (int i = 0; i < target.Children.Count; ++i)
 				{
-					var childID = target.ChildrenIDs[i];
-					var node = Nodes[childID];
-					list.Add(node);
-					if (!node.Collapsed)
+					var child = target.Children[i];
+					list.Add(child);
+					if (!child.Collapsed)
 					{
-						GatherExpandingNodes(node, list);
+						GatherExpandingNodes(child, list);
 					}
 				}
 			}
