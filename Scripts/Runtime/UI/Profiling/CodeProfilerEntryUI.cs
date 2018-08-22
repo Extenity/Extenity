@@ -15,16 +15,15 @@ namespace Extenity.UIToolbox
 
 		public override void OnItemCreated(TreeView<CodeProfilerEntry>.Node node)
 		{
-			Data = node.Data;
-			var isRoot = Data == null;
+			Node = node;
 
-			if (isRoot)
+			if (Node.IsRoot)
 			{
 				SetLabel("Root");
 			}
 			else
 			{
-				var label = CodeProfiler.GetLabelOrID(Data.ID);
+				var label = CodeProfiler.GetLabelOrID(Node.Data.ID);
 				SetLabel(label);
 				RefreshValues();
 			}
@@ -47,7 +46,7 @@ namespace Extenity.UIToolbox
 		#region Data
 
 		[NonSerialized]
-		public CodeProfilerEntry Data;
+		public TreeView<CodeProfilerEntry>.Node Node;
 
 		#endregion
 
@@ -85,7 +84,7 @@ namespace Extenity.UIToolbox
 
 		public void RefreshValues()
 		{
-			SetValues((float)Data.LastDuration, (float)Data.AverageDuration, Data.TotalCount);
+			SetValues((float)Node.Data.LastDuration, (float)Node.Data.AverageDuration, Node.Data.TotalCount);
 		}
 
 		#endregion

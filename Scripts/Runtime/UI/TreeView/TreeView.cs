@@ -81,7 +81,12 @@ namespace Extenity.UIToolbox
 						child = node.LastChild;
 					}
 				}
-				return node.Component.transform.GetSiblingIndex();
+
+				if (node.Component)
+				{
+					return node.Component.transform.GetSiblingIndex();
+				}
+				return -1;
 			}
 
 			#endregion
@@ -108,13 +113,19 @@ namespace Extenity.UIToolbox
 		/// <summary>
 		/// All existing nodes indexed by IDs. Do not modify.
 		/// </summary>
+		[NonSerialized]
 		public Dictionary<int, Node> NodeDictionary = new Dictionary<int, Node>();
 		/// <summary>
 		/// All existing nodes as a list. Do not modify.
 		/// </summary>
+		[NonSerialized]
 		public List<Node> NodeList = new List<Node>();
 
-		private Node RootNode;
+		/// <summary>
+		/// The root node that is the starting point for all other nodes. Do not modify.
+		/// </summary>
+		[NonSerialized]
+		public Node RootNode;
 
 		private void InitializeNodes()
 		{
@@ -153,29 +164,32 @@ namespace Extenity.UIToolbox
 			}
 		}
 
-		public Node GetNodeByData(TData data)
-		{
-			for (var i = 0; i < NodeList.Count; i++)
-			{
-				if (NodeList[i].Data.Equals(data))
-				{
-					return NodeList[i];
-				}
-			}
-			return null;
-		}
+		// NOTE: It's not wise to get a node by searching for it's data. One data can be set to more than one node, or the data can be set as null. In those cases, finding a node by it's data will not work as expected.
+		//public Node GetNodeByData(TData data)
+		//{
+		//	for (var i = 0; i < NodeList.Count; i++)
+		//	{
+		//		var node = NodeList[i];
+		//		if (node != null && data.Equals(node.Data))
+		//		{
+		//			return node;
+		//		}
+		//	}
+		//	return null;
+		//}
 
 		#endregion
 
 		#region Nodes - Add / Remove
 
-		public Node AddNode(TData data, TData parentData)
-		{
-			var parentNode = GetNodeByData(parentData);
-			if (parentNode == null)
-				throw new Exception("Failed to find parent node.");
-			return AddNode(data, parentNode);
-		}
+		// NOTE: It's not wise to get a node by searching for it's data. One data can be set to more than one node, or the data can be set as null. In those cases, finding a node by it's data will not work as expected.
+		//public Node AddNode(TData data, TData parentData)
+		//{
+		//	var parentNode = GetNodeByData(parentData);
+		//	if (parentNode == null)
+		//		throw new Exception("Failed to find parent node.");
+		//	return AddNode(data, parentNode);
+		//}
 
 		public virtual Node AddNode(TData data, Node parent = null)
 		{
@@ -224,7 +238,14 @@ namespace Extenity.UIToolbox
 			if (!isRoot)
 			{
 				var siblingIndexOfLastNodeInParent = parent.GetLastGrandchildOrSelfSiblingIndex();
-				itemGO.transform.SetSiblingIndex(siblingIndexOfLastNodeInParent + 1);
+				if (siblingIndexOfLastNodeInParent >= 0)
+				{
+					itemGO.transform.SetSiblingIndex(siblingIndexOfLastNodeInParent + 1);
+				}
+				//else
+				//{
+				//	No need to do anything. The component will be placed as the last child, which is what we want.
+				//}
 			}
 
 			// Add this node into parent's children list.

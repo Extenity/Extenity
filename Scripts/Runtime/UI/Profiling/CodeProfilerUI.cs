@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Extenity.ProfilingToolbox;
+using UnityEngine;
 
 namespace Extenity.UIToolbox
 {
@@ -31,16 +31,22 @@ namespace Extenity.UIToolbox
 
 		protected void LateUpdate()
 		{
-			throw new NotImplementedException();
+			// Iterate over all entry UIs and make them refresh their values. No need to iterate over entry data, since a UI item representation
+			// should be created by now for each entry.
+			for (var i = 0; i < AllEntries.Count; i++)
+			{
+				AllEntries[i].RefreshValues();
+			}
 		}
 
 		#endregion
 
 		#region Items
 
+		[Header("Code Profiler")]
 		public CodeProfilerEntryUI EntryTemplate;
 
-		private List<CodeProfilerEntryUI> AllEntries;
+		private readonly List<CodeProfilerEntryUI> AllEntries = new List<CodeProfilerEntryUI>();
 
 		private void InitializeItems()
 		{
@@ -63,7 +69,9 @@ namespace Extenity.UIToolbox
 
 		private void CreateUIForItem(CodeProfilerEntry entry)
 		{
-			AddNode(entry, entry.Parent);
+			var parentNode = GetNode(entry.Parent);
+			var node = AddNode(entry, parentNode);
+			AllEntries.Add((CodeProfilerEntryUI)node.Component);
 		}
 
 		private void ClearItems()
@@ -73,6 +81,25 @@ namespace Extenity.UIToolbox
 				Destroy(entry.gameObject);
 			}
 			AllEntries.Clear();
+		}
+
+		private Node GetNode(CodeProfilerEntry entry)
+		{
+			// Special case for root
+			if (entry == CodeProfiler.BaseEntry)
+			{
+				return RootNode;
+			}
+
+			for (var i = 0; i < AllEntries.Count; i++)
+			{
+				var entryUI = AllEntries[i];
+				if (entryUI.Node.Data == entry)
+				{
+					return entryUI.Node;
+				}
+			}
+			return null;
 		}
 
 		#endregion
