@@ -835,7 +835,7 @@ MonoBehaviour:
   Background: {fileID: 114506522796050882}
   IndentationPanel: {fileID: 224788665480754782}
   ExpandIcon: {fileID: 224548794760270468}
-  Indentation: 5
+  Indentation: 30
   SelectedColor: {r: 0.8301887, g: 0.6148096, b: 0.6148096, a: 0.6627451}
   LabelText: {fileID: 114760812281024106}
   LastDurationText: {fileID: 114548370713752336}
@@ -1879,6 +1879,6 @@ CanvasGroup:
   m_GameObject: {fileID: 1868999936985420}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
