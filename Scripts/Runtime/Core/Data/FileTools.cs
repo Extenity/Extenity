@@ -363,7 +363,7 @@ namespace Extenity.DataToolbox
 		}
 
 		/// <summary>
-		/// Compares if two file contents are the same. First it checks for file sizes and immediatelly tells if file sizes are different. Then it checks byte by byte until a difference found.
+		/// Compares if two file contents are the same. First it checks for file sizes and immediately tells if file sizes are different. Then it checks byte by byte until a difference found.
 		/// </summary>
 		/// <returns>True if files are the same.</returns>
 		public static bool CompareFileContents(this FileInfo fileInfo1, FileInfo fileInfo2)

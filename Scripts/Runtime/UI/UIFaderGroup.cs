@@ -128,7 +128,7 @@ namespace Extenity.UIToolbox
 
 		public void FadeInImmediate(UIFader fader)
 		{
-			// Immediatelly fade out all others.
+			// Immediately fade out all others.
 			for (var i = 0; i < Faders.Count; i++)
 			{
 				if (Faders[i] != fader && Faders[i])
