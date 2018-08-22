@@ -81,6 +81,7 @@ namespace Extenity.ProfilingToolbox
 			CurrentEntry.LastDuration = duration;
 			CurrentEntry.TotalDuration += duration;
 			CurrentEntry.TotalCount++;
+			CurrentEntry.RunningAverageDuration.Push((float)duration);
 
 			// Set current entry as the parent.
 			CurrentEntry = CurrentEntry.Parent;

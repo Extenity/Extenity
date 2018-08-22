@@ -84,7 +84,7 @@ namespace Extenity.UIToolbox
 
 		public void RefreshValues()
 		{
-			SetValues((float)Node.Data.LastDuration, (float)Node.Data.AverageDuration, Node.Data.TotalCount);
+			SetValues((float)Node.Data.LastDuration, Node.Data.RunningAverageDuration.Mean, Node.Data.TotalCount);
 		}
 
 		#endregion

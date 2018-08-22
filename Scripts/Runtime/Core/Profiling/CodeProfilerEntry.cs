@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extenity.MathToolbox;
 
 namespace Extenity.ProfilingToolbox
 {
@@ -97,6 +98,8 @@ namespace Extenity.ProfilingToolbox
 						: 0.0;
 			}
 		}
+
+		public readonly RunningHotMeanFloat RunningAverageDuration = new RunningHotMeanFloat(20);
 
 		#endregion
 	}
