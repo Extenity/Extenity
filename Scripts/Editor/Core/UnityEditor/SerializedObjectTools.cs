@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityEditor;
@@ -355,6 +356,24 @@ namespace Extenity.UnityEditorToolbox
 			// Finalize
 			var text = stringBuilder.ToString();
 			Debug.Log(text);
+		}
+
+		#endregion
+
+		#region Get SerializedProperties
+
+		public static void GatherSerializedPropertiesNotStartingWithM(this SerializedObject serializedObject, List<SerializedProperty> result)
+		{
+			var it = serializedObject.GetIterator();
+			it.Next(true);
+			do
+			{
+				if (!it.name.StartsWith("m_", StringComparison.Ordinal))
+				{
+					result.Add(it.Copy());
+				}
+			}
+			while (it.NextVisible(false));
 		}
 
 		#endregion
