@@ -7,6 +7,13 @@ using UnityEngine.Events;
 namespace Extenity.UIToolbox
 {
 
+	public enum FadeState
+	{
+		Untouched,
+		FadedIn,
+		FadedOut,
+	}
+
 	public class UIFader : MonoBehaviour
 	{
 		#region Configuration
@@ -14,7 +21,7 @@ namespace Extenity.UIToolbox
 		public CanvasGroup CanvasGroup;
 		[Tooltip("Optional Canvas reference that will be enabled or disabled.")]
 		public Canvas Canvas;
-		public InitialFadeState InitialState = InitialFadeState.Untouched;
+		public FadeState InitialState = FadeState.Untouched;
 		public bool Interactable = true;
 		public bool BlocksRaycasts = true;
 		[Tooltip("Optional orchestrator that is triggered with fading.")]
@@ -38,13 +45,6 @@ namespace Extenity.UIToolbox
 
 		#region Initialization
 
-		public enum InitialFadeState
-		{
-			Untouched,
-			FadedIn,
-			FadedOut,
-		}
-
 		protected void Start()
 		{
 			if (GetFadeInConfigurationFromInitialValue)
@@ -60,12 +60,12 @@ namespace Extenity.UIToolbox
 
 			switch (InitialState)
 			{
-				case InitialFadeState.Untouched:
+				case FadeState.Untouched:
 					break;
-				case InitialFadeState.FadedIn:
+				case FadeState.FadedIn:
 					AlphaFadeIn(0f, 0f);
 					break;
-				case InitialFadeState.FadedOut:
+				case FadeState.FadedOut:
 					AlphaFadeOut(0f, 0f);
 					break;
 				default:
@@ -76,6 +76,8 @@ namespace Extenity.UIToolbox
 		#endregion
 
 		#region Fade Commands
+
+		public FadeState State { get; private set; }
 
 		public class FaderEvent : UnityEvent<UIFader> { }
 
@@ -139,6 +141,8 @@ namespace Extenity.UIToolbox
 			{
 				Debug.Log($"Fading in '{CanvasGroup.gameObject.FullName()}'");
 			}
+
+			State = FadeState.FadedIn;
 
 			if (delay < 0f)
 				delay = 0f;
@@ -208,6 +212,8 @@ namespace Extenity.UIToolbox
 			{
 				Debug.Log($"Fading out '{CanvasGroup.gameObject.FullName()}'");
 			}
+
+			State = FadeState.FadedOut;
 
 			if (delay < 0f)
 				delay = 0f;
