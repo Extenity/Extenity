@@ -233,6 +233,49 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
+		public static bool ResizeIfRequired<T>(ref T[] thisList, int length, Action<T[], int> processItemToBeRemoved, Action<T[], int> processItemToBeAdded)
+		{
+			if (length < 0)
+				return false; // Ignored.
+
+			if (thisList == null)
+			{
+				thisList = new T[length];
+				if (processItemToBeAdded != null)
+				{
+					// Array needs to be expanded. Call the callback for added items.
+					for (int i = 0; i < length; i++)
+					{
+						processItemToBeAdded(thisList, i);
+					}
+				}
+				return true;
+			}
+			else if (thisList.Length != length)
+			{
+				var currentLength = thisList.Length;
+				if (currentLength > length && processItemToBeRemoved != null)
+				{
+					// Array needs to be sized down. Call the callback for removed items.
+					for (int i = length; i < currentLength; i++)
+					{
+						processItemToBeRemoved(thisList, i);
+					}
+				}
+				Array.Resize(ref thisList, length);
+				if (currentLength < length && processItemToBeAdded != null)
+				{
+					// Array needs to be expanded. Call the callback for added items.
+					for (int i = currentLength; i < length; i++)
+					{
+						processItemToBeAdded(thisList, i);
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
 		public static bool ExpandIfRequired<T>(ref T[] thisList, int length, bool expandToDoubleSize = false)
 		{
 			if (length < 0)
