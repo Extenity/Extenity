@@ -370,6 +370,20 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Dot
+
+		public static float DotXY(this Vector3 lhs, Vector3 rhs)
+		{
+			return lhs.x * rhs.x + lhs.y * rhs.y;
+		}
+
+		public static float DotXZ(this Vector3 lhs, Vector3 rhs)
+		{
+			return lhs.x * rhs.x + lhs.z * rhs.z;
+		}
+
+		#endregion
+
 		#region Distance and Difference
 
 		public static float SqrDistanceTo(this Vector3 a, Vector3 b)
@@ -557,6 +571,16 @@ namespace Extenity.MathToolbox
 		public static float AngleBetween(this Vector3 vector1, Vector3 vector2)
 		{
 			return Mathf.Acos(Vector3.Dot(vector1.normalized, vector2.normalized));
+		}
+
+		public static float AngleBetweenXY(this Vector3 vector1, Vector3 vector2)
+		{
+			return Mathf.Acos(DotXY(vector1.normalized, vector2.normalized));
+		}
+
+		public static float AngleBetweenXZ(this Vector3 vector1, Vector3 vector2)
+		{
+			return Mathf.Acos(DotXZ(vector1.normalized, vector2.normalized));
 		}
 
 		public static float AngleBetween_NegPIToPI(this Vector3 vector1, Vector3 vector2, Vector3 referencePlaneNormal)
