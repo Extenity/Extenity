@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Extenity.OperatingSystemToolbox
 {
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 
 	public class Clipboard : ApplicationToolbox.Clipboard
 	{
@@ -14,6 +14,9 @@ namespace Extenity.OperatingSystemToolbox
 
 		internal static bool IsInitialized;
 
+#if UNITY_EDITOR
+		[UnityEditor.InitializeOnLoadMethod]
+#endif
 		[RuntimeInitializeOnLoadMethod]
 		public static void Initialize()
 		{
