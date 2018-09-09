@@ -24,13 +24,15 @@ namespace Extenity.DesignPatternsToolbox
 		private string className;
 #pragma warning restore
 
-		protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
+		protected T InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
+		//protected void InitializeSingleton(bool dontDestroyOnLoad = true) // TODO: Refactor: Do this on extra time. See 1759175
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
 			UnityEngine.Debug.Log("Instantiating singleton: " + className, obj);
 #endif
 			instance = obj;
+			//instance = this as T; // TODO: Refactor: Do this on extra time. See 1759175
 
 			if (dontDestroyOnLoad)
 			{
@@ -38,6 +40,11 @@ namespace Extenity.DesignPatternsToolbox
 			}
 
 			SingletonTracker.SingletonInstantiated(className);
+
+			// Returning the instance for ease of use. When there are double derived singleton classes,
+			// they need to keep their own static instance fields. Returning the instance here allows
+			// these fields to be set directly in one-liner code where InitializeSingleton is called.
+			return instance;
 		}
 
 		protected virtual void OnDestroy()
