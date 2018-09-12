@@ -3,7 +3,9 @@
     "references": [
         "Extenity",
         "Unity.TextMeshPro",
-        "Unity.TextMeshPro.Editor"
+        "Unity.TextMeshPro.Editor",
+        "Photon.Editor",
+        "Photon"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

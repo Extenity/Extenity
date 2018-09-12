@@ -2,7 +2,8 @@
     "name": "Extenity",
     "references": [
         "Unity.TextMeshPro",
-        "DOTweenModules"
+        "DOTweenModules",
+        "Photon"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
