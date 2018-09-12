@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	public class ProcessController

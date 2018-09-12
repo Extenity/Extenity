@@ -1,7 +1,7 @@
 using System;
 using Photon.Realtime;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	[Serializable]

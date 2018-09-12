@@ -13,7 +13,7 @@ using Photon.Realtime;
 using UnityEngine.Events;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	/// <summary>

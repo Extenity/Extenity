@@ -1,6 +1,6 @@
 using UnityEngine.Events;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	public abstract class NetworkSession

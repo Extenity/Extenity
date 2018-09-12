@@ -2,7 +2,7 @@ using System;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	[Serializable]

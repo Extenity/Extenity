@@ -2,11 +2,10 @@ using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 using UnityEditor;
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	[CustomEditor(typeof(NetworkConnectivityManager))]

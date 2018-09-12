@@ -1,5 +1,5 @@
 
-namespace PhotonTools
+namespace BeyondNetworking
 {
 
 	public enum NetworkState
