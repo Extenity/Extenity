@@ -55,6 +55,9 @@ namespace BeyondNetworking
 				throw new Exception("Internal error 922817!");
 			_Instance = this;
 
+			// TODO: Temporary solution for a Photon bug. CollectibleSpawnInfo serialization in RpcSpawnCollectibles method throws an exception when using GpBinaryV18.
+			PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = SerializationProtocol.GpBinaryV16;
+
 			PhotonNetwork.GameVersion = GameVersion;
 			InitializePhotonLogLevel();
 
