@@ -11,7 +11,6 @@ namespace BeyondNetworking
 		public string RoomPassword;
 		public string[] ExpectedUserIDs;
 		public RoomOptions RoomOptions;
-		//public bool AutoCleanUpPlayerObjects = true; // TODO: See if this is abandoned in PUN2 or just renamed.
 		public TypedLobby Lobby;
 		//public object Tag; This is kept here commented out as a reminder for future ideas.
 

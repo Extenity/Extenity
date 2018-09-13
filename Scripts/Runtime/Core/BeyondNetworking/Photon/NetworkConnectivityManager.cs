@@ -908,7 +908,6 @@ namespace BeyondNetworking
 					IsVisible = false,
 					MaxPlayers = (byte)1,
 				};
-				//PhotonNetwork.autoCleanUpPlayerObjects = true; // TODO: See if this is abandoned in PUN2 or just renamed.
 				var isRequestSent = PhotonNetwork.CreateRoom(configuration.RoomName, roomOptions, configuration.Lobby, null);
 
 				if (!isRequestSent)
@@ -992,7 +991,6 @@ namespace BeyondNetworking
 			{
 				SetProcessStep(session, NetworkProcessStep.CreatingHostRoom);
 
-				//PhotonNetwork.autoCleanUpPlayerObjects = configuration.AutoCleanUpPlayerObjects; // TODO: See if this is abandoned in PUN2 or just renamed.
 				var isRequestSent = PhotonNetwork.CreateRoom(configuration.RoomName, configuration.RoomOptions, configuration.Lobby, configuration.ExpectedUserIDs);
 
 				if (!isRequestSent)
