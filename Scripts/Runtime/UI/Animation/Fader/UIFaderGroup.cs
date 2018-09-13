@@ -11,6 +11,9 @@ namespace Extenity.UIToolbox
 		[Header("Setup")]
 		public List<UIFader> Faders;
 
+		[Tooltip("This will only work for " + nameof(UIFaderGroup) + " components in prefabs and WILL NOT work for components in scenes.")]
+		public bool ForceHiddenAndUntouched;
+
 		#endregion
 
 		#region Initialization
