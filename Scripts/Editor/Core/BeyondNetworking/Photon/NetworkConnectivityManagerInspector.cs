@@ -2,6 +2,7 @@ using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEditor;
 
@@ -29,7 +30,9 @@ namespace BeyondNetworking
 			EditorGUILayout.LabelField("DesiredMode", NetworkConnectivityManager.DesiredMode.ToString());
 			EditorGUILayout.LabelField("NetworkState", NetworkConnectivityManager.NetworkState.ToString());
 
-			//if (PhotonNetwork.IsConnected)
+			var clientAvailable = PhotonNetwork.NetworkClientState != ClientState.Disconnected;
+
+			if (clientAvailable)
 			{
 				EditorGUILayoutTools.DrawHeader("Lobby Stats");
 				EditorGUILayout.LabelField("Online Players", NetworkConnectivityManager.OnlinePlayerCount.ToString());
@@ -65,10 +68,10 @@ namespace BeyondNetworking
 			EditorGUILayout.LabelField("IsConnectedAndReady", PhotonNetwork.IsConnectedAndReady.ToString());
 			EditorGUILayout.LabelField("AutomaticallySyncScene", PhotonNetwork.AutomaticallySyncScene.ToString());
 			EditorGUILayout.LabelField("InRoom", PhotonNetwork.InRoom.ToString());
-			EditorGUILayout.LabelField("InLobby", PhotonNetwork.InLobby.ToString());
+			EditorGUILayout.LabelField("InLobby", clientAvailable ? PhotonNetwork.InLobby.ToString() : "N/A");
 			EditorGUILayout.LabelField("OfflineMode", PhotonNetwork.OfflineMode.ToString());
 			EditorGUILayout.LabelField("ConnectMethod", PhotonNetwork.ConnectMethod.ToString());
-			EditorGUILayout.LabelField("CurrentLobby", PhotonNetwork.CurrentLobby.ToHumanReadableString());
+			EditorGUILayout.LabelField("CurrentLobby", clientAvailable ? PhotonNetwork.CurrentLobby.ToHumanReadableString() : "N/A");
 		}
 	}
 

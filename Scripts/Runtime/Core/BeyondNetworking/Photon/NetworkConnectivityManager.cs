@@ -1940,8 +1940,8 @@ namespace BeyondNetworking
 
 		#region Photon Log Level
 
+		[Header("Logging")]
 		[SerializeField]
-		[HideInInspector]
 		private PunLogLevel _PhotonLogLevel = PunLogLevel.Informational;
 
 		//[Inspect]
@@ -1964,7 +1964,6 @@ namespace BeyondNetworking
 
 		#region Log
 
-		[Header("Logging")]
 		public bool VerboseLogging = false;
 		public bool OverkillLogging = false;
 
