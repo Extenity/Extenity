@@ -42,11 +42,18 @@ namespace Extenity.BeyondAudio
 
 		#region Initialization
 
-		private void Start() // Quick fix for not properly initializing Unity's audio system. Do the initialization in Start, instead of Awake. Otherwise AudioMixer parameters won't be initialized. See 197152.
+		private void Awake()
 		{
 			InitializeSingleton(this, true);
 			CalculateEventInternals();
 			InitializeAudioSourceTemplate();
+		}
+
+		private void Start()
+		{
+			// Quick fix for not properly initializing Unity's audio system.
+			// Mixer parameters must be set in Start, instead of Awake.
+			// Otherwise they will be ignored silently.
 			InitializeVolumeControls();
 		}
 
