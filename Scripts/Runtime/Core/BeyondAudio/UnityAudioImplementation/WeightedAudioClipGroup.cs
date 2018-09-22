@@ -1,4 +1,4 @@
-//#if BeyondAudioUsesUnityAudio
+#if BeyondAudioUsesUnityAudio
 
 using System;
 using UnityEngine;
@@ -44,4 +44,4 @@ namespace Extenity.BeyondAudio
 
 }
 
-//#endif
+#endif

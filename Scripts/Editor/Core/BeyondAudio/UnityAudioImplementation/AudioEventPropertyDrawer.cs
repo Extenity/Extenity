@@ -1,4 +1,6 @@
-﻿using Extenity.UnityEditorToolbox.Editor;
+﻿#if BeyondAudioUsesUnityAudio
+
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 
 namespace Extenity.BeyondAudio.Editor
@@ -10,3 +12,5 @@ namespace Extenity.BeyondAudio.Editor
 	}
 
 }
+
+#endif

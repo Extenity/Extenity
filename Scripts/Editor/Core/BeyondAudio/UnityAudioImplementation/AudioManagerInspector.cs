@@ -1,3 +1,5 @@
+#if BeyondAudioUsesUnityAudio
+
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
@@ -83,3 +85,5 @@ namespace Extenity.BeyondAudio.Editor
 	}
 
 }
+
+#endif

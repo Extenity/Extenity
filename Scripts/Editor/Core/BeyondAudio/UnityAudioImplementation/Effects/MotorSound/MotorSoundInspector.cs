@@ -1,4 +1,4 @@
-﻿//#if BeyondAudioUsesUnityAudio
+﻿#if BeyondAudioUsesUnityAudio
 
 using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
@@ -110,4 +110,4 @@ namespace Extenity.BeyondAudio.Effects.Editor
 
 }
 
-//#endif
+#endif

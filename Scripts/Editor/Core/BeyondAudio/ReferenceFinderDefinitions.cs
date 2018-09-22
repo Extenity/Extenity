@@ -1,3 +1,5 @@
+#if BeyondAudioUsesUnityAudio
+
 using Extenity.ReflectionToolbox;
 using UnityEditor;
 
@@ -9,11 +11,16 @@ namespace Extenity.BeyondAudio.Editor
 	{
 		static ReferenceFinderDefinitions()
 		{
-			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(AudioEvent));
+			// Beyond Audio's general types.
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(VolumeControl));
+
+			// Beyond Audio's Unity Audio implementation specific types.
+			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(AudioEvent));
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(WeightedAudioClipGroup));
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(Effects.MotorSound.ClipConfiguration));
 		}
 	}
 
 }
+
+#endif
