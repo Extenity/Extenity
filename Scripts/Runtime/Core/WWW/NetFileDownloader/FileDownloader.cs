@@ -186,7 +186,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 		{
 			try
 			{
-				File.Delete(localFileName);
+				FileTools.DeleteFileEvenIfReadOnly(localFileName);
 			}
 			catch
 			{

@@ -421,13 +421,7 @@ namespace Extenity.DataToolbox
 				var fileInfo = fileInfos[i];
 				try
 				{
-					// Try to set attributes to "Normal". Because File.Delete() fails if file is readonly.
-					if (fileInfo.IsReadOnly)
-					{
-						fileInfo.Attributes = FileAttributes.Normal;
-					}
-
-					File.Delete(fileInfo.FullName);
+					fileInfo.DeleteFileEvenIfReadOnly();
 					fileInfos[i] = null;
 				}
 				catch

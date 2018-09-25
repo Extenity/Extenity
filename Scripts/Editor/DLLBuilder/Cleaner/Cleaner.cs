@@ -67,7 +67,7 @@ namespace Extenity.DLLBuilder
 				{
 					if (File.Exists(fileToDelete))
 					{
-						File.Delete(fileToDelete);
+						FileTools.DeleteFileEvenIfReadOnly(fileToDelete);
 						result.Add("Deleted : " + fileToDelete);
 					}
 					else

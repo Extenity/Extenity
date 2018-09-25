@@ -122,14 +122,14 @@ namespace Extenity.WWWToolbox
 				{
 					// Extract downloaded file and delete
 					SharpZipLibTools.ExtractSingleFileEnsured(File.OpenRead(localTempFileFullPath), localFileFullPath);
-					File.Delete(localTempFileFullPath);
+					FileTools.DeleteFileEvenIfReadOnly(localTempFileFullPath);
 				}
 				else
 				{
 					// Delete if file already exists.
 					if (File.Exists(localFileFullPath))
 					{
-						File.Delete(localFileFullPath);
+						FileTools.DeleteFileEvenIfReadOnly(localFileFullPath);
 					}
 					// Rename downloaded file
 					File.Move(localTempFileFullPath, localFileFullPath);

@@ -512,6 +512,26 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region File Delete
+
+		public static void DeleteFileEvenIfReadOnly(string path)
+		{
+			DeleteFileEvenIfReadOnly(new FileInfo(path));
+		}
+
+		public static void DeleteFileEvenIfReadOnly(this FileInfo fileInfo)
+		{
+			// Try to set attributes to "Normal". Because File.Delete() fails if file is readonly.
+			if (fileInfo.IsReadOnly)
+			{
+				fileInfo.Attributes = FileAttributes.Normal;
+			}
+
+			File.Delete(fileInfo.FullName);
+		}
+
+		#endregion
+
 		#region Unique File
 
 		public static string GenerateUniqueFilePath(this string path, string numberPrefix = " (", string numberPostfix = ")", int maxTries = 10000)

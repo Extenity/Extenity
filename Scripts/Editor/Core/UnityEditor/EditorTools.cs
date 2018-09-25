@@ -35,7 +35,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 			else if (File.Exists(path))
 			{
-				File.Delete(path);
+				FileTools.DeleteFileEvenIfReadOnly(path);
 				DeleteMetaFileOfItem(path);
 			}
 			else
@@ -48,7 +48,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			var metaFile = path + ".meta";
 			if (File.Exists(metaFile))
-				File.Delete(metaFile);
+				FileTools.DeleteFileEvenIfReadOnly(metaFile);
 		}
 
 		#endregion

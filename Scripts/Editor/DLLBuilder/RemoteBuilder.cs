@@ -88,7 +88,7 @@ namespace Extenity.DLLBuilder
 		{
 			try
 			{
-				File.Delete(Constants.RemoteBuilder.RequestFilePath);
+				FileTools.DeleteFileEvenIfReadOnly(Constants.RemoteBuilder.RequestFilePath);
 			}
 			catch
 			{
@@ -266,7 +266,7 @@ namespace Extenity.DLLBuilder
 			{
 				if (File.Exists(remoteProjectResponseFilePath))
 				{
-					File.Delete(remoteProjectResponseFilePath);
+					FileTools.DeleteFileEvenIfReadOnly(remoteProjectResponseFilePath);
 					DLLBuilder.LogAndUpdateStatus("Deleted remote project build response file '{0}'.", remoteProjectResponseFilePath);
 				}
 			}

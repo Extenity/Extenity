@@ -206,7 +206,7 @@ namespace Extenity.DLLBuilder
 			try
 			{
 				DLLBuilder.UpdateStatus("Deleting assembly reload survival file");
-				File.Delete(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
+				FileTools.DeleteFileEvenIfReadOnly(Constants.BuildJob.AssemblyReloadSurvivalFilePath);
 			}
 			catch
 			{
