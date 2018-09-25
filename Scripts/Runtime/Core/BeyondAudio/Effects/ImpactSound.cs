@@ -1,5 +1,3 @@
-#if BeyondAudioUsesUnityAudio
-
 using Extenity.MathToolbox;
 using UnityEngine;
 
@@ -42,5 +40,3 @@ namespace Extenity.BeyondAudio
 	}
 
 }
-
-#endif
