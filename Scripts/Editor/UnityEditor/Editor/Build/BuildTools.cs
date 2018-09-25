@@ -1,14 +1,101 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using Extenity.CryptoToolbox;
+using Extenity.DataToolbox;
+using Extenity.DebugToolbox;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildToolbox.Editor
 {
 
 	public static class BuildTools
 	{
+		#region Windows Build Cleanup
+
+		public static void ClearWindowsBuild(string outputExecutablePath,
+			bool simplifyDataFolderName, bool deleteDLLArtifacts, bool deleteCrashHandlerExecutable,
+			string[] deleteFilesWithExtensions, string[] deleteFilesWithFileNamePatterns)
+		{
+			var outputDirectory = Path.GetDirectoryName(outputExecutablePath);
+			var executableNameWithoutExtension = Path.GetFileNameWithoutExtension(outputExecutablePath);
+			var executablePathWithoutExtension = Path.Combine(outputDirectory, executableNameWithoutExtension);
+
+			// Rename data folder to just "Data"
+			if (simplifyDataFolderName)
+			{
+				var originalDataFolderPath = executablePathWithoutExtension + "_Data";
+				var newDataFolderPath = Path.Combine(outputDirectory, "Data");
+				if (!Directory.Exists(originalDataFolderPath))
+				{
+					if (!Directory.Exists(newDataFolderPath))
+					{
+						throw new Exception($"Output data folder at path '{originalDataFolderPath}' does not exist.");
+					}
+					else
+					{
+						Debug.Log("Skipping data folder name simplification because looks like it has already been done.");
+					}
+				}
+				else
+				{
+					if (Directory.Exists(newDataFolderPath))
+					{
+						throw new Exception($"Output data folder at path '{newDataFolderPath}' already exists.");
+					}
+					else
+					{
+						Directory.Move(originalDataFolderPath, newDataFolderPath);
+					}
+				}
+			}
+
+			// Clear unwanted files
+			{
+				var deletedFiles = new List<FileInfo>();
+				var failedFiles = new List<FileInfo>();
+
+				// Clear DLL artifacts
+				if (deleteDLLArtifacts)
+				{
+					DirectoryTools.ClearDLLArtifacts(outputDirectory, SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+				}
+				// Clear crash handler executable
+				if (deleteCrashHandlerExecutable)
+				{
+					DirectoryTools.DeleteFilesWithPatternInDirectory(outputDirectory, "UnityCrashHandler.exe", SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+					DirectoryTools.DeleteFilesWithPatternInDirectory(outputDirectory, "UnityCrashHandler64.exe", SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+				}
+				// Clear by extensions
+				if (deleteFilesWithExtensions.IsNotNullAndEmpty())
+				{
+					foreach (var extension in deleteFilesWithExtensions)
+					{
+						DirectoryTools.DeleteFilesWithExtensionInDirectory(outputDirectory, extension, SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+					}
+				}
+				// Clear by file name patterns
+				if (deleteFilesWithFileNamePatterns.IsNotNullAndEmpty())
+				{
+					foreach (var filePattern in deleteFilesWithFileNamePatterns)
+					{
+						DirectoryTools.DeleteFilesWithPatternInDirectory(outputDirectory, filePattern, SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+					}
+				}
+
+				deletedFiles.LogList($"Cleared '{deletedFiles.Count}' files:");
+				if (failedFiles.Count > 0)
+				{
+					throw new Exception($"Failed to delete '{failedFiles.Count}' files:\n" + failedFiles.Serialize('\n'));
+				}
+			}
+		}
+
+		#endregion
+
 		#region Process
 
 		public static int RunConsoleCommandAndCaptureOutput(string filePath, string arguments, out string output)

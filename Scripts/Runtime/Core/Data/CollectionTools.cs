@@ -85,6 +85,22 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
+		public static int RemoveAllNullItems<T>(this IList<T> list)
+		{
+			if (list == null)
+				return 0;
+			var count = 0;
+			for (var i = 0; i < list.Count; i++)
+			{
+				if (list[i] == null)
+				{
+					list.RemoveAt(i);
+					count++;
+				}
+			}
+			return count;
+		}
+
 		// See if the list does not contain any items other than specified items.
 		public static bool DoesNotContainOtherThan<T>(this List<T> list, params T[] items)
 		{

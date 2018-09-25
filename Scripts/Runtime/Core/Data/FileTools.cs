@@ -514,13 +514,20 @@ namespace Extenity.DataToolbox
 
 		#region File Delete
 
-		public static void DeleteFileEvenIfReadOnly(string path)
+		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
+		public static bool DeleteFileEvenIfReadOnly(string path, bool checkIfExists = false)
 		{
-			DeleteFileEvenIfReadOnly(new FileInfo(path));
+			return DeleteFileEvenIfReadOnly(new FileInfo(path), checkIfExists);
 		}
 
-		public static void DeleteFileEvenIfReadOnly(this FileInfo fileInfo)
+		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
+		public static bool DeleteFileEvenIfReadOnly(this FileInfo fileInfo, bool checkIfExists = false)
 		{
+			if (checkIfExists && !fileInfo.Exists)
+			{
+				return false;
+			}
+
 			// Try to set attributes to "Normal". Because File.Delete() fails if file is readonly.
 			if (fileInfo.IsReadOnly)
 			{
@@ -528,6 +535,7 @@ namespace Extenity.DataToolbox
 			}
 
 			File.Delete(fileInfo.FullName);
+			return true;
 		}
 
 		#endregion

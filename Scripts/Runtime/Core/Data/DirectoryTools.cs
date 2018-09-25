@@ -411,43 +411,113 @@ namespace Extenity.DataToolbox
 
 		#region Delete Files
 
-		public static List<FileInfo> DeleteFilesWithExtensionInDirectory(string directoryPath, string extension, SearchOption searchOption)
+		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
+		public static bool DeleteFilesWithExtensionInDirectory(string directoryPath, string extension, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
 		{
+			if (deletedFiles == null)
+				deletedFiles = new List<FileInfo>();
+			if (failedFiles == null)
+				failedFiles = new List<FileInfo>();
+			var error = false;
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var fileInfos = directoryInfo.GetFiles("*." + extension, searchOption).Where(fileInfo => fileInfo.Extension == "." + extension).ToList();
-			var error = false;
-			for (var i = fileInfos.Count - 1; i >= 0; i--)
+			for (int i = 0; i < fileInfos.Count; i++)
 			{
-				var fileInfo = fileInfos[i];
 				try
 				{
-					fileInfo.DeleteFileEvenIfReadOnly();
-					fileInfos[i] = null;
+					fileInfos[i].DeleteFileEvenIfReadOnly();
+					deletedFiles.Add(fileInfos[i]);
 				}
 				catch
 				{
+					failedFiles.Add(fileInfos[i]);
 					error = true;
 				}
 			}
+			return !error;
+		}
 
-			if (error)
+		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
+		public static bool DeleteFilesWithPatternInDirectory(string directoryPath, string searchPattern, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
+		{
+			if (deletedFiles == null)
+				deletedFiles = new List<FileInfo>();
+			if (failedFiles == null)
+				failedFiles = new List<FileInfo>();
+			var error = false;
+			var directoryInfo = new DirectoryInfo(directoryPath);
+			var fileInfos = directoryInfo.GetFiles(searchPattern, searchOption).ToList();
+			for (int i = 0; i < fileInfos.Count; i++)
 			{
-				// Clean up the list. This will remove all successfully processed files from the list (because their entries are now null).
-				for (var i = fileInfos.Count - 1; i >= 0; i--)
+				try
 				{
-					if (fileInfos[i] == null)
-					{
-						fileInfos.RemoveAt(i);
-					}
+					fileInfos[i].DeleteFileEvenIfReadOnly();
+					deletedFiles.Add(fileInfos[i]);
+				}
+				catch
+				{
+					failedFiles.Add(fileInfos[i]);
+					error = true;
+				}
+			}
+			return !error;
+		}
+
+		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
+		public static bool ClearDLLArtifacts(string directoryPath, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
+		{
+			if (deletedFiles == null)
+				deletedFiles = new List<FileInfo>();
+			if (failedFiles == null)
+				failedFiles = new List<FileInfo>();
+			var error = false;
+			var directoryInfo = new DirectoryInfo(directoryPath);
+			var fileInfos = directoryInfo.GetFiles("*.dll", searchOption).Where(fileInfo => fileInfo.Extension == ".dll").ToList();
+			for (int i = 0; i < fileInfos.Count; i++)
+			{
+				var dllFullPath = fileInfos[i].FullName;
+				var dllDirectoryPath = Path.GetDirectoryName(dllFullPath);
+				var dllFullPathWithoutExtension = Path.Combine(
+					dllDirectoryPath,
+					Path.GetFileNameWithoutExtension(dllFullPath));
+
+				try
+				{
+					var path = dllFullPathWithoutExtension + ".mdb";
+					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+						deletedFiles.Add(new FileInfo(path));
+				}
+				catch
+				{
+					failedFiles.Add(fileInfos[i]);
+					error = true;
 				}
 
-				return fileInfos;
+				try
+				{
+					var path = dllFullPathWithoutExtension + ".pdb";
+					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+						deletedFiles.Add(new FileInfo(path));
+				}
+				catch
+				{
+					failedFiles.Add(fileInfos[i]);
+					error = true;
+				}
+
+				try
+				{
+					var path = dllFullPathWithoutExtension + ".xml";
+					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+						deletedFiles.Add(new FileInfo(path));
+				}
+				catch
+				{
+					failedFiles.Add(fileInfos[i]);
+					error = true;
+				}
 			}
-			else
-			{
-				fileInfos.Clear(); // Clear unnecessary stuff.
-				return null;
-			}
+			return !error;
 		}
 
 		#endregion
