@@ -5,7 +5,9 @@
         "Unity.TextMeshPro",
         "Unity.TextMeshPro.Editor",
         "Photon.Editor",
-        "Photon"
+        "Photon",
+        "Wwise",
+        "Wwise.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

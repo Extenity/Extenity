@@ -3,7 +3,8 @@
     "references": [
         "Unity.TextMeshPro",
         "DOTweenModules",
-        "Photon"
+        "Photon",
+        "Wwise"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

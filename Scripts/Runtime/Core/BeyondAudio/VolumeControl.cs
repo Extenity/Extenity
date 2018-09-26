@@ -149,19 +149,23 @@ namespace Extenity.BeyondAudio
 			IsMuted = !isMuted;
 		}
 
+		// TODO: AUDIO: TEMP
+		public AK.Wwise.RTPC TestRTPC;
+
 		public float GetActualVolume()
 		{
 			float value;
 #if BeyondAudioUsesUnityAudio
 			AudioMixer.GetFloat(MixerParameterName, out value);
+			return AudioManager.DbToNormalizedRange(value);
 #elif BeyondAudioUsesWwiseAudio
-			// TODO: AUDIO:
-			throw new NotImplementedException();
+			// TODO: AUDIO: Is this the correct way to get global RTPC?
+			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
+			AkSoundEngine.GetRTPCValue(MixerParameterName, null, 0, out value, ref valueType);
+			return AudioManager.DbToNormalizedRange(value);
 #else
 			throw new NotImplementedException();
 #endif
-
-			return AudioManager.DbToNormalizedRange(value);
 		}
 
 		public void ReassignMixerParameter()
@@ -177,7 +181,7 @@ namespace Extenity.BeyondAudio
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
 #elif BeyondAudioUsesWwiseAudio
 			// TODO: AUDIO:
-			throw new NotImplementedException();
+			AkSoundEngine.SetRTPCValue(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
 #else
 			throw new NotImplementedException();
 #endif
