@@ -1034,6 +1034,7 @@ namespace Extenity.ReflectionToolbox
 				return;
 
 			// Decide how to include referenced game objects based on referenced object's type
+#if BeyondAudioUsesUnityAudio
 			if (type.IsSameOrSubclassOf(typeof(AudioSource)))
 			{
 				var referencedAudioSource = referencedObject as AudioSource;
@@ -1066,7 +1067,9 @@ namespace Extenity.ReflectionToolbox
 					InternalAddReferencedObjectOfType(referencedAudioMixerGroup.audioMixer, result, excludedTypes);
 				}
 			}
-			else if (type.IsSameOrSubclassOf(typeof(Animator)))
+			else
+#endif
+			if (type.IsSameOrSubclassOf(typeof(Animator)))
 			{
 				var referencedAnimator = referencedObject as Animator;
 				if (referencedAnimator)

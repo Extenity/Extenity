@@ -1,3 +1,5 @@
+#if BeyondAudioUsesUnityAudio
+
 using UnityEngine;
 
 namespace Extenity.DebugFlowTool.GraphPlotting
@@ -141,3 +143,5 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 	}
 
 }
+
+#endif
