@@ -3,7 +3,6 @@
 using System;
 using Extenity.MathToolbox;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Extenity.BeyondAudio.Effects
 {
@@ -16,7 +15,6 @@ namespace Extenity.BeyondAudio.Effects
 		public ClampedFloat RPM;
 
 		[SerializeField]
-		[FormerlySerializedAs("_MaxRPM")]
 		public float MaxRPM;
 
 		[Header("RPM")]
