@@ -2,8 +2,10 @@ using System;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.Events;
+#if BeyondAudioUsesUnityAudio
+using UnityEngine.Audio;
+#endif
 
 namespace Extenity.BeyondAudio
 {
@@ -11,7 +13,9 @@ namespace Extenity.BeyondAudio
 	[Serializable]
 	public class VolumeControl
 	{
+#if BeyondAudioUsesUnityAudio
 		public AudioMixer AudioMixer;
+#endif
 		public string MixerParameterName;
 		public bool UsePlayerPrefsForSavingVolume = true;
 		public float DefaultVolume = 1.0f;
@@ -148,7 +152,14 @@ namespace Extenity.BeyondAudio
 		public float GetActualVolume()
 		{
 			float value;
+#if BeyondAudioUsesUnityAudio
 			AudioMixer.GetFloat(MixerParameterName, out value);
+#elif BeyondAudioUsesWwiseAudio
+			throw new NotImplementedException();
+#else
+			throw new NotImplementedException();
+#endif
+
 			return AudioManager.DbToNormalizedRange(value);
 		}
 
@@ -161,7 +172,14 @@ namespace Extenity.BeyondAudio
 				Debug.LogFormat("Reassign mixer parameter for '{0}'. Muted: '{1}'. Volume: '{2}'. Result: '{3}'.", MixerParameterName, IsMuted, Volume.ToString("N2"), resultingVolume.ToString("N2"));
 			}
 
+#if BeyondAudioUsesUnityAudio
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
+#elif BeyondAudioUsesWwiseAudio
+			throw new NotImplementedException();
+#else
+			throw new NotImplementedException();
+#endif
+
 			OnVolumeChanged.Invoke(resultingVolume);
 		}
 	}
