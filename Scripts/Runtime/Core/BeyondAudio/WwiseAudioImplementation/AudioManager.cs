@@ -1,13 +1,7 @@
 #if BeyondAudioUsesWwiseAudio
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Extenity.DesignPatternsToolbox;
-using Extenity.GameObjectToolbox;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Extenity.BeyondAudio
 {
@@ -44,7 +38,7 @@ namespace Extenity.BeyondAudio
 		private void Awake()
 		{
 			InitializeSingleton(this, true);
-			InitializeAudioSourceTemplate();
+			//InitializeAudioSourceTemplate();
 		}
 
 		private void Start()
@@ -74,10 +68,10 @@ namespace Extenity.BeyondAudio
 
 		#region Update
 
-		private void Update()
-		{
-			UpdateReleaseTracker();
-		}
+		//private void Update()
+		//{
+		//	UpdateReleaseTracker();
+		//}
 
 		#endregion
 
@@ -153,6 +147,8 @@ namespace Extenity.BeyondAudio
 
 		#region AudioSource Template
 
+		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
+		/*
 		[Header("Audio Source Configuration")]
 		public GameObject AudioSourceTemplate;
 
@@ -162,11 +158,14 @@ namespace Extenity.BeyondAudio
 			var audioSource = AudioSourceTemplate.GetComponent<AudioSource>();
 			audioSource.playOnAwake = false;
 		}
+		*/
 
 		#endregion
 
 		#region Pooled AudioClips
 
+		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
+		/*
 		public class AllocationEvent : UnityEvent<AudioSource, string> { }
 		public class DeallocationEvent : UnityEvent<AudioSource> { }
 		public readonly AllocationEvent OnAllocatedAudioSource = new AllocationEvent();
@@ -270,11 +269,14 @@ namespace Extenity.BeyondAudio
 				}
 			}
 		}
+		*/
 
 		#endregion
 
 		#region AudioSource Release Tracker
 
+		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
+		/*
 		private struct ReleaseTrackerEntry
 		{
 			public float ReleaseTime;
@@ -335,102 +337,85 @@ namespace Extenity.BeyondAudio
 				}
 			}
 		}
+		*/
 
 		#endregion
 
 		#region Play One Shot
 
-		private static void SetAudioSourceParametersAndPlay(AudioSource audioSource, bool loop, float volume, float pitch, float spatialBlend)
-		{
-			audioSource.loop = loop;
-			audioSource.pitch = pitch;
-			audioSource.volume = volume;
-			audioSource.spatialBlend = spatialBlend;
-			audioSource.gameObject.SetActive(true);
-			audioSource.Play();
-		}
+		//private static void SetAudioSourceParametersAndPlay(AudioSource audioSource, bool loop, float volume, float pitch, float spatialBlend)
+		//{
+		//	audioSource.loop = loop;
+		//	audioSource.pitch = pitch;
+		//	audioSource.volume = volume;
+		//	audioSource.spatialBlend = spatialBlend;
+		//	audioSource.gameObject.SetActive(true);
+		//	audioSource.Play();
+		//}
 
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
 		/// </summary>
-		public static AudioSource Play(string eventName, bool loop = false, float volume = 1f, float pitch = 1f)
+		public static void Play(string eventName, bool loop = false, float volume = 1f, float pitch = 1f)
 		{
-			return Play(eventName, 0f, loop, volume, pitch);
-		}
-
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
-		public static AudioSource Play(string eventName, float selectorPin, bool loop = false, float volume = 1f, float pitch = 1f)
-		{
+			LogError("'Play' not implemented yet. Event name: " + eventName);
+			/*
 			var instance = InstanceEnsured;
 			if (!instance)
-				return null;
+				return;
 			if (instance.EnableLogging)
-				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
-			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
+				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}' (V:{volume:N2} P:{pitch:N2}).");
+			var audioSource = instance.AllocateAudioSourceWithClip(eventName, true);
 			if (!audioSource)
-				return null;
+				return;
 			audioSource.transform.position = Vector3.zero;
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, 0f);
 			if (!loop)
 			{
 				instance.AddToReleaseTracker(audioSource);
 			}
-			return audioSource;
+			*/
 		}
 
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
 		/// </summary>
-		public static AudioSource PlayAtPosition(string eventName, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		public static void PlayAtPosition(string eventName, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
-			return PlayAtPosition(eventName, 0f, position, loop, volume, pitch, spatialBlend);
-		}
-
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
-		public static AudioSource PlayAtPosition(string eventName, float selectorPin, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
-		{
+			LogError("'PlayAtPosition' not implemented yet. Event name: " + eventName);
+			/*
 			var instance = InstanceEnsured;
 			if (!instance)
-				return null;
+				return;
 			if (instance.EnableLogging)
-				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
-			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
+				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}' (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
+			var audioSource = instance.AllocateAudioSourceWithClip(eventName, true);
 			if (!audioSource)
-				return null;
+				return;
 			audioSource.transform.position = position;
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
 			if (!loop)
 			{
 				instance.AddToReleaseTracker(audioSource);
 			}
-			return audioSource;
+			*/
 		}
 
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
 		/// </summary>
-		public static AudioSource PlayAttached(string eventName, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		public static void PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
-			return PlayAttached(eventName, 0f, parent, localPosition, loop, volume, pitch, spatialBlend);
-		}
-
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
-		public static AudioSource PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
-		{
+			LogError("'PlayAttached' not implemented yet. Event name: " + eventName);
+			/*
 			var instance = InstanceEnsured;
 			if (!instance)
-				return null;
+				return;
 			if (instance.EnableLogging)
 				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) attached to '{parent.FullName()}' at local position '{localPosition}'.");
 			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
-				return null;
+				return;
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
 			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
@@ -438,29 +423,15 @@ namespace Extenity.BeyondAudio
 			{
 				instance.AddToReleaseTracker(audioSource);
 			}
-			return audioSource;
-		}
-
-		public static void Stop(ref AudioSource audioSource)
-		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-
-			if (audioSource)
-			{
-				if (instance.EnableLogging)
-					Log($"Stopping audio source '{audioSource.gameObject.FullName()}' with clip '{audioSource.clip}'.");
-
-				instance.ReleaseAudioSource(audioSource);
-				audioSource = null;
-			}
+			*/
 		}
 
 		#endregion
 
 		#region Play Music
 
+		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
+		/*
 		[NonSerialized]
 		public AudioSource MusicAudioSource;
 
@@ -538,6 +509,7 @@ namespace Extenity.BeyondAudio
 				return;
 			instance.ReleaseAudioSource(instance.MusicAudioSource);
 		}
+		*/
 
 		#endregion
 
@@ -556,6 +528,11 @@ namespace Extenity.BeyondAudio
 			//	return;
 
 			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+		}
+
+		private static void LogError(string message)
+		{
+			Debug.LogError("<i><b>AUDIO | </b></i>" + message, Instance);
 		}
 
 		#endregion

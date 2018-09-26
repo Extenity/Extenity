@@ -42,7 +42,7 @@ namespace Extenity.UIToolbox
 		{
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(UsePowerUpSound, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(UsePowerUpSound, 0f, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
