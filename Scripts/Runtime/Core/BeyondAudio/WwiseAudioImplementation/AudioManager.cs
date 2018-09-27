@@ -356,27 +356,11 @@ namespace Extenity.BeyondAudio
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
 		/// </summary>
-		public static void Play(string eventName, bool loop = false, float volume = 1f, float pitch = 1f)
+		public static void Play(string eventName)
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
-			AkSoundEngine.PostEvent(eventName, null);
-			/*
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-			if (instance.EnableLogging)
-				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}' (V:{volume:N2} P:{pitch:N2}).");
-			var audioSource = instance.AllocateAudioSourceWithClip(eventName, true);
-			if (!audioSource)
-				return;
-			audioSource.transform.position = Vector3.zero;
-			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, 0f);
-			if (!loop)
-			{
-				instance.AddToReleaseTracker(audioSource);
-			}
-			*/
+			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
 		}
 
 		/// <summary>
