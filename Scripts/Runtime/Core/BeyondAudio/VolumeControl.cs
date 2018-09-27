@@ -158,8 +158,7 @@ namespace Extenity.BeyondAudio
 #elif BeyondAudioUsesWwiseAudio
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
 			AkSoundEngine.GetRTPCValue(MixerParameterName, null, 0, out value, ref valueType);
-			var valueNormalized = AudioManager.DbToNormalizedRange(value);
-			return valueNormalized;
+			return value / 100f;
 #else
 			throw new NotImplementedException();
 #endif
@@ -177,8 +176,7 @@ namespace Extenity.BeyondAudio
 #if BeyondAudioUsesUnityAudio
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
 #elif BeyondAudioUsesWwiseAudio
-			var valueDb = AudioManager.NormalizedToDbRange(resultingVolume);
-			AkSoundEngine.SetRTPCValue(MixerParameterName, valueDb);
+			AkSoundEngine.SetRTPCValue(MixerParameterName, resultingVolume * 100f);
 #else
 			throw new NotImplementedException();
 #endif
