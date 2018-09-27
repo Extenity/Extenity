@@ -358,7 +358,9 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static void Play(string eventName, bool loop = false, float volume = 1f, float pitch = 1f)
 		{
-			LogError("'Play' not implemented yet. Event name: " + eventName);
+			if (string.IsNullOrEmpty(eventName))
+				return;
+			AkSoundEngine.PostEvent(eventName, null);
 			/*
 			var instance = InstanceEnsured;
 			if (!instance)
@@ -382,6 +384,8 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static void PlayAtPosition(string eventName, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
+			if (string.IsNullOrEmpty(eventName))
+				return;
 			LogError("'PlayAtPosition' not implemented yet. Event name: " + eventName);
 			/*
 			var instance = InstanceEnsured;
@@ -406,6 +410,8 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public static void PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
 		{
+			if (string.IsNullOrEmpty(eventName))
+				return;
 			LogError("'PlayAttached' not implemented yet. Event name: " + eventName);
 			/*
 			var instance = InstanceEnsured;
