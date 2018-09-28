@@ -1759,9 +1759,37 @@ namespace BeyondNetworking
 			if (OverkillLogging)
 				DebugLogNetworkState(session);
 
-			if (IsCurrentlyProcessing)
+			switch (cause)
 			{
-				FailProcess(session, $"Disconnected (Error: {cause})");
+				// Process failure
+				case DisconnectCause.DisconnectByServerUserLimit:
+				case DisconnectCause.ExceptionOnConnect:
+				case DisconnectCause.Exception:
+				case DisconnectCause.InvalidAuthentication:
+				case DisconnectCause.CustomAuthenticationFailed:
+				case DisconnectCause.MaxCcuReached:
+				case DisconnectCause.InvalidRegion:
+				case DisconnectCause.OperationNotAllowedInCurrentState:
+				case DisconnectCause.AuthenticationTicketExpired:
+				// Connection lost
+				case DisconnectCause.TimeoutDisconnect:
+				case DisconnectCause.DisconnectByServer:
+					{
+						if (IsCurrentlyProcessing)
+						{
+							FailProcess(session, $"Disconnected (Error: {cause})");
+						}
+					}
+					break;
+
+				// Connection closed by request
+				case DisconnectCause.DisconnectByServerLogic:
+				case DisconnectCause.DisconnectByClientLogic:
+					break;
+
+				case DisconnectCause.None:
+				default:
+					throw new ArgumentOutOfRangeException(nameof(cause), cause, null);
 			}
 
 			OnClientListChanged.Invoke();
