@@ -4,10 +4,12 @@
         "Extenity",
         "Unity.TextMeshPro",
         "Unity.TextMeshPro.Editor",
-        "Photon.Editor",
-        "Photon",
         "Wwise",
-        "Wwise.Editor"
+        "Wwise.Editor",
+        "PhotonRealtime",
+        "PhotonUnityNetworking",
+        "PhotonWebSocket",
+        "PhotonUnityNetworking.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

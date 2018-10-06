@@ -3,8 +3,10 @@
     "references": [
         "Unity.TextMeshPro",
         "DOTweenModules",
-        "Photon",
-        "Wwise"
+        "Wwise",
+        "PhotonRealtime",
+        "PhotonUnityNetworking",
+        "PhotonWebSocket"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
