@@ -1772,6 +1772,7 @@ namespace BeyondNetworking
 				case DisconnectCause.OperationNotAllowedInCurrentState:
 				case DisconnectCause.AuthenticationTicketExpired:
 				// Connection lost
+				case DisconnectCause.None:
 				case DisconnectCause.TimeoutDisconnect:
 				case DisconnectCause.DisconnectByServer:
 					{
@@ -1787,7 +1788,6 @@ namespace BeyondNetworking
 				case DisconnectCause.DisconnectByClientLogic:
 					break;
 
-				case DisconnectCause.None:
 				default:
 					throw new ArgumentOutOfRangeException(nameof(cause), cause, null);
 			}
