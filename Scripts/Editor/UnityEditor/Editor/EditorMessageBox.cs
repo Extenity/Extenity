@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 
@@ -109,6 +110,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(80f);
+
+							// CTRL + V
+							if (Event.current.type == EventType.KeyUp && Event.current.modifiers == EventModifiers.Control && Event.current.keyCode == KeyCode.V)
+							{
+								userInputField.Value += Clipboard.GetClipboardText();
+								Repaint();
+							}
+
 							GUI.SetNextControlName("UserInputField-" + i);
 							userInputField.Value = GUILayout.TextField(userInputField.Value);
 							GUILayout.Space(80f);
