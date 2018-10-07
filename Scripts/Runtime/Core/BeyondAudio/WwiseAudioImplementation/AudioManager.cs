@@ -370,7 +370,9 @@ namespace Extenity.BeyondAudio
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
-			LogError("'PlayAtPosition' not implemented yet. Event name: " + eventName);
+			Log("'PlayAtPosition' not implemented yet. Event name: " + eventName);
+			//AkSoundEngine.PostEvent(eventName, dynamicallyGeneratedAndPooledObjectGoesHere)
+
 			/*
 			var instance = InstanceEnsured;
 			if (!instance)
@@ -396,7 +398,7 @@ namespace Extenity.BeyondAudio
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
-			LogError("'PlayAttached' not implemented yet. Event name: " + eventName);
+			Log("'PlayAttached' not implemented yet. Event name: " + eventName);
 			/*
 			var instance = InstanceEnsured;
 			if (!instance)
