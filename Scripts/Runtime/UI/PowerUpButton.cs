@@ -4,6 +4,8 @@ using Extenity.FlowToolbox;
 using TMPro;
 using TMPro.Extensions;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox
@@ -20,6 +22,8 @@ namespace Extenity.UIToolbox
 		public UIFader CooldownFader;
 		public TextMeshProUGUI CooldownTimerText;
 		public float CooldownRefreshInterval = 0.1f;
+		[NonSerialized]
+		public object Tag;
 
 		private int LastSetCount = Int32.MinValue;
 
@@ -51,7 +55,20 @@ namespace Extenity.UIToolbox
 			interactable = active;
 		}
 
-		public void InformClick(Transform soundEffectParent, float cooldownDuration)
+		#endregion
+
+		#region Click
+
+		public class ClickEvent : UnityEvent<PowerUpButton> { }
+		public readonly ClickEvent OnClicked = new ClickEvent();
+
+		public override void OnPointerDown(PointerEventData eventData)
+		{
+			base.OnPointerDown(eventData);
+			OnClicked.Invoke(this);
+		}
+
+		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration)
 		{
 			if (soundEffectParent)
 			{
