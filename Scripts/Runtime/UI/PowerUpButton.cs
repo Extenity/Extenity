@@ -14,20 +14,33 @@ namespace Extenity.UIToolbox
 		#region UI Elements
 
 		[Header("Power-Up Button")]
+		public Image IconImage;
 		public TextMeshProUGUI CountText;
-		public string UsePowerUpSound;
+		public string PowerUpUseSound;
 		public UIFader CooldownFader;
 		public TextMeshProUGUI CooldownTimerText;
 		public float CooldownRefreshInterval = 0.1f;
 
 		private int LastSetCount = Int32.MinValue;
 
-		public void SetCount(int value)
+		public Sprite Icon
 		{
-			if (LastSetCount != value)
+			get { return IconImage.sprite; }
+			set { IconImage.sprite = value; }
+		}
+
+		public Color IconColor
+		{
+			get { return IconImage.color; }
+			set { IconImage.color = value; }
+		}
+
+		public void SetCount(int count)
+		{
+			if (LastSetCount != count)
 			{
-				LastSetCount = value;
-				CountText.SetCharArrayForInt(value);
+				LastSetCount = count;
+				CountText.SetCharArrayForInt(count);
 			}
 			RefreshInteractable();
 		}
@@ -42,11 +55,11 @@ namespace Extenity.UIToolbox
 		{
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(UsePowerUpSound, 0f, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(PowerUpUseSound, 0f, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
-				AudioManager.Play(UsePowerUpSound);
+				AudioManager.Play(PowerUpUseSound);
 			}
 
 			StartCooldown(cooldownDuration);
