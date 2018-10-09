@@ -31,7 +31,11 @@ namespace Extenity.UIToolbox
 		public Sprite Icon
 		{
 			get { return IconImage.sprite; }
-			set { IconImage.sprite = value; }
+			set
+			{
+				IconImage.sprite = value;
+				IconImage.enabled = value;
+			}
 		}
 
 		public Color IconColor
