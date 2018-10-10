@@ -49,7 +49,10 @@ namespace Extenity.UIToolbox
 			if (LastSetCount != count)
 			{
 				LastSetCount = count;
-				CountText.SetCharArrayForInt(count);
+				if (CountText)
+				{
+					CountText.SetCharArrayForInt(count);
+				}
 			}
 			RefreshInteractable();
 		}
