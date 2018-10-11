@@ -110,6 +110,11 @@ namespace Extenity.UIToolbox
 		private float CooldownDuration;
 		private bool IsCooldownActive => CooldownStartTime > 0f;
 
+		public void ResetCooldown()
+		{
+			StartCooldown(0f);
+		}
+
 		public void StartCooldown(float duration)
 		{
 			this.CancelFastInvoke(EndCooldown);
