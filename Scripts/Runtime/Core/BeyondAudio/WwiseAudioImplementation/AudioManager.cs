@@ -1,6 +1,8 @@
 #if BeyondAudioUsesWwiseAudio
 
+using System.Collections.Generic;
 using Extenity.DesignPatternsToolbox;
+using Extenity.GameObjectToolbox;
 using UnityEngine;
 
 namespace Extenity.BeyondAudio
@@ -38,7 +40,7 @@ namespace Extenity.BeyondAudio
 		private void Awake()
 		{
 			InitializeSingleton(this, true);
-			//InitializeAudioSourceTemplate();
+			InitializeAudioSourceTemplate();
 		}
 
 		private void Start()
@@ -68,10 +70,10 @@ namespace Extenity.BeyondAudio
 
 		#region Update
 
-		//private void Update()
-		//{
-		//	UpdateReleaseTracker();
-		//}
+		private void Update()
+		{
+			UpdateReleaseTracker();
+		}
 
 		#endregion
 
@@ -147,36 +149,29 @@ namespace Extenity.BeyondAudio
 
 		#region AudioSource Template
 
-		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
-		/*
 		[Header("Audio Source Configuration")]
 		public GameObject AudioSourceTemplate;
 
 		private void InitializeAudioSourceTemplate()
 		{
 			AudioSourceTemplate.SetActive(false);
-			var audioSource = AudioSourceTemplate.GetComponent<AudioSource>();
-			audioSource.playOnAwake = false;
 		}
-		*/
 
 		#endregion
 
 		#region Pooled AudioClips
 
-		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
-		/*
-		public class AllocationEvent : UnityEvent<AudioSource, string> { }
-		public class DeallocationEvent : UnityEvent<AudioSource> { }
-		public readonly AllocationEvent OnAllocatedAudioSource = new AllocationEvent();
-		public readonly DeallocationEvent OnReleasingAudioSource = new DeallocationEvent();
+		//public class AllocationEvent : UnityEvent<AudioSource, string> { }
+		//public class DeallocationEvent : UnityEvent<AudioSource> { }
+		//public readonly AllocationEvent OnAllocatedAudioSource = new AllocationEvent();
+		//public readonly DeallocationEvent OnReleasingAudioSource = new DeallocationEvent();
 
-		private List<AudioSource> FreeAudioSources = new List<AudioSource>(10);
-		private HashSet<AudioSource> ActiveAudioSources = new HashSet<AudioSource>();
+		private List<GameObject> FreeAudioSources = new List<GameObject>(10);
+		private HashSet<GameObject> ActiveAudioSources = new HashSet<GameObject>();
 
 		private static int LastCreatedAudioSourceIndex = 0;
 
-		private AudioSource GetOrCreateAudioSource()
+		private GameObject GetOrCreateAudioSource()
 		{
 			while (FreeAudioSources.Count > 0)
 			{
@@ -197,36 +192,17 @@ namespace Extenity.BeyondAudio
 
 			var go = Instantiate(AudioSourceTemplate);
 			go.name = "Audio Source " + LastCreatedAudioSourceIndex++;
-			var newAudioSource = go.GetComponent<AudioSource>();
 			DontDestroyOnLoad(go);
-			ActiveAudioSources.Add(newAudioSource);
+			ActiveAudioSources.Add(go);
 			if (EnableLogging)
 				Log($"Created audio source '{go.FullName()}'.");
-			return newAudioSource;
+			return go;
 		}
 
-		public AudioSource AllocateAudioSourceWithClip(string eventName, float selectorPin, bool errorIfNotFound)
+		public void ReleaseAudioSource(GameObject audioSource)
 		{
 			if (EnableLogging)
-				Log($"Allocating audio source for event '{eventName}' with pin '{selectorPin}'.");
-
-			var audioEvent = GetEvent(eventName, errorIfNotFound);
-			if (audioEvent == null)
-				return null;
-			var clip = audioEvent.SelectRandomClip(selectorPin, errorIfNotFound);
-			if (!clip)
-				return null;
-			var audioSource = GetOrCreateAudioSource();
-			audioSource.clip = clip;
-			audioSource.outputAudioMixerGroup = audioEvent.Output;
-			OnAllocatedAudioSource.Invoke(audioSource, eventName);
-			return audioSource;
-		}
-
-		public void ReleaseAudioSource(AudioSource audioSource)
-		{
-			if (EnableLogging)
-				Log($"Releasing audio source with clip '{(audioSource && audioSource.clip ? audioSource.clip.name : "N/A")}'.");
+				Log($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
@@ -239,11 +215,10 @@ namespace Extenity.BeyondAudio
 				return;
 			}
 
-			OnReleasingAudioSource.Invoke(audioSource);
+			//OnReleasingAudioSource.Invoke(audioSource);
 
-			audioSource.Stop();
-			audioSource.clip = null;
-			audioSource.outputAudioMixerGroup = null;
+			// TODO: Stop the Wwise event
+			//audioSource.Stop();
 			audioSource.gameObject.SetActive(false);
 			audioSource.transform.SetParent(null);
 
@@ -269,20 +244,17 @@ namespace Extenity.BeyondAudio
 				}
 			}
 		}
-		*/
 
 		#endregion
 
 		#region AudioSource Release Tracker
 
-		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
-		/*
 		private struct ReleaseTrackerEntry
 		{
 			public float ReleaseTime;
-			public AudioSource AudioSource;
+			public GameObject AudioSource;
 
-			public ReleaseTrackerEntry(float releaseTime, AudioSource audioSource)
+			public ReleaseTrackerEntry(float releaseTime, GameObject audioSource)
 			{
 				ReleaseTime = releaseTime;
 				AudioSource = audioSource;
@@ -307,14 +279,15 @@ namespace Extenity.BeyondAudio
 			}
 		}
 
-		private void AddToReleaseTracker(AudioSource audioSource)
+		private void AddToReleaseTracker(GameObject audioSource)
 		{
-			var clip = audioSource.clip;
-			var duration = clip.length / audioSource.pitch;
-			ReleaseTracker.Add(new ReleaseTrackerEntry(CurrentTime + duration, audioSource));
+			Log("#= Release tracker is not implemented yet!");
+			//var clip = audioSource.clip;
+			//var duration = clip.length / audioSource.pitch;
+			//ReleaseTracker.Add(new ReleaseTrackerEntry(CurrentTime + duration, audioSource));
 		}
 
-		private void InternalRemoveFromReleaseTrackerList(AudioSource audioSource)
+		private void InternalRemoveFromReleaseTrackerList(GameObject audioSource)
 		{
 			for (int i = 0; i < ReleaseTracker.Count; i++)
 			{
@@ -337,21 +310,10 @@ namespace Extenity.BeyondAudio
 				}
 			}
 		}
-		*/
 
 		#endregion
 
 		#region Play One Shot
-
-		//private static void SetAudioSourceParametersAndPlay(AudioSource audioSource, bool loop, float volume, float pitch, float spatialBlend)
-		//{
-		//	audioSource.loop = loop;
-		//	audioSource.pitch = pitch;
-		//	audioSource.volume = volume;
-		//	audioSource.spatialBlend = spatialBlend;
-		//	audioSource.gameObject.SetActive(true);
-		//	audioSource.Play();
-		//}
 
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
@@ -366,29 +328,27 @@ namespace Extenity.BeyondAudio
 		/// <summary>
 		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
 		/// </summary>
-		public static void PlayAtPosition(string eventName, Vector3 position, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		public static void PlayAtPosition(string eventName, Vector3 position)
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
-			Log("'PlayAtPosition' not implemented yet. Event name: " + eventName);
-			//AkSoundEngine.PostEvent(eventName, dynamicallyGeneratedAndPooledObjectGoesHere)
-
-			/*
 			var instance = InstanceEnsured;
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}' (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
-			var audioSource = instance.AllocateAudioSourceWithClip(eventName, true);
+				Log($"Playing '{eventName}' at position '{position}'.");
+			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return;
 			audioSource.transform.position = position;
-			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
-			if (!loop)
-			{
-				instance.AddToReleaseTracker(audioSource);
-			}
-			*/
+			audioSource.gameObject.SetActive(true);
+			AkSoundEngine.PostEvent(eventName, audioSource);
+
+			Log("#= Release tracker is not implemented yet!");
+			//if (!loop)
+			//{
+			//	instance.AddToReleaseTracker(audioSource);
+			//}
 		}
 
 		/// <summary>
