@@ -203,6 +203,27 @@ namespace Extenity.UIToolbox
 		}
 
 		#endregion
+
+		#region Layout Rebuild
+
+		public static void RebuildLayoutFromGroundUp(this RectTransform parentTransform)
+		{
+			Canvas.ForceUpdateCanvases();
+
+			var layoutGroups = parentTransform.GetComponentsInChildren<LayoutGroup>();
+			foreach (var layoutGroup in layoutGroups)
+			{
+				LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup.GetComponent<RectTransform>());
+			}
+
+			var contentSizeFitters = parentTransform.GetComponentsInChildren<ContentSizeFitter>();
+			foreach (var contentSizeFitter in contentSizeFitters)
+			{
+				contentSizeFitter.SetLayoutVertical();
+			}
+		}
+
+		#endregion
 	}
 
 }
