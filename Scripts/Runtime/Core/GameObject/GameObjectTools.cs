@@ -1904,11 +1904,36 @@ namespace Extenity.GameObjectToolbox
 			return name;
 		}
 
+		public static string FullName(this GameObject me, int maxHierarchyLevels, char separator = '/')
+		{
+			if (me == null || maxHierarchyLevels <= 0)
+				return NullGameObjectNamePlaceholder;
+			var name = me.name;
+			var parent = me.transform.parent;
+			maxHierarchyLevels--;
+			while (parent != null && maxHierarchyLevels > 0)
+			{
+				name = parent.name + separator + name;
+				parent = parent.parent;
+				maxHierarchyLevels--;
+			}
+			return parent
+				? "..." + separator + name
+				: name;
+		}
+
 		public static string FullName(this Component me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
 		{
 			if (me == null)
 				return NullGameObjectNamePlaceholder;
 			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
+		}
+
+		public static string FullName(this Component me, int maxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me == null)
+				return NullGameObjectNamePlaceholder;
+			return me.gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
 		/// <summary>
