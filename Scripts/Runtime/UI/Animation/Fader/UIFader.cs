@@ -90,6 +90,14 @@ namespace Extenity.UIToolbox
 		[NonSerialized]
 		public FaderEvent OnFinishedFadeOut = new FaderEvent();
 
+		public float Fade(bool visible, bool immediate)
+		{
+			if (visible)
+				return FadeIn(immediate);
+			else
+				return FadeOut(immediate);
+		}
+
 		public float Fade(bool visible)
 		{
 			if (visible)
@@ -106,9 +114,17 @@ namespace Extenity.UIToolbox
 				return FadeOutImmediate();
 		}
 
+		public float FadeIn(bool immediate)
+		{
+			if (immediate)
+				return AlphaFadeIn(0f, 0f);
+			else
+				return AlphaFadeIn(FadeInDelay, FadeInDuration);
+		}
+
 		public float FadeIn()
 		{
-			return AlphaFadeIn();
+			return AlphaFadeIn(FadeInDelay, FadeInDuration);
 		}
 
 		public float FadeInImmediate()
@@ -116,9 +132,17 @@ namespace Extenity.UIToolbox
 			return AlphaFadeIn(0f, 0f);
 		}
 
+		public float FadeOut(bool immediate)
+		{
+			if (immediate)
+				return AlphaFadeOut(0f, 0f);
+			else
+				return AlphaFadeOut(FadeOutDelay, FadeOutDuration);
+		}
+
 		public float FadeOut()
 		{
-			return AlphaFadeOut();
+			return AlphaFadeOut(FadeOutDelay, FadeOutDuration);
 		}
 
 		public float FadeOutImmediate()
@@ -129,11 +153,6 @@ namespace Extenity.UIToolbox
 		#endregion
 
 		#region Fade - Alpha
-
-		protected float AlphaFadeIn()
-		{
-			return AlphaFadeIn(FadeInDelay, FadeInDuration);
-		}
 
 		protected float AlphaFadeIn(float delay, float duration)
 		{
@@ -199,11 +218,6 @@ namespace Extenity.UIToolbox
 				}
 			}
 			return duration + delay;
-		}
-
-		protected float AlphaFadeOut()
-		{
-			return AlphaFadeOut(FadeOutDelay, FadeOutDuration);
 		}
 
 		protected float AlphaFadeOut(float delay, float duration)
