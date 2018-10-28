@@ -1762,7 +1762,6 @@ namespace BeyondNetworking
 			switch (cause)
 			{
 				// Process failure
-				case DisconnectCause.DisconnectByServerUserLimit:
 				case DisconnectCause.ExceptionOnConnect:
 				case DisconnectCause.Exception:
 				case DisconnectCause.InvalidAuthentication:
@@ -1773,8 +1772,9 @@ namespace BeyondNetworking
 				case DisconnectCause.AuthenticationTicketExpired:
 				// Connection lost
 				case DisconnectCause.None:
-				case DisconnectCause.TimeoutDisconnect:
-				case DisconnectCause.DisconnectByServer:
+				case DisconnectCause.ClientTimeout:
+				case DisconnectCause.ServerTimeout:
+				case DisconnectCause.DisconnectByServerReasonUnknown:
 					{
 						if (IsCurrentlyProcessing)
 						{
