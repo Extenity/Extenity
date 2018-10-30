@@ -15,6 +15,8 @@ namespace Extenity.BeyondAudio
 		public static float CurrentTime { get { return Time.realtimeSinceStartup; } }
 
 		public const float VolumeAdjustmentDb = -80f;
+		private const int FreeAudioSourcesInitialCapacity = 25;
+		private const int AudioSourceBagInitialCapacity = FreeAudioSourcesInitialCapacity * 4;
 
 		#endregion
 
@@ -166,8 +168,9 @@ namespace Extenity.BeyondAudio
 		//public readonly AllocationEvent OnAllocatedAudioSource = new AllocationEvent();
 		//public readonly DeallocationEvent OnReleasingAudioSource = new DeallocationEvent();
 
-		private List<GameObject> FreeAudioSources = new List<GameObject>(10);
-		private HashSet<GameObject> ActiveAudioSources = new HashSet<GameObject>();
+		private readonly List<GameObject> FreeAudioSources = new List<GameObject>(FreeAudioSourcesInitialCapacity);
+		private readonly HashSet<GameObject> ActiveAudioSources = new HashSet<GameObject>();
+		private readonly GameObjectBag AudioSourceBag = new GameObjectBag(AudioSourceBagInitialCapacity);
 
 		private static int LastCreatedAudioSourceIndex = 0;
 
@@ -194,11 +197,20 @@ namespace Extenity.BeyondAudio
 			go.name = "Audio Source " + LastCreatedAudioSourceIndex++;
 			DontDestroyOnLoad(go);
 			ActiveAudioSources.Add(go);
+			AudioSourceBag.Add(go);
 			if (EnableLogging)
 				Log($"Created audio source '{go.FullName()}'.");
 			return go;
 		}
 
+		/// <summary>
+		/// Stops the audio on the game object (that contains audio component) and releases the object
+		/// to the pool to be used again.
+		///
+		/// It's okay to send a null game object, in case the object was destroyed along the way.
+		/// A full cleanup will be scheduled in internal lists if that happens.
+		/// </summary>
+		/// <param name="audioSource"></param>
 		public void ReleaseAudioSource(GameObject audioSource)
 		{
 			if (EnableLogging)
@@ -207,11 +219,10 @@ namespace Extenity.BeyondAudio
 			if (!audioSource)
 			{
 				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
+				// TODO: Schedule a full cleanup that will be executed in 100 ms from now. That way we group multiple cleanups together.
 				if (EnableLogging)
 					Log("Clearing lost references.");
-				ClearLostReferencesInActiveAudioSourcesList();
-				ClearLostReferencesInFreeAudioSourcesList();
-				ClearLostReferencesInReleaseTrackerList();
+				ClearLostReferencesInAllInternalContainers();
 				return;
 			}
 
@@ -226,6 +237,14 @@ namespace Extenity.BeyondAudio
 			FreeAudioSources.Add(audioSource);
 
 			InternalRemoveFromReleaseTrackerList(audioSource);
+		}
+
+		private void ClearLostReferencesInAllInternalContainers()
+		{
+			ClearLostReferencesInActiveAudioSourcesList();
+			ClearLostReferencesInFreeAudioSourcesList();
+			ClearLostReferencesInAudioSourceBag();
+			ClearLostReferencesInReleaseTrackerList();
 		}
 
 		private void ClearLostReferencesInActiveAudioSourcesList()
@@ -243,6 +262,11 @@ namespace Extenity.BeyondAudio
 					i--;
 				}
 			}
+		}
+
+		private void ClearLostReferencesInAudioSourceBag()
+		{
+			AudioSourceBag.ClearDestroyedGameObjects();
 		}
 
 		#endregion
@@ -322,7 +346,7 @@ namespace Extenity.BeyondAudio
 			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
 		}
 
-		public static void PlayAtPosition(string eventName, Vector3 position)
+		public static void PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
@@ -330,19 +354,13 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}' at position '{position}'.");
+				Log($"Playing '{eventName}' at position '{worldPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return;
-			audioSource.transform.position = position;
+			audioSource.transform.position = worldPosition;
 			audioSource.gameObject.SetActive(true);
-			AkSoundEngine.PostEvent(eventName, audioSource);
-
-			Log("#= Release tracker is not implemented yet!");
-			//if (!loop)
-			//{
-			//	instance.AddToReleaseTracker(audioSource);
-			//}
+			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
 		}
 
 		public static void PlayAttached(string eventName, Transform parent, Vector3 localPosition)
@@ -360,13 +378,30 @@ namespace Extenity.BeyondAudio
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
 			audioSource.gameObject.SetActive(true);
-			AkSoundEngine.PostEvent(eventName, audioSource);
+			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
+		}
 
-			Log("#= Release tracker is not implemented yet!");
-			//if (!loop)
-			//{
-			//	instance.AddToReleaseTracker(audioSource);
-			//}
+		private static void EndOfEventCallback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+
+			var info = (AkEventCallbackInfo)in_info;
+			var gameObjectID = info.gameObjID;
+			if (gameObjectID == AkSoundEngine.AK_INVALID_GAME_OBJECT)
+			{
+				Log($"Received 'EndOfEvent' callback for an invalid game object.");
+				return;
+			}
+			GameObject gameObject;
+			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out gameObject))
+			{
+				Log($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.");
+				return;
+			}
+			// It's okay to send it a null game object, if the object was destroyed along the way. 
+			instance.ReleaseAudioSource(gameObject);
 		}
 
 		#endregion
