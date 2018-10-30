@@ -315,9 +315,6 @@ namespace Extenity.BeyondAudio
 
 		#region Play One Shot
 
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
 		public static void Play(string eventName)
 		{
 			if (string.IsNullOrEmpty(eventName))
@@ -325,9 +322,6 @@ namespace Extenity.BeyondAudio
 			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
 		}
 
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
 		public static void PlayAtPosition(string eventName, Vector3 position)
 		{
 			if (string.IsNullOrEmpty(eventName))
@@ -351,31 +345,28 @@ namespace Extenity.BeyondAudio
 			//}
 		}
 
-		/// <summary>
-		/// Note that looped events should be stopped using 'Stop' or they have to be manually released using 'ReleaseAudioSource' if stopped manually.
-		/// </summary>
-		public static void PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop = false, float volume = 1f, float pitch = 1f, float spatialBlend = 1f)
+		public static void PlayAttached(string eventName, Transform parent, Vector3 localPosition)
 		{
 			if (string.IsNullOrEmpty(eventName))
 				return;
-			Log("'PlayAttached' not implemented yet. Event name: " + eventName);
-			/*
 			var instance = InstanceEnsured;
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				Log($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) attached to '{parent.FullName()}' at local position '{localPosition}'.");
-			var audioSource = instance.AllocateAudioSourceWithClip(eventName, selectorPin, true);
+				Log($"Playing '{eventName}' attached to '{parent.FullName()}' at local position '{localPosition}'.");
+			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return;
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
-			SetAudioSourceParametersAndPlay(audioSource, loop, volume, pitch, spatialBlend);
-			if (!loop)
-			{
-				instance.AddToReleaseTracker(audioSource);
-			}
-			*/
+			audioSource.gameObject.SetActive(true);
+			AkSoundEngine.PostEvent(eventName, audioSource);
+
+			Log("#= Release tracker is not implemented yet!");
+			//if (!loop)
+			//{
+			//	instance.AddToReleaseTracker(audioSource);
+			//}
 		}
 
 		#endregion

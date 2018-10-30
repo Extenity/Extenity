@@ -4,6 +4,8 @@ using UnityEngine;
 namespace Extenity.BeyondAudio
 {
 
+	// TODO: Disabled for now. We need to figure out how to send parameters to Wwise in a generalized way if possible. If not, we just turn this into an RTPC based approach for Wwise integration, and keep the old method for other audio implementations.
+	/*
 	public class ImpactSound : MonoBehaviour
 	{
 		[Header("Collision")]
@@ -38,5 +40,6 @@ namespace Extenity.BeyondAudio
 			}
 		}
 	}
+	*/
 
 }

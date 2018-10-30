@@ -80,7 +80,7 @@ namespace Extenity.UIToolbox
 		{
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(PowerUpUsedSound, 0f, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(PowerUpUsedSound, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
@@ -94,7 +94,7 @@ namespace Extenity.UIToolbox
 		{
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(PowerUpFailedSound, 0f, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(PowerUpFailedSound, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
