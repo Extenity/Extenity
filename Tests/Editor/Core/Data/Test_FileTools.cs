@@ -384,6 +384,121 @@ namespace ExtenityTests.DataToolbox
 
 		#endregion
 
+		#region String Operations - Get Parent Directory
+
+		[Test]
+		public static void GetParentDirectoryName()
+		{
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\");
+			CheckGetParentDirectoryNameThrows<ArgumentNullException>(@"");
+			CheckGetParentDirectoryNameThrows<ArgumentNullException>(null);
+#if FileToolsSupportDoubleBackslashPaths
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\");
+#endif
+
+			// Without filename
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\Subdir Name\",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\",
+				@"Directory Name");
+			CheckGetParentDirectoryName(
+				@"Directory Name\Subdir Name\",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"Directory Name\",
+				@"Directory Name");
+#if FileToolsSupportDoubleBackslashPaths
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\Subdir Name\",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\",
+				@"Directory Name");
+#endif
+
+			// With extension
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\Subdir Name\File Name.fileextension",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\File Name.fileextension",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"C:\File Name.fileextension");
+			CheckGetParentDirectoryName(
+				@"Directory Name\Subdir Name\File Name.fileextension",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"Directory Name\File Name.fileextension",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"File Name.fileextension");
+#if FileToolsSupportDoubleBackslashPaths
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\Subdir Name\File Name.fileextension",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\File Name.fileextension",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"\\File Name.fileextension");
+#endif
+
+			// Without extension
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\Subdir Name\File Name",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"C:\Directory Name\File Name",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"C:\File Name");
+			CheckGetParentDirectoryName(
+				@"Directory Name\Subdir Name\File Name",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"Directory Name\File Name",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"File Name");
+#if FileToolsSupportDoubleBackslashPaths
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\Subdir Name\File Name",
+				@"Subdir Name");
+			CheckGetParentDirectoryName(
+				@"\\Directory Name\File Name",
+				@"Directory Name");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
+				@"\\File Name");
+#endif
+		}
+
+		private static void CheckGetParentDirectoryName(string path, string expected)
+		{
+			DoCheckGetParentDirectoryName(path, expected);
+			//DoCheckGetParentDirectoryName(path.TrimAll(), expectedPath.TrimAll()); // TODO: Not sure about this. Decide if it should be included.
+			DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('\\'), expected.FixDirectorySeparatorChars('\\'));
+			DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('/'), expected.FixDirectorySeparatorChars('/'));
+		}
+
+		private static void CheckGetParentDirectoryNameThrows<T>(string path) where T : Exception
+		{
+			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path, null));
+			//Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.TrimAll(), null)); // TODO: Not sure about this. Decide if it should be included.
+			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('\\'), null));
+			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('/'), null));
+		}
+
+		private static void DoCheckGetParentDirectoryName(string path, string expected)
+		{
+			Assert.AreEqual(expected, path.GetParentDirectoryName());
+		}
+
+		#endregion
+
 		#region Path Info
 
 		[Test]

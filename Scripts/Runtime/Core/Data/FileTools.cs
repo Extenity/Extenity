@@ -95,6 +95,36 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region String Operations - Get Parent Directory
+
+		public static string GetParentDirectoryName(this string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException(path);
+
+			string root;
+			string directory;
+			string fileName;
+			path.SplitPath(out root, out directory, out fileName);
+
+			var lastSeparator = directory.IndexOfEndingDirectorySeparatorChar();
+			if (lastSeparator > 0)
+			{
+				var previousSeparator = directory.IndexOfEndingDirectorySeparatorChar(lastSeparator - 1);
+				if (previousSeparator < 0)
+				{
+					return directory.Substring(0, lastSeparator);
+				}
+				else
+				{
+					return directory.Substring(previousSeparator + 1, lastSeparator - previousSeparator - 1);
+				}
+			}
+			throw new InvalidOperationException($"Failed to find parent directory of path '{path}'.");
+		}
+
+		#endregion
+
 		#region String Operations - Relative Path
 
 		/// <summary>
