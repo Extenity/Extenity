@@ -180,10 +180,12 @@ namespace Extenity.DataToolbox
 		{
 			if (path == null)
 				return -1;
-			int index = path.IndexOf('/', startIndex);
-			if (index < 0)
-				index = path.IndexOf('\\', startIndex);
-			return index;
+			int index1 = path.IndexOf('/', startIndex);
+			int index2 = path.IndexOf('\\', startIndex);
+			if (index1 < index2)
+				return index1;
+			return index2;
+
 		}
 
 		public static int IndexOfEndingDirectorySeparatorChar(this string path)
@@ -197,10 +199,11 @@ namespace Extenity.DataToolbox
 		{
 			if (path == null)
 				return -1;
-			int index = path.LastIndexOf('/', startIndex);
-			if (index < 0)
-				index = path.LastIndexOf('\\', startIndex);
-			return index;
+			int index1 = path.LastIndexOf('/', startIndex);
+			int index2 = path.LastIndexOf('\\', startIndex);
+			if (index1 > index2)
+				return index1;
+			return index2;
 		}
 
 		public static string FixDirectorySeparatorChars(this string path)
