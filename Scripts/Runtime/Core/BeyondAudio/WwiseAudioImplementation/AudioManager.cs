@@ -220,8 +220,6 @@ namespace Extenity.BeyondAudio
 			{
 				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
 				// TODO: Schedule a full cleanup that will be executed in 100 ms from now. That way we group multiple cleanups together.
-				if (EnableLogging)
-					Log("Clearing lost references.");
 				ClearLostReferencesInAllInternalContainers();
 				return;
 			}
@@ -241,6 +239,9 @@ namespace Extenity.BeyondAudio
 
 		private void ClearLostReferencesInAllInternalContainers()
 		{
+			if (EnableLogging)
+				Log("Clearing lost references.");
+
 			ClearLostReferencesInActiveAudioSourcesList();
 			ClearLostReferencesInFreeAudioSourcesList();
 			ClearLostReferencesInAudioSourceBag();
@@ -407,6 +408,16 @@ namespace Extenity.BeyondAudio
 		#endregion
 
 		#region Play Music
+
+		public static void PlayMusic(string eventName)
+		{
+			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
+		}
+
+		public static void SetMusicState(string stateGroup, string state)
+		{
+			AkSoundEngine.SetState(stateGroup, state);
+		}
 
 		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
 		/*
