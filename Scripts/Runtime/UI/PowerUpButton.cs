@@ -76,29 +76,33 @@ namespace Extenity.UIToolbox
 			OnClicked.Invoke(this);
 		}
 
-		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration)
+		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration, string powerUpUsedSoundOverride = null)
 		{
+			var sound = string.IsNullOrEmpty(powerUpUsedSoundOverride) ? PowerUpUsedSound : powerUpUsedSoundOverride;
+
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(PowerUpUsedSound, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(sound, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
-				AudioManager.Play(PowerUpUsedSound);
+				AudioManager.Play(sound);
 			}
 
 			StartCooldown(cooldownDuration);
 		}
 
-		public void InformClickFailed(Transform soundEffectParent)
+		public void InformClickFailed(Transform soundEffectParent, string powerUpFailedSoundOverride = null)
 		{
+			var sound = string.IsNullOrEmpty(powerUpFailedSoundOverride) ? PowerUpFailedSound : powerUpFailedSoundOverride;
+
 			if (soundEffectParent)
 			{
-				AudioManager.PlayAttached(PowerUpFailedSound, soundEffectParent, Vector3.zero);
+				AudioManager.PlayAttached(sound, soundEffectParent, Vector3.zero);
 			}
 			else
 			{
-				AudioManager.Play(PowerUpFailedSound);
+				AudioManager.Play(sound);
 			}
 		}
 
