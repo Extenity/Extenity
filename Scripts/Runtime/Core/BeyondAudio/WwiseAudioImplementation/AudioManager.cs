@@ -186,8 +186,8 @@ namespace Extenity.BeyondAudio
 				// Otherwise, continue to look in FreeAudioSources.
 				if (reusedAudioSource)
 				{
-					if (EnableLogging)
-						Log($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
+					if (EnableVolatileLogging)
+						LogVolatile($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -198,8 +198,8 @@ namespace Extenity.BeyondAudio
 			DontDestroyOnLoad(go);
 			ActiveAudioSources.Add(go);
 			AudioSourceBag.Add(go);
-			if (EnableLogging)
-				Log($"Created audio source '{go.FullName()}'.");
+			if (EnableVolatileLogging)
+				LogVolatile($"Created audio source '{go.FullName()}'.");
 			return go;
 		}
 
@@ -213,8 +213,8 @@ namespace Extenity.BeyondAudio
 		/// <param name="audioSource"></param>
 		public void ReleaseAudioSource(GameObject audioSource)
 		{
-			if (EnableLogging)
-				Log($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
+			if (EnableVolatileLogging)
+				LogVolatile($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
@@ -239,8 +239,8 @@ namespace Extenity.BeyondAudio
 
 		private void ClearLostReferencesInAllInternalContainers()
 		{
-			if (EnableLogging)
-				Log("Clearing lost references.");
+			if (EnableVolatileLogging)
+				LogVolatile("Clearing lost references.");
 
 			ClearLostReferencesInActiveAudioSourcesList();
 			ClearLostReferencesInFreeAudioSourcesList();
@@ -342,18 +342,31 @@ namespace Extenity.BeyondAudio
 
 		public static void Play(string eventName)
 		{
-			if (string.IsNullOrEmpty(eventName))
+			var instance = InstanceEnsured;
+			if (!instance)
 				return;
-			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
+			if (string.IsNullOrEmpty(eventName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile("Received empty event name for playing.");
+				return;
+			}
+			if (instance.EnableLogging)
+				Log($"Playing '{eventName}'.");
+			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
 		public static void PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
-			if (string.IsNullOrEmpty(eventName))
-				return;
 			var instance = InstanceEnsured;
 			if (!instance)
 				return;
+			if (string.IsNullOrEmpty(eventName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Received empty event name for playing at position '{worldPosition}'.");
+				return;
+			}
 			if (instance.EnableLogging)
 				Log($"Playing '{eventName}' at position '{worldPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
@@ -366,13 +379,17 @@ namespace Extenity.BeyondAudio
 
 		public static void PlayAttached(string eventName, Transform parent, Vector3 localPosition)
 		{
-			if (string.IsNullOrEmpty(eventName))
-				return;
 			var instance = InstanceEnsured;
 			if (!instance)
 				return;
+			if (string.IsNullOrEmpty(eventName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
+				return;
+			}
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}' attached to '{parent.FullName()}' at local position '{localPosition}'.");
+				Log($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return;
@@ -392,13 +409,15 @@ namespace Extenity.BeyondAudio
 			var gameObjectID = info.gameObjID;
 			if (gameObjectID == AkSoundEngine.AK_INVALID_GAME_OBJECT)
 			{
-				Log($"Received 'EndOfEvent' callback for an invalid game object.");
+				if (instance.EnableWarningLogging)
+					LogWarning($"Received 'EndOfEvent' callback for an invalid game object.");
 				return;
 			}
 			GameObject gameObject;
 			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out gameObject))
 			{
-				Log($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.");
+				if (instance.EnableWarningLogging)
+					LogWarning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.");
 				return;
 			}
 			// It's okay to send it a null game object, if the object was destroyed along the way. 
@@ -411,11 +430,27 @@ namespace Extenity.BeyondAudio
 
 		public static void PlayMusic(string eventName)
 		{
-			AkSoundEngine.PostEvent(eventName, Instance.gameObject);
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (string.IsNullOrEmpty(eventName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Received empty event name for playing music.");
+				return;
+			}
+			if (instance.EnableLogging)
+				Log($"Playing music '{eventName}'.");
+			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
 		public static void SetMusicState(string stateGroup, string state)
 		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (instance.EnableLogging)
+				Log($"Setting music state '{state}' of group '{stateGroup}'.");
 			AkSoundEngine.SetState(stateGroup, state);
 		}
 
@@ -505,7 +540,9 @@ namespace Extenity.BeyondAudio
 		#region Debug
 
 		[Header("Debug")]
-		public bool EnableLogging;
+		public bool EnableLogging = false;
+		public bool EnableVolatileLogging = false;
+		public bool EnableWarningLogging = true;
 
 		/// <summary>
 		/// Check for 'EnableLogging' before each Log call to prevent unnecessary string creation.
@@ -517,6 +554,24 @@ namespace Extenity.BeyondAudio
 			//	return;
 
 			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+		}
+
+		private static void LogVolatile(string message)
+		{
+			// This must be checked before each Log call manually.
+			//if (!EnableVolatileLogging)
+			//	return;
+
+			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+		}
+
+		private static void LogWarning(string message)
+		{
+			// This must be checked before each Log call manually.
+			//if (!EnableWarningLogging)
+			//	return;
+
+			Debug.LogWarning("<i><b>AUDIO | </b></i>" + message, Instance);
 		}
 
 		private static void LogError(string message)
