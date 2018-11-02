@@ -1936,6 +1936,20 @@ namespace Extenity.GameObjectToolbox
 			return me.gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
+		public static string FullGameObjectName(this Component me, char separator = '/')
+		{
+			if (me == null)
+				return NullGameObjectNamePlaceholder;
+			return me.gameObject.FullName(separator);
+		}
+
+		public static string FullGameObjectName(this Component me, int maxHierarchyLevels, char separator = '/')
+		{
+			if (me == null)
+				return NullGameObjectNamePlaceholder;
+			return me.gameObject.FullName(maxHierarchyLevels, separator);
+		}
+
 		/// <summary>
 		/// Only sets the name if it's not the same. Prevents firing hierarchy changed events in editor.
 		/// </summary>
