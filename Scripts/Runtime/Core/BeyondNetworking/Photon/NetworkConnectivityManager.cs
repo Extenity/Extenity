@@ -1996,33 +1996,45 @@ namespace BeyondNetworking
 		public bool VerboseLogging = false;
 		public bool OverkillLogging = false;
 
+		private NetworkSession _LastUsedNetworkSessionForLogPrefix;
+		private string _LogPrefix;
+		private string LogPrefix(NetworkSession session)
+		{
+			if (_LastUsedNetworkSessionForLogPrefix != session)
+			{
+				_LogPrefix = $"<b><i>NetConMan-{(session != null ? session.ID.ToString() : "NA")} | </i></b>";
+				_LastUsedNetworkSessionForLogPrefix = session;
+			}
+			return _LogPrefix;
+		}
+
 		private void Log(string message, NetworkSession session)
 		{
-			Debug.Log($"<b><i>NET-{(session != null ? session.ID.ToString() : "NA")} | </i></b>" + message);
+			Debug.Log(LogPrefix(session) + message);
 		}
 
 		private void LogVerbose(string message, NetworkSession session)
 		{
 			if (!VerboseLogging)
 				return;
-			Debug.Log($"<b><i>NET-{(session != null ? session.ID.ToString() : "NA")} | </i></b>" + message);
+			Debug.Log(LogPrefix(session) + message);
 		}
 
 		private void LogOverkill(string message, NetworkSession session)
 		{
 			if (!OverkillLogging)
 				return;
-			Debug.Log($"<b><i>NET-{(session != null ? session.ID.ToString() : "NA")} | </i></b>" + message);
+			Debug.Log(LogPrefix(session) + message);
 		}
 
 		private void LogWarning(string message, NetworkSession session)
 		{
-			Debug.LogWarning($"<b><i>NET-{(session != null ? session.ID.ToString() : "NA")} | </i></b>" + message);
+			Debug.LogWarning(LogPrefix(session) + message);
 		}
 
 		private void LogError(string message, NetworkSession session)
 		{
-			Debug.LogError($"<b><i>NET-{(session != null ? session.ID.ToString() : "NA")} | </i></b>" + message);
+			Debug.LogError(LogPrefix(session) + message);
 		}
 
 		public void DebugLogNetworkState(NetworkSession session)
