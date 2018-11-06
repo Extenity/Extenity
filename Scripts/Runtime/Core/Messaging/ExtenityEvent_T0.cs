@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Extenity.Messaging
+namespace Extenity.MessagingToolbox
 {
 
 	public class ExtenityEvent
@@ -46,11 +46,21 @@ namespace Extenity.Messaging
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
 		public void AddListener(MethodDefinition callback, int order = 0)
 		{
-			if (callback == null || IsListenerRegistered(callback))
+			if (callback == null)
+			{
+				if (ExtenityEventTools.VerboseLogging)
+					ExtenityEventTools.LogVerbose($"Tried to add a null callback with order '{order}'.");
 				return; // Silently ignore
+			}
+			if (IsListenerRegistered(callback))
+			{
+				if (ExtenityEventTools.VerboseLogging)
+					ExtenityEventTools.LogVerbose($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+				return; // Silently ignore
+			}
 			if (!(callback.Target as Object))
 			{
-				Debug.LogError("Callbacks on non-Unity objects are not supported.");
+				ExtenityEventTools.LogError("Callbacks on non-Unity or non-existing objects are not supported.");
 				return;
 			}
 
@@ -64,6 +74,8 @@ namespace Extenity.Messaging
 			if (Callbacks.Count == 0 || // Line 1
 				order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
 			{
+				if (ExtenityEventTools.VerboseLogging)
+					ExtenityEventTools.LogVerbose($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
 				Callbacks.Add(new Entry(callback, order));
 				return;
 			}
@@ -72,6 +84,8 @@ namespace Extenity.Messaging
 			{
 				if (order < Callbacks[i].Order)
 				{
+					if (ExtenityEventTools.VerboseLogging)
+						ExtenityEventTools.LogVerbose($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
 					Callbacks.Insert(i, new Entry(callback, order));
 					return;
 				}
@@ -87,15 +101,22 @@ namespace Extenity.Messaging
 			{
 				if (Callbacks[i].Callback == callback)
 				{
+					if (ExtenityEventTools.VerboseLogging)
+						ExtenityEventTools.LogVerbose($"Removing listener with order '{Callbacks[i].Order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
 					Callbacks.RemoveAt(i);
 					return true;
 				}
 			}
+			if (ExtenityEventTools.VerboseLogging)
+				ExtenityEventTools.LogVerbose($"Failed to remove listener for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
 			return false;
 		}
 
 		public void RemoveAllListeners()
 		{
+			if (ExtenityEventTools.VerboseLogging)
+				ExtenityEventTools.LogVerbose($"Removing all listeners.");
+
 			Callbacks.Clear();
 		}
 
@@ -108,17 +129,9 @@ namespace Extenity.Messaging
 			for (int i = 0; i < Callbacks.Count; i++)
 			{
 				var callback = Callbacks[i].Callback;
-				if (callback != null)
+				if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
 				{
-					if (callback.Target as Object) // Check if the object is not destroyed
-					{
-						callback.Invoke();
-					}
-					else
-					{
-						Callbacks.RemoveAt(i);
-						i--;
-					}
+					callback();
 				}
 				else
 				{
@@ -133,23 +146,15 @@ namespace Extenity.Messaging
 			for (int i = 0; i < Callbacks.Count; i++)
 			{
 				var callback = Callbacks[i].Callback;
-				if (callback != null)
+				if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
 				{
-					if (callback.Target as Object) // Check if the object is not destroyed
+					try
 					{
-						try
-						{
-							callback.Invoke();
-						}
-						catch (Exception exception)
-						{
-							Debug.LogException(exception, callback.Target as Object);
-						}
+						callback();
 					}
-					else
+					catch (Exception exception)
 					{
-						Callbacks.RemoveAt(i);
-						i--;
+						Debug.LogException(exception, callback.Target as Object);
 					}
 				}
 				else
