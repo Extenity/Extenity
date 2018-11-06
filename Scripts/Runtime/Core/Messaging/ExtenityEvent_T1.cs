@@ -8,6 +8,8 @@ namespace Extenity.Messaging
 
 	public class ExtenityEvent<T1>
 	{
+		#region Callback entries
+
 		public delegate void MethodDefinition(T1 param1);
 
 		public struct Entry
@@ -22,15 +24,10 @@ namespace Extenity.Messaging
 			}
 		}
 
-		private readonly List<Entry> Callbacks = new List<Entry>(10);
-
 		/// <summary>
-		/// CAUTION! Returned list should not be modified.
+		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
-		public List<Entry> GetListeners()
-		{
-			return Callbacks;
-		}
+		public readonly List<Entry> Callbacks = new List<Entry>(10);
 
 		public bool IsListenerRegistered(MethodDefinition callback)
 		{
@@ -41,6 +38,10 @@ namespace Extenity.Messaging
 			}
 			return false;
 		}
+
+		#endregion
+
+		#region Add / Remove Listener
 
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
 		public void AddListener(MethodDefinition callback, int order = 0)
@@ -92,6 +93,15 @@ namespace Extenity.Messaging
 			}
 			return false;
 		}
+
+		public void RemoveAllListeners()
+		{
+			Callbacks.Clear();
+		}
+
+		#endregion
+
+		#region Invoke
 
 		public void Invoke(T1 param1)
 		{
@@ -149,6 +159,8 @@ namespace Extenity.Messaging
 				}
 			}
 		}
+
+		#endregion
 	}
 
 }
