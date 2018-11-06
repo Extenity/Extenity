@@ -124,25 +124,48 @@ namespace Extenity.MessagingToolbox
 
 		#region Invoke
 
+		private bool IsInvoking;
+
 		public void Invoke(T1 param1)
 		{
-			for (int i = 0; i < Callbacks.Count; i++)
+			if (IsInvoking)
 			{
-				var callback = Callbacks[i].Callback;
-				if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
+				ExtenityEventTools.LogError("Invoked an event while an invocation is ongoing.");
+				return;
+			}
+			IsInvoking = true;
+
+			try
+			{
+				for (int i = 0; i < Callbacks.Count; i++)
 				{
-					callback(param1);
+					var callback = Callbacks[i].Callback;
+					if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
+					{
+						callback(param1);
+					}
+					else
+					{
+						Callbacks.RemoveAt(i);
+						i--;
+					}
 				}
-				else
-				{
-					Callbacks.RemoveAt(i);
-					i--;
-				}
+			}
+			finally
+			{
+				IsInvoking = false;
 			}
 		}
 
 		public void InvokeSafe(T1 param1)
 		{
+			if (IsInvoking)
+			{
+				ExtenityEventTools.LogError("Invoked an event while an invocation is ongoing.");
+				return;
+			}
+			IsInvoking = true;
+
 			for (int i = 0; i < Callbacks.Count; i++)
 			{
 				var callback = Callbacks[i].Callback;
@@ -163,6 +186,8 @@ namespace Extenity.MessagingToolbox
 					i--;
 				}
 			}
+
+			IsInvoking = false;
 		}
 
 		#endregion
