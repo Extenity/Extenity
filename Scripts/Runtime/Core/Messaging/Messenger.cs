@@ -10,6 +10,18 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
+	// TODO: Consider these before starting to use Messenger.
+	// User should have the ability to order event calls. Maybe by specifying a 'priority' parameter.
+	// Event dispatching should be exception proof. A thrown exception should not break the operation. Better yet, this can be controlled by specifying per registration.
+	// Event registration and deregistration should not allocate memory frequently.
+	// Consider making a class alternative to UnityEvent that can be used as a field to a class. Forget about making it inspector friendly. It should not work in inspector, since this is a really bad design issue. If linking callbacks inside Unity Editor is required, user should use a UnityEvent for this, instead of using Messenger system.
+	// Consider making a compile-time type checking mechanism, rather than checking in runtime. Performance would increase drastically.
+	// Consider how we can profile callbacks in a Unity friendly way, which would be great to allow selection of specific events, and without causing any performance hit when profiling is disabled.
+	// Consider supporting non UnityEngine.Object objects as targets, but only if this won't require considerable amount of work or does not require giving up on any other good feature.
+	// Feature: One shot calls.
+	// Feature: Ability to deregister from event easily, inside the callback. Something like Messenger.Deregister(gameObject, MyCallback) or better yet, Messenger.DeregisterCurrentCallback(). Note that DeregisterCurrentCallback should be thread safe. Also it's better to check if we really are in the process of calling the callback, and throw an error if called outside of callback.
+	// Feature: Deregistering a callback while dispatching the event should not break anything.
+
 	public class Messenger : MonoBehaviour
 	{
 		#region Update
@@ -32,7 +44,7 @@ namespace Extenity.MessagingToolbox
 		{
 			get
 			{
-				if (_Global == null)
+				if (!_Global)
 				{
 					var go = new GameObject("_GlobalMessenger", typeof(Messenger));
 					go.hideFlags = HideFlags.HideAndDontSave;
@@ -81,7 +93,7 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		private Dictionary<string, ListenerInfo> ListenerInfoDictionary = new Dictionary<string, ListenerInfo>();
+		private readonly Dictionary<string, ListenerInfo> ListenerInfoDictionary = new Dictionary<string, ListenerInfo>();
 
 		private ListenerInfo GetListenerInfo(string messageId)
 		{
@@ -111,9 +123,6 @@ namespace Extenity.MessagingToolbox
 
 		private void CleanUpListenerLists()
 		{
-			if (ListenerInfoDictionary == null || ListenerInfoDictionary.Count == 0)
-				return;
-
 			foreach (var listenerInfo in ListenerInfoDictionary.Values)
 			{
 				if (!listenerInfo.IsValidAndNotEmpty)
@@ -230,7 +239,7 @@ namespace Extenity.MessagingToolbox
 			// Make sure all listener methods are identical (that is, recently added method is identical with the first added method in listeners list)
 			{
 				// Optimization ID-150827532:
-				var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing two methods' parameters.
+				var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing parameters of two methods.
 				if (!listenerInfo.ParameterInfos.CompareMethodParameters(newListenerParameters, false))
 				{
 					LogBadListenerParameters();
@@ -313,7 +322,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -321,7 +330,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -342,7 +351,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -350,7 +359,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -371,7 +380,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -379,7 +388,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -400,7 +409,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -408,7 +417,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -429,7 +438,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -437,7 +446,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -458,7 +467,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -466,7 +475,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -487,7 +496,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -495,7 +504,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -516,7 +525,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -524,7 +533,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -545,7 +554,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -553,7 +562,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -574,7 +583,7 @@ namespace Extenity.MessagingToolbox
 				var castListener = delegates[i] as MessengerAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>;
 				if (castListener != null)
 				{
-					if ((castListener.Target as Object) != null) // Check if the object is not destroyed
+					if (castListener.Target as Object) // Check if the object is not destroyed
 					{
 						try
 						{
@@ -582,7 +591,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Debug.LogException(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -599,17 +608,17 @@ namespace Extenity.MessagingToolbox
 
 		private void LogAddNonUnityObject()
 		{
-			Debug.LogError("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.");
+			Debug.LogError("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.", gameObject);
 		}
 
 		private void LogBadEmitParameters()
 		{
-			Debug.LogError("Mismatching parameter type(s) between message listener and emit request.");
+			Debug.LogError("Mismatching parameter type(s) between message listener and emit request.", gameObject);
 		}
 
 		private void LogBadListenerParameters()
 		{
-			Debug.LogError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.");
+			Debug.LogError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.", gameObject);
 		}
 
 		#endregion
@@ -619,15 +628,14 @@ namespace Extenity.MessagingToolbox
 		public void DebugLogListAllListeners()
 		{
 			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n",
-				ListenerInfoDictionary == null ? 0 : ListenerInfoDictionary.Count);
+			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n", ListenerInfoDictionary.Count);
 
 			foreach (var listenerInfo in ListenerInfoDictionary.Values)
 			{
 				var delegates = listenerInfo.Delegates;
 				stringBuilder.AppendFormat("   Message ID: {0}    Listeners: {1}\n",
 					listenerInfo.MessageId,
-					delegates == null ? 0 : delegates.Count);
+					delegates?.Count ?? 0);
 
 				if (delegates == null)
 					continue;
@@ -649,7 +657,7 @@ namespace Extenity.MessagingToolbox
 				}
 			}
 
-			Debug.Log(stringBuilder.ToString());
+			Debug.Log(stringBuilder.ToString(), gameObject);
 		}
 
 		#endregion
