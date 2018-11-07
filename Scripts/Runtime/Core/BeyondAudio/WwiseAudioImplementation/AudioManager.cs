@@ -555,6 +555,44 @@ namespace Extenity.BeyondAudio
 
 		#region RTPC
 
+		public static float GetRTPCValue(string rtpcName)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return float.NaN;
+			if (string.IsNullOrEmpty(rtpcName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Tried to get RTPC with empty name.");
+				return float.NaN;
+			}
+			float value;
+			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
+			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out value, ref valueType);
+			if (instance.EnableLogging)
+				Log($"Getting RTPC '{rtpcName}' value '{value}'.");
+			return value;
+		}
+
+		public static float GetRTPCValue(string rtpcName, GameObject associatedObject)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return float.NaN;
+			if (string.IsNullOrEmpty(rtpcName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.");
+				return float.NaN;
+			}
+			float value;
+			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
+			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out value, ref valueType);
+			if (instance.EnableLogging)
+				Log($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.");
+			return value;
+		}
+
 		public static void SetRTPCValue(string rtpcName, float value)
 		{
 			var instance = InstanceEnsured;
@@ -563,7 +601,7 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVolatileLogging)
-					LogVolatile($"Received empty RTPC name with value '{value}'.");
+					LogVolatile($"Tried to set RTPC with empty name and value '{value}'.");
 				return;
 			}
 			if (instance.EnableLogging)
@@ -579,7 +617,7 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVolatileLogging)
-					LogVolatile($"Received empty RTPC name with value '{value}' on object '{associatedObject.FullName()}'.");
+					LogVolatile($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.");
 				return;
 			}
 			if (instance.EnableLogging)

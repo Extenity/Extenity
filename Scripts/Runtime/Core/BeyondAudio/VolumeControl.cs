@@ -151,13 +151,12 @@ namespace Extenity.BeyondAudio
 
 		public float GetActualVolume()
 		{
-			float value;
 #if BeyondAudioUsesUnityAudio
+			float value;
 			AudioMixer.GetFloat(MixerParameterName, out value);
 			return AudioManager.DbToNormalizedRange(value);
 #elif BeyondAudioUsesWwiseAudio
-			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
-			AkSoundEngine.GetRTPCValue(MixerParameterName, null, 0, out value, ref valueType);
+			var value = AudioManager.GetRTPCValue(MixerParameterName);
 			return value / 100f;
 #else
 			throw new NotImplementedException();
@@ -176,7 +175,7 @@ namespace Extenity.BeyondAudio
 #if BeyondAudioUsesUnityAudio
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
 #elif BeyondAudioUsesWwiseAudio
-			AkSoundEngine.SetRTPCValue(MixerParameterName, resultingVolume * 100f);
+			AudioManager.SetRTPCValue(MixerParameterName, resultingVolume * 100f);
 #else
 			throw new NotImplementedException();
 #endif
