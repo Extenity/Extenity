@@ -62,7 +62,21 @@ namespace Extenity.SceneManagementToolbox.Editor
 			return GetLoadedScenes(includeActiveScene).Any(scene => scene.isDirty);
 		}
 
-		public static void LoadMultipleScenes(string activeScene, List<string> loadedScenes)
+		public static void LoadMultipleScenes(IList<string> loadedScenesWithActiveAtFirst)
+		{
+			if (loadedScenesWithActiveAtFirst.IsNotNullAndEmpty())
+			{
+				var i = 0;
+				var scene = EditorSceneManager.OpenScene(loadedScenesWithActiveAtFirst[i++], OpenSceneMode.Single);
+				EditorSceneManager.SetActiveScene(scene);
+				for (; i < loadedScenesWithActiveAtFirst.Count; i++)
+				{
+					EditorSceneManager.OpenScene(loadedScenesWithActiveAtFirst[i], OpenSceneMode.Additive);
+				}
+			}
+		}
+
+		public static void LoadMultipleScenes(string activeScene, IList<string> loadedScenes)
 		{
 			var scene = EditorSceneManager.OpenScene(activeScene, OpenSceneMode.Single);
 			EditorSceneManager.SetActiveScene(scene);
