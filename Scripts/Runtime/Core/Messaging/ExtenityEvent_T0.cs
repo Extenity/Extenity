@@ -39,6 +39,25 @@ namespace Extenity.MessagingToolbox
 			return false;
 		}
 
+		public void Clear()
+		{
+			for (int i = 0; i < Callbacks.Count; i++)
+			{
+				var callback = Callbacks[i].Callback;
+				if (callback == null || !(callback.Target as Object)) // Check if the object is destroyed
+				{
+					Callbacks.RemoveAt(i);
+					i--;
+				}
+			}
+		}
+
+		public void ClearIfRequired()
+		{
+			if (CleanupRequired)
+				Clear();
+		}
+
 		#endregion
 
 		#region Add / Remove Listener
@@ -125,6 +144,10 @@ namespace Extenity.MessagingToolbox
 		#region Invoke
 
 		private bool IsInvoking;
+		public bool CleanupRequired;
+
+		[ThreadStatic]
+		private static List<Entry> CallbacksCopy;
 
 		public void Invoke()
 		{
@@ -137,17 +160,22 @@ namespace Extenity.MessagingToolbox
 
 			try
 			{
-				for (int i = 0; i < Callbacks.Count; i++)
+				// Copy the list to allow adding and removing callbacks while processing the invoke.
+				if (CallbacksCopy == null)
+					CallbacksCopy = new List<Entry>(Callbacks.Count);
+				CallbacksCopy.Clear();
+				CallbacksCopy.AddRange(Callbacks);
+
+				for (int i = 0; i < CallbacksCopy.Count; i++)
 				{
-					var callback = Callbacks[i].Callback;
+					var callback = CallbacksCopy[i].Callback;
 					if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
 					{
 						callback();
 					}
 					else
 					{
-						Callbacks.RemoveAt(i);
-						i--;
+						CleanupRequired = true;
 					}
 				}
 			}
@@ -166,9 +194,15 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 
-			for (int i = 0; i < Callbacks.Count; i++)
+			// Copy the list to allow adding and removing callbacks while processing the invoke.
+			if (CallbacksCopy == null)
+				CallbacksCopy = new List<Entry>(Callbacks.Count);
+			CallbacksCopy.Clear();
+			CallbacksCopy.AddRange(Callbacks);
+
+			for (int i = 0; i < CallbacksCopy.Count; i++)
 			{
-				var callback = Callbacks[i].Callback;
+				var callback = CallbacksCopy[i].Callback;
 				if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
 				{
 					try
@@ -182,8 +216,7 @@ namespace Extenity.MessagingToolbox
 				}
 				else
 				{
-					Callbacks.RemoveAt(i);
-					i--;
+					CleanupRequired = true;
 				}
 			}
 
