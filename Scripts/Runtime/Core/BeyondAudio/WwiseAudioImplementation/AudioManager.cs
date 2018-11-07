@@ -537,6 +537,20 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
+		#region State
+
+		public static void SetState(string stateGroup, string state)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (instance.EnableLogging)
+				Log($"Setting state '{state}' of group '{stateGroup}'.");
+			AkSoundEngine.SetState(stateGroup, state);
+		}
+
+		#endregion
+
 		#region Debug
 
 		[Header("Debug")]
