@@ -356,6 +356,22 @@ namespace Extenity.BeyondAudio
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
+		public static void Play(string eventName, GameObject associatedObject)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (string.IsNullOrEmpty(eventName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile("Received empty event name for playing.");
+				return;
+			}
+			if (instance.EnableLogging)
+				Log($"Playing '{eventName}' on object '{associatedObject.FullName()}'.");
+			AkSoundEngine.PostEvent(eventName, associatedObject);
+		}
+
 		public static void PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
 			var instance = InstanceEnsured;
@@ -534,6 +550,42 @@ namespace Extenity.BeyondAudio
 			instance.ReleaseAudioSource(instance.MusicAudioSource);
 		}
 		*/
+
+		#endregion
+
+		#region RTPC
+
+		public static void SetRTPCValue(string rtpcName, float value)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (string.IsNullOrEmpty(rtpcName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Received empty RTPC name with value '{value}'.");
+				return;
+			}
+			if (instance.EnableLogging)
+				Log($"Setting RTPC '{rtpcName}' to '{value}'.");
+			AkSoundEngine.SetRTPCValue(rtpcName, value);
+		}
+
+		public static void SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
+		{
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (string.IsNullOrEmpty(rtpcName))
+			{
+				if (instance.EnableVolatileLogging)
+					LogVolatile($"Received empty RTPC name with value '{value}' on object '{associatedObject.FullName()}'.");
+				return;
+			}
+			if (instance.EnableLogging)
+				Log($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.");
+			AkSoundEngine.SetRTPCValue(rtpcName, value, associatedObject);
+		}
 
 		#endregion
 
