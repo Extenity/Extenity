@@ -211,30 +211,39 @@ namespace Extenity.BeyondAudio
 		/// A full cleanup will be scheduled in internal lists if that happens.
 		/// </summary>
 		/// <param name="audioSource"></param>
-		public void ReleaseAudioSource(GameObject audioSource)
+		public static void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null)
 		{
-			if (EnableVolatileLogging)
+			var instance = InstanceEnsured;
+			if (!instance)
+				return;
+			if (instance.EnableVolatileLogging)
 				LogVolatile($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
 				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
 				// TODO: Schedule a full cleanup that will be executed in 100 ms from now. That way we group multiple cleanups together.
-				ClearLostReferencesInAllInternalContainers();
+				instance.ClearLostReferencesInAllInternalContainers();
 				return;
 			}
 
 			//OnReleasingAudioSource.Invoke(audioSource);
 
-			// TODO: Stop the Wwise event
-			//audioSource.Stop();
+			// Stop Wwise
+			if (!string.IsNullOrEmpty(stopEventName))
+			{
+				AkSoundEngine.PostEvent(stopEventName, audioSource);
+			}
+
 			audioSource.gameObject.SetActive(false);
 			audioSource.transform.SetParent(null);
 
-			ActiveAudioSources.Remove(audioSource);
-			FreeAudioSources.Add(audioSource);
+			instance.ActiveAudioSources.Remove(audioSource);
+			instance.FreeAudioSources.Add(audioSource);
 
-			InternalRemoveFromReleaseTrackerList(audioSource);
+			instance.InternalRemoveFromReleaseTrackerList(audioSource);
+
+			audioSource = null;
 		}
 
 		private void ClearLostReferencesInAllInternalContainers()
@@ -278,11 +287,13 @@ namespace Extenity.BeyondAudio
 		{
 			public float ReleaseTime;
 			public GameObject AudioSource;
+			public string StopEventName;
 
-			public ReleaseTrackerEntry(float releaseTime, GameObject audioSource)
+			public ReleaseTrackerEntry(float releaseTime, GameObject audioSource, string stopEventName)
 			{
 				ReleaseTime = releaseTime;
 				AudioSource = audioSource;
+				StopEventName = stopEventName;
 			}
 		}
 
@@ -299,7 +310,7 @@ namespace Extenity.BeyondAudio
 					var audioSource = ReleaseTracker[i].AudioSource;
 					ReleaseTracker.RemoveAt(i);
 					i--;
-					ReleaseAudioSource(audioSource);
+					ReleaseAudioSource(ref audioSource, ReleaseTracker[i].StopEventName);
 				}
 			}
 		}
@@ -372,47 +383,49 @@ namespace Extenity.BeyondAudio
 			AkSoundEngine.PostEvent(eventName, associatedObject);
 		}
 
-		public static void PlayAtPosition(string eventName, Vector3 worldPosition)
+		public static GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
 			var instance = InstanceEnsured;
 			if (!instance)
-				return;
+				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVolatileLogging)
 					LogVolatile($"Received empty event name for playing at position '{worldPosition}'.");
-				return;
+				return null;
 			}
 			if (instance.EnableLogging)
 				Log($"Playing '{eventName}' at position '{worldPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
-				return;
+				return null;
 			audioSource.transform.position = worldPosition;
 			audioSource.gameObject.SetActive(true);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
+			return audioSource;
 		}
 
-		public static void PlayAttached(string eventName, Transform parent, Vector3 localPosition)
+		public static GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition)
 		{
 			var instance = InstanceEnsured;
 			if (!instance)
-				return;
+				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVolatileLogging)
 					LogVolatile($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
-				return;
+				return null;
 			}
 			if (instance.EnableLogging)
 				Log($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
-				return;
+				return null;
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
 			audioSource.gameObject.SetActive(true);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
+			return audioSource;
 		}
 
 		private static void EndOfEventCallback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
@@ -437,7 +450,7 @@ namespace Extenity.BeyondAudio
 				return;
 			}
 			// It's okay to send it a null game object, if the object was destroyed along the way. 
-			instance.ReleaseAudioSource(gameObject);
+			ReleaseAudioSource(ref gameObject);
 		}
 
 		#endregion
