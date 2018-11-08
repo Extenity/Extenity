@@ -2002,7 +2002,7 @@ namespace BeyondNetworking
 		{
 			if (_LastUsedNetworkSessionForLogPrefix != session)
 			{
-				_LogPrefix = $"<b><i>NetConMan-{(session != null ? session.ID.ToString() : "NA")} | </i></b>";
+				_LogPrefix = $"|NetConMan-{(session != null ? session.ID.ToString() : "NA")}|";
 				_LastUsedNetworkSessionForLogPrefix = session;
 			}
 			return _LogPrefix;

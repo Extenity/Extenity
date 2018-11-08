@@ -16,12 +16,12 @@ namespace Extenity.MessagingToolbox
 		{
 			//if (!VerboseLogging) Check this at the location of method call for performance reasons.
 			//	return;
-			Debug.Log("<b><i>ExtEvent | </i></b>" + message);
+			Debug.Log("|ExtEvent|" + message);
 		}
 
 		public static void LogError(string message)
 		{
-			Debug.LogError("<b><i>ExtEvent | </i></b>" + message);
+			Debug.LogError("|ExtEvent|" + message);
 		}
 
 		#endregion

@@ -670,7 +670,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableLogging)
 			//	return;
 
-			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+			Debug.Log("|AUDIO|" + message, Instance);
 		}
 
 		private static void LogVolatile(string message)
@@ -679,7 +679,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableVolatileLogging)
 			//	return;
 
-			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+			Debug.Log("|AUDIO|" + message, Instance);
 		}
 
 		private static void LogWarning(string message)
@@ -688,12 +688,12 @@ namespace Extenity.BeyondAudio
 			//if (!EnableWarningLogging)
 			//	return;
 
-			Debug.LogWarning("<i><b>AUDIO | </b></i>" + message, Instance);
+			Debug.LogWarning("|AUDIO|" + message, Instance);
 		}
 
 		private static void LogError(string message)
 		{
-			Debug.LogError("<i><b>AUDIO | </b></i>" + message, Instance);
+			Debug.LogError("|AUDIO|" + message, Instance);
 		}
 
 		#endregion

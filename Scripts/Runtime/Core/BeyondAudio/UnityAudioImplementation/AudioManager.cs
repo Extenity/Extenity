@@ -722,7 +722,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableLogging)
 			//	return;
 
-			Debug.Log("<i><b>AUDIO | </b></i>" + message, Instance);
+			Debug.Log("|AUDIO|" + message, Instance);
 		}
 
 		#endregion

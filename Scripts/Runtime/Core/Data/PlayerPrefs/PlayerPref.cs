@@ -183,13 +183,13 @@ namespace Extenity.DataToolbox
 		[Conditional("EnablePlayerPrefLogging")]
 		private void Log(string message)
 		{
-			Debug.Log($"<b><i>Pref-{PrefsKey} | </i></b>" + message);
+			Debug.Log($"|Pref-{PrefsKey}|" + message);
 		}
 
 		//[Conditional("EnablePlayerPrefLogging")] Do not uncomment this. Always show errors.
 		private void LogError(string message)
 		{
-			Debug.LogError($"<b><i>Pref-{PrefsKey} | </i></b>" + message);
+			Debug.LogError($"|Pref-{PrefsKey}|" + message);
 		}
 
 		#endregion
