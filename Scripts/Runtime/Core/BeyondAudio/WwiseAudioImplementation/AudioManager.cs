@@ -216,6 +216,11 @@ namespace Extenity.BeyondAudio
 			var instance = InstanceEnsured;
 			if (!instance)
 				return;
+			if (!instance.ActiveAudioSources.Contains(audioSource))
+			{
+				LogVolatile($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.");
+				return;
+			}
 			if (instance.EnableVolatileLogging)
 				LogVolatile($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
 
@@ -237,6 +242,7 @@ namespace Extenity.BeyondAudio
 
 			audioSource.gameObject.SetActive(false);
 			audioSource.transform.SetParent(null);
+			DontDestroyOnLoad(audioSource.gameObject);
 
 			instance.ActiveAudioSources.Remove(audioSource);
 			instance.FreeAudioSources.Add(audioSource);
