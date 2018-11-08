@@ -386,6 +386,8 @@ namespace Extenity.BeyondAudio
 			}
 			if (instance.EnableLogging)
 				Log($"Playing '{eventName}' on object '{associatedObject.FullName()}'.");
+			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
+			AkSoundEngine.SetObjectPosition(associatedObject, associatedObject.transform);
 			AkSoundEngine.PostEvent(eventName, associatedObject);
 		}
 
@@ -407,6 +409,8 @@ namespace Extenity.BeyondAudio
 				return null;
 			audioSource.transform.position = worldPosition;
 			audioSource.gameObject.SetActive(true);
+			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
+			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
 			return audioSource;
 		}
@@ -430,6 +434,8 @@ namespace Extenity.BeyondAudio
 			audioSource.transform.SetParent(parent);
 			audioSource.transform.localPosition = localPosition;
 			audioSource.gameObject.SetActive(true);
+			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
+			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
 			return audioSource;
 		}
