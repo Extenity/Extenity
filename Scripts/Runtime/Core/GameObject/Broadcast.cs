@@ -1,10 +1,55 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Extenity.GameObjectToolbox
 {
 
 	public class Broadcast
 	{
+
+
+		public static void ToScene(string methodName)
+		{
+			var roots = new List<GameObject>(); // TODO: OPTIMIZATION: Use pooled lists.
+
+			var sceneCount = SceneManager.sceneCount;
+			for (int iScene = 0; iScene < sceneCount; iScene++)
+			{
+				var scene = SceneManager.GetSceneAt(iScene);
+				if (scene.isLoaded)
+				{
+					scene.GetRootGameObjects(roots);
+					for (var iRoot = 0; iRoot < roots.Count; iRoot++)
+					{
+						roots[iRoot].BroadcastMessage(methodName, SendMessageOptions.DontRequireReceiver);
+					}
+					roots.Clear();
+				}
+			}
+		}
+
+		public static void ToScene(string methodName, object parameter)
+		{
+			var roots = new List<GameObject>(); // TODO: OPTIMIZATION: Use pooled lists.
+
+			var sceneCount = SceneManager.sceneCount;
+			for (int iScene = 0; iScene < sceneCount; iScene++)
+			{
+				var scene = SceneManager.GetSceneAt(iScene);
+				if (scene.isLoaded)
+				{
+					scene.GetRootGameObjects(roots);
+					for (var iRoot = 0; iRoot < roots.Count; iRoot++)
+					{
+						roots[iRoot].BroadcastMessage(methodName, parameter, SendMessageOptions.DontRequireReceiver);
+					}
+					roots.Clear();
+				}
+			}
+		}
+
+		/* Old but gold. Keep them commented out.
 		public static void ToScene(string methodName)
 		{
 			var objects = Object.FindObjectsOfType(typeof(GameObject)) as GameObject[];
@@ -14,7 +59,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var obj = objects[i];
-				if (obj != null && obj.transform.parent == null)
+				if (obj && !obj.transform.parent)
 					obj.BroadcastMessage(methodName, SendMessageOptions.DontRequireReceiver);
 			}
 		}
@@ -28,10 +73,11 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var obj = objects[i];
-				if (obj != null && obj.transform.parent == null)
+				if (obj && !obj.transform.parent)
 					obj.BroadcastMessage(methodName, value, SendMessageOptions.DontRequireReceiver);
 			}
 		}
+		*/
 	}
 
 }
