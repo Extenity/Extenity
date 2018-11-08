@@ -94,6 +94,37 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Static Constructor API Call Bug Prevention
+
+		protected void InitializeAPICallPrevention()
+		{
+			EditorApplication.playModeStateChanged += OnPlayModeStateChangedForAPICallPrevention;
+			AssemblyReloadEvents.beforeAssemblyReload += CloseWindowToPreventAPICallAccess;
+		}
+
+		protected void DeinitializeAPICallPrevention()
+		{
+			EditorApplication.playModeStateChanged -= OnPlayModeStateChangedForAPICallPrevention;
+			AssemblyReloadEvents.beforeAssemblyReload -= CloseWindowToPreventAPICallAccess;
+		}
+
+		private void OnPlayModeStateChangedForAPICallPrevention(PlayModeStateChange stateChange)
+		{
+			CloseWindowToPreventAPICallAccess();
+		}
+
+		private void CloseWindowToPreventAPICallAccess()
+		{
+			// Quick fix:
+			// Close the window when play mode changes. Because at the time the user
+			// stops playmode, Unity will go crazy about calling ApplicationTools.PathHash
+			// from static constructor. This is a duct tape solution, but whatever.
+			Debug.Log($"Closing '{titleContent.text}' window automatically to prevent API call errors.");
+			Close();
+		}
+
+		#endregion
+
 		#region serializedObject
 
 		// Name intentionally left small casing to make it compatible with Editor.serializedObject
