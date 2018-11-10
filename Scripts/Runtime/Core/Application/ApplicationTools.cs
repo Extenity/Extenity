@@ -17,10 +17,10 @@ namespace Extenity.ApplicationToolbox
 			{
 				switch (Application.platform)
 				{
-					case RuntimePlatform.OSXEditor:
-					case RuntimePlatform.WindowsPlayer:
 					case RuntimePlatform.WindowsEditor:
-						return Application.dataPath.RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+						return Application.dataPath.AddDirectorySeparatorToEnd().RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+					case RuntimePlatform.WindowsPlayer:
+						throw new NotImplementedException(); // TODO:
 
 					default:
 						throw new NotImplementedException();
