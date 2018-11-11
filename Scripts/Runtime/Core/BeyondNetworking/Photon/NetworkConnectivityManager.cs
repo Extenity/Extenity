@@ -237,15 +237,16 @@ namespace BeyondNetworking
 
 		#region Master Client
 
-		public class MasterClientEvent : UnityEvent { }
+		public class MasterClientEvent : UnityEvent<bool> { }
 		public static readonly MasterClientEvent OnMasterClientChanged = new MasterClientEvent();
 
 		public override void OnMasterClientSwitched(Player newMasterClient)
 		{
 			var session = CurrentSession;
-			Log($"OnMasterClientSwitched    newMasterClient: '{newMasterClient}'", session);
 
-			OnMasterClientChanged.Invoke();
+			var isMasterClient = PhotonNetwork.IsMasterClient;
+			Log($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", session);
+			OnMasterClientChanged.Invoke(isMasterClient);
 		}
 
 		#endregion
