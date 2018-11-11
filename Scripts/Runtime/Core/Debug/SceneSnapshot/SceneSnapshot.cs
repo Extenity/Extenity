@@ -117,7 +117,7 @@ namespace Extenity.DebugToolbox
 						OUTPUT.AppendLine("\t" + componentEntry.Type.Name);
 						foreach (var serializedField in componentEntry.SerializedFields)
 						{
-							OUTPUT.AppendLine("\t\t" + serializedField.Name + " = " + serializedField.Value.ToString());
+							OUTPUT.AppendLine("\t\t" + serializedField.Name + " = " + serializedField.Value?.ToString());
 						}
 					}
 				}

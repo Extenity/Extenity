@@ -1312,7 +1312,7 @@ namespace BeyondNetworking
 
 						// Wait for leaving the room
 						// TODO: Check for timeout (if not already handled by Photon). See 726179.
-						while (PhotonNetwork.InRoom)
+						while (PhotonNetwork.InRoom || PhotonNetwork.NetworkClientState == ClientState.Leaving)
 						{
 							LogOverkill("---------- Waiting for leaving the room...", session);
 
