@@ -78,6 +78,9 @@ namespace Extenity.DebugToolbox
 		{
 			var sceneInfos = SceneManagerTools.GetLoadedScenes(true);
 			Scenes = sceneInfos.Select(sceneInfo => new SceneEntry(sceneInfo)).ToArray();
+
+			// Also add the DontDestroyOnLoad scene
+			Scenes = Scenes.Add(new SceneEntry(SceneManagerTools.GetDontDestroyOnLoadScene()));
 		}
 
 		public string BuildStringForGameObjectPaths()
