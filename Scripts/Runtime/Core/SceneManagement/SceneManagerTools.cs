@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Extenity.SceneManagementToolbox
 {
@@ -91,6 +93,55 @@ namespace Extenity.SceneManagementToolbox
 				}
 			}
 		}
+
+		#region DontDestroyOnLoad Scene
+
+		/// <summary>
+		/// Source: https://forum.unity.com/threads/editor-script-how-to-access-objects-under-dontdestroyonload-while-in-play-mode.442014/
+		/// </summary>
+		public static GameObject[] GetRootGameObjectsOfDontDestroyOnLoadScene()
+		{
+			GameObject temp = null;
+			try
+			{
+				temp = new GameObject();
+				Object.DontDestroyOnLoad(temp);
+				var dontDestroyOnLoadScene = temp.scene;
+				Object.DestroyImmediate(temp);
+				temp = null;
+
+				return dontDestroyOnLoadScene.GetRootGameObjects();
+			}
+			finally
+			{
+				if (temp != null)
+					Object.DestroyImmediate(temp);
+			}
+		}
+
+		/// <summary>
+		/// Source: https://forum.unity.com/threads/editor-script-how-to-access-objects-under-dontdestroyonload-while-in-play-mode.442014/
+		/// </summary>
+		public static Scene GetDontDestroyOnLoadScene()
+		{
+			GameObject temp = null;
+			try
+			{
+				temp = new GameObject();
+				Object.DontDestroyOnLoad(temp);
+				var dontDestroyOnLoadScene = temp.scene;
+				Object.DestroyImmediate(temp);
+				temp = null;
+				return dontDestroyOnLoadScene;
+			}
+			finally
+			{
+				if (temp != null)
+					Object.DestroyImmediate(temp);
+			}
+		}
+
+		#endregion
 	}
 
 	public static class SceneManagerToolsExtensions
