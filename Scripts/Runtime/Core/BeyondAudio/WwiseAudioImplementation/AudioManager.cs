@@ -594,8 +594,8 @@ namespace Extenity.BeyondAudio
 			float value;
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
 			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out value, ref valueType);
-			if (instance.EnableLogging)
-				Log($"Getting RTPC '{rtpcName}' value '{value}'.");
+			if (instance.EnableRTPCLogging)
+				LogRTPC($"Getting RTPC '{rtpcName}' value '{value}'.");
 			return value;
 		}
 
@@ -613,8 +613,8 @@ namespace Extenity.BeyondAudio
 			float value;
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
 			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out value, ref valueType);
-			if (instance.EnableLogging)
-				Log($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.");
+			if (instance.EnableRTPCLogging)
+				LogRTPC($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.");
 			return value;
 		}
 
@@ -629,8 +629,8 @@ namespace Extenity.BeyondAudio
 					LogVolatile($"Tried to set RTPC with empty name and value '{value}'.");
 				return;
 			}
-			if (instance.EnableLogging)
-				Log($"Setting RTPC '{rtpcName}' to '{value}'.");
+			if (instance.EnableRTPCLogging)
+				LogRTPC($"Setting RTPC '{rtpcName}' to '{value}'.");
 			AkSoundEngine.SetRTPCValue(rtpcName, value);
 		}
 
@@ -645,8 +645,8 @@ namespace Extenity.BeyondAudio
 					LogVolatile($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.");
 				return;
 			}
-			if (instance.EnableLogging)
-				Log($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.");
+			if (instance.EnableRTPCLogging)
+				LogRTPC($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.");
 			AkSoundEngine.SetRTPCValue(rtpcName, value, associatedObject);
 		}
 
@@ -670,6 +670,7 @@ namespace Extenity.BeyondAudio
 
 		[Header("Debug")]
 		public bool EnableLogging = false;
+		public bool EnableRTPCLogging = false;
 		public bool EnableVolatileLogging = false;
 		public bool EnableWarningLogging = true;
 
@@ -685,6 +686,21 @@ namespace Extenity.BeyondAudio
 			Debug.Log("|AUDIO|" + message, Instance);
 		}
 
+		/// <summary>
+		/// Check for 'EnableRTPCLogging' before each Log call to prevent unnecessary string creation.
+		/// </summary>
+		private static void LogRTPC(string message)
+		{
+			// This must be checked before each Log call manually.
+			//if (!EnableRTPCLogging)
+			//	return;
+
+			Debug.Log("|AUDIO|" + message, Instance);
+		}
+
+		/// <summary>
+		/// Check for 'EnableVolatileLogging' before each Log call to prevent unnecessary string creation.
+		/// </summary>
 		private static void LogVolatile(string message)
 		{
 			// This must be checked before each Log call manually.
@@ -694,6 +710,9 @@ namespace Extenity.BeyondAudio
 			Debug.Log("|AUDIO|" + message, Instance);
 		}
 
+		/// <summary>
+		/// Check for 'EnableWarningLogging' before each Log call to prevent unnecessary string creation.
+		/// </summary>
 		private static void LogWarning(string message)
 		{
 			// This must be checked before each Log call manually.
