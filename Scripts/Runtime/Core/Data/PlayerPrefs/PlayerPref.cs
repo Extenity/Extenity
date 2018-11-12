@@ -198,13 +198,17 @@ namespace Extenity.DataToolbox
 		[Conditional("EnablePlayerPrefLogging")]
 		private void Log(string message)
 		{
+#if EnablePlayerPrefLogging
 			Debug.Log(LogPrefix + message);
+#endif
 		}
 
 		//[Conditional("EnablePlayerPrefLogging")] Do not uncomment this. Always show errors.
 		private void LogError(string message)
 		{
+#if EnablePlayerPrefLogging
 			Debug.LogError(LogPrefix + message);
+#endif
 		}
 
 		#endregion
