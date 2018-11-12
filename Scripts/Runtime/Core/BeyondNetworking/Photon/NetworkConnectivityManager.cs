@@ -58,7 +58,6 @@ namespace BeyondNetworking
 			// TODO: Temporary solution for a Photon bug. CollectibleSpawnInfo serialization in RpcSpawnCollectibles method throws an exception when using GpBinaryV18.
 			PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = SerializationProtocol.GpBinaryV16;
 
-			PhotonNetwork.GameVersion = GameVersion;
 			InitializePhotonLogLevel();
 
 			//BackendAuthentication.OnAuthenticationCompleted.AddListener(OnAuthenticated);
@@ -555,6 +554,9 @@ namespace BeyondNetworking
 
 		private IEnumerator InternalProcessDesiredMode(NetworkSession session)
 		{
+			if (string.IsNullOrEmpty(_GameVersion))
+				throw new Exception("Internal error 7581051!"); // SetVersion must be called before any operation.
+
 			// Cancel the ongoing process immediately as this method called. This must be the first line.
 			if (IsCurrentlyProcessing)
 			{
@@ -1976,6 +1978,7 @@ namespace BeyondNetworking
 			}
 
 			_GameVersion = value;
+			PhotonNetwork.GameVersion = GameVersion;
 		}
 
 		#endregion
