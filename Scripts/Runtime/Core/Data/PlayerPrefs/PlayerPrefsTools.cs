@@ -1,3 +1,5 @@
+//#define EnableDeferredSaveLogging
+
 using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DesignPatternsToolbox;
@@ -124,13 +126,17 @@ namespace Extenity.DataToolbox
 			}
 
 			DeferredSaveTriggerTime = now + delay;
-			//Debug.Log($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
+#if EnableDeferredSaveLogging
+			Debug.Log($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
+#endif
 			DeferredSaveHelper.Instance.FastInvoke(OnTimeToSave, delay, true);
 		}
 
 		private static void OnTimeToSave()
 		{
-			//Debug.Log($"On time to save called at '{Time.unscaledTime}'");
+#if EnableDeferredSaveLogging
+			Debug.Log($"Deferred saving triggered at '{Time.unscaledTime}'");
+#endif
 			DeferredSaveTriggerTime = -1f;
 			PlayerPrefs.Save();
 		}

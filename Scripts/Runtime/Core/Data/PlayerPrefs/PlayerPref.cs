@@ -178,18 +178,33 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region Log - Collectible
+		#region Log
+
+#if EnablePlayerPrefLogging
+
+		private string _LogPrefix;
+		private string LogPrefix
+		{
+			get
+			{
+				if (_LogPrefix == null)
+					_LogPrefix = $"|Pref-{ProcessedPrefsKey}|";
+				return _LogPrefix;
+			}
+		}
+
+#endif
 
 		[Conditional("EnablePlayerPrefLogging")]
 		private void Log(string message)
 		{
-			Debug.Log($"|Pref-{PrefsKey}|" + message);
+			Debug.Log(LogPrefix + message);
 		}
 
 		//[Conditional("EnablePlayerPrefLogging")] Do not uncomment this. Always show errors.
 		private void LogError(string message)
 		{
-			Debug.LogError($"|Pref-{PrefsKey}|" + message);
+			Debug.LogError(LogPrefix + message);
 		}
 
 		#endregion
