@@ -29,6 +29,8 @@ namespace Extenity.MessagingToolbox
 		/// </summary>
 		public readonly List<Entry> Callbacks = new List<Entry>(10);
 
+		public bool IsAnyListenerRegistered => Callbacks.Count > 0;
+
 		public bool IsListenerRegistered(MethodDefinition callback)
 		{
 			for (var i = 0; i < Callbacks.Count; i++)
