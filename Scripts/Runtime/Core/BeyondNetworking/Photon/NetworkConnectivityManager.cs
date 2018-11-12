@@ -1950,20 +1950,32 @@ namespace BeyondNetworking
 
 		#region Version
 
-		private static string GameVersion;
+		private static string _GameVersion;
+		private static string GameVersion
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_GameVersion))
+				{
+					// Game version is not set yet. Make sure it's set before calling the getter.
+					throw new Exception("Internal error 17659823!");
+				}
+				return _GameVersion;
+			}
+		}
 
 		public static void SetVersion(string value)
 		{
-			if (!string.IsNullOrEmpty(GameVersion))
+			if (!string.IsNullOrEmpty(_GameVersion))
 			{
 #if UNITY_EDITOR
-				Debug.LogError("Version was already set.");
+				Debug.LogError("Internal error 27659823!");
 #endif
 				// TODO: SECURITY: Possible tampering attempt.
 				return;
 			}
 
-			GameVersion = value;
+			_GameVersion = value;
 		}
 
 		#endregion
