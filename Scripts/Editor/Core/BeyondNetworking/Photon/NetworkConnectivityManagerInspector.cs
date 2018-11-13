@@ -16,10 +16,18 @@ namespace BeyondNetworking
 		{
 			AutoRepaintInspectorPeriod = 0.3f;
 			IsAutoRepaintInspectorEnabled = true;
+
+			NetworkConnectivityManager.OnNetworkStatsRefresh.AddListener(OnNetworkStatsRefresh);
 		}
 
 		protected override void OnDisableDerived()
 		{
+			NetworkConnectivityManager.OnNetworkStatsRefresh.RemoveListener(OnNetworkStatsRefresh);
+		}
+
+		private void OnNetworkStatsRefresh()
+		{
+			Repaint();
 		}
 
 		protected override void OnAfterDefaultInspectorGUI()
@@ -30,8 +38,23 @@ namespace BeyondNetworking
 			EditorGUILayout.LabelField("DesiredMode", NetworkConnectivityManager.DesiredMode.ToString());
 			EditorGUILayout.LabelField("NetworkState", NetworkConnectivityManager.NetworkState.ToString());
 
-			var clientAvailable = PhotonNetwork.NetworkClientState != ClientState.Disconnected;
+			GUILayout.Space(6f);
 
+			// Network stats
+			{
+				EditorGUILayoutTools.DrawHeader("Network Stats");
+				NetworkConnectivityManager.NetworkStatisticsEnabled = GUILayout.Toggle(NetworkConnectivityManager.NetworkStatisticsEnabled, "Enabled");
+
+				EditorGUILayout.LabelField("Total Sent", $"{NetworkConnectivityManager.TotalSentPacketBytes:N0}\tCount: {NetworkConnectivityManager.TotalSentPacketCount}");
+				EditorGUILayout.LabelField("Total Received", $"{NetworkConnectivityManager.TotalReceivedPacketBytes:N0}\tCount: {NetworkConnectivityManager.TotalReceivedPacketCount}");
+				EditorGUILayout.LabelField("Delta Sent", $"{NetworkConnectivityManager.SentPacketBytesPerSecond:N0}\tCount: {NetworkConnectivityManager.SentPacketCountPerSecond}");
+				EditorGUILayout.LabelField("Delta Received", $"{NetworkConnectivityManager.ReceivedPacketBytesPerSecond:N0}\tCount: {NetworkConnectivityManager.ReceivedPacketCountPerSecond}");
+			}
+
+			GUILayout.Space(6f);
+
+			// Lobby stats
+			var clientAvailable = PhotonNetwork.NetworkClientState != ClientState.Disconnected;
 			if (clientAvailable)
 			{
 				EditorGUILayoutTools.DrawHeader("Lobby Stats");
@@ -60,6 +83,8 @@ namespace BeyondNetworking
 					}
 				}
 			}
+
+			GUILayout.Space(6f);
 
 			EditorGUILayoutTools.DrawHeader("Photon Internals");
 			EditorGUILayout.LabelField("NetworkClientState", PhotonNetwork.NetworkClientState.ToString());

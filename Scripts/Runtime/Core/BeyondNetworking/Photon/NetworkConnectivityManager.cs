@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
+using Extenity.FlowToolbox;
 using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
@@ -1936,6 +1937,106 @@ namespace BeyondNetworking
 			Log("OnUpdatedFriendList", session);
 
 			OnFriendListChanged.Invoke(friendList);
+		}
+
+		#endregion
+
+		#region Stats - Data
+
+		public static int TotalSentPacketCount => OutgoingTrafficStats?.TotalPacketCount ?? 0;
+		public static int TotalSentPacketBytes => OutgoingTrafficStats?.TotalPacketBytes ?? 0;
+		[NonSerialized]
+		public static int SentPacketBytesPerSecond;
+		public static float SentKBsPerSecond => SentPacketBytesPerSecond / 1000f;
+		private static int _TotalSentPacketBytesInPreviousMeasurement;
+		[NonSerialized]
+		public static int SentPacketCountPerSecond;
+		private static int _TotalSentPacketCountInPreviousMeasurement;
+
+		public static int TotalReceivedPacketCount => IncomingTrafficStats?.TotalPacketCount ?? 0;
+		public static int TotalReceivedPacketBytes => IncomingTrafficStats?.TotalPacketBytes ?? 0;
+		[NonSerialized]
+		public static int ReceivedPacketBytesPerSecond;
+		public static float ReceivedKBsPerSecond => ReceivedPacketBytesPerSecond / 1000f;
+		private static int _TotalReceivedPacketBytesInPreviousMeasurement;
+		[NonSerialized]
+		public static int ReceivedPacketCountPerSecond;
+		private static int _TotalReceivedPacketCountInPreviousMeasurement;
+
+		#endregion
+
+		#region Stats - Controller
+
+		public static readonly UnityEvent OnNetworkStatsRefresh = new UnityEvent();
+
+		private static TrafficStats IncomingTrafficStats;
+		private static TrafficStats OutgoingTrafficStats;
+
+		private static bool _NetworkStatisticsEnabled;
+		public static bool NetworkStatisticsEnabled
+		{
+			get { return _NetworkStatisticsEnabled; }
+			set
+			{
+				if (_NetworkStatisticsEnabled == value)
+					return;
+				if (_NetworkStatisticsEnabled != PhotonNetwork.NetworkStatisticsEnabled)
+					throw new Exception("Internal error 751952!"); // PhotonNetwork.NetworkStatisticsEnabled should not be used elsewhere.
+				if (!IsInstanceAvailable)
+					throw new Exception("Internal error 851952!"); // This is only available in play mode. (It requires FastInvokes)
+				_NetworkStatisticsEnabled = value;
+
+				ResetStatInternals();
+
+				if (value)
+				{
+					IncomingTrafficStats = PhotonNetwork.NetworkingClient.LoadBalancingPeer.TrafficStatsIncoming;
+					OutgoingTrafficStats = PhotonNetwork.NetworkingClient.LoadBalancingPeer.TrafficStatsOutgoing;
+					Instance.FastInvokeRepeating(InternalUpdateNetworkStats, 1, 1, true);
+				}
+				else
+				{
+					Instance.CancelFastInvoke(InternalUpdateNetworkStats);
+				}
+
+				OnNetworkStatsRefresh.Invoke(); // This will initialize UIs.
+
+				PhotonNetwork.NetworkStatisticsEnabled = value;
+			}
+		}
+
+		private static void ResetStatInternals()
+		{
+			SentPacketBytesPerSecond = 0;
+			SentPacketCountPerSecond = 0;
+			_TotalSentPacketBytesInPreviousMeasurement = 0;
+			_TotalSentPacketCountInPreviousMeasurement = 0;
+			ReceivedPacketBytesPerSecond = 0;
+			ReceivedPacketCountPerSecond = 0;
+			_TotalReceivedPacketBytesInPreviousMeasurement = 0;
+			_TotalReceivedPacketCountInPreviousMeasurement = 0;
+
+			IncomingTrafficStats = null;
+			OutgoingTrafficStats = null;
+		}
+
+		private static void InternalUpdateNetworkStats()
+		{
+			var TotalSentPacketBytes = OutgoingTrafficStats.TotalPacketBytes;
+			var TotalSentPacketCount = OutgoingTrafficStats.TotalPacketCount;
+			SentPacketBytesPerSecond = TotalSentPacketBytes - _TotalSentPacketBytesInPreviousMeasurement;
+			_TotalSentPacketBytesInPreviousMeasurement = TotalSentPacketBytes;
+			SentPacketCountPerSecond = TotalSentPacketCount - _TotalSentPacketCountInPreviousMeasurement;
+			_TotalSentPacketCountInPreviousMeasurement = TotalSentPacketCount;
+
+			var TotalReceivedPacketBytes = IncomingTrafficStats.TotalPacketBytes;
+			var TotalReceivedPacketCount = IncomingTrafficStats.TotalPacketCount;
+			ReceivedPacketBytesPerSecond = TotalReceivedPacketBytes - _TotalReceivedPacketBytesInPreviousMeasurement;
+			_TotalReceivedPacketBytesInPreviousMeasurement = TotalReceivedPacketBytes;
+			ReceivedPacketCountPerSecond = TotalReceivedPacketCount - _TotalReceivedPacketCountInPreviousMeasurement;
+			_TotalReceivedPacketCountInPreviousMeasurement = TotalReceivedPacketCount;
+
+			OnNetworkStatsRefresh.Invoke();
 		}
 
 		#endregion
