@@ -41,15 +41,20 @@ namespace BeyondNetworking
 			GUILayout.Space(6f);
 
 			// Network stats
+			EditorGUI.BeginDisabledGroup(!EditorApplication.isPlaying);
 			{
 				EditorGUILayoutTools.DrawHeader("Network Stats");
 				NetworkConnectivityManager.NetworkStatisticsEnabled = GUILayout.Toggle(NetworkConnectivityManager.NetworkStatisticsEnabled, "Enabled");
+				EditorGUI.BeginDisabledGroup(!NetworkConnectivityManager.NetworkStatisticsEnabled);
+				NetworkConnectivityManager.NetworkStatisticsPlottingEnabled = GUILayout.Toggle(NetworkConnectivityManager.NetworkStatisticsPlottingEnabled, "Enable Graph Plotting");
+				EditorGUI.EndDisabledGroup();
 
 				EditorGUILayout.LabelField("Total Sent", $"{NetworkConnectivityManager.TotalSentPacketBytes:N0}\tCount: {NetworkConnectivityManager.TotalSentPacketCount}");
 				EditorGUILayout.LabelField("Total Received", $"{NetworkConnectivityManager.TotalReceivedPacketBytes:N0}\tCount: {NetworkConnectivityManager.TotalReceivedPacketCount}");
 				EditorGUILayout.LabelField("Delta Sent", $"{NetworkConnectivityManager.SentPacketBytesPerSecond:N0}\tCount: {NetworkConnectivityManager.SentPacketCountPerSecond}");
 				EditorGUILayout.LabelField("Delta Received", $"{NetworkConnectivityManager.ReceivedPacketBytesPerSecond:N0}\tCount: {NetworkConnectivityManager.ReceivedPacketCountPerSecond}");
 			}
+			EditorGUI.EndDisabledGroup();
 
 			GUILayout.Space(6f);
 

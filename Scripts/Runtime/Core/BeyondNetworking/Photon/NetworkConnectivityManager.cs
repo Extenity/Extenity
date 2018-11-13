@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
+using Extenity.DebugFlowTool.GraphPlotting;
 using Extenity.FlowToolbox;
 using JetBrains.Annotations;
 using Photon.Pun;
@@ -1943,23 +1944,19 @@ namespace BeyondNetworking
 
 		#region Stats - Data
 
-		public static int TotalSentPacketCount => OutgoingTrafficStats?.TotalPacketCount ?? 0;
-		public static int TotalSentPacketBytes => OutgoingTrafficStats?.TotalPacketBytes ?? 0;
-		[NonSerialized]
+		public static int TotalSentPacketCount;
+		public static int TotalSentPacketBytes;
 		public static int SentPacketBytesPerSecond;
 		public static float SentKBsPerSecond => SentPacketBytesPerSecond / 1000f;
 		private static int _TotalSentPacketBytesInPreviousMeasurement;
-		[NonSerialized]
 		public static int SentPacketCountPerSecond;
 		private static int _TotalSentPacketCountInPreviousMeasurement;
 
-		public static int TotalReceivedPacketCount => IncomingTrafficStats?.TotalPacketCount ?? 0;
-		public static int TotalReceivedPacketBytes => IncomingTrafficStats?.TotalPacketBytes ?? 0;
-		[NonSerialized]
+		public static int TotalReceivedPacketCount;
+		public static int TotalReceivedPacketBytes;
 		public static int ReceivedPacketBytesPerSecond;
 		public static float ReceivedKBsPerSecond => ReceivedPacketBytesPerSecond / 1000f;
 		private static int _TotalReceivedPacketBytesInPreviousMeasurement;
-		[NonSerialized]
 		public static int ReceivedPacketCountPerSecond;
 		private static int _TotalReceivedPacketCountInPreviousMeasurement;
 
@@ -1968,9 +1965,6 @@ namespace BeyondNetworking
 		#region Stats - Controller
 
 		public static readonly UnityEvent OnNetworkStatsRefresh = new UnityEvent();
-
-		private static TrafficStats IncomingTrafficStats;
-		private static TrafficStats OutgoingTrafficStats;
 
 		private static bool _NetworkStatisticsEnabled;
 		public static bool NetworkStatisticsEnabled
@@ -1990,8 +1984,6 @@ namespace BeyondNetworking
 
 				if (value)
 				{
-					IncomingTrafficStats = PhotonNetwork.NetworkingClient.LoadBalancingPeer.TrafficStatsIncoming;
-					OutgoingTrafficStats = PhotonNetwork.NetworkingClient.LoadBalancingPeer.TrafficStatsOutgoing;
 					Instance.FastInvokeRepeating(InternalUpdateNetworkStats, 1, 1, true);
 				}
 				else
@@ -1999,6 +1991,7 @@ namespace BeyondNetworking
 					Instance.CancelFastInvoke(InternalUpdateNetworkStats);
 				}
 
+				InternalRefreshNetworkStatsGraph();
 				OnNetworkStatsRefresh.Invoke(); // This will initialize UIs.
 
 				PhotonNetwork.NetworkStatisticsEnabled = value;
@@ -2007,36 +2000,91 @@ namespace BeyondNetworking
 
 		private static void ResetStatInternals()
 		{
+			TotalSentPacketBytes = 0;
+			TotalSentPacketCount = 0;
 			SentPacketBytesPerSecond = 0;
 			SentPacketCountPerSecond = 0;
 			_TotalSentPacketBytesInPreviousMeasurement = 0;
 			_TotalSentPacketCountInPreviousMeasurement = 0;
+			TotalReceivedPacketBytes = 0;
+			TotalReceivedPacketCount = 0;
 			ReceivedPacketBytesPerSecond = 0;
 			ReceivedPacketCountPerSecond = 0;
 			_TotalReceivedPacketBytesInPreviousMeasurement = 0;
 			_TotalReceivedPacketCountInPreviousMeasurement = 0;
-
-			IncomingTrafficStats = null;
-			OutgoingTrafficStats = null;
 		}
 
 		private static void InternalUpdateNetworkStats()
 		{
-			var TotalSentPacketBytes = OutgoingTrafficStats.TotalPacketBytes;
-			var TotalSentPacketCount = OutgoingTrafficStats.TotalPacketCount;
+			var peer = PhotonNetwork.NetworkingClient.LoadBalancingPeer;
+			var IncomingTrafficStats = peer.TrafficStatsIncoming;
+			var OutgoingTrafficStats = peer.TrafficStatsOutgoing;
+
+			TotalSentPacketBytes = OutgoingTrafficStats.TotalPacketBytes;
+			TotalSentPacketCount = OutgoingTrafficStats.TotalPacketCount;
 			SentPacketBytesPerSecond = TotalSentPacketBytes - _TotalSentPacketBytesInPreviousMeasurement;
 			_TotalSentPacketBytesInPreviousMeasurement = TotalSentPacketBytes;
 			SentPacketCountPerSecond = TotalSentPacketCount - _TotalSentPacketCountInPreviousMeasurement;
 			_TotalSentPacketCountInPreviousMeasurement = TotalSentPacketCount;
 
-			var TotalReceivedPacketBytes = IncomingTrafficStats.TotalPacketBytes;
-			var TotalReceivedPacketCount = IncomingTrafficStats.TotalPacketCount;
+			TotalReceivedPacketBytes = IncomingTrafficStats.TotalPacketBytes;
+			TotalReceivedPacketCount = IncomingTrafficStats.TotalPacketCount;
 			ReceivedPacketBytesPerSecond = TotalReceivedPacketBytes - _TotalReceivedPacketBytesInPreviousMeasurement;
 			_TotalReceivedPacketBytesInPreviousMeasurement = TotalReceivedPacketBytes;
 			ReceivedPacketCountPerSecond = TotalReceivedPacketCount - _TotalReceivedPacketCountInPreviousMeasurement;
 			_TotalReceivedPacketCountInPreviousMeasurement = TotalReceivedPacketCount;
 
+			InternalRefreshNetworkStatsGraph();
 			OnNetworkStatsRefresh.Invoke();
+		}
+
+		#endregion
+
+		#region Stats - Graph
+
+		public static bool NetworkStatisticsPlottingEnabled = false;
+
+		private static Graph NetworkStatisticsGraph;
+		private static Channel[] NetworkStatisticsGraphChannels;
+
+		private static void InternalRefreshNetworkStatsGraph()
+		{
+			var shouldDraw = NetworkStatisticsEnabled && NetworkStatisticsPlottingEnabled;
+
+			if (shouldDraw)
+			{
+				// Create if not exists.
+				if (NetworkStatisticsGraph == null)
+				{
+					Graph.SetupGraphWithXYChannels(true, ref NetworkStatisticsGraph, "Network Send/Receive Delta", Instance.gameObject,
+						new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, 0f, 0f), ref NetworkStatisticsGraphChannels,
+						true, true, "Sent", "Received", Color.red, Color.green);
+				}
+				else // Do not draw at the first call. This will probably be 0.
+				{
+					// Send values to graph
+					var time = Time.unscaledTime;
+					var frame = Time.frameCount;
+					NetworkStatisticsGraphChannels[0].Sample(SentPacketBytesPerSecond, time, frame);
+					NetworkStatisticsGraphChannels[1].Sample(ReceivedPacketBytesPerSecond, time, frame);
+				}
+			}
+			else
+			{
+				// Destroy if exists.
+				if (NetworkStatisticsGraph != null)
+				{
+					// Close channels
+					foreach (var channel in NetworkStatisticsGraphChannels)
+					{
+						channel.Close();
+					}
+					NetworkStatisticsGraphChannels = null;
+					// Close graph
+					NetworkStatisticsGraph.Close();
+					NetworkStatisticsGraph = null;
+				}
+			}
 		}
 
 		#endregion
