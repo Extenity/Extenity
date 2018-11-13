@@ -60,6 +60,8 @@ namespace BeyondNetworking
 			// TODO: Temporary solution for a Photon bug. CollectibleSpawnInfo serialization in RpcSpawnCollectibles method throws an exception when using GpBinaryV18.
 			PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = SerializationProtocol.GpBinaryV16;
 
+			PhotonNetwork.UseRpcMonoBehaviourCache = true;
+
 			InitializePhotonLogLevel();
 
 			//BackendAuthentication.OnAuthenticationCompleted.AddListener(OnAuthenticated);
