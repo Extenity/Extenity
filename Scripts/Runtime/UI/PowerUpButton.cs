@@ -119,7 +119,7 @@ namespace Extenity.UIToolbox
 
 		private float CooldownStartTime;
 		private float CooldownDuration;
-		private bool IsCooldownActive => CooldownStartTime > 0f;
+		public bool IsCooldownActive => CooldownStartTime > 0f;
 
 		private Action<PowerUpButton> CallbackOnButtonCooldownEnd;
 
