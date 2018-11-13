@@ -51,7 +51,14 @@ namespace Extenity.UIToolbox
 				LastSetCount = count;
 				if (CountText)
 				{
-					CountText.SetCharArrayForInt(count);
+					if (count >= 0)
+					{
+						CountText.SetCharArrayForInt(count);
+					}
+					else
+					{
+						CountText.text = "";
+					}
 				}
 			}
 			RefreshInteractable();
