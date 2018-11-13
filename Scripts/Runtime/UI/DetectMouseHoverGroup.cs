@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 #if PLAYMAKER
@@ -33,7 +34,7 @@ namespace Extenity.UIToolbox
 				if (!wasInside)
 				{
 					Log("---- Mouse enter");
-					OnMouseEnter.Invoke();
+					OnHoverEnter.Invoke();
 
 #if PLAYMAKER
 					GetLastPointerDataInfo.lastPointeEventData = null;
@@ -43,7 +44,7 @@ namespace Extenity.UIToolbox
 				else
 				{
 					Log("---- Mouse stay");
-					OnMouseStay.Invoke();
+					OnHoverStay.Invoke();
 				}
 			}
 			else
@@ -51,7 +52,7 @@ namespace Extenity.UIToolbox
 				if (wasInside)
 				{
 					Log("---- Mouse exit");
-					OnMouseExit.Invoke();
+					OnHoverExit.Invoke();
 
 #if PLAYMAKER
 					GetLastPointerDataInfo.lastPointeEventData = null;
@@ -86,9 +87,12 @@ namespace Extenity.UIToolbox
 
 		#region Events
 
-		public UnityEvent OnMouseEnter;
-		public UnityEvent OnMouseStay;
-		public UnityEvent OnMouseExit;
+		[NonSerialized]
+		public UnityEvent OnHoverEnter;
+		[NonSerialized]
+		public UnityEvent OnHoverStay;
+		[NonSerialized]
+		public UnityEvent OnHoverExit;
 
 		#endregion
 
