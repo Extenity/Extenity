@@ -83,7 +83,7 @@ namespace Extenity.UIToolbox
 			OnClicked.Invoke(this);
 		}
 
-		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration, string powerUpUsedSoundOverride = null)
+		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration, Action<PowerUpButton> onButtonCooldownEnd = null, string powerUpUsedSoundOverride = null)
 		{
 			var sound = string.IsNullOrEmpty(powerUpUsedSoundOverride) ? PowerUpUsedSound : powerUpUsedSoundOverride;
 
@@ -96,7 +96,7 @@ namespace Extenity.UIToolbox
 				AudioManager.Play(sound);
 			}
 
-			StartCooldown(cooldownDuration);
+			StartCooldown(cooldownDuration, onButtonCooldownEnd);
 		}
 
 		public void InformClickFailed(Transform soundEffectParent, string powerUpFailedSoundOverride = null)
@@ -121,12 +121,14 @@ namespace Extenity.UIToolbox
 		private float CooldownDuration;
 		private bool IsCooldownActive => CooldownStartTime > 0f;
 
+		private Action<PowerUpButton> CallbackOnButtonCooldownEnd;
+
 		public void ResetCooldown()
 		{
-			StartCooldown(0f);
+			StartCooldown(0f, null);
 		}
 
-		public void StartCooldown(float duration)
+		public void StartCooldown(float duration, Action<PowerUpButton> onButtonCooldownEnd)
 		{
 			this.CancelFastInvoke(EndCooldown);
 			this.CancelFastInvoke(RefreshCooldown);
@@ -135,6 +137,7 @@ namespace Extenity.UIToolbox
 			if (duration > 0f)
 			{
 				CooldownStartTime = Time.time;
+				CallbackOnButtonCooldownEnd = onButtonCooldownEnd;
 				this.FastInvoke(EndCooldown, duration);
 				this.FastInvokeRepeating(RefreshCooldown, CooldownRefreshInterval, CooldownRefreshInterval, false);
 				RefreshCooldown();
@@ -153,6 +156,12 @@ namespace Extenity.UIToolbox
 			this.CancelFastInvoke(RefreshCooldown);
 			RefreshInteractable();
 			CooldownFader.FadeOut();
+
+			if (CallbackOnButtonCooldownEnd != null)
+			{
+				CallbackOnButtonCooldownEnd(this);
+				CallbackOnButtonCooldownEnd = null;
+			}
 		}
 
 		private void RefreshCooldown()
