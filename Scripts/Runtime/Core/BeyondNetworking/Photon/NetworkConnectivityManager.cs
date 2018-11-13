@@ -64,6 +64,9 @@ namespace BeyondNetworking
 
 			InitializePhotonLogLevel();
 
+			//NetworkStatisticsEnabled = true;
+			//NetworkStatisticsPlottingEnabled = true;
+
 			//BackendAuthentication.OnAuthenticationCompleted.AddListener(OnAuthenticated);
 			//if (BackendAuthentication.IsAuthenticated)
 			//	OnAuthenticated();
