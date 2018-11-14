@@ -28,24 +28,44 @@ namespace Extenity.MessagingToolbox
 
 		#region ToString
 
-		public static string FullNameOfTarget(this Delegate del)
+		public static string FullNameOfTarget(this Delegate del, char separator = '/')
 		{
-			if (del == null)
-				return "[NA]";
-			var asComponent = del.Target as Component;
-			if (asComponent)
+			return FullNameOfTarget(del, 10000, separator);
+		}
+
+		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels, char separator = '/')
+		{
+			if (del != null)
 			{
-				return asComponent.FullName();
+				var asComponent = del.Target as Component;
+				if (asComponent)
+				{
+					return asComponent.FullName(maxHierarchyLevels, separator);
+				}
+				var asGameObject = del.Target as GameObject;
+				if (asGameObject)
+				{
+					return asGameObject.FullName(maxHierarchyLevels, separator);
+				}
+				var asObject = del.Target as Object;
+				if (asObject)
+				{
+					return asObject.ToString();
+				}
 			}
-			var asGameObject = del.Target as GameObject;
-			if (asGameObject)
+			return "[NA]";
+		}
+
+		public static string FullNameOfTargetAndMethod(this Delegate del, char separator = '/', string methodAndTargetSeparator = " in ")
+		{
+			return FullNameOfTargetAndMethod(del, 10000, separator, methodAndTargetSeparator);
+		}
+
+		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels, char separator = '/', string methodAndTargetSeparator = " in ")
+		{
+			if (del != null)
 			{
-				return asGameObject.FullName();
-			}
-			var asObject = del.Target as Object;
-			if (asObject)
-			{
-				return asObject.ToString();
+				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels, separator);
 			}
 			return "[NA]";
 		}
