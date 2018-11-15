@@ -62,10 +62,10 @@ namespace BeyondNetworking
 
 			PhotonNetwork.UseRpcMonoBehaviourCache = true;
 
-			InitializePhotonLogLevel();
-
-			//NetworkStatisticsEnabled = true;
-			//NetworkStatisticsPlottingEnabled = true;
+			if (EnableNetworkStatisticsAtStart)
+				NetworkStatisticsEnabled = true;
+			if (EnableNetworkStatisticsGraphPlottingAtStart)
+				NetworkStatisticsPlottingEnabled = true;
 
 			//BackendAuthentication.OnAuthenticationCompleted.AddListener(OnAuthenticated);
 			//if (BackendAuthentication.IsAuthenticated)
@@ -1969,6 +1969,10 @@ namespace BeyondNetworking
 
 		#region Stats - Controller
 
+		[Header("Stats")]
+		public bool EnableNetworkStatisticsAtStart = false;
+		public bool EnableNetworkStatisticsGraphPlottingAtStart = false;
+
 		public static readonly UnityEvent OnNetworkStatsRefresh = new UnityEvent();
 
 		private static bool _NetworkStatisticsEnabled;
@@ -2133,30 +2137,6 @@ namespace BeyondNetworking
 
 			_GameVersion = value;
 			PhotonNetwork.GameVersion = GameVersion;
-		}
-
-		#endregion
-
-		#region Photon Log Level
-
-		[Header("Logging")]
-		[SerializeField]
-		private PunLogLevel _PhotonLogLevel = PunLogLevel.Informational;
-
-		//[Inspect]
-		public PunLogLevel PhotonLogLevel
-		{
-			get { return _PhotonLogLevel; }
-			set
-			{
-				LogVerbose("Photon log level changed to " + value, CurrentSession);
-				PhotonNetwork.LogLevel = _PhotonLogLevel = value;
-			}
-		}
-
-		private void InitializePhotonLogLevel()
-		{
-			PhotonNetwork.LogLevel = _PhotonLogLevel;
 		}
 
 		#endregion
