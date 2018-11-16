@@ -11,6 +11,11 @@ using Object = UnityEngine.Object;
 namespace Extenity.DebugToolbox
 {
 
+	// TODO: Keeping a list of all active and erroneous Trackers. Successfully finalized Trackers should be removed from the list.
+	// TODO: Editor UI.
+
+	#region Initialization Step
+
 	public enum InitializationStepType : byte
 	{
 		ObjectInstantiation,
@@ -71,6 +76,8 @@ namespace Extenity.DebugToolbox
 			return StepType + " of " + context;
 		}
 	}
+
+	#endregion
 
 	/// <summary>
 	/// Tells if a system's initialization process completed as expected or not, by tracking object instantiation order
