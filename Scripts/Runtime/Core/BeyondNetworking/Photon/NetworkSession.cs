@@ -27,6 +27,8 @@ namespace BeyondNetworking
 		public class NetworkStateEvent : UnityEvent<NetworkState> { }
 		public readonly NetworkStateEvent OnNetworkStateChanged = new NetworkStateEvent();
 
+		public readonly UnityEvent OnDisconnected = new UnityEvent();
+
 		public class FinishEvent : UnityEvent<bool> { }
 		public readonly FinishEvent OnFinished = new FinishEvent();
 

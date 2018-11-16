@@ -295,6 +295,10 @@ namespace BeyondNetworking
 
 				OnNetworkStateChanged.Invoke(newState);
 				session.OnNetworkStateChanged.Invoke(newState);
+				if (newState == NetworkState.NotConnected)
+				{
+					session.OnDisconnected.Invoke();
+				}
 			}
 		}
 
