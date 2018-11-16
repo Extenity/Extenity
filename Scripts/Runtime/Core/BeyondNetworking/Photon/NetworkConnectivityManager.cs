@@ -45,7 +45,8 @@ namespace BeyondNetworking
 			}
 		}
 
-		public static bool IsInstanceAvailable { get { return _Instance; } }
+		private static bool IsInstanceAvailable { get { return _Instance; } }
+		private static bool _WasInstantiatedBefore;
 
 		#endregion
 
@@ -56,6 +57,16 @@ namespace BeyondNetworking
 			if (_Instance)
 				throw new Exception("Internal error 922817!");
 			_Instance = this;
+			if (_WasInstantiatedBefore)
+			{
+				// Instantiating NetworkConnectivityManager the second time will probably cause errors.
+				// Because there are static fields in this class which should be reset properly.
+				// Also when destroyed, the underlying networking system should be put in a proper state.
+				// If you absolutely need to destroy it and create it again, then make sure it works
+				// flawlessly before proceeding any further. Then remove this error log.
+				LogError("Internal error 1784111!", null);
+			}
+			_WasInstantiatedBefore = true;
 
 			// TODO: Temporary solution for a Photon bug. CollectibleSpawnInfo serialization in RpcSpawnCollectibles method throws an exception when using GpBinaryV18.
 			PhotonNetwork.NetworkingClient.LoadBalancingPeer.SerializationProtocolType = SerializationProtocol.GpBinaryV16;
@@ -72,10 +83,10 @@ namespace BeyondNetworking
 			//	OnAuthenticated();
 		}
 
-		public override void OnEnable()
-		{
-			base.OnEnable();
-		}
+		//public override void OnEnable()
+		//{
+		//	base.OnEnable();
+		//}
 
 		//private void OnAuthenticated()
 		//{
@@ -93,10 +104,10 @@ namespace BeyondNetworking
 
 		private static bool IsQuitting;
 
-		public override void OnDisable()
-		{
-			base.OnDisable();
-		}
+		//public override void OnDisable()
+		//{
+		//	base.OnDisable();
+		//}
 
 		protected void OnApplicationQuit()
 		{
@@ -567,6 +578,8 @@ namespace BeyondNetworking
 		{
 			if (string.IsNullOrEmpty(_GameVersion))
 				throw new Exception("Internal error 7581051!"); // SetVersion must be called before any operation.
+			if (session == null)
+				throw new ArgumentNullException(nameof(session));
 
 			// Cancel the ongoing process immediately as this method called. This must be the first line.
 			if (IsCurrentlyProcessing)
