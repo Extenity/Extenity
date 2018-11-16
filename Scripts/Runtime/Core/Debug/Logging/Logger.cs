@@ -409,6 +409,42 @@ namespace Extenity.DebugToolbox
 
 		#endregion
 
+		#region Log Extension
+
+		/// <summary>
+		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void LogCriticalError(string message)
+		{
+			Debug.LogException(new Exception(message));
+		}
+
+		/// <summary>
+		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void LogCriticalError(string message, Exception innerException)
+		{
+			Debug.LogException(new Exception(message, innerException));
+		}
+
+		/// <summary>
+		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void LogCriticalError(string message, Object context)
+		{
+			Debug.LogException(new Exception(message), context);
+		}
+
+		/// <summary>
+		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void LogCriticalError(string message, Object context, Exception innerException)
+		{
+			Debug.LogException(new Exception(message, innerException), context);
+		}
+
+		#endregion
+
 		#region Log Tools - Methods
 
 		public static void LogCurrentMethodNotImplemented()
