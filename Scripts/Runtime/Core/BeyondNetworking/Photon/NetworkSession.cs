@@ -1,3 +1,4 @@
+using Extenity.DebugToolbox;
 using UnityEngine.Events;
 
 namespace BeyondNetworking
@@ -19,6 +20,29 @@ namespace BeyondNetworking
 		/// Set at the start of desired mode process and lives until the desired mode process is completed.
 		/// </summary>
 		public ProcessController Controller;
+
+		#endregion
+
+		#region Initialization Tracker
+
+		private InitializationTracker _InitializationTracker;
+		public InitializationTracker InitializationTracker
+		{
+			get { return _InitializationTracker; }
+			set
+			{
+				_InitializationTracker = value;
+				SetToCancelInitializationTrackerOnDisconnect();
+			}
+		}
+
+		private void SetToCancelInitializationTrackerOnDisconnect()
+		{
+			if (InitializationTracker != null)
+			{
+				OnDisconnected.AddListener(InitializationTracker.CancelIfNotFinalized);
+			}
+		}
 
 		#endregion
 

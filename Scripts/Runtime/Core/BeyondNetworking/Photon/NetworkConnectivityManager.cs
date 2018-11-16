@@ -353,21 +353,21 @@ namespace BeyondNetworking
 		#region Process
 
 		//[Inspect, ReadOnly]
-		private bool IsCurrentlyProcessing { get { return CurrentSession != null && CurrentSession.Controller != null; } }
+		public static bool IsCurrentlyProcessing { get { return CurrentSession != null && CurrentSession.Controller != null; } }
 
 		/// <summary>
 		/// A process requires currently ongoing process to be cancelled first before getting started.
 		/// While waiting for ongoing process to be finished, this process will be kept in a pending state.
-		/// 'PendingProcessController' field keeps track of currently pending process, so that a secondly
-		/// launched pending process may cancel both the ongoing process and the previously pending process.
+		/// 'PendingSession' field keeps track of currently pending process, so that a secondly launched
+		/// pending process may cancel both the ongoing process and the previously pending process.
 		/// </summary>
-		private NetworkSession PendingSession;
+		public static NetworkSession PendingSession { get; private set; }
 		/// <summary>
 		/// Set at the start of desired mode process and lives until the desired mode is terminated,
 		/// i.e disconnecting from server or changing to another desired mode.
 		/// See also 'ProcessController' which lives until the desired mode process is completed.
 		/// </summary>
-		private NetworkSession CurrentSession;
+		public static NetworkSession CurrentSession { get; private set; }
 
 		//[Inspect, ReadOnly]
 		private List<string> AllProcessSteps = new List<string>(20);
