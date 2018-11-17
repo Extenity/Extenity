@@ -66,9 +66,9 @@ namespace Extenity.DebugToolbox
 				if (!string.IsNullOrEmpty(EndText))
 				{
 					if (Context == null)
-						Log(EndText);
+						Info(EndText);
 					else
-						Log(EndText, Context);
+						Info(EndText, Context);
 				}
 			}
 		}
@@ -82,36 +82,18 @@ namespace Extenity.DebugToolbox
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
-				Log(startText);
+				Info(startText);
 			}
 			return new IndentationHandler(null, endText);
-		}
-
-		public static IDisposable IndentFormat(string startText, params object[] startTextArgs)
-		{
-			if (!string.IsNullOrEmpty(startText))
-			{
-				LogFormat(startText, startTextArgs);
-			}
-			return new IndentationHandler();
 		}
 
 		public static IDisposable Indent(Object context, string startText, string endText = null)
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
-				Log(startText, context);
+				Info(startText, context);
 			}
 			return new IndentationHandler(context, endText);
-		}
-
-		public static IDisposable IndentFormat(Object context, string startText, params object[] startTextArgs)
-		{
-			if (!string.IsNullOrEmpty(startText))
-			{
-				LogFormat(context, startText, startTextArgs);
-			}
-			return new IndentationHandler();
 		}
 
 		#endregion
@@ -227,82 +209,84 @@ namespace Extenity.DebugToolbox
 
 		#region Log
 
-		public static void Log(object message)
+		public static void Info(object message)
 		{
 			Debug.Log(CreateMessage(message), null);
 		}
 
-		public static void Log(object message, Object context)
+		public static void Info(object message, Object context)
 		{
 			Debug.Log(CreateMessage(message, context), context);
 		}
 
-		public static void LogFormat(string format, params object[] args)
-		{
-			Debug.Log(CreateMessage(string.Format(format, args)), null);
-		}
-
-		public static void LogFormat(Object context, string format, params object[] args)
-		{
-			Debug.Log(CreateMessage(string.Format(format, args), context), context);
-		}
-
-		public static void LogWarning(object message)
+		public static void Warning(object message)
 		{
 			Debug.LogWarning(CreateMessage(message), null);
 		}
 
-		public static void LogWarning(object message, Object context)
+		public static void Warning(object message, Object context)
 		{
 			Debug.LogWarning(CreateMessage(message, context), context);
 		}
 
-		public static void LogWarningFormat(string format, params object[] args)
-		{
-			Debug.LogWarning(CreateMessage(string.Format(format, args)), null);
-		}
-
-		public static void LogWarningFormat(Object context, string format, params object[] args)
-		{
-			Debug.LogWarning(CreateMessage(string.Format(format, args), context), context);
-		}
-
-		public static void LogError(object message)
+		public static void Error(object message)
 		{
 			Debug.LogError(CreateMessage(message), null);
 		}
 
-		public static void LogError(object message, Object context)
+		public static void Error(object message, Object context)
 		{
 			Debug.LogError(CreateMessage(message, context), context);
 		}
 
-		public static void LogErrorFormat(string format, params object[] args)
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void CriticalError(string message)
 		{
-			Debug.LogError(CreateMessage(string.Format(format, args)), null);
+			Debug.LogException(new Exception(message));
 		}
 
-		public static void LogErrorFormat(Object context, string format, params object[] args)
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void CriticalError(string message, Exception innerException)
 		{
-			Debug.LogError(CreateMessage(string.Format(format, args), context), context);
+			Debug.LogException(new Exception(message, innerException));
 		}
 
-		public static void LogException(Exception exception)
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void CriticalError(string message, Object context)
+		{
+			Debug.LogException(new Exception(message), context);
+		}
+
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		public static void CriticalError(string message, Object context, Exception innerException)
+		{
+			Debug.LogException(new Exception(message, innerException), context);
+		}
+
+		public static void Exception(Exception exception)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
 		}
 
-		public static void LogException(Exception exception, Object context)
+		public static void Exception(Exception exception, Object context)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
 		}
 
-		public static void LogExceptionDetailed(this Exception exception)
+		public static void ExceptionDetailed(this Exception exception)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception), null);
 		}
 
-		public static void LogExceptionDetailed(this Exception exception, Object context)
+		public static void ExceptionDetailed(this Exception exception, Object context)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
 		}
@@ -312,170 +296,98 @@ namespace Extenity.DebugToolbox
 		#region Debug Log
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLog(object message)
+		public static void DebugInfo(object message)
 		{
 			Debug.Log(CreateMessage(message), null);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLog(object message, Object context)
+		public static void DebugInfo(object message, Object context)
 		{
 			Debug.Log(CreateMessage(message, context), context);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogFormat(string format, params object[] args)
-		{
-			Debug.Log(CreateMessage(string.Format(format, args)), null);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogFormat(Object context, string format, params object[] args)
-		{
-			Debug.Log(CreateMessage(string.Format(format, args), context), context);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogWarning(object message)
+		public static void DebugWarning(object message)
 		{
 			Debug.LogWarning(CreateMessage(message), null);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogWarning(object message, Object context)
+		public static void DebugWarning(object message, Object context)
 		{
 			Debug.LogWarning(CreateMessage(message, context), context);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogWarningFormat(string format, params object[] args)
-		{
-			Debug.LogWarning(CreateMessage(string.Format(format, args)), null);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogWarningFormat(Object context, string format, params object[] args)
-		{
-			Debug.LogWarning(CreateMessage(string.Format(format, args), context), context);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogError(object message)
+		public static void DebugError(object message)
 		{
 			Debug.LogError(CreateMessage(message), null);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogError(object message, Object context)
+		public static void DebugError(object message, Object context)
 		{
 			Debug.LogError(CreateMessage(message, context), context);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogErrorFormat(string format, params object[] args)
-		{
-			Debug.LogError(CreateMessage(string.Format(format, args)), null);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogErrorFormat(Object context, string format, params object[] args)
-		{
-			Debug.LogError(CreateMessage(string.Format(format, args), context), context);
-		}
-
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogException(Exception exception)
+		public static void DebugException(Exception exception)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogException(Exception exception, Object context)
+		public static void DebugException(Exception exception, Object context)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogExceptionDetailed(this Exception exception)
+		public static void DebugExceptionDetailed(this Exception exception)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception), null);
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		public static void DebugLogExceptionDetailed(this Exception exception, Object context)
+		public static void DebugExceptionDetailed(this Exception exception, Object context)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
 		}
 
 		#endregion
 
-		#region Log Extension
-
-		/// <summary>
-		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		public static void LogCriticalError(string message)
-		{
-			Debug.LogException(new Exception(message));
-		}
-
-		/// <summary>
-		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		public static void LogCriticalError(string message, Exception innerException)
-		{
-			Debug.LogException(new Exception(message, innerException));
-		}
-
-		/// <summary>
-		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		public static void LogCriticalError(string message, Object context)
-		{
-			Debug.LogException(new Exception(message), context);
-		}
-
-		/// <summary>
-		/// Send error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		public static void LogCriticalError(string message, Object context, Exception innerException)
-		{
-			Debug.LogException(new Exception(message, innerException), context);
-		}
-
-		#endregion
-
 		#region Log Tools - Methods
 
-		public static void LogCurrentMethodNotImplemented()
+		public static void CurrentMethodNotImplemented()
 		{
-			LogError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
+			Error("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 		}
 
-		public static void LogCurrentMethod(string additionalText = null)
+		public static void CurrentMethod(string additionalText = null)
 		{
-			Log(string.IsNullOrEmpty(additionalText) ?
+			Info(string.IsNullOrEmpty(additionalText) ?
 				DebugReflection.PreviousMethodNameWithType :
 				DebugReflection.PreviousMethodNameWithType + " : " + additionalText);
 		}
 
-		public static void LogPreviousMethod(string additionalText = null)
+		public static void PreviousMethod(string additionalText = null)
 		{
-			Log(string.IsNullOrEmpty(additionalText) ?
+			Info(string.IsNullOrEmpty(additionalText) ?
 				DebugReflection.PrePreviousMethodNameWithType :
 				DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText);
 		}
 
-		public static void LogCurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
+		public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 		{
-			Log(string.IsNullOrEmpty(additionalText) ?
+			Info(string.IsNullOrEmpty(additionalText) ?
 				DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ")" :
 				DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ") : " + additionalText);
 		}
 
-		public static void LogPreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
+		public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 		{
-			Log(string.IsNullOrEmpty(additionalText) ?
+			Info(string.IsNullOrEmpty(additionalText) ?
 				DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ")" :
 				DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ") : " + additionalText);
 		}
@@ -484,7 +396,7 @@ namespace Extenity.DebugToolbox
 
 		#region Log Tools - Stack Trace
 
-		public static void LogStackTrace(string headerMessage, Object context = null)
+		public static void StackTrace(string headerMessage, Object context = null)
 		{
 			using (Indent(context, headerMessage))
 			{
@@ -495,7 +407,7 @@ namespace Extenity.DebugToolbox
 					MethodBase method = frames[i].GetMethod();
 
 					var reflectedTypeName = method.ReflectedType != null ? method.ReflectedType.Name : string.Empty;
-					Log(reflectedTypeName + "::" + method.Name, context);
+					Info(reflectedTypeName + "::" + method.Name, context);
 				}
 			}
 		}
@@ -511,26 +423,26 @@ namespace Extenity.DebugToolbox
 		{
 			if (obj == null)
 			{
-				Logger.Log("Object is null.");
+				Logger.Info("Object is null.");
 				return;
 			}
 
 			if (!string.IsNullOrEmpty(prefix))
 				prefix += ": ";
-			Logger.Log(prefix + obj.ToString());
+			Logger.Info(prefix + obj.ToString());
 		}
 
 		public static void LogSimple<T>(this T obj, UnityEngine.Object context, string prefix = "")
 		{
 			if (obj == null)
 			{
-				Logger.Log("Object is null.");
+				Logger.Info("Object is null.");
 				return;
 			}
 
 			if (!string.IsNullOrEmpty(prefix))
 				prefix += ": ";
-			Logger.Log(prefix + obj.ToString(), context);
+			Logger.Info(prefix + obj.ToString(), context);
 		}
 
 		#endregion
@@ -546,7 +458,7 @@ namespace Extenity.DebugToolbox
 				prefix += ": ";
 			var body = (MemberExpression)expression.Body;
 			var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-			Logger.Log(prefix + body.Member.Name + ": '" + value + "'");
+			Logger.Info(prefix + body.Member.Name + ": '" + value + "'");
 		}
 
 		/// <summary>
@@ -558,7 +470,7 @@ namespace Extenity.DebugToolbox
 				prefix += ": ";
 			var body = (MemberExpression)expression.Body;
 			var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-			Logger.Log(prefix + body.Member.Name + ": '" + value + "'", context);
+			Logger.Info(prefix + body.Member.Name + ": '" + value + "'", context);
 		}
 
 		#endregion
@@ -637,7 +549,7 @@ namespace Extenity.DebugToolbox
 		{
 			if (dictionary == null)
 			{
-				Logger.Log("Dictionary is null.");
+				Logger.Info("Dictionary is null.");
 				return;
 			}
 
@@ -648,7 +560,7 @@ namespace Extenity.DebugToolbox
 				var line = (item.Key == null ? "Null" : item.Key.ToString()) + ": '" + (item.Value == null ? "Null" : item.Value.ToString()) + "'";
 				if (inSeparateLogCalls)
 				{
-					Logger.Log(line);
+					Logger.Info(line);
 				}
 				else
 				{
@@ -658,7 +570,7 @@ namespace Extenity.DebugToolbox
 
 			if (!inSeparateLogCalls)
 			{
-				Logger.Log(text.ToString());
+				Logger.Info(text.ToString());
 			}
 		}
 
