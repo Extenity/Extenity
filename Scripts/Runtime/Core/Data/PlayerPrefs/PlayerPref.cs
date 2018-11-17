@@ -67,21 +67,21 @@ namespace Extenity.DataToolbox
 						if (_DefaultValueOverride != null)
 						{
 							_Value = _DefaultValueOverride(this);
-							Log($"Initialized value from override as '{_Value}'");
+							LogInfo($"Initialized value from override as '{_Value}'");
 						}
 						else
 						{
 							// Default value was already assigned to _Value at construction time. Nothing to do here.
-							Log($"Initialized value as default '{_Value}'");
+							LogInfo($"Initialized value as default '{_Value}'");
 						}
 					}
 					else
 					{
 						_Value = InternalGetValue();
-						Log($"Initialized value as '{_Value}'");
+						LogInfo($"Initialized value as '{_Value}'");
 					}
 				}
-				Log($"Got the value '{_Value}'");
+				LogInfo($"Got the value '{_Value}'");
 				return _Value;
 			}
 			set
@@ -89,13 +89,13 @@ namespace Extenity.DataToolbox
 				if (_IsInitialized)
 				{
 					var oldValue = Value; // This must be called before setting _IsInitialized to true;
-					Log($"Setting value to '{value}' which previously was '{oldValue}'");
+					LogInfo($"Setting value to '{value}' which previously was '{oldValue}'");
 					if (IsSame(oldValue, value))
 						return;
 				}
 				else
 				{
-					Log($"Setting value to '{value}' <b>as initialization</b>");
+					LogInfo($"Setting value to '{value}' <b>as initialization</b>");
 					_IsInitialized = true;
 				}
 
@@ -104,7 +104,7 @@ namespace Extenity.DataToolbox
 
 				if (SaveDelay > 0f)
 				{
-					Log($"Saving deferred for '{SaveDelay}' seconds");
+					LogInfo($"Saving deferred for '{SaveDelay}' seconds");
 					DeferredSave(SaveDelay);
 				}
 				else
@@ -114,7 +114,7 @@ namespace Extenity.DataToolbox
 
 				if (_DontEmitNextValueChangedEvent)
 				{
-					Log("Skipping value change event");
+					LogInfo("Skipping value change event");
 					_DontEmitNextValueChangedEvent = false;
 				}
 				else
@@ -142,13 +142,13 @@ namespace Extenity.DataToolbox
 
 		public void InvokeValueChanged()
 		{
-			Log("Invoking value change event");
+			LogInfo("Invoking value change event");
 			OnValueChanged.Invoke(Value);
 		}
 
 		public void SuppressNextValueChangedEvent()
 		{
-			Log("Suppressing next value change event");
+			LogInfo("Suppressing next value change event");
 			_DontEmitNextValueChangedEvent = true;
 		}
 
@@ -196,7 +196,7 @@ namespace Extenity.DataToolbox
 #endif
 
 		[Conditional("EnablePlayerPrefLogging")]
-		private void Log(string message)
+		private void LogInfo(string message)
 		{
 #if EnablePlayerPrefLogging
 			Debug.Log(LogPrefix + message);

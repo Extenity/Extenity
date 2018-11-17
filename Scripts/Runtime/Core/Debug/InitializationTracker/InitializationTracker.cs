@@ -295,7 +295,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformObjectInstantiation)} called with component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"(LOGONLY) {nameof(InformObjectInstantiation)} called with component '{component}'.");
+			LogInfo($"(LOGONLY) {nameof(InformObjectInstantiation)} called with component '{component}'.");
 		}
 
 		/// <summary>
@@ -310,7 +310,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(FINALIZED) {nameof(InformObjectInstantiation)} called with component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
+			LogInfo($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
 			if (!component)
 				throw new ArgumentNullException(nameof(component));
 			var type = component.GetType();
@@ -350,7 +350,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"(LOGONLY) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
+			LogInfo($"(LOGONLY) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 		}
 
 		/// <summary>
@@ -372,7 +372,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(FINALIZED) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"{nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
+			LogInfo($"{nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 			if (string.IsNullOrEmpty(methodName))
 				throw new ArgumentNullException(nameof(methodName));
 
@@ -415,7 +415,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"(LOGONLY) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
+			LogInfo($"(LOGONLY) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 		}
 
 		/// <summary>
@@ -430,7 +430,7 @@ namespace Extenity.DebugToolbox
 				LogVerbose($"(FINALIZED) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			Log($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
+			LogInfo($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 			if (string.IsNullOrEmpty(checkpointName))
 				throw new ArgumentNullException(nameof(checkpointName));
 
@@ -463,7 +463,7 @@ namespace Extenity.DebugToolbox
 		#region Log
 
 		[Conditional("InitializationTrackerLogging")]
-		private static void Log(string message)
+		private static void LogInfo(string message)
 		{
 			Debug.Log("|InitTrack|" + message);
 		}

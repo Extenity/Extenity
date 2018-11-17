@@ -323,7 +323,7 @@ namespace Extenity.BeyondAudio
 
 		private void AddToReleaseTracker(GameObject audioSource)
 		{
-			Log("#= Release tracker is not implemented yet!");
+			LogInfo("#= Release tracker is not implemented yet!");
 			//var clip = audioSource.clip;
 			//var duration = clip.length / audioSource.pitch;
 			//ReleaseTracker.Add(new ReleaseTrackerEntry(CurrentTime + duration, audioSource));
@@ -369,7 +369,7 @@ namespace Extenity.BeyondAudio
 				return;
 			}
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}'.");
+				LogInfo($"Playing '{eventName}'.");
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
@@ -385,7 +385,7 @@ namespace Extenity.BeyondAudio
 				return;
 			}
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}' on object '{associatedObject.FullName()}'.");
+				LogInfo($"Playing '{eventName}' on object '{associatedObject.FullName()}'.");
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(associatedObject, associatedObject.transform);
 			AkSoundEngine.PostEvent(eventName, associatedObject);
@@ -403,7 +403,7 @@ namespace Extenity.BeyondAudio
 				return null;
 			}
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}' at position '{worldPosition}'.");
+				LogInfo($"Playing '{eventName}' at position '{worldPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
@@ -427,7 +427,7 @@ namespace Extenity.BeyondAudio
 				return null;
 			}
 			if (instance.EnableLogging)
-				Log($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
+				LogInfo($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
@@ -481,7 +481,7 @@ namespace Extenity.BeyondAudio
 				return;
 			}
 			if (instance.EnableLogging)
-				Log($"Playing music '{eventName}'.");
+				LogInfo($"Playing music '{eventName}'.");
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
@@ -491,7 +491,7 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				Log($"Setting music state '{state}' of group '{stateGroup}'.");
+				LogInfo($"Setting music state '{state}' of group '{stateGroup}'.");
 			AkSoundEngine.SetState(stateGroup, state);
 		}
 
@@ -660,7 +660,7 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				Log($"Setting state '{state}' of group '{stateGroup}'.");
+				LogInfo($"Setting state '{state}' of group '{stateGroup}'.");
 			AkSoundEngine.SetState(stateGroup, state);
 		}
 
@@ -677,7 +677,7 @@ namespace Extenity.BeyondAudio
 		/// <summary>
 		/// Check for 'EnableLogging' before each Log call to prevent unnecessary string creation.
 		/// </summary>
-		private static void Log(string message)
+		private static void LogInfo(string message)
 		{
 			// This must be checked before each Log call manually.
 			//if (!EnableLogging)

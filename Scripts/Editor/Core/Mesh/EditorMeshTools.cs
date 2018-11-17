@@ -49,7 +49,7 @@ namespace Extenity.MeshToolbox
 
 		#region Tools
 
-		public void Log()
+		public void LogDetails()
 		{
 			var stringBuilder = new StringBuilder();
 

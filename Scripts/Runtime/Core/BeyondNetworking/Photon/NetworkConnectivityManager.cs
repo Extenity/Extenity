@@ -146,7 +146,7 @@ namespace BeyondNetworking
 				if (Input.GetKeyDown((KeyCode)i))
 				{
 					var count = i - (int)KeyCode.Alpha0;
-					Log($"<b>DEBUG | Setting command repeats to '{count}'</b>", session);
+					LogInfo($"<b>DEBUG | Setting command repeats to '{count}'</b>", session);
 					CommandRepeats = count;
 				}
 			}
@@ -154,25 +154,25 @@ namespace BeyondNetworking
 			// Switch DesiredMode - Menu related
 			if (Input.GetKeyDown(KeyCode.F1))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToOfflineMenu</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToOfflineMenu</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOfflineMenu(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F2))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToOnlineMenu</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToOnlineMenu</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOnlineMenu(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F3))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToGameFinder with default lobby</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToGameFinder with default lobby</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToGameFinder(new DefaultNetworkSession(), new GameFinderConfiguration { Lobby = TypedLobby.Default });
 			}
 			if (Input.GetKeyDown(KeyCode.F4))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToGameFinder with custom lobby</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToGameFinder with custom lobby</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToGameFinder(new DefaultNetworkSession(), new GameFinderConfiguration { Lobby = new TypedLobby("TestLobby", LobbyType.Default) });
 			}
@@ -180,31 +180,31 @@ namespace BeyondNetworking
 			// Switch DesiredMode - Game related
 			if (Input.GetKeyDown(KeyCode.F5))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToOfflineSession</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToOfflineSession</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOfflineSession(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F6))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToSinglePlayerSession</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToSinglePlayerSession</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToSinglePlayerSession(new DefaultNetworkSession(), new SinglePlayerConfiguration { Lobby = TypedLobby.Default });
 			}
 			if (Input.GetKeyDown(KeyCode.F7))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToHostSession</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToHostSession</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToHostSession(new DefaultNetworkSession(), new HostConfiguration { RoomName = "TestRoom" });
 			}
 			if (Input.GetKeyDown(KeyCode.F8))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToJoinSession</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToJoinSession</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 			}
 			if (Input.GetKeyDown(KeyCode.F9))
 			{
-				Log("<b>DEBUG | Calling SetDesiredModeToRandomJoinSession</b>", session);
+				LogInfo("<b>DEBUG | Calling SetDesiredModeToRandomJoinSession</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToRandomJoinSession(new DefaultNetworkSession(), new RandomJoinConfiguration { MatchingType = MatchmakingMode.FillRoom });
 			}
@@ -219,7 +219,7 @@ namespace BeyondNetworking
 
 			if (Input.GetKeyDown(KeyCode.F10))
 			{
-				Log("<b>DEBUG | Testing pending process discard mechanism</b>", session);
+				LogInfo("<b>DEBUG | Testing pending process discard mechanism</b>", session);
 				SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 				SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 				SetDesiredModeToHostSession(new DefaultNetworkSession(), new HostConfiguration { RoomName = "TestRoom" });
@@ -229,7 +229,7 @@ namespace BeyondNetworking
 
 			if (Input.GetKeyDown(KeyCode.F11))
 			{
-				Log("<b>DEBUG | Restarting desired mode</b>", session);
+				LogInfo("<b>DEBUG | Restarting desired mode</b>", session);
 				for (int i = 0; i < CommandRepeats; i++)
 					RestartDesiredMode(new DefaultNetworkSession());
 			}
@@ -262,7 +262,7 @@ namespace BeyondNetworking
 			var session = CurrentSession;
 
 			var isMasterClient = PhotonNetwork.IsMasterClient;
-			Log($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", session);
+			LogInfo($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", session);
 			OnMasterClientChanged.Invoke(isMasterClient);
 		}
 
@@ -388,7 +388,7 @@ namespace BeyondNetworking
 			ClearFailedFlag();
 
 			// Change current process
-			Log(initialMessage, session);
+			LogInfo(initialMessage, session);
 
 			// Reset process steps
 			CurrentProcessSteps.Clear();
@@ -619,7 +619,7 @@ namespace BeyondNetworking
 				// the cancellation request of previously active process.
 				if (session.Controller.IsCancelled)
 				{
-					Log($"Discarded a pending desired mode '{session.Controller.Mode}'.", session);
+					LogInfo($"Discarded a pending desired mode '{session.Controller.Mode}'.", session);
 					yield break;
 				}
 
@@ -1731,7 +1731,7 @@ namespace BeyondNetworking
 			if (PhotonNetwork.IsConnected) // TODO: See if we should also check for IsConnecting state, so that it will be possible to break the connection process in the middle.
 			{
 				SetProcessStep(session, NetworkProcessStep.Disconnecting);
-				Log("Disconnecting...", session);
+				LogInfo("Disconnecting...", session);
 				var wasOffline = PhotonNetwork.OfflineMode;
 				PhotonNetwork.Disconnect();
 
@@ -1836,7 +1836,7 @@ namespace BeyondNetworking
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
 			var session = CurrentSession;
-			Log($"Player '{newPlayer.NickName}' connected", session);
+			LogInfo($"Player '{newPlayer.NickName}' connected", session);
 
 			OnClientConnected.Invoke(newPlayer);
 			OnClientListChanged.Invoke();
@@ -1845,7 +1845,7 @@ namespace BeyondNetworking
 		public override void OnPlayerLeftRoom(Player otherPlayer)
 		{
 			var session = CurrentSession;
-			Log($"Player '{otherPlayer.NickName}' disconnected", session);
+			LogInfo($"Player '{otherPlayer.NickName}' disconnected", session);
 
 			OnClientDisconnected.Invoke(otherPlayer);
 			OnClientListChanged.Invoke();
@@ -1871,7 +1871,7 @@ namespace BeyondNetworking
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
 			var session = CurrentSession;
-			Log("OnReceivedRoomListUpdate", session);
+			LogInfo("OnReceivedRoomListUpdate", session);
 
 			RoomList = roomList;
 
@@ -1881,13 +1881,13 @@ namespace BeyondNetworking
 		public override void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
 		{
 			var session = CurrentSession;
-			Log("OnLobbyStatisticsUpdate", session);
+			LogInfo("OnLobbyStatisticsUpdate", session);
 
 			LobbyStatistics = lobbyStatistics;
 
 			foreach (var lobby in lobbyStatistics)
 			{
-				Log(lobby.ToHumanReadableString(), session);
+				LogInfo(lobby.ToHumanReadableString(), session);
 			}
 
 			OnLobbyStatisticsChanged.Invoke(lobbyStatistics);
@@ -1957,7 +1957,7 @@ namespace BeyondNetworking
 		public override void OnFriendListUpdate(List<FriendInfo> friendList)
 		{
 			var session = CurrentSession;
-			Log("OnUpdatedFriendList", session);
+			LogInfo("OnUpdatedFriendList", session);
 
 			OnFriendListChanged.Invoke(friendList);
 		}
@@ -2175,7 +2175,7 @@ namespace BeyondNetworking
 			return _LogPrefix;
 		}
 
-		private void Log(string message, NetworkSession session)
+		private void LogInfo(string message, NetworkSession session)
 		{
 			Debug.Log(LogPrefix(session) + message);
 		}
@@ -2206,7 +2206,7 @@ namespace BeyondNetworking
 
 		public void DebugLogNetworkState(NetworkSession session)
 		{
-			Log($@"Network state: {GrabStateOfPhoton()}
+			LogInfo($@"Network state: {GrabStateOfPhoton()}
 			NetworkClientState : {PhotonNetwork.NetworkClientState}
 			Server : {PhotonNetwork.Server}
 			IsConnected : {PhotonNetwork.IsConnected}
@@ -2243,13 +2243,13 @@ namespace BeyondNetworking
 		public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
 		{
 			var session = CurrentSession;
-			Log($"OnPhotonCustomRoomPropertiesChanged    propertiesThatChanged: '{propertiesThatChanged.ToJoinedString()}'", session);
+			LogInfo($"OnPhotonCustomRoomPropertiesChanged    propertiesThatChanged: '{propertiesThatChanged.ToJoinedString()}'", session);
 		}
 
 		public override void OnWebRpcResponse(OperationResponse response)
 		{
 			var session = CurrentSession;
-			Log($"OnWebRpcResponse    response: '{response}'", session);
+			LogInfo($"OnWebRpcResponse    response: '{response}'", session);
 		}
 	}
 

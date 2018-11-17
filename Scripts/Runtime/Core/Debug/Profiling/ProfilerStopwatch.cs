@@ -87,33 +87,33 @@ namespace Extenity.DebugToolbox
 		public void EndAndLog(string profilerMessageFormat)
 		{
 			End();
-			Log(profilerMessageFormat);
+			LogInfo(profilerMessageFormat);
 		}
 
 		public void EndAndLog(Object context, string profilerMessageFormat)
 		{
 			End();
-			Log(context, profilerMessageFormat);
+			LogInfo(context, profilerMessageFormat);
 		}
 
 		#region Log
 
-		public void Log(string profilerMessageFormat)
+		public void LogInfo(string profilerMessageFormat)
 		{
 			Debug.LogFormat(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
-		public void Log(Object context, string profilerMessageFormat)
+		public void LogInfo(Object context, string profilerMessageFormat)
 		{
 			Debug.LogFormat(context, profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
-		public void LogCumulative(string profilerMessageFormat)
+		public void LogInfoCumulative(string profilerMessageFormat)
 		{
 			Debug.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
-		public void LogCumulative(Object context, string profilerMessageFormat)
+		public void LogInfoCumulative(Object context, string profilerMessageFormat)
 		{
 			Debug.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}

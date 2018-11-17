@@ -36,7 +36,7 @@ namespace Extenity.UIToolbox
 			{
 				if (!wasInside)
 				{
-					Log("---- Mouse enter");
+					LogInfo("---- Mouse enter");
 					OnHoverEnter.Invoke();
 
 #if PLAYMAKER
@@ -46,7 +46,7 @@ namespace Extenity.UIToolbox
 				}
 				else
 				{
-					Log("---- Mouse stay");
+					LogInfo("---- Mouse stay");
 					OnHoverStay.Invoke();
 				}
 			}
@@ -54,7 +54,7 @@ namespace Extenity.UIToolbox
 			{
 				if (wasInside)
 				{
-					Log("---- Mouse exit");
+					LogInfo("---- Mouse exit");
 					OnHoverExit.Invoke();
 
 #if PLAYMAKER
@@ -120,7 +120,7 @@ namespace Extenity.UIToolbox
 		[Header("Debug")]
 		public bool WriteDebugLogs = false;
 
-		private void Log(string message)
+		private void LogInfo(string message)
 		{
 			if (WriteDebugLogs)
 			{
