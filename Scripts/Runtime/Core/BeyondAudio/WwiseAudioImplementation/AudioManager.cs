@@ -186,8 +186,8 @@ namespace Extenity.BeyondAudio
 				// Otherwise, continue to look in FreeAudioSources.
 				if (reusedAudioSource)
 				{
-					if (EnableVolatileLogging)
-						LogVolatile($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
+					if (EnableVerboseLogging)
+						LogVerbose($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -198,8 +198,8 @@ namespace Extenity.BeyondAudio
 			DontDestroyOnLoad(go);
 			ActiveAudioSources.Add(go);
 			AudioSourceBag.Add(go);
-			if (EnableVolatileLogging)
-				LogVolatile($"Created audio source '{go.FullName()}'.");
+			if (EnableVerboseLogging)
+				LogVerbose($"Created audio source '{go.FullName()}'.");
 			return go;
 		}
 
@@ -218,11 +218,11 @@ namespace Extenity.BeyondAudio
 				return;
 			if (!instance.ActiveAudioSources.Contains(audioSource))
 			{
-				LogVolatile($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.");
+				LogVerbose($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.");
 				return;
 			}
-			if (instance.EnableVolatileLogging)
-				LogVolatile($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
+			if (instance.EnableVerboseLogging)
+				LogVerbose($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
@@ -254,8 +254,8 @@ namespace Extenity.BeyondAudio
 
 		private void ClearLostReferencesInAllInternalContainers()
 		{
-			if (EnableVolatileLogging)
-				LogVolatile("Clearing lost references.");
+			if (EnableVerboseLogging)
+				LogVerbose("Clearing lost references.");
 
 			ClearLostReferencesInActiveAudioSourcesList();
 			ClearLostReferencesInFreeAudioSourcesList();
@@ -364,8 +364,8 @@ namespace Extenity.BeyondAudio
 				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile("Received empty event name for playing.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose("Received empty event name for playing.");
 				return;
 			}
 			if (instance.EnableLogging)
@@ -380,8 +380,8 @@ namespace Extenity.BeyondAudio
 				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile("Received empty event name for playing.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose("Received empty event name for playing.");
 				return;
 			}
 			if (instance.EnableLogging)
@@ -398,8 +398,8 @@ namespace Extenity.BeyondAudio
 				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Received empty event name for playing at position '{worldPosition}'.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Received empty event name for playing at position '{worldPosition}'.");
 				return null;
 			}
 			if (instance.EnableLogging)
@@ -422,8 +422,8 @@ namespace Extenity.BeyondAudio
 				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
 				return null;
 			}
 			if (instance.EnableLogging)
@@ -476,8 +476,8 @@ namespace Extenity.BeyondAudio
 				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Received empty event name for playing music.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Received empty event name for playing music.");
 				return;
 			}
 			if (instance.EnableLogging)
@@ -587,8 +587,8 @@ namespace Extenity.BeyondAudio
 				return float.NaN;
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Tried to get RTPC with empty name.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Tried to get RTPC with empty name.");
 				return float.NaN;
 			}
 			float value;
@@ -606,8 +606,8 @@ namespace Extenity.BeyondAudio
 				return float.NaN;
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.");
 				return float.NaN;
 			}
 			float value;
@@ -625,8 +625,8 @@ namespace Extenity.BeyondAudio
 				return;
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Tried to set RTPC with empty name and value '{value}'.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Tried to set RTPC with empty name and value '{value}'.");
 				return;
 			}
 			if (instance.EnableRTPCLogging)
@@ -641,8 +641,8 @@ namespace Extenity.BeyondAudio
 				return;
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVolatileLogging)
-					LogVolatile($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.");
+				if (instance.EnableVerboseLogging)
+					LogVerbose($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.");
 				return;
 			}
 			if (instance.EnableRTPCLogging)
@@ -671,7 +671,7 @@ namespace Extenity.BeyondAudio
 		[Header("Debug")]
 		public bool EnableLogging = false;
 		public bool EnableRTPCLogging = false;
-		public bool EnableVolatileLogging = false;
+		public bool EnableVerboseLogging = false;
 		public bool EnableWarningLogging = true;
 
 		/// <summary>
@@ -699,12 +699,12 @@ namespace Extenity.BeyondAudio
 		}
 
 		/// <summary>
-		/// Check for 'EnableVolatileLogging' before each Log call to prevent unnecessary string creation.
+		/// Check for 'EnableVerboseLogging' before each Log call to prevent unnecessary string creation.
 		/// </summary>
-		private static void LogVolatile(string message)
+		private static void LogVerbose(string message)
 		{
 			// This must be checked before each Log call manually.
-			//if (!EnableVolatileLogging)
+			//if (!EnableVerboseLogging)
 			//	return;
 
 			Debug.Log("|AUDIO|" + message, Instance);
