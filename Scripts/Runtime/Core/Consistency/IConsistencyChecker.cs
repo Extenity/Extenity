@@ -61,7 +61,7 @@ namespace Extenity.ConsistencyToolbox
 					message = titleMessage + "\n";
 				message += errors.Serialize('\n');
 
-				Debug.LogError(message, context);
+				Log.Error(message, context);
 			}
 			return errors;
 		}

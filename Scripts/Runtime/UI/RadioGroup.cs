@@ -139,7 +139,7 @@ namespace Extenity.UIToolbox
 						}
 						else
 						{
-							Debug.LogError($"Failed to make the default selection. There is no button specified in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+							Log.Error($"Failed to make the default selection. There is no button specified in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
 						}
 					}
 					break;
@@ -147,7 +147,7 @@ namespace Extenity.UIToolbox
 					{
 						if (RegisteredToggleButtons.IsNullOrEmpty())
 						{
-							Debug.LogError($"Failed to make the default selection. There is no registered button in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+							Log.Error($"Failed to make the default selection. There is no registered button in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
 							break;
 						}
 
@@ -168,7 +168,7 @@ namespace Extenity.UIToolbox
 						}
 						else
 						{
-							Debug.LogError($"Failed to make the default selection. There are '{activeButtonCount}' active buttons while expected only one in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
+							Log.Error($"Failed to make the default selection. There are '{activeButtonCount}' active buttons while expected only one in {nameof(RadioGroup)} of object '{gameObject.FullName()}'.", this);
 						}
 					}
 					break;

@@ -82,7 +82,7 @@ namespace Extenity.WWWToolbox
 				//if (inputStream == null)
 				//{
 				//    worker.CancelAsync();
-				//    Debug.LogError("FTP Web Response GetResponseStream is NULL!!");
+				//    Log.Error("FTP Web Response GetResponseStream is NULL!!");
 				//    return;
 				//}
 

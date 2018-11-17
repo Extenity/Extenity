@@ -72,7 +72,7 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 				if (!string.IsNullOrEmpty(data))
 				{
 					errorReceived = true;
-					Debug.LogError("ImageMagick Error: " + data);
+					Log.Error("ImageMagick Error: " + data);
 				}
 			};
 			process.OutputDataReceived += (sender, eventArgs) =>

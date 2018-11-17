@@ -30,14 +30,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 					if (denied)
 					{
-						Debug.LogError("Field '" + property.displayName + "' only allows prefabs.");
+						Log.Error("Field '" + property.displayName + "' only allows prefabs.");
 						property.objectReferenceValue = null;
 					}
 				}
 			}
 			else
 			{
-				Debug.LogError("OnlyAllowPrefabs attribute is only meaningful for fields of type Object.");
+				Log.Error("OnlyAllowPrefabs attribute is only meaningful for fields of type Object.");
 			}
 		}
 	}

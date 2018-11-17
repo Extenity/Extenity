@@ -34,7 +34,7 @@ namespace Extenity.DebugToolbox
 		{
 			if (IsStarted)
 			{
-				Debug.LogError("Tried to start profiler stopwatch but it was already started.");
+				Log.Error("Tried to start profiler stopwatch but it was already started.");
 				return;
 			}
 			IsStarted = true;
@@ -54,7 +54,7 @@ namespace Extenity.DebugToolbox
 			{
 				StartTime = 0;
 				EndTime = 0;
-				Debug.LogError("Tried to end profiler stopwatch but it was not started.");
+				Log.Error("Tried to end profiler stopwatch but it was not started.");
 				return 0;
 			}
 

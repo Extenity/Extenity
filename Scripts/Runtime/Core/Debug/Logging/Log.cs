@@ -272,25 +272,25 @@ public static class Log
 		Debug.LogException(new Exception(message, innerException), context);
 	}
 
-	public static void Exception(Exception exception)
-	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
-	}
+	//public static void Exception(Exception exception)
+	//{
+	//	Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
+	//}
 
-	public static void Exception(Exception exception, Object context)
-	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
-	}
+	//public static void Exception(Exception exception, Object context)
+	//{
+	//	Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
+	//}
 
-	public static void ExceptionDetailed(this Exception exception)
-	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception), null);
-	}
+	//public static void ExceptionDetailed(this Exception exception)
+	//{
+	//	Debug.LogError(CreateDetailedExceptionMessage(exception), null);
+	//}
 
-	public static void ExceptionDetailed(this Exception exception, Object context)
-	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
-	}
+	//public static void ExceptionDetailed(this Exception exception, Object context)
+	//{
+	//	Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
+	//}
 
 	#endregion
 
@@ -332,29 +332,29 @@ public static class Log
 		Debug.LogError(CreateMessage(message, context), context);
 	}
 
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugException(Exception exception)
-	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
-	}
+	//[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	//public static void DebugException(Exception exception)
+	//{
+	//	Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
+	//}
 
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugException(Exception exception, Object context)
-	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
-	}
+	//[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	//public static void DebugException(Exception exception, Object context)
+	//{
+	//	Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
+	//}
 
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugExceptionDetailed(this Exception exception)
-	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception), null);
-	}
+	//[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	//public static void DebugExceptionDetailed(this Exception exception)
+	//{
+	//	Debug.LogError(CreateDetailedExceptionMessage(exception), null);
+	//}
 
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugExceptionDetailed(this Exception exception, Object context)
-	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
-	}
+	//[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	//public static void DebugExceptionDetailed(this Exception exception, Object context)
+	//{
+	//	Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
+	//}
 
 	#endregion
 

@@ -55,7 +55,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		{
 			if (m_TreeModel.root == null)
 			{
-				Debug.LogError("tree model root is null. did you call SetData()?");
+				Log.Error("tree model root is null. did you call SetData()?");
 			}
 
 			m_Rows.Clear();
@@ -196,7 +196,7 @@ namespace Extenity.IMGUIToolbox.Editor
 						return DragAndDropVisualMode.Move;
 					}
 				default:
-					Debug.LogError("Unhandled enum " + args.dragAndDropPosition);
+					Log.Error("Unhandled enum " + args.dragAndDropPosition);
 					return DragAndDropVisualMode.None;
 			}
 		}

@@ -120,7 +120,7 @@ namespace Extenity.DebugToolbox
 					string assertInformation = "Assert failed! " + assertString + "\nFilename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
 
 					// Loggin would be included in both Debug and UNITY_EDITOR builds
-					UnityEngine.Debug.LogError(assertInformation);
+					Log.Error(assertInformation);
 
 #if UNITY_EDITOR
 					// Pause application

@@ -582,7 +582,7 @@ namespace Extenity.DLLBuilder
 				if (!string.IsNullOrEmpty(stdoutOutput))
 					Log.Info("Stdout: " + stdoutOutput);
 				if (!string.IsNullOrEmpty(stderrOutput))
-					Debug.LogError("Stderr: " + stderrOutput);
+					Log.Error("Stderr: " + stderrOutput);
 
 				if (process.ExitCode == 0)
 				{
@@ -673,7 +673,7 @@ namespace Extenity.DLLBuilder
 			exportedFiles.RemoveDuplicates();
 			exportedFiles.LogList($"Source files for {(isEditor ? "editor" : "runtime")} DLL ({exportedFiles.Count}):");
 
-			Debug.LogError("NOT IMPLEMENTED YET! Sources are not checked for precompiler directives.");
+			Log.Error("NOT IMPLEMENTED YET! Sources are not checked for precompiler directives.");
 		}
 
 	}

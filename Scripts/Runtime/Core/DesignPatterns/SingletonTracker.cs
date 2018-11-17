@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.DesignPatternsToolbox
 {
@@ -30,7 +29,7 @@ namespace Extenity.DesignPatternsToolbox
 				singletonCalls[className]++;
 				if (singletonCalls[className] > 1)
 				{
-					Debug.LogError("Singleton '" + className + "' instantiated " + singletonCalls[className] + " times");
+					Log.Error("Singleton '" + className + "' instantiated " + singletonCalls[className] + " times");
 				}
 			}
 			else
@@ -49,7 +48,7 @@ namespace Extenity.DesignPatternsToolbox
 			if (singletonCalls.ContainsKey(className))
 				singletonCalls[className]--;
 			else
-				Debug.LogError("Unregistered singleton: " + className);
+				Log.Error("Unregistered singleton: " + className);
 		}
 
 		//[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]

@@ -97,7 +97,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				if (component)
 				{
 					// Do not merge all logs in a single log entry. Log each error in a separate entry that points to the gameobject in log's context for ease of use.
-					Debug.LogError($"Object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
+					Log.Error($"Object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
 					found = true;
 				}
 			}
@@ -132,7 +132,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				if (component)
 				{
 					// Do not merge all logs in a single log entry. Log each error in a separate entry that points to the gameobject in log's context for ease of use.
-					Debug.LogError($"Static object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
+					Log.Error($"Static object of component '{typeof(T).Name}' exists in scene '{scene.name}'.", component.gameObject);
 					found = true;
 				}
 			}

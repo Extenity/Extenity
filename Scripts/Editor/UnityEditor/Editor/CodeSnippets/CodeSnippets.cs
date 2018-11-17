@@ -290,7 +290,7 @@ namespace __NAMESPACE__
 					}
 					catch (Exception e)
 					{
-						Debug.LogError("Could not create snippet file for '" + snippetName + "' snippet. Exception: " + e);
+						Log.Error("Could not create snippet file for '" + snippetName + "' snippet. Exception: " + e);
 					}
 				}
 			}
@@ -336,7 +336,7 @@ namespace __NAMESPACE__
 				if (File.Exists(filePath))
 				{
 					found = true;
-					Debug.LogError("Could not create snippet file because a file already exists at path '" + filePath + "'.");
+					Log.Error("Could not create snippet file because a file already exists at path '" + filePath + "'.");
 				}
 			}
 			return found;

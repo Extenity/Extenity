@@ -72,7 +72,7 @@ namespace Extenity.UIToolbox
 					{
 						if (ExpectedObjects.IsNullOrEmpty())
 						{
-							Debug.LogError($"No expected object specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}',");
+							Log.Error($"No expected object specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}',");
 							break;
 						}
 
@@ -108,7 +108,7 @@ namespace Extenity.UIToolbox
 		{
 			if (Target == null)
 			{
-				Debug.LogError("Target was not set for radio group activator.");
+				Log.Error("Target was not set for radio group activator.");
 				return;
 			}
 
@@ -138,7 +138,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Debug.LogError("Unrecognized target set for radio group activator.");
+				Log.Error("Unrecognized target set for radio group activator.");
 			}
 		}
 
@@ -176,7 +176,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Debug.LogError($"{nameof(RadioGroup)} was not specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}'.", this);
+				Log.Error($"{nameof(RadioGroup)} was not specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}'.", this);
 			}
 		}
 

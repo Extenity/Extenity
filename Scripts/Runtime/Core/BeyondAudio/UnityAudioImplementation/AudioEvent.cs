@@ -146,7 +146,7 @@ namespace Extenity.BeyondAudio
 							}
 							if (errorIfNotFound && !clip)
 							{
-								Debug.LogError($"There is a null clip in sound event '{Name}'.");
+								Log.Error($"There is a null clip in sound event '{Name}'.");
 							}
 						}
 						else
@@ -154,7 +154,7 @@ namespace Extenity.BeyondAudio
 							clip = null;
 							if (errorIfNotFound)
 							{
-								Debug.LogError($"There are no clips in sound event '{Name}'.");
+								Log.Error($"There are no clips in sound event '{Name}'.");
 							}
 						}
 					}
@@ -203,7 +203,7 @@ namespace Extenity.BeyondAudio
 
 							if (errorIfNotFound && !clip)
 							{
-								Debug.LogError($"There is a null clip in weighted group '{weightedGroupIndex}' of sound event '{Name}'.");
+								Log.Error($"There is a null clip in weighted group '{weightedGroupIndex}' of sound event '{Name}'.");
 							}
 						}
 						else
@@ -211,7 +211,7 @@ namespace Extenity.BeyondAudio
 							clip = null;
 							if (errorIfNotFound)
 							{
-								Debug.LogError($"There are no clips in sound event '{Name}'.");
+								Log.Error($"There are no clips in sound event '{Name}'.");
 							}
 						}
 					}

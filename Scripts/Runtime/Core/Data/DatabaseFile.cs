@@ -46,7 +46,7 @@ namespace Extenity.DataToolbox
 
 						if (pair.Length != 2)
 						{
-							Debug.LogError("Invalid database file! Line: " + line);
+							Log.Error("Invalid database file! Line: " + line);
 						}
 						else
 						{

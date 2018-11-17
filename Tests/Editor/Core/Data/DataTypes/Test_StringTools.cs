@@ -4,7 +4,6 @@ using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
-using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 namespace ExtenityTests.DataToolbox
@@ -1001,12 +1000,12 @@ namespace ExtenityTests.DataToolbox
 				UnityTestTools.BeginMemoryCheck();
 				var length = convertToCharArray(BigBuffer);
 				if (UnityTestTools.EndMemoryCheck())
-					Assert.Fail("Memory allocated while converting value '" + value + "' with format '" + format + "' to string resulting '" + BigBuffer.ConvertToString(0, length) + "'.");
+					Assert.Fail("Memory allocated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				var originalString = convertToString();
 				var resultString = BigBuffer.ConvertToString(0, length);
 				if (!originalString.Equals(resultString))
 				{
-					Debug.LogError("Erroneous value generated while converting value '" + value + "' with format '" + format + "' to string resulting '" + BigBuffer.ConvertToString(0, length) + "'.");
+					Log.Error($"Erroneous value generated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				}
 				Assert.AreEqual(originalString, resultString);
 				Assert.AreEqual(originalString.Length, length);

@@ -122,7 +122,7 @@ namespace Extenity.UIToolbox
 				}
 				else
 				{
-					Debug.LogError("Label UI element was not assigned.");
+					Log.Error("Label UI element was not assigned.");
 				}
 			}
 		}

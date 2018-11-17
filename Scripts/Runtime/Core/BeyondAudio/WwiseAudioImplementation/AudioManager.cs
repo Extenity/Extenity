@@ -29,7 +29,7 @@ namespace Extenity.BeyondAudio
 				var instance = Instance;
 				if (!instance && !IsShuttingDown)
 				{
-					Debug.LogError("AudioManager is not initialized yet.");
+					Log.Error("AudioManager is not initialized yet.");
 				}
 				return instance;
 			}
@@ -117,7 +117,7 @@ namespace Extenity.BeyondAudio
 				if (volumeControl.MixerParameterName == mixerParameterName)
 					return volumeControl;
 			}
-			Debug.LogError($"Volume control '{mixerParameterName}' does not exist.");
+			Log.Error($"Volume control '{mixerParameterName}' does not exist.");
 			return null;
 		}
 
@@ -724,7 +724,7 @@ namespace Extenity.BeyondAudio
 
 		private static void LogError(string message)
 		{
-			Debug.LogError("|AUDIO|" + message, Instance);
+			Log.Error("|AUDIO|" + message, Instance);
 		}
 
 		#endregion

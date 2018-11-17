@@ -2146,7 +2146,7 @@ namespace BeyondNetworking
 			if (!string.IsNullOrEmpty(_GameVersion))
 			{
 #if UNITY_EDITOR
-				Debug.LogError("Internal error 27659823!");
+				Log.Error("Internal error 27659823!");
 #endif
 				// TODO: SECURITY: Possible tampering attempt.
 				return;

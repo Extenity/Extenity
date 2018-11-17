@@ -61,7 +61,7 @@ namespace Extenity.NavigationToolbox
 #if UNITY_EDITOR
 			if (LinkInstance.valid)
 			{
-				Debug.LogError("Link is already added: " + this);
+				Log.Error("Link is already added: " + this);
 				return;
 			}
 #endif
@@ -80,7 +80,7 @@ namespace Extenity.NavigationToolbox
 			//LinkInstance = NavMesh.AddLink(link, transform.position, transform.rotation); // TODO: Find a proper way of making the NavigationLink positions to be configured as Local or World coordinates. See 1878201.
 			LinkInstance.owner = this;
 			if (!LinkInstance.valid)
-				Debug.LogError($"Failed to add navmesh link of object '{gameObject.FullName()}'.", gameObject);
+				Log.Error($"Failed to add navmesh link of object '{gameObject.FullName()}'.", gameObject);
 		}
 
 #if UNITY_EDITOR

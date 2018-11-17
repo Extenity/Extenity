@@ -29,14 +29,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 						prefabType != PrefabType.DisconnectedPrefabInstance &&
 						prefabType != PrefabType.DisconnectedModelPrefabInstance)
 					{
-						Debug.LogError("Field '" + property.displayName + "' only allows scene objects. Does not allow prefabs or model prefabs.");
+						Log.Error("Field '" + property.displayName + "' only allows scene objects. Does not allow prefabs or model prefabs.");
 						property.objectReferenceValue = null;
 					}
 				}
 			}
 			else
 			{
-				Debug.LogError("OnlyAllowSceneObjects attribute is only meaningful for fields of type Object.");
+				Log.Error("OnlyAllowSceneObjects attribute is only meaningful for fields of type Object.");
 			}
 		}
 	}

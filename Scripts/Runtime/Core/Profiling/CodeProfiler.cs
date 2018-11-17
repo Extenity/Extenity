@@ -128,7 +128,7 @@ namespace Extenity.ProfilingToolbox
 				string alreadyExistingLabel;
 				if (Labels.TryGetValue(id, out alreadyExistingLabel))
 				{
-					Debug.LogError($"Overwriting profiling label '{label}' with ID '{id}' which previously was '{alreadyExistingLabel}'.");
+					Log.Error($"Overwriting profiling label '{label}' with ID '{id}' which previously was '{alreadyExistingLabel}'.");
 				}
 			}
 			Labels[id] = label;

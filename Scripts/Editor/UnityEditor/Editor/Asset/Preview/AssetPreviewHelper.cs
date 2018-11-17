@@ -24,7 +24,7 @@ namespace Extenity.AssetToolbox.Editor
 			var method = customEditorType.GetMethod("RenderStaticPreview");
 			if (method == null)
 			{
-				Debug.LogError((object)"Fail to find RenderStaticPreview base method");
+				Log.Error("Fail to find RenderStaticPreview base method");
 				return null;
 			}
 			if (method.DeclaringType == typeof(UnityEditor.Editor))

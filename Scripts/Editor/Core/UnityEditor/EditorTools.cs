@@ -40,7 +40,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 			else
 			{
-				Debug.LogError("Tried to delete file or directory at path '" + path + "' but item cannot be found.");
+				Log.Error("Tried to delete file or directory at path '" + path + "' but item cannot be found.");
 			}
 		}
 
