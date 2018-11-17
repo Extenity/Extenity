@@ -421,13 +421,13 @@ namespace Extenity.DebugToolbox
 		#region Log
 
 		[Conditional("InitializationTrackerLogging")]
-		public static void Log(string message)
+		private static void Log(string message)
 		{
 			Debug.Log("|InitTrack|" + message);
 		}
 
 		[Conditional("InitializationTrackerVerboseLogging")]
-		public static void LogVerbose(string message)
+		private static void LogVerbose(string message)
 		{
 			Debug.Log("|InitTrack|" + message);
 		}
