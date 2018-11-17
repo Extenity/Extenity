@@ -32,7 +32,7 @@ namespace Extenity.DLLBuilder
 
 		public static void Pack(PackerConfiguration configuration)
 		{
-			DLLBuilder.LogAndUpdateStatus("Packing configuration '{0}'", configuration.ConfigurationName);
+			DLLBuilder.LogAndUpdateStatus($"Packing configuration '{configuration.ConfigurationName}'");
 
 			if (!configuration.Enabled)
 				throw new Exception($"Internal error. Tried to pack using a disabled configuration '{configuration.ConfigurationName}'.");

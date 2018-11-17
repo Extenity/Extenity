@@ -43,7 +43,7 @@ namespace Extenity.AssetToolbox.Editor
 				locked = false;
 				if (EditorApplication.isCompiling)
 				{
-					Debug.Log("You can now reload assemblies.");
+					Log.Info("You can now reload assemblies.");
 					DebugDelegate = CompilingPrevented;
 				}
 			}
@@ -53,7 +53,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		private void CompilingPrevented()
 		{
-			Debug.Log("Compiling currently prevented: press Unlock Reload to reallow compilation.");
+			Log.Info("Compiling currently prevented: press Unlock Reload to allow compilation again.");
 			DebugDelegate = EmptyMethod;
 		}
 

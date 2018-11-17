@@ -125,7 +125,7 @@ public static class Log
 		{
 			if (item.Key == null)
 			{
-				Debug.Log("############### destroyed object: " + item.Key); // TODO: test this
+				Log.Info("############### destroyed object: " + item.Key); // TODO: test this
 				RegisteredPrefixes.Remove(item.Key);
 			}
 		}
@@ -593,7 +593,7 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Debug.Log(text);
+		Log.Info(text);
 	}
 
 	public static void LogAllFields<T>(this T obj, string initialLine = null)
@@ -610,7 +610,7 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Debug.Log(text);
+		Log.Info(text);
 	}
 
 	public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null)
@@ -630,7 +630,7 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Debug.Log(text);
+		Log.Info(text);
 	}
 
 	private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")

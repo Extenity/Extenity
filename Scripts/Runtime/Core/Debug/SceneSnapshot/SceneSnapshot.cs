@@ -147,7 +147,7 @@ namespace Extenity.DebugToolbox
 
 		private void LogToFile(string path, string message)
 		{
-			Debug.Log("Saving log at path: " + path);
+			Log.Info("Saving log at path: " + path);
 			DirectoryTools.CreateFromFilePath(path);
 			File.WriteAllText(path, message);
 		}

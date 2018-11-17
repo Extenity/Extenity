@@ -88,7 +88,7 @@ namespace Extenity.SystemToolbox
 		private static void _StoreID(string id)
 		{
 #if UNITY_EDITOR
-			Debug.Log("Storing device ID: " + id);
+			Log.Info("Storing device ID: " + id);
 #endif
 			var key = Builder();
 			id = DeviceIDStoredPrefix + id;

@@ -161,7 +161,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				if (scene != null)
 					EditorSceneManager.playModeStartScene = scene;
 				else
-					Debug.Log($"Could not find scene at path '{scenePath}'.");
+					Log.Info($"Could not find scene at path '{scenePath}'.");
 			}
 		}
 

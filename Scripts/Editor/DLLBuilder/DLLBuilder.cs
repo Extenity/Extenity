@@ -10,6 +10,13 @@ using UnityEngine.Events;
 namespace Extenity.DLLBuilder
 {
 
+	public enum StatusMessageType
+	{
+		Normal,
+		Warning,
+		Error,
+	}
+
 	public static class DLLBuilder
 	{
 		#region Configuration
@@ -64,7 +71,7 @@ namespace Extenity.DLLBuilder
 			// Don't continue if loading is in progress.
 			if (EditorApplication.isUpdating || EditorApplication.isCompiling)
 			{
-				LogErrorAndUpdateStatus("Unity was processing assets at the time the builder started.");
+				LogAndUpdateStatus("Unity was processing assets at the time the builder started.", StatusMessageType.Error);
 				InternalFinishProcess(job, jobStatus, false);
 				yield break;
 			}
@@ -90,7 +97,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				LogErrorAndUpdateStatus(exception.Message);
+				LogAndUpdateStatus(exception.Message, StatusMessageType.Error);
 				InternalFinishProcess(job, jobStatus, false);
 				yield break;
 			}
@@ -99,7 +106,7 @@ namespace Extenity.DLLBuilder
 			{
 				if (EditorApplication.isCompiling)
 				{
-					LogErrorAndUpdateStatus("Unity was compiling just before the builder needed configuration asset.");
+					LogAndUpdateStatus("Unity was compiling just before the builder needed configuration asset.", StatusMessageType.Error);
 					InternalFinishProcess(job, jobStatus, false);
 					yield break;
 				}
@@ -173,34 +180,34 @@ namespace Extenity.DLLBuilder
 											}
 											catch (Exception exception)
 											{
-												LogErrorAndUpdateStatus("Post-build failed. Reason: " + exception.Message);
+												LogAndUpdateStatus("Post-build failed. Reason: " + exception.Message, StatusMessageType.Error);
 											}
 											InternalFinishProcess(job, jobStatus, succeeded);
 										},
 										error =>
 										{
-											LogErrorAndUpdateStatus(error);
+											LogAndUpdateStatus(error, StatusMessageType.Error);
 											InternalFinishProcess(job, jobStatus, false);
 										}
 									);
 								},
 								exception =>
 								{
-									LogErrorAndUpdateStatus(exception.Message);
+									LogAndUpdateStatus(exception.Message, StatusMessageType.Error);
 									InternalFinishProcess(job, jobStatus, false);
 								}
 							);
 						},
 						error =>
 						{
-							LogErrorAndUpdateStatus(error);
+							LogAndUpdateStatus(error, StatusMessageType.Error);
 							InternalFinishProcess(job, jobStatus, false);
 						}
 					);
 				},
 				error =>
 				{
-					LogErrorAndUpdateStatus(error);
+					LogAndUpdateStatus(error, StatusMessageType.Error);
 					InternalFinishProcess(job, jobStatus, false);
 				}
 			);
@@ -212,7 +219,7 @@ namespace Extenity.DLLBuilder
 			{
 				IsProcessing = false;
 
-				UpdateStatus("Finishing process {0}.", succeeded ? "successfully" : "with errors");
+				UpdateStatus($"Finishing process {(succeeded ? "successfully" : "with errors")}.");
 
 				BuildJob.DeleteAssemblyReloadSurvivalFile();
 
@@ -226,7 +233,7 @@ namespace Extenity.DLLBuilder
 				if (succeeded)
 					LogAndUpdateStatus("Process finished successfully.");
 				else
-					LogErrorAndUpdateStatus("Process finished with errors. Check previous console logs for more information.");
+					LogAndUpdateStatus("Process finished with errors. Check previous console logs for more information.", StatusMessageType.Error);
 			}
 			catch (Exception exception)
 			{
@@ -255,13 +262,6 @@ namespace Extenity.DLLBuilder
 
 		#region UI Status
 
-		public enum StatusMessageType
-		{
-			Normal,
-			Warning,
-			Error,
-		}
-
 		public class StatusMessage
 		{
 			public StatusMessageType Type;
@@ -280,34 +280,6 @@ namespace Extenity.DLLBuilder
 		public static StatusMessage CurrentStatus { get; private set; }
 		public static readonly UnityEvent OnStatusChanged = new UnityEvent();
 
-		public static void UpdateWarningStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			UpdateStatus(text, StatusMessageType.Warning);
-		}
-
-		public static void UpdateErrorStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			UpdateStatus(text, StatusMessageType.Error);
-		}
-
-		public static void UpdateStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			UpdateStatus(text, StatusMessageType.Normal);
-		}
-
-		public static void UpdateWarningStatus(string text)
-		{
-			UpdateStatus(text, StatusMessageType.Warning);
-		}
-
-		public static void UpdateErrorStatus(string text)
-		{
-			UpdateStatus(text, StatusMessageType.Error);
-		}
-
 		public static void UpdateStatus(string text, StatusMessageType type = StatusMessageType.Normal)
 		{
 			if (CurrentStatus == null)
@@ -318,44 +290,13 @@ namespace Extenity.DLLBuilder
 			OnStatusChanged.Invoke();
 		}
 
-		public static void LogWarningAndUpdateStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			Debug.LogWarning(text);
-			UpdateStatus(text, StatusMessageType.Warning);
-		}
-
-		public static void LogErrorAndUpdateStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			Debug.LogError(text);
-			UpdateStatus(text, StatusMessageType.Error);
-		}
-
-		public static void LogAndUpdateStatus(string format, params object[] args)
-		{
-			var text = string.Format(format, args);
-			Debug.Log(text);
-			UpdateStatus(text, StatusMessageType.Normal);
-		}
-
-		public static void LogWarningAndUpdateStatus(string text)
-		{
-			LogAndUpdateStatus(text, StatusMessageType.Warning);
-		}
-
-		public static void LogErrorAndUpdateStatus(string text)
-		{
-			LogAndUpdateStatus(text, StatusMessageType.Error);
-		}
-
 		public static void LogAndUpdateStatus(string text, StatusMessageType type = StatusMessageType.Normal)
 		{
 			switch (type)
 			{
-				case StatusMessageType.Normal: Debug.Log(text); break;
-				case StatusMessageType.Warning: Debug.LogWarning(text); break;
-				case StatusMessageType.Error: Debug.LogError(text); break;
+				case StatusMessageType.Normal: Log.Info(text); break;
+				case StatusMessageType.Warning: Log.Warning(text); break;
+				case StatusMessageType.Error: Log.Error(text); break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(type), type, null);
 			}

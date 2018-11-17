@@ -458,11 +458,11 @@ namespace Extenity.PainkillaTool.Editor
 			var transforms = Selection.GetTransforms(SelectionMode.ExcludePrefab | SelectionMode.TopLevel);
 			if (transforms.IsNullOrEmpty())
 			{
-				Debug.Log("Nothing to snap.");
+				Log.Info("Nothing to snap.");
 			}
 			else
 			{
-				Debug.LogFormat("Snapping objects ({0}): \n{1}", transforms.Length, transforms.Select(item => item.gameObject.FullName()).ToList().Serialize('\n'));
+				Log.Info($"Snapping objects ({transforms.Length}): \n" + transforms.Select(item => item.gameObject.FullName()).ToList().Serialize('\n'));
 
 				Undo.RecordObjects(transforms, $"Snap {transforms.Length.ToStringWithEnglishPluralPostfix("object")}");
 

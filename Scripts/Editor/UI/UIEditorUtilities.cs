@@ -83,7 +83,7 @@ namespace Extenity.UIToolbox.Editor
 		public static void ToggleGlobalButtonClickSoundLogging()
 		{
 			ButtonClickSound.IsLoggingEnabled = !ButtonClickSound.IsLoggingEnabled;
-			Debug.Log("Global Button Click Sound logging " + (ButtonClickSound.IsLoggingEnabled ? "enabled" : "disabled"));
+			Log.Info("Global Button Click Sound logging " + (ButtonClickSound.IsLoggingEnabled ? "enabled" : "disabled"));
 		}
 
 		public static void CreateButtonClickSoundFor<TTarget>(this TTarget clickable) where TTarget : Selectable
@@ -106,15 +106,15 @@ namespace Extenity.UIToolbox.Editor
 			// Log
 			if (isCreated)
 			{
-				Debug.Log($"{typeof(ButtonClickSound).Name} component created in object '{clickable.gameObject.name}'.", clickable.gameObject);
+				Log.Info($"{typeof(ButtonClickSound).Name} component created in object '{clickable.gameObject.name}'.", clickable.gameObject);
 			}
 			else if (movedBy != 0)
 			{
-				Debug.Log($"{typeof(ButtonClickSound).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.gameObject.name}'.", clickable.gameObject);
+				Log.Info($"{typeof(ButtonClickSound).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.gameObject.name}'.", clickable.gameObject);
 			}
 			else
 			{
-				Debug.Log($"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(ButtonClickSound).Name}.", clickable.gameObject);
+				Log.Info($"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(ButtonClickSound).Name}.", clickable.gameObject);
 			}
 		}
 	}

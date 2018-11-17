@@ -98,7 +98,7 @@ namespace Extenity.DLLBuilder
 			}
 			else
 			{
-				DLLBuilder.LogAndUpdateStatus("Cleared previous output files: (runtime: {0}, editor: {1})\n{2}", clearRutimeDLL, clearEditorDLL, result.Serialize('\n'));
+				DLLBuilder.LogAndUpdateStatus($"Cleared previous output files: (runtime: {clearRutimeDLL}, editor: {clearEditorDLL})\n{result.Serialize('\n')}");
 			}
 		}
 	}

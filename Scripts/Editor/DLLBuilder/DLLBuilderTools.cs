@@ -28,7 +28,7 @@ namespace Extenity.DLLBuilder
 				if (File.Exists(path))
 				{
 					CSCPath = path;
-					Debug.Log("Using CSC at path \"" + path + "\".");
+					Log.Info($"Using CSC at path '{path}'.");
 					break;
 				}
 			}
@@ -45,7 +45,7 @@ namespace Extenity.DLLBuilder
 					if (File.Exists(path))
 					{
 						CSCPath = path;
-						Debug.Log("Using CSC at path \"" + path + "\".");
+						Log.Info($"Using CSC at path '{path}'.");
 						break;
 					}
 				}

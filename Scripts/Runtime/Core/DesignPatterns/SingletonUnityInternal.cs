@@ -14,7 +14,7 @@ namespace Extenity.DesignPatternsToolbox
 		protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
 		{
 			className = typeof(T).Name;
-			Debug.Log("Instantiating internal singleton: " + className, obj);
+			Log.Info("Instantiating internal singleton: " + className, obj);
 			instance = obj;
 
 			if (dontDestroyOnLoad)
@@ -30,7 +30,7 @@ namespace Extenity.DesignPatternsToolbox
 			if (instance == null)  // To prevent errors in ExecuteInEditMode
 				return;
 
-			Debug.Log("Destroying internal singleton: " + className);
+			Log.Info("Destroying internal singleton: " + className);
 			instance = default(T);
 			SingletonTracker.SingletonDestroyed(className);
 		}

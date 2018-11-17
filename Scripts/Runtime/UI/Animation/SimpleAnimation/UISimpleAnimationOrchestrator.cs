@@ -100,7 +100,7 @@ namespace Extenity.UIToolbox
 
 			if (DEBUG_ShowAnimationMessages)
 			{
-				Debug.Log("Animating 'To A'.", gameObject);
+				Log.Info("Animating 'To A'.", gameObject);
 			}
 
 			var maxLength = 0f;
@@ -138,7 +138,7 @@ namespace Extenity.UIToolbox
 
 			if (DEBUG_ShowAnimationMessages)
 			{
-				Debug.Log("Animating 'To B'.", gameObject);
+				Log.Info("Animating 'To B'.", gameObject);
 			}
 
 			var maxLength = 0f;

@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		static WebView()
 		{
-			Debug.Log("########### WebView constructor");
+			Log.Info("########### WebView constructor");
 
 			var editorAssembly = typeof(UnityEditor.Editor).Assembly;
 			var editorWindowType = typeof(EditorWindow);
@@ -57,7 +57,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void Initialize(object view, Rect rect, bool showResizeHandle)
 		{
-			Debug.Log("########### WebView Initialize           UnityWebView == null : " + (UnityWebView == null));
+			Log.Info("########### WebView Initialize           UnityWebView == null : " + (UnityWebView == null));
 
 			CreateUnityWebViewIfRequired();
 
@@ -70,7 +70,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void OnDestroy()
 		{
-			Debug.Log("########### WebView OnDestroy           UnityWebView != null : " + (UnityWebView != null));
+			Log.Info("########### WebView OnDestroy           UnityWebView != null : " + (UnityWebView != null));
 
 			if (UnityWebView != null)
 			{

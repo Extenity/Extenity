@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR_WIN
 
-using UnityEngine;
 using UnityEditor;
 using System.Runtime.InteropServices;
 
@@ -36,7 +35,7 @@ namespace Extenity.AssetToolbox.Editor
 				if (!IsPressing) // Prevent calling refresh multiple times before user releases the keys
 				{
 					IsPressing = true;
-					Debug.Log("Refreshing asset database");
+					Log.Info("Refreshing asset database");
 					if (EditorApplication.isPlaying)
 					{
 						EditorApplication.isPlaying = false;

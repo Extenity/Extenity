@@ -60,7 +60,7 @@ namespace Extenity.DLLBuilder
 				try
 				{
 					job = new CompilerJob(configuration);
-					DLLBuilder.LogAndUpdateStatus("Compiling '{0}'", job.Configuration.DLLNameWithoutExtension);
+					DLLBuilder.LogAndUpdateStatus($"Compiling '{job.Configuration.DLLNameWithoutExtension}'");
 
 					job.UnityVersion = Application.unityVersion;
 					DLLBuilderTools.DetectUnityReferences(ref job.UnityManagedReferences);
@@ -256,7 +256,7 @@ namespace Extenity.DLLBuilder
 
 		private static void CopySourcesToTemporaryDirectory(List<string> sourceFilePaths, string sourceBasePath, string temporaryDirectoryPath)
 		{
-			DLLBuilder.LogAndUpdateStatus("Copying sources into temporary directory '{0}'.", temporaryDirectoryPath);
+			DLLBuilder.LogAndUpdateStatus($"Copying sources into temporary directory '{temporaryDirectoryPath}'.");
 			sourceBasePath = sourceBasePath.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars('/');
 
 			DirectoryTools.Delete(temporaryDirectoryPath);
@@ -571,7 +571,7 @@ namespace Extenity.DLLBuilder
 
 				if (!process.Start())
 				{
-					DLLBuilder.LogErrorAndUpdateStatus("Compiler process stopped with code " + process.ExitCode + ".");
+					DLLBuilder.LogAndUpdateStatus($"Compiler process stopped with code '{process.ExitCode}'.", StatusMessageType.Error);
 					return CompileResult.Failed;
 				}
 
@@ -580,7 +580,7 @@ namespace Extenity.DLLBuilder
 				process.WaitForExit();
 
 				if (!string.IsNullOrEmpty(stdoutOutput))
-					Debug.Log("Stdout: " + stdoutOutput);
+					Log.Info("Stdout: " + stdoutOutput);
 				if (!string.IsNullOrEmpty(stderrOutput))
 					Debug.LogError("Stderr: " + stderrOutput);
 
@@ -605,23 +605,23 @@ namespace Extenity.DLLBuilder
 						}
 					}
 
-					DLLBuilder.LogAndUpdateStatus("Finished compiling '{0}'.", isEditorBuild ? job.Configuration.EditorDLLName : job.Configuration.DLLName);
+					DLLBuilder.LogAndUpdateStatus($"Finished compiling '{(isEditorBuild ? job.Configuration.EditorDLLName : job.Configuration.DLLName)}'.");
 
 					// Make sure meta files exist
 					{
 						if (!CheckIfMetaFileExists(dllOutputPath))
 						{
-							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", dllOutputPath);
+							DLLBuilder.LogAndUpdateStatus($"Meta file does not exist for file '{dllOutputPath}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", StatusMessageType.Error);
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDocumentation && !CheckIfMetaFileExists(documentationOutputPath))
 						{
-							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", documentationOutputPath);
+							DLLBuilder.LogAndUpdateStatus($"Meta file does not exist for file '{documentationOutputPath}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", StatusMessageType.Error);
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDebugInfo && !CheckIfMetaFileExists(debugDatabaseOutputPath))
 						{
-							DLLBuilder.LogErrorAndUpdateStatus("Meta file does not exist for file '{0}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", debugDatabaseOutputPath);
+							DLLBuilder.LogAndUpdateStatus($"Meta file does not exist for file '{debugDatabaseOutputPath}'. You should probably be using an outside Unity project to generate these meta files for you. Meta file generation responsibility left to the user since it's a one time operation.", StatusMessageType.Error);
 							return CompileResult.Failed;
 						}
 					}

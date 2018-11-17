@@ -355,7 +355,7 @@ namespace Extenity.UnityEditorToolbox
 
 			// Finalize
 			var text = stringBuilder.ToString();
-			Debug.Log(text);
+			Log.Info(text);
 		}
 
 		#endregion

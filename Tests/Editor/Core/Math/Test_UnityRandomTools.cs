@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Extenity.MathToolbox;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace ExtenityTests.MathToolbox
 {
@@ -19,7 +18,7 @@ namespace ExtenityTests.MathToolbox
 
 			var bag = new HashSet<int>();
 			var completionRatiosAtFailTime = new List<float>(repeatCount);
-			//Debug.Log("_________________________________________________________________________");
+			//Log.Info("_________________________________________________________________________");
 
 			for (int iRepeat = 0; iRepeat < repeatCount; iRepeat++)
 			{
@@ -38,11 +37,11 @@ namespace ExtenityTests.MathToolbox
 
 				var ratio = (float)bag.Count / generationCount;
 				completionRatiosAtFailTime.Add(ratio);
-				//Debug.Log(ratio.ToStringAsPercentageBar());
+				//Log.Info(ratio.ToStringAsPercentageBar());
 			}
 
 			var averageCompletionRatioAtFailTime = completionRatiosAtFailTime.Average();
-			//Debug.Log($"Rapid seed generation tests completed among '{generationCount:N0}' seeds with an average of {averageCompletionRatioAtFailTime:P} success ratio.");
+			//Log.Info($"Rapid seed generation tests completed among '{generationCount:N0}' seeds with an average of {averageCompletionRatioAtFailTime:P} success ratio.");
 
 			// We count how many seeds generated before a collision occured. Then we divide it by the
 			// total seeds that we were going to generate. This gives "Completion ratio at fail time".

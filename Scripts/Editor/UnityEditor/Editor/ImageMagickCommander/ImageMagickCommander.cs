@@ -79,11 +79,11 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 			{
 				var data = eventArgs.Data.Trim();
 				if (!string.IsNullOrEmpty(data))
-					Debug.Log("ImageMagick Output: " + data);
+					Log.Info("ImageMagick Output: " + data);
 			};
 
-			//Debug.Log("launch |     " + process.StartInfo.FileName);
-			//Debug.Log("args |     " + process.StartInfo.Arguments);
+			//Log.Info("launch |     " + process.StartInfo.FileName);
+			//Log.Info("args |     " + process.StartInfo.Arguments);
 
 			process.Start();
 

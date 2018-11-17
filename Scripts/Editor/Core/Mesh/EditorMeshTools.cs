@@ -88,7 +88,7 @@ namespace Extenity.MeshToolbox
 				}
 			}
 
-			Debug.Log(stringBuilder.ToString());
+			Log.Info(stringBuilder.ToString());
 		}
 
 		#endregion

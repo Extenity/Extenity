@@ -72,7 +72,7 @@ namespace Extenity.DLLBuilder
 				//}
 				//return _CurrentlyProcessedProjectStatus;
 				var status = InternalFindCurrentlyProcessedProjectStatusRecursively();
-				DLLBuilder.UpdateStatus("Currently processed project detected as '{0}'.", status == null ? "[Null]" : status.ProjectPath);
+				DLLBuilder.UpdateStatus($"Currently processed project detected as '{(status == null ? "[Null]" : status.ProjectPath)}'.");
 				return status;
 			}
 		}
@@ -110,7 +110,7 @@ namespace Extenity.DLLBuilder
 		{
 			UnsetCurrentlyProcessedProject();
 
-			DLLBuilder.UpdateStatus("Setting currently processed project status to '{0}'.", remoteProjectStatus.ProjectPath);
+			DLLBuilder.UpdateStatus($"Setting currently processed project status to '{remoteProjectStatus.ProjectPath}'.");
 			remoteProjectStatus.IsCurrentlyProcessedProject = true;
 		}
 
@@ -140,7 +140,7 @@ namespace Extenity.DLLBuilder
 			var result = InternalChangeCurrentlyProcessedProjectStatusReference(ref ProjectChain, oldStatus, newStatus);
 			if (result)
 				return true;
-			DLLBuilder.LogErrorAndUpdateStatus("Failed to update currently processed project status");
+			DLLBuilder.LogAndUpdateStatus("Failed to update currently processed project status", StatusMessageType.Error);
 			return false;
 		}
 

@@ -85,7 +85,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				EditorTools.DeleteMetaFileAndItem(items[i]);
 			}
 
-			Debug.Log("Cleared '.orig' files: " + items.Length);
+			Log.Info("Cleared '.orig' files: " + items.Length);
 			if (items.Length > 0)
 				items.LogList();
 
@@ -101,7 +101,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				EditorTools.DeleteMetaFileAndItem(items[i]);
 			}
 
-			Debug.Log("Cleared 'thumbs.db' files: " + items.Length);
+			Log.Info("Cleared 'thumbs.db' files: " + items.Length);
 			if (items.Length > 0)
 				items.LogList();
 
@@ -126,7 +126,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				tryAgain = items.Count > 0;
 			}
 
-			Debug.Log("Cleared empty directories: " + clearedItems.Count);
+			Log.Info("Cleared empty directories: " + clearedItems.Count);
 			if (clearedItems.Count > 0)
 				clearedItems.LogList();
 

@@ -1233,13 +1233,13 @@ namespace ExtenityTests.DataToolbox
 
 		private static void TestSmartFormat(string input, string expected, bool trim, bool trimEndOfEachLine, bool normalizeLineEndings, int maxAllowedConsecutiveLineEndings, int maxLength)
 		{
-			//Debug.Log("------------------------------------------ before   (A: input  B: expected)");
-			//Debug.Log("A: '" + input.ToHexStringFancy() + "\n" + "'" + input + "'");
-			//Debug.Log("B: '" + expected.ToHexStringFancy() + "\n" + "'" + expected + "'");
+			//Log.Info("------------------------------------------ before   (A: input  B: expected)");
+			//Log.Info("A: '" + input.ToHexStringFancy() + "\n" + "'" + input + "'");
+			//Log.Info("B: '" + expected.ToHexStringFancy() + "\n" + "'" + expected + "'");
 			StringTools.SmartFormat(ref input, trim, trimEndOfEachLine, normalizeLineEndings, maxAllowedConsecutiveLineEndings, maxLength);
-			//Debug.Log("--------------- after   (A: input  B: expected)");
-			//Debug.Log("A: " + input.ToHexStringFancy() + "\n" + "'" + input + "'");
-			//Debug.Log("B: " + expected.ToHexStringFancy() + "\n" + "'" + expected + "'");
+			//Log.Info("--------------- after   (A: input  B: expected)");
+			//Log.Info("A: " + input.ToHexStringFancy() + "\n" + "'" + input + "'");
+			//Log.Info("B: " + expected.ToHexStringFancy() + "\n" + "'" + expected + "'");
 			Assert.AreEqual(expected, input);
 		}
 

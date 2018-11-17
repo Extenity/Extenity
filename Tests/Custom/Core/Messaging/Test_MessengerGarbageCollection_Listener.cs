@@ -9,13 +9,13 @@ namespace Extenity.Messaging
 	{
 		protected void Awake()
 		{
-			Debug.Log("LISTENER :: Awake", this);
+			Log.Info("LISTENER :: Awake", this);
 			Messenger.Global.AddListener(1001, MyMessageHandler);
 		}
 
 		protected void OnDestroy()
 		{
-			Debug.Log("LISTENER :: OnDestroy", this);
+			Log.Info("LISTENER :: OnDestroy", this);
 
 			// We may call RemoveListener here but whole point of this messaging system is not requiring to do so.
 			// MessageHandler should not be called anymore when this MonoBehaviour gets destroyed.
@@ -24,7 +24,7 @@ namespace Extenity.Messaging
 
 		private void MyMessageHandler(string text)
 		{
-			Debug.Log("LISTENER :: MessageHandler    text: " + text, this);
+			Log.Info("LISTENER :: MessageHandler    text: " + text, this);
 
 			if (text.Contains("should NOT be delivered to MyMessageHandler"))
 			{

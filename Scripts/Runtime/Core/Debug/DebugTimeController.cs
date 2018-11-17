@@ -45,7 +45,7 @@ namespace Extenity.DebugToolbox
 		private void SetTimeScale(float scale)
 		{
 			Time.timeScale = scale;
-			Debug.Log("Time scale set to " + scale);
+			Log.Info("Time scale set to " + scale);
 		}
 	}
 

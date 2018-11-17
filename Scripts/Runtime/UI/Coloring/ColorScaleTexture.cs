@@ -1,5 +1,4 @@
 using System;
-using Extenity.MathToolbox;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,7 +43,7 @@ namespace Extenity.ColoringToolbox
 
 			if (ColorScale == null)
 			{
-				Debug.Log("Color scale was not set.");
+				Log.Info("Color scale was not set.");
 				return;
 			}
 
@@ -62,7 +61,7 @@ namespace Extenity.ColoringToolbox
 
 			if (TextureResolution.x <= 0 || TextureResolution.y <= 0)
 			{
-				Debug.Log("Texture resolution should be greater than zero.");
+				Log.Info("Texture resolution should be greater than zero.");
 				return;
 			}
 

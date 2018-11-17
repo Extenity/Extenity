@@ -208,7 +208,7 @@ namespace Extenity.UIToolbox
 			{
 				if (ExpectedObjects.IsNotNullAndEmpty())
 				{
-					Debug.Log($"Clearing '{nameof(ExpectedObjects)}' as it is not needed and would leave unused references.");
+					Log.Info($"Clearing '{nameof(ExpectedObjects)}' as it is not needed and would leave unused references.");
 					ExpectedObjects = new Object[0];
 				}
 			}

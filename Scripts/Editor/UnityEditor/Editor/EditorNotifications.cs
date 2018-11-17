@@ -15,7 +15,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (IsCreated)
 				return; // One instance at a time is enough
 
-			//Debug.Log("Creating EditorNotifications");
+			//Log.Info("Creating EditorNotifications");
 			instance = this;
 			RegisterCustomUpdate();
 		}
@@ -25,7 +25,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (!IsCreated)
 				return; // Nothing to destroy
 
-			//Debug.Log("Destroying EditorNotifications");
+			//Log.Info("Destroying EditorNotifications");
 			instance = null;
 			DeregisterCustomUpdate();
 		}

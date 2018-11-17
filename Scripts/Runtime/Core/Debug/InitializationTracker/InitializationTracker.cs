@@ -465,13 +465,13 @@ namespace Extenity.DebugToolbox
 		[Conditional("InitializationTrackerLogging")]
 		private static void LogInfo(string message)
 		{
-			Debug.Log("|InitTrack|" + message);
+			Log.Info("|InitTrack|" + message);
 		}
 
 		[Conditional("InitializationTrackerVerboseLogging")]
 		private static void LogVerbose(string message)
 		{
-			Debug.Log("|InitTrack|" + message);
+			Log.Info("|InitTrack|" + message);
 		}
 
 		private void LogCriticalError(string message, Object context)

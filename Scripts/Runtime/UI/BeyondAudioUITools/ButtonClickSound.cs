@@ -50,7 +50,7 @@ namespace Extenity.BeyondAudio.UI
 			if (Button)
 			{
 				if (IsLoggingEnabled)
-					Debug.Log($"Registering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
+					Log.Info($"Registering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -68,7 +68,7 @@ namespace Extenity.BeyondAudio.UI
 			else if (Toggle)
 			{
 				if (IsLoggingEnabled)
-					Debug.Log($"Registering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
+					Log.Info($"Registering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -90,7 +90,7 @@ namespace Extenity.BeyondAudio.UI
 			if (Button)
 			{
 				if (IsLoggingEnabled)
-					Debug.Log($"Deregistering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
+					Log.Info($"Deregistering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -106,7 +106,7 @@ namespace Extenity.BeyondAudio.UI
 			else if (Toggle)
 			{
 				if (IsLoggingEnabled)
-					Debug.Log($"Deregistering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
+					Log.Info($"Deregistering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -139,7 +139,7 @@ namespace Extenity.BeyondAudio.UI
 		public void Play()
 		{
 			if (IsLoggingEnabled)
-				Debug.Log($"Playing click sound of '{gameObject.name}'.", this);
+				Log.Info($"Playing click sound of '{gameObject.name}'.", this);
 			AudioManager.Play(EventName);
 		}
 

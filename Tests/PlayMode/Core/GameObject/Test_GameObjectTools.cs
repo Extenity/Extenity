@@ -28,7 +28,7 @@ namespace ExtenityTests.DataToolbox
 			if (SceneManagerTools.GetLoadedScenes().Count > 1)
 			{
 				// Allow some time for previously loaded scene to unload. See TearDown method below.
-				Debug.Log("Waiting for previous scene to unload");
+				Log.Info("Waiting for previous scene to unload");
 				const float timeout = 2f; // 2 seconds
 				var startTime = PrecisionTiming.PreciseTime;
 				while (SceneManagerTools.GetLoadedScenes().Count > 1)
@@ -616,19 +616,19 @@ namespace ExtenityTests.DataToolbox
 
 		private void LogResult<T>(ICollection<T> objects) where T : Component
 		{
-			Debug.Log($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':");
+			Log.Info($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':");
 			foreach (var obj in objects)
 			{
-				Debug.Log(obj.FullName(), obj.gameObject);
+				Log.Info(obj.FullName(), obj.gameObject);
 			}
 		}
 
 		private void LogExpectedPaths(ICollection<string> paths)
 		{
-			Debug.Log($"Listing '{paths.Count}' expected paths':");
+			Log.Info($"Listing '{paths.Count}' expected paths':");
 			foreach (var path in paths)
 			{
-				Debug.Log(path);
+				Log.Info(path);
 			}
 		}
 

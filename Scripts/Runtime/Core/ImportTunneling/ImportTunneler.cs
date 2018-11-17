@@ -182,13 +182,13 @@ namespace Extenity.ImportTunnelingToolbox
 		//private void OnUnityEditorProcessOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
 		//{
 		//	var line = dataReceivedEventArgs.Data;
-		//	Debug.Log("  |  " + line);
+		//	Log.Info("  |  " + line);
 		//}
 
 		//private void OnUnityEditorProcessErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
 		//{
 		//	var line = dataReceivedEventArgs.Data;
-		//	Debug.Log("  Err |  " + line);
+		//	Log.Info("  Err |  " + line);
 		//}
 
 		#endregion
@@ -249,7 +249,7 @@ namespace Extenity.ImportTunnelingToolbox
 
 			BuildPipeline.BuildAssetBundles(outputDirectoryPath, builds, BuildAssetBundleOptions.UncompressedAssetBundle, assetBundlePlatform);
 
-			Debug.Log(""Conversion completed"");
+			Log.Info(""Conversion completed"");
 		}
 
 		#endregion

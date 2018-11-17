@@ -37,7 +37,7 @@ namespace Extenity.PhysicsToolbox
 					{
 						if (logFilteredOutRigidbodies)
 						{
-							Debug.Log("Filtered: " + rigidbodies[i].gameObject, rigidbodies[i].gameObject);
+							Log.Info("Filtered: " + rigidbodies[i].gameObject, rigidbodies[i].gameObject);
 						}
 						rigidbodies.RemoveAt(i);
 						i--;

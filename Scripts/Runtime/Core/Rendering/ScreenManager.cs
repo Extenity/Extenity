@@ -124,7 +124,7 @@ namespace Extenity.RenderingToolbox
 				if (width > 0 && height > 0)
 				{
 					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
-						Debug.LogFormat("Adjusting screen resolution to native {0}x{1} on monitor {2}.", width, height, activeDisplayIndex);
+						Log.Info($"Adjusting screen resolution to native {width}x{height} on monitor {activeDisplayIndex}.");
 					//activeDisplay.SetParams(width, height, 0, 0);
 					//activeDisplay.SetRenderingResolution(width, height);
 					Screen.SetResolution(width, height, true);
@@ -132,13 +132,13 @@ namespace Extenity.RenderingToolbox
 				else
 				{
 					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
-						Debug.LogFormat("Failed to get screen resolution of active monitor {0}.", activeDisplayIndex);
+						Log.Info($"Failed to get screen resolution of active monitor {activeDisplayIndex}.");
 				}
 			}
 			else
 			{
 				if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
-					Debug.Log("Failed to find active display.");
+					Log.Info("Failed to find active display.");
 			}
 		}
 

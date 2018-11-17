@@ -215,15 +215,15 @@ namespace Extenity.PainkillaTool.Editor
 			//	//foreach (var selection in Selection.objects.Where(item => item as GameObject).Cast<GameObject>())
 			//	var selection = ReplaceWithObject;
 			//	{
-			//		Debug.Log("----------------------------- selection: " + selection.FullName());
+			//		Log.Info("----------------------------- selection: " + selection.FullName());
 			//		var go = selection.gameObject;
-			//		Debug.Log("go.IsPrefab(includePrefabInstances: true): " + go.IsPrefab(true));
-			//		Debug.Log("go.IsPrefab(includePrefabInstances: false): " + go.IsPrefab(false));
-			//		Debug.Log("go.IsAnInstanceInScene(): " + go.IsAnInstanceInScene());
-			//		Debug.Log("FindPrefabRoot(go): " + PrefabUtility.FindPrefabRoot(go) + "           \t Type: " + PrefabUtility.FindPrefabRoot(go).GetTypeSafe(), PrefabUtility.FindPrefabRoot(go));
-			//		Debug.Log("GetPrefabObject(go): " + PrefabUtility.GetPrefabObject(go) + "          \t Type: " + PrefabUtility.GetPrefabObject(go).GetTypeSafe(), PrefabUtility.GetPrefabObject(go));
-			//		Debug.Log("GetPrefabParent(go): " + PrefabUtility.GetPrefabParent(go), PrefabUtility.GetPrefabParent(go));
-			//		Debug.Log("FindValidUploadPrefabInstanceRoot(go): " + PrefabUtility.FindValidUploadPrefabInstanceRoot(go).FullName(), PrefabUtility.FindValidUploadPrefabInstanceRoot(go));
+			//		Log.Info("go.IsPrefab(includePrefabInstances: true): " + go.IsPrefab(true));
+			//		Log.Info("go.IsPrefab(includePrefabInstances: false): " + go.IsPrefab(false));
+			//		Log.Info("go.IsAnInstanceInScene(): " + go.IsAnInstanceInScene());
+			//		Log.Info("FindPrefabRoot(go): " + PrefabUtility.FindPrefabRoot(go) + "           \t Type: " + PrefabUtility.FindPrefabRoot(go).GetTypeSafe(), PrefabUtility.FindPrefabRoot(go));
+			//		Log.Info("GetPrefabObject(go): " + PrefabUtility.GetPrefabObject(go) + "          \t Type: " + PrefabUtility.GetPrefabObject(go).GetTypeSafe(), PrefabUtility.GetPrefabObject(go));
+			//		Log.Info("GetPrefabParent(go): " + PrefabUtility.GetPrefabParent(go), PrefabUtility.GetPrefabParent(go));
+			//		Log.Info("FindValidUploadPrefabInstanceRoot(go): " + PrefabUtility.FindValidUploadPrefabInstanceRoot(go).FullName(), PrefabUtility.FindValidUploadPrefabInstanceRoot(go));
 			//	}
 			//	//return;
 			//}

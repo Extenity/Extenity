@@ -199,7 +199,7 @@ namespace Extenity.DataToolbox
 		private void LogInfo(string message)
 		{
 #if EnablePlayerPrefLogging
-			Debug.Log(LogPrefix + message);
+			Log.Info(LogPrefix + message);
 #endif
 		}
 
@@ -207,7 +207,7 @@ namespace Extenity.DataToolbox
 		private void LogError(string message)
 		{
 #if EnablePlayerPrefLogging
-			Debug.LogError(LogPrefix + message);
+			Log.Error(LogPrefix + message);
 #endif
 		}
 

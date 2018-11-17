@@ -101,7 +101,7 @@ namespace Extenity.OperatingSystemToolbox
 
 			if (log)
 			{
-				Debug.Log("Copied to clipboard: " + text);
+				Log.Info("Copied to clipboard: " + text);
 			}
 		}
 

@@ -59,7 +59,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void PushSelection(bool keepSelection = false)
 		{
-			//Debug.Log("Pushing current selection");
+			//Log.Info("Pushing current selection");
 			if (SelectionStack == null)
 				SelectionStack = new List<int[]>(4);
 			else if (SelectionStack.Count == 100)
@@ -74,7 +74,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void PopSelection()
 		{
-			//Debug.Log("Popping selection");
+			//Log.Info("Popping selection");
 			if (SelectionStack.IsNullOrEmpty())
 				throw new Exception("Tried to pop selection while there were none in stack.");
 

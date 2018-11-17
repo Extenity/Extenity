@@ -246,7 +246,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DefaultSelectedButton)
 				{
-					Debug.Log($"Clearing '{nameof(DefaultSelectedButton)}' as it is not needed and would leave unused references.");
+					Log.Info($"Clearing '{nameof(DefaultSelectedButton)}' as it is not needed and would leave unused references.");
 					DefaultSelectedButton = null;
 				}
 			}

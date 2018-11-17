@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Extenity.DebugToolbox;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 
@@ -36,21 +35,13 @@ namespace Extenity.ResourceLoadingToolbox
 
 		#endregion
 
-		#region Initialization
-
-		//protected void Awake()
-		//{
-		//}
-
-		#endregion
-
 		#region Deinitialization
 
 		protected void OnDestroy()
 		{
 #if UNITY_EDITOR
 
-			Debug.Log("################ make sure this is called when pressing Stop in editor");
+			Log.Info("################ make sure this is called when pressing Stop in editor");
 
 			// If we are in editor, all asset bundles should be destroyed before pressing Play.
 			// If not, don't try to release any resources. They will be destroyed on program

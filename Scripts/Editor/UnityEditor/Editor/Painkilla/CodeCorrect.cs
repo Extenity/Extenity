@@ -85,7 +85,7 @@ namespace Extenity.PainkillaTool.Editor
 					{
 						if (GUILayout.Button(character.ToString(), CharacterButtonWidth))
 						{
-							Debug.Log($"Character '{character}' with unicode representation '\\u{((ulong)character).ToHexString()}' copied into clipboard.");
+							Log.Info($"Character '{character}' with unicode representation '\\u{((ulong)character).ToHexString()}' copied into clipboard.");
 							Clipboard.SetClipboardText(character.ToString(), false);
 						}
 					}

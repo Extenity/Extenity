@@ -34,7 +34,7 @@ namespace Extenity.BeyondAudio
 				var pitch = 1f;
 				var selectorPin = pureVolume.Clamp01();
 
-				//Debug.Log($"Playing impact sound. Impulse '{impulse:N2}'\t Volume: '{volume:N2}'\t SelectorPin: '{selectorPin:N2}'\t Sound: '{Sound}'");
+				//Log.Info($"Playing impact sound. Impulse '{impulse:N2}'\t Volume: '{volume:N2}'\t SelectorPin: '{selectorPin:N2}'\t Sound: '{Sound}'");
 				LastPlayTime = now;
 				AudioManager.PlayAttached(Sound, selectorPin, collision.transform, Vector3.zero, false, volume, pitch, 1f);
 			}

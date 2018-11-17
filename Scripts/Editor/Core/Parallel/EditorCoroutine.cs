@@ -35,7 +35,7 @@ namespace Extenity.ParallelToolbox.Editor
 						EditorApplication.update -= onUpdate;
 						if (onFinished != null)
 							onFinished();
-						//Debug.Log("callCount : " + callCount);
+						//Log.Info("callCount : " + callCount);
 					}
 					if (autoRefreshUI)
 						EditorGUITools.SafeRepaintAllViews();
@@ -48,7 +48,7 @@ namespace Extenity.ParallelToolbox.Editor
 						onFinished();
 					if (autoRefreshUI)
 						EditorGUITools.SafeRepaintAllViews();
-					//Debug.Log("callCount : " + callCount);
+					//Log.Info("callCount : " + callCount);
 				}
 			};
 

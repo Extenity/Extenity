@@ -223,7 +223,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			while (needsReRun);
 
 			if (log)
-				Debug.Log(
+				Log.Info(
 					$"<b>Destroyed {destroyedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')} in scene '{scene.name}':</b>\n" +
 					$"{deletedObjectsText}\n\n" +
 					$"<b>Skipped {skippedCount.ToStringWithEnglishPluralPostfix("empty object", '\'')}:</b>\n" +
@@ -270,7 +270,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+				Log.Info($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion
@@ -313,7 +313,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+				Log.Info($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static object", '\'')} containing component '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion
@@ -356,7 +356,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+				Log.Info($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion
@@ -399,7 +399,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.Log($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
+				Log.Info($"<b>Destroyed {count.ToStringWithEnglishPluralPostfix("static component", '\'')} of type '{typeof(T).Name}' in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion
@@ -465,7 +465,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 
 			if (log)
-				Debug.Log($"<b>Destroyed {meshRendererCount.ToStringWithEnglishPluralPostfix("disabled static MeshRenderer", '\'')} and {meshFilterCount.ToStringWithEnglishPluralPostfix("disabled static MeshFilter", '\'')} in scene '{scene.name}':</b>\n{deletedObjectsText}");
+				Log.Info($"<b>Destroyed {meshRendererCount.ToStringWithEnglishPluralPostfix("disabled static MeshRenderer", '\'')} and {meshFilterCount.ToStringWithEnglishPluralPostfix("disabled static MeshFilter", '\'')} in scene '{scene.name}':</b>\n{deletedObjectsText}");
 		}
 
 		#endregion

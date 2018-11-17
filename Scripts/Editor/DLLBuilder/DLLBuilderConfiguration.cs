@@ -133,7 +133,7 @@ namespace Extenity.DLLBuilder
 			var assetIDs = AssetDatabase.FindAssets(filter);
 			if (assetIDs.Length == 0)
 			{
-				Debug.Log(Constants.DLLBuilderName + " configuration asset does not exist. Creating new one.");
+				Log.Info(Constants.DLLBuilderName + " configuration asset does not exist. Creating new one.");
 				_Instance = AssetTools.CreateAsset<DLLBuilderConfiguration>(Constants.DefaultConfigurationPath);
 			}
 			else if (assetIDs.Length > 1)
@@ -143,7 +143,7 @@ namespace Extenity.DLLBuilder
 			else
 			{
 				var assetPath = AssetDatabase.GUIDToAssetPath(assetIDs[0]);
-				Debug.Log(Constants.DLLBuilderName + " configuration asset found at path: " + assetPath);
+				Log.Info(Constants.DLLBuilderName + " configuration asset found at path: " + assetPath);
 				_Instance = AssetDatabase.LoadAssetAtPath<DLLBuilderConfiguration>(assetPath);
 			}
 

@@ -669,7 +669,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			if (ExtenityEditorTypes == null)
 			{
-				//Debug.Log("Searching for Extenity editor base types");
+				//Log.Info("Searching for Extenity editor base types");
 
 				ExtenityEditorTypes = new Dictionary<Type, Type>();
 
@@ -686,7 +686,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 								throw new Exception();
 							}
 							ExtenityEditorTypes.Add(objectType, inspectorType);
-							//Debug.LogFormat("Found inspector type '{0}' of object type '{1}'.", inspectorType.FullName, objectType.FullName);
+							//Log.Info($"Found inspector type '{inspectorType.FullName}' of object type '{objectType.FullName}'.");
 						}
 
 					}

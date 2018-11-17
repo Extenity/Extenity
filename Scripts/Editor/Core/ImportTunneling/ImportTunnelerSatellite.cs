@@ -51,7 +51,7 @@ namespace Extenity.ImportTunnelingToolbox.Editor
 
 			BuildPipeline.BuildAssetBundles(outputDirectoryPath, builds, BuildAssetBundleOptions.UncompressedAssetBundle, assetBundlePlatform);
 
-			Debug.Log("Conversion completed");
+			Log.Info("Conversion completed");
 		}
 
 		#endregion

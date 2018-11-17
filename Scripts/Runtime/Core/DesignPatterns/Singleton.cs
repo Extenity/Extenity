@@ -27,7 +27,7 @@ namespace Extenity.DesignPatternsToolbox
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
-			UnityEngine.Debug.Log("Instantiating singleton: " + className);
+			Log.Info("Instantiating singleton: " + className);
 #endif
 
 			instance = obj;
@@ -37,7 +37,7 @@ namespace Extenity.DesignPatternsToolbox
 		public void DestroySingleton()
 		{
 #if LoggingEnabled
-			UnityEngine.Debug.Log("Destroying singleton: " + className);
+			Log.Info("Destroying singleton: " + className);
 #endif
 
 			OnDestroySingleton();

@@ -124,7 +124,7 @@ namespace Extenity.UIToolbox
 		{
 			if (WriteDebugLogs)
 			{
-				Debug.Log(message);
+				Log.Info(message);
 			}
 		}
 

@@ -42,7 +42,7 @@ namespace Extenity.DLLBuilder
 			for (var i = 0; i < configurations.Count; i++)
 			{
 				var configuration = configurations[i];
-				DLLBuilder.LogAndUpdateStatus("Gathering dependencies for configuration '{0}'", configuration.ConfigurationName);
+				DLLBuilder.LogAndUpdateStatus($"Gathering dependencies for configuration '{configuration.ConfigurationName}'");
 
 				if (!configuration.Enabled)
 				{
@@ -58,7 +58,7 @@ namespace Extenity.DLLBuilder
 					if (errors.Count > 0)
 					{
 						if (onFailed != null)
-							onFailed(string.Format("Failed to gather dependencies because of consistency errors:\n" + errors.Serialize('\n')));
+							onFailed("Failed to gather dependencies because of consistency errors:\n" + errors.Serialize('\n'));
 						yield break;
 					}
 				}
@@ -87,7 +87,7 @@ namespace Extenity.DLLBuilder
 						yield break;
 					}
 
-					DLLBuilder.LogAndUpdateStatus("Gathering dependencies for '{0}'", targetDirectoryPath);
+					DLLBuilder.LogAndUpdateStatus($"Gathering dependencies for '{targetDirectoryPath}'");
 
 					// TODO: Better just sync files, instead of deleting and copying from scratch.
 					DirectoryTools.Delete(targetDirectoryPath);

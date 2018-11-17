@@ -81,11 +81,11 @@ namespace Extenity.UnityEditorToolbox
 							if (definition.JobTags.Contains(requiredTag))
 								return true;
 						}
-						Debug.Log($"Skipping job '{jobName}' because it does not have "+ 
-						          (requiredTags.Length > 1 
-							          ? $"any of the tags '{string.Join(", ", requiredTags)}'." 
-							          : $"the tag '{requiredTags[0]}'."
-						          )
+						Log.Info($"Skipping job '{jobName}' because it does not have " +
+								  (requiredTags.Length > 1
+									  ? $"any of the tags '{string.Join(", ", requiredTags)}'."
+									  : $"the tag '{requiredTags[0]}'."
+								  )
 						);
 						skippedSomething = true;
 					}

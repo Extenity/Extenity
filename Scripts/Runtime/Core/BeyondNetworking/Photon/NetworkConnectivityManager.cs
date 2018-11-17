@@ -2177,31 +2177,31 @@ namespace BeyondNetworking
 
 		private void LogInfo(string message, NetworkSession session)
 		{
-			Debug.Log(LogPrefix(session) + message);
+			Log.Info(LogPrefix(session) + message);
 		}
 
 		private void LogVerbose(string message, NetworkSession session)
 		{
 			if (!VerboseLogging)
 				return;
-			Debug.Log(LogPrefix(session) + message);
+			Log.Info(LogPrefix(session) + message);
 		}
 
 		private void LogOverkill(string message, NetworkSession session)
 		{
 			if (!OverkillLogging)
 				return;
-			Debug.Log(LogPrefix(session) + message);
+			Log.Info(LogPrefix(session) + message);
 		}
 
 		private void LogWarning(string message, NetworkSession session)
 		{
-			Debug.LogWarning(LogPrefix(session) + message);
+			Log.Warning(LogPrefix(session) + message);
 		}
 
 		private void LogError(string message, NetworkSession session)
 		{
-			Debug.LogError(LogPrefix(session) + message);
+			Log.Error(LogPrefix(session) + message);
 		}
 
 		public void DebugLogNetworkState(NetworkSession session)

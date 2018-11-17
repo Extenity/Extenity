@@ -964,7 +964,7 @@ namespace ExtenityTests.UnityEditorToolbox
 					stringBuilder.AppendLine(path);
 				}
 			} while (iterator.Next(true));
-			Debug.Log(stringBuilder.ToString());
+			Log.Info(stringBuilder.ToString());
 		}
 
 		#endregion

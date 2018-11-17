@@ -203,14 +203,14 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no '{nameof(AnimatedTransform)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no '{nameof(AnimatedTransform)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
 
 			if (DEBUG_ShowAnimationMessages)
 			{
-				Debug.Log($"Animating '{AnimatedTransform.gameObject.FullName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.", gameObject);
+				Log.Info($"Animating '{AnimatedTransform.gameObject.FullName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.", gameObject);
 			}
 
 			if (delay < 0f)

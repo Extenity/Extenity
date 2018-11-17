@@ -33,29 +33,29 @@ namespace Extenity.ParallelToolbox
 	/// {
 	/// 	if (Input.anyKeyDown)
 	/// 	{
-	/// 		Debug.Log("-------- Stop");
+	/// 		Log.Info("-------- Stop");
 	/// 		task.Stop();
 	/// 	}
 	/// }
 	/// 
 	/// IEnumerator MainCoroutine()
 	/// {
-	/// 	Debug.Log("Main start  -  Waiting 5 seconds");
+	/// 	Log.Info("Main start  -  Waiting 5 seconds");
 	/// 	yield return new WaitForSeconds(5f);
 	/// 	yield return task.StartNested(SubCoroutine());
-	/// 	Debug.Log("Main end");
+	/// 	Log.Info("Main end");
 	/// }
 	/// 
 	/// IEnumerator SubCoroutine()
 	/// {
-	/// 	Debug.Log("Sub start  -  Waiting 5 seconds");
+	/// 	Log.Info("Sub start  -  Waiting 5 seconds");
 	/// 	yield return new WaitForSeconds(5f);
-	/// 	Debug.Log("Sub end");
+	/// 	Log.Info("Sub end");
 	/// }
 	/// 
 	/// private void TaskOnFinished(bool manuallyStopped)
 	/// {
-	/// 	Debug.Log("Task finished. Manually stopped: " + manuallyStopped);
+	/// 	Log.Info("Task finished. Manually stopped: " + manuallyStopped);
 	/// 	task = null;
 	/// }
 	/// </code>
@@ -262,15 +262,15 @@ namespace Extenity.ParallelToolbox
 				{
 					var enumerator = CoroutineStack.Peek();
 
-					//Debug.Log("                                           movenext " + enumerator + "        list count: " + CoroutineStack.Count);
+					//Log.Info("                                           movenext " + enumerator + "        list count: " + CoroutineStack.Count);
 					if (enumerator != null && enumerator.MoveNext())
 					{
-						//Debug.Log("                                           yes");
+						//Log.Info("                                           yes");
 						yield return enumerator.Current;
 					}
 					else
 					{
-						//Debug.Log("                                           no");
+						//Log.Info("                                           no");
 						CoroutineStack.Pop();
 						if (CoroutineStack.Count == 0)
 						{

@@ -9,11 +9,11 @@ namespace Extenity.Messaging
 	{
 		protected void Awake()
 		{
-			Debug.Log("Press F3 to emit a test message.", this);
-			Debug.Log("Press F4 to destroy listener component.", this);
-			Debug.Log("Press F5 to destroy listener component using DestroyImmediate.", this);
-			Debug.Log("Press F8 to create a new listener component (Don't instantiate multiple listeners to test F4 and F5 or logs will be confusing).", this);
-			Debug.Log("Press F12 to list all registered listeners.");
+			Log.Info("Press F3 to emit a test message.", this);
+			Log.Info("Press F4 to destroy listener component.", this);
+			Log.Info("Press F5 to destroy listener component using DestroyImmediate.", this);
+			Log.Info("Press F8 to create a new listener component (Don't instantiate multiple listeners to test F4 and F5 or logs will be confusing).", this);
+			Log.Info("Press F12 to list all registered listeners.");
 		}
 
 		protected void Update()

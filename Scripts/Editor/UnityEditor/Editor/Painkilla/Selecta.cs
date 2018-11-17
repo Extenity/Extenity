@@ -104,14 +104,14 @@ namespace Extenity.PainkillaTool.Editor
 		//				//	if (Physics.Raycast(ray, out hitInfo, float.MaxValue))
 		//				//	{
 		//				//		Event.current.Use();
-		//				//		Debug.Log("Selected: " + hitInfo.transform);
+		//				//		Log.Info("Selected: " + hitInfo.transform);
 		//				//		//Selection.activeTransform = hitInfo.transform;
 		//				//		HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 		//				//	}
 		//				//	else
 		//				//	{
 		//				//		Event.current.Use();
-		//				//		Debug.Log("Miss! Selection: " + Selection.activeTransform);
+		//				//		Log.Info("Miss! Selection: " + Selection.activeTransform);
 		//				//		//Selection.activeObject = null;
 		//				//		HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 		//				//	}
@@ -194,7 +194,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			if (changed)
 			{
-				//Debug.Log("Should deselect");
+				//Log.Info("Should deselect");
 				NewSelection = expectedSelection.ToArray();
 				SelectionShouldUpdate = true;
 				Repaint();

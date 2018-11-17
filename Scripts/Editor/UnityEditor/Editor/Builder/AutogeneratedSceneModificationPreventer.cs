@@ -13,11 +13,11 @@ namespace Extenity.UnityEditorToolbox
 
 			if (IsProcessorRunning)
 			{
-				//Debug.Log("Skipping backup scene modification checks.");
+				//Log.Info("Skipping backup scene modification checks.");
 				return paths;
 			}
 
-			//Debug.Log("Saving assets: \n" + paths.Serialize('\n'));
+			//Log.Info("Saving assets: \n" + paths.Serialize('\n'));
 
 			for (var i = 0; i < paths.Length; i++)
 			{

@@ -44,7 +44,7 @@ namespace Extenity.DLLBuilder
 			{
 				var content = File.ReadAllText(Constants.RemoteBuilder.RequestFilePath);
 				DeleteBuildRequestFile();
-				Debug.Log("## file content: " + content);
+				Log.Info("## file content: " + content);
 
 				var job = JsonConvert.DeserializeObject<BuildJob>(content);
 				//job.CheckConsistencyAndThrow(); This will be done in DLLBuilder.StartProcess. Otherwise we can't be able to produce response file.
@@ -58,7 +58,7 @@ namespace Extenity.DLLBuilder
 				//	{
 				//		try
 				//		{
-				//			Debug.Log("Remote DLL build request received. " + job);
+				//			Log.Info("Remote DLL build request received. " + job);
 				//			DLLBuilder.StartProcess(job, BuildTriggerSource.RemoteBuildRequest);
 				//		}
 				//		catch (Exception exception)
@@ -78,7 +78,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				DLLBuilder.LogErrorAndUpdateStatus("Failed to process " + Constants.DLLBuilderName + " remote request file. Reason: " + exception);
+				DLLBuilder.LogAndUpdateStatus($"Failed to process {Constants.DLLBuilderName} remote request file. Reason: " + exception, StatusMessageType.Error);
 				// Delete request file so that it won't bother console logs again.
 				DeleteBuildRequestFile();
 			}
@@ -102,7 +102,7 @@ namespace Extenity.DLLBuilder
 
 		public static void CreateBuildRequestFileForProject(BuildJob job, string targetProjectPath)
 		{
-			DLLBuilder.UpdateStatus("Creating build request file for project '{0}'.", targetProjectPath);
+			DLLBuilder.UpdateStatus($"Creating build request file for project '{targetProjectPath}'.");
 
 			if (string.IsNullOrEmpty(targetProjectPath))
 				throw new ArgumentNullException(nameof(targetProjectPath));
@@ -166,7 +166,7 @@ namespace Extenity.DLLBuilder
 			for (var i = 0; i < configurations.Count; i++)
 			{
 				var configuration = configurations[i];
-				DLLBuilder.LogAndUpdateStatus("Building remote project at path '{0}'", configuration.ProjectPath);
+				DLLBuilder.LogAndUpdateStatus($"Building remote project at path '{configuration.ProjectPath}'");
 
 				// Check consistency first.
 				{
@@ -199,7 +199,7 @@ namespace Extenity.DLLBuilder
 
 					checkCount++;
 
-					DLLBuilder.UpdateStatus("Waiting for remote project response ({0})", checkCount);
+					DLLBuilder.UpdateStatus($"Waiting for remote project response ({checkCount})");
 					var responseJob = LoadRemoteProjectBuildResponseFile(remoteProjectResponseFilePath);
 					if (responseJob != null)
 					{
@@ -242,7 +242,7 @@ namespace Extenity.DLLBuilder
 			try
 			{
 				var json = File.ReadAllText(remoteProjectResponseFilePath);
-				Debug.Log("## Remote project response: " + json);
+				Log.Info("## Remote project response: " + json);
 				return JsonConvert.DeserializeObject<BuildJob>(json);
 			}
 			catch (FileNotFoundException)
@@ -267,7 +267,7 @@ namespace Extenity.DLLBuilder
 				if (File.Exists(remoteProjectResponseFilePath))
 				{
 					FileTools.DeleteFileEvenIfReadOnly(remoteProjectResponseFilePath);
-					DLLBuilder.LogAndUpdateStatus("Deleted remote project build response file '{0}'.", remoteProjectResponseFilePath);
+					DLLBuilder.LogAndUpdateStatus($"Deleted remote project build response file '{remoteProjectResponseFilePath}'.");
 				}
 			}
 			catch (FileNotFoundException)

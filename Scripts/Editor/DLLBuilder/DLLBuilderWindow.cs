@@ -160,11 +160,11 @@ namespace Extenity.DLLBuilder
 			if (StatusMessageStyles == null || StatusMessageStyles.Length == 0)
 			{
 				StatusMessageStyles = new GUIStyle[3];
-				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Normal] = new GUIStyle(GUI.skin.label);
-				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Warning] = new GUIStyle(GUI.skin.label);
-				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Warning].normal.textColor = Color.yellow;
-				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error] = new GUIStyle(GUI.skin.label);
-				StatusMessageStyles[(int)DLLBuilder.StatusMessageType.Error].normal.textColor = Color.red;
+				StatusMessageStyles[(int)StatusMessageType.Normal] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)StatusMessageType.Warning] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)StatusMessageType.Warning].normal.textColor = Color.yellow;
+				StatusMessageStyles[(int)StatusMessageType.Error] = new GUIStyle(GUI.skin.label);
+				StatusMessageStyles[(int)StatusMessageType.Error].normal.textColor = Color.red;
 			}
 
 			GUILayout.Label(LastStatusMessageTime.ToFullDateTimeMsec());

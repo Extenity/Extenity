@@ -172,28 +172,28 @@ namespace Extenity.BeyondAudio.BankInfo
 
 		public void DebugLog()
 		{
-			Debug.Log($"Events ({Events.Count}):");
+			Log.Info($"Events ({Events.Count}):");
 			foreach (var entry in Events)
 			{
-				Debug.Log($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
+				Log.Info($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
 			}
 
-			Debug.Log($"States ({States.Count}):");
+			Log.Info($"States ({States.Count}):");
 			foreach (var entry in States)
 			{
-				Debug.Log($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.StateGroup}");
+				Log.Info($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.StateGroup}");
 			}
 
-			Debug.Log($"GameParameters ({GameParameters.Count}):");
+			Log.Info($"GameParameters ({GameParameters.Count}):");
 			foreach (var entry in GameParameters)
 			{
-				Debug.Log($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
+				Log.Info($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
 			}
 
-			Debug.Log($"AudioBuses ({AudioBuses.Count}):");
+			Log.Info($"AudioBuses ({AudioBuses.Count}):");
 			foreach (var entry in AudioBuses)
 			{
-				Debug.Log($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
+				Log.Info($"{entry.ID}\t| <b>{entry.Name}</b>\t| {entry.ParentDirectory}\t| {entry.WwiseObjectPath}");
 			}
 		}
 	}

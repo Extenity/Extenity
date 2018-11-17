@@ -683,7 +683,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableLogging)
 			//	return;
 
-			Debug.Log("|AUDIO|" + message, Instance);
+			Log.Info("|AUDIO|" + message, Instance);
 		}
 
 		/// <summary>
@@ -695,7 +695,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableRTPCLogging)
 			//	return;
 
-			Debug.Log("|AUDIO|" + message, Instance);
+			Log.Info("|AUDIO|" + message, Instance);
 		}
 
 		/// <summary>
@@ -707,7 +707,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableVerboseLogging)
 			//	return;
 
-			Debug.Log("|AUDIO|" + message, Instance);
+			Log.Info("|AUDIO|" + message, Instance);
 		}
 
 		/// <summary>

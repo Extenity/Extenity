@@ -129,7 +129,7 @@ namespace Extenity.RenderingToolbox
 
 			public void LogDump(int indentation)
 			{
-				Debug.Log(new string('\t', indentation) + Layer + "   " + GameObject.name, GameObject);
+				Log.Info(new string('\t', indentation) + Layer + "   " + GameObject.name, GameObject);
 				if (ChildHistoryEntries != null)
 				{
 					for (int i = 0; i < ChildHistoryEntries.Count; i++)
@@ -179,7 +179,7 @@ namespace Extenity.RenderingToolbox
 
 			public void LogDump()
 			{
-				Debug.Log("Dumping all layer history:");
+				Log.Info("Dumping all layer history:");
 				for (int i = 0; i < Entries.Count; i++)
 				{
 					var entry = Entries[i];

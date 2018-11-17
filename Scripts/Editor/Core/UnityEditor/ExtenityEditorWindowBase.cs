@@ -119,7 +119,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Close the window when play mode changes. Because at the time the user
 			// stops playmode, Unity will go crazy about calling ApplicationTools.PathHash
 			// from static constructor. This is a duct tape solution, but whatever.
-			Debug.Log($"Closing '{titleContent.text}' window automatically to prevent API call errors.");
+			Log.Info($"Closing '{titleContent.text}' window automatically to prevent API call errors.");
 			Close();
 		}
 

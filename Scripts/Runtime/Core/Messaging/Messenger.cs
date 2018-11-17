@@ -657,7 +657,7 @@ namespace Extenity.MessagingToolbox
 				}
 			}
 
-			Debug.Log(stringBuilder.ToString(), gameObject);
+			Log.Info(stringBuilder.ToString(), gameObject);
 		}
 
 		#endregion

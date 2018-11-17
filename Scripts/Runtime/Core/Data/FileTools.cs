@@ -587,10 +587,10 @@ namespace Extenity.DataToolbox
 				? path
 				: path.Substring(0, path.Length - fileExtension.Length);
 
-			//Debug.Log("path : " + path);
-			//Debug.Log("fileName : " + fileName);
-			//Debug.Log("extension : " + fileExtension);
-			//Debug.Log("filePathWithoutExtension : " + filePathWithoutExtension);
+			//Log.Info("path : " + path);
+			//Log.Info("fileName : " + fileName);
+			//Log.Info("extension : " + fileExtension);
+			//Log.Info("filePathWithoutExtension : " + filePathWithoutExtension);
 
 			return GenerateUniqueNumberedName(
 				filePathWithoutExtension,
@@ -606,7 +606,7 @@ namespace Extenity.DataToolbox
 			if (!doesExistCheck(name))
 				return name;
 
-			//Debug.Log("---- Name already exists: " + name);
+			//Log.Info("---- Name already exists: " + name);
 
 			int number = 1;
 			string nameWithPrefix = null;
@@ -639,7 +639,7 @@ namespace Extenity.DataToolbox
 			var newName = nameWithPrefix + number + numberPostfix;
 			while (doesExistCheck(newName))
 			{
-				//Debug.Log("---- Tried name already exists: " + newName);
+				//Log.Info("---- Tried name already exists: " + newName);
 				number++;
 				newName = nameWithPrefix + number + numberPostfix;
 				if (++tryCount > maxTries)

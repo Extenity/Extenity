@@ -37,7 +37,7 @@ namespace Extenity.BuildToolbox.Editor
 					}
 					else
 					{
-						Debug.Log("Skipping data folder name simplification because looks like it has already been done.");
+						Log.Info("Skipping data folder name simplification because looks like it has already been done.");
 					}
 				}
 				else
@@ -321,7 +321,7 @@ namespace Extenity.BuildToolbox.Editor
 			code = major * 10000 + minor * 100 + build;
 			var version = major + "." + minor + "." + build;
 
-			UnityEngine.Debug.Log($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
 
 			// Android
 			{

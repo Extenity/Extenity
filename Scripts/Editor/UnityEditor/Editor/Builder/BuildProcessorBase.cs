@@ -176,7 +176,7 @@ namespace Extenity.UnityEditorToolbox
 					}
 				}
 
-				Debug.Log("Scene is ready to be processed. Starting the process.");
+				Log.Info("Scene is ready to be processed. Starting the process.");
 
 				// Call initialization process
 				yield return Task.StartNested(OnBeforeProcess(definition, configuration, runAsync));
@@ -310,7 +310,7 @@ namespace Extenity.UnityEditorToolbox
 		public void OnPreprocessBuild(BuildTarget target, string path)
 #endif
 		{
-			Debug.LogFormat("Build processor '{0}' is checking up in build preprocess...", BuildProcessorName);
+			Log.Info($"Build processor '{BuildProcessorName}' is checking up in build preprocess...");
 
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
 		}
@@ -321,7 +321,7 @@ namespace Extenity.UnityEditorToolbox
 		public void OnPostprocessBuild(BuildTarget target, string path)
 #endif
 		{
-			//Debug.Log("Cleaning up in build postprocess...");
+			//Log.Info("Cleaning up in build postprocess...");
 		}
 
 #if UNITY_2018_1_OR_NEWER
@@ -334,7 +334,7 @@ namespace Extenity.UnityEditorToolbox
 				return;
 
 			// TODO:
-			Debug.LogWarning("Launching build processor on build time is not implemented!");
+			Log.Warning("Launching build processor on build time is not implemented!");
 			//DoProcessScene(scene, false).;
 		}
 

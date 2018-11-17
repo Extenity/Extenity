@@ -31,7 +31,7 @@ namespace Extenity.DLLBuilder
 
 		public static void Distribute(DistributerConfiguration configuration)
 		{
-			DLLBuilder.LogAndUpdateStatus("Distributing configuration '{0}'", configuration.ConfigurationName);
+			DLLBuilder.LogAndUpdateStatus($"Distributing configuration '{configuration.ConfigurationName}'");
 
 			if (!configuration.Enabled)
 				throw new Exception($"Internal error. Tried to distribute using a disabled configuration '{configuration.ConfigurationName}'.");
@@ -60,7 +60,7 @@ namespace Extenity.DLLBuilder
 					throw new Exception($"Distribution target directory '{target.TargetDirectoryPath}' does not exist. This is a precaution to prevent any damage caused by misconfiguration. Please make sure the target directory is created.");
 				}
 
-				DLLBuilder.LogAndUpdateStatus("Distributing to '{0}'", targetDirectoryPath);
+				DLLBuilder.LogAndUpdateStatus($"Distributing to '{targetDirectoryPath}'");
 
 				// TODO: Better just sync files, instead of deleting and copying from scratch.
 				DirectoryTools.Delete(targetDirectoryPath);

@@ -79,7 +79,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			{
 				foreach (var component in go.GetComponents<Collider>())
 				{
-					Debug.Log($"Removing '{component.FullName()}'.", component.gameObject);
+					Log.Info($"Removing '{component.FullName()}'.", component.gameObject);
 					Undo.DestroyObjectImmediate(component);
 				}
 			}
@@ -97,7 +97,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				var newName = go.name.RemoveEndingNumberedParentheses();
 				if (newName != go.name)
 				{
-					Debug.Log($"Renaming '{go.FullName()}' to '{newName}'.", go);
+					Log.Info($"Renaming '{go.FullName()}' to '{newName}'.", go);
 					Undo.RecordObject(go, "Remove Numbered Parentheses Postfix");
 					go.name = newName;
 				}
@@ -112,7 +112,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				var newName = go.name.RemoveEndingNumberedParentheses();
 				if (newName != go.name)
 				{
-					Debug.Log($"Renaming '{go.FullName()}' to '{newName}'.", go);
+					Log.Info($"Renaming '{go.FullName()}' to '{newName}'.", go);
 					Undo.RecordObject(go, "Remove Numbered Parentheses Postfix");
 					go.name = newName;
 				}
