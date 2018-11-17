@@ -476,7 +476,7 @@ namespace Extenity.DebugToolbox
 
 		private void LogCriticalError(string message, Object context)
 		{
-			Logger.CriticalError("|InitTrack|" + message, context);
+			Log.CriticalError("|InitTrack|" + message, context);
 		}
 
 		#endregion
