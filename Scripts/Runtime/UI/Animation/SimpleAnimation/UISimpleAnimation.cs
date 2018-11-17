@@ -139,7 +139,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
@@ -152,7 +152,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
@@ -175,7 +175,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
@@ -188,7 +188,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}

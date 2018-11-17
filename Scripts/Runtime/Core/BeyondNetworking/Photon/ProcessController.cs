@@ -32,7 +32,7 @@ namespace BeyondNetworking
 		{
 			if (IsCancelled)
 			{
-				Debug.LogWarning($"Tried to cancel process '{Mode}' more than once.");
+				Log.Warning($"Tried to cancel process '{Mode}' more than once.");
 				return;
 			}
 			IsCancelled = true;
@@ -42,7 +42,7 @@ namespace BeyondNetworking
 		{
 			if (IsFinished)
 			{
-				Debug.LogWarning($"Tried to finish process '{Mode}' more than once.");
+				Log.Warning($"Tried to finish process '{Mode}' more than once.");
 				return;
 			}
 			IsFinished = true;

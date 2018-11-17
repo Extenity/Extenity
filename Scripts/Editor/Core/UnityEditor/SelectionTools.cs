@@ -63,7 +63,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (SelectionStack == null)
 				SelectionStack = new List<int[]>(4);
 			else if (SelectionStack.Count == 100)
-				Debug.LogWarning("Enormous amount of selection pushes detected.");
+				Log.Warning("Enormous amount of selection pushes detected.");
 
 			var selection = Selection.instanceIDs;
 			SelectionStack.Add(selection);

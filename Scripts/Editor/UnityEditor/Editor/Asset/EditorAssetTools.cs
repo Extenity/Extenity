@@ -338,7 +338,7 @@ namespace Extenity.AssetToolbox.Editor
 
 			if (EditorSceneManagerTools.IsAnyLoadedSceneDirty())
 			{
-				Debug.LogWarning($"Scene '{sceneAssetPath}' still has unsaved changes just after it is saved. Probably a script in scene makes some changes after serialization, which is an unexpected behaviour. You may want to inspect it further, though most of the time you can safely ignore this message.");
+				Log.Warning($"Scene '{sceneAssetPath}' still has unsaved changes just after it is saved. Probably a script in scene makes some changes after serialization, which is an unexpected behaviour. You may want to inspect it further, though most of the time you can safely ignore this message.");
 			}
 
 			// Make sure there is no garbage left after reserialization. 

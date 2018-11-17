@@ -28,7 +28,7 @@ namespace Extenity.Messaging
 
 			if (text.Contains("should NOT be delivered to MyMessageHandler"))
 			{
-				Debug.LogWarning("Well, we have an unexpected message.", this);
+				Log.Warning("Well, we have an unexpected message.", this);
 			}
 		}
 	}

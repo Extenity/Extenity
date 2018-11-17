@@ -719,7 +719,7 @@ namespace Extenity.BeyondAudio
 			//if (!EnableWarningLogging)
 			//	return;
 
-			Debug.LogWarning("|AUDIO|" + message, Instance);
+			Log.Warning("|AUDIO|" + message, Instance);
 		}
 
 		private static void LogError(string message)

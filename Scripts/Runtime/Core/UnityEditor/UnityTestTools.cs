@@ -61,7 +61,7 @@ namespace Extenity.UnityTestToolbox
 			DetectedMemoryInMemoryCheck = 0;
 			if (change != 0)
 			{
-				Debug.LogWarning($"Detected a memory change of '{change}' bytes.");
+				Log.Warning($"Detected a memory change of '{change}' bytes.");
 			}
 			return change != 0;
 		}

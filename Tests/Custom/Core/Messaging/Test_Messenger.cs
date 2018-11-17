@@ -15,7 +15,7 @@ namespace Extenity.Messaging
 
 			public void SomeListenerWhichIsNotPartOfAUnityObject()
 			{
-				Debug.LogWarning("This method should not be called from messenger.");
+				Log.Warning("This method should not be called from messenger.");
 			}
 		}
 

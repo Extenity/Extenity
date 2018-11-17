@@ -74,7 +74,7 @@ namespace Extenity.ProfilingToolbox
 			var duration = now - CurrentEntry.StartTime;
 			if (duration < 0.0)
 			{
-				Debug.LogWarning($"Detected profiler time leap to backwards for '{duration}' seconds.");
+				Log.Warning($"Detected profiler time leap to backwards for '{duration}' seconds.");
 				duration = 0.0;
 			}
 			CurrentEntry.StartTime = 0.0;

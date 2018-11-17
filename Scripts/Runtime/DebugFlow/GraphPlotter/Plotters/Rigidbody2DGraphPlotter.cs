@@ -128,7 +128,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 			if (Rigidbody2D == null)
 			{
-				Debug.LogWarning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(UnityEngine.Rigidbody2D) + " component.", this);
+				Log.Warning(nameof(Rigidbody2DGraphPlotter) + " requires " + nameof(UnityEngine.Rigidbody2D) + " component.", this);
 				return;
 			}
 

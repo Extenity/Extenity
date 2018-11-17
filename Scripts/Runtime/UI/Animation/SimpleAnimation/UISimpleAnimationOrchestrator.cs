@@ -93,7 +93,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
@@ -131,7 +131,7 @@ namespace Extenity.UIToolbox
 			{
 				if (DEBUG_ShowAnimationMessages)
 				{
-					Debug.LogWarning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
+					Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
 				}
 				return 0f;
 			}
