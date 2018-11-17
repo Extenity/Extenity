@@ -284,9 +284,9 @@ namespace Extenity.DebugToolbox
 		/// </summary>
 		public void InformObjectInstantiation(MonoBehaviour component)
 		{
-			LogVerbose($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
 			if (IsFinalized)
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			LogVerbose($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
 			if (!component)
 				throw new ArgumentNullException(nameof(component));
 			var type = component.GetType();
@@ -329,9 +329,9 @@ namespace Extenity.DebugToolbox
 		/// </summary>
 		public void InformMethodCall(string methodName, Object context = null)
 		{
-			LogVerbose($"{nameof(InformMethodCall)} called with method '{methodName}'.");
 			if (IsFinalized)
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			LogVerbose($"{nameof(InformMethodCall)} called with method '{methodName}'.");
 			if (string.IsNullOrEmpty(methodName))
 				throw new ArgumentNullException(nameof(methodName));
 
@@ -366,9 +366,9 @@ namespace Extenity.DebugToolbox
 		/// </summary>
 		public void InformCheckpointReached(string checkpointName, Object context = null)
 		{
-			LogVerbose($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 			if (IsFinalized)
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			LogVerbose($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 			if (string.IsNullOrEmpty(checkpointName))
 				throw new ArgumentNullException(nameof(checkpointName));
 
