@@ -1,3 +1,4 @@
+#define InitializationTrackerLogging
 #define InitializationTrackerVerboseLogging
 
 using System;
@@ -122,6 +123,12 @@ namespace Extenity.DebugToolbox
 		private void Finalize(bool succeeded)
 		{
 			LogVerbose($"{nameof(Finalize)} called with succeeded '{succeeded}'.");
+			if (IsFinalized)
+			{
+				// Finalization should only be called once.
+				LogCriticalError("Internal error 17541957!", null);
+				return;
+			}
 
 			IsFinalized = true;
 
@@ -143,7 +150,7 @@ namespace Extenity.DebugToolbox
 		/// </summary>
 		public void CancelIfNotFinalized()
 		{
-			LogVerbose($"{nameof(CancelIfNotFinalized)} called.");
+			LogVerbose($"{nameof(CancelIfNotFinalized)} called while finalized '{IsFinalized}'.");
 			if (IsFinalized)
 				return;
 			IsCancelled = true;
@@ -156,7 +163,7 @@ namespace Extenity.DebugToolbox
 		/// </summary>
 		public void GiveUpIfNotFinalized()
 		{
-			LogVerbose($"{nameof(GiveUpIfNotFinalized)} called.");
+			LogVerbose($"{nameof(GiveUpIfNotFinalized)} called while finalized '{IsFinalized}'.");
 			if (IsFinalized)
 				return;
 			Finalize(false);
@@ -270,7 +277,7 @@ namespace Extenity.DebugToolbox
 			if (IsFailed)
 				return; // Ignore consecutive failures.
 			IsFailed = true;
-			Logger.LogCriticalError(message, context);
+			LogCriticalError(message, context);
 		}
 
 		#endregion
@@ -285,8 +292,11 @@ namespace Extenity.DebugToolbox
 		public void InformObjectInstantiation(MonoBehaviour component)
 		{
 			if (IsFinalized)
+			{
+				LogVerbose($"(FINALIZED) {nameof(InformObjectInstantiation)} called with component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
-			LogVerbose($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
+			}
+			Log($"{nameof(InformObjectInstantiation)} called with component '{component}'.");
 			if (!component)
 				throw new ArgumentNullException(nameof(component));
 			var type = component.GetType();
@@ -327,18 +337,25 @@ namespace Extenity.DebugToolbox
 		///
 		/// Remember to use 'nameof' to make life easier.
 		/// </summary>
-		public void InformMethodCall(string methodName, Object context = null)
+		public void InformMethodCall(string methodName, MonoBehaviour component = null)
 		{
 			if (IsFinalized)
+			{
+				LogVerbose($"(FINALIZED) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
-			LogVerbose($"{nameof(InformMethodCall)} called with method '{methodName}'.");
+			}
+			Log($"{nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 			if (string.IsNullOrEmpty(methodName))
 				throw new ArgumentNullException(nameof(methodName));
 
+			var componentAndMethodName = component
+				? component.GetType().Name + ":" + methodName
+				: methodName;
+
 			// Check if the method was already called before
-			if (IsMethodCalled(methodName))
+			if (IsMethodCalled(componentAndMethodName))
 			{
-				NoteFailure($"Method '{methodName}' was already called before.", context);
+				NoteFailure($"Method '{componentAndMethodName}' was already called before.", component);
 				//return; Nope. Add it to the list one more time. The list can contain more than one entries for the same method.
 			}
 
@@ -348,14 +365,14 @@ namespace Extenity.DebugToolbox
 				Debug.Assert(index < ExpectedInitializationStepsInOrder.Length); // See 98157.
 				var expectedEntry = ExpectedInitializationStepsInOrder[index];
 				if (expectedEntry.StepType != InitializationStepType.MethodCall ||
-					expectedEntry.Tag != methodName)
+					expectedEntry.Tag != componentAndMethodName)
 				{
-					NoteFailure($"Method '{methodName}' is called while expecting '{expectedEntry.ToLogFriendlyString()}'", context);
+					NoteFailure($"Method '{componentAndMethodName}' is called while expecting '{expectedEntry.ToLogFriendlyString()}'", component);
 				}
 			}
 
 			// Add it to the instantiation history
-			InitializationHistoryInOrder.Add(new InitializationHistoryEntry(InitializationStepType.MethodCall, null, null, methodName));
+			InitializationHistoryInOrder.Add(new InitializationHistoryEntry(InitializationStepType.MethodCall, null, null, componentAndMethodName));
 			FinalizeIfHistoryIsFull();
 		}
 
@@ -367,8 +384,11 @@ namespace Extenity.DebugToolbox
 		public void InformCheckpointReached(string checkpointName, Object context = null)
 		{
 			if (IsFinalized)
+			{
+				LogVerbose($"(FINALIZED) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
-			LogVerbose($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
+			}
+			Log($"{nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 			if (string.IsNullOrEmpty(checkpointName))
 				throw new ArgumentNullException(nameof(checkpointName));
 
@@ -400,10 +420,21 @@ namespace Extenity.DebugToolbox
 
 		#region Log
 
+		[Conditional("InitializationTrackerLogging")]
+		public static void Log(string message)
+		{
+			Debug.Log("|InitTrack|" + message);
+		}
+
 		[Conditional("InitializationTrackerVerboseLogging")]
 		public static void LogVerbose(string message)
 		{
 			Debug.Log("|InitTrack|" + message);
+		}
+
+		private void LogCriticalError(string message, Object context)
+		{
+			Logger.LogCriticalError("|InitTrack|" + message, context);
 		}
 
 		#endregion
