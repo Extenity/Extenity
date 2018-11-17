@@ -398,7 +398,7 @@ namespace Extenity.AssetToolbox.Editor
 				{
 					if (candidates.Length > 1)
 					{
-						Debug.LogErrorFormat("Found more than one candidate of type '{0}'. You need to manually assign the field '{1}'.", field.FieldType, field.Name);
+						Log.Error($"Found more than one candidate of type '{field.FieldType}'. You need to manually assign the field '{field.Name}'.");
 					}
 					else
 					{
@@ -413,7 +413,7 @@ namespace Extenity.AssetToolbox.Editor
 					{
 						if (candidates.Length > 1)
 						{
-							Debug.LogErrorFormat("Found more than one candidate of type '{0}' in children. You need to manually assign the field '{1}'.", field.FieldType, field.Name);
+							Log.Error($"Found more than one candidate of type '{field.FieldType}' in children. You need to manually assign the field '{field.Name}'.");
 						}
 						else
 						{
@@ -422,7 +422,7 @@ namespace Extenity.AssetToolbox.Editor
 					}
 					else
 					{
-						Debug.LogErrorFormat("No candidates found of type '{0}' for field '{1}'.", field.FieldType, field.Name);
+						Log.Error($"No candidates found of type '{field.FieldType}' for field '{field.Name}'.");
 					}
 				}
 

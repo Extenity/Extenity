@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox
 		{
 			if (Application.isPlaying)
 			{
-				Debug.LogWarningFormat("Destroying SnapToGroundInEditor in object '{0}' which should already be removed by now.", gameObject.FullName());
+				Log.Warning($"Destroying SnapToGroundInEditor in object '{gameObject.FullName()}' which should already be removed by now.");
 				Destroy(this);
 			}
 			else

@@ -285,7 +285,7 @@ namespace Extenity.UnityEditorToolbox
 					if (previousMethodOrder == currentMethodOrder)
 					{
 						detected = true;
-						Debug.LogErrorFormat("Methods '{0}' and '{1}' have the same order of '{2}'.", previousMethod.Name, currentMethod.Name, currentMethodOrder);
+						Log.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
 					}
 
 					previousMethod = currentMethod;

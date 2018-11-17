@@ -41,7 +41,7 @@ namespace Extenity.ProfilingToolbox
 				if (now > LastLogTime + MinimumLogInterval)
 				{
 					LastLogTime = now;
-					Debug.LogWarningFormat("{0}.{1} took {2} ms to execute.", obj.GetType().Name, methodName, elapsed);
+					Log.Warning($"{obj.GetType().Name}.{methodName} took {elapsed} ms to execute.");
 				}
 			}
 		}

@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var currentEvent = Event.current;
 			if (currentEvent.type != EventType.MouseDown)
 			{
-				Debug.LogErrorFormat("Tried to prevent mouse selection in an event with type '{0}' which should be 'MouseDown'.", currentEvent.type);
+				Log.Error($"Tried to prevent mouse selection in an event with type '{currentEvent.type}' which should be 'MouseDown'.");
 				return;
 			}
 			var passiveControlId = GUIUtility.GetControlID(FocusType.Passive);

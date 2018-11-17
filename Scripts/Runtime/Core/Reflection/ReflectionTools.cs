@@ -1160,7 +1160,7 @@ namespace Extenity.ReflectionToolbox
 				// out of this unknown type likewise.
 				if (!KnownTypesOfGameObjectReferenceFinder.Contains(type))
 				{
-					Debug.LogWarningFormat("Unknown object of type '{0}'. See the code for details.", type.FullName);
+					Log.Warning($"Unknown object of type '{type.FullName}'. See the code for details.");
 				}
 
 				foreach (var serializedField in referencedObject.GetUnitySerializedFields())

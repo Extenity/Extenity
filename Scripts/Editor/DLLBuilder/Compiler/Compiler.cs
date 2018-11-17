@@ -590,17 +590,17 @@ namespace Extenity.DLLBuilder
 					{
 						if (!File.Exists(dllOutputPath))
 						{
-							Debug.LogErrorFormat("Compiler returned no errors but output file '{0}' does not exist.", documentationOutputPath);
+							Log.Error($"Compiler returned no errors but output file '{documentationOutputPath}' does not exist.");
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDocumentation && !File.Exists(documentationOutputPath))
 						{
-							Debug.LogErrorFormat("Compiler returned no errors but output file '{0}' does not exist.", documentationOutputPath);
+							Log.Error($"Compiler returned no errors but output file '{documentationOutputPath}' does not exist.");
 							return CompileResult.Failed;
 						}
 						if (job.Configuration.GenerateDebugInfo && !File.Exists(debugDatabaseOutputPath))
 						{
-							Debug.LogErrorFormat("Compiler returned no errors but output file '{0}' does not exist.", debugDatabaseOutputPath);
+							Log.Error($"Compiler returned no errors but output file '{debugDatabaseOutputPath}' does not exist.");
 							return CompileResult.Failed;
 						}
 					}
@@ -629,8 +629,8 @@ namespace Extenity.DLLBuilder
 					return CompileResult.Succeeded;
 				}
 
-				Debug.LogError("Compilation exit code: " + process.ExitCode);
-				Debug.LogWarning("The failure might be due to a compilation error. Start Unity and manually check the errors.");
+				Log.Error("Compilation exit code: " + process.ExitCode);
+				Log.Warning("The failure might be due to a compilation error. Start Unity and manually check the errors.");
 				return CompileResult.Failed;
 			}
 			catch (Exception ex)

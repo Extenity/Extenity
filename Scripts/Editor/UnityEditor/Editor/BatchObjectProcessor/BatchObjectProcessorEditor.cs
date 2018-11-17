@@ -44,7 +44,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var reference = processor.Entries[entryIndex].Objects[objectIndex];
 			if (!reference.Object)
 			{
-				Debug.LogErrorFormat("Batch object processor has a null reference in entry '{0}' (at index {1}) and object at index '{2}'.", processor.Entries[entryIndex].AppliedJobName, entryIndex, objectIndex);
+				Log.Error($"Batch object processor has a null reference in entry '{processor.Entries[entryIndex].AppliedJobName}' (at index {entryIndex}) and object at index '{objectIndex}'.");
 				return 0;
 			}
 

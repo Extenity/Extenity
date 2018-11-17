@@ -73,7 +73,7 @@ namespace Extenity.CameraToolbox
 				{
 					if (field.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
 					{
-						Debug.LogErrorFormat("Field type '{0}' is not supported.", field.FieldType);
+						Log.Error($"Field type '{field.FieldType}' is not supported.");
 						continue;
 					}
 
@@ -106,7 +106,7 @@ namespace Extenity.CameraToolbox
 				var effectComponentType = Type.GetType(effectComponentData.Name);
 				if (effectComponentType == null)
 				{
-					Debug.LogErrorFormat("Camera effect '{0}' does not exist.", effectComponentData.Name);
+					Log.Error($"Camera effect '{effectComponentData.Name}' does not exist.");
 					continue;
 				}
 				var effectComponent = camera.gameObject.AddComponent(effectComponentType);
@@ -120,10 +120,7 @@ namespace Extenity.CameraToolbox
 						var fieldName = effectComponentSerializedFields[iComponentField].Name;
 						if (effectComponentData.SerializedFields.All(item => item.Name != fieldName))
 						{
-							Debug.LogWarningFormat(
-								"Camera effect '{0}' has the field '{1}' which does not exist in saved camera properties.",
-								effectComponent.name,
-								fieldName);
+							Log.Warning($"Camera effect '{effectComponent.name}' has the field '{fieldName}' which does not exist in saved camera properties.");
 
 							// Also remove from the list. We don't need them.
 							effectComponentSerializedFields.RemoveAt(iComponentField);
@@ -138,10 +135,7 @@ namespace Extenity.CameraToolbox
 						var field = effectComponentSerializedFields.FirstOrDefault(item => item.Name == fieldName);
 						if (field == null)
 						{
-							Debug.LogWarningFormat(
-								"Camera effect '{0}' does not have the field '{1}' which exists in saved camera properties.",
-								effectComponent.name,
-								fieldName);
+							Log.Warning($"Camera effect '{effectComponent.name}' does not have the field '{fieldName}' which exists in saved camera properties.");
 						}
 						else
 						{

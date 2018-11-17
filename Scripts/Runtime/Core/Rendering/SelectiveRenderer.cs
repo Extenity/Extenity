@@ -59,7 +59,7 @@ namespace Extenity.RenderingToolbox
 			{
 				if (GameObject != null)
 				{
-					Debug.LogErrorFormat(GameObject, "Tried to overwrite a noncleared history entry in selective renderer for object '{0}'. Expect unpredictable results. Make sure you clear history before starting new render.", GameObject.name);
+					Log.Error($"Tried to overwrite a noncleared history entry in selective renderer for object '{GameObject.name}'. Expect unpredictable results. Make sure you clear history before starting new render.", GameObject);
 					ClearOnly();
 				}
 

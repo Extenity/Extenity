@@ -207,7 +207,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 			{
-				Debug.LogWarningFormat("Changing active build platform from '{0}' to '{1}' as stated in '{2}'.", EditorUserBuildSettings.activeBuildTarget, buildTarget, SettingsFilePath);
+				Log.Warning($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' as stated in '{SettingsFilePath}'.");
 
 				EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
 			}

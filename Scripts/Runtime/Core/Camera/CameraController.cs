@@ -105,7 +105,7 @@ namespace Extenity.CameraToolbox
 		//		}
 		//		if (CachedEventSystem == null)
 		//		{
-		//			Debug.LogErrorFormat(this, "Scene should have an EventSystem for camera controller on game object '{0}' to work.", gameObject.name);
+		//			Log.Error($"Scene should have an EventSystem for camera controller on game object '{gameObject.name}' to work.", this);
 		//			return false;
 		//		}
 		//		return CachedEventSystem.currentSelectedGameObject != null;

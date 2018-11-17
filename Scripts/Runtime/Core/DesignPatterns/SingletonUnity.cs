@@ -92,7 +92,7 @@ namespace Extenity.DesignPatternsToolbox
 			{
 				if (Application.isPlaying)
 				{
-					Debug.LogErrorFormat("Tried to get editor instance of singleton '{0}' in play time.", typeof(T).Name);
+					Log.Error($"Tried to get editor instance of singleton '{typeof(T).Name}' in play time.");
 					return null;
 				}
 				if (!_EditorInstance)
@@ -100,7 +100,7 @@ namespace Extenity.DesignPatternsToolbox
 					_EditorInstance = FindObjectOfType<T>();
 					if (!_EditorInstance)
 					{
-						Debug.LogErrorFormat("Could not find an instance of singleton '{0}' in scene.", typeof(T).Name);
+						Log.Error($"Could not find an instance of singleton '{typeof(T).Name}' in scene.");
 					}
 				}
 				return _EditorInstance;

@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			if (property.type != typeof(MinMaxRange).Name)
 			{
-				Debug.LogErrorFormat("MinMaxRange attribute can only be used on fields with MinMaxRange type. Check '{0}' field which is a type of '{1}'.", property.name, property.type);
+				Log.Error($"MinMaxRange attribute can only be used on fields with MinMaxRange type. Check '{property.name}' field which is a type of '{property.type}'.");
 			}
 			else
 			{
