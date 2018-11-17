@@ -285,6 +285,20 @@ namespace Extenity.DebugToolbox
 		#region Inform
 
 		/// <summary>
+		/// Simplified, log-only version of it's Inform_ variant.
+		/// Useful when you just need to see what's happening, without processing.
+		/// </summary>
+		public void LogObjectInstantiation(MonoBehaviour component)
+		{
+			if (IsFinalized)
+			{
+				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformObjectInstantiation)} called with component '{component}'.");
+				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			}
+			Log($"(LOGONLY) {nameof(InformObjectInstantiation)} called with component '{component}'.");
+		}
+
+		/// <summary>
 		/// You should inform the Tracker when an expected object is instantiated.
 		/// Feel free to call it in at the most suitable time, like Awake, Start,
 		/// OnEnable, network instantiation method or maybe the first Update.
@@ -323,6 +337,20 @@ namespace Extenity.DebugToolbox
 			// Add it to the instantiation history
 			InitializationHistoryInOrder.Add(new InitializationHistoryEntry(InitializationStepType.ObjectInstantiation, type, component, null));
 			FinalizeIfHistoryIsFull();
+		}
+
+		/// <summary>
+		/// Simplified, log-only version of it's Inform_ variant.
+		/// Useful when you just need to see what's happening, without processing.
+		/// </summary>
+		public void LogMethodCall(string methodName, MonoBehaviour component = null)
+		{
+			if (IsFinalized)
+			{
+				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
+				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			}
+			Log($"(LOGONLY) {nameof(InformMethodCall)} called with method '{methodName}' and component '{component}'.");
 		}
 
 		/// <summary>
@@ -374,6 +402,20 @@ namespace Extenity.DebugToolbox
 			// Add it to the instantiation history
 			InitializationHistoryInOrder.Add(new InitializationHistoryEntry(InitializationStepType.MethodCall, null, null, componentAndMethodName));
 			FinalizeIfHistoryIsFull();
+		}
+
+		/// <summary>
+		/// Simplified, log-only version of it's Inform_ variant.
+		/// Useful when you just need to see what's happening, without processing.
+		/// </summary>
+		public void LogCheckpointReached(string checkpointName, Object context = null)
+		{
+			if (IsFinalized)
+			{
+				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
+				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
+			}
+			Log($"(LOGONLY) {nameof(InformCheckpointReached)} called with checkpoint '{checkpointName}'.");
 		}
 
 		/// <summary>
