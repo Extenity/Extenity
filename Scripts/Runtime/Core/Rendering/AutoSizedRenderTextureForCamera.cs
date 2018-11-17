@@ -81,9 +81,7 @@ namespace Extenity.RenderingToolbox
 				{
 					if (EnableLogging) // Checked here to prevent unnecessary string formatting.
 					{
-						LogFormat("Changing render texture. Old: {0}x{1} {2} {3} {4} New: {5}x{6} {7} {8} {9}",
-							CurrentTextureWidth, CurrentTextureHeight, CurrentTextureDepth, CurrentTextureFormat, CurrentTextureReadWrite,
-							sizeX, sizeY, Depth, Format, ReadWrite);
+						LogFormat($"Changing render texture. Old: {CurrentTextureWidth}x{CurrentTextureHeight} {CurrentTextureDepth} {CurrentTextureFormat} {CurrentTextureReadWrite} New: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 					}
 				}
 			}
@@ -91,8 +89,7 @@ namespace Extenity.RenderingToolbox
 			{
 				if (EnableLogging) // Checked here to prevent unnecessary string formatting.
 				{
-					LogFormat("Creating new render texture: {0}x{1} {2} {3} {4}",
-						sizeX, sizeY, Depth, Format, ReadWrite);
+					LogFormat($"Creating new render texture: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 				}
 			}
 
@@ -121,11 +118,11 @@ namespace Extenity.RenderingToolbox
 
 		public bool EnableLogging = true;
 
-		private void LogFormat(string format, params object[] args)
+		private void LogFormat(string message)
 		{
 			if (EnableLogging)
 			{
-				Debug.LogFormat(this, format, args);
+				Log.Info(message, this);
 			}
 		}
 

@@ -47,7 +47,6 @@ namespace Extenity.FlowToolbox
 			while (ScaledInvokeQueue.Count > 0)
 			{
 				var entry = ScaledInvokeQueue[0];
-				//Debug.LogFormat("now: {0}      \tnexttime: {1}", now, entry.NextTime);
 				if (now >= entry.NextTime)
 				{
 					// Remove entry if the related object does not exist anymore.
@@ -94,7 +93,6 @@ namespace Extenity.FlowToolbox
 			while (UnscaledInvokeQueue.Count > 0)
 			{
 				var entry = UnscaledInvokeQueue[0];
-				//Debug.LogFormat("now: {0}      \tnexttime: {1}", now, entry.NextTime);
 				if (now >= entry.NextTime)
 				{
 					// Remove entry if the related object does not exist anymore.

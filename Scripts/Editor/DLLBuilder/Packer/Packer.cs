@@ -52,18 +52,12 @@ namespace Extenity.DLLBuilder
 				var directoryInfo = configuration.DirectoriesToCopy[i];
 				if (!directoryInfo.Enabled)
 				{
-					Debug.LogWarningFormat("Skipping directory '{0}'.{1}", directoryInfo.DirectoryName,
-						string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes)
-							? ""
-							: $" Notes: '{directoryInfo.BuildEngineerNotes}'");
+					Log.Warning($"Skipping directory '{directoryInfo.DirectoryName}'.{(string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes) ? "" : $" Notes: '{directoryInfo.BuildEngineerNotes}'")}");
 					continue;
 				}
 				else
 				{
-					Debug.LogFormat("Processing directory '{0}'.{1}", directoryInfo.DirectoryName,
-						string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes)
-							? ""
-							: $" Notes: '{directoryInfo.BuildEngineerNotes}'");
+					Log.Info($"Processing directory '{directoryInfo.DirectoryName}'.{(string.IsNullOrEmpty(directoryInfo.BuildEngineerNotes) ? "" : $" Notes: '{directoryInfo.BuildEngineerNotes}'")}");
 				}
 
 				var sourceDirectoryPath = Path.Combine(DLLBuilderConfiguration.InsertEnvironmentVariables(configuration.SourceDirectoryPath), directoryInfo.DirectoryName);

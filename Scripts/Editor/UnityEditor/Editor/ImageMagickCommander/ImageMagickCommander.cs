@@ -38,7 +38,7 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 					continue;
 
 				var path = AssetDatabase.GetAssetPath(reflectionProbe.bakedTexture);
-				Debug.LogFormat("Downsizing Reflection Probe baked texture to '{0}x{1}' at path: {2}", sizeX, sizeY, path);
+				Log.Info($"Downsizing Reflection Probe baked texture to '{sizeX}x{sizeY}' at path: {path}");
 
 				path = Path.GetFullPath(path).FixDirectorySeparatorChars('\\');
 				var directoryPath = Path.GetDirectoryName(path).FixDirectorySeparatorChars('\\');

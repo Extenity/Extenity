@@ -87,7 +87,7 @@ namespace Extenity.PainkillaTool.Editor
 					var go = newReplaceWithObject.GetRootGameObjectIfChildOfAPrefabAsset();
 					if (go != newReplaceWithObject)
 					{
-						Debug.LogFormat(go, "Correcting the reference. Switched to parent object of the prefab, rather than the child '{0}'. See 'Replace Prefab Parent' option's tooltip for more information.", newReplaceWithObject);
+						Log.Info("Correcting the reference. Switched to parent object of the prefab, rather than the child '{newReplaceWithObject}'. See 'Replace Prefab Parent' option's tooltip for more information.", go);
 						newReplaceWithObject = go;
 					}
 				}

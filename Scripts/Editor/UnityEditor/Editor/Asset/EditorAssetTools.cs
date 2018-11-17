@@ -74,7 +74,7 @@ namespace Extenity.AssetToolbox.Editor
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
-			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
+			Log.Info($"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
 		}
 
 		private static void _GenerateEmbeddedCodeForImageFile(TextureFormat format)
@@ -90,7 +90,7 @@ namespace Extenity.AssetToolbox.Editor
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
-			Debug.LogFormat("Generated texture data as field '{0}' and copied to clipboard. Path: {1}", fieldName, path);
+			Log.Info($"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
 		}
 
 		#endregion
@@ -428,7 +428,7 @@ namespace Extenity.AssetToolbox.Editor
 
 				if (selected != null)
 				{
-					Debug.LogFormat("Filling field '{0}' of type '{1}' with '{2}'.", field.Name, field.FieldType, selected.gameObject.FullName());
+					Log.Info($"Filling field '{field.Name}' of type '{field.FieldType}' with '{selected.gameObject.FullName()}'.");
 					Undo.RecordObject(component, "Fill Empty References");
 					field.SetValue(component, candidates[0]);
 					EditorUtility.SetDirty(component);

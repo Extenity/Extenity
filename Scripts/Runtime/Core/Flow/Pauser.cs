@@ -70,7 +70,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (IsLoggingEnabled)
 			{
-				Debug.LogFormat("Pausing for '{0}' in Pauser '{1}'.", description, ID);
+				Log.Info($"Pausing for '{description}' in Pauser '{ID}'.");
 			}
 
 			var handler = new PauseHandler(this, description);
@@ -82,7 +82,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (handler == null)
 			{
-				Debug.LogErrorFormat("Tried to resume Pauser '{0}' but pause handler is null.", ID);
+				Log.Error($"Tried to resume Pauser '{ID}' but pause handler is null.");
 				return false;
 			}
 
@@ -92,11 +92,11 @@ namespace Extenity.FlowToolbox
 			{
 				if (resumed)
 				{
-					Debug.LogFormat("Resuming '{0}' in Pauser '{1}'.", handler.Description, ID);
+					Log.Info($"Resuming '{handler.Description}' in Pauser '{ID}'.");
 				}
 				else
 				{
-					Debug.LogFormat("Resuming '{0}' (though it was already resumed or cut loose) in Pauser '{1}'.", handler.Description, ID);
+					Log.Info($"Resuming '{handler.Description}' (though it was already resumed or cut loose) in Pauser '{ID}'.");
 				}
 			}
 
@@ -112,10 +112,7 @@ namespace Extenity.FlowToolbox
 			{
 				if (IsLoggingEnabled)
 				{
-					Debug.LogFormat("Resuming all {0} handler(s) '{1}' in Pauser '{2}'.",
-						PauseCount,
-						string.Join(", ", GetActivePauseHandlerDescriptions()),
-						ID);
+					Log.Info($"Resuming all {PauseCount} handler(s) '{string.Join(", ", GetActivePauseHandlerDescriptions())}' in Pauser '{ID}'.");
 				}
 
 				ActivePauseHandlers.Clear();
@@ -124,7 +121,7 @@ namespace Extenity.FlowToolbox
 			{
 				if (IsLoggingEnabled)
 				{
-					Debug.LogFormat("Resuming all handlers (though there were none) in Pauser '{0}'.", ID);
+					Log.Info($"Resuming all handlers (though there were none) in Pauser '{ID}'.");
 				}
 			}
 		}

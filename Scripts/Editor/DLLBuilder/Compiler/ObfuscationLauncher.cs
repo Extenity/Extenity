@@ -44,7 +44,7 @@ namespace Extenity.DLLBuilder
 			{
 				//var startTime = DateTime.Now;
 				var method = GetObfuscateMethod();
-				//Debug.LogFormat("Method search took '{0}'", (DateTime.Now - startTime).ToStringMinutesSecondsMilliseconds());
+				//Log.Info($"Method search took '{(DateTime.Now - startTime).ToStringMinutesSecondsMilliseconds()}'");
 
 				if (method == null)
 				{

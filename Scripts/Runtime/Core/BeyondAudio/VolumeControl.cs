@@ -83,7 +83,7 @@ namespace Extenity.BeyondAudio
 					PlayerPrefsTools.SetBool(MixerParameterNameForMute, value);
 				if (LogMixerAndVolumeChanges)
 				{
-					Debug.LogFormat("Mute set to '{0}' for parameter '{1}'.", value, MixerParameterName);
+					Log.Info($"Mute set to '{value}' for parameter '{MixerParameterName}'.");
 				}
 				OnMuteChanged.Invoke(value);
 				ReassignMixerParameter();
@@ -118,7 +118,7 @@ namespace Extenity.BeyondAudio
 					PlayerPrefs.SetFloat(MixerParameterNameForVolume, valueClamped);
 				if (LogMixerAndVolumeChanges)
 				{
-					Debug.LogFormat("Volume set to '{0} for parameter '{1}''.", valueClamped.ToString("N2"), MixerParameterName);
+					Log.Info($"Volume set to '{valueClamped:N2} for parameter '{MixerParameterName}''.");
 				}
 				ReassignMixerParameter();
 			}
@@ -169,7 +169,7 @@ namespace Extenity.BeyondAudio
 
 			if (LogMixerAndVolumeChanges)
 			{
-				Debug.LogFormat("Reassign mixer parameter for '{0}'. Muted: '{1}'. Volume: '{2}'. Result: '{3}'.", MixerParameterName, IsMuted, Volume.ToString("N2"), resultingVolume.ToString("N2"));
+				Log.Info($"Reassign mixer parameter for '{MixerParameterName}'. Muted: '{IsMuted}'. Volume: '{Volume:N2}'. Result: '{resultingVolume:N2}'.");
 			}
 
 #if BeyondAudioUsesUnityAudio

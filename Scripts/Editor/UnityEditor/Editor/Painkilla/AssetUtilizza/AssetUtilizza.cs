@@ -67,9 +67,7 @@ namespace Extenity.PainkillaTool.Editor
 			//{
 			//	SelectionShouldUpdate = false;
 			//	Selection.objects = NewSelection;
-			//	//Debug.LogFormat("Applying new selection ({0}): {1}",
-			//	//	NewSelection.Length,
-			//	//	NewSelection.Serialize('|'));
+			//	//Log.Info($"Applying new selection ({NewSelection.Length}): " + NewSelection.Serialize('|'));
 			//}
 
 			GUILayout.Space(8f);
@@ -115,9 +113,7 @@ namespace Extenity.PainkillaTool.Editor
 		//		case EventType.MouseDown:
 		//			{
 		//				RecordedSelectionOnMouseDown = Selection.objects;
-		//				Debug.LogFormat("Selection was ({0}): {1}",
-		//					RecordedSelectionOnMouseDown.Length,
-		//					RecordedSelectionOnMouseDown.Serialize('|'));
+		//				Log.Info($"Selection was ({RecordedSelectionOnMouseDown.Length}): " + RecordedSelectionOnMouseDown.Serialize('|'));
 
 		//				//if (currentEvent.button == 0)
 		//				//{
@@ -366,9 +362,7 @@ namespace Extenity.PainkillaTool.Editor
 				}
 			).Where(item => item != null).ToList();
 
-			//Debug.LogFormat("Current selection ({0}): {1}",
-			//	currentSelection.Length,
-			//	currentSelection.Serialize('|'));
+			//Log.Info($"Current selection ({currentSelection.Length}): " + currentSelection.Serialize('|'));
 
 			if (changed)
 			{

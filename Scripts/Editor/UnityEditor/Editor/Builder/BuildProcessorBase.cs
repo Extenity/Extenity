@@ -97,7 +97,7 @@ namespace Extenity.UnityEditorToolbox
 				);
 				if (definition == null)
 				{
-					Debug.LogFormat("Skipping scene processing for scene '{0}'.", scene.name);
+					Log.Info($"Skipping scene processing for scene '{scene.name}'.");
 					yield break;
 				}
 
@@ -111,11 +111,11 @@ namespace Extenity.UnityEditorToolbox
 				// See if we need to process the scene
 				if (configuration.NeedsProcessing(isLaunchedByUser))
 				{
-					Debug.LogFormat("Processing configuration '{0}' on scene at path: {1}", configurationName, scenePath);
+					Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
 				}
 				else
 				{
-					Debug.LogFormat("Skipping configuration '{0}' on scene at path: {1}", configurationName, scenePath);
+					Log.Info($"Skipping configuration '{configurationName}' on scene at path: {scenePath}");
 					yield break;
 				}
 
@@ -200,7 +200,7 @@ namespace Extenity.UnityEditorToolbox
 				var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
 				if (CurrentStep - 1 > 0)
 				{
-					Debug.LogFormat("Step {0} took {1}.", CurrentStep - 1, previousStepDuration.ToStringHoursMinutesSecondsMilliseconds());
+					Log.Info($"Step {CurrentStep - 1} took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
 				}
 
 				// Hack: This is needed to save the scene after lightmap settings change.
@@ -211,7 +211,7 @@ namespace Extenity.UnityEditorToolbox
 				AggressivelySaveOpenScenes();
 
 				succeeded = true;
-				Debug.LogFormat("{0} | Scene processor finished.", ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds());
+				Log.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
 
 				ClearProgressBar();
 			}
@@ -462,13 +462,13 @@ namespace Extenity.UnityEditorToolbox
 
 			if (isFirstStep)
 			{
-				Debug.LogFormat("{0} | {1}Scene Processor Step {2} - {3}", now.ToStringHoursMinutesSecondsMilliseconds(), skippedText, CurrentStep, title);
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {title}");
 			}
 			else
 			{
 				var previousStepDuration = now - PreviousStepStartTime;
-				Debug.LogFormat("Step '{0}' took {1}.", PreviousStepTitle, previousStepDuration.ToStringHoursMinutesSecondsMilliseconds());
-				Debug.LogFormat("{0} | {1}Scene Processor Step {2} - {3}", now.ToStringHoursMinutesSecondsMilliseconds(), skippedText, CurrentStep, title);
+				Log.Info($"Step '{PreviousStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {title}");
 				if (isAllowed)
 				{
 					DisplayProgressBar("Scene Processor Step " + CurrentStep, title);

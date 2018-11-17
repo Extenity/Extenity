@@ -43,18 +43,18 @@ namespace Extenity.NavigationToolbox
 			if (count == buffer.Length)
 			{
 				var size = buffer.Length;
-				//Debug.LogFormat("Extending the buffer size from: {0}", size);
+				//Log.Info($"Extending the buffer size from: {size}");
 				while (size < maxBufferExtensionSize)
 				{
 					size = size == 0 ? 8 : Mathf.Min(size * 2, maxBufferExtensionSize);
-					//Debug.LogFormat("New buffer size: {0}", size);
+					//Log.Info($"New buffer size: {size}");
 					buffer = new Vector3[size];
 					count = path.GetCornersNonAlloc(buffer);
 					if (count < buffer.Length)
 						return count;
 				}
 			}
-			//Debug.LogFormat("Buffer size: {0}    count: {1}", buffer.Length, count);
+			//Log.Info($"Buffer size: {buffer.Length}    count: {count}");
 			return count;
 		}
 
@@ -64,11 +64,11 @@ namespace Extenity.NavigationToolbox
 			if (count == buffer.Length)
 			{
 				var size = buffer.Length;
-				//Debug.LogFormat("Extending the buffer size from: {0}", size);
+				//Log.Info($"Extending the buffer size from: {size}");
 				while (size < maxBufferExtensionSize)
 				{
 					size = size == 0 ? 8 : Mathf.Min(size * 2, maxBufferExtensionSize);
-					//Debug.LogFormat("New buffer size: {0}", size);
+					//Log.Info($"New buffer size: {size}");
 					buffer = new Vector3[size];
 					count = path.GetCornersNonAlloc(buffer);
 					if (count < buffer.Length)
@@ -95,7 +95,7 @@ namespace Extenity.NavigationToolbox
 				bufferXZ[i].y = item.z;
 			}
 
-			//Debug.LogFormat("Buffer size: {0}    count: {1}", buffer.Length, count);
+			//Log.Info($"Buffer size: {buffer.Length}    count: {count}");
 			return count;
 		}
 

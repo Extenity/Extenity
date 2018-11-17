@@ -187,7 +187,7 @@ namespace Extenity.DLLBuilder
 				EnvironmentVariableEnd,
 				key =>
 				{
-					Debug.LogFormat("Replacing '{0}' in text '{1}'.", key, text);
+					Log.Info($"Replacing '{key}' in text '{text}'.");
 
 					for (int i = 0; i < EnvironmentVariables.Count; i++)
 					{

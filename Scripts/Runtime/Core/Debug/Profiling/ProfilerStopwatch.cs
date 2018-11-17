@@ -100,22 +100,22 @@ namespace Extenity.DebugToolbox
 
 		public void LogInfo(string profilerMessageFormat)
 		{
-			Debug.LogFormat(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
+			Log.Info(string.Format(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds()));
 		}
 
 		public void LogInfo(Object context, string profilerMessageFormat)
 		{
-			Debug.LogFormat(context, profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
+			Log.Info(string.Format(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds()), context);
 		}
 
 		public void LogInfoCumulative(string profilerMessageFormat)
 		{
-			Debug.LogFormat(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
+			Log.Info(string.Format(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds()));
 		}
 
 		public void LogInfoCumulative(Object context, string profilerMessageFormat)
 		{
-			Debug.LogFormat(context, profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
+			Log.Info(string.Format(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds()), context);
 		}
 
 		#endregion

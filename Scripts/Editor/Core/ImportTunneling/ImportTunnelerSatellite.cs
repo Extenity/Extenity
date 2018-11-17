@@ -30,7 +30,7 @@ namespace Extenity.ImportTunnelingToolbox.Editor
 
 		public static void Convert(string sourceAssetPath, string outputAssetPath, BuildTarget assetBundlePlatform)
 		{
-			Debug.LogFormat("Starting asset conversion for '{0}' output as '{1}'.", sourceAssetPath, outputAssetPath);
+			Log.Info($"Starting asset conversion for '{sourceAssetPath}' output as '{outputAssetPath}'.");
 
 			var outputFileName = Path.GetFileName(outputAssetPath);
 			var outputDirectoryPath = Path.GetDirectoryName(outputAssetPath);

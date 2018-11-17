@@ -367,7 +367,7 @@ namespace __NAMESPACE__
 					},
 					() =>
 					{
-						Debug.LogFormat("Cancelled snippet creation for '{0}'.", scriptName);
+						Log.Info($"Cancelled snippet creation for '{scriptName}'.");
 					}
 				);
 			}

@@ -419,7 +419,7 @@ namespace Extenity.DataToolbox
 		[Conditional("LogCachedTypeGetters")]
 		private static void LogCTG(string format, params object[] args)
 		{
-			Debug.LogFormat(format, args);
+			Log.Info(string.Format(format, args));
 		}
 
 		#endregion

@@ -115,7 +115,7 @@ namespace Extenity.RenderingToolbox
 
 		private static RenderTexture CreateRenderTexture(int width, int height, int depth, RenderTextureFormat format, RenderTextureReadWrite readWrite)
 		{
-			Debug.LogFormat("Creating render texture. Resolution: {0}x{1} Depth: {2} Format: {3} ReadWrite: {4}", width, height, depth, format, readWrite);
+			Log.Info($"Creating render texture. Resolution: {width}x{height} Depth: {depth} Format: {format} ReadWrite: {readWrite}");
 			return new RenderTexture(width, height, depth, format, readWrite);
 		}
 
