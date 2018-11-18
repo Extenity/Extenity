@@ -650,7 +650,7 @@ namespace BeyondNetworking
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				Log.Exception(exception);
 				controller.InformFail();
 				yield break;
 			}

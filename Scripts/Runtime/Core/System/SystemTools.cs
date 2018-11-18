@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Extenity.SystemToolbox
 {
@@ -19,7 +18,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -36,7 +35,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -53,7 +52,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -70,7 +69,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -87,7 +86,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -104,7 +103,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -121,7 +120,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -138,7 +137,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -155,7 +154,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -172,7 +171,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			return false;
@@ -193,7 +192,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -211,7 +210,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -229,7 +228,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -247,7 +246,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -265,7 +264,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -283,7 +282,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -301,7 +300,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -319,7 +318,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -337,7 +336,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);
@@ -355,7 +354,7 @@ namespace Extenity.SystemToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			result = default(TResult);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Timers;
 using UnityEditor;
 using System.IO;
@@ -63,7 +62,7 @@ namespace Extenity.DLLBuilder
 				//		}
 				//		catch (Exception exception)
 				//		{
-				//			Debug.LogException(exception);
+				//			Log.Exception(exception);
 				//		}
 				//	}
 				//);

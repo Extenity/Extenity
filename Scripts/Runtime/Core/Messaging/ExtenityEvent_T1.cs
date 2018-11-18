@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -213,7 +212,7 @@ namespace Extenity.MessagingToolbox
 					}
 					catch (Exception exception)
 					{
-						Debug.LogException(exception, callback.Target as Object);
+						Log.Exception(exception, callback.Target as Object);
 					}
 				}
 				else

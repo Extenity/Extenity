@@ -7,14 +7,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.DLLBuilder
 {
@@ -74,7 +71,7 @@ namespace Extenity.DLLBuilder
 				}
 				catch (Exception exception)
 				{
-					Debug.LogException(exception);
+					Log.Exception(exception);
 					if (onFailed != null)
 						onFailed($"Failed initialize compilation of DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 					yield break;
@@ -87,7 +84,7 @@ namespace Extenity.DLLBuilder
 				}
 				catch (Exception exception)
 				{
-					Debug.LogException(exception);
+					Log.Exception(exception);
 					if (onFailed != null)
 						onFailed($"Failed to start compilation of runtime DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 					yield break;
@@ -113,7 +110,7 @@ namespace Extenity.DLLBuilder
 					}
 					catch (Exception exception)
 					{
-						Debug.LogException(exception);
+						Log.Exception(exception);
 						if (onFailed != null)
 							onFailed($"Failed to obfuscate runtime DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 						yield break;
@@ -132,7 +129,7 @@ namespace Extenity.DLLBuilder
 					}
 					catch (Exception exception)
 					{
-						Debug.LogException(exception);
+						Log.Exception(exception);
 						if (onFailed != null)
 							onFailed($"Failed to start compilation of editor DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 						yield break;
@@ -158,7 +155,7 @@ namespace Extenity.DLLBuilder
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Log.Exception(exception);
 							if (onFailed != null)
 								onFailed($"Failed to obfuscate editor DLL '{job.Configuration.DLLNameWithoutExtension}'.");
 							yield break;
@@ -218,7 +215,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				Log.Exception(exception);
 			}
 
 			job.RuntimeDLLFinished = true;
@@ -246,7 +243,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				Log.Exception(exception);
 			}
 
 			job.EditorDLLFinished = true;
@@ -635,7 +632,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception ex)
 			{
-				Debug.LogException(ex);
+				Log.Exception(ex);
 				return CompileResult.Failed;
 			}
 		}

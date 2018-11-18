@@ -66,7 +66,7 @@ namespace Extenity.FlowToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Log.Exception(exception);
 						}
 					}
 
@@ -112,7 +112,7 @@ namespace Extenity.FlowToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception);
+							Log.Exception(exception);
 						}
 					}
 

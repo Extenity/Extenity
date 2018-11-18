@@ -4,7 +4,6 @@ using System.Linq;
 using Extenity.ConsistencyToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace Extenity.DLLBuilder
@@ -237,7 +236,7 @@ namespace Extenity.DLLBuilder
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				Log.Exception(exception);
 
 				// Well, it won't count as succeeded if we can't finalize the process.
 				jobStatus.IsSucceeded = false;

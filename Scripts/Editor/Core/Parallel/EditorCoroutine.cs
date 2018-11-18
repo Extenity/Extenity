@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using Extenity.ApplicationToolbox.Editor;
 using Extenity.IMGUIToolbox.Editor;
-using UnityEngine;
 using UnityEditor;
 
 namespace Extenity.ParallelToolbox.Editor
@@ -42,8 +41,8 @@ namespace Extenity.ParallelToolbox.Editor
 				}
 				catch (Exception ex)
 				{
+					Log.Exception(ex);
 					EditorApplication.update -= onUpdate;
-					Debug.LogException(ex);
 					if (onFinished != null)
 						onFinished();
 					if (autoRefreshUI)
@@ -100,6 +99,7 @@ namespace Extenity.ParallelToolbox.Editor
 					}
 					catch (Exception ex)
 					{
+						Log.Exception(ex);
 						if (timer != null)
 						{
 							timer.Dispose();
@@ -107,7 +107,6 @@ namespace Extenity.ParallelToolbox.Editor
 						}
 						if (onFinished != null)
 							onFinished();
-						Debug.LogException(ex);
 						if (autoRefreshUI)
 							EditorGUITools.SafeRepaintAllViews();
 						isProcessing = false;
@@ -154,6 +153,7 @@ namespace Extenity.ParallelToolbox.Editor
 				}
 				catch (Exception ex)
 				{
+					Log.Exception(ex);
 					if (timer != null)
 					{
 						timer.Enabled = false;
@@ -162,7 +162,6 @@ namespace Extenity.ParallelToolbox.Editor
 					}
 					if (onFinished != null)
 						onFinished();
-					Debug.LogException(ex);
 					if (autoRefreshUI)
 						EditorGUITools.SafeRepaintAllViews();
 				}

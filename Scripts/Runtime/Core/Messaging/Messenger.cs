@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Extenity.ReflectionToolbox;
-using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -330,7 +329,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -359,7 +358,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -388,7 +387,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -417,7 +416,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -446,7 +445,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -475,7 +474,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -504,7 +503,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -533,7 +532,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -562,7 +561,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else
@@ -591,7 +590,7 @@ namespace Extenity.MessagingToolbox
 						}
 						catch (Exception exception)
 						{
-							Debug.LogException(exception, castListener.Target as Object);
+							Log.Exception(exception, castListener.Target as Object);
 						}
 					}
 					else

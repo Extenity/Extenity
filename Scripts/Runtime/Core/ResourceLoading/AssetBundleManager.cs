@@ -127,7 +127,7 @@ namespace Extenity.ResourceLoadingToolbox
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					Log.Exception(e);
 				}
 			}
 			LoadedAssetBundles.Clear();
@@ -148,7 +148,7 @@ namespace Extenity.ResourceLoadingToolbox
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				Log.Exception(e);
 			}
 		}
 

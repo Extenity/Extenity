@@ -21,7 +21,6 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.UnityEditorToolbox
 {
@@ -217,7 +216,7 @@ namespace Extenity.UnityEditorToolbox
 			}
 			//catch (Exception e)
 			//{
-			//	Debug.LogException(e);
+			//	Log.Exception(e);
 			//}
 			finally
 			{
