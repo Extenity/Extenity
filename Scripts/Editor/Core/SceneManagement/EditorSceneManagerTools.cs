@@ -30,7 +30,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 			}
 		}
 
-		public static void FailIfAnyLoadedSceneIsDirty(string failMessage)
+		public static void ThrowIfAnyLoadedSceneIsDirty(string failMessage)
 		{
 			var isAnySceneDirty = IsAnyLoadedSceneDirty();
 			if (isAnySceneDirty)

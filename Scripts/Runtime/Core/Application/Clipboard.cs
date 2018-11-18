@@ -13,13 +13,13 @@ namespace Extenity.ApplicationToolbox
 			get
 			{
 				if (_Instance == null)
-					throw new Exception("Internal error! Clipboard system is not initialized yet!");
+					throw new Exception("Internal error 1857182!"); // Clipboard system is not initialized yet
 				return _Instance;
 			}
 			protected set
 			{
 				if (_Instance != null)
-					throw new Exception("Internal error! There already was an existing Clipboard system running!");
+					throw new Exception("Internal error 2857182!"); // There already was an existing Clipboard system running
 				_Instance = value;
 			}
 		}

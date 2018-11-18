@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Revealed internals (Unity version 2018.1.1f1)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.PropertyHandler");
 			if (type == null)
-				throw new Exception("Internal error 18672-3!");
+				throw new Exception("Internal error 38672!"); // See 837379.
 
 			type.GetMethodAsFunc("OnGUI", out _OnGUI);
 		}
