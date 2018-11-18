@@ -79,7 +79,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexMe;
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
-				throw new Exception("Internal error!"); // That's odd.
+				throw new InternalException(176581); // That's odd. See 908157.
 
 			if (acceptOnlyJustAbove)
 				return indexMe == indexTarget - 1;
@@ -101,7 +101,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexMe;
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
-				throw new Exception("Internal error!"); // That's odd.
+				throw new InternalException(276581); // That's odd. See 908157.
 
 			if (acceptOnlyJustBelow)
 				return indexMe == indexTarget + 1;
@@ -123,7 +123,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexMe;
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
-				throw new Exception("Internal error!"); // That's odd.
+				throw new InternalException(376581); // That's odd. See 908157.
 			int indexShouldBe = indexTarget;
 
 			int upTopFactor = indexMe < indexTarget ? -1 : 0;
@@ -146,7 +146,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			int indexMe;
 			int indexTarget;
 			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
-				throw new Exception("Internal error!"); // That's odd.
+				throw new InternalException(476581); // That's odd. See 908157.
 			int indexShouldBe = indexTarget + 1;
 
 			int upTopFactor = indexMe < indexTarget ? -1 : 0;

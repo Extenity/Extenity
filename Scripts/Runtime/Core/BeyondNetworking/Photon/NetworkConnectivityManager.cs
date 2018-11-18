@@ -55,7 +55,7 @@ namespace BeyondNetworking
 		protected void Awake()
 		{
 			if (_Instance)
-				throw new Exception("Internal error 922817!");
+					throw new InternalException(922817);
 			_Instance = this;
 			if (_WasInstantiatedBefore)
 			{
@@ -577,7 +577,7 @@ namespace BeyondNetworking
 		private IEnumerator InternalProcessDesiredMode(NetworkSession session)
 		{
 			if (string.IsNullOrEmpty(_GameVersion))
-				throw new Exception("Internal error 7581051!"); // SetVersion must be called before any operation.
+					throw new InternalException(7581051); // SetVersion must be called before any operation.
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 
@@ -2001,9 +2001,9 @@ namespace BeyondNetworking
 				if (_NetworkStatisticsEnabled == value)
 					return;
 				if (_NetworkStatisticsEnabled != PhotonNetwork.NetworkStatisticsEnabled)
-					throw new Exception("Internal error 751952!"); // PhotonNetwork.NetworkStatisticsEnabled should not be used elsewhere.
+					throw new InternalException(751952); // PhotonNetwork.NetworkStatisticsEnabled should not be used elsewhere.
 				if (!IsInstanceAvailable)
-					throw new Exception("Internal error 851952!"); // This is only available in play mode. (It requires FastInvokes)
+					throw new InternalException(851952); // This is only available in play mode. (It requires FastInvokes)
 				_NetworkStatisticsEnabled = value;
 
 				ResetStatInternals();
@@ -2135,7 +2135,7 @@ namespace BeyondNetworking
 				if (string.IsNullOrEmpty(_GameVersion))
 				{
 					// Game version is not set yet. Make sure it's set before calling the getter.
-					throw new Exception("Internal error 17659823!");
+					throw new InternalException(17659823);
 				}
 				return _GameVersion;
 			}
@@ -2145,7 +2145,7 @@ namespace BeyondNetworking
 		{
 			if (!string.IsNullOrEmpty(_GameVersion))
 			{
-				Log.DebugError("Internal error 27659823!");
+				Log.InternalError(27659823);
 				// TODO: SECURITY: Possible tampering attempt.
 				return;
 			}

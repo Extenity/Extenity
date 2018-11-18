@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityEditor;
-using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
 {
@@ -170,7 +169,7 @@ namespace Extenity.UnityEditorToolbox
 						}
 						else
 						{
-							throw new Exception("Internal error 59931!");
+							throw new InternalException(59931);
 						}
 					}
 

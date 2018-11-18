@@ -272,6 +272,16 @@ public static class Log
 		Debug.LogException(new Exception(message, innerException), context);
 	}
 
+	/// <summary>
+	/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+	///
+	/// See also 'InternalException'.
+	/// </summary>
+	public static void InternalError(int errorCode)
+	{
+		Debug.LogException(new InternalException(errorCode));
+	}
+
 	public static void Exception(Exception exception)
 	{
 		Debug.LogException(exception);
@@ -342,6 +352,17 @@ public static class Log
 		Debug.LogError(CreateMessage(message, context), context);
 	}
 
+	/// <summary>
+	/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+	///
+	/// See also 'InternalException'.
+	/// </summary>
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugInternalError(int errorCode)
+	{
+		Debug.LogException(new InternalException(errorCode));
+	}
+
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugException(Exception exception)
 	{
@@ -376,6 +397,15 @@ public static class Log
 	public static void DebugExceptionAsErrorDetailed(this Exception exception, Object context)
 	{
 		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
+	}
+
+	#endregion
+
+	#region Internal Error Message
+
+	public static string BuildInternalErrorMessage(int errorCode)
+	{
+		return "Internal error " + errorCode + "!";
 	}
 
 	#endregion
@@ -732,6 +762,19 @@ public static class LogExtensions
 	}
 
 	#endregion
+}
+
+public class InternalException : Exception
+{
+	public InternalException(int errorCode) 
+		: base(Log.BuildInternalErrorMessage(errorCode))
+	{
+	}
+
+	public InternalException(int errorCode, Exception innerException) 
+		: base(Log.BuildInternalErrorMessage(errorCode), innerException)
+	{
+	}
 }
 
 //}

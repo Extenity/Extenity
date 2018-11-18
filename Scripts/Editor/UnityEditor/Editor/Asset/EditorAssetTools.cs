@@ -321,7 +321,7 @@ namespace Extenity.AssetToolbox.Editor
 			// An already loaded asset may confuse the loading process.
 			EditorSceneManagerTools.UnloadAllScenes(true);
 
-			EditorSceneManagerTools.ThrowIfAnyLoadedSceneIsDirty("Internal error 105851!");
+			EditorSceneManagerTools.ThrowIfAnyLoadedSceneIsDirty(Log.BuildInternalErrorMessage(105851));
 
 			// Load the scene.
 			var openedScene = EditorSceneManager.OpenScene(sceneAssetPath, OpenSceneMode.Single);

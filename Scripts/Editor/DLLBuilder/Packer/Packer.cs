@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
-using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {
