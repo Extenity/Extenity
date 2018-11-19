@@ -410,7 +410,7 @@ public static class Log
 
 	public static void CurrentMethodNotImplemented()
 	{
-		Error("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
+		CriticalError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 	}
 
 	public static void CurrentMethod(string additionalText = null)

@@ -73,7 +73,7 @@ namespace Extenity.CameraToolbox
 				{
 					if (field.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
 					{
-						Log.Error($"Field type '{field.FieldType}' is not supported.");
+						Log.CriticalError($"Field type '{field.FieldType}' is not supported.");
 						continue;
 					}
 
@@ -106,7 +106,7 @@ namespace Extenity.CameraToolbox
 				var effectComponentType = Type.GetType(effectComponentData.Name);
 				if (effectComponentType == null)
 				{
-					Log.Error($"Camera effect '{effectComponentData.Name}' does not exist.");
+					Log.CriticalError($"Camera effect '{effectComponentData.Name}' does not exist.");
 					continue;
 				}
 				var effectComponent = camera.gameObject.AddComponent(effectComponentType);

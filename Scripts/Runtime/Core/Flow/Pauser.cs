@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Extenity.FlowToolbox
 {
@@ -82,7 +81,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (handler == null)
 			{
-				Log.Error($"Tried to resume Pauser '{ID}' but pause handler is null.");
+				Log.CriticalError($"Tried to resume Pauser '{ID}' but pause handler is null.");
 				return false;
 			}
 

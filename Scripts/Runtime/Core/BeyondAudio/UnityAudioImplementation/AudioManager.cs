@@ -32,7 +32,7 @@ namespace Extenity.BeyondAudio
 				var instance = Instance;
 				if (!instance && !IsShuttingDown)
 				{
-					Log.Error("AudioManager is not initialized yet.");
+					Log.CriticalError("AudioManager is not initialized yet.");
 				}
 				return instance;
 			}

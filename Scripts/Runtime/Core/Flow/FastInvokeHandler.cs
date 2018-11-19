@@ -231,7 +231,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to invoke for a null behaviour.");
+				Log.CriticalError("Tried to invoke for a null behaviour.");
 				return;
 			}
 			var entry = CreateOrGetEntryPool();
@@ -243,7 +243,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to cancel fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -274,7 +274,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to cancel fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -309,7 +309,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -335,7 +335,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -369,7 +369,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return -1;
 			}
 			var count = 0;
@@ -394,7 +394,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return -1;
 			}
 			var count = 0;
@@ -421,7 +421,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			double now = (double)Time.time;
@@ -440,7 +440,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			double now = (double)Time.unscaledTime;
@@ -459,7 +459,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			double now = (double)Time.time;
@@ -478,7 +478,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.Error("Tried to query fast invoke of a null behaviour.");
+				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			double now = (double)Time.unscaledTime;
