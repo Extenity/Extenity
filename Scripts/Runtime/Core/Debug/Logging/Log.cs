@@ -208,7 +208,7 @@ public static class Log
 
 	public static void Info(string message)
 	{
-		Debug.Log(CreateMessage(message), null);
+		Debug.Log(CreateMessage(message));
 	}
 
 	public static void Info(string message, Object context)
@@ -218,7 +218,7 @@ public static class Log
 
 	public static void Warning(string message)
 	{
-		Debug.LogWarning(CreateMessage(message), null);
+		Debug.LogWarning(CreateMessage(message));
 	}
 
 	public static void Warning(string message, Object context)
@@ -228,7 +228,7 @@ public static class Log
 
 	public static void Error(string message)
 	{
-		Debug.LogError(CreateMessage(message), null);
+		Debug.LogError(CreateMessage(message));
 	}
 
 	public static void Error(string message, Object context)
@@ -278,6 +278,16 @@ public static class Log
 		Debug.LogException(new InternalException(errorCode));
 	}
 
+	/// <summary>
+	/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+	///
+	/// See also 'InternalException'.
+	/// </summary>
+	public static void InternalError(int errorCode, Object context)
+	{
+		Debug.LogException(new InternalException(errorCode), context);
+	}
+
 	public static void Exception(Exception exception)
 	{
 		Debug.LogException(exception);
@@ -290,17 +300,17 @@ public static class Log
 
 	public static void ExceptionAsError(Exception exception)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString()));
 	}
 
 	public static void ExceptionAsError(Exception exception, Object context)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context);
 	}
 
 	public static void ExceptionAsErrorDetailed(this Exception exception)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception), null);
+		Debug.LogError(CreateDetailedExceptionMessage(exception));
 	}
 
 	public static void ExceptionAsErrorDetailed(this Exception exception, Object context)
@@ -315,7 +325,7 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message)
 	{
-		Debug.Log(CreateMessage(message), null);
+		Debug.Log(CreateMessage(message));
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
@@ -327,7 +337,7 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugWarning(string message)
 	{
-		Debug.LogWarning(CreateMessage(message), null);
+		Debug.LogWarning(CreateMessage(message));
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
@@ -339,7 +349,7 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugError(string message)
 	{
-		Debug.LogError(CreateMessage(message), null);
+		Debug.LogError(CreateMessage(message));
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
@@ -359,6 +369,17 @@ public static class Log
 		Debug.LogException(new InternalException(errorCode));
 	}
 
+	/// <summary>
+	/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+	///
+	/// See also 'InternalException'.
+	/// </summary>
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugInternalError(int errorCode, Object context)
+	{
+		Debug.LogException(new InternalException(errorCode), context);
+	}
+
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugException(Exception exception)
 	{
@@ -374,19 +395,19 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsError(Exception exception)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString()), null);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString()));
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsError(Exception exception, Object context)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "Null exception" : exception.ToString(), context), context);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsErrorDetailed(this Exception exception)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception), null);
+		Debug.LogError(CreateDetailedExceptionMessage(exception));
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
