@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Extenity.MathToolbox;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -13,6 +14,28 @@ namespace Extenity.DataToolbox
 
 	public static class StringTools
 	{
+		#region Shared Objects
+
+		private static readonly ThreadLocal<StringBuilder> SharedStringBuilder = new ThreadLocal<StringBuilder>(() => new StringBuilder(SharedStringBuilderInitialCapacity));
+		private const int SharedStringBuilderInitialCapacity = 1000;
+		private const int SharedStringBuilderCapacityTolerance = 100000; // If the StringBuilder exceeds this capacity, it will be freed.
+
+		private static void ClearSharedStringBuilder(StringBuilder stringBuilder)
+		{
+			if (stringBuilder.Capacity > SharedStringBuilderCapacityTolerance)
+			{
+				// If this happens regularly, consider increasing the tolerance.
+				Log.DebugWarning($"Shared StringBuilder size '{stringBuilder.Capacity}' exceeded the tolerance '{SharedStringBuilderCapacityTolerance}'.");
+				stringBuilder.Capacity = SharedStringBuilderInitialCapacity;
+			}
+			else
+			{
+				stringBuilder.Clear();
+			}
+		}
+
+		#endregion
+
 		#region Constants
 
 		public static readonly char[] LineEndingCharacters = { '\r', '\n' };
@@ -303,38 +326,6 @@ namespace Extenity.DataToolbox
 			return text.IndexOfAny(LineEndingCharacters, startIndex);
 		}
 
-		public static string NormalizeLineEndings(this string text)
-		{
-			var builder = new StringBuilder((int)(text.Length * 1.1f));
-			bool lastWasCR = false;
-
-			foreach (char c in text)
-			{
-				if (lastWasCR)
-				{
-					lastWasCR = false;
-					if (c == '\n')
-					{
-						continue; // Already written \r\n
-					}
-				}
-				switch (c)
-				{
-					case '\r':
-						builder.Append("\r\n");
-						lastWasCR = true;
-						break;
-					case '\n':
-						builder.Append("\r\n");
-						break;
-					default:
-						builder.Append(c);
-						break;
-				}
-			}
-			return builder.ToString();
-		}
-
 		public static string Repeat(this string text, int count)
 		{
 			if (string.IsNullOrEmpty(text))
@@ -463,6 +454,88 @@ namespace Extenity.DataToolbox
 				return -1;
 
 			return indexOfBeginning;
+		}
+
+		#endregion
+
+		#region Normalize Line Endings
+
+		public static bool IsLineEndingNormalizationNeededCRLF(this string text)
+		{
+			if (text == null)
+				return false;
+			var lastWasCR = false;
+
+			foreach (char c in text)
+			{
+				if (lastWasCR)
+				{
+					lastWasCR = false;
+					if (c != '\n')
+					{
+						return true;
+					}
+				}
+				else
+				{
+					switch (c)
+					{
+						case '\r':
+							lastWasCR = true;
+							break;
+						case '\n':
+							return true;
+					}
+				}
+			}
+			return lastWasCR;
+		}
+
+		public static string NormalizeLineEndingsCRLF(this string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+
+			lock (SharedStringBuilder)
+			{
+				// Check if normalization needed. Don't do any operation if not required.
+				if (!text.IsLineEndingNormalizationNeededCRLF())
+				{
+					return text;
+				}
+
+				var stringBuilder = SharedStringBuilder.Value;
+				stringBuilder.Clear();
+
+				var lastWasCR = false;
+				foreach (char c in text)
+				{
+					if (lastWasCR)
+					{
+						lastWasCR = false;
+						if (c == '\n')
+						{
+							continue; // Already written \r\n
+						}
+					}
+					switch (c)
+					{
+						case '\r':
+							stringBuilder.Append("\r\n");
+							lastWasCR = true;
+							break;
+						case '\n':
+							stringBuilder.Append("\r\n");
+							break;
+						default:
+							stringBuilder.Append(c);
+							break;
+					}
+				}
+				var result = stringBuilder.ToString();
+				ClearSharedStringBuilder(stringBuilder);
+				return result;
+			}
 		}
 
 		#endregion
@@ -1357,7 +1430,7 @@ namespace Extenity.DataToolbox
 			// Normalize line endings
 			if (normalizeLineEndings)
 			{
-				text = text.NormalizeLineEndings().Replace("\r\n", "\n");
+				text = text.NormalizeLineEndingsCRLF().Replace("\r\n", "\n");
 			}
 
 			// Trim end of each line (do not trim the beginning of the line)

@@ -275,6 +275,110 @@ namespace ExtenityTests.DataToolbox
 
 		#endregion
 
+		#region Normalize Line Endings
+
+		[Test]
+		public void IsLineEndingNormalizationNeededCRLF()
+		{
+			TestIsLineEndingNormalizationNeededCRLF(null, false);
+			TestIsLineEndingNormalizationNeededCRLF("", false);
+			TestIsLineEndingNormalizationNeededCRLF(" ", false);
+			TestIsLineEndingNormalizationNeededCRLF("\t", false);
+
+			TestIsLineEndingNormalizationNeededCRLF("\r\n", false);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n", false);
+			TestIsLineEndingNormalizationNeededCRLF("\r\n ", false);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n ", false);
+
+			TestIsLineEndingNormalizationNeededCRLF("\r", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r", true);
+			TestIsLineEndingNormalizationNeededCRLF("\r ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r ", true);
+
+			TestIsLineEndingNormalizationNeededCRLF("\n", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \n", true);
+			TestIsLineEndingNormalizationNeededCRLF("\n ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \n ", true);
+
+			TestIsLineEndingNormalizationNeededCRLF("\r\r\n", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\r\n", true);
+			TestIsLineEndingNormalizationNeededCRLF("\r\r\n ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\r\n ", true);
+
+			TestIsLineEndingNormalizationNeededCRLF("\n\r\n", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \n\r\n", true);
+			TestIsLineEndingNormalizationNeededCRLF("\n\r\n ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \n\r\n ", true);
+
+			TestIsLineEndingNormalizationNeededCRLF("\r\n\r", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n\r", true);
+			TestIsLineEndingNormalizationNeededCRLF("\r\n\r ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n\r ", true);
+
+			TestIsLineEndingNormalizationNeededCRLF("\r\n\n", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n\n", true);
+			TestIsLineEndingNormalizationNeededCRLF("\r\n\n ", true);
+			TestIsLineEndingNormalizationNeededCRLF(" \r\n\n ", true);
+		}
+
+		[Test]
+		public void NormalizeLineEndingsCRLF()
+		{
+			TestNormalizeLineEndingsCRLF(null, null);
+			TestNormalizeLineEndingsCRLF("", "");
+			TestNormalizeLineEndingsCRLF(" ", " ");
+			TestNormalizeLineEndingsCRLF("\t", "\t");
+
+			TestNormalizeLineEndingsCRLF("\r\n", "\r\n");
+			TestNormalizeLineEndingsCRLF(" \r\n", " \r\n");
+			TestNormalizeLineEndingsCRLF("\r\n ", "\r\n ");
+			TestNormalizeLineEndingsCRLF(" \r\n ", " \r\n ");
+
+			TestNormalizeLineEndingsCRLF("\r", "\r\n");
+			TestNormalizeLineEndingsCRLF(" \r", " \r\n");
+			TestNormalizeLineEndingsCRLF("\r ", "\r\n ");
+			TestNormalizeLineEndingsCRLF(" \r ", " \r\n ");
+
+			TestNormalizeLineEndingsCRLF("\n", "\r\n");
+			TestNormalizeLineEndingsCRLF(" \n", " \r\n");
+			TestNormalizeLineEndingsCRLF("\n ", "\r\n ");
+			TestNormalizeLineEndingsCRLF(" \n ", " \r\n ");
+
+			TestNormalizeLineEndingsCRLF("\r\r\n", "\r\n\r\n");
+			TestNormalizeLineEndingsCRLF(" \r\r\n", " \r\n\r\n");
+			TestNormalizeLineEndingsCRLF("\r\r\n ", "\r\n\r\n ");
+			TestNormalizeLineEndingsCRLF(" \r\r\n ", " \r\n\r\n ");
+
+			TestNormalizeLineEndingsCRLF("\n\r\n", "\r\n\r\n");
+			TestNormalizeLineEndingsCRLF(" \n\r\n", " \r\n\r\n");
+			TestNormalizeLineEndingsCRLF("\n\r\n ", "\r\n\r\n ");
+			TestNormalizeLineEndingsCRLF(" \n\r\n ", " \r\n\r\n ");
+
+			TestNormalizeLineEndingsCRLF("\r\n\r", "\r\n\r\n");
+			TestNormalizeLineEndingsCRLF(" \r\n\r", " \r\n\r\n");
+			TestNormalizeLineEndingsCRLF("\r\n\r ", "\r\n\r\n ");
+			TestNormalizeLineEndingsCRLF(" \r\n\r ", " \r\n\r\n ");
+
+			TestNormalizeLineEndingsCRLF("\r\n\n", "\r\n\r\n");
+			TestNormalizeLineEndingsCRLF(" \r\n\n", " \r\n\r\n");
+			TestNormalizeLineEndingsCRLF("\r\n\n ", "\r\n\r\n ");
+			TestNormalizeLineEndingsCRLF(" \r\n\n ", " \r\n\r\n ");
+		}
+
+		private static void TestIsLineEndingNormalizationNeededCRLF(string input, bool expected)
+		{
+			var result = input.IsLineEndingNormalizationNeededCRLF();
+			Assert.AreEqual(expected, result);
+		}
+
+		private void TestNormalizeLineEndingsCRLF(string input, string expected)
+		{
+			var result = input.NormalizeLineEndingsCRLF();
+			Assert.AreEqual(expected, result);
+		}
+
+		#endregion
+
 		#region Conversions - Int ToStringAsCharArray
 
 		[Test]

@@ -148,7 +148,7 @@ public static class Log
 		if (message == null)
 			return CurrentIndentationString + "[NullStr]";
 		else
-			return CurrentIndentationString + message.NormalizeLineEndings();
+			return CurrentIndentationString + message.NormalizeLineEndingsCRLF();
 	}
 
 	private static string CreateMessage(string message, Object obj)
@@ -159,11 +159,11 @@ public static class Log
 		string prefix;
 		if (obj != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
 		{
-			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndings();
+			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndingsCRLF();
 		}
 		else
 		{
-			return CurrentIndentationString + message.NormalizeLineEndings();
+			return CurrentIndentationString + message.NormalizeLineEndingsCRLF();
 		}
 	}
 
