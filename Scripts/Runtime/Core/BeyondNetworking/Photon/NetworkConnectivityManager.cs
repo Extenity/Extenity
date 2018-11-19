@@ -55,7 +55,7 @@ namespace BeyondNetworking
 		protected void Awake()
 		{
 			if (_Instance)
-					throw new InternalException(922817);
+				throw new InternalException(922817);
 			_Instance = this;
 			if (_WasInstantiatedBefore)
 			{
@@ -301,7 +301,8 @@ namespace BeyondNetworking
 
 			if (newState != oldState)
 			{
-				LogVerbose($"Network state changed to '{newState}' (Previously was '{oldState}')", session);
+				if (VerboseLogging)
+					LogVerbose($"Network state changed to '{newState}' (Previously was '{oldState}')", session);
 				NetworkState = newState;
 
 				OnNetworkStateChanged.Invoke(newState);
@@ -481,7 +482,8 @@ namespace BeyondNetworking
 				case NetworkProcessStep.LeftRoom:
 				case NetworkProcessStep.AlreadyNotInRoom:
 				case NetworkProcessStep.LeftRoomInformation:
-					LogVerbose(fullMessage, session);
+					if (VerboseLogging)
+						LogVerbose(fullMessage, session);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(step), step, "");
@@ -577,7 +579,7 @@ namespace BeyondNetworking
 		private IEnumerator InternalProcessDesiredMode(NetworkSession session)
 		{
 			if (string.IsNullOrEmpty(_GameVersion))
-					throw new InternalException(7581051); // SetVersion must be called before any operation.
+				throw new InternalException(7581051); // SetVersion must be called before any operation.
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 
@@ -611,7 +613,8 @@ namespace BeyondNetworking
 				// Wait for the process to finish. At this time, we are the pending process.
 				while (!currentlyActiveControllerToBeTerminated.IsFinished && !session.Controller.IsCancelled)
 				{
-					LogOverkill("---------- Waiting for previous process to finish...", session);
+					if (OverkillLogging)
+						LogOverkill("---------- Waiting for previous process to finish...", session);
 					yield return null;
 				}
 
@@ -952,7 +955,8 @@ namespace BeyondNetworking
 					// TODO: Check for timeout (if not already handled by Photon). See 726179.
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
-						LogOverkill("---------- Waiting for the single player room to be created...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for the single player room to be created...", session);
 						if (_RoomCreationFailedFlag)
 						{
 							FailProcess(session, _RoomCreationFailedMessage);
@@ -1035,7 +1039,8 @@ namespace BeyondNetworking
 					// TODO: Check for timeout (if not already handled by Photon). See 726179.
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
-						LogOverkill("---------- Waiting for the host room to be created...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for the host room to be created...", session);
 						if (_RoomCreationFailedFlag)
 						{
 							FailProcess(session, _RoomCreationFailedMessage);
@@ -1144,7 +1149,8 @@ namespace BeyondNetworking
 					// TODO: Check for timeout (if not already handled by Photon). See 726179.
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
-						LogOverkill("---------- Waiting for joining to the room...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for joining to the room...", session);
 						if (_RoomJoiningFailedFlag)
 						{
 							FailProcess(session, _RoomJoiningFailedMessage);
@@ -1253,7 +1259,8 @@ namespace BeyondNetworking
 					// TODO: Check for timeout (if not already handled by Photon). See 726179.
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
-						LogOverkill("---------- Waiting for joining to a random room...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for joining to a random room...", session);
 						if (_RoomJoiningFailedFlag)
 						{
 							FailProcess(session, _RoomJoiningFailedMessage);
@@ -1341,7 +1348,8 @@ namespace BeyondNetworking
 						// TODO: Check for timeout (if not already handled by Photon). See 726179.
 						while (PhotonNetwork.InRoom || PhotonNetwork.NetworkClientState == ClientState.Leaving)
 						{
-							LogOverkill("---------- Waiting for leaving the room...", session);
+							if (OverkillLogging)
+								LogOverkill("---------- Waiting for leaving the room...", session);
 
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
@@ -1356,7 +1364,8 @@ namespace BeyondNetworking
 						// TODO: Check for timeout (if not already handled by Photon). See 726179.
 						while (!PhotonNetwork.IsConnectedAndReady)
 						{
-							LogOverkill("---------- Waiting for cloud connection to be established after leaving the room...", session);
+							if (OverkillLogging)
+								LogOverkill("---------- Waiting for cloud connection to be established after leaving the room...", session);
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
 							yield return null;
@@ -1459,7 +1468,8 @@ namespace BeyondNetworking
 							// TODO: Check for timeout (if not already handled by Photon). See 726179.
 							while (PhotonNetwork.InLobby)
 							{
-								LogOverkill("---------- Waiting for leaving the lobby...", session);
+								if (OverkillLogging)
+									LogOverkill("---------- Waiting for leaving the lobby...", session);
 								if (controller.IsCancelled) yield break;
 								if (ProcessFailed) break;
 								yield return null;
@@ -1489,7 +1499,8 @@ namespace BeyondNetworking
 					// TODO: Check for timeout (if not already handled by Photon). See 726179.
 					while (!PhotonNetwork.InLobby)
 					{
-						LogOverkill("---------- Waiting for joining to lobby...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for joining to lobby...", session);
 						if (controller.IsCancelled) yield break;
 						if (ProcessFailed) break;
 						yield return null;
@@ -1563,7 +1574,8 @@ namespace BeyondNetworking
 						// TODO: Check for timeout (if not already handled by Photon). See 726179.
 						while (PhotonNetwork.InLobby)
 						{
-							LogOverkill("---------- Waiting for leaving the lobby...", session);
+							if (OverkillLogging)
+								LogOverkill("---------- Waiting for leaving the lobby...", session);
 							if (controller.IsCancelled) yield break;
 							if (ProcessFailed) break;
 							yield return null;
@@ -1655,7 +1667,8 @@ namespace BeyondNetworking
 						// TODO: Check for timeout (if not already handled by Photon). See 726179.
 						while (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterserver)
 						{
-							LogOverkill("---------- Waiting for cloud connection to be established...", session);
+							if (OverkillLogging)
+								LogOverkill("---------- Waiting for cloud connection to be established...", session);
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
 							yield return null;
@@ -1749,7 +1762,8 @@ namespace BeyondNetworking
 
 					while (PhotonNetwork.IsConnected || PhotonNetwork.NetworkClientState == ClientState.Disconnecting)
 					{
-						LogOverkill("---------- Waiting for connection to be closed...", session);
+						if (OverkillLogging)
+							LogOverkill("---------- Waiting for connection to be closed...", session);
 						if (controller.IsCancelled) yield break;
 						if (ProcessFailed) break;
 						yield return null;
@@ -2180,15 +2194,15 @@ namespace BeyondNetworking
 
 		private void LogVerbose(string message, NetworkSession session)
 		{
-			if (!VerboseLogging)
-				return;
+			//if (!VerboseLogging) Check this at the location of method call for performance reasons.
+			//	return;
 			Log.Info(LogPrefix(session) + message);
 		}
 
 		private void LogOverkill(string message, NetworkSession session)
 		{
-			if (!OverkillLogging)
-				return;
+			//if (!OverkillLogging) Check this at the location of method call for performance reasons.
+			//	return;
 			Log.Info(LogPrefix(session) + message);
 		}
 
@@ -2227,7 +2241,8 @@ namespace BeyondNetworking
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.AuthenticationFailedInformation, debugMessage);
 
-			LogVerbose($"Custom authentication failed: '{debugMessage}'", session);
+			if (VerboseLogging)
+				LogVerbose($"Custom authentication failed: '{debugMessage}'", session);
 		}
 
 		public override void OnCustomAuthenticationResponse(Dictionary<string, object> data)
@@ -2235,7 +2250,8 @@ namespace BeyondNetworking
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.AuthenticationResponseInformation);
 
-			LogVerbose($"Custom authentication response: '{data.ToJoinedString()}'", session);
+			if (VerboseLogging)
+				LogVerbose($"Custom authentication response: '{data.ToJoinedString()}'", session);
 		}
 
 		public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
