@@ -101,7 +101,7 @@ public static class Log
 
 	#region Prefix
 
-	public static Dictionary<Object, string> RegisteredPrefixes = new Dictionary<Object, string>(100);
+	public static readonly Dictionary<Object, string> RegisteredPrefixes = new Dictionary<Object, string>(100);
 
 	public static void RegisterPrefix(Object obj, string prefix)
 	{
@@ -143,61 +143,57 @@ public static class Log
 
 	public static string PrefixSeparator = " | ";
 
-	private static string CreateMessage(object message)
+	private static string CreateMessage(string message)
 	{
-		var messageString = message == null
-			? "Null"
-			: message.ToString().NormalizeLineEndings();
-
-		return CurrentIndentationString + messageString;
+		if (message == null)
+			return CurrentIndentationString + "[NullStr]";
+		else
+			return CurrentIndentationString + message.NormalizeLineEndings();
 	}
 
-	private static string CreateMessage(object message, Object obj)
+	private static string CreateMessage(string message, Object obj)
 	{
-		var messageString = message == null
-			? "Null"
-			: message.ToString().NormalizeLineEndings();
+		if (message == null)
+			return CurrentIndentationString + "[NullStr]";
 
 		string prefix;
-		if (obj != null && RegisteredPrefixes != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
 		{
-			return CurrentIndentationString + prefix + PrefixSeparator + messageString;
+			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndings();
 		}
 		else
 		{
-			return CurrentIndentationString + messageString;
+			return CurrentIndentationString + message.NormalizeLineEndings();
 		}
 	}
 
 	private static string CreateDetailedExceptionMessage(Exception exception)
 	{
-		string messageString = exception == null
-			? "Null exception"
-			: InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndings();
-
-		return CurrentIndentationString + messageString;
+		if (exception == null)
+			return CurrentIndentationString + "[NullExc]";
+		else
+			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception);
 	}
 
 	private static string CreateDetailedExceptionMessage(Exception exception, Object obj)
 	{
-		string messageString = exception == null
-			? "Null exception"
-			: InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndings();
+		if (exception == null)
+			return CurrentIndentationString + "[NullExc]";
 
 		string prefix;
-		if (obj != null && RegisteredPrefixes != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
 		{
-			return CurrentIndentationString + prefix + PrefixSeparator + messageString;
+			return CurrentIndentationString + prefix + PrefixSeparator + InternalCreateDetailedExceptionMessage(exception);
 		}
 		else
 		{
-			return CurrentIndentationString + messageString;
+			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception);
 		}
 	}
 
 	private static string InternalCreateDetailedExceptionMessage(Exception exception)
 	{
-		string message = exception.ToString();
+		var message = exception.ToString();
 		message += "\r\nInnerException: " + exception.InnerException;
 		message += "\r\nMessage: " + exception.Message;
 		message += "\r\nSource: " + exception.Source;
@@ -210,32 +206,32 @@ public static class Log
 
 	#region Log
 
-	public static void Info(object message)
+	public static void Info(string message)
 	{
 		Debug.Log(CreateMessage(message), null);
 	}
 
-	public static void Info(object message, Object context)
+	public static void Info(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context);
 	}
 
-	public static void Warning(object message)
+	public static void Warning(string message)
 	{
 		Debug.LogWarning(CreateMessage(message), null);
 	}
 
-	public static void Warning(object message, Object context)
+	public static void Warning(string message, Object context)
 	{
 		Debug.LogWarning(CreateMessage(message, context), context);
 	}
 
-	public static void Error(object message)
+	public static void Error(string message)
 	{
 		Debug.LogError(CreateMessage(message), null);
 	}
 
-	public static void Error(object message, Object context)
+	public static void Error(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context);
 	}
@@ -317,37 +313,37 @@ public static class Log
 	#region Debug Log
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugInfo(object message)
+	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message), null);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugInfo(object message, Object context)
+	public static void DebugInfo(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugWarning(object message)
+	public static void DebugWarning(string message)
 	{
 		Debug.LogWarning(CreateMessage(message), null);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugWarning(object message, Object context)
+	public static void DebugWarning(string message, Object context)
 	{
 		Debug.LogWarning(CreateMessage(message, context), context);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugError(object message)
+	public static void DebugError(string message)
 	{
 		Debug.LogError(CreateMessage(message), null);
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugError(object message, Object context)
+	public static void DebugError(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context);
 	}
@@ -766,12 +762,12 @@ public static class LogExtensions
 
 public class InternalException : Exception
 {
-	public InternalException(int errorCode) 
+	public InternalException(int errorCode)
 		: base(Log.BuildInternalErrorMessage(errorCode))
 	{
 	}
 
-	public InternalException(int errorCode, Exception innerException) 
+	public InternalException(int errorCode, Exception innerException)
 		: base(Log.BuildInternalErrorMessage(errorCode), innerException)
 	{
 	}
