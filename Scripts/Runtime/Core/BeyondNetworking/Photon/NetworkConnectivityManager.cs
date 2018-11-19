@@ -57,6 +57,7 @@ namespace BeyondNetworking
 			if (_Instance)
 				throw new InternalException(922817);
 			_Instance = this;
+			UpdateLogPrefix(null);
 			if (_WasInstantiatedBefore)
 			{
 				// Instantiating NetworkConnectivityManager the second time will probably cause errors.
@@ -64,7 +65,7 @@ namespace BeyondNetworking
 				// Also when destroyed, the underlying networking system should be put in a proper state.
 				// If you absolutely need to destroy it and create it again, then make sure it works
 				// flawlessly before proceeding any further. Then remove this error log.
-				LogError("Internal error 1784111!", null);
+				Log.InternalError(1784111, this);
 			}
 			_WasInstantiatedBefore = true;
 
@@ -146,7 +147,7 @@ namespace BeyondNetworking
 				if (Input.GetKeyDown((KeyCode)i))
 				{
 					var count = i - (int)KeyCode.Alpha0;
-					LogInfo($"<b>DEBUG | Setting command repeats to '{count}'</b>", session);
+					Log.Info($"<b>DEBUG | Setting command repeats to '{count}'</b>", this);
 					CommandRepeats = count;
 				}
 			}
@@ -154,25 +155,25 @@ namespace BeyondNetworking
 			// Switch DesiredMode - Menu related
 			if (Input.GetKeyDown(KeyCode.F1))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToOfflineMenu</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToOfflineMenu</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOfflineMenu(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F2))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToOnlineMenu</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToOnlineMenu</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOnlineMenu(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F3))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToGameFinder with default lobby</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToGameFinder with default lobby</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToGameFinder(new DefaultNetworkSession(), new GameFinderConfiguration { Lobby = TypedLobby.Default });
 			}
 			if (Input.GetKeyDown(KeyCode.F4))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToGameFinder with custom lobby</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToGameFinder with custom lobby</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToGameFinder(new DefaultNetworkSession(), new GameFinderConfiguration { Lobby = new TypedLobby("TestLobby", LobbyType.Default) });
 			}
@@ -180,38 +181,38 @@ namespace BeyondNetworking
 			// Switch DesiredMode - Game related
 			if (Input.GetKeyDown(KeyCode.F5))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToOfflineSession</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToOfflineSession</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToOfflineSession(new DefaultNetworkSession());
 			}
 			if (Input.GetKeyDown(KeyCode.F6))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToSinglePlayerSession</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToSinglePlayerSession</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToSinglePlayerSession(new DefaultNetworkSession(), new SinglePlayerConfiguration { Lobby = TypedLobby.Default });
 			}
 			if (Input.GetKeyDown(KeyCode.F7))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToHostSession</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToHostSession</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToHostSession(new DefaultNetworkSession(), new HostConfiguration { RoomName = "TestRoom" });
 			}
 			if (Input.GetKeyDown(KeyCode.F8))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToJoinSession</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToJoinSession</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 			}
 			if (Input.GetKeyDown(KeyCode.F9))
 			{
-				LogInfo("<b>DEBUG | Calling SetDesiredModeToRandomJoinSession</b>", session);
+				Log.Info("<b>DEBUG | Calling SetDesiredModeToRandomJoinSession</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					SetDesiredModeToRandomJoinSession(new DefaultNetworkSession(), new RandomJoinConfiguration { MatchingType = MatchmakingMode.FillRoom });
 			}
 
 			//if (Input.GetKeyDown(KeyCode.F9))
 			//{
-			//	Log("<b>DEBUG | Leaving lobby</b>", session);
+			//	Log.Info("<b>DEBUG | Leaving lobby</b>", this);
 			//	if (CurrentSession.Controller == null)
 			//		CurrentSession.Controller = new ProcessController(ConnectivityMode.Unspecified);
 			//	StartCoroutine(InternalLeaveLobby(CurrentSession));
@@ -219,7 +220,7 @@ namespace BeyondNetworking
 
 			if (Input.GetKeyDown(KeyCode.F10))
 			{
-				LogInfo("<b>DEBUG | Testing pending process discard mechanism</b>", session);
+				Log.Info("<b>DEBUG | Testing pending process discard mechanism</b>", this);
 				SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 				SetDesiredModeToJoinSession(new DefaultNetworkSession(), new JoinConfiguration { RoomName = "TestRoom" });
 				SetDesiredModeToHostSession(new DefaultNetworkSession(), new HostConfiguration { RoomName = "TestRoom" });
@@ -229,7 +230,7 @@ namespace BeyondNetworking
 
 			if (Input.GetKeyDown(KeyCode.F11))
 			{
-				LogInfo("<b>DEBUG | Restarting desired mode</b>", session);
+				Log.Info("<b>DEBUG | Restarting desired mode</b>", this);
 				for (int i = 0; i < CommandRepeats; i++)
 					RestartDesiredMode(new DefaultNetworkSession());
 			}
@@ -259,10 +260,10 @@ namespace BeyondNetworking
 
 		public override void OnMasterClientSwitched(Player newMasterClient)
 		{
-			var session = CurrentSession;
+			//var session = CurrentSession;
 
 			var isMasterClient = PhotonNetwork.IsMasterClient;
-			LogInfo($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", session);
+			Log.Info($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", this);
 			OnMasterClientChanged.Invoke(isMasterClient);
 		}
 
@@ -295,14 +296,14 @@ namespace BeyondNetworking
 			{
 				if (!expectedStates.Contains(newState))
 				{
-					LogWarning($"New network state '{newState}' is different from the expected state(s) '{string.Join(", ", expectedStates.Select(item => item.ToString()))}'.", session);
+					Log.Warning($"New network state '{newState}' is different from the expected state(s) '{string.Join(", ", expectedStates.Select(item => item.ToString()))}'.", this);
 				}
 			}
 
 			if (newState != oldState)
 			{
 				if (VerboseLogging)
-					LogVerbose($"Network state changed to '{newState}' (Previously was '{oldState}')", session);
+					Log.Info($"Network state changed to '{newState}' (Previously was '{oldState}')", this);
 				NetworkState = newState;
 
 				OnNetworkStateChanged.Invoke(newState);
@@ -389,7 +390,7 @@ namespace BeyondNetworking
 			ClearFailedFlag();
 
 			// Change current process
-			LogInfo(initialMessage, session);
+			Log.Info(initialMessage, this);
 
 			// Reset process steps
 			CurrentProcessSteps.Clear();
@@ -403,7 +404,7 @@ namespace BeyondNetworking
 
 			if (!IsCurrentlyProcessing)
 			{
-				LogError("Tried to end process while there is no active one.", session);
+				Log.CriticalError("Tried to end process while there is no active one.", this);
 			}
 			else
 			{
@@ -421,7 +422,7 @@ namespace BeyondNetworking
 		{
 			if (!IsCurrentlyProcessing)
 			{
-				LogWarning("Added a process step while not currently processing.", session);
+				Log.Warning("Added a process step while not currently processing.", this);
 			}
 
 			var fullMessage = !string.IsNullOrEmpty(message)
@@ -446,7 +447,7 @@ namespace BeyondNetworking
 				case NetworkProcessStep.JoinRoomFailedInformation:
 				case NetworkProcessStep.RandomJoinFailedInformation:
 				case NetworkProcessStep.FailedToLeaveRoom:
-					LogError(fullMessage, session);
+					Log.Error(fullMessage, this);
 					break;
 				case NetworkProcessStep.ProcessStarted:
 				case NetworkProcessStep.ProcessCompleted:
@@ -483,7 +484,7 @@ namespace BeyondNetworking
 				case NetworkProcessStep.AlreadyNotInRoom:
 				case NetworkProcessStep.LeftRoomInformation:
 					if (VerboseLogging)
-						LogVerbose(fullMessage, session);
+						Log.Info(fullMessage, this);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(step), step, "");
@@ -614,7 +615,7 @@ namespace BeyondNetworking
 				while (!currentlyActiveControllerToBeTerminated.IsFinished && !session.Controller.IsCancelled)
 				{
 					if (OverkillLogging)
-						LogOverkill("---------- Waiting for previous process to finish...", session);
+						Log.Info("---------- Waiting for previous process to finish...", this);
 					yield return null;
 				}
 
@@ -622,17 +623,18 @@ namespace BeyondNetworking
 				// the cancellation request of previously active process.
 				if (session.Controller.IsCancelled)
 				{
-					LogInfo($"Discarded a pending desired mode '{session.Controller.Mode}'.", session);
+					Log.Info($"Discarded a pending desired mode '{session.Controller.Mode}'.", this);
 					yield break;
 				}
 
 				// Time to start the pending process.
 				if (PendingSession != session)
 				{
-					LogError($"Pending session expected to be '{session.ID}' but it was '{PendingSession.ID}'.", session);
+					Log.CriticalError($"Pending session expected to be '{session.ID}' but it was '{PendingSession.ID}'.", this);
 					yield break;
 				}
 				CurrentSession = session;
+				UpdateLogPrefix(session);
 				PendingSession = null;
 			}
 			else
@@ -640,6 +642,7 @@ namespace BeyondNetworking
 				// We immediately set CurrentProcessController here at the start of this method.
 				// See the comments above for detailed explanation.
 				CurrentSession = session;
+				UpdateLogPrefix(session);
 				Debug.Assert(PendingSession == null);
 			}
 
@@ -663,7 +666,7 @@ namespace BeyondNetworking
 			switch (DesiredMode)
 			{
 				case ConnectivityMode.Unspecified:
-					LogError("Tried to process desired network connectivity mode while it was unspecified.", session);
+					Log.CriticalError("Tried to process desired network connectivity mode while it was unspecified.", this);
 					yield break;
 				case ConnectivityMode.OfflineMenu:
 					yield return StartCoroutine(DoStartOfflineMenu(session));
@@ -795,7 +798,7 @@ namespace BeyondNetworking
 			var error = configuration.ValidateAndFix();
 			if (error != null)
 			{
-				LogError(error, session);
+				Log.CriticalError(error, this);
 				SetProcessStep(session, NetworkProcessStep.InternalError);
 				yield break; // Nothing more to do here.
 			}
@@ -906,7 +909,7 @@ namespace BeyondNetworking
 			var error = configuration.ValidateAndFix();
 			if (error != null)
 			{
-				LogError(error, session);
+				Log.CriticalError(error, this);
 				SetProcessStep(session, NetworkProcessStep.InternalError);
 				yield break; // Nothing more to do here.
 			}
@@ -956,7 +959,7 @@ namespace BeyondNetworking
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for the single player room to be created...", session);
+							Log.Info("---------- Waiting for the single player room to be created...", this);
 						if (_RoomCreationFailedFlag)
 						{
 							FailProcess(session, _RoomCreationFailedMessage);
@@ -997,7 +1000,7 @@ namespace BeyondNetworking
 			var error = configuration.ValidateAndFix();
 			if (error != null)
 			{
-				LogError(error, session);
+				Log.CriticalError(error, this);
 				SetProcessStep(session, NetworkProcessStep.InternalError);
 				yield break; // Nothing more to do here.
 			}
@@ -1040,7 +1043,7 @@ namespace BeyondNetworking
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for the host room to be created...", session);
+							Log.Info("---------- Waiting for the host room to be created...", this);
 						if (_RoomCreationFailedFlag)
 						{
 							FailProcess(session, _RoomCreationFailedMessage);
@@ -1107,7 +1110,7 @@ namespace BeyondNetworking
 			var error = configuration.ValidateAndFix();
 			if (error != null)
 			{
-				LogError(error, session);
+				Log.CriticalError(error, this);
 				SetProcessStep(session, NetworkProcessStep.InternalError);
 				yield break; // Nothing more to do here.
 			}
@@ -1150,7 +1153,7 @@ namespace BeyondNetworking
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for joining to the room...", session);
+							Log.Info("---------- Waiting for joining to the room...", this);
 						if (_RoomJoiningFailedFlag)
 						{
 							FailProcess(session, _RoomJoiningFailedMessage);
@@ -1217,7 +1220,7 @@ namespace BeyondNetworking
 			var error = configuration.ValidateAndFix();
 			if (error != null)
 			{
-				LogError(error, session);
+				Log.CriticalError(error, this);
 				SetProcessStep(session, NetworkProcessStep.InternalError);
 				yield break; // Nothing more to do here.
 			}
@@ -1260,7 +1263,7 @@ namespace BeyondNetworking
 					while (PhotonNetwork.NetworkClientState != ClientState.Joined)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for joining to a random room...", session);
+							Log.Info("---------- Waiting for joining to a random room...", this);
 						if (_RoomJoiningFailedFlag)
 						{
 							FailProcess(session, _RoomJoiningFailedMessage);
@@ -1349,7 +1352,7 @@ namespace BeyondNetworking
 						while (PhotonNetwork.InRoom || PhotonNetwork.NetworkClientState == ClientState.Leaving)
 						{
 							if (OverkillLogging)
-								LogOverkill("---------- Waiting for leaving the room...", session);
+								Log.Info("---------- Waiting for leaving the room...", this);
 
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
@@ -1365,7 +1368,7 @@ namespace BeyondNetworking
 						while (!PhotonNetwork.IsConnectedAndReady)
 						{
 							if (OverkillLogging)
-								LogOverkill("---------- Waiting for cloud connection to be established after leaving the room...", session);
+								Log.Info("---------- Waiting for cloud connection to be established after leaving the room...", this);
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
 							yield return null;
@@ -1469,7 +1472,7 @@ namespace BeyondNetworking
 							while (PhotonNetwork.InLobby)
 							{
 								if (OverkillLogging)
-									LogOverkill("---------- Waiting for leaving the lobby...", session);
+									Log.Info("---------- Waiting for leaving the lobby...", this);
 								if (controller.IsCancelled) yield break;
 								if (ProcessFailed) break;
 								yield return null;
@@ -1500,7 +1503,7 @@ namespace BeyondNetworking
 					while (!PhotonNetwork.InLobby)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for joining to lobby...", session);
+							Log.Info("---------- Waiting for joining to lobby...", this);
 						if (controller.IsCancelled) yield break;
 						if (ProcessFailed) break;
 						yield return null;
@@ -1575,7 +1578,7 @@ namespace BeyondNetworking
 						while (PhotonNetwork.InLobby)
 						{
 							if (OverkillLogging)
-								LogOverkill("---------- Waiting for leaving the lobby...", session);
+								Log.Info("---------- Waiting for leaving the lobby...", this);
 							if (controller.IsCancelled) yield break;
 							if (ProcessFailed) break;
 							yield return null;
@@ -1668,7 +1671,7 @@ namespace BeyondNetworking
 						while (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterserver)
 						{
 							if (OverkillLogging)
-								LogOverkill("---------- Waiting for cloud connection to be established...", session);
+								Log.Info("---------- Waiting for cloud connection to be established...", this);
 							//if (controller.IsCancelled) yield break; Intentionally commented out. Photon is not happy breaking the connection process in the middle.
 							if (ProcessFailed) break;
 							yield return null;
@@ -1744,7 +1747,7 @@ namespace BeyondNetworking
 			if (PhotonNetwork.IsConnected) // TODO: See if we should also check for IsConnecting state, so that it will be possible to break the connection process in the middle.
 			{
 				SetProcessStep(session, NetworkProcessStep.Disconnecting);
-				LogInfo("Disconnecting...", session);
+				Log.Info("Disconnecting...", this);
 				var wasOffline = PhotonNetwork.OfflineMode;
 				PhotonNetwork.Disconnect();
 
@@ -1763,7 +1766,7 @@ namespace BeyondNetworking
 					while (PhotonNetwork.IsConnected || PhotonNetwork.NetworkClientState == ClientState.Disconnecting)
 					{
 						if (OverkillLogging)
-							LogOverkill("---------- Waiting for connection to be closed...", session);
+							Log.Info("---------- Waiting for connection to be closed...", this);
 						if (controller.IsCancelled) yield break;
 						if (ProcessFailed) break;
 						yield return null;
@@ -1780,7 +1783,7 @@ namespace BeyondNetworking
 		{
 			if (!IsCurrentlyProcessing)
 			{
-				LogError("Tried to fail process while there was none. Fail message: " + message, session);
+				Log.CriticalError("Tried to fail process while there was none. Fail message: " + message, this);
 				return;
 			}
 
@@ -1849,8 +1852,8 @@ namespace BeyondNetworking
 
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
-			var session = CurrentSession;
-			LogInfo($"Player '{newPlayer.NickName}' connected", session);
+			//var session = CurrentSession;
+			Log.Info($"Player '{newPlayer.NickName}' connected", this);
 
 			OnClientConnected.Invoke(newPlayer);
 			OnClientListChanged.Invoke();
@@ -1858,8 +1861,8 @@ namespace BeyondNetworking
 
 		public override void OnPlayerLeftRoom(Player otherPlayer)
 		{
-			var session = CurrentSession;
-			LogInfo($"Player '{otherPlayer.NickName}' disconnected", session);
+			//var session = CurrentSession;
+			Log.Info($"Player '{otherPlayer.NickName}' disconnected", this);
 
 			OnClientDisconnected.Invoke(otherPlayer);
 			OnClientListChanged.Invoke();
@@ -1884,8 +1887,8 @@ namespace BeyondNetworking
 
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
-			var session = CurrentSession;
-			LogInfo("OnReceivedRoomListUpdate", session);
+			//var session = CurrentSession;
+			Log.Info("OnReceivedRoomListUpdate", this);
 
 			RoomList = roomList;
 
@@ -1894,14 +1897,14 @@ namespace BeyondNetworking
 
 		public override void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
 		{
-			var session = CurrentSession;
-			LogInfo("OnLobbyStatisticsUpdate", session);
+			//var session = CurrentSession;
+			Log.Info("OnLobbyStatisticsUpdate", this);
 
 			LobbyStatistics = lobbyStatistics;
 
 			foreach (var lobby in lobbyStatistics)
 			{
-				LogInfo(lobby.ToHumanReadableString(), session);
+				Log.Info(lobby.ToHumanReadableString(), this);
 			}
 
 			OnLobbyStatisticsChanged.Invoke(lobbyStatistics);
@@ -1970,8 +1973,8 @@ namespace BeyondNetworking
 
 		public override void OnFriendListUpdate(List<FriendInfo> friendList)
 		{
-			var session = CurrentSession;
-			LogInfo("OnUpdatedFriendList", session);
+			//var session = CurrentSession;
+			Log.Info("OnUpdatedFriendList", this);
 
 			OnFriendListChanged.Invoke(friendList);
 		}
@@ -2172,53 +2175,17 @@ namespace BeyondNetworking
 
 		#region Log
 
-		public bool VerboseLogging = false;
-		public bool OverkillLogging = false;
+		public bool VerboseLogging = false; // Check this at the location of method call for performance reasons.
+		public bool OverkillLogging = false; // Check this at the location of method call for performance reasons.
 
-		private NetworkSession _LastUsedNetworkSessionForLogPrefix;
-		private string _LogPrefix;
-		private string LogPrefix(NetworkSession session)
+		private void UpdateLogPrefix(NetworkSession session)
 		{
-			if (_LastUsedNetworkSessionForLogPrefix != session)
-			{
-				_LogPrefix = $"|NetConMan-{(session != null ? session.ID.ToString() : "NA")}|";
-				_LastUsedNetworkSessionForLogPrefix = session;
-			}
-			return _LogPrefix;
-		}
-
-		private void LogInfo(string message, NetworkSession session)
-		{
-			Log.Info(LogPrefix(session) + message);
-		}
-
-		private void LogVerbose(string message, NetworkSession session)
-		{
-			//if (!VerboseLogging) Check this at the location of method call for performance reasons.
-			//	return;
-			Log.Info(LogPrefix(session) + message);
-		}
-
-		private void LogOverkill(string message, NetworkSession session)
-		{
-			//if (!OverkillLogging) Check this at the location of method call for performance reasons.
-			//	return;
-			Log.Info(LogPrefix(session) + message);
-		}
-
-		private void LogWarning(string message, NetworkSession session)
-		{
-			Log.Warning(LogPrefix(session) + message);
-		}
-
-		private void LogError(string message, NetworkSession session)
-		{
-			Log.Error(LogPrefix(session) + message);
+			Log.RegisterPrefix(this, "NetConMan-" + (session != null ? session.ID.ToString() : "NA"));
 		}
 
 		public void DebugLogNetworkState(NetworkSession session)
 		{
-			LogInfo($@"Network state: {GrabStateOfPhoton()}
+			Log.Info($@"Network state: {GrabStateOfPhoton()}
 			NetworkClientState : {PhotonNetwork.NetworkClientState}
 			Server : {PhotonNetwork.Server}
 			IsConnected : {PhotonNetwork.IsConnected}
@@ -2227,7 +2194,7 @@ namespace BeyondNetworking
 			InRoom : {PhotonNetwork.InRoom}
 			InLobby : {PhotonNetwork.InLobby}
 			OfflineMode : {PhotonNetwork.OfflineMode}
-			ConnectMethod : {PhotonNetwork.ConnectMethod}", session);
+			ConnectMethod : {PhotonNetwork.ConnectMethod}", this);
 		}
 
 		#endregion
@@ -2242,7 +2209,7 @@ namespace BeyondNetworking
 			SetProcessStep(session, NetworkProcessStep.AuthenticationFailedInformation, debugMessage);
 
 			if (VerboseLogging)
-				LogVerbose($"Custom authentication failed: '{debugMessage}'", session);
+				Log.Info($"Custom authentication failed: '{debugMessage}'", this);
 		}
 
 		public override void OnCustomAuthenticationResponse(Dictionary<string, object> data)
@@ -2251,19 +2218,19 @@ namespace BeyondNetworking
 			SetProcessStep(session, NetworkProcessStep.AuthenticationResponseInformation);
 
 			if (VerboseLogging)
-				LogVerbose($"Custom authentication response: '{data.ToJoinedString()}'", session);
+				Log.Info($"Custom authentication response: '{data.ToJoinedString()}'", this);
 		}
 
 		public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
 		{
-			var session = CurrentSession;
-			LogInfo($"OnPhotonCustomRoomPropertiesChanged    propertiesThatChanged: '{propertiesThatChanged.ToJoinedString()}'", session);
+			//var session = CurrentSession;
+			Log.Info($"OnPhotonCustomRoomPropertiesChanged    propertiesThatChanged: '{propertiesThatChanged.ToJoinedString()}'", this);
 		}
 
 		public override void OnWebRpcResponse(OperationResponse response)
 		{
-			var session = CurrentSession;
-			LogInfo($"OnWebRpcResponse    response: '{response}'", session);
+			//var session = CurrentSession;
+			Log.Info($"OnWebRpcResponse    response: '{response}'", this);
 		}
 	}
 
