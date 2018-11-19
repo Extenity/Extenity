@@ -69,18 +69,18 @@ namespace Extenity.MessagingToolbox
 			if (callback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					ExtenityEventTools.LogVerbose($"Tried to add a null callback with order '{order}'.");
+					Log.Info($"Tried to add a null callback with order '{order}'.");
 				return; // Silently ignore
 			}
 			if (IsListenerRegistered(callback))
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					ExtenityEventTools.LogVerbose($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+					Log.Info($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
 				return; // Silently ignore
 			}
 			if (!(callback.Target as Object))
 			{
-				ExtenityEventTools.LogError("Callbacks on non-Unity or non-existing objects are not supported.");
+				Log.CriticalError("Callbacks on non-Unity or non-existing objects are not supported.");
 				return;
 			}
 
@@ -95,7 +95,7 @@ namespace Extenity.MessagingToolbox
 				order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					ExtenityEventTools.LogVerbose($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
+					Log.Info($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
 				Callbacks.Add(new Entry(callback, order));
 				return;
 			}
@@ -105,7 +105,7 @@ namespace Extenity.MessagingToolbox
 				if (order < Callbacks[i].Order)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						ExtenityEventTools.LogVerbose($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
+						Log.Info($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
 					Callbacks.Insert(i, new Entry(callback, order));
 					return;
 				}
@@ -122,20 +122,20 @@ namespace Extenity.MessagingToolbox
 				if (Callbacks[i].Callback == callback)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						ExtenityEventTools.LogVerbose($"Removing listener with order '{Callbacks[i].Order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
+						Log.Info($"Removing listener with order '{Callbacks[i].Order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
 					Callbacks.RemoveAt(i);
 					return true;
 				}
 			}
 			if (ExtenityEventTools.VerboseLogging)
-				ExtenityEventTools.LogVerbose($"Failed to remove listener for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+				Log.Info($"Failed to remove listener for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
 			return false;
 		}
 
 		public void RemoveAllListeners()
 		{
 			if (ExtenityEventTools.VerboseLogging)
-				ExtenityEventTools.LogVerbose($"Removing all listeners.");
+				Log.Info($"Removing all listeners.");
 
 			Callbacks.Clear();
 		}
@@ -154,7 +154,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				ExtenityEventTools.LogError("Invoked an event while an invocation is ongoing.");
+				Log.CriticalError("Invoked an event while an invocation is ongoing.");
 				return;
 			}
 			IsInvoking = true;
@@ -190,7 +190,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				ExtenityEventTools.LogError("Invoked an event while an invocation is ongoing.");
+				Log.CriticalError("Invoked an event while an invocation is ongoing.");
 				return;
 			}
 			IsInvoking = true;

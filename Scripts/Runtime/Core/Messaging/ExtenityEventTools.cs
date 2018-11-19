@@ -10,19 +10,7 @@ namespace Extenity.MessagingToolbox
 	{
 		#region Log
 
-		public static bool VerboseLogging = false;
-
-		public static void LogVerbose(string message)
-		{
-			//if (!VerboseLogging) Check this at the location of method call for performance reasons.
-			//	return;
-			Log.Info("|ExtEvent|" + message);
-		}
-
-		public static void LogError(string message)
-		{
-			Log.Error("|ExtEvent|" + message);
-		}
+		public static bool VerboseLogging = false; // Check this at the location of method call for performance reasons.
 
 		#endregion
 
