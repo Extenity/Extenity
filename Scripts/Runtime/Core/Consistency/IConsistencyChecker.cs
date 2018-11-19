@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using UnityEngine;
 
 namespace Extenity.ConsistencyToolbox
 {
@@ -61,7 +60,7 @@ namespace Extenity.ConsistencyToolbox
 					message = titleMessage + "\n";
 				message += errors.Serialize('\n');
 
-				Log.Error(message, context);
+				Log.CriticalError(message, context);
 			}
 			return errors;
 		}
