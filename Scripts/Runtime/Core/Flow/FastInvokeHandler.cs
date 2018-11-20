@@ -71,7 +71,7 @@ namespace Extenity.FlowToolbox
 					}
 
 					// Remove from queue. But first check if the user manually removed it or not.
-					if (entry == ScaledInvokeQueue[0])
+					if (ScaledInvokeQueue.Count > 0 && entry == ScaledInvokeQueue[0])
 					{
 						ScaledInvokeQueue.RemoveAt(0);
 
