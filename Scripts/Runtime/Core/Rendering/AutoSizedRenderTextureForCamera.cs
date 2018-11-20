@@ -79,18 +79,14 @@ namespace Extenity.RenderingToolbox
 				}
 				else
 				{
-					if (EnableLogging) // Checked here to prevent unnecessary string formatting.
-					{
-						LogFormat($"Changing render texture. Old: {CurrentTextureWidth}x{CurrentTextureHeight} {CurrentTextureDepth} {CurrentTextureFormat} {CurrentTextureReadWrite} New: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
-					}
+					if (EnableLogging)
+						Log.Info($"Changing render texture. Old: {CurrentTextureWidth}x{CurrentTextureHeight} {CurrentTextureDepth} {CurrentTextureFormat} {CurrentTextureReadWrite} New: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 				}
 			}
 			else
 			{
-				if (EnableLogging) // Checked here to prevent unnecessary string formatting.
-				{
-					LogFormat($"Creating new render texture: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
-				}
+				if (EnableLogging)
+					Log.Info($"Creating new render texture: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 			}
 
 			CurrentTextureWidth = sizeX;
@@ -117,14 +113,6 @@ namespace Extenity.RenderingToolbox
 		#region Log
 
 		public bool EnableLogging = true;
-
-		private void LogFormat(string message)
-		{
-			if (EnableLogging)
-			{
-				Log.Info(message, this);
-			}
-		}
 
 		#endregion
 	}
