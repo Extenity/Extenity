@@ -1,6 +1,8 @@
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 using Photon.Realtime;
+using UnityEngine;
 
 namespace BeyondNetworking
 {
@@ -43,7 +45,7 @@ namespace BeyondNetworking
 
 		#region Serialization
 
-		private static readonly byte[] _Buffer = new byte[4];
+		private static readonly byte[] _Buffer = new byte[sizeof(float) * 4]; // That's the size of a Quaternion, which is the largest data structure.
 
 		public static int Serialize(this StreamBuffer outStream, int value)
 		{
@@ -85,6 +87,45 @@ namespace BeyondNetworking
 				var index = 0;
 				var valueShort = (short)value;
 				Protocol.Serialize(valueShort, _Buffer, ref index);
+				outStream.Write(_Buffer, 0, index);
+				return index;
+			}
+		}
+
+		public static int Serialize(this StreamBuffer outStream, bool value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				var valueAsShort = value ? (short)1 : (short)0; // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
+				Protocol.Serialize(valueAsShort, _Buffer, ref index);
+				outStream.Write(_Buffer, 0, index);
+				return index;
+			}
+		}
+
+		public static int Serialize(this StreamBuffer outStream, Vector3 value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				Protocol.Serialize(value.x, _Buffer, ref index);
+				Protocol.Serialize(value.y, _Buffer, ref index);
+				Protocol.Serialize(value.z, _Buffer, ref index);
+				outStream.Write(_Buffer, 0, index);
+				return index;
+			}
+		}
+
+		public static int Serialize(this StreamBuffer outStream, Quaternion value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				Protocol.Serialize(value.x, _Buffer, ref index);
+				Protocol.Serialize(value.y, _Buffer, ref index);
+				Protocol.Serialize(value.z, _Buffer, ref index);
+				Protocol.Serialize(value.w, _Buffer, ref index);
 				outStream.Write(_Buffer, 0, index);
 				return index;
 			}
@@ -152,6 +193,70 @@ namespace BeyondNetworking
 				short valueShort;
 				Protocol.Deserialize(out valueShort, _Buffer, ref index);
 				value = valueShort;
+				return true;
+			}
+		}
+
+		public static bool Deserialize(this StreamBuffer inStream, out bool value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				var readSize = inStream.Read(_Buffer, 0, sizeof(short)); // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
+				if (readSize != sizeof(short)) // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
+				{
+					value = default(bool);
+					return false;
+				}
+				short valueAsShort; // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
+				Protocol.Deserialize(out valueAsShort, _Buffer, ref index);
+				value = valueAsShort != 0;
+				return true;
+			}
+		}
+
+		public static bool Deserialize(this StreamBuffer inStream, out Vector3 value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				var readSize = inStream.Read(_Buffer, 0, sizeof(float) * 3);
+				if (readSize != sizeof(float) * 3)
+				{
+					value = Vector3Tools.NaN;
+					return false;
+				}
+				float valueX;
+				float valueY;
+				float valueZ;
+				Protocol.Deserialize(out valueX, _Buffer, ref index);
+				Protocol.Deserialize(out valueY, _Buffer, ref index);
+				Protocol.Deserialize(out valueZ, _Buffer, ref index);
+				value = new Vector3(valueX, valueY, valueZ);
+				return true;
+			}
+		}
+
+		public static bool Deserialize(this StreamBuffer inStream, out Quaternion value)
+		{
+			lock (_Buffer)
+			{
+				var index = 0;
+				var readSize = inStream.Read(_Buffer, 0, sizeof(float) * 4);
+				if (readSize != sizeof(float) * 4)
+				{
+					value = QuaternionTools.NaN;
+					return false;
+				}
+				float valueX;
+				float valueY;
+				float valueZ;
+				float valueW;
+				Protocol.Deserialize(out valueX, _Buffer, ref index);
+				Protocol.Deserialize(out valueY, _Buffer, ref index);
+				Protocol.Deserialize(out valueZ, _Buffer, ref index);
+				Protocol.Deserialize(out valueW, _Buffer, ref index);
+				value = new Quaternion(valueX, valueY, valueZ, valueW);
 				return true;
 			}
 		}
