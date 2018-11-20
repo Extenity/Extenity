@@ -43,7 +43,7 @@ namespace Extenity.ApplicationToolbox.Editor
 					var directory = file.Directory;
 					var parentDirectory = directory.Parent;
 					if (directory.Name != "Managed" || parentDirectory.Name != "Data")
-						throw new Exception("Internal error! Unexpected Unity Editor executable location.");
+						throw new InternalException(9776381); // Unexpected Unity Editor executable location.
 					_UnityEditorExecutableDirectory = parentDirectory.Parent.FullName;
 				}
 				return _UnityEditorExecutableDirectory;

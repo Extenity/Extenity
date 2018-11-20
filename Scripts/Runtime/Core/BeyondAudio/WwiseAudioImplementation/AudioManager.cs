@@ -42,6 +42,7 @@ namespace Extenity.BeyondAudio
 		private void Awake()
 		{
 			InitializeSingleton(this, true);
+			Log.RegisterPrefix(this, "Audio");
 			InitializeAudioSourceTemplate();
 		}
 
@@ -117,7 +118,7 @@ namespace Extenity.BeyondAudio
 				if (volumeControl.MixerParameterName == mixerParameterName)
 					return volumeControl;
 			}
-			Log.Error($"Volume control '{mixerParameterName}' does not exist.");
+			Log.CriticalError($"Volume control '{mixerParameterName}' does not exist.", this);
 			return null;
 		}
 
@@ -187,7 +188,7 @@ namespace Extenity.BeyondAudio
 				if (reusedAudioSource)
 				{
 					if (EnableVerboseLogging)
-						LogVerbose($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
+						Log.Info($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.", this);
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -199,7 +200,7 @@ namespace Extenity.BeyondAudio
 			ActiveAudioSources.Add(go);
 			AudioSourceBag.Add(go);
 			if (EnableVerboseLogging)
-				LogVerbose($"Created audio source '{go.FullName()}'.");
+				Log.Info($"Created audio source '{go.FullName()}'.", this);
 			return go;
 		}
 
@@ -218,11 +219,11 @@ namespace Extenity.BeyondAudio
 				return;
 			if (!instance.ActiveAudioSources.Contains(audioSource))
 			{
-				LogVerbose($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.");
+				Log.Info($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.", instance);
 				return;
 			}
 			if (instance.EnableVerboseLogging)
-				LogVerbose($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.");
+				Log.Info($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.", instance);
 
 			if (!audioSource)
 			{
@@ -255,7 +256,7 @@ namespace Extenity.BeyondAudio
 		private void ClearLostReferencesInAllInternalContainers()
 		{
 			if (EnableVerboseLogging)
-				LogVerbose("Clearing lost references.");
+				Log.Info("Clearing lost references.", this);
 
 			ClearLostReferencesInActiveAudioSourcesList();
 			ClearLostReferencesInFreeAudioSourcesList();
@@ -323,7 +324,7 @@ namespace Extenity.BeyondAudio
 
 		private void AddToReleaseTracker(GameObject audioSource)
 		{
-			LogInfo("#= Release tracker is not implemented yet!");
+			Log.Info("#= Release tracker is not implemented yet!", this);
 			//var clip = audioSource.clip;
 			//var duration = clip.length / audioSource.pitch;
 			//ReleaseTracker.Add(new ReleaseTrackerEntry(CurrentTime + duration, audioSource));
@@ -365,11 +366,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose("Received empty event name for playing.");
+					Log.Info("Received empty event name for playing.", instance);
 				return;
 			}
 			if (instance.EnableLogging)
-				LogInfo($"Playing '{eventName}'.");
+				Log.Info($"Playing '{eventName}'.", instance);
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
@@ -381,11 +382,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose("Received empty event name for playing.");
+					Log.Info("Received empty event name for playing.", instance);
 				return;
 			}
 			if (instance.EnableLogging)
-				LogInfo($"Playing '{eventName}' on object '{associatedObject.FullName()}'.");
+				Log.Info($"Playing '{eventName}' on object '{associatedObject.FullName()}'.", instance);
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(associatedObject, associatedObject.transform);
 			AkSoundEngine.PostEvent(eventName, associatedObject);
@@ -399,11 +400,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Received empty event name for playing at position '{worldPosition}'.");
+					Log.Info($"Received empty event name for playing at position '{worldPosition}'.", instance);
 				return null;
 			}
 			if (instance.EnableLogging)
-				LogInfo($"Playing '{eventName}' at position '{worldPosition}'.");
+				Log.Info($"Playing '{eventName}' at position '{worldPosition}'.", instance);
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
@@ -423,11 +424,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
+					Log.Info($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", instance);
 				return null;
 			}
 			if (instance.EnableLogging)
-				LogInfo($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.");
+				Log.Info($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", instance);
 			var audioSource = instance.GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
@@ -451,14 +452,14 @@ namespace Extenity.BeyondAudio
 			if (gameObjectID == AkSoundEngine.AK_INVALID_GAME_OBJECT)
 			{
 				if (instance.EnableWarningLogging)
-					LogWarning($"Received 'EndOfEvent' callback for an invalid game object.");
+					Log.Warning($"Received 'EndOfEvent' callback for an invalid game object.", instance);
 				return;
 			}
 			GameObject gameObject;
 			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out gameObject))
 			{
 				if (instance.EnableWarningLogging)
-					LogWarning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.");
+					Log.Warning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.", instance);
 				return;
 			}
 			// It's okay to send it a null game object, if the object was destroyed along the way. 
@@ -477,11 +478,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(eventName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Received empty event name for playing music.");
+					Log.Info("Received empty event name for playing music.", instance);
 				return;
 			}
 			if (instance.EnableLogging)
-				LogInfo($"Playing music '{eventName}'.");
+				Log.Info($"Playing music '{eventName}'.", instance);
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
 		}
 
@@ -491,7 +492,7 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				LogInfo($"Setting music state '{state}' of group '{stateGroup}'.");
+				Log.Info($"Setting music state '{state}' of group '{stateGroup}'.", instance);
 			AkSoundEngine.SetState(stateGroup, state);
 		}
 
@@ -588,14 +589,14 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Tried to get RTPC with empty name.");
+					Log.Info($"Tried to get RTPC with empty name.", instance);
 				return float.NaN;
 			}
 			float value;
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
 			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out value, ref valueType);
 			if (instance.EnableRTPCLogging)
-				LogRTPC($"Getting RTPC '{rtpcName}' value '{value}'.");
+				Log.Info($"Getting RTPC '{rtpcName}' value '{value}'.", instance);
 			return value;
 		}
 
@@ -607,14 +608,14 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.");
+					Log.Info($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.", instance);
 				return float.NaN;
 			}
 			float value;
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
 			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out value, ref valueType);
 			if (instance.EnableRTPCLogging)
-				LogRTPC($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.");
+				Log.Info($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.", instance);
 			return value;
 		}
 
@@ -626,11 +627,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Tried to set RTPC with empty name and value '{value}'.");
+					Log.Info($"Tried to set RTPC with empty name and value '{value}'.", instance);
 				return;
 			}
 			if (instance.EnableRTPCLogging)
-				LogRTPC($"Setting RTPC '{rtpcName}' to '{value}'.");
+				Log.Info($"Setting RTPC '{rtpcName}' to '{value}'.", instance);
 			AkSoundEngine.SetRTPCValue(rtpcName, value);
 		}
 
@@ -642,11 +643,11 @@ namespace Extenity.BeyondAudio
 			if (string.IsNullOrEmpty(rtpcName))
 			{
 				if (instance.EnableVerboseLogging)
-					LogVerbose($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.");
+					Log.Info($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.", instance);
 				return;
 			}
 			if (instance.EnableRTPCLogging)
-				LogRTPC($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.");
+				Log.Info($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.", instance);
 			AkSoundEngine.SetRTPCValue(rtpcName, value, associatedObject);
 		}
 
@@ -660,7 +661,7 @@ namespace Extenity.BeyondAudio
 			if (!instance)
 				return;
 			if (instance.EnableLogging)
-				LogInfo($"Setting state '{state}' of group '{stateGroup}'.");
+				Log.Info($"Setting state '{state}' of group '{stateGroup}'.", instance);
 			AkSoundEngine.SetState(stateGroup, state);
 		}
 
@@ -673,59 +674,6 @@ namespace Extenity.BeyondAudio
 		public bool EnableRTPCLogging = false;
 		public bool EnableVerboseLogging = false;
 		public bool EnableWarningLogging = true;
-
-		/// <summary>
-		/// Check for 'EnableLogging' before each Log call to prevent unnecessary string creation.
-		/// </summary>
-		private static void LogInfo(string message)
-		{
-			// This must be checked before each Log call manually.
-			//if (!EnableLogging)
-			//	return;
-
-			Log.Info("|AUDIO|" + message, Instance);
-		}
-
-		/// <summary>
-		/// Check for 'EnableRTPCLogging' before each Log call to prevent unnecessary string creation.
-		/// </summary>
-		private static void LogRTPC(string message)
-		{
-			// This must be checked before each Log call manually.
-			//if (!EnableRTPCLogging)
-			//	return;
-
-			Log.Info("|AUDIO|" + message, Instance);
-		}
-
-		/// <summary>
-		/// Check for 'EnableVerboseLogging' before each Log call to prevent unnecessary string creation.
-		/// </summary>
-		private static void LogVerbose(string message)
-		{
-			// This must be checked before each Log call manually.
-			//if (!EnableVerboseLogging)
-			//	return;
-
-			Log.Info("|AUDIO|" + message, Instance);
-		}
-
-		/// <summary>
-		/// Check for 'EnableWarningLogging' before each Log call to prevent unnecessary string creation.
-		/// </summary>
-		private static void LogWarning(string message)
-		{
-			// This must be checked before each Log call manually.
-			//if (!EnableWarningLogging)
-			//	return;
-
-			Log.Warning("|AUDIO|" + message, Instance);
-		}
-
-		private static void LogError(string message)
-		{
-			Log.Error("|AUDIO|" + message, Instance);
-		}
 
 		#endregion
 	}
