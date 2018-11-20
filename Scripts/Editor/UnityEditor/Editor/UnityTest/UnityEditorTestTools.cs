@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEditor;
-
+﻿
 namespace Extenity.UnityTestToolbox.Editor
 {
 

@@ -5,9 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using UnityEditor;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildToolbox.Editor
 {

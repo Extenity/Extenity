@@ -8,7 +8,6 @@
 #undef LoggingEnabled
 #endif
 
-using System;
 using UnityEngine;
 
 namespace Extenity.DesignPatternsToolbox

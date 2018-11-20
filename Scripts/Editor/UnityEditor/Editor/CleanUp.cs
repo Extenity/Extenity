@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor

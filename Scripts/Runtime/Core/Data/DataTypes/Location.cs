@@ -1,4 +1,3 @@
-using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.DataToolbox

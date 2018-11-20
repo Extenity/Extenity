@@ -7,7 +7,6 @@ using Extenity.SceneManagementToolbox;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.UnityEditorToolbox.ImageMagick
 {

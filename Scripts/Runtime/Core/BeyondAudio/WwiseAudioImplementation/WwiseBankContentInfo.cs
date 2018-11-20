@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.DataToolbox;
-using UnityEngine;
 
 namespace Extenity.BeyondAudio.BankInfo
 {

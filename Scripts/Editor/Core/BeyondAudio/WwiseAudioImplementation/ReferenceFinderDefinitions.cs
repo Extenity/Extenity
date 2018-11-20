@@ -1,6 +1,5 @@
 #if BeyondAudioUsesWwiseAudio
 
-using Extenity.ReflectionToolbox;
 using UnityEditor;
 
 namespace Extenity.BeyondAudio.Editor

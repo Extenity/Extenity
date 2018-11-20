@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
-using UnityEngine;
 
 namespace Extenity.DLLBuilder
 {

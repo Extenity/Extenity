@@ -1,9 +1,10 @@
 #if UNITY_STANDALONE_WIN
-using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
+#else
+using System;
 #endif
 #endif
 

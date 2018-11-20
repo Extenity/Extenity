@@ -1,7 +1,10 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR_WIN
+#else
+using System;
+#if UNITY_STANDALONE_WIN
 using System.Runtime.InteropServices;
+#endif
+#endif
 
 namespace Extenity.ApplicationToolbox
 {
