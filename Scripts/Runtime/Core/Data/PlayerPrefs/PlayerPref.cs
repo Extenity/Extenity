@@ -5,7 +5,6 @@ using System.Diagnostics;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Events;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.DataToolbox
 {
