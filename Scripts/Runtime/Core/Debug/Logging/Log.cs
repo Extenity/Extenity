@@ -101,37 +101,56 @@ public static class Log
 
 	#region Prefix
 
-	public static readonly Dictionary<Object, string> RegisteredPrefixes = new Dictionary<Object, string>(100);
+	public static readonly Dictionary<int, string> RegisteredPrefixes = new Dictionary<int, string>(100);
+	public static readonly Dictionary<int, Object> RegisteredPrefixObjects = new Dictionary<int, Object>(100);
 
 	public static void RegisterPrefix(Object obj, string prefix)
 	{
+		if (!obj)
+			throw new ArgumentNullException(nameof(obj));
+
 		ClearDestroyedObjectPrefixes();
 
-		if (RegisteredPrefixes.ContainsKey(obj))
-			RegisteredPrefixes[obj] = prefix;
+		var id = obj.GetInstanceID();
+		if (RegisteredPrefixes.ContainsKey(id))
+			RegisteredPrefixes[id] = prefix;
 		else
-			RegisteredPrefixes.Add(obj, prefix);
+			RegisteredPrefixes.Add(id, prefix);
 	}
 
 	public static void DeregisterPrefix(Object obj)
 	{
-		RegisteredPrefixes.Remove(obj);
-		ClearDestroyedObjectPrefixes();
+		if (!obj)
+		{
+			// It's okay. Maybe the object was destroyed before reaching at this point. Just trigger a cleanup.
+			ClearDestroyedObjectPrefixes();
+		}
+		else
+		{
+			var id = obj.GetInstanceID();
+			RegisteredPrefixes.Remove(id);
+			RegisteredPrefixObjects.Remove(id);
+			ClearDestroyedObjectPrefixes();
+		}
 	}
 
 	private static void ClearDestroyedObjectPrefixes()
 	{
-		// TODO: OPTIMIZATION: Not the best way of handling this I presume.
+		// TODO: This method is called way more than necessary. Reduce the calls.
+		//Info("-------- Checking for destroyed log objects");
+
+		// TODO: OPTIMIZATION: Not the best way of handling this I presume. Maybe allocate a pooled list.
 		var retry = true;
 		while (retry)
 		{
 			retry = false;
-			foreach (var item in RegisteredPrefixes)
+			foreach (var item in RegisteredPrefixObjects)
 			{
-				if (item.Key == null)
+				if (!item.Value)
 				{
-					Info("############### destroyed object: " + item.Value); // TODO: test this
-					RegisteredPrefixes.Remove(item.Key);
+					var id = item.Key;
+					RegisteredPrefixes.Remove(id);
+					RegisteredPrefixObjects.Remove(id);
 					retry = true;
 					break;
 				}
@@ -165,7 +184,7 @@ public static class Log
 			return CurrentIndentationString + "[NullStr]";
 
 		string prefix;
-		if (obj != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out prefix))
 		{
 			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndingsCRLF();
 		}
@@ -189,7 +208,7 @@ public static class Log
 			return CurrentIndentationString + "[NullExc]";
 
 		string prefix;
-		if (obj != null && RegisteredPrefixes.TryGetValue(obj, out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out prefix))
 		{
 			return CurrentIndentationString + prefix + PrefixSeparator + InternalCreateDetailedExceptionMessage(exception);
 		}
