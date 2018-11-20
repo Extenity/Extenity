@@ -15,13 +15,13 @@ namespace Extenity.DesignPatternsToolbox
 		//	get { return singletonCalls; }
 		//}
 
-		[System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		public static void SingletonInstantiated()
 		{
 			SingletonInstantiated(PreviousMethodType);
 		}
 
-		[System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		public static void SingletonInstantiated(string className)
 		{
 			if (singletonCalls.ContainsKey(className))
@@ -36,13 +36,13 @@ namespace Extenity.DesignPatternsToolbox
 				singletonCalls.Add(className, 1);
 		}
 
-		[System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		public static void SingletonDestroyed()
 		{
 			SingletonDestroyed(PreviousMethodType);
 		}
 
-		[System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		public static void SingletonDestroyed(string className)
 		{
 			if (singletonCalls.ContainsKey(className))
