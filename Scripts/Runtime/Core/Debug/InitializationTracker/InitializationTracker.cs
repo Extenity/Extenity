@@ -126,7 +126,7 @@ namespace Extenity.DebugToolbox
 			if (IsFinalized)
 			{
 				// Finalization should only be called once.
-				LogCriticalError("Internal error 17541957!", null);
+				LogInternalError(17541957);
 				return;
 			}
 
@@ -465,18 +465,23 @@ namespace Extenity.DebugToolbox
 		[Conditional("InitializationTrackerLogging")]
 		private static void LogInfo(string message)
 		{
-			Log.Info("|InitTrack|" + message);
+			Log.Info(Log.CreateMessage(message, "InitTrack"));
 		}
 
 		[Conditional("InitializationTrackerVerboseLogging")]
 		private static void LogVerbose(string message)
 		{
-			Log.Info("|InitTrack|" + message);
+			Log.Info(Log.CreateMessage(message, "InitTrack"));
 		}
 
 		private void LogCriticalError(string message, Object context)
 		{
-			Log.CriticalError("|InitTrack|" + message, context);
+			Log.CriticalError(Log.CreateMessage(message, "InitTrack"), context);
+		}
+
+		private void LogInternalError(int errorCode)
+		{
+			Log.InternalError(errorCode);
 		}
 
 		#endregion

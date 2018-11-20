@@ -170,7 +170,7 @@ public static class Log
 
 	public static string PrefixSeparator = " | ";
 
-	private static string CreateMessage(string message)
+	public static string CreateMessage(string message)
 	{
 		if (message == null)
 			return CurrentIndentationString + "[NullStr]";
@@ -178,7 +178,15 @@ public static class Log
 			return CurrentIndentationString + message.NormalizeLineEndingsCRLF();
 	}
 
-	private static string CreateMessage(string message, Object obj)
+	public static string CreateMessage(string message, string prefix)
+	{
+		if (message == null)
+			return CurrentIndentationString + "[NullStr]";
+		else
+			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndingsCRLF();
+	}
+
+	public static string CreateMessage(string message, Object obj)
 	{
 		if (message == null)
 			return CurrentIndentationString + "[NullStr]";
@@ -194,15 +202,15 @@ public static class Log
 		}
 	}
 
-	private static string CreateDetailedExceptionMessage(Exception exception)
+	public static string CreateDetailedExceptionMessage(Exception exception)
 	{
 		if (exception == null)
 			return CurrentIndentationString + "[NullExc]";
 		else
-			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception);
+			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
 	}
 
-	private static string CreateDetailedExceptionMessage(Exception exception, Object obj)
+	public static string CreateDetailedExceptionMessage(Exception exception, Object obj)
 	{
 		if (exception == null)
 			return CurrentIndentationString + "[NullExc]";
@@ -210,11 +218,11 @@ public static class Log
 		string prefix;
 		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out prefix))
 		{
-			return CurrentIndentationString + prefix + PrefixSeparator + InternalCreateDetailedExceptionMessage(exception);
+			return CurrentIndentationString + prefix + PrefixSeparator + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
 		}
 		else
 		{
-			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception);
+			return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
 		}
 	}
 
