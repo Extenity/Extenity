@@ -121,12 +121,20 @@ public static class Log
 
 	private static void ClearDestroyedObjectPrefixes()
 	{
-		foreach (var item in RegisteredPrefixes)
+		// TODO: OPTIMIZATION: Not the best way of handling this I presume.
+		var retry = true;
+		while (retry)
 		{
-			if (item.Key == null)
+			retry = false;
+			foreach (var item in RegisteredPrefixes)
 			{
-				Log.Info("############### destroyed object: " + item.Key); // TODO: test this
-				RegisteredPrefixes.Remove(item.Key);
+				if (item.Key == null)
+				{
+					Info("############### destroyed object: " + item.Value); // TODO: test this
+					RegisteredPrefixes.Remove(item.Key);
+					retry = true;
+					break;
+				}
 			}
 		}
 	}
