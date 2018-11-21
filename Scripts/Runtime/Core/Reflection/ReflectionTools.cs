@@ -927,7 +927,9 @@ namespace Extenity.ReflectionToolbox
 
 		private struct TypeSizeProxy<T>
 		{
+#pragma warning disable 649
 			public T PublicField;
+#pragma warning restore 649
 		}
 
 		public static int SizeOf<T>()

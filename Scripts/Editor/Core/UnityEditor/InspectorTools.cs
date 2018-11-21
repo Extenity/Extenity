@@ -210,10 +210,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 					return false;
 				}
 
+#if UNITY_2018_3_OR_NEWER
+				throw new System.NotImplementedException();
+#else
 				if (PrefabUtility.GetCorrespondingObjectFromSource(draggedGameObject) != null || PrefabUtility.GetPrefabObject(draggedGameObject) == null)
 				{
 					return false;
 				}
+#endif
 			}
 			return true;
 		}

@@ -21,6 +21,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var obj = property.objectReferenceValue;
 				if (obj != null)
 				{
+#if UNITY_2018_3_OR_NEWER
+					throw new System.NotImplementedException();
+#else
 					var prefabType = PrefabUtility.GetPrefabType(obj);
 
 					if (prefabType != PrefabType.None &&
@@ -32,6 +35,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						Log.Error("Field '" + property.displayName + "' only allows scene objects. Does not allow prefabs or model prefabs.");
 						property.objectReferenceValue = null;
 					}
+#endif
 				}
 			}
 			else

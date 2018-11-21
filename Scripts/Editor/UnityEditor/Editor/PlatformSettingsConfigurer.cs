@@ -21,7 +21,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 			iOS,
 
 			PS4,
-			PSP2,
 			XboxOne,
 
 			tvOS,
@@ -94,10 +93,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 				case DesiredBuildTarget.PS4:
 					buildTargetGroup = BuildTargetGroup.PS4;
 					buildTarget = BuildTarget.PS4;
-					break;
-				case DesiredBuildTarget.PSP2:
-					buildTargetGroup = BuildTargetGroup.PSP2;
-					buildTarget = BuildTarget.PSP2;
 					break;
 				case DesiredBuildTarget.XboxOne:
 					buildTargetGroup = BuildTargetGroup.XboxOne;

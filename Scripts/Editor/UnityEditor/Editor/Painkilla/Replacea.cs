@@ -33,6 +33,7 @@ namespace Extenity.PainkillaTool.Editor
 			SetTitleAndIcon("Replacea", null);
 			minSize = MinimumWindowSize;
 
+			/*
 			ReplaceWithObjectProperty = serializedObject.FindProperty("_ReplaceWithObject");
 			ReplaceAsPrefabProperty = serializedObject.FindProperty("_ReplaceAsPrefab");
 			ReplacePrefabParentProperty = serializedObject.FindProperty("_ReplacePrefabParent");
@@ -44,6 +45,7 @@ namespace Extenity.PainkillaTool.Editor
 			Selection.selectionChanged += OnSelectionChanged;
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
+			*/
 		}
 
 		#endregion
@@ -52,31 +54,39 @@ namespace Extenity.PainkillaTool.Editor
 
 		protected void OnDestroy()
 		{
+			/*
 			Selection.selectionChanged -= OnSelectionChanged;
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			*/
 		}
 
 		#endregion
 
 		#region Serialized Properties
 
+		/*
 		private SerializedProperty ReplaceWithObjectProperty;
 		private SerializedProperty ReplaceAsPrefabProperty;
 		private SerializedProperty ReplacePrefabParentProperty;
 		private SerializedProperty OverrideRotationsProperty;
 		private SerializedProperty OverrideScalesProperty;
 		private SerializedProperty OverrideNamesProperty;
+		*/
 
 		#endregion
 
 		#region GUI - Window
 
+		/*
 		private readonly GUILayoutOption[] ReplaceButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
 		private readonly GUIContent ReplaceButtonContent = new GUIContent("Replace", "Replaces all selected objects with the specified object.");
 		private readonly GUIContent ReplaceWithContent = new GUIContent("Replace With", "This object will be duplicated and replaced with selected objects.");
+		*/
 
 		protected override void OnGUIDerived()
 		{
+			GUILayout.Label("Not implemented yet for Nested Prefabs.");
+			/*
 			GUILayout.Space(8f);
 
 			{
@@ -170,12 +180,14 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				SceneView.RepaintAll();
 			}
+			*/
 		}
 
 		#endregion
 
 		#region Replace
 
+		/*
 #pragma warning disable 414
 
 		[SerializeField]
@@ -323,11 +335,13 @@ namespace Extenity.PainkillaTool.Editor
 				serializedObject.ApplyModifiedProperties();
 			}
 		}
+		*/
 
 		#endregion
 
 		#region Selection
 
+		/*
 		public List<Transform> FilteredSelection;
 
 		private void OnSelectionChanged()
@@ -352,6 +366,7 @@ namespace Extenity.PainkillaTool.Editor
 			}
 			Selection.objects = FilteredSelection.Select(transform => transform.gameObject).ToArray();
 		}
+		*/
 
 		#endregion
 	}

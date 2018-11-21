@@ -21,6 +21,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var obj = property.objectReferenceValue;
 				if (obj != null)
 				{
+#if UNITY_2018_3_OR_NEWER
+					throw new System.NotImplementedException();
+#else
 					var prefabType = PrefabUtility.GetPrefabType(obj);
 					OnlyAllowPrefabsAttribute thisAttribute = (OnlyAllowPrefabsAttribute)attribute;
 
@@ -33,6 +36,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						Log.Error("Field '" + property.displayName + "' only allows prefabs.");
 						property.objectReferenceValue = null;
 					}
+#endif
 				}
 			}
 			else
