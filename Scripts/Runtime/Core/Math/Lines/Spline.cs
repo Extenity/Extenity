@@ -11,7 +11,6 @@ namespace Extenity.MathToolbox
 
 		public void ClearData()
 		{
-			//Logger.Log("######### Clear");
 			ClearRawPoints();
 			ClearProcessedPoints();
 		}
@@ -92,8 +91,6 @@ namespace Extenity.MathToolbox
 
 		public void ProcessPoints()
 		{
-			//Logger.Log("######### ProcessPoints");
-
 			// Clear previous points
 			if (ProcessedPoints == null)
 			{
@@ -233,8 +230,6 @@ namespace Extenity.MathToolbox
 
 		public void Invalidate()
 		{
-			//Logger.Log("######### Invalidate");
-
 			CancelInvoke("Invalidate");
 
 			InvalidateRawLineLengths();

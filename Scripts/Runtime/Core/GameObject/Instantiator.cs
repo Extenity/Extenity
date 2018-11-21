@@ -113,7 +113,7 @@ namespace Extenity.GameObjectToolbox
 		private void Initialize()
 		{
 #if LoggingEnabled
-			using (Extenity.DebugToolbox.Logger.Indent(gameObject, "Initializing instantiator: " + type))
+			using (Log.Indent(gameObject, "Initializing instantiator: " + type))
 #endif
 			{
 				instantiated[(int)type] = true;
@@ -138,7 +138,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < everlastingPrefabs.Length; i++)
 			{
 #if LoggingEnabled
-				using (Extenity.DebugToolbox.Logger.IndentFormat(this, "Instantiating everlasting '{0}'", everlastingPrefabs[i].name))
+				using (Log.Indent(this, $"Instantiating everlasting '{everlastingPrefabs[i].name}'"))
 #endif
 				{
 					EverlastingInstantiate(everlastingPrefabs[i]);
@@ -151,7 +151,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < nonlastingPrefabs.Length; i++)
 			{
 #if LoggingEnabled
-				using (Extenity.DebugToolbox.Logger.IndentFormat(this, "Instantiating nonlasting '{0}'", nonlastingPrefabs[i].name))
+				using (Log.Indent(this, "Instantiating nonlasting '{nonlastingPrefabs[i].name}'"))
 #endif
 				{
 					NonlastingInstantiate(nonlastingPrefabs[i]);
