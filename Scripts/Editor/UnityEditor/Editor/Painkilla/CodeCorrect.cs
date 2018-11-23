@@ -24,7 +24,7 @@ namespace Extenity.PainkillaTool.Editor
 		private const string IgnoreInspectionText = "Ignored by Code Correct";
 		private const string TestScriptFileNamePrefix = "Test_";
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		private static readonly Vector2 MinimumWindowSize = new Vector2(500f, 60f);
 
 		#endregion
 
@@ -60,9 +60,23 @@ namespace Extenity.PainkillaTool.Editor
 		private static readonly GUILayoutOption InspectButtonHeight = GUILayout.Height(50);
 		private static readonly GUILayoutOption InspectButtonWidth = GUILayout.Width(200);
 
-		private bool ToggleInspect_UnexpectedCharacters = true;
-		private bool ToggleInspect_YieldAllocations = true;
-		private bool ToggleInspect_OnGUIUsage = true;
+		public List<InspectionResult> Results;
+
+		public bool ToggleInspect_UnexpectedCharacters = true;
+		public bool ToggleInspect_YieldAllocations = true;
+		public bool ToggleInspect_OnGUIUsage = true;
+
+		private void InspectByUserClick()
+		{
+			Results = Inspect(new InspectionConfiguration
+			{
+				InspectUnexpectedCharacters = ToggleInspect_UnexpectedCharacters,
+				InspectYieldAllocations = ToggleInspect_YieldAllocations,
+				InspectOnGUIUsage = ToggleInspect_OnGUIUsage,
+			});
+
+			Repaint();
+		}
 
 		protected override void OnGUIDerived()
 		{
@@ -73,7 +87,7 @@ namespace Extenity.PainkillaTool.Editor
 				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Inspect Scripts", InspectButtonHeight, InspectButtonWidth))
 				{
-					EditorApplication.delayCall += Inspect;
+					EditorApplication.delayCall += InspectByUserClick;
 				}
 				GUILayout.BeginVertical();
 				ToggleInspect_UnexpectedCharacters = GUILayout.Toggle(ToggleInspect_UnexpectedCharacters, "Unexpected Characters");
@@ -104,7 +118,7 @@ namespace Extenity.PainkillaTool.Editor
 							AssetTools.OpenScriptInIDE(result.ScriptPath);
 						}
 
-						GUILayout.Label(result.ScriptPathGUIContent);
+						GUILayout.Label(result.ScriptPath);
 						GUILayout.EndHorizontal();
 					}
 
@@ -180,7 +194,14 @@ namespace Extenity.PainkillaTool.Editor
 
 		#endregion
 
-		#region Inspect Scripts
+		#region Inspect
+
+		public struct InspectionConfiguration
+		{
+			public bool InspectUnexpectedCharacters;
+			public bool InspectYieldAllocations;
+			public bool InspectOnGUIUsage;
+		}
 
 		public class InspectionResult
 		{
@@ -188,40 +209,53 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				public int Line;
 				public string Content;
-				public GUIContent GUIContent;
+
+				#region Cached GUIContent
+
+				private GUIContent _GUIContent;
+				public GUIContent GUIContent
+				{
+					get
+					{
+						if (_GUIContent == null)
+							_GUIContent = new GUIContent($"{Line}\t: {Content}".ClipIfNecessary(100));
+						return _GUIContent;
+					}
+				}
+
+				#endregion
 			}
 
 			public string ScriptPath;
 			public HashSet<char> UnexpectedCharacters;
 			public ScriptLineEntry[] YieldAllocations;
 			public ScriptLineEntry[] OnGUIUsages;
-
-			public GUIContent ScriptPathGUIContent;
 		}
-
-		public List<InspectionResult> Results;
 
 		private static Regex OnGUIUsageRegex;
 		private static Regex YieldAllocationsRegex;
 
-		public void Inspect()
+		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
-			Results = new List<InspectionResult>();
-
 			var scriptPaths = AssetTools.GetAllScriptAssetPaths();
-			foreach (var scriptPath in scriptPaths)
-			{
-				InternalInspectScript(scriptPath,
-					ToggleInspect_UnexpectedCharacters,
-					ToggleInspect_YieldAllocations,
-					ToggleInspect_OnGUIUsage);
-			}
-
-			SortResults();
-			Repaint();
+			return Inspect(configuration, scriptPaths);
 		}
 
-		private void InternalInspectScript(string scriptPath, bool inspectUnexpectedCharacters, bool inspectYieldAllocations, bool inspectOnGUIUsage)
+		public static List<InspectionResult> Inspect(InspectionConfiguration configuration, List<string> scriptPaths)
+		{
+			var results = new List<InspectionResult>();
+
+			foreach (var scriptPath in scriptPaths)
+			{
+				InternalInspectScript(results, scriptPath, configuration);
+			}
+
+			SortResults(results);
+
+			return results;
+		}
+
+		private static void InternalInspectScript(List<InspectionResult> results, string scriptPath, InspectionConfiguration configuration)
 		{
 			if (string.IsNullOrEmpty(scriptPath))
 				throw new ArgumentNullException(nameof(scriptPath));
@@ -243,7 +277,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
-			if (inspectUnexpectedCharacters)
+			if (configuration.InspectUnexpectedCharacters)
 			{
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
@@ -266,7 +300,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains yield allocations
 			List<InspectionResult.ScriptLineEntry> yieldAllocations = null;
-			if (inspectYieldAllocations)
+			if (configuration.InspectYieldAllocations)
 			{
 				if (YieldAllocationsRegex == null)
 					YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
@@ -282,7 +316,6 @@ namespace Extenity.PainkillaTool.Editor
 						{
 							Line = lineNumber,
 							Content = line,
-							GUIContent = new GUIContent($"{lineNumber}\t: {line}".ClipIfNecessary(100)),
 						});
 						anyErrors = true;
 					}
@@ -291,7 +324,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains OnGUI
 			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
-			if (inspectOnGUIUsage)
+			if (configuration.InspectOnGUIUsage)
 			{
 				if (OnGUIUsageRegex == null)
 					OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
@@ -307,7 +340,6 @@ namespace Extenity.PainkillaTool.Editor
 						{
 							Line = lineNumber,
 							Content = line,
-							GUIContent = new GUIContent($"{lineNumber}\t: {line}".ClipIfNecessary(100)),
 						});
 						anyErrors = true;
 					}
@@ -322,29 +354,29 @@ namespace Extenity.PainkillaTool.Editor
 					UnexpectedCharacters = unexpectedCharacters,
 					YieldAllocations = yieldAllocations?.ToArray(),
 					OnGUIUsages = onGUIUsages?.ToArray(),
-					ScriptPathGUIContent = new GUIContent(scriptPath),
 				};
-				Results.Add(result);
+				results.Add(result);
 			}
 		}
 
-		public void SortResults()
+		private static void SortResults(List<InspectionResult> results)
 		{
-			if (Results.IsNullOrEmpty())
+			if (results.IsNullOrEmpty())
 				return;
 
-			Results.Sort((a, b) => string.Compare(a.ScriptPath, b.ScriptPath, StringComparison.Ordinal));
+			results.Sort((a, b) => string.Compare(a.ScriptPath, b.ScriptPath, StringComparison.Ordinal));
 		}
 
 		#endregion
 
 		#region Ignore Inspection
 
-		private bool IsLineAllowedToBeInspected(string line)
+		private static bool IsLineAllowedToBeInspected(string line)
 		{
-			return
-				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Does not contain the ignore label that is entered by the coder
-				line[0] != '/'; // Does not start with comment
+			return 
+				!string.IsNullOrEmpty(line) && // Skip empty lines
+				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Skip lines that contain the ignore label that is entered by the coder
+				line[0] != '/'; // Skip lines that start with comment
 		}
 
 		#endregion
