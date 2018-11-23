@@ -21,6 +21,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region Configuration
 
 		public static readonly string ExpectedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_-+=[]{}\\/,.:;|?<>'\"\t\n\r ";
+		private const string IgnoreInspectionText = "Ignored by Code Correct";
 
 		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
 
@@ -199,8 +200,8 @@ namespace Extenity.PainkillaTool.Editor
 
 		public List<InspectionResult> Results;
 
-		private static Regex OnGUIUsageRegex; 
-		private static Regex YieldAllocationsRegex; 
+		private static Regex OnGUIUsageRegex;
+		private static Regex YieldAllocationsRegex;
 
 		public void Inspect()
 		{
@@ -229,6 +230,12 @@ namespace Extenity.PainkillaTool.Editor
 			var lines = File.ReadLines(scriptPath).ToList();
 			var anyErrors = false;
 
+			// Trim all lines
+			for (var i = 0; i < lines.Count; i++)
+			{
+				lines[i] = lines[i].Trim();
+			}
+
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
 			if (inspectUnexpectedCharacters && !isInEditorFolder)
@@ -236,14 +243,17 @@ namespace Extenity.PainkillaTool.Editor
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
 					var line = lines[iLine];
-					for (int i = 0; i < line.Length; i++)
+					if (IsLineAllowedToBeInspected(line))
 					{
-						if (ExpectedCharacters.IndexOf(line[i]) < 0)
+						for (int i = 0; i < line.Length; i++)
 						{
-							if (unexpectedCharacters == null)
-								unexpectedCharacters = new HashSet<char>();
-							unexpectedCharacters.Add(line[i]);
-							anyErrors = true;
+							if (ExpectedCharacters.IndexOf(line[i]) < 0)
+							{
+								if (unexpectedCharacters == null)
+									unexpectedCharacters = new HashSet<char>();
+								unexpectedCharacters.Add(line[i]);
+								anyErrors = true;
+							}
 						}
 					}
 				}
@@ -258,17 +268,16 @@ namespace Extenity.PainkillaTool.Editor
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
 					var line = lines[iLine];
-					if (YieldAllocationsRegex.IsMatch(line))
+					if (YieldAllocationsRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
 					{
 						if (yieldAllocations == null)
 							yieldAllocations = new List<InspectionResult.ScriptLineEntry>();
 						var lineNumber = iLine + 1;
-						var content = line.Trim();
 						yieldAllocations.Add(new InspectionResult.ScriptLineEntry
 						{
 							Line = lineNumber,
-							Content = content,
-							GUIContent = new GUIContent($"{lineNumber}\t: {content}".ClipIfNecessary(100)),
+							Content = line,
+							GUIContent = new GUIContent($"{lineNumber}\t: {line}".ClipIfNecessary(100)),
 						});
 						anyErrors = true;
 					}
@@ -284,17 +293,16 @@ namespace Extenity.PainkillaTool.Editor
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
 					var line = lines[iLine];
-					if (OnGUIUsageRegex.IsMatch(line))
+					if (OnGUIUsageRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
 					{
 						if (onGUIUsages == null)
 							onGUIUsages = new List<InspectionResult.ScriptLineEntry>();
 						var lineNumber = iLine + 1;
-						var content = line.Trim();
 						onGUIUsages.Add(new InspectionResult.ScriptLineEntry
 						{
 							Line = lineNumber,
-							Content = content,
-							GUIContent = new GUIContent($"{lineNumber}\t: {content}".ClipIfNecessary(100)),
+							Content = line,
+							GUIContent = new GUIContent($"{lineNumber}\t: {line}".ClipIfNecessary(100)),
 						});
 						anyErrors = true;
 					}
@@ -321,6 +329,17 @@ namespace Extenity.PainkillaTool.Editor
 				return;
 
 			Results.Sort((a, b) => string.Compare(a.ScriptPath, b.ScriptPath, StringComparison.Ordinal));
+		}
+
+		#endregion
+
+		#region Ignore Inspection
+
+		private bool IsLineAllowedToBeInspected(string line)
+		{
+			return 
+				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Does not contain the ignore label that is entered by the coder
+				line[0] != '/'; // Does not start with comment
 		}
 
 		#endregion
