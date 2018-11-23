@@ -57,7 +57,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private static readonly GUILayoutOption CharacterButtonWidth = GUILayout.Width(24);
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(60);
-		private static readonly GUILayoutOption InspectButtonHeight = GUILayout.Height(50);
+		private static readonly GUILayoutOption InspectButtonHeight = GUILayout.Height(34);
 		private static readonly GUILayoutOption InspectButtonWidth = GUILayout.Width(200);
 
 		public List<InspectionResult> Results;
@@ -65,6 +65,7 @@ namespace Extenity.PainkillaTool.Editor
 		public bool ToggleInspect_UnexpectedCharacters = true;
 		public bool ToggleInspect_YieldAllocations = true;
 		public bool ToggleInspect_OnGUIUsage = true;
+		public bool ToggleInspect_OnMouseUsage = true;
 
 		private void InspectByUserClick()
 		{
@@ -73,6 +74,7 @@ namespace Extenity.PainkillaTool.Editor
 				InspectUnexpectedCharacters = ToggleInspect_UnexpectedCharacters,
 				InspectYieldAllocations = ToggleInspect_YieldAllocations,
 				InspectOnGUIUsage = ToggleInspect_OnGUIUsage,
+				InspectOnMouseUsage = ToggleInspect_OnMouseUsage,
 			});
 
 			Repaint();
@@ -92,8 +94,12 @@ namespace Extenity.PainkillaTool.Editor
 				GUILayout.BeginVertical();
 				ToggleInspect_UnexpectedCharacters = GUILayout.Toggle(ToggleInspect_UnexpectedCharacters, "Unexpected Characters");
 				ToggleInspect_YieldAllocations = GUILayout.Toggle(ToggleInspect_YieldAllocations, "Yield Allocations");
-				ToggleInspect_OnGUIUsage = GUILayout.Toggle(ToggleInspect_OnGUIUsage, "OnGUI Usage");
 				GUILayout.EndVertical();
+				GUILayout.BeginVertical();
+				ToggleInspect_OnGUIUsage = GUILayout.Toggle(ToggleInspect_OnGUIUsage, "OnGUI Usage");
+				ToggleInspect_OnMouseUsage = GUILayout.Toggle(ToggleInspect_OnMouseUsage, "OnMouse_ Usage");
+				GUILayout.EndVertical();
+				GUILayout.FlexibleSpace();
 				GUILayout.EndHorizontal();
 			}
 
@@ -144,43 +150,19 @@ namespace Extenity.PainkillaTool.Editor
 					// Yield allocations
 					if (result.YieldAllocations.IsNotNullAndEmpty())
 					{
-						GUILayout.BeginVertical();
-						GUILayout.Label("Yield allocations: ");
-
-						foreach (var entry in result.YieldAllocations)
-						{
-							GUILayout.BeginHorizontal();
-							if (GUILayout.Button("Go", ButtonWidth))
-							{
-								Log.Info($"Opening script '{result.ScriptPath}' at line '{entry.Line}'.");
-								AssetTools.OpenScriptInIDE(result.ScriptPath, entry.Line);
-							}
-							GUILayout.Label(entry.GUIContent);
-							GUILayout.EndHorizontal();
-						}
-
-						GUILayout.EndVertical();
+						DrawEntryForLinedScripts("Yield allocations: ", result.YieldAllocations, result.ScriptPath);
 					}
 
 					// OnGUI usages
 					if (result.OnGUIUsages.IsNotNullAndEmpty())
 					{
-						GUILayout.BeginVertical();
-						GUILayout.Label("OnGUI usages: ");
+						DrawEntryForLinedScripts("OnGUI usages: ", result.OnGUIUsages, result.ScriptPath);
+					}
 
-						foreach (var entry in result.OnGUIUsages)
-						{
-							GUILayout.BeginHorizontal();
-							if (GUILayout.Button("Go", ButtonWidth))
-							{
-								Log.Info($"Opening script '{result.ScriptPath}' at line '{entry.Line}'.");
-								AssetTools.OpenScriptInIDE(result.ScriptPath, entry.Line);
-							}
-							GUILayout.Label(entry.GUIContent);
-							GUILayout.EndHorizontal();
-						}
-
-						GUILayout.EndVertical();
+					// OnMouse_ usages
+					if (result.OnMouseUsages.IsNotNullAndEmpty())
+					{
+						DrawEntryForLinedScripts("OnMouse_ usages: ", result.OnMouseUsages, result.ScriptPath);
 					}
 
 					GUILayout.EndVertical();
@@ -192,6 +174,27 @@ namespace Extenity.PainkillaTool.Editor
 			}
 		}
 
+		private void DrawEntryForLinedScripts(string title, InspectionResult.ScriptLineEntry[] entries, string scriptPath)
+		{
+			GUILayout.BeginVertical();
+			GUILayout.Label(title);
+
+			foreach (var entry in entries)
+			{
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button("Go", ButtonWidth))
+				{
+					Log.Info($"Opening script '{scriptPath}' at line '{entry.Line}'.");
+					AssetTools.OpenScriptInIDE(scriptPath, entry.Line);
+				}
+
+				GUILayout.Label(entry.GUIContent);
+				GUILayout.EndHorizontal();
+			}
+
+			GUILayout.EndVertical();
+		}
+
 		#endregion
 
 		#region Inspect
@@ -201,6 +204,7 @@ namespace Extenity.PainkillaTool.Editor
 			public bool InspectUnexpectedCharacters;
 			public bool InspectYieldAllocations;
 			public bool InspectOnGUIUsage;
+			public bool InspectOnMouseUsage;
 		}
 
 		public class InspectionResult
@@ -230,10 +234,12 @@ namespace Extenity.PainkillaTool.Editor
 			public HashSet<char> UnexpectedCharacters;
 			public ScriptLineEntry[] YieldAllocations;
 			public ScriptLineEntry[] OnGUIUsages;
+			public ScriptLineEntry[] OnMouseUsages;
 		}
 
-		private static Regex OnGUIUsageRegex;
 		private static Regex YieldAllocationsRegex;
+		private static Regex OnGUIUsageRegex;
+		private static Regex OnMouseUsageRegex;
 
 		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
@@ -322,7 +328,7 @@ namespace Extenity.PainkillaTool.Editor
 				}
 			}
 
-			// Check if the script contains OnGUI
+			// Check if the script contains OnGUI methods
 			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
 			if (configuration.InspectOnGUIUsage)
 			{
@@ -346,6 +352,30 @@ namespace Extenity.PainkillaTool.Editor
 				}
 			}
 
+			// Check if the script contains OnMouse_ methods
+			List<InspectionResult.ScriptLineEntry> onMouseUsages = null;
+			if (configuration.InspectOnMouseUsage)
+			{
+				if (OnMouseUsageRegex == null)
+					OnMouseUsageRegex = new Regex(@"OnMouse.*\(\s*\)", RegexOptions.Compiled);
+				for (int iLine = 0; iLine < lines.Count; iLine++)
+				{
+					var line = lines[iLine];
+					if (OnMouseUsageRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
+					{
+						if (onMouseUsages == null)
+							onMouseUsages = new List<InspectionResult.ScriptLineEntry>();
+						var lineNumber = iLine + 1;
+						onMouseUsages.Add(new InspectionResult.ScriptLineEntry
+						{
+							Line = lineNumber,
+							Content = line,
+						});
+						anyErrors = true;
+					}
+				}
+			}
+
 			if (anyErrors)
 			{
 				var result = new InspectionResult
@@ -354,6 +384,7 @@ namespace Extenity.PainkillaTool.Editor
 					UnexpectedCharacters = unexpectedCharacters,
 					YieldAllocations = yieldAllocations?.ToArray(),
 					OnGUIUsages = onGUIUsages?.ToArray(),
+					OnMouseUsages = onMouseUsages?.ToArray(),
 				};
 				results.Add(result);
 			}
@@ -373,7 +404,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private static bool IsLineAllowedToBeInspected(string line)
 		{
-			return 
+			return
 				!string.IsNullOrEmpty(line) && // Skip empty lines
 				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Skip lines that contain the ignore label that is entered by the coder
 				line[0] != '/'; // Skip lines that start with comment
