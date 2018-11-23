@@ -22,6 +22,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		public static readonly string ExpectedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_-+=[]{}\\/,.:;|?<>'\"\t\n\r ";
 		private const string IgnoreInspectionText = "Ignored by Code Correct";
+		private const string TestScriptFileNamePrefix = "Test_";
 
 		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
 
@@ -222,9 +223,13 @@ namespace Extenity.PainkillaTool.Editor
 
 		private void InternalInspectScript(string scriptPath, bool inspectUnexpectedCharacters, bool inspectYieldAllocations, bool inspectOnGUIUsage)
 		{
+			if (string.IsNullOrEmpty(scriptPath))
+				throw new ArgumentNullException(nameof(scriptPath));
+
+			var isTestScript = Path.GetFileName(scriptPath).StartsWith(TestScriptFileNamePrefix, StringComparison.InvariantCultureIgnoreCase);
 			var isInEditorFolder = scriptPath.FixDirectorySeparatorChars('/').Split('/').Any(item => item.Equals("Editor", StringComparison.InvariantCultureIgnoreCase));
-			// Skip editor scripts. Currently there are no inspections that is meaningful to be applied on editor scripts.
-			if (isInEditorFolder)
+			// Skip editor scripts and test scripts. Currently there are no inspections that is meaningful to be applied on these scripts.
+			if (isInEditorFolder || isTestScript)
 				return;
 
 			var lines = File.ReadLines(scriptPath).ToList();
@@ -238,7 +243,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
-			if (inspectUnexpectedCharacters && !isInEditorFolder)
+			if (inspectUnexpectedCharacters)
 			{
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
@@ -261,7 +266,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains yield allocations
 			List<InspectionResult.ScriptLineEntry> yieldAllocations = null;
-			if (inspectYieldAllocations && !isInEditorFolder)
+			if (inspectYieldAllocations)
 			{
 				if (YieldAllocationsRegex == null)
 					YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
@@ -286,7 +291,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			// Check if the script contains OnGUI
 			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
-			if (inspectOnGUIUsage && !isInEditorFolder)
+			if (inspectOnGUIUsage)
 			{
 				if (OnGUIUsageRegex == null)
 					OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
@@ -337,7 +342,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private bool IsLineAllowedToBeInspected(string line)
 		{
-			return 
+			return
 				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Does not contain the ignore label that is entered by the coder
 				line[0] != '/'; // Does not start with comment
 		}
