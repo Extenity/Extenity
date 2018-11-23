@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Extenity.ApplicationToolbox;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
@@ -54,43 +55,97 @@ namespace Extenity.PainkillaTool.Editor
 
 		private static readonly GUILayoutOption CharacterButtonWidth = GUILayout.Width(24);
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(60);
+		private static readonly GUILayoutOption InspectButtonWidth = GUILayout.Width(200);
+
+		private bool ToggleInspect_UnexpectedCharacters = true;
+		private bool ToggleInspect_YieldAllocations = true;
 
 		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(8f);
 
-			if (GUILayout.Button("Inspect Scripts", BigButtonHeight))
+			// Control panel
 			{
-				EditorApplication.delayCall += Inspect;
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button("Inspect Scripts", BigButtonHeight, InspectButtonWidth))
+				{
+					EditorApplication.delayCall += Inspect;
+				}
+				GUILayout.BeginVertical();
+				ToggleInspect_UnexpectedCharacters = GUILayout.Toggle(ToggleInspect_UnexpectedCharacters, "Unexpected Characters");
+				ToggleInspect_YieldAllocations = GUILayout.Toggle(ToggleInspect_YieldAllocations, "Yield Allocations");
+				GUILayout.EndVertical();
+				GUILayout.EndHorizontal();
 			}
 
+			// Results
 			if (Results != null)
 			{
 				EditorGUILayoutTools.DrawHeader($"Results ({Results.Count})");
+				GUILayout.Space(10f);
 
 				ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
 
 				foreach (var result in Results)
 				{
-					GUILayout.BeginHorizontal();
+					GUILayout.BeginVertical();
 
-					if (GUILayout.Button("Open", ButtonWidth))
+					// Script path and Open button
 					{
-						var obj = AssetDatabase.LoadAssetAtPath<MonoScript>(result.ScriptPath);
-						AssetDatabase.OpenAsset(obj);
-					}
-					GUILayout.Label(result.GUIContent);
-					GUILayout.FlexibleSpace();
-					foreach (var character in result.UnexpectedCharacters)
-					{
-						if (GUILayout.Button(character.ToString(), CharacterButtonWidth))
+						GUILayout.BeginHorizontal();
+
+						if (GUILayout.Button("Open", ButtonWidth))
 						{
-							Log.Info($"Character '{character}' with unicode representation '\\u{((ulong)character).ToHexString()}' copied into clipboard.");
-							Clipboard.SetClipboardText(character.ToString(), false);
+							AssetTools.OpenScriptInIDE(result.ScriptPath);
 						}
+
+						GUILayout.Label(result.ScriptPathGUIContent);
+						GUILayout.EndHorizontal();
 					}
 
-					GUILayout.EndHorizontal();
+					// Unexpected characters
+					if (result.UnexpectedCharacters.IsNotNullAndEmpty())
+					{
+						GUILayout.BeginHorizontal();
+						GUILayout.Label("Unexpected characters: ");
+
+						foreach (var character in result.UnexpectedCharacters)
+						{
+							if (GUILayout.Button(character.ToString(), CharacterButtonWidth))
+							{
+								Log.Info($"Character '{character}' with unicode representation '\\u{((ulong)character).ToHexString()}' copied into clipboard.");
+								Clipboard.SetClipboardText(character.ToString(), false);
+							}
+						}
+
+						GUILayout.FlexibleSpace();
+						GUILayout.EndHorizontal();
+					}
+
+					// Yield allocations
+					if (result.YieldAllocations.IsNotNullAndEmpty())
+					{
+						GUILayout.BeginVertical();
+						GUILayout.Label("Yield allocations: ");
+
+						foreach (var entry in result.YieldAllocations)
+						{
+							GUILayout.BeginHorizontal();
+							if (GUILayout.Button("Go", ButtonWidth))
+							{
+								Log.Info($"Opening script '{result.ScriptPath}' at line '{entry.Line}'.");
+								AssetTools.OpenScriptInIDE(result.ScriptPath, entry.Line);
+							}
+							GUILayout.Label(entry.GUIContent);
+							GUILayout.EndHorizontal();
+						}
+
+						GUILayout.EndVertical();
+					}
+
+					GUILayout.EndVertical();
+
+					GUILayout.Space(30f);
 				}
 
 				GUILayout.EndScrollView();
@@ -103,10 +158,18 @@ namespace Extenity.PainkillaTool.Editor
 
 		public class InspectionResult
 		{
+			public struct YieldAllocationEntry
+			{
+				public int Line;
+				public string Content;
+				public GUIContent GUIContent;
+			}
+
 			public string ScriptPath;
 			public HashSet<char> UnexpectedCharacters;
+			public YieldAllocationEntry[] YieldAllocations;
 
-			public GUIContent GUIContent;
+			public GUIContent ScriptPathGUIContent;
 		}
 
 		public List<InspectionResult> Results;
@@ -118,35 +181,68 @@ namespace Extenity.PainkillaTool.Editor
 			var scriptPaths = AssetTools.GetAllScriptAssetPaths();
 			foreach (var scriptPath in scriptPaths)
 			{
-				InternalInspectScript(scriptPath);
+				InternalInspectScript(scriptPath,
+					ToggleInspect_UnexpectedCharacters,
+					ToggleInspect_YieldAllocations);
 			}
 
 			SortResults();
 			Repaint();
 		}
 
-		private void InternalInspectScript(string scriptPath)
+		private void InternalInspectScript(string scriptPath, bool inspectUnexpectedCharacters, bool inspectYieldAllocations)
 		{
 			//// Check script encoding
 			//{
 			//}
 
+			var lines = File.ReadLines(scriptPath).ToList();
+			var anyErrors = false;
+
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
+			if (inspectUnexpectedCharacters)
 			{
-				var content = File.ReadAllText(scriptPath);
-				for (int i = 0; i < content.Length; i++)
+				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
-					if (!ExpectedCharacters.Contains(content[i]))
+					var line = lines[iLine];
+					for (int i = 0; i < line.Length; i++)
 					{
-						if (unexpectedCharacters == null)
-							unexpectedCharacters = new HashSet<char>();
-						unexpectedCharacters.Add(content[i]);
+						if (ExpectedCharacters.IndexOf(line[i]) < 0)
+						{
+							if (unexpectedCharacters == null)
+								unexpectedCharacters = new HashSet<char>();
+							unexpectedCharacters.Add(line[i]);
+							anyErrors = true;
+						}
 					}
 				}
 			}
 
-			var anyErrors = unexpectedCharacters != null;
+			// Check if the script contains yield allocations
+			List<InspectionResult.YieldAllocationEntry> yieldAllocations = null;
+			if (inspectYieldAllocations)
+			{
+				var regex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
+				for (int iLine = 0; iLine < lines.Count; iLine++)
+				{
+					var line = lines[iLine];
+					if (regex.IsMatch(line))
+					{
+						if (yieldAllocations == null)
+							yieldAllocations = new List<InspectionResult.YieldAllocationEntry>();
+						var lineNumber = iLine + 1;
+						var content = line.Trim();
+						yieldAllocations.Add(new InspectionResult.YieldAllocationEntry
+						{
+							Line = lineNumber,
+							Content = content,
+							GUIContent = new GUIContent($"{lineNumber}\t: {content}".ClipIfNecessary(100)),
+						});
+						anyErrors = true;
+					}
+				}
+			}
 
 			if (anyErrors)
 			{
@@ -154,7 +250,8 @@ namespace Extenity.PainkillaTool.Editor
 				{
 					ScriptPath = scriptPath,
 					UnexpectedCharacters = unexpectedCharacters,
-					GUIContent = new GUIContent(scriptPath, "Unexpected characters: " + string.Join(" ", unexpectedCharacters)),
+					YieldAllocations = yieldAllocations?.ToArray(),
+					ScriptPathGUIContent = new GUIContent(scriptPath),
 				};
 				Results.Add(result);
 			}

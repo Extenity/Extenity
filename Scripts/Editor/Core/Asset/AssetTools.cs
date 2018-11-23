@@ -329,6 +329,23 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Open Script
+
+		public static void OpenScriptInIDE(string scriptPath, int line = -1)
+		{
+			var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(scriptPath); // Maybe use MonoScript instead of TextAsset
+			if (line >= 0)
+			{
+				AssetDatabase.OpenAsset(asset, line);
+			}
+			else
+			{
+				AssetDatabase.OpenAsset(asset);
+			}
+		}
+
+		#endregion
+
 		[MenuItem("Assets/Copy Asset Path")]
 		public static void CopySelectedAssetPaths()
 		{
