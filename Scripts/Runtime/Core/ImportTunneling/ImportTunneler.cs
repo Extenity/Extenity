@@ -175,7 +175,7 @@ namespace Extenity.ImportTunnelingToolbox
 
 			while (!process.HasExited)
 			{
-				yield return new WaitForEndOfFrame();
+				yield return null;
 			}
 		}
 

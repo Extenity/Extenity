@@ -35,19 +35,19 @@ namespace Extenity.UIToolbox
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerEnterHandler);
 			if (!selectable || !go)
 				yield break;
-			yield return new WaitForEndOfFrame();
+			yield return null;
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerDownHandler);
 			if (!selectable || !go)
 				yield break;
-			yield return new WaitForEndOfFrame();
+			yield return null;
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.submitHandler);
 			if (!selectable || !go)
 				yield break;
-			yield return new WaitForEndOfFrame();
+			yield return null;
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerUpHandler);
 			if (!selectable || !go)
 				yield break;
-			yield return new WaitForEndOfFrame();
+			yield return null;
 			ExecuteEvents.Execute(go, pointer, ExecuteEvents.pointerExitHandler);
 		}
 

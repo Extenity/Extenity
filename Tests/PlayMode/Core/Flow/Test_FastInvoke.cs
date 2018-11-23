@@ -150,7 +150,7 @@ namespace ExtenityTests.FlowToolbox
 			// Invoke and wait for half of it, then cancel
 			Subject.FastInvoke(Subject.Callback, 1);
 			while (Subject.RemainingTimeUntilNextFastInvoke() > 0.5)
-				yield return new WaitForFixedUpdate();
+				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
 			DoFastInvokingChecks(true);
 			Subject.CancelFastInvoke(Subject.Callback);
 			DoFastInvokingChecks(false);
@@ -174,7 +174,7 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, 0.2);
 			DoFastInvokingChecks(true);
 			for (int i = 0; i < 0.5f / fixedDeltaTime; i++)
-				yield return new WaitForFixedUpdate();
+				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
 			DoFastInvokingChecks(true);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
 			Subject.CancelFastInvoke(Subject.Callback);
@@ -210,29 +210,30 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, 5);
 			Assert.AreEqual(2, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
 			double time = 0;
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 0.5);
+			var WaitForFixedUpdate = new WaitForFixedUpdate();
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 0.5);
 			Assert.AreEqual(1.5, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 0.9);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 0.9);
 			Assert.AreEqual(1.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 1.9);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 1.9);
 			DoFastInvokingChecks(true, 4);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 2.0);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 2.0);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 2.9);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 2.9);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 3.0);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 3.0);
 			DoFastInvokingChecks(true, 2);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 4.0);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 4.0);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 4.4);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 4.4);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(0.6, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
-			do yield return new WaitForFixedUpdate(); while ((time += fixedDeltaTime) < 5.0);
+			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 5.0);
 			DoFastInvokingChecks(false, 0);
 			Assert.IsTrue(double.IsNaN(Subject.RemainingTimeUntilNextFastInvoke()));
 		}
@@ -261,12 +262,12 @@ namespace ExtenityTests.FlowToolbox
 			if (startAtRandomTime)
 			{
 				// This will make tests start at a random Time.time.
-				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame(); // Ignored by Code Correct
 			}
 			else
 			{
 				// This will make tests start right in FixedUpdates where Time.time is consistent.
-				yield return new WaitForFixedUpdate();
+				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
 			}
 		}
 
