@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Extenity.PainkillaTool.Editor
 {
 
-	// TODO: Implement a tool that checks all runtime scripts for OnGUI methods and throws error if any exists. All OnGUI methods should be killed with fire.
+	// TODO: Add tool to check script encoding
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
@@ -55,10 +55,12 @@ namespace Extenity.PainkillaTool.Editor
 
 		private static readonly GUILayoutOption CharacterButtonWidth = GUILayout.Width(24);
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(60);
+		private static readonly GUILayoutOption InspectButtonHeight = GUILayout.Height(50);
 		private static readonly GUILayoutOption InspectButtonWidth = GUILayout.Width(200);
 
 		private bool ToggleInspect_UnexpectedCharacters = true;
 		private bool ToggleInspect_YieldAllocations = true;
+		private bool ToggleInspect_OnGUIUsage = true;
 
 		protected override void OnGUIDerived()
 		{
@@ -67,13 +69,14 @@ namespace Extenity.PainkillaTool.Editor
 			// Control panel
 			{
 				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Inspect Scripts", BigButtonHeight, InspectButtonWidth))
+				if (GUILayout.Button("Inspect Scripts", InspectButtonHeight, InspectButtonWidth))
 				{
 					EditorApplication.delayCall += Inspect;
 				}
 				GUILayout.BeginVertical();
 				ToggleInspect_UnexpectedCharacters = GUILayout.Toggle(ToggleInspect_UnexpectedCharacters, "Unexpected Characters");
 				ToggleInspect_YieldAllocations = GUILayout.Toggle(ToggleInspect_YieldAllocations, "Yield Allocations");
+				ToggleInspect_OnGUIUsage = GUILayout.Toggle(ToggleInspect_OnGUIUsage, "OnGUI Usage");
 				GUILayout.EndVertical();
 				GUILayout.EndHorizontal();
 			}
@@ -143,6 +146,27 @@ namespace Extenity.PainkillaTool.Editor
 						GUILayout.EndVertical();
 					}
 
+					// OnGUI usages
+					if (result.OnGUIUsages.IsNotNullAndEmpty())
+					{
+						GUILayout.BeginVertical();
+						GUILayout.Label("OnGUI usages: ");
+
+						foreach (var entry in result.OnGUIUsages)
+						{
+							GUILayout.BeginHorizontal();
+							if (GUILayout.Button("Go", ButtonWidth))
+							{
+								Log.Info($"Opening script '{result.ScriptPath}' at line '{entry.Line}'.");
+								AssetTools.OpenScriptInIDE(result.ScriptPath, entry.Line);
+							}
+							GUILayout.Label(entry.GUIContent);
+							GUILayout.EndHorizontal();
+						}
+
+						GUILayout.EndVertical();
+					}
+
 					GUILayout.EndVertical();
 
 					GUILayout.Space(30f);
@@ -158,7 +182,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		public class InspectionResult
 		{
-			public struct YieldAllocationEntry
+			public struct ScriptLineEntry
 			{
 				public int Line;
 				public string Content;
@@ -167,12 +191,16 @@ namespace Extenity.PainkillaTool.Editor
 
 			public string ScriptPath;
 			public HashSet<char> UnexpectedCharacters;
-			public YieldAllocationEntry[] YieldAllocations;
+			public ScriptLineEntry[] YieldAllocations;
+			public ScriptLineEntry[] OnGUIUsages;
 
 			public GUIContent ScriptPathGUIContent;
 		}
 
 		public List<InspectionResult> Results;
+
+		private static Regex OnGUIUsageRegex; 
+		private static Regex YieldAllocationsRegex; 
 
 		public void Inspect()
 		{
@@ -183,25 +211,27 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				InternalInspectScript(scriptPath,
 					ToggleInspect_UnexpectedCharacters,
-					ToggleInspect_YieldAllocations);
+					ToggleInspect_YieldAllocations,
+					ToggleInspect_OnGUIUsage);
 			}
 
 			SortResults();
 			Repaint();
 		}
 
-		private void InternalInspectScript(string scriptPath, bool inspectUnexpectedCharacters, bool inspectYieldAllocations)
+		private void InternalInspectScript(string scriptPath, bool inspectUnexpectedCharacters, bool inspectYieldAllocations, bool inspectOnGUIUsage)
 		{
-			//// Check script encoding
-			//{
-			//}
+			var isInEditorFolder = scriptPath.FixDirectorySeparatorChars('/').Split('/').Any(item => item.Equals("Editor", StringComparison.InvariantCultureIgnoreCase));
+			// Skip editor scripts. Currently there are no inspections that is meaningful to be applied on editor scripts.
+			if (isInEditorFolder)
+				return;
 
 			var lines = File.ReadLines(scriptPath).ToList();
 			var anyErrors = false;
 
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
-			if (inspectUnexpectedCharacters)
+			if (inspectUnexpectedCharacters && !isInEditorFolder)
 			{
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
@@ -220,20 +250,47 @@ namespace Extenity.PainkillaTool.Editor
 			}
 
 			// Check if the script contains yield allocations
-			List<InspectionResult.YieldAllocationEntry> yieldAllocations = null;
-			if (inspectYieldAllocations)
+			List<InspectionResult.ScriptLineEntry> yieldAllocations = null;
+			if (inspectYieldAllocations && !isInEditorFolder)
 			{
-				var regex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
+				if (YieldAllocationsRegex == null)
+					YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
 				for (int iLine = 0; iLine < lines.Count; iLine++)
 				{
 					var line = lines[iLine];
-					if (regex.IsMatch(line))
+					if (YieldAllocationsRegex.IsMatch(line))
 					{
 						if (yieldAllocations == null)
-							yieldAllocations = new List<InspectionResult.YieldAllocationEntry>();
+							yieldAllocations = new List<InspectionResult.ScriptLineEntry>();
 						var lineNumber = iLine + 1;
 						var content = line.Trim();
-						yieldAllocations.Add(new InspectionResult.YieldAllocationEntry
+						yieldAllocations.Add(new InspectionResult.ScriptLineEntry
+						{
+							Line = lineNumber,
+							Content = content,
+							GUIContent = new GUIContent($"{lineNumber}\t: {content}".ClipIfNecessary(100)),
+						});
+						anyErrors = true;
+					}
+				}
+			}
+
+			// Check if the script contains OnGUI
+			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
+			if (inspectOnGUIUsage && !isInEditorFolder)
+			{
+				if (OnGUIUsageRegex == null)
+					OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
+				for (int iLine = 0; iLine < lines.Count; iLine++)
+				{
+					var line = lines[iLine];
+					if (OnGUIUsageRegex.IsMatch(line))
+					{
+						if (onGUIUsages == null)
+							onGUIUsages = new List<InspectionResult.ScriptLineEntry>();
+						var lineNumber = iLine + 1;
+						var content = line.Trim();
+						onGUIUsages.Add(new InspectionResult.ScriptLineEntry
 						{
 							Line = lineNumber,
 							Content = content,
@@ -251,6 +308,7 @@ namespace Extenity.PainkillaTool.Editor
 					ScriptPath = scriptPath,
 					UnexpectedCharacters = unexpectedCharacters,
 					YieldAllocations = yieldAllocations?.ToArray(),
+					OnGUIUsages = onGUIUsages?.ToArray(),
 					ScriptPathGUIContent = new GUIContent(scriptPath),
 				};
 				Results.Add(result);
