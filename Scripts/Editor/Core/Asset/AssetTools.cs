@@ -335,12 +335,15 @@ namespace Extenity.AssetToolbox.Editor
 		public static void OpenScriptInIDE(string scriptPath, int line = -1)
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(scriptPath); // Maybe use MonoScript instead of TextAsset
+
 			if (line >= 0)
 			{
+				Log.Info($"Opening script '{scriptPath}' at line '{line}'.", asset);
 				AssetDatabase.OpenAsset(asset, line);
 			}
 			else
 			{
+				Log.Info($"Opening script '{scriptPath}'.", asset);
 				AssetDatabase.OpenAsset(asset);
 			}
 		}

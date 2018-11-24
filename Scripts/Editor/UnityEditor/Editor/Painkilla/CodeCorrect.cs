@@ -184,7 +184,6 @@ namespace Extenity.PainkillaTool.Editor
 				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Go", ButtonWidth))
 				{
-					Log.Info($"Opening script '{scriptPath}' at line '{entry.Line}'.");
 					AssetTools.OpenScriptInIDE(scriptPath, entry.Line);
 				}
 
