@@ -403,6 +403,42 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region String Operations - Replace Selective
+
+		public static string ReplaceSelective(this string text, string oldValue, string newValue, ImmutableStack<bool> selection, StringComparison comparisonType = StringComparison.CurrentCulture)
+		{
+			//if (string.IsNullOrEmpty(text)) Commented out for performance reasons.
+			//	throw new ArgumentNullException(nameof(text));
+			//if (string.IsNullOrEmpty(oldValue))
+			//	throw new ArgumentNullException(nameof(oldValue));
+			////if (string.IsNullOrEmpty(newValue)) No! It's okay to have the new value empty. This means user wants to remove the 'oldValue' instances, rather than replacing it with something else.
+			////	throw new ArgumentNullException(nameof(newValue));
+			if (newValue == null)
+				newValue = string.Empty;
+
+			var oldValueLength = oldValue.Length;
+			var newValueLength = newValue.Length;
+			int index = 0;
+			foreach (var isReplaced in selection)
+			{
+				index = text.IndexOf(oldValue, index, comparisonType);
+				if (index < 0)
+					return text; // Seems like 'selection' contains more entries than the 'oldValue' count in 'text'. This is considered as okay. Break the operation.
+				if (isReplaced)
+				{
+					text = text.Remove(index, oldValue.Length).Insert(index, newValue);
+					index += newValueLength;
+				}
+				else
+				{
+					index += oldValueLength;
+				}
+			}
+			return text;
+		}
+
+		#endregion
+
 		#region Number At The End
 
 		public static int GetNumberAtTheEnd(this string text)

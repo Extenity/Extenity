@@ -229,6 +229,29 @@ namespace ExtenityTests.DataToolbox
 
 		#endregion
 
+		#region String Operations - Replace Selective
+
+		[Test]
+		public static void ReplaceSelective()
+		{
+			Test_ReplaceBetween(". . .", ". . .", ImmutableStack<bool>.CreateInverse(false, false, false));
+			Test_ReplaceBetween(". . .", "X . .", ImmutableStack<bool>.CreateInverse(true, false, false));
+			Test_ReplaceBetween(". . .", ". X .", ImmutableStack<bool>.CreateInverse(false, true, false));
+			Test_ReplaceBetween(". . .", ". . X", ImmutableStack<bool>.CreateInverse(false, false, true));
+			Test_ReplaceBetween(". . .", "X . X", ImmutableStack<bool>.CreateInverse(true, false, true));
+			Test_ReplaceBetween(". . .", "X X X", ImmutableStack<bool>.CreateInverse(true, true, true));
+
+			Test_ReplaceBetween(". . .", "X . .", ImmutableStack<bool>.CreateInverse(true));
+		}
+
+		private static void Test_ReplaceBetween(string input, string expected, ImmutableStack<bool> selection)
+		{
+			var result = input.ReplaceSelective(".", "X", selection);
+			Assert.AreEqual(expected, result);
+		}
+
+		#endregion
+
 		#region Number At The End
 
 		[Test]
