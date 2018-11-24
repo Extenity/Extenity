@@ -86,9 +86,19 @@ namespace Extenity.DataToolbox
 		}
 
 		// Got from http://stackoverflow.com/questions/541954/how-would-you-count-occurences-of-a-string-within-a-string-c
-		public static int CountSubstrings(this string subtext, string text)
+		public static int CountSubstrings(this string text, string substring, StringComparison comparisonType = StringComparison.CurrentCulture)
 		{
-			return (text.Length - text.Replace(subtext, "").Length) / subtext.Length;
+			if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(substring))
+				return 0;
+
+			var count = 0;
+			var index = 0;
+			while ((index = text.IndexOf(substring, index, comparisonType)) != -1)
+			{
+				index += substring.Length;
+				++count;
+			}
+			return count;
 		}
 
 		public static bool IsAlphaNumeric(this string str, bool allowSpace = false, bool ensureStartsWithAlpha = false)
