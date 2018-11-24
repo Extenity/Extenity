@@ -18,19 +18,16 @@ namespace Extenity.DataToolbox
 
 		private static readonly ThreadLocal<StringBuilder> SharedStringBuilder = new ThreadLocal<StringBuilder>(() => new StringBuilder(SharedStringBuilderInitialCapacity));
 		private const int SharedStringBuilderInitialCapacity = 1000;
-		private const int SharedStringBuilderCapacityTolerance = 100000; // If the StringBuilder exceeds this capacity, it will be freed.
+		private const int SharedStringBuilderCapacityTolerance = 10 * 1000 * 1000; // If the StringBuilder exceeds this capacity, it will be freed.
 
 		private static void ClearSharedStringBuilder(StringBuilder stringBuilder)
 		{
+			stringBuilder.Clear();
 			if (stringBuilder.Capacity > SharedStringBuilderCapacityTolerance)
 			{
 				// If this happens regularly, consider increasing the tolerance.
 				Log.DebugWarning($"Shared StringBuilder size '{stringBuilder.Capacity}' exceeded the tolerance '{SharedStringBuilderCapacityTolerance}'.");
 				stringBuilder.Capacity = SharedStringBuilderInitialCapacity;
-			}
-			else
-			{
-				stringBuilder.Clear();
 			}
 		}
 
