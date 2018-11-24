@@ -272,34 +272,59 @@ namespace Extenity.PainkillaTool.Editor
 			if (isInEditorFolder || isTestScript)
 				return;
 
-			var lines = File.ReadLines(scriptPath).ToList();
-			var anyErrors = false;
-
-			// Trim all lines
-			for (var i = 0; i < lines.Count; i++)
+			// Read file. Remove comments. Remove ignored lines. Trim lines.
+			List<int> ignoredLineIndices = null;
+			string originalFileContent;
+			string[] lines;
+			try
 			{
-				lines[i] = lines[i].Trim();
+				originalFileContent = File.ReadAllText(scriptPath).NormalizeLineEndingsCRLF();
+				lines = originalFileContent.Split(new[] { "\r\n" }, StringSplitOptions.None);
+
+				// Before removing commented out parts, detect lines that contain the ignore label that is entered by the coder.
+				for (var i = 0; i < lines.Length; i++)
+				{
+					if (lines[i].Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase))
+					{
+						if (ignoredLineIndices == null)
+							ignoredLineIndices = new List<int>();
+						ignoredLineIndices.Add(i);
+					}
+					// Also trim lines while doing that.
+					lines[i] = lines[i].Trim();
+				}
+
+				// Delete commented out parts.
+				AssetTools.DeleteCommentsInScriptAssetContents(lines);
+
+				// Delete lines marked as ignored by coder.
+				if (ignoredLineIndices != null)
+				{
+					foreach (var ignoredLineIndex in ignoredLineIndices)
+					{
+						lines[ignoredLineIndex] = "";
+					}
+				}
 			}
+			catch (Exception exception)
+			{
+				throw new Exception("Failed to process script at path: " + scriptPath, exception);
+			}
+
+			var anyErrors = false;
 
 			// Check if the script contains any unexpected characters
 			HashSet<char> unexpectedCharacters = null;
 			if (configuration.InspectUnexpectedCharacters)
 			{
-				for (int iLine = 0; iLine < lines.Count; iLine++)
+				for (int i = 0; i < originalFileContent.Length; i++)
 				{
-					var line = lines[iLine];
-					if (IsLineAllowedToBeInspected(line))
+					if (ExpectedCharacters.IndexOf(originalFileContent[i]) < 0)
 					{
-						for (int i = 0; i < line.Length; i++)
-						{
-							if (ExpectedCharacters.IndexOf(line[i]) < 0)
-							{
-								if (unexpectedCharacters == null)
-									unexpectedCharacters = new HashSet<char>();
-								unexpectedCharacters.Add(line[i]);
-								anyErrors = true;
-							}
-						}
+						if (unexpectedCharacters == null)
+							unexpectedCharacters = new HashSet<char>();
+						unexpectedCharacters.Add(originalFileContent[i]);
+						anyErrors = true;
 					}
 				}
 			}
@@ -310,10 +335,10 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				if (YieldAllocationsRegex == null)
 					YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
-				for (int iLine = 0; iLine < lines.Count; iLine++)
+				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
-					if (YieldAllocationsRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
+					if (YieldAllocationsRegex.IsMatch(line))
 					{
 						if (yieldAllocations == null)
 							yieldAllocations = new List<InspectionResult.ScriptLineEntry>();
@@ -334,10 +359,10 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				if (OnGUIUsageRegex == null)
 					OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
-				for (int iLine = 0; iLine < lines.Count; iLine++)
+				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
-					if (OnGUIUsageRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
+					if (OnGUIUsageRegex.IsMatch(line))
 					{
 						if (onGUIUsages == null)
 							onGUIUsages = new List<InspectionResult.ScriptLineEntry>();
@@ -358,10 +383,10 @@ namespace Extenity.PainkillaTool.Editor
 			{
 				if (OnMouseUsageRegex == null)
 					OnMouseUsageRegex = new Regex(@"OnMouse.*\(\s*\)", RegexOptions.Compiled);
-				for (int iLine = 0; iLine < lines.Count; iLine++)
+				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
-					if (OnMouseUsageRegex.IsMatch(line) && IsLineAllowedToBeInspected(line))
+					if (OnMouseUsageRegex.IsMatch(line))
 					{
 						if (onMouseUsages == null)
 							onMouseUsages = new List<InspectionResult.ScriptLineEntry>();
@@ -396,18 +421,6 @@ namespace Extenity.PainkillaTool.Editor
 				return;
 
 			results.Sort((a, b) => string.Compare(a.ScriptPath, b.ScriptPath, StringComparison.Ordinal));
-		}
-
-		#endregion
-
-		#region Ignore Inspection
-
-		private static bool IsLineAllowedToBeInspected(string line)
-		{
-			return
-				!string.IsNullOrEmpty(line) && // Skip empty lines
-				!line.Contains(IgnoreInspectionText, StringComparison.InvariantCultureIgnoreCase) && // Skip lines that contain the ignore label that is entered by the coder
-				line[0] != '/'; // Skip lines that start with comment
 		}
 
 		#endregion

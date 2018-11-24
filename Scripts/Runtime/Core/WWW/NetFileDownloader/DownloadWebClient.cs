@@ -68,7 +68,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 			if (position != 0)
 			{
 				webRequest.AddRange((int)position);
-				webRequest.Accept = "*/*";
+				webRequest.Accept = "*/*"; /**/ // Quick hack to prevent Code Correct to falsely detect comment characters in string.
 			}
 			webRequest.CookieContainer = cookieContainer;
 			return request;
