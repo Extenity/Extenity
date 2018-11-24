@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Extenity.ApplicationToolbox;
 using Extenity.AssetToolbox.Editor;
+using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
@@ -242,7 +243,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
-			var scriptPaths = AssetTools.GetAllScriptAssetPaths();
+			var scriptPaths = AssetTools.GetAllScriptAssetPathsOfType(ScriptType.Runtime);
 			return Inspect(configuration, scriptPaths);
 		}
 

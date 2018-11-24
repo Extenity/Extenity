@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Extenity.ApplicationToolbox;
+using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
@@ -200,6 +201,13 @@ namespace Extenity.AssetToolbox.Editor
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".cs", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
+		}
+
+		public static List<string> GetAllScriptAssetPathsOfType(ScriptType scriptType)
+		{
+			return GetAllScriptAssetPaths()
+				.Where(scriptPath => CompilationPipelineTools.GetScriptType(scriptPath) == scriptType)
+				.ToList();
 		}
 
 		#endregion
