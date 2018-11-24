@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Extenity.ApplicationToolbox;
+using Extenity.DataToolbox;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
@@ -329,7 +330,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Open Script
+		#region Script Assets
 
 		public static void OpenScriptInIDE(string scriptPath, int line = -1)
 		{
@@ -341,6 +342,100 @@ namespace Extenity.AssetToolbox.Editor
 			else
 			{
 				AssetDatabase.OpenAsset(asset);
+			}
+		}
+
+		/// <summary>
+		/// Note that this won't check if the comment characters are inside a string or not.
+		/// </summary>
+		public static void DeleteCommentsInScriptAssetContents(string[] lines)
+		{
+			if (lines.IsNullOrEmpty())
+				return;
+
+			var tries = lines.Length * 10;
+
+			const int commentLength = 2; // Length of '//', '/*', '*/'
+			var inMultiLineComment = false;
+			var multiLineCommentStartIndex = -1;
+			var cursor = 0;
+			var iLine = 0;
+			string line = lines[0];
+
+			while (true)
+			{
+				//Log.Info($"Line: {iLine} (of {lines.Length}) \t Tries: {tries} \t mult: {inMultiLineComment} \t multStart: {multiLineCommentStartIndex} \t cursor: {cursor}   \n" + string.Join(Environment.NewLine, lines));
+
+				if (--tries < 0)
+					throw new InternalException(91786195);
+
+				if (inMultiLineComment)
+				{
+					var commentEndIndex = line.IndexOf("*/", cursor, StringComparison.Ordinal);
+					if (commentEndIndex < 0)
+					{
+						// No ending found. Delete comment parts. Then move on to the next line.
+						if (multiLineCommentStartIndex > 0)
+						{
+							lines[iLine] = line.Substring(0, multiLineCommentStartIndex);
+							multiLineCommentStartIndex = -1;
+						}
+						else
+						{
+							lines[iLine] = "";
+						}
+						cursor = 0;
+						if (++iLine >= lines.Length) break; line = lines[iLine];
+					}
+					else
+					{
+						if (multiLineCommentStartIndex > 0)
+						{
+							line = line.Remove(multiLineCommentStartIndex, commentEndIndex + commentLength - multiLineCommentStartIndex);
+							lines[iLine] = line;
+							cursor = multiLineCommentStartIndex;
+							multiLineCommentStartIndex = -1;
+						}
+						else
+						{
+							line = line.Remove(0, commentEndIndex + commentLength);
+							lines[iLine] = line;
+							cursor = 0;
+						}
+						inMultiLineComment = false;
+					}
+				}
+				else
+				{
+					var commentStartIndex1 = line.IndexOf("/*", cursor, StringComparison.Ordinal);
+					var commentStartIndex2 = line.IndexOf("//", cursor, StringComparison.Ordinal);
+					if (commentStartIndex1 >= 0 && (commentStartIndex2 < 0 || commentStartIndex1 < commentStartIndex2))
+					{
+						inMultiLineComment = true;
+						multiLineCommentStartIndex = commentStartIndex1;
+						cursor = multiLineCommentStartIndex + commentLength;
+					}
+					else if (commentStartIndex2 >= 0 && (commentStartIndex1 < 0 || commentStartIndex2 < commentStartIndex1))
+					{
+						// Delete the single-line comment.
+						lines[iLine] = line.Substring(0, commentStartIndex2);
+
+						// Continue from the next line.
+						cursor = 0;
+						if (++iLine >= lines.Length) break; line = lines[iLine];
+					}
+					else
+					{
+						// No comments on this line. Continue from the next line.
+						cursor = 0;
+						if (++iLine >= lines.Length) break; line = lines[iLine];
+					}
+				}
+			}
+
+			if (inMultiLineComment)
+			{
+				throw new Exception("Unclosed multi-line comment.");
 			}
 		}
 
