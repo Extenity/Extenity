@@ -206,6 +206,36 @@ namespace Extenity.DataToolbox
 			return text.Substring(startTagIndex, endTagIndex - startTagIndex);
 		}
 
+		public static string ReplaceFirstOccurrence(this string text, string oldValue, string newValue, int startIndex = 0, StringComparison comparisonType = StringComparison.CurrentCulture)
+		{
+			//if (string.IsNullOrEmpty(text)) Commented out for performance reasons.
+			//	throw new ArgumentNullException(nameof(text));
+			//if (string.IsNullOrEmpty(oldValue))
+			//	throw new ArgumentNullException(nameof(oldValue));
+			////if (string.IsNullOrEmpty(newValue)) No! It's okay to have the new value empty. This means user wants to remove the 'oldValue' instances, rather than replacing it with something else.
+			////	throw new ArgumentNullException(nameof(newValue));
+
+			var index = text.IndexOf(oldValue, startIndex, comparisonType);
+			if (index < 0)
+				return text;
+			return text.Remove(index, oldValue.Length).Insert(index, newValue);
+		}
+
+		public static string ReplaceLastOccurrence(this string text, string oldValue, string newValue, int startIndex = 0, StringComparison comparisonType = StringComparison.CurrentCulture)
+		{
+			//if (string.IsNullOrEmpty(text)) Commented out for performance reasons.
+			//	throw new ArgumentNullException(nameof(text));
+			//if (string.IsNullOrEmpty(oldValue))
+			//	throw new ArgumentNullException(nameof(oldValue));
+			////if (string.IsNullOrEmpty(newValue)) No! It's okay to have the new value empty. This means user wants to remove the 'oldValue' instances, rather than replacing it with something else.
+			////	throw new ArgumentNullException(nameof(newValue));
+
+			var index = text.LastIndexOf(oldValue, startIndex, comparisonType);
+			if (index < 0)
+				return text;
+			return text.Remove(index, oldValue.Length).Insert(index, newValue);
+		}
+
 		/// <summary>
 		/// Replaces the text found between startTag and endTag. Only the first occurence will be replaced.
 		/// </summary>
