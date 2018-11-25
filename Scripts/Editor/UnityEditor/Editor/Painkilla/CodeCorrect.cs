@@ -382,7 +382,7 @@ namespace Extenity.PainkillaTool.Editor
 			if (configuration.InspectOnMouseUsage)
 			{
 				if (OnMouseUsageRegex == null)
-					OnMouseUsageRegex = new Regex(@"OnMouse.*\(\s*\)", RegexOptions.Compiled);
+					OnMouseUsageRegex = new Regex(@"OnMouse.*\(", RegexOptions.Compiled);
 				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
