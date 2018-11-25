@@ -113,6 +113,39 @@ namespace Extenity.CameraToolbox
 		}
 
 		#endregion
+
+		#region Frustum Check
+
+		private static Plane[] FrustumCheckPlanes;
+		private static Camera LastCalculatedCameraOfFrustumCheckPlanes;
+		private static int LastCalculatedFrameOfFrustumCheckPlanes = -1;
+
+		public static bool IsInsideFrustum(this Camera camera, Bounds bounds)
+		{
+			if (FrustumCheckPlanes == null)
+				FrustumCheckPlanes = new Plane[6];
+
+			// Calculate frustum planes if required.
+			// Assumes camera won't move in the same frame and that allows
+			// calculating only once if called multiple times in the same frame.
+			var currentFrame = Time.frameCount;
+			if (LastCalculatedFrameOfFrustumCheckPlanes != currentFrame ||
+				LastCalculatedCameraOfFrustumCheckPlanes != camera)
+			{
+				GeometryUtility.CalculateFrustumPlanes(camera, FrustumCheckPlanes);
+				LastCalculatedFrameOfFrustumCheckPlanes = currentFrame;
+				LastCalculatedCameraOfFrustumCheckPlanes = camera;
+			}
+
+			return GeometryUtility.TestPlanesAABB(FrustumCheckPlanes, bounds);
+		}
+
+		public static bool IsInsideFrustum(this Camera camera, Bounds bounds, Plane[] preCalculatedPlanes)
+		{
+			return GeometryUtility.TestPlanesAABB(preCalculatedPlanes, bounds);
+		}
+
+		#endregion
 	}
 
 }
