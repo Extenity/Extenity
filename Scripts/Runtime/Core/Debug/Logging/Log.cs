@@ -1,3 +1,5 @@
+#define EnableInfoLogging
+
 using System;
 using System.Collections;
 using UnityEngine;
@@ -241,11 +243,13 @@ public static class Log
 
 	#region Log
 
+	[Conditional("EnableInfoLogging")]
 	public static void Info(string message)
 	{
 		Debug.Log(CreateMessage(message));
 	}
 
+	[Conditional("EnableInfoLogging")]
 	public static void Info(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context);
@@ -357,12 +361,14 @@ public static class Log
 
 	#region Debug Log
 
+	[Conditional("EnableInfoLogging")]
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message));
 	}
 
+	[Conditional("EnableInfoLogging")]
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message, Object context)
 	{
