@@ -175,7 +175,7 @@ namespace Extenity.PainkillaTool.Editor
 			}
 		}
 
-		private void DrawEntryForLinedScripts(string title, InspectionResult.ScriptLineEntry[] entries, string scriptPath)
+		private void DrawEntryForLinedScripts(string title, List<InspectionResult.ScriptLineEntry> entries, string scriptPath)
 		{
 			GUILayout.BeginVertical();
 			GUILayout.Label(title);
@@ -230,11 +230,35 @@ namespace Extenity.PainkillaTool.Editor
 				#endregion
 			}
 
-			public string ScriptPath;
+			// Metadata
+			public readonly string ScriptPath;
+
+			// Inspections
 			public HashSet<char> UnexpectedCharacters;
-			public ScriptLineEntry[] YieldAllocations;
-			public ScriptLineEntry[] OnGUIUsages;
-			public ScriptLineEntry[] OnMouseUsages;
+			public List<ScriptLineEntry> YieldAllocations;
+			public List<ScriptLineEntry> OnGUIUsages;
+			public List<ScriptLineEntry> OnMouseUsages;
+
+			public bool AnyErrors
+			{
+				get
+				{
+					return
+						UnexpectedCharacters != null ||
+						YieldAllocations != null ||
+						OnGUIUsages != null ||
+						OnMouseUsages != null;
+				}
+			}
+
+			#region Initialization
+
+			public InspectionResult(string scriptPath)
+			{
+				ScriptPath = scriptPath;
+			}
+
+			#endregion
 		}
 
 		private static readonly Regex YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
@@ -311,100 +335,34 @@ namespace Extenity.PainkillaTool.Editor
 				throw new Exception("Failed to process script at path: " + scriptPath, exception);
 			}
 
-			var anyErrors = false;
+			var result = new InspectionResult(scriptPath);
 
 			// Check if the script contains any unexpected characters
-			HashSet<char> unexpectedCharacters = null;
 			if (configuration.InspectUnexpectedCharacters)
 			{
-				for (int i = 0; i < originalFileContent.Length; i++)
-				{
-					if (ExpectedCharacters.IndexOf(originalFileContent[i]) < 0)
-					{
-						if (unexpectedCharacters == null)
-							unexpectedCharacters = new HashSet<char>();
-						unexpectedCharacters.Add(originalFileContent[i]);
-						anyErrors = true;
-					}
-				}
+				result.UnexpectedCharacters = SearchUnexpectedCharacters(originalFileContent);
 			}
 
 			// Check if the script contains yield allocations
-			List<InspectionResult.ScriptLineEntry> yieldAllocations = null;
 			if (configuration.InspectYieldAllocations)
 			{
-				for (int iLine = 0; iLine < lines.Length; iLine++)
-				{
-					var line = lines[iLine];
-					if (YieldAllocationsRegex.IsMatch(line))
-					{
-						if (yieldAllocations == null)
-							yieldAllocations = new List<InspectionResult.ScriptLineEntry>();
-						var lineNumber = iLine + 1;
-						yieldAllocations.Add(new InspectionResult.ScriptLineEntry
-						{
-							Line = lineNumber,
-							Content = line,
-						});
-						anyErrors = true;
-					}
-				}
+				result.YieldAllocations = SearchScriptLineEntriesForRegexMatches(lines, YieldAllocationsRegex);
 			}
 
 			// Check if the script contains OnGUI methods
-			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
 			if (configuration.InspectOnGUIUsage)
 			{
-				for (int iLine = 0; iLine < lines.Length; iLine++)
-				{
-					var line = lines[iLine];
-					if (OnGUIUsageRegex.IsMatch(line))
-					{
-						if (onGUIUsages == null)
-							onGUIUsages = new List<InspectionResult.ScriptLineEntry>();
-						var lineNumber = iLine + 1;
-						onGUIUsages.Add(new InspectionResult.ScriptLineEntry
-						{
-							Line = lineNumber,
-							Content = line,
-						});
-						anyErrors = true;
-					}
-				}
+				result.OnGUIUsages = SearchScriptLineEntriesForRegexMatches(lines, OnGUIUsageRegex);
 			}
 
 			// Check if the script contains OnMouse_ methods
-			List<InspectionResult.ScriptLineEntry> onMouseUsages = null;
 			if (configuration.InspectOnMouseUsage)
 			{
-				for (int iLine = 0; iLine < lines.Length; iLine++)
-				{
-					var line = lines[iLine];
-					if (OnMouseUsageRegex.IsMatch(line))
-					{
-						if (onMouseUsages == null)
-							onMouseUsages = new List<InspectionResult.ScriptLineEntry>();
-						var lineNumber = iLine + 1;
-						onMouseUsages.Add(new InspectionResult.ScriptLineEntry
-						{
-							Line = lineNumber,
-							Content = line,
-						});
-						anyErrors = true;
-					}
-				}
+				result.OnMouseUsages = SearchScriptLineEntriesForRegexMatches(lines, OnMouseUsageRegex);
 			}
 
-			if (anyErrors)
+			if (result.AnyErrors)
 			{
-				var result = new InspectionResult
-				{
-					ScriptPath = scriptPath,
-					UnexpectedCharacters = unexpectedCharacters,
-					YieldAllocations = yieldAllocations?.ToArray(),
-					OnGUIUsages = onGUIUsages?.ToArray(),
-					OnMouseUsages = onMouseUsages?.ToArray(),
-				};
 				results.Add(result);
 			}
 		}
@@ -415,6 +373,46 @@ namespace Extenity.PainkillaTool.Editor
 				return;
 
 			results.Sort((a, b) => string.Compare(a.ScriptPath, b.ScriptPath, StringComparison.Ordinal));
+		}
+
+		#endregion
+
+		#region Inspection Methods
+
+		private static HashSet<char> SearchUnexpectedCharacters(string originalFileContent)
+		{
+			HashSet<char> unexpectedCharacters = null;
+			for (int i = 0; i < originalFileContent.Length; i++)
+			{
+				if (ExpectedCharacters.IndexOf(originalFileContent[i]) < 0)
+				{
+					if (unexpectedCharacters == null)
+						unexpectedCharacters = new HashSet<char>();
+					unexpectedCharacters.Add(originalFileContent[i]);
+				}
+			}
+			return unexpectedCharacters;
+		}
+
+		private static List<InspectionResult.ScriptLineEntry> SearchScriptLineEntriesForRegexMatches(string[] lines, Regex regex)
+		{
+			List<InspectionResult.ScriptLineEntry> foundLines = null;
+			for (int iLine = 0; iLine < lines.Length; iLine++)
+			{
+				var line = lines[iLine];
+				if (regex.IsMatch(line))
+				{
+					if (foundLines == null)
+						foundLines = new List<InspectionResult.ScriptLineEntry>();
+					var lineNumber = iLine + 1;
+					foundLines.Add(new InspectionResult.ScriptLineEntry
+					{
+						Line = lineNumber,
+						Content = line,
+					});
+				}
+			}
+			return foundLines;
 		}
 
 		#endregion
