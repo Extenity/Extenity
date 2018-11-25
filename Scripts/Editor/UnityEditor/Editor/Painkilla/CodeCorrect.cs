@@ -67,6 +67,7 @@ namespace Extenity.PainkillaTool.Editor
 		public bool ToggleInspect_YieldAllocations = true;
 		public bool ToggleInspect_OnGUIUsage = true;
 		public bool ToggleInspect_OnMouseUsage = true;
+		public bool ToggleInspect_DebugLogUsage = true;
 
 		private void InspectByUserClick()
 		{
@@ -76,6 +77,7 @@ namespace Extenity.PainkillaTool.Editor
 				InspectYieldAllocations = ToggleInspect_YieldAllocations,
 				InspectOnGUIUsage = ToggleInspect_OnGUIUsage,
 				InspectOnMouseUsage = ToggleInspect_OnMouseUsage,
+				InspectDebugLogUsage = ToggleInspect_DebugLogUsage,
 			});
 
 			Repaint();
@@ -99,6 +101,9 @@ namespace Extenity.PainkillaTool.Editor
 				GUILayout.BeginVertical();
 				ToggleInspect_OnGUIUsage = GUILayout.Toggle(ToggleInspect_OnGUIUsage, "OnGUI Usage");
 				ToggleInspect_OnMouseUsage = GUILayout.Toggle(ToggleInspect_OnMouseUsage, "OnMouse_ Usage");
+				GUILayout.EndVertical();
+				GUILayout.BeginVertical();
+				ToggleInspect_DebugLogUsage = GUILayout.Toggle(ToggleInspect_DebugLogUsage, "Debug.Log_ Usage");
 				GUILayout.EndVertical();
 				GUILayout.FlexibleSpace();
 				GUILayout.EndHorizontal();
@@ -166,6 +171,12 @@ namespace Extenity.PainkillaTool.Editor
 						DrawEntryForLinedScripts("OnMouse_ usages: ", result.OnMouseUsages, result.ScriptPath);
 					}
 
+					// Debug.Log_ usages
+					if (result.DebugLogUsages.IsNotNullAndEmpty())
+					{
+						DrawEntryForLinedScripts("Debug.Log_ usages: ", result.DebugLogUsages, result.ScriptPath);
+					}
+
 					GUILayout.EndVertical();
 
 					GUILayout.Space(30f);
@@ -205,6 +216,7 @@ namespace Extenity.PainkillaTool.Editor
 			public bool InspectYieldAllocations;
 			public bool InspectOnGUIUsage;
 			public bool InspectOnMouseUsage;
+			public bool InspectDebugLogUsage;
 		}
 
 		public class InspectionResult
@@ -238,7 +250,8 @@ namespace Extenity.PainkillaTool.Editor
 			public List<ScriptLineEntry> YieldAllocations;
 			public List<ScriptLineEntry> OnGUIUsages;
 			public List<ScriptLineEntry> OnMouseUsages;
-
+			public List<ScriptLineEntry> DebugLogUsages;
+			
 			public bool AnyErrors
 			{
 				get
@@ -247,7 +260,8 @@ namespace Extenity.PainkillaTool.Editor
 						UnexpectedCharacters != null ||
 						YieldAllocations != null ||
 						OnGUIUsages != null ||
-						OnMouseUsages != null;
+						OnMouseUsages != null ||
+						DebugLogUsages != null;
 				}
 			}
 
@@ -264,6 +278,7 @@ namespace Extenity.PainkillaTool.Editor
 		private static readonly Regex YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
 		private static readonly Regex OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
 		private static readonly Regex OnMouseUsageRegex = new Regex(@"OnMouse.*\(", RegexOptions.Compiled);
+		private static readonly Regex DebugLogUsageRegex = new Regex(@"Debug\s*\.\s*Log.*\(", RegexOptions.Compiled);
 
 		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
@@ -359,6 +374,12 @@ namespace Extenity.PainkillaTool.Editor
 			if (configuration.InspectOnMouseUsage)
 			{
 				result.OnMouseUsages = SearchScriptLineEntriesForRegexMatches(lines, OnMouseUsageRegex);
+			}
+
+			// Check if the script contains Debug.Log_ methods
+			if (configuration.InspectDebugLogUsage)
+			{
+				result.DebugLogUsages = SearchScriptLineEntriesForRegexMatches(lines, DebugLogUsageRegex);
 			}
 
 			if (result.AnyErrors)

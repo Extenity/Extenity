@@ -246,33 +246,33 @@ public static class Log
 	[Conditional("EnableInfoLogging")]
 	public static void Info(string message)
 	{
-		Debug.Log(CreateMessage(message));
+		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("EnableInfoLogging")]
 	public static void Info(string message, Object context)
 	{
-		Debug.Log(CreateMessage(message, context), context);
+		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	public static void Warning(string message)
 	{
-		Debug.LogWarning(CreateMessage(message));
+		Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	public static void Warning(string message, Object context)
 	{
-		Debug.LogWarning(CreateMessage(message, context), context);
+		Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	public static void Error(string message)
 	{
-		Debug.LogError(CreateMessage(message));
+		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	public static void Error(string message, Object context)
 	{
-		Debug.LogError(CreateMessage(message, context), context);
+		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -280,7 +280,7 @@ public static class Log
 	/// </summary>
 	public static void CriticalError(string message)
 	{
-		Debug.LogException(new Exception(message));
+		Debug.LogException(new Exception(message)); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -288,7 +288,7 @@ public static class Log
 	/// </summary>
 	public static void CriticalError(string message, Exception innerException)
 	{
-		Debug.LogException(new Exception(message, innerException));
+		Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -296,7 +296,7 @@ public static class Log
 	/// </summary>
 	public static void CriticalError(string message, Object context)
 	{
-		Debug.LogException(new Exception(message), context);
+		Debug.LogException(new Exception(message), context); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -304,7 +304,7 @@ public static class Log
 	/// </summary>
 	public static void CriticalError(string message, Object context, Exception innerException)
 	{
-		Debug.LogException(new Exception(message, innerException), context);
+		Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -314,7 +314,7 @@ public static class Log
 	/// </summary>
 	public static void InternalError(int errorCode)
 	{
-		Debug.LogException(new InternalException(errorCode));
+		Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -324,37 +324,37 @@ public static class Log
 	/// </summary>
 	public static void InternalError(int errorCode, Object context)
 	{
-		Debug.LogException(new InternalException(errorCode), context);
+		Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 	}
 
 	public static void Exception(Exception exception)
 	{
-		Debug.LogException(exception);
+		Debug.LogException(exception); // Ignored by Code Correct
 	}
 
 	public static void Exception(Exception exception, Object context)
 	{
-		Debug.LogException(exception, context);
+		Debug.LogException(exception, context); // Ignored by Code Correct
 	}
 
 	public static void ExceptionAsError(Exception exception)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString()));
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 	}
 
 	public static void ExceptionAsError(Exception exception, Object context)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 	}
 
 	public static void ExceptionAsErrorDetailed(this Exception exception)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception));
+		Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 	}
 
 	public static void ExceptionAsErrorDetailed(this Exception exception, Object context)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
+		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 	}
 
 	#endregion
@@ -365,38 +365,38 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message)
 	{
-		Debug.Log(CreateMessage(message));
+		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("EnableInfoLogging")]
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message, Object context)
 	{
-		Debug.Log(CreateMessage(message, context), context);
+		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugWarning(string message)
 	{
-		Debug.LogWarning(CreateMessage(message));
+		Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugWarning(string message, Object context)
 	{
-		Debug.LogWarning(CreateMessage(message, context), context);
+		Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugError(string message)
 	{
-		Debug.LogError(CreateMessage(message));
+		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugError(string message, Object context)
 	{
-		Debug.LogError(CreateMessage(message, context), context);
+		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -407,7 +407,7 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInternalError(int errorCode)
 	{
-		Debug.LogException(new InternalException(errorCode));
+		Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
 	}
 
 	/// <summary>
@@ -418,43 +418,43 @@ public static class Log
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInternalError(int errorCode, Object context)
 	{
-		Debug.LogException(new InternalException(errorCode), context);
+		Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugException(Exception exception)
 	{
-		Debug.LogException(exception);
+		Debug.LogException(exception); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugException(Exception exception, Object context)
 	{
-		Debug.LogException(exception, context);
+		Debug.LogException(exception, context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsError(Exception exception)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString()));
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsError(Exception exception, Object context)
 	{
-		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context);
+		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsErrorDetailed(this Exception exception)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception));
+		Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugExceptionAsErrorDetailed(this Exception exception, Object context)
 	{
-		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context);
+		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 	}
 
 	#endregion
