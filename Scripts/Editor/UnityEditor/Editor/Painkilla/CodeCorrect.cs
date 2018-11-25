@@ -237,9 +237,9 @@ namespace Extenity.PainkillaTool.Editor
 			public ScriptLineEntry[] OnMouseUsages;
 		}
 
-		private static Regex YieldAllocationsRegex;
-		private static Regex OnGUIUsageRegex;
-		private static Regex OnMouseUsageRegex;
+		private static readonly Regex YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
+		private static readonly Regex OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
+		private static readonly Regex OnMouseUsageRegex = new Regex(@"OnMouse.*\(", RegexOptions.Compiled);
 
 		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
@@ -333,8 +333,6 @@ namespace Extenity.PainkillaTool.Editor
 			List<InspectionResult.ScriptLineEntry> yieldAllocations = null;
 			if (configuration.InspectYieldAllocations)
 			{
-				if (YieldAllocationsRegex == null)
-					YieldAllocationsRegex = new Regex(@"yield\s+return\s+new", RegexOptions.Compiled);
 				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
@@ -357,8 +355,6 @@ namespace Extenity.PainkillaTool.Editor
 			List<InspectionResult.ScriptLineEntry> onGUIUsages = null;
 			if (configuration.InspectOnGUIUsage)
 			{
-				if (OnGUIUsageRegex == null)
-					OnGUIUsageRegex = new Regex(@"OnGUI\s*\(\s*\)", RegexOptions.Compiled);
 				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
@@ -381,8 +377,6 @@ namespace Extenity.PainkillaTool.Editor
 			List<InspectionResult.ScriptLineEntry> onMouseUsages = null;
 			if (configuration.InspectOnMouseUsage)
 			{
-				if (OnMouseUsageRegex == null)
-					OnMouseUsageRegex = new Regex(@"OnMouse.*\(", RegexOptions.Compiled);
 				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
 					var line = lines[iLine];
