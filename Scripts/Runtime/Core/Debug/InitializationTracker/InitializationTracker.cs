@@ -1,5 +1,5 @@
 #define InitializationTrackerLogging
-#define InitializationTrackerVerboseLogging
+//#define InitializationTrackerVerboseLogging
 
 using System;
 using System.Collections.Generic;
