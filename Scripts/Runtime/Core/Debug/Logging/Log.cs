@@ -1,4 +1,4 @@
-#define EnableInfoLogging
+//#define DisableInfoLogging
 
 using System;
 using System.Collections;
@@ -243,13 +243,17 @@ public static class Log
 
 	#region Log
 
-	[Conditional("EnableInfoLogging")]
+#if DisableInfoLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#endif
 	public static void Info(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
-	[Conditional("EnableInfoLogging")]
+#if DisableInfoLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#endif
 	public static void Info(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -361,14 +365,12 @@ public static class Log
 
 	#region Debug Log
 
-	[Conditional("EnableInfoLogging")]
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
-	[Conditional("EnableInfoLogging")]
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message, Object context)
 	{
