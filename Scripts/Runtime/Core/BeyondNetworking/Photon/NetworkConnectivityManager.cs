@@ -1313,6 +1313,8 @@ namespace BeyondNetworking
 
 		#region Leave Room
 
+		public bool AutomaticallyRemovePlayerCustomPropertiesWhenLeavingRoom = true;
+
 		private IEnumerator InternalLeaveRoom(NetworkSession session)
 		{
 			var controller = session.Controller;
@@ -1414,6 +1416,11 @@ namespace BeyondNetworking
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.LeftRoomInformation);
+
+			if (AutomaticallyRemovePlayerCustomPropertiesWhenLeavingRoom)
+			{
+				PhotonNetwork.RemovePlayerCustomProperties(null);
+			}
 
 			if (!IsQuitting)
 			{
