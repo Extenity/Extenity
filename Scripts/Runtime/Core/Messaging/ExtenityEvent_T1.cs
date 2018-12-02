@@ -40,6 +40,22 @@ namespace Extenity.MessagingToolbox
 			return false;
 		}
 
+		/// <summary>
+		/// Finds the specified callback in registered callbacks list and tells it's order.
+		/// The order is the value that is passed into the system at the time the callback
+		/// is registered via AddListener, or when it's changed via ChangeListenerOrder.
+		/// </summary>
+		/// <returns>The order of specified callback. If the callback is not registered, returns int.MaxValue.</returns>
+		public int GetListenerOrder(MethodDefinition callback)
+		{
+			for (var i = 0; i < Callbacks.Count; i++)
+			{
+				if (Callbacks[i].Callback == callback)
+					return Callbacks[i].Order;
+			}
+			return int.MaxValue;
+		}
+
 		public void Clear()
 		{
 			for (int i = 0; i < Callbacks.Count; i++)
@@ -66,17 +82,32 @@ namespace Extenity.MessagingToolbox
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
 		public void AddListener(MethodDefinition callback, int order = 0)
 		{
+			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
+				throw new ArgumentOutOfRangeException(nameof(order), order, "");
 			if (callback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
 					Log.Info($"Tried to add a null callback with order '{order}'.");
 				return; // Silently ignore
 			}
-			if (IsListenerRegistered(callback))
+			var alreadyExistingListenerOrder = GetListenerOrder(callback);
+			if (alreadyExistingListenerOrder != int.MaxValue)
 			{
-				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
-				return; // Silently ignore
+				if (order != alreadyExistingListenerOrder)
+				{
+					// The callback is already registered but the order is different.
+					// So just change the order.
+					// TODO: This is a quick fix. Better just change the order than removing and adding the listener again. See commented out lines below.
+					RemoveListener(callback);
+					//ChangeListenerOrder(callback, order);
+					//return; // Do not proceed to adding a new listener.
+				}
+				else
+				{
+					if (ExtenityEventTools.VerboseLogging)
+						Log.Info($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+					return; // Silently ignore
+				}
 			}
 			if (!(callback.Target as Object))
 			{
