@@ -36,7 +36,7 @@ namespace Extenity.ColoringToolbox
 			var saturation = PositiveMinimumSaturation + (PositiveMaximumSaturation - PositiveMinimumSaturation) * normalizedScalePoint;
 			var lightness = PositiveMinimumLightness + (PositiveMaximumLightness - PositiveMinimumLightness) * normalizedScalePoint;
 
-			return ColorTools.HSL2RGB(hue, saturation, lightness);
+			return ColorTools.HSL2RGBColor32(hue, saturation, lightness);
 		}
 
 		public override Color32 GetNegativeNormalizedColor32(float normalizedScalePoint)
@@ -50,7 +50,7 @@ namespace Extenity.ColoringToolbox
 			var saturation = NegativeMinimumSaturation + (NegativeMaximumSaturation - NegativeMinimumSaturation) * normalizedScalePoint;
 			var lightness = NegativeMinimumLightness + (NegativeMaximumLightness - NegativeMinimumLightness) * normalizedScalePoint;
 
-			return ColorTools.HSL2RGB(hue, saturation, lightness);
+			return ColorTools.HSL2RGBColor32(hue, saturation, lightness);
 		}
 
 		#endregion

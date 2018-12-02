@@ -6,15 +6,84 @@ namespace Extenity.DataToolbox
 
 	public static class ColorTools
 	{
-		public static readonly Color Red = new Color(1f, 0.0f, 0.0f, 1f);
-		public static readonly Color DimmedRed = new Color(0.8f, 0.0f, 0.0f, 1f);
-		public static readonly Color DarkRed = new Color(0.5f, 0.0f, 0.0f, 1f);
-		public static readonly Color Green = new Color(0.0f, 1f, 0.0f, 1f);
-		public static readonly Color DimmedGreen = new Color(0.0f, 0.8f, 0.0f, 1f);
-		public static readonly Color DarkGreen = new Color(0.0f, 0.5f, 0.0f, 1f);
-		public static readonly Color Blue = new Color(0.0f, 0.0f, 1f, 1f);
-		public static readonly Color DimmedBlue = new Color(0.0f, 0.0f, 0.8f, 1f);
-		public static readonly Color DarkBlue = new Color(0.0f, 0.0f, 0.5f, 1f);
+		#region Predefined Colors
+
+		public static readonly Color White = new Color(1f, 1f, 1f, 1f);
+		public static readonly Color Gray = new Color(0.5f, 0.5f, 0.5f, 1f);
+		public static readonly Color Black = new Color(0f, 0f, 0f, 1f);
+
+		public static readonly Color Red = new Color(1f, 0f, 0f, 1f);
+		public static readonly Color Orange = new Color(1f, 0.39f, 0f, 1f);
+		public static readonly Color Yellow = new Color(1f, 1f, 0f, 1f);
+		public static readonly Color Green = new Color(0f, 1f, 0f, 1f);
+		public static readonly Color Cyan = new Color(0f, 1f, 1f, 1f);
+		public static readonly Color Azure = new Color(0f, 0.48f, 1f, 1f);
+		public static readonly Color Blue = new Color(0f, 0f, 1f, 1f);
+		public static readonly Color Violet = new Color(0.5f, 0f, 1f, 1f);
+		public static readonly Color Magenta = new Color(1f, 0f, 0.56f, 1f);
+
+		public static readonly Color[] AllBrightColors =
+		{
+			Red,
+			Orange,
+			Yellow,
+			Green,
+			Cyan,
+			Azure,
+			Blue,
+			Violet,
+			Magenta,
+		};
+
+		public const float DimmedBrightness = 0.75f;
+		public static readonly Color DimmedRed = Red.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedOrange = Orange.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedYellow = Yellow.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedGreen = Green.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedCyan = Cyan.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedAzure = Azure.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedBlue = Blue.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedViolet = Violet.AdjustBrightness(DimmedBrightness);
+		public static readonly Color DimmedMagenta = Magenta.AdjustBrightness(DimmedBrightness);
+
+		public static readonly Color[] AllDimmedColors =
+		{
+			DimmedRed,
+			DimmedOrange,
+			DimmedYellow,
+			DimmedGreen,
+			DimmedCyan,
+			DimmedAzure,
+			DimmedBlue,
+			DimmedViolet,
+			DimmedMagenta,
+		};
+
+		public const float DarkBrightness = 0.4f;
+		public static readonly Color DarkRed = Red.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkOrange = Orange.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkYellow = Yellow.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkGreen = Green.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkCyan = Cyan.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkAzure = Azure.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkBlue = Blue.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkViolet = Violet.AdjustBrightness(DarkBrightness);
+		public static readonly Color DarkMagenta = Magenta.AdjustBrightness(DarkBrightness);
+
+		public static readonly Color[] AllDarkColors =
+		{
+			DarkRed,
+			DarkOrange,
+			DarkYellow,
+			DarkGreen,
+			DarkCyan,
+			DarkAzure,
+			DarkBlue,
+			DarkViolet,
+			DarkMagenta,
+		};
+
+		#endregion
 
 		public static bool IsAlmostEqualRGBA(this Color value1, Color value2, float precision)
 		{
@@ -172,7 +241,7 @@ namespace Extenity.DataToolbox
 
 		#region HSL
 
-		public static Color32 HSL2RGB(float h, float sl, float l)
+		public static Color32 HSL2RGBColor32(float h, float sl, float l)
 		{
 			var v = (l <= 0.5f) ? (l * (1.0f + sl)) : (l + sl - l * sl);
 
@@ -235,6 +304,70 @@ namespace Extenity.DataToolbox
 				255);
 		}
 
+		
+		public static Color HSL2RGBColor(float h, float sl, float l)
+		{
+			var v = (l <= 0.5f) ? (l * (1.0f + sl)) : (l + sl - l * sl);
+
+			if (v > 0f)
+			{
+				var m = l + l - v;
+				var sv = (v - m) / v;
+				h *= 6.0f;
+				var sextant = (int)h;
+				var fract = h - sextant;
+				var vsf = v * sv * fract;
+				var mid1 = m + vsf;
+				var mid2 = v - vsf;
+
+				switch (sextant)
+				{
+					case 0:
+						return new Color(
+							v * 255f,
+							mid1 * 255f,
+							m * 255f,
+							255);
+					case 1:
+						return new Color(
+							mid2 * 255f,
+							v * 255f,
+							m * 255f,
+							255);
+					case 2:
+						return new Color(
+							m * 255f,
+							v * 255f,
+							mid1 * 255f,
+							255);
+					case 3:
+						return new Color(
+							m * 255f,
+							mid2 * 255f,
+							v * 255f,
+							255);
+					case 4:
+						return new Color(
+							mid1 * 255f,
+							m * 255f,
+							v * 255f,
+							255);
+					case 5:
+						return new Color(
+							v * 255f,
+							m * 255f,
+							mid2 * 255f,
+							255);
+				}
+			}
+
+			return new Color(
+				l * 255f,
+				l * 255f,
+				l * 255f,
+				255);
+		}
+
 		public static void RGB2HSL(Color rgb, out float h, out float s, out float l)
 		{
 			var r = rgb.r;
@@ -277,6 +410,17 @@ namespace Extenity.DataToolbox
 				h = (r == m ? 3.0f + g2 : 5.0f - r2);
 			}
 			h /= 6.0f;
+		}
+
+		#endregion
+
+		#region Brightness
+
+		public static Color AdjustBrightness(this Color color, float brightness)
+		{
+			RGB2HSL(color, out var h, out var s, out var l);
+			l *= brightness;
+			return HSL2RGBColor(h, s, l);
 		}
 
 		#endregion

@@ -32,7 +32,7 @@ namespace Extenity.ColoringToolbox
 			var saturation = MinimumSaturation + (MaximumSaturation - MinimumSaturation) * normalizedScalePoint;
 			var lightness = MinimumLightness + (MaximumLightness - MinimumLightness) * normalizedScalePoint;
 
-			return ColorTools.HSL2RGB(hue, saturation, lightness);
+			return ColorTools.HSL2RGBColor32(hue, saturation, lightness);
 		}
 
 		#endregion

@@ -24,7 +24,7 @@ namespace Extenity.ColoringToolbox
 			//Hue = hue;
 			//Saturation = saturation;
 			//Lightness = lightness;
-			Color32 = ColorTools.HSL2RGB(hue, saturation, lightness);
+			Color32 = ColorTools.HSL2RGBColor32(hue, saturation, lightness);
 		}
 
 		public ColorStop(float position, Color32 color)
