@@ -106,6 +106,22 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 			}
 
+			if (jobDefinition.UnpackPrefab != BatchObjectProcessor.PrefabUnpackingType.No)
+			{
+				if (PrefabUtility.IsPartOfAnyPrefab(go))
+				{
+					switch (jobDefinition.UnpackPrefab)
+					{
+						case BatchObjectProcessor.PrefabUnpackingType.Unpack:
+							PrefabUtility.UnpackPrefabInstance(go, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
+							break;
+						case BatchObjectProcessor.PrefabUnpackingType.UnpackCompletely:
+							PrefabUtility.UnpackPrefabInstance(go, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+							break;
+					}
+				}
+			}
+
 			if (jobDefinition.DeparentAll)
 			{
 				go.transform.DetachChildrenRecursive();

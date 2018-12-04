@@ -10,6 +10,13 @@ namespace Extenity.UnityEditorToolbox
 
 	public class BatchObjectProcessor : MonoBehaviour
 	{
+		public enum PrefabUnpackingType
+		{
+			No,
+			Unpack,
+			UnpackCompletely,
+		}
+
 		[Serializable]
 		public class ObjectReference
 		{
@@ -53,6 +60,9 @@ namespace Extenity.UnityEditorToolbox
 			[Header("Change Navigation")]
 			public bool ChangeNavMeshArea = false;
 			public int AreaIndex = -1;
+
+			[Header("Unpack Prefab")]
+			public PrefabUnpackingType UnpackPrefab = PrefabUnpackingType.No;
 
 			[Header("Deparent")]
 			public bool DeparentAll = false;
