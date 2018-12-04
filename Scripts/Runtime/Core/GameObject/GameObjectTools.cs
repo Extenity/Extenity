@@ -1271,7 +1271,7 @@ namespace Extenity.GameObjectToolbox
 
 		#region DetachChildrenRecursive
 
-		public static void DetachChildrenRecursive(this Transform parent)
+		public static void DetachChildren(this Transform parent, ref int detachedObjectCount, bool worldPositionStays = true)
 		{
 			var childCount = parent.childCount;
 			if (childCount == 0)
@@ -1279,9 +1279,22 @@ namespace Extenity.GameObjectToolbox
 
 			for (int i = childCount - 1; i >= 0; i--)
 			{
-				parent.GetChild(i).DetachChildrenRecursive();
+				parent.GetChild(i).SetParent(null, worldPositionStays);
+				detachedObjectCount++;
 			}
-			parent.DetachChildren();
+		}
+
+		public static void DetachChildrenRecursive(this Transform parent, ref int detachedObjectCount, bool worldPositionStays = true)
+		{
+			var childCount = parent.childCount;
+			if (childCount == 0)
+				return;
+
+			for (int i = childCount - 1; i >= 0; i--)
+			{
+				parent.GetChild(i).DetachChildrenRecursive(ref detachedObjectCount, worldPositionStays);
+			}
+			parent.DetachChildren(ref detachedObjectCount, worldPositionStays);
 		}
 
 		#endregion
