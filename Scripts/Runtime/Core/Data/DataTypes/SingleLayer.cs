@@ -12,7 +12,7 @@ namespace Extenity.DataToolbox
 
 		public int LayerIndex
 		{
-			get { return _LayerIndex; }
+			get => _LayerIndex;
 			set
 			{
 				if (value < 0 || value > 31)
@@ -21,10 +21,9 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public int Mask
-		{
-			get { return 1 << _LayerIndex; }
-		}
+		public int Mask => 1 << _LayerIndex;
+
+		public string Name => LayerMask.LayerToName(LayerIndex);
 	}
 
 }
