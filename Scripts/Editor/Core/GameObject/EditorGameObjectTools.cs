@@ -194,8 +194,26 @@ namespace Extenity.GameObjectToolbox.Editor
 					if (!gameObject || !gameObject.IsEmpty())
 						continue;
 
-					// Check if the object referenced in any of the components in active scene
-					if (!allReferencedObjects.Contains(gameObject))
+					var skip = false;
+					var skipReason = "";
+
+					// Check if the object referenced in any of the components in active scene.
+					if (allReferencedObjects.Contains(gameObject))
+					{
+						skip = true;
+						skipReason = "Referenced";
+					}
+					// TODO: See if this is the best way to handle Nested Prefabs. See how much empty objects are passing through for this reason.
+					// Check if the object is part of a prefab. It's okay to delete if the object
+					// is the prefab's root. But not okay if the object is deep inside a prefab.
+					// This operation requires breaking the prefab.
+					else if (PrefabUtility.IsPartOfAnyPrefab(gameObject) && !PrefabUtility.IsAnyPrefabInstanceRoot(gameObject))
+					{
+						skip = true;
+						skipReason = "Prefab";
+					}
+
+					if (!skip)
 					{
 						destroyedCount++;
 						if (log)
@@ -212,7 +230,7 @@ namespace Extenity.GameObjectToolbox.Editor
 					{
 						skippedCount++;
 						if (log)
-							skippedObjectsText.AppendLine(gameObject.FullName());
+							skippedObjectsText.AppendLine($"({skipReason}) " + gameObject.FullName());
 					}
 
 					// We won't need to process this gameObject anymore. Remove it from list.
