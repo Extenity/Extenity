@@ -17,6 +17,13 @@ using Object = UnityEngine.Object;
 //namespace Extenity.DebugToolbox
 //{
 
+public enum SeverityType
+{
+	Warning,
+	Error,
+	Critical,
+}
+
 public static class Log
 {
 	#region Indentation
@@ -259,6 +266,30 @@ public static class Log
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
+	public static void Severe(string message, SeverityType severity)
+	{
+		switch (severity)
+		{
+			case SeverityType.Warning: Warning(message); break;
+			case SeverityType.Error: Error(message); break;
+			case SeverityType.Critical: CriticalError(message); break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+		}
+	}
+
+	public static void Severe(string message, SeverityType severity, Object context)
+	{
+		switch (severity)
+		{
+			case SeverityType.Warning: Warning(message, context); break;
+			case SeverityType.Error: Error(message, context); break;
+			case SeverityType.Critical: CriticalError(message, context); break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+		}
+	}
+
 	public static void Warning(string message)
 	{
 		Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
@@ -376,6 +407,33 @@ public static class Log
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
+
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugSevere(string message, SeverityType severity)
+	{
+		switch (severity)
+		{
+			case SeverityType.Warning: DebugWarning(message); break;
+			case SeverityType.Error: DebugError(message); break;
+			case SeverityType.Critical: CriticalError(message); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			default:
+				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+		}
+	}
+
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugSevere(string message, SeverityType severity, Object context)
+	{
+		switch (severity)
+		{
+			case SeverityType.Warning: DebugWarning(message, context); break;
+			case SeverityType.Error: DebugError(message, context); break;
+			case SeverityType.Critical: CriticalError(message, context); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			default:
+				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+		}
+	}
+
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugWarning(string message)
