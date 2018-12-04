@@ -16,25 +16,36 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 		}
 
-		public EditorTools.TagsPane JobTagsPane = new EditorTools.TagsPane();
-		public string[] JobTags;
+		public EditorTools.TagsPane ProcessTagsPane = new EditorTools.TagsPane();
+		public string[] ProcessTags;
 
 		protected override void OnBeforeDefaultInspectorGUI()
 		{
 			GUILayout.Space(20f);
 
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Job Tags:", GUILayout.ExpandWidth(false));
-			JobTags = EditorTools.DrawTags(JobTags, JobTagsPane, 200);
-			GUILayout.EndHorizontal();
-			if (GUILayout.Button("Process All", BigButtonHeight))
+			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 			{
-				var changedObjectCount = Me.ProcessAll(JobTags);
-				if (changedObjectCount > 0)
+				GUILayout.Space(6f);
+
+				// Process Tags
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Process Tags:", GUILayout.ExpandWidth(false));
+				ProcessTags = EditorTools.DrawTags(ProcessTags, ProcessTagsPane, 200);
+				GUILayout.EndHorizontal();
+
+				// Process Button
+				if (GUILayout.Button("Process All", BigButtonHeight))
 				{
-					EditorSceneManager.MarkAllScenesDirty();
+					var changedObjectCount = Me.ProcessAll(ProcessTags);
+					if (changedObjectCount > 0)
+					{
+						EditorSceneManager.MarkAllScenesDirty();
+					}
 				}
+
+				GUILayout.Space(6f);
 			}
+			EditorGUILayout.EndVertical();
 
 			GUILayout.Space(20f);
 		}

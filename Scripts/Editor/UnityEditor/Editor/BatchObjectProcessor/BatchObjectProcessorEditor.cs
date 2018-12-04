@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEditor;
@@ -9,125 +11,163 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Process
 
-		/// <param name="jobTags">If an entry requires a tag to be processed, the tag must be specified in this list.</param>
+		/// <param name="processTags">If an entry requires a tag to be processed, the tag must be specified in this list.</param>
 		/// <returns>Changed object count.</returns>
-		public static int ProcessAll(this BatchObjectProcessor processor, string[] jobTags)
+		public static int ProcessAll(this BatchObjectProcessor processor, string[] processTags)
 		{
 			var count = 0;
-			for (var i = 0; i < processor.Entries.Length; i++)
+			for (var iJob = 0; iJob < processor.Jobs.Length; iJob++)
 			{
-				count += processor.ProcessEntry(i, jobTags);
-			}
-			return count;
-		}
-
-		/// <param name="jobTags">If an entry requires a tag to be processed, the tag must be specified in this list.</param>
-		/// <returns>Changed object count.</returns>
-		public static int ProcessEntry(this BatchObjectProcessor processor, int entryIndex, string[] jobTags)
-		{
-			var count = 0;
-			var entry = processor.Entries[entryIndex];
-			var jobDefinitions = processor.GetJobDefinitions(entry.AppliedJobName, jobTags);
-			foreach (var jobDefinition in jobDefinitions)
-			{
-				for (var i = 0; i < entry.Objects.Length; i++)
+				var job = processor.Jobs[iJob];
+				if (!job.ShouldBeIncludedInProcess(processTags))
 				{
-					count += ProcessReferencedObject(processor, entryIndex, i, jobDefinition);
+					Log.Info($"Skipping job '{job.Name}' because process does not have " +
+							 (job.RequiredTags.Length > 1
+								 ? $"any of the tags '{string.Join(", ", job.RequiredTags)}'."
+								 : $"the tag '{job.RequiredTags[0]}'."
+							 )
+							 , processor);
+					continue;
+				}
+
+				var instruction = processor.GetInstruction(job.AppliedInstructionName);
+				if (instruction == null)
+					throw new Exception($"Batch object instruction definition '{job.AppliedInstructionName}' does not exist.");
+
+				for (var i = 0; i < job.Objects.Length; i++)
+				{
+					count += processor.ProcessReferencedObject(job, i, instruction);
 				}
 			}
 			return count;
 		}
 
 		/// <returns>Changed object count.</returns>
-		private static int ProcessReferencedObject(this BatchObjectProcessor processor, int entryIndex, int objectIndex, BatchObjectProcessor.JobDefinition jobDefinition)
+		private static int ProcessReferencedObject(this BatchObjectProcessor processor, BatchObjectProcessor.Job job, int objectIndex, BatchObjectProcessor.Instruction instruction)
 		{
-			var reference = processor.Entries[entryIndex].Objects[objectIndex];
+			var reference = job.Objects[objectIndex];
 			if (!reference.Object)
 			{
-				Log.Error($"Batch object processor has a null reference in entry '{processor.Entries[entryIndex].AppliedJobName}' (at index {entryIndex}) and object at index '{objectIndex}'.");
+				Log.Error($"Batch object processor encountered to a null reference in job '{job.Name}' object list at index '{objectIndex}'.", processor);
 				return 0;
 			}
 
 			var count = 0;
-			if (ProcessObject(reference.Object, jobDefinition))
+			var appliedModificationCount = 0;
+			var appliedModifications = new List<string>();
+			if (ProcessObject(reference.Object, instruction, ref appliedModificationCount, ref appliedModifications))
 				count++;
 			if (reference.IncludeChildren)
 			{
 				reference.Object.ForeachChildren(child =>
 				{
-					if (ProcessObject(child, jobDefinition))
+					if (ProcessObject(child, instruction, ref appliedModificationCount, ref appliedModifications))
 						count++;
 				}, true);
 			}
+
+			Log.Info($"Job '{job.Name}' applied on object {(reference.IncludeChildren ? "(and its children)" : "")} '{reference.FullPathOfObject}' which applied '{appliedModificationCount}' modification(s) over '{count}' object(s)." +
+					 (appliedModifications.Count == 0 ? "" : " Details:" + Environment.NewLine + string.Join(Environment.NewLine, appliedModifications)), processor);
+
 			return count;
 		}
 
 		/// <returns>True if anything changed in object.</returns>
-		private static bool ProcessObject(GameObject go, BatchObjectProcessor.JobDefinition jobDefinition)
+		private static bool ProcessObject(GameObject go, BatchObjectProcessor.Instruction instruction, ref int appliedModificationCount, ref List<string> appliedModifications)
 		{
 			var changed = false;
 
-			if (jobDefinition.ChangeStatic)
+			// Change Static
+			if (instruction.ChangeStatic)
 			{
 				var flags = GameObjectUtility.GetStaticEditorFlags(go);
-				var staticEditorFlags = (StaticEditorFlags)jobDefinition.StaticFlags;
+				var staticEditorFlags = (StaticEditorFlags)instruction.StaticFlags;
 				if (flags != staticEditorFlags)
 				{
-					changed = true;
+					_MarkChange(1, $"Static flags set to '{staticEditorFlags}' for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
 					GameObjectUtility.SetStaticEditorFlags(go, staticEditorFlags);
 				}
 			}
 
-			if (jobDefinition.ChangeLayers)
+			// Change Layers
+			if (instruction.ChangeLayers)
 			{
-				if (go.layer != jobDefinition.Layer.LayerIndex)
+				if (go.layer != instruction.Layer.LayerIndex)
 				{
-					changed = true;
-					go.layer = jobDefinition.Layer.LayerIndex;
+					_MarkChange(1, $"Layer set to '{instruction.Layer.Name}' for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
+					go.layer = instruction.Layer.LayerIndex;
 				}
 			}
 
-			if (jobDefinition.ChangeTags)
+			// Change Tags
+			if (instruction.ChangeTags)
 			{
-				if (!go.CompareTag(jobDefinition.Tag))
+				if (!go.CompareTag(instruction.Tag))
 				{
-					changed = true;
-					go.tag = jobDefinition.Tag;
+					_MarkChange(1, $"Tag set to '{instruction.Tag}' for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
+					go.tag = instruction.Tag;
 				}
 			}
 
-			if (jobDefinition.ChangeNavMeshArea)
+			// Change NavMesh Area
+			if (instruction.ChangeNavMeshArea)
 			{
 				var areaIndex = GameObjectUtility.GetNavMeshArea(go);
-				if (areaIndex != jobDefinition.AreaIndex)
+				if (areaIndex != instruction.AreaIndex)
 				{
-					changed = true;
-					GameObjectUtility.SetNavMeshArea(go, jobDefinition.AreaIndex);
+					_MarkChange(1, $"NavMesh Area set to '{instruction.AreaIndex}' for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
+					GameObjectUtility.SetNavMeshArea(go, instruction.AreaIndex);
 				}
 			}
 
-			if (jobDefinition.UnpackPrefab != BatchObjectProcessor.PrefabUnpackingType.No)
+			// Unpack Prefab
+			if (instruction.UnpackPrefab != BatchObjectProcessor.PrefabUnpackingType.No)
 			{
 				if (PrefabUtility.IsPartOfAnyPrefab(go))
 				{
-					switch (jobDefinition.UnpackPrefab)
+					switch (instruction.UnpackPrefab)
 					{
 						case BatchObjectProcessor.PrefabUnpackingType.Unpack:
+							_MarkChange(1, $"Unpacking prefab for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
 							PrefabUtility.UnpackPrefabInstance(go, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
 							break;
 						case BatchObjectProcessor.PrefabUnpackingType.UnpackCompletely:
+							_MarkChange(1, $"Unpacking prefab completely for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
 							PrefabUtility.UnpackPrefabInstance(go, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
 							break;
 					}
 				}
 			}
 
-			if (jobDefinition.DeparentAll)
+			// Detach
+			if (instruction.Detach)
 			{
-				go.transform.DetachChildrenRecursive();
+				if (go.transform.parent)
+				{
+					_MarkChange(1, $"Detaching object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
+					go.transform.SetParent(null, instruction.WorldPositionStaysWhenDeparenting);
+				}
+			}
+
+			// Detach Children Recursive
+			if (instruction.DetachChildrenRecursive)
+			{
+				if (go.transform.childCount > 0)
+				{
+					int detachedObjectCount = 0;
+					go.transform.DetachChildrenRecursive(ref detachedObjectCount, instruction.WorldPositionStaysWhenDeparenting);
+					_MarkChange(detachedObjectCount, $"Detaching '{detachedObjectCount}' children recursively under object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
+				}
 			}
 
 			return changed;
+		}
+
+		private static void _MarkChange(int modificationIncrement, string message, ref bool changed, ref int appliedModificationCount, ref List<string> appliedModifications)
+		{
+			changed = true;
+			appliedModificationCount += modificationIncrement;
+			appliedModifications.Add(message);
 		}
 
 		#endregion
