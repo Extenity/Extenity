@@ -17,6 +17,7 @@ namespace Extenity.PainkillaTool.Editor
 
 	// TODO: Add tool to check script encoding
 	// TODO: Detect empty methods (Awake, Start, OnDestroy, Update, FixedUpdate, LateUpdate)
+	// TODO: Detect where Debug.Log_ methods are called.
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{

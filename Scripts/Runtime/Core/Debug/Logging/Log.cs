@@ -24,6 +24,8 @@ public enum SeverityType
 	Critical,
 }
 
+// TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
+
 public static class Log
 {
 	#region Indentation
