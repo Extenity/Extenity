@@ -133,7 +133,6 @@ namespace Extenity.UIToolbox
 			this.CancelFastInvoke(EndCooldown);
 			this.CancelFastInvoke(RefreshCooldown);
 			CooldownDuration = duration;
-			RefreshInteractable();
 			if (duration > 0f)
 			{
 				CooldownStartTime = Time.time;
@@ -145,8 +144,10 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
+				CooldownStartTime = 0;
 				CooldownFader.FadeOut();
 			}
+			RefreshInteractable();
 		}
 
 		private void EndCooldown()
@@ -171,6 +172,8 @@ namespace Extenity.UIToolbox
 			if (remainingTime < 0f)
 				remainingTime = 0f;
 			CooldownTimerText.SetCharArrayForValue("N1", remainingTime);
+
+			RefreshInteractable();
 		}
 
 		#endregion
