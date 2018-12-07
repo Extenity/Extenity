@@ -286,6 +286,11 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Increment Mobile Version (Android/iOS/Bundle)
 
+		public static void DecrementMobileVersion(int subtractMajor, int subtractMinor, int subtractBuild, bool saveAssets)
+		{
+			IncrementMobileVersion(-subtractMajor, -subtractMinor, -subtractBuild, saveAssets);
+		}
+
 		public static void IncrementMobileVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
 		{
 			var androidCode = PlayerSettings.Android.bundleVersionCode;
