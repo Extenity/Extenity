@@ -9,7 +9,10 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox
 {
 
-	public class BatchObjectProcessor : MonoBehaviour, IConsistencyChecker, ISerializationCallbackReceiver
+	public class BatchObjectProcessor : MonoBehaviour, IConsistencyChecker
+#if UNITY_EDITOR
+		, ISerializationCallbackReceiver
+#endif
 	{
 		public enum PrefabUnpackingType
 		{
