@@ -1354,8 +1354,7 @@ namespace Extenity.MathToolbox
 			{
 				var currentPoint = points[i];
 
-				float distanceFromStartOfCurrentSegmentClosestPoint;
-				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
 				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
@@ -1390,8 +1389,7 @@ namespace Extenity.MathToolbox
 			{
 				var currentPoint = points[i];
 
-				float distanceFromStartOfCurrentSegmentClosestPoint;
-				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
 				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
@@ -1426,8 +1424,7 @@ namespace Extenity.MathToolbox
 			{
 				var currentPoint = points[i];
 
-				float distanceFromStartOfCurrentSegmentClosestPoint;
-				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
 				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
@@ -1444,8 +1441,7 @@ namespace Extenity.MathToolbox
 			{
 				var currentPoint = points[0];
 
-				float distanceFromStartOfCurrentSegmentClosestPoint;
-				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
 				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
@@ -1827,8 +1823,7 @@ namespace Extenity.MathToolbox
 			{
 				var currentPointPosition = points[i].Position;
 
-				float distanceFromStartOfCurrentSegmentClosestPoint;
-				var currentSegmentClosestPoint = MathTools.ClosestPointOnLineSegment(previousPointPosition, currentPointPosition, point, out distanceFromStartOfCurrentSegmentClosestPoint);
+				var currentSegmentClosestPoint = MathTools.ClosestPointOnLineSegment(previousPointPosition, currentPointPosition, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
 				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
 
 				if (closestPointSqrDistance > sqrDistance)
@@ -1850,10 +1845,10 @@ namespace Extenity.MathToolbox
 
 		public static Vector3 GetBezierPoint(Vector3 p1, Vector3 p2, Vector3 p3, float t)
 		{
-			float it = 1 - t;
-			float it2 = it * it;
-			float itt = it * t;
-			float t2 = t * t;
+			var it = 1 - t;
+			var it2 = it * it;
+			var itt = it * t;
+			var t2 = t * t;
 
 			return new Vector3(
 				(p1.x * it2 + 2 * p2.x * itt + p3.x * t2),
@@ -1875,8 +1870,8 @@ namespace Extenity.MathToolbox
 			// bias and tension controls:
 			// http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
 
-			float percentageSquare = percentage * percentage;
-			float percentageCube = percentageSquare * percentage;
+			var percentageSquare = percentage * percentage;
+			var percentageCube = percentageSquare * percentage;
 
 			return previous * (-0.5f * percentageCube +
 							 percentageSquare -
