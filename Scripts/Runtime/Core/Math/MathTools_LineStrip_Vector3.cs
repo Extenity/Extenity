@@ -72,7 +72,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Line Strip Operations
+		#region GetPointAtDistanceFromStart
 
 		public static Vector3 GetPointAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
 		{
@@ -238,6 +238,10 @@ namespace Extenity.MathToolbox
 
 			return previousPoint;
 		}
+
+		#endregion
+
+		#region GetLinePartAtDistanceFromStart
 
 		public static Vector3 GetLinePartAtDistanceFromStart(this IList<Vector3> points, float distanceFromStart, ref int startingPointIndexOfPart, ref Vector3 part, int bufferSize = -1)
 		{
@@ -608,7 +612,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Search For Value On Line Strip Elements
+		#region FindClosestValueIndex
 
 		public static int FindClosestValueIndex(this IList<Vector3> values, Vector3 targetValue, int startIndex = 0)
 		{
@@ -617,8 +621,7 @@ namespace Extenity.MathToolbox
 
 			for (int i = startIndex; i < values.Count; i++)
 			{
-				var value = values[i];
-				var sqrDistance = value.SqrDistanceTo(targetValue);
+				var sqrDistance = values[i].SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -635,8 +638,7 @@ namespace Extenity.MathToolbox
 
 			for (int i = startIndex; i < values.Length; i++)
 			{
-				var value = values[i];
-				var sqrDistance = value.SqrDistanceTo(targetValue);
+				var sqrDistance = values[i].SqrDistanceTo(targetValue);
 				if (closestSqrDistance > sqrDistance)
 				{
 					closestSqrDistance = sqrDistance;
@@ -646,12 +648,15 @@ namespace Extenity.MathToolbox
 			return closestIndex;
 		}
 
+		#endregion
+
+		#region FindFirstNonNaNValueIndex
+
 		public static int FindFirstNonNaNValueIndex(this IList<Vector3> values)
 		{
 			for (int i = 0; i < values.Count; i++)
 			{
-				var value = values[i];
-				if (!value.IsAnyNaN())
+				if (!values[i].IsAnyNaN())
 					return i;
 			}
 			return -1;
@@ -661,8 +666,7 @@ namespace Extenity.MathToolbox
 		{
 			for (int i = 0; i < values.Length; i++)
 			{
-				var value = values[i];
-				if (!value.IsAnyNaN())
+				if (!values[i].IsAnyNaN())
 					return i;
 			}
 			return -1;

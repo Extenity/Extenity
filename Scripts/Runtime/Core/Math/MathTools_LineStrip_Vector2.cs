@@ -72,7 +72,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Line Strip Operations
+		#region GetPointAtDistanceFromStart
 
 		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, float distanceFromStart, int bufferSize = -1)
 		{
@@ -165,7 +165,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Search For Value On Line Strip Elements
+		#region FindClosestValueIndex
 
 		public static int FindClosestValueIndex(this IList<Vector2> values, Vector2 targetValue, int startIndex = 0)
 		{
@@ -200,6 +200,10 @@ namespace Extenity.MathToolbox
 			}
 			return closestIndex;
 		}
+
+		#endregion
+
+		#region FindFirstNonNaNValueIndex
 
 		public static int FindFirstNonNaNValueIndex(this IList<Vector2> values)
 		{
