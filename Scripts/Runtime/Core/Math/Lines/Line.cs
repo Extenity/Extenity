@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.UnityEditorToolbox;
+using UnityEngine.Events;
 
 namespace Extenity.MathToolbox
 {
@@ -12,6 +14,7 @@ namespace Extenity.MathToolbox
 		public void ClearData()
 		{
 			ClearPoints();
+			Invalidate();
 		}
 
 		#endregion
@@ -20,6 +23,12 @@ namespace Extenity.MathToolbox
 
 		[Header("Configuration")]
 		public bool Loop = false;
+		// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+		//public bool KeepDataInLocalCoordinates = false;
+
+		//var point = KeepDataInLocalCoordinates
+		//	? transform.TransformPoint(points[0])
+		//	: points[0];
 
 		#endregion
 
@@ -28,21 +37,11 @@ namespace Extenity.MathToolbox
 		[Header("Data")]
 		public List<Vector3> Points;
 
-		public bool IsAnyPointAvailable
-		{
-			get { return Points != null && Points.Count > 0; }
-		}
+		public bool IsAnyPointAvailable => Points != null && Points.Count > 0;
 
 		private void ClearPoints()
 		{
-			if (Points == null)
-			{
-				Points = new List<Vector3>();
-			}
-			else
-			{
-				Points.Clear();
-			}
+			Points?.Clear();
 		}
 
 		public Vector3 GetPoint(float distanceFromStart, ref Vector3 part)
@@ -60,7 +59,7 @@ namespace Extenity.MathToolbox
 			return Points[index];
 		}
 
-		public int SortPoints(Vector3 initialPointReference)
+		public int SortLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
 		{
 			return Points.SortLineStripUsingClosestSequentialPointsMethod(initialPointReference);
 		}
@@ -69,19 +68,7 @@ namespace Extenity.MathToolbox
 
 		#region Segments
 
-		public int SegmentCount
-		{
-			get
-			{
-				if (Points == null || Points.Count == 0)
-					return 0;
-
-				if (Loop)
-					return Points.Count;
-				else
-					return Points.Count - 1;
-			}
-		}
+		public int SegmentCount => Points.GetLineSegmentCount(Loop);
 
 		#endregion
 
@@ -95,7 +82,7 @@ namespace Extenity.MathToolbox
 			{
 				if (IsTotalLengthInvalidated || _TotalLength < 0f)
 				{
-					_TotalLength = CalculateTotalLength();
+					_TotalLength = Points?.CalculateLineStripLength(Loop) ?? 0f;
 				}
 				return _TotalLength;
 			}
@@ -115,26 +102,6 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		private float CalculateTotalLength()
-		{
-			if (Points == null || Points.Count < 2)
-				return 0f;
-
-			var totalLength = 0f;
-			var previousPoint = GetPoint(0);
-			for (int i = 1; i < Points.Count; i++)
-			{
-				var currentPoint = GetPoint(i);
-				totalLength += Vector3.Distance(previousPoint, currentPoint);
-				previousPoint = currentPoint;
-			}
-			if (Loop)
-			{
-				totalLength += Vector3.Distance(previousPoint, GetPoint(0));
-			}
-			return totalLength;
-		}
-
 		private float CalculateAverageSegmentLength()
 		{
 			if (Points == null || Points.Count < 2)
@@ -145,7 +112,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Calculations - Closest Point
+		#region Calculations
 
 		public Vector3 ClosestPointOnLine(Vector3 point)
 		{
@@ -162,12 +129,10 @@ namespace Extenity.MathToolbox
 			return Points.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		#endregion
-
-		#region Calculations - Point Ahead
-
 		public Vector3 GetPointAheadOfClosestPoint(Vector3 point, float resultingPointDistanceToClosestPoint)
 		{
+			throw new NotImplementedException(); // Move this into MathTools.
+
 			var distanceFromStartOfClosestPointOnLine = DistanceFromStartOfClosestPointOnLine(point);
 			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
 			if (Loop)
@@ -181,10 +146,14 @@ namespace Extenity.MathToolbox
 
 		#region Invalidate
 
+		public readonly UnityEvent OnInvalidated = new UnityEvent();
+
 		public void Invalidate()
 		{
 			IsTotalLengthInvalidated = true;
 			IsAverageSegmentLengthInvalidated = true;
+
+			OnInvalidated.Invoke();
 		}
 
 		#endregion
@@ -197,10 +166,11 @@ namespace Extenity.MathToolbox
 		public class DebugConfigurationData
 		{
 			public bool DrawUnselected = true;
-			public Color UnselectedGizmoColor = new Color(0.4f, 0.4f, 0.42f);
-			public Color GizmoColor = new Color(0.0f, 0.0f, 1.0f);
-			public float FirstControlPointSizeFactor = 0.08f;
-			public float ControlPointSizeFactor = 0.04f;
+			public Color UnselectedColor = new Color(0.4f, 0.4f, 0.42f);
+			public Color PointColor = new Color(0.0f, 0.0f, 1.0f);
+			public Color LineColor = new Color(0.0f, 0.0f, 1.0f);
+			public float PointSize = 0.04f;
+			public float FirstPointSizeFactor = 1.1f;
 		}
 
 		[Header("Debug")]
@@ -210,43 +180,13 @@ namespace Extenity.MathToolbox
 		{
 			if (DEBUG.DrawUnselected)
 			{
-				Gizmos.color = DEBUG.UnselectedGizmoColor;
-				DrawPath();
+				GizmosTools.DrawPathLines(GetPoint, Points?.Count ?? 0, Loop, DEBUG.UnselectedColor);
 			}
 		}
 
 		private void OnDrawGizmosSelected()
 		{
-			if (!IsAnyPointAvailable)
-				return;
-
-			Gizmos.color = DEBUG.GizmoColor;
-			DrawPath();
-		}
-
-		private void DrawPath()
-		{
-			var previousPoint = GetPoint(0);
-
-			var size = AverageSegmentLength * DEBUG.FirstControlPointSizeFactor;
-			var size3 = new Vector3(size, size, size);
-
-			Gizmos.DrawWireCube(previousPoint, size3);
-
-			size = AverageSegmentLength * DEBUG.ControlPointSizeFactor;
-			size3.Set(size, size, size);
-
-			for (int i = 1; i < Points.Count; i++)
-			{
-				var currentPoint = GetPoint(i);
-				Gizmos.DrawLine(previousPoint, currentPoint);
-				Gizmos.DrawWireCube(currentPoint, size3);
-				previousPoint = currentPoint;
-			}
-			if (Loop)
-			{
-				Gizmos.DrawLine(previousPoint, GetPoint(0));
-			}
+			GizmosTools.DrawPath(GetPoint, Points?.Count ?? 0, Loop, true, DEBUG.PointColor, true, DEBUG.LineColor, AverageSegmentLength * DEBUG.PointSize, DEBUG.FirstPointSizeFactor);
 		}
 
 #endif
@@ -255,10 +195,15 @@ namespace Extenity.MathToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
+			// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
 			Invalidate();
 		}
+
+#endif
 
 		#endregion
 	}

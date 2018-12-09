@@ -1,6 +1,10 @@
+using System;
+using System.Text;
+using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
+using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
@@ -21,12 +25,48 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void OnMovementDetected()
 		{
-			Me.Invalidate();
+			if (MovementDetectionPreviousPosition.IsAnyNaN() ||
+				MovementDetectionPreviousRotation.IsAnyNaN() ||
+				MovementDetectionPreviousScale.IsAnyNaN())
+				return;
+
+			// Move all points
+			{
+				var previousTransformMatrix = new Matrix4x4();
+				previousTransformMatrix.SetTRS(MovementDetectionPreviousPosition, MovementDetectionPreviousRotation, MovementDetectionPreviousScale);
+				previousTransformMatrix = previousTransformMatrix.inverse;
+
+				for (int i = 0; i < Me.RawPoints.Count; i++)
+				{
+					var point = Me.RawPoints[i];
+					point = previousTransformMatrix.MultiplyPoint(point);
+					point = Me.transform.TransformPoint(point);
+					Me.RawPoints[i] = point;
+				}
+			}
+
+			// Invalidate
+			Me.InvalidateRawLine();
 		}
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
+			GUILayout.BeginHorizontal();
+
+			// Invalidate
+			{
+				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
+				{
+					CopyToClipboard();
+				}
+				if (GUILayout.Button("Paste", BigButtonHeight))
+				{
+					PasteClipboard();
+				}
+			}
+
+			GUILayout.EndHorizontal();
 			GUILayout.BeginHorizontal();
 
 			// Invalidate
@@ -37,7 +77,7 @@ namespace Extenity.MathToolbox.Editor
 				}
 				if (GUILayout.Button("Invalidate", BigButtonHeight))
 				{
-					Me.Invalidate();
+					Me.InvalidateRawLine();
 				}
 			}
 
@@ -56,18 +96,14 @@ namespace Extenity.MathToolbox.Editor
 
 		private void OnSceneGUI()
 		{
-			//var eventType = Event.current.type;
+			var eventType = Event.current.type;
 			var eventRawType = Event.current.rawType;
 			var rect = new Rect();
 			var camera = SceneView.lastActiveSceneView.camera;
 			var screenWidth = camera.pixelWidth;
 			var screenHeight = camera.pixelHeight;
 			var mousePosition = MouseSceneViewPosition;
-			//Handles.BeginGUI();
-			//GUI.Button(new Rect(mousePosition.x - 10, mousePosition.y - 10, 20, 20), "#");
-			//Handles.EndGUI();
 			float mouseVisibilityDistance = Mathf.Min(screenWidth, screenHeight) / 4f;
-
 
 			if (eventRawType == EventType.MouseUp)
 			{
@@ -75,48 +111,81 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// Point handles
-			if (Me.RawPoints != null)
+			switch (eventType)
 			{
-				// Find closest point to mouse pointer (if not currently dragging)
-				if (DraggingPointIndex < 0)
-				{
-					var closestPointIndex = -1;
-					var closestPointDistance = mouseVisibilityDistance;
-
-					for (int i = 0; i < Me.RawPoints.Count; i++)
+				case EventType.MouseUp:
+				case EventType.MouseDown:
+				case EventType.MouseMove:
+				case EventType.MouseDrag:
+				case EventType.KeyDown:
+				case EventType.KeyUp:
+				case EventType.ScrollWheel:
+				case EventType.Repaint:
+				case EventType.Layout:
+				case EventType.DragUpdated:
+				case EventType.DragPerform:
+				case EventType.DragExited:
+				case EventType.Ignore:
+				case EventType.Used:
+				case EventType.ValidateCommand:
+				case EventType.ExecuteCommand:
+				case EventType.ContextClick:
 					{
-						var point = ConvertLocalToWorldPosition(Me.RawPoints[i]);
-						Vector2 difference;
-						if (IsMouseCloseToWorldPointInScreenCoordinates(camera, point, mousePosition, closestPointDistance,
-							out difference))
+						if (Me.RawPoints != null)
 						{
-							closestPointIndex = i;
-							closestPointDistance = difference.magnitude;
+							int selectedPointIndex = -1;
+
+							if (DraggingPointIndex >= 0)
+							{
+								// Select currently dragged point
+								selectedPointIndex = DraggingPointIndex;
+							}
+							else
+							{
+								// Find closest point
+								float closestPointDistanceSqr = float.MaxValue;
+								for (int i = 0; i < Me.RawPoints.Count; i++)
+								{
+									var point = ConvertLocalToWorldPosition(Me.RawPoints[i]);
+									var diff = GetDifferenceBetweenMousePositionAndWorldPoint(camera, point, mousePosition, mouseVisibilityDistance);
+									var distanceSqr = diff.sqrMagnitude;
+									if (closestPointDistanceSqr > distanceSqr)
+									{
+										closestPointDistanceSqr = distanceSqr;
+										selectedPointIndex = i;
+									}
+								}
+							}
+
+							if (selectedPointIndex >= 0)
+							{
+								var currentPosition = ConvertLocalToWorldPosition(Me.RawPoints[selectedPointIndex]);
+								GUIUtility.GetControlID(FocusType.Keyboard);
+								var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
+								if (newPosition != currentPosition)
+								{
+									Me.RawPoints[selectedPointIndex] = ConvertWorldToLocalPosition(newPosition);
+
+									if (eventType == EventType.MouseDown ||
+										eventType == EventType.MouseDrag ||
+										eventType == EventType.MouseMove)
+									{
+										DraggingPointIndex = selectedPointIndex;
+									}
+								}
+							}
 						}
 					}
-
-					if (closestPointIndex >= 0)
-					{
-						DraggingPointIndex = closestPointIndex;
-					}
-				}
-
-				if (DraggingPointIndex >= 0)
-				{
-					var point = ConvertLocalToWorldPosition(Me.RawPoints[DraggingPointIndex]);
-					var newPoint = Handles.PositionHandle(point, Quaternion.identity);
-					if (newPoint != point)
-					{
-						Me.RawPoints[DraggingPointIndex] = ConvertWorldToLocalPosition(newPoint);
-					}
-				}
+					break;
+					//default:
+					//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
 			}
 
 			Handles.BeginGUI();
 			var savedBackgroundColor = GUI.backgroundColor;
 
 			// "Insert point" buttons
-			if (Me.RawPoints != null && Me.RawPoints.Count > 1)
+			if (Me.RawPoints != null && Me.RawPoints.Count > 1 && DraggingPointIndex < 0)
 			{
 				rect.width = SmallButtonSize;
 				rect.height = SmallButtonSize;
@@ -146,7 +215,7 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// "Add point to end" button
-			if (Me.RawPoints != null && Me.RawPoints.Count > 0)
+			if (Me.RawPoints != null && Me.RawPoints.Count > 0 && DraggingPointIndex < 0)
 			{
 				rect.width = MediumButtonSize;
 				rect.height = MediumButtonSize;
@@ -173,7 +242,7 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// "Remove point" buttons
-			if (Me.RawPoints != null && Me.RawPoints.Count > 0)
+			if (Me.RawPoints != null && Me.RawPoints.Count > 0 && DraggingPointIndex < 0)
 			{
 				rect.width = SmallButtonSize;
 				rect.height = SmallButtonSize;
@@ -207,23 +276,67 @@ namespace Extenity.MathToolbox.Editor
 			if (GUI.changed)
 			{
 				EditorUtility.SetDirty(target);
-				Me.Invalidate();
+				// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
+				Me.InvalidateRawLine();
 			}
 		}
 
+		#region Local-World Conversion
+
 		private Vector3 ConvertWorldToLocalPosition(Vector3 point)
 		{
-			return Me.KeepDataInLocalCoordinates
-				? Me.transform.InverseTransformPoint(point)
-				: point;
+			return point;
+			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+			//return Me.KeepDataInLocalCoordinates
+			//	? Me.transform.InverseTransformPoint(point)
+			//	: point;
 		}
 
 		private Vector3 ConvertLocalToWorldPosition(Vector3 point)
 		{
-			return Me.KeepDataInLocalCoordinates
-				? Me.transform.TransformPoint(point)
-				: point;
+			return point;
+			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+			//return Me.KeepDataInLocalCoordinates
+			//	? Me.transform.TransformPoint(point)
+			//	: point;
 		}
+
+		#endregion
+
+		#region Clipboard
+
+		private void CopyToClipboard()
+		{
+			if (Me.RawPoints.IsNullOrEmpty())
+				return;
+
+			var stringBuilder = new StringBuilder();
+			for (int i = 0; i < Me.RawPoints.Count; i++)
+			{
+				var point = Me.RawPoints[i];
+				stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
+			}
+
+			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
+		}
+
+		private void PasteClipboard()
+		{
+			var text = Clipboard.GetClipboardText();
+			if (!string.IsNullOrEmpty(text))
+			{
+				var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+				for (int iLine = 0; iLine < lines.Length; iLine++)
+				{
+					var line = lines[iLine];
+					var split = line.Split(' ');
+					var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+					Me.RawPoints.Add(point);
+				}
+			}
+		}
+
+		#endregion
 	}
 
 }

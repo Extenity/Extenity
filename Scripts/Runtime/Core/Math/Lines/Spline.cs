@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.UnityEditorToolbox;
+using UnityEngine.Events;
 
 namespace Extenity.MathToolbox
 {
@@ -13,6 +15,7 @@ namespace Extenity.MathToolbox
 		{
 			ClearRawPoints();
 			ClearProcessedPoints();
+			InvalidateRawLine();
 		}
 
 		#endregion
@@ -20,54 +23,57 @@ namespace Extenity.MathToolbox
 		#region Configuration
 
 		[Header("Configuration")]
-		//public bool SmoothingEnabled = false;
-		public bool KeepDataInLocalCoordinates = true;
+		public bool Loop = false;
+		public bool SmoothingEnabled = true;
+		// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+		//public bool KeepDataInLocalCoordinates = true;
+
+		//var point = KeepDataInLocalCoordinates
+		//	? transform.TransformPoint(points[0])
+		//	: points[0];
 
 		#endregion
 
-		#region Points
+		#region Points - Raw
 
 		[Header("Data")]
 		public List<Vector3> RawPoints;
 
-		public bool IsAnyRawPointAvailable
-		{
-			get { return RawPoints != null && RawPoints.Count > 0; }
-		}
+		public bool IsAnyRawPointAvailable => RawPoints != null && RawPoints.Count > 0;
 
 		private void ClearRawPoints()
 		{
-			if (RawPoints == null)
-			{
-				RawPoints = new List<Vector3>();
-			}
-			else
-			{
-				RawPoints.Clear();
-			}
+			RawPoints?.Clear();
 		}
 
 		public Vector3 GetRawPoint(float distanceFromStart, ref Vector3 part)
 		{
-			return RawPoints.GetPointAtDistanceFromStart(distanceFromStart, ref part);
+			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
 		}
 
-		public int SortRawPoints(Vector3 initialPointReference)
+		public Vector3 GetRawPoint(float distanceFromStart)
+		{
+			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+		}
+
+		public Vector3 GetRawPoint(int index)
+		{
+			return RawPoints[index];
+		}
+
+		public int SortRawLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
 		{
 			return RawPoints.SortLineStripUsingClosestSequentialPointsMethod(initialPointReference);
 		}
 
 		#endregion
 
-		#region Processed Points
+		#region Points - Processed
 
 		[NonSerialized]
 		public List<Vector3> ProcessedPoints;
 
-		public bool IsAnyProcessedPointAvailable
-		{
-			get { return ProcessedPoints != null && ProcessedPoints.Count > 0; }
-		}
+		public bool IsAnyProcessedPointAvailable => ProcessedPoints != null && ProcessedPoints.Count > 0;
 
 		private void ClearProcessedPoints()
 		{
@@ -86,32 +92,46 @@ namespace Extenity.MathToolbox
 
 		public Vector3 GetProcessedPoint(float distanceFromStart, ref Vector3 part)
 		{
-			return ProcessedPoints.GetPointAtDistanceFromStart(distanceFromStart, ref part);
+			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
 		}
+
+		public Vector3 GetProcessedPoint(float distanceFromStart)
+		{
+			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+		}
+
+		public Vector3 GetProcessedPoint(int index)
+		{
+			return ProcessedPoints[index];
+		}
+
+		#endregion
+
+		#region Process
 
 		public void ProcessPoints()
 		{
-			// Clear previous points
-			if (ProcessedPoints == null)
+			// Process
+			if (SmoothingEnabled)
 			{
-				ProcessedPoints = new List<Vector3>();
+				// Clear previous points
+				if (ProcessedPoints == null)
+				{
+					ProcessedPoints = new List<Vector3>();
+				}
+				else
+				{
+					ProcessedPoints.Clear();
+				}
+
+				ProcessPointsUsingSmoothing(ProcessedPoints, RawPoints);
 			}
 			else
 			{
-				ProcessedPoints.Clear();
+				ProcessedPoints = RawPoints;
 			}
 
-			// Process
-			//if (SmoothingEnabled)
-			{
-				ProcessPointsUsingSmoothing(ProcessedPoints, RawPoints);
-			}
-			//else
-			//{
-			//	ProcessedPoints = RawPoints;
-			//}
-
-			InvalidateProcessedLineLengths();
+			InvalidateProcessedLine();
 		}
 
 		private static void ProcessPointsUsingSmoothing(List<Vector3> smoothedPoints, List<Vector3> points)
@@ -138,7 +158,14 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Length
+		#region Segments
+
+		public int RawSegmentCount => RawPoints.GetLineSegmentCount(Loop);
+		public int ProcessedSegmentCount => ProcessedPoints.GetLineSegmentCount(Loop);
+
+		#endregion
+
+		#region Length - Raw
 
 		public bool IsTotalRawLengthInvalidated { get; private set; }
 		private float _TotalRawLength = -1f;
@@ -148,9 +175,7 @@ namespace Extenity.MathToolbox
 			{
 				if (IsTotalRawLengthInvalidated || _TotalRawLength < 0f)
 				{
-					_TotalRawLength = RawPoints == null
-						? 0f
-						: RawPoints.CalculateLineStripLength();
+					_TotalRawLength = RawPoints?.CalculateLineStripLength(Loop) ?? 0f;
 				}
 				return _TotalRawLength;
 			}
@@ -164,13 +189,23 @@ namespace Extenity.MathToolbox
 			{
 				if (IsAverageRawSegmentLengthInvalidated || _AverageRawSegmentLength < 0f)
 				{
-					_AverageRawSegmentLength = RawPoints == null
-						? 0f
-						: RawPoints.CalculateAverageLengthOfLineStripParts();
+					_AverageRawSegmentLength = CalculateAverageRawSegmentLength();
 				}
 				return _AverageRawSegmentLength;
 			}
 		}
+
+		private float CalculateAverageRawSegmentLength()
+		{
+			if (RawPoints == null || RawPoints.Count < 2)
+				return 0f;
+
+			return TotalRawLength / RawSegmentCount;
+		}
+
+		#endregion
+
+		#region Length - Processed
 
 		public bool IsTotalProcessedLengthInvalidated { get; private set; }
 		private float _TotalProcessedLength = -1f;
@@ -180,16 +215,7 @@ namespace Extenity.MathToolbox
 			{
 				if (IsTotalProcessedLengthInvalidated || _TotalProcessedLength < 0f)
 				{
-					if (ProcessedPoints == RawPoints)
-					{
-						_TotalProcessedLength = TotalRawLength;
-					}
-					else
-					{
-						_TotalProcessedLength = ProcessedPoints == null
-							? 0f
-							: ProcessedPoints.CalculateLineStripLength();
-					}
+					_TotalProcessedLength = ProcessedPoints == RawPoints ? TotalRawLength : ProcessedPoints?.CalculateLineStripLength(Loop) ?? 0f;
 				}
 				return _TotalProcessedLength;
 			}
@@ -203,51 +229,97 @@ namespace Extenity.MathToolbox
 			{
 				if (IsAverageProcessedSegmentLengthInvalidated || _AverageProcessedSegmentLength < 0f)
 				{
-					if (ProcessedPoints == RawPoints)
-					{
-						_AverageProcessedSegmentLength = AverageRawSegmentLength;
-					}
-					else
-					{
-						_AverageProcessedSegmentLength = ProcessedPoints == null
-							? 0f
-							: ProcessedPoints.CalculateAverageLengthOfLineStripParts();
-					}
+					_AverageProcessedSegmentLength = ProcessedPoints == RawPoints ? AverageRawSegmentLength : CalculateAverageProcessedSegmentLength();
 				}
 				return _AverageProcessedSegmentLength;
 			}
 		}
 
+		private float CalculateAverageProcessedSegmentLength()
+		{
+			if (ProcessedPoints == null || ProcessedPoints.Count < 2)
+				return 0f;
+
+			return TotalProcessedLength / ProcessedSegmentCount;
+		}
+
 		#endregion
 
-		#region Invalidate
+		#region Calculations - Raw
 
-		public void InvalidateDelayed(float delay = 0.1f)
+		public Vector3 ClosestPointOnRawLine(Vector3 point)
 		{
-			CancelInvoke("Invalidate");
-			Invoke("Invalidate", delay);
+			return RawPoints.ClosestPointOnLineStrip(point, Loop);
 		}
 
-		public void Invalidate()
+		public Vector3 ClosestPointOnRawLine(Vector3 point, ref Vector3 part)
 		{
-			CancelInvoke("Invalidate");
-
-			InvalidateRawLineLengths();
-			//InvalidateProcessedLineLengths(); // ProcessPoints() already does this.
-
-			ProcessPoints();
+			return RawPoints.ClosestPointOnLineStrip(point, Loop, ref part);
 		}
 
-		public void InvalidateRawLineLengths()
+		public float DistanceFromStartOfClosestPointOnRawLine(Vector3 point)
+		{
+			return RawPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
+		}
+
+		public Vector3 GetPointAheadOfClosestPointOnRawLine(Vector3 point, float resultingPointDistanceToClosestPoint)
+		{
+			throw new NotImplementedException(); // Look into Line to implement this.
+		}
+
+		#endregion
+
+		#region Calculations - Processed
+
+		public Vector3 ClosestPointOnProcessedLine(Vector3 point)
+		{
+			return ProcessedPoints.ClosestPointOnLineStrip(point, Loop);
+		}
+
+		public Vector3 ClosestPointOnProcessedLine(Vector3 point, ref Vector3 part)
+		{
+			return ProcessedPoints.ClosestPointOnLineStrip(point, Loop, ref part);
+		}
+
+		public float DistanceFromStartOfClosestPointOnProcessedLine(Vector3 point)
+		{
+			return ProcessedPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
+		}
+
+		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint)
+		{
+			throw new NotImplementedException(); // Look into Line to implement this.
+		}
+
+		#endregion
+
+		#region Invalidate - Raw
+
+		public readonly UnityEvent OnRawLineInvalidated = new UnityEvent();
+
+		public void InvalidateRawLine()
 		{
 			IsTotalRawLengthInvalidated = true;
 			IsAverageRawSegmentLengthInvalidated = true;
+
+			OnRawLineInvalidated.Invoke();
+
+			// This also invalidates the processed line.
+			InvalidateProcessedLine();
 		}
 
-		public void InvalidateProcessedLineLengths()
+		#endregion
+
+		#region Invalidate - Processed
+
+		public readonly UnityEvent OnProcessedLineInvalidated = new UnityEvent();
+
+		public void InvalidateProcessedLine()
 		{
 			IsTotalProcessedLengthInvalidated = true;
 			IsAverageProcessedSegmentLengthInvalidated = true;
+
+			OnProcessedLineInvalidated.Invoke();
 		}
 
 		#endregion
@@ -256,36 +328,40 @@ namespace Extenity.MathToolbox
 
 #if UNITY_EDITOR
 
+		[Serializable]
+		public class DebugConfigurationData
+		{
+			public bool DrawUnselectedRaw = false;
+			public bool DrawUnselectedProcessed = true;
+			public Color UnselectedColor = new Color(0.4f, 0.4f, 0.42f);
+			public Color RawPointColor = new Color(0.0f, 0.0f, 1.0f);
+			public Color RawLineColor = new Color(0.0f, 0.0f, 1.0f);
+			public Color ProcessedPointColor = new Color(0.4f, 0.4f, 0.6f);
+			public Color ProcessedLineColor = new Color(0.4f, 0.4f, 0.6f);
+			public float RawPointSize = 0.04f;
+			public float ProcessedPointSize = 0.04f;
+			public float FirstRawPointSizeFactor = 1.1f;
+		}
+
 		[Header("Debug")]
-		public Color DEBUG_GizmoColor = new Color(0.6f, 0.6f, 0.7f);
-		public float DEBUG_ControlPointSizeFactor = 0.04f;
-		private float DEBUG_ControlPointSize;
-		private Vector3 DEBUG_ControlPointSize3;
+		public DebugConfigurationData DEBUG;
+
+		private void OnDrawGizmos()
+		{
+			if (DEBUG.DrawUnselectedRaw)
+			{
+				GizmosTools.DrawPathLines(GetRawPoint, RawPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
+			}
+			if (DEBUG.DrawUnselectedProcessed)
+			{
+				GizmosTools.DrawPathLines(GetProcessedPoint, ProcessedPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
+			}
+		}
 
 		private void OnDrawGizmosSelected()
 		{
-			if (!IsAnyRawPointAvailable)
-				return;
-
-			Gizmos.color = DEBUG_GizmoColor;
-			DEBUG_ControlPointSize = AverageRawSegmentLength * DEBUG_ControlPointSizeFactor;
-			DEBUG_ControlPointSize3.Set(DEBUG_ControlPointSize, DEBUG_ControlPointSize, DEBUG_ControlPointSize);
-
-			var previousPoint = KeepDataInLocalCoordinates
-				? transform.TransformPoint(RawPoints[0])
-				: RawPoints[0];
-			Gizmos.DrawWireCube(previousPoint, DEBUG_ControlPointSize3);
-
-			for (int i = 1; i < RawPoints.Count; i++)
-			{
-				var currentPoint = KeepDataInLocalCoordinates
-					? transform.TransformPoint(RawPoints[i])
-					: RawPoints[i];
-
-				Gizmos.DrawLine(previousPoint, currentPoint);
-				Gizmos.DrawWireCube(currentPoint, DEBUG_ControlPointSize3);
-				previousPoint = currentPoint;
-			}
+			GizmosTools.DrawPath(GetRawPoint, RawPoints?.Count ?? 0, Loop, true, DEBUG.RawPointColor, true, DEBUG.RawLineColor, AverageRawSegmentLength * DEBUG.RawPointSize, DEBUG.FirstRawPointSizeFactor);
+			GizmosTools.DrawPath(GetProcessedPoint, ProcessedPoints?.Count ?? 0, Loop, true, DEBUG.ProcessedPointColor, true, DEBUG.ProcessedLineColor, AverageProcessedSegmentLength * DEBUG.ProcessedPointSize, 1f);
 		}
 
 #endif
@@ -294,10 +370,15 @@ namespace Extenity.MathToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
-			Invalidate();
+			// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
+			InvalidateRawLine();
 		}
+
+#endif
 
 		#endregion
 	}

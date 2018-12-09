@@ -806,22 +806,56 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Line Strip Length
+		#region Line Strip Segment Count - Vector3
 
-		public static float CalculateLineStripLength(this IList<Vector3> points)
+		public static int GetLineSegmentCount(this IList<Vector3> points, bool loop)
+		{
+			if (points == null || points.Count == 0)
+				return 0;
+
+			if (loop)
+				return points.Count;
+			else
+				return points.Count - 1;
+		}
+
+		#endregion
+
+		#region Line Strip Segment Count - Vector2
+
+		public static int GetLineSegmentCount(this IList<Vector2> points, bool loop)
+		{
+			if (points == null || points.Count == 0)
+				return 0;
+
+			if (loop)
+				return points.Count;
+			else
+				return points.Count - 1;
+		}
+
+		#endregion
+
+		#region Line Strip Length - Vector3
+
+		public static float CalculateLineStripLength(this IList<Vector3> points, bool loop)
 		{
 			if (points == null || points.Count < 2)
 				return 0f;
 
-			var totalDistance = 0f;
+			var totalLength = 0f;
 			var previousPoint = points[0];
 			for (int i = 1; i < points.Count; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += previousPoint.DistanceTo(currentPoint);
+				totalLength += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
-			return totalDistance;
+			if (loop)
+			{
+				totalLength += previousPoint.DistanceTo(points[0]);
+			}
+			return totalLength;
 		}
 
 		public static float CalculateLineStripLength(this IList<Vector3> points, int startIndex, int count)
@@ -829,41 +863,49 @@ namespace Extenity.MathToolbox
 			if (points == null || points.Count < 2 || count < 2)
 				return 0f;
 
-			var totalDistance = 0f;
+			var totalLength = 0f;
 			var previousPoint = points[0];
 			var endIndex = startIndex + count;
 			for (int i = startIndex + 1; i < endIndex; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += previousPoint.DistanceTo(currentPoint);
+				totalLength += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
-			return totalDistance;
+			return totalLength;
 		}
 
-		public static float CalculateAverageLengthOfLineStripParts(this IList<Vector3> points)
+		public static float CalculateAverageLengthOfLineStripParts(this IList<Vector3> points, bool loop)
 		{
 			if (points == null || points.Count < 2)
 				return 0f;
 
-			var totalDistance = CalculateLineStripLength(points);
-			return totalDistance / (points.Count - 1);
+			var totalLength = CalculateLineStripLength(points, loop);
+			return totalLength / points.GetLineSegmentCount(loop);
 		}
 
-		public static float CalculateLineStripLength(this IList<Vector2> points)
+		#endregion
+
+		#region Line Strip Length - Vector2
+
+		public static float CalculateLineStripLength(this IList<Vector2> points, bool loop)
 		{
 			if (points == null || points.Count < 2)
 				return 0f;
 
-			var totalDistance = 0f;
+			var totalLength = 0f;
 			var previousPoint = points[0];
 			for (int i = 1; i < points.Count; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += previousPoint.DistanceTo(currentPoint);
+				totalLength += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
-			return totalDistance;
+			if (loop)
+			{
+				totalLength += previousPoint.DistanceTo(points[0]);
+			}
+			return totalLength;
 		}
 
 		public static float CalculateLineStripLength(this IList<Vector2> points, int startIndex, int count)
@@ -871,25 +913,25 @@ namespace Extenity.MathToolbox
 			if (points == null || points.Count < 2 || count < 2)
 				return 0f;
 
-			var totalDistance = 0f;
+			var totalLength = 0f;
 			var previousPoint = points[0];
 			var endIndex = startIndex + count;
 			for (int i = startIndex + 1; i < endIndex; i++)
 			{
 				var currentPoint = points[i];
-				totalDistance += previousPoint.DistanceTo(currentPoint);
+				totalLength += previousPoint.DistanceTo(currentPoint);
 				previousPoint = currentPoint;
 			}
-			return totalDistance;
+			return totalLength;
 		}
 
-		public static float CalculateAverageLengthOfLineStripParts(this IList<Vector2> points)
+		public static float CalculateAverageLengthOfLineStripParts(this IList<Vector2> points, bool loop)
 		{
 			if (points == null || points.Count < 2)
 				return 0f;
 
-			var totalDistance = CalculateLineStripLength(points);
-			return totalDistance / (points.Count - 1);
+			var totalLength = CalculateLineStripLength(points, loop);
+			return totalLength / points.GetLineSegmentCount(loop);
 		}
 
 		#endregion
@@ -1179,6 +1221,10 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
+		#endregion
+
+		#region ClosestPointOnLineStrip
+
 		public static Vector3 ClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
@@ -1336,6 +1382,10 @@ namespace Extenity.MathToolbox
 			return closestPoint;
 		}
 
+		#endregion
+
+		#region DistanceFromStartOfClosestPointOnLineStrip
+
 		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<Vector3> points, Vector3 point, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
@@ -1458,6 +1508,10 @@ namespace Extenity.MathToolbox
 			return distanceFromStartOfClosestPoint;
 		}
 
+		#endregion
+
+		#region GetPointAheadOfClosestPoint
+
 		public static Vector3 GetPointAheadOfClosestPoint(this IList<Vector3> points, Vector3 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
@@ -1496,6 +1550,10 @@ namespace Extenity.MathToolbox
 		//	}
 		//	return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		//}
+
+		#endregion
+
+		#region Search For Value On Line Strip Elements
 
 		public static int FindClosestValueIndex(this IList<Vector3> values, Vector3 targetValue, int startIndex = 0)
 		{
@@ -1608,6 +1666,10 @@ namespace Extenity.MathToolbox
 			}
 			return -1;
 		}
+
+		#endregion
+
+		#region SortLineStripUsingClosestSequentialPointsMethod
 
 		public static int SortLineStripUsingClosestSequentialPointsMethod(this IList<Vector3> points, Vector3 initialPointReference)
 		{

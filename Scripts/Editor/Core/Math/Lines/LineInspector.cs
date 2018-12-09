@@ -1,6 +1,10 @@
+using System;
+using System.Text;
+using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
+using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
@@ -48,21 +52,21 @@ namespace Extenity.MathToolbox.Editor
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
-			//GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal();
 
-			//// Invalidate
-			//{
-			//	if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
-			//	{
-			//		CopyToClipboard();
-			//	}
-			//	if (GUILayout.Button("Paste", BigButtonHeight))
-			//	{
-			//		PasteClipboard();
-			//	}
-			//}
+			// Invalidate
+			{
+				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
+				{
+					CopyToClipboard();
+				}
+				if (GUILayout.Button("Paste", BigButtonHeight))
+				{
+					PasteClipboard();
+				}
+			}
 
-			//GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal();
 			GUILayout.BeginHorizontal();
 
 			// Invalidate
@@ -142,7 +146,7 @@ namespace Extenity.MathToolbox.Editor
 								float closestPointDistanceSqr = float.MaxValue;
 								for (int i = 0; i < Me.Points.Count; i++)
 								{
-									var point = Me.GetPoint(i);
+									var point = ConvertLocalToWorldPosition(Me.Points[i]);
 									var diff = GetDifferenceBetweenMousePositionAndWorldPoint(camera, point, mousePosition, mouseVisibilityDistance);
 									var distanceSqr = diff.sqrMagnitude;
 									if (closestPointDistanceSqr > distanceSqr)
@@ -155,12 +159,12 @@ namespace Extenity.MathToolbox.Editor
 
 							if (selectedPointIndex >= 0)
 							{
-								var currentPosition = Me.GetPoint(selectedPointIndex);
+								var currentPosition = ConvertLocalToWorldPosition(Me.Points[selectedPointIndex]);
 								GUIUtility.GetControlID(FocusType.Keyboard);
 								var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
 								if (newPosition != currentPosition)
 								{
-									Me.Points[selectedPointIndex] = newPosition;
+									Me.Points[selectedPointIndex] = ConvertWorldToLocalPosition(newPosition);
 
 									if (eventType == EventType.MouseDown ||
 										eventType == EventType.MouseDrag ||
@@ -173,8 +177,8 @@ namespace Extenity.MathToolbox.Editor
 						}
 					}
 					break;
-				//default:
-				//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
+					//default:
+					//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
 			}
 
 			Handles.BeginGUI();
@@ -187,10 +191,10 @@ namespace Extenity.MathToolbox.Editor
 				rect.height = SmallButtonSize;
 				GUI.backgroundColor = InsertButtonBackgroundColor;
 
-				var previous = Me.GetPoint(0);
+				var previous = ConvertLocalToWorldPosition(Me.Points[0]);
 				for (int i = 1; i < Me.Points.Count; i++)
 				{
-					var current = Me.GetPoint(i);
+					var current = ConvertLocalToWorldPosition(Me.Points[i]);
 					var center = current.Mid(previous);
 					var screenPosition = camera.WorldToScreenPointWithReverseCheck(center);
 
@@ -217,11 +221,11 @@ namespace Extenity.MathToolbox.Editor
 				rect.height = MediumButtonSize;
 				GUI.backgroundColor = InsertButtonBackgroundColor;
 
-				var endingPoint = Me.GetPoint(Me.Points.Count - 1);
+				var endingPoint = ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 1]);
 				var cameraDistanceToEndingPoint = Vector3.Distance(camera.transform.position, endingPoint);
 				var direction = Me.Points.Count == 1
 					? Vector3.forward
-					: (endingPoint - Me.GetPoint(Me.Points.Count - 2)).normalized;
+					: (endingPoint - ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 2])).normalized;
 
 				var point = endingPoint + direction * (cameraDistanceToEndingPoint * 0.5f);
 				var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
@@ -232,7 +236,7 @@ namespace Extenity.MathToolbox.Editor
 					rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
 					if (GUI.Button(rect, "+"))
 					{
-						Me.Points.Add(point);
+						Me.Points.Add(ConvertWorldToLocalPosition(point));
 					}
 				}
 			}
@@ -246,7 +250,7 @@ namespace Extenity.MathToolbox.Editor
 
 				for (int i = 0; i < Me.Points.Count; i++)
 				{
-					var point = Me.GetPoint(i);
+					var point = ConvertLocalToWorldPosition(Me.Points[i]);
 					var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
 					if (screenPosition.HasValue)
 					{
@@ -272,42 +276,65 @@ namespace Extenity.MathToolbox.Editor
 			if (GUI.changed)
 			{
 				EditorUtility.SetDirty(target);
+				// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
 				Me.Invalidate();
 			}
 		}
 
+		#region Local-World Conversion
+
+		private Vector3 ConvertWorldToLocalPosition(Vector3 point)
+		{
+			return point;
+			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+			//return Me.KeepDataInLocalCoordinates
+			//	? Me.transform.InverseTransformPoint(point)
+			//	: point;
+		}
+
+		private Vector3 ConvertLocalToWorldPosition(Vector3 point)
+		{
+			return point;
+			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
+			//return Me.KeepDataInLocalCoordinates
+			//	? Me.transform.TransformPoint(point)
+			//	: point;
+		}
+
+		#endregion
+
 		#region Clipboard
 
-		//private void CopyToClipboard()
-		//{
-		//	if (Me.Points.IsNullOrEmpty())
-		//		return;
+		private void CopyToClipboard()
+		{
+			if (Me.Points.IsNullOrEmpty())
+				return;
 
-		//	StringBuilder stringBuilder = new StringBuilder();
-		//	for (int i = 0; i < Me.Points.Count; i++)
-		//	{
-		//		var point = Me.Points[i];
-		//		stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
-		//	}
+			var stringBuilder = new StringBuilder();
+			for (int i = 0; i < Me.Points.Count; i++)
+			{
+				var point = Me.Points[i];
+				stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
+			}
 
-		//	Clipboard.SetClipboardText(stringBuilder.ToString());
-		//}
+			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
+		}
 
-		//private void PasteClipboard()
-		//{
-		//	var text = Clipboard.GetClipboardText();
-		//	if (!string.IsNullOrEmpty(text))
-		//	{
-		//		var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-		//		for (int iLine = 0; iLine < lines.Length; iLine++)
-		//		{
-		//			var line = lines[iLine];
-		//			var split = line.Split(' ');
-		//			var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
-		//			Me.Points.Add(point);
-		//		}
-		//	}
-		//}
+		private void PasteClipboard()
+		{
+			var text = Clipboard.GetClipboardText();
+			if (!string.IsNullOrEmpty(text))
+			{
+				var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+				for (int iLine = 0; iLine < lines.Length; iLine++)
+				{
+					var line = lines[iLine];
+					var split = line.Split(' ');
+					var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+					Me.Points.Add(point);
+				}
+			}
+		}
 
 		#endregion
 	}
