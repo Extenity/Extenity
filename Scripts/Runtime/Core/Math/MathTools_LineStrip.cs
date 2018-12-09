@@ -9,67 +9,6 @@ namespace Extenity.MathToolbox
 
 	public static partial class MathTools
 	{
-		#region Find Closest Point
-
-		public static Vector2 FindClosest(this IList<Vector2> list, Vector2 toPoint)
-		{
-			var value = Vector2Tools.NaN;
-			var closestDistanceSqr = float.MaxValue;
-			if (list != null)
-			{
-				for (var i = 0; i < list.Count; i++)
-				{
-					var distanceSqr = list[i].SqrDistanceTo(toPoint);
-					if (closestDistanceSqr > distanceSqr)
-					{
-						closestDistanceSqr = distanceSqr;
-						value = list[i];
-					}
-				}
-			}
-			return value;
-		}
-
-		public static Vector3 FindClosest(this IList<Vector3> list, Vector3 toPoint)
-		{
-			var value = Vector3Tools.NaN;
-			var closestDistanceSqr = float.MaxValue;
-			if (list != null)
-			{
-				for (var i = 0; i < list.Count; i++)
-				{
-					var distanceSqr = list[i].SqrDistanceTo(toPoint);
-					if (closestDistanceSqr > distanceSqr)
-					{
-						closestDistanceSqr = distanceSqr;
-						value = list[i];
-					}
-				}
-			}
-			return value;
-		}
-
-		public static T FindClosest<T>(this IList<T> list, Func<T, float> calculateSqrDistance) where T : class
-		{
-			var value = default(T);
-			var closestDistanceSqr = float.MaxValue;
-			if (list != null)
-			{
-				for (var i = 0; i < list.Count; i++)
-				{
-					var distanceSqr = calculateSqrDistance(list[i]);
-					if (closestDistanceSqr > distanceSqr)
-					{
-						closestDistanceSqr = distanceSqr;
-						value = list[i];
-					}
-				}
-			}
-			return value;
-		}
-
-		#endregion
-
 		#region Closest Point On Line
 
 		public static Vector2 ClosestPointOnLine(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
