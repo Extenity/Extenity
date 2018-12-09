@@ -9,8 +9,9 @@ namespace Extenity.MathToolbox
 
 		public static Vector2 ClosestPointOnLine(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
 		{
+			// TODO: OPTIMIZATION: This is directly copied from 3D calculations. See if there is a faster algorithm in 2D.
 			var lineDirection = (lineEnd - lineStart).normalized;
-			var closestPoint = Vector2.Dot(point - lineStart, lineDirection) / Vector2.Dot(lineDirection, lineDirection);
+			var closestPoint = Vector2.Dot(point - lineStart, lineDirection);
 			return lineStart + (closestPoint * lineDirection);
 		}
 

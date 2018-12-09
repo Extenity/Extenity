@@ -10,7 +10,7 @@ namespace Extenity.MathToolbox
 		public static Vector3 ClosestPointOnLine(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
 		{
 			var lineDirection = (lineEnd - lineStart).normalized;
-			var closestPoint = Vector3.Dot(point - lineStart, lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			var closestPoint = Vector3.Dot(point - lineStart, lineDirection);
 			return lineStart + (closestPoint * lineDirection);
 		}
 
