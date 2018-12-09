@@ -581,31 +581,6 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Line Intersection
-
-		public static bool CheckLineLineIntersection(
-			Vector2 line1Point1, Vector2 line1Point2,
-			Vector2 line2Point1, Vector2 line2Point2)
-		{
-			var b = line1Point2 - line1Point1;
-			var d = line2Point2 - line2Point1;
-			var bDotDPerp = b.x * d.y - b.y * d.x;
-
-			// if b dot d == 0, it means the lines are parallel so have infinite intersection points
-			if (bDotDPerp.IsZero())
-				return false;
-
-			var c = line2Point1 - line1Point1;
-			var lineFactor = (c.x * d.y - c.y * d.x) / bDotDPerp;
-			if (lineFactor < 0 || lineFactor > 1)
-				return false;
-
-			lineFactor = (c.x * b.y - c.y * b.x) / bDotDPerp;
-			return lineFactor >= 0 && lineFactor <= 1;
-		}
-
-		#endregion
-
 		#region Bounds
 
 		public static Bounds BoundsNaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
