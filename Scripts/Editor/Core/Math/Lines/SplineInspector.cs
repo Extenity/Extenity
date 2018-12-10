@@ -62,7 +62,9 @@ namespace Extenity.MathToolbox.Editor
 				}
 				if (GUILayout.Button("Paste", BigButtonHeight))
 				{
+					Undo.RecordObject(Me, "Paste data");
 					PasteClipboard();
+					Me.InvalidateRawLine();
 				}
 			}
 
@@ -73,6 +75,7 @@ namespace Extenity.MathToolbox.Editor
 			{
 				if (GUILayout.Button("Clear Data", BigButtonHeight))
 				{
+					Undo.RecordObject(Me, "Clear data");
 					Me.ClearData();
 				}
 				if (GUILayout.Button("Invalidate", BigButtonHeight))

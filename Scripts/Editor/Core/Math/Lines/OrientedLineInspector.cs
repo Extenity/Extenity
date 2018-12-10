@@ -56,13 +56,27 @@ namespace Extenity.MathToolbox.Editor
 
 			// Invalidate
 			{
+				if (GUILayout.Button("Normalize All Orientations", BigButtonHeight))
+				{
+					Undo.RecordObject(Me, "Normalize all orientations");
+					Me.NormalizeAllOrientations();
+				}
+			}
+
+			GUILayout.EndHorizontal();
+			GUILayout.BeginHorizontal();
+
+			// Invalidate
+			{
 				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
 				{
 					CopyToClipboard();
 				}
 				if (GUILayout.Button("Paste", BigButtonHeight))
 				{
+					Undo.RecordObject(Me, "Paste data");
 					PasteClipboard();
+					Me.Invalidate();
 				}
 			}
 
@@ -73,6 +87,7 @@ namespace Extenity.MathToolbox.Editor
 			{
 				if (GUILayout.Button("Clear Data", BigButtonHeight))
 				{
+					Undo.RecordObject(Me, "Clear data");
 					Me.ClearData();
 				}
 				if (GUILayout.Button("Invalidate", BigButtonHeight))
@@ -314,7 +329,7 @@ namespace Extenity.MathToolbox.Editor
 			for (int i = 0; i < Me.Points.Count; i++)
 			{
 				var point = Me.Points[i];
-				stringBuilder.AppendLine(point.Position.x + " " + point.Position.y + " " + point.Position.z + point.Orientation.x + " " + point.Orientation.y + " " + point.Orientation.z);
+				stringBuilder.AppendLine(point.Position.x + " " + point.Position.y + " " + point.Position.z + " " + point.Orientation.x + " " + point.Orientation.y + " " + point.Orientation.z);
 			}
 
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);

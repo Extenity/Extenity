@@ -150,6 +150,23 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Operations
+
+		public void NormalizeAllOrientations()
+		{
+			if (Points == null)
+				return;
+
+			for (var i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i].WithOrientation(Points[i].Orientation.normalized);
+			}
+
+			Invalidate();
+		}
+
+		#endregion
+
 		#region Invalidate
 
 		public readonly UnityEvent OnInvalidated = new UnityEvent();
