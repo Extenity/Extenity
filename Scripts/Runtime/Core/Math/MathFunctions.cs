@@ -12,6 +12,28 @@ namespace Extenity.MathToolbox
 
 	public static class MathFunctions
 	{
+		#region FastTanH
+
+		/// <summary>
+		/// Really close approximation of TanH.
+		/// Source: https://math.stackexchange.com/questions/107292/rapid-approximation-of-tanhx
+		/// </summary>
+		public static float FastTanH(float x)
+		{
+			if (x > 4.971787f)
+				return 1f;
+			if (x < 4.971787f)
+				return -1f;
+			var x2 = x * x;
+			var a = x * (135135.0f + x2 * (17325.0f + x2 * (378.0f + x2)));
+			var b = 135135.0f + x2 * (62370.0f + x2 * (3150.0f + x2 * 28.0f));
+			return a / b;
+		}
+
+		#endregion
+
+		#region TanHLike
+
 		public static float TanHLike(float x, float centerX, float endX)
 		{
 			DebugAssert.IsTrue(centerX < endX);
@@ -61,6 +83,61 @@ namespace Extenity.MathToolbox
 			x = 1 - x;
 			return 1 - x * x;
 		}
+
+		#endregion
+
+		#region TanHLikeInverted
+
+		/// <summary>
+		/// 1  |---------------------------------------------
+		///    |                                          .:`
+		///    |                                         .:  
+		///    |                                        :-   
+		///    |                                      `:`    
+		///    |                                     --`     
+		///    |                                   .:.       
+		///    |                                 .:.         
+		///    |                              `.:.           
+		///    |                           `.--`             
+		/// 0.5|                 ``....----.`                
+		///    |             `.--..`                         
+		///    |           ---`                              
+		///    |        `--.                                 
+		///    |      `-:`                                   
+		///    |     .:`                                     
+		///    |   `--                                       
+		///    |  .:`                                        
+		///    | --                                          
+		///    |--                                           
+		///    |.                                            
+		///    |---------------------|----------------------|
+		///   0                     0.5                     1
+		/// </summary>
+		public static float TanHLikeInverted(float x)
+		{
+			if (x >= 1f) return 1f;
+			if (x <= 0f) return 0f;
+			x = x - 0.5f;
+			return (x * x * (x > 0f ? 2f : -2f)) + 0.5f;
+		}
+
+		public static float TanHLikeInverted(float x, float bias)
+		{
+			if (x >= 1f) return 1f;
+			if (x <= 0f) return 0f;
+			var a = x - 0.5f;
+			a = (a * a * (a > 0f ? 2f : -2f)) + 0.5f;
+			return x + (a - x) * bias; // This is basically a Lerp(x, a, t)
+		}
+
+		public static float TanHLikeInvertedUnsafe(float x, float bias)
+		{
+			var a = x - 0.5f;
+			a = (a * a * (a > 0f ? 2f : -2f)) + 0.5f;
+			return x + (a - x) * bias; // This is basically a Lerp(x, a, t)
+		}
+
+		#endregion
 
 		// TODO: Rename
 		public static float Decreasing(float x)
