@@ -504,6 +504,9 @@ namespace Extenity.DataToolbox
 
 		public static IEnumerable<int> DuplicatesIndexed<T>(this IEnumerable<T> source)
 		{
+			if (source == null)
+				yield break;
+
 			var itemsSeen = new HashSet<T>();
 			int index = 0;
 
@@ -519,6 +522,9 @@ namespace Extenity.DataToolbox
 
 		public static IEnumerable<T> Duplicates<T>(this IEnumerable<T> source)
 		{
+			if (source == null)
+				yield break;
+
 			var itemsSeen = new HashSet<T>();
 			var itemsYielded = new HashSet<T>();
 
@@ -536,6 +542,9 @@ namespace Extenity.DataToolbox
 
 		public static IEnumerable<T> Duplicates<T>(this IEnumerable<T> source, IEqualityComparer<T> equaltyComparer)
 		{
+			if (source == null)
+				yield break;
+
 			var itemsSeen = new HashSet<T>();
 			var itemsYielded = new HashSet<T>();
 
@@ -561,6 +570,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static void RemoveDuplicates<T>(this List<T> source)
 		{
+			if (source == null)
+				return;
+
 			var hash = new HashSet<T>();
 			for (int i = source.Count - 1; i >= 0; i--)
 			{
@@ -574,6 +586,9 @@ namespace Extenity.DataToolbox
 
 		public static T[] RemoveDuplicates<T>(this T[] source)
 		{
+			if (source == null)
+				return null;
+
 			var hash = new HashSet<T>();
 			var cleanList = new List<T>();
 			for (int i = 0; i < source.Length; i++)

@@ -214,27 +214,30 @@ namespace Extenity.UnityEditorToolbox
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)
 		{
-			if (InstructionDefinitions.Duplicates(Instruction.DuplicateNameChecker.Instance).Any())
+			if (InstructionDefinitions != null)
 			{
-				errors.Add(new ConsistencyError(this, $"There are duplicate {nameof(Instruction)} names."));
-			}
-			if (Jobs.Duplicates(Job.DuplicateNameChecker.Instance).Any())
-			{
-				errors.Add(new ConsistencyError(this, $"There are duplicate {nameof(Job)} names."));
-			}
+				if (InstructionDefinitions.Duplicates(Instruction.DuplicateNameChecker.Instance).Any())
+					errors.Add(new ConsistencyError(this, $"There are duplicate {nameof(Instruction)} names."));
 
-			foreach (var instruction in InstructionDefinitions)
-			{
-				instruction.CheckConsistency(ref errors);
-			}
-			foreach (var job in Jobs)
-			{
-				job.CheckConsistency(ref errors);
-
-				if (!string.IsNullOrEmpty(job.AppliedInstructionName) &&
-					GetInstruction(job.AppliedInstructionName) == null)
+				foreach (var instruction in InstructionDefinitions)
 				{
-					errors.Add(new ConsistencyError(this, $"Job '{job.Name}' points to an unknown {nameof(Instruction)} named '{job.AppliedInstructionName}'."));
+					instruction.CheckConsistency(ref errors);
+				}
+			}
+			if (Jobs != null)
+			{
+				if (Jobs.Duplicates(Job.DuplicateNameChecker.Instance).Any())
+					errors.Add(new ConsistencyError(this, $"There are duplicate {nameof(Job)} names."));
+
+				foreach (var job in Jobs)
+				{
+					job.CheckConsistency(ref errors);
+
+					if (!string.IsNullOrEmpty(job.AppliedInstructionName) &&
+						GetInstruction(job.AppliedInstructionName) == null)
+					{
+						errors.Add(new ConsistencyError(this, $"Job '{job.Name}' points to an unknown {nameof(Instruction)} named '{job.AppliedInstructionName}'."));
+					}
 				}
 			}
 		}
