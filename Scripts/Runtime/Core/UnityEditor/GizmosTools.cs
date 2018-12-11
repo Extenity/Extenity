@@ -1,4 +1,6 @@
 using System;
+using Extenity.MathToolbox;
+using Extenity.MeshToolbox;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -60,6 +62,18 @@ namespace Extenity.UnityEditorToolbox
 					Gizmos.DrawWireCube(currentPoint, size3);
 				}
 			}
+		}
+
+		#endregion
+
+		#region DrawCylinder
+
+		public static void DrawCylinder(Vector3 start, Vector3 end, float radius)
+		{
+			Gizmos.DrawMesh(MeshTools.UnitCylinderZ,
+				start,
+				Quaternion.LookRotation(end - start, Vector3.up),
+				new Vector3(radius * 2f, radius * 2f, end.DistanceTo(start)));
 		}
 
 		#endregion
