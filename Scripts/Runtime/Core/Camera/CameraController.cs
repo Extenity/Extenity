@@ -50,7 +50,7 @@ namespace Extenity.CameraToolbox
 		#region Input
 
 		[Tooltip("This helps fixing huge deltas when starting to drag the camera, happening on mobile WebGL.")]
-		public bool IgnoreInitialDragOnClick = false;
+		public bool IgnoreInitialDragOnClick = true;
 		protected bool IsDragging;
 
 		#endregion

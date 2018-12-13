@@ -45,10 +45,19 @@ namespace Extenity.CameraToolbox
 		#region Input
 
 		[Header("Input - Orbit")]
+		public bool EnableUserMovement = true;
 		public int MovementMouseButton = 0;
+		public float MovementMouseSensitivity = 1f;
+		//public float MovementTouchSensitivity = 1f;
+
+		public bool EnableUserRotation = true;
 		public int RotationMouseButton = 1;
-		public float MouseSensitivity = 1f;
-		//public float AxisSensitivity = 1f;
+		public float RotationMouseSensitivity = 1f;
+		//public float RotationTouchSensitivity = 1f;
+
+		public bool EnableUserZoom = true;
+		//public float ZoomTouchSensitivity = 1f;
+
 		[NonSerialized]
 		public Vector3 InputShift;
 		[NonSerialized]
@@ -58,6 +67,7 @@ namespace Extenity.CameraToolbox
 
 		public override bool IsAxisActive { get; set; }
 		public override bool IsMouseActive { get; set; }
+		//public override bool IsTouchActive { get; set; }
 
 		private void UpdateInput()
 		{
@@ -78,13 +88,13 @@ namespace Extenity.CameraToolbox
 			// Mouse
 			if (IsMouseActive)
 			{
-				if (Input.GetMouseButton(RotationMouseButton))
+				if (EnableUserRotation && Input.GetMouseButton(RotationMouseButton))
 				{
 					BreakIdle();
-					if (IgnoreInitialDragOnClick && IsDragging)
+					if (!IgnoreInitialDragOnClick || IsDragging)
 					{
-						InputRotate.y += Input.GetAxis("Mouse X") * MouseSensitivity;
-						InputRotate.x += -Input.GetAxis("Mouse Y") * MouseSensitivity;
+						InputRotate.y += Input.GetAxis("Mouse X") * RotationMouseSensitivity;
+						InputRotate.x -= Input.GetAxis("Mouse Y") * RotationMouseSensitivity;
 					}
 					IsDragging = true;
 					MouseCursor.HideCursor();
@@ -93,13 +103,13 @@ namespace Extenity.CameraToolbox
 				{
 					MouseCursor.ShowCursor();
 
-					if (Input.GetMouseButton(MovementMouseButton))
+					if (EnableUserMovement && Input.GetMouseButton(MovementMouseButton))
 					{
 						BreakIdle();
-						if (IgnoreInitialDragOnClick && IsDragging)
+						if (!IgnoreInitialDragOnClick || IsDragging)
 						{
-							InputShift.x += -Input.GetAxis("Mouse X") * MouseSensitivity;
-							InputShift.z += -Input.GetAxis("Mouse Y") * MouseSensitivity;
+							InputShift.x -= Input.GetAxis("Mouse X") * MovementMouseSensitivity;
+							InputShift.z -= Input.GetAxis("Mouse Y") * MovementMouseSensitivity;
 						}
 						IsDragging = true;
 					}
@@ -108,12 +118,16 @@ namespace Extenity.CameraToolbox
 						IsDragging = false;
 					}
 				}
-				InputZoom += -Input.mouseScrollDelta.y;
-				if (InputZoom != 0f)
+
+				if (EnableUserZoom)
 				{
-					if (ZoomOnlyBreaksIdlingWhenNotIdle && !IsIdle)
+					InputZoom += -Input.mouseScrollDelta.y;
+					if (InputZoom != 0f)
 					{
-						BreakIdle();
+						if (ZoomOnlyBreaksIdlingWhenNotIdle && !IsIdle)
+						{
+							BreakIdle();
+						}
 					}
 				}
 			}
@@ -128,7 +142,7 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
-		#region IDle
+		#region Idle
 
 		[Header("Idle - Orbit")]
 		public bool ZoomOnlyBreaksIdlingWhenNotIdle = true;
