@@ -5,31 +5,7 @@ namespace Extenity.ProfilingToolbox
 
 	public class TickAnalyzer
 	{
-		public double CurrentPeriodStartTime;
-		public double LastTickTime;
-
-		public double LastElapsedTime;
-		public double LastElapsedTimeDeviation
-		{
-			get { return LastElapsedTime - MeanElapsedTime; }
-		}
-
-		private int InternalTickCounter;
-		public int TicksPerSecond;
-
-		public double MeanElapsedTime
-		{
-			get { return ElapsedTimes.Mean; }
-		}
-
-		public RunningHotMeanDouble ElapsedTimes;
-
-
-		public delegate void UpdateAction(TickAnalyzer me);
-		public event UpdateAction OnUpdate;
-		public delegate void TickAction(TickAnalyzer me);
-		public event TickAction OnTick;
-
+		#region Initialization
 
 		public void Reset(double currentTime)
 		{
@@ -41,39 +17,22 @@ namespace Extenity.ProfilingToolbox
 			ElapsedTimes = new RunningHotMeanDouble(100);
 		}
 
-		public void Tick(double currentTime)
-		{
-			lock (this)
-			{
-				InternalTickCounter++;
+		#endregion
 
-				if (LastTickTime != 0) // To ignore first tick
-				{
-					var elapsedTime = currentTime - LastTickTime;
-					ElapsedTimes.Push(elapsedTime);
-					LastElapsedTime = elapsedTime;
-				}
+		#region Stats
 
-				LastTickTime = currentTime;
+		public double CurrentPeriodStartTime;
+		public double LastTickTime;
 
-				while (currentTime - CurrentPeriodStartTime >= 1.0)
-				{
-					CurrentPeriodStartTime += 1.0;
-					TicksPerSecond = InternalTickCounter;
-					InternalTickCounter = 0;
+		public double LastElapsedTime;
+		public double LastElapsedTimeDeviation => LastElapsedTime - MeanElapsedTime;
 
-					if (OnUpdate != null)
-					{
-						OnUpdate(this);
-					}
-				}
+		private int InternalTickCounter;
+		public int TicksPerSecond;
 
-				if (OnTick != null)
-				{
-					OnTick(this);
-				}
-			}
-		}
+		public double MeanElapsedTime => ElapsedTimes.Mean;
+
+		public RunningHotMeanDouble ElapsedTimes;
 
 		//public double Variance
 		//{
@@ -97,6 +56,49 @@ namespace Extenity.ProfilingToolbox
 		//		return 0;
 		//	}
 		//}
+
+		#endregion
+
+		#region Events
+
+		public delegate void UpdateAction(TickAnalyzer me);
+		public event UpdateAction OnUpdate;
+		public delegate void TickAction(TickAnalyzer me);
+		public event TickAction OnTick;
+
+		#endregion
+
+		#region Tick
+
+		public void Tick(double currentTime)
+		{
+			lock (this)
+			{
+				InternalTickCounter++;
+
+				if (LastTickTime != 0) // To ignore first tick
+				{
+					var elapsedTime = currentTime - LastTickTime;
+					ElapsedTimes.Push(elapsedTime);
+					LastElapsedTime = elapsedTime;
+				}
+
+				LastTickTime = currentTime;
+
+				while (currentTime - CurrentPeriodStartTime >= 1.0)
+				{
+					CurrentPeriodStartTime += 1.0;
+					TicksPerSecond = InternalTickCounter;
+					InternalTickCounter = 0;
+
+					OnUpdate?.Invoke(this);
+				}
+
+				OnTick?.Invoke(this);
+			}
+		}
+
+		#endregion
 	}
 
 }
