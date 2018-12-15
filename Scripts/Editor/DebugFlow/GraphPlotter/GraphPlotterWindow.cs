@@ -173,31 +173,20 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 		#region Initialization
 
-		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void ToggleWindow()
-		{
-			if (EditorTools.IsWindowOpen<GraphPlotterWindow>())
-			{
-				var window = GetWindow<GraphPlotterWindow>();
-				window.Close();
-			}
-			else
-			{
-				GetWindow<GraphPlotterWindow>();
-			}
-		}
-
-		protected void Awake()
+		protected void OnEnable()
 		{
 			titleContent = new GUIContent("Graph Plotter");
 			wantsMouseMove = true;
-		}
 
-		protected void OnEnable()
-		{
 			LoadSettings();
 
 			CreateStyles();
+		}
+
+		[MenuItem("Window/Graph Plotter _#%g")]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<GraphPlotterWindow>();
 		}
 
 		#endregion

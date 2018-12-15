@@ -22,13 +22,6 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
-		private static void ShowWindow()
-		{
-			var window = GetWindow<AssetUtilizza>();
-			window.Show();
-		}
-
 		private void OnEnable()
 		{
 			SetTitleAndIcon("Asset Utilizza", null);
@@ -40,6 +33,12 @@ namespace Extenity.PainkillaTool.Editor
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
 			//Selection.selectionChanged -= SelectionChanged;
 			//Selection.selectionChanged += SelectionChanged;
+		}
+
+		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<AssetUtilizza>();
 		}
 
 		#endregion

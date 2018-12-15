@@ -70,13 +70,6 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
-		private static void ShowWindow()
-		{
-			var window = GetWindow<Snappa>();
-			window.Show();
-		}
-
 		private void OnEnable()
 		{
 			SetTitleAndIcon("Snappa", SnappaIcons.Texture_ArrowStraight);
@@ -85,6 +78,12 @@ namespace Extenity.PainkillaTool.Editor
 			InitializeKeyboard();
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
+		}
+
+		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<Snappa>();
 		}
 
 		#endregion

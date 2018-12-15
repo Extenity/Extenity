@@ -470,6 +470,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 			return window;
 		}
 
+		public static void ToggleWindow<T>() where T : EditorWindow
+		{
+			if (IsWindowOpen<T>())
+			{
+				var window = EditorWindow.GetWindow<T>();
+				window.Close();
+			}
+			else
+			{
+				EditorWindow.GetWindow<T>();
+			}
+		}
+
 		#endregion
 
 		#region Project Metadata

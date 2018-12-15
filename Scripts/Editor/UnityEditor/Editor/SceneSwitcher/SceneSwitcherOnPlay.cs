@@ -26,15 +26,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void Awake()
 		{
-			titleContent = new GUIContent("Scene Switcher");
+			SetTitleAndIcon("Scene Switcher", null);
 
 			InitializeAPICallPrevention();
 		}
 
 		[MenuItem("Edit/Scene Switcher on Play", priority = 140)] // Priority is just above the Play option.
-		private static void OpenWindow()
+		private static void ToggleWindow()
 		{
-			GetWindow<SceneSwitcherOnPlay>();
+			EditorTools.ToggleWindow<SceneSwitcherOnPlay>();
 		}
 
 		#endregion

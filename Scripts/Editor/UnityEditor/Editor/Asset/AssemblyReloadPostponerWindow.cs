@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Extenity.UnityEditorToolbox.Editor;
+using UnityEngine;
 using UnityEditor;
 
 namespace Extenity.AssetToolbox.Editor
@@ -13,9 +14,9 @@ namespace Extenity.AssetToolbox.Editor
 		System.Action DebugDelegate;
 
 		[MenuItem("Assets/Assembly Reload Postponer")]
-		public static void Init()
+		private static void ToggleWindow()
 		{
-			GetWindow<AssemblyReloadPostponerWindow>();
+			EditorTools.ToggleWindow<AssemblyReloadPostponerWindow>();
 		}
 
 		bool locked = false;

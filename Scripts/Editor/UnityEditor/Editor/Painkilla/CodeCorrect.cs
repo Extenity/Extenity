@@ -33,17 +33,16 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Code Correct")]
-		private static void ShowWindow()
-		{
-			var window = GetWindow<CodeCorrect>();
-			window.Show();
-		}
-
 		private void OnEnable()
 		{
 			SetTitleAndIcon("Code Correct", null);
 			minSize = MinimumWindowSize;
+		}
+
+		[MenuItem("Tools/Code Correct")]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<CodeCorrect>();
 		}
 
 		#endregion

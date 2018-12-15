@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
-using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -20,13 +14,6 @@ namespace Extenity.PainkillaTool.Editor
 		#endregion
 
 		#region Initialization
-
-		[MenuItem("Edit/Replacea", false, 1010)] // Just below Unity's "Snap Settings"
-		private static void ShowWindow()
-		{
-			var window = GetWindow<Replacea>();
-			window.Show();
-		}
 
 		private void OnEnable()
 		{
@@ -46,6 +33,12 @@ namespace Extenity.PainkillaTool.Editor
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
 			*/
+		}
+
+		[MenuItem("Edit/Replacea", false, 1010)] // Just below Unity's "Snap Settings"
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<Replacea>();
 		}
 
 		#endregion

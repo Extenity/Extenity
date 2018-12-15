@@ -22,13 +22,6 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
-		private static void ShowWindow()
-		{
-			var window = GetWindow<UIOptimizza>();
-			window.Show();
-		}
-
 		private void OnEnable()
 		{
 			SetTitleAndIcon("UI Optimizza", null);
@@ -40,6 +33,12 @@ namespace Extenity.PainkillaTool.Editor
 			//Selection.selectionChanged += OnSelectionChanged;
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
+		}
+
+		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<UIOptimizza>();
 		}
 
 		#endregion

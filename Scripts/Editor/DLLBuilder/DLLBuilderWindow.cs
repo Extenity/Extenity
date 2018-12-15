@@ -14,11 +14,19 @@ namespace Extenity.DLLBuilder
 
 		private void OnEnable()
 		{
+			SetTitleAndIcon("DLL Builder", null);
+
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 			InitializeStatusMessage();
 
 			CompilationPipeline.assemblyCompilationStarted += RefreshUIOnCompilationStart;
 			CompilationPipeline.assemblyCompilationFinished += RefreshUIOnCompilationEnd;
+		}
+
+		[MenuItem(Constants.MenuItemPrefix + "Open Builder", priority = 1000)]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<DLLBuilderWindow>();
 		}
 
 		#endregion
@@ -31,17 +39,6 @@ namespace Extenity.DLLBuilder
 			CompilationPipeline.assemblyCompilationFinished -= RefreshUIOnCompilationEnd;
 
 			DeinitializeStatusMessage();
-		}
-
-		#endregion
-
-		#region Show
-
-		[MenuItem(Constants.MenuItemPrefix + "Open Builder", priority = 1000)]
-		public static void ShowWindow()
-		{
-			var window = GetWindow<DLLBuilderWindow>();
-			window.titleContent = new GUIContent("DLL Builder");
 		}
 
 		#endregion

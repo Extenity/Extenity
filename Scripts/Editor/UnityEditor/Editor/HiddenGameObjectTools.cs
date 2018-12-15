@@ -17,14 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Menu Command
-
-		[MenuItem("Tools/Hidden GameObject Tools")]
-		public static void ShowWindow()
-		{
-			var window = GetWindow<HiddenGameObjectTools>();
-			window.titleContent = new GUIContent("Hidden GOs");
-		}
+		#region Initialization
 
 		#endregion
 
@@ -32,8 +25,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void OnEnable()
 		{
+			SetTitleAndIcon("Hidden GOs", null);
+
 			IsRightMouseButtonScrollingEnabled = true;
 			GatherHiddenObjects();
+		}
+
+		[MenuItem("Tools/Hidden GameObject Tools")]
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<HiddenGameObjectTools>();
 		}
 
 		#endregion

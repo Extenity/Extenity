@@ -16,13 +16,6 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Edit/Selecta", false, 1005)] // Just below Unity's "Snap Settings"
-		private static void ShowWindow()
-		{
-			var window = GetWindow<Selecta>();
-			window.Show();
-		}
-
 		private void OnEnable()
 		{
 			SetTitleAndIcon("Selecta", null);
@@ -32,6 +25,12 @@ namespace Extenity.PainkillaTool.Editor
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged -= SelectionChanged;
 			Selection.selectionChanged += SelectionChanged;
+		}
+
+		[MenuItem("Edit/Selecta", false, 1005)] // Just below Unity's "Snap Settings"
+		private static void ToggleWindow()
+		{
+			EditorTools.ToggleWindow<Selecta>();
 		}
 
 		#endregion
