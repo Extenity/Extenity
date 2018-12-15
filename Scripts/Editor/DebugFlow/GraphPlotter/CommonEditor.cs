@@ -28,7 +28,8 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 			float newMin;
 			float newMax;
 
-			if (newSizing == ValueAxisSizing.Adaptive)
+			if (newSizing == ValueAxisSizing.Adaptive ||
+			    newSizing == ValueAxisSizing.ZeroBasedAdaptive)
 			{
 				newMin = float.PositiveInfinity;
 				newMax = float.NegativeInfinity;

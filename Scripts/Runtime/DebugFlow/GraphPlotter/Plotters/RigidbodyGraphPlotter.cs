@@ -78,7 +78,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		public bool PlotPositionX = true;
 		public bool PlotPositionY = true;
 		public bool PlotPositionZ = true;
-		public ValueAxisRangeConfiguration PositionRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public ValueAxisRangeConfiguration PositionRange = ValueAxisRangeConfiguration.CreateAdaptive();
 		public Graph PositionGraph;
 		private Channel[] PositionChannels;
 		// -----------------------------------------------------
@@ -88,7 +88,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		public bool PlotRotationX = true;
 		public bool PlotRotationY = true;
 		public bool PlotRotationZ = true;
-		public ValueAxisRangeConfiguration RotationRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 360f);
+		public ValueAxisRangeConfiguration RotationRange = ValueAxisRangeConfiguration.CreateFixed(0f, 360f);
 		public Graph RotationGraph;
 		private Channel[] RotationChannels;
 		// -----------------------------------------------------
@@ -98,7 +98,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		public bool PlotVelocityX = true;
 		public bool PlotVelocityY = true;
 		public bool PlotVelocityZ = true;
-		public ValueAxisRangeConfiguration VelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public ValueAxisRangeConfiguration VelocityRange = ValueAxisRangeConfiguration.CreateAdaptive();
 		public Graph VelocityGraph;
 		private Channel[] VelocityChannels;
 		// -----------------------------------------------------
@@ -108,7 +108,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		public bool PlotAngularVelocityX = true;
 		public bool PlotAngularVelocityY = true;
 		public bool PlotAngularVelocityZ = true;
-		public ValueAxisRangeConfiguration AngularVelocityRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public ValueAxisRangeConfiguration AngularVelocityRange = ValueAxisRangeConfiguration.CreateAdaptive();
 		public Graph AngularVelocityGraph;
 		private Channel[] AngularVelocityChannels;
 		// -----------------------------------------------------

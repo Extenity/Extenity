@@ -2107,7 +2107,7 @@ namespace BeyondNetworking
 				if (NetworkStatisticsGraph == null)
 				{
 					Graph.SetupGraphWithXYChannels(true, ref NetworkStatisticsGraph, "Network Send/Receive Delta", Instance.gameObject,
-						new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, 0f, 0f), ref NetworkStatisticsGraphChannels,
+						ValueAxisRangeConfiguration.CreateAdaptive(), ref NetworkStatisticsGraphChannels,
 						true, true, "Sent", "Received", Color.red, Color.green);
 				}
 				else // Do not draw at the first call. This will probably be 0.

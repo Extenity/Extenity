@@ -23,7 +23,12 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 	{
 		Fixed,
 		Expansive,
-		Adaptive
+		Adaptive,
+
+		/// <summary>
+		/// Adaptive that always includes Zero axis.
+		/// </summary>
+		ZeroBasedAdaptive,
 	};
 
 	[Serializable]
@@ -37,7 +42,27 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 		#region Initialization
 
-		public ValueAxisRangeConfiguration(ValueAxisSizing sizing, float min, float max)
+		public static ValueAxisRangeConfiguration CreateFixed(float min, float max)
+		{
+			return new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, min, max);
+		}
+
+		public static ValueAxisRangeConfiguration CreateExpansive(float min, float max)
+		{
+			return new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, min, max);
+		}
+
+		public static ValueAxisRangeConfiguration CreateAdaptive()
+		{
+			return new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		}
+
+		public static ValueAxisRangeConfiguration CreateZeroBasedAdaptive()
+		{
+			return new ValueAxisRangeConfiguration(ValueAxisSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
+		}
+
+		private ValueAxisRangeConfiguration(ValueAxisSizing sizing, float min, float max)
 		{
 			Sizing = sizing;
 			Min = min;

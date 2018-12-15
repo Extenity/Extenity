@@ -90,7 +90,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		// -----------------------------------------------------
 		[HideInInspector] // Not meant to be shown in raw format
 		public List<ChannelField> ChannelFields = new List<ChannelField>();
-		public ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public ValueAxisRangeConfiguration Range = ValueAxisRangeConfiguration.CreateAdaptive();
 		public Graph Graph;
 		// -----------------------------------------------------
 

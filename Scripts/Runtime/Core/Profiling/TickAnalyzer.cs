@@ -10,6 +10,21 @@ namespace Extenity.ProfilingToolbox
 	{
 		#region Initialization
 
+		public TickAnalyzer()
+		{
+		}
+
+		public TickAnalyzer(double currentTime, int historySize = 100)
+		{
+			Reset(currentTime, historySize);
+		}
+
+		public TickAnalyzer(GraphPlottingConfiguration configuration, double currentTime, int historySize = 100)
+			: this(currentTime, historySize)
+		{
+			EnableGraphPlotting(configuration);
+		}
+
 		public void Reset(double currentTime, int historySize = 100)
 		{
 			CurrentPeriodStartTime = currentTime;
@@ -169,6 +184,15 @@ namespace Extenity.ProfilingToolbox
 			{
 				configuration._Channels[1].Sample((float)(1.0 / ElapsedTimes.Mean), (float)CurrentPeriodStartTime, Time.frameCount);
 			}
+		}
+
+		#endregion
+
+		#region Tools
+
+		public static int HistorySizeFor(float expectedFPS, float durationForAverageCalculation)
+		{
+			return (int)(expectedFPS * durationForAverageCalculation);
 		}
 
 		#endregion

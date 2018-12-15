@@ -280,9 +280,18 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 				var timeEnd = LatestTimeOfFilteredGraphs + scrollPositionTime;
 				var timeStart = LatestTimeOfFilteredGraphs - TimeWindow + scrollPositionTime;
 
-				if (range.Sizing == ValueAxisSizing.Adaptive)
+				switch (range.Sizing)
 				{
-					graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd);
+					case ValueAxisSizing.Adaptive:
+						{
+							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
+						}
+						break;
+					case ValueAxisSizing.ZeroBasedAdaptive:
+						{
+							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
+						}
+						break;
 				}
 
 				if (range.Min < float.PositiveInfinity)

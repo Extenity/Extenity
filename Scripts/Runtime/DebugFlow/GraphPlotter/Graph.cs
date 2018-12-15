@@ -81,7 +81,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		public string Title;
 		public GameObject Context = null;
 		
-		public readonly ValueAxisRangeConfiguration Range = new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+		public readonly ValueAxisRangeConfiguration Range = ValueAxisRangeConfiguration.CreateAdaptive();
 
 		#endregion
 
@@ -180,6 +180,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 					break;
 				case ValueAxisSizing.Fixed:
 				case ValueAxisSizing.Adaptive:
+				case ValueAxisSizing.ZeroBasedAdaptive:
 					// Nothing to do.
 					break;
 				default:
@@ -216,12 +217,9 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 			}
 		}
 
-		public void CalculateValueAxisRangeInTimeWindow(float timeStart, float timeEnd)
+		public void CalculateValueAxisRangeInTimeWindow(float timeStart, float timeEnd, float min, float max)
 		{
 			CheckClosed();
-
-			var min = float.PositiveInfinity;
-			var max = float.NegativeInfinity;
 
 			for (var i = 0; i < Channels.Count; i++)
 			{
