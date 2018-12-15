@@ -19,22 +19,92 @@ namespace Extenity.MathToolbox
 		public static readonly Vector3 NegativeInfinity = Vector3.negativeInfinity;
 		public static readonly Vector3 NaN = new Vector3(float.NaN, float.NaN, float.NaN);
 
-		#region Basic Checks
+		#region Basic Checks - Zero
 
-		public static bool IsZero(this Vector3 value)
+		public static bool IsAllZero(this Vector3 value)
 		{
-			return value.IsAllZero();
+			return value.x.IsZero() && value.y.IsZero() && value.z.IsZero();
 		}
 
-		public static bool IsUnit(this Vector3 value)
+		public static bool IsAnyZero(this Vector3 value)
 		{
-			return value.magnitude.IsAlmostEqual(1f);
+			return value.x.IsZero() || value.y.IsZero() || value.z.IsZero();
 		}
+
+		public static bool IsAllNonZero(this Vector3 value)
+		{
+			return !value.x.IsZero() && !value.y.IsZero() && !value.z.IsZero();
+		}
+
+		public static bool IsAnyNonZero(this Vector3 value)
+		{
+			return !value.x.IsZero() || !value.y.IsZero() || !value.z.IsZero();
+		}
+
+		#endregion
+
+		#region Basic Checks - Infinity
+
+		public static bool IsAllInfinity(this Vector3 value)
+		{
+			return float.IsInfinity(value.x) && float.IsInfinity(value.y) && float.IsInfinity(value.z);
+		}
+
+		public static bool IsAnyInfinity(this Vector3 value)
+		{
+			return float.IsInfinity(value.x) || float.IsInfinity(value.y) || float.IsInfinity(value.z);
+		}
+
+		#endregion
+
+		#region Basic Checks - NaN
+
+		public static bool IsAllNaN(this Vector3 value)
+		{
+			return float.IsNaN(value.x) && float.IsNaN(value.y) && float.IsNaN(value.z);
+		}
+
+		public static bool IsAnyNaN(this Vector3 value)
+		{
+			return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z);
+		}
+
+		#endregion
+
+		#region Basic Checks - Equality
 
 		public static bool IsAllEqual(this Vector3 value, float val)
 		{
 			return value.x == val && value.y == val && value.z == val;
 		}
+
+		public static bool IsAnyEqual(this Vector3 value, float val)
+		{
+			return value.x == val || value.y == val || value.z == val;
+		}
+
+		public static bool IsAllAlmostEqual(this Vector3 value, float val, float precision = MathTools.ZeroTolerance)
+		{
+			return value.x.IsAlmostEqual(val, precision) && value.y.IsAlmostEqual(val, precision) && value.z.IsAlmostEqual(val, precision);
+		}
+
+		public static bool IsAnyAlmostEqual(this Vector3 value, float val, float precision = MathTools.ZeroTolerance)
+		{
+			return value.x.IsAlmostEqual(val, precision) || value.y.IsAlmostEqual(val, precision) || value.z.IsAlmostEqual(val, precision);
+		}
+
+		public static bool IsAlmostEqual(this Vector3 value1, Vector3 value2, float precision = MathTools.ZeroTolerance)
+		{
+			value1 = value1 - value2;
+			return
+				value1.x <= precision && value1.x >= -precision &&
+				value1.y <= precision && value1.y >= -precision &&
+				value1.z <= precision && value1.z >= -precision;
+		}
+
+		#endregion
+
+		#region Basic Checks - Range
 
 		public static bool IsAllBetween(this Vector3 value, float minVal, float maxVal)
 		{
@@ -44,53 +114,13 @@ namespace Extenity.MathToolbox
 				value.z <= maxVal && value.z >= minVal;
 		}
 
-		public static bool IsAlmostEqualVector3(this Vector3 value1, Vector3 value2, float precision = MathTools.ZeroTolerance)
-		{
-			value1 = value1 - value2;
-			return
-				value1.x <= precision && value1.x >= -precision &&
-				value1.y <= precision && value1.y >= -precision &&
-				value1.z <= precision && value1.z >= -precision;
-		}
+		#endregion
 
-		public static bool IsAllZero(this Vector3 value)
-		{
-			return value.x.IsZero() && value.y.IsZero() && value.z.IsZero();
-		}
+		#region Basic Checks - Unit
 
-		public static bool IsAllInfinity(this Vector3 value)
+		public static bool IsUnit(this Vector3 value)
 		{
-			return float.IsInfinity(value.x) && float.IsInfinity(value.y) && float.IsInfinity(value.z);
-		}
-
-		public static bool IsAllNaN(this Vector3 value)
-		{
-			return float.IsNaN(value.x) && float.IsNaN(value.y) && float.IsNaN(value.z);
-		}
-
-		public static bool IsAnyEqual(this Vector3 value, float val)
-		{
-			return value.x == val || value.y == val || value.z == val;
-		}
-
-		public static bool IsAnyAlmostEqual(this Vector3 value, float val)
-		{
-			return value.x.IsAlmostEqual(val) || value.y.IsAlmostEqual(val) || value.z.IsAlmostEqual(val);
-		}
-
-		public static bool IsAnyZero(this Vector3 value)
-		{
-			return value.x.IsZero() || value.y.IsZero() || value.z.IsZero();
-		}
-
-		public static bool IsAnyInfinity(this Vector3 value)
-		{
-			return float.IsInfinity(value.x) || float.IsInfinity(value.y) || float.IsInfinity(value.z);
-		}
-
-		public static bool IsAnyNaN(this Vector3 value)
-		{
-			return float.IsNaN(value.x) || float.IsNaN(value.y) || float.IsNaN(value.z);
+			return value.magnitude.IsAlmostEqual(1f);
 		}
 
 		#endregion

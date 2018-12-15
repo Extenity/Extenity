@@ -17,22 +17,91 @@ namespace Extenity.MathToolbox
 		public static readonly Vector2 NegativeInfinity = Vector2.negativeInfinity;
 		public static readonly Vector2 NaN = new Vector2(float.NaN, float.NaN);
 
-		#region Basic Checks
+		#region Basic Checks - Zero
 
-		public static bool IsZero(this Vector2 value)
+		public static bool IsAllZero(this Vector2 value)
 		{
-			return value.IsAllZero();
+			return value.x.IsZero() && value.y.IsZero();
 		}
 
-		public static bool IsUnit(this Vector2 value)
+		public static bool IsAnyZero(this Vector2 value)
 		{
-			return value.magnitude.IsAlmostEqual(1f);
+			return value.x.IsZero() || value.y.IsZero();
 		}
+
+		public static bool IsAllNonZero(this Vector2 value)
+		{
+			return !value.x.IsZero() && !value.y.IsZero();
+		}
+
+		public static bool IsAnyNonZero(this Vector2 value)
+		{
+			return !value.x.IsZero() || !value.y.IsZero();
+		}
+
+		#endregion
+
+		#region Basic Checks - Infinity
+
+		public static bool IsAllInfinity(this Vector2 value)
+		{
+			return float.IsInfinity(value.x) && float.IsInfinity(value.y);
+		}
+
+		public static bool IsAnyInfinity(this Vector2 value)
+		{
+			return float.IsInfinity(value.x) || float.IsInfinity(value.y);
+		}
+
+		#endregion
+
+		#region Basic Checks - NaN
+
+		public static bool IsAllNaN(this Vector2 value)
+		{
+			return float.IsNaN(value.x) && float.IsNaN(value.y);
+		}
+
+		public static bool IsAnyNaN(this Vector2 value)
+		{
+			return float.IsNaN(value.x) || float.IsNaN(value.y);
+		}
+
+		#endregion
+
+		#region Basic Checks - Equality
 
 		public static bool IsAllEqual(this Vector2 value, float val)
 		{
 			return value.x == val && value.y == val;
 		}
+
+		public static bool IsAnyEqual(this Vector2 value, float val)
+		{
+			return value.x == val || value.y == val;
+		}
+
+		public static bool IsAllAlmostEqual(this Vector2 value, float val, float precision = MathTools.ZeroTolerance)
+		{
+			return value.x.IsAlmostEqual(val, precision) && value.y.IsAlmostEqual(val, precision);
+		}
+
+		public static bool IsAnyAlmostEqual(this Vector2 value, float val, float precision = MathTools.ZeroTolerance)
+		{
+			return value.x.IsAlmostEqual(val, precision) || value.y.IsAlmostEqual(val, precision);
+		}
+
+		public static bool IsAlmostEqual(this Vector2 value1, Vector2 value2, float precision = MathTools.ZeroTolerance)
+		{
+			value1 = value1 - value2;
+			return
+				value1.x <= precision && value1.x >= -precision &&
+				value1.y <= precision && value1.y >= -precision;
+		}
+
+		#endregion
+
+		#region Basic Checks - Range
 
 		public static bool IsAllBetween(this Vector2 value, float minVal, float maxVal)
 		{
@@ -41,52 +110,13 @@ namespace Extenity.MathToolbox
 				value.y <= maxVal && value.y >= minVal;
 		}
 
-		public static bool IsAlmostEqualVector2(this Vector2 value1, Vector2 value2, float precision = MathTools.ZeroTolerance)
-		{
-			value1 = value1 - value2;
-			return
-				value1.x <= precision && value1.x >= -precision &&
-				value1.y <= precision && value1.y >= -precision;
-		}
+		#endregion
 
-		public static bool IsAllZero(this Vector2 value)
-		{
-			return value.x.IsZero() && value.y.IsZero();
-		}
+		#region Basic Checks - Unit
 
-		public static bool IsAllInfinity(this Vector2 value)
+		public static bool IsUnit(this Vector2 value)
 		{
-			return float.IsInfinity(value.x) && float.IsInfinity(value.y);
-		}
-
-		public static bool IsAllNaN(this Vector2 value)
-		{
-			return float.IsNaN(value.x) && float.IsNaN(value.y);
-		}
-
-		public static bool IsAnyEqual(this Vector2 value, float val)
-		{
-			return value.x == val || value.y == val;
-		}
-
-		public static bool IsAnyAlmostEqual(this Vector2 value, float val)
-		{
-			return value.x.IsAlmostEqual(val) || value.y.IsAlmostEqual(val);
-		}
-
-		public static bool IsAnyZero(this Vector2 value)
-		{
-			return value.x.IsZero() || value.y.IsZero();
-		}
-
-		public static bool IsAnyInfinity(this Vector2 value)
-		{
-			return float.IsInfinity(value.x) || float.IsInfinity(value.y);
-		}
-
-		public static bool IsAnyNaN(this Vector2 value)
-		{
-			return float.IsNaN(value.x) || float.IsNaN(value.y);
+			return value.magnitude.IsAlmostEqual(1f);
 		}
 
 		#endregion

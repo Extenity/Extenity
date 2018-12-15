@@ -1198,7 +1198,7 @@ namespace Extenity.DebugToolbox
 			for (int i = 0; i < writeSceneData.Count; i++)
 			{
 				var data = writeSceneData[i];
-				if (data.lineIndex == lineIndex && data.position.IsAlmostEqualVector3(position))
+				if (data.lineIndex == lineIndex && data.position.IsAlmostEqual(position))
 				{
 					return data;
 				}
