@@ -6,6 +6,31 @@ using UnityEngine;
 namespace Extenity.ProfilingToolbox
 {
 
+	[Serializable]
+	public class TickPlotter
+	{
+		public string Title;
+		public ValueAxisRangeConfiguration RangeConfiguration;
+		public GameObject Context;
+
+		[Tooltip("Ticks per second.")]
+		public bool OutputTPSGraph = true;
+		public Color TPSColor = new Color(0.2f, 0.9f, 0.2f, 1f);
+		[Tooltip("Average ticks per second calculated using the average elapsed time of all samples in history.")]
+		public bool OutputAverageTPSGraph = true;
+		public Color AverageTPSColor = new Color(0.4f, 0.5f, 0.2f, 1f);
+
+		public TickPlotter(string title, ValueAxisRangeConfiguration rangeConfiguration, GameObject context = null)
+		{
+			Title = title;
+			RangeConfiguration = rangeConfiguration;
+			Context = context;
+		}
+
+		internal Graph _Graph;
+		internal Channel[] _Channels;
+	}
+
 	public class TickAnalyzer
 	{
 		#region Initialization
@@ -19,10 +44,10 @@ namespace Extenity.ProfilingToolbox
 			Reset(currentTime, historySize);
 		}
 
-		public TickAnalyzer(GraphPlottingConfiguration configuration, double currentTime, int historySize = 100)
+		public TickAnalyzer(TickPlotter plotter, double currentTime, int historySize = 100)
 			: this(currentTime, historySize)
 		{
-			EnableGraphPlotting(configuration);
+			EnableGraphPlotting(plotter);
 		}
 
 		public void Reset(double currentTime, int historySize = 100)
@@ -120,69 +145,43 @@ namespace Extenity.ProfilingToolbox
 
 		#region Graph
 
-		[Serializable]
-		public class GraphPlottingConfiguration
-		{
-			public string Title;
-			public ValueAxisRangeConfiguration RangeConfiguration;
-			public GameObject Context;
+		public bool IsGraphPlottingEnabled => Plotter != null;
+		private TickPlotter Plotter;
 
-			[Tooltip("Ticks per second.")]
-			public bool OutputTPSGraph = true;
-			public Color TPSColor = new Color(0.2f, 0.9f, 0.2f, 1f);
-			[Tooltip("Average ticks per second calculated using the average elapsed time of all samples in history.")]
-			public bool OutputAverageTPSGraph = true;
-			public Color AverageTPSColor = new Color(0.4f, 0.5f, 0.2f, 1f);
-
-			public GraphPlottingConfiguration(string title, ValueAxisRangeConfiguration rangeConfiguration, GameObject context = null)
-			{
-				Title = title;
-				RangeConfiguration = rangeConfiguration;
-				Context = context;
-			}
-
-			internal Graph _Graph;
-			internal Channel[] _Channels;
-		}
-
-		public bool IsGraphPlottingEnabled => PlottingConfiguration != null;
-		private GraphPlottingConfiguration PlottingConfiguration;
-
-		public void EnableGraphPlotting(GraphPlottingConfiguration configuration)
+		public void EnableGraphPlotting(TickPlotter plotter)
 		{
 			// Deinitialize previous plotting first.
 			DisableGraphPlotting();
 
-			PlottingConfiguration = configuration;
+			Plotter = plotter;
 
-			Graph.SetupGraphWithXYChannels(true, ref PlottingConfiguration._Graph, PlottingConfiguration.Title, PlottingConfiguration.Context,
-				PlottingConfiguration.RangeConfiguration, ref PlottingConfiguration._Channels, true, true,
-				"TPS", "Average TPS", PlottingConfiguration.TPSColor, PlottingConfiguration.AverageTPSColor);
+			Graph.SetupGraphWithXYChannels(true, ref Plotter._Graph, Plotter.Title, Plotter.Context,
+				Plotter.RangeConfiguration, ref Plotter._Channels, true, true,
+				"TPS", "Average TPS", Plotter.TPSColor, Plotter.AverageTPSColor);
 		}
 
 		private void DisableGraphPlotting()
 		{
 			if (IsGraphPlottingEnabled)
 			{
-				Graph.SafeClose(ref PlottingConfiguration._Graph);
+				Graph.SafeClose(ref Plotter._Graph);
 			}
 
-			PlottingConfiguration = null;
+			Plotter = null;
 		}
 
 		private void OutputToGraph()
 		{
-			var configuration = PlottingConfiguration;
-			if (configuration == null)
+			if (Plotter == null)
 				return;
 
-			if (configuration.OutputTPSGraph)
+			if (Plotter.OutputTPSGraph)
 			{
-				configuration._Channels[0].Sample(TicksPerSecond, (float)CurrentPeriodStartTime, Time.frameCount);
+				Plotter._Channels[0].Sample(TicksPerSecond, (float)CurrentPeriodStartTime, Time.frameCount);
 			}
-			if (configuration.OutputAverageTPSGraph)
+			if (Plotter.OutputAverageTPSGraph)
 			{
-				configuration._Channels[1].Sample((float)(1.0 / ElapsedTimes.Mean), (float)CurrentPeriodStartTime, Time.frameCount);
+				Plotter._Channels[1].Sample((float)(1.0 / ElapsedTimes.Mean), (float)CurrentPeriodStartTime, Time.frameCount);
 			}
 		}
 
