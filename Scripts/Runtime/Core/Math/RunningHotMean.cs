@@ -9,8 +9,8 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		/// CAUTION! Use it as readonly, do not modify. Use 'Push' and 'Clear' instead.
 		/// </summary>
-		public CircularArray<double> Values;
-		public int ValueCount { get { return Values.Count; } }
+		public readonly CircularArray<double> Values;
+		public int ValueCount => Values.Count;
 
 		private bool IsInvalidated;
 
@@ -63,8 +63,8 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		/// CAUTION! Use it as readonly, do not modify. Use 'Push' and 'Clear' instead.
 		/// </summary>
-		public CircularArray<float> Values;
-		public int ValueCount { get { return Values.Count; } }
+		public readonly CircularArray<float> Values;
+		public int ValueCount => Values.Count;
 
 		private bool IsInvalidated;
 
@@ -117,8 +117,8 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		/// CAUTION! Use it as readonly, do not modify. Use 'Push' and 'Clear' instead.
 		/// </summary>
-		public CircularArray<Int32> Values;
-		public int ValueCount { get { return Values.Count; } }
+		public readonly CircularArray<Int32> Values;
+		public int ValueCount => Values.Count;
 
 		private bool IsInvalidated;
 
