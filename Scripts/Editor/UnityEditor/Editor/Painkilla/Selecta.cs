@@ -10,17 +10,18 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Selecta",
+			MinimumWindowSize = new Vector2(200f, 50f),
+		};
 
 		#endregion
 
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("Selecta", null);
-			minSize = MinimumWindowSize;
-
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			//SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged -= SelectionChanged;

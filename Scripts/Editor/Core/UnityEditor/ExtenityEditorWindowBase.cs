@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Extenity.MathToolbox;
+using UnityEngine;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -6,6 +7,57 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 	public abstract class ExtenityEditorWindowBase : EditorWindow
 	{
+		#region Configuration
+
+		public struct WindowSpecifications
+		{
+			public string Title;
+			public Texture2D Icon;
+
+			public Vector2 MinimumWindowSize;
+			public Vector2 MaximumWindowSize;
+
+			public bool EnableRightMouseButtonScrolling;
+
+			public bool WantsMouseMove;
+			public bool WantsMouseEnterLeaveWindow;
+			
+			public bool AutoRepaintOnSceneChange;
+		}
+
+		protected abstract WindowSpecifications Specifications { get; }
+
+		#endregion
+
+		#region Initialization
+
+		protected virtual void OnEnableDerived() { }
+
+		protected void OnEnable()
+		{
+			var specs = Specifications;
+
+			SetTitleAndIcon(specs.Title, specs.Icon);
+
+			if (specs.MinimumWindowSize.IsAnyNonZero())
+				minSize = specs.MinimumWindowSize;
+			if (specs.MaximumWindowSize.IsAnyNonZero())
+				maxSize = specs.MaximumWindowSize;
+
+			IsRightMouseButtonScrollingEnabled = specs.EnableRightMouseButtonScrolling;
+
+			if (wantsMouseMove != specs.WantsMouseMove)
+				wantsMouseMove = specs.WantsMouseMove;
+			if (wantsMouseEnterLeaveWindow != specs.WantsMouseEnterLeaveWindow)
+				wantsMouseEnterLeaveWindow = specs.WantsMouseEnterLeaveWindow;
+			if (autoRepaintOnSceneChange != specs.AutoRepaintOnSceneChange)
+				autoRepaintOnSceneChange = specs.AutoRepaintOnSceneChange;
+
+			OnEnableDerived();
+		}
+
+		#endregion
+
 		#region OnGUI
 
 		protected abstract void OnGUIDerived();

@@ -14,7 +14,12 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Snappa",
+			Icon = SnappaIcons.Texture_ArrowStraight,
+			MinimumWindowSize = new Vector2(200f, 50f),
+		};
 
 		private const float GizmoSize = 1f;
 		private const float SpeedModifierFactor = 5f;
@@ -70,11 +75,8 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("Snappa", SnappaIcons.Texture_ArrowStraight);
-			minSize = MinimumWindowSize;
-
 			InitializeKeyboard();
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;

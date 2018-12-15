@@ -10,6 +10,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 	[InitializeOnLoad]
 	public class SceneSwitcherOnPlay : ExtenityEditorWindowBase
 	{
+		#region Configuration
+
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Scene Switcher",
+		};
+
+		#endregion
+
 		#region Initialization
 
 		static SceneSwitcherOnPlay()
@@ -26,8 +35,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void Awake()
 		{
-			SetTitleAndIcon("Scene Switcher", null);
-
 			InitializeAPICallPrevention();
 		}
 

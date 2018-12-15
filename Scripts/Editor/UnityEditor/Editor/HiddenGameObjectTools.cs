@@ -15,19 +15,18 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private const float StringMatcherTolerance = 0.8f;
 
-		#endregion
-
-		#region Initialization
-
-		#endregion
-
-		#region Initialization
-
-		private void OnEnable()
+		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			SetTitleAndIcon("Hidden GOs", null);
+			Title = "Hidden GOs",
+			EnableRightMouseButtonScrolling = true,
+		};
 
-			IsRightMouseButtonScrollingEnabled = true;
+		#endregion
+
+		#region Initialization
+
+		protected override void OnEnableDerived()
+		{
 			GatherHiddenObjects();
 		}
 

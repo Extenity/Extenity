@@ -16,17 +16,18 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "UI Optimizza",
+			MinimumWindowSize = new Vector2(200f, 50f),
+		};
 
 		#endregion
 
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("UI Optimizza", null);
-			minSize = MinimumWindowSize;
-
 			//ReplaceAsPrefabProperty = serializedObject.FindProperty("ReplaceAsPrefab");
 
 			//Selection.selectionChanged -= OnSelectionChanged;

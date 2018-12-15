@@ -9,17 +9,18 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Replacea",
+			MinimumWindowSize = new Vector2(200f, 50f),
+		};
 
 		#endregion
 
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("Replacea", null);
-			minSize = MinimumWindowSize;
-
 			/*
 			ReplaceWithObjectProperty = serializedObject.FindProperty("_ReplaceWithObject");
 			ReplaceAsPrefabProperty = serializedObject.FindProperty("_ReplaceAsPrefab");

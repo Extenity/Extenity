@@ -10,12 +10,19 @@ namespace Extenity.DLLBuilder
 
 	public class DLLBuilderWindow : ExtenityEditorWindowBase
 	{
+		#region Configuration
+
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "DLL Builder",
+		};
+
+		#endregion
+
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("DLL Builder", null);
-
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 			InitializeStatusMessage();
 

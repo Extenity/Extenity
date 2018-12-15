@@ -27,17 +27,15 @@ namespace Extenity.PainkillaTool.Editor
 		private const string IgnoreInspectionText = "Ignored by Code Correct";
 		private const string TestScriptFileNamePrefix = "Test_";
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(500f, 60f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Code Correct",
+			MinimumWindowSize = new Vector2(500f, 60f),
+		};
 
 		#endregion
 
 		#region Initialization
-
-		private void OnEnable()
-		{
-			SetTitleAndIcon("Code Correct", null);
-			minSize = MinimumWindowSize;
-		}
 
 		[MenuItem("Tools/Code Correct")]
 		private static void ToggleWindow()

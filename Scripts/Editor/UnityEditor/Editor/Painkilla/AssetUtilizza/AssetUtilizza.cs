@@ -16,17 +16,18 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		private static readonly Vector2 MinimumWindowSize = new Vector2(200f, 50f);
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Asset Utilizza",
+			MinimumWindowSize = new Vector2(200f, 50f),
+		};
 
 		#endregion
 
 		#region Initialization
 
-		private void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			SetTitleAndIcon("Asset Utilizza", null);
-			minSize = MinimumWindowSize;
-
 			OnEnableTreeView();
 
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;

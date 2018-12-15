@@ -8,9 +8,16 @@ using UnityEngine;
 namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 {
 
-	public class GraphPlotterWindow : EditorWindow
+	public class GraphPlotterWindow : ExtenityEditorWindowBase
 	{
 		#region Configuration
+
+		protected override WindowSpecifications Specifications => new WindowSpecifications
+		{
+			Title = "Graph Plotter",
+			WantsMouseMove = true,
+			WantsMouseEnterLeaveWindow = true,
+		};
 
 		private static class EditorSettings
 		{
@@ -173,11 +180,8 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 		#region Initialization
 
-		protected void OnEnable()
+		protected override void OnEnableDerived()
 		{
-			titleContent = new GUIContent("Graph Plotter");
-			wantsMouseMove = true;
-
 			LoadSettings();
 
 			CreateStyles();
@@ -202,7 +206,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 		#region GUI
 
-		protected void OnGUI()
+		protected override void OnGUIDerived()
 		{
 			// Make sure content color is sane.
 			GUI.contentColor = Color.white;
