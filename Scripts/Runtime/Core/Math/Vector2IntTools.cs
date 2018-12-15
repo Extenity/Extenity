@@ -178,11 +178,9 @@ namespace Extenity.MathToolbox
 				var split = valueString.Split(separator);
 				if (split.Length == 2)
 				{
-					int x;
-					if (int.TryParse(split[0], out x))
+					if (int.TryParse(split[0], out var x))
 					{
-						int y;
-						if (int.TryParse(split[1], out y))
+						if (int.TryParse(split[1], out var y))
 						{
 							result = new Vector2Int(x, y);
 							return true;
@@ -207,9 +205,7 @@ namespace Extenity.MathToolbox
 				string[] parts = text.Split(' ');
 				if (parts.Length == 2)
 				{
-					int x;
-					int y;
-					if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
+					if (int.TryParse(parts[0], out var x) && int.TryParse(parts[1], out var y))
 					{
 						return new Vector2Int(x, y);
 					}
@@ -221,11 +217,9 @@ namespace Extenity.MathToolbox
 		public static bool TryParse(string text, out Vector2Int value)
 		{
 			string[] parts = text.Split(' ');
-			int x;
-			if (int.TryParse(parts[0], out x))
+			if (int.TryParse(parts[0], out var x))
 			{
-				int y;
-				if (int.TryParse(parts[1], out y))
+				if (int.TryParse(parts[1], out var y))
 				{
 					value = new Vector2Int(x, y);
 					return true;

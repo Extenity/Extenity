@@ -56,8 +56,7 @@ namespace Extenity.UIToolbox
 
 		private void OnInputFieldEndEdit(string value)
 		{
-			float valueFloat;
-			if (float.TryParse(value, out valueFloat))
+			if (float.TryParse(value, out var valueFloat))
 			{
 				if (!Slider.value.IsAlmostEqual(valueFloat))
 				{

@@ -74,9 +74,7 @@ namespace Extenity.UnityEditorToolbox
 			bool enabled = false;
 			bool compareValues;
 
-			Type declaringType;
-			object declaringObject;
-			propertyWithAttribute.GetDeclaringTypeAndObject(out declaringType, out declaringObject);
+			propertyWithAttribute.GetDeclaringTypeAndObject(out var declaringType, out var declaringObject);
 
 			// See if this is a 'Field'
 			var targetFieldInfo = declaringType.GetField(attribute.FieldPropertyMethodName, bindingFlags);

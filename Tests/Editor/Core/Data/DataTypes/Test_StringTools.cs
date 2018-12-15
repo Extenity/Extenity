@@ -209,7 +209,6 @@ namespace ExtenityTests.DataToolbox
 
 		private static void TestValue_ReplaceBetweenAll(string text, string startTag, string endTag, List<KeyValue<string, string>> list, bool keepTags, bool skipTagsInReplacedText, string expectedResult)
 		{
-			string result;
 			text.ReplaceBetweenAll(startTag, endTag,
 				key =>
 				{
@@ -222,7 +221,7 @@ namespace ExtenityTests.DataToolbox
 				},
 				keepTags,
 				skipTagsInReplacedText,
-				out result
+				out var result
 			);
 			Assert.AreEqual(expectedResult, result);
 		}
@@ -741,10 +740,8 @@ namespace ExtenityTests.DataToolbox
 		private static void TestValue_ToStringAsCharArray_Int32(Int32 value)
 		{
 			var chars = new char[10 + 1];
-			int startIndex;
-			int length;
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, out startIndex, out length);
+			value.ToStringAsCharArray(chars, out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
 			var original = value.ToString();
@@ -755,10 +752,8 @@ namespace ExtenityTests.DataToolbox
 		private static void TestValue_ToStringAsCharArray_Int64(Int64 value)
 		{
 			var chars = new char[19 + 1];
-			int startIndex;
-			int length;
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, out startIndex, out length);
+			value.ToStringAsCharArray(chars, out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
 			var original = value.ToString();
@@ -769,10 +764,8 @@ namespace ExtenityTests.DataToolbox
 		private static void TestValue_ToStringAsCharArray_WithThousandsSeparator_Int32(Int32 value)
 		{
 			var chars = new char[10 + 1 + 3];
-			int startIndex;
-			int length;
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, ',', out startIndex, out length);
+			value.ToStringAsCharArray(chars, ',', out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
 			var original = value.ToString("N0");
@@ -783,10 +776,8 @@ namespace ExtenityTests.DataToolbox
 		private static void TestValue_ToStringAsCharArray_WithThousandsSeparator_Int64(Int64 value)
 		{
 			var chars = new char[19 + 1 + 6];
-			int startIndex;
-			int length;
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, ',', out startIndex, out length);
+			value.ToStringAsCharArray(chars, ',', out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
 			var original = value.ToString("N0");

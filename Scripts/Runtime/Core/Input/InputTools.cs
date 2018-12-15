@@ -100,16 +100,14 @@ namespace Extenity.InputToolbox
 			Ray mouseRay = Camera.main.ScreenPointToRay(screenPoint);
 			Plane groundPlane = new Plane(Vector3.up, 0f);
 
-			float distance;
-			groundPlane.Raycast(mouseRay, out distance);
+			groundPlane.Raycast(mouseRay, out var distance);
 
 			return mouseRay.origin + mouseRay.direction * distance;
 		}
 
 		public static GameObject PickObjectWithMouse()
 		{
-			RaycastHit hitObject;
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitObject, Mathf.Infinity))
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitObject, Mathf.Infinity))
 			{
 				return hitObject.collider.gameObject;
 			}

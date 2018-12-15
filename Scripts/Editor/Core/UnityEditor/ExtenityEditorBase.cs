@@ -460,14 +460,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (GUIProfilingTickAnalyzer == null)
 				GUIProfilingTickAnalyzer = new Dictionary<EventType, TickAnalyzer>();
 
-			RunningHotMeanFloat runningMean;
-			if (!GUIProfilingTimes_ProcessBuffer.TryGetValue(currentEventType, out runningMean))
+			if (!GUIProfilingTimes_ProcessBuffer.TryGetValue(currentEventType, out var runningMean))
 			{
 				runningMean = new RunningHotMeanFloat(10);
 				GUIProfilingTimes_ProcessBuffer.Add(currentEventType, runningMean);
 			}
-			TickAnalyzer tickAnalyzer;
-			if (!GUIProfilingTickAnalyzer.TryGetValue(currentEventType, out tickAnalyzer))
+
+			if (!GUIProfilingTickAnalyzer.TryGetValue(currentEventType, out var tickAnalyzer))
 			{
 				tickAnalyzer = new TickAnalyzer();
 				tickAnalyzer.Reset(now);
@@ -660,8 +659,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static Type FindExtenityInspectorType(this Type type)
 		{
 			InitializeExtenityEditorTypesDictionaryIfNecessary();
-			Type inspectorType;
-			ExtenityEditorTypes.TryGetValue(type, out inspectorType);
+			ExtenityEditorTypes.TryGetValue(type, out var inspectorType);
 			return inspectorType;
 		}
 

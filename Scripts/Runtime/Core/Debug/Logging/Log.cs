@@ -202,8 +202,7 @@ public static class Log
 		if (message == null)
 			return CurrentIndentationString + "[NullStr]";
 
-		string prefix;
-		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out var prefix))
 		{
 			return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndingsCRLF();
 		}
@@ -226,8 +225,7 @@ public static class Log
 		if (exception == null)
 			return CurrentIndentationString + "[NullExc]";
 
-		string prefix;
-		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out prefix))
+		if (obj != null && RegisteredPrefixes.TryGetValue(obj.GetInstanceID(), out var prefix))
 		{
 			return CurrentIndentationString + prefix + PrefixSeparator + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
 		}

@@ -118,8 +118,7 @@ namespace Extenity.UIToolbox
 		/// </summary>
 		public static void Calculate2DLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, bool radial, ref Vector2 normalizedLeverPosition)
 		{
-			Vector2 position;
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var position))
 			{
 				var dragAreaSize = dragAreaTransform.sizeDelta;
 
@@ -150,8 +149,7 @@ namespace Extenity.UIToolbox
 		/// </summary>
 		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
 		{
-			Vector2 position;
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var position))
 			{
 				var dragAreaSize = dragAreaTransform.sizeDelta.x;
 
@@ -171,8 +169,7 @@ namespace Extenity.UIToolbox
 			Vector2 position;
 			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(hitAreaTransform, eventData.position, eventData.pressEventCamera, out position))
 			{
-				Vector2 positionInDragArea;
-				RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out positionInDragArea);
+				RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var positionInDragArea);
 
 				var dragAreaSize = dragAreaTransform.sizeDelta.x;
 

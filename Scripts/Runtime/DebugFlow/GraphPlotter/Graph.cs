@@ -206,9 +206,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 			for (var i = 0; i < Channels.Count; i++)
 			{
-				float entryMin;
-				float entryMax;
-				Channels[i].GetMinMaxTime(out entryMin, out entryMax);
+				Channels[i].GetMinMaxTime(out var entryMin, out var entryMax);
 
 				if (minTime > entryMin)
 					minTime = entryMin;
@@ -223,8 +221,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 			for (var i = 0; i < Channels.Count; i++)
 			{
-				float channelMin, channelMax;
-				Channels[i].GetValueRangeInTimeWindow(timeStart, timeEnd, out channelMin, out channelMax);
+				Channels[i].GetValueRangeInTimeWindow(timeStart, timeEnd, out var channelMin, out var channelMax);
 				if (min > channelMin)
 					min = channelMin;
 				if (max < channelMax)

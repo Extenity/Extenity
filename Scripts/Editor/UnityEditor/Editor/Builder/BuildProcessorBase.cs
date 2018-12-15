@@ -101,8 +101,7 @@ namespace Extenity.UnityEditorToolbox
 				}
 
 				// Get process configuration
-				BuildProcessConfiguration configuration;
-				if (!Configurations.TryGetValue(configurationName, out configuration))
+				if (!Configurations.TryGetValue(configurationName, out var configuration))
 				{
 					throw new Exception($"Configuration '{configurationName}' does not exist.");
 				}

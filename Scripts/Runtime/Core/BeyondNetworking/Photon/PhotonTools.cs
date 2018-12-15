@@ -190,8 +190,7 @@ namespace BeyondNetworking
 					value = int.MinValue;
 					return false;
 				}
-				short valueShort;
-				Protocol.Deserialize(out valueShort, _Buffer, ref index);
+				Protocol.Deserialize(out short valueShort, _Buffer, ref index);
 				value = valueShort;
 				return true;
 			}
@@ -208,8 +207,8 @@ namespace BeyondNetworking
 					value = default(bool);
 					return false;
 				}
-				short valueAsShort; // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
-				Protocol.Deserialize(out valueAsShort, _Buffer, ref index);
+				// TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
+				Protocol.Deserialize(out short valueAsShort, _Buffer, ref index);
 				value = valueAsShort != 0;
 				return true;
 			}
@@ -226,12 +225,9 @@ namespace BeyondNetworking
 					value = Vector3Tools.NaN;
 					return false;
 				}
-				float valueX;
-				float valueY;
-				float valueZ;
-				Protocol.Deserialize(out valueX, _Buffer, ref index);
-				Protocol.Deserialize(out valueY, _Buffer, ref index);
-				Protocol.Deserialize(out valueZ, _Buffer, ref index);
+				Protocol.Deserialize(out float valueX, _Buffer, ref index);
+				Protocol.Deserialize(out float valueY, _Buffer, ref index);
+				Protocol.Deserialize(out float valueZ, _Buffer, ref index);
 				value = new Vector3(valueX, valueY, valueZ);
 				return true;
 			}
@@ -248,14 +244,10 @@ namespace BeyondNetworking
 					value = QuaternionTools.NaN;
 					return false;
 				}
-				float valueX;
-				float valueY;
-				float valueZ;
-				float valueW;
-				Protocol.Deserialize(out valueX, _Buffer, ref index);
-				Protocol.Deserialize(out valueY, _Buffer, ref index);
-				Protocol.Deserialize(out valueZ, _Buffer, ref index);
-				Protocol.Deserialize(out valueW, _Buffer, ref index);
+				Protocol.Deserialize(out float valueX, _Buffer, ref index);
+				Protocol.Deserialize(out float valueY, _Buffer, ref index);
+				Protocol.Deserialize(out float valueZ, _Buffer, ref index);
+				Protocol.Deserialize(out float valueW, _Buffer, ref index);
 				value = new Quaternion(valueX, valueY, valueZ, valueW);
 				return true;
 			}

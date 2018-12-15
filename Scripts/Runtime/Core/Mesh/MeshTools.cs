@@ -509,8 +509,7 @@ namespace Extenity.MeshToolbox
 			for (int i = 0; i < submeshTriangles.Length; i++)
 			{
 				var index = submeshTriangles[i];
-				int newIndex;
-				if (!indexMap.TryGetValue(index, out newIndex))
+				if (!indexMap.TryGetValue(index, out var newIndex))
 				{
 					newIndex = resultingData.Append(sourceData, index);
 					indexMap.Add(index, newIndex);

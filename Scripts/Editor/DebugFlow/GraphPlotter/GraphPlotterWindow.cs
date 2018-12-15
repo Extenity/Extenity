@@ -757,8 +757,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 					var maxTime = LatestTimeOfFilteredGraphs;
 					foreach (var graph in FilteredGraphs)
 					{
-						float graphMinTime, graphMaxTime;
-						graph.GetMinMaxTime(out graphMinTime, out graphMaxTime);
+						graph.GetMinMaxTime(out var graphMinTime, out var graphMaxTime);
 						if (minTime > graphMinTime)
 							minTime = graphMinTime;
 						if (maxTime < graphMaxTime)

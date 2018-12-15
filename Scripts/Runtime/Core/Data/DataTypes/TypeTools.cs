@@ -384,8 +384,7 @@ namespace Extenity.DataToolbox
 			if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
 			{
 				// Try to get it from cache
-				object defaultValue;
-				if (DefaultValues.TryGetValue(type, out defaultValue))
+				if (DefaultValues.TryGetValue(type, out var defaultValue))
 					return defaultValue;
 
 				defaultValue = Activator.CreateInstance(type);
@@ -439,10 +438,8 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static FieldInfo[] GetPublicAndPrivateInstanceFields(this Type type)
 		{
-			FieldInfo[] fields;
-
 			// Try to get it from cache
-			if (PublicAndPrivateInstanceFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			if (PublicAndPrivateInstanceFieldsIncludingBaseTypes.TryGetValue(type, out var fields))
 			{
 				LogCTG("Getting field info from cache for '{0}' with fields ({1}): \n{2}", type, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -492,10 +489,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo GetPublicAndPrivateInstanceFieldByName(this Type type, string fieldName)
 		{
 			var key = new KeyValuePair<Type, string>(type, fieldName);
-			FieldInfo field;
 
 			// Try to get it from cache
-			if (PublicAndPrivateInstanceFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			if (PublicAndPrivateInstanceFieldsByNameIncludingBaseTypes.TryGetValue(key, out var field))
 			{
 				LogCTG("Getting field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
 				return field;
@@ -542,10 +538,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo[] GetPublicAndPrivateInstanceFieldsOfType(this Type type, Type fieldType)
 		{
 			var key = new KeyValuePair<Type, Type>(type, fieldType);
-			FieldInfo[] fields;
 
 			// Try to get it from cache
-			if (PublicAndPrivateInstanceFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out fields))
+			if (PublicAndPrivateInstanceFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out var fields))
 			{
 				LogCTG("Getting field info from cache for '{0}' and field type '{1}' with fields ({2}): \n{3}", type, fieldType, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -588,11 +583,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetPublicAndPrivateInstanceFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			if (PublicAndPrivateInstanceFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithAttributes))
 			{
 				LogCTG("Getting field-with-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithAttributes.Length, fieldsWithAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithAttributes;
@@ -623,11 +616,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetPublicAndPrivateInstanceFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			if (PublicAndPrivateInstanceFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithoutAttributes))
 			{
 				LogCTG("Getting field-without-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithoutAttributes.Length, fieldsWithoutAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithoutAttributes;
@@ -669,10 +660,8 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static PropertyInfo[] GetPublicAndPrivateInstanceProperties(this Type type)
 		{
-			PropertyInfo[] properties;
-
 			// Try to get it from cache
-			if (PublicAndPrivateInstancePropertiesIncludingBaseTypes.TryGetValue(type, out properties))
+			if (PublicAndPrivateInstancePropertiesIncludingBaseTypes.TryGetValue(type, out var properties))
 			{
 				LogCTG("Getting property info from cache for '{0}' with properties ({1}): \n{2}", type, properties.Length, properties.Serialize('\n'));
 				return properties;
@@ -722,10 +711,9 @@ namespace Extenity.DataToolbox
 		public static PropertyInfo GetPublicAndPrivateInstancePropertyByName(this Type type, string propertyName)
 		{
 			var key = new KeyValuePair<Type, string>(type, propertyName);
-			PropertyInfo property;
 
 			// Try to get it from cache
-			if (PublicAndPrivateInstancePropertiesByNameIncludingBaseTypes.TryGetValue(key, out property))
+			if (PublicAndPrivateInstancePropertiesByNameIncludingBaseTypes.TryGetValue(key, out var property))
 			{
 				LogCTG("Getting property info from cache for '{0}' and property name '{1}' with property '{2}'", type, propertyName, property.ToString());
 				return property;
@@ -771,10 +759,9 @@ namespace Extenity.DataToolbox
 		public static PropertyInfo[] GetPublicAndPrivateInstancePropertiesOfType(this Type type, Type propertyType)
 		{
 			var key = new KeyValuePair<Type, Type>(type, propertyType);
-			PropertyInfo[] properties;
 
 			// Try to get it from cache
-			if (PublicAndPrivateInstancePropertiesOfTypeIncludingBaseTypes.TryGetValue(key, out properties))
+			if (PublicAndPrivateInstancePropertiesOfTypeIncludingBaseTypes.TryGetValue(key, out var properties))
 			{
 				LogCTG("Getting property info from cache for '{0}' and property type '{1}' with properties ({2}): \n{3}", type, propertyType, properties.Length, properties.Serialize('\n'));
 				return properties;
@@ -817,11 +804,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<PropertyInfo, Attribute[]>[] GetPublicAndPrivateInstancePropertiesWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<PropertyInfo, Attribute[]>[] propertiesWithAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (PublicAndPrivateInstancePropertiesWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out propertiesWithAttributes))
+			if (PublicAndPrivateInstancePropertiesWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var propertiesWithAttributes))
 			{
 				LogCTG("Getting property-with-attributes info from cache for '{0}' with properties ({1}): \n{2}", type, propertiesWithAttributes.Length, propertiesWithAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return propertiesWithAttributes;
@@ -852,11 +837,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<PropertyInfo, Attribute[]>[] GetPublicAndPrivateInstancePropertiesWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<PropertyInfo, Attribute[]>[] propertiesWithoutAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (PublicAndPrivateInstancePropertiesWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out propertiesWithoutAttributes))
+			if (PublicAndPrivateInstancePropertiesWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var propertiesWithoutAttributes))
 			{
 				LogCTG("Getting property-without-attributes info from cache for '{0}' with properties ({1}): \n{2}", type, propertiesWithoutAttributes.Length, propertiesWithoutAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return propertiesWithoutAttributes;
@@ -898,10 +881,8 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static FieldInfo[] GetSerializedFields(this Type type)
 		{
-			FieldInfo[] fields;
-
 			// Try to get it from cache
-			if (SerializedFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			if (SerializedFieldsIncludingBaseTypes.TryGetValue(type, out var fields))
 			{
 				LogCTG("Getting Unity-serialized field info from cache for '{0}' with fields ({1}): \n{2}", type, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -940,10 +921,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo GetSerializedFieldByName(this Type type, string fieldName)
 		{
 			var key = new KeyValuePair<Type, string>(type, fieldName);
-			FieldInfo field;
 
 			// Try to get it from cache
-			if (SerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			if (SerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out var field))
 			{
 				LogCTG("Getting Unity-serialized field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
 				return field;
@@ -982,10 +962,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo[] GetSerializedFieldsOfType(this Type type, Type fieldType)
 		{
 			var key = new KeyValuePair<Type, Type>(type, fieldType);
-			FieldInfo[] fields;
 
 			// Try to get it from cache
-			if (SerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out fields))
+			if (SerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out var fields))
 			{
 				LogCTG("Getting Unity-serialized field info from cache for '{0}' and field type '{1}' with fields ({2}): \n{3}", type, fieldType, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -1019,11 +998,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetSerializedFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (SerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			if (SerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithAttributes))
 			{
 				LogCTG("Getting Unity-serialized field-with-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithAttributes.Length, fieldsWithAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithAttributes;
@@ -1045,11 +1022,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetSerializedFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (SerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			if (SerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithoutAttributes))
 			{
 				LogCTG("Getting Unity-serialized field-without-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithoutAttributes.Length, fieldsWithoutAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithoutAttributes;
@@ -1082,10 +1057,8 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static FieldInfo[] GetNonSerializedFields(this Type type)
 		{
-			FieldInfo[] fields;
-
 			// Try to get it from cache
-			if (NonSerializedFieldsIncludingBaseTypes.TryGetValue(type, out fields))
+			if (NonSerializedFieldsIncludingBaseTypes.TryGetValue(type, out var fields))
 			{
 				LogCTG("Getting Unity-NonSerialized field info from cache for '{0}' with fields ({1}): \n{2}", type, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -1124,10 +1097,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo GetNonSerializedFieldByName(this Type type, string fieldName)
 		{
 			var key = new KeyValuePair<Type, string>(type, fieldName);
-			FieldInfo field;
 
 			// Try to get it from cache
-			if (NonSerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out field))
+			if (NonSerializedFieldsByNameIncludingBaseTypes.TryGetValue(key, out var field))
 			{
 				LogCTG("Getting Unity-NonSerialized field info from cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
 				return field;
@@ -1166,10 +1138,9 @@ namespace Extenity.DataToolbox
 		public static FieldInfo[] GetNonSerializedFieldsOfType(this Type type, Type fieldType)
 		{
 			var key = new KeyValuePair<Type, Type>(type, fieldType);
-			FieldInfo[] fields;
 
 			// Try to get it from cache
-			if (NonSerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out fields))
+			if (NonSerializedFieldsOfTypeIncludingBaseTypes.TryGetValue(key, out var fields))
 			{
 				LogCTG("Getting Unity-NonSerialized field info from cache for '{0}' and field type '{1}' with fields ({2}): \n{3}", type, fieldType, fields.Length, fields.Serialize('\n'));
 				return fields;
@@ -1203,11 +1174,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetNonSerializedFieldsWithAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (NonSerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithAttributes))
+			if (NonSerializedFieldsWithAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithAttributes))
 			{
 				LogCTG("Getting Unity-NonSerialized field-with-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithAttributes.Length, fieldsWithAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithAttributes;
@@ -1229,11 +1198,9 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static KeyValuePair<FieldInfo, Attribute[]>[] GetNonSerializedFieldsWithoutAttribute<TAttribute>(this Type type) where TAttribute : Attribute
 		{
-			KeyValuePair<FieldInfo, Attribute[]>[] fieldsWithoutAttributes;
-
 			// Try to get it from cache
 			var thisTypeAndAttributeTypeCombination = new KeyValuePair<Type, Type>(type, typeof(TAttribute));
-			if (NonSerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out fieldsWithoutAttributes))
+			if (NonSerializedFieldsWithoutAttributeIncludingBaseTypes.TryGetValue(thisTypeAndAttributeTypeCombination, out var fieldsWithoutAttributes))
 			{
 				LogCTG("Getting Unity-NonSerialized field-without-attributes info from cache for '{0}' with fields ({1}): \n{2}", type, fieldsWithoutAttributes.Length, fieldsWithoutAttributes.Serialize(item => item.Key.ToString(), '\n'));
 				return fieldsWithoutAttributes;

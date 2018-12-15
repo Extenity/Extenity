@@ -862,25 +862,19 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringAngleAxis(this Quaternion val)
 		{
-			float angle;
-			Vector3 axis;
-			val.ToAngleAxis(out angle, out axis);
+			val.ToAngleAxis(out var angle, out var axis);
 			return angle + " " + axis.x + " " + axis.y + " " + axis.z;
 		}
 
 		public static string ToStringAngleAxisDecorated(this Quaternion val)
 		{
-			float angle;
-			Vector3 axis;
-			val.ToAngleAxis(out angle, out axis);
+			val.ToAngleAxis(out var angle, out var axis);
 			return "Angle " + angle.ToString("N1") + " Axis " + axis.ToString();
 		}
 
 		public static string ToStringAngleAxisEulerDecorated(this Quaternion val, string separatorBeforeEuler = "\t")
 		{
-			float angle;
-			Vector3 axis;
-			val.ToAngleAxis(out angle, out axis);
+			val.ToAngleAxis(out var angle, out var axis);
 			return "Angle " + angle.ToString("N1") + " Axis " + axis.ToString() + separatorBeforeEuler + " Euler " + val.eulerAngles.ToString();
 		}
 

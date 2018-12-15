@@ -125,8 +125,7 @@ namespace Extenity.ProfilingToolbox
 		{
 			if (errorOnOverwrite)
 			{
-				string alreadyExistingLabel;
-				if (Labels.TryGetValue(id, out alreadyExistingLabel))
+				if (Labels.TryGetValue(id, out var alreadyExistingLabel))
 				{
 					Log.CriticalError($"Overwriting profiling label '{label}' with ID '{id}' which previously was '{alreadyExistingLabel}'.");
 				}
@@ -141,8 +140,7 @@ namespace Extenity.ProfilingToolbox
 
 		public static string GetLabelOrID(int id, bool automaticallyRegisterIfNotFound = true)
 		{
-			string label;
-			if (Labels.TryGetValue(id, out label))
+			if (Labels.TryGetValue(id, out var label))
 			{
 				return label;
 			}

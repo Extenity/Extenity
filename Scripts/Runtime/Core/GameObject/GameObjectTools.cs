@@ -1706,8 +1706,7 @@ namespace Extenity.GameObjectToolbox
 				//	UnityEngine.Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
 				//}
 
-				RaycastHit hit;
-				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask) ||
+				if (Physics.Raycast(upperRayStartPosition, direction, out var hit, stepLengthWithErrorMargin, raycastLayerMask) ||
 					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask))
 				{
 					currentPosition.y = hit.point.y + offset;
@@ -1797,12 +1796,11 @@ namespace Extenity.GameObjectToolbox
 			var negativeSideHit = false;
 			var positiveSideHitPoint = Vector3Tools.NaN;
 			var negativeSideHitPoint = Vector3Tools.NaN;
-			RaycastHit hit;
 
 			// Positive side
 			var castPosition = objectPosition + castLocalPosition;
 			castPosition.y += castDistance * castHalfLength;
-			if (Physics.Raycast(castPosition, direction, out hit, castDistance * castLength, raycastLayerMask))
+			if (Physics.Raycast(castPosition, direction, out var hit, castDistance * castLength, raycastLayerMask))
 			{
 				//UnityEngine.Debug.DrawLine(castPosition, castPosition + direction * (castDistance * castLength), Color.red);
 				//DebugToolbox.DebugDraw.Cross(hit.point, 0.05f, Color.red);
@@ -1870,8 +1868,7 @@ namespace Extenity.GameObjectToolbox
 				//Debug.DrawLine(upperRayStartPosition, upperRayStartPosition + direction * stepLength, Color.red, 1f);
 				//Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
 
-				RaycastHit hit;
-				if (Physics.Raycast(upperRayStartPosition, direction, out hit, stepLength, raycastLayerMask) ||
+				if (Physics.Raycast(upperRayStartPosition, direction, out var hit, stepLength, raycastLayerMask) ||
 					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, raycastLayerMask))
 				{
 					position.y = hit.point.y + offset;

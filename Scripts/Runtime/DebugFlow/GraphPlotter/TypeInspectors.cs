@@ -62,8 +62,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 		public ITypeInspector GetTypeInspector(Type type)
 		{
-			ITypeInspector inspector = null;
-			if (!Inspectors.TryGetValue(type, out inspector))
+			if (!Inspectors.TryGetValue(type, out var inspector))
 			{
 				inspector = new DefaultTypeInspector(type);
 				Inspectors.Add(type, inspector);
@@ -108,8 +107,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 			public Object GetValue(Object instance, string fieldName)
 			{
-				FieldInfo fieldInfo;
-				if (!nameToFieldInfo.TryGetValue(fieldName, out fieldInfo))
+				if (!nameToFieldInfo.TryGetValue(fieldName, out var fieldInfo))
 				{
 					return null;
 				}
@@ -202,8 +200,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 		private string GetPrettyName(Type type)
 		{
-			string readable;
-			if (!PrettyTypeNames.TryGetValue(type, out readable))
+			if (!PrettyTypeNames.TryGetValue(type, out var readable))
 			{
 				readable = type.Name;
 			}

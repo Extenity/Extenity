@@ -196,9 +196,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (desiredBuildTarget == DesiredBuildTarget.None)
 				return;
 
-			BuildTarget buildTarget;
-			BuildTargetGroup buildTargetGroup;
-			ConvertToBuildTarget(desiredBuildTarget, out buildTargetGroup, out buildTarget);
+			ConvertToBuildTarget(desiredBuildTarget, out var buildTargetGroup, out var buildTarget);
 
 			if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 			{

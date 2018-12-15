@@ -76,9 +76,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (me.transform != target.transform)
 				throw new Exception("Tried to check component orders between different objects.");
 
-			int indexMe;
-			int indexTarget;
-			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
 				throw new InternalException(176581); // That's odd. See 908157.
 
 			if (acceptOnlyJustAbove)
@@ -98,9 +96,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (me.transform != target.transform)
 				throw new Exception("Tried to check component orders between different objects.");
 
-			int indexMe;
-			int indexTarget;
-			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
 				throw new InternalException(276581); // That's odd. See 908157.
 
 			if (acceptOnlyJustBelow)
@@ -120,9 +116,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (me.transform != target.transform)
 				throw new Exception("Tried to relatively move components between different objects.");
 
-			int indexMe;
-			int indexTarget;
-			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
 				throw new InternalException(376581); // That's odd. See 908157.
 			int indexShouldBe = indexTarget;
 
@@ -143,9 +137,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			if (me.transform != target.transform)
 				throw new Exception("Tried to relatively move components between different objects.");
 
-			int indexMe;
-			int indexTarget;
-			if (!me.transform.FindComponentIndices(me, target, out indexMe, out indexTarget))
+			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
 				throw new InternalException(476581); // That's odd. See 908157.
 			int indexShouldBe = indexTarget + 1;
 

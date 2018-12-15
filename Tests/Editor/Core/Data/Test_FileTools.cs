@@ -580,10 +580,7 @@ namespace ExtenityTests.DataToolbox
 
 		private static void DoCheckSplitPath(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName)
 		{
-			string root;
-			string directoryWithoutRoot;
-			string fileName;
-			path.SplitPath(out root, out directoryWithoutRoot, out fileName);
+			path.SplitPath(out var root, out var directoryWithoutRoot, out var fileName);
 			Assert.AreEqual(expectedRoot, root);
 			Assert.AreEqual(expectedDirectoryWithoutRoot, directoryWithoutRoot);
 			Assert.AreEqual(expectedFileName, fileName);

@@ -428,8 +428,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static float _CalculateLabelWidth(GUIContent labelContent)
 		{
-			float labelMinWidth, labelMaxWidth;
-			TagPaneThings.TagLabelStyle.CalcMinMaxWidth(labelContent, out labelMinWidth, out labelMaxWidth);
+			TagPaneThings.TagLabelStyle.CalcMinMaxWidth(labelContent, out _, out var labelMaxWidth);
 			labelMaxWidth += 6f; // Add a couple of pixels to get rid of silly clamping at the end
 			return Mathf.Max(TagPaneThings.MinimumLabelWidth, labelMaxWidth);
 		}

@@ -1195,8 +1195,7 @@ namespace Extenity.DataToolbox
 													   TKey key)
 			where TValue : new()
 		{
-			TValue ret;
-			if (!dictionary.TryGetValue(key, out ret))
+			if (!dictionary.TryGetValue(key, out var ret))
 			{
 				ret = new TValue();
 				dictionary[key] = ret;
@@ -1219,8 +1218,7 @@ namespace Extenity.DataToolbox
 													   TKey key,
 													   Func<TValue> valueProvider)
 		{
-			TValue ret;
-			if (!dictionary.TryGetValue(key, out ret))
+			if (!dictionary.TryGetValue(key, out var ret))
 			{
 				ret = valueProvider();
 				dictionary[key] = ret;
@@ -1242,8 +1240,7 @@ namespace Extenity.DataToolbox
 													   TKey key,
 													   TValue defaultValue)
 		{
-			TValue ret;
-			if (!dictionary.TryGetValue(key, out ret))
+			if (!dictionary.TryGetValue(key, out var ret))
 			{
 				ret = defaultValue;
 				dictionary[key] = ret;
@@ -1265,8 +1262,7 @@ namespace Extenity.DataToolbox
 													   TKey key,
 													   TValue defaultValue)
 		{
-			TValue ret;
-			if (!dictionary.TryGetValue(key, out ret))
+			if (!dictionary.TryGetValue(key, out var ret))
 			{
 				return defaultValue;
 			}
@@ -1277,8 +1273,7 @@ namespace Extenity.DataToolbox
 			TKey key,
 			TValue value)
 		{
-			List<TValue> list;
-			if (!dictionary.TryGetValue(key, out list) || list == null)
+			if (!dictionary.TryGetValue(key, out var list) || list == null)
 			{
 				list = new List<TValue>();
 				dictionary.Add(key, list);
@@ -1290,8 +1285,7 @@ namespace Extenity.DataToolbox
 			TKey key,
 			int initialValue = 1)
 		{
-			int ret;
-			if (dictionary.TryGetValue(key, out ret))
+			if (dictionary.TryGetValue(key, out var ret))
 			{
 				ret++;
 				dictionary[key] = ret;
@@ -1403,11 +1397,8 @@ namespace Extenity.DataToolbox
 
 		private static bool HaveMismatchedElement(IEnumerable<T> first, IEnumerable<T> second)
 		{
-			int firstCount;
-			int secondCount;
-
-			var firstElementCounts = GetElementCounts(first, out firstCount);
-			var secondElementCounts = GetElementCounts(second, out secondCount);
+			var firstElementCounts = GetElementCounts(first, out var firstCount);
+			var secondElementCounts = GetElementCounts(second, out var secondCount);
 
 			if (firstCount != secondCount)
 				return true;
@@ -1437,8 +1428,7 @@ namespace Extenity.DataToolbox
 				}
 				else
 				{
-					int num;
-					dictionary.TryGetValue(element, out num);
+					dictionary.TryGetValue(element, out var num);
 					num++;
 					dictionary[element] = num;
 				}

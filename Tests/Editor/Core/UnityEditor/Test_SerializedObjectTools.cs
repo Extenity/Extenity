@@ -910,9 +910,7 @@ namespace ExtenityTests.UnityEditorToolbox
 
 		private static void AssertGetDeclaringTypeAndObject(string propertyPath, Type expectedType, object expectedObject)
 		{
-			Type type;
-			object obj;
-			SerializedObject.FindProperty(propertyPath).GetDeclaringTypeAndObject(out type, out obj);
+			SerializedObject.FindProperty(propertyPath).GetDeclaringTypeAndObject(out var type, out var obj);
 			Assert.AreEqual(expectedType, type, "Got wrong Declaring Type for property at path '{0}'.", propertyPath);
 			Assert.AreEqual(expectedObject, obj, "Got wrong Declaring Object for property at path '{0}'.", propertyPath);
 		}

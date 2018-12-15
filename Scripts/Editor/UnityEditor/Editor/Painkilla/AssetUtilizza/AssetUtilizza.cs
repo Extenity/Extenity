@@ -277,8 +277,7 @@ namespace Extenity.PainkillaTool.Editor
 
 				foreach (var obj in objects)
 				{
-					AssetUtilizzaElement element;
-					if (!elementsByObjects.TryGetValue(obj, out element))
+					if (!elementsByObjects.TryGetValue(obj, out var element))
 					{
 						element = new AssetUtilizzaElement(obj, scene.name);
 						elementsByObjects.Add(obj, element);

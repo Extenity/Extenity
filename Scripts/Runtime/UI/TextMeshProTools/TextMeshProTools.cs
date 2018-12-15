@@ -12,8 +12,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}
@@ -22,8 +21,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}
@@ -32,8 +30,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, thousandsSeparator, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, thousandsSeparator, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}
@@ -42,8 +39,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, thousandsSeparator, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, thousandsSeparator, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}
@@ -52,8 +48,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
 				startIndex--;
 				length++;
 				Buffer[startIndex] = prefix;
@@ -65,8 +60,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				int startIndex, length;
-				value.ToStringAsCharArray(Buffer, out startIndex, out length);
+				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
 				startIndex--;
 				length++;
 				Buffer[startIndex] = prefix;

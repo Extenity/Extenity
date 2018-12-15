@@ -455,8 +455,8 @@ namespace Extenity.BeyondAudio
 					Log.Warning($"Received 'EndOfEvent' callback for an invalid game object.", instance);
 				return;
 			}
-			GameObject gameObject;
-			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out gameObject))
+
+			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out var gameObject))
 			{
 				if (instance.EnableWarningLogging)
 					Log.Warning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.", instance);
@@ -592,9 +592,9 @@ namespace Extenity.BeyondAudio
 					Log.Info($"Tried to get RTPC with empty name.", instance);
 				return float.NaN;
 			}
-			float value;
+
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
-			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out value, ref valueType);
+			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out var value, ref valueType);
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Getting RTPC '{rtpcName}' value '{value}'.", instance);
 			return value;
@@ -611,9 +611,9 @@ namespace Extenity.BeyondAudio
 					Log.Info($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.", instance);
 				return float.NaN;
 			}
-			float value;
+
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
-			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out value, ref valueType);
+			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out var value, ref valueType);
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.", instance);
 			return value;

@@ -64,8 +64,7 @@ namespace Extenity.CryptoToolbox
 			var fileInfo = new FileInfo(filePath);
 
 			// Use cache if already calculated.
-			CachedResult cachedResult;
-			if (CachedResultsMD5.TryGetValue(filePath, out cachedResult))
+			if (CachedResultsMD5.TryGetValue(filePath, out var cachedResult))
 			{
 				if (cachedResult.CheckEquality(fileInfo))
 					return cachedResult.Hash;
@@ -114,8 +113,7 @@ namespace Extenity.CryptoToolbox
 			var fileInfo = new FileInfo(filePath);
 
 			// Use cache if already calculated.
-			CachedResult cachedResult;
-			if (CachedResultsSHA1.TryGetValue(filePath, out cachedResult))
+			if (CachedResultsSHA1.TryGetValue(filePath, out var cachedResult))
 			{
 				if (cachedResult.CheckEquality(fileInfo))
 				{
@@ -166,8 +164,7 @@ namespace Extenity.CryptoToolbox
 			var fileInfo = new FileInfo(filePath);
 
 			// Use cache if already calculated.
-			CachedResult cachedResult;
-			if (CachedResultsSHA256.TryGetValue(filePath, out cachedResult))
+			if (CachedResultsSHA256.TryGetValue(filePath, out var cachedResult))
 			{
 				if (cachedResult.CheckEquality(fileInfo))
 					return cachedResult.Hash;

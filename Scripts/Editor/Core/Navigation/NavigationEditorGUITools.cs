@@ -298,11 +298,10 @@ namespace Extenity.NavigationToolbox.Editor
 
 			if (drawStartPoint)
 			{
-				Vector3 newPosition;
 				//var position = localToWorldMatrix.MultiplyPoint(startPointGetter());
 				var position = startPointGetter();
 				var rotation = Tools.pivotRotation == PivotRotation.Local ? context.transform.rotation : Quaternion.identity;
-				if (InternalDrawCustomNavigationLinkPoint(0, context, position, out newPosition, rotation, snapToGround, snapRaycastLayerMask))
+				if (InternalDrawCustomNavigationLinkPoint(0, context, position, out var newPosition, rotation, snapToGround, snapRaycastLayerMask))
 				{
 					//startPointSetter(localToWorldMatrix.inverse.MultiplyPoint(newPosition));
 					startPointSetter(newPosition);
@@ -311,11 +310,10 @@ namespace Extenity.NavigationToolbox.Editor
 
 			if (drawEndPoint)
 			{
-				Vector3 newPosition;
 				//var position = localToWorldMatrix.MultiplyPoint(endPointGetter());
 				var position = endPointGetter();
 				var rotation = Tools.pivotRotation == PivotRotation.Local ? context.transform.rotation : Quaternion.identity;
-				if (InternalDrawCustomNavigationLinkPoint(1, context, position, out newPosition, rotation, snapToGround, snapRaycastLayerMask))
+				if (InternalDrawCustomNavigationLinkPoint(1, context, position, out var newPosition, rotation, snapToGround, snapRaycastLayerMask))
 				{
 					//endPointSetter(localToWorldMatrix.inverse.MultiplyPoint(newPosition));
 					endPointSetter(newPosition);
@@ -345,8 +343,7 @@ namespace Extenity.NavigationToolbox.Editor
 				{
 					if (snapToGround)
 					{
-						Vector3 snappedPosition;
-						if (newPosition.SnapToGround(out snappedPosition, 30f, 60, snapRaycastLayerMask, 0f))
+						if (newPosition.SnapToGround(out var snappedPosition, 30f, 60, snapRaycastLayerMask, 0f))
 						{
 							newPosition = snappedPosition;
 						}

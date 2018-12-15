@@ -96,15 +96,13 @@ namespace Extenity.MessagingToolbox
 
 		private ListenerInfo GetListenerInfo(string messageId)
 		{
-			ListenerInfo listenerInfo;
-			ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo);
+			ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo);
 			return listenerInfo;
 		}
 
 		private List<Delegate> GetDelegates(string messageId)
 		{
-			ListenerInfo listenerInfo;
-			if (ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
+			if (ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 			{
 				if (listenerInfo.IsNotEmpty)
 				{
@@ -193,9 +191,8 @@ namespace Extenity.MessagingToolbox
 				return;
 			}
 
-			ListenerInfo listenerInfo;
 			// Is this the first time we add a listener for this messageId?
-			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
+			if (!ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 			{
 				// Do the initialization for this messageId
 				{
@@ -296,8 +293,7 @@ namespace Extenity.MessagingToolbox
 			if (string.IsNullOrEmpty(messageId))
 				throw new ArgumentOutOfRangeException(nameof(messageId), "Message ID should not be empty.");
 
-			ListenerInfo listenerInfo;
-			if (!ListenerInfoDictionary.TryGetValue(messageId, out listenerInfo))
+			if (!ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 				return false;
 			if (listenerInfo.Delegates == null)
 				return false;

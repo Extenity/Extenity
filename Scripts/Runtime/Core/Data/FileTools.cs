@@ -45,10 +45,7 @@ namespace Extenity.DataToolbox
 			if (string.IsNullOrEmpty(path))
 				throw new ArgumentNullException(path);
 
-			string root;
-			string directory;
-			string fileName;
-			path.SplitPath(out root, out directory, out fileName);
+			path.SplitPath(out string root, out string directory, out string fileName);
 
 			if (string.IsNullOrEmpty(directory))
 			{
@@ -70,10 +67,7 @@ namespace Extenity.DataToolbox
 			if (string.IsNullOrEmpty(path))
 				throw new ArgumentNullException(path);
 
-			string root;
-			string directory;
-			string fileName;
-			path.SplitPath(out root, out directory, out fileName);
+			path.SplitPath(out string root, out string directory, out string fileName);
 
 			if (string.IsNullOrEmpty(directory))
 			{
@@ -102,10 +96,7 @@ namespace Extenity.DataToolbox
 			if (string.IsNullOrEmpty(path))
 				throw new ArgumentNullException(path);
 
-			string root;
-			string directory;
-			string fileName;
-			path.SplitPath(out root, out directory, out fileName);
+			path.SplitPath(out _, out string directory, out _);
 
 			var lastSeparator = directory.IndexOfEndingDirectorySeparatorChar();
 			if (lastSeparator > 0)

@@ -181,7 +181,6 @@ namespace Extenity.DLLBuilder
 
 		public static string InsertEnvironmentVariables(string text)
 		{
-			string result;
 			text.ReplaceBetweenAll(
 				EnvironmentVariableStart,
 				EnvironmentVariableEnd,
@@ -198,7 +197,7 @@ namespace Extenity.DLLBuilder
 				},
 				false,
 				false,
-				out result
+				out var result
 			);
 			return result;
 		}
