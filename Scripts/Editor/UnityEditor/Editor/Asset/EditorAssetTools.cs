@@ -196,7 +196,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 			if (shaders)
 			{
-				var list = AssetTools.GetAllShaderAssetPaths();
+				var list = AssetTools.GetAllShaderAssetPaths(true, true, true, true);
 				InternalAddToAssetList(list, fullList, "Shaders", log);
 			}
 			if (textures)

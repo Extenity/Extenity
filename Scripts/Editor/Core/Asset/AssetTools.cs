@@ -42,21 +42,40 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region GetAllAssetPaths Exluding Folders
+
+		public static List<string> GetAllAssetPathsExcludingFolders()
+		{
+			var paths = AssetDatabase.GetAllAssetPaths().ToList();
+			for (int i = 0; i < paths.Count; i++)
+			{
+				// See if this is a file, not a folder.
+				if (!File.Exists(paths[i]))
+				{
+					paths.RemoveAt(i);
+					i--;
+				}
+			}
+			return paths;
+		}
+
+		#endregion
+
 		#region Get Asset Paths
 
 		public static List<string> GetAllSceneAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".unity")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".unity")).ToList();
 		}
 
 		public static List<string> GetAllPrefabAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".prefab")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".prefab")).ToList();
 		}
 
 		public static List<string> GetAllModelAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".fbx") ||
@@ -70,7 +89,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllAnimationAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".anim") ||
@@ -82,23 +101,24 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllMaterialAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".mat")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".mat")).ToList();
 		}
 
-		public static List<string> GetAllShaderAssetPaths()
+		public static List<string> GetAllShaderAssetPaths(bool shaders, bool shaderVariants, bool shaderGraphs, bool computeShaders)
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".compute") ||
-					   lower.EndsWith(".shadervariants") ||
-					   lower.EndsWith(".shader");
+				return (computeShaders && lower.EndsWith(".compute")) ||
+					   (shaderGraphs && lower.EndsWith(".shadergraph")) ||
+					   (shaderVariants && lower.EndsWith(".shadervariants")) ||
+					   (shaders && lower.EndsWith(".shader"));
 			}).ToList();
 		}
 
 		public static List<string> GetAllTextureAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".cubemap") ||
@@ -118,27 +138,27 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllProceduralTextureAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".sbsar")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".sbsar")).ToList();
 		}
 
 		public static List<string> GetAllRenderTextureAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".renderTexture")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".renderTexture")).ToList();
 		}
 
 		public static List<string> GetAllLightmapAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".giparams")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".giparams")).ToList();
 		}
 
 		public static List<string> GetAllFlareAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item => item.ToLowerInvariant().EndsWith(".flare")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".flare")).ToList();
 		}
 
 		public static List<string> GetAllVideoAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".asf") ||
@@ -158,7 +178,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllUIAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".guiskin") ||
@@ -168,7 +188,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllAudioAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".mixer") ||
@@ -186,7 +206,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllPhysicsAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".physicMaterial") ||
@@ -196,7 +216,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllScriptAssetPaths()
 		{
-			return AssetDatabase.GetAllAssetPaths().Where(item =>
+			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".cs", StringComparison.OrdinalIgnoreCase);
