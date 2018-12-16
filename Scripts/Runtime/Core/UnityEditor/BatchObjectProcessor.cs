@@ -207,8 +207,14 @@ namespace Extenity.UnityEditorToolbox
 
 		public void OnAfterDeserialize()
 		{
-			Log.RegisterPrefix(this, "BatchObjectProcessor");
-			this.CheckConsistencyAndLog($"{nameof(BatchObjectProcessor)} has some inconsistencies.", this);
+			UnityEditor.EditorApplication.delayCall += () =>
+			{
+				if (!UnityEditor.EditorApplication.isPlaying)
+				{
+					Log.RegisterPrefix(this, "BatchObjectProcessor");
+					this.CheckConsistencyAndLog($"{nameof(BatchObjectProcessor)} has some inconsistencies.", this);
+				}
+			};
 		}
 #endif
 
