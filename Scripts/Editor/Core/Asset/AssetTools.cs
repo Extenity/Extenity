@@ -9,6 +9,7 @@ using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
+using Extenity.DebugToolbox;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
@@ -468,6 +469,52 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				throw new Exception("Unclosed multi-line comment.");
 			}
+		}
+
+		#endregion
+
+		#region Reimport All - Menu Additions
+
+		[MenuItem("Assets/Reimport All Scripts", priority = 41)] // Priority is just below the Reimport All option.
+		public static void ReimportAllScripts()
+		{
+			var paths = GetAllScriptAssetPaths().OrderByDescending(item => item).ToList();
+
+			var stopwatch = new ProfilerStopwatch();
+			stopwatch.Start();
+			{
+				Log.Info($"Reimporting {paths.Count} scripts.");
+				AssetDatabase.StartAssetEditing();
+				for (var i = 0; i < paths.Count; i++)
+				{
+					AssetDatabase.ImportAsset(paths[i], ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.DontDownloadFromCacheServer);
+				}
+				AssetDatabase.StopAssetEditing();
+			}
+			stopwatch.EndAndLog("import Took '{0}'");
+
+			stopwatch = new ProfilerStopwatch();
+			stopwatch.Start();
+			{
+				AssetDatabase.Refresh();
+			}
+			stopwatch.EndAndLog("refresh Took '{0}'");
+
+			Log.Info("Done.");
+		}
+
+		[MenuItem("Assets/Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
+		public static void ReimportAllShaders()
+		{
+			var paths = GetAllShaderAssetPaths(true, true, true, true).OrderByDescending(item => item).ToList();
+			AssetDatabase.StartAssetEditing();
+			foreach (var path in paths)
+			{
+				AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+			}
+			AssetDatabase.StopAssetEditing();
+			AssetDatabase.Refresh();
+			Log.Info("Done.");
 		}
 
 		#endregion
