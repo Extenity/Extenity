@@ -38,7 +38,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			InitializeAPICallPrevention();
 		}
 
-		[MenuItem("Edit/Scene Switcher on Play", priority = 140)] // Priority is just above the Play option.
+		[MenuItem("Edit/Scene Switcher on Play", priority = 159)] // Priority is just above the Play option.
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<SceneSwitcherOnPlay>();
