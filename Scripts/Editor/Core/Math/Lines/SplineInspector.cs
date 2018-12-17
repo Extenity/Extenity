@@ -50,7 +50,7 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// Invalidate
-			Me.InvalidateRawLine();
+			InvalidatePoints();
 		}
 
 		protected override void OnAfterDefaultInspectorGUI()
@@ -92,7 +92,7 @@ namespace Extenity.MathToolbox.Editor
 				{
 					Undo.RecordObject(Me, "Paste data");
 					PasteClipboard();
-					Me.InvalidateRawLine();
+					InvalidatePoints();
 				}
 			}
 
@@ -108,7 +108,7 @@ namespace Extenity.MathToolbox.Editor
 				}
 				if (GUILayout.Button("Invalidate", BigButtonHeight))
 				{
-					Me.InvalidateRawLine();
+					InvalidatePoints();
 				}
 			}
 
@@ -312,7 +312,7 @@ namespace Extenity.MathToolbox.Editor
 				{
 					EditorUtility.SetDirty(target);
 					// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
-					Me.InvalidateRawLine();
+					InvalidatePoints();
 				}
 			}
 		}
@@ -320,6 +320,11 @@ namespace Extenity.MathToolbox.Editor
 		#region Data
 
 		private List<Vector3> Points => Me.RawPoints;
+
+		private void InvalidatePoints()
+		{
+			Me.InvalidateRawLine();
+		}
 
 		#endregion
 

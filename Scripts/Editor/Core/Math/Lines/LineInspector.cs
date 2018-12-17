@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using UnityEngine;
@@ -7,7 +8,6 @@ using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
-using System.Collections.Generic;
 
 namespace Extenity.MathToolbox.Editor
 {
@@ -50,7 +50,7 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// Invalidate
-			Me.Invalidate();
+			InvalidatePoints();
 		}
 
 		protected override void OnAfterDefaultInspectorGUI()
@@ -92,7 +92,7 @@ namespace Extenity.MathToolbox.Editor
 				{
 					Undo.RecordObject(Me, "Paste data");
 					PasteClipboard();
-					Me.Invalidate();
+					InvalidatePoints();
 				}
 			}
 
@@ -108,7 +108,7 @@ namespace Extenity.MathToolbox.Editor
 				}
 				if (GUILayout.Button("Invalidate", BigButtonHeight))
 				{
-					Me.Invalidate();
+					InvalidatePoints();
 				}
 			}
 
@@ -312,7 +312,7 @@ namespace Extenity.MathToolbox.Editor
 				{
 					EditorUtility.SetDirty(target);
 					// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
-					Me.Invalidate();
+					InvalidatePoints();
 				}
 			}
 		}
@@ -320,6 +320,11 @@ namespace Extenity.MathToolbox.Editor
 		#region Data
 
 		private List<Vector3> Points => Me.Points;
+
+		private void InvalidatePoints()
+		{
+			Me.Invalidate();
+		}
 
 		#endregion
 
