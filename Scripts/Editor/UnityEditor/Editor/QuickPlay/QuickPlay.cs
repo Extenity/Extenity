@@ -1,8 +1,11 @@
-﻿using Extenity.ApplicationToolbox;
+﻿using System;
+using Extenity.ApplicationToolbox;
 using UnityEditor;
+using UnityEditor.Callbacks;
 
-namespace Extenity.AssetToolbox.Editor
+namespace Extenity.UnityEditorToolbox.Editor
 {
+
 
 	[InitializeOnLoad]
 	public static class QuickPlay
@@ -16,23 +19,73 @@ namespace Extenity.AssetToolbox.Editor
 			AsyncKeyCodes.X,
 		};
 
+		public static readonly QuickPlayCommand[] Commands =
+		{
+			new QuickPlayCommand_ClearConsole(),
+			new QuickPlayCommand_StopPlaying(),
+			new QuickPlayCommand_RefreshAssetDatabase(),
+			new QuickPlayCommand_StartPlaying(),
+		};
+
 		#endregion
 
 		#region Initialization
 
 		static QuickPlay()
 		{
+			InitializeAndCheckPostponedCommands();
+		}
+
+		[DidReloadScripts]
+		private static void InitializeAndCheckPostponedCommands()
+		{
+			// Mark it as currently processing at the start of everything, until proven otherwise.
+			// It will be set to false below, if there is no postponed process detected.
+			IsProcessing = true;
+
+			// Register to editor updates for detecting global shortcut keys.
+			EditorApplication.update -= DetectGlobalShortcutKeyPress;
 			EditorApplication.update += DetectGlobalShortcutKeyPress;
+
+			// See if there is a postponed command, which should be continued after assembly reload.
+			{
+				int continueFromCommand = -1;
+				for (var i = 0; i < Commands.Length; i++)
+				{
+					var command = Commands[i];
+					if (command.CheckAfterAssemblyReload())
+					{
+						continueFromCommand = i;
+						break;
+					}
+				}
+
+				if (continueFromCommand < 0)
+				{
+					IsProcessing = false;
+				}
+				else
+				{
+					IsProcessing = true;
+					EditorApplication.delayCall += () =>
+					{
+						Process(continueFromCommand);
+					};
+				}
+			}
 		}
 
 		#endregion
 
 		#region Global Shortcut Key Press
 
-		private static bool IsPressing = true;
+		private static bool IsKeyCombinationDown = true;
 
 		private static void DetectGlobalShortcutKeyPress()
 		{
+			if (IsProcessing)
+				return;
+
 			var currentlyPressing = true;
 			for (var i = 0; i < ShortcutKeyCombination.Length; i++)
 			{
@@ -45,15 +98,15 @@ namespace Extenity.AssetToolbox.Editor
 
 			if (currentlyPressing)
 			{
-				if (!IsPressing) // Prevent calling refresh multiple times before user releases the keys
+				if (!IsKeyCombinationDown) // Prevent calling refresh multiple times before user releases the keys
 				{
-					IsPressing = true;
-					Process();
+					IsKeyCombinationDown = true;
+					Process(-1);
 				}
 			}
 			else
 			{
-				IsPressing = false;
+				IsKeyCombinationDown = false;
 			}
 		}
 
@@ -61,28 +114,51 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Process
 
-		private static void Process()
+		private static bool IsProcessing;
+
+		private static void Process(int continueFromCommand)
 		{
-			Log.Info("QuickPlay triggered.");
-			Command_StopPlaying();
-			Command_RefreshAssetDatabase();
-		}
+			IsProcessing = true;
 
-		#endregion
+			Log.Info("QuickPlay triggered." + (continueFromCommand >= 0 ? $" Continuing from command '{Commands[continueFromCommand].PrettyName}'." : ""));
 
-		#region Commands
-
-		private static void Command_StopPlaying()
-		{
-			if (EditorApplication.isPlaying)
+			if (continueFromCommand < 0)
 			{
-				EditorApplication.isPlaying = false;
+				continueFromCommand = 0;
 			}
-		}
 
-		private static void Command_RefreshAssetDatabase()
-		{
-			AssetDatabase.Refresh();
+			for (var i = continueFromCommand; i < Commands.Length; i++)
+			{
+				var command = Commands[i];
+
+				command.Process();
+
+				switch (command.PostponeType)
+				{
+					case QuickPlayPostponeType.NotPostponed:
+						{
+							// Continue to the next command.
+							continue;
+						}
+					case QuickPlayPostponeType.WaitingForAssemblyReload:
+						{
+							// Nothing to do here. We will wait for Unity to reload assemblies, then
+							// eventually call the static constructor (InitializeOnLoad).
+							break;
+						}
+					case QuickPlayPostponeType.WaitingForDelayedCall:
+						{
+							EditorApplication.delayCall += InitializeAndCheckPostponedCommands;
+							break;
+						}
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				Log.Info($"QuickPlay command '{command.PrettyName}' postponed.");
+				return;
+			}
+
+			IsProcessing = false;
 		}
 
 		#endregion
