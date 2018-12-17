@@ -79,6 +79,34 @@ namespace Extenity.MathToolbox.Editor
 
 			GUILayout.Space(15f);
 
+			GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(60f));
+			GUILayout.FlexibleSpace();
+			GUILayout.BeginHorizontal();
+
+			// Operations
+			{
+				if (GUILayout.Button("Mirror X", BigButtonHeight))
+				{
+					Undo.RecordObject(Me, "Line mirror X");
+					Me.MirrorX();
+				}
+				if (GUILayout.Button("Mirror Y", BigButtonHeight))
+				{
+					Undo.RecordObject(Me, "Line mirror Y");
+					Me.MirrorY();
+				}
+				if (GUILayout.Button("Mirror Z", BigButtonHeight))
+				{
+					Undo.RecordObject(Me, "Line mirror Z");
+					Me.MirrorZ();
+				}
+			}
+
+			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
+
+			GUILayout.Space(15f);
+
 			GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
 			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();

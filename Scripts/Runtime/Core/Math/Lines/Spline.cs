@@ -340,6 +340,49 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Operations
+
+		public void MirrorX()
+		{
+			if (RawPoints == null)
+				return;
+			for (var i = 0; i < RawPoints.Count; i++)
+			{
+				var point = RawPoints[i];
+				point.x = -point.x;
+				RawPoints[i] = point;
+			}
+			InvalidateRawLine();
+		}
+
+		public void MirrorY()
+		{
+			if (RawPoints == null)
+				return;
+			for (var i = 0; i < RawPoints.Count; i++)
+			{
+				var point = RawPoints[i];
+				point.y = -point.y;
+				RawPoints[i] = point;
+			}
+			InvalidateRawLine();
+		}
+
+		public void MirrorZ()
+		{
+			if (RawPoints == null)
+				return;
+			for (var i = 0; i < RawPoints.Count; i++)
+			{
+				var point = RawPoints[i];
+				point.z = -point.z;
+				RawPoints[i] = point;
+			}
+			InvalidateRawLine();
+		}
+
+		#endregion
+
 		#region Invalidate - Raw
 
 		public readonly UnityEvent OnRawLineInvalidated = new UnityEvent();

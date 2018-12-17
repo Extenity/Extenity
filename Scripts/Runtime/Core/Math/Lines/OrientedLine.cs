@@ -186,6 +186,45 @@ namespace Extenity.MathToolbox
 
 		#region Operations
 
+		public void MirrorX()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.Position.x = -point.Position.x;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
+		public void MirrorY()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.Position.y = -point.Position.y;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
+		public void MirrorZ()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.Position.z = -point.Position.z;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
 		public void NormalizeAllOrientations()
 		{
 			if (Points == null)

@@ -164,6 +164,49 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Operations
+
+		public void MirrorX()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.x = -point.x;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
+		public void MirrorY()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.y = -point.y;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
+		public void MirrorZ()
+		{
+			if (Points == null)
+				return;
+			for (var i = 0; i < Points.Count; i++)
+			{
+				var point = Points[i];
+				point.z = -point.z;
+				Points[i] = point;
+			}
+			Invalidate();
+		}
+
+		#endregion
+
 		#region Invalidate
 
 		public readonly UnityEvent OnInvalidated = new UnityEvent();
