@@ -394,10 +394,15 @@ namespace Extenity.MathToolbox
 
 			IsEditing = true;
 			gameObject.GetSingleOrAddComponent<DontShowEditorHandler>();
+
+			UnityEditor.Selection.selectionChanged -= CheckIfNeedToStopEditing;
+			UnityEditor.Selection.selectionChanged += CheckIfNeedToStopEditing;
 		}
 
 		public void StopEditing()
 		{
+			UnityEditor.Selection.selectionChanged -= CheckIfNeedToStopEditing;
+
 			if (IsEditing)
 			{
 				Log.Info($"Finished editing '{gameObject.FullName()}'");
@@ -407,13 +412,27 @@ namespace Extenity.MathToolbox
 			var dontShowEditorHandle = gameObject.GetComponent<DontShowEditorHandler>();
 			if (dontShowEditorHandle)
 			{
-				UnityEditor.EditorApplication.delayCall+= () =>
-				{
-					if (dontShowEditorHandle)
-					{
-						DestroyImmediate(dontShowEditorHandle);
-					}
-				};
+				UnityEditor.EditorApplication.delayCall += () =>
+				 {
+					 if (dontShowEditorHandle)
+					 {
+						 DestroyImmediate(dontShowEditorHandle);
+					 }
+				 };
+			}
+		}
+
+		private void CheckIfNeedToStopEditing()
+		{
+			if (!this)
+			{
+				UnityEditor.Selection.selectionChanged -= CheckIfNeedToStopEditing;
+				return;
+			}
+
+			if (UnityEditor.Selection.activeGameObject != gameObject)
+			{
+				StopEditing();
 			}
 		}
 
