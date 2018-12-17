@@ -58,4 +58,21 @@ namespace Extenity.DataToolbox
 		}
 	}
 
+	public static class OrientedPointTools
+	{
+		public static OrientedPoint TransformOrientedPoint(this Transform transform, OrientedPoint point)
+		{
+			point.Position = transform.TransformPoint(point.Position);
+			point.Orientation = transform.TransformVector(point.Orientation);
+			return point;
+		}
+
+		public static OrientedPoint InverseTransformOrientedPoint(this Transform transform, OrientedPoint point)
+		{
+			point.Position = transform.InverseTransformPoint(point.Position);
+			point.Orientation = transform.InverseTransformVector(point.Orientation);
+			return point;
+		}
+	}
+
 }

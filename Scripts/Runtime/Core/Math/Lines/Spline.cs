@@ -39,12 +39,7 @@ namespace Extenity.MathToolbox
 		[Header("Configuration")]
 		public bool Loop = false;
 		public bool SmoothingEnabled = true;
-		// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
-		//public bool KeepDataInLocalCoordinates = false;
-
-		//var point = KeepDataInLocalCoordinates
-		//	? transform.TransformPoint(points[0])
-		//	: points[0];
+		public bool KeepDataInLocalCoordinates = true;
 
 		#endregion
 
@@ -60,19 +55,23 @@ namespace Extenity.MathToolbox
 			RawPoints?.Clear();
 		}
 
-		public Vector3 GetRawPoint(float distanceFromStart, ref Vector3 part)
-		{
-			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
-		}
-
-		public Vector3 GetRawPoint(float distanceFromStart)
-		{
-			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
-		}
-
-		public Vector3 GetRawPoint(int index)
+		public Vector3 GetRawPointPosition(int index)
 		{
 			return RawPoints[index];
+		}
+
+		public Vector3 GetRawPointLocalPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? RawPoints[index]
+				: transform.InverseTransformPoint(RawPoints[index]);
+		}
+
+		public Vector3 GetRawPointWorldPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? transform.TransformPoint(RawPoints[index])
+				: RawPoints[index];
 		}
 
 		public int SortRawLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
@@ -104,19 +103,23 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		public Vector3 GetProcessedPoint(float distanceFromStart, ref Vector3 part)
-		{
-			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
-		}
-
-		public Vector3 GetProcessedPoint(float distanceFromStart)
-		{
-			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
-		}
-
-		public Vector3 GetProcessedPoint(int index)
+		public Vector3 GetProcessedPointPosition(int index)
 		{
 			return ProcessedPoints[index];
+		}
+
+		public Vector3 GetProcessedPointLocalPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? ProcessedPoints[index]
+				: transform.InverseTransformPoint(ProcessedPoints[index]);
+		}
+
+		public Vector3 GetProcessedPointWorldPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? transform.TransformPoint(ProcessedPoints[index])
+				: ProcessedPoints[index];
 		}
 
 		#endregion
@@ -261,6 +264,16 @@ namespace Extenity.MathToolbox
 
 		#region Calculations - Raw
 
+		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart)
+		{
+			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+		}
+
+		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		{
+			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+		}
+
 		public Vector3 ClosestPointOnRawLine(Vector3 point)
 		{
 			return RawPoints.ClosestPointOnLineStrip(point, Loop);
@@ -284,6 +297,16 @@ namespace Extenity.MathToolbox
 		#endregion
 
 		#region Calculations - Processed
+
+		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart)
+		{
+			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+		}
+
+		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		{
+			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+		}
 
 		public Vector3 ClosestPointOnProcessedLine(Vector3 point)
 		{
@@ -364,18 +387,18 @@ namespace Extenity.MathToolbox
 		{
 			if (DEBUG.DrawUnselectedRaw)
 			{
-				GizmosTools.DrawPathLines(GetRawPoint, RawPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
+				GizmosTools.DrawPathLines(GetRawPointWorldPosition, RawPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
 			}
 			if (DEBUG.DrawUnselectedProcessed)
 			{
-				GizmosTools.DrawPathLines(GetProcessedPoint, ProcessedPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
+				GizmosTools.DrawPathLines(GetProcessedPointWorldPosition, ProcessedPoints?.Count ?? 0, Loop, DEBUG.UnselectedColor);
 			}
 		}
 
 		private void OnDrawGizmosSelected()
 		{
-			GizmosTools.DrawPath(GetRawPoint, RawPoints?.Count ?? 0, Loop, true, DEBUG.RawPointColor, true, DEBUG.RawLineColor, AverageRawSegmentLength * DEBUG.RawPointSize, DEBUG.FirstRawPointSizeFactor);
-			GizmosTools.DrawPath(GetProcessedPoint, ProcessedPoints?.Count ?? 0, Loop, true, DEBUG.ProcessedPointColor, true, DEBUG.ProcessedLineColor, AverageProcessedSegmentLength * DEBUG.ProcessedPointSize, 1f);
+			GizmosTools.DrawPath(GetRawPointWorldPosition, RawPoints?.Count ?? 0, Loop, true, DEBUG.RawPointColor, true, DEBUG.RawLineColor, AverageRawSegmentLength * DEBUG.RawPointSize, DEBUG.FirstRawPointSizeFactor);
+			GizmosTools.DrawPath(GetProcessedPointWorldPosition, ProcessedPoints?.Count ?? 0, Loop, true, DEBUG.ProcessedPointColor, true, DEBUG.ProcessedLineColor, AverageProcessedSegmentLength * DEBUG.ProcessedPointSize, 1f);
 		}
 
 #endif

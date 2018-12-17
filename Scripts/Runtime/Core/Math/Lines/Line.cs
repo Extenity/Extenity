@@ -37,12 +37,7 @@ namespace Extenity.MathToolbox
 
 		[Header("Configuration")]
 		public bool Loop = false;
-		// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
-		//public bool KeepDataInLocalCoordinates = false;
-
-		//var point = KeepDataInLocalCoordinates
-		//	? transform.TransformPoint(points[0])
-		//	: points[0];
+		public bool KeepDataInLocalCoordinates = true;
 
 		#endregion
 
@@ -58,19 +53,23 @@ namespace Extenity.MathToolbox
 			Points?.Clear();
 		}
 
-		public Vector3 GetPoint(float distanceFromStart, ref Vector3 part)
-		{
-			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
-		}
-
-		public Vector3 GetPoint(float distanceFromStart)
-		{
-			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart);
-		}
-
-		public Vector3 GetPoint(int index)
+		public Vector3 GetPointPosition(int index)
 		{
 			return Points[index];
+		}
+
+		public Vector3 GetPointLocalPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? Points[index]
+				: transform.InverseTransformPoint(Points[index]);
+		}
+
+		public Vector3 GetPointWorldPosition(int index)
+		{
+			return KeepDataInLocalCoordinates
+				? transform.TransformPoint(Points[index])
+				: Points[index];
 		}
 
 		public int SortLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
@@ -128,6 +127,16 @@ namespace Extenity.MathToolbox
 
 		#region Calculations
 
+		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart)
+		{
+			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+		}
+
+		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		{
+			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+		}
+
 		public Vector3 ClosestPointOnLine(Vector3 point)
 		{
 			return Points.ClosestPointOnLineStrip(point, Loop);
@@ -153,7 +162,7 @@ namespace Extenity.MathToolbox
 			{
 				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % TotalLength;
 			}
-			return GetPoint(distanceFromStartOfResultingPoint);
+			return GetPointAtDistanceFromStart(distanceFromStartOfResultingPoint);
 		}
 
 		#endregion
@@ -194,13 +203,13 @@ namespace Extenity.MathToolbox
 		{
 			if (DEBUG.DrawUnselected)
 			{
-				GizmosTools.DrawPathLines(GetPoint, Points?.Count ?? 0, Loop, DEBUG.UnselectedColor);
+				GizmosTools.DrawPathLines(GetPointWorldPosition, Points?.Count ?? 0, Loop, DEBUG.UnselectedColor);
 			}
 		}
 
 		private void OnDrawGizmosSelected()
 		{
-			GizmosTools.DrawPath(GetPoint, Points?.Count ?? 0, Loop, true, DEBUG.PointColor, true, DEBUG.LineColor, AverageSegmentLength * DEBUG.PointSize, DEBUG.FirstPointSizeFactor);
+			GizmosTools.DrawPath(GetPointWorldPosition, Points?.Count ?? 0, Loop, true, DEBUG.PointColor, true, DEBUG.LineColor, AverageSegmentLength * DEBUG.PointSize, DEBUG.FirstPointSizeFactor);
 		}
 
 #endif

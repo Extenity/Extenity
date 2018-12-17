@@ -27,6 +27,9 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void OnMovementDetected()
 		{
+			if (Me.KeepDataInLocalCoordinates)
+				return;
+
 			if (MovementDetectionPreviousPosition.IsAnyNaN() ||
 				MovementDetectionPreviousRotation.IsAnyNaN() ||
 				MovementDetectionPreviousScale.IsAnyNaN())
@@ -143,9 +146,12 @@ namespace Extenity.MathToolbox.Editor
 		private List<OrientedPoint> Points => Me.Points;
 
 		protected override bool IsEditing => Me.IsEditing;
+
 		protected override bool IsPointListAvailable => Points != null;
 		protected override bool IsPointListAvailableAndNotEmpty => Points != null && Points.Count > 0;
 		protected override int PointCount => Points.Count;
+
+		protected override bool KeepDataInLocalCoordinates => Me.KeepDataInLocalCoordinates;
 
 		protected override Vector3 GetPointPosition(int i)
 		{
@@ -159,7 +165,7 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void InsertPoint(int i, Vector3 position)
 		{
-			var midOrientation = Points[i].MidOrientation(Points[i - 1]); 
+			var midOrientation = Points[i].MidOrientation(Points[i - 1]);
 			Points.Insert(i, new OrientedPoint(position, midOrientation));
 		}
 

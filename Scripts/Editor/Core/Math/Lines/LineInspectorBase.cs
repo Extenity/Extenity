@@ -219,6 +219,8 @@ namespace Extenity.MathToolbox.Editor
 		protected abstract bool IsPointListAvailableAndNotEmpty { get; }
 		protected abstract int PointCount { get; }
 
+		protected abstract bool KeepDataInLocalCoordinates { get; }
+
 		protected abstract Vector3 GetPointPosition(int i);
 		protected abstract void SetPoint(int i, Vector3 position);
 		protected abstract void InsertPoint(int i, Vector3 position);
@@ -232,20 +234,16 @@ namespace Extenity.MathToolbox.Editor
 
 		protected Vector3 ConvertWorldToLocalPosition(Vector3 point)
 		{
-			return point;
-			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
-			//return Me.KeepDataInLocalCoordinates
-			//	? Me.transform.InverseTransformPoint(point)
-			//	: point;
+			return KeepDataInLocalCoordinates
+				? Me.transform.InverseTransformPoint(point)
+				: point;
 		}
 
 		protected Vector3 ConvertLocalToWorldPosition(Vector3 point)
 		{
-			return point;
-			// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
-			//return Me.KeepDataInLocalCoordinates
-			//	? Me.transform.TransformPoint(point)
-			//	: point;
+			return KeepDataInLocalCoordinates
+				? Me.transform.TransformPoint(point)
+				: point;
 		}
 
 		#endregion
