@@ -42,10 +42,14 @@ namespace Extenity.MathToolbox.Editor
 
 				for (int i = 0; i < Points.Count; i++)
 				{
-					var point = Points[i].Position;
-					point = previousTransformMatrix.MultiplyPoint(point);
-					point = Me.transform.TransformPoint(point);
-					Points[i] = Points[i].WithPosition(point);
+					var point = Points[i];
+					var position = point.Position;
+					position = previousTransformMatrix.MultiplyPoint(position);
+					position = Me.transform.TransformPoint(position);
+					var orientation = point.Orientation;
+					//orientation = previousTransformMatrix.MultiplyVector(orientation);
+					//orientation = Me.transform.TransformVector(orientation);
+					Points[i] = new OrientedPoint(position, orientation);
 				}
 			}
 
@@ -199,7 +203,7 @@ namespace Extenity.MathToolbox.Editor
 									float closestPointDistanceSqr = float.MaxValue;
 									for (int i = 0; i < Points.Count; i++)
 									{
-										var point = ConvertLocalToWorldPosition(Points[i].Position);
+										var point = ConvertLocalToWorldPosition(GetPointPosition(i));
 										var diff = GetDifferenceBetweenMousePositionAndWorldPoint(camera, point, mousePosition, mouseVisibilityDistance);
 										var distanceSqr = diff.sqrMagnitude;
 										if (closestPointDistanceSqr > distanceSqr)
@@ -212,7 +216,7 @@ namespace Extenity.MathToolbox.Editor
 
 								if (selectedPointIndex >= 0)
 								{
-									var currentPosition = ConvertLocalToWorldPosition(Points[selectedPointIndex].Position);
+									var currentPosition = ConvertLocalToWorldPosition(GetPointPosition(selectedPointIndex));
 									GUIUtility.GetControlID(FocusType.Keyboard);
 									var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
 									if (newPosition != currentPosition)
@@ -244,10 +248,10 @@ namespace Extenity.MathToolbox.Editor
 					rect.height = SmallButtonSize;
 					GUI.backgroundColor = InsertButtonBackgroundColor;
 
-					var previous = ConvertLocalToWorldPosition(Points[0].Position);
+					var previous = ConvertLocalToWorldPosition(GetPointPosition(0));
 					for (int i = 1; i < Points.Count; i++)
 					{
-						var current = ConvertLocalToWorldPosition(Points[i].Position);
+						var current = ConvertLocalToWorldPosition(GetPointPosition(i));
 						var center = current.Mid(previous);
 						var screenPosition = camera.WorldToScreenPointWithReverseCheck(center);
 
@@ -275,11 +279,11 @@ namespace Extenity.MathToolbox.Editor
 					rect.height = MediumButtonSize;
 					GUI.backgroundColor = InsertButtonBackgroundColor;
 
-					var endingPoint = ConvertLocalToWorldPosition(Points[Points.Count - 1].Position);
+					var endingPoint = ConvertLocalToWorldPosition(GetPointPosition(Points.Count - 1));
 					var cameraDistanceToEndingPoint = Vector3.Distance(camera.transform.position, endingPoint);
 					var direction = Points.Count == 1
 						? Vector3.forward
-						: (endingPoint - ConvertLocalToWorldPosition(Points[Points.Count - 2].Position)).normalized;
+						: (endingPoint - ConvertLocalToWorldPosition(GetPointPosition(Points.Count - 2))).normalized;
 
 					var point = endingPoint + direction * (cameraDistanceToEndingPoint * 0.5f);
 					var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
@@ -304,7 +308,7 @@ namespace Extenity.MathToolbox.Editor
 
 					for (int i = 0; i < Points.Count; i++)
 					{
-						var point = ConvertLocalToWorldPosition(Points[i].Position);
+						var point = ConvertLocalToWorldPosition(GetPointPosition(i));
 						var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
 						if (screenPosition.HasValue)
 						{
@@ -339,6 +343,11 @@ namespace Extenity.MathToolbox.Editor
 		#region Data
 
 		private List<OrientedPoint> Points => Me.Points;
+
+		public Vector3 GetPointPosition(int i)
+		{
+			return Points[i].Position;
+		}
 
 		private void InvalidatePoints()
 		{
