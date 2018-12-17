@@ -156,17 +156,10 @@ namespace Extenity.MathToolbox
 			return Points.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
+		public Vector3 GetPointAheadOfClosestPoint(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
-			throw new NotImplementedException(); // Move this into MathTools.
-
-			var distanceFromStartOfClosestPointOnLine = DistanceFromStartOfClosestPointOnLine(point);
-			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
-			if (Loop)
-			{
-				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % TotalLength;
-			}
-			return GetPointAtDistanceFromStart(distanceFromStartOfResultingPoint, space);
+			var position = Points.GetPointAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalLength);
+			return TransformFromDataSpace(position, space);
 		}
 
 		#endregion

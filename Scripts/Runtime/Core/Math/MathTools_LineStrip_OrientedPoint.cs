@@ -600,16 +600,20 @@ namespace Extenity.MathToolbox
 			return points.GetPointPositionAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
-		//public static Vector3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, Vector3 point, float resultingPointDistanceToClosestPoint, bool loop, int bufferSize = -1)
-		//{
-		//	var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
-		//	var resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
-		//	if (loop)
-		//	{
-		//		resultingPointDistanceFromStart = resultingPointDistanceFromStart % TotalLength;
-		//	}
-		//	return points.GetPointPositionAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
-		//}
+		public static Vector3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, Vector3 point, float resultingPointDistanceToClosestPoint, bool loop, float precalculatedTotalLength = -1f, int bufferSize = -1)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, loop, bufferSize);
+			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			if (loop)
+			{
+				if (precalculatedTotalLength < 0f)
+				{
+					precalculatedTotalLength = points.CalculateLineStripLength(loop);
+				}
+				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % precalculatedTotalLength;
+			}
+			return points.GetPointPositionAtDistanceFromStart(loop, distanceFromStartOfResultingPoint, bufferSize);
+		}
 
 		#endregion
 

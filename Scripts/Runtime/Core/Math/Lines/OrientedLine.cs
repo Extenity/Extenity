@@ -178,15 +178,8 @@ namespace Extenity.MathToolbox
 
 		public Vector3 GetPointPositionAheadOfClosestPoint(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
-			throw new NotImplementedException(); // Move this into MathTools.
-
-			var distanceFromStartOfClosestPointOnLine = DistanceFromStartOfClosestPointOnLine(point);
-			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
-			if (Loop)
-			{
-				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % TotalLength;
-			}
-			return GetPointPositionAtDistanceFromStart(distanceFromStartOfResultingPoint, space);
+			var position = Points.GetPointPositionAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalLength);
+			return TransformFromDataSpace(position, space);
 		}
 
 		#endregion

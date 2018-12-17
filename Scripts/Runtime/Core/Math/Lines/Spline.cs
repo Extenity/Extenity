@@ -295,7 +295,8 @@ namespace Extenity.MathToolbox
 
 		public Vector3 GetPointAheadOfClosestPointOnRawLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
-			throw new NotImplementedException(); // Look into Line to implement this.
+			var position = RawPoints.GetPointAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalRawLength);
+			return TransformFromDataSpace(position, space);
 		}
 
 		#endregion
@@ -333,7 +334,8 @@ namespace Extenity.MathToolbox
 
 		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
-			throw new NotImplementedException(); // Look into Line to implement this.
+			var position = ProcessedPoints.GetPointAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalProcessedLength);
+			return TransformFromDataSpace(position, space);
 		}
 
 		#endregion

@@ -74,10 +74,94 @@ namespace Extenity.MathToolbox
 
 		#region GetPointAtDistanceFromStart
 
+		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, float distanceFromStart, ref Vector2 part, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return Vector2Tools.NaN;
+			if (points.Count == 1 || distanceFromStart < 0f)
+				return points[0];
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					part = diff;
+					return previousPoint + diff * ratio;
+				}
+
+				totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+
+			return previousPoint;
+		}
+
+		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, bool loop, float distanceFromStart, ref Vector2 part, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return Vector2Tools.NaN;
+			if (points.Count == 1 || distanceFromStart < 0f)
+				return points[0];
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					part = diff;
+					return previousPoint + diff * ratio;
+				}
+
+				totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+			if (loop)
+			{
+				var currentPoint = points[0];
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					part = diff;
+					return previousPoint + diff * ratio;
+				}
+
+				//totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+
+			return previousPoint;
+		}
+
 		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return Vector2Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0];
 
@@ -106,6 +190,55 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 		
+		public static Vector2 GetPointAtDistanceFromStart(this IList<Vector2> points, bool loop, float distanceFromStart, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return Vector2Tools.NaN;
+			if (points.Count == 1 || distanceFromStart < 0f)
+				return points[0];
+
+			var totalDistance = 0f;
+			var previousPoint = points[0];
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					return previousPoint + diff * ratio;
+				}
+
+				totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+			if (loop)
+			{
+				var currentPoint = points[0];
+				var distance = previousPoint.DistanceTo(currentPoint);
+
+				if (distanceFromStart - totalDistance < distance)
+				{
+					var ratio = (distanceFromStart - totalDistance) / distance;
+					DebugAssert.IsBetweenZeroOne(ratio);
+
+					var diff = currentPoint - previousPoint;
+					return previousPoint + diff * ratio;
+				}
+
+				//totalDistance += distance;
+				previousPoint = currentPoint;
+			}
+
+			return previousPoint;
+		}
+
 		#endregion
 
 		#region DistanceFromStartOfClosestPointOnLineStrip
@@ -145,6 +278,58 @@ namespace Extenity.MathToolbox
 			return distanceFromStartOfClosestPoint;
 		}
 
+		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<Vector2> points, Vector2 point, bool loop, int bufferSize = -1)
+		{
+			if (points == null || points.Count == 0)
+				return float.NaN;
+			if (points.Count == 1)
+				return 0f;
+
+			var previousPoint = points[0];
+			var totalLength = 0f;
+			//var closestPoint = previousPoint;
+			var distanceFromStartOfClosestPoint = 0f;
+			var closestPointSqrDistance = float.PositiveInfinity;
+			if (bufferSize < 0)
+				bufferSize = points.Count;
+			for (int i = 1; i < bufferSize; i++)
+			{
+				var currentPoint = points[i];
+
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
+
+				if (closestPointSqrDistance > sqrDistance)
+				{
+					closestPointSqrDistance = sqrDistance;
+					//closestPoint = currentSegmentClosestPoint;
+					distanceFromStartOfClosestPoint = totalLength + distanceFromStartOfCurrentSegmentClosestPoint;
+				}
+
+				totalLength += currentPoint.DistanceTo(previousPoint);
+				previousPoint = currentPoint;
+			}
+			if (loop)
+			{
+				var currentPoint = points[0];
+
+				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point, out var distanceFromStartOfCurrentSegmentClosestPoint);
+				var sqrDistance = currentSegmentClosestPoint.SqrDistanceTo(point);
+
+				if (closestPointSqrDistance > sqrDistance)
+				{
+					//closestPointSqrDistance = sqrDistance;
+					////closestPoint = currentSegmentClosestPoint;
+					distanceFromStartOfClosestPoint = totalLength + distanceFromStartOfCurrentSegmentClosestPoint;
+				}
+
+				//totalLength += (currentPoint - previousPoint).magnitude;
+				//previousPoint = currentPoint;
+			}
+
+			return distanceFromStartOfClosestPoint;
+		}
+
 		#endregion
 
 		#region GetPointAheadOfClosestPoint
@@ -161,6 +346,21 @@ namespace Extenity.MathToolbox
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
 			return points.GetPointAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
+		}
+
+		public static Vector2 GetPointAheadOfClosestPoint(this IList<Vector2> points, Vector2 point, float resultingPointDistanceToClosestPoint, bool loop, float precalculatedTotalLength = -1f, int bufferSize = -1)
+		{
+			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, loop, bufferSize);
+			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
+			if (loop)
+			{
+				if (precalculatedTotalLength < 0f)
+				{
+					precalculatedTotalLength = points.CalculateLineStripLength(loop);
+				}
+				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % precalculatedTotalLength;
+			}
+			return points.GetPointAtDistanceFromStart(loop, distanceFromStartOfResultingPoint, bufferSize);
 		}
 
 		#endregion
