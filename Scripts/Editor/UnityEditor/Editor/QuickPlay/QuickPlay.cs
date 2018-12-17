@@ -116,6 +116,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static bool IsProcessing;
 
+		public static Action OnProcessSucceeded;
+
 		private static void Process(int continueFromCommand)
 		{
 			IsProcessing = true;
@@ -159,6 +161,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			IsProcessing = false;
+
+			OnProcessSucceeded?.Invoke();
 		}
 
 		#endregion
