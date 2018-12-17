@@ -5,6 +5,13 @@ using UnityEngine;
 namespace Extenity.MathToolbox
 {
 
+	public enum Space
+	{
+		Unspecified,
+		World,
+		Local,
+	}
+
 	public static partial class MathTools
 	{
 		#region Int Float Double

@@ -127,24 +127,28 @@ namespace Extenity.MathToolbox
 
 		#region Calculations
 
-		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart)
+		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart, Space space)
 		{
-			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			var position = Points.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		public Vector3 GetPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
 		{
-			return Points.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			var position = Points.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnLine(Vector3 point)
+		public Vector3 ClosestPointOnLine(Vector3 point, Space space)
 		{
-			return Points.ClosestPointOnLineStrip(point, Loop);
+			var position = Points.ClosestPointOnLineStrip(point, Loop);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnLine(Vector3 point, ref Vector3 part)
+		public Vector3 ClosestPointOnLine(Vector3 point, ref Vector3 part, Space space)
 		{
-			return Points.ClosestPointOnLineStrip(point, Loop, ref part);
+			var position = Points.ClosestPointOnLineStrip(point, Loop, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
 		public float DistanceFromStartOfClosestPointOnLine(Vector3 point)
@@ -152,7 +156,7 @@ namespace Extenity.MathToolbox
 			return Points.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPoint(Vector3 point, float resultingPointDistanceToClosestPoint)
+		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			throw new NotImplementedException(); // Move this into MathTools.
 
@@ -162,7 +166,7 @@ namespace Extenity.MathToolbox
 			{
 				distanceFromStartOfResultingPoint = distanceFromStartOfResultingPoint % TotalLength;
 			}
-			return GetPointAtDistanceFromStart(distanceFromStartOfResultingPoint);
+			return GetPointAtDistanceFromStart(distanceFromStartOfResultingPoint, space);
 		}
 
 		#endregion
@@ -177,6 +181,28 @@ namespace Extenity.MathToolbox
 			IsAverageSegmentLengthInvalidated = true;
 
 			OnInvalidated.Invoke();
+		}
+
+		#endregion
+
+		#region Space Transformation
+
+		public Vector3 TransformFromDataSpace(Vector3 pointInDataSpace, Space targetSpace)
+		{
+			switch (targetSpace)
+			{
+				case Space.Unspecified: return pointInDataSpace;
+				case Space.World:
+					return KeepDataInLocalCoordinates
+						? transform.TransformPoint(pointInDataSpace)
+						: pointInDataSpace;
+				case Space.Local:
+					return KeepDataInLocalCoordinates
+						? pointInDataSpace
+						: transform.InverseTransformPoint(pointInDataSpace);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(targetSpace), targetSpace, null);
+			}
 		}
 
 		#endregion

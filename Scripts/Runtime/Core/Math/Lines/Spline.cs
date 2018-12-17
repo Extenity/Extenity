@@ -264,24 +264,28 @@ namespace Extenity.MathToolbox
 
 		#region Calculations - Raw
 
-		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart)
+		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, Space space)
 		{
-			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			var position = RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
 		{
-			return RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			var position = RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnRawLine(Vector3 point)
+		public Vector3 ClosestPointOnRawLine(Vector3 point, Space space)
 		{
-			return RawPoints.ClosestPointOnLineStrip(point, Loop);
+			var position = RawPoints.ClosestPointOnLineStrip(point, Loop);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnRawLine(Vector3 point, ref Vector3 part)
+		public Vector3 ClosestPointOnRawLine(Vector3 point, ref Vector3 part, Space space)
 		{
-			return RawPoints.ClosestPointOnLineStrip(point, Loop, ref part);
+			var position = RawPoints.ClosestPointOnLineStrip(point, Loop, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
 		public float DistanceFromStartOfClosestPointOnRawLine(Vector3 point)
@@ -289,7 +293,7 @@ namespace Extenity.MathToolbox
 			return RawPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPointOnRawLine(Vector3 point, float resultingPointDistanceToClosestPoint)
+		public Vector3 GetPointAheadOfClosestPointOnRawLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			throw new NotImplementedException(); // Look into Line to implement this.
 		}
@@ -298,24 +302,28 @@ namespace Extenity.MathToolbox
 
 		#region Calculations - Processed
 
-		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart)
+		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, Space space)
 		{
-			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			var position = ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part)
+		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
 		{
-			return ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			var position = ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnProcessedLine(Vector3 point)
+		public Vector3 ClosestPointOnProcessedLine(Vector3 point, Space space)
 		{
-			return ProcessedPoints.ClosestPointOnLineStrip(point, Loop);
+			var position = ProcessedPoints.ClosestPointOnLineStrip(point, Loop);
+			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnProcessedLine(Vector3 point, ref Vector3 part)
+		public Vector3 ClosestPointOnProcessedLine(Vector3 point, ref Vector3 part, Space space)
 		{
-			return ProcessedPoints.ClosestPointOnLineStrip(point, Loop, ref part);
+			var position = ProcessedPoints.ClosestPointOnLineStrip(point, Loop, ref part);
+			return TransformFromDataSpace(position, space);
 		}
 
 		public float DistanceFromStartOfClosestPointOnProcessedLine(Vector3 point)
@@ -323,7 +331,7 @@ namespace Extenity.MathToolbox
 			return ProcessedPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint)
+		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			throw new NotImplementedException(); // Look into Line to implement this.
 		}
@@ -357,6 +365,28 @@ namespace Extenity.MathToolbox
 			IsAverageProcessedSegmentLengthInvalidated = true;
 
 			OnProcessedLineInvalidated.Invoke();
+		}
+
+		#endregion
+
+		#region Space Transformation
+
+		public Vector3 TransformFromDataSpace(Vector3 pointInDataSpace, Space targetSpace)
+		{
+			switch (targetSpace)
+			{
+				case Space.Unspecified: return pointInDataSpace;
+				case Space.World:
+					return KeepDataInLocalCoordinates
+						? transform.TransformPoint(pointInDataSpace)
+						: pointInDataSpace;
+				case Space.Local:
+					return KeepDataInLocalCoordinates
+						? pointInDataSpace
+						: transform.InverseTransformPoint(pointInDataSpace);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(targetSpace), targetSpace, null);
+			}
 		}
 
 		#endregion
