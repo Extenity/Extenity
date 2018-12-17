@@ -338,7 +338,7 @@ namespace Extenity.MathToolbox.Editor
 
 		private void AppendPoint(Vector3 position)
 		{
-			Points.Add(ConvertWorldToLocalPosition(position));
+			Points.Add(position);
 		}
 
 		private void InvalidatePoints()
