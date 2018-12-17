@@ -240,6 +240,8 @@ namespace Extenity.UIToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
 			if (DefaultSelectionBehaviour != DefaultSelection.SelectSpecifiedButton)
@@ -251,6 +253,8 @@ namespace Extenity.UIToolbox
 				}
 			}
 		}
+
+#endif
 
 		#endregion
 	}

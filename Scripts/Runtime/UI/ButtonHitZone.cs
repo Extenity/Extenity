@@ -55,6 +55,8 @@ namespace Extenity.UIToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		private void OnValidate()
 		{
 			var rectTransform = GetComponent<RectTransform>();
@@ -64,6 +66,8 @@ namespace Extenity.UIToolbox
 				Height = Mathf.Max(Height, rectTransform.sizeDelta.y);
 			}
 		}
+
+#endif
 
 		#endregion
 	}

@@ -143,6 +143,8 @@ namespace Extenity.BeyondAudio.UI
 			AudioManager.Play(EventName);
 		}
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
 			// Need to check for both at the same time. We are interested in triggering
@@ -153,6 +155,8 @@ namespace Extenity.BeyondAudio.UI
 				Toggle = GetComponent<Toggle>();
 			}
 		}
+
+#endif
 
 		#region Log
 

@@ -197,6 +197,8 @@ namespace Extenity.UIToolbox
 
 		#region Validate
 
+#if UNITY_EDITOR
+
 		private void OnValidate()
 		{
 			if (!RadioGroup)
@@ -213,6 +215,8 @@ namespace Extenity.UIToolbox
 				}
 			}
 		}
+
+#endif
 
 		#endregion
 	}

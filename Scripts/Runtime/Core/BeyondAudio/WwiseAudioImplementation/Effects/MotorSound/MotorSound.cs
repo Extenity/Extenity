@@ -122,10 +122,14 @@ namespace Extenity.BeyondAudio.Effects
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		private void OnValidate()
 		{
 			RefreshStates();
 		}
+
+#endif
 
 		#endregion
 	}

@@ -102,11 +102,15 @@ namespace Extenity.RenderingToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
 			// This will make sure the RenderTexture always created in editor mode. Ideally it's not necessary and not a good practice to create RenderTexture in Awake because camera settings could have been changed before we start rendering.
 			RefreshRenderTexture();
 		}
+
+#endif
 
 		#endregion
 

@@ -258,6 +258,8 @@ namespace Extenity.UIToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
 			if (!AnimatedTransform)
@@ -265,6 +267,8 @@ namespace Extenity.UIToolbox
 				AnimatedTransform = gameObject.GetComponent<RectTransform>();
 			}
 		}
+
+#endif
 
 		#endregion
 

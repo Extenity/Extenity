@@ -32,6 +32,8 @@ namespace Extenity.AnimationToolbox.ScriptedAnimations
 			}
 		}
 
+#if UNITY_EDITOR
+
 		protected void OnValidate()
 		{
 			if (!RotatedObject)
@@ -39,6 +41,8 @@ namespace Extenity.AnimationToolbox.ScriptedAnimations
 				RotatedObject = transform;
 			}
 		}
+
+#endif
 	}
 
 }

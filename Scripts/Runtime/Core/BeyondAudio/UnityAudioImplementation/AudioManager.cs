@@ -729,11 +729,15 @@ namespace Extenity.BeyondAudio
 
 		#region Editor
 
+#if UNITY_EDITOR
+
 		private void OnValidate()
 		{
 			RefreshEventNamesList();
 			CalculateEventInternals();
 		}
+
+#endif
 
 		#endregion
 
