@@ -544,6 +544,31 @@ namespace Extenity.GameObjectToolbox
 
 		#region IsChildOf / IsParentOf / HasComponent / IsEmpty
 
+		public static bool IsChildOf(this GameObject me, GameObject parent, bool checkSelf = true)
+		{
+			if (me == null)
+				throw new ArgumentNullException(nameof(me));
+			if (parent == null)
+				throw new ArgumentNullException(nameof(parent));
+
+			if (checkSelf)
+			{
+				if (me == parent)
+					return true;
+			}
+
+			while (true)
+			{
+				var parentTransform = parent.transform.parent;
+				if (!parentTransform)
+					return false;
+
+				parent = parentTransform.gameObject;
+				if (parent == me)
+					return true;
+			}
+		}
+
 		/// <summary>
 		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
 		/// </summary>
