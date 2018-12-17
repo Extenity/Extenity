@@ -47,8 +47,8 @@ namespace Extenity.MathToolbox.Editor
 					position = previousTransformMatrix.MultiplyPoint(position);
 					position = Me.transform.TransformPoint(position);
 					var orientation = point.Orientation;
-					//orientation = previousTransformMatrix.MultiplyVector(orientation);
-					//orientation = Me.transform.TransformVector(orientation);
+					orientation = previousTransformMatrix.MultiplyVector(orientation);
+					orientation = Me.transform.TransformVector(orientation);
 					Points[i] = new OrientedPoint(position, orientation);
 				}
 			}
