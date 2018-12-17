@@ -89,6 +89,7 @@ namespace Extenity.MathToolbox.Editor
 									var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
 									if (newPosition != currentPosition)
 									{
+										Undo.RecordObject(Me, "Move line point");
 										SetPoint(selectedPointIndex, ConvertWorldToLocalPosition(newPosition));
 
 										if (eventType == EventType.MouseDown ||
@@ -130,6 +131,7 @@ namespace Extenity.MathToolbox.Editor
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 							if (GUI.Button(rect, "+"))
 							{
+								Undo.RecordObject(Me, "Insert line point");
 								InsertPoint(i, ConvertWorldToLocalPosition(center));
 								break;
 							}
@@ -161,6 +163,7 @@ namespace Extenity.MathToolbox.Editor
 						rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
 						if (GUI.Button(rect, "+"))
 						{
+							Undo.RecordObject(Me, "Add line point");
 							AppendPoint(ConvertWorldToLocalPosition(point));
 						}
 					}
@@ -187,6 +190,7 @@ namespace Extenity.MathToolbox.Editor
 								rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 								if (GUI.Button(rect, "-"))
 								{
+									Undo.RecordObject(Me, "Remove line point");
 									RemovePoint(i);
 									break;
 								}
