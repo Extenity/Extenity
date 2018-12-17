@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
 
@@ -17,6 +18,19 @@ namespace Extenity.MathToolbox
 			ClearPoints();
 			Invalidate();
 		}
+
+		#endregion
+
+		#region Deinitialization
+
+#if UNITY_EDITOR
+
+		private void OnDisable()
+		{
+			StopEditing();
+		}
+
+#endif
 
 		#endregion
 
@@ -218,6 +232,45 @@ namespace Extenity.MathToolbox
 				{
 					Gizmos.DrawLine(point.Position, point.Position + point.Orientation * AverageSegmentLength * DEBUG.PointSize);
 				}
+			}
+		}
+
+#endif
+
+		#endregion
+
+		#region Edit Mode
+
+#if UNITY_EDITOR
+
+		public bool IsEditing { get; private set; }
+
+		public void StartEditing()
+		{
+			Log.Info($"Starting to edit '{gameObject.FullName()}'");
+
+			IsEditing = true;
+			gameObject.GetSingleOrAddComponent<DontShowEditorHandler>();
+		}
+
+		public void StopEditing()
+		{
+			if (IsEditing)
+			{
+				Log.Info($"Finished editing '{gameObject.FullName()}'");
+				IsEditing = false;
+			}
+
+			var dontShowEditorHandle = gameObject.GetComponent<DontShowEditorHandler>();
+			if (dontShowEditorHandle)
+			{
+				UnityEditor.EditorApplication.delayCall+= () =>
+				{
+					if (dontShowEditorHandle)
+					{
+						DestroyImmediate(dontShowEditorHandle);
+					}
+				};
 			}
 		}
 

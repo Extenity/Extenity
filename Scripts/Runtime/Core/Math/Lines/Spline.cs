@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
 
@@ -20,13 +21,26 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Deinitialization
+
+#if UNITY_EDITOR
+
+		private void OnDisable()
+		{
+			StopEditing();
+		}
+
+#endif
+
+		#endregion
+
 		#region Configuration
 
 		[Header("Configuration")]
 		public bool Loop = false;
 		public bool SmoothingEnabled = true;
 		// TODO: Implement KeepDataInLocalCoordinates. See 1798515712.
-		//public bool KeepDataInLocalCoordinates = true;
+		//public bool KeepDataInLocalCoordinates = false;
 
 		//var point = KeepDataInLocalCoordinates
 		//	? transform.TransformPoint(points[0])
@@ -324,7 +338,7 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Gizmos
+		#region Debug and Gizmos
 
 #if UNITY_EDITOR
 
@@ -362,6 +376,45 @@ namespace Extenity.MathToolbox
 		{
 			GizmosTools.DrawPath(GetRawPoint, RawPoints?.Count ?? 0, Loop, true, DEBUG.RawPointColor, true, DEBUG.RawLineColor, AverageRawSegmentLength * DEBUG.RawPointSize, DEBUG.FirstRawPointSizeFactor);
 			GizmosTools.DrawPath(GetProcessedPoint, ProcessedPoints?.Count ?? 0, Loop, true, DEBUG.ProcessedPointColor, true, DEBUG.ProcessedLineColor, AverageProcessedSegmentLength * DEBUG.ProcessedPointSize, 1f);
+		}
+
+#endif
+
+		#endregion
+
+		#region Edit Mode
+
+#if UNITY_EDITOR
+
+		public bool IsEditing { get; private set; }
+
+		public void StartEditing()
+		{
+			Log.Info($"Starting to edit '{gameObject.FullName()}'");
+
+			IsEditing = true;
+			gameObject.GetSingleOrAddComponent<DontShowEditorHandler>();
+		}
+
+		public void StopEditing()
+		{
+			if (IsEditing)
+			{
+				Log.Info($"Finished editing '{gameObject.FullName()}'");
+				IsEditing = false;
+			}
+
+			var dontShowEditorHandle = gameObject.GetComponent<DontShowEditorHandler>();
+			if (dontShowEditorHandle)
+			{
+				UnityEditor.EditorApplication.delayCall+= () =>
+				{
+					if (dontShowEditorHandle)
+					{
+						DestroyImmediate(dontShowEditorHandle);
+					}
+				};
+			}
 		}
 
 #endif

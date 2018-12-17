@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
@@ -21,6 +22,8 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void OnDisableDerived()
 		{
+			// TODO: That did not work as expected. The second we hit the Start Editing button, OnDisableDerived is called for some reason.
+			//Me.StopEditing();
 		}
 
 		protected override void OnMovementDetected()
@@ -52,9 +55,33 @@ namespace Extenity.MathToolbox.Editor
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
+
+			GUILayout.BeginVertical("Edit", EditorStyles.helpBox, GUILayout.Height(60f));
+			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
 
-			// Invalidate
+			// Edit
+			{
+				if (GUILayoutTools.Button("Start Editing", !Me.IsEditing, BigButtonHeight))
+				{
+					Me.StartEditing();
+				}
+				if (GUILayoutTools.Button("Stop Editing", Me.IsEditing, BigButtonHeight))
+				{
+					Me.StopEditing();
+				}
+			}
+
+			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
+
+			GUILayout.Space(15f);
+
+			GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(60f));
+			GUILayout.FlexibleSpace();
+			GUILayout.BeginHorizontal();
+
+			// Operations
 			{
 				if (GUILayout.Button("Normalize All Orientations", BigButtonHeight))
 				{
@@ -64,9 +91,15 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
+
+			GUILayout.Space(15f);
+
+			GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
+			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
 
-			// Invalidate
+			// Clipboard
 			{
 				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
 				{
@@ -97,6 +130,8 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			GUILayout.EndHorizontal();
+			GUILayout.EndVertical();
+
 			GUILayout.Space(15f);
 		}
 
@@ -126,173 +161,176 @@ namespace Extenity.MathToolbox.Editor
 			}
 
 			// Point handles
-			switch (eventType)
+			if (Me.IsEditing)
 			{
-				case EventType.MouseUp:
-				case EventType.MouseDown:
-				case EventType.MouseMove:
-				case EventType.MouseDrag:
-				case EventType.KeyDown:
-				case EventType.KeyUp:
-				case EventType.ScrollWheel:
-				case EventType.Repaint:
-				case EventType.Layout:
-				case EventType.DragUpdated:
-				case EventType.DragPerform:
-				case EventType.DragExited:
-				case EventType.Ignore:
-				case EventType.Used:
-				case EventType.ValidateCommand:
-				case EventType.ExecuteCommand:
-				case EventType.ContextClick:
-					{
-						if (Me.Points != null)
+				switch (eventType)
+				{
+					case EventType.MouseUp:
+					case EventType.MouseDown:
+					case EventType.MouseMove:
+					case EventType.MouseDrag:
+					case EventType.KeyDown:
+					case EventType.KeyUp:
+					case EventType.ScrollWheel:
+					case EventType.Repaint:
+					case EventType.Layout:
+					case EventType.DragUpdated:
+					case EventType.DragPerform:
+					case EventType.DragExited:
+					case EventType.Ignore:
+					case EventType.Used:
+					case EventType.ValidateCommand:
+					case EventType.ExecuteCommand:
+					case EventType.ContextClick:
 						{
-							int selectedPointIndex = -1;
+							if (Me.Points != null)
+							{
+								int selectedPointIndex = -1;
 
-							if (DraggingPointIndex >= 0)
-							{
-								// Select currently dragged point
-								selectedPointIndex = DraggingPointIndex;
-							}
-							else
-							{
-								// Find closest point
-								float closestPointDistanceSqr = float.MaxValue;
-								for (int i = 0; i < Me.Points.Count; i++)
+								if (DraggingPointIndex >= 0)
 								{
-									var point = ConvertLocalToWorldPosition(Me.Points[i].Position);
-									var diff = GetDifferenceBetweenMousePositionAndWorldPoint(camera, point, mousePosition, mouseVisibilityDistance);
-									var distanceSqr = diff.sqrMagnitude;
-									if (closestPointDistanceSqr > distanceSqr)
+									// Select currently dragged point
+									selectedPointIndex = DraggingPointIndex;
+								}
+								else
+								{
+									// Find closest point
+									float closestPointDistanceSqr = float.MaxValue;
+									for (int i = 0; i < Me.Points.Count; i++)
 									{
-										closestPointDistanceSqr = distanceSqr;
-										selectedPointIndex = i;
+										var point = ConvertLocalToWorldPosition(Me.Points[i].Position);
+										var diff = GetDifferenceBetweenMousePositionAndWorldPoint(camera, point, mousePosition, mouseVisibilityDistance);
+										var distanceSqr = diff.sqrMagnitude;
+										if (closestPointDistanceSqr > distanceSqr)
+										{
+											closestPointDistanceSqr = distanceSqr;
+											selectedPointIndex = i;
+										}
 									}
 								}
-							}
 
-							if (selectedPointIndex >= 0)
-							{
-								var currentPosition = ConvertLocalToWorldPosition(Me.Points[selectedPointIndex].Position);
-								GUIUtility.GetControlID(FocusType.Keyboard);
-								var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
-								if (newPosition != currentPosition)
+								if (selectedPointIndex >= 0)
 								{
-									Me.Points[selectedPointIndex] = Me.Points[selectedPointIndex].WithPosition(ConvertWorldToLocalPosition(newPosition));
-
-									if (eventType == EventType.MouseDown ||
-										eventType == EventType.MouseDrag ||
-										eventType == EventType.MouseMove)
+									var currentPosition = ConvertLocalToWorldPosition(Me.Points[selectedPointIndex].Position);
+									GUIUtility.GetControlID(FocusType.Keyboard);
+									var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
+									if (newPosition != currentPosition)
 									{
-										DraggingPointIndex = selectedPointIndex;
+										Me.Points[selectedPointIndex] = Me.Points[selectedPointIndex].WithPosition(ConvertWorldToLocalPosition(newPosition));
+
+										if (eventType == EventType.MouseDown ||
+											eventType == EventType.MouseDrag ||
+											eventType == EventType.MouseMove)
+										{
+											DraggingPointIndex = selectedPointIndex;
+										}
 									}
 								}
 							}
 						}
-					}
-					break;
-					//default:
-					//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
-			}
-
-			Handles.BeginGUI();
-			var savedBackgroundColor = GUI.backgroundColor;
-
-			// "Insert point" buttons
-			if (Me.Points != null && Me.Points.Count > 1 && DraggingPointIndex < 0)
-			{
-				rect.width = SmallButtonSize;
-				rect.height = SmallButtonSize;
-				GUI.backgroundColor = InsertButtonBackgroundColor;
-
-				var previous = ConvertLocalToWorldPosition(Me.Points[0].Position);
-				for (int i = 1; i < Me.Points.Count; i++)
-				{
-					var current = ConvertLocalToWorldPosition(Me.Points[i].Position);
-					var center = current.Mid(previous);
-					var screenPosition = camera.WorldToScreenPointWithReverseCheck(center);
-
-					if (screenPosition.HasValue &&
-						IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, mouseVisibilityDistance))
-					{
-						rect.x = screenPosition.Value.x - SmallButtonHalfSize;
-						rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
-						if (GUI.Button(rect, "+"))
-						{
-							Me.Points.Insert(i, Me.Points[i].Mid(Me.Points[i - 1]));
-							break;
-						}
-					}
-
-					previous = current;
+						break;
+						//default:
+						//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
 				}
-			}
 
-			// "Add point to end" button
-			if (Me.Points != null && Me.Points.Count > 0 && DraggingPointIndex < 0)
-			{
-				rect.width = MediumButtonSize;
-				rect.height = MediumButtonSize;
-				GUI.backgroundColor = InsertButtonBackgroundColor;
+				Handles.BeginGUI();
+				var savedBackgroundColor = GUI.backgroundColor;
 
-				var endingPoint = ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 1].Position);
-				var cameraDistanceToEndingPoint = Vector3.Distance(camera.transform.position, endingPoint);
-				var direction = Me.Points.Count == 1
-					? Vector3.forward
-					: (endingPoint - ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 2].Position)).normalized;
-
-				var point = endingPoint + direction * (cameraDistanceToEndingPoint * 0.5f);
-				var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
-
-				if (screenPosition.HasValue)
+				// "Insert point" buttons
+				if (Me.Points != null && Me.Points.Count > 1 && DraggingPointIndex < 0)
 				{
-					rect.x = screenPosition.Value.x - MediumButtonHalfSize;
-					rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
-					if (GUI.Button(rect, "+"))
+					rect.width = SmallButtonSize;
+					rect.height = SmallButtonSize;
+					GUI.backgroundColor = InsertButtonBackgroundColor;
+
+					var previous = ConvertLocalToWorldPosition(Me.Points[0].Position);
+					for (int i = 1; i < Me.Points.Count; i++)
 					{
-						Me.Points.Add(new OrientedPoint(ConvertWorldToLocalPosition(point), Me.Points[Me.Points.Count - 1].Orientation));
-					}
-				}
-			}
+						var current = ConvertLocalToWorldPosition(Me.Points[i].Position);
+						var center = current.Mid(previous);
+						var screenPosition = camera.WorldToScreenPointWithReverseCheck(center);
 
-			// "Remove point" buttons
-			if (Me.Points != null && Me.Points.Count > 0 && DraggingPointIndex < 0)
-			{
-				rect.width = SmallButtonSize;
-				rect.height = SmallButtonSize;
-				GUI.backgroundColor = RemoveButtonBackgroundColor;
-
-				for (int i = 0; i < Me.Points.Count; i++)
-				{
-					var point = ConvertLocalToWorldPosition(Me.Points[i].Position);
-					var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
-					if (screenPosition.HasValue)
-					{
-						screenPosition -= new Vector3(0f, 30f, 0f);
-
-						if (IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, mouseVisibilityDistance))
+						if (screenPosition.HasValue &&
+							IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, mouseVisibilityDistance))
 						{
 							rect.x = screenPosition.Value.x - SmallButtonHalfSize;
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
-							if (GUI.Button(rect, "-"))
+							if (GUI.Button(rect, "+"))
 							{
-								Me.Points.RemoveAt(i);
+								Me.Points.Insert(i, Me.Points[i].Mid(Me.Points[i - 1]));
 								break;
+							}
+						}
+
+						previous = current;
+					}
+				}
+
+				// "Add point to end" button
+				if (Me.Points != null && Me.Points.Count > 0 && DraggingPointIndex < 0)
+				{
+					rect.width = MediumButtonSize;
+					rect.height = MediumButtonSize;
+					GUI.backgroundColor = InsertButtonBackgroundColor;
+
+					var endingPoint = ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 1].Position);
+					var cameraDistanceToEndingPoint = Vector3.Distance(camera.transform.position, endingPoint);
+					var direction = Me.Points.Count == 1
+						? Vector3.forward
+						: (endingPoint - ConvertLocalToWorldPosition(Me.Points[Me.Points.Count - 2].Position)).normalized;
+
+					var point = endingPoint + direction * (cameraDistanceToEndingPoint * 0.5f);
+					var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
+
+					if (screenPosition.HasValue)
+					{
+						rect.x = screenPosition.Value.x - MediumButtonHalfSize;
+						rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
+						if (GUI.Button(rect, "+"))
+						{
+							Me.Points.Add(new OrientedPoint(ConvertWorldToLocalPosition(point), Me.Points[Me.Points.Count - 1].Orientation));
+						}
+					}
+				}
+
+				// "Remove point" buttons
+				if (Me.Points != null && Me.Points.Count > 0 && DraggingPointIndex < 0)
+				{
+					rect.width = SmallButtonSize;
+					rect.height = SmallButtonSize;
+					GUI.backgroundColor = RemoveButtonBackgroundColor;
+
+					for (int i = 0; i < Me.Points.Count; i++)
+					{
+						var point = ConvertLocalToWorldPosition(Me.Points[i].Position);
+						var screenPosition = camera.WorldToScreenPointWithReverseCheck(point);
+						if (screenPosition.HasValue)
+						{
+							screenPosition -= new Vector3(0f, 30f, 0f);
+
+							if (IsMouseCloseToScreenPoint(mousePosition, screenPosition.Value, mouseVisibilityDistance))
+							{
+								rect.x = screenPosition.Value.x - SmallButtonHalfSize;
+								rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
+								if (GUI.Button(rect, "-"))
+								{
+									Me.Points.RemoveAt(i);
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
 
-			GUI.backgroundColor = savedBackgroundColor;
-			Handles.EndGUI();
+				GUI.backgroundColor = savedBackgroundColor;
+				Handles.EndGUI();
 
-			if (GUI.changed)
-			{
-				EditorUtility.SetDirty(target);
-				// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
-				Me.Invalidate();
+				if (GUI.changed)
+				{
+					EditorUtility.SetDirty(target);
+					// TODO: Not cool to always invalidate everything. But it's a quick and robust solution for now.
+					Me.Invalidate();
+				}
 			}
 		}
 
