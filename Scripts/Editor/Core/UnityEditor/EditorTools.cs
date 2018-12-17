@@ -559,6 +559,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Clear Console
+
+		public static void ClearConsole()
+		{
+			//Debug.ClearDeveloperConsole(); This does not work for some reason.
+
+			var logEntries = Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+			var clearMethod = logEntries.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
+			clearMethod.Invoke(null, null);
+		}
+
+		#endregion
 	}
 
 }
