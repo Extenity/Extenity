@@ -143,8 +143,8 @@ namespace Extenity.MathToolbox.Editor
 		private List<OrientedPoint> Points => Me.Points;
 
 		protected override bool IsEditing => Me.IsEditing;
-		protected override bool IsPointsListAvailable => Points != null;
-		protected override bool IsPointsListAvailableAndNotEmpty => Points != null && Points.Count > 0;
+		protected override bool IsPointListAvailable => Points != null;
+		protected override bool IsPointListAvailableAndNotEmpty => Points != null && Points.Count > 0;
 		protected override int PointCount => Points.Count;
 
 		protected override Vector3 GetPointPosition(int i)

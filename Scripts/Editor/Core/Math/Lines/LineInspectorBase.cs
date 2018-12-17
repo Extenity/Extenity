@@ -10,14 +10,14 @@ namespace Extenity.MathToolbox.Editor
 	{
 		private static readonly Color InsertButtonBackgroundColor = new Color(0.1f, 1f, 0.1f, 1f);
 		private static readonly Color RemoveButtonBackgroundColor = new Color(1f, 0.6f, 0.6f, 1f);
-		private static readonly int SmallButtonSize = 20;
-		private static readonly int SmallButtonHalfSize = SmallButtonSize / 2;
-		private static readonly int MediumButtonSize = 26;
-		private static readonly int MediumButtonHalfSize = MediumButtonSize / 2;
+		private const int SmallButtonSize = 20;
+		private const int SmallButtonHalfSize = SmallButtonSize / 2;
+		private const int MediumButtonSize = 26;
+		private const int MediumButtonHalfSize = MediumButtonSize / 2;
 
-		private static int DraggingPointIndex = -1;
+		private int DraggingPointIndex = -1;
 
-		private void OnSceneGUI()
+		protected void OnSceneGUI()
 		{
 			var eventType = Event.current.type;
 			var eventRawType = Event.current.rawType;
@@ -56,7 +56,7 @@ namespace Extenity.MathToolbox.Editor
 					case EventType.ExecuteCommand:
 					case EventType.ContextClick:
 						{
-							if (IsPointsListAvailable)
+							if (IsPointListAvailable)
 							{
 								int selectedPointIndex = -1;
 
@@ -110,7 +110,7 @@ namespace Extenity.MathToolbox.Editor
 				var savedBackgroundColor = GUI.backgroundColor;
 
 				// "Insert point" buttons
-				if (IsPointsListAvailable && PointCount > 1 && DraggingPointIndex < 0)
+				if (IsPointListAvailable && PointCount > 1 && DraggingPointIndex < 0)
 				{
 					rect.width = SmallButtonSize;
 					rect.height = SmallButtonSize;
@@ -140,7 +140,7 @@ namespace Extenity.MathToolbox.Editor
 				}
 
 				// "Add point to end" button
-				if (IsPointsListAvailableAndNotEmpty && DraggingPointIndex < 0)
+				if (IsPointListAvailableAndNotEmpty && DraggingPointIndex < 0)
 				{
 					rect.width = MediumButtonSize;
 					rect.height = MediumButtonSize;
@@ -167,7 +167,7 @@ namespace Extenity.MathToolbox.Editor
 				}
 
 				// "Remove point" buttons
-				if (IsPointsListAvailableAndNotEmpty && DraggingPointIndex < 0)
+				if (IsPointListAvailableAndNotEmpty && DraggingPointIndex < 0)
 				{
 					rect.width = SmallButtonSize;
 					rect.height = SmallButtonSize;
@@ -211,8 +211,8 @@ namespace Extenity.MathToolbox.Editor
 
 		protected abstract bool IsEditing { get; }
 
-		protected abstract bool IsPointsListAvailable { get; }
-		protected abstract bool IsPointsListAvailableAndNotEmpty { get; }
+		protected abstract bool IsPointListAvailable { get; }
+		protected abstract bool IsPointListAvailableAndNotEmpty { get; }
 		protected abstract int PointCount { get; }
 
 		protected abstract Vector3 GetPointPosition(int i);
