@@ -257,7 +257,8 @@ namespace Extenity.MathToolbox.Editor
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 							if (GUI.Button(rect, "+"))
 							{
-								Me.Points.Insert(i, Me.Points[i].Mid(Me.Points[i - 1]));
+								var midOrientation = Me.Points[i].MidOrientation(Me.Points[i - 1]); 
+								Me.Points.Insert(i, new OrientedPoint(ConvertWorldToLocalPosition(center), midOrientation));
 								break;
 							}
 						}

@@ -22,6 +22,8 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void OnDisableDerived()
 		{
+			// TODO: That did not work as expected. The second we hit the Start Editing button, OnDisableDerived is called for some reason.
+			//Me.StopEditing();
 		}
 
 		protected override void OnMovementDetected()
@@ -237,7 +239,7 @@ namespace Extenity.MathToolbox.Editor
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 							if (GUI.Button(rect, "+"))
 							{
-								Me.Points.Insert(i, center);
+								Me.Points.Insert(i, ConvertWorldToLocalPosition(center));
 								break;
 							}
 						}

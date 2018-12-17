@@ -35,6 +35,18 @@ namespace Extenity.DataToolbox
 				orientation);
 		}
 
+		public Vector3 MidPosition(OrientedPoint other)
+		{
+			return (Position + other.Position) * 0.5f;
+		}
+
+		public Vector3 MidOrientation(OrientedPoint other)
+		{
+			var orientation = (Orientation + other.Orientation) * 0.5f;
+			var length = (Orientation.magnitude + other.Orientation.magnitude) * 0.5f;
+			return orientation.normalized * length;
+		}
+
 		public OrientedPoint WithPosition(Vector3 position)
 		{
 			return new OrientedPoint(position, Orientation);
