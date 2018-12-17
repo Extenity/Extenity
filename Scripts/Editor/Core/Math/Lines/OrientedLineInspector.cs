@@ -221,7 +221,7 @@ namespace Extenity.MathToolbox.Editor
 									var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
 									if (newPosition != currentPosition)
 									{
-										Points[selectedPointIndex] = Points[selectedPointIndex].WithPosition(ConvertWorldToLocalPosition(newPosition));
+										SetPoint(selectedPointIndex, ConvertWorldToLocalPosition(newPosition));
 
 										if (eventType == EventType.MouseDown ||
 											eventType == EventType.MouseDrag ||
@@ -262,8 +262,7 @@ namespace Extenity.MathToolbox.Editor
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 							if (GUI.Button(rect, "+"))
 							{
-								var midOrientation = Points[i].MidOrientation(Points[i - 1]); 
-								Points.Insert(i, new OrientedPoint(ConvertWorldToLocalPosition(center), midOrientation));
+								InsertPoint(i, ConvertWorldToLocalPosition(center));
 								break;
 							}
 						}
@@ -294,7 +293,7 @@ namespace Extenity.MathToolbox.Editor
 						rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
 						if (GUI.Button(rect, "+"))
 						{
-							Points.Add(new OrientedPoint(ConvertWorldToLocalPosition(point), Points[Points.Count - 1].Orientation));
+							AppendPoint(ConvertWorldToLocalPosition(point));
 						}
 					}
 				}
@@ -344,9 +343,25 @@ namespace Extenity.MathToolbox.Editor
 
 		private List<OrientedPoint> Points => Me.Points;
 
-		public Vector3 GetPointPosition(int i)
+		private Vector3 GetPointPosition(int i)
 		{
 			return Points[i].Position;
+		}
+
+		private void SetPoint(int i, Vector3 position)
+		{
+			Points[i] = Points[i].WithPosition(position);
+		}
+
+		private void InsertPoint(int i, Vector3 position)
+		{
+			var midOrientation = Points[i].MidOrientation(Points[i - 1]); 
+			Points.Insert(i, new OrientedPoint(position, midOrientation));
+		}
+
+		private void AppendPoint(Vector3 position)
+		{
+			Points.Add(new OrientedPoint(position, Points[Points.Count - 1].Orientation));
 		}
 
 		private void InvalidatePoints()

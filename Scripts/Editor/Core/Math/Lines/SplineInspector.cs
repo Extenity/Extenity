@@ -199,7 +199,7 @@ namespace Extenity.MathToolbox.Editor
 									var newPosition = Handles.PositionHandle(currentPosition, Quaternion.identity);
 									if (newPosition != currentPosition)
 									{
-										Points[selectedPointIndex] = ConvertWorldToLocalPosition(newPosition);
+										SetPoint(selectedPointIndex, ConvertWorldToLocalPosition(newPosition));
 
 										if (eventType == EventType.MouseDown ||
 											eventType == EventType.MouseDrag ||
@@ -240,7 +240,7 @@ namespace Extenity.MathToolbox.Editor
 							rect.y = screenHeight - screenPosition.Value.y - SmallButtonHalfSize;
 							if (GUI.Button(rect, "+"))
 							{
-								Points.Insert(i, ConvertWorldToLocalPosition(center));
+								InsertPoint(i, ConvertWorldToLocalPosition(center));
 								break;
 							}
 						}
@@ -271,7 +271,7 @@ namespace Extenity.MathToolbox.Editor
 						rect.y = screenHeight - screenPosition.Value.y - MediumButtonHalfSize;
 						if (GUI.Button(rect, "+"))
 						{
-							Points.Add(ConvertWorldToLocalPosition(point));
+							AppendPoint(ConvertWorldToLocalPosition(point));
 						}
 					}
 				}
@@ -321,9 +321,24 @@ namespace Extenity.MathToolbox.Editor
 
 		private List<Vector3> Points => Me.RawPoints;
 
-		public Vector3 GetPointPosition(int i)
+		private Vector3 GetPointPosition(int i)
 		{
 			return Points[i];
+		}
+
+		private void SetPoint(int i, Vector3 position)
+		{
+			Points[i] = position;
+		}
+
+		private void InsertPoint(int i, Vector3 position)
+		{
+			Points.Insert(i, position);
+		}
+
+		private void AppendPoint(Vector3 position)
+		{
+			Points.Add(ConvertWorldToLocalPosition(position));
 		}
 
 		private void InvalidatePoints()
