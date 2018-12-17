@@ -19,7 +19,7 @@ namespace Extenity.PainkillaTool.Editor
 	// TODO: Detect empty methods (Awake, Start, OnDestroy, Update, FixedUpdate, LateUpdate)
 	// TODO: Detect where Debug.Log_ methods are called.
 	// TODO: Detect where Log._ methods with no context are called.
-	// TODO: Detect OnValidate methods that are not covered inside UNITY_EDITOR blocks.
+	// TODO: Detect OnValidate, OnDrawGizmos, OnDrawGizmosSelected methods that are not covered inside UNITY_EDITOR blocks.
 	// TODO: Detect "EditorApplication.delayCall =" which should be "EditorApplication.delayCall +=".
 
 	public class CodeCorrect : ExtenityEditorWindowBase
