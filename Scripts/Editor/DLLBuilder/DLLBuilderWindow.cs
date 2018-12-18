@@ -40,7 +40,7 @@ namespace Extenity.DLLBuilder
 
 		#region Deinitialization
 
-		private void OnDisable()
+		protected override void OnDisableDerived()
 		{
 			CompilationPipeline.assemblyCompilationStarted -= RefreshUIOnCompilationStart;
 			CompilationPipeline.assemblyCompilationFinished -= RefreshUIOnCompilationEnd;

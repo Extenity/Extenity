@@ -60,6 +60,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Deinitialization
 
+		protected virtual void OnDisableDerived() { }
+
+		protected void OnDisable()
+		{
+			OnDisableDerived();
+		}
+
 		protected virtual void OnDestroyDerived() { }
 
 		protected void OnDestroy()
