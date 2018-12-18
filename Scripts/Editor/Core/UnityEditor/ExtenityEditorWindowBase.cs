@@ -58,6 +58,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Deinitialization
+
+		protected virtual void OnDestroyDerived() { }
+
+		protected void OnDestroy()
+		{
+			DeinitializeClosingWindowOnAssemblyReloadOrPlayModeChange();
+
+			OnDestroyDerived();
+		}
+
+		#endregion
+
 		#region OnGUI
 
 		protected abstract void OnGUIDerived();
@@ -148,30 +161,27 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Static Constructor API Call Bug Prevention
 
-		protected void InitializeAPICallPrevention()
+		protected void SetToCloseWindowOnAssemblyReloadOrPlayModeChange()
 		{
-			EditorApplication.playModeStateChanged += OnPlayModeStateChangedForAPICallPrevention;
-			AssemblyReloadEvents.beforeAssemblyReload += CloseWindowToPreventAPICallAccess;
+			EditorApplication.playModeStateChanged += _CloseWindowOnAssemblyReloadOrPlayModeChange;
+			AssemblyReloadEvents.beforeAssemblyReload += _CloseWindowOnAssemblyReloadOrPlayModeChange;
 		}
 
-		protected void DeinitializeAPICallPrevention()
+		private void DeinitializeClosingWindowOnAssemblyReloadOrPlayModeChange()
 		{
-			EditorApplication.playModeStateChanged -= OnPlayModeStateChangedForAPICallPrevention;
-			AssemblyReloadEvents.beforeAssemblyReload -= CloseWindowToPreventAPICallAccess;
+			EditorApplication.playModeStateChanged -= _CloseWindowOnAssemblyReloadOrPlayModeChange;
+			AssemblyReloadEvents.beforeAssemblyReload -= _CloseWindowOnAssemblyReloadOrPlayModeChange;
 		}
 
-		private void OnPlayModeStateChangedForAPICallPrevention(PlayModeStateChange stateChange)
+		private void _CloseWindowOnAssemblyReloadOrPlayModeChange(PlayModeStateChange stateChange)
 		{
-			CloseWindowToPreventAPICallAccess();
+			_CloseWindowOnAssemblyReloadOrPlayModeChange();
 		}
 
-		private void CloseWindowToPreventAPICallAccess()
+		private void _CloseWindowOnAssemblyReloadOrPlayModeChange()
 		{
-			// Quick fix:
-			// Close the window when play mode changes. Because at the time the user
-			// stops playmode, Unity will go crazy about calling ApplicationTools.PathHash
-			// from static constructor. This is a duct tape solution, but whatever.
-			Log.Info($"Closing '{titleContent.text}' window automatically to prevent API call errors.");
+			Log.Info($"Closing '{titleContent.text}' window automatically.");
+			DeinitializeClosingWindowOnAssemblyReloadOrPlayModeChange();
 			Close();
 		}
 

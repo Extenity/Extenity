@@ -35,22 +35,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void Awake()
 		{
-			InitializeAPICallPrevention();
+			// Quick fix:
+			// Close the window when play mode changes. Because at the time the user
+			// stops playmode, Unity will go crazy about calling ApplicationTools.PathHash
+			// from static constructor. This is a duct tape solution, but whatever.
+			SetToCloseWindowOnAssemblyReloadOrPlayModeChange();
 		}
 
 		[MenuItem("Edit/Scene Switcher on Play", priority = 159)] // Priority is just above the Play option.
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<SceneSwitcherOnPlay>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		private void OnDestroy()
-		{
-			DeinitializeAPICallPrevention();
 		}
 
 		#endregion
