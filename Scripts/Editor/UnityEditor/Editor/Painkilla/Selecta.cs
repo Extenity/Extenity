@@ -38,7 +38,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Deinitialization
 
-		protected void OnDestroy()
+		protected override void OnDestroyDerived()
 		{
 			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= SelectionChanged;

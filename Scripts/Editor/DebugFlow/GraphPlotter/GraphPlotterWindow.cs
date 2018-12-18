@@ -197,7 +197,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 		#region Deinitialization
 
-		protected void OnDestroy()
+		protected override void OnDestroyDerived()
 		{
 			DestroyTextures();
 		}
