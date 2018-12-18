@@ -38,7 +38,10 @@ namespace Extenity.ApplicationToolbox
 
 #else
 
-		NotImplemented
+		public static void IsAsyncKeyStateDown(AsyncKeyCodes key)
+		{
+			throw new System.NotImplementedException();
+		}
 
 #endif
 
@@ -70,7 +73,10 @@ namespace Extenity.ApplicationToolbox
 
 #else
 
-		NotImplemented
+		public static void ChangeWindowTitle(string newTitle)
+		{
+			throw new System.NotImplementedException();
+		}
 
 #endif
 
