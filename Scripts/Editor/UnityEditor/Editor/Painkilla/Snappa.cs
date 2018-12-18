@@ -78,23 +78,12 @@ namespace Extenity.PainkillaTool.Editor
 		protected override void OnEnableDerived()
 		{
 			InitializeKeyboard();
-			SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			SceneView.onSceneGUIDelegate += OnSceneGUI;
 		}
 
 		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<Snappa>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected override void OnDestroyDerived()
-		{
-			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 
 		#endregion
@@ -135,7 +124,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private bool IsMouseDown;
 
-		private void OnSceneGUI(SceneView sceneview)
+		protected override void OnSceneGUI(SceneView sceneView)
 		{
 			var currentEvent = Event.current;
 			var currentEventType = currentEvent.type;

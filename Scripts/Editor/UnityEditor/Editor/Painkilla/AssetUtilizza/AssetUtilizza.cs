@@ -29,27 +29,12 @@ namespace Extenity.PainkillaTool.Editor
 		protected override void OnEnableDerived()
 		{
 			OnEnableTreeView();
-
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			//SceneView.onSceneGUIDelegate += OnSceneGUI;
-			//Selection.selectionChanged -= SelectionChanged;
-			//Selection.selectionChanged += SelectionChanged;
 		}
 
 		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<AssetUtilizza>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected override void OnDisableDerived()
-		{
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			//Selection.selectionChanged -= SelectionChanged;
 		}
 
 		#endregion

@@ -26,30 +26,10 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		protected override void OnEnableDerived()
-		{
-			//ReplaceAsPrefabProperty = serializedObject.FindProperty("ReplaceAsPrefab");
-
-			//Selection.selectionChanged -= OnSelectionChanged;
-			//Selection.selectionChanged += OnSelectionChanged;
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			//SceneView.onSceneGUIDelegate += OnSceneGUI;
-		}
-
 		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<UIOptimizza>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected override void OnDestroyDerived()
-		{
-			//Selection.selectionChanged -= OnSelectionChanged;
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 
 		#endregion

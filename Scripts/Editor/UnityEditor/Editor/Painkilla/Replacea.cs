@@ -28,11 +28,6 @@ namespace Extenity.PainkillaTool.Editor
 			OverrideRotationsProperty = serializedObject.FindProperty("_OverrideRotations");
 			OverrideScalesProperty = serializedObject.FindProperty("_OverrideScales");
 			OverrideNamesProperty = serializedObject.FindProperty("_OverrideNames");
-
-			Selection.selectionChanged -= OnSelectionChanged;
-			Selection.selectionChanged += OnSelectionChanged;
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			//SceneView.onSceneGUIDelegate += OnSceneGUI;
 			*/
 		}
 
@@ -40,18 +35,6 @@ namespace Extenity.PainkillaTool.Editor
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<Replacea>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected override void OnDestroyDerived()
-		{
-			/*
-			Selection.selectionChanged -= OnSelectionChanged;
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			*/
 		}
 
 		#endregion

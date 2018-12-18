@@ -20,28 +20,10 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		protected override void OnEnableDerived()
-		{
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			//SceneView.onSceneGUIDelegate += OnSceneGUI;
-			Selection.selectionChanged -= SelectionChanged;
-			Selection.selectionChanged += SelectionChanged;
-		}
-
 		[MenuItem("Edit/Selecta", false, 1005)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
 			EditorTools.ToggleWindow<Selecta>();
-		}
-
-		#endregion
-
-		#region Deinitialization
-
-		protected override void OnDestroyDerived()
-		{
-			//SceneView.onSceneGUIDelegate -= OnSceneGUI;
-			Selection.selectionChanged -= SelectionChanged;
 		}
 
 		#endregion
@@ -131,7 +113,7 @@ namespace Extenity.PainkillaTool.Editor
 		private bool SelectionShouldUpdate;
 		private Object[] NewSelection;
 
-		private void SelectionChanged()
+		protected override void OnSelectionChanged()
 		{
 			Calculate();
 		}

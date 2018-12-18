@@ -1,4 +1,7 @@
-﻿using Extenity.MathToolbox;
+﻿using System;
+using System.Reflection;
+using Extenity.MathToolbox;
+using Extenity.ReflectionToolbox;
 using UnityEngine;
 using UnityEditor;
 
@@ -21,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			public bool WantsMouseMove;
 			public bool WantsMouseEnterLeaveWindow;
-			
+
 			public bool AutoRepaintOnSceneChange;
 		}
 
@@ -53,6 +56,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (autoRepaintOnSceneChange != specs.AutoRepaintOnSceneChange)
 				autoRepaintOnSceneChange = specs.AutoRepaintOnSceneChange;
 
+			InitializeOnSceneGUI();
+			InitializeOnSelectionChanged();
+
 			OnEnableDerived();
 		}
 
@@ -64,6 +70,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected void OnDisable()
 		{
+			DeinitializeOnSceneGUI();
+			DeinitializeOnSelectionChanged();
+
 			OnDisableDerived();
 		}
 
@@ -86,6 +95,60 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			CalculateRightMouseButtonScrolling();
 			OnGUIDerived();
+		}
+
+		#endregion
+
+		#region OnSceneGUI
+
+		private void InitializeOnSceneGUI()
+		{
+			var methodInfo = GetType().GetMethod(nameof(OnSceneGUI),
+				BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
+				null, CallingConventions.Any, new Type[] { typeof(SceneView) }, null);
+
+			// Register to the event if the method in base class is overriden.
+			if (methodInfo.IsOverride())
+			{
+				SceneView.onSceneGUIDelegate -= OnSceneGUI;
+				SceneView.onSceneGUIDelegate += OnSceneGUI;
+			}
+		}
+
+		private void DeinitializeOnSceneGUI()
+		{
+			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+		}
+
+		protected virtual void OnSceneGUI(SceneView sceneView)
+		{
+		}
+
+		#endregion
+
+		#region OnSelectionChanged
+
+		private void InitializeOnSelectionChanged()
+		{
+			var methodInfo = GetType().GetMethod(nameof(OnSelectionChanged),
+				BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
+				null, CallingConventions.Any, new Type[0], null);
+
+			// Register to the event if the method in base class is overriden.
+			if (methodInfo.IsOverride())
+			{
+				Selection.selectionChanged -= OnSelectionChanged;
+				Selection.selectionChanged += OnSelectionChanged;
+			}
+		}
+
+		private void DeinitializeOnSelectionChanged()
+		{
+			Selection.selectionChanged -= OnSelectionChanged;
+		}
+
+		protected virtual void OnSelectionChanged()
+		{
 		}
 
 		#endregion
@@ -166,7 +229,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Static Constructor API Call Bug Prevention
+		#region Set To Close Window On AssemblyReload Or PlayModeChange
 
 		protected void SetToCloseWindowOnAssemblyReloadOrPlayModeChange()
 		{
