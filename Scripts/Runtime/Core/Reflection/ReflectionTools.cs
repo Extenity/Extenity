@@ -923,6 +923,21 @@ namespace Extenity.ReflectionToolbox
 
 		#endregion
 
+		#region IsOverride
+
+		/// <summary>
+		/// Tells if the method is an override, that overrides the method in its base class.
+		/// Source: https://stackoverflow.com/questions/2932421/detect-if-a-method-was-overridden-using-reflection-c
+		/// </summary>
+		public static bool IsOverride(this MethodInfo methodInfo)
+		{
+			if (methodInfo == null)
+				throw new ArgumentNullException();
+			return methodInfo.GetBaseDefinition().DeclaringType != methodInfo.DeclaringType;
+		}
+
+		#endregion
+
 		#region SizeOf<T> Enhanced
 
 		private struct TypeSizeProxy<T>
