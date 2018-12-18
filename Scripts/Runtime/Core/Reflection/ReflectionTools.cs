@@ -946,12 +946,12 @@ namespace Extenity.ReflectionToolbox
 			var methodInfo = me.GetType().GetMethod(methodName,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
 				null, CallingConventions.Any, methodParameters, null);
-			
+
 			if (methodInfo == null)
 			{
 				throw new Exception($"No method named '{methodName}' with specified parameters found in derived classes.");
 			}
-			
+
 			return methodInfo.IsOverride();
 		}
 

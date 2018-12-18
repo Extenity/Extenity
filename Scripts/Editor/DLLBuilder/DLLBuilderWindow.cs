@@ -2,7 +2,6 @@
 using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
-using UnityEditor.Compilation;
 using UnityEngine;
 
 namespace Extenity.DLLBuilder
@@ -23,6 +22,8 @@ namespace Extenity.DLLBuilder
 
 		protected override void OnEnableDerived()
 		{
+			SetToDisableWindowOnCompilation();
+
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 			InitializeStatusMessage();
 		}
@@ -53,7 +54,11 @@ namespace Extenity.DLLBuilder
 		{
 			GUILayout.Space(20f);
 
-			GUI.enabled = !DLLBuilder.IsProcessing && !EditorApplication.isCompiling;
+			if (DLLBuilder.IsProcessing)
+			{
+				GUI.enabled = false;
+			}
+
 			if (GUILayout.Button("Build Remote", ThickButtonOptions))
 			{
 				DLLBuilder.StartProcess(BuildTriggerSource.UI, null, true);
@@ -99,18 +104,6 @@ namespace Extenity.DLLBuilder
 			//{
 			//	Distributer.DistributeToAll();
 			//}
-		}
-
-		protected override void OnAssemblyCompilationStarted(string outputAssemblyPath)
-		{
-			ShowNotification(new GUIContent("COMPILING..."));
-			Repaint();
-		}
-
-		protected override void OnAssemblyCompilationFinished(string outputAssemblyPath, CompilerMessage[] compilerMessages)
-		{
-			RemoveNotification();
-			Repaint();
 		}
 
 		#endregion

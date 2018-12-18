@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Extenity.MathToolbox;
 using Extenity.ReflectionToolbox;
 using UnityEngine;
@@ -75,6 +74,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			DeinitializeOnSceneGUI();
 			DeinitializeOnSelectionChanged();
 			DeinitializeOnCompilation();
+			DeinitializeDisablingWindowOnCompilation();
 
 			OnDisableDerived();
 		}
@@ -96,8 +96,32 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected void OnGUI()
 		{
-			CalculateRightMouseButtonScrolling();
-			OnGUIDerived();
+			var wasDisabled = false;
+			if (DisableWindowGUIOnCompilation)
+			{
+				if (EditorApplication.isCompiling)
+				{
+					wasDisabled = true;
+					EditorGUI.BeginDisabledGroup(true);
+				}
+			}
+
+			try
+			{
+				CalculateRightMouseButtonScrolling();
+				OnGUIDerived();
+			}
+			catch (Exception exception)
+			{
+				Log.Exception(exception);
+			}
+			finally
+			{
+				if (wasDisabled)
+				{
+					EditorGUI.EndDisabledGroup();
+				}
+			}
 		}
 
 		#endregion
@@ -172,13 +196,49 @@ namespace Extenity.UnityEditorToolbox.Editor
 			CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
 		}
 
-
 		protected virtual void OnAssemblyCompilationStarted(string outputAssemblyPath)
 		{
 		}
 
 		protected virtual void OnAssemblyCompilationFinished(string outputAssemblyPath, CompilerMessage[] compilerMessages)
 		{
+		}
+
+		#endregion
+
+		#region Disable Window On Compilation
+
+		public bool DisableWindowGUIOnCompilation;
+
+		private GUIContent CompilationMessage;
+
+		public void SetToDisableWindowOnCompilation(string message = "Compiling...")
+		{
+			DisableWindowGUIOnCompilation = true;
+			CompilationMessage = new GUIContent(message);
+
+			CompilationPipeline.assemblyCompilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.assemblyCompilationStarted += _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.assemblyCompilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
+			CompilationPipeline.assemblyCompilationFinished += _OnAssemblyCompilationFinished_ForDisablingWindow;
+		}
+
+		private void DeinitializeDisablingWindowOnCompilation()
+		{
+			CompilationPipeline.assemblyCompilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.assemblyCompilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
+		}
+
+		private void _OnAssemblyCompilationStarted_ForDisablingWindow(string outputAssemblyPath)
+		{
+			ShowNotification(CompilationMessage);
+			Repaint();
+		}
+
+		private void _OnAssemblyCompilationFinished_ForDisablingWindow(string outputAssemblyPath, CompilerMessage[] compilerMessages)
+		{
+			RemoveNotification();
+			Repaint();
 		}
 
 		#endregion
