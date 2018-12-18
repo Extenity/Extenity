@@ -77,6 +77,35 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			var changed = false;
 
+			// Change State
+			{
+				switch (instruction.GameObjectState)
+				{
+					case BatchObjectProcessor.GameObjectState.Unchanged:
+						break;
+					case BatchObjectProcessor.GameObjectState.Enable:
+						{
+							if (!go.activeSelf)
+							{
+								go.SetActive(true);
+								changed = true;
+							}
+						}
+						break;
+					case BatchObjectProcessor.GameObjectState.Disable:
+						{
+							if (go.activeSelf)
+							{
+								go.SetActive(false);
+								changed = true;
+							}
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+
 			// Change Static
 			if (instruction.ChangeStatic)
 			{

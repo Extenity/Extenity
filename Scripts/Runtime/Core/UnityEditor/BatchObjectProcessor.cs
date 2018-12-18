@@ -21,6 +21,13 @@ namespace Extenity.UnityEditorToolbox
 			UnpackCompletely,
 		}
 
+		public enum GameObjectState
+		{
+			Unchanged,
+			Enable,
+			Disable,
+		}
+
 		[Serializable]
 		public class ObjectReference
 		{
@@ -124,6 +131,9 @@ namespace Extenity.UnityEditorToolbox
 		public class Instruction : IConsistencyChecker
 		{
 			public string Name;
+
+			[Header("Activate GameObject")]
+			public GameObjectState GameObjectState = GameObjectState.Unchanged;
 
 			[Header("Change Layers")]
 			public bool ChangeLayers = false;
