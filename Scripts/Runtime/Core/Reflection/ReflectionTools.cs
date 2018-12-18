@@ -936,6 +936,25 @@ namespace Extenity.ReflectionToolbox
 			return methodInfo.GetBaseDefinition().DeclaringType != methodInfo.DeclaringType;
 		}
 
+		public static bool IsMethodOverriden(this object me, string methodName, Type[] methodParameters = default)
+		{
+			if (methodParameters == null)
+			{
+				methodParameters = new Type[0];
+			}
+
+			var methodInfo = me.GetType().GetMethod(methodName,
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
+				null, CallingConventions.Any, methodParameters, null);
+			
+			if (methodInfo == null)
+			{
+				throw new Exception($"No method named '{methodName}' with specified parameters found in derived classes.");
+			}
+			
+			return methodInfo.IsOverride();
+		}
+
 		#endregion
 
 		#region SizeOf<T> Enhanced

@@ -103,12 +103,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void InitializeOnSceneGUI()
 		{
-			var methodInfo = GetType().GetMethod(nameof(OnSceneGUI),
-				BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
-				null, CallingConventions.Any, new Type[] { typeof(SceneView) }, null);
-
 			// Register to the event if the method in base class is overriden.
-			if (methodInfo.IsOverride())
+			if (this.IsMethodOverriden(nameof(OnSceneGUI), new Type[] { typeof(SceneView) }))
 			{
 				SceneView.onSceneGUIDelegate -= OnSceneGUI;
 				SceneView.onSceneGUIDelegate += OnSceneGUI;
@@ -130,12 +126,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void InitializeOnSelectionChanged()
 		{
-			var methodInfo = GetType().GetMethod(nameof(OnSelectionChanged),
-				BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
-				null, CallingConventions.Any, new Type[0], null);
-
 			// Register to the event if the method in base class is overriden.
-			if (methodInfo.IsOverride())
+			if (this.IsMethodOverriden(nameof(OnSelectionChanged)))
 			{
 				Selection.selectionChanged -= OnSelectionChanged;
 				Selection.selectionChanged += OnSelectionChanged;
