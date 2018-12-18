@@ -4,6 +4,7 @@ using Extenity.MathToolbox;
 using Extenity.ReflectionToolbox;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Compilation;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -58,6 +59,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			InitializeOnSceneGUI();
 			InitializeOnSelectionChanged();
+			InitializeOnCompilation();
 
 			OnEnableDerived();
 		}
@@ -72,6 +74,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			DeinitializeOnSceneGUI();
 			DeinitializeOnSelectionChanged();
+			DeinitializeOnCompilation();
 
 			OnDisableDerived();
 		}
@@ -140,6 +143,41 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		protected virtual void OnSelectionChanged()
+		{
+		}
+
+		#endregion
+
+		#region On Compilation
+
+		private void InitializeOnCompilation()
+		{
+			// Register to the event if the method in base class is overriden.
+			if (this.IsMethodOverriden(nameof(OnAssemblyCompilationStarted), new[] { typeof(string) }))
+			{
+				CompilationPipeline.assemblyCompilationStarted -= OnAssemblyCompilationStarted;
+				CompilationPipeline.assemblyCompilationStarted += OnAssemblyCompilationStarted;
+			}
+			// Register to the event if the method in base class is overriden.
+			if (this.IsMethodOverriden(nameof(OnAssemblyCompilationFinished), new[] { typeof(string), typeof(CompilerMessage[]) }))
+			{
+				CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
+				CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompilationFinished;
+			}
+		}
+
+		private void DeinitializeOnCompilation()
+		{
+			CompilationPipeline.assemblyCompilationStarted -= OnAssemblyCompilationStarted;
+			CompilationPipeline.assemblyCompilationFinished -= OnAssemblyCompilationFinished;
+		}
+
+
+		protected virtual void OnAssemblyCompilationStarted(string outputAssemblyPath)
+		{
+		}
+
+		protected virtual void OnAssemblyCompilationFinished(string outputAssemblyPath, CompilerMessage[] compilerMessages)
 		{
 		}
 

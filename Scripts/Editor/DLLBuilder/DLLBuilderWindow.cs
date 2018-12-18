@@ -25,9 +25,6 @@ namespace Extenity.DLLBuilder
 		{
 			DLLBuilder.OnRepaintRequested.AddListener(ThreadSafeRepaint);
 			InitializeStatusMessage();
-
-			CompilationPipeline.assemblyCompilationStarted += RefreshUIOnCompilationStart;
-			CompilationPipeline.assemblyCompilationFinished += RefreshUIOnCompilationEnd;
 		}
 
 		[MenuItem(Constants.MenuItemPrefix + "Open Builder", priority = 1000)]
@@ -42,9 +39,6 @@ namespace Extenity.DLLBuilder
 
 		protected override void OnDisableDerived()
 		{
-			CompilationPipeline.assemblyCompilationStarted -= RefreshUIOnCompilationStart;
-			CompilationPipeline.assemblyCompilationFinished -= RefreshUIOnCompilationEnd;
-
 			DeinitializeStatusMessage();
 		}
 
@@ -107,13 +101,13 @@ namespace Extenity.DLLBuilder
 			//}
 		}
 
-		private void RefreshUIOnCompilationStart(string dummy)
+		protected override void OnAssemblyCompilationStarted(string outputAssemblyPath)
 		{
 			ShowNotification(new GUIContent("COMPILING..."));
 			Repaint();
 		}
 
-		private void RefreshUIOnCompilationEnd(string dummy1, CompilerMessage[] dummy2)
+		protected override void OnAssemblyCompilationFinished(string outputAssemblyPath, CompilerMessage[] compilerMessages)
 		{
 			RemoveNotification();
 			Repaint();
