@@ -209,10 +209,13 @@ namespace Extenity.UnityEditorToolbox
 		{
 			UnityEditor.EditorApplication.delayCall += () =>
 			{
-				if (!UnityEditor.EditorApplication.isPlaying)
+				if (this) // Check if the object is still alive.
 				{
-					Log.RegisterPrefix(this, "BatchObjectProcessor");
-					this.CheckConsistencyAndLog($"{nameof(BatchObjectProcessor)} has some inconsistencies.", this);
+					if (!UnityEditor.EditorApplication.isPlaying)
+					{
+						Log.RegisterPrefix(this, "BatchObjectProcessor");
+						this.CheckConsistencyAndLog($"{nameof(BatchObjectProcessor)} has some inconsistencies.", this);
+					}
 				}
 			};
 		}
