@@ -8,8 +8,6 @@ using System.Runtime.InteropServices;
 namespace Extenity.ApplicationToolbox
 {
 
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-
 	public enum AsyncKeyCodes
 	{
 		R = 82,
@@ -19,8 +17,6 @@ namespace Extenity.ApplicationToolbox
 		RShift = 160,
 		RControl = 162,
 	}
-
-#endif
 
 	public static class OperatingSystemTools
 	{
