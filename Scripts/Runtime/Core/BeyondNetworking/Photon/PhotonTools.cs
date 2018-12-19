@@ -32,12 +32,12 @@ namespace BeyondNetworking
 			return $"Room '{room.Name}' ({room.PlayerCount}/{room.MaxPlayers}) {(room.IsOpen ? "Open" : "Closed")}, {(room.IsVisible ? "Visible" : "Hidden")} {(room.CustomProperties.IsNotNullAndEmpty() ? "Properties:\n" + room.CustomProperties.ToJoinedString() : "")}";
 		}
 
-		public static string NickNameOrActorNumber(this Player player)
+		public static string NickNameOrRoomActorNumber(this Player player)
 		{
 			if (player == null)
 				return "[Null]";
 			return string.IsNullOrEmpty(player.NickName)
-				? player.ActorNumber.ToString()
+				? "ACT:" + player.ActorNumber.ToString()
 				: player.NickName;
 		}
 
