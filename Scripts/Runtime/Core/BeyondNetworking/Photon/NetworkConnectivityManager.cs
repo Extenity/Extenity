@@ -9,6 +9,7 @@ using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
 using Extenity.DebugFlowTool.GraphPlotting;
 using Extenity.FlowToolbox;
+using Extenity.MessagingToolbox;
 using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
@@ -257,7 +258,14 @@ namespace BeyondNetworking
 
 		public class MasterClientEvent : UnityEvent<bool> { }
 		public static readonly MasterClientEvent OnMasterClientChanged = new MasterClientEvent();
-		public static readonly UnityEvent OnBecameMasterClient = new UnityEvent();
+		public static readonly ExtenityEvent OnBecameMasterClient = new ExtenityEvent();
+
+		// TODO: 
+		//private void CheckConsistencyOnDesiredModeSwitch_MasterClient()
+		//{
+		//	OnMasterClientChanged.EnsureNoCallbacksRegistered(nameof(OnMasterClientChanged));
+		//	OnBecameMasterClient.EnsureNoCallbacksRegistered(nameof(OnBecameMasterClient));
+		//}
 
 		public override void OnMasterClientSwitched(Player newMasterClient)
 		{
@@ -266,9 +274,10 @@ namespace BeyondNetworking
 			var isMasterClient = PhotonNetwork.IsMasterClient;
 			Log.Info($"Master Client switched to '{(isMasterClient ? "local" : "remote")}' player: '{newMasterClient}'", this);
 			OnMasterClientChanged.Invoke(isMasterClient);
+
 			if (isMasterClient)
 			{
-				OnBecameMasterClient.Invoke();
+				OnBecameMasterClient.InvokeOneShotSafe();
 			}
 		}
 
