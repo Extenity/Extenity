@@ -12,11 +12,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Configuration
 
-		public static readonly AsyncKeyCodes[] ShortcutKeyCombination =
+		public static readonly VirtualKeyCode[] ShortcutKeyCombination =
 		{
-			AsyncKeyCodes.RControl,
-			AsyncKeyCodes.RShift,
-			AsyncKeyCodes.X,
+			VirtualKeyCode.RControl,
+			VirtualKeyCode.RWin,
+			VirtualKeyCode.X,
 		};
 
 		public static readonly QuickPlayCommand[] Commands =
