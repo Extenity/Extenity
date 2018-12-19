@@ -220,6 +220,7 @@ namespace Extenity.MessagingToolbox
 			finally
 			{
 				IsInvoking = false;
+				CallbacksCopy.Clear();
 			}
 		}
 
@@ -265,6 +266,7 @@ namespace Extenity.MessagingToolbox
 			}
 
 			IsInvoking = false;
+			CallbacksCopy.Clear();
 		}
 
 		#endregion
