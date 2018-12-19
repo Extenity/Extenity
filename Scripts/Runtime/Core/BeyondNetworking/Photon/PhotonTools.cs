@@ -1,3 +1,4 @@
+using System.Text;
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
@@ -47,14 +48,31 @@ namespace BeyondNetworking
 
 		private static readonly byte[] _Buffer = new byte[sizeof(float) * 4]; // That's the size of a Quaternion, which is the largest data structure.
 
+		public static int Serialize(this StreamBuffer outStream, string value)
+		{
+			// TODO: OPTIMIZATION: Reduce memory allocations if possible.
+			lock (_Buffer)
+			{
+				var writtenSize = 0;
+				var bytes = Encoding.UTF8.GetBytes(value);
+				// Write size of the string
+				Protocol.Serialize(bytes.Length, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				// Write the string bytes
+				outStream.Write(bytes, 0, bytes.Length);
+				writtenSize += bytes.Length;
+				return writtenSize;
+			}
+		}
+
 		public static int Serialize(this StreamBuffer outStream, int value)
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
-				Protocol.Serialize(value, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				var writtenSize = 0;
+				Protocol.Serialize(value, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -62,10 +80,10 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
-				Protocol.Serialize(value, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				var writtenSize = 0;
+				Protocol.Serialize(value, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -73,10 +91,10 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
-				Protocol.Serialize(value, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				var writtenSize = 0;
+				Protocol.Serialize(value, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -84,11 +102,11 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
+				var writtenSize = 0;
 				var valueShort = (short)value;
-				Protocol.Serialize(valueShort, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				Protocol.Serialize(valueShort, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -96,11 +114,11 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
+				var writtenSize = 0;
 				var valueAsShort = value ? (short)1 : (short)0; // TODO: Photon does not support bool serialization. Find a way to do it properly. See 7817575.
-				Protocol.Serialize(valueAsShort, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				Protocol.Serialize(valueAsShort, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -108,12 +126,12 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
-				var index = 0;
-				Protocol.Serialize(value.x, _Buffer, ref index);
-				Protocol.Serialize(value.y, _Buffer, ref index);
-				Protocol.Serialize(value.z, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				var writtenSize = 0;
+				Protocol.Serialize(value.x, _Buffer, ref writtenSize);
+				Protocol.Serialize(value.y, _Buffer, ref writtenSize);
+				Protocol.Serialize(value.z, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
 			}
 		}
 
@@ -121,13 +139,55 @@ namespace BeyondNetworking
 		{
 			lock (_Buffer)
 			{
+				var writtenSize = 0;
+				Protocol.Serialize(value.x, _Buffer, ref writtenSize);
+				Protocol.Serialize(value.y, _Buffer, ref writtenSize);
+				Protocol.Serialize(value.z, _Buffer, ref writtenSize);
+				Protocol.Serialize(value.w, _Buffer, ref writtenSize);
+				outStream.Write(_Buffer, 0, writtenSize);
+				return writtenSize;
+			}
+		}
+
+
+		public static bool Deserialize(this StreamBuffer inStream, out string value)
+		{
+			// TODO: OPTIMIZATION: Reduce memory allocations if possible.
+			lock (_Buffer)
+			{
 				var index = 0;
-				Protocol.Serialize(value.x, _Buffer, ref index);
-				Protocol.Serialize(value.y, _Buffer, ref index);
-				Protocol.Serialize(value.z, _Buffer, ref index);
-				Protocol.Serialize(value.w, _Buffer, ref index);
-				outStream.Write(_Buffer, 0, index);
-				return index;
+				// Read size of the string
+				var readSize = inStream.Read(_Buffer, 0, sizeof(int));
+				if (readSize != sizeof(int))
+				{
+					value = "";
+					return false;
+				}
+				Protocol.Deserialize(out int stringBytesLength, _Buffer, ref index);
+				// Read the string bytes
+				if (stringBytesLength > 0)
+				{
+					var stringBytes = new byte[stringBytesLength];
+					readSize = inStream.Read(stringBytes, 0, stringBytesLength);
+					if (readSize != stringBytesLength)
+					{
+						value = "";
+						return false;
+					}
+					value = Encoding.UTF8.GetString(stringBytes);
+					return true;
+				}
+				else if (stringBytesLength < 0)
+				{
+					// Negative length is unexpected, which means the buffer has some faulty data.
+					value = "";
+					return false;
+				}
+				else
+				{
+					value = "";
+					return true;
+				}
 			}
 		}
 
