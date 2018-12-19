@@ -181,6 +181,12 @@ namespace Extenity.MessagingToolbox
 		[ThreadStatic]
 		private static List<Entry> CallbacksCopy;
 
+		public void InvokeOneShot(T1 param1, T2 param2)
+		{
+			Invoke(param1, param2);
+			RemoveAllListeners();
+		}
+
 		public void Invoke(T1 param1, T2 param2)
 		{
 			if (IsInvoking)
@@ -215,6 +221,12 @@ namespace Extenity.MessagingToolbox
 			{
 				IsInvoking = false;
 			}
+		}
+
+		public void InvokeOneShotSafe(T1 param1, T2 param2)
+		{
+			InvokeSafe(param1, param2);
+			RemoveAllListeners();
 		}
 
 		public void InvokeSafe(T1 param1, T2 param2)
