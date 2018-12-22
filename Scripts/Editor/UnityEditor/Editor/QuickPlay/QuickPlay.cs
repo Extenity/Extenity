@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Extenity.ApplicationToolbox;
+using Sirenix.Utilities;
 using UnityEditor;
 using UnityEditor.Callbacks;
 
@@ -12,11 +14,25 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Configuration
 
-		public static readonly VirtualKeyCode[] ShortcutKeyCombination =
+		public static readonly VirtualKeyCode[] DefaultShortcutKeyCombination =
 		{
-			VirtualKeyCode.RControl,
-			VirtualKeyCode.RWin,
+			VirtualKeyCode.LControl,
+			VirtualKeyCode.LShift,
 			VirtualKeyCode.X,
+		};
+
+		public static readonly VirtualKeyCode[][] PredefinedShortcutKeyCombinations =
+		{
+			new []{
+				VirtualKeyCode.LControl,
+				VirtualKeyCode.LShift,
+				VirtualKeyCode.X,
+			},
+			new []{
+				VirtualKeyCode.RControl,
+				VirtualKeyCode.RWin,
+				VirtualKeyCode.X,
+			},
 		};
 
 		public static readonly QuickPlayCommand[] Commands =
@@ -109,6 +125,65 @@ namespace Extenity.UnityEditorToolbox.Editor
 				IsKeyCombinationDown = false;
 			}
 		}
+
+		#endregion
+
+		#region Global Shortcut Key Preference
+
+		private const string ShortcutKeyPrefKey = "QuickPlay.Shortcut";
+
+		public static string ShortcutKeyCombinationToString(VirtualKeyCode[] keys)
+		{
+			return string.Join(", ", keys);
+		}
+
+		public static VirtualKeyCode[] ShortcutKeyCombinationFromString(string keysString)
+		{
+			return keysString.Split(',')
+				.Where(item => !string.IsNullOrWhiteSpace(item))
+				.Select(item =>
+				{
+					Enum.TryParse(item.Trim(), true, out VirtualKeyCode result);
+					if ((int)result == 0)
+					{
+						throw new Exception($"Invalid key '{item.Trim()}'");
+					}
+					return result;
+				})
+				.ToArray();
+		}
+
+		private static VirtualKeyCode[] _ShortcutKeyCombination;
+		public static VirtualKeyCode[] ShortcutKeyCombination
+		{
+			get
+			{
+				if (_ShortcutKeyCombination == null)
+				{
+					try
+					{
+						var keysString = EditorPrefs.GetString(ShortcutKeyPrefKey, null);
+						_ShortcutKeyCombination = ShortcutKeyCombinationFromString(keysString);
+					}
+					catch
+					{
+						// Ignored.
+					}
+
+					if (_ShortcutKeyCombination.IsNullOrEmpty())
+					{
+						_ShortcutKeyCombination = DefaultShortcutKeyCombination;
+					}
+				}
+				return _ShortcutKeyCombination;
+			}
+			set
+			{
+				_ShortcutKeyCombination = value;
+				EditorPrefs.SetString(ShortcutKeyPrefKey, ShortcutKeyCombinationToString(value));
+			}
+		}
+
 
 		#endregion
 

@@ -9,7 +9,7 @@ namespace Extenity.DebugFlowTool.Unity
 	{
 		#region GUI
 
-		[PreferenceItem("DebugFlow")]
+		[PreferenceItem(nameof(DebugFlow))]
 		public static void PreferencesGUI()
 		{
 			EditorGUILayoutTools.DrawHeader("Target Interface");
