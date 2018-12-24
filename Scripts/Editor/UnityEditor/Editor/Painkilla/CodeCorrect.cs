@@ -22,6 +22,7 @@ namespace Extenity.PainkillaTool.Editor
 	// TODO: Detect OnValidate, OnDrawGizmos, OnDrawGizmosSelected methods that are not covered inside UNITY_EDITOR blocks.
 	// TODO: Detect "EditorApplication.delayCall =" which should be "EditorApplication.delayCall +=".
 	// TODO: Detect Destroy and DestroyImmediate calls that trying to destroy a Transform component. This is a critical bug and can't be ignored.
+	// TODO: Detect "yield return new" usages that can be cached.
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
