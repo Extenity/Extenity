@@ -11,8 +11,11 @@ namespace Extenity.ProfilingToolbox
 
 		public static void Tick(string label)
 		{
-			var now = Time.time;
+			Tick(label, Time.time);
+		}
 
+		public static void Tick(string label, float now)
+		{
 			if (!Analyzers.TryGetValue(label, out var analyzer))
 			{
 				analyzer = new TickAnalyzer(
