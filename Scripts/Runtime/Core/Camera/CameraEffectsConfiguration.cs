@@ -7,6 +7,8 @@ using UnityEngine;
 namespace Extenity.CameraToolbox
 {
 
+	// TODO: Camera effects are not handled the same way in SRP. So this class is no use anymore. But decided not to delete it since it's a powerful utility that serializes and deserializes components of a gameobject. Figure out what to do with it.
+
 	[Serializable]
 	public class CameraEffectsConfiguration
 	{
