@@ -14,7 +14,7 @@ namespace Extenity.BeyondAudio
 
 		protected void Awake()
 		{
-			InitializeSingleton(this, true);
+			InitializeSingleton(true);
 		}
 
 		#endregion

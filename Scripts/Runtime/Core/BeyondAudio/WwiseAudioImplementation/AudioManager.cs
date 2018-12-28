@@ -41,7 +41,7 @@ namespace Extenity.BeyondAudio
 
 		private void Awake()
 		{
-			InitializeSingleton(this, true);
+			InitializeSingleton(true);
 			Log.RegisterPrefix(this, "Audio");
 			InitializeAudioSourceTemplate();
 		}

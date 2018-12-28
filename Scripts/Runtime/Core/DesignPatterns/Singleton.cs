@@ -13,8 +13,8 @@ namespace Extenity.DesignPatternsToolbox
 
 	// Usage:
 	//   Use "new" to create singleton.
-	//   InitializeSingleton(this); must be placed on the constructor of derived class.
-	public class Singleton<T>
+	//   InitializeSingleton(...); must be placed on the constructor of derived class.
+	public class Singleton<T> where T : Singleton<T>
 	{
 		protected virtual void OnDestroySingleton() { }
 
@@ -23,14 +23,14 @@ namespace Extenity.DesignPatternsToolbox
 		private string className;
 #pragma warning restore
 
-		protected void InitializeSingleton(T obj)
+		protected void InitializeSingleton()
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
 			Log.Info("Instantiating singleton: " + className);
 #endif
 
-			instance = obj;
+			instance = this as T;
 			SingletonTracker.SingletonInstantiated(className);
 		}
 

@@ -23,7 +23,7 @@ namespace Extenity.ProfilingToolbox
 
 		void Awake()
 		{
-			InitializeSingleton(this);
+			InitializeSingleton();
 
 			lastUpdateTime = Time.realtimeSinceStartup;
 		}

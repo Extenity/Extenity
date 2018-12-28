@@ -15,21 +15,21 @@ namespace Extenity.DesignPatternsToolbox
 
 	// Usage:
 	//   Use the derived class as a Component of a GameObject.
-	//   InitializeSingleton(this); must be placed on the Awake method of derived class.
-	public class AutoSingletonUnity<T> : MonoBehaviour where T : Component
+	//   InitializeSingleton(...); must be placed on the Awake method of derived class.
+	public class AutoSingletonUnity<T> : MonoBehaviour where T : AutoSingletonUnity<T>
 	{
 		private static T instance;
 #pragma warning disable 414
 		private string className;
 #pragma warning restore
 
-		protected void InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
+		protected void InitializeSingleton(bool dontDestroyOnLoad = true)
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
 			Log.Info("Instantiating singleton: " + className, obj);
 #endif
-			instance = obj;
+			instance = this as T;
 
 			if (dontDestroyOnLoad)
 			{

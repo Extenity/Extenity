@@ -33,7 +33,7 @@ namespace Extenity.DebugToolbox
 
 		private void Awake()
 		{
-			InitializeSingleton(this, false);
+			InitializeSingleton(false);
 
 			InitializeTextures();
 

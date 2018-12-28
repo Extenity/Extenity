@@ -15,23 +15,21 @@ namespace Extenity.DesignPatternsToolbox
 
 	// Usage:
 	//   Use the derived class as a MonoBehaviour of a GameObject.
-	//   InitializeSingleton(this); must be placed on the Awake method of derived class.
-	public class SingletonUnity<T> : MonoBehaviour where T : MonoBehaviour
+	//   InitializeSingleton(...); must be placed on the Awake method of derived class.
+	public class SingletonUnity<T> : MonoBehaviour where T : SingletonUnity<T>
 	{
 		private static T instance;
 #pragma warning disable 414
 		private string className;
 #pragma warning restore
 
-		protected T InitializeSingleton(T obj, bool dontDestroyOnLoad = true)
-		//protected void InitializeSingleton(bool dontDestroyOnLoad = true) // TODO: Refactor: Do this on extra time. See 1759175
+		protected T InitializeSingleton(bool dontDestroyOnLoad = true)
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
 			Log.Info("Instantiating singleton: " + className, obj);
 #endif
-			instance = obj;
-			//instance = this as T; // TODO: Refactor: Do this on extra time. See 1759175
+			instance = this as T;
 
 			if (dontDestroyOnLoad)
 			{
