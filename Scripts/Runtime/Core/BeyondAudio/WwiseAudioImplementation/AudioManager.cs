@@ -98,6 +98,20 @@ namespace Extenity.BeyondAudio
 
 #elif UNITY_ANDROID
 
+		public bool IsDeviceVolumeSupported => false;
+
+		public float GetDeviceVolumeNormalized()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public float SetDeviceVolumeNormalized(float normalizedVolume)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		// TODO: There is only little left to complete this feature. But it takes so much time because every try needs a build on device.
+		/*
 		// Source: https://forum.unity.com/threads/accessing-and-changing-the-volume-of-the-device.135907/
 
 		public bool IsDeviceVolumeSupported => true;
@@ -107,6 +121,7 @@ namespace Extenity.BeyondAudio
 
 		private RangeInt GetDeviceVolumeRange()
 		{
+			Log.Info("## GetDeviceVolumeRange");
 			var min = AndroidAudioService.Call<int>("getStreamMinVolume", ANDROID_STREAM_MUSIC);
 			var max = AndroidAudioService.Call<int>("getStreamMaxVolume", ANDROID_STREAM_MUSIC);
 			Log.Info($"Android device volume range: {min}-{max}", this);
@@ -115,6 +130,7 @@ namespace Extenity.BeyondAudio
 
 		private int GetDeviceVolume()
 		{
+			Log.Info("## GetDeviceVolume");
 			var volume = AndroidAudioService.Call<int>("getStreamVolume", ANDROID_STREAM_MUSIC);
 			Log.Info($"Android device volume: {volume}", this);
 			return volume;
@@ -122,6 +138,7 @@ namespace Extenity.BeyondAudio
 
 		public float GetDeviceVolumeNormalized()
 		{
+			Log.Info("## GetDeviceVolumeNormalized");
 			var range = GetDeviceVolumeRange();
 			var volume = GetDeviceVolume();
 			var normalizedVolume = (volume - range.start) / (float)range.length;
@@ -134,6 +151,7 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		private int SetDeviceVolume(int volume)
 		{
+			Log.Info("## SetDeviceVolume   volume: " + volume);
 			AndroidAudioService.Call("setStreamVolume", ANDROID_STREAM_MUSIC, volume, ANDROID_SETSTREAMVOLUME_FLAGS);
 			var newVolume = GetDeviceVolume();
 			if (newVolume == volume)
@@ -152,6 +170,7 @@ namespace Extenity.BeyondAudio
 		/// </summary>
 		public float SetDeviceVolumeNormalized(float normalizedVolume)
 		{
+			Log.Info("## SetDeviceVolumeNormalized   normalizedVolume: " + normalizedVolume);
 			var range = GetDeviceVolumeRange();
 			var volume = range.start + (int)(range.length * normalizedVolume);
 			var newVolume = SetDeviceVolume(volume);
@@ -168,8 +187,16 @@ namespace Extenity.BeyondAudio
 				{
 					var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 					var context = up.GetStatic<AndroidJavaObject>("currentActivity");
-					var audioName = context.GetStatic<string>("AUDIO_SERVICE");
-					_AndroidAudioService = context.Call<AndroidJavaObject>("getSystemService", audioName);
+					
+					// This seems to fail for some reason. Probably caused by Unity.
+					// So we use the constant value of this static field, instead of
+					// querying its value. See below:
+					// https://forum.unity.com/threads/crash-after-call-androidjavaobject-getstatic-2018-1-0f2.531238/
+					// https://developer.android.com/reference/android/content/Context#AUDIO_SERVICE
+					//var AudioServiceName = context.GetStatic<string>("AUDIO_SERVICE");
+					const string AudioServiceName = "audio";
+
+					_AndroidAudioService = context.Call<AndroidJavaObject>("getSystemService", AudioServiceName);
 				}
 				if (_AndroidAudioService == null)
 				{
@@ -178,6 +205,7 @@ namespace Extenity.BeyondAudio
 				return _AndroidAudioService;
 			}
 		}
+		*/
 
 #elif UNITY_IOS
 
