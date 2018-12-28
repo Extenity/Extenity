@@ -80,6 +80,113 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
+		#region Device Volume
+
+#if UNITY_EDITOR_WIN
+
+		public bool IsDeviceVolumeSupported => false;
+
+		public float GetDeviceVolumeNormalized()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public float SetDeviceVolumeNormalized(float normalizedVolume)
+		{
+			throw new System.NotImplementedException();
+		}
+
+#elif UNITY_ANDROID
+
+		// Source: https://forum.unity.com/threads/accessing-and-changing-the-volume-of-the-device.135907/
+
+		public bool IsDeviceVolumeSupported => true;
+
+		private const int ANDROID_STREAM_MUSIC = 3;
+		private const int ANDROID_SETSTREAMVOLUME_FLAGS = 0;
+
+		private RangeInt GetDeviceVolumeRange()
+		{
+			var min = AndroidAudioService.Call<int>("getStreamMinVolume", ANDROID_STREAM_MUSIC);
+			var max = AndroidAudioService.Call<int>("getStreamMaxVolume", ANDROID_STREAM_MUSIC);
+			Log.Info($"Android device volume range: {min}-{max}", this);
+			return new RangeInt(min, max - min);
+		}
+
+		private int GetDeviceVolume()
+		{
+			var volume = AndroidAudioService.Call<int>("getStreamVolume", ANDROID_STREAM_MUSIC);
+			Log.Info($"Android device volume: {volume}", this);
+			return volume;
+		}
+
+		public float GetDeviceVolumeNormalized()
+		{
+			var range = GetDeviceVolumeRange();
+			var volume = GetDeviceVolume();
+			var normalizedVolume = (volume - range.start) / (float)range.length;
+			Log.Info($"Android device normalized volume: {normalizedVolume}", this);
+			return volume;
+		}
+
+		/// <summary>
+		/// Returns the current volume after the value is set.
+		/// </summary>
+		private int SetDeviceVolume(int volume)
+		{
+			AndroidAudioService.Call("setStreamVolume", ANDROID_STREAM_MUSIC, volume, ANDROID_SETSTREAMVOLUME_FLAGS);
+			var newVolume = GetDeviceVolume();
+			if (newVolume == volume)
+			{
+				Log.Info($"Android device volume set to: {newVolume}", this);
+			}
+			else
+			{
+				Log.Warning($"Failed to set Android device volume to '{volume}'. Currently '{newVolume}'", this);
+			}
+			return newVolume;
+		}
+
+		/// <summary>
+		/// Returns the current volume after the value is set.
+		/// </summary>
+		public float SetDeviceVolumeNormalized(float normalizedVolume)
+		{
+			var range = GetDeviceVolumeRange();
+			var volume = range.start + (int)(range.length * normalizedVolume);
+			var newVolume = SetDeviceVolume(volume);
+			var newNormalizedVolume = (newVolume - range.start) / (float)range.length;
+			return newNormalizedVolume;
+		}
+
+		private AndroidJavaObject _AndroidAudioService;
+		private AndroidJavaObject AndroidAudioService
+		{
+			get
+			{
+				if (_AndroidAudioService == null)
+				{
+					var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+					var context = up.GetStatic<AndroidJavaObject>("currentActivity");
+					var audioName = context.GetStatic<string>("AUDIO_SERVICE");
+					_AndroidAudioService = context.Call<AndroidJavaObject>("getSystemService", audioName);
+				}
+				if (_AndroidAudioService == null)
+				{
+					throw new System.Exception("Failed to get Android Audio Service.");
+				}
+				return _AndroidAudioService;
+			}
+		}
+
+#elif UNITY_IOS
+
+		ImplementThis;
+
+#endif
+
+		#endregion
+
 		#region Master Audio Mixer and Music/Effect Volumes
 
 		[Header("Audio Mixers and Volume Controls")]
