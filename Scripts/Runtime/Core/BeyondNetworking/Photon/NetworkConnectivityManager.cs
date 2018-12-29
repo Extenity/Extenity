@@ -267,6 +267,27 @@ namespace BeyondNetworking
 		//	OnBecameMasterClient.EnsureNoCallbacksRegistered(nameof(OnBecameMasterClient));
 		//}
 
+		public static void RegisterToBecomingMasterClientIfRequired(ExtenityEvent.MethodDefinition action)
+		{
+			if (!PhotonNetwork.IsMasterClient)
+			{
+				OnBecameMasterClient.AddListener(action);
+			}
+		}
+
+		public static void CallOrRegisterToBecomingMasterClient(ExtenityEvent.MethodDefinition action, ExtenityEvent.MethodDefinition immediateActionIfNotMaster = null)
+		{
+			if (PhotonNetwork.IsMasterClient)
+			{
+				action();
+			}
+			else
+			{
+				immediateActionIfNotMaster?.Invoke();
+				OnBecameMasterClient.AddListener(action);
+			}
+		}
+
 		public override void OnMasterClientSwitched(Player newMasterClient)
 		{
 			//var session = CurrentSession;
