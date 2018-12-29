@@ -98,6 +98,23 @@ namespace Extenity.SceneManagementToolbox.Editor
 			}
 		}
 
+		public new static void ReloadAllLoadedScenes()
+		{
+			var loadedScenes = GetLoadedScenes(false);
+			var loadedActiveScene = EditorSceneManager.GetActiveScene();
+			if (!loadedActiveScene.IsValid())
+				return;
+
+			EditorSceneManager.OpenScene(loadedActiveScene.path, OpenSceneMode.Single);
+			if (loadedScenes != null)
+			{
+				foreach (var loadedScene in loadedScenes)
+				{
+					EditorSceneManager.OpenScene(loadedScene.path, OpenSceneMode.Additive);
+				}
+			}
+		}
+
 		public static bool IsSceneExistsAtPath(string path)
 		{
 			if (string.IsNullOrEmpty(path))
