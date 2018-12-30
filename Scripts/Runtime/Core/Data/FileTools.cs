@@ -344,6 +344,25 @@ namespace Extenity.DataToolbox
 
 		#region Extension
 
+		public static string ChangeFileExtension(this string path, string extension)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException(nameof(path));
+			if (string.IsNullOrEmpty(extension))
+				throw new ArgumentNullException(nameof(extension));
+
+			var extensionWithDot = extension[0] == '.'
+				? extension
+				: '.' + extension;
+
+			if (path.EndsWith(extensionWithDot, StringComparison.OrdinalIgnoreCase))
+				return path;
+
+			var directory = Path.GetDirectoryName(path);
+			var fileName = Path.GetFileNameWithoutExtension(path) + extensionWithDot;
+			return Path.Combine(directory, fileName);
+		}
+
 		public static string AddFileExtension(this string path, string extension, bool ignoreIfAlreadyThere = true)
 		{
 			if (string.IsNullOrEmpty(path))
