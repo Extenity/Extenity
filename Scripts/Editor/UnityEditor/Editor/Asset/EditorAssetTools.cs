@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
+using Extenity.DebugToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.TextureToolbox;
@@ -91,6 +93,156 @@ namespace Extenity.AssetToolbox.Editor
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
 			Log.Info($"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
+		}
+
+		#endregion
+
+		#region Assets Menu - Operations - RenderTexture
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/All", priority = 2901)]
+		public static void SaveRenderTextureToFile_All()
+		{
+			var allTextureFormats = Enum.GetValues(typeof(TextureFormat)) as TextureFormat[];
+			foreach (var textureFormat in allTextureFormats)
+			{
+				_SaveSelectedRenderTexturesToFile(textureFormat, true);
+				_SaveSelectedRenderTexturesToFile(textureFormat, false);
+			}
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/All", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_All()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBA32", priority = 2801)]
+		public static void SaveRenderTextureToFile_RGBA32()
+		{
+			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBA32, true);
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBA32", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_RGBA32()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/ARGB32", priority = 2802)]
+		public static void SaveRenderTextureToFile_ARGB32()
+		{
+			_SaveSelectedRenderTexturesToFile(TextureFormat.ARGB32, true);
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/ARGB32", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_ARGB32()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGB24", priority = 2803)]
+		public static void SaveRenderTextureToFile_RGB24()
+		{
+			_SaveSelectedRenderTexturesToFile(TextureFormat.RGB24, true);
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGB24", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_RGB24()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAFloat", priority = 2804)]
+		public static void SaveRenderTextureToFile_RGBAFloat()
+		{
+			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBAFloat, true);
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAFloat", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_RGBAFloat()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAHalf", priority = 2805)]
+		public static void SaveRenderTextureToFile_RGBAHalf()
+		{
+			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBAHalf, true);
+		}
+		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAHalf", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile_RGBAHalf()
+		{
+			return IsSelectionContainsAnyRenderTexture();
+		}
+
+		private static void _SaveSelectedRenderTexturesToFile(TextureFormat format, bool linear)
+		{
+			var selectedObjects = Selection.objects;
+			if (selectedObjects.IsNotNullAndEmpty())
+			{
+				foreach (var selected in selectedObjects)
+				{
+					if (selected is RenderTexture)
+					{
+						var renderTexturePath = AssetDatabase.GetAssetPath(selected);
+						var renderTextureFileName = Path.GetFileNameWithoutExtension(renderTexturePath);
+						var fileName = $"{renderTextureFileName}-{(linear ? "Linear" : "NonLinear")}-{format}.png";
+						//var directory = Path.GetDirectoryName(renderTexturePath);
+						var directory = "RenderTextureDump";
+						var path = Path.Combine(directory, fileName);
+						DirectoryTools.CreateFromFilePath(path);
+						_SaveRenderTextureToFile(path, (RenderTexture)selected, format, linear);
+					}
+				}
+			}
+		}
+
+		private static void _SaveRenderTextureToFile(string path, RenderTexture renderTexture, TextureFormat format, bool linear)
+		{
+			try
+			{
+				using (var error = new ErrorLogDetector(true, true, true))
+				{
+					var texture = new Texture2D(renderTexture.width, renderTexture.height, format, false, linear);
+					if (!texture)
+					{
+						Log.Warning($"Could not create texture with format '{format}'.");
+						return;
+					}
+
+					RenderTexture.active = renderTexture;
+
+					texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+					texture.Apply();
+
+					RenderTexture.active = null;
+
+					var imageBytes = texture.EncodeToPNG();
+					if (imageBytes.IsNullOrEmpty())
+					{
+						Log.Warning($"PNG data is empty for texture format '{format}'.");
+						return;
+					}
+
+					// Reroute the image into Erroneous directory.
+					if (error.AnyDetected)
+					{
+						var fileName = Path.GetFileName(path);
+						var directory = Path.GetDirectoryName(path);
+						directory = Path.Combine(directory, "Erroneous");
+						path = Path.Combine(directory, fileName);
+						DirectoryTools.CreateFromFilePath(path);
+					}
+
+					File.WriteAllBytes(path, imageBytes);
+					Log.Info($"Texture saved to '{path}'.");
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Warning($"Exception was thrown while processing for texture format '{format}'. Exception: {exception.Message}");
+			}
+		}
+
+		private static bool IsSelectionContainsAnyRenderTexture()
+		{
+			var objects = Selection.objects;
+			return objects.IsNotNullAndEmpty() && objects.Any(item => item is RenderTexture);
 		}
 
 		#endregion
