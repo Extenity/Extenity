@@ -243,42 +243,40 @@ namespace Extenity.MathToolbox
 
 		public void MoveToStart(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
-			/*
 			if (!IsAnyPointAvailable)
 				return;
-			var pointPosition = Points[0].Position;
+			var pointPosition = GetPointLocalPosition(0);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
 			if (keepWorldPosition)
 			{
-				var matrix = Matrix4x4.TRS(pointPosition, transform.localRotation, transform.localScale);
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
 				for (var i = 0; i < Points.Count; i++)
 				{
 					Points[i] = matrix.MultiplyPoint(Points[i]);
 				}
 			}
-			transform.SetLocalLocation(pointPosition, Quaternion.identity, Vector3Tools.One);
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
 			Invalidate();
-			*/
 		}
 
 		public void MoveToEnd(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
-			/*
 			if (!IsAnyPointAvailable)
 				return;
-			var pointPosition = Points[Points.Count - 1].Position;
+			var pointPosition = GetPointLocalPosition(Points.Count - 1);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
 			if (keepWorldPosition)
 			{
-				var matrix = Matrix4x4.TRS(pointPosition, transform.localRotation, transform.localScale);
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
 				for (var i = 0; i < Points.Count; i++)
 				{
 					Points[i] = matrix.MultiplyPoint(Points[i]);
 				}
 			}
-			transform.SetLocalLocation(pointPosition, Quaternion.identity, Vector3Tools.One);
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
 			Invalidate();
-			*/
 		}
 
 		public void NormalizeAllOrientations()

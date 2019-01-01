@@ -155,7 +155,6 @@ namespace Extenity.MathToolbox.Editor
 				Undo.RecordObject(Me, action);
 				MoveToLocalZero(true);
 			}
-			/*
 			action = "Move To Start";
 			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
@@ -170,7 +169,6 @@ namespace Extenity.MathToolbox.Editor
 				Undo.RecordObject(Me, action);
 				MoveToEnd(true);
 			}
-			*/
 			GUILayout.EndHorizontal();
 		}
 

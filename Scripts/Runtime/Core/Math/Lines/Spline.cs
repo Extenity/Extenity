@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
@@ -399,12 +400,40 @@ namespace Extenity.MathToolbox
 
 		public void MoveToStart(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
+			if (!IsAnyRawPointAvailable)
+				return;
+			var pointPosition = GetRawPointLocalPosition(0);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
+			if (keepWorldPosition)
+			{
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
+				for (var i = 0; i < RawPoints.Count; i++)
+				{
+					RawPoints[i] = matrix.MultiplyPoint(RawPoints[i]);
+				}
+			}
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
+			InvalidateRawLine();
 		}
 
 		public void MoveToEnd(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
+			if (!IsAnyRawPointAvailable)
+				return;
+			var pointPosition = GetRawPointLocalPosition(RawPoints.Count - 1);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
+			if (keepWorldPosition)
+			{
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
+				for (var i = 0; i < RawPoints.Count; i++)
+				{
+					RawPoints[i] = matrix.MultiplyPoint(RawPoints[i]);
+				}
+			}
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
+			InvalidateRawLine();
 		}
 
 		#endregion

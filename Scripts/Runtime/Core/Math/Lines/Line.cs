@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
@@ -223,12 +224,40 @@ namespace Extenity.MathToolbox
 
 		public void MoveToStart(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
+			if (!IsAnyPointAvailable)
+				return;
+			var pointPosition = GetPointLocalPosition(0);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
+			if (keepWorldPosition)
+			{
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = matrix.MultiplyPoint(Points[i]);
+				}
+			}
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
+			Invalidate();
 		}
 
 		public void MoveToEnd(bool keepWorldPosition)
 		{
-			throw new System.NotImplementedException();
+			if (!IsAnyPointAvailable)
+				return;
+			var pointPosition = GetPointLocalPosition(Points.Count - 1);
+			var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
+			var newPosition = matrix.MultiplyPoint(pointPosition);
+			if (keepWorldPosition)
+			{
+				matrix = Matrix4x4.TRS(-newPosition, Quaternion.identity, Vector3Tools.One) * matrix;
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = matrix.MultiplyPoint(Points[i]);
+				}
+			}
+			transform.SetLocalLocation(newPosition, Quaternion.identity, Vector3Tools.One);
+			Invalidate();
 		}
 
 		#endregion
