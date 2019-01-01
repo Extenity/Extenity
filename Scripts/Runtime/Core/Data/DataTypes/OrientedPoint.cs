@@ -73,6 +73,27 @@ namespace Extenity.DataToolbox
 			point.Orientation = transform.InverseTransformVector(point.Orientation);
 			return point;
 		}
+
+		public static OrientedPoint TransformPointFromLocalToLocal(this OrientedPoint point, Transform currentTransform, Transform newTransform)
+		{
+			return TransformPointFromLocalToLocal(point, currentTransform.worldToLocalMatrix, newTransform.localToWorldMatrix);
+		}
+
+		public static OrientedPoint TransformPointFromLocalToLocal(this OrientedPoint point, Matrix4x4 inverseCurrentMatrix, Transform newTransform)
+		{
+			return TransformPointFromLocalToLocal(point, inverseCurrentMatrix, newTransform.localToWorldMatrix);
+		}
+
+		public static OrientedPoint TransformPointFromLocalToLocal(this OrientedPoint point, Matrix4x4 inverseCurrentMatrix, Matrix4x4 newMatrix)
+		{
+			point.Position = inverseCurrentMatrix.MultiplyPoint(point.Position);
+			point.Position = newMatrix.MultiplyPoint(point.Position);
+
+			point.Orientation = inverseCurrentMatrix.MultiplyVector(point.Orientation);
+			point.Orientation = newMatrix.MultiplyVector(point.Orientation);
+
+			return point;
+		}
 	}
 
 }

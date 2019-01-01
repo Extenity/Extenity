@@ -586,6 +586,22 @@ namespace Extenity.MathToolbox
 			matrix.m23 = z;
 		}
 
+		public static Vector3 TransformPointFromLocalToLocal(this Vector3 point, Transform currentTransform, Transform newTransform)
+		{
+			return TransformPointFromLocalToLocal(point, currentTransform.worldToLocalMatrix, newTransform.localToWorldMatrix);
+		}
+
+		public static Vector3 TransformPointFromLocalToLocal(this Vector3 point, Matrix4x4 inverseCurrentMatrix, Transform newTransform)
+		{
+			return TransformPointFromLocalToLocal(point, inverseCurrentMatrix, newTransform.localToWorldMatrix);
+		}
+
+		public static Vector3 TransformPointFromLocalToLocal(this Vector3 point, Matrix4x4 inverseCurrentMatrix, Matrix4x4 newMatrix)
+		{
+			point = inverseCurrentMatrix.MultiplyPoint(point);
+			return newMatrix.MultiplyPoint(point);
+		}
+
 		#endregion
 
 		#region Bounds
