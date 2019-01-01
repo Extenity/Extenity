@@ -5,7 +5,6 @@ using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.DataToolbox;
-using Extenity.IMGUIToolbox;
 
 namespace Extenity.MathToolbox.Editor
 {
@@ -22,16 +21,7 @@ namespace Extenity.MathToolbox.Editor
 				GUILayout.BeginVertical("Edit", EditorStyles.helpBox, GUILayout.Height(60f));
 				GUILayout.FlexibleSpace();
 
-				GUILayout.BeginHorizontal();
-				if (GUILayoutTools.Button("Start Editing", !Me.IsEditing, BigButtonHeight))
-				{
-					Me.StartEditing();
-				}
-				if (GUILayoutTools.Button("Stop Editing", Me.IsEditing, BigButtonHeight))
-				{
-					Me.StopEditing();
-				}
-				GUILayout.EndHorizontal();
+				Draw_StartStopEditing();
 
 				GUILayout.EndVertical();
 			}
@@ -123,7 +113,7 @@ namespace Extenity.MathToolbox.Editor
 			GUILayout.Space(15f);
 		}
 
-		#region Data
+		#region Generalization
 
 		private List<OrientedPoint> Points => Me.Points;
 
@@ -164,6 +154,16 @@ namespace Extenity.MathToolbox.Editor
 		protected override void InvalidatePoints()
 		{
 			Me.Invalidate();
+		}
+
+		protected override void StartEditing()
+		{
+			Me.StartEditing();
+		}
+
+		protected override void StopEditing()
+		{
+			Me.StopEditing();
 		}
 
 		#endregion

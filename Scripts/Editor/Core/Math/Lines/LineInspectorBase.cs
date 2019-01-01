@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
+using Extenity.IMGUIToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
@@ -56,6 +57,26 @@ namespace Extenity.MathToolbox.Editor
 		}
 
 		#endregion
+
+		#region Inspector GUI
+
+		protected void Draw_StartStopEditing()
+		{
+			GUILayout.BeginHorizontal();
+			if (GUILayoutTools.Button("Start Editing", !IsEditing, BigButtonHeight))
+			{
+				StartEditing();
+			}
+			if (GUILayoutTools.Button("Stop Editing", IsEditing, BigButtonHeight))
+			{
+				StopEditing();
+			}
+			GUILayout.EndHorizontal();
+		}
+
+		#endregion
+
+		#region Scene GUI
 
 		private static readonly Color InsertButtonBackgroundColor = new Color(0.1f, 1f, 0.1f, 1f);
 		private static readonly Color RemoveButtonBackgroundColor = new Color(1f, 0.6f, 0.6f, 1f);
@@ -260,7 +281,9 @@ namespace Extenity.MathToolbox.Editor
 			}
 		}
 
-		#region Data
+		#endregion
+
+		#region Generalization
 
 		protected abstract bool IsEditing { get; }
 
@@ -276,6 +299,9 @@ namespace Extenity.MathToolbox.Editor
 		protected abstract void AppendPoint(Vector3 position);
 		protected abstract void RemovePoint(int i);
 		protected abstract void InvalidatePoints();
+
+		protected abstract void StartEditing();
+		protected abstract void StopEditing();
 
 		#endregion
 
