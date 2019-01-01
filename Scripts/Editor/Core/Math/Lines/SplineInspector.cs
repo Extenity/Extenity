@@ -12,48 +12,26 @@ namespace Extenity.MathToolbox.Editor
 	[CustomEditor(typeof(Spline))]
 	public class SplineInspector : LineInspectorBase<Spline>
 	{
-		protected override void OnAfterDefaultInspectorGUI()
+		#region Inspector GUI
+
+		protected override void DrawPanel_Edit()
 		{
-			GUILayout.Space(15f);
-
-			// Edit
-			{
-				GUILayout.BeginVertical("Edit", EditorStyles.helpBox, GUILayout.Height(60f));
-				GUILayout.FlexibleSpace();
-
-				Draw_StartStopEditing();
-
-				GUILayout.EndVertical();
-			}
-
-			GUILayout.Space(15f);
-
-			// Operations
-			{
-				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(100f));
-				GUILayout.FlexibleSpace();
-
-				Draw_Operations_Mirror();
-				Draw_Operations_Position();
-
-				GUILayout.EndVertical();
-			}
-
-			GUILayout.Space(15f);
-
-			// Data
-			{
-				GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
-				GUILayout.FlexibleSpace();
-
-				Draw_Data_Clipboard();
-				Draw_Data_General();
-
-				GUILayout.EndVertical();
-			}
-
-			GUILayout.Space(15f);
+			Draw_StartStopEditing();
 		}
+
+		protected override void DrawPanel_Operations()
+		{
+			Draw_Operations_Mirror();
+			Draw_Operations_Position();
+		}
+
+		protected override void DrawPanel_Data()
+		{
+			Draw_Data_Clipboard();
+			Draw_Data_General();
+		}
+
+		#endregion
 
 		#region Generalization
 

@@ -60,6 +60,51 @@ namespace Extenity.MathToolbox.Editor
 
 		#region Inspector GUI
 
+		protected abstract void DrawPanel_Edit();
+		protected abstract void DrawPanel_Operations();
+		protected abstract void DrawPanel_Data();
+
+		protected override void OnAfterDefaultInspectorGUI()
+		{
+			GUILayout.Space(15f);
+
+			// Edit
+			{
+				GUILayout.BeginVertical("Edit", EditorStyles.helpBox);
+				GUILayout.Space(20f);
+
+				DrawPanel_Edit();
+
+				GUILayout.EndVertical();
+			}
+
+			GUILayout.Space(15f);
+
+			// Operations
+			{
+				GUILayout.BeginVertical("Operations", EditorStyles.helpBox);
+				GUILayout.Space(20f);
+
+				DrawPanel_Operations();
+
+				GUILayout.EndVertical();
+			}
+
+			GUILayout.Space(15f);
+
+			// Data
+			{
+				GUILayout.BeginVertical("Data", EditorStyles.helpBox);
+				GUILayout.Space(20f);
+
+				DrawPanel_Data();
+
+				GUILayout.EndVertical();
+			}
+
+			GUILayout.Space(15f);
+		}
+
 		protected void Draw_StartStopEditing()
 		{
 			GUILayout.BeginHorizontal();
