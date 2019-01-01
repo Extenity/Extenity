@@ -8,6 +8,26 @@ namespace Extenity.MathToolbox.Editor
 
 	public abstract class LineInspectorBase<TLine> : ExtenityEditorBase<TLine> where TLine : Behaviour
 	{
+		#region Initialization
+
+		protected override void OnEnableDerived()
+		{
+			IsAutoRepaintSceneViewEnabled = true;
+			IsMovementDetectionEnabled = true;
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected override void OnDisableDerived()
+		{
+			// TODO: That did not work as expected. The second we hit the Start Editing button, OnDisableDerived is called for some reason.
+			//Me.StopEditing();
+		}
+
+		#endregion
+
 		#region Movement
 
 		protected override void OnMovementDetected()

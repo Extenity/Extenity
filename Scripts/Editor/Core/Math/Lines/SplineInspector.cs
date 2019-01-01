@@ -13,18 +13,6 @@ namespace Extenity.MathToolbox.Editor
 	[CustomEditor(typeof(Spline))]
 	public class SplineInspector : LineInspectorBase<Spline>
 	{
-		protected override void OnEnableDerived()
-		{
-			IsAutoRepaintSceneViewEnabled = true;
-			IsMovementDetectionEnabled = true;
-		}
-
-		protected override void OnDisableDerived()
-		{
-			// TODO: That did not work as expected. The second we hit the Start Editing button, OnDisableDerived is called for some reason.
-			//Me.StopEditing();
-		}
-
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
