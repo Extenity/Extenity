@@ -8,6 +8,35 @@ namespace Extenity.MathToolbox.Editor
 
 	public abstract class LineInspectorBase<TLine> : ExtenityEditorBase<TLine> where TLine : Behaviour
 	{
+		#region Movement
+
+		protected override void OnMovementDetected()
+		{
+			if (KeepDataInLocalCoordinates)
+				return;
+
+			if (MovementDetectionPreviousPosition.IsAnyNaN() ||
+				MovementDetectionPreviousRotation.IsAnyNaN() ||
+				MovementDetectionPreviousScale.IsAnyNaN())
+				return;
+
+			// Move all points
+			{
+				var previousTransformMatrix = new Matrix4x4();
+				previousTransformMatrix.SetTRS(MovementDetectionPreviousPosition, MovementDetectionPreviousRotation, MovementDetectionPreviousScale);
+
+				for (int i = 0; i < PointCount; i++)
+				{
+					TransformPointFromLocalToLocal(i, previousTransformMatrix.inverse, Me.transform.localToWorldMatrix);
+				}
+			}
+
+			// Invalidate
+			InvalidatePoints();
+		}
+
+		#endregion
+
 		private static readonly Color InsertButtonBackgroundColor = new Color(0.1f, 1f, 0.1f, 1f);
 		private static readonly Color RemoveButtonBackgroundColor = new Color(1f, 0.6f, 0.6f, 1f);
 		private const int SmallButtonSize = 20;
@@ -230,7 +259,7 @@ namespace Extenity.MathToolbox.Editor
 
 		#endregion
 
-		#region Local-World Conversion
+		#region Space Conversions
 
 		protected Vector3 ConvertWorldToLocalPosition(Vector3 point)
 		{
@@ -245,6 +274,8 @@ namespace Extenity.MathToolbox.Editor
 				? Me.transform.TransformPoint(point)
 				: point;
 		}
+
+		protected abstract void TransformPointFromLocalToLocal(int pointIndex, Matrix4x4 currentMatrix, Matrix4x4 newMatrix);
 
 		#endregion
 	}

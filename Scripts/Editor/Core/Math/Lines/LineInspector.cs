@@ -25,31 +25,6 @@ namespace Extenity.MathToolbox.Editor
 			//Me.StopEditing();
 		}
 
-		protected override void OnMovementDetected()
-		{
-			if (Me.KeepDataInLocalCoordinates)
-				return;
-
-			if (MovementDetectionPreviousPosition.IsAnyNaN() ||
-				MovementDetectionPreviousRotation.IsAnyNaN() ||
-				MovementDetectionPreviousScale.IsAnyNaN())
-				return;
-
-			// Move all points
-			{
-				var previousTransformMatrix = new Matrix4x4();
-				previousTransformMatrix.SetTRS(MovementDetectionPreviousPosition, MovementDetectionPreviousRotation, MovementDetectionPreviousScale);
-
-				for (int i = 0; i < Points.Count; i++)
-				{
-					Points[i] = Points[i].TransformPointFromLocalToLocal(previousTransformMatrix.inverse, Me.transform);
-				}
-			}
-
-			// Invalidate
-			InvalidatePoints();
-		}
-
 		protected override void OnAfterDefaultInspectorGUI()
 		{
 			GUILayout.Space(15f);
@@ -191,6 +166,15 @@ namespace Extenity.MathToolbox.Editor
 		protected override void InvalidatePoints()
 		{
 			Me.Invalidate();
+		}
+
+		#endregion
+
+		#region Space Conversions
+
+		protected override void TransformPointFromLocalToLocal(int pointIndex, Matrix4x4 currentMatrix, Matrix4x4 newMatrix)
+		{
+			Points[pointIndex] = Points[pointIndex].TransformPointFromLocalToLocal(currentMatrix, newMatrix);
 		}
 
 		#endregion
