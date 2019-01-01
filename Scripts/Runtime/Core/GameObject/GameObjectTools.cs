@@ -1911,11 +1911,11 @@ namespace Extenity.GameObjectToolbox
 
 		public const string NullGameObjectNamePlaceholder = "[Null]";
 
-		public static string NameSafe(this Transform transform)
+		public static string NameSafe(this Component component)
 		{
-			if (transform == null)
+			if (component == null)
 				return NullGameObjectNamePlaceholder;
-			return transform.gameObject.name;
+			return component.gameObject.name;
 		}
 
 		public static string NameSafe(this GameObject gameObject)
