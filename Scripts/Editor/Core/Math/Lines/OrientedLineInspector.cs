@@ -33,33 +33,8 @@ namespace Extenity.MathToolbox.Editor
 				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(140f));
 				GUILayout.FlexibleSpace();
 
-				// Mirror
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Mirror X", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror X");
-					Me.MirrorX();
-				}
-				if (GUILayout.Button("Mirror Y", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror Y");
-					Me.MirrorY();
-				}
-				if (GUILayout.Button("Mirror Z", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror Z");
-					Me.MirrorZ();
-				}
-				GUILayout.EndHorizontal();
-
-				// Position
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Move To Zero", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Move to zero");
-					Me.MoveToZero(true);
-				}
-				GUILayout.EndHorizontal();
+				Draw_Operations_Mirror();
+				Draw_Operations_Position();
 
 				// Orientations
 				GUILayout.BeginHorizontal();
@@ -125,46 +100,20 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override bool KeepDataInLocalCoordinates => Me.KeepDataInLocalCoordinates;
 
-		protected override Vector3 GetPointPosition(int i)
-		{
-			return Points[i].Position;
-		}
+		protected override Vector3 GetPointPosition(int i) { return Points[i].Position; }
+		protected override void SetPoint(int i, Vector3 position) { Points[i] = Points[i].WithPosition(position); }
+		protected override void InsertPoint(int i, Vector3 position) { var midOrientation = Points[i].MidOrientation(Points[i - 1]); Points.Insert(i, new OrientedPoint(position, midOrientation)); }
+		protected override void AppendPoint(Vector3 position) { Points.Add(new OrientedPoint(position, Points[Points.Count - 1].Orientation)); }
+		protected override void RemovePoint(int i) { Points.RemoveAt(i); }
+		protected override void InvalidatePoints() { Me.Invalidate(); }
 
-		protected override void SetPoint(int i, Vector3 position)
-		{
-			Points[i] = Points[i].WithPosition(position);
-		}
+		protected override void MirrorX() { Me.MirrorX(); }
+		protected override void MirrorY() { Me.MirrorY(); }
+		protected override void MirrorZ() { Me.MirrorZ(); }
+		protected override void MoveToZero(bool keepWorldPosition) { Me.MoveToZero(keepWorldPosition); }
 
-		protected override void InsertPoint(int i, Vector3 position)
-		{
-			var midOrientation = Points[i].MidOrientation(Points[i - 1]);
-			Points.Insert(i, new OrientedPoint(position, midOrientation));
-		}
-
-		protected override void AppendPoint(Vector3 position)
-		{
-			Points.Add(new OrientedPoint(position, Points[Points.Count - 1].Orientation));
-		}
-
-		protected override void RemovePoint(int i)
-		{
-			Points.RemoveAt(i);
-		}
-
-		protected override void InvalidatePoints()
-		{
-			Me.Invalidate();
-		}
-
-		protected override void StartEditing()
-		{
-			Me.StartEditing();
-		}
-
-		protected override void StopEditing()
-		{
-			Me.StopEditing();
-		}
+		protected override void StartEditing() { Me.StartEditing(); }
+		protected override void StopEditing() { Me.StopEditing(); }
 
 		#endregion
 

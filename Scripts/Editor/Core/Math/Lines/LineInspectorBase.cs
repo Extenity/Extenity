@@ -74,6 +74,38 @@ namespace Extenity.MathToolbox.Editor
 			GUILayout.EndHorizontal();
 		}
 
+		protected void Draw_Operations_Mirror()
+		{
+			GUILayout.BeginHorizontal();
+			if (GUILayout.Button("Mirror X", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Line mirror X");
+				MirrorX();
+			}
+			if (GUILayout.Button("Mirror Y", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Line mirror Y");
+				MirrorY();
+			}
+			if (GUILayout.Button("Mirror Z", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Line mirror Z");
+				MirrorZ();
+			}
+			GUILayout.EndHorizontal();
+		}
+
+		protected void Draw_Operations_Position()
+		{
+			GUILayout.BeginHorizontal();
+			if (GUILayout.Button("Move To Zero", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Move to zero");
+				MoveToZero(true);
+			}
+			GUILayout.EndHorizontal();
+		}
+
 		#endregion
 
 		#region Scene GUI
@@ -299,6 +331,11 @@ namespace Extenity.MathToolbox.Editor
 		protected abstract void AppendPoint(Vector3 position);
 		protected abstract void RemovePoint(int i);
 		protected abstract void InvalidatePoints();
+
+		protected abstract void MirrorX();
+		protected abstract void MirrorY();
+		protected abstract void MirrorZ();
+		protected abstract void MoveToZero(bool keepWorldPosition);
 
 		protected abstract void StartEditing();
 		protected abstract void StopEditing();

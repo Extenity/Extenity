@@ -33,33 +33,8 @@ namespace Extenity.MathToolbox.Editor
 				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(100f));
 				GUILayout.FlexibleSpace();
 
-				// Mirror
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Mirror X", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror X");
-					Me.MirrorX();
-				}
-				if (GUILayout.Button("Mirror Y", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror Y");
-					Me.MirrorY();
-				}
-				if (GUILayout.Button("Mirror Z", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Line mirror Z");
-					Me.MirrorZ();
-				}
-				GUILayout.EndHorizontal();
-
-				// Position
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Move To Zero", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Move to zero");
-					Me.MoveToZero(true);
-				}
-				GUILayout.EndHorizontal();
+				Draw_Operations_Mirror();
+				Draw_Operations_Position();
 
 				GUILayout.EndVertical();
 			}
@@ -116,45 +91,20 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override bool KeepDataInLocalCoordinates => Me.KeepDataInLocalCoordinates;
 
-		protected override Vector3 GetPointPosition(int i)
-		{
-			return Points[i];
-		}
+		protected override Vector3 GetPointPosition(int i) { return Points[i]; }
+		protected override void SetPoint(int i, Vector3 position) { Points[i] = position; }
+		protected override void InsertPoint(int i, Vector3 position) { Points.Insert(i, position); }
+		protected override void AppendPoint(Vector3 position) { Points.Add(position); }
+		protected override void RemovePoint(int i) { Points.RemoveAt(i); }
+		protected override void InvalidatePoints() { Me.InvalidateRawLine(); }
 
-		protected override void SetPoint(int i, Vector3 position)
-		{
-			Points[i] = position;
-		}
+		protected override void MirrorX() { Me.MirrorX(); }
+		protected override void MirrorY() { Me.MirrorY(); }
+		protected override void MirrorZ() { Me.MirrorZ(); }
+		protected override void MoveToZero(bool keepWorldPosition) { Me.MoveToZero(keepWorldPosition); }
 
-		protected override void InsertPoint(int i, Vector3 position)
-		{
-			Points.Insert(i, position);
-		}
-
-		protected override void AppendPoint(Vector3 position)
-		{
-			Points.Add(position);
-		}
-
-		protected override void RemovePoint(int i)
-		{
-			Points.RemoveAt(i);
-		}
-
-		protected override void InvalidatePoints()
-		{
-			Me.InvalidateRawLine();
-		}
-
-		protected override void StartEditing()
-		{
-			Me.StartEditing();
-		}
-
-		protected override void StopEditing()
-		{
-			Me.StopEditing();
-		}
+		protected override void StartEditing() { Me.StartEditing(); }
+		protected override void StopEditing() { Me.StopEditing(); }
 
 		#endregion
 
