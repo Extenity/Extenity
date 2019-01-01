@@ -58,12 +58,12 @@ namespace Extenity.MathToolbox.Editor
 		{
 			GUILayout.Space(15f);
 
-			GUILayout.BeginVertical("Edit", EditorStyles.helpBox, GUILayout.Height(60f));
-			GUILayout.FlexibleSpace();
-			GUILayout.BeginHorizontal();
-
 			// Edit
 			{
+				GUILayout.BeginVertical("Edit", EditorStyles.helpBox, GUILayout.Height(60f));
+				GUILayout.FlexibleSpace();
+
+				GUILayout.BeginHorizontal();
 				if (GUILayoutTools.Button("Start Editing", !Me.IsEditing, BigButtonHeight))
 				{
 					Me.StartEditing();
@@ -72,19 +72,20 @@ namespace Extenity.MathToolbox.Editor
 				{
 					Me.StopEditing();
 				}
-			}
+				GUILayout.EndHorizontal();
 
-			GUILayout.EndHorizontal();
-			GUILayout.EndVertical();
+				GUILayout.EndVertical();
+			}
 
 			GUILayout.Space(15f);
 
-			GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(60f));
-			GUILayout.FlexibleSpace();
-			GUILayout.BeginHorizontal();
-
 			// Operations
 			{
+				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(60f));
+				GUILayout.FlexibleSpace();
+
+				// Mirror
+				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Mirror X", BigButtonHeight))
 				{
 					Undo.RecordObject(Me, "Line mirror X");
@@ -100,19 +101,20 @@ namespace Extenity.MathToolbox.Editor
 					Undo.RecordObject(Me, "Line mirror Z");
 					Me.MirrorZ();
 				}
-			}
+				GUILayout.EndHorizontal();
 
-			GUILayout.EndHorizontal();
-			GUILayout.EndVertical();
+				GUILayout.EndVertical();
+			}
 
 			GUILayout.Space(15f);
 
-			GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
-			GUILayout.FlexibleSpace();
-			GUILayout.BeginHorizontal();
-
-			// Clipboard
+			// Data
 			{
+				GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
+				GUILayout.FlexibleSpace();
+
+				// Clipboard
+				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
 				{
 					CopyToClipboard();
@@ -123,13 +125,10 @@ namespace Extenity.MathToolbox.Editor
 					PasteClipboard();
 					InvalidatePoints();
 				}
-			}
+				GUILayout.EndHorizontal();
 
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-
-			// Invalidate
-			{
+				// Clear / Invalidate
+				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Clear Data", BigButtonHeight))
 				{
 					Undo.RecordObject(Me, "Clear data");
@@ -139,10 +138,10 @@ namespace Extenity.MathToolbox.Editor
 				{
 					InvalidatePoints();
 				}
-			}
+				GUILayout.EndHorizontal();
 
-			GUILayout.EndHorizontal();
-			GUILayout.EndVertical();
+				GUILayout.EndVertical();
+			}
 
 			GUILayout.Space(15f);
 		}
