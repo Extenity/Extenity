@@ -229,9 +229,10 @@ namespace Extenity.MathToolbox
 		{
 			if (keepWorldPosition)
 			{
+				var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
 				for (var i = 0; i < Points.Count; i++)
 				{
-					Points[i] = transform.TransformOrientedPoint(Points[i]);
+					Points[i] = matrix.MultiplyPoint(Points[i]);
 				}
 			}
 			transform.ResetTransformToLocalZero();

@@ -385,9 +385,10 @@ namespace Extenity.MathToolbox
 		{
 			if (keepWorldPosition)
 			{
+				var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
 				for (var i = 0; i < RawPoints.Count; i++)
 				{
-					RawPoints[i] = transform.TransformPoint(RawPoints[i]);
+					RawPoints[i] = matrix.MultiplyPoint(RawPoints[i]);
 				}
 			}
 			transform.ResetTransformToLocalZero();
