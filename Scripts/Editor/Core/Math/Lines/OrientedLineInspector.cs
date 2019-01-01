@@ -39,18 +39,10 @@ namespace Extenity.MathToolbox.Editor
 			{
 				var previousTransformMatrix = new Matrix4x4();
 				previousTransformMatrix.SetTRS(MovementDetectionPreviousPosition, MovementDetectionPreviousRotation, MovementDetectionPreviousScale);
-				previousTransformMatrix = previousTransformMatrix.inverse;
 
 				for (int i = 0; i < Points.Count; i++)
 				{
-					var point = Points[i];
-					var position = point.Position;
-					position = previousTransformMatrix.MultiplyPoint(position);
-					position = Me.transform.TransformPoint(position);
-					var orientation = point.Orientation;
-					orientation = previousTransformMatrix.MultiplyVector(orientation);
-					orientation = Me.transform.TransformVector(orientation);
-					Points[i] = new OrientedPoint(position, orientation);
+					Points[i] = Points[i].TransformPointFromLocalToLocal(previousTransformMatrix.inverse, Me.transform);
 				}
 			}
 
