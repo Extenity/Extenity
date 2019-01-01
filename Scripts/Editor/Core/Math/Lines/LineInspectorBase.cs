@@ -106,6 +106,37 @@ namespace Extenity.MathToolbox.Editor
 			GUILayout.EndHorizontal();
 		}
 
+		protected void Draw_Data_Clipboard()
+		{
+			GUILayout.BeginHorizontal();
+			if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
+			{
+				CopyToClipboard();
+			}
+			if (GUILayout.Button("Paste", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Paste data");
+				PasteClipboard();
+				InvalidatePoints();
+			}
+			GUILayout.EndHorizontal();
+		}
+
+		protected void Draw_Data_General()
+		{
+			GUILayout.BeginHorizontal();
+			if (GUILayout.Button("Clear Data", BigButtonHeight))
+			{
+				Undo.RecordObject(Me, "Clear data");
+				ClearData();
+			}
+			if (GUILayout.Button("Invalidate", BigButtonHeight))
+			{
+				InvalidatePoints();
+			}
+			GUILayout.EndHorizontal();
+		}
+
 		#endregion
 
 		#region Scene GUI
@@ -330,6 +361,7 @@ namespace Extenity.MathToolbox.Editor
 		protected abstract void InsertPoint(int i, Vector3 position);
 		protected abstract void AppendPoint(Vector3 position);
 		protected abstract void RemovePoint(int i);
+		protected abstract void ClearData();
 		protected abstract void InvalidatePoints();
 
 		protected abstract void MirrorX();
@@ -359,6 +391,13 @@ namespace Extenity.MathToolbox.Editor
 		}
 
 		protected abstract void TransformPointFromLocalToLocal(int pointIndex, Matrix4x4 currentMatrix, Matrix4x4 newMatrix);
+
+		#endregion
+
+		#region Clipboard
+
+		protected abstract void CopyToClipboard();
+		protected abstract void PasteClipboard();
 
 		#endregion
 	}

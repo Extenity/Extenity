@@ -46,32 +46,8 @@ namespace Extenity.MathToolbox.Editor
 				GUILayout.BeginVertical("Data", EditorStyles.helpBox, GUILayout.Height(100f));
 				GUILayout.FlexibleSpace();
 
-				// Clipboard
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
-				{
-					CopyToClipboard();
-				}
-				if (GUILayout.Button("Paste", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Paste data");
-					PasteClipboard();
-					InvalidatePoints();
-				}
-				GUILayout.EndHorizontal();
-
-				// Clear / Invalidate
-				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Clear Data", BigButtonHeight))
-				{
-					Undo.RecordObject(Me, "Clear data");
-					Me.ClearData();
-				}
-				if (GUILayout.Button("Invalidate", BigButtonHeight))
-				{
-					InvalidatePoints();
-				}
-				GUILayout.EndHorizontal();
+				Draw_Data_Clipboard();
+				Draw_Data_General();
 
 				GUILayout.EndVertical();
 			}
@@ -96,6 +72,7 @@ namespace Extenity.MathToolbox.Editor
 		protected override void InsertPoint(int i, Vector3 position) { Points.Insert(i, position); }
 		protected override void AppendPoint(Vector3 position) { Points.Add(position); }
 		protected override void RemovePoint(int i) { Points.RemoveAt(i); }
+		protected override void ClearData() { Me.ClearData(); }
 		protected override void InvalidatePoints() { Me.Invalidate(); }
 
 		protected override void MirrorX() { Me.MirrorX(); }
@@ -119,7 +96,7 @@ namespace Extenity.MathToolbox.Editor
 
 		#region Clipboard
 
-		private void CopyToClipboard()
+		protected override void CopyToClipboard()
 		{
 			if (Points.IsNullOrEmpty())
 				return;
@@ -134,7 +111,7 @@ namespace Extenity.MathToolbox.Editor
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
 		}
 
-		private void PasteClipboard()
+		protected override void PasteClipboard()
 		{
 			var text = Clipboard.GetClipboardText();
 			if (!string.IsNullOrEmpty(text))
