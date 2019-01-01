@@ -108,11 +108,13 @@ namespace Extenity.MathToolbox.Editor
 		protected void Draw_StartStopEditing()
 		{
 			GUILayout.BeginHorizontal();
-			if (GUILayoutTools.Button("Start Editing", !IsEditing, BigButtonHeight))
+			var action = "Start Editing";
+			if (GUILayoutTools.Button(action, !IsEditing, BigButtonHeight))
 			{
 				StartEditing();
 			}
-			if (GUILayoutTools.Button("Stop Editing", IsEditing, BigButtonHeight))
+			action = "Stop Editing";
+			if (GUILayoutTools.Button(action, IsEditing, BigButtonHeight))
 			{
 				StopEditing();
 			}
@@ -122,19 +124,22 @@ namespace Extenity.MathToolbox.Editor
 		protected void Draw_Operations_Mirror()
 		{
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Mirror X", BigButtonHeight))
+			var action = "Mirror X";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Line mirror X");
+				Undo.RecordObject(Me, action);
 				MirrorX();
 			}
-			if (GUILayout.Button("Mirror Y", BigButtonHeight))
+			action = "Mirror Y";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Line mirror Y");
+				Undo.RecordObject(Me, action);
 				MirrorY();
 			}
-			if (GUILayout.Button("Mirror Z", BigButtonHeight))
+			action = "Mirror Z";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Line mirror Z");
+				Undo.RecordObject(Me, action);
 				MirrorZ();
 			}
 			GUILayout.EndHorizontal();
@@ -143,24 +148,44 @@ namespace Extenity.MathToolbox.Editor
 		protected void Draw_Operations_Position()
 		{
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Move To Zero", BigButtonHeight))
+			var action = "Move To Local Zero";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Move to zero");
-				MoveToZero(true);
+				Undo.RecordObject(Me.transform, action);
+				Undo.RecordObject(Me, action);
+				MoveToLocalZero(true);
 			}
+			/*
+			action = "Move To Start";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
+			{
+				Undo.RecordObject(Me.transform, action);
+				Undo.RecordObject(Me, action);
+				MoveToStart(true);
+			}
+			action = "Move To End";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
+			{
+				Undo.RecordObject(Me.transform, action);
+				Undo.RecordObject(Me, action);
+				MoveToEnd(true);
+			}
+			*/
 			GUILayout.EndHorizontal();
 		}
 
 		protected void Draw_Data_Clipboard()
 		{
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Copy To Clipboard", BigButtonHeight))
+			var action = "Copy To Clipboard";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
 				CopyToClipboard();
 			}
-			if (GUILayout.Button("Paste", BigButtonHeight))
+			action = "Paste";
+			if (GUILayout.Button(action, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Paste data");
+				Undo.RecordObject(Me, action);
 				PasteClipboard();
 				InvalidatePoints();
 			}
@@ -170,12 +195,14 @@ namespace Extenity.MathToolbox.Editor
 		protected void Draw_Data_General()
 		{
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Clear Data", BigButtonHeight))
+			var action = "Clear data";
+			if (GUILayoutTools.Button(action, IsPointListAvailableAndNotEmpty, BigButtonHeight))
 			{
-				Undo.RecordObject(Me, "Clear data");
+				Undo.RecordObject(Me, action);
 				ClearData();
 			}
-			if (GUILayout.Button("Invalidate", BigButtonHeight))
+			action = "Invalidate";
+			if (GUILayout.Button(action, BigButtonHeight))
 			{
 				InvalidatePoints();
 			}
@@ -412,7 +439,9 @@ namespace Extenity.MathToolbox.Editor
 		protected abstract void MirrorX();
 		protected abstract void MirrorY();
 		protected abstract void MirrorZ();
-		protected abstract void MoveToZero(bool keepWorldPosition);
+		protected abstract void MoveToLocalZero(bool keepWorldPosition);
+		protected abstract void MoveToStart(bool keepWorldPosition);
+		protected abstract void MoveToEnd(bool keepWorldPosition);
 
 		protected abstract void StartEditing();
 		protected abstract void StopEditing();

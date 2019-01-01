@@ -56,7 +56,9 @@ namespace Extenity.MathToolbox.Editor
 		protected override void MirrorX() { Me.MirrorX(); }
 		protected override void MirrorY() { Me.MirrorY(); }
 		protected override void MirrorZ() { Me.MirrorZ(); }
-		protected override void MoveToZero(bool keepWorldPosition) { Me.MoveToZero(keepWorldPosition); }
+		protected override void MoveToLocalZero(bool keepWorldPosition) { Me.MoveToLocalZero(keepWorldPosition); }
+		protected override void MoveToStart(bool keepWorldPosition) { Me.MoveToStart(keepWorldPosition); }
+		protected override void MoveToEnd(bool keepWorldPosition) { Me.MoveToEnd(keepWorldPosition); }
 
 		protected override void StartEditing() { Me.StartEditing(); }
 		protected override void StopEditing() { Me.StopEditing(); }

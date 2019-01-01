@@ -64,6 +64,13 @@ namespace Extenity.DataToolbox
 			transform.localPosition = position;
 			transform.localRotation = rotation;
 		}
+
+		public static void SetLocalLocation(this Transform transform, Vector3 position, Quaternion rotation, Vector3 scale)
+		{
+			transform.localPosition = position;
+			transform.localRotation = rotation;
+			transform.localScale = scale;
+		}
 	}
 
 }

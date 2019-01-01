@@ -225,8 +225,10 @@ namespace Extenity.MathToolbox
 			Invalidate();
 		}
 
-		public void MoveToZero(bool keepWorldPosition)
+		public void MoveToLocalZero(bool keepWorldPosition)
 		{
+			if (!IsAnyPointAvailable)
+				return;
 			if (keepWorldPosition)
 			{
 				var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
@@ -237,6 +239,46 @@ namespace Extenity.MathToolbox
 			}
 			transform.ResetTransformToLocalZero();
 			Invalidate();
+		}
+
+		public void MoveToStart(bool keepWorldPosition)
+		{
+			throw new System.NotImplementedException();
+			/*
+			if (!IsAnyPointAvailable)
+				return;
+			var pointPosition = Points[0].Position;
+			if (keepWorldPosition)
+			{
+				var matrix = Matrix4x4.TRS(pointPosition, transform.localRotation, transform.localScale);
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = matrix.MultiplyPoint(Points[i]);
+				}
+			}
+			transform.SetLocalLocation(pointPosition, Quaternion.identity, Vector3Tools.One);
+			Invalidate();
+			*/
+		}
+
+		public void MoveToEnd(bool keepWorldPosition)
+		{
+			throw new System.NotImplementedException();
+			/*
+			if (!IsAnyPointAvailable)
+				return;
+			var pointPosition = Points[Points.Count - 1].Position;
+			if (keepWorldPosition)
+			{
+				var matrix = Matrix4x4.TRS(pointPosition, transform.localRotation, transform.localScale);
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = matrix.MultiplyPoint(Points[i]);
+				}
+			}
+			transform.SetLocalLocation(pointPosition, Quaternion.identity, Vector3Tools.One);
+			Invalidate();
+			*/
 		}
 
 		public void NormalizeAllOrientations()

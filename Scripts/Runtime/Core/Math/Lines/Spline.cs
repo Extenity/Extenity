@@ -381,8 +381,10 @@ namespace Extenity.MathToolbox
 			InvalidateRawLine();
 		}
 
-		public void MoveToZero(bool keepWorldPosition)
+		public void MoveToLocalZero(bool keepWorldPosition)
 		{
+			if (!IsAnyRawPointAvailable)
+				return;
 			if (keepWorldPosition)
 			{
 				var matrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale);
@@ -393,6 +395,16 @@ namespace Extenity.MathToolbox
 			}
 			transform.ResetTransformToLocalZero();
 			InvalidateRawLine();
+		}
+
+		public void MoveToStart(bool keepWorldPosition)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void MoveToEnd(bool keepWorldPosition)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		#endregion
