@@ -225,6 +225,19 @@ namespace Extenity.MathToolbox
 			Invalidate();
 		}
 
+		public void MoveToZero(bool keepWorldPosition)
+		{
+			if (keepWorldPosition)
+			{
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = transform.TransformOrientedPoint(Points[i]);
+				}
+			}
+			transform.ResetTransformToLocalZero();
+			Invalidate();
+		}
+
 		public void NormalizeAllOrientations()
 		{
 			if (Points == null)

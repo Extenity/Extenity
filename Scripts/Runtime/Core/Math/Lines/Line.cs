@@ -205,6 +205,19 @@ namespace Extenity.MathToolbox
 			Invalidate();
 		}
 
+		public void MoveToZero(bool keepWorldPosition)
+		{
+			if (keepWorldPosition)
+			{
+				for (var i = 0; i < Points.Count; i++)
+				{
+					Points[i] = transform.TransformPoint(Points[i]);
+				}
+			}
+			transform.ResetTransformToLocalZero();
+			Invalidate();
+		}
+
 		#endregion
 
 		#region Invalidate

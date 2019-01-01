@@ -381,6 +381,19 @@ namespace Extenity.MathToolbox
 			InvalidateRawLine();
 		}
 
+		public void MoveToZero(bool keepWorldPosition)
+		{
+			if (keepWorldPosition)
+			{
+				for (var i = 0; i < RawPoints.Count; i++)
+				{
+					RawPoints[i] = transform.TransformPoint(RawPoints[i]);
+				}
+			}
+			transform.ResetTransformToLocalZero();
+			InvalidateRawLine();
+		}
+
 		#endregion
 
 		#region Invalidate - Raw

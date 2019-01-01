@@ -85,7 +85,7 @@ namespace Extenity.MathToolbox.Editor
 
 			// Operations
 			{
-				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(100f));
+				GUILayout.BeginVertical("Operations", EditorStyles.helpBox, GUILayout.Height(140f));
 				GUILayout.FlexibleSpace();
 
 				// Mirror
@@ -104,6 +104,15 @@ namespace Extenity.MathToolbox.Editor
 				{
 					Undo.RecordObject(Me, "Line mirror Z");
 					Me.MirrorZ();
+				}
+				GUILayout.EndHorizontal();
+
+				// Position
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button("Move To Zero", BigButtonHeight))
+				{
+					Undo.RecordObject(Me, "Move to zero");
+					Me.MoveToZero(true);
 				}
 				GUILayout.EndHorizontal();
 
