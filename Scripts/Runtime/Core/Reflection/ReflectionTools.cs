@@ -1280,6 +1280,10 @@ namespace Extenity.ReflectionToolbox
 							typeof(ClampedFloat),
 							typeof(PathPoint),
 							typeof(PIDConfiguration),
+							typeof(Line.DebugConfigurationData),
+							typeof(Spline.DebugConfigurationData),
+							typeof(OrientedLine.DebugConfigurationData),
+							//typeof(OrientedSpline.DebugConfigurationData), Uncomment when implemented
 						}
 					);
 				}

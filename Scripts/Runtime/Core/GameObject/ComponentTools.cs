@@ -16,8 +16,19 @@ namespace Extenity.GameObjectToolbox
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
 			var type = obj as Type;
-			if (type == null)
-				type = obj.GetType();
+			if (type != null)
+			{
+				throw new InternalException(723659); // Encountered an unexpected behaviour. Developer attention is needed. See below.
+			}
+			type = obj.GetType();
+			// This was the old implementation, which I'm not sure if it was a faulty copy-paste mistake as some
+			// similar usages exist in some other methods. There is a chance it really means something.
+			// If you encounter, figure out what should be done. Trying to get serialized fields of a Type
+			// seems to be a dull operation, but maybe I'm wrong.
+			//
+			// Delete the lines after a year if we don't encounter the error above.
+			//if (type == null)
+			//	type = obj.GetType();
 
 			var fields = new List<FieldInfo>();
 			var allFields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
