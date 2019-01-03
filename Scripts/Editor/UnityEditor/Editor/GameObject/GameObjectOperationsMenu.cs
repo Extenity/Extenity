@@ -40,14 +40,14 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Delete Empty Unreferenced GameObjects
 
-		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Loaded Scenes", priority = 0)]
-		private static void Menu_DestroyEmptyUnreferencedGameObjectsInLoadedScenes()
+		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = 0)]
+		private static void Menu_DestroyEmptyUnreferencedGameObjects_InLoadedScenes()
 		{
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(new[] { typeof(Instantiator) }, true, true);
 		}
 
-		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects In Active Scene", priority = 1)]
-		private static void Menu_DestroyEmptyUnreferencedGameObjectsInActiveScene()
+		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects/In Active Scene", priority = 1)]
+		private static void Menu_DestroyEmptyUnreferencedGameObjects_InActiveScene()
 		{
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(new[] { typeof(Instantiator) }, true, true);
 		}
@@ -56,14 +56,14 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Delete All Disabled Static MeshRenderers
 
-		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Loaded Scenes", priority = 4)]
-		private static void Menu_DeleteAllDisabledStaticMeshRenderersInLoadedScenes()
+		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers/In Loaded Scenes", priority = 4)]
+		private static void Menu_DeleteAllDisabledStaticMeshRenderers_InLoadedScenes()
 		{
 			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck.InactiveOnly, true, true);
 		}
 
-		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers In Active Scene", priority = 5)]
-		private static void Menu_DeleteAllDisabledStaticMeshRenderersInActiveScene()
+		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers/In Active Scene", priority = 5)]
+		private static void Menu_DeleteAllDisabledStaticMeshRenderers_InActiveScene()
 		{
 			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck.InactiveOnly, true, true);
 		}
@@ -72,8 +72,8 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Remove All Colliders
 
-		[MenuItem("GameObject/Operations/Remove Colliders In Selection", priority = 101)]
-		public static void RemoveCollidersInSelection()
+		[MenuItem("GameObject/Operations/Remove Colliders/In Selection", priority = 101)]
+		public static void RemoveColliders_InSelection()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
 			{
@@ -89,8 +89,8 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Remove Numbered Parentheses Postfix
 
-		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix In Selected Object Names", priority = 201)]
-		public static void RemoveNumberedParenthesesPostfixInSelectedObjectNames()
+		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix/In Selected Object Names", priority = 2001)]
+		public static void RemoveNumberedParenthesesPostfix_InSelectedObjectNames()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().OrderBy(item => item.FullName()))
 			{
@@ -104,8 +104,8 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 		}
 
-		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix In Selected Object Names (With Children)", priority = 202)]
-		public static void RemoveNumberedParenthesesPostfixInSelectedObjectNamesWithChildren()
+		[MenuItem("GameObject/Operations/Remove Numbered Parentheses Postfix/In Selected Object Names (With Children)", priority = 2002)]
+		public static void RemoveNumberedParenthesesPostfix_InSelectedObjectNamesWithChildren()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
 			{
