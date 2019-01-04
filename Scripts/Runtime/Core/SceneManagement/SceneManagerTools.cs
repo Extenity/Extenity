@@ -94,6 +94,17 @@ namespace Extenity.SceneManagementToolbox
 			}
 		}
 
+		public static List<GameObject> GetRootGameObjectsOfLoadedScenes()
+		{
+			var scenes = GetLoadedScenes();
+			var result = new List<GameObject>();
+			foreach (var scene in scenes)
+			{
+				scene.GetRootGameObjects(result);
+			}
+			return result;
+		}
+
 		#region DontDestroyOnLoad Scene
 
 		/// <summary>

@@ -10,6 +10,8 @@ using Extenity.ApplicationToolbox;
 using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
+using Extenity.GameObjectToolbox;
+using Extenity.ReflectionToolbox;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
@@ -263,9 +265,9 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static string GetSelectedPath()
 		{
-			var filteredSelection = Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets);
+			var filteredSelection = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
 
-			foreach (UnityEngine.Object obj in filteredSelection)
+			foreach (Object obj in filteredSelection)
 			{
 				var path = AssetDatabase.GetAssetPath(obj);
 				if (string.IsNullOrEmpty(path))
@@ -515,6 +517,87 @@ namespace Extenity.AssetToolbox.Editor
 			AssetDatabase.StopAssetEditing();
 			AssetDatabase.Refresh();
 			Log.Info("Done.");
+		}
+
+		#endregion
+
+		#region Asset Usage
+
+		public static void LogListReferencedAssetsOfTypeInGameObject(this GameObject gameObject, bool includeChildren, params Type[] types)
+		{
+			new List<GameObject> { gameObject } // Yes, not cool. But yeah, really cool.
+				.LogListReferencedAssetsOfTypeInGameObjects(includeChildren, types);
+		}
+
+		public static void LogListReferencedAssetsOfTypeInGameObjects(this IList<GameObject> gameObjects, bool includeChildren, params Type[] types)
+		{
+			var resultsAsDictionary = new Dictionary<Object, List<Component>>();
+
+			foreach (var gameObject in gameObjects)
+			{
+				// Include children if user wants.
+				var gameObjectAndChildren = new List<GameObject> { gameObject };
+				if (includeChildren)
+				{
+					gameObject.ListAllChildrenGameObjects(gameObjectAndChildren, false);
+				}
+
+				foreach (var processedGameObject in gameObjectAndChildren)
+				{
+					var components = processedGameObject.GetComponents<Component>();
+					foreach (var component in components)
+					{
+						var fieldsAndValues = component.GetUnitySerializedFieldsAndValues(true);
+						foreach (var fieldAndValue in fieldsAndValues)
+						{
+							// See if the field type is one of the types that user wants.
+							if (!types.Any(type => fieldAndValue.FieldInfo.FieldType.IsSameOrSubclassOf(type)))
+								continue;
+
+							// Save the referenced asset into a list which will be logged in a minute.
+							// Also the list then saved into a dictionary for detailed logging.
+							var castValue = (Object)fieldAndValue.Value;
+							if (!resultsAsDictionary.TryGetValue(castValue, out var list))
+							{
+								list = new List<Component>();
+								resultsAsDictionary.Add(castValue, list);
+							}
+							list.Add(component);
+						}
+					}
+				}
+			}
+
+			// Sort the results
+			var sortedResults = new List<(string AssetPath, Object ReferencedObject, List<Component> ReferencedInComponents)>();
+			foreach (var entry in resultsAsDictionary)
+			{
+				var path = AssetDatabase.GetAssetPath(entry.Key);
+				sortedResults.Add((path, entry.Key, entry.Value));
+			}
+			sortedResults.Sort((item1, item2) => string.Compare(item1.AssetPath, item2.AssetPath, StringComparison.Ordinal));
+
+			// List referenced assets
+			using (Log.Indent($"Listing all assets of type(s) '{string.Join(", ", types.Select(type => type.Name))}' in '{gameObjects.Count}' object(s){(includeChildren ? " and their children" : "")}..."))
+			{
+				foreach (var result in sortedResults)
+				{
+					Log.Info($"{result.AssetPath}", result.ReferencedObject);
+				}
+			}
+
+			// List referenced assets and components where they are referenced
+			using (Log.Indent("Detailed listing of components where the assets are referenced..."))
+			{
+				foreach (var result in sortedResults)
+				{
+					Log.Info($"{result.AssetPath}", result.ReferencedObject);
+					foreach (var referencedByComponent in result.ReferencedInComponents)
+					{
+						Log.Info($"{Log.IndentationOneLevelString}Referenced in: '{referencedByComponent.FullName()}'", referencedByComponent);
+					}
+				}
+			}
 		}
 
 		#endregion
