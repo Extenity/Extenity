@@ -1,4 +1,5 @@
 using System;
+using Object = UnityEngine.Object;
 
 namespace Extenity.SystemToolbox
 {
@@ -198,7 +199,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, TResult>(this Func<T1, TResult> action, T1 arg1, out TResult result)
 		{
 			if (action != null)
@@ -216,7 +217,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, TResult>(this Func<T1, T2, TResult> action, T1 arg1, T2 arg2, out TResult result)
 		{
 			if (action != null)
@@ -234,7 +235,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, TResult>(this Func<T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3, out TResult result)
 		{
 			if (action != null)
@@ -252,7 +253,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, TResult>(this Func<T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, out TResult result)
 		{
 			if (action != null)
@@ -270,7 +271,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, T5, TResult>(this Func<T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, out TResult result)
 		{
 			if (action != null)
@@ -288,7 +289,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, T5, T6, TResult>(this Func<T1, T2, T3, T4, T5, T6, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, out TResult result)
 		{
 			if (action != null)
@@ -306,7 +307,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, T5, T6, T7, TResult>(this Func<T1, T2, T3, T4, T5, T6, T7, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, out TResult result)
 		{
 			if (action != null)
@@ -324,7 +325,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, out TResult result)
 		{
 			if (action != null)
@@ -342,7 +343,7 @@ namespace Extenity.SystemToolbox
 			result = default(TResult);
 			return false;
 		}
-		
+
 		public static bool InvokeSafe<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, out TResult result)
 		{
 			if (action != null)
@@ -359,6 +360,28 @@ namespace Extenity.SystemToolbox
 			}
 			result = default(TResult);
 			return false;
+		}
+
+		#endregion
+
+		#region Unity Object Null Check
+
+		public static bool IsNullRespectingUnityObject(this object obj)
+		{
+			if (obj is Object cast)
+			{
+				return !cast;
+			}
+			return obj == null;
+		}
+
+		public static bool IsNotNullRespectingUnityObject(this object obj)
+		{
+			if (obj is Object cast)
+			{
+				return cast;
+			}
+			return obj != null;
 		}
 
 		#endregion
