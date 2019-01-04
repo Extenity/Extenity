@@ -1368,10 +1368,12 @@ namespace Extenity.ReflectionToolbox
 							typeof(ClampedFloat),
 							typeof(PathPoint),
 							typeof(PIDConfiguration),
+#if UNITY_EDITOR
 							typeof(Line.DebugConfigurationData),
 							typeof(Spline.DebugConfigurationData),
 							typeof(OrientedLine.DebugConfigurationData),
 							//typeof(OrientedSpline.DebugConfigurationData), Uncomment when implemented
+#endif
 						}
 					);
 				}
