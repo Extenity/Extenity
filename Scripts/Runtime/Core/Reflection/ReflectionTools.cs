@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
+using Extenity.SystemToolbox;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -982,10 +983,49 @@ namespace Extenity.ReflectionToolbox
 
 		#region Get Unity-Serialized Fields
 
+		public static List<(FieldInfo FieldInfo, object Value)> GetUnitySerializedFieldsAndValues(this object obj, bool includeOnlyNonNullFields)
+		{
+			var fields = obj.GetUnitySerializedFields();
+			var result = new List<(FieldInfo FieldInfo, object Value)>(fields.Count);
+			if (includeOnlyNonNullFields)
+			{
+				foreach (var field in fields)
+				{
+					var value = field.GetValue(obj);
+					if (value.IsNotNullRespectingUnityObject())
+					{
+						result.Add((field, value));
+					}
+				}
+			}
+			else
+			{
+				foreach (var field in fields)
+				{
+					var value = field.GetValue(obj);
+					result.Add((field, value));
+				}
+			}
+			return result;
+		}
+
 		public static List<FieldInfo> GetUnitySerializedFields(this object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
+
+			if (obj is GameObject)
+			{
+				// This is an intentionally placed trap. Getting fields of a GameObject is undefined behaviour.
+				// This method designed to be simple with no fancy features. So it does not try to iterate over
+				// Components of GameObject.
+				//
+				// If you see this exception, you probably needed to get fields of all Components of that GameObject.
+				// If so, iterate all components manually and call this method for each of them OR use other
+				// variations of this method.
+				throw new InternalException(934857);
+			}
+
 			var type = obj as Type;
 			if (type != null)
 			{
@@ -1024,30 +1064,6 @@ namespace Extenity.ReflectionToolbox
 			}
 
 			return fields;
-		}
-
-		public static void GetUnitySerializedFieldsOfType<TField>(this GameObject me, List<(TField AssignedObject, Component Component, FieldInfo FieldInfo)> result)
-		{
-			var components = me.GetComponents<Component>();
-			foreach (var component in components)
-			{
-				GetUnitySerializedFieldsOfType(component, result);
-			}
-		}
-
-		public static void GetUnitySerializedFieldsOfType<TField>(this Component me, List<(TField AssignedObject, Component Component, FieldInfo FieldInfo)> result)
-		{
-			var fields = me.GetUnitySerializedFields().Where(field => field.FieldType.IsSameOrSubclassOf(typeof(TField))).ToList();
-
-			foreach (var field in fields)
-			{
-				var assigned = (TField)field.GetValue(me);
-
-				if (assigned != null)
-				{
-					result.Add((assigned, me, field));
-				}
-			}
 		}
 
 		#endregion
