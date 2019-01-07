@@ -394,16 +394,16 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 						var index_a = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
 						var index_b = (index_a + 1) % channel.SampleBufferSize;
 
-						var time_a = channel.SampleAxisX[index_a];
-						var time_b = channel.SampleAxisX[index_b];
+						var time_a = channel.Samples[index_a].AxisX;
+						var time_b = channel.Samples[index_b].AxisX;
 
 						if (float.IsNaN(time_a) || float.IsNaN(time_b))
 							continue;
 
 						if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
 						{
-							var sample_a = channel.SampleAxisY[index_a];
-							var sample_b = channel.SampleAxisY[index_b];
+							var sample_a = channel.Samples[index_a].AxisY;
+							var sample_b = channel.Samples[index_b].AxisY;
 
 							if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
 								continue;
@@ -524,15 +524,15 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 					var index = -1;
 
-					for (int k = 1; k < channel.SampleAxisY.Length - 1; k++)
+					for (int k = 1; k < channel.Samples.Length - 1; k++)
 					{
-						int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.SampleAxisY.Length;
-						int sampleIndex_b = (sampleIndex_a + 1) % channel.SampleAxisY.Length;
+						int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.Samples.Length;
+						int sampleIndex_b = (sampleIndex_a + 1) % channel.Samples.Length;
 
-						if (mouseTime >= channel.SampleAxisX[sampleIndex_a] &&
-							mouseTime <= channel.SampleAxisX[sampleIndex_b])
+						if (mouseTime >= channel.Samples[sampleIndex_a].AxisX &&
+							mouseTime <= channel.Samples[sampleIndex_b].AxisX)
 						{
-							index = Mathf.Abs(channel.SampleAxisX[sampleIndex_a] - mouseTime) <= Mathf.Abs(channel.SampleAxisX[sampleIndex_b] - mouseTime) ? sampleIndex_a : sampleIndex_b;
+							index = Mathf.Abs(channel.Samples[sampleIndex_a].AxisX - mouseTime) <= Mathf.Abs(channel.Samples[sampleIndex_b].AxisX - mouseTime) ? sampleIndex_a : sampleIndex_b;
 							break;
 						}
 					}
@@ -543,9 +543,10 @@ namespace Extenity.DebugFlowTool.GraphPlotting.Editor
 
 					if (index > -1)
 					{
-						sampleValue = channel.SampleAxisY[index];
-						time = channel.SampleAxisX[index];
-						frame = channel.SampleFrames[index];
+						var sample = channel.Samples[index];
+						sampleValue = sample.AxisY;
+						time = sample.AxisX;
+						frame = sample.Frame;
 					}
 
 					// Draw time marker.

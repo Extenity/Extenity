@@ -5,6 +5,22 @@ using UnityEngine;
 namespace Extenity.DebugFlowTool.GraphPlotting
 {
 
+	public struct Sample
+	{
+		public readonly float AxisX;
+		public readonly float AxisY;
+		public readonly int Frame;
+
+		public Sample(float axisX, float axisY, int frame)
+		{
+			AxisX = axisX;
+			AxisY = axisY;
+			Frame = frame;
+		}
+
+		public static readonly Sample Default = new Sample(float.NaN, float.NaN, -1);
+	}
+
 	public class Channel
 	{
 		#region Initialization
@@ -102,22 +118,16 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 
 		public int CurrentSampleIndex;
 		public int SampleBufferSize = 1000;
-		public float[] SampleAxisY;
-		public float[] SampleAxisX;
-		public int[] SampleFrames;
+		public Sample[] Samples;
 
 		private void InitializeData()
 		{
 			CurrentSampleIndex = 0;
-			SampleAxisY = new float[SampleBufferSize];
-			SampleAxisX = new float[SampleBufferSize];
-			SampleFrames = new int[SampleBufferSize];
+			Samples = new Sample[SampleBufferSize];
 
-			for (int i = 0; i < SampleAxisY.Length; i++)
+			for (int i = 0; i < Samples.Length; i++)
 			{
-				SampleAxisY[i] = float.NaN;
-				SampleAxisX[i] = float.NaN;
-				SampleFrames[i] = -1;
+				Samples[i] = GraphPlotting.Sample.Default;
 			}
 		}
 
@@ -134,9 +144,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		{
 			CheckClosed();
 
-			SampleAxisY[CurrentSampleIndex] = value;
-			SampleAxisX[CurrentSampleIndex] = time;
-			SampleFrames[CurrentSampleIndex] = frame;
+			Samples[CurrentSampleIndex] = new Sample(time, value, frame);
 
 			Graph.InformNewEntry(value, time);
 
@@ -154,12 +162,12 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 			min = float.PositiveInfinity;
 			max = float.NegativeInfinity;
 
-			for (int i = 0; i < SampleAxisX.Length; i++)
+			for (int i = 0; i < Samples.Length; i++)
 			{
-				var time = SampleAxisX[i];
+				var time = Samples[i].AxisX;
 				if (time >= timeStart && time <= timeEnd)
 				{
-					var value = SampleAxisY[i];
+					var value = Samples[i].AxisY;
 					if (min > value)
 						min = value;
 					if (max < value)
@@ -175,9 +183,9 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 			var start = float.PositiveInfinity;
 			var end = float.NegativeInfinity;
 
-			for (int i = 0; i < SampleAxisX.Length; i++)
+			for (int i = 0; i < Samples.Length; i++)
 			{
-				var time = SampleAxisX[i];
+				var time = Samples[i].AxisX;
 				if (float.IsNaN(time))
 					continue;
 
