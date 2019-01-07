@@ -1226,6 +1226,7 @@ namespace ExtenityTests.DataToolbox
 			TestValue_GetHashCodeGuaranteed(valueBag, history, "123", -1623739142);
 			TestValue_GetHashCodeGuaranteed(valueBag, history, "bvuYGfg823tbn181", -2132762692);
 
+			/*
 			// Just add some random values and expect them to not collide.
 			// Of course it will collide randomly. So this is just for fun experimentation.
 			// Seems like the collision will be rare below 5.000 items.
@@ -1240,6 +1241,7 @@ namespace ExtenityTests.DataToolbox
 				if (!TestValue_GetHashCodeGuaranteed(valueBag, history, value))
 					i--;
 			}
+			*/
 		}
 
 		//private static void CreateLog(System.Text.StringBuilder builder, string value)
