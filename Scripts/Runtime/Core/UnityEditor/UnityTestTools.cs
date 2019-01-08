@@ -40,6 +40,7 @@ namespace Extenity.UnityTestToolbox
 				throw new Exception("Memory check was already started.");
 			}
 
+			//GC.Collect(); Calling garbage collection just before GetTotalMemory will make it work more accurately. But it takes so long, so we ignore it.
 			DetectedMemoryInMemoryCheck = GC.GetTotalMemory(false);
 			if (DetectedMemoryInMemoryCheck == 0)
 			{
@@ -57,11 +58,12 @@ namespace Extenity.UnityTestToolbox
 				throw new Exception("Memory check was not started.");
 			}
 
+			//GC.Collect(); Calling garbage collection just before GetTotalMemory will make it work more accurately. But it takes so long, so we ignore it.
 			var change = GC.GetTotalMemory(false) - DetectedMemoryInMemoryCheck;
 			DetectedMemoryInMemoryCheck = 0;
 			if (change != 0)
 			{
-				Log.Warning($"Detected a memory change of '{change}' bytes.");
+				Log.Warning($"Detected a memory change of '{change:N0}' bytes.");
 			}
 			return change != 0;
 		}

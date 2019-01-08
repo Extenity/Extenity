@@ -1121,33 +1121,42 @@ namespace ExtenityTests.DataToolbox
 
 		private static void TestValue_ToStringAsCharArray_FormattedInt(string format, Int64 value)
 		{
-			TestValue_ToStringAsCharArray_FormattedValue(format, value, chars => value.ToStringAsCharArray(format, chars), () => value.ToString(format));
-			TestValue_ToStringAsCharArray_FormattedValue(format, value, chars => ((Int32)value).ToStringAsCharArray(format, chars), () => ((Int32)value).ToString(format));
+			TestValue_ToStringAsCharArray_FormattedValue(format, value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
+			TestValue_ToStringAsCharArray_FormattedValue(format, (Int32)value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
 		}
 
 		private static void TestValue_ToStringAsCharArray_FormattedDouble(string format, double value)
 		{
-			TestValue_ToStringAsCharArray_FormattedValue(format, value, chars => value.ToStringAsCharArray(format, chars), () => value.ToString(format));
-			TestValue_ToStringAsCharArray_FormattedValue(format, value, chars => ((float)value).ToStringAsCharArray(format, chars), () => ((float)value).ToString(format));
+			TestValue_ToStringAsCharArray_FormattedValue(format, value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
+			TestValue_ToStringAsCharArray_FormattedValue(format, (float)value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
 		}
 
-		private static void TestValue_ToStringAsCharArray_FormattedValue(string format, object value, Func<char[], int> convertToCharArray, Func<string> convertToString)
+		/// <summary>
+		/// The trick here is that convertToExpectedString and convertToCharArray
+		/// won't allocate any memory while providing the test functionality for
+		/// various types of values. The allocation problems can easily be seen
+		/// with ReSharper's 'Heap Allocations Viewer' plugin.
+		///
+		/// Though admittedly the lines where this method is called looks a bit silly.
+		/// </summary>
+		private static void TestValue_ToStringAsCharArray_FormattedValue<T>(string format, T value, Func<T, string, string> convertToExpectedString, Func<T, string, char[], int> convertToCharArray)
 		{
 			lock (BigBuffer)
 			{
-				BigBuffer.FillRandomly();
+				var valueAsUnformattedString = value.ToString();
+				BigBuffer.Clear();
 				UnityTestTools.BeginMemoryCheck();
-				var length = convertToCharArray(BigBuffer);
+				var length = convertToCharArray(value, format, BigBuffer);
 				if (UnityTestTools.EndMemoryCheck())
-					Assert.Fail($"Memory allocated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
-				var originalString = convertToString();
+					Assert.Fail($"Memory allocated while converting value '{valueAsUnformattedString}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				var resultString = BigBuffer.ConvertToString(0, length);
-				if (!originalString.Equals(resultString))
+				var expectedString = convertToExpectedString(value, format);
+				if (!expectedString.Equals(resultString))
 				{
-					Log.Error($"Erroneous value generated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
+					Log.Error($"Erroneous value generated while converting value '{valueAsUnformattedString}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				}
-				Assert.AreEqual(originalString, resultString);
-				Assert.AreEqual(originalString.Length, length);
+				Assert.AreEqual(expectedString, resultString);
+				Assert.AreEqual(expectedString.Length, length);
 			}
 		}
 
