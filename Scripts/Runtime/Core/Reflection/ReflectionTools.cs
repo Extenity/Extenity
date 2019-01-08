@@ -1415,6 +1415,8 @@ namespace Extenity.ReflectionToolbox
 
 		#region List.GetInternalArray
 
+#if !NET_STANDARD_2_0
+
 		// Source: https://stackoverflow.com/questions/4972951/listt-to-t-without-copying
 		private static class ArrayAccessor<T>
 		{
@@ -1435,6 +1437,8 @@ namespace Extenity.ReflectionToolbox
 		{
 			return ArrayAccessor<T>.Getter(list);
 		}
+
+#endif
 
 		#endregion
 	}
