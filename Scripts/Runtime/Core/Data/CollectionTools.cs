@@ -500,6 +500,11 @@ namespace Extenity.DataToolbox
 			return source;
 		}
 
+		public static void Clear(this Array array)
+		{
+			Array.Clear(array, 0, array.Length);
+		}
+
 		#region Duplicates
 
 		public static IEnumerable<int> DuplicatesIndexed<T>(this IEnumerable<T> source)
