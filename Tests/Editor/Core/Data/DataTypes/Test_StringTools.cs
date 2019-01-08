@@ -1076,6 +1076,16 @@ namespace ExtenityTests.DataToolbox
 				// Warm up internal buffers of FastNumberFormatter
 				for (int iDecimal = 0; iDecimal < 15; iDecimal++)
 				{
+					float.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
+					//float.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer); Integers only
+					float.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
+					//float.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer); Integers only
+
 					double.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
 					//double.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer); Integers only
 					double.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
@@ -1085,6 +1095,17 @@ namespace ExtenityTests.DataToolbox
 					double.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
 					double.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
 					//double.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer); Integers only
+
+					Int32.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer);
+
 					Int64.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
 					Int64.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer);
 					Int64.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
@@ -1118,7 +1139,7 @@ namespace ExtenityTests.DataToolbox
 				UnityTestTools.BeginMemoryCheck();
 				var length = convertToCharArray(BigBuffer);
 				if (UnityTestTools.EndMemoryCheck())
-					Assert.Fail("Memory allocated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
+					Assert.Fail($"Memory allocated while converting value '{value}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				var originalString = convertToString();
 				var resultString = BigBuffer.ConvertToString(0, length);
 				if (!originalString.Equals(resultString))

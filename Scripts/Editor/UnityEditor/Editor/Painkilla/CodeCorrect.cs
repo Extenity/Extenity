@@ -16,6 +16,7 @@ namespace Extenity.PainkillaTool.Editor
 {
 
 	// TODO: Add tool to check script encoding
+	// TODO: Improve ignore comments by defining which action(s) to ignore. So it will only exclude the intended check(s) and still catch other bad coding practices.
 	// TODO: Detect empty methods (Awake, Start, OnDestroy, Update, FixedUpdate, LateUpdate)
 	// TODO: Detect where Debug.Log_ methods are called.
 	// TODO: Detect where Log._ methods with no context are called.
@@ -23,6 +24,13 @@ namespace Extenity.PainkillaTool.Editor
 	// TODO: Detect "EditorApplication.delayCall =" which should be "EditorApplication.delayCall +=".
 	// TODO: Detect Destroy and DestroyImmediate calls that trying to destroy a Transform component. This is a critical bug and can't be ignored.
 	// TODO: Detect "yield return new" usages that can be cached.
+	// TODO: Detect closures. See https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html
+	// TODO: Detect boxing. See https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html
+	// TODO: Detect dictionaries that use enum as key. See https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html
+	// TODO: Detect foreach usages.
+	// TODO: Detect Unity API usages that cause memory allocations (Input.touches, Mesh.vertices etc). Maybe try to detect if they are used inside loops.
+	// TODO: Detect generating empty arrays where in places other than assigning them into static fields.
+	// TODO: Detect static fields. (Maybe exclude fields that keeps empty arrays)
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
