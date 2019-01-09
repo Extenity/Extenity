@@ -27,9 +27,11 @@ namespace Extenity.GameObjectToolbox
 
 		public void Deparent()
 		{
-			for (int i = transform.childCount - 1; i >= 0; i--)
+			// Deparent while keeping the order of objects.
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
-				var child = transform.GetChild(i);
+				var child = transform.GetChild(0);
 				child.SetParent(null, WorldPositionStays);
 			}
 
