@@ -43,24 +43,24 @@ namespace Extenity.ConsistencyToolbox
 
 		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, UnityEngine.Object context = null)
 		{
-			return CheckConsistencyAndLog(me, SeverityType.Error, context);
+			return CheckConsistencyAndLog(me, SeverityCategory.Error, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityType severityType, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityCategory severityCategory, UnityEngine.Object context = null)
 		{
 			var meObject = me as UnityEngine.Object;
 			var titleMessage = meObject != null
 				? "'" + meObject.name + "' has some inconsistencies."
 				: null;
-			return CheckConsistencyAndLog(me, titleMessage, severityType, context);
+			return CheckConsistencyAndLog(me, titleMessage, severityCategory, context);
 		}
 
 		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, UnityEngine.Object context = null)
 		{
-			return CheckConsistencyAndLog(me, titleMessage, SeverityType.Error, context);
+			return CheckConsistencyAndLog(me, titleMessage, SeverityCategory.Error, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, SeverityType severityType, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, SeverityCategory severityCategory, UnityEngine.Object context = null)
 		{
 			var errors = me.CheckConsistency();
 			if (errors.Count > 0)
@@ -70,7 +70,7 @@ namespace Extenity.ConsistencyToolbox
 					message = titleMessage + "\n";
 				message += errors.Serialize('\n');
 
-				Log.Severe(message, severityType, context);
+				Log.Severe(message, severityCategory, context);
 			}
 			return errors;
 		}

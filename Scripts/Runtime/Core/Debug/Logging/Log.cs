@@ -17,7 +17,15 @@ using Object = UnityEngine.Object;
 //namespace Extenity.DebugToolbox
 //{
 
-public enum SeverityType
+public enum LogCategory
+{
+	Info,
+	Warning,
+	Error,
+	Critical,
+}
+
+public enum SeverityCategory
 {
 	Warning,
 	Error,
@@ -250,6 +258,32 @@ public static class Log
 
 	#region Log
 
+	public static void Any(string message, LogCategory category)
+	{
+		switch (category)
+		{
+			case LogCategory.Info: Info(message); break;
+			case LogCategory.Warning: Warning(message); break;
+			case LogCategory.Error: Error(message); break;
+			case LogCategory.Critical: CriticalError(message); break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(category), category, null);
+		}
+	}
+
+	public static void Any(string message, LogCategory category, Object context)
+	{
+		switch (category)
+		{
+			case LogCategory.Info: Info(message, context); break;
+			case LogCategory.Warning: Warning(message, context); break;
+			case LogCategory.Error: Error(message, context); break;
+			case LogCategory.Critical: CriticalError(message, context); break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(category), category, null);
+		}
+	}
+
 #if DisableInfoLogging
 	[Conditional("DummyConditionThatNeverExists")]
 #endif
@@ -266,25 +300,25 @@ public static class Log
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
-	public static void Severe(string message, SeverityType severity)
+	public static void Severe(string message, SeverityCategory severity)
 	{
 		switch (severity)
 		{
-			case SeverityType.Warning: Warning(message); break;
-			case SeverityType.Error: Error(message); break;
-			case SeverityType.Critical: CriticalError(message); break;
+			case SeverityCategory.Warning: Warning(message); break;
+			case SeverityCategory.Error: Error(message); break;
+			case SeverityCategory.Critical: CriticalError(message); break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
 	}
 
-	public static void Severe(string message, SeverityType severity, Object context)
+	public static void Severe(string message, SeverityCategory severity, Object context)
 	{
 		switch (severity)
 		{
-			case SeverityType.Warning: Warning(message, context); break;
-			case SeverityType.Error: Error(message, context); break;
-			case SeverityType.Critical: CriticalError(message, context); break;
+			case SeverityCategory.Warning: Warning(message, context); break;
+			case SeverityCategory.Error: Error(message, context); break;
+			case SeverityCategory.Critical: CriticalError(message, context); break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
@@ -409,26 +443,26 @@ public static class Log
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugSevere(string message, SeverityType severity)
+	public static void DebugSevere(string message, SeverityCategory severity)
 	{
 		switch (severity)
 		{
-			case SeverityType.Warning: DebugWarning(message); break;
-			case SeverityType.Error: DebugError(message); break;
-			case SeverityType.Critical: CriticalError(message); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			case SeverityCategory.Warning: DebugWarning(message); break;
+			case SeverityCategory.Error: DebugError(message); break;
+			case SeverityCategory.Critical: CriticalError(message); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-	public static void DebugSevere(string message, SeverityType severity, Object context)
+	public static void DebugSevere(string message, SeverityCategory severity, Object context)
 	{
 		switch (severity)
 		{
-			case SeverityType.Warning: DebugWarning(message, context); break;
-			case SeverityType.Error: DebugError(message, context); break;
-			case SeverityType.Critical: CriticalError(message, context); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			case SeverityCategory.Warning: DebugWarning(message, context); break;
+			case SeverityCategory.Error: DebugError(message, context); break;
+			case SeverityCategory.Critical: CriticalError(message, context); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
@@ -530,6 +564,22 @@ public static class Log
 
 	#region Log Tools - Methods
 
+	/// <summary>
+	/// Usage: Log.LogVariable(() => myVariable);
+	/// </summary>
+	public static void Variable<T>(Expression<Func<T>> expression, string prefix = "", LogCategory category = LogCategory.Info)
+	{
+		if (!string.IsNullOrEmpty(prefix))
+			prefix += ": ";
+		var body = (MemberExpression)expression.Body;
+		var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
+		Log.Any(prefix + body.Member.Name + ": '" + value + "'", category);
+	}
+
+	#endregion
+
+	#region Log Tools - Methods
+
 	public static void CurrentMethodNotImplemented()
 	{
 		CriticalError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
@@ -552,15 +602,15 @@ public static class Log
 	public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ")" :
-			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ") : " + additionalText);
+			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")" :
+			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
 	}
 
 	public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ")" :
-			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "Null" : me.name) + ") : " + additionalText);
+			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")" :
+			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
 	}
 
 	#endregion
@@ -590,67 +640,26 @@ public static class LogExtensions
 {
 	#region Simple
 
-	public static void LogSimple<T>(this T obj, string prefix = "")
+	public static void LogSimple<T>(this T obj, string prefix = "", LogCategory category = LogCategory.Info)
 	{
 		if (obj == null)
 		{
-			Log.Info("Object is null.");
+			Log.Any("[Null]", category);
 			return;
 		}
 
 		if (!string.IsNullOrEmpty(prefix))
 			prefix += ": ";
-		Log.Info(prefix + obj.ToString());
-	}
-
-	public static void LogSimple<T>(this T obj, UnityEngine.Object context, string prefix = "")
-	{
-		if (obj == null)
-		{
-			Log.Info("Object is null.");
-			return;
-		}
-
-		if (!string.IsNullOrEmpty(prefix))
-			prefix += ": ";
-		Log.Info(prefix + obj.ToString(), context);
-	}
-
-	#endregion
-
-	#region Variable Name and Value
-
-	/// <summary>
-	/// Usage: DebugLog.LogSimple(() => myVariable);
-	/// </summary>
-	public static void LogVariable<T>(Expression<Func<T>> expression, string prefix = "")
-	{
-		if (!string.IsNullOrEmpty(prefix))
-			prefix += ": ";
-		var body = (MemberExpression)expression.Body;
-		var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-		Log.Info(prefix + body.Member.Name + ": '" + value + "'");
-	}
-
-	/// <summary>
-	/// Usage: DebugLog.LogSimple(() => myVariable);
-	/// </summary>
-	public static void LogVariable<T>(Expression<Func<T>> expression, UnityEngine.Object context, string prefix = "")
-	{
-		if (!string.IsNullOrEmpty(prefix))
-			prefix += ": ";
-		var body = (MemberExpression)expression.Body;
-		var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-		Log.Info(prefix + body.Member.Name + ": '" + value + "'", context);
+		Log.Any(prefix + obj.ToString(), category);
 	}
 
 	#endregion
 
 	#region List
 
-	public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogType logType = LogType.Log)
+	public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
 	{
-		StringBuilder stringBuilder = !inSeparateLogCalls
+		var stringBuilder = !inSeparateLogCalls
 			? new StringBuilder()
 			: null;
 
@@ -659,7 +668,7 @@ public static class LogExtensions
 		{
 			if (inSeparateLogCalls)
 			{
-				Debug.unityLogger.Log(logType, initialLine);
+				Log.Any(initialLine, category);
 			}
 			else
 			{
@@ -672,7 +681,7 @@ public static class LogExtensions
 		{
 			if (inSeparateLogCalls)
 			{
-				Debug.unityLogger.Log(logType, "[NullList]");
+				Log.Any("[NullList]", category);
 			}
 			else
 			{
@@ -687,7 +696,7 @@ public static class LogExtensions
 				var line = (item == null ? "[Null]" : item.ToString());
 				if (inSeparateLogCalls)
 				{
-					Debug.unityLogger.Log(logType, line);
+					Log.Any(line, category);
 				}
 				else
 				{
@@ -698,40 +707,32 @@ public static class LogExtensions
 
 		if (!inSeparateLogCalls)
 		{
-			Debug.unityLogger.Log(logType, stringBuilder.ToString());
+			Log.Any(stringBuilder.ToString(), category);
 		}
-	}
-
-	public static void LogWarningList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false)
-	{
-		LogList<T>(list, initialLine, inSeparateLogCalls, LogType.Warning);
-	}
-
-	public static void LogErrorList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false)
-	{
-		LogList<T>(list, initialLine, inSeparateLogCalls, LogType.Error);
 	}
 
 	#endregion
 
 	#region Dictionary
 
-	public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, bool inSeparateLogCalls = false)
+	// TODO: Add 'initialLine' parameter, like in LogList method.
+	public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
 	{
 		if (dictionary == null)
 		{
-			Log.Info("Dictionary is null.");
+			Log.Any("[NullDict]", category);
 			return;
 		}
 
+		// TODO: OPTIMIZATION: Use StringBuilder, like in LogList method.
 		string text = "";
 
 		foreach (KeyValuePair<TKey, TValue> item in dictionary)
 		{
-			var line = (item.Key == null ? "Null" : item.Key.ToString()) + ": '" + (item.Value == null ? "Null" : item.Value.ToString()) + "'";
+			var line = (item.Key == null ? "[Null]" : item.Key.ToString()) + ": '" + (item.Value == null ? "[Null]" : item.Value.ToString()) + "'";
 			if (inSeparateLogCalls)
 			{
-				Log.Info(line);
+				Log.Any(line, category);
 			}
 			else
 			{
@@ -741,7 +742,7 @@ public static class LogExtensions
 
 		if (!inSeparateLogCalls)
 		{
-			Log.Info(text.ToString());
+			Log.Any(text.ToString(), category);
 		}
 	}
 
@@ -749,7 +750,7 @@ public static class LogExtensions
 
 	#region Dump Class Data
 
-	public static void LogAllProperties<T>(this T obj, string initialLine = null)
+	public static void LogAllProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
@@ -763,10 +764,10 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Log.Info(text);
+		Log.Any(text, category);
 	}
 
-	public static void LogAllFields<T>(this T obj, string initialLine = null)
+	public static void LogAllFields<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
@@ -780,10 +781,10 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Log.Info(text);
+		Log.Any(text, category);
 	}
 
-	public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null)
+	public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
@@ -800,7 +801,7 @@ public static class LogExtensions
 
 		// Finalize
 		var text = stringBuilder.ToString();
-		Log.Info(text);
+		Log.Any(text, category);
 	}
 
 	private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")
