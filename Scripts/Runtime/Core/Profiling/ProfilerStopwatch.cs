@@ -2,7 +2,7 @@ using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Object = UnityEngine.Object;
 
-namespace Extenity.DebugToolbox
+namespace Extenity.ProfilingToolbox
 {
 
 	public class ProfilerStopwatch
