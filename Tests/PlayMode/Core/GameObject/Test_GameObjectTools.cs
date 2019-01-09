@@ -37,6 +37,8 @@ namespace ExtenityTests.DataToolbox
 
 		#region FindObjectsOfType
 
+		#region List - ActiveOnly
+
 		private static readonly string[] List_ActiveOnly_BoxCollider =
 		{
 			"Container 1/ChildCube/GrandchildCube|BoxCollider",
@@ -138,6 +140,221 @@ namespace ExtenityTests.DataToolbox
 			"Cube|CanvasGroup",
 		};
 
+		#endregion
+
+		#region List - InactiveOnly
+
+		private static readonly string[] List_InactiveOnly_BoxCollider =
+		{
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|BoxCollider",
+			"Container 1 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|BoxCollider",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|BoxCollider",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|BoxCollider",
+			"Container 2/ChildCube (GO Disabled)|BoxCollider",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|BoxCollider",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|BoxCollider",
+			"Container 3/ChildCube (Comp Disabled)|BoxCollider",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|BoxCollider",
+			"Container 4 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|BoxCollider",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|BoxCollider",
+			"Container 5 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|BoxCollider",
+			"Cube (Comp Disabled)|BoxCollider",
+			"Cube (GO Disabled)|BoxCollider",
+		};
+
+		private static readonly string[] List_InactiveOnly_MeshRenderer =
+		{
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|MeshRenderer",
+			"Container 1 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|MeshRenderer",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|MeshRenderer",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|MeshRenderer",
+			"Container 2/ChildCube (GO Disabled)|MeshRenderer",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|MeshRenderer",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|MeshRenderer",
+			"Container 3/ChildCube (Comp Disabled)|MeshRenderer",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|MeshRenderer",
+			"Container 4 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|MeshRenderer",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|MeshRenderer",
+			"Container 5 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|MeshRenderer",
+			"Cube (Comp Disabled)|MeshRenderer",
+			"Cube (GO Disabled)|MeshRenderer",
+		};
+
+		private static readonly string[] List_InactiveOnly_Component =
+		{
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|BoxCollider",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|CanvasGroup",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|EmptyTestBehaviour",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|MeshFilter",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|MeshRenderer",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|Transform",
+			"Container 1 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 1 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 1 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 1 (GO Disabled)/ChildCube|MeshFilter",
+			"Container 1 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 1 (GO Disabled)/ChildCube|Transform",
+			"Container 1 (GO Disabled)|Transform",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|BoxCollider",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|MeshFilter",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|MeshRenderer",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|Transform",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|BoxCollider",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|MeshFilter",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|MeshRenderer",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|Transform",
+			"Container 2 (GO Disabled)|Transform",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|BoxCollider",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|MeshFilter",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|MeshRenderer",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|Transform",
+			"Container 2/ChildCube (GO Disabled)|BoxCollider",
+			"Container 2/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 2/ChildCube (GO Disabled)|MeshFilter",
+			"Container 2/ChildCube (GO Disabled)|MeshRenderer",
+			"Container 2/ChildCube (GO Disabled)|Transform",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|BoxCollider",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|MeshFilter",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|MeshRenderer",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|Transform",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|BoxCollider",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|MeshFilter",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|MeshRenderer",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|Transform",
+			"Container 3 (GO Disabled)|Transform",
+			"Container 3/ChildCube (Comp Disabled)|BoxCollider",
+			"Container 3/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 3/ChildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 3/ChildCube (Comp Disabled)|MeshRenderer",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|BoxCollider",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|MeshFilter",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|MeshRenderer",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|Transform",
+			"Container 4 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 4 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 4 (GO Disabled)/ChildCube|MeshFilter",
+			"Container 4 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 4 (GO Disabled)/ChildCube|Transform",
+			"Container 4 (GO Disabled)|Transform",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|BoxCollider",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|MeshFilter",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|MeshRenderer",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|Transform",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|BoxCollider",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|MeshFilter",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|MeshRenderer",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|Transform",
+			"Container 5 (GO Disabled)/ChildCube|BoxCollider",
+			"Container 5 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 5 (GO Disabled)/ChildCube|MeshFilter",
+			"Container 5 (GO Disabled)/ChildCube|MeshRenderer",
+			"Container 5 (GO Disabled)/ChildCube|Transform",
+			"Container 5 (GO Disabled)|Transform",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|BoxCollider",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|MeshRenderer",
+			"Cube (Comp Disabled)|BoxCollider",
+			"Cube (Comp Disabled)|CanvasGroup",
+			"Cube (Comp Disabled)|EmptyTestBehaviour",
+			"Cube (Comp Disabled)|MeshRenderer",
+			"Cube (GO Disabled)|BoxCollider",
+			"Cube (GO Disabled)|CanvasGroup",
+			"Cube (GO Disabled)|EmptyTestBehaviour",
+			"Cube (GO Disabled)|MeshFilter",
+			"Cube (GO Disabled)|MeshRenderer",
+			"Cube (GO Disabled)|Transform",
+			"Empty (GO Disabled)|Transform",
+			"MultiBehaviour|MarkedTestBehaviour|Disabled One",
+		};
+
+		private static readonly string[] List_InactiveOnly_Behaviour =
+		{
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|CanvasGroup",
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|EmptyTestBehaviour",
+			"Container 1 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 1 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 2/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|EmptyTestBehaviour",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 3/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 3/ChildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 4 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|EmptyTestBehaviour",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Container 5 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube|EmptyTestBehaviour",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|EmptyTestBehaviour",
+			"Cube (Comp Disabled)|CanvasGroup",
+			"Cube (Comp Disabled)|EmptyTestBehaviour",
+			"Cube (GO Disabled)|CanvasGroup",
+			"Cube (GO Disabled)|EmptyTestBehaviour",
+			"MultiBehaviour|MarkedTestBehaviour|Disabled One",
+		};
+
+		private static readonly string[] List_InactiveOnly_CanvasGroup =
+		{
+			"Container 1 (GO Disabled)/ChildCube/GrandchildCube|CanvasGroup",
+			"Container 1 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2 (GO Disabled)/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)/GrandchildCube|CanvasGroup",
+			"Container 2/ChildCube (GO Disabled)|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)/GrandchildCube|CanvasGroup",
+			"Container 3 (GO Disabled)/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 3/ChildCube (Comp Disabled)|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 4 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 4/ChildCube/GrandchildCube (GO Disabled)|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Container 5 (GO Disabled)/ChildCube|CanvasGroup",
+			"Container 5/ChildCube/GrandchildCube (Comp Disabled)|CanvasGroup",
+			"Cube (Comp Disabled)|CanvasGroup",
+			"Cube (GO Disabled)|CanvasGroup",
+		};
+
+		#endregion
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_ActiveOnly_A1_BoxCollider()
 		{
@@ -176,79 +393,79 @@ namespace ExtenityTests.DataToolbox
 
 		// ------------------------------------------------------
 
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_A1_BoxCollider()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<BoxCollider>(ActiveCheck.IncludingInactive), IncludingInactiveList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_A2_Collider()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.IncludingInactive), IncludingInactiveList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_B1_MeshRenderer()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<MeshRenderer>(ActiveCheck.IncludingInactive), IncludingInactiveList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_B2_Renderer()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Renderer>(ActiveCheck.IncludingInactive), IncludingInactiveList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_C_Component()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Component>(ActiveCheck.IncludingInactive), IncludingInactiveListForAllComponents);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_D_Behaviour()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Behaviour>(ActiveCheck.IncludingInactive), IncludingInactiveList.Combine(BehaviourAddition).Combine(BehaviourAddition));
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_IncludingInactive_E_CanvasGroup()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<CanvasGroup>(ActiveCheck.IncludingInactive), IncludingInactiveList);
-		//}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_A1_BoxCollider()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<BoxCollider>(ActiveCheck.IncludingInactive), List_ActiveOnly_BoxCollider.Combine(List_InactiveOnly_BoxCollider));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_A2_Collider()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.IncludingInactive), List_ActiveOnly_BoxCollider.Combine(List_InactiveOnly_BoxCollider));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_B1_MeshRenderer()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<MeshRenderer>(ActiveCheck.IncludingInactive), List_ActiveOnly_MeshRenderer.Combine(List_InactiveOnly_MeshRenderer));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_B2_Renderer()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Renderer>(ActiveCheck.IncludingInactive), List_ActiveOnly_MeshRenderer.Combine(List_InactiveOnly_MeshRenderer));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_C_Component()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Component>(ActiveCheck.IncludingInactive), List_ActiveOnly_Component.Combine(List_InactiveOnly_Component));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_D_Behaviour()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Behaviour>(ActiveCheck.IncludingInactive), List_ActiveOnly_Behaviour.Combine(List_InactiveOnly_Behaviour));
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_IncludingInactive_E_CanvasGroup()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<CanvasGroup>(ActiveCheck.IncludingInactive), List_ActiveOnly_CanvasGroup.Combine(List_InactiveOnly_CanvasGroup));
+		}
 
 		// ------------------------------------------------------
 
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_A1_BoxCollider()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<BoxCollider>(ActiveCheck.InactiveOnly), InactiveOnlyList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_A2_Collider()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.InactiveOnly), InactiveOnlyList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_B1_MeshRenderer()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<MeshRenderer>(ActiveCheck.InactiveOnly), InactiveOnlyList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_B2_Renderer()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Renderer>(ActiveCheck.InactiveOnly), InactiveOnlyList);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_C_Component()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Component>(ActiveCheck.InactiveOnly), InactiveOnlyListForAllComponents);
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_D_Behaviour()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Behaviour>(ActiveCheck.InactiveOnly), InactiveOnlyList.Combine(BehaviourAddition));
-		//}
-		//[UnityTest, Category(TestCategories.Cheesy)]
-		//public IEnumerator FindObjectsOfType_InactiveOnly_E_CanvasGroup()
-		//{
-		//	yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<CanvasGroup>(ActiveCheck.InactiveOnly), InactiveOnlyList.Remove(IneffectiveComponentExclusion));
-		//}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_A1_BoxCollider()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<BoxCollider>(ActiveCheck.InactiveOnly), List_InactiveOnly_BoxCollider);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_A2_Collider()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.InactiveOnly), List_InactiveOnly_BoxCollider);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_B1_MeshRenderer()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<MeshRenderer>(ActiveCheck.InactiveOnly), List_InactiveOnly_MeshRenderer);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_B2_Renderer()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Renderer>(ActiveCheck.InactiveOnly), List_InactiveOnly_MeshRenderer);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_C_Component()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Component>(ActiveCheck.InactiveOnly), List_InactiveOnly_Component);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_D_Behaviour()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Behaviour>(ActiveCheck.InactiveOnly), List_InactiveOnly_Behaviour);
+		}
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FindObjectsOfType_InactiveOnly_E_CanvasGroup()
+		{
+			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<CanvasGroup>(ActiveCheck.InactiveOnly), List_InactiveOnly_CanvasGroup);
+		}
 
 		private IEnumerator TestFindObjectsOfType<T>(Func<List<T>> searchMethod, string[] expectedComponentPaths) where T : Component
 		{
