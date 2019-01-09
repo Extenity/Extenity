@@ -1,8 +1,11 @@
 #if BeyondAudioUsesWwiseAudio
 
+using System;
 using System.Collections.Generic;
 using Extenity.DesignPatternsToolbox;
+using Extenity.FlowToolbox;
 using Extenity.GameObjectToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.BeyondAudio
@@ -43,6 +46,7 @@ namespace Extenity.BeyondAudio
 		{
 			InitializeSingleton(true);
 			Log.RegisterPrefix(this, "Audio");
+			InitializeIncidentTracker();
 			InitializeAudioSourceTemplate();
 		}
 
@@ -374,6 +378,7 @@ namespace Extenity.BeyondAudio
 			if (!string.IsNullOrEmpty(stopEventName))
 			{
 				AkSoundEngine.PostEvent(stopEventName, audioSource);
+				instance.InformIncidentTracker(stopEventName, OccurrenceType.PostEvent);
 			}
 
 			audioSource.gameObject.SetActive(false);
@@ -507,6 +512,7 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableLogging)
 				Log.Info($"Playing '{eventName}'.", instance);
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
+			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
 		public static void Play(string eventName, GameObject associatedObject)
@@ -525,6 +531,7 @@ namespace Extenity.BeyondAudio
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(associatedObject, associatedObject.transform);
 			AkSoundEngine.PostEvent(eventName, associatedObject);
+			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
 		public static GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
@@ -548,6 +555,7 @@ namespace Extenity.BeyondAudio
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
+			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 			return audioSource;
 		}
 
@@ -573,6 +581,7 @@ namespace Extenity.BeyondAudio
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
+			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 			return audioSource;
 		}
 
@@ -619,6 +628,7 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableLogging)
 				Log.Info($"Playing music '{eventName}'.", instance);
 			AkSoundEngine.PostEvent(eventName, instance.gameObject);
+			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
 		public static void SetMusicState(string stateGroup, string state)
@@ -629,6 +639,7 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableLogging)
 				Log.Info($"Setting music state '{state}' of group '{stateGroup}'.", instance);
 			AkSoundEngine.SetState(stateGroup, state);
+			instance.InformIncidentTracker(stateGroup, OccurrenceType.SetState);
 		}
 
 		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
@@ -730,6 +741,7 @@ namespace Extenity.BeyondAudio
 
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
 			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out var value, ref valueType);
+			instance.InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Getting RTPC '{rtpcName}' value '{value}'.", instance);
 			return value;
@@ -749,6 +761,7 @@ namespace Extenity.BeyondAudio
 
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
 			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out var value, ref valueType);
+			instance.InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.", instance);
 			return value;
@@ -768,6 +781,7 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Setting RTPC '{rtpcName}' to '{value}'.", instance);
 			AkSoundEngine.SetRTPCValue(rtpcName, value);
+			instance.InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
 		}
 
 		public static void SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
@@ -784,6 +798,7 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableRTPCLogging)
 				Log.Info($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.", instance);
 			AkSoundEngine.SetRTPCValue(rtpcName, value, associatedObject);
+			instance.InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
 		}
 
 		#endregion
@@ -798,7 +813,105 @@ namespace Extenity.BeyondAudio
 			if (instance.EnableLogging)
 				Log.Info($"Setting state '{state}' of group '{stateGroup}'.", instance);
 			AkSoundEngine.SetState(stateGroup, state);
+			instance.InformIncidentTracker(stateGroup, OccurrenceType.SetState);
 		}
+
+		#endregion
+
+		#region Incident Tracker
+
+		public enum OccurrenceType
+		{
+			PostEvent,
+			GetRTPC,
+			SetRTPC,
+			GetState,
+			SetState,
+		}
+
+		/// <summary>
+		/// The list keeps a dictionary for each OccurrenceType. Dictionaries keep the names of occurrences (events, RTPCs, state groups, etc.) and keeps the count to see how frequent they happen.
+		/// </summary>
+		[NonSerialized]
+		[ShowInInspector, ReadOnly]
+		public Dictionary<string, int>[] OccurrenceCounts;
+		[NonSerialized]
+		[ShowInInspector, ReadOnly]
+		public readonly HashSet<(string occurrenceName, OccurrenceType occurrenceType)> ReportedIncidents = new HashSet<(string occurrenceName, OccurrenceType occurrenceType)>();
+
+		[Header("Incident Tracker")]
+		public int InitialIncidentTrackerDictionaryCapacity = 50 * 4; // 50 is an average event type count. 4 is the magic number that makes the dictionary work at it's best condition.
+		public int IncidentTrackerOccurrenceToleranceInLastSecond = 30;
+		public bool EnableIncidentLogging = true;
+		public LogCategory IncidentLogTypeInEditor = LogCategory.Error;
+		public LogCategory IncidentLogTypeInBuild = LogCategory.Critical;
+
+		private LogCategory IncidentLogType
+		{
+			get
+			{
+#if UNITY_EDITOR
+				return IncidentLogTypeInEditor;
+#else
+				return IncidentLogTypeInBuild;
+#endif
+			}
+		}
+
+		private void InitializeIncidentTracker()
+		{
+			var occurrenceTypeCount = (int)OccurrenceType.SetState + 1;
+			Debug.Assert(occurrenceTypeCount == Enum.GetNames(typeof(OccurrenceType)).Length);
+
+			OccurrenceCounts = new Dictionary<string, int>[occurrenceTypeCount];
+			for (int i = 0; i < occurrenceTypeCount; i++)
+			{
+				OccurrenceCounts[i] = new Dictionary<string, int>(InitialIncidentTrackerDictionaryCapacity);
+			}
+
+			this.FastInvokeRepeating(ClearIncidentTrackerCounts, 1f, 1f, true);
+		}
+
+		private void ClearIncidentTrackerCounts()
+		{
+			for (int i = 0; i < OccurrenceCounts.Length; i++)
+			{
+				OccurrenceCounts[i].Clear();
+			}
+		}
+
+		private void InformIncidentTracker(string occurrenceName, OccurrenceType occurrenceType)
+		{
+			var dict = OccurrenceCounts[(int)occurrenceType];
+			dict.TryGetValue(occurrenceName, out int occurrenceCount);
+			occurrenceCount++;
+			dict[occurrenceName] = occurrenceCount;
+
+			if (occurrenceCount == IncidentTrackerOccurrenceToleranceInLastSecond)
+			{
+				if (EnableIncidentLogging)
+				{
+					if (ReportedIncidents.Add((occurrenceName, occurrenceType))) // This is here to block repetitive logs. Do not log an incident more than once.
+					{
+						Log.Any($"Heavy use of '{occurrenceType}' for '{occurrenceName}' detected.", IncidentLogType, this);
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region Editor
+
+#if UNITY_EDITOR
+
+		[OnInspectorGUI]
+		private void OnInspectorGUI()
+		{
+			Sirenix.Utilities.Editor.GUIHelper.RequestRepaint();
+		}
+
+#endif
 
 		#endregion
 
