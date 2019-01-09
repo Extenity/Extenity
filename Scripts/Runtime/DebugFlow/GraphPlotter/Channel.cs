@@ -117,7 +117,7 @@ namespace Extenity.DebugFlowTool.GraphPlotting
 		#region Data
 
 		public int CurrentSampleIndex;
-		public int SampleBufferSize = 1000;
+		public int SampleBufferSize = 150 * 20; // Approximately 150 ticks-per-second over 20 seconds.
 		public Sample[] Samples;
 
 		private void InitializeData()
