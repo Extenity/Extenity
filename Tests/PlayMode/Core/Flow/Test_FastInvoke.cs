@@ -76,19 +76,19 @@ namespace ExtenityTests.FlowToolbox
 		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestUnityInvoke_Various(false); }
 
 		// UnityInvoke_LongRun_StartsAtRandomTime
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime() { yield return TestUnityInvoke(CheesyLongRunDuration, true); }
-		[UnityTest, Category(TestCategories.Detailed), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Detailed), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestUnityInvoke(DetailedLongRunDuration, true); }
-		[UnityTest, Category(TestCategories.Overnight), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Overnight), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestUnityInvoke(OvernightLongRunDuration, true); }
 
 		// UnityInvoke_LongRun_StartsAtFixedUpdate
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate() { yield return TestUnityInvoke(CheesyLongRunDuration, false); }
-		[UnityTest, Category(TestCategories.Detailed), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Detailed), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestUnityInvoke(DetailedLongRunDuration, false); }
-		[UnityTest, Category(TestCategories.Overnight), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Overnight), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestUnityInvoke(OvernightLongRunDuration, false); }
 
 		// ---------- FastInvoke
@@ -118,24 +118,24 @@ namespace ExtenityTests.FlowToolbox
 		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestFastInvoke_Various(false); }
 
 		// FastInvoke_LongRun_StartsAtRandomTime
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime() { yield return TestFastInvoke(CheesyLongRunDuration, true); }
-		[UnityTest, Category(TestCategories.Detailed), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Detailed), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestFastInvoke(DetailedLongRunDuration, true); }
-		[UnityTest, Category(TestCategories.Overnight), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Overnight), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestFastInvoke(OvernightLongRunDuration, true); }
 
 		// FastInvoke_LongRun_StartsAtFixedUpdate
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate() { yield return TestFastInvoke(CheesyLongRunDuration, false); }
-		[UnityTest, Category(TestCategories.Detailed), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Detailed), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestFastInvoke(DetailedLongRunDuration, false); }
-		[UnityTest, Category(TestCategories.Overnight), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Overnight), /*Repeat(),*/ Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestFastInvoke(OvernightLongRunDuration, false); }
 
 		// ---------- FastInvoke Consistency
 
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_Cancel()
 		{
 			yield return InitializeTest(true);
@@ -181,7 +181,7 @@ namespace ExtenityTests.FlowToolbox
 			DoFastInvokingChecks(false);
 		}
 
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_RemainingTime()
 		{
 			yield return InitializeTest(true);
@@ -216,7 +216,7 @@ namespace ExtenityTests.FlowToolbox
 			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 0.9);
 			Assert.AreEqual(1.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
 			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 1.9);
-			DoFastInvokingChecks(true, 4);
+			DoFastInvokingChecks(true, 4); // Just before invoking the first one, that is set to 2 seconds
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), fixedDeltaTime);
 			do yield return WaitForFixedUpdate; while ((time += fixedDeltaTime) < 2.0);
 			DoFastInvokingChecks(true, 3);
@@ -240,7 +240,7 @@ namespace ExtenityTests.FlowToolbox
 
 		// ---------- FastInvoke Other Specialities
 
-		[UnityTest, Category(TestCategories.Cheesy), Repeat(1), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_AllowsRegisteringMethodsOutsideOfBehaviour()
 		{
 			yield return TestOutsiderFastInvoke(0, true);
@@ -550,13 +550,24 @@ namespace ExtenityTests.FlowToolbox
 			{
 				if (invokeCountShouldBe == 0)
 				{
-					Assert.Fail("Illogical to expect zero invoke count while also stated that something was expected.", invokeCountShouldBe);
+					Assert.Fail("Illogical to expect zero invoke count while also stated that something was expected.");
 				}
 				else if (invokeCountShouldBe > 0)
 				{
 					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalFastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount(Subject.Callback));
+				}
+				else if (invokeCountShouldBe == -1)
+				{
+					// Expecting any count.
+					Assert.Greater(Invoker.TotalFastInvokeCount(), 0);
+					Assert.Greater(Subject.FastInvokeCount(), 0);
+					Assert.Greater(Subject.FastInvokeCount(Subject.Callback), 0);
+				}
+				else
+				{
+					Assert.Fail(); // Internal error.
 				}
 				Assert.True(Invoker.IsFastInvokingAny());
 				Assert.True(Subject.IsFastInvoking());
@@ -580,13 +591,24 @@ namespace ExtenityTests.FlowToolbox
 			{
 				if (invokeCountShouldBe == 0)
 				{
-					Assert.Fail("Illogical to expect zero invoke count while also stated that something was expected.", invokeCountShouldBe);
+					Assert.Fail("Illogical to expect zero invoke count while also stated that something was expected.");
 				}
 				else if (invokeCountShouldBe > 0)
 				{
 					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalFastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount(FastInvokeOutsiderCallback));
+				}
+				else if (invokeCountShouldBe == -1)
+				{
+					// Expecting any count.
+					Assert.Greater(Invoker.TotalFastInvokeCount(), 0);
+					Assert.Greater(Subject.FastInvokeCount(), 0);
+					Assert.Greater(Subject.FastInvokeCount(FastInvokeOutsiderCallback), 0);
+				}
+				else
+				{
+					Assert.Fail(); // Internal error.
 				}
 				Assert.True(Invoker.IsFastInvokingAny());
 				Assert.True(Subject.IsFastInvoking());
