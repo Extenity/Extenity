@@ -487,6 +487,76 @@ namespace Extenity.GameObjectToolbox.Editor
 		}
 
 		#endregion
+
+		#region Sort Children
+
+		public static void SortChildren(this GameObject gameObject, bool inverse)
+		{
+			var children = gameObject.transform.GetChildren().Select(child => (child, child.name)).ToList();
+
+			QuicksortAscending(children, 0, children.Count - 1);
+
+			if (inverse)
+			{
+				for (int i = children.Count - 1; i >= 0; --i)
+				{
+					Undo.SetTransformParent(children[i].Item1, gameObject.transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
+					children[i].Item1.SetAsLastSibling();
+				}
+			}
+			else
+			{
+				for (int i = 0; i < children.Count; ++i)
+				{
+					Undo.SetTransformParent(children[i].Item1, gameObject.transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
+					children[i].Item1.SetAsLastSibling();
+				}
+			}
+		}
+
+		public static void QuicksortAscending(List<(Transform transform, string name)> transformsAndNames, int left, int right)
+		{
+			var i = left;
+			var j = right;
+			var pivotName = transformsAndNames[(left + right) / 2].name;
+
+			while (i <= j)
+			{
+				while (string.CompareOrdinal(transformsAndNames[i].name, pivotName) < 0)
+				{
+					i++;
+				}
+
+				while (string.CompareOrdinal(transformsAndNames[j].name, pivotName) > 0)
+				{
+					j--;
+				}
+
+				if (i <= j)
+				{
+					// Swap
+					var temp = transformsAndNames[i];
+					transformsAndNames[i] = transformsAndNames[j];
+					transformsAndNames[j] = temp;
+
+					i++;
+					j--;
+				}
+			}
+
+			// Recursive calls
+			if (left < j)
+			{
+				QuicksortAscending(transformsAndNames, left, j);
+			}
+
+			if (i < right)
+			{
+				QuicksortAscending(transformsAndNames, i, right);
+			}
+		}
+
+		#endregion
 	}
 
 }

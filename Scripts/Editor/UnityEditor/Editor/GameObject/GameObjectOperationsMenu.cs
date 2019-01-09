@@ -151,6 +151,30 @@ namespace Extenity.GameObjectToolbox.Editor
 		}
 
 		#endregion
+
+		#region Hierarchy Menu - Sort Children By Name
+
+		[MenuItem("GameObject/Operations/Sort Children By Name/Ascending", priority = 7001)]
+		public static void SortChildrenByName_Ascending()
+		{
+			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();
+			for (var i = 0; i < gameObjects.Count; i++)
+			{
+				gameObjects[i].SortChildren(false);
+			}
+		}
+
+		[MenuItem("GameObject/Operations/Sort Children By Name/Descending", priority = 7002)]
+		public static void SortChildrenByName_Descending()
+		{
+			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();
+			for (var i = 0; i < gameObjects.Count; i++)
+			{
+				gameObjects[i].SortChildren(true);
+			}
+		}
+
+		#endregion
 	}
 
 }
