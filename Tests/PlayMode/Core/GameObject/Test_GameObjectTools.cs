@@ -2,10 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Extenity.ApplicationToolbox;
+using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
-using Extenity.SceneManagementToolbox;
 using Extenity.UnityTestToolbox;
 using ExtenityTests.Common;
 using NUnit.Framework;
@@ -18,35 +17,19 @@ namespace ExtenityTests.DataToolbox
 
 	public class Test_GameObjectTools : AssertionHelper
 	{
-		private Scene Scene;
+		private Scene Scene => SceneManager.GetActiveScene();
 
 		#region Initialization and Cleanup
 
 		public IEnumerator Setup()
 		{
-			if (SceneManagerTools.GetLoadedScenes().Count > 1)
-			{
-				// Allow some time for previously loaded scene to unload. See TearDown method below.
-				Log.Info("Waiting for previous scene to unload");
-				const float timeout = 2f; // 2 seconds
-				var startTime = PrecisionTiming.PreciseTime;
-				while (SceneManagerTools.GetLoadedScenes().Count > 1)
-				{
-					if (timeout < PrecisionTiming.PreciseTime - startTime)
-						throw new Exception("There are more than 1 scenes loaded.");
-					yield return null;
-				}
-			}
-
-			SceneManager.LoadScene("Test_GameObjectTools", LoadSceneMode.Additive);
-			yield return null; // Need to wait for a bit so that Unity loads the scene and set it's isLoaded state. Otherwise we can't get the scene below.
-			Scene = SceneManagerTools.GetLoadedScenes().First(scene => scene.name == "Test_GameObjectTools");
+			AssetTools.InstantiatePrefabWithTheSameNameOfThisScript();
+			yield break;
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			SceneManager.UnloadSceneAsync("Test_GameObjectTools");
 			UnityTestTools.Cleanup();
 		}
 
@@ -544,16 +527,33 @@ namespace ExtenityTests.DataToolbox
 			yield return Setup();
 			var foundComponents = searchMethod();
 
-			var resultingGameObjectPaths = foundComponents.Select(item => item.gameObject.FullName()).ToList();
-			resultingGameObjectPaths.Sort();
-			Array.Sort(expectedGameObjectPaths);
+			// Get full names of found components. Also get MarkedTestBehaviour data
+			// as an extra to see if we got "Enabled One" or "Disabled One".
+			var resultingComponentPaths = foundComponents
+				.Where(item => item.gameObject.name != "Code-based tests runner")
+				.Select(item =>
+				{
+					var name = item.FullName();
+					if (item is MarkedTestBehaviour marked)
+					{
+						name += "|" + marked.Mark;
+					}
+					return name;
+				}).ToList();
 
-			if (!resultingGameObjectPaths.SequenceEqual(expectedGameObjectPaths))
+			// Sort
+			resultingComponentPaths.Sort();
+			Array.Sort(expectedComponentPaths);
+
+			if (!resultingComponentPaths.SequenceEqual(expectedComponentPaths))
 			{
-				LogExpectedPaths(expectedGameObjectPaths);
-				LogResult(foundComponents);
-				expectedGameObjectPaths.LogList("Expected:");
-				resultingGameObjectPaths.LogList("Found:");
+				using (Log.Indent("Something went wrong and here are the details. See below for the error."))
+				{
+					LogExpectedPaths(expectedComponentPaths);
+					LogResult(foundComponents);
+					expectedComponentPaths.LogList("Expected:");
+					resultingComponentPaths.LogList("Found:");
+				}
 				Assert.Fail("Found GameObject paths does not match the expected paths. See logs for details.");
 			}
 		}
@@ -615,19 +615,23 @@ namespace ExtenityTests.DataToolbox
 
 		private void LogResult<T>(ICollection<T> objects) where T : Component
 		{
-			Log.Info($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':");
-			foreach (var obj in objects)
+			using (Log.Indent($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':"))
 			{
-				Log.Info(obj.FullName(), obj.gameObject);
+				foreach (var obj in objects)
+				{
+					Log.Info(obj.FullName(), obj.gameObject);
+				}
 			}
 		}
 
 		private void LogExpectedPaths(ICollection<string> paths)
 		{
-			Log.Info($"Listing '{paths.Count}' expected paths':");
-			foreach (var path in paths)
+			using (Log.Indent($"Listing '{paths.Count}' expected paths':"))
 			{
-				Log.Info(path);
+				foreach (var path in paths)
+				{
+					Log.Info(path);
+				}
 			}
 		}
 
