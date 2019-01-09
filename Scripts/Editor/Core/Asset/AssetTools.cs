@@ -483,8 +483,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var paths = GetAllScriptAssetPaths().OrderByDescending(item => item).ToList();
 
-			var stopwatch = new ProfilerStopwatch();
-			stopwatch.Start();
+			using (new QuickProfilerStopwatch("Import Took '{0}'"))
 			{
 				Log.Info($"Reimporting {paths.Count} scripts.");
 				AssetDatabase.StartAssetEditing();
@@ -494,14 +493,11 @@ namespace Extenity.AssetToolbox.Editor
 				}
 				AssetDatabase.StopAssetEditing();
 			}
-			stopwatch.EndAndLog("import Took '{0}'");
 
-			stopwatch = new ProfilerStopwatch();
-			stopwatch.Start();
+			using (new QuickProfilerStopwatch("Refresh Took '{0}'"))
 			{
 				AssetDatabase.Refresh();
 			}
-			stopwatch.EndAndLog("refresh Took '{0}'");
 
 			Log.Info("Done.");
 		}
