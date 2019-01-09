@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.CompilationToolbox.Editor;
@@ -598,6 +599,43 @@ namespace Extenity.AssetToolbox.Editor
 					}
 				}
 			}
+		}
+
+		#endregion
+
+		#region Script Path
+
+		/// <summary>
+		/// Returns the path of the script which calls this method.
+		///
+		/// Uses C# compiler magic to get the script path.
+		/// </summary>
+		public static string GetCurrentScriptPath(bool relativeToProjectFolder = true, [CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
+		{
+			var scriptPath = DontTouch_LeaveThisAsDefault;
+			return relativeToProjectFolder
+				? ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath)
+				: scriptPath;
+		}
+
+		/// <summary>
+		/// Instantiates the prefab with the same name of the script which calls this method.
+		/// Example:
+		///		When called inside Test_FluxCapacitor.cs,
+		///		instantiates Test_FluxCapacitor.prefab inside the same folder of the script.
+		/// 
+		/// Heavily used in testing environment to instantiate the related prefab of the script
+		/// that is being tested.
+		///
+		/// Uses C# compiler magic to get the script path.
+		/// </summary>
+		public static void InstantiatePrefabWithTheSameNameOfThisScript([CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
+		{
+			var scriptPath = DontTouch_LeaveThisAsDefault;
+			scriptPath = ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath);
+			var prefabPath = Path.Combine(Path.GetDirectoryName(scriptPath), Path.GetFileNameWithoutExtension(scriptPath) + ".prefab");
+			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+			GameObject.Instantiate(prefab);
 		}
 
 		#endregion
