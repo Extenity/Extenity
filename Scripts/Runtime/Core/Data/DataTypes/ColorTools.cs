@@ -8,6 +8,8 @@ namespace Extenity.DataToolbox
 	{
 		#region Predefined Colors
 
+		public static readonly Color Zero = new Color(0f, 0f, 0f, 0f);
+
 		public static readonly Color White = new Color(1f, 1f, 1f, 1f);
 		public static readonly Color Gray = new Color(0.5f, 0.5f, 0.5f, 1f);
 		public static readonly Color Black = new Color(0f, 0f, 0f, 1f);
