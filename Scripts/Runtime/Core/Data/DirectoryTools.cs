@@ -364,12 +364,14 @@ namespace Extenity.DataToolbox
 
 		#region Delete Directory
 
-		public static void Delete(string path)
+		public static bool Delete(string path)
 		{
 			if (Directory.Exists(path))
 			{
 				Directory.Delete(path, true);
+				return true;
 			}
+			return false;
 		}
 
 		/// <summary>
