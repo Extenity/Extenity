@@ -31,6 +31,10 @@ namespace Extenity.PainkillaTool.Editor
 	// TODO: Detect Unity API usages that cause memory allocations (Input.touches, Mesh.vertices etc). Maybe try to detect if they are used inside loops.
 	// TODO: Detect generating empty arrays where in places other than assigning them into static fields.
 	// TODO: Detect static fields. (Maybe exclude fields that keeps empty arrays)
+	// TODO: Make sure IPunObservable, IPunOwnershipCallbacks, IPunInstantiateMagicCallback, IConnectionCallbacks, ILobbyCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, IOnEventCallback, IWebRpcCallback interfaces are only used in classes that derive from NetworkedBehaviour base class class.
+	// TODO: Make sure methods marked with PunRPC attribute are only exist in classes that derive from NetworkedBehaviour base class.
+	// TODO: Make sure InitializeNetworkedObjectInstantiation is the first line of every OnPhotonInstantiate(PhotonMessageInfo) method.
+	// TODO: Make sure IsRPCInvalid is checked in the first line of every PunRPC method.
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
