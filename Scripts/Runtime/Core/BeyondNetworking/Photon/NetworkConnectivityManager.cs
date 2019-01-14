@@ -29,7 +29,7 @@ namespace BeyondNetworking
 	/// NetworkConnectivityManager won't depend on network library's callbacks when processing
 	/// desired modes. It will always poll the network state when deciding to process to next step.
 	/// </summary>
-	public class NetworkConnectivityManager : MonoBehaviourPunCallbacks
+	public class NetworkConnectivityManager : MonoBehaviourPun, IConnectionCallbacks, IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks
 	{
 		#region Singleton
 
@@ -85,10 +85,10 @@ namespace BeyondNetworking
 			//	OnAuthenticated();
 		}
 
-		//public override void OnEnable()
-		//{
-		//	base.OnEnable();
-		//}
+		protected void OnEnable()
+		{
+			PhotonNetwork.AddCallbackTarget(this);
+		}
 
 		//private void OnAuthenticated()
 		//{
@@ -125,6 +125,11 @@ namespace BeyondNetworking
 
 			NetworkState = NetworkState.Unspecified;
 			_DesiredMode = ConnectivityMode.Unspecified;
+		}
+
+		protected void OnDisable()
+		{
+			PhotonNetwork.RemoveCallbackTarget(this);
 		}
 
 		#endregion
@@ -288,7 +293,7 @@ namespace BeyondNetworking
 			}
 		}
 
-		public override void OnMasterClientSwitched(Player newMasterClient)
+		public void OnMasterClientSwitched(Player newMasterClient)
 		{
 			//var session = CurrentSession;
 
@@ -1108,7 +1113,7 @@ namespace BeyondNetworking
 			InternalEndProcess(session);
 		}
 
-		public override void OnCreatedRoom()
+		public void OnCreatedRoom()
 		{
 			// No task is done here intentionally. Required tasks that have to happen when creating a room
 			// will be done in desired mode processes, instead of this callback.
@@ -1117,7 +1122,7 @@ namespace BeyondNetworking
 			SetProcessStep(session, NetworkProcessStep.RoomCreatedInformation);
 		}
 
-		public override void OnCreateRoomFailed(short returnCode, string message)
+		public void OnCreateRoomFailed(short returnCode, string message)
 		{
 			// No task is done here intentionally. Required tasks that have to happen when creating a room
 			// will be done in desired mode processes, instead of this callback.
@@ -1218,7 +1223,7 @@ namespace BeyondNetworking
 			InternalEndProcess(session);
 		}
 
-		public override void OnJoinedRoom()
+		public void OnJoinedRoom()
 		{
 			// No task is done here intentionally. Required tasks that have to happen when creating a room
 			// will be done in desired mode processes, instead of this callback.
@@ -1227,7 +1232,7 @@ namespace BeyondNetworking
 			SetProcessStep(session, NetworkProcessStep.JoinedRoomInformation);
 		}
 
-		public override void OnJoinRoomFailed(short returnCode, string message)
+		public void OnJoinRoomFailed(short returnCode, string message)
 		{
 			// No task is done here intentionally. Required tasks that have to happen when creating a room
 			// will be done in desired mode processes, instead of this callback.
@@ -1328,7 +1333,7 @@ namespace BeyondNetworking
 			InternalEndProcess(session);
 		}
 
-		public override void OnJoinRandomFailed(short returnCode, string message)
+		public void OnJoinRandomFailed(short returnCode, string message)
 		{
 			// No task is done here intentionally. Required tasks that have to happen when creating a room
 			// will be done in desired mode processes, instead of this callback.
@@ -1447,7 +1452,7 @@ namespace BeyondNetworking
 			}
 		}
 
-		public override void OnLeftRoom()
+		public void OnLeftRoom()
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.LeftRoomInformation);
@@ -1567,7 +1572,7 @@ namespace BeyondNetworking
 			}
 		}
 
-		public override void OnJoinedLobby()
+		public void OnJoinedLobby()
 		{
 			// No task is done here intentionally. Required tasks that have to happen here
 			// will be done in desired mode processes, instead of this callback.
@@ -1661,7 +1666,7 @@ namespace BeyondNetworking
 			}
 		}
 
-		public override void OnLeftLobby()
+		public void OnLeftLobby()
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.LeftLobbyInformation);
@@ -1745,7 +1750,7 @@ namespace BeyondNetworking
 			}
 		}
 
-		public override void OnConnectedToMaster()
+		public void OnConnectedToMaster()
 		{
 			// No task is done here intentionally. Required tasks that have to happen here
 			// will be done in desired mode processes, instead of this callback.
@@ -1754,7 +1759,7 @@ namespace BeyondNetworking
 			SetProcessStep(session, NetworkProcessStep.ConnectedToMasterInformation);
 		}
 
-		public override void OnConnected()
+		public void OnConnected()
 		{
 			// No task is done here intentionally. Required tasks that have to happen here
 			// will be done in desired mode processes, instead of this callback.
@@ -1837,7 +1842,7 @@ namespace BeyondNetworking
 			//ProcessFailMessage = message;
 		}
 
-		public override void OnDisconnected(DisconnectCause cause)
+		public void OnDisconnected(DisconnectCause cause)
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.DisconnectedInformation);
@@ -1892,7 +1897,7 @@ namespace BeyondNetworking
 		public class ClientDisconnectedEvent : UnityEvent<Player> { }
 		public static readonly ClientDisconnectedEvent OnClientDisconnected = new ClientDisconnectedEvent();
 
-		public override void OnPlayerEnteredRoom(Player newPlayer)
+		public void OnPlayerEnteredRoom(Player newPlayer)
 		{
 			//var session = CurrentSession;
 			Log.Info($"Player '{newPlayer.NickName}' connected", this);
@@ -1901,7 +1906,7 @@ namespace BeyondNetworking
 			OnClientListChanged.Invoke();
 		}
 
-		public override void OnPlayerLeftRoom(Player otherPlayer)
+		public void OnPlayerLeftRoom(Player otherPlayer)
 		{
 			//var session = CurrentSession;
 			Log.Info($"Player '{otherPlayer.NickName}' disconnected", this);
@@ -1927,7 +1932,7 @@ namespace BeyondNetworking
 		public static List<RoomInfo> RoomList;
 		public static List<TypedLobbyInfo> LobbyStatistics;
 
-		public override void OnRoomListUpdate(List<RoomInfo> roomList)
+		public void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
 			//var session = CurrentSession;
 			Log.Info("OnReceivedRoomListUpdate", this);
@@ -1937,7 +1942,7 @@ namespace BeyondNetworking
 			OnRoomListChanged.Invoke(roomList);
 		}
 
-		public override void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
+		public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
 		{
 			//var session = CurrentSession;
 			Log.Info("OnLobbyStatisticsUpdate", this);
@@ -2013,7 +2018,7 @@ namespace BeyondNetworking
 		public class FriendListEvent : UnityEvent<List<FriendInfo>> { }
 		public static readonly FriendListEvent OnFriendListChanged = new FriendListEvent();
 
-		public override void OnFriendListUpdate(List<FriendInfo> friendList)
+		public void OnFriendListUpdate(List<FriendInfo> friendList)
 		{
 			//var session = CurrentSession;
 			Log.Info("OnUpdatedFriendList", this);
@@ -2245,7 +2250,7 @@ namespace BeyondNetworking
 
 		// TODO: What to do with these below?
 
-		public override void OnCustomAuthenticationFailed(string debugMessage)
+		public void OnCustomAuthenticationFailed(string debugMessage)
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.AuthenticationFailedInformation, debugMessage);
@@ -2254,7 +2259,7 @@ namespace BeyondNetworking
 				Log.Info($"Custom authentication failed: '{debugMessage}'", this);
 		}
 
-		public override void OnCustomAuthenticationResponse(Dictionary<string, object> data)
+		public void OnCustomAuthenticationResponse(Dictionary<string, object> data)
 		{
 			var session = CurrentSession;
 			SetProcessStep(session, NetworkProcessStep.AuthenticationResponseInformation);
@@ -2263,16 +2268,24 @@ namespace BeyondNetworking
 				Log.Info($"Custom authentication response: '{data.ToJoinedString()}'", this);
 		}
 
-		public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+		public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
 		{
 			//var session = CurrentSession;
 			Log.Info($"OnPhotonCustomRoomPropertiesChanged    propertiesThatChanged: '{propertiesThatChanged.ToJoinedString()}'", this);
 		}
 
-		public override void OnWebRpcResponse(OperationResponse response)
+		public void OnWebRpcResponse(OperationResponse response)
 		{
 			//var session = CurrentSession;
 			Log.Info($"OnWebRpcResponse    response: '{response}'", this);
+		}
+
+		public void OnRegionListReceived(RegionHandler regionHandler)
+		{
+		}
+
+		public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+		{
 		}
 	}
 
