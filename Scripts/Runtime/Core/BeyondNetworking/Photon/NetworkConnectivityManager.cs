@@ -29,7 +29,7 @@ namespace BeyondNetworking
 	/// NetworkConnectivityManager won't depend on network library's callbacks when processing
 	/// desired modes. It will always poll the network state when deciding to process to next step.
 	/// </summary>
-	public class NetworkConnectivityManager : MonoBehaviourPun, IConnectionCallbacks, IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks
+	public class NetworkConnectivityManager : MonoBehaviour, IConnectionCallbacks, IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks
 	{
 		#region Singleton
 
