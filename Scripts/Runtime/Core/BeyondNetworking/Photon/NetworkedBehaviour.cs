@@ -1,3 +1,4 @@
+using Extenity.DebugToolbox;
 using Photon.Pun;
 using UnityEngine;
 
@@ -66,8 +67,6 @@ namespace BeyondNetworking
 			}
 		}
 
-		// TODO: Implement this for all RPCs in application.
-		/*
 		/// <summary>
 		/// Use this in the first line of every PunRPC. Full usage is:
 		/// if (IsRPCInvalid) return;
@@ -85,7 +84,6 @@ namespace BeyondNetworking
 				return false;
 			}
 		}
-		*/
 
 		#endregion
 	}
