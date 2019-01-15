@@ -843,6 +843,8 @@ namespace Extenity.BeyondAudio
 			SetState,
 		}
 
+		public static int OccurrenceTypeCount => (int)OccurrenceType.SetState + 1;
+
 		/// <summary>
 		/// The list keeps a dictionary for each OccurrenceType. Dictionaries keep the names of occurrences (events, RTPCs, state groups, etc.) and keeps the count to see how frequent they happen.
 		/// </summary>
@@ -855,7 +857,7 @@ namespace Extenity.BeyondAudio
 
 		[Header("Incident Tracker")]
 		public int InitialIncidentTrackerDictionaryCapacity = 50 * 4; // 50 is an average event type count. 4 is the magic number that makes the dictionary work at it's best condition.
-		public int IncidentTrackerOccurrenceToleranceInLastSecond = 30;
+		public int[] IncidentTrackerOccurrenceToleranceInLastSecond;
 		public bool EnableIncidentLogging = true;
 		public LogCategory IncidentLogTypeInEditor = LogCategory.Error;
 		public LogCategory IncidentLogTypeInBuild = LogCategory.Critical;
@@ -874,11 +876,10 @@ namespace Extenity.BeyondAudio
 
 		private void InitializeIncidentTracker()
 		{
-			var occurrenceTypeCount = (int)OccurrenceType.SetState + 1;
-			Debug.Assert(occurrenceTypeCount == Enum.GetNames(typeof(OccurrenceType)).Length);
+			Debug.Assert(OccurrenceTypeCount == Enum.GetNames(typeof(OccurrenceType)).Length);
 
-			OccurrenceCounts = new Dictionary<string, int>[occurrenceTypeCount];
-			for (int i = 0; i < occurrenceTypeCount; i++)
+			OccurrenceCounts = new Dictionary<string, int>[OccurrenceTypeCount];
+			for (int i = 0; i < OccurrenceTypeCount; i++)
 			{
 				OccurrenceCounts[i] = new Dictionary<string, int>(InitialIncidentTrackerDictionaryCapacity);
 			}
@@ -901,7 +902,7 @@ namespace Extenity.BeyondAudio
 			occurrenceCount++;
 			dict[occurrenceName] = occurrenceCount;
 
-			if (occurrenceCount == IncidentTrackerOccurrenceToleranceInLastSecond)
+			if (occurrenceCount == IncidentTrackerOccurrenceToleranceInLastSecond[(int)occurrenceType])
 			{
 				if (EnableIncidentLogging)
 				{
@@ -923,6 +924,14 @@ namespace Extenity.BeyondAudio
 		private void OnInspectorGUI()
 		{
 			Sirenix.Utilities.Editor.GUIHelper.RequestRepaint();
+		}
+
+		protected void OnValidate()
+		{
+			if (IncidentTrackerOccurrenceToleranceInLastSecond.Length != OccurrenceTypeCount)
+			{
+				Array.Resize(ref IncidentTrackerOccurrenceToleranceInLastSecond, OccurrenceTypeCount);
+			}
 		}
 
 #endif
