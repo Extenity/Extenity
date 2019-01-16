@@ -337,6 +337,9 @@ namespace Extenity.BuildToolbox.Editor
 				// TODO: Set code and version for iOS.
 				//PlayerSettings.iOS.bundleVersionCode or something
 				//PlayerSettings.iOS.buildNumber
+#if UNITY_IOS
+				implement_me;
+#endif
 			}
 
 			if (saveAssets)
