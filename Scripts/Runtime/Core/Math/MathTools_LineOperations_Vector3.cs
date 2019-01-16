@@ -114,6 +114,48 @@ namespace Extenity.MathToolbox
 		}
 
 		#endregion
+
+		#region Distance To Line Segment
+
+		/// <summary>
+		/// Source: http://geomalgorithms.com/a02-_lines.html
+		/// </summary>
+		public static float DistanceToLineSegment(this Vector3 point, Vector3 lineStart, Vector3 lineEnd)
+		{
+			var v = lineEnd - lineStart;
+			var w = point - lineStart;
+			var c1 = Vector3.Dot(w, v);
+			if (c1 <= 0)
+				return Vector3.Distance(point, lineStart);
+			var c2 = Vector3.Dot(v, v);
+			if (c2 <= c1)
+				return Vector3.Distance(point, lineEnd);
+
+			var b = c1 / c2;
+			var Pb = lineStart + b * v;
+			return Vector3.Distance(point, Pb);
+		}
+
+		/// <summary>
+		/// Source: http://geomalgorithms.com/a02-_lines.html
+		/// </summary>
+		public static float SqrDistanceToLineSegment(this Vector3 point, Vector3 lineA, Vector3 lineB)
+		{
+			var v = lineB - lineA;
+			var w = point - lineA;
+			var c1 = Vector3.Dot(w, v);
+			if (c1 <= 0)
+				return point.SqrDistanceTo(lineA);
+			var c2 = Vector3.Dot(v, v);
+			if (c2 <= c1)
+				return point.SqrDistanceTo(lineB);
+
+			var b = c1 / c2;
+			var Pb = lineA + b * v;
+			return point.SqrDistanceTo(Pb);
+		}
+
+		#endregion
 	}
 
 }
