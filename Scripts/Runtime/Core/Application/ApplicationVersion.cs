@@ -6,8 +6,8 @@ namespace Extenity.ApplicationToolbox
 
 	public struct ApplicationVersion
 	{
-		private const int MajorDigits = 10000;
-		private const int MinorDigits = 100;
+		public const int MajorDigits = 10000;
+		public const int MinorDigits = 100;
 
 		public readonly int Major;
 		public readonly int Minor;
@@ -32,6 +32,13 @@ namespace Extenity.ApplicationToolbox
 			Build = build;
 		}
 
+		public ApplicationVersion IncrementedMajor => new ApplicationVersion(Major + 1, Minor, Build);
+		public ApplicationVersion DecrementedMajor => new ApplicationVersion(Major - 1, Minor, Build);
+		public ApplicationVersion IncrementedMinor => new ApplicationVersion(Major, Minor + 1, Build);
+		public ApplicationVersion DecrementedMinor => new ApplicationVersion(Major, Minor - 1, Build);
+		public ApplicationVersion IncrementedBuild => new ApplicationVersion(Major, Minor, Build + 1);
+		public ApplicationVersion DecrementedBuild => new ApplicationVersion(Major, Minor, Build - 1);
+
 		public static ApplicationVersion FromCombined(int combined)
 		{
 			if (combined <= 0)
@@ -46,18 +53,32 @@ namespace Extenity.ApplicationToolbox
 
 		public static ApplicationVersion Parse(string versionText)
 		{
+			int major;
+			int minor;
+			int build;
+
 			try
 			{
 				var split = versionText.Split('.');
-				return new ApplicationVersion(
-					int.Parse(split[0]),
-					int.Parse(split[1]),
-					int.Parse(split[2]));
+
+				// Do not allow formats other than *.*.*
+				if (split.Length != 3 ||
+					string.IsNullOrWhiteSpace(split[0]) ||
+					string.IsNullOrWhiteSpace(split[1]) ||
+					string.IsNullOrWhiteSpace(split[2])
+				)
+					throw new Exception();
+
+				major = int.Parse(split[0]);
+				minor = int.Parse(split[1]);
+				build = int.Parse(split[2]);
 			}
-			catch
+			catch (Exception exception)
 			{
-				throw new Exception($"Failed to parse version '{versionText}'.");
+				throw new Exception($"Failed to parse version '{versionText}'.", exception);
 			}
+
+			return new ApplicationVersion(major, minor, build);
 		}
 
 		public static ApplicationVersion GetFromUnity()
