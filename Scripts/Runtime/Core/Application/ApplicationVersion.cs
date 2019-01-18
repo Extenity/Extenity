@@ -85,6 +85,20 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
+		#region Comparison
+
+		public static bool operator >(ApplicationVersion lhs, ApplicationVersion rhs)
+		{
+			return lhs.Combined > rhs.Combined;
+		}
+
+		public static bool operator <(ApplicationVersion lhs, ApplicationVersion rhs)
+		{
+			return lhs.Combined < rhs.Combined;
+		}
+
+		#endregion
+
 		#region Change Version
 
 		public ApplicationVersion IncrementedMajor => AddVersion(1, 0, 0);
@@ -102,7 +116,7 @@ namespace Extenity.ApplicationToolbox
 			minor += addMinor;
 			build += addBuild;
 
-			if (IsOutOfRange(major,minor,build))
+			if (IsOutOfRange(major, minor, build))
 			{
 				throw new Exception($"Version change makes the version go out of range. Current version is: {ToString()}. New version is: {ToString(major, minor, build)}");
 			}
@@ -131,18 +145,117 @@ namespace Extenity.ApplicationToolbox
 			return new ApplicationVersion(UnityEditor.PlayerSettings.iOS.buildNumber);
 		}
 
+		public static void SetAllPlatformVersions(ApplicationVersion version, bool saveAssets)
+		{
+			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
+			UnityEditor.PlayerSettings.Android.bundleVersionCode = version.Combined;
+			UnityEditor.PlayerSettings.iOS.buildNumber = version.ToString();
+
+			if (saveAssets)
+			{
+				UnityEditor.AssetDatabase.SaveAssets();
+			}
+		}
+
+		public static void AddToUnityVersionConfiguration(int addMajor, int addMinor, int addBuild, bool saveAssets)
+		{
+			CheckVersionConfigurationConsistency();
+
+			var version = GetUnityVersion();
+			version.AddVersion(addMajor, addMinor, addBuild);
+
+			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+
+			// Set versions for all platforms
+			SetAllPlatformVersions(version, saveAssets);
+		}
+
 		/// <summary>
 		/// Makes sure all platform configurations have the same version set.
 		/// </summary>
 		public static void CheckVersionConfigurationConsistency()
 		{
-			if (!Equals(GetAndroidVersion(), GetIOSVersion()))
+			ApplicationVersion AndroidVersion;
+			ApplicationVersion iOSVersion;
+			ApplicationVersion UnityVersion;
+
+			try
+			{
+				AndroidVersion = GetAndroidVersion();
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Failed to get version configuration.", exception);
+			}
+			try
+			{
+				iOSVersion = GetIOSVersion();
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Failed to get version configuration.", exception);
+			}
+			try
+			{
+				UnityVersion = GetUnityVersion();
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Failed to get version configuration.", exception);
+			}
+
+			if (!Equals(AndroidVersion, iOSVersion))
 			{
 				throw new Exception($"Android version '{GetAndroidVersion()}' and iOS version '{GetIOSVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
 			}
-			if (!Equals(GetUnityVersion(), GetAndroidVersion()))
+			if (!Equals(AndroidVersion, UnityVersion))
 			{
 				throw new Exception($"Android version '{GetAndroidVersion()}' and Bundle version '{GetUnityVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+			}
+		}
+
+		public static void FixVersionConfigurationByChoosingTheHighestVersion()
+		{
+			try
+			{
+				CheckVersionConfigurationConsistency();
+			}
+			catch
+			{
+				ApplicationVersion AndroidVersion;
+				ApplicationVersion iOSVersion;
+				ApplicationVersion UnityVersion;
+
+				try
+				{
+					AndroidVersion = GetAndroidVersion();
+				}
+				catch
+				{
+					AndroidVersion = new ApplicationVersion(1, 0, 0);
+				}
+				try
+				{
+					iOSVersion = GetIOSVersion();
+				}
+				catch
+				{
+					iOSVersion = new ApplicationVersion(1, 0, 0);
+				}
+				try
+				{
+					UnityVersion = GetUnityVersion();
+				}
+				catch
+				{
+					UnityVersion = new ApplicationVersion(1, 0, 0);
+				}
+
+				var maxVersion = AndroidVersion > iOSVersion ? AndroidVersion : iOSVersion;
+				maxVersion = UnityVersion > maxVersion ? UnityVersion : maxVersion;
+
+				Log.Warning($"Fixing platform versions to the detected maximum version '{maxVersion}'.");
+				SetAllPlatformVersions(maxVersion, true);
 			}
 		}
 

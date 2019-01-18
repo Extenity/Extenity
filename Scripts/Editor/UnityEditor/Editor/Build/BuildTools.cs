@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using Extenity.ApplicationToolbox;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using UnityEditor;
@@ -281,35 +280,6 @@ namespace Extenity.BuildToolbox.Editor
 			return TemporarilySetKeys(
 				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
 				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
-		}
-
-		#endregion
-
-		#region Increment Mobile Version (Android/iOS/Bundle)
-
-		public static void DecrementMobileVersion(int subtractMajor, int subtractMinor, int subtractBuild, bool saveAssets)
-		{
-			IncrementMobileVersion(-subtractMajor, -subtractMinor, -subtractBuild, saveAssets);
-		}
-
-		public static void IncrementMobileVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
-		{
-			ApplicationVersion.CheckVersionConfigurationConsistency();
-
-			var version = ApplicationVersion.GetUnityVersion();
-			version.AddVersion(addMajor, addMinor, addBuild);
-
-			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
-
-			// Set versions for all platforms
-			PlayerSettings.bundleVersion = version.ToString();
-			PlayerSettings.Android.bundleVersionCode = version.Combined;
-			PlayerSettings.iOS.buildNumber = version.ToString();
-
-			if (saveAssets)
-			{
-				AssetDatabase.SaveAssets();
-			}
 		}
 
 		#endregion
