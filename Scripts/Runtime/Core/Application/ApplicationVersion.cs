@@ -6,12 +6,18 @@ namespace Extenity.ApplicationToolbox
 
 	public struct ApplicationVersion
 	{
-		public const int MajorDigits = 10000;
-		public const int MinorDigits = 100;
-
 		public readonly int Major;
 		public readonly int Minor;
 		public readonly int Build;
+
+		#region Configuration
+
+		public const int MajorDigits = 10000;
+		public const int MinorDigits = 100;
+
+		#endregion
+
+		#region Initialization and Conversions
 
 		public int Combined =>
 			Major * MajorDigits +
@@ -20,43 +26,31 @@ namespace Extenity.ApplicationToolbox
 
 		public ApplicationVersion(int major, int minor, int build)
 		{
-			if (major < 1 || major > 49 ||
-				minor < 0 || minor > 99 ||
-				build < 0 || build > 99)
-			{
+			if (IsOutOfRange(major, minor, build))
 				throw new ArgumentOutOfRangeException();
-			}
 
 			Major = major;
 			Minor = minor;
 			Build = build;
 		}
 
-		public ApplicationVersion IncrementedMajor => new ApplicationVersion(Major + 1, Minor, Build);
-		public ApplicationVersion DecrementedMajor => new ApplicationVersion(Major - 1, Minor, Build);
-		public ApplicationVersion IncrementedMinor => new ApplicationVersion(Major, Minor + 1, Build);
-		public ApplicationVersion DecrementedMinor => new ApplicationVersion(Major, Minor - 1, Build);
-		public ApplicationVersion IncrementedBuild => new ApplicationVersion(Major, Minor, Build + 1);
-		public ApplicationVersion DecrementedBuild => new ApplicationVersion(Major, Minor, Build - 1);
-
-		public static ApplicationVersion FromCombined(int combined)
+		public ApplicationVersion(int combinedVersion)
 		{
-			if (combined <= 0)
+			if (combinedVersion <= 0)
 				throw new ArgumentOutOfRangeException();
 
-			var major = combined / MajorDigits;
-			combined -= major * MajorDigits;
-			var minor = combined / MinorDigits;
-			combined -= minor * MinorDigits;
-			return new ApplicationVersion(major, minor, combined);
+			Major = combinedVersion / MajorDigits;
+			combinedVersion -= Major * MajorDigits;
+			Minor = combinedVersion / MinorDigits;
+			combinedVersion -= Minor * MinorDigits;
+			Build = combinedVersion;
+
+			if (IsOutOfRange(Major, Minor, Build))
+				throw new ArgumentOutOfRangeException();
 		}
 
-		public static ApplicationVersion Parse(string versionText)
+		public ApplicationVersion(string versionText)
 		{
-			int major;
-			int minor;
-			int build;
-
 			try
 			{
 				var split = versionText.Split('.');
@@ -69,22 +63,118 @@ namespace Extenity.ApplicationToolbox
 				)
 					throw new Exception();
 
-				major = int.Parse(split[0]);
-				minor = int.Parse(split[1]);
-				build = int.Parse(split[2]);
+				Major = int.Parse(split[0]);
+				Minor = int.Parse(split[1]);
+				Build = int.Parse(split[2]);
+
+				if (IsOutOfRange(Major, Minor, Build))
+					throw new ArgumentOutOfRangeException();
 			}
 			catch (Exception exception)
 			{
 				throw new Exception($"Failed to parse version '{versionText}'.", exception);
 			}
+		}
+
+		public void Split(out int major, out int minor, out int build)
+		{
+			major = Major;
+			minor = Minor;
+			build = Build;
+		}
+
+		#endregion
+
+		#region Change Version
+
+		public ApplicationVersion IncrementedMajor => AddVersion(1, 0, 0);
+		public ApplicationVersion DecrementedMajor => AddVersion(-1, 0, 0);
+		public ApplicationVersion IncrementedMinor => AddVersion(0, 1, 0);
+		public ApplicationVersion DecrementedMinor => AddVersion(0, -1, 0);
+		public ApplicationVersion IncrementedBuild => AddVersion(0, 0, 1);
+		public ApplicationVersion DecrementedBuild => AddVersion(0, 0, -1);
+
+		public ApplicationVersion AddVersion(int addMajor, int addMinor, int addBuild)
+		{
+			Split(out var major, out var minor, out var build);
+
+			major += addMajor;
+			minor += addMinor;
+			build += addBuild;
+
+			if (IsOutOfRange(major,minor,build))
+			{
+				throw new Exception($"Version change makes the version go out of range. Current version is: {ToString()}. New version is: {ToString(major, minor, build)}");
+			}
 
 			return new ApplicationVersion(major, minor, build);
 		}
 
-		public static ApplicationVersion GetFromUnity()
+		#endregion
+
+		#region Get From Unity and Project Configuration
+
+		public static ApplicationVersion GetUnityVersion()
 		{
-			return Parse(Application.version);
+			return new ApplicationVersion(Application.version);
 		}
+
+#if UNITY_EDITOR
+
+		public static ApplicationVersion GetAndroidVersion()
+		{
+			return new ApplicationVersion(UnityEditor.PlayerSettings.Android.bundleVersionCode);
+		}
+
+		public static ApplicationVersion GetIOSVersion()
+		{
+			return new ApplicationVersion(UnityEditor.PlayerSettings.iOS.buildNumber);
+		}
+
+		/// <summary>
+		/// Makes sure all platform configurations have the same version set.
+		/// </summary>
+		public static void CheckVersionConfigurationConsistency()
+		{
+			if (!Equals(GetAndroidVersion(), GetIOSVersion()))
+			{
+				throw new Exception($"Android version '{GetAndroidVersion()}' and iOS version '{GetIOSVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+			}
+			if (!Equals(GetUnityVersion(), GetAndroidVersion()))
+			{
+				throw new Exception($"Android version '{GetAndroidVersion()}' and Bundle version '{GetUnityVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+			}
+		}
+
+#endif
+
+		#endregion
+
+		#region Consistency
+
+		private static bool IsOutOfRange(int major, int minor, int build)
+		{
+			return
+				major < 1 || major >= 50 ||
+				minor < 0 || minor >= (MajorDigits / MinorDigits) ||
+				build < 0 || build >= MinorDigits;
+		}
+
+		#endregion
+
+		#region ToString
+
+		public static string ToString(int major, int minor, int build)
+		{
+			return major + "." + minor + "." + build;
+		}
+
+		public override string ToString()
+		{
+			return Major + "." + Minor + "." + Build;
+		}
+
+		#endregion
 	}
 
 }

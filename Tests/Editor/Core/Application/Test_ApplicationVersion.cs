@@ -53,58 +53,58 @@ namespace ExtenityTests.ApplicationToolbox
 			Assert.AreEqual(new ApplicationVersion(1, 0, 0), new ApplicationVersion(1, 0, 1).DecrementedBuild);
 
 			// Throws if tried to increment/decrement to out of range.
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(49, 0, 0).IncrementedMajor; });
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedMajor; });
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(1, 99, 0).IncrementedMinor; });
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedMinor; });
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(1, 0, 99).IncrementedBuild; });
-			Assert.Throws<ArgumentOutOfRangeException>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedBuild; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(49, 0, 0).IncrementedMajor; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedMajor; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(1, 99, 0).IncrementedMinor; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedMinor; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(1, 0, 99).IncrementedBuild; });
+			Assert.Throws<Exception>(() => { var dummy = new ApplicationVersion(1, 0, 0).DecrementedBuild; });
 		}
 
 		[Test]
 		public static void FromCombined()
 		{
 			// Throws if zero or negative
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.FromCombined(0));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.FromCombined(-1));
+			Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(0));
+			Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(-1));
 
-			// Throws if major is below 1
+			// Throws if Major is below 1
 			for (int i = 0; i < ApplicationVersion.MajorDigits; i++)
 			{
-				Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.FromCombined(i));
+				Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(i));
 			}
 
-			Assert.AreEqual(ApplicationVersion.FromCombined(10000), new ApplicationVersion(1, 0, 0));
-			Assert.AreEqual(ApplicationVersion.FromCombined(10203), new ApplicationVersion(1, 2, 3));
-			Assert.AreEqual(ApplicationVersion.FromCombined(12143), new ApplicationVersion(1, 21, 43));
-			Assert.AreEqual(ApplicationVersion.FromCombined(19999), new ApplicationVersion(1, 99, 99));
+			Assert.AreEqual(new ApplicationVersion(10000), new ApplicationVersion(1, 0, 0));
+			Assert.AreEqual(new ApplicationVersion(10203), new ApplicationVersion(1, 2, 3));
+			Assert.AreEqual(new ApplicationVersion(12143), new ApplicationVersion(1, 21, 43));
+			Assert.AreEqual(new ApplicationVersion(19999), new ApplicationVersion(1, 99, 99));
 		}
 
 		[Test]
 		public static void Parse()
 		{
-			Assert.AreEqual(new ApplicationVersion(1, 0, 0), ApplicationVersion.Parse("1.0.0"));
-			Assert.AreEqual(new ApplicationVersion(1, 1, 0), ApplicationVersion.Parse("1.1.0"));
-			Assert.AreEqual(new ApplicationVersion(1, 0, 1), ApplicationVersion.Parse("1.0.1"));
-			Assert.AreEqual(new ApplicationVersion(2, 3, 4), ApplicationVersion.Parse("2.3.4"));
-			Assert.AreEqual(new ApplicationVersion(12, 34, 56), ApplicationVersion.Parse("12.34.56"));
+			Assert.AreEqual(new ApplicationVersion(1, 0, 0), new ApplicationVersion("1.0.0"));
+			Assert.AreEqual(new ApplicationVersion(1, 1, 0), new ApplicationVersion("1.1.0"));
+			Assert.AreEqual(new ApplicationVersion(1, 0, 1), new ApplicationVersion("1.0.1"));
+			Assert.AreEqual(new ApplicationVersion(2, 3, 4), new ApplicationVersion("2.3.4"));
+			Assert.AreEqual(new ApplicationVersion(12, 34, 56), new ApplicationVersion("12.34.56"));
 
 			// Throws if format does not match
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse(""));
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse(".."));
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse(" . . "));
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse("a.0.1"));
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse("1.0.1a"));
-			Assert.Throws<Exception>(() => ApplicationVersion.Parse("1.0.1f1"));
+			Assert.Throws<Exception>(() => new ApplicationVersion(""));
+			Assert.Throws<Exception>(() => new ApplicationVersion(".."));
+			Assert.Throws<Exception>(() => new ApplicationVersion(" . . "));
+			Assert.Throws<Exception>(() => new ApplicationVersion("a.0.1"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.1a"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.1f1"));
 
 			// Throws out of range
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("0.0.0"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("-1.0.0"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("50.0.0"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("1.100.0"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("1.-1.0"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("1.0.100"));
-			Assert.Throws<ArgumentOutOfRangeException>(() => ApplicationVersion.Parse("1.0.-1"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("0.0.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("-1.0.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("50.0.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.100.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.-1.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.100"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.-1"));
 		}
 	}
 
