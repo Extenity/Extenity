@@ -1,3 +1,6 @@
+// QuickPlay shortcuts are not supported outside of Windows environment.
+#if UNITY_EDITOR_WIN
+
 using System;
 using System.IO;
 using Extenity.ApplicationToolbox.Editor;
@@ -92,3 +95,5 @@ namespace Extenity.UnityEditorToolbox.Editor
 	}
 
 }
+
+#endif
