@@ -213,7 +213,17 @@ namespace Extenity.BeyondAudio
 
 #elif UNITY_IOS
 
-		ImplementThis;
+		public bool IsDeviceVolumeSupported => false;
+
+		public float GetDeviceVolumeNormalized()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public float SetDeviceVolumeNormalized(float normalizedVolume)
+		{
+			throw new System.NotImplementedException();
+		}
 
 #elif UNITY_STANDALONE_WIN
 
