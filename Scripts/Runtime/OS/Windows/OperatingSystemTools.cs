@@ -289,7 +289,7 @@ namespace Extenity.ApplicationToolbox
 
 #else
 
-		public static void IsAsyncKeyStateDown(VirtualKeyCode key)
+		public static bool IsAsyncKeyStateDown(VirtualKeyCode key)
 		{
 			throw new System.NotImplementedException();
 		}
