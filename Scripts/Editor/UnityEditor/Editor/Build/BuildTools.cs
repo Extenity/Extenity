@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using Extenity.ApplicationToolbox;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using UnityEditor;
@@ -293,54 +294,17 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static void IncrementMobileVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
 		{
-			var androidCode = PlayerSettings.Android.bundleVersionCode;
+			ApplicationVersion.CheckVersionConfigurationConsistency();
 
-			// TODO: Check if Android and iOS codes match. If not, throw exception and ask user to correct it first.
-
-			var code = androidCode;
-
-			const int MajorDigits = 10000;
-			const int MinorDigits = 100;
-
-			// Get version details
-			var major = code / 10000;
-			var minor = (code - major * 10000) / 100;
-			var build = code - major * 10000 - minor * 100;
-
-			// Increment
-			major += addMajor;
-			minor += addMinor;
-			build += addBuild;
-			if (
-				(major < 0) ||
-				(minor < 0 || minor >= (MajorDigits / MinorDigits)) ||
-				(build < 0 || build >= MinorDigits)
-			)
-			{
-				throw new Exception($"Version change makes the version go out of range. New version is: {major}.{minor}.{build}");
-			}
-
-			// Calculate new code and version
-			code = major * 10000 + minor * 100 + build;
-			var version = major + "." + minor + "." + build;
+			var version = ApplicationVersion.GetUnityVersion();
+			version.AddVersion(addMajor, addMinor, addBuild);
 
 			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
 
-			// Android
-			{
-				PlayerSettings.Android.bundleVersionCode = code;
-				PlayerSettings.bundleVersion = version;
-			}
-
-			// iOS
-			{
-				// TODO: Set code and version for iOS.
-				//PlayerSettings.iOS.bundleVersionCode or something
-				//PlayerSettings.iOS.buildNumber
-#if UNITY_IOS
-				implement_me;
-#endif
-			}
+			// Set versions for all platforms
+			PlayerSettings.bundleVersion = version.ToString();
+			PlayerSettings.Android.bundleVersionCode = version.Combined;
+			PlayerSettings.iOS.buildNumber = version.ToString();
 
 			if (saveAssets)
 			{
