@@ -140,6 +140,29 @@ namespace Extenity.SystemToolbox
 
 		#endregion
 
+		public static string NonThrowingUnityDeviceUniqueIdentifier
+		{
+			get
+			{
+				try
+				{
+					return SystemInfo.deviceUniqueIdentifier;
+				}
+				catch
+				{
+					// Well, things went bad. But this method does not attempt to do anything,
+					// other than prevent things to blow.
+					return "";
+				}
+			}
+		}
+
+		private static string GenerateGUIDIfUnityGeneratedDeviceIDIsInvalid()
+		{
+			var id = NonThrowingUnityDeviceUniqueIdentifier;
+			return GenerateGUIDIfDeviceIDIsInvalid(id);
+		}
+
 		private static string GenerateGUIDIfDeviceIDIsInvalid(string id)
 		{
 			if (IsDeviceIDValid(id))
@@ -186,7 +209,7 @@ namespace Extenity.SystemToolbox
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
 
-			var id = GenerateGUIDIfDeviceIDIsInvalid(SystemInfo.deviceUniqueIdentifier);
+			var id = GenerateGUIDIfUnityGeneratedDeviceIDIsInvalid();
 			id = id + "dae" + ApplicationToolbox.ApplicationTools.PathHash.ToLowerInvariant() + "ade";
 			_StoreID(id);
 			return id;
@@ -229,7 +252,7 @@ namespace Extenity.SystemToolbox
 			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
-			var id = GenerateGUIDIfDeviceIDIsInvalid(SystemInfo.deviceUniqueIdentifier);
+			var id = GenerateGUIDIfUnityGeneratedDeviceIDIsInvalid();
 			_StoreID(id);
 			return id;
 
