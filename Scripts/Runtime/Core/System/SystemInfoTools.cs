@@ -144,7 +144,8 @@ namespace Extenity.SystemToolbox
 			}
 
 			// This will never be the case. But if it is, something really fishy is going on.
-			throw new Exception("Failed to generate a device ID.");
+			throw new InternalException(57128991);
+			//throw new Exception("Failed to generate a device ID."); Let's not write down what happened in detail, which may give hints if there is a hack attempt.
 		}
 
 		private static string InternalGetDeviceUniqueIdentifier()
