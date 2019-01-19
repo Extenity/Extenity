@@ -172,7 +172,7 @@ namespace Extenity.SystemToolbox
 			// Generate using Guid.NewGuid. However despite how unlikely it might seem, this result too
 			// will be validated in case it might not work on some platforms or in future for some unknown
 			// reason.
-			id = System.Guid.NewGuid().ToByteArray().ToHexString(true);
+			id = System.Guid.NewGuid().ToByteArray().ToHexStringCombined(true);
 			if (IsDeviceIDValid(id))
 				return id + "0e"; // Postfix means the ID is generated locally via Guid.NewGuid.
 
@@ -181,7 +181,7 @@ namespace Extenity.SystemToolbox
 				// Generate a seed beforehand because we would never know the state of Unity's RNG.
 				// Generate a seed afterwards to clear RNG state. Make sure it's harder to link back
 				// to this ID.
-				id = Guid.NewPseudoGuid(true, true).Data.ToHexString(true);
+				id = Guid.NewPseudoGuid(true, true).Data.ToHexStringCombined(true);
 				if (IsDeviceIDValid(id))
 					return id + "0f"; // Postfix means the ID is generated locally via Unity's RNG.
 			}
