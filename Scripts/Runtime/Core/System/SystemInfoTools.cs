@@ -145,7 +145,7 @@ namespace Extenity.SystemToolbox
 
 		private static string InternalGetDeviceUniqueIdentifier()
 		{
-#if UNITY_EDITOR_WIN
+#if UNITY_EDITOR
 
 			// Device ID is nothing critical in editor environment. Just use what Unity has to say about it
 			// though with some little modifications. Note that Unity's deviceUniqueIdentifier is so broken
