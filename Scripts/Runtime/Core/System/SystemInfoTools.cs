@@ -23,7 +23,7 @@ namespace Extenity.SystemToolbox
 		/// analytics database would allow us to see which device vendors and models tend to generate
 		/// which type of device IDs.
 		///
-		/// The implementation is heavily commented with references to other developer's experiences.
+		/// The implementation is heavily commented with references to other developer experiences.
 		/// Before using the method or modifying the algorithm, make sure you read all comments for
 		/// all platforms and understand why this approach is required.
 		/// 
@@ -56,6 +56,8 @@ namespace Extenity.SystemToolbox
 			}
 		}
 
+		#region Store device ID in PlayerPrefs
+
 		public static Func<string> Builder;
 
 		/// <summary>
@@ -66,7 +68,7 @@ namespace Extenity.SystemToolbox
 
 		private static string _GetStoredID()
 		{
-			// If you see an error here about null Builder, you have probably forgot
+			// If you see an error here about 'Builder' being null, you have probably forgot
 			// to give it a callback that generates the encryption key for your project.
 			// You need to set the callback before calling DeviceUniqueIdentifier.
 			// The error is intentionally left without a description for security reasons.
@@ -117,6 +119,8 @@ namespace Extenity.SystemToolbox
 			return true;
 		}
 
+		#endregion
+
 		private static string GenerateGUIDIfDeviceIDIsInvalid(string id)
 		{
 			if (IsDeviceIDValid(id))
@@ -156,9 +160,12 @@ namespace Extenity.SystemToolbox
 			// in the same PC. We will treat them as if they are on separate devices by appending a path hash
 			// to the ID. That way these projects would be treated like different clients of a multiplayer game
 			// (don't know if there are any other use cases).
+
+			// Try to get saved ID, if there are any.
 			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
+
 			var id = GenerateGUIDIfDeviceIDIsInvalid(SystemInfo.deviceUniqueIdentifier);
 			id = id + "dae" + ApplicationToolbox.ApplicationTools.PathHash.ToLowerInvariant() + "ade";
 			_StoreID(id);
@@ -181,6 +188,13 @@ namespace Extenity.SystemToolbox
 			// That may possibly end up unexpectedly changing a user's device ID with an update to the application
 			// in which the application incorporates a newer Unity version. Looks like so many users have lost
 			// their game accounts in the past because of their device IDs changed after updating the game.
+			//
+			// Note that if the user deletes the application with it's configuration, the saved ID is gone.
+			// When the user decides to install the application once more, there is a possibility that Unity
+			// would fail to generate the same ID for that user again. As long as this implementation is based
+			// on SystemInfo.deviceUniqueIdentifier, we would only hope that Unity will not fail us, as it was
+			// happened in the past.
+
 			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
