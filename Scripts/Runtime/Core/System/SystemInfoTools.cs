@@ -31,6 +31,10 @@ namespace Extenity.SystemToolbox
 		/// the user account wherever possible. This method of anonymous login mechanism is great for
 		/// first time users that are just started trying the application. But the application should
 		/// direct users to create an account or link with a social account as soon as possible.
+		/// It especially should be considered a MUST for paying customers. As stated in PlayFab docs,
+		/// "A free account lost forever is a bummer. A paid account lost forever is a revenue problem."
+		/// More detailed information is available in PlayFab documents.
+		/// https://api.playfab.com/docs/tutorials/landing-players/best-login
 		/// 
 		/// The implementation in some cases saves the generated ID in PlayerPrefs to cope with
 		/// unexpectedly changing IDs. This makes the whole application vulnerable to hack attempts.
@@ -187,13 +191,16 @@ namespace Extenity.SystemToolbox
 			_StoreID(id);
 			return id;
 
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IOS
 
 			// Unity has a proven track of getting messy with Android implementation of deviceUniqueIdentifier.
 			// Hopefully these are in the past and I personally kind of in a love and hate relationship with
 			// Unity. Decided not to implement it myself and just use SystemInfo.deviceUniqueIdentifier wrapped
 			// inside a security blanket. Because Unity as a giant, should have the potential to implement it
 			// better than anybody. I think it was just not in the mood lately.
+			//
+			// iOS implementation is looking more robust, so decided to use SystemInfo.deviceUniqueIdentifier
+			// for iOS too.
 			//
 			// One additional feature over deviceUniqueIdentifier is that the system will check if device ID
 			// is valid. If not, it will generate a device ID locally. See GenerateGUIDIfDeviceIDIsInvalid.
@@ -210,6 +217,14 @@ namespace Extenity.SystemToolbox
 			// would fail to generate the same ID for that user again. As long as this implementation is based
 			// on SystemInfo.deviceUniqueIdentifier, we would only hope that Unity will not fail us, as it was
 			// happened in the past.
+			//
+			// See these links for further information.
+			//     https://community.playfab.com/questions/14538/unity-ios-device-unique-identifier.html
+			//     https://api.playfab.com/docs/tutorials/landing-players/best-login
+			//     UnityEngine.iOS.Device.vendorIdentifier
+			//     https://github.com/HuaYe1975/Unity-iOS-DeviceID
+			//     https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
+			//     https://docs.unity3d.com/ScriptReference/SystemInfo-deviceUniqueIdentifier.html
 
 			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
@@ -217,18 +232,6 @@ namespace Extenity.SystemToolbox
 			var id = GenerateGUIDIfDeviceIDIsInvalid(SystemInfo.deviceUniqueIdentifier);
 			_StoreID(id);
 			return id;
-
-#elif UNITY_IOS
-
-			// These will help the implementation.
-			// https://community.playfab.com/questions/14538/unity-ios-device-unique-identifier.html
-			// https://api.playfab.com/docs/tutorials/landing-players/best-login
-			// UnityEngine.iOS.Device.vendorIdentifier
-			// https://github.com/HuaYe1975/Unity-iOS-DeviceID
-			// https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
-			// https://docs.unity3d.com/ScriptReference/SystemInfo-deviceUniqueIdentifier.html
-
-			throw new NotImplementedException($"DeviceUniqueIdentifier is not yet implemented for platform '{Application.platform}'");
 
 #else
 
