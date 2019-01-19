@@ -903,10 +903,10 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Hex
 
-		public static bool IsHexString(this string text)
+		public static bool IsHexString(this string text, bool treatEmptyAsHex)
 		{
-			if (text == null)
-				return false;
+			if (string.IsNullOrEmpty(text))
+				return treatEmptyAsHex;
 			for (int i = 0; i < text.Length; i++)
 			{
 				var character = text[i];
