@@ -13,13 +13,19 @@ namespace Extenity.SystemToolbox
 
 		/// <summary>
 		/// The alternative to SystemInfo.deviceUniqueIdentifier which hopefully is more robust.
-		/// The generated ID is lowercase hexadecimal string of varying lengths.
-		/// 
-		/// The algorithm also adds a postfix to the ID that tells which method is used for getting
-		/// the device ID on that device. Being registered into an analytics database allows us
-		/// to see which device vendors and models tend to generate which type of device IDs.
+		/// The generated ID is lowercase hexadecimal string of varying lengths. The algorithm also
+		/// adds a postfix to the ID that tells which method is used for getting the device ID on
+		/// that device.
 		///
-		/// Note that device ID generation system is not extensively tested yet, as of 09/2018.
+		/// Note that this implementation is no way proven to be robust, as of 09/2018. It requires
+		/// extensive testing in large scale with collecting data from user devices. The implementation
+		/// is just based on developer experiences collected on forums. Being registered into an
+		/// analytics database would allow us to see which device vendors and models tend to generate
+		/// which type of device IDs.
+		///
+		/// The implementation is heavily commented with references to other developer's experiences.
+		/// Before using the method or modifying the algorithm, make sure you read all comments for
+		/// all platforms and understand why this approach is required.
 		/// 
 		/// See these links for why Unity's implementation is bad.
 		/// https://forum.unity.com/threads/systeminfo-deviceuniqueidentifier-android-6-0.367028/
