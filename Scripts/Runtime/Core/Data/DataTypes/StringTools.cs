@@ -165,6 +165,36 @@ namespace Extenity.DataToolbox
 			return true;
 		}
 
+		public static bool IsAlphaNumericAscii(this string str, char additionalAllowedCharacter, bool allowSpace = false, bool ensureStartsWithAlpha = false)
+		{
+			if (string.IsNullOrEmpty(str))
+				return false;
+
+			if (ensureStartsWithAlpha && !str[0].IsAsciiLetter())
+				return false;
+
+			if (allowSpace)
+			{
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (str[i].IsAsciiLetter() || char.IsNumber(str[i]) || str[i] == ' ' || str[i] == additionalAllowedCharacter)
+						continue;
+					return false;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (str[i].IsAsciiLetter() || char.IsNumber(str[i]) || str[i] == additionalAllowedCharacter)
+						continue;
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		public static bool IsNumeric(this string str, bool allowSpace = false)
 		{
 			if (string.IsNullOrEmpty(str))
