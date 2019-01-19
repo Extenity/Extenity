@@ -127,7 +127,7 @@ namespace Extenity.SystemToolbox
 		private static bool IsDeviceIDValid(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id) ||
-				!id.IsAlphaNumericAscii(false, false) ||
+				!id.IsAlphaNumericAscii('-', false, false) ||
 				//!id.IsHexString(false) || Decided not to give a hex constraint. Maybe Unity generates non-hex alpha characters in some platforms.
 				id.Equals(SystemInfo.unsupportedIdentifier, StringComparison.OrdinalIgnoreCase) ||
 				id.IsAllZeros() || // This can happen with SystemInfo.deviceUniqueIdentifier failing to read MAC address on some devices.
