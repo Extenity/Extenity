@@ -43,63 +43,63 @@ namespace ExtenityTests.DataToolbox
 		#region String Operations
 
 		[Test]
-		public static void IsAlphaNumeric()
+		public static void IsAlphaNumericAscii()
 		{
-			Assert.False("".IsAlphaNumeric(false, false));
-			Assert.False(" ".IsAlphaNumeric(false, false));
-			Assert.False("-".IsAlphaNumeric(false, false));
-			Assert.False(" a".IsAlphaNumeric(false, false));
-			Assert.False(" 1".IsAlphaNumeric(false, false));
-			Assert.False(" a1".IsAlphaNumeric(false, false));
-			Assert.False("-a".IsAlphaNumeric(false, false));
-			Assert.False("-1".IsAlphaNumeric(false, false));
-			Assert.False("-a1".IsAlphaNumeric(false, false));
-			Assert.False("a-".IsAlphaNumeric(false, false));
-			Assert.False("1-".IsAlphaNumeric(false, false));
-			Assert.False("a1-".IsAlphaNumeric(false, false));
-			Assert.False("a-".IsAlphaNumeric(false, false));
-			Assert.False("1-".IsAlphaNumeric(false, false));
-			Assert.False("a1-".IsAlphaNumeric(false, false));
-			Assert.False("a a".IsAlphaNumeric(false, false));
+			Assert.False("".IsAlphaNumericAscii(false, false));
+			Assert.False(" ".IsAlphaNumericAscii(false, false));
+			Assert.False("-".IsAlphaNumericAscii(false, false));
+			Assert.False(" a".IsAlphaNumericAscii(false, false));
+			Assert.False(" 1".IsAlphaNumericAscii(false, false));
+			Assert.False(" a1".IsAlphaNumericAscii(false, false));
+			Assert.False("-a".IsAlphaNumericAscii(false, false));
+			Assert.False("-1".IsAlphaNumericAscii(false, false));
+			Assert.False("-a1".IsAlphaNumericAscii(false, false));
+			Assert.False("a-".IsAlphaNumericAscii(false, false));
+			Assert.False("1-".IsAlphaNumericAscii(false, false));
+			Assert.False("a1-".IsAlphaNumericAscii(false, false));
+			Assert.False("a-".IsAlphaNumericAscii(false, false));
+			Assert.False("1-".IsAlphaNumericAscii(false, false));
+			Assert.False("a1-".IsAlphaNumericAscii(false, false));
+			Assert.False("a a".IsAlphaNumericAscii(false, false));
 
-			Assert.True("a".IsAlphaNumeric(false, false));
-			Assert.True("1".IsAlphaNumeric(false, false));
-			Assert.True("a1".IsAlphaNumeric(false, false));
-			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumeric(false, false));
+			Assert.True("a".IsAlphaNumericAscii(false, false));
+			Assert.True("1".IsAlphaNumericAscii(false, false));
+			Assert.True("a1".IsAlphaNumericAscii(false, false));
+			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumericAscii(false, false));
 
 			// Allow spaces
-			Assert.True("a".IsAlphaNumeric(true, false));
-			Assert.True("1".IsAlphaNumeric(true, false));
-			Assert.True("a1".IsAlphaNumeric(true, false));
-			Assert.True(" a".IsAlphaNumeric(true, false));
-			Assert.True(" 1".IsAlphaNumeric(true, false));
-			Assert.True(" a1".IsAlphaNumeric(true, false));
-			Assert.True("a ".IsAlphaNumeric(true, false));
-			Assert.True("1 ".IsAlphaNumeric(true, false));
-			Assert.True("a1 ".IsAlphaNumeric(true, false));
-			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumeric(true, false));
-			Assert.True(" a1bjgfy8723bsdk71".IsAlphaNumeric(true, false));
-			Assert.True("a1bjgfy8723bsdk71 ".IsAlphaNumeric(true, false));
-			Assert.True(" a1bjgfy8723bsdk71 ".IsAlphaNumeric(true, false));
-			Assert.False("\ta".IsAlphaNumeric(true, false));
-			Assert.False("\t1".IsAlphaNumeric(true, false));
-			Assert.False("\ta1".IsAlphaNumeric(true, false));
-			Assert.False("a\t".IsAlphaNumeric(true, false));
-			Assert.False("1\t".IsAlphaNumeric(true, false));
-			Assert.False("a1\t".IsAlphaNumeric(true, false));
-			Assert.False("\ta1bjgfy8723bsdk71".IsAlphaNumeric(true, false));
-			Assert.False("a1bjgfy8723bsdk71\t".IsAlphaNumeric(true, false));
-			Assert.False("\ta1bjgfy8723bsdk71\t".IsAlphaNumeric(true, false));
+			Assert.True("a".IsAlphaNumericAscii(true, false));
+			Assert.True("1".IsAlphaNumericAscii(true, false));
+			Assert.True("a1".IsAlphaNumericAscii(true, false));
+			Assert.True(" a".IsAlphaNumericAscii(true, false));
+			Assert.True(" 1".IsAlphaNumericAscii(true, false));
+			Assert.True(" a1".IsAlphaNumericAscii(true, false));
+			Assert.True("a ".IsAlphaNumericAscii(true, false));
+			Assert.True("1 ".IsAlphaNumericAscii(true, false));
+			Assert.True("a1 ".IsAlphaNumericAscii(true, false));
+			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumericAscii(true, false));
+			Assert.True(" a1bjgfy8723bsdk71".IsAlphaNumericAscii(true, false));
+			Assert.True("a1bjgfy8723bsdk71 ".IsAlphaNumericAscii(true, false));
+			Assert.True(" a1bjgfy8723bsdk71 ".IsAlphaNumericAscii(true, false));
+			Assert.False("\ta".IsAlphaNumericAscii(true, false));
+			Assert.False("\t1".IsAlphaNumericAscii(true, false));
+			Assert.False("\ta1".IsAlphaNumericAscii(true, false));
+			Assert.False("a\t".IsAlphaNumericAscii(true, false));
+			Assert.False("1\t".IsAlphaNumericAscii(true, false));
+			Assert.False("a1\t".IsAlphaNumericAscii(true, false));
+			Assert.False("\ta1bjgfy8723bsdk71".IsAlphaNumericAscii(true, false));
+			Assert.False("a1bjgfy8723bsdk71\t".IsAlphaNumericAscii(true, false));
+			Assert.False("\ta1bjgfy8723bsdk71\t".IsAlphaNumericAscii(true, false));
 
 			// Ensure starts with alpha
-			Assert.True("a".IsAlphaNumeric(true, true));
-			Assert.False("1".IsAlphaNumeric(true, true));
-			Assert.True("a1".IsAlphaNumeric(true, true));
-			Assert.False(" a".IsAlphaNumeric(true, true));
-			Assert.False(" 1".IsAlphaNumeric(true, true));
-			Assert.False(" a1".IsAlphaNumeric(true, true));
-			Assert.False("1a1bjgfy8723bsdk7".IsAlphaNumeric(true, true));
-			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumeric(true, true));
+			Assert.True("a".IsAlphaNumericAscii(true, true));
+			Assert.False("1".IsAlphaNumericAscii(true, true));
+			Assert.True("a1".IsAlphaNumericAscii(true, true));
+			Assert.False(" a".IsAlphaNumericAscii(true, true));
+			Assert.False(" 1".IsAlphaNumericAscii(true, true));
+			Assert.False(" a1".IsAlphaNumericAscii(true, true));
+			Assert.False("1a1bjgfy8723bsdk7".IsAlphaNumericAscii(true, true));
+			Assert.True("a1bjgfy8723bsdk71".IsAlphaNumericAscii(true, true));
 		}
 
 

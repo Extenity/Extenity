@@ -98,7 +98,14 @@ namespace Extenity.DataToolbox
 			return count;
 		}
 
-		public static bool IsAlphaNumeric(this string str, bool allowSpace = false, bool ensureStartsWithAlpha = false)
+		public static bool IsAsciiLetter(this char value)
+		{
+			return 
+				(value >= 'A' && value <= 'Z') || 
+				(value >= 'a' && value <= 'z'); 
+		}
+
+		public static bool IsAlphaNumericUnicode(this string str, bool allowSpace = false, bool ensureStartsWithAlpha = false)
 		{
 			if (string.IsNullOrEmpty(str))
 				return false;
@@ -123,6 +130,39 @@ namespace Extenity.DataToolbox
 				for (int i = 0; i < str.Length; i++)
 				{
 					if (char.IsLetter(str[i]) || char.IsNumber(str[i]))
+						continue;
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public static bool IsAlphaNumericAscii(this string str, bool allowSpace = false, bool ensureStartsWithAlpha = false)
+		{
+			if (string.IsNullOrEmpty(str))
+				return false;
+
+			if (ensureStartsWithAlpha)
+			{
+				if (!str[0].IsAsciiLetter())
+					return false;
+			}
+
+			if (allowSpace)
+			{
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (str[i].IsAsciiLetter() || char.IsNumber(str[i]) || str[i] == ' ')
+						continue;
+					return false;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < str.Length; i++)
+				{
+					if (str[i].IsAsciiLetter() || char.IsNumber(str[i]))
 						continue;
 					return false;
 				}
