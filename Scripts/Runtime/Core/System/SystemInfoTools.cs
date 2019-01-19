@@ -26,6 +26,21 @@ namespace Extenity.SystemToolbox
 		/// The implementation is heavily commented with references to other developer experiences.
 		/// Before using the method or modifying the algorithm, make sure you read all comments for
 		/// all platforms and understand why this approach is required.
+		///
+		/// One of the key ideas here is your application SHOULD NOT use the device ID for accessing
+		/// the user account wherever possible. This method of anonymous login mechanism is great for
+		/// first time users that are just started trying the application. But the application should
+		/// direct users to create an account or link with a social account as soon as possible.
+		/// 
+		/// The implementation in some cases saves the generated ID in PlayerPrefs to cope with
+		/// unexpectedly changing IDs. This makes the whole application vulnerable to hack attempts.
+		/// Makes it easier for an intruder to gain access to another user's account if the victim's
+		/// device ID is known by the intruder. While this looks bad, it will only affect users that
+		/// are not yet linked their progress with a social or custom account. Login with using only
+		/// the device ID should be a temporary step for the user. Also the implementation saves
+		/// the device ID encrypted with varying encryption keys for every project. This closes some
+		/// doors for an intruder to gain the device ID information of another user. Intruder won't
+		/// be able to get the device ID from another application and use that in your application.
 		/// 
 		/// See these links for why Unity's implementation is bad.
 		/// https://forum.unity.com/threads/systeminfo-deviceuniqueidentifier-android-6-0.367028/
