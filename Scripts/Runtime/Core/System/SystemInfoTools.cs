@@ -250,17 +250,28 @@ namespace Extenity.SystemToolbox
 			//     https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 			//     https://docs.unity3d.com/ScriptReference/SystemInfo-deviceUniqueIdentifier.html
 
+			// First, try to get the previously saved ID, if there is one.
 			var storedID = _GetStoredID();
 			if (!string.IsNullOrEmpty(storedID))
 				return storedID;
+
+			// Get the ID from Unity, but ensure it's not faulty. Generate a new one randomly if it is faulty.
 			var id = GenerateGUIDIfUnityGeneratedDeviceIDIsInvalid();
+
+			// Store the ID for future uses. This is required so that any changes to Unity's implementation
+			// of SystemInfo.deviceUniqueIdentifier won't affect already existing users when we update Unity
+			// to a new version.
 			_StoreID(id);
 			return id;
 
 #else
 
-			// Seeing that SystemInfo.deviceUniqueIdentifier is not trustworthy,
-			// find a proper way to implement it in required platform.
+			// Oops! This is a new platform. Seeing that SystemInfo.deviceUniqueIdentifier is not trustworthy,
+			// find a proper way to implement our own in this new platform.
+			//
+			// If decided to use Unity generated ID on this new platform, make sure the Unity generated ID is
+			// not detected as faulty by GenerateGUIDIfDeviceIDIsInvalid. If so, modify the detection method.
+
 			throw new NotImplementedException($"DeviceUniqueIdentifier is not yet implemented for platform '{Application.platform}'");
 
 #endif
