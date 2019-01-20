@@ -1,3 +1,5 @@
+#if BeyondAudioUsesWwiseAudio
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -198,3 +200,5 @@ namespace Extenity.BeyondAudio.BankInfo
 	}
 
 }
+
+#endif
