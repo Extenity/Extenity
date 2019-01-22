@@ -162,7 +162,7 @@ namespace Extenity.ApplicationToolbox
 			CheckVersionConfigurationConsistency();
 
 			var version = GetUnityVersion();
-			version.AddVersion(addMajor, addMinor, addBuild);
+			version = version.AddVersion(addMajor, addMinor, addBuild);
 
 			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
 
