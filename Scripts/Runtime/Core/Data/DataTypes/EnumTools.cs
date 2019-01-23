@@ -7,30 +7,25 @@ namespace Extenity.DataToolbox
 
 	public static class EnumTools
 	{
-		public static T ParseSafe<T>(string value, bool ignoreCase = false)
+		public static T ParseSafe<T>(string value, bool ignoreCase = false) where T : Enum
 		{
-			var enumType = typeof(T);
-
-			if (!enumType.IsEnum)
-				throw new ArgumentException("Generic type must be an enumeration.", "enumType");
-
 			try
 			{
-				var result = (T)Enum.Parse(enumType, value, ignoreCase);
+				var result = (T)Enum.Parse(typeof(T), value, ignoreCase);
 				return result;
 			}
 			catch
 			{
 			}
-			return default(T);
+			return default;
 		}
 
-		public static IEnumerable<T> GetValues<T>()
+		public static IEnumerable<T> GetValues<T>() where T : Enum
 		{
 			return Enum.GetValues(typeof(T)).Cast<T>();
 		}
 
-		public static Dictionary<int, string> GetIntValuesAndNames<T>()
+		public static Dictionary<int, string> GetIntValuesAndNames<T>() where T : Enum
 		{
 			var enumEntries = Enum.GetValues(typeof(T));
 			var dictionary = new Dictionary<int, string>(enumEntries.Length);
@@ -41,6 +36,11 @@ namespace Extenity.DataToolbox
 				dictionary.Add(value, name);
 			}
 			return dictionary;
+		}
+
+		public static bool ContainsValue<T>(int value) where T : Enum
+		{
+			return Enum.GetValues(typeof(T)).Cast<int>().Contains(value);
 		}
 	}
 
