@@ -83,8 +83,11 @@ namespace Extenity.UIToolbox
 			}
 		}
 
-		public void Show(string title, string message, string okayButtonText, string cancelButtonText, Action onClickedOkay, Action onClickedCancel)
+		public void Show(string title, string message, string okayButtonText, string cancelButtonText = null, Action onClickedOkay = null, Action onClickedCancel = null)
 		{
+			Debug.Assert(TitleText);
+			Debug.Assert(MessageText);
+
 			OkayButton.gameObject.SetActive(!string.IsNullOrEmpty(okayButtonText));
 			CancelButton.gameObject.SetActive(!string.IsNullOrEmpty(cancelButtonText));
 			OkayButton.GetComponentInChildren<Text>().text = okayButtonText;
@@ -94,8 +97,10 @@ namespace Extenity.UIToolbox
 
 			TitleText.text = title;
 			MessageText.text = message;
-			UserInputTitle.gameObject.SetActive(false);
-			UserInputField.gameObject.SetActive(false);
+			if (UserInputTitle)
+				UserInputTitle.gameObject.SetActive(false);
+			if (UserInputField)
+				UserInputField.gameObject.SetActive(false);
 
 			RefreshOkayButtonAvailability();
 			gameObject.SetActive(true);
@@ -104,6 +109,11 @@ namespace Extenity.UIToolbox
 
 		public void ShowWithUserInput(string title, string message, string okayButtonText, string cancelButtonText, string userInputTitle, string userInputDefaultValue, bool allowEmptyUserInput, Action<string> onClickedOkay, Action onClickedCancel)
 		{
+			Debug.Assert(TitleText);
+			Debug.Assert(MessageText);
+			Debug.Assert(UserInputTitle);
+			Debug.Assert(UserInputField);
+
 			OkayButton.gameObject.SetActive(!string.IsNullOrEmpty(okayButtonText));
 			CancelButton.gameObject.SetActive(!string.IsNullOrEmpty(cancelButtonText));
 			OkayButton.GetComponentInChildren<Text>().text = okayButtonText;

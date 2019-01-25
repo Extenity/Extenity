@@ -39,14 +39,12 @@ namespace Extenity.ApplicationToolbox
 				catch
 				{
 					// There is something wrong with "minimum allowed version" configuration received from the backend.
-					// Something is probably wrong here. But we don't want to cause any trouble for the player. So we just skip the check and move on.
 					Status = VersionCheckStatus.FailedToCheck;
 				}
 			}
 			else
 			{
 				// There is no "minimum allowed version" configuration received from the backend.
-				// Something is probably wrong here. But we don't want to cause any trouble for the player. So we just skip the check and move on.
 				Status = VersionCheckStatus.FailedToCheck;
 			}
 
