@@ -106,6 +106,54 @@ namespace Extenity.ApplicationToolbox
 		}
 
 		#endregion
+
+		#region Launch App Store Page
+
+		public static void LaunchMarketPage()
+		{
+#if UNITY_EDITOR
+			Log.Info("Ambiguous to launch the market page in Editor. So launching all markets...");
+			LaunchMarketPage_GooglePlay();
+			LaunchMarketPage_AppStore();
+#elif UNITY_ANDROID
+			LaunchMarketPage_GooglePlay();
+#elif UNITY_IOS
+			LaunchMarketPage_AppStore();
+#else
+			throw new System.NotImplementedException();
+#endif
+		}
+
+#if UNITY_EDITOR || UNITY_IOS
+
+		private static void LaunchMarketPage_AppStore()
+		{
+			throw new NotImplementedException();
+		}
+
+#endif
+
+#if UNITY_EDITOR || UNITY_ANDROID
+
+		private static void LaunchMarketPage_GooglePlay()
+		{
+			var address = "market://details?id=" + Application.identifier;
+			Log.Info("Launching market page: " + address);
+			Application.OpenURL(address);
+		}
+
+#endif
+
+		#endregion
+
+		#region Restart
+
+		public static void Restart()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 
 }
