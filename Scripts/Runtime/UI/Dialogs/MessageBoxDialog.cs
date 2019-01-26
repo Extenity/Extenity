@@ -28,6 +28,7 @@ namespace Extenity.UIToolbox
 
 		#region Blackout
 
+		// TODO: Replace this with BlackoutUI. But first, move BlackoutUI inside Extenity. Then make it count the Show and Hide requests and act accordingly, i.e. hide only if all the Show requests canceled out with a respective Hide request.
 		public GameObject Blackout;
 
 		#endregion
@@ -71,6 +72,7 @@ namespace Extenity.UIToolbox
 					Close();
 				});
 			}
+
 			if (CancelButton)
 			{
 				CancelButton.onClick.AddListener(() =>
@@ -85,9 +87,16 @@ namespace Extenity.UIToolbox
 
 		private void RefreshOkayButtonAvailability()
 		{
-			if (UserInputField.gameObject.activeSelf && !AllowEmptyUserInput)
+			if (UserInputField)
 			{
-				OkayButton.interactable = !string.IsNullOrEmpty(UserInputField.text.Trim());
+				if (UserInputField.gameObject.activeSelf && !AllowEmptyUserInput)
+				{
+					OkayButton.interactable = !string.IsNullOrEmpty(UserInputField.text.Trim());
+				}
+				else
+				{
+					OkayButton.interactable = true;
+				}
 			}
 			else
 			{
@@ -167,10 +176,14 @@ namespace Extenity.UIToolbox
 
 		public void Close()
 		{
-			TitleText.text = "";
-			MessageText.text = "";
-			UserInputTitle.text = "";
-			UserInputField.text = "";
+			if (TitleText)
+				TitleText.text = "";
+			if (MessageText)
+				MessageText.text = "";
+			if (UserInputTitle)
+				UserInputTitle.text = "";
+			if (UserInputField)
+				UserInputField.text = "";
 			OnClickedOkay = null;
 			OnClickedOkayWithUserInput = null;
 			OnClickedCancel = null;
@@ -178,6 +191,14 @@ namespace Extenity.UIToolbox
 			gameObject.SetActive(false);
 			Blackout.SetActive(false);
 		}
+
+		#region Draw Order
+
+		// TODO: Ability to put the dialog in front of every other canvas that's been created.
+		// TODO: If possible, tell Unity to draw Sort Order inspector field as disabled for the Canvas component.
+		// TODO: Make the Sort Order of Canvas always set to -1000 in editor.
+
+		#endregion
 	}
 
 }
