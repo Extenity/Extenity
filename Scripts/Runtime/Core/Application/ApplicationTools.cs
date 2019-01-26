@@ -150,7 +150,20 @@ namespace Extenity.ApplicationToolbox
 
 		public static void Restart()
 		{
+#if UNITY_EDITOR
+			if (UnityEditor.EditorApplication.isPlaying)
+			{
+				// Quit playing.
+				UnityEditor.EditorApplication.ExecuteMenuItem("Edit/Play");
+				// Start playing again.
+				UnityEditor.EditorApplication.delayCall += () =>
+				{
+					UnityEditor.EditorApplication.ExecuteMenuItem("Edit/Play");
+				};
+			}
+#else
 			throw new NotImplementedException();
+#endif
 		}
 
 		#endregion
