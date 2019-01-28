@@ -112,9 +112,9 @@ namespace Extenity.ApplicationToolbox
 		public static void LaunchMarketPage()
 		{
 #if UNITY_EDITOR
-			Log.Info("Ambiguous to launch the market page in Editor. So launching all markets...");
-			LaunchMarketPage_GooglePlay();
-			LaunchMarketPage_AppStore();
+			Log.Info("Ambiguous to launch the market page in Editor.");
+			//LaunchMarketPage_GooglePlay();
+			//LaunchMarketPage_AppStore();
 #elif UNITY_ANDROID
 			LaunchMarketPage_GooglePlay();
 #elif UNITY_IOS
