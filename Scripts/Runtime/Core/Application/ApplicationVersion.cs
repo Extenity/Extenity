@@ -12,16 +12,25 @@ namespace Extenity.ApplicationToolbox
 
 		#region Configuration
 
-		public const int MajorDigits = 10000;
-		public const int MinorDigits = 100;
+		public const int MinorDigits = 1000;
+		public const int BuildDigits = 10000;
+		public const int MinorAndBuildDigits = BuildDigits * MinorDigits;
+
+		// Max major version is here for no good reason. May safely be changed in future. But think wisely about how that would change other systems that uses the version.
+		public const int MaxMajorVersion = 49;
+		public const int MinMajorVersion = 1;
+		public const int MaxMinorVersion = MinorDigits - 1;
+		public const int MinMinorVersion = 0;
+		public const int MaxBuildVersion = BuildDigits - 1;
+		public const int MinBuildVersion = 0;
 
 		#endregion
 
 		#region Initialization and Conversions
 
 		public int Combined =>
-			Major * MajorDigits +
-			Minor * MinorDigits +
+			Major * MinorAndBuildDigits +
+			Minor * BuildDigits +
 			Build;
 
 		public ApplicationVersion(int major, int minor, int build)
@@ -39,10 +48,10 @@ namespace Extenity.ApplicationToolbox
 			if (combinedVersion <= 0)
 				throw new ArgumentOutOfRangeException();
 
-			Major = combinedVersion / MajorDigits;
-			combinedVersion -= Major * MajorDigits;
-			Minor = combinedVersion / MinorDigits;
-			combinedVersion -= Minor * MinorDigits;
+			Major = combinedVersion / MinorAndBuildDigits;
+			combinedVersion -= Major * MinorAndBuildDigits;
+			Minor = combinedVersion / BuildDigits;
+			combinedVersion -= Minor * BuildDigits;
 			Build = combinedVersion;
 
 			if (IsOutOfRange(Major, Minor, Build))
@@ -268,9 +277,9 @@ namespace Extenity.ApplicationToolbox
 		private static bool IsOutOfRange(int major, int minor, int build)
 		{
 			return
-				major < 1 || major >= 50 ||
-				minor < 0 || minor >= (MajorDigits / MinorDigits) ||
-				build < 0 || build >= MinorDigits;
+				major < MinMajorVersion || major > MaxMajorVersion ||
+				minor < MinMinorVersion || minor > MaxMinorVersion ||
+				build < MinBuildVersion || build > MaxBuildVersion;
 		}
 
 		#endregion
