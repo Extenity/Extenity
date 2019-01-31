@@ -137,7 +137,7 @@ namespace Extenity.ApplicationToolbox
 
 		#region Get From Unity and Project Configuration
 
-		public static ApplicationVersion GetUnityVersion()
+		public static ApplicationVersion GetUnityApplicationVersion()
 		{
 			return new ApplicationVersion(Application.version);
 		}
@@ -170,7 +170,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			CheckVersionConfigurationConsistency();
 
-			var version = GetUnityVersion();
+			var version = GetUnityApplicationVersion();
 			version = version.AddVersion(addMajor, addMinor, addBuild);
 
 			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
@@ -186,7 +186,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			ApplicationVersion AndroidVersion;
 			ApplicationVersion iOSVersion;
-			ApplicationVersion UnityVersion;
+			ApplicationVersion ApplicationVersion;
 
 			try
 			{
@@ -206,7 +206,7 @@ namespace Extenity.ApplicationToolbox
 			}
 			try
 			{
-				UnityVersion = GetUnityVersion();
+				ApplicationVersion = GetUnityApplicationVersion();
 			}
 			catch (Exception exception)
 			{
@@ -215,11 +215,11 @@ namespace Extenity.ApplicationToolbox
 
 			if (!Equals(AndroidVersion, iOSVersion))
 			{
-				throw new Exception($"Android version '{GetAndroidVersion()}' and iOS version '{GetIOSVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+				throw new Exception($"Android version '{AndroidVersion}' and iOS version '{iOSVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
 			}
-			if (!Equals(AndroidVersion, UnityVersion))
+			if (!Equals(AndroidVersion, ApplicationVersion))
 			{
-				throw new Exception($"Android version '{GetAndroidVersion()}' and Bundle version '{GetUnityVersion()}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+				throw new Exception($"Android version '{AndroidVersion}' and Bundle version '{ApplicationVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace Extenity.ApplicationToolbox
 				}
 				try
 				{
-					UnityVersion = GetUnityVersion();
+					UnityVersion = GetUnityApplicationVersion();
 				}
 				catch
 				{

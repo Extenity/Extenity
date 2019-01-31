@@ -26,7 +26,7 @@ namespace Extenity.ApplicationToolbox
 				try
 				{
 					var minVersion = new ApplicationVersion(minVersionString);
-					var currentVersion = ApplicationVersion.GetUnityVersion();
+					var currentVersion = ApplicationVersion.GetUnityApplicationVersion();
 					if (currentVersion < minVersion)
 					{
 						Status = VersionCheckStatus.NewVersionAvailable;
