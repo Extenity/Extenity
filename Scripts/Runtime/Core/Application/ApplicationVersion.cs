@@ -296,6 +296,11 @@ namespace Extenity.ApplicationToolbox
 			return Major + "." + Minor + "." + Build;
 		}
 
+		public string ToMajorMinorString()
+		{
+			return Major + "." + Minor;
+		}
+
 		#endregion
 	}
 
