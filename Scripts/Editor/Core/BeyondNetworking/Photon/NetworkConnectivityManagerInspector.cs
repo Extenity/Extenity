@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
@@ -106,3 +108,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

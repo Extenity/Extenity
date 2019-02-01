@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 
 namespace BeyondNetworking
 {
@@ -134,3 +136,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 using System;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
@@ -60,3 +62,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

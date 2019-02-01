@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 using Extenity.DebugToolbox;
 using UnityEngine.Events;
 
@@ -60,3 +62,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

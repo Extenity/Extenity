@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 #define EnableNetworkDebugInput
 
 using System;
@@ -2290,3 +2292,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

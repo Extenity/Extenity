@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 using System;
 using Photon.Realtime;
 
@@ -57,3 +59,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif

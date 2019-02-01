@@ -1,3 +1,5 @@
+#if BeyondNetworkingUsesPhoton
+
 using System.Text;
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
@@ -317,3 +319,5 @@ namespace BeyondNetworking
 	}
 
 }
+
+#endif
