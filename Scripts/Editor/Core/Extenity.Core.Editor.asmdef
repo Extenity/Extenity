@@ -1,12 +1,14 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.Core.Editor",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "Wwise",
+        "Wwise.Editor"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

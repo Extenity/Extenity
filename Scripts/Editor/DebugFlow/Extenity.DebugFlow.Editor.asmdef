@@ -1,12 +1,14 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.DebugFlow.Editor",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "Extenity.Core.Editor",
+        "Extenity.DebugFlow"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

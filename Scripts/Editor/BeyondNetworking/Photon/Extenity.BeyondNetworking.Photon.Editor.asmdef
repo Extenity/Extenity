@@ -1,13 +1,15 @@
 {
-    "name": "Extenity.Tests.Editor",
+    "name": "Extenity.BeyondNetworking.Photon.Editor",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
-        "Extenity.Tests.Common"
+        "Extenity.BeyondNetworking.Photon",
+        "PhotonRealtime",
+        "PhotonUnityNetworking",
+        "PhotonUnityNetworking.Editor",
+        "PhotonWebSocket"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],

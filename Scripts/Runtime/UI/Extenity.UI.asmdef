@@ -1,11 +1,11 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.UI",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "Unity.TextMeshPro",
+        "DOTweenModules"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

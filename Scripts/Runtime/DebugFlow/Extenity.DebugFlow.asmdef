@@ -1,11 +1,9 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.DebugFlow",
     "references": [
         "Extenity.Core"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

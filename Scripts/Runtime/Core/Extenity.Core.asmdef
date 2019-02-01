@@ -1,14 +1,12 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.Core",
     "references": [
-        "Extenity.Core"
+        "Wwise"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

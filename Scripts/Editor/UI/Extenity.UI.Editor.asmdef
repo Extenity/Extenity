@@ -1,14 +1,17 @@
 {
-    "name": "Extenity.Tests.PlayMode",
+    "name": "Extenity.UI.Editor",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
-        "Extenity.Tests.Common"
+        "Extenity.UI",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor",
+        "DOTweenModules"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

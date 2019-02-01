@@ -1,11 +1,12 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.BeyondNetworking.Photon",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "PhotonRealtime",
+        "PhotonUnityNetworking",
+        "PhotonWebSocket"
     ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
