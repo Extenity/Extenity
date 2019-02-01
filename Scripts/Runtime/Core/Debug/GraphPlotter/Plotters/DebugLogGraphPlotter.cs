@@ -1,7 +1,7 @@
 ﻿using Extenity.DataToolbox;
 using UnityEngine;
 
-namespace Extenity.DebugFlowTool.GraphPlotting
+namespace Extenity.DebugToolbox.GraphPlotting
 {
 
 	[AddComponentMenu("Graph Plotter/Plot Debug.Log Calls")]

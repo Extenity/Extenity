@@ -1,5 +1,5 @@
 ﻿using System;
-using Extenity.DebugFlowTool.GraphPlotting;
+using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.MathToolbox;
 using UnityEngine;
 

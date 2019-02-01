@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExitGames.Client.Photon;
 using Extenity.DataToolbox;
-using Extenity.DebugFlowTool.GraphPlotting;
+using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.FlowToolbox;
 using Extenity.MessagingToolbox;
 using JetBrains.Annotations;

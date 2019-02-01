@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Extenity.DebugFlowTool.GraphPlotting
+namespace Extenity.DebugToolbox.GraphPlotting
 {
 
 	public struct Sample

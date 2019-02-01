@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Extenity.DebugFlowTool.GraphPlotting;
+using Extenity.DebugToolbox.GraphPlotting;
 using UnityEngine;
 
 namespace Extenity.ProfilingToolbox

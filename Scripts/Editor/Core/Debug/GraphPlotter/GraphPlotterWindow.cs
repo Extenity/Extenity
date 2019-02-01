@@ -5,7 +5,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.DebugFlowTool.GraphPlotting.Editor
+namespace Extenity.DebugToolbox.GraphPlotting.Editor
 {
 
 	public class GraphPlotterWindow : ExtenityEditorWindowBase

@@ -3,7 +3,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
-namespace Extenity.DebugFlowTool.GraphPlotting.Editor
+namespace Extenity.DebugToolbox.GraphPlotting.Editor
 {
 
 	[CustomEditor(typeof(Rigidbody2DGraphPlotter))]
