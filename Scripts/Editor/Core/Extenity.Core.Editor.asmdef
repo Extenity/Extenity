@@ -1,9 +1,7 @@
 {
     "name": "Extenity.Core.Editor",
     "references": [
-        "Extenity.Core",
-        "Wwise",
-        "Wwise.Editor"
+        "Extenity.Core"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
