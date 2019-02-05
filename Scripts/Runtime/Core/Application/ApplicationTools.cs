@@ -9,6 +9,12 @@ namespace Extenity.ApplicationToolbox
 
 	public static class ApplicationTools
 	{
+		#region Deinitialization
+
+		public static bool IsShuttingDown = false;
+
+		#endregion
+
 		#region Paths
 
 		public static string ApplicationPath
