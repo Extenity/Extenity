@@ -708,16 +708,9 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
-		#region RTPC
+		#region Parameter
 
-		public static float GetRTPCValue(string rtpcName)
-		{
-			if (AudioManager.EnsureIntegrity())
-				return Instance._GetRTPCValue(rtpcName);
-			return float.NaN;
-		}
-
-		private float _GetRTPCValue(string rtpcName)
+		public float GetFloat(string rtpcName)
 		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
@@ -734,14 +727,7 @@ namespace Extenity.BeyondAudio
 			return value;
 		}
 
-		public static float GetRTPCValue(string rtpcName, GameObject associatedObject)
-		{
-			if (AudioManager.EnsureIntegrity())
-				return Instance._GetRTPCValue(rtpcName, associatedObject);
-			return float.NaN;
-		}
-
-		private float _GetRTPCValue(string rtpcName, GameObject associatedObject)
+		public float GetFloat(string rtpcName, GameObject associatedObject)
 		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
@@ -758,13 +744,7 @@ namespace Extenity.BeyondAudio
 			return value;
 		}
 
-		public static void SetRTPCValue(string rtpcName, float value)
-		{
-			if (AudioManager.EnsureIntegrity())
-				Instance._SetRTPCValue(rtpcName, value);
-		}
-
-		private void _SetRTPCValue(string rtpcName, float value)
+		public void SetFloat(string rtpcName, float value)
 		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
@@ -778,13 +758,7 @@ namespace Extenity.BeyondAudio
 			InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
 		}
 
-		public static void SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
-		{
-			if (AudioManager.EnsureIntegrity())
-				Instance._SetRTPCValue(rtpcName, value, associatedObject);
-		}
-
-		private void _SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
+		public void SetFloat(string rtpcName, float value, GameObject associatedObject)
 		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{

@@ -39,6 +39,15 @@ namespace Extenity.BeyondAudio
 		void PlayMusic(string eventName);
 
 		#endregion
+
+		#region Parameter
+
+		float GetFloat(string rtpcName);
+		float GetFloat(string rtpcName, GameObject associatedObject);
+		void SetFloat(string rtpcName, float value);
+		void SetFloat(string rtpcName, float value, GameObject associatedObject);
+
+		#endregion
 	}
 
 }

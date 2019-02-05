@@ -74,6 +74,15 @@ namespace Extenity.BeyondAudio
 		public static void PlayMusic(string eventName) { if (EnsureIntegrity()) Instance.PlayMusic(eventName); }
 
 		#endregion
+
+		#region Parameter
+
+		public static float GetFloat(string rtpcName) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcName); return float.NaN; }
+		public static float GetFloat(string rtpcName, GameObject associatedObject) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcName, associatedObject); return float.NaN; }
+		public static void SetFloat(string rtpcName, float value) { if (EnsureIntegrity()) Instance.SetFloat(rtpcName, value); }
+		public static void SetFloat(string rtpcName, float value, GameObject associatedObject) { if (EnsureIntegrity()) Instance.SetFloat(rtpcName, value, associatedObject); }
+
+		#endregion
 	}
 
 }
