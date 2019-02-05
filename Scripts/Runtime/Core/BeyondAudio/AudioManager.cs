@@ -32,7 +32,7 @@ namespace Extenity.BeyondAudio
 			return true;
 		}
 
-		internal static void _SetManager(IAudioManager instance)
+		public static void _SetManager(IAudioManager instance)
 		{
 			Instance = instance;
 			InstanceAsMonoBehaviour = (MonoBehaviour)instance;

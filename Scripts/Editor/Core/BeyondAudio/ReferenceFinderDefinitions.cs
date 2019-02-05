@@ -1,9 +1,11 @@
 using Extenity.ReflectionToolbox;
+using UnityEditor;
 
 namespace Extenity.BeyondAudio.Editor
 {
 
-	public static partial class ReferenceFinderDefinitions
+	[InitializeOnLoad]
+	public static class ReferenceFinderDefinitions
 	{
 		private static void AddGeneralReferenceFinderDefinitions()
 		{
