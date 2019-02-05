@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Extenity.BeyondAudio
 {
 
-	public class AudioManager : SingletonUnity<AudioManager>
+	public class WwiseAudioManager : SingletonUnity<WwiseAudioManager>, IAudioManager
 	{
 		#region Configuration
 
@@ -23,29 +23,14 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
-		#region Singleton
-
-		private static AudioManager InstanceEnsured
-		{
-			get
-			{
-				var instance = Instance;
-				if (!instance && !IsShuttingDown)
-				{
-					Log.CriticalError("AudioManager is not initialized yet.");
-				}
-				return instance;
-			}
-		}
-
-		#endregion
-
 		#region Initialization
 
 		private void Awake()
 		{
 			InitializeSingleton(true);
+			AudioManager._SetManager(this);
 			Log.RegisterPrefix(this, "Audio");
+
 			InitializeIncidentTracker();
 			InitializeAudioSourceTemplate();
 		}
@@ -61,13 +46,6 @@ namespace Extenity.BeyondAudio
 		#endregion
 
 		#region Deinitialization
-
-		internal static bool IsShuttingDown;
-
-		private void OnApplicationQuit()
-		{
-			IsShuttingDown = true;
-		}
 
 		//protected void OnDestroy()
 		//{
@@ -325,7 +303,7 @@ namespace Extenity.BeyondAudio
 
 		#endregion
 
-		#region Pooled AudioClips
+		#region Pooled Audio Sources
 
 		//public class AllocationEvent : UnityEvent<AudioSource, string> { }
 		//public class DeallocationEvent : UnityEvent<AudioSource> { }
@@ -375,24 +353,21 @@ namespace Extenity.BeyondAudio
 		/// A full cleanup will be scheduled in internal lists if that happens.
 		/// </summary>
 		/// <param name="audioSource"></param>
-		public static void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null)
+		public void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-			if (!instance.ActiveAudioSources.Contains(audioSource))
+			if (!ActiveAudioSources.Contains(audioSource))
 			{
-				Log.Info($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.", instance);
+				Log.Info($"Tried to release audio source '{(audioSource ? audioSource.name : "N/A")}' while it's not active.", this);
 				return;
 			}
-			if (instance.EnableVerboseLogging)
-				Log.Info($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.", instance);
+			if (EnableVerboseLogging)
+				Log.Info($"Releasing audio source '{(audioSource ? audioSource.name : "N/A")}'.", this);
 
 			if (!audioSource)
 			{
 				// Somehow the audio source was already destroyed (or maybe the reference was lost, which we can do nothing about here)
 				// TODO: Schedule a full cleanup that will be executed in 100 ms from now. That way we group multiple cleanups together.
-				instance.ClearLostReferencesInAllInternalContainers();
+				ClearLostReferencesInAllInternalContainers();
 				return;
 			}
 
@@ -402,17 +377,17 @@ namespace Extenity.BeyondAudio
 			if (!string.IsNullOrEmpty(stopEventName))
 			{
 				AkSoundEngine.PostEvent(stopEventName, audioSource);
-				instance.InformIncidentTracker(stopEventName, OccurrenceType.PostEvent);
+				InformIncidentTracker(stopEventName, OccurrenceType.PostEvent);
 			}
 
 			audioSource.gameObject.SetActive(false);
 			audioSource.transform.SetParent(null);
 			DontDestroyOnLoad(audioSource.gameObject);
 
-			instance.ActiveAudioSources.Remove(audioSource);
-			instance.FreeAudioSources.Add(audioSource);
+			ActiveAudioSources.Remove(audioSource);
+			FreeAudioSources.Add(audioSource);
 
-			instance.InternalRemoveFromReleaseTrackerList(audioSource);
+			InternalRemoveFromReleaseTrackerList(audioSource);
 
 			audioSource = null;
 		}
@@ -522,56 +497,47 @@ namespace Extenity.BeyondAudio
 
 		#region Play One Shot
 
-		public static void Play(string eventName)
+		public void Play(string eventName)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info("Received empty event name for playing.", instance);
+				if (EnableVerboseLogging)
+					Log.Info("Received empty event name for playing.", this);
 				return;
 			}
-			if (instance.EnableLogging)
-				Log.Info($"Playing '{eventName}'.", instance);
-			AkSoundEngine.PostEvent(eventName, instance.gameObject);
-			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
+			if (EnableLogging)
+				Log.Info($"Playing '{eventName}'.", this);
+			AkSoundEngine.PostEvent(eventName, gameObject);
+			InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
-		public static void Play(string eventName, GameObject associatedObject)
+		public void Play(string eventName, GameObject associatedObject)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info("Received empty event name for playing.", instance);
+				if (EnableVerboseLogging)
+					Log.Info("Received empty event name for playing.", this);
 				return;
 			}
-			if (instance.EnableLogging)
-				Log.Info($"Playing '{eventName}' on object '{associatedObject.FullName()}'.", instance);
+			if (EnableLogging)
+				Log.Info($"Playing '{eventName}' on object '{associatedObject.FullName()}'.", this);
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(associatedObject, associatedObject.transform);
 			AkSoundEngine.PostEvent(eventName, associatedObject);
-			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
+			InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
-		public static GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
+		public GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Received empty event name for playing at position '{worldPosition}'.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Received empty event name for playing at position '{worldPosition}'.", this);
 				return null;
 			}
-			if (instance.EnableLogging)
-				Log.Info($"Playing '{eventName}' at position '{worldPosition}'.", instance);
-			var audioSource = instance.GetOrCreateAudioSource();
+			if (EnableLogging)
+				Log.Info($"Playing '{eventName}' at position '{worldPosition}'.", this);
+			var audioSource = GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
 			audioSource.transform.position = worldPosition;
@@ -579,24 +545,21 @@ namespace Extenity.BeyondAudio
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
-			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
+			InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 			return audioSource;
 		}
 
-		public static GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition)
+		public GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return null;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Received empty event name for playing attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", this);
 				return null;
 			}
-			if (instance.EnableLogging)
-				Log.Info($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", instance);
-			var audioSource = instance.GetOrCreateAudioSource();
+			if (EnableLogging)
+				Log.Info($"Playing '{eventName}' attached to '{parent.FullGameObjectName()}' at local position '{localPosition}'.", this);
+			var audioSource = GetOrCreateAudioSource();
 			if (!audioSource)
 				return null;
 			audioSource.transform.SetParent(parent);
@@ -605,29 +568,25 @@ namespace Extenity.BeyondAudio
 			// Need to manually update object position because Wwise is coming one frame behind in that matter, which results playing audio in wrong locations.
 			AkSoundEngine.SetObjectPosition(audioSource, audioSource.transform);
 			AkSoundEngine.PostEvent(eventName, audioSource, (uint)AkCallbackType.AK_EndOfEvent, EndOfEventCallback, (object)null);
-			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
+			InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 			return audioSource;
 		}
 
-		private static void EndOfEventCallback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
+		private void EndOfEventCallback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-
 			var info = (AkEventCallbackInfo)in_info;
 			var gameObjectID = info.gameObjID;
 			if (gameObjectID == AkSoundEngine.AK_INVALID_GAME_OBJECT)
 			{
-				if (instance.EnableWarningLogging)
-					Log.Warning($"Received 'EndOfEvent' callback for an invalid game object.", instance);
+				if (EnableWarningLogging)
+					Log.Warning($"Received 'EndOfEvent' callback for an invalid game object.", this);
 				return;
 			}
 
-			if (!instance.AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out var gameObject))
+			if (!AudioSourceBag.InstanceMap.TryGetValue((int)gameObjectID, out var gameObject))
 			{
-				if (instance.EnableWarningLogging)
-					Log.Warning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.", instance);
+				if (EnableWarningLogging)
+					Log.Warning($"Received 'EndOfEvent' callback for an unknown game object with id '{gameObjectID}', which probably was destroyed.", this);
 				return;
 			}
 			// It's okay to send it a null game object, if the object was destroyed along the way. 
@@ -638,32 +597,32 @@ namespace Extenity.BeyondAudio
 
 		#region Play Music
 
-		public static void PlayMusic(string eventName)
+		public void PlayMusic(string eventName)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
 			if (string.IsNullOrEmpty(eventName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info("Received empty event name for playing music.", instance);
+				if (EnableVerboseLogging)
+					Log.Info("Received empty event name for playing music.", this);
 				return;
 			}
-			if (instance.EnableLogging)
-				Log.Info($"Playing music '{eventName}'.", instance);
-			AkSoundEngine.PostEvent(eventName, instance.gameObject);
-			instance.InformIncidentTracker(eventName, OccurrenceType.PostEvent);
+			if (EnableLogging)
+				Log.Info($"Playing music '{eventName}'.", this);
+			AkSoundEngine.PostEvent(eventName, gameObject);
+			InformIncidentTracker(eventName, OccurrenceType.PostEvent);
 		}
 
 		public static void SetMusicState(string stateGroup, string state)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-			if (instance.EnableLogging)
-				Log.Info($"Setting music state '{state}' of group '{stateGroup}'.", instance);
+			if (AudioManager.EnsureIntegrity())
+				Instance._SetMusicState(stateGroup, state);
+		}
+
+		private void _SetMusicState(string stateGroup, string state)
+		{
+			if (EnableLogging)
+				Log.Info($"Setting music state '{state}' of group '{stateGroup}'.", this);
 			AkSoundEngine.SetState(stateGroup, state);
-			instance.InformIncidentTracker(stateGroup, OccurrenceType.SetState);
+			InformIncidentTracker(stateGroup, OccurrenceType.SetState);
 		}
 
 		// Don't know if we will ever need this functionality. But keep it here in case we need it in future.
@@ -753,76 +712,90 @@ namespace Extenity.BeyondAudio
 
 		public static float GetRTPCValue(string rtpcName)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return float.NaN;
+			if (AudioManager.EnsureIntegrity())
+				return Instance._GetRTPCValue(rtpcName);
+			return float.NaN;
+		}
+
+		private float _GetRTPCValue(string rtpcName)
+		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Tried to get RTPC with empty name.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Tried to get RTPC with empty name.", this);
 				return float.NaN;
 			}
 
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_Global;
 			AkSoundEngine.GetRTPCValue(rtpcName, null, 0, out var value, ref valueType);
-			instance.InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
-			if (instance.EnableRTPCLogging)
-				Log.Info($"Getting RTPC '{rtpcName}' value '{value}'.", instance);
+			InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
+			if (EnableRTPCLogging)
+				Log.Info($"Getting RTPC '{rtpcName}' value '{value}'.", this);
 			return value;
 		}
 
 		public static float GetRTPCValue(string rtpcName, GameObject associatedObject)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return float.NaN;
+			if (AudioManager.EnsureIntegrity())
+				return Instance._GetRTPCValue(rtpcName, associatedObject);
+			return float.NaN;
+		}
+
+		private float _GetRTPCValue(string rtpcName, GameObject associatedObject)
+		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Tried to get RTPC with empty name on object '{associatedObject.FullName()}'.", this);
 				return float.NaN;
 			}
 
 			int valueType = (int)AkQueryRTPCValue.RTPCValue_GameObject;
 			AkSoundEngine.GetRTPCValue(rtpcName, associatedObject, 0, out var value, ref valueType);
-			instance.InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
-			if (instance.EnableRTPCLogging)
-				Log.Info($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.", instance);
+			InformIncidentTracker(rtpcName, OccurrenceType.GetRTPC);
+			if (EnableRTPCLogging)
+				Log.Info($"Getting RTPC '{rtpcName}' value '{value}' on object '{associatedObject.FullName()}'.", this);
 			return value;
 		}
 
 		public static void SetRTPCValue(string rtpcName, float value)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
+			if (AudioManager.EnsureIntegrity())
+				Instance._SetRTPCValue(rtpcName, value);
+		}
+
+		private void _SetRTPCValue(string rtpcName, float value)
+		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Tried to set RTPC with empty name and value '{value}'.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Tried to set RTPC with empty name and value '{value}'.", this);
 				return;
 			}
-			if (instance.EnableRTPCLogging)
-				Log.Info($"Setting RTPC '{rtpcName}' to '{value}'.", instance);
+			if (EnableRTPCLogging)
+				Log.Info($"Setting RTPC '{rtpcName}' to '{value}'.", this);
 			AkSoundEngine.SetRTPCValue(rtpcName, value);
-			instance.InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
+			InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
 		}
 
 		public static void SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
+			if (AudioManager.EnsureIntegrity())
+				Instance._SetRTPCValue(rtpcName, value, associatedObject);
+		}
+
+		private void _SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
+		{
 			if (string.IsNullOrEmpty(rtpcName))
 			{
-				if (instance.EnableVerboseLogging)
-					Log.Info($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.", instance);
+				if (EnableVerboseLogging)
+					Log.Info($"Tried to set RTPC with empty name and value '{value}' on object '{associatedObject.FullName()}'.", this);
 				return;
 			}
-			if (instance.EnableRTPCLogging)
-				Log.Info($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.", instance);
+			if (EnableRTPCLogging)
+				Log.Info($"Setting RTPC '{rtpcName}' to '{value}' on object '{associatedObject.FullName()}'.", this);
 			AkSoundEngine.SetRTPCValue(rtpcName, value, associatedObject);
-			instance.InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
+			InformIncidentTracker(rtpcName, OccurrenceType.SetRTPC);
 		}
 
 		#endregion
@@ -831,13 +804,16 @@ namespace Extenity.BeyondAudio
 
 		public static void SetState(string stateGroup, string state)
 		{
-			var instance = InstanceEnsured;
-			if (!instance)
-				return;
-			if (instance.EnableLogging)
-				Log.Info($"Setting state '{state}' of group '{stateGroup}'.", instance);
+			if (AudioManager.EnsureIntegrity())
+				Instance._SetState(stateGroup, state);
+		}
+
+		private void _SetState(string stateGroup, string state)
+		{
+			if (EnableLogging)
+				Log.Info($"Setting state '{state}' of group '{stateGroup}'.", this);
 			AkSoundEngine.SetState(stateGroup, state);
-			instance.InformIncidentTracker(stateGroup, OccurrenceType.SetState);
+			InformIncidentTracker(stateGroup, OccurrenceType.SetState);
 		}
 
 		#endregion
