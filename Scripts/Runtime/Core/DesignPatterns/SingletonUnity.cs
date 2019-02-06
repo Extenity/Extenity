@@ -27,7 +27,7 @@ namespace Extenity.DesignPatternsToolbox
 		{
 			className = typeof(T).Name;
 #if LoggingEnabled
-			Log.Info("Instantiating singleton: " + className, obj);
+			Log.Info("Instantiating singleton: " + className, this);
 #endif
 			instance = this as T;
 
