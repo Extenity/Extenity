@@ -6,30 +6,14 @@ using UnityEngine;
 namespace Extenity.BeyondAudio
 {
 
-	public class AudioManager : SingletonUnity<AudioManager>
+	public class WwiseAudioManager : SingletonUnity<WwiseAudioManager>, IAudioManager
 	{
-		#region Singleton
-
-		private static AudioManager InstanceEnsured
-		{
-			get
-			{
-				var instance = Instance;
-				if (!instance && !IsShuttingDown)
-				{
-					Log.CriticalError("AudioManager is not initialized yet.");
-				}
-				return instance;
-			}
-		}
-
-		#endregion
-
 		#region Initialization
 
 		private void Awake()
 		{
 			InitializeSingleton(true);
+			AudioManager._SetManager(this);
 			Log.RegisterPrefix(this, "Audio");
 		}
 
@@ -91,7 +75,7 @@ namespace Extenity.BeyondAudio
 
 		#region Pooled AudioClips
 
-		public static void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null)
+		public void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null)
 		{
 		}
 
@@ -99,20 +83,20 @@ namespace Extenity.BeyondAudio
 
 		#region Play One Shot
 
-		public static void Play(string eventName)
+		public void Play(string eventName)
 		{
 		}
 
-		public static void Play(string eventName, GameObject associatedObject)
+		public void Play(string eventName, GameObject associatedObject)
 		{
 		}
 
-		public static GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
+		public GameObject PlayAtPosition(string eventName, Vector3 worldPosition)
 		{
 			return null;
 		}
 
-		public static GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition)
+		public GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition)
 		{
 			return null;
 		}
@@ -121,33 +105,33 @@ namespace Extenity.BeyondAudio
 
 		#region Play Music
 
-		public static void PlayMusic(string eventName)
+		public void PlayMusic(string eventName)
 		{
 		}
 
-		public static void SetMusicState(string stateGroup, string state)
+		public void SetMusicState(string stateGroup, string state)
 		{
 		}
 
 		#endregion
 
-		#region RTPC
+		#region Parameter
 
-		public static float GetRTPCValue(string rtpcName)
+		public float GetFloat(string rtpcName)
 		{
 			return float.NaN;
 		}
 
-		public static float GetRTPCValue(string rtpcName, GameObject associatedObject)
+		public float GetFloat(string rtpcName, GameObject associatedObject)
 		{
 			return float.NaN;
 		}
 
-		public static void SetRTPCValue(string rtpcName, float value)
+		public void SetFloat(string rtpcName, float value)
 		{
 		}
 
-		public static void SetRTPCValue(string rtpcName, float value, GameObject associatedObject)
+		public void SetFloat(string rtpcName, float value, GameObject associatedObject)
 		{
 		}
 

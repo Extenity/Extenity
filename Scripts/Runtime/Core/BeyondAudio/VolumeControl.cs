@@ -155,7 +155,7 @@ namespace Extenity.BeyondAudio
 			float value;
 			AudioMixer.GetFloat(MixerParameterName, out value);
 			return AudioManager.DbToNormalizedRange(value);
-#elif BeyondAudioUsesWwiseAudio
+#elif BeyondAudioUsesWwiseAudio || BeyondAudioUsesWwiseDummyAudio
 			var value = AudioManager.GetFloat(MixerParameterName);
 			return value / 100f;
 #else
@@ -174,7 +174,7 @@ namespace Extenity.BeyondAudio
 
 #if BeyondAudioUsesUnityAudio
 			AudioMixer.SetFloat(MixerParameterName, AudioManager.NormalizedToDbRange(resultingVolume));
-#elif BeyondAudioUsesWwiseAudio
+#elif BeyondAudioUsesWwiseAudio || BeyondAudioUsesWwiseDummyAudio
 			AudioManager.SetFloat(MixerParameterName, resultingVolume * 100f);
 #else
 			throw new NotImplementedException();
