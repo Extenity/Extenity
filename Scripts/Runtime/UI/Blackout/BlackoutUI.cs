@@ -4,7 +4,6 @@ using Extenity.UIToolbox;
 namespace WheelsOfSteel
 {
 
-	// TODO: Move into Extenity
 	public class BlackoutUI : SingletonUnity<BlackoutUI>
 	{
 		#region Initialization
