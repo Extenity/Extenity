@@ -516,6 +516,20 @@ namespace Extenity.AssetToolbox.Editor
 			Log.Info("Done.");
 		}
 
+		[MenuItem("Assets/Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
+		public static void ReimportAllPrefabs()
+		{
+			var paths = GetAllPrefabAssetPaths().OrderByDescending(item => item).ToList();
+			AssetDatabase.StartAssetEditing();
+			foreach (var path in paths)
+			{
+				AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+			}
+			AssetDatabase.StopAssetEditing();
+			AssetDatabase.Refresh();
+			Log.Info("Done.");
+		}
+
 		#endregion
 
 		#region Asset Usage
