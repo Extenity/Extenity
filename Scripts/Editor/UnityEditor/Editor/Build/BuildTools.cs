@@ -228,16 +228,16 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
-		#region Keys
+		#region Android Keys
 
-		public class KeyDisposeHandler : IDisposable
+		public class AndroidKeyDisposeHandler : IDisposable
 		{
 			public string ResultingKeystoreName;
 			public string ResultingKeystorePass;
 			public string ResultingKeyaliasName;
 			public string ResultingKeyaliasPass;
 
-			internal KeyDisposeHandler(string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
+			internal AndroidKeyDisposeHandler(string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
 			{
 				ResultingKeystoreName = resultingKeystoreName;
 				ResultingKeystorePass = resultingKeystorePass;
@@ -255,7 +255,7 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static void SetKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		public static void SetAndroidKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
 		{
 			PlayerSettings.Android.keystoreName = setKeystoreName;
 			PlayerSettings.Android.keystorePass = setKeystorePass;
@@ -263,7 +263,7 @@ namespace Extenity.BuildToolbox.Editor
 			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
 		}
 
-		public static IDisposable TemporarilySetKeys(
+		public static IDisposable TemporarilySetAndroidKeys(
 			string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass,
 			string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
 		{
@@ -271,16 +271,16 @@ namespace Extenity.BuildToolbox.Editor
 			PlayerSettings.Android.keystorePass = setKeystorePass;
 			PlayerSettings.Android.keyaliasName = setKeyaliasName;
 			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
-			return new KeyDisposeHandler(resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
+			return new AndroidKeyDisposeHandler(resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
 		}
 
-		public static IDisposable TemporarilySetKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		public static IDisposable TemporarilySetAndroidKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
 		{
 			var resultingKeystoreName = PlayerSettings.Android.keystoreName;
 			var resultingKeystorePass = PlayerSettings.Android.keystorePass;
 			var resultingKeyaliasName = PlayerSettings.Android.keyaliasName;
 			var resultingKeyaliasPass = PlayerSettings.Android.keyaliasPass;
-			return TemporarilySetKeys(
+			return TemporarilySetAndroidKeys(
 				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
 				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
 		}
@@ -296,7 +296,7 @@ namespace Extenity.BuildToolbox.Editor
 
 			var value = EditorPrefs.GetString(key, "");
 
-			if (String.IsNullOrWhiteSpace(value))
+			if (string.IsNullOrWhiteSpace(value))
 			{
 				var inputField = new UserInputField(key, false);
 				EditorMessageBox.Show(new Rect(0, 0, 300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
