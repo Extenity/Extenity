@@ -431,19 +431,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Project Metadata
-
-		public static string ProjectName
-		{
-			get
-			{
-				var assetsFolderPath = Application.dataPath.Split('/');
-				return assetsFolderPath[assetsFolderPath.Length - 2];
-			}
-		}
-
-		#endregion
-
 		#region Duplicate Selection
 
 		/// <summary>
