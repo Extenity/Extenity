@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.BuildToolbox.Editor
 {
@@ -167,7 +170,7 @@ namespace Extenity.BuildToolbox.Editor
 
 			using (HashAlgorithm hash = new MD4())
 			{
-				byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+				byte[] hashed = hash.ComputeHash(Encoding.UTF8.GetBytes(toBeHashed));
 
 				int result = 0;
 
@@ -280,6 +283,32 @@ namespace Extenity.BuildToolbox.Editor
 			return TemporarilySetKeys(
 				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
 				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
+		}
+
+		#endregion
+
+		#region Register Keys in EditorPrefs
+
+		public static string GetKeyFromEditorPrefsOrPrompt(string key)
+		{
+			// Add project path postfix. Because we need to keep the key only for this project, where EditorPrefs data is shared between all projects on this PC.
+			key = PlayerPrefsTools.GenerateKey(key, PathHashPostfix.Yes);
+
+			var value = EditorPrefs.GetString(key, "");
+
+			if (String.IsNullOrWhiteSpace(value))
+			{
+				var inputField = new UserInputField(key, false);
+				EditorMessageBox.Show(new Rect(0, 0, 300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
+					() =>
+					{
+						EditorPrefs.SetString(key, inputField.Value.Trim());
+					}
+				);
+				throw new Exception($"Set the key and restart the process.");
+			}
+
+			return value;
 		}
 
 		#endregion
