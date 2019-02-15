@@ -34,7 +34,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<AssetUtilizza>();
+			EditorWindowTools.ToggleWindow<AssetUtilizza>();
 		}
 
 		#endregion

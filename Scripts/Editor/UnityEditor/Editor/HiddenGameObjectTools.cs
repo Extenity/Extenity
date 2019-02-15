@@ -33,7 +33,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[MenuItem("Tools/Hidden GameObject Tools")]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<HiddenGameObjectTools>();
+			EditorWindowTools.ToggleWindow<HiddenGameObjectTools>();
 		}
 
 		#endregion

@@ -29,7 +29,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<UIOptimizza>();
+			EditorWindowTools.ToggleWindow<UIOptimizza>();
 		}
 
 		#endregion

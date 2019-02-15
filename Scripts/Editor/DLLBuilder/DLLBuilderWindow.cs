@@ -31,7 +31,7 @@ namespace Extenity.DLLBuilder
 		[MenuItem(Constants.MenuItemPrefix + "Open Builder", priority = 1000)]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<DLLBuilderWindow>();
+			EditorWindowTools.ToggleWindow<DLLBuilderWindow>();
 		}
 
 		#endregion

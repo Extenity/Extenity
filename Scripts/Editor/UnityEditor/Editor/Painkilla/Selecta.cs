@@ -23,7 +23,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Edit/Selecta", false, 1005)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<Selecta>();
+			EditorWindowTools.ToggleWindow<Selecta>();
 		}
 
 		#endregion

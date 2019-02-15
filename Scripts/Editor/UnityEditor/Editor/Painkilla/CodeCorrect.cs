@@ -57,7 +57,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Tools/Code Correct")]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<CodeCorrect>();
+			EditorWindowTools.ToggleWindow<CodeCorrect>();
 		}
 
 		#endregion

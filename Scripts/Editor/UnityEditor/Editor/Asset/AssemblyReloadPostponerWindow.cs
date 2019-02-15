@@ -16,7 +16,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("Assets/Assembly Reload Postponer")]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<AssemblyReloadPostponerWindow>();
+			EditorWindowTools.ToggleWindow<AssemblyReloadPostponerWindow>();
 		}
 
 		bool locked = false;

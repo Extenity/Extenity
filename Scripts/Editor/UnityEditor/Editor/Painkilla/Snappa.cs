@@ -83,7 +83,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<Snappa>();
+			EditorWindowTools.ToggleWindow<Snappa>();
 		}
 
 		#endregion

@@ -34,7 +34,7 @@ namespace Extenity.PainkillaTool.Editor
 		[MenuItem("Edit/Replacea", false, 1010)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<Replacea>();
+			EditorWindowTools.ToggleWindow<Replacea>();
 		}
 
 		#endregion

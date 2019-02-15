@@ -1,5 +1,6 @@
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -35,6 +36,33 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (HasFocusPropertyInfo == null)
 				HasFocusPropertyInfo = typeof(EditorWindow).GetProperty("hasFocus", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
 			return !(bool)HasFocusPropertyInfo.GetValue(window, null);
+		}
+
+		#endregion
+
+		#region IsWindowOpen and ToggleWindow
+
+		/// <summary>
+		/// Check if there is at least one window of type T open. Checking method is directly copied from 'EditorWindow.GetWindow'.
+		/// </summary>
+		public static bool IsWindowOpen<T>() where T : EditorWindow
+		{
+			var objects = Resources.FindObjectsOfTypeAll<T>();
+			var window = objects.Length > 0 ? (EditorWindow)objects[0] : null;
+			return window;
+		}
+
+		public static void ToggleWindow<T>() where T : EditorWindow
+		{
+			if (IsWindowOpen<T>())
+			{
+				var window = EditorWindow.GetWindow<T>();
+				window.Close();
+			}
+			else
+			{
+				EditorWindow.GetWindow<T>();
+			}
 		}
 
 		#endregion

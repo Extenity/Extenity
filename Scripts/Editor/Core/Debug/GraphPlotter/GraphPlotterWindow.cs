@@ -190,7 +190,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		[MenuItem("Window/Graph Plotter _#%g")]
 		private static void ToggleWindow()
 		{
-			EditorTools.ToggleWindow<GraphPlotterWindow>();
+			EditorWindowTools.ToggleWindow<GraphPlotterWindow>();
 		}
 
 		#endregion
