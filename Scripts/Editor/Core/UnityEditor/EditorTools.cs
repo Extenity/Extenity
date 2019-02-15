@@ -15,15 +15,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 	// TODO: EditorTools is not a good name. Move methods into their own classes. Like move LoadSceneInEditorByPath into EditorSceneManagerTools because it extends EditorSceneManager.
 	public static class EditorTools
 	{
-		#region Initialization
-
-		static EditorTools()
-		{
-			InitializeWindowDock();
-		}
-
-		#endregion
-
 		#region File/Directory Delete
 
 		public static void DeleteMetaFileAndItem(string path)
@@ -436,23 +427,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private static float _CalculateTagBackgroundTotalWidth(float labelWidth)
 		{
 			return labelWidth + TagPaneThings.ButtonSize + TagPaneThings.BackgroundDoublePadding;
-		}
-
-		#endregion
-
-		#region Window Dock
-
-		static PropertyInfo DockedPropertyInfo;
-
-		private static void InitializeWindowDock()
-		{
-			DockedPropertyInfo = typeof(EditorWindow).GetProperty("docked", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.GetProperty);
-		}
-
-		public static bool IsDocked(this EditorWindow window)
-		{
-			var obj = DockedPropertyInfo.GetValue(window, null);
-			return bool.Parse(obj.ToString());
 		}
 
 		#endregion
