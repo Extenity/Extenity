@@ -1,6 +1,7 @@
 // QuickPlay shortcuts are not supported outside of Windows environment.
 #if UNITY_EDITOR_WIN
 
+using Extenity.DebugToolbox.Editor;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -20,7 +21,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected override void DoProcess()
 		{
-			EditorTools.ClearConsole();
+			EditorDebugTools.ClearDeveloperConsole();
 		}
 
 		#endregion

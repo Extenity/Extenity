@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
 using Extenity.TextureToolbox;
@@ -490,19 +489,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 				if (keepSelectionIntact)
 					SelectionTools.PopSelection();
 			}
-		}
-
-		#endregion
-
-		#region Clear Console
-
-		public static void ClearConsole()
-		{
-			//Debug.ClearDeveloperConsole(); This does not work for some reason.
-
-			var logEntries = Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
-			var clearMethod = logEntries.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
-			clearMethod.Invoke(null, null);
 		}
 
 		#endregion
