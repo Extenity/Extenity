@@ -1,3 +1,4 @@
+using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,7 +17,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 		}
 
-		public EditorTools.TagsPane ProcessTagsPane = new EditorTools.TagsPane();
+		public TagsPane ProcessTagsPane = new TagsPane();
 		public string[] ProcessTags;
 
 		protected override void OnBeforeDefaultInspectorGUI()
@@ -30,7 +31,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				// Process Tags
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Process Tags:", GUILayout.ExpandWidth(false));
-				ProcessTags = EditorTools.DrawTags(ProcessTags, ProcessTagsPane, 200);
+				ProcessTags = GUILayoutTools.TagsPane(ProcessTags, ProcessTagsPane, 200);
 				GUILayout.EndHorizontal();
 
 				// Process Button
