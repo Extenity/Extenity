@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -61,6 +62,22 @@ namespace Extenity.SceneManagementToolbox.Editor
 		{
 			return GetLoadedScenes(includeActiveScene).Any(scene => scene.isDirty);
 		}
+
+		#region Load Scene
+
+		public static void LoadSceneInEditorByPath(string scenePath)
+		{
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+				EditorSceneManager.OpenScene(scenePath);
+		}
+
+		public static void LoadSceneInEditorByName(string sceneName)
+		{
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+				EditorSceneManager.OpenScene(EditorBuildSettingsTools.GetScenePathFromBuildSettings(sceneName, false));
+		}
+
+		#endregion
 
 		public static void LoadMultipleScenes(IList<string> loadedScenesWithActiveAtFirst)
 		{
