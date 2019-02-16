@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
@@ -11,45 +10,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 	// TODO: EditorTools is not a good name. Move methods into their own classes. Like move LoadSceneInEditorByPath into EditorSceneManagerTools because it extends EditorSceneManager.
 	public static class EditorTools
 	{
-		#region Enable/Disable Auto Refresh
-
-		public static bool IsAutoRefreshEnabled
-		{
-			get
-			{
-				return EditorPrefs.GetBool("kAutoRefresh");
-			}
-		}
-
-		public static void EnableAutoRefresh(bool enabled)
-		{
-			EditorPrefs.SetBool("kAutoRefresh", enabled);
-		}
-
-		public static void EnableAutoRefresh()
-		{
-			EditorPrefs.SetBool("kAutoRefresh", true);
-		}
-
-		public static void DisableAutoRefresh()
-		{
-			EditorPrefs.SetBool("kAutoRefresh", false);
-		}
-
-		public static void ToggleAutoRefresh()
-		{
-			if (IsAutoRefreshEnabled)
-			{
-				DisableAutoRefresh();
-			}
-			else
-			{
-				EnableAutoRefresh();
-			}
-		}
-
-		#endregion
-
 		#region Tags
 
 		public class TagsPane
