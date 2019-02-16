@@ -15,17 +15,20 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region File/Directory Delete
 
-		public static void DeleteMetaFileAndItem(string path)
+		/// <summary>
+		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// </summary>
+		public static void ManuallyDeleteMetaFileAndAsset(string path)
 		{
 			if (Directory.Exists(path))
 			{
 				Directory.Delete(path, true);
-				DeleteMetaFileOfItem(path);
+				ManuallyDeleteMetaFileOfAsset(path);
 			}
 			else if (File.Exists(path))
 			{
 				FileTools.DeleteFileEvenIfReadOnly(path);
-				DeleteMetaFileOfItem(path);
+				ManuallyDeleteMetaFileOfAsset(path);
 			}
 			else
 			{
@@ -33,7 +36,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
-		public static void DeleteMetaFileOfItem(string path)
+		/// <summary>
+		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// </summary>
+		public static void ManuallyDeleteMetaFileOfAsset(string path)
 		{
 			var metaFile = path + ".meta";
 			if (File.Exists(metaFile))

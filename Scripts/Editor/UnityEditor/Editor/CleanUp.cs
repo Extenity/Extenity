@@ -81,7 +81,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var items = GetOrigFiles();
 			for (int i = 0; i < items.Length; i++)
 			{
-				EditorTools.DeleteMetaFileAndItem(items[i]);
+				EditorTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 			}
 
 			Log.Info("Cleared '.orig' files: " + items.Length);
@@ -97,7 +97,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var items = GetThumbsDbFiles();
 			for (int i = 0; i < items.Length; i++)
 			{
-				EditorTools.DeleteMetaFileAndItem(items[i]);
+				EditorTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 			}
 
 			Log.Info("Cleared 'thumbs.db' files: " + items.Length);
@@ -118,7 +118,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var items = GetEmptyDirectories();
 				for (int i = 0; i < items.Count; i++)
 				{
-					EditorTools.DeleteMetaFileAndItem(items[i]);
+					EditorTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 				}
 
 				clearedItems.Combine(items);
