@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox;
 using Extenity.TextureToolbox;
@@ -13,41 +12,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 	// TODO: EditorTools is not a good name. Move methods into their own classes. Like move LoadSceneInEditorByPath into EditorSceneManagerTools because it extends EditorSceneManager.
 	public static class EditorTools
 	{
-		#region File/Directory Delete
-
-		/// <summary>
-		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
-		/// </summary>
-		public static void ManuallyDeleteMetaFileAndAsset(string path)
-		{
-			if (Directory.Exists(path))
-			{
-				Directory.Delete(path, true);
-				ManuallyDeleteMetaFileOfAsset(path);
-			}
-			else if (File.Exists(path))
-			{
-				FileTools.DeleteFileEvenIfReadOnly(path);
-				ManuallyDeleteMetaFileOfAsset(path);
-			}
-			else
-			{
-				Log.Error("Tried to delete file or directory at path '" + path + "' but item cannot be found.");
-			}
-		}
-
-		/// <summary>
-		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
-		/// </summary>
-		public static void ManuallyDeleteMetaFileOfAsset(string path)
-		{
-			var metaFile = path + ".meta";
-			if (File.Exists(metaFile))
-				FileTools.DeleteFileEvenIfReadOnly(metaFile);
-		}
-
-		#endregion
-
 		#region Enable/Disable Auto Refresh
 
 		public static bool IsAutoRefreshEnabled

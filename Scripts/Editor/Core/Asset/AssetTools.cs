@@ -362,6 +362,41 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Manually Delete Asset File and Meta
+
+		/// <summary>
+		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// </summary>
+		public static void ManuallyDeleteMetaFileAndAsset(string path)
+		{
+			if (Directory.Exists(path))
+			{
+				Directory.Delete(path, true);
+				ManuallyDeleteMetaFileOfAsset(path);
+			}
+			else if (File.Exists(path))
+			{
+				FileTools.DeleteFileEvenIfReadOnly(path);
+				ManuallyDeleteMetaFileOfAsset(path);
+			}
+			else
+			{
+				Log.Error("Tried to delete file or directory at path '" + path + "' but item cannot be found.");
+			}
+		}
+
+		/// <summary>
+		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// </summary>
+		public static void ManuallyDeleteMetaFileOfAsset(string path)
+		{
+			var metaFile = path + ".meta";
+			if (File.Exists(metaFile))
+				FileTools.DeleteFileEvenIfReadOnly(metaFile);
+		}
+
+		#endregion
+
 		#region Script Assets
 
 		public static void OpenScriptInIDE(string scriptPath, int line = -1)
