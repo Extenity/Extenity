@@ -1,24 +1,12 @@
 using System;
 using System.Reflection;
 using Extenity.ColoringToolbox;
+using Extenity.DataToolbox;
 using Extenity.RenderingToolbox;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox
 {
-
-	public enum NineSliceAnchor
-	{
-		TopLeft,
-		Top,
-		TopRight,
-		Right,
-		BottomRight,
-		Bottom,
-		BottomLeft,
-		Left,
-		Center,
-	}
 
 	public enum EnabledState
 	{
