@@ -1,4 +1,4 @@
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 

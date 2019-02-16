@@ -5,7 +5,7 @@ using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.DataToolbox;
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor
 {

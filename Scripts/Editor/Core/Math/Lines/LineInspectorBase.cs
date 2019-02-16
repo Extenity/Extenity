@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 
 namespace Extenity.MathToolbox.Editor

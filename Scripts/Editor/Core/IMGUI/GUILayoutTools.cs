@@ -2,7 +2,7 @@
 using Extenity.ColoringToolbox;
 using UnityEngine;
 
-namespace Extenity.IMGUIToolbox
+namespace Extenity.IMGUIToolbox.Editor
 {
 
 	public static class GUILayoutTools

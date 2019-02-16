@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.TextureToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;

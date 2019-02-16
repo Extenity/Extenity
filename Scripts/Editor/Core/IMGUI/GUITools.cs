@@ -5,7 +5,7 @@ using Extenity.DataToolbox;
 using Extenity.RenderingToolbox;
 using UnityEngine;
 
-namespace Extenity.IMGUIToolbox
+namespace Extenity.IMGUIToolbox.Editor
 {
 
 	public enum EnabledState

@@ -1,5 +1,5 @@
 using Extenity.ApplicationToolbox;
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;

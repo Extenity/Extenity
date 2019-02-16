@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Extenity.IMGUIToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.TextureToolbox;
 
 namespace Extenity.UnityEditorToolbox.Editor
