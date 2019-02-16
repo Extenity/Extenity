@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using Extenity.DataToolbox;
-using Extenity.IMGUIToolbox;
 using Extenity.IMGUIToolbox.Editor;
 
 namespace Extenity.UnityEditorToolbox.Editor
