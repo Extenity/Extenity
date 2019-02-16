@@ -36,6 +36,7 @@ namespace Extenity.PainkillaTool.Editor
 	// TODO: Make sure InitializeNetworkedObjectInstantiation is the first line of every OnPhotonInstantiate(PhotonMessageInfo) method.
 	// TODO: Make sure IsRPCInvalid is checked in the first line of every PunRPC method.
 	// TODO: Debug.ClearDeveloperConsole does not work. Use EditorDebugTools.ClearDeveloperConsole instead.
+	// TODO: Make sure "using Boo." does not exist anywhere.
 
 	public class CodeCorrect : ExtenityEditorWindowBase
 	{
