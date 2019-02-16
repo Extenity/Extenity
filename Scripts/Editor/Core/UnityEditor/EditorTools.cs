@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
@@ -303,69 +302,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private static float _CalculateTagBackgroundTotalWidth(float labelWidth)
 		{
 			return labelWidth + TagPaneThings.ButtonSize + TagPaneThings.BackgroundDoublePadding;
-		}
-
-		#endregion
-
-		#region Duplicate Selection
-
-		/// <summary>
-		/// Triggers Unity's duplicate (CTRL+D) functionality.
-		/// Source: https://answers.unity.com/questions/168580/how-do-i-properly-duplicate-an-object-in-a-editor.html
-		/// </summary>
-		public static void Duplicate()
-		{
-			// Need to focus a scene view first. Create one if there is none.
-			var sceneView = SceneView.lastActiveSceneView;
-			if (!sceneView)
-			{
-				sceneView = SceneView.currentDrawingSceneView;
-				if (!sceneView)
-				{
-					var allSceneViews = SceneView.sceneViews;
-					if (allSceneViews == null || allSceneViews.Count == 0)
-					{
-						// That crashes Unity so we need to figure out another way if this functionality really needed. 
-						//EditorWindow.GetWindow<SceneView>();
-						throw new Exception("There must be a visible Scene window for duplication to work.");
-					}
-					else
-					{
-						sceneView = (SceneView)allSceneViews[0];
-					}
-				}
-			}
-			sceneView.Focus();
-
-			EditorWindow.focusedWindow.SendEvent(EditorGUIUtility.CommandEvent("Duplicate"));
-		}
-
-		/// <summary>
-		/// Triggers Unity's duplicate (CTRL+D) functionality.
-		/// Source: https://answers.unity.com/questions/168580/how-do-i-properly-duplicate-an-object-in-a-editor.html
-		/// </summary>
-		public static GameObject Duplicate(this GameObject original, bool keepSelectionIntact)
-		{
-			ObjectTools.CheckNullArgument(original, "The Object you want to instantiate is null.");
-
-			// Save selection
-			if (keepSelectionIntact)
-				SelectionTools.PushSelection(true);
-
-			try
-			{
-				// Select the original object and tell Unity to duplicate the object.
-				Selection.activeGameObject = original;
-				Duplicate();
-				var duplicate = Selection.activeGameObject;
-				return duplicate;
-			}
-			finally
-			{
-				// Restore selection
-				if (keepSelectionIntact)
-					SelectionTools.PopSelection();
-			}
 		}
 
 		#endregion
