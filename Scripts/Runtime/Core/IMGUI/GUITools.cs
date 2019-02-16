@@ -7,15 +7,15 @@ using UnityEngine;
 namespace Extenity.IMGUIToolbox
 {
 
-	public enum GUIAnchor // TODO: rename to ScreenAnchor
+	public enum NineSliceAnchor
 	{
-		LeftTop,
+		TopLeft,
 		Top,
-		RightTop,
+		TopRight,
 		Right,
-		RightBottom,
+		BottomRight,
 		Bottom,
-		LeftBottom,
+		BottomLeft,
 		Left,
 		Center,
 	}
@@ -63,56 +63,56 @@ namespace Extenity.IMGUIToolbox
 
 		#region Anchored Points
 
-		public static Rect ScreenRect(int width, int height, GUIAnchor anchor, int marginX = 0, int marginY = 0)
+		public static Rect ScreenRect(int width, int height, NineSliceAnchor anchor, int marginX = 0, int marginY = 0)
 		{
 			switch (anchor)
 			{
-				case GUIAnchor.LeftTop: return new Rect(marginX, marginY, width, height);
-				case GUIAnchor.Top: return new Rect((Screen.width - width) >> 1, marginY, width, height);
-				case GUIAnchor.RightTop: return new Rect(Screen.width - width - marginX, marginY, width, height);
-				case GUIAnchor.Right: return new Rect(Screen.width - width - marginX, (Screen.height - height) >> 1, width, height);
-				case GUIAnchor.RightBottom: return new Rect(Screen.width - width - marginX, Screen.height - height - marginX, width, height);
-				case GUIAnchor.Bottom: return new Rect((Screen.width - width) >> 1, Screen.height - height - marginY, width, height);
-				case GUIAnchor.LeftBottom: return new Rect(marginX, Screen.height - height - marginY, width, height);
-				case GUIAnchor.Left: return new Rect(marginX, (Screen.height - height) >> 1, width, height);
-				case GUIAnchor.Center: return new Rect((Screen.width - width) >> 1, (Screen.height - height) >> 1, width, height);
+				case NineSliceAnchor.TopLeft: return new Rect(marginX, marginY, width, height);
+				case NineSliceAnchor.Top: return new Rect((Screen.width - width) >> 1, marginY, width, height);
+				case NineSliceAnchor.TopRight: return new Rect(Screen.width - width - marginX, marginY, width, height);
+				case NineSliceAnchor.Right: return new Rect(Screen.width - width - marginX, (Screen.height - height) >> 1, width, height);
+				case NineSliceAnchor.BottomRight: return new Rect(Screen.width - width - marginX, Screen.height - height - marginX, width, height);
+				case NineSliceAnchor.Bottom: return new Rect((Screen.width - width) >> 1, Screen.height - height - marginY, width, height);
+				case NineSliceAnchor.BottomLeft: return new Rect(marginX, Screen.height - height - marginY, width, height);
+				case NineSliceAnchor.Left: return new Rect(marginX, (Screen.height - height) >> 1, width, height);
+				case NineSliceAnchor.Center: return new Rect((Screen.width - width) >> 1, (Screen.height - height) >> 1, width, height);
 				default: throw new ArgumentOutOfRangeException();
 			}
 		}
 
-		public static Vector2 ScreenPoint(GUIAnchor anchor, int marginX = 0, int marginY = 0)
+		public static Vector2 ScreenPoint(NineSliceAnchor anchor, int marginX = 0, int marginY = 0)
 		{
 			switch (anchor)
 			{
-				case GUIAnchor.LeftTop: return new Vector2(marginX, marginY);
-				case GUIAnchor.Top: return new Vector2(Screen.width >> 1, marginY);
-				case GUIAnchor.RightTop: return new Vector2(Screen.width - marginX, marginY);
-				case GUIAnchor.Right: return new Vector2(Screen.width - marginX, Screen.height >> 1);
-				case GUIAnchor.RightBottom: return new Vector2(Screen.width - marginX, Screen.height - marginX);
-				case GUIAnchor.Bottom: return new Vector2(Screen.width >> 1, Screen.height - marginY);
-				case GUIAnchor.LeftBottom: return new Vector2(marginX, Screen.height - marginY);
-				case GUIAnchor.Left: return new Vector2(marginX, Screen.height >> 1);
-				case GUIAnchor.Center: return new Vector2(Screen.width >> 1, Screen.height >> 1);
+				case NineSliceAnchor.TopLeft: return new Vector2(marginX, marginY);
+				case NineSliceAnchor.Top: return new Vector2(Screen.width >> 1, marginY);
+				case NineSliceAnchor.TopRight: return new Vector2(Screen.width - marginX, marginY);
+				case NineSliceAnchor.Right: return new Vector2(Screen.width - marginX, Screen.height >> 1);
+				case NineSliceAnchor.BottomRight: return new Vector2(Screen.width - marginX, Screen.height - marginX);
+				case NineSliceAnchor.Bottom: return new Vector2(Screen.width >> 1, Screen.height - marginY);
+				case NineSliceAnchor.BottomLeft: return new Vector2(marginX, Screen.height - marginY);
+				case NineSliceAnchor.Left: return new Vector2(marginX, Screen.height >> 1);
+				case NineSliceAnchor.Center: return new Vector2(Screen.width >> 1, Screen.height >> 1);
 				default: throw new ArgumentOutOfRangeException();
 			}
 		}
 
-		public static Vector2 OrthographicCameraPoint(Camera camera, GUIAnchor anchor, float offsetX = 0, float offsetY = 0)
+		public static Vector2 OrthographicCameraPoint(Camera camera, NineSliceAnchor anchor, float offsetX = 0, float offsetY = 0)
 		{
 			var orthographicSizeY = camera.orthographicSize;
 			var orthographicSizeX = orthographicSizeY / ScreenManager.Instance.CurrentAspectRatio;
 
 			switch (anchor)
 			{
-				case GUIAnchor.LeftTop: return new Vector2(-orthographicSizeX + offsetX, orthographicSizeY - offsetY);
-				case GUIAnchor.Top: return new Vector2(offsetX, orthographicSizeY - offsetY);
-				case GUIAnchor.RightTop: return new Vector2(orthographicSizeX - offsetX, orthographicSizeY - offsetY);
-				case GUIAnchor.Right: return new Vector2(orthographicSizeX - offsetX, offsetY);
-				case GUIAnchor.RightBottom: return new Vector2(orthographicSizeX - offsetX, -orthographicSizeY + offsetY);
-				case GUIAnchor.Bottom: return new Vector2(offsetX, -orthographicSizeY + offsetY);
-				case GUIAnchor.LeftBottom: return new Vector2(-orthographicSizeX + offsetX, -orthographicSizeY + offsetY);
-				case GUIAnchor.Left: return new Vector2(-orthographicSizeX + offsetX, offsetY);
-				case GUIAnchor.Center: return new Vector2(offsetX, offsetY);
+				case NineSliceAnchor.TopLeft: return new Vector2(-orthographicSizeX + offsetX, orthographicSizeY - offsetY);
+				case NineSliceAnchor.Top: return new Vector2(offsetX, orthographicSizeY - offsetY);
+				case NineSliceAnchor.TopRight: return new Vector2(orthographicSizeX - offsetX, orthographicSizeY - offsetY);
+				case NineSliceAnchor.Right: return new Vector2(orthographicSizeX - offsetX, offsetY);
+				case NineSliceAnchor.BottomRight: return new Vector2(orthographicSizeX - offsetX, -orthographicSizeY + offsetY);
+				case NineSliceAnchor.Bottom: return new Vector2(offsetX, -orthographicSizeY + offsetY);
+				case NineSliceAnchor.BottomLeft: return new Vector2(-orthographicSizeX + offsetX, -orthographicSizeY + offsetY);
+				case NineSliceAnchor.Left: return new Vector2(-orthographicSizeX + offsetX, offsetY);
+				case NineSliceAnchor.Center: return new Vector2(offsetX, offsetY);
 				default: throw new ArgumentOutOfRangeException();
 			}
 		}

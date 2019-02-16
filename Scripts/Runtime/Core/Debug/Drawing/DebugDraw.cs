@@ -548,7 +548,7 @@ namespace Extenity.DebugToolbox
 		public class BarData
 		{
 			public int lineIndex;
-			public GUIAnchor anchor;
+			public NineSliceAnchor anchor;
 			public float value;
 			public float shadowedValue;
 			public float minValue;
@@ -565,7 +565,7 @@ namespace Extenity.DebugToolbox
 			internal float lastUpdateTime;
 			internal int updatedInFrame;
 
-			public BarData(int lineIndex, GUIAnchor anchor)
+			public BarData(int lineIndex, NineSliceAnchor anchor)
 			{
 				this.shadowedValue = float.NaN;
 				this.lineIndex = lineIndex;
@@ -636,14 +636,14 @@ namespace Extenity.DebugToolbox
 		#region User - Bar Bool
 
 		public static BarData Bar(string text, bool value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth)
 		{
 			return UpdateOrCreateBarData(text, value ? 1f : 0f, 0f, 1f, 0f, anchor, lineIndex, duration, width, false);
 		}
 
 		public static BarData Bar(string text, bool value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth)
 		{
@@ -654,14 +654,14 @@ namespace Extenity.DebugToolbox
 		#region User - Bar 01
 
 		public static BarData Bar01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, 0f, 1f, 0f, anchor, lineIndex, duration, width, clamp);
 		}
 
 		public static BarData Bar01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -672,14 +672,14 @@ namespace Extenity.DebugToolbox
 		#region User - Bar Centered 01
 
 		public static BarData BarCentered01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, 0f, 1f, 0.5f, anchor, lineIndex, duration, width, clamp);
 		}
 
 		public static BarData BarCentered01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -690,14 +690,14 @@ namespace Extenity.DebugToolbox
 		#region User - Bar Symmetric 01
 
 		public static BarData BarSymmetric01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, -1f, 1f, 0f, anchor, lineIndex, duration, width, clamp);
 		}
 
 		public static BarData BarSymmetric01(string text, float value,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -708,14 +708,14 @@ namespace Extenity.DebugToolbox
 		#region User - Bar Symmetric
 
 		public static BarData BarSymmetric(string text, float value, float maxValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, -maxValue, maxValue, 0f, anchor, lineIndex, duration, width, clamp);
 		}
 
 		public static BarData BarSymmetric(string text, float value, float maxValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -727,7 +727,7 @@ namespace Extenity.DebugToolbox
 
 		public static BarData Bar(string text, float value,
 			float minValue, float maxValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, minValue, maxValue, 0f, anchor, lineIndex, duration, width, clamp);
@@ -735,7 +735,7 @@ namespace Extenity.DebugToolbox
 
 		public static BarData Bar(string text, float value,
 			float minValue, float maxValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -747,7 +747,7 @@ namespace Extenity.DebugToolbox
 
 		public static BarData Bar(string text, float value,
 			float minValue, float maxValue, float centerValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
 			return UpdateOrCreateBarData(text, value, minValue, maxValue, centerValue, anchor, lineIndex, duration, width, clamp);
@@ -755,7 +755,7 @@ namespace Extenity.DebugToolbox
 
 		public static BarData Bar(string text, float value,
 			float minValue, float maxValue, float centerValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration = DefaultBarDuration, int width = DefaultBarWidth, bool clamp = false)
 		{
@@ -765,12 +765,12 @@ namespace Extenity.DebugToolbox
 		#endregion
 		#region User - Bar Shadowed Value
 
-		public static BarData BarShadowedValue(float shadowedValue, GUIAnchor anchor, int lineIndex)
+		public static BarData BarShadowedValue(float shadowedValue, NineSliceAnchor anchor, int lineIndex)
 		{
 			return UpdateOrCreateBarDataForOnlyShadowedValue(shadowedValue, anchor, lineIndex);
 		}
 
-		public static BarData BarShadowedValueReset(GUIAnchor anchor, int lineIndex)
+		public static BarData BarShadowedValueReset(NineSliceAnchor anchor, int lineIndex)
 		{
 			return UpdateOrCreateBarDataForOnlyShadowedValue(float.NaN, anchor, lineIndex);
 		}
@@ -781,7 +781,7 @@ namespace Extenity.DebugToolbox
 
 		private static BarData UpdateOrCreateBarData(string text, float value,
 			float minValue, float maxValue, float centerValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			float duration, int width, bool clamp)
 		{
 			if (!IsInstanceAvailable)
@@ -791,7 +791,7 @@ namespace Extenity.DebugToolbox
 
 		private static BarData UpdateOrCreateBarData(string text, float value,
 			float minValue, float maxValue, float centerValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor,
 			float duration, int width, bool clamp)
 		{
@@ -802,7 +802,7 @@ namespace Extenity.DebugToolbox
 
 		private static BarData UpdateOrCreateBarData(string text, float value,
 			float minValue, float maxValue, float centerValue,
-			GUIAnchor anchor, int lineIndex,
+			NineSliceAnchor anchor, int lineIndex,
 			Color barColor, Color backgroundColor,
 			float duration, int width, bool clamp)
 		{
@@ -830,7 +830,7 @@ namespace Extenity.DebugToolbox
 			return data;
 		}
 
-		private static BarData UpdateOrCreateBarDataForOnlyShadowedValue(float shadowedValue, GUIAnchor anchor, int lineIndex)
+		private static BarData UpdateOrCreateBarDataForOnlyShadowedValue(float shadowedValue, NineSliceAnchor anchor, int lineIndex)
 		{
 			if (!IsInstanceAvailable)
 				return null;
@@ -844,7 +844,7 @@ namespace Extenity.DebugToolbox
 			return data;
 		}
 
-		private BarData GetOrCreateBarData(int lineIndex, GUIAnchor anchor)
+		private BarData GetOrCreateBarData(int lineIndex, NineSliceAnchor anchor)
 		{
 			for (int i = 0; i < barData.Count; i++)
 			{
@@ -929,27 +929,27 @@ namespace Extenity.DebugToolbox
 
 			switch (data.anchor)
 			{
-				case GUIAnchor.LeftTop: rectArea.x = 0f; rectArea.y = data.lineIndex * BarAreaHeight; break;
-				case GUIAnchor.Top: rectArea.x = (Screen.width - data.width) >> 1; rectArea.y = data.lineIndex * BarAreaHeight; break;
-				case GUIAnchor.RightTop: rectArea.x = Screen.width - data.width; rectArea.y = data.lineIndex * BarAreaHeight; break;
-				case GUIAnchor.Right: rectArea.x = Screen.width - data.width; rectArea.y = (Screen.height >> 1) + data.lineIndex * BarAreaHeight; break;
-				case GUIAnchor.RightBottom: rectArea.x = Screen.width - data.width; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
-				case GUIAnchor.Bottom: rectArea.x = (Screen.width - data.width) >> 1; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
-				case GUIAnchor.LeftBottom: rectArea.x = 0; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
-				case GUIAnchor.Left: rectArea.x = 0; rectArea.y = (Screen.height >> 1) + data.lineIndex * BarAreaHeight; break;
+				case NineSliceAnchor.TopLeft: rectArea.x = 0f; rectArea.y = data.lineIndex * BarAreaHeight; break;
+				case NineSliceAnchor.Top: rectArea.x = (Screen.width - data.width) >> 1; rectArea.y = data.lineIndex * BarAreaHeight; break;
+				case NineSliceAnchor.TopRight: rectArea.x = Screen.width - data.width; rectArea.y = data.lineIndex * BarAreaHeight; break;
+				case NineSliceAnchor.Right: rectArea.x = Screen.width - data.width; rectArea.y = (Screen.height >> 1) + data.lineIndex * BarAreaHeight; break;
+				case NineSliceAnchor.BottomRight: rectArea.x = Screen.width - data.width; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
+				case NineSliceAnchor.Bottom: rectArea.x = (Screen.width - data.width) >> 1; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
+				case NineSliceAnchor.BottomLeft: rectArea.x = 0; rectArea.y = Screen.height - (data.lineIndex + 1) * BarAreaHeight; break;
+				case NineSliceAnchor.Left: rectArea.x = 0; rectArea.y = (Screen.height >> 1) + data.lineIndex * BarAreaHeight; break;
 				default: throw new ArgumentOutOfRangeException();
 			}
 
 			switch (data.anchor)
 			{
-				case GUIAnchor.LeftTop: MathTools.Move(ref rectArea, BarAreaMargin, BarAreaMargin); break;
-				case GUIAnchor.Top: MathTools.MoveY(ref rectArea, BarAreaMargin); break;
-				case GUIAnchor.RightTop: MathTools.Move(ref rectArea, -BarAreaMargin, BarAreaMargin); break;
-				case GUIAnchor.Right: MathTools.MoveX(ref rectArea, -BarAreaMargin); break;
-				case GUIAnchor.RightBottom: MathTools.Move(ref rectArea, -BarAreaMargin, -BarAreaMargin); break;
-				case GUIAnchor.Bottom: MathTools.MoveY(ref rectArea, -BarAreaMargin); break;
-				case GUIAnchor.LeftBottom: MathTools.Move(ref rectArea, BarAreaMargin, -BarAreaMargin); break;
-				case GUIAnchor.Left: MathTools.MoveX(ref rectArea, BarAreaMargin); break;
+				case NineSliceAnchor.TopLeft: MathTools.Move(ref rectArea, BarAreaMargin, BarAreaMargin); break;
+				case NineSliceAnchor.Top: MathTools.MoveY(ref rectArea, BarAreaMargin); break;
+				case NineSliceAnchor.TopRight: MathTools.Move(ref rectArea, -BarAreaMargin, BarAreaMargin); break;
+				case NineSliceAnchor.Right: MathTools.MoveX(ref rectArea, -BarAreaMargin); break;
+				case NineSliceAnchor.BottomRight: MathTools.Move(ref rectArea, -BarAreaMargin, -BarAreaMargin); break;
+				case NineSliceAnchor.Bottom: MathTools.MoveY(ref rectArea, -BarAreaMargin); break;
+				case NineSliceAnchor.BottomLeft: MathTools.Move(ref rectArea, BarAreaMargin, -BarAreaMargin); break;
+				case NineSliceAnchor.Left: MathTools.MoveX(ref rectArea, BarAreaMargin); break;
 				default: throw new ArgumentOutOfRangeException();
 			}
 
@@ -1039,7 +1039,7 @@ namespace Extenity.DebugToolbox
 		{
 #pragma warning disable 649
 			public int lineIndex;
-			public GUIAnchor anchor;
+			public NineSliceAnchor anchor;
 			public string text;
 			public Rect rect;
 			public Color color;
@@ -1047,7 +1047,7 @@ namespace Extenity.DebugToolbox
 			public float duration;
 #pragma warning restore 649
 
-			public WriteScreenData(int lineIndex, GUIAnchor anchor)
+			public WriteScreenData(int lineIndex, NineSliceAnchor anchor)
 			{
 				this.lineIndex = lineIndex;
 				this.anchor = anchor;
@@ -1057,7 +1057,7 @@ namespace Extenity.DebugToolbox
 		private List<WriteScreenData> writeScreenData = new List<WriteScreenData>(20);
 		private const int writeScreenTextAreaHeight = 20;
 
-		public static void WriteScreenRectSeparated(string prefix, Rect value, int lineIndexStart, GUIAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
+		public static void WriteScreenRectSeparated(string prefix, Rect value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
 			WriteScreen(prefix + ".y = " + value.y, lineIndexStart + 1, anchor, textColor, duration, textAreaWidth);
@@ -1065,20 +1065,20 @@ namespace Extenity.DebugToolbox
 			WriteScreen(prefix + ".height = " + value.height, lineIndexStart + 3, anchor, textColor, duration, textAreaWidth);
 		}
 
-		public static void WriteScreenVector2Separated(string prefix, Vector2 value, int lineIndexStart, GUIAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
+		public static void WriteScreenVector2Separated(string prefix, Vector2 value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
 			WriteScreen(prefix + ".y = " + value.y, lineIndexStart + 1, anchor, textColor, duration, textAreaWidth);
 		}
 
-		public static void WriteScreenVector3Separated(string prefix, Vector3 value, int lineIndexStart, GUIAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
+		public static void WriteScreenVector3Separated(string prefix, Vector3 value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
 			WriteScreen(prefix + ".y = " + value.y, lineIndexStart + 1, anchor, textColor, duration, textAreaWidth);
 			WriteScreen(prefix + ".z = " + value.z, lineIndexStart + 2, anchor, textColor, duration, textAreaWidth);
 		}
 
-		public static void WriteScreen(string text, int lineIndex, GUIAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
+		public static void WriteScreen(string text, int lineIndex, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			if (!IsInstanceAvailable)
 				return;
@@ -1087,15 +1087,15 @@ namespace Extenity.DebugToolbox
 
 			switch (anchor)
 			{
-				case GUIAnchor.LeftTop: data.rect.x = 0f; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
-				case GUIAnchor.Top: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
-				case GUIAnchor.RightTop: data.rect.x = Screen.width - textAreaWidth; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
-				case GUIAnchor.Right: data.rect.x = Screen.width - textAreaWidth; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
-				case GUIAnchor.RightBottom: data.rect.x = Screen.width - textAreaWidth; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
-				case GUIAnchor.Bottom: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
-				case GUIAnchor.LeftBottom: data.rect.x = 0; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
-				case GUIAnchor.Left: data.rect.x = 0; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
-				case GUIAnchor.Center: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.TopLeft: data.rect.x = 0f; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.Top: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.TopRight: data.rect.x = Screen.width - textAreaWidth; data.rect.y = lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.Right: data.rect.x = Screen.width - textAreaWidth; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.BottomRight: data.rect.x = Screen.width - textAreaWidth; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.Bottom: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.BottomLeft: data.rect.x = 0; data.rect.y = Screen.height - (lineIndex + 1) * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.Left: data.rect.x = 0; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
+				case NineSliceAnchor.Center: data.rect.x = (Screen.width - textAreaWidth) >> 1; data.rect.y = (Screen.height >> 1) + lineIndex * writeScreenTextAreaHeight; break;
 				default: throw new ArgumentOutOfRangeException();
 			}
 
@@ -1111,7 +1111,7 @@ namespace Extenity.DebugToolbox
 			data.duration = duration;
 		}
 
-		private WriteScreenData GetOrCreateWriteScreenData(int lineIndex, GUIAnchor anchor)
+		private WriteScreenData GetOrCreateWriteScreenData(int lineIndex, NineSliceAnchor anchor)
 		{
 			for (int i = 0; i < writeScreenData.Count; i++)
 			{
