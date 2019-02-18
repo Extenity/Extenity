@@ -13,6 +13,41 @@ using UnityEngine;
 namespace Extenity.BuildToolbox.Editor
 {
 
+	public class AndroidKeys
+	{
+		public string KeystoreName;
+		public string KeystorePass;
+		public string KeyaliasName;
+		public string KeyaliasPass;
+
+		public static AndroidKeys Empty => new AndroidKeys(null, null, null, null);
+
+		public AndroidKeys(string keystoreName, string keystorePass, string keyaliasName, string keyaliasPass)
+		{
+			KeystoreName = keystoreName;
+			KeystorePass = keystorePass;
+			KeyaliasName = keyaliasName;
+			KeyaliasPass = keyaliasPass;
+		}
+
+		public void SetToProjectSettings()
+		{
+			PlayerSettings.Android.keystoreName = KeystoreName;
+			PlayerSettings.Android.keystorePass = KeystorePass;
+			PlayerSettings.Android.keyaliasName = KeyaliasName;
+			PlayerSettings.Android.keyaliasPass = KeyaliasPass;
+		}
+
+		public static AndroidKeys GetFromProjectSettings()
+		{
+			return new AndroidKeys(
+				PlayerSettings.Android.keystoreName,
+				PlayerSettings.Android.keystorePass,
+				PlayerSettings.Android.keyaliasName,
+				PlayerSettings.Android.keyaliasPass);
+		}
+	}
+
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -232,57 +267,37 @@ namespace Extenity.BuildToolbox.Editor
 
 		public class AndroidKeyDisposeHandler : IDisposable
 		{
-			public string ResultingKeystoreName;
-			public string ResultingKeystorePass;
-			public string ResultingKeyaliasName;
-			public string ResultingKeyaliasPass;
+			public AndroidKeys ResultingKeys;
 
-			internal AndroidKeyDisposeHandler(string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
+			internal AndroidKeyDisposeHandler(AndroidKeys resultingKeys)
 			{
-				ResultingKeystoreName = resultingKeystoreName;
-				ResultingKeystorePass = resultingKeystorePass;
-				ResultingKeyaliasName = resultingKeyaliasName;
-				ResultingKeyaliasPass = resultingKeyaliasPass;
+				ResultingKeys = resultingKeys;
 			}
 
 			public void Dispose()
 			{
-				PlayerSettings.Android.keystoreName = ResultingKeystoreName;
-				PlayerSettings.Android.keystorePass = ResultingKeystorePass;
-				PlayerSettings.Android.keyaliasName = ResultingKeyaliasName;
-				PlayerSettings.Android.keyaliasPass = ResultingKeyaliasPass;
+				if (ResultingKeys != null)
+				{
+					ResultingKeys.SetToProjectSettings();
+				}
 				AssetDatabase.SaveAssets();
 			}
 		}
 
-		public static void SetAndroidKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
+		public static IDisposable TemporarilySetAndroidKeys(AndroidKeys setKeys, AndroidKeys resultingKeys)
 		{
-			PlayerSettings.Android.keystoreName = setKeystoreName;
-			PlayerSettings.Android.keystorePass = setKeystorePass;
-			PlayerSettings.Android.keyaliasName = setKeyaliasName;
-			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
+			if (resultingKeys == null)
+			{
+				throw new ArgumentNullException(nameof(resultingKeys), $"The '{nameof(resultingKeys)}' parameter should not be null. Did you mean 'AndroidKeys.Empty' which is used to reset all keys when the process completed?");
+			}
+			setKeys.SetToProjectSettings();
+			return new AndroidKeyDisposeHandler(resultingKeys);
 		}
 
-		public static IDisposable TemporarilySetAndroidKeys(
-			string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass,
-			string resultingKeystoreName, string resultingKeystorePass, string resultingKeyaliasName, string resultingKeyaliasPass)
+		public static IDisposable TemporarilySetAndroidKeys(AndroidKeys setKeys)
 		{
-			PlayerSettings.Android.keystoreName = setKeystoreName;
-			PlayerSettings.Android.keystorePass = setKeystorePass;
-			PlayerSettings.Android.keyaliasName = setKeyaliasName;
-			PlayerSettings.Android.keyaliasPass = setKeyaliasPass;
-			return new AndroidKeyDisposeHandler(resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
-		}
-
-		public static IDisposable TemporarilySetAndroidKeys(string setKeystoreName, string setKeystorePass, string setKeyaliasName, string setKeyaliasPass)
-		{
-			var resultingKeystoreName = PlayerSettings.Android.keystoreName;
-			var resultingKeystorePass = PlayerSettings.Android.keystorePass;
-			var resultingKeyaliasName = PlayerSettings.Android.keyaliasName;
-			var resultingKeyaliasPass = PlayerSettings.Android.keyaliasPass;
-			return TemporarilySetAndroidKeys(
-				setKeystoreName, setKeystorePass, setKeyaliasName, setKeyaliasPass,
-				resultingKeystoreName, resultingKeystorePass, resultingKeyaliasName, resultingKeyaliasPass);
+			var resultingKeys = AndroidKeys.GetFromProjectSettings();
+			return TemporarilySetAndroidKeys(setKeys, resultingKeys);
 		}
 
 		#endregion
