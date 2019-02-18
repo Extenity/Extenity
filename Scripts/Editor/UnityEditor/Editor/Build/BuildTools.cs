@@ -30,12 +30,16 @@ namespace Extenity.BuildToolbox.Editor
 			KeyaliasPass = keyaliasPass;
 		}
 
-		public void SetToProjectSettings()
+		public void SetToProjectSettings(bool saveAssets)
 		{
 			PlayerSettings.Android.keystoreName = KeystoreName;
 			PlayerSettings.Android.keystorePass = KeystorePass;
 			PlayerSettings.Android.keyaliasName = KeyaliasName;
 			PlayerSettings.Android.keyaliasPass = KeyaliasPass;
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
+			}
 		}
 
 		public static AndroidKeys GetFromProjectSettings()
@@ -272,16 +276,14 @@ namespace Extenity.BuildToolbox.Editor
 			internal AndroidKeyDisposeHandler(AndroidKeys resultingKeys)
 			{
 				ResultingKeys = resultingKeys;
-				AssetDatabase.SaveAssets();
 			}
 
 			public void Dispose()
 			{
 				if (ResultingKeys != null)
 				{
-					ResultingKeys.SetToProjectSettings();
+					ResultingKeys.SetToProjectSettings(true);
 				}
-				AssetDatabase.SaveAssets();
 			}
 		}
 
@@ -291,7 +293,7 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				throw new ArgumentNullException(nameof(resultingKeys), $"The '{nameof(resultingKeys)}' parameter should not be null. Did you mean 'AndroidKeys.Empty' which is used to reset all keys when the process completed?");
 			}
-			setKeys.SetToProjectSettings();
+			setKeys.SetToProjectSettings(true);
 			return new AndroidKeyDisposeHandler(resultingKeys);
 		}
 
