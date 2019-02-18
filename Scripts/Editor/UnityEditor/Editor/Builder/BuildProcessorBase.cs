@@ -84,6 +84,7 @@ namespace Extenity.UnityEditorToolbox
 			IsProcessorRunning = true;
 
 			var succeeded = false;
+			var indented = false;
 
 			try
 			{
@@ -110,6 +111,8 @@ namespace Extenity.UnityEditorToolbox
 				if (configuration.NeedsProcessing(isLaunchedByUser))
 				{
 					Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
+					Log.IncreaseIndent();
+					indented = true;
 				}
 				else
 				{
@@ -224,6 +227,11 @@ namespace Extenity.UnityEditorToolbox
 				PreviousStepStartTime = new TimeSpan();
 				PreviousStepTitle = null;
 				CurrentStep = 0;
+
+				if (indented)
+				{
+					Log.DecreaseIndent();
+				}
 			}
 
 			if (OnProcessFinished != null)
