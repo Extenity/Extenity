@@ -13,12 +13,12 @@ using UnityEngine;
 namespace Extenity.BuildToolbox.Editor
 {
 
-	public class AndroidKeys
+	public struct AndroidKeys
 	{
-		public string KeystoreName;
-		public string KeystorePass;
-		public string KeyaliasName;
-		public string KeyaliasPass;
+		public readonly string KeystoreName;
+		public readonly string KeystorePass;
+		public readonly string KeyaliasName;
+		public readonly string KeyaliasPass;
 
 		public static AndroidKeys Empty => new AndroidKeys(null, null, null, null);
 
@@ -271,7 +271,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		public class AndroidKeyDisposeHandler : IDisposable
 		{
-			public AndroidKeys ResultingKeys;
+			public readonly AndroidKeys ResultingKeys;
 
 			internal AndroidKeyDisposeHandler(AndroidKeys resultingKeys)
 			{
@@ -280,19 +280,12 @@ namespace Extenity.BuildToolbox.Editor
 
 			public void Dispose()
 			{
-				if (ResultingKeys != null)
-				{
-					ResultingKeys.SetToProjectSettings(true);
-				}
+				ResultingKeys.SetToProjectSettings(true);
 			}
 		}
 
 		public static IDisposable TemporarilySetAndroidKeys(AndroidKeys setKeys, AndroidKeys resultingKeys)
 		{
-			if (resultingKeys == null)
-			{
-				throw new ArgumentNullException(nameof(resultingKeys), $"The '{nameof(resultingKeys)}' parameter should not be null. Did you mean 'AndroidKeys.Empty' which is used to reset all keys when the process completed?");
-			}
 			setKeys.SetToProjectSettings(true);
 			return new AndroidKeyDisposeHandler(resultingKeys);
 		}
