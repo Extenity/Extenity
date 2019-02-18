@@ -272,6 +272,7 @@ namespace Extenity.BuildToolbox.Editor
 			internal AndroidKeyDisposeHandler(AndroidKeys resultingKeys)
 			{
 				ResultingKeys = resultingKeys;
+				AssetDatabase.SaveAssets();
 			}
 
 			public void Dispose()
