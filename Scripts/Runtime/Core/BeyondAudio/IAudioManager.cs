@@ -21,31 +21,31 @@ namespace Extenity.BeyondAudio
 
 		#region Pooled Audio Sources
 
-		void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null);
+		void ReleaseAudioSource(ref GameObject audioSource, uint stopEventID = 0);
 
 		#endregion
 
 		#region Play One Shot
 
-		void Play(string eventName);
-		void Play(string eventName, GameObject associatedObject);
-		GameObject PlayAtPosition(string eventName, Vector3 worldPosition);
-		GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition);
+		void Play(uint eventID);
+		void Play(uint eventID, GameObject associatedObject);
+		GameObject PlayAtPosition(uint eventID, Vector3 worldPosition);
+		GameObject PlayAttached(uint eventID, Transform parent, Vector3 localPosition);
 
 		#endregion
 
 		#region Play Music
 		
-		void PlayMusic(string eventName);
+		void PlayMusic(uint eventID);
 
 		#endregion
 
 		#region Parameter
 
-		float GetFloat(string rtpcName);
-		float GetFloat(string rtpcName, GameObject associatedObject);
-		void SetFloat(string rtpcName, float value);
-		void SetFloat(string rtpcName, float value, GameObject associatedObject);
+		float GetFloat(uint rtpcID);
+		float GetFloat(uint rtpcID, GameObject associatedObject);
+		void SetFloat(uint rtpcID, float value);
+		void SetFloat(uint rtpcID, float value, GameObject associatedObject);
 
 		#endregion
 	}
