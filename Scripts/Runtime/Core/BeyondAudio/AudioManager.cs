@@ -56,31 +56,31 @@ namespace Extenity.BeyondAudio
 
 		#region Pooled Audio Sources
 
-		public static void ReleaseAudioSource(ref GameObject audioSource, uint stopEventID = 0) { if (EnsureIntegrity()) Instance.ReleaseAudioSource(ref audioSource, stopEventID); }
+		public static void ReleaseAudioSource(ref GameObject audioSource, string stopEventName = null) { if (EnsureIntegrity()) Instance.ReleaseAudioSource(ref audioSource, stopEventName); }
 
 		#endregion
 
 		#region Play One Shot
 
-		public static void Play(uint eventID) { if (EnsureIntegrity()) Instance.Play(eventID); }
-		public static void Play(uint eventID, GameObject associatedObject) { if (EnsureIntegrity()) Instance.Play(eventID, associatedObject); }
-		public static GameObject PlayAtPosition(uint eventID, Vector3 worldPosition) { if (EnsureIntegrity()) return Instance.PlayAtPosition(eventID, worldPosition); return null; }
-		public static GameObject PlayAttached(uint eventID, Transform parent, Vector3 localPosition) { if (EnsureIntegrity()) return Instance.PlayAttached(eventID, parent, localPosition); return null; }
+		public static void Play(string eventName) { if (EnsureIntegrity()) Instance.Play(eventName); }
+		public static void Play(string eventName, GameObject associatedObject) { if (EnsureIntegrity()) Instance.Play(eventName, associatedObject); }
+		public static GameObject PlayAtPosition(string eventName, Vector3 worldPosition) { if (EnsureIntegrity()) return Instance.PlayAtPosition(eventName, worldPosition); return null; }
+		public static GameObject PlayAttached(string eventName, Transform parent, Vector3 localPosition) { if (EnsureIntegrity()) return Instance.PlayAttached(eventName, parent, localPosition); return null; }
 
 		#endregion
 
 		#region Play Music
 
-		public static void PlayMusic(uint eventID) { if (EnsureIntegrity()) Instance.PlayMusic(eventID); }
+		public static void PlayMusic(string eventName) { if (EnsureIntegrity()) Instance.PlayMusic(eventName); }
 
 		#endregion
 
 		#region Parameter
 
-		public static float GetFloat(uint rtpcID) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcID); return float.NaN; }
-		public static float GetFloat(uint rtpcID, GameObject associatedObject) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcID, associatedObject); return float.NaN; }
-		public static void SetFloat(uint rtpcID, float value) { if (EnsureIntegrity()) Instance.SetFloat(rtpcID, value); }
-		public static void SetFloat(uint rtpcID, float value, GameObject associatedObject) { if (EnsureIntegrity()) Instance.SetFloat(rtpcID, value, associatedObject); }
+		public static float GetFloat(string rtpcName) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcName); return float.NaN; }
+		public static float GetFloat(string rtpcName, GameObject associatedObject) { if (EnsureIntegrity()) return Instance.GetFloat(rtpcName, associatedObject); return float.NaN; }
+		public static void SetFloat(string rtpcName, float value) { if (EnsureIntegrity()) Instance.SetFloat(rtpcName, value); }
+		public static void SetFloat(string rtpcName, float value, GameObject associatedObject) { if (EnsureIntegrity()) Instance.SetFloat(rtpcName, value, associatedObject); }
 
 		#endregion
 	}
