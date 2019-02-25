@@ -1,5 +1,4 @@
 using System;
-using Extenity.BeyondAudio;
 using Extenity.FlowToolbox;
 using TMPro;
 using TMPro.Extensions;
@@ -18,8 +17,6 @@ namespace Extenity.UIToolbox
 		[Header("Power-Up Button")]
 		public Image IconImage;
 		public TextMeshProUGUI CountText;
-		public string PowerUpUsedSound;
-		public string PowerUpFailedSound;
 		public UIFader CooldownFader;
 		public TextMeshProUGUI CooldownTimerText;
 		public float CooldownRefreshInterval = 0.1f;
@@ -83,34 +80,13 @@ namespace Extenity.UIToolbox
 			OnClicked.Invoke(this);
 		}
 
-		public void InformClickSuccessful(Transform soundEffectParent, float cooldownDuration, Action<PowerUpButton> onButtonCooldownEnd = null, string powerUpUsedSoundOverride = null)
+		public void InformClickSuccessful(float cooldownDuration, Action<PowerUpButton> onButtonCooldownEnd = null)
 		{
-			var sound = string.IsNullOrEmpty(powerUpUsedSoundOverride) ? PowerUpUsedSound : powerUpUsedSoundOverride;
-
-			if (soundEffectParent)
-			{
-				AudioManager.PlayAttached(sound, soundEffectParent, Vector3.zero);
-			}
-			else
-			{
-				AudioManager.Play(sound);
-			}
-
 			StartCooldown(cooldownDuration, onButtonCooldownEnd);
 		}
 
-		public void InformClickFailed(Transform soundEffectParent, string powerUpFailedSoundOverride = null)
+		public void InformClickFailed()
 		{
-			var sound = string.IsNullOrEmpty(powerUpFailedSoundOverride) ? PowerUpFailedSound : powerUpFailedSoundOverride;
-
-			if (soundEffectParent)
-			{
-				AudioManager.PlayAttached(sound, soundEffectParent, Vector3.zero);
-			}
-			else
-			{
-				AudioManager.Play(sound);
-			}
 		}
 
 		#endregion
