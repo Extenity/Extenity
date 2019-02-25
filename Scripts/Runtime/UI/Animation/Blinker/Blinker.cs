@@ -1,5 +1,4 @@
 using System;
-using Extenity.BeyondAudio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,9 +20,10 @@ namespace Extenity.UIToolbox
 		public float BlinkInterval = 0.4f;
 		public float BlinkOnPercentage = 0.8f;
 		public float Duration = 0f;
-		[Header("Audio")]
-		public string BlinkAudio = "";
-		public string HideAudio = "";
+		// Blinker's audio should be implemented as part of the audio library because the usage varies wildly between audio libraries. See 1580125.
+		//[Header("Audio")]
+		//public string BlinkAudio = "";
+		//public string HideAudio = "";
 		[Header("Color")]
 		public Color OnColor = Color.white;
 		public Color OffColor = Color.grey;
@@ -118,17 +118,18 @@ namespace Extenity.UIToolbox
 			if (ColoredTextMeshProUGUI)
 				ColoredTextMeshProUGUI.color = blinkState ? OnColor : OffColor;
 
-			if (playAudio)
-			{
-				if (blinkState)
-				{
-					AudioManager.Play(HideAudio);
-				}
-				else
-				{
-					AudioManager.Play(BlinkAudio);
-				}
-			}
+			// Blinker's audio should be implemented as part of the audio library because the usage varies wildly between audio libraries. See 1580125.
+			//if (playAudio)
+			//{
+			//	if (blinkState)
+			//	{
+			//		AudioManager.Play(HideAudio);
+			//	}
+			//	else
+			//	{
+			//		AudioManager.Play(BlinkAudio);
+			//	}
+			//}
 		}
 	}
 
