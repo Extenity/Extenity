@@ -252,52 +252,73 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1102)]
 		public static void ReserializeSelectedAssets()
 		{
-			var fullList = new List<string>();
-			var log = new StringBuilder();
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				var fullList = new List<string>();
+				var log = new StringBuilder();
 
-			Log.Info("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
-			var list = AssetTools.GetSelectedAssetPaths(true);
-			InternalAddToAssetList(list, fullList, "Selected Assets", log);
+				Log.Info("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
+				var list = AssetTools.GetSelectedAssetPaths(true);
+				InternalAddToAssetList(list, fullList, "Selected Assets", log);
 
-			Log.Info(log.ToString());
+				Log.Info(log.ToString());
 
-			ReserializeAssets(fullList);
+				ReserializeAssets(fullList);
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1103)]
 		public static void ReserializeAllAssets()
 		{
-			ReserializeAssets(AssetDatabase.GetAllAssetPaths());
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(AssetDatabase.GetAllAssetPaths());
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Scenes", priority = 1104)]
 		public static void ReserializeAllScenes()
 		{
-			ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Prefabs", priority = 1105)]
 		public static void ReserializeAllPrefabs()
 		{
-			ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Graphics Assets", priority = 1106)]
 		public static void ReserializeAllGraphicsAssets()
 		{
-			ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false, false);
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false, false);
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Audio Assets", priority = 1107)]
 		public static void ReserializeAllAudioAssets()
 		{
-			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false);
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false);
+			};
 		}
 
 		[MenuItem("Assets/Operations/Reserialize All Script Assets", priority = 1108)]
 		public static void ReserializeAllScriptAssets()
 		{
-			ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+			};
 		}
 
 		public static void ReserializeAssets(
