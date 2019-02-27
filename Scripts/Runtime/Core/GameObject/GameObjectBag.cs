@@ -28,19 +28,28 @@ namespace Extenity.GameObjectToolbox
 			InstanceMap.Add(id, gameObject);
 		}
 
+		public void Add(int customID, GameObject gameObject)
+		{
+			if (!gameObject)
+				return;
+			if (InstanceMap.ContainsKey(customID))
+				return;
+			InstanceMap.Add(customID, gameObject);
+		}
+
 		public void AddAllGameObjects()
 		{
 			var gameObjects = Resources.FindObjectsOfTypeAll(typeof(GameObject));
 			foreach (GameObject gameObject in gameObjects)
 			{
-				var id = gameObject.GetInstanceID();
-				if (InstanceMap.ContainsKey(id))
+				var instanceID = gameObject.GetInstanceID();
+				if (InstanceMap.ContainsKey(instanceID))
 					continue;
-				InstanceMap.Add(id, gameObject);
+				InstanceMap.Add(instanceID, gameObject);
 			}
 		}
 
-		public void ClearDestroyedGameObjects()
+		public void ClearLostReferences()
 		{
 			List<int> bag = null;
 			foreach (var entry in InstanceMap)
@@ -56,9 +65,9 @@ namespace Extenity.GameObjectToolbox
 			}
 			if (bag != null)
 			{
-				foreach (var gameObjectID in bag)
+				foreach (var instanceID in bag)
 				{
-					InstanceMap.Remove(gameObjectID);
+					InstanceMap.Remove(instanceID);
 				}
 			}
 		}
