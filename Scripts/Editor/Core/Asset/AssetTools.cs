@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -681,6 +682,16 @@ namespace Extenity.AssetToolbox.Editor
 			var prefabPath = Path.Combine(Path.GetDirectoryName(scriptPath), Path.GetFileNameWithoutExtension(scriptPath) + ".prefab");
 			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 			GameObject.Instantiate(prefab);
+		}
+
+		#endregion
+
+		#region Show In Explorer
+
+		public static void ShowInExplorer(string itemPath)
+		{
+			itemPath = itemPath.Replace(@"/", @"\"); // Explorer doesn't like slashes
+			Process.Start("explorer.exe", "/select," + itemPath);
 		}
 
 		#endregion
