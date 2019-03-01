@@ -690,8 +690,20 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static void ShowInExplorer(string itemPath)
 		{
+#if UNITY_EDITOR_WIN
+			Log.Info("Showing in Explorer: " + itemPath);
 			itemPath = itemPath.Replace(@"/", @"\"); // Explorer doesn't like slashes
-			Process.Start("explorer.exe", "/select," + itemPath);
+			if (Directory.Exists(itemPath))
+			{
+				Process.Start("explorer.exe", "\"" + itemPath + "\"");
+			}
+			else if (File.Exists(itemPath))
+			{
+				Process.Start("explorer.exe", "/select,\"" + itemPath + "\"");
+			}
+#else
+			throw new NotImplementedException();
+#endif
 		}
 
 		#endregion
