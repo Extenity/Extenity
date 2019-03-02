@@ -339,9 +339,21 @@ public static class Log
 		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 	}
 
+	public static void ErrorAndBreak(string message)
+	{
+		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
+		Debug.Break();
+	}
+
 	public static void Error(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
+	}
+
+	public static void ErrorAndBreak(string message, Object context)
+	{
+		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
+		Debug.Break();
 	}
 
 	/// <summary>
