@@ -75,6 +75,15 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			Stop();
+		}
+
+		#endregion
+
 		#region Fade Commands
 
 		public FadeState State { get; private set; }
