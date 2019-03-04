@@ -156,6 +156,14 @@ namespace Extenity.UIToolbox
 
 		protected float AlphaFadeIn(float delay, float duration)
 		{
+			if (!CanvasGroup)
+			{
+				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
+				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
+				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.NameSafe()}'.", this);
+				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
+			}
+
 			if (DEBUG_ShowFadeMessages)
 			{
 				Log.Info($"Fading in '{CanvasGroup.gameObject.FullName()}'");
@@ -222,6 +230,14 @@ namespace Extenity.UIToolbox
 
 		protected float AlphaFadeOut(float delay, float duration)
 		{
+			if (!CanvasGroup)
+			{
+				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
+				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
+				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.NameSafe()}'.", this);
+				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
+			}
+
 			if (DEBUG_ShowFadeMessages)
 			{
 				Log.Info($"Fading out '{CanvasGroup.gameObject.FullName()}'");
