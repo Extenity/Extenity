@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if !DisableParticleSystem
+
+using UnityEngine;
 
 namespace Extenity.ParticleToolbox
 {
@@ -12,3 +14,5 @@ namespace Extenity.ParticleToolbox
 	}
 
 }
+
+#endif
