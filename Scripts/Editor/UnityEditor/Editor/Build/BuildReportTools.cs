@@ -17,7 +17,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void OnPostBuildPlayerScriptDLLs(BuildReport report)
 		{
-			Log.Info($"Included DLLs ({report.files.Length}):\n" + string.Join("\n", report.files.Select(item => item.path)));
+			Log.Info($"Included DLLs ({report.files.Length}):\n" + string.Join("\n", report.files.Select(item => item.path).OrderBy(item => item)));
 			report.DetailedLog(nameof(DLLBuildReport));
 		}
 	}
