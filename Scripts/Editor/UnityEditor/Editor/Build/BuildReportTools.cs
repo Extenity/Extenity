@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
-using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void OnPostBuildPlayerScriptDLLs(BuildReport report)
 		{
-			Log.Info("Included DLLs:\n" + string.Join("\n", report.files.Select(item => item.path)));
+			Log.Info($"Included DLLs ({report.files.Length}):\n" + string.Join("\n", report.files.Select(item => item.path)));
 			report.DetailedLog(nameof(DLLBuildReport));
 		}
 	}
