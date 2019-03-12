@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Extenity.DataToolbox;
@@ -17,11 +18,14 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void OnPostBuildPlayerScriptDLLs(BuildReport report)
 		{
-			var dllsWithoutDebugFiles = report.files.Select(item => item.path).Where(path =>
-				!path.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase) &&
-				!path.EndsWith(".mdb", StringComparison.OrdinalIgnoreCase))
-				.OrderBy(item => item);
-			Log.Info($"Included DLLs ({report.files.Length}):\n" + string.Join("\n", dllsWithoutDebugFiles));
+			var dllsWithoutDebugFiles = report.files.Select(item => item.path)
+				.Where(path =>
+				   !path.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase) &&
+				   !path.EndsWith(".mdb", StringComparison.OrdinalIgnoreCase))
+				.Select(path => Path.GetFileName(path) + "\t" + Path.GetDirectoryName(path))
+				.OrderBy(path => path)
+				.ToList();
+			Log.Info($"Included DLLs ({dllsWithoutDebugFiles.Count}):\n" + string.Join("\n", dllsWithoutDebugFiles));
 			report.DetailedLog(nameof(DLLBuildReport));
 		}
 	}
