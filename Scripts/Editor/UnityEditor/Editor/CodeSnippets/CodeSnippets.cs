@@ -1,11 +1,11 @@
 ﻿using System;
-using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
-using Extenity.RenderingToolbox;
 using Extenity.UnityEditorToolbox.Editor;
+using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.CodeSnippetsToolbox.Editor
 {
@@ -358,7 +358,7 @@ namespace __NAMESPACE__
 			{
 				var rootNamespace = EditorSettings.projectGenerationRootNamespace;
 				var inputField = new[] { new UserInputField("Namespace", string.IsNullOrEmpty(rootNamespace) ? "" : rootNamespace + ".", false) };
-				EditorMessageBox.Show(ScreenManager.GetCenteredRect(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
+				EditorMessageBox.Show(new Vector2Int(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
 					() =>
 					{
 						var scriptNamespace = inputField[0].Value;

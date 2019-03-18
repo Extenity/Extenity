@@ -310,7 +310,7 @@ namespace Extenity.BuildToolbox.Editor
 			if (string.IsNullOrWhiteSpace(value))
 			{
 				var inputField = new UserInputField(key, false);
-				EditorMessageBox.Show(new Rect(0, 0, 300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
+				EditorMessageBox.Show(new Vector2Int(300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
 					() =>
 					{
 						EditorPrefs.SetString(key, inputField.Value.Trim());
