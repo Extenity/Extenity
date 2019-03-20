@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.IO;
 using System.Reflection;
@@ -90,6 +91,43 @@ namespace Extenity.ApplicationToolbox.Editor
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.SyncVS", true, true);
 			var method = type.GetMethod("SyncAndOpenSolution", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 			method.Invoke(null, null);
+		}
+
+		#endregion
+
+		#region Compilation Check
+
+		public static void EnsureNotCompiling()
+		{
+			if (EditorApplication.isCompiling)
+			{
+				// These lines are kept here commented out for future needs. The idea was to hopefully
+				// and desperately find a way to continue execution after Unity recompiles the code.
+				//
+				// It seems that waiting for compilation to finish by sleeping the thread is useless.
+				// Not tried in a thread, but it's useless when sleeping in main thread. When isCompiling
+				// called after an AssetDatabase.Refresh, Unity sets isCompiling to true, but won't start
+				// the compilation until our method execution completes and Unity Editor's main loop takes
+				// control.
+				//
+				// Also desperately tried to check for isCompiling inside editor coroutines. That way,
+				// compilation starts after AssetDatabase.Refresh. Then Unity reloads the domain after
+				// compilation. Which makes us lose the domain where coroutines live and new domain won't
+				// try to continue coroutine executions from where they are left. Just like that.
+				//
+				//if (tryToSleepItOff)
+				//{
+				//	var tryCount = 60;
+				//	while (EditorApplication.isCompiling && --tryCount > 0)
+				//		Thread.Sleep(1000);
+				//}
+
+				// Just check once more. Maybe Unity has not yet realized the compilation was finished.
+				if (EditorApplication.isCompiling)
+				{
+					throw new Exception("There is an ongoing compilation, which was not expected.");
+				}
+			}
 		}
 
 		#endregion
