@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox.Editor;
@@ -320,6 +322,135 @@ namespace Extenity.BuildToolbox.Editor
 			}
 
 			return value;
+		}
+
+		#endregion
+
+		#region Temporarily Move Directories
+
+		public class TemporarilyMoveHandler : IDisposable
+		{
+			public readonly List<string> OriginalPaths;
+			public readonly List<string> TempPaths;
+			public readonly string TempLocationBasePath;
+
+			internal TemporarilyMoveHandler(IEnumerable<string> originalPaths, string tempLocationBasePath)
+			{
+				OriginalPaths = originalPaths.Select(path => path.FixDirectorySeparatorChars('/')).ToList();
+				TempLocationBasePath = tempLocationBasePath;
+
+				TempPaths = OriginalPaths.Select(path =>
+				{
+					if (!path.StartsWith("Assets/"))
+					{
+						throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
+					}
+					return tempLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
+				}).ToList();
+
+				MoveToTemp();
+			}
+
+			public void Dispose()
+			{
+				MoveToOriginal();
+			}
+
+			#region Move
+
+			private void MoveToTemp()
+			{
+				using (Log.Indent($"Moving assets to temporary location '{TempLocationBasePath}'..."))
+				{
+					EditorApplicationTools.EnsureNotCompiling();
+					MakeSureNothingExists(TempPaths);
+					for (var i = 0; i < OriginalPaths.Count; i++)
+					{
+						MoveTo(OriginalPaths[i], TempPaths[i]);
+					}
+					MakeSureNothingExists(OriginalPaths); // Before refreshing AssetDatabase.
+					AssetDatabase.Refresh();
+					MakeSureNothingExists(OriginalPaths); // After refreshing AssetDatabase.
+					EditorApplicationTools.EnsureNotCompiling();
+				}
+			}
+
+			private void MoveToOriginal()
+			{
+				using (Log.Indent($"Moving assets back to original location from '{TempLocationBasePath}'..."))
+				{
+					EditorApplicationTools.EnsureNotCompiling();
+					MakeSureNothingExists(OriginalPaths);
+					for (var i = 0; i < OriginalPaths.Count; i++)
+					{
+						MoveTo(TempPaths[i], OriginalPaths[i]);
+					}
+					MakeSureNothingExists(TempPaths); // Before refreshing AssetDatabase.
+					AssetDatabase.Refresh();
+					MakeSureNothingExists(TempPaths); // After refreshing AssetDatabase.
+					EditorApplicationTools.EnsureNotCompiling();
+				}
+			}
+
+			private void MoveTo(string source, string destination)
+			{
+				if (string.IsNullOrEmpty(source))
+					throw new ArgumentNullException(nameof(source));
+				if (string.IsNullOrEmpty(destination))
+					throw new ArgumentNullException(nameof(destination));
+
+				var assetName = Path.GetFileName(source.RemoveEndingDirectorySeparatorChar());
+				var sourceMeta = source.RemoveEndingDirectorySeparatorChar() + ".meta";
+				var destinationMeta = destination.RemoveEndingDirectorySeparatorChar() + ".meta";
+
+				if (Directory.Exists(source))
+				{
+					Log.Info($"{assetName} (Directory)\n\tFROM: {source}\n\tTO: {destination}");
+					DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
+					Directory.Move(source, destination);
+					File.Move(sourceMeta, destinationMeta);
+				}
+				else if (File.Exists(source))
+				{
+					Log.Info($"{assetName} (File)\n\tFROM: {source}\n\tTO: {destination}");
+					DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
+					File.Move(source, destination);
+					File.Move(sourceMeta, destinationMeta);
+				}
+				else
+				{
+					Log.Info($"{assetName} (Not Found)\n\tFROM: {source}\n\tTO: {destination}");
+				}
+
+				//AssetDatabase.MoveAsset(source, destination); Won't work since we are moving outside of Assets folder.
+			}
+
+			#endregion
+
+			#region Consistency
+
+			private void MakeSureNothingExists(IEnumerable<string> paths)
+			{
+				foreach (var path in paths)
+				{
+					if (Directory.Exists(path) || File.Exists(path))
+					{
+						throw new Exception($"The asset is not expected to exist at path '{path}'.");
+					}
+					var metaPath = path.RemoveEndingDirectorySeparatorChar() + ".meta";
+					if (Directory.Exists(metaPath) || File.Exists(metaPath))
+					{
+						throw new Exception($"The asset is not expected to exist at path '{metaPath}'.");
+					}
+				}
+			}
+
+			#endregion
+		}
+
+		public static IDisposable TemporarilyMoveFilesAndDirectories(IEnumerable<string> originalPaths, string tempLocationBasePath)
+		{
+			return new TemporarilyMoveHandler(originalPaths, tempLocationBasePath);
 		}
 
 		#endregion
