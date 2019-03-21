@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Extenity.ApplicationToolbox;
+using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
@@ -25,6 +26,22 @@ using UnityEngine.SceneManagement;
 namespace Extenity.UnityEditorToolbox
 {
 
+	/// <summary>
+	/// </summary>
+	/// <remarks>
+	/// Some notes on trying to do all preprocesses at Unity build callbacks.
+	/// See 713951791.
+	/// 
+	/// Initial idea was doing all preprocesses when Unity needs to build the application.
+	/// That way, the user would use the Build button in BuildSettings to build the application.
+	/// But then, Unity is such a pain in the arse that we better not use any build callbacks
+	/// to do serious modifications to assets, especially scripts.
+	///
+	/// Instead of processing scenes in OnProcessScene callbacks or processing other assets
+	/// in OnPreprocessBuild callback, as a more cleaner approach, we process these assets
+	/// just before triggering the actual Unity build. Do any AssetDatabase.Refresh operations
+	/// there. Then we start Unity build with all assets ready to be processed.
+	/// </remarks>
 	public abstract class BuildProcessorBase<TBuildProcessor> :
 #if UNITY_2018_1_OR_NEWER
 		IPreprocessBuildWithReport,
@@ -316,8 +333,9 @@ namespace Extenity.UnityEditorToolbox
 		public void OnPreprocessBuild(BuildTarget target, string path)
 #endif
 		{
-			Log.Info($"Build processor '{BuildProcessorName}' is checking up in build preprocess...");
+			Log.Info($"Build processor '{BuildProcessorName}' checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
 
+			// See 713951791.
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
 		}
 
@@ -327,7 +345,7 @@ namespace Extenity.UnityEditorToolbox
 		public void OnPostprocessBuild(BuildTarget target, string path)
 #endif
 		{
-			//Log.Info("Cleaning up in build postprocess...");
+			Log.Info($"Build processor '{BuildProcessorName}' checking in at postprocess callback... Report details: " + report.ToDetailedLogString());
 		}
 
 #if UNITY_2018_1_OR_NEWER
@@ -337,71 +355,16 @@ namespace Extenity.UnityEditorToolbox
 #endif
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
+			{
+				// TODO: Automatically processing the scene when pressing the Play button should be made here. But processing the scene each time the Play button gets pressed is madness. So before doing that, a mechanism for checking if a process is already done before should be implemented first.
 				return;
-
-			// TODO:
-			Log.Warning("Launching build processor on build time is not implemented!");
-			//DoProcessScene(scene, false).;
-		}
-
-		#endregion
-
-		#region Scene File Operations
-
-		/*
-		private static string GetBackupScenePath(string scenePath)
-		{
-			if (string.IsNullOrEmpty(scenePath))
-				throw new ArgumentNullException();
-
-			var sceneName = Path.GetFileNameWithoutExtension(scenePath);
-			if (!sceneName.EndsWith(BackupScenePostfix))
-			{
-				var directoryPath = Path.GetDirectoryName(scenePath);
-				var backupSceneName = sceneName + BackupScenePostfix;
-				return Path.Combine(directoryPath, backupSceneName).FixDirectorySeparatorChars('/') + Path.GetExtension(scenePath);
 			}
-			return scenePath;
-		}
 
-		private static string GetOriginalScenePath(string scenePath)
-		{
-			if (string.IsNullOrEmpty(scenePath))
-				throw new ArgumentNullException();
+			Log.Info($"Build processor checking in at scene process callback for '{scene.name}'.");
 
-			var sceneName = Path.GetFileNameWithoutExtension(scenePath);
-			if (sceneName.EndsWith(BackupScenePostfix))
-			{
-				var directoryPath = Path.GetDirectoryName(scenePath);
-				var originalSceneName = sceneName.Substring(0, sceneName.Length - BackupScenePostfix.Length);
-				return Path.Combine(directoryPath, originalSceneName).FixDirectorySeparatorChars('/') + Path.GetExtension(scenePath);
-			}
-			return scenePath;
+			// See 713951791.
+			//DoProcessScene(scene, ...);
 		}
-
-		private static void BackupOriginalScene()
-		{
-			var scene = EditorSceneManager.GetActiveScene();
-			var originalScenePath = GetOriginalScenePath(scene.path);
-			var backupScenePath = GetBackupScenePath(scene.path);
-			AssetTools.CreateOrReplaceScene(originalScenePath, backupScenePath);
-		}
-
-		private static void RevertToBackupScene()
-		{
-			var scene = EditorSceneManager.GetActiveScene();
-			var originalScenePath = GetOriginalScenePath(scene.path);
-			var backupScenePath = GetBackupScenePath(scene.path);
-			AssetTools.CreateOrReplaceScene(backupScenePath, originalScenePath);
-		}
-
-		private static void LoadOriginalScene()
-		{
-			var scene = EditorSceneManager.GetActiveScene();
-			var originalScenePath = GetOriginalScenePath(scene.path);
-			EditorSceneManager.OpenScene(originalScenePath, OpenSceneMode.Single);
-		}
-		*/
 
 		#endregion
 
