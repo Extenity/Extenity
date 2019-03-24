@@ -147,7 +147,11 @@ namespace Extenity.BuildToolbox.Editor
 					// Just curious if it's a file. Turns out it's not.
 					//Line("Asset Path: " + AssetDatabase.GetAssetPath(report.info));
 
-					if (info.includedModules.Any())
+					if (info == null)
+					{
+						Line("No info available");
+					}
+					else if (info.includedModules.Any())
 					{
 						Line("No included modules listed");
 					}
