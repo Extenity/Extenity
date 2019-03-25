@@ -1,7 +1,6 @@
 ﻿using Extenity.DesignPatternsToolbox;
-using Extenity.UIToolbox;
 
-namespace WheelsOfSteel
+namespace Extenity.UIToolbox
 {
 
 	public class BlackoutUI : SingletonUnity<BlackoutUI>

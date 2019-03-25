@@ -2,7 +2,7 @@ using Extenity.UnityEditorToolbox;
 using TMPro;
 using UnityEngine;
 
-namespace WheelsOfSteel
+namespace Extenity.UIToolbox
 {
 
 	/// <summary>

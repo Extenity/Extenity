@@ -8,7 +8,6 @@ using UnityEngine;
 namespace Extenity.UIToolbox
 {
 
-	// TODO: Move this into Extenity
 	[CustomEditor(typeof(SpriteList))]
 	public class SpriteListInspector : ExtenityEditorBase<SpriteList>
 	{

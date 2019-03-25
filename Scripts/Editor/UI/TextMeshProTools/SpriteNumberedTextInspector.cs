@@ -3,10 +3,9 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
-namespace WheelsOfSteel
+namespace Extenity.UIToolbox
 {
 
-	// TODO: Move this into Extenity
 	[CustomEditor(typeof(SpriteNumberedText))]
 	public class SpriteNumberedTextInspector : ExtenityEditorBase<SpriteNumberedText>
 	{
