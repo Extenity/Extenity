@@ -1,50 +1,29 @@
 
 namespace Extenity.MathToolbox
 {
-
-	public struct ActivateCounter
+	
+	public class BoolCounter
 	{
-		private int counter;
+		public bool IsTrue => counter > 0;
+		public bool IsFalse => counter <= 0;
+		/// <summary>
+		/// Tells if the counter is 1. This may mean it has just been increased from zero. This may also mean the counter decreased and only one request left.
+		/// </summary>
+		public bool IsSingular => counter == 1;
 
-		public void Activate() { counter++; }
-		public void Deactivate() { counter--; }
-		public void ActivateIfDeactive() { if (counter < 1) counter++; }
-		public void DeactivateIfActive() { if (counter > 0) counter--; }
-		public bool IsActive { get { return counter > 0; } }
-
-		public void SetCounterUnsafe(int value) { counter = value; }
-		public void AddCounterUnsafe(int value) { counter += value; }
-		public int Counter { get { return counter; } }
-	}
-
-	public struct EnableCounter
-	{
-		private int counter;
-
-		public void Enable() { counter++; }
-		public void Disable() { counter--; }
-		public void EnableIfDisabled() { if (counter < 1) counter++; }
-		public void DisableIfEnabled() { if (counter > 0) counter--; }
-		public bool IsEnabled { get { return counter > 0; } }
-
-		public void SetCounterUnsafe(int value) { counter = value; }
-		public void AddCounterUnsafe(int value) { counter += value; }
-		public int Counter { get { return counter; } }
-	}
-
-	public struct BoolCounter
-	{
+		/// <summary>
+		/// Note that the counter goes negative if Decrease called more than Increase.
+		/// </summary>
+		public int Counter => counter;
 		private int counter;
 
 		public void Increase() { counter++; }
 		public void Decrease() { counter--; }
 		public void IncreaseIfFalse() { if (counter < 1) counter++; }
 		public void DecreaseIfTrue() { if (counter > 0) counter--; }
-		public bool IsTrue { get { return counter > 0; } }
 
 		public void SetCounterUnsafe(int value) { counter = value; }
 		public void AddCounterUnsafe(int value) { counter += value; }
-		public int Counter { get { return counter; } }
 	}
 
 }
