@@ -1,7 +1,3 @@
-// Commented out intentionally. PathTools are always included in builds
-// since they are widely used. See 1174912734.
-//#if UNITY_EDITOR
-
 using System;
 using System.IO;
 
@@ -382,5 +378,3 @@ namespace Extenity.DataToolbox
 	}
 
 }
-
-//#endif
