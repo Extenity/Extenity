@@ -5,7 +5,6 @@ namespace Extenity.ProcessToolbox
 
 	public static class ProcessTools
 	{
-#if !UNITY_WEBPLAYER
 
 		public static void SetProcessPriority(ProcessPriorityClass priority)
 		{
@@ -15,7 +14,6 @@ namespace Extenity.ProcessToolbox
 			}
 		}
 
-#endif
 	}
 
 }

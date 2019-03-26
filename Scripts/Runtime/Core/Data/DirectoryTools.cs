@@ -7,19 +7,13 @@ using System.Threading;
 namespace Extenity.DataToolbox
 {
 
-#if UNITY_EDITOR || !UNITY_WEBPLAYER
+#if UNITY_EDITOR
 
 	public static class DirectoryTools
 	{
 		public static bool IsDirectoryEmpty(string path)
 		{
-#if UNITY_WEBPLAYER
-			var directories = Directory.GetDirectories(path);
-			var files = Directory.GetFiles(path);
-			return directories.Length == 0 && files.Length == 0;
-#else
 			return Directory.GetFileSystemEntries(path).Length == 0;
-#endif
 		}
 
 		public static void CreateFromFilePath(string filePath)
