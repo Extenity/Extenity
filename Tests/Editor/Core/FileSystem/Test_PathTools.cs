@@ -1,9 +1,10 @@
 //#define PathToolsSupportDoubleBackslashPaths
 using System;
 using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using NUnit.Framework;
 
-namespace ExtenityTests.DataToolbox
+namespace ExtenityTests.FileSystemToolbox
 {
 
 	public class Test_PathTools : AssertionHelper

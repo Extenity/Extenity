@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Extenity.DataToolbox;
 
-namespace Extenity.DataToolbox
+namespace Extenity.FileSystemToolbox
 {
 
 	public static class DirectoryTools

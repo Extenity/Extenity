@@ -64,6 +64,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox;
 
 namespace Extenity.WWWToolbox.FileDownloader

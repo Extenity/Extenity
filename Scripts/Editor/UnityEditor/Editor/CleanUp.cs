@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor

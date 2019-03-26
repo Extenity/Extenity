@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
-using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 
 namespace Extenity.WWWToolbox
 {
