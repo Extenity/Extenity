@@ -178,6 +178,11 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Mercurial
 
+		public static void EnsureMercurialRepositoryDoesNotContainAnyChanges()
+		{
+			Log.Warning("Checking for Mercurial repository changes is not implemented yet!");
+		}
+
 		public static string GetVersionInfoFromMercurialRepository()
 		{
 			string output;
