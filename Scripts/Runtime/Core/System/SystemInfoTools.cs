@@ -11,13 +11,15 @@ namespace Extenity.SystemToolbox
 	{
 		#region DeviceUniqueIdentifier
 
+		// TODO: Logging IDs to database each time a user launches the application and make sure it only runs if the user accepts the collection of analytics data. Required data: DeviceUniqueIdentifier, NonThrowingUnityDeviceUniqueIdentifier, device vendor, device model.
+
 		/// <summary>
 		/// The alternative to SystemInfo.deviceUniqueIdentifier which hopefully is more robust.
 		/// The generated ID is lowercase hexadecimal string of varying lengths. The algorithm also
 		/// adds a postfix to the ID that tells which method is used for getting the device ID on
 		/// that device.
 		///
-		/// Note that this implementation is no way proven to be robust, as of 09/2018. It requires
+		/// Note that this implementation is no way proven to be robust, as of 03/2019. It requires
 		/// extensive testing in large scale with collecting data from user devices. The implementation
 		/// is just based on developer experiences collected on forums. Being registered into an
 		/// analytics database would allow us to see which device vendors and models tend to generate
@@ -236,7 +238,7 @@ namespace Extenity.SystemToolbox
 			// in which the application incorporates a newer Unity version. Looks like so many users have lost
 			// their game accounts in the past because of their device IDs changed after updating the game.
 			//
-			// Note that if the user deletes the application with it's configuration, the saved ID is gone.
+			// Note that if the user deletes the application with its configuration, the saved ID is gone.
 			// When the user decides to install the application once more, there is a possibility that Unity
 			// would fail to generate the same ID for that user again. As long as this implementation is based
 			// on SystemInfo.deviceUniqueIdentifier, we would only hope that Unity will not fail us, as it was
@@ -249,6 +251,25 @@ namespace Extenity.SystemToolbox
 			//     https://github.com/HuaYe1975/Unity-iOS-DeviceID
 			//     https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 			//     https://docs.unity3d.com/ScriptReference/SystemInfo-deviceUniqueIdentifier.html
+
+			// First, try to get the previously saved ID, if there is one.
+			var storedID = _GetStoredID();
+			if (!string.IsNullOrEmpty(storedID))
+				return storedID;
+
+			// Get the ID from Unity, but ensure it's not faulty. Generate a new one randomly if it is faulty.
+			var id = GenerateGUIDIfUnityGeneratedDeviceIDIsInvalid();
+
+			// Store the ID for future uses. This is required so that any changes to Unity's implementation
+			// of SystemInfo.deviceUniqueIdentifier won't affect already existing users when we update Unity
+			// to a new version.
+			_StoreID(id);
+			return id;
+
+#elif UNITY_STANDALONE_WIN
+
+			// This implementation is copied from iOS and Android implementation above. Not so much thought
+			// was given on this platform yet. But the same principles apply here too.
 
 			// First, try to get the previously saved ID, if there is one.
 			var storedID = _GetStoredID();
