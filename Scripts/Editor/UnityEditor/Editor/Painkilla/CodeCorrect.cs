@@ -42,7 +42,7 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		public static readonly string ExpectedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_-+=[]{}\\/,.:;|?<>'\"\t\n\r ";
+		public const string ExpectedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_-+=[]{}\\/,.:;|?<>'\"\t\n\r ";
 		private const string IgnoreInspectionText = "Ignored by Code Correct";
 		private const string TestScriptFileNamePrefix = "Test_";
 
