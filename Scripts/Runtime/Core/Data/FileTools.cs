@@ -1,3 +1,8 @@
+// File System tools are supposed to be only used in Editor environment.
+// If you need some of the tools in built applications, make sure you
+// are doing it platform friendly. See 1174912734.
+#if UNITY_EDITOR
+
 using System;
 using System.IO;
 using System.Security;
@@ -662,3 +667,5 @@ namespace Extenity.DataToolbox
 	}
 
 }
+
+#endif
