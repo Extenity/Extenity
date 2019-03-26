@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.ReflectionToolbox;
@@ -132,7 +131,7 @@ namespace Extenity.DebugToolbox
 
 		public void LogToFile(bool saveSimpleLog, bool saveDetailedLog)
 		{
-			var path = Path.Combine(Path.Combine(ApplicationTools.ApplicationPath, "Log"), "SceneSnapshot - " + DateTime.Now.ToFullDateTimeMsecForFilename() + ".txt");
+			var path = Path.Combine(Path.Combine(Application.persistentDataPath, "Log"), "SceneSnapshot - " + DateTime.Now.ToFullDateTimeMsecForFilename() + ".txt");
 
 			if (saveSimpleLog)
 			{
