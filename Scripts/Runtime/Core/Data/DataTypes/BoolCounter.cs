@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Extenity.MathToolbox
+namespace Extenity.DataToolbox
 {
 
 	/// <summary>
