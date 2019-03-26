@@ -32,7 +32,7 @@ namespace Extenity.DataToolbox
 
 		public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths)
 		{
-			return GenerateFolderNameListToBeCreatedFromFilePaths(filePaths, FileTools.DirectorySeparatorChar);
+			return GenerateFolderNameListToBeCreatedFromFilePaths(filePaths, PathTools.DirectorySeparatorChar);
 		}
 
 		public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths, char directorySeparator)

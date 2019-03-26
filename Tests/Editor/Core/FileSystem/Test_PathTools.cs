@@ -1,4 +1,4 @@
-//#define FileToolsSupportDoubleBackslashPaths
+//#define PathToolsSupportDoubleBackslashPaths
 using System;
 using Extenity.DataToolbox;
 using NUnit.Framework;
@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_FileTools : AssertionHelper
+	public class Test_PathTools : AssertionHelper
 	{
 		#region Alter File Name
 
@@ -149,7 +149,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveFirstDirectoryThrows<ArgumentNullException>(
 				"",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(
 				@"\\",
 				null);
@@ -168,7 +168,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveFirstDirectory(
 				@"Directory Name\",
 				@"");
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(
 				@"\\Directory Name\Subdir Name\",
 				@"\\Subdir Name\");
@@ -196,7 +196,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(
 				@"File Name.fileextension",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(
 				@"\\Directory Name\Subdir Name\File Name.fileextension",
 				@"\\Subdir Name\File Name.fileextension");
@@ -227,7 +227,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(
 				@"File Name",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(
 				@"\\Directory Name\Subdir Name\File Name",
 				@"\\Subdir Name\File Name");
@@ -249,7 +249,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveLastDirectoryThrows<ArgumentNullException>(
 				"",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectoryThrows<InvalidOperationException>(
 				@"\\",
 				null);
@@ -268,7 +268,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveLastDirectory(
 				@"Directory Name\",
 				@"");
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(
 				@"\\Directory Name\Subdir Name\",
 				@"\\Directory Name\");
@@ -296,7 +296,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveLastDirectoryThrows<InvalidOperationException>(
 				@"File Name.fileextension",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(
 				@"\\Directory Name\Subdir Name\File Name.fileextension",
 				@"\\Directory Name\File Name.fileextension");
@@ -327,7 +327,7 @@ namespace ExtenityTests.DataToolbox
 			CheckRemoveLastDirectoryThrows<InvalidOperationException>(
 				@"File Name",
 				null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(
 				@"\\Directory Name\Subdir Name\File Name",
 				@"\\Directory Name\File Name");
@@ -393,7 +393,7 @@ namespace ExtenityTests.DataToolbox
 			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\");
 			CheckGetParentDirectoryNameThrows<ArgumentNullException>(@"");
 			CheckGetParentDirectoryNameThrows<ArgumentNullException>(null);
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\");
 #endif
 
@@ -410,7 +410,7 @@ namespace ExtenityTests.DataToolbox
 			CheckGetParentDirectoryName(
 				@"Directory Name\",
 				@"Directory Name");
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(
 				@"\\Directory Name\Subdir Name\",
 				@"Subdir Name");
@@ -436,7 +436,7 @@ namespace ExtenityTests.DataToolbox
 				@"Directory Name");
 			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
 				@"File Name.fileextension");
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(
 				@"\\Directory Name\Subdir Name\File Name.fileextension",
 				@"Subdir Name");
@@ -464,7 +464,7 @@ namespace ExtenityTests.DataToolbox
 				@"Directory Name");
 			CheckGetParentDirectoryNameThrows<InvalidOperationException>(
 				@"File Name");
-#if FileToolsSupportDoubleBackslashPaths
+#if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(
 				@"\\Directory Name\Subdir Name\File Name",
 				@"Subdir Name");
