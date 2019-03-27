@@ -67,6 +67,7 @@ namespace Extenity.UnityEditorToolbox
 
 		public static bool IsProcessorRunning { get; private set; }
 		public static int CurrentStep { get; private set; }
+		public static string CurrentStepTitle { get; private set; }
 		public static Stopwatch ProcessStopwatch { get; private set; }
 		public static TimeSpan PreviousStepStartTime { get; private set; }
 		public static string PreviousStepTitle { get; private set; }
@@ -138,6 +139,7 @@ namespace Extenity.UnityEditorToolbox
 				}
 
 				CurrentStep = 1;
+				CurrentStepTitle = null;
 				ProcessStopwatch = new Stopwatch();
 				ProcessStopwatch.Start();
 				PreviousStepStartTime = new TimeSpan();
@@ -207,6 +209,7 @@ namespace Extenity.UnityEditorToolbox
 					var methods = CollectProcessorMethods(category);
 					foreach (var method in methods)
 					{
+						CurrentStepTitle = method.Name;
 						var enumerator = (IEnumerator)method.Invoke(this, new object[] { definition, configuration, runAsync });
 						yield return Task.StartNested(enumerator);
 					}
@@ -244,6 +247,7 @@ namespace Extenity.UnityEditorToolbox
 				PreviousStepStartTime = new TimeSpan();
 				PreviousStepTitle = null;
 				CurrentStep = 0;
+				CurrentStepTitle = null;
 
 				if (indented)
 				{
@@ -423,7 +427,7 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Tools
 
-		protected static bool StartStep(string title, bool isAllowed = true)
+		protected static bool StartStep(bool isAllowed = true)
 		{
 			var now = ProcessStopwatch.Elapsed;
 			var isFirstStep = CurrentStep == 1;
@@ -431,21 +435,21 @@ namespace Extenity.UnityEditorToolbox
 
 			if (isFirstStep)
 			{
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {title}");
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
 			}
 			else
 			{
 				var previousStepDuration = now - PreviousStepStartTime;
 				Log.Info($"Step '{PreviousStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {title}");
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
 				if (isAllowed)
 				{
-					DisplayProgressBar("Scene Processor Step " + CurrentStep, title);
+					DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
 				}
 			}
 
 			PreviousStepStartTime = now;
-			PreviousStepTitle = title;
+			PreviousStepTitle = CurrentStepTitle;
 			CurrentStep++;
 			return isAllowed;
 		}
