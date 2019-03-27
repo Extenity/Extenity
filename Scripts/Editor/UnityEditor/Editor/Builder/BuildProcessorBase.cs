@@ -215,14 +215,11 @@ namespace Extenity.UnityEditorToolbox
 					}
 				}
 
-				// Call finalization process
-				yield return Task.StartNested(OnAfterProcess(definition, configuration, runAsync));
+				EndLastStep();
 
-				var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
-				if (CurrentStep - 1 > 0)
-				{
-					Log.Info($"Step {CurrentStep - 1} took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-				}
+				// Call finalization process
+				DisplayProgressBar("Finalizing Scene Processor", "Finalization");
+				yield return Task.StartNested(OnAfterProcess(definition, configuration, runAsync));
 
 				// Hack: This is needed to save the scene after lightmap settings change.
 				// For some reason, we need to wait one more frame or the scene would get
@@ -452,6 +449,15 @@ namespace Extenity.UnityEditorToolbox
 			PreviousStepTitle = CurrentStepTitle;
 			CurrentStep++;
 			return isAllowed;
+		}
+
+		private static void EndLastStep()
+		{
+			var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
+			if (CurrentStep - 1 > 0)
+			{
+				Log.Info($"Step '{CurrentStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
+			}
 		}
 
 		protected static void AggressivelySaveOpenScenes()
