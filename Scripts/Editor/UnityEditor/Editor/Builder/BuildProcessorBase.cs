@@ -69,8 +69,7 @@ namespace Extenity.UnityEditorToolbox
 		public static int CurrentStep { get; private set; }
 		public static string CurrentStepTitle { get; private set; }
 		public static Stopwatch ProcessStopwatch { get; private set; }
-		public static TimeSpan PreviousStepStartTime { get; private set; }
-		public static string PreviousStepTitle { get; private set; }
+		public static TimeSpan CurrentStepStartTime { get; private set; }
 		private static CoroutineTask Task;
 
 		public delegate void ProcessFinishedAction(bool succeeded);
@@ -138,12 +137,11 @@ namespace Extenity.UnityEditorToolbox
 					yield break;
 				}
 
-				CurrentStep = 1;
+				CurrentStep = 0;
 				CurrentStepTitle = null;
 				ProcessStopwatch = new Stopwatch();
 				ProcessStopwatch.Start();
-				PreviousStepStartTime = new TimeSpan();
-				PreviousStepTitle = null;
+				CurrentStepStartTime = new TimeSpan();
 
 				if (!configuration.DontLoadAndMergeScenes)
 				{
@@ -210,12 +208,13 @@ namespace Extenity.UnityEditorToolbox
 					foreach (var method in methods)
 					{
 						CurrentStepTitle = method.Name;
+						StartStep();
 						var enumerator = (IEnumerator)method.Invoke(this, new object[] { definition, configuration, runAsync });
 						yield return Task.StartNested(enumerator);
+						EndStep();
+						yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 					}
 				}
-
-				EndLastStep();
 
 				// Call finalization process
 				DisplayProgressBar("Finalizing Scene Processor", "Finalization");
@@ -241,8 +240,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				IsProcessorRunning = false;
 				ProcessStopwatch = null;
-				PreviousStepStartTime = new TimeSpan();
-				PreviousStepTitle = null;
+				CurrentStepStartTime = new TimeSpan();
 				CurrentStep = 0;
 				CurrentStepTitle = null;
 
@@ -328,40 +326,23 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Start/End Step
 
-		protected static bool StartStep(bool isAllowed = true)
+		protected static void StartStep()
 		{
 			var now = ProcessStopwatch.Elapsed;
-			var isFirstStep = CurrentStep == 1;
-			var skippedText = isAllowed ? "" : "SKIPPED ";
 
-			if (isFirstStep)
-			{
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
-			}
-			else
-			{
-				var previousStepDuration = now - PreviousStepStartTime;
-				Log.Info($"Step '{PreviousStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
-				if (isAllowed)
-				{
-					DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
-				}
-			}
-
-			PreviousStepStartTime = now;
-			PreviousStepTitle = CurrentStepTitle;
 			CurrentStep++;
-			return isAllowed;
+			CurrentStepStartTime = now;
+
+			Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
+			DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
 		}
 
-		private static void EndLastStep()
+		private static void EndStep()
 		{
-			var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
-			if (CurrentStep - 1 > 0)
-			{
-				Log.Info($"Step '{CurrentStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-			}
+			var duration = ProcessStopwatch.Elapsed - CurrentStepStartTime;
+			Log.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
+			CurrentStepTitle = null;
+			CurrentStepStartTime = new TimeSpan();
 		}
 
 		#endregion
