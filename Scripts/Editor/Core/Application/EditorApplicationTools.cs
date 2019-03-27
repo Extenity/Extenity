@@ -54,6 +54,8 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Update Continuum
 
+		// TODO: See if EditorApplication.QueuePlayerLoopUpdate does the job.
+
 		/// <summary>
 		/// Creates and destroys gameobjects to keep EditorApplication.update calls coming.
 		/// That's the worst idea ever but it's the only way I could find.
