@@ -260,7 +260,7 @@ namespace Extenity.UnityEditorToolbox
 
 		#endregion
 
-		#region Processor Methods
+		#region Collect Processor Methods
 
 		public static List<MethodInfo> CollectProcessorMethods(string category)
 		{
@@ -322,6 +322,46 @@ namespace Extenity.UnityEditorToolbox
 			}
 
 			return methods;
+		}
+
+		#endregion
+
+		#region Start/End Step
+
+		protected static bool StartStep(bool isAllowed = true)
+		{
+			var now = ProcessStopwatch.Elapsed;
+			var isFirstStep = CurrentStep == 1;
+			var skippedText = isAllowed ? "" : "SKIPPED ";
+
+			if (isFirstStep)
+			{
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
+			}
+			else
+			{
+				var previousStepDuration = now - PreviousStepStartTime;
+				Log.Info($"Step '{PreviousStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
+				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
+				if (isAllowed)
+				{
+					DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
+				}
+			}
+
+			PreviousStepStartTime = now;
+			PreviousStepTitle = CurrentStepTitle;
+			CurrentStep++;
+			return isAllowed;
+		}
+
+		private static void EndLastStep()
+		{
+			var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
+			if (CurrentStep - 1 > 0)
+			{
+				Log.Info($"Step '{CurrentStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
+			}
 		}
 
 		#endregion
@@ -423,42 +463,6 @@ namespace Extenity.UnityEditorToolbox
 		#endregion
 
 		#region Tools
-
-		protected static bool StartStep(bool isAllowed = true)
-		{
-			var now = ProcessStopwatch.Elapsed;
-			var isFirstStep = CurrentStep == 1;
-			var skippedText = isAllowed ? "" : "SKIPPED ";
-
-			if (isFirstStep)
-			{
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
-			}
-			else
-			{
-				var previousStepDuration = now - PreviousStepStartTime;
-				Log.Info($"Step '{PreviousStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-				Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | {skippedText}Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
-				if (isAllowed)
-				{
-					DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
-				}
-			}
-
-			PreviousStepStartTime = now;
-			PreviousStepTitle = CurrentStepTitle;
-			CurrentStep++;
-			return isAllowed;
-		}
-
-		private static void EndLastStep()
-		{
-			var previousStepDuration = ProcessStopwatch.Elapsed - PreviousStepStartTime;
-			if (CurrentStep - 1 > 0)
-			{
-				Log.Info($"Step '{CurrentStepTitle}' took {previousStepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-			}
-		}
 
 		protected static void AggressivelySaveOpenScenes()
 		{
