@@ -145,53 +145,7 @@ namespace Extenity.UnityEditorToolbox
 
 				if (!configuration.DontLoadAndMergeScenes)
 				{
-					// Copy main scene to processed scene path
-					{
-						// Open the main scene, or reopen if already opened. This will head us to a clean start.
-						EditorSceneManager.OpenScene(definition.MainScenePath, OpenSceneMode.Single);
-
-						// Copy the main scene to processed scene path and load the processed scene which we will need when merging scenes.
-						var activeScene = EditorSceneManager.GetActiveScene();
-						var result = EditorSceneManager.SaveScene(activeScene, definition.ProcessedScenePath, false);
-						if (!result)
-						{
-							throw new Exception("Could not copy main scene to processed scene path.");
-						}
-					}
-
-					// Disable automatic lightmap baking in processed scene
-					{
-						DisableAutomaticLightmapBakingForActiveScene();
-					}
-
-					// Merge scenes into processed scene
-					{
-						// Processed scene should already be loaded by now.
-						var processingScene = EditorSceneManager.GetSceneByPath(definition.ProcessedScenePath);
-						if (!processingScene.IsValid())
-						{
-							throw new Exception($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
-						}
-
-						// Merge other scenes into processing scene.
-						if (definition.MergedScenePaths != null)
-						{
-							foreach (var mergedScenePath in definition.MergedScenePaths)
-							{
-								if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
-								{
-									throw new Exception($"Merged scene could not be found at path '{mergedScenePath}'.");
-								}
-
-								// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
-								var mergedScene = EditorSceneManager.OpenScene(mergedScenePath, OpenSceneMode.Additive);
-								EditorSceneManager.MergeScenes(mergedScene, processingScene);
-							}
-						}
-
-						// Save processed scene
-						EditorSceneManager.SaveOpenScenes();
-					}
+					MergeScenesIntoProcessedScene(definition);
 				}
 
 				Log.Info("Scene is ready to be processed. Starting the process.");
@@ -253,6 +207,62 @@ namespace Extenity.UnityEditorToolbox
 			if (OnProcessFinished != null)
 			{
 				OnProcessFinished(succeeded);
+			}
+		}
+
+		#endregion
+
+		#region Merge Scenes
+
+		private void MergeScenesIntoProcessedScene(BuildProcessorSceneDefinition definition)
+		{
+			// Copy main scene to processed scene path
+			{
+				// Open the main scene, or reopen if already opened. This will head us to a clean start.
+				EditorSceneManager.OpenScene(definition.MainScenePath, OpenSceneMode.Single);
+
+				// Copy the main scene to processed scene path and load the processed scene which we will need when merging scenes.
+				var activeScene = EditorSceneManager.GetActiveScene();
+				var result = EditorSceneManager.SaveScene(activeScene, definition.ProcessedScenePath, false);
+				if (!result)
+				{
+					throw new Exception("Could not copy main scene to processed scene path.");
+				}
+			}
+
+			// Disable automatic lightmap baking in processed scene. That complicates things.
+			// The lighting should be calculated in a scene processing step, after modifications.
+			{
+				DisableAutomaticLightmapBakingForActiveScene();
+			}
+
+			// Merge scenes into processed scene
+			{
+				// Processed scene should already be loaded by now.
+				var processingScene = EditorSceneManager.GetSceneByPath(definition.ProcessedScenePath);
+				if (!processingScene.IsValid())
+				{
+					throw new Exception($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
+				}
+
+				// Merge other scenes into processing scene.
+				if (definition.MergedScenePaths != null)
+				{
+					foreach (var mergedScenePath in definition.MergedScenePaths)
+					{
+						if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
+						{
+							throw new Exception($"Merged scene could not be found at path '{mergedScenePath}'.");
+						}
+
+						// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
+						var mergedScene = EditorSceneManager.OpenScene(mergedScenePath, OpenSceneMode.Additive);
+						EditorSceneManager.MergeScenes(mergedScene, processingScene);
+					}
+				}
+
+				// Save processed scene
+				EditorSceneManager.SaveOpenScenes();
 			}
 		}
 
