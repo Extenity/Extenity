@@ -27,18 +27,18 @@ namespace Extenity.UnityEditorToolbox
 	/// <summary>
 	/// </summary>
 	/// <remarks>
-	/// Some notes on trying to do all preprocesses at Unity build callbacks.
+	/// Some notes on trying to do all preprocess operations inside Unity build callbacks.
 	/// See 713951791.
 	/// 
-	/// Initial idea was doing all preprocesses when Unity needs to build the application.
-	/// That way, the user would use the Build button in BuildSettings to build the application.
+	/// Initial idea was doing all the preprocesses when Unity needs to build the application.
+	/// That way, the user would use the regular Build button to build the application.
 	/// But then, Unity is such a pain in the arse that we better not use any build callbacks
 	/// to do serious modifications to assets, especially scripts.
 	///
 	/// Instead of processing scenes in OnProcessScene callbacks or processing other assets
 	/// in OnPreprocessBuild callback, as a more cleaner approach, we process these assets
 	/// just before triggering the actual Unity build. Do any AssetDatabase.Refresh operations
-	/// there. Then we start Unity build with all assets ready to be processed.
+	/// there. Then we start Unity build with all assets ready to be built.
 	/// </remarks>
 	public abstract class BuildProcessorBase<TBuildProcessor> :
 		IPreprocessBuildWithReport,
@@ -48,7 +48,6 @@ namespace Extenity.UnityEditorToolbox
 	{
 		#region Configuration
 
-		public abstract string BuildProcessorName { get; }
 		public abstract int callbackOrder { get; }
 		public abstract BuildProcessorSceneDefinition[] Scenes { get; }
 		public abstract Dictionary<string, BuildProcessConfiguration> Configurations { get; }
@@ -344,7 +343,7 @@ namespace Extenity.UnityEditorToolbox
 
 		public void OnPreprocessBuild(BuildReport report)
 		{
-			Log.Info($"Build processor '{BuildProcessorName}' checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
+			Log.Info($"Build processor checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
 
 			// See 713951791.
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
@@ -352,7 +351,7 @@ namespace Extenity.UnityEditorToolbox
 
 		public void OnPostprocessBuild(BuildReport report)
 		{
-			Log.Info($"Build processor '{BuildProcessorName}' checking in at postprocess callback... Report details: " + report.ToDetailedLogString());
+			Log.Info($"Build processor checking in at postprocess callback... Report details: " + report.ToDetailedLogString());
 		}
 
 		public void OnProcessScene(Scene scene, BuildReport report)
