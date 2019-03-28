@@ -11,15 +11,7 @@ namespace Extenity.UnityEditorToolbox
 		public string Category;
 		public bool DontLoadAndMergeScenes;
 
-		public bool SkipAtCustomProcessing;
-		public bool SkipAtBuildPreprocessing;
-
 		public LightingBuildConfiguration Lighting;
-
-		public bool NeedsProcessing(bool isLaunchedByUser)
-		{
-			return isLaunchedByUser ? !SkipAtCustomProcessing : !SkipAtBuildPreprocessing;
-		}
 
 		#region Consistency
 

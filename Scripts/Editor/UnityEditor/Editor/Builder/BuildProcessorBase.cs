@@ -90,11 +90,11 @@ namespace Extenity.UnityEditorToolbox
 			}
 			OnProcessFinished += onProcessFinished;
 			var processorInstance = (TBuildProcessor)Activator.CreateInstance(typeof(TBuildProcessor));
-			Task = CoroutineTask.Create(processorInstance.DoProcessScene(scene, configurationName, true, true), false);
+			Task = CoroutineTask.Create(processorInstance.DoProcessScene(scene, configurationName, true), false);
 			Task.StartInEditorUpdate(true, true, null);
 		}
 
-		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool isLaunchedByUser, bool runAsync)
+		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
 		{
 			if (IsProcessorRunning)
 				throw new Exception("Scene processor was already running.");
@@ -124,18 +124,9 @@ namespace Extenity.UnityEditorToolbox
 					throw new Exception($"Configuration '{configurationName}' does not exist.");
 				}
 
-				// See if we need to process the scene
-				if (configuration.NeedsProcessing(isLaunchedByUser))
-				{
-					Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
-					Log.IncreaseIndent();
-					indented = true;
-				}
-				else
-				{
-					Log.Info($"Skipping configuration '{configurationName}' on scene at path: {scenePath}");
-					yield break;
-				}
+				Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
+				Log.IncreaseIndent();
+				indented = true;
 
 				CurrentStep = 0;
 				CurrentStepTitle = null;
