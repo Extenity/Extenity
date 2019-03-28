@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Extenity.ApplicationToolbox;
-using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
@@ -15,8 +14,6 @@ using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
 using UnityEditor;
-using UnityEditor.Build;
-using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,6 +24,10 @@ namespace Extenity.UnityEditorToolbox
 	/// <summary>
 	/// </summary>
 	/// <remarks>
+	/// During scene processes, no changes are allowed that requires a code recompilation.
+	/// That complicates things tremendously.
+	/// See 112739521.
+	/// 
 	/// Some notes on trying to do all preprocess operations inside Unity build callbacks.
 	/// See 713951791.
 	/// 
@@ -40,15 +41,11 @@ namespace Extenity.UnityEditorToolbox
 	/// just before triggering the actual Unity build. Do any AssetDatabase.Refresh operations
 	/// there. Then we start Unity build with all assets ready to be built.
 	/// </remarks>
-	public abstract class BuildProcessorBase<TBuildProcessor> :
-		IPreprocessBuildWithReport,
-		IPostprocessBuildWithReport,
-		IProcessSceneWithReport
+	public abstract class BuildProcessorBase<TBuildProcessor>
 		where TBuildProcessor : BuildProcessorBase<TBuildProcessor>
 	{
 		#region Configuration
 
-		public abstract int callbackOrder { get; }
 		public abstract BuildProcessorSceneDefinition[] Scenes { get; }
 		public abstract Dictionary<string, BuildProcessConfiguration> Configurations { get; }
 
@@ -335,37 +332,6 @@ namespace Extenity.UnityEditorToolbox
 			Log.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
 			CurrentStepTitle = null;
 			CurrentStepStartTime = new TimeSpan();
-		}
-
-		#endregion
-
-		#region Build Preprocessor / Build Postprocessor / Scene Processor
-
-		public void OnPreprocessBuild(BuildReport report)
-		{
-			Log.Info($"Build processor checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
-
-			// See 713951791.
-			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
-		}
-
-		public void OnPostprocessBuild(BuildReport report)
-		{
-			Log.Info($"Build processor checking in at postprocess callback... Report details: " + report.ToDetailedLogString());
-		}
-
-		public void OnProcessScene(Scene scene, BuildReport report)
-		{
-			if (EditorApplication.isPlayingOrWillChangePlaymode)
-			{
-				// TODO: Automatically processing the scene when pressing the Play button should be made here. But processing the scene each time the Play button gets pressed is madness. So before doing that, a mechanism for checking if a process is already done before should be implemented first.
-				return;
-			}
-
-			Log.Info($"Build processor checking in at scene process callback for '{scene.name}'.");
-
-			// See 713951791.
-			//DoProcessScene(scene, ...);
 		}
 
 		#endregion
