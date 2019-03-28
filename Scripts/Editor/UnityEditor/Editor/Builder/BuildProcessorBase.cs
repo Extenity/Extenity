@@ -16,9 +16,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
 using UnityEditor;
 using UnityEditor.Build;
-#if UNITY_2018_1_OR_NEWER
 using UnityEditor.Build.Reporting;
-#endif
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -43,15 +41,9 @@ namespace Extenity.UnityEditorToolbox
 	/// there. Then we start Unity build with all assets ready to be processed.
 	/// </remarks>
 	public abstract class BuildProcessorBase<TBuildProcessor> :
-#if UNITY_2018_1_OR_NEWER
 		IPreprocessBuildWithReport,
 		IPostprocessBuildWithReport,
 		IProcessSceneWithReport
-#else
-		IPreprocessBuild, 
-		IPostprocessBuild, 
-		IProcessScene
-#endif
 		where TBuildProcessor : BuildProcessorBase<TBuildProcessor>
 	{
 		#region Configuration
@@ -350,11 +342,7 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Build Preprocessor / Build Postprocessor / Scene Processor
 
-#if UNITY_2018_1_OR_NEWER
 		public void OnPreprocessBuild(BuildReport report)
-#else
-		public void OnPreprocessBuild(BuildTarget target, string path)
-#endif
 		{
 			Log.Info($"Build processor '{BuildProcessorName}' checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
 
@@ -362,20 +350,12 @@ namespace Extenity.UnityEditorToolbox
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
 		}
 
-#if UNITY_2018_1_OR_NEWER
 		public void OnPostprocessBuild(BuildReport report)
-#else
-		public void OnPostprocessBuild(BuildTarget target, string path)
-#endif
 		{
 			Log.Info($"Build processor '{BuildProcessorName}' checking in at postprocess callback... Report details: " + report.ToDetailedLogString());
 		}
 
-#if UNITY_2018_1_OR_NEWER
 		public void OnProcessScene(Scene scene, BuildReport report)
-#else
-		public void OnProcessScene(Scene scene)
-#endif
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
