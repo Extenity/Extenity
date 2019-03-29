@@ -1,5 +1,4 @@
-﻿using System;
-using Extenity.FlowToolbox;
+﻿using Extenity.FlowToolbox;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,7 +13,8 @@ namespace Extenity.UIToolbox
 			var selectable = GetComponent<Selectable>();
 			if (selectable == null)
 			{
-				throw new NotImplementedException("DontKeepFocusOnClick needs a Selectable component to work");
+				Log.DebugError($"{nameof(DontKeepFocusOnClick)} needs a {nameof(Selectable)} component to work");
+				return;
 			}
 
 			// -------------------------------------------------------------------------
@@ -35,7 +35,7 @@ namespace Extenity.UIToolbox
 			// -------------------------------------------------------------------------
 			// -------------------------------------------------------------------------
 
-			throw new NotImplementedException("DontKeepFocusOnClick is not implemented for type " + selectable.GetType().Name);
+			Log.DebugError($"{nameof(DontKeepFocusOnClick)} is not implemented for type {selectable.GetType().Name}");
 		}
 
 		protected void OnDestroy()
