@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace Extenity.UnityEditorToolbox
 {
 
-	// TODO: Detect and throw error if any changes made that needs recompilation during scene processes. See 112739521.
+	// TODO: Detect and throw error if any changes made that needs recompilation during scene processes. Try to use CompilationPipeline.assemblyCompilationStarted. See 112739521.
 
 	public class BuildProcessorCallbacks :
 		IPreprocessBuildWithReport,
@@ -18,7 +18,15 @@ namespace Extenity.UnityEditorToolbox
 
 		public void OnPreprocessBuild(BuildReport report)
 		{
-			Log.Info($"Build processor checking in at preprocess callback... Report details: " + report.ToDetailedLogString());
+#if Release
+			var release = true;
+#else
+			var release = false;
+#endif
+			//var unityDebug = Debug.isDebugBuild; This does not say what option the build was started. Only tells if the Development option is ticked in Build Settings window.
+			var unityDebug = report.summary.options.HasFlag(BuildOptions.Development);
+
+			Log.Info($"Build processor checking in at preprocess callback (Release: {release}, UnityDev: {unityDebug})... Report details: " + report.ToDetailedLogString());
 
 			// See 713951791.
 			//EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before building."); Disabled because it causes an internal Unity error at build time.
