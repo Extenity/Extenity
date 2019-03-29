@@ -11,6 +11,7 @@ using Extenity.GameObjectToolbox.Editor;
 using Extenity.ParallelToolbox;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.SceneManagementToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
 using UnityEditor;
@@ -18,7 +19,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.BuildMachine.Editor
 {
 
 	/// <summary>

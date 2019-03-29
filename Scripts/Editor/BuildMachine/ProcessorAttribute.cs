@@ -1,6 +1,6 @@
 using System;
 
-namespace Extenity.UnityEditorToolbox.Editor
+namespace Extenity.BuildMachine.Editor
 {
 
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]

@@ -4,7 +4,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.UnityEditorToolbox
+namespace Extenity.BuildMachine.Editor
 {
 
 	// TODO: Detect and throw error if any changes made that needs recompilation during scene processes. Try to use CompilationPipeline.assemblyCompilationStarted. See 112739521.
