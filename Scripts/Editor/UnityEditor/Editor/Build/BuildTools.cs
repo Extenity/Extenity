@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -548,7 +547,7 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				using (Log.Indent($"Moving assets to temporary location '{TempLocationBasePath}'..."))
 				{
-					EditorApplicationTools.EnsureNotCompiling();
+					//EditorApplicationTools.EnsureNotCompiling(); Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
 					MakeSureNothingExists(TempPaths);
 					for (var i = 0; i < OriginalPaths.Count; i++)
 					{
@@ -557,7 +556,7 @@ namespace Extenity.BuildToolbox.Editor
 					MakeSureNothingExists(OriginalPaths); // Before refreshing AssetDatabase.
 					AssetDatabase.Refresh();
 					MakeSureNothingExists(OriginalPaths); // After refreshing AssetDatabase.
-					EditorApplicationTools.EnsureNotCompiling();
+					//EditorApplicationTools.EnsureNotCompiling(); Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
 				}
 			}
 
@@ -565,7 +564,7 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				using (Log.Indent($"Moving assets back to original location from '{TempLocationBasePath}'..."))
 				{
-					EditorApplicationTools.EnsureNotCompiling();
+					//EditorApplicationTools.EnsureNotCompiling(); Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
 					MakeSureNothingExists(OriginalPaths);
 					for (var i = 0; i < OriginalPaths.Count; i++)
 					{
@@ -574,7 +573,7 @@ namespace Extenity.BuildToolbox.Editor
 					MakeSureNothingExists(TempPaths); // Before refreshing AssetDatabase.
 					AssetDatabase.Refresh();
 					MakeSureNothingExists(TempPaths); // After refreshing AssetDatabase.
-					EditorApplicationTools.EnsureNotCompiling();
+					//EditorApplicationTools.EnsureNotCompiling(); Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
 				}
 			}
 
