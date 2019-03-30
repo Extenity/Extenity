@@ -395,6 +395,15 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
 			}
+
+			// Ensure the symbols added.
+			foreach (var symbol in symbols)
+			{
+				if (!HasDefineSymbol(symbol, targetGroup))
+				{
+					throw new Exception($"Failed to complete Define Symbol Add operation for symbol(s) '{string.Join(", ", symbol)}'.");
+				}
+			}
 		}
 
 		public static void RemoveDefineSymbols(string[] symbols)
@@ -414,6 +423,15 @@ namespace Extenity.BuildToolbox.Editor
 			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
 			{
 				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
+			}
+
+			// Ensure the symbols removed.
+			foreach (var symbol in symbols)
+			{
+				if (HasDefineSymbol(symbol, targetGroup))
+				{
+					throw new Exception($"Failed to complete Define Symbol Remove operation for symbol(s) '{string.Join(", ", symbol)}'.");
+				}
 			}
 		}
 
@@ -451,6 +469,45 @@ namespace Extenity.BuildToolbox.Editor
 			}
 
 			return result;
+		}
+
+		#endregion
+
+		#region Temporarily Add Define Symbols
+
+		public class TemporarilyAddDefineSymbolsHandler : IDisposable
+		{
+			public readonly string[] Symbols;
+
+			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore)
+			{
+				Symbols = (string[])symbols.Clone();
+
+				Log.Info($"Adding define symbols '{string.Join(", ", Symbols)}'.");
+
+				if (ensureNotAddedBefore)
+				{
+					foreach (var symbol in Symbols)
+					{
+						if (HasDefineSymbol(symbol))
+						{
+							throw new Exception($"The symbol '{symbol}' was already added before.");
+						}
+					}
+				}
+				AddDefineSymbols(Symbols);
+			}
+
+			public void Dispose()
+			{
+				Log.Info($"Removing define symbols '{string.Join(", ", Symbols)}'.");
+				RemoveDefineSymbols(Symbols);
+			}
+		}
+
+		public static IDisposable TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
+		{
+			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore);
 		}
 
 		#endregion
