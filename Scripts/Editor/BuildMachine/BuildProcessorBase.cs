@@ -415,6 +415,11 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Tools
 
+		/// <summary>
+		/// During scene processes, no changes are allowed that requires a code recompilation.
+		/// That complicates things tremendously.
+		/// See 112739521.
+		/// </summary>
 		private static void EnsureNotCompiling(string message)
 		{
 			if (EditorApplication.isCompiling)
