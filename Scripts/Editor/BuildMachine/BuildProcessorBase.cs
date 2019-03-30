@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Extenity.ApplicationToolbox;
+using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
@@ -112,6 +113,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					throw new Exception($"Configuration '{configurationName}' does not exist.");
 				}
+				configuration.CheckConsistencyAndThrow();
 
 				Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
 				Log.IncreaseIndent();
@@ -135,10 +137,7 @@ namespace Extenity.BuildMachine.Editor
 
 				// Call custom processors
 				{
-					var category = string.IsNullOrEmpty(configuration.Category)
-						? "Default"
-						: configuration.Category;
-					var methods = CollectProcessorMethods(category);
+					var methods = CollectProcessorMethods(configuration);
 					foreach (var method in methods)
 					{
 						CurrentStepTitle = method.Name;
@@ -250,10 +249,11 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Collect Processor Methods
 
-		public static List<MethodInfo> CollectProcessorMethods(string category)
+		public static List<MethodInfo> CollectProcessorMethods(BuildProcessConfiguration configuration)
 		{
-			if (string.IsNullOrEmpty(category))
-				throw new ArgumentNullException(nameof(category));
+			configuration.CheckConsistencyAndThrow();
+			var includedCategories = configuration.IncludedCategories;
+			var excludedCategories = configuration.ExcludedCategories;
 
 			var methods = typeof(TBuildProcessor)
 				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -271,7 +271,25 @@ namespace Extenity.BuildMachine.Editor
 								var attribute = method.GetAttribute<ProcessorAttribute>(true);
 								if (attribute != null && attribute.Categories.IsNotNullAndEmpty())
 								{
-									return attribute.Categories.Contains(category);
+									// See if the attribute contains any one of the included categories
+									foreach (var includedCategory in includedCategories)
+									{
+										if (attribute.Categories.Contains(includedCategory))
+										{
+											// Make sure the attribute does not contain any one of the excluded categories
+											if (excludedCategories.IsNotNullAndEmpty())
+											{
+												foreach (var excludedCategory in excludedCategories)
+												{
+													if (attribute.Categories.Contains(excludedCategory))
+													{
+														return false;
+													}
+												}
+											}
+											return true;
+										}
+									}
 								}
 							}
 						}
