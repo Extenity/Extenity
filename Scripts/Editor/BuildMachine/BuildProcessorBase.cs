@@ -70,6 +70,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges, ProcessFinishedAction onProcessFinished = null)
 		{
+			EnsureNotCompiling("Tried to start scene processing while compiling.");
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
 				throw new Exception("Tried to start scene processing while in play mode.");
@@ -137,26 +138,30 @@ namespace Extenity.BuildMachine.Editor
 
 				// Call custom processors
 				{
+					EnsureNotCompiling("Detected script compilation before processing steps.");
 					var methods = CollectProcessorMethods(configuration);
 					foreach (var method in methods)
 					{
 						CurrentStepTitle = method.Name;
+						EnsureNotCompiling($"Detected script compilation while stepping into '{CurrentStepTitle}'");
 						StartStep();
 						var enumerator = (IEnumerator)method.Invoke(this, new object[] { definition, configuration, runAsync });
 						yield return Task.StartNested(enumerator);
 						EndStep();
 						yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 					}
+					EnsureNotCompiling("Detected script compilation after processing steps.");
 				}
 
 				// Call finalization process
 				DisplayProgressBar("Finalizing Scene Processor", "Finalization");
 				yield return Task.StartNested(OnAfterProcess(definition, configuration, runAsync));
 
+				EnsureNotCompiling("Detected script compilation before finalization.");
+				DisplayProgressBar("Finalizing Scene Processor", "Saving scene");
 				// Hack: This is needed to save the scene after lightmap settings change.
 				// For some reason, we need to wait one more frame or the scene would get
 				// marked as unsaved.
-				DisplayProgressBar("Finalizing Scene Processor", "Saving scene");
 				yield return null;
 				AggressivelySaveOpenScenes();
 
@@ -409,6 +414,14 @@ namespace Extenity.BuildMachine.Editor
 		#endregion
 
 		#region Tools
+
+		private static void EnsureNotCompiling(string message)
+		{
+			if (EditorApplication.isCompiling)
+			{
+				throw new Exception(message);
+			}
+		}
 
 		protected static void AggressivelySaveOpenScenes()
 		{
