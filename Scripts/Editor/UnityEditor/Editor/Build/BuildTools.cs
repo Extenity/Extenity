@@ -371,6 +371,90 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Add/Remove Define Symbols
+
+		public static void AddDefineSymbols(string[] symbols)
+		{
+			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
+		}
+
+		/// <summary>
+		/// Source: https://answers.unity.com/questions/1225189/how-can-i-change-scripting-define-symbols-before-a.html
+		/// </summary>
+		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
+		{
+			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var allDefines = definesString.Split(';').ToList();
+
+			foreach (var symbol in symbols)
+				if (!allDefines.Contains(symbol))
+					allDefines.Add(symbol);
+
+			var newDefinesString = string.Join(";", allDefines);
+			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
+			{
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
+			}
+		}
+
+		public static void RemoveDefineSymbols(string[] symbols)
+		{
+			RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
+		}
+
+		public static void RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
+		{
+			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var allDefines = definesString.Split(';').ToList();
+
+			foreach (var symbol in symbols)
+				allDefines.Remove(symbol);
+
+			var newDefinesString = string.Join(";", allDefines);
+			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
+			{
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
+			}
+		}
+
+		public static string GetDefineSymbols()
+		{
+			return GetDefineSymbols(EditorUserBuildSettings.selectedBuildTargetGroup);
+		}
+
+		public static string GetDefineSymbols(BuildTargetGroup targetGroup)
+		{
+			return PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+		}
+
+		public static bool HasDefineSymbol(string symbol)
+		{
+			return HasDefineSymbol(symbol, EditorUserBuildSettings.selectedBuildTargetGroup);
+		}
+
+		public static bool HasDefineSymbol(string symbol, BuildTargetGroup targetGroup)
+		{
+			if (string.IsNullOrWhiteSpace(symbol))
+				throw new ArgumentNullException(nameof(symbol));
+
+			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var allDefines = definesString.Split(';').ToList();
+			var result = allDefines.Contains(symbol);
+
+			// Warn the user if there is that symbol but with different letter cases.
+			if (!result)
+			{
+				if (allDefines.Contains(symbol, StringComparer.OrdinalIgnoreCase))
+				{
+					Log.Warning($"Checking for define symbol '{symbol}' for build target group '{targetGroup}' which has the symbol but with different letter cases.");
+				}
+			}
+
+			return result;
+		}
+
+		#endregion
+
 		#region Temporarily Move Directories
 
 		public class TemporarilyMoveHandler : IDisposable
