@@ -181,7 +181,46 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static void EnsureMercurialRepositoryDoesNotContainAnyChanges()
 		{
-			Log.Warning("Checking for Mercurial repository changes is not implemented yet!");
+			string output;
+			int exitCode;
+			try
+			{
+				exitCode = RunConsoleCommandAndCaptureOutput("hg", "status", out output);
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Could not get status of Mercurial repository.", exception);
+			}
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not get status of Mercurial repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			output = output.Trim().Trim(new[] { '\r', '\n' });
+
+			if (!string.IsNullOrWhiteSpace(output))
+			{
+				throw new Exception("There are some modifications in Mercurial repository. Details:\n" + output);
+			}
+
+			// Check subrepositories
+			try
+			{
+				exitCode = RunConsoleCommandAndCaptureOutput("hg", "onsub \"hg status\"", out output);
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Could not get status of Mercurial subrepositories.", exception);
+			}
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not get status of Mercurial subrepositories. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			output = output.Trim().Trim(new[] { '\r', '\n' });
+
+			if (!string.IsNullOrWhiteSpace(output))
+			{
+				throw new Exception("There are some modifications in Mercurial subrepositories. Details:\n" + output);
+			}
 		}
 
 		public static string GetVersionInfoFromMercurialRepository()
@@ -192,9 +231,9 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				exitCode = RunConsoleCommandAndCaptureOutput("hg", "id -i -b", out output);
 			}
-			catch (Exception e)
+			catch (Exception exception)
 			{
-				throw new Exception("Could not get version from Mercurial repository. Exception: " + e);
+				throw new Exception("Could not get version from Mercurial repository. Exception: " + exception);
 			}
 
 			if (exitCode != 0)
