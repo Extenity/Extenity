@@ -8,13 +8,13 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[Serializable]
-	public struct BuildProcessConfiguration : IConsistencyChecker
+	public struct SceneProcessorConfiguration : IConsistencyChecker
 	{
 		public string[] IncludedCategories;
 		public string[] ExcludedCategories;
 		public bool DontLoadAndMergeScenes;
 
-		public LightingBuildConfiguration Lighting;
+		public LightingConfiguration Lighting;
 
 		#region Consistency
 

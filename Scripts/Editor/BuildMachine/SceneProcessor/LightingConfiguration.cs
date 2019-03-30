@@ -6,7 +6,7 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[Serializable]
-	public struct LightingBuildConfiguration : IConsistencyChecker
+	public struct LightingConfiguration : IConsistencyChecker
 	{
 		public bool RealtimeGlobalIlluminationEnabled;
 		public bool BakedGlobalIlluminationEnabled;

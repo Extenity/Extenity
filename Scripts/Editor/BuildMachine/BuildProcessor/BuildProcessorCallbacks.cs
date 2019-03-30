@@ -12,7 +12,7 @@ namespace Extenity.BuildMachine.Editor
 	public class BuildProcessorCallbacks :
 		IPreprocessBuildWithReport,
 		IPostprocessBuildWithReport,
-		IProcessSceneWithReport
+		IProcessSceneWithReport // TODO: Move this into SceneProcessorCallbacks
 	{
 		public int callbackOrder => 10000;
 

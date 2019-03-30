@@ -43,13 +43,13 @@ namespace Extenity.BuildMachine.Editor
 	/// just before triggering the actual Unity build. Do any AssetDatabase.Refresh operations
 	/// there. Then we start Unity build with all assets ready to be built.
 	/// </remarks>
-	public abstract class BuildProcessorBase<TBuildProcessor>
-		where TBuildProcessor : BuildProcessorBase<TBuildProcessor>
+	public abstract class SceneProcessorBase<TSceneProcessor>
+		where TSceneProcessor : SceneProcessorBase<TSceneProcessor>
 	{
 		#region Configuration
 
-		public abstract BuildProcessorSceneDefinition[] Scenes { get; }
-		public abstract Dictionary<string, BuildProcessConfiguration> Configurations { get; }
+		public abstract SceneDefinition[] Scenes { get; }
+		public abstract Dictionary<string, SceneProcessorConfiguration> Configurations { get; }
 
 		#endregion
 
@@ -65,8 +65,8 @@ namespace Extenity.BuildMachine.Editor
 		public delegate void ProcessFinishedAction(bool succeeded);
 		public static event ProcessFinishedAction OnProcessFinished;
 
-		protected abstract IEnumerator OnBeforeProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
-		protected abstract IEnumerator OnAfterProcess(BuildProcessorSceneDefinition definition, BuildProcessConfiguration configuration, bool runAsync);
+		protected abstract IEnumerator OnBeforeSceneProcess(SceneDefinition definition, SceneProcessorConfiguration configuration, bool runAsync);
+		protected abstract IEnumerator OnAfterSceneProcess(SceneDefinition definition, SceneProcessorConfiguration configuration, bool runAsync);
 
 		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges, ProcessFinishedAction onProcessFinished = null)
 		{
@@ -80,7 +80,7 @@ namespace Extenity.BuildMachine.Editor
 				EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before processing.");
 			}
 			OnProcessFinished += onProcessFinished;
-			var processorInstance = (TBuildProcessor)Activator.CreateInstance(typeof(TBuildProcessor));
+			var processorInstance = (TSceneProcessor)Activator.CreateInstance(typeof(TSceneProcessor));
 			Task = CoroutineTask.Create(processorInstance.DoProcessScene(scene, configurationName, true), false);
 			Task.StartInEditorUpdate(true, true, null);
 		}
@@ -134,7 +134,7 @@ namespace Extenity.BuildMachine.Editor
 				Log.Info("Scene is ready to be processed. Starting the process.");
 
 				// Call initialization process
-				yield return Task.StartNested(OnBeforeProcess(definition, configuration, runAsync));
+				yield return Task.StartNested(OnBeforeSceneProcess(definition, configuration, runAsync));
 
 				// Call custom processors
 				{
@@ -155,7 +155,7 @@ namespace Extenity.BuildMachine.Editor
 
 				// Call finalization process
 				DisplayProgressBar("Finalizing Scene Processor", "Finalization");
-				yield return Task.StartNested(OnAfterProcess(definition, configuration, runAsync));
+				yield return Task.StartNested(OnAfterSceneProcess(definition, configuration, runAsync));
 
 				EnsureNotCompiling("Detected script compilation before finalization.");
 				DisplayProgressBar("Finalizing Scene Processor", "Saving scene");
@@ -198,7 +198,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Merge Scenes
 
-		private void MergeScenesIntoProcessedScene(BuildProcessorSceneDefinition definition)
+		private void MergeScenesIntoProcessedScene(SceneDefinition definition)
 		{
 			// Copy main scene to processed scene path
 			{
@@ -217,7 +217,7 @@ namespace Extenity.BuildMachine.Editor
 			// Disable automatic lightmap baking in processed scene. That complicates things.
 			// The lighting should be calculated in a scene processing step, after modifications.
 			{
-				DisableAutomaticLightmapBakingForActiveScene();
+				DisableAutomaticLightingForActiveScene();
 			}
 
 			// Merge scenes into processed scene
@@ -254,13 +254,13 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Collect Processor Methods
 
-		public static List<MethodInfo> CollectProcessorMethods(BuildProcessConfiguration configuration)
+		public static List<MethodInfo> CollectProcessorMethods(SceneProcessorConfiguration configuration)
 		{
 			configuration.CheckConsistencyAndThrow();
 			var includedCategories = configuration.IncludedCategories;
 			var excludedCategories = configuration.ExcludedCategories;
 
-			var methods = typeof(TBuildProcessor)
+			var methods = typeof(TSceneProcessor)
 				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 				.Where(method =>
 					{
@@ -268,12 +268,12 @@ namespace Extenity.BuildMachine.Editor
 						{
 							var parameters = method.GetParameters();
 							if (parameters.Length == 3 &&
-								parameters[0].ParameterType == typeof(BuildProcessorSceneDefinition) &&
-								parameters[1].ParameterType == typeof(BuildProcessConfiguration) &&
+								parameters[0].ParameterType == typeof(SceneDefinition) &&
+								parameters[1].ParameterType == typeof(SceneProcessorConfiguration) &&
 								parameters[2].ParameterType == typeof(bool)
 							)
 							{
-								var attribute = method.GetAttribute<ProcessorAttribute>(true);
+								var attribute = method.GetAttribute<SceneProcessStepAttribute>(true);
 								if (attribute != null && attribute.Categories.IsNotNullAndEmpty())
 								{
 									// See if the attribute contains any one of the included categories
@@ -301,7 +301,7 @@ namespace Extenity.BuildMachine.Editor
 						return false;
 					}
 				)
-				.OrderBy(method => method.GetAttribute<ProcessorAttribute>(true).Order)
+				.OrderBy(method => method.GetAttribute<SceneProcessStepAttribute>(true).Order)
 				.ToList();
 
 			//methods.LogList();
@@ -311,11 +311,11 @@ namespace Extenity.BuildMachine.Editor
 			{
 				var detected = false;
 				var previousMethod = methods[0];
-				var previousMethodOrder = previousMethod.GetAttribute<ProcessorAttribute>(true).Order;
+				var previousMethodOrder = previousMethod.GetAttribute<SceneProcessStepAttribute>(true).Order;
 				for (int i = 1; i < methods.Count; i++)
 				{
 					var currentMethod = methods[i];
-					var currentMethodOrder = currentMethod.GetAttribute<ProcessorAttribute>(true).Order;
+					var currentMethodOrder = currentMethod.GetAttribute<SceneProcessStepAttribute>(true).Order;
 
 					if (previousMethodOrder == currentMethodOrder)
 					{
@@ -362,12 +362,12 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Lightmap
 
-		protected void DisableAutomaticLightmapBakingForActiveScene()
+		protected void DisableAutomaticLightingForActiveScene()
 		{
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
 		}
 
-		protected void ApplyLightmapConfigurationToActiveScene(LightingBuildConfiguration configuration)
+		protected void ApplyLightingConfigurationToActiveScene(LightingConfiguration configuration)
 		{
 			Lightmapping.bakedGI = configuration.BakedGlobalIlluminationEnabled;
 			Lightmapping.realtimeGI = configuration.RealtimeGlobalIlluminationEnabled;

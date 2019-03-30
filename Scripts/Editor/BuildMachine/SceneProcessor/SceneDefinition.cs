@@ -6,7 +6,7 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[Serializable]
-	public class BuildProcessorSceneDefinition : IConsistencyChecker
+	public class SceneDefinition : IConsistencyChecker
 	{
 		/// <summary>
 		/// Path of the resulting scene after processing has been done. This should match the scene path in build settings.
