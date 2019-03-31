@@ -9,12 +9,11 @@ using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
-using Extenity.ParallelToolbox;
-using Extenity.ParallelToolbox.Editor;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -47,7 +46,6 @@ namespace Extenity.BuildMachine.Editor
 		public static string CurrentStepTitle { get; private set; }
 		public static Stopwatch ProcessStopwatch { get; private set; }
 		public static TimeSpan CurrentStepStartTime { get; private set; }
-		private static CoroutineTask Task;
 
 		public delegate void ProcessFinishedAction(bool succeeded);
 		public static event ProcessFinishedAction OnProcessFinished;
@@ -68,8 +66,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 			OnProcessFinished += onProcessFinished;
 			var processorInstance = (TSceneProcessor)Activator.CreateInstance(typeof(TSceneProcessor));
-			Task = CoroutineTask.Create(processorInstance.DoProcessScene(scene, configurationName, true), false);
-			Task.StartInEditorUpdate(true, true, null);
+			EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true));
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
@@ -121,7 +118,7 @@ namespace Extenity.BuildMachine.Editor
 				Log.Info("Scene is ready to be processed. Starting the process.");
 
 				// Call initialization process
-				yield return Task.StartNested(OnBeforeSceneProcess(definition, configuration, runAsync));
+				yield return EditorCoroutineUtility.StartCoroutineOwnerless(OnBeforeSceneProcess(definition, configuration, runAsync));
 
 				// Call custom processors
 				{
@@ -133,7 +130,7 @@ namespace Extenity.BuildMachine.Editor
 						EnsureNotCompiling($"Detected script compilation while stepping into '{CurrentStepTitle}'");
 						StartStep();
 						var enumerator = (IEnumerator)method.Invoke(this, new object[] { definition, configuration, runAsync });
-						yield return Task.StartNested(enumerator);
+						yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 						EndStep();
 						yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 					}
@@ -142,7 +139,7 @@ namespace Extenity.BuildMachine.Editor
 
 				// Call finalization process
 				DisplayProgressBar("Finalizing Scene Processor", "Finalization");
-				yield return Task.StartNested(OnAfterSceneProcess(definition, configuration, runAsync));
+				yield return EditorCoroutineUtility.StartCoroutineOwnerless(OnAfterSceneProcess(definition, configuration, runAsync));
 
 				EnsureNotCompiling("Detected script compilation before finalization.");
 				DisplayProgressBar("Finalizing Scene Processor", "Saving scene");

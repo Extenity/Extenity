@@ -3,7 +3,8 @@
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
-        "Extenity.UnityEditor.Editor"
+        "Extenity.UnityEditor.Editor",
+        "Unity.EditorCoroutines.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
