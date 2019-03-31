@@ -47,13 +47,10 @@ namespace Extenity.BuildMachine.Editor
 		public static Stopwatch ProcessStopwatch { get; private set; }
 		public static TimeSpan CurrentStepStartTime { get; private set; }
 
-		public delegate void ProcessFinishedAction(bool succeeded);
-		public static event ProcessFinishedAction OnProcessFinished;
-
 		protected abstract IEnumerator OnBeforeSceneProcess(SceneDefinition definition, SceneProcessorConfiguration configuration, bool runAsync);
 		protected abstract IEnumerator OnAfterSceneProcess(SceneDefinition definition, SceneProcessorConfiguration configuration, bool runAsync);
 
-		public static void ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges, ProcessFinishedAction onProcessFinished = null)
+		public static IEnumerator ProcessScene(Scene scene, string configurationName, bool askUserForUnsavedChanges)
 		{
 			EnsureNotCompiling("Tried to start scene processing while compiling.");
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
@@ -64,9 +61,8 @@ namespace Extenity.BuildMachine.Editor
 			{
 				EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before processing.");
 			}
-			OnProcessFinished += onProcessFinished;
 			var processorInstance = (TSceneProcessor)Activator.CreateInstance(typeof(TSceneProcessor));
-			EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true));
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true));
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
@@ -75,7 +71,6 @@ namespace Extenity.BuildMachine.Editor
 				throw new Exception("Scene processor was already running.");
 			IsProcessorRunning = true;
 
-			var succeeded = false;
 			var indented = false;
 
 			try
@@ -149,7 +144,6 @@ namespace Extenity.BuildMachine.Editor
 				yield return null;
 				AggressivelySaveOpenScenes();
 
-				succeeded = true;
 				Log.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
 
 				ClearProgressBar();
@@ -170,11 +164,6 @@ namespace Extenity.BuildMachine.Editor
 				{
 					Log.DecreaseIndent();
 				}
-			}
-
-			if (OnProcessFinished != null)
-			{
-				OnProcessFinished(succeeded);
 			}
 		}
 
