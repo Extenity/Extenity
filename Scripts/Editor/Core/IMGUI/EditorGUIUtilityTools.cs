@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using System.Reflection;
+using Extenity.DataToolbox;
+using Extenity.TextureToolbox;
+using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox.Editor
@@ -6,7 +9,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 	public static class EditorGUIUtilityTools
 	{
-		#region EditorGUIUtility Exposed Internals
+		#region EditorGUIUtility Exposed Internals - TempContent
 
 		private static GUIContent s_Text = new GUIContent();
 		private static GUIContent s_Image = new GUIContent();
@@ -33,9 +36,72 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		#endregion
 
-		#region Icons
+		#region EditorGUIUtility Exposed Internals - GetBasicTextureStyle
+
+		private static GUIStyle s_BasicTextureStyle;
+
+		public static GUIStyle GetBasicTextureStyle(Texture2D texture)
+		{
+			if (s_BasicTextureStyle == null)
+				s_BasicTextureStyle = new GUIStyle();
+			s_BasicTextureStyle.normal.background = texture;
+			return s_BasicTextureStyle;
+		}
+
+		#endregion
+
+		#region EditorGUIUtility Exposed Internals - GetDefaultBackgroundColor
+
+		private static Color _DefaultBackgroundColor;
+		public static Color DefaultBackgroundColor
+		{
+			get
+			{
+				if (_DefaultBackgroundColor.a == 0)
+				{
+					var method = typeof(EditorGUIUtility).GetMethod("GetDefaultBackgroundColor", BindingFlags.NonPublic | BindingFlags.Static);
+					_DefaultBackgroundColor = (Color)method.Invoke(null, null);
+				}
+				return _DefaultBackgroundColor;
+			}
+		}
+
+		#endregion
+
+		#region Default Background Texture
+
+		private static Texture2D _DefaultBackgroundTexture;
+		public static Texture2D DefaultBackgroundTexture
+		{
+			get
+			{
+				if (!_DefaultBackgroundTexture)
+				{
+					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(2, 2, DefaultBackgroundColor);
+				}
+				return _DefaultBackgroundTexture;
+			}
+		}
+
+		private static Texture2D _DarkerDefaultBackgroundTexture;
+		public static Texture2D DarkerDefaultBackgroundTexture
+		{
+			get
+			{
+				if (!_DefaultBackgroundTexture)
+				{
+					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(2, 2, DefaultBackgroundColor.AdjustBrightness(0.8f));
+				}
+				return _DefaultBackgroundTexture;
+			}
+		}
+
+		#endregion
+
+		#region Unity Editor Icons
 
 		private static Texture2D[] _UnityEditorIcons;
+
 		public static Texture2D[] UnityEditorIcons
 		{
 			get
