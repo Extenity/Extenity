@@ -11,19 +11,21 @@ using Object = UnityEngine.Object;
 namespace Extenity.ReflectionToolbox.Editor
 {
 
+	// TODO: Move these methods into EditorUtilityTools
 	public static class EditorReflectionTools
 	{
-		#region FindAllReferencedObjects...
+		#region CollectDependenciesReferencedIn...
 
-		public static KeyValue<Scene, TSearched[]>[] FindAllReferencedObjectsInLoadedScenes<TSearched>() where TSearched : Object
+		public static KeyValue<Scene, TSearched[]>[] CollectDependenciesReferencedInLoadedScenes<TSearched>() where TSearched : Object
 		{
 			var scenes = SceneManagerTools.GetLoadedScenes();
 			var objectsInScenes = new KeyValue<Scene, TSearched[]>[scenes.Count];
+			var objects = new HashSet<TSearched>();
 			for (var i = 0; i < scenes.Count; i++)
 			{
 				var scene = scenes[i];
-				var objects = new HashSet<TSearched>();
-				scene.FindAllReferencedDependenciesInScene(objects);
+				objects.Clear();
+				scene.CollectDependenciesReferencedInScene(objects);
 
 				objectsInScenes[i] = new KeyValue<Scene, TSearched[]>
 				{
@@ -34,7 +36,7 @@ namespace Extenity.ReflectionToolbox.Editor
 			return objectsInScenes;
 		}
 
-		public static void FindAllReferencedDependenciesInScene<TSearched>(this Scene scene, HashSet<TSearched> result) where TSearched : Object
+		public static void CollectDependenciesReferencedInScene<TSearched>(this Scene scene, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(scene.ListAllGameObjectsInScene().ToArray());
 			foreach (var obj in objects)
@@ -45,7 +47,7 @@ namespace Extenity.ReflectionToolbox.Editor
 			}
 		}
 
-		public static void FindAllReferencedDependenciesInComponents<T, TSearched>(this IEnumerable<T> components, HashSet<TSearched> result) where T : Component where TSearched : Object
+		public static void CollectDependenciesReferencedInComponents<T, TSearched>(this IEnumerable<T> components, HashSet<TSearched> result) where T : Component where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(components.ToArray());
 			foreach (var obj in objects)
@@ -56,7 +58,7 @@ namespace Extenity.ReflectionToolbox.Editor
 			}
 		}
 
-		public static void FindAllReferencedDependenciesInComponent<T, TSearched>(this T component, HashSet<TSearched> result) where T : Component where TSearched : Object
+		public static void CollectDependenciesReferencedInComponent<T, TSearched>(this T component, HashSet<TSearched> result) where T : Component where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { component });
 			foreach (var obj in objects)
@@ -67,7 +69,7 @@ namespace Extenity.ReflectionToolbox.Editor
 			}
 		}
 
-		public static void FindAllReferencedDependenciesInGameObject<TSearched>(this GameObject gameObject, HashSet<TSearched> result) where TSearched : Object
+		public static void CollectDependenciesReferencedInGameObject<TSearched>(this GameObject gameObject, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { gameObject });
 			foreach (var obj in objects)
@@ -78,7 +80,7 @@ namespace Extenity.ReflectionToolbox.Editor
 			}
 		}
 
-		public static void FindAllReferencedDependenciesInUnityObject<TSearched>(this Object unityObject, HashSet<TSearched> result) where TSearched : Object
+		public static void CollectDependenciesReferencedInUnityObject<TSearched>(this Object unityObject, HashSet<TSearched> result) where TSearched : Object
 		{
 			var objects = EditorUtility.CollectDependencies(new Object[] { unityObject });
 			foreach (var obj in objects)

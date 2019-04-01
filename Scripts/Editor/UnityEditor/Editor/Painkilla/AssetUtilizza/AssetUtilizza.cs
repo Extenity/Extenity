@@ -250,7 +250,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private static List<AssetUtilizzaElement> GatherMaterialsInScenes()
 		{
-			var objectsInScenes = EditorReflectionTools.FindAllReferencedObjectsInLoadedScenes<Material>();
+			var objectsInScenes = EditorReflectionTools.CollectDependenciesReferencedInLoadedScenes<Material>();
 
 			var elementsByObjects = new Dictionary<Material, AssetUtilizzaElement>(objectsInScenes.Sum(item => item.Value.Length));
 
