@@ -314,7 +314,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Data
 
-		// Note we We only build the visible rows, only the backend has the full tree information. 
+		// Note that we only build the visible rows. Only the backend has the full tree information. 
 		// The treeview only creates info for the row list.
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
 		{
@@ -326,9 +326,9 @@ namespace Extenity.PainkillaTool.Editor
 		public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
 		{
 			if (root == null)
-				throw new NullReferenceException("root");
+				throw new NullReferenceException(nameof(root));
 			if (result == null)
-				throw new NullReferenceException("result");
+				throw new NullReferenceException(nameof(result));
 
 			result.Clear();
 
