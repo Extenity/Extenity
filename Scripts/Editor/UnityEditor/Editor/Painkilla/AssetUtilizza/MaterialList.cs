@@ -39,21 +39,10 @@ namespace Extenity.PainkillaTool.Editor
 			AssetPath,
 		}
 
-		private enum SortOption
+		// Sorting options per column
+		private static readonly SortOption[] SortOptions =
 		{
-			Name,
-			TextureCount,
-			MaxTextureSize,
-			Instanced,
-			ShaderName,
-			AssetPath,
-			SceneCount,
-		}
-
-		// Sort options per column
-		private readonly SortOption[] SortOptions =
-		{
-			SortOption.Name, // Not applicable
+			SortOption.NotApplicable,
 			SortOption.Name,
 			SortOption.TextureCount,
 			SortOption.MaxTextureSize,
@@ -62,6 +51,18 @@ namespace Extenity.PainkillaTool.Editor
 			SortOption.SceneCount,
 			SortOption.AssetPath,
 		};
+
+		private enum SortOption
+		{
+			NotApplicable,
+			Name,
+			TextureCount,
+			MaxTextureSize,
+			Instanced,
+			ShaderName,
+			AssetPath,
+			SceneCount,
+		}
 
 		internal static MultiColumnHeaderState CreateDefaultMultiColumnHeaderState()
 		{
@@ -72,7 +73,6 @@ namespace Extenity.PainkillaTool.Editor
 					headerContent = GUIContent.none,
 					contextMenuText = "Preview",
 					headerTextAlignment = TextAlignment.Center,
-					canSort = false,
 					width = 30,
 					minWidth = 30,
 					maxWidth = 60,
@@ -162,6 +162,12 @@ namespace Extenity.PainkillaTool.Editor
 			};
 
 			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(Columns)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
+
+			// Automatically set if the column is sortable.
+			for (int iColumn = 0; iColumn < columns.Length; iColumn++)
+			{
+				columns[iColumn].canSort = SortOptions[iColumn++] != SortOption.NotApplicable;
+			}
 
 			var state = new MultiColumnHeaderState(columns);
 			return state;
