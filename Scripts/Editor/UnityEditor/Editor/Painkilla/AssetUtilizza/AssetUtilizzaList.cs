@@ -19,6 +19,9 @@ namespace Extenity.PainkillaTool.Editor
 		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
 			: base(state, multiColumnHeader, model)
 		{
+			rowHeight = RowHeights;
+			showAlternatingRowBackgrounds = true;
+			showBorder = true;
 		}
 
 		#endregion

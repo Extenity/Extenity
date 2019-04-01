@@ -287,11 +287,7 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
-			// Custom setup
-			rowHeight = RowHeights;
 			columnIndexForTreeFoldouts = 1;
-			showAlternatingRowBackgrounds = true;
-			showBorder = true;
 			// Center foldout in the row since we also center the content. See RowGUI.
 			customFoldoutYOffset = (RowHeights - EditorGUIUtility.singleLineHeight) * 0.5f;
 			//extraSpaceBeforeIconAndLabel = kToggleWidth;
