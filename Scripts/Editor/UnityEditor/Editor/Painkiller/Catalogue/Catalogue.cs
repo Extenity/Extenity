@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class CatalogueWindow : ExtenityEditorWindowBase
+	public class Catalogue : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
@@ -29,7 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		[MenuItem("Tools/Painkiller/Catalogue %&A")]
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<CatalogueWindow>();
+			EditorWindowTools.ToggleWindow<Catalogue>();
 		}
 
 		#endregion

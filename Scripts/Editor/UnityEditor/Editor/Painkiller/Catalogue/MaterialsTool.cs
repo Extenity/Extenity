@@ -18,7 +18,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		private readonly GUILayoutOption[] RefreshButtonOptions = { GUILayout.Width(100f), GUILayout.Height(24f) };
 		private readonly GUIContent RefreshButtonContent = new GUIContent("Refresh", "Scans all objects.");
 
-		public void OnGUI(CatalogueWindow window)
+		public void OnGUI(Catalogue window)
 		{
 			InitializeListViewIfNeeded();
 
