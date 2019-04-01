@@ -219,7 +219,7 @@ namespace Extenity.PainkillaTool.Editor
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
 
-			var multiColumnHeader = new AssetUtilizzaColumnHeader(headerState);
+			var multiColumnHeader = new MultiColumnHeader(headerState);
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
