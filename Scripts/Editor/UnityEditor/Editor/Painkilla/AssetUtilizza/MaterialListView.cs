@@ -12,7 +12,7 @@ using UnityEngine.Assertions;
 namespace Extenity.PainkillaTool.Editor
 {
 
-	public class MaterialList : AssetUtilizzaList<MaterialElement>
+	public class MaterialListView : AssetUtilizzaListView<MaterialElement>
 	{
 		#region Configuration
 
@@ -282,7 +282,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		public MaterialList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model)
+		public MaterialListView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");

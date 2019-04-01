@@ -4,7 +4,7 @@ using UnityEditor.IMGUI.Controls;
 namespace Extenity.PainkillaTool.Editor
 {
 
-	public abstract class AssetUtilizzaList<TElement> : TreeViewWithTreeModel<TElement>
+	public abstract class AssetUtilizzaListView<TElement> : TreeViewWithTreeModel<TElement>
 		where TElement : TreeElement
 	{
 		#region Configuration
@@ -16,7 +16,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
+		public AssetUtilizzaListView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			rowHeight = RowHeights;
