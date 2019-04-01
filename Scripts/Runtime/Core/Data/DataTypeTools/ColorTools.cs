@@ -243,7 +243,7 @@ namespace Extenity.DataToolbox
 
 		#region HSL
 
-		public static Color32 HSL2RGBColor32(float h, float sl, float l)
+		public static Color32 HSL2RGBColor32(float h, float sl, float l, byte alpha = 255)
 		{
 			var v = (l <= 0.5f) ? (l * (1.0f + sl)) : (l + sl - l * sl);
 
@@ -265,37 +265,37 @@ namespace Extenity.DataToolbox
 							(byte)(v * 255f),
 							(byte)(mid1 * 255f),
 							(byte)(m * 255f),
-							255);
+							alpha);
 					case 1:
 						return new Color32(
 							(byte)(mid2 * 255f),
 							(byte)(v * 255f),
 							(byte)(m * 255f),
-							255);
+							alpha);
 					case 2:
 						return new Color32(
 							(byte)(m * 255f),
 							(byte)(v * 255f),
 							(byte)(mid1 * 255f),
-							255);
+							alpha);
 					case 3:
 						return new Color32(
 							(byte)(m * 255f),
 							(byte)(mid2 * 255f),
 							(byte)(v * 255f),
-							255);
+							alpha);
 					case 4:
 						return new Color32(
 							(byte)(mid1 * 255f),
 							(byte)(m * 255f),
 							(byte)(v * 255f),
-							255);
+							alpha);
 					case 5:
 						return new Color32(
 							(byte)(v * 255f),
 							(byte)(m * 255f),
 							(byte)(mid2 * 255f),
-							255);
+							alpha);
 				}
 			}
 
@@ -303,11 +303,11 @@ namespace Extenity.DataToolbox
 				(byte)(l * 255f),
 				(byte)(l * 255f),
 				(byte)(l * 255f),
-				255);
+				alpha);
 		}
 
-		
-		public static Color HSL2RGBColor(float h, float sl, float l)
+
+		public static Color HSL2RGBColor(float h, float sl, float l, float alpha = 1f)
 		{
 			var v = (l <= 0.5f) ? (l * (1.0f + sl)) : (l + sl - l * sl);
 
@@ -326,48 +326,48 @@ namespace Extenity.DataToolbox
 				{
 					case 0:
 						return new Color(
-							v * 255f,
-							mid1 * 255f,
-							m * 255f,
-							255);
+							v,
+							mid1,
+							m,
+							alpha);
 					case 1:
 						return new Color(
-							mid2 * 255f,
-							v * 255f,
-							m * 255f,
-							255);
+							mid2,
+							v,
+							m,
+							alpha);
 					case 2:
 						return new Color(
-							m * 255f,
-							v * 255f,
-							mid1 * 255f,
-							255);
+							m,
+							v,
+							mid1,
+							alpha);
 					case 3:
 						return new Color(
-							m * 255f,
-							mid2 * 255f,
-							v * 255f,
-							255);
+							m,
+							mid2,
+							v,
+							alpha);
 					case 4:
 						return new Color(
-							mid1 * 255f,
-							m * 255f,
-							v * 255f,
-							255);
+							mid1,
+							m,
+							v,
+							alpha);
 					case 5:
 						return new Color(
-							v * 255f,
-							m * 255f,
-							mid2 * 255f,
-							255);
+							v,
+							m,
+							mid2,
+							alpha);
 				}
 			}
 
 			return new Color(
-				l * 255f,
-				l * 255f,
-				l * 255f,
-				255);
+				l,
+				l,
+				l,
+				alpha);
 		}
 
 		public static void RGB2HSL(Color rgb, out float h, out float s, out float l)
@@ -422,7 +422,7 @@ namespace Extenity.DataToolbox
 		{
 			RGB2HSL(color, out var h, out var s, out var l);
 			l *= brightness;
-			return HSL2RGBColor(h, s, l);
+			return HSL2RGBColor(h, s, l, color.a);
 		}
 
 		#endregion
