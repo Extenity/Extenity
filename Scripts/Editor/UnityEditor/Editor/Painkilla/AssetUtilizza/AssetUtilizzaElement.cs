@@ -43,7 +43,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region Material
 
 		public Material Material;
-		public string ShaderName { get { return Material ? Material.shader.name : ""; } }
+		public string ShaderName { get { return Material && Material.shader ? Material.shader.name : ""; } }
 		public int TextureCount;
 		public Vector2Int MaxTextureSize;
 		public bool IsInstanced { get { return Material ? Material.enableInstancing : false; } }
