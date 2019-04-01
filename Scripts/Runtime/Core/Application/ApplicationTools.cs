@@ -158,6 +158,7 @@ namespace Extenity.ApplicationToolbox
 		public static void Restart()
 		{
 #if UNITY_EDITOR
+
 			if (UnityEditor.EditorApplication.isPlaying)
 			{
 				// Quit playing.
@@ -168,6 +169,18 @@ namespace Extenity.ApplicationToolbox
 					UnityEditor.EditorApplication.ExecuteMenuItem("Edit/Play");
 				};
 			}
+
+#elif UNITY_ANDROID || UNITY_IOS
+
+			// Android and iOS does not provide a way to restart the application. Seems like
+			// they are not happy about the idea of applications launching themselves or other
+			// applications.
+			// 
+			// The best way to restart the application is not restarting but destroying all
+			// objects and reloading the splash menu item. Though static objects and singletons
+			// should be handled carefully.
+			Application.Quit();
+
 #else
 			throw new NotImplementedException();
 #endif
