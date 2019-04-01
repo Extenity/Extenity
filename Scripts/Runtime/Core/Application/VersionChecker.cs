@@ -37,7 +37,7 @@ namespace Extenity.ApplicationToolbox
 					{
 						Status = VersionCheckStatus.NoNewVersion;
 						if (log)
-							Log.Info("Up to date.");
+							Log.Info($"Up to date. (Current: {currentVersion} Min: {minVersion})");
 					}
 				}
 				catch
