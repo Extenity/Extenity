@@ -140,7 +140,7 @@ namespace Extenity.PainkillaTool.Editor
 		[NonSerialized]
 		private AssetUtilizzaList TreeView;
 		[NonSerialized]
-		private TreeModel<AssetUtilizzaElement> TreeModel;
+		private TreeModel<MaterialElement> TreeModel;
 
 		private void OnEnableTreeView()
 		{
@@ -223,7 +223,7 @@ namespace Extenity.PainkillaTool.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			TreeModel = new TreeModel<AssetUtilizzaElement>(GetData());
+			TreeModel = new TreeModel<MaterialElement>(GetData());
 
 			TreeView = new AssetUtilizzaList(TreeViewState, multiColumnHeader, TreeModel);
 
@@ -242,17 +242,17 @@ namespace Extenity.PainkillaTool.Editor
 			Repaint();
 		}
 
-		private IList<AssetUtilizzaElement> GetData()
+		private IList<MaterialElement> GetData()
 		{
 			var materialsInScenes = GatherMaterialsInScenes();
 			return materialsInScenes;
 		}
 
-		private static List<AssetUtilizzaElement> GatherMaterialsInScenes()
+		private static List<MaterialElement> GatherMaterialsInScenes()
 		{
 			var objectsInScenes = EditorReflectionTools.CollectDependenciesReferencedInLoadedScenes<Material>();
 
-			var elementsByObjects = new Dictionary<Material, AssetUtilizzaElement>(objectsInScenes.Sum(item => item.Value.Length));
+			var elementsByObjects = new Dictionary<Material, MaterialElement>(objectsInScenes.Sum(item => item.Value.Length));
 
 			foreach (var objectsInScene in objectsInScenes)
 			{
@@ -263,7 +263,7 @@ namespace Extenity.PainkillaTool.Editor
 				{
 					if (!elementsByObjects.TryGetValue(obj, out var element))
 					{
-						element = new AssetUtilizzaElement(obj, scene.name);
+						element = new MaterialElement(obj, scene.name);
 						elementsByObjects.Add(obj, element);
 					}
 					else
@@ -274,7 +274,7 @@ namespace Extenity.PainkillaTool.Editor
 			}
 
 			var elements = elementsByObjects.Values.ToList();
-			elements.Insert(0, AssetUtilizzaElement.CreateRoot());
+			elements.Insert(0, MaterialElement.CreateRoot());
 			return elements;
 		}
 

@@ -12,7 +12,7 @@ using UnityEngine.Assertions;
 namespace Extenity.PainkillaTool.Editor
 {
 
-	public class AssetUtilizzaList : TreeViewWithTreeModel<AssetUtilizzaElement>
+	public class AssetUtilizzaList : TreeViewWithTreeModel<MaterialElement>
 	{
 		#region Configuration
 
@@ -204,7 +204,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		protected override void RowGUI(RowGUIArgs args)
 		{
-			var item = (TreeViewItem<AssetUtilizzaElement>)args.item;
+			var item = (TreeViewItem<MaterialElement>)args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
@@ -212,7 +212,7 @@ namespace Extenity.PainkillaTool.Editor
 			}
 		}
 
-		private void CellGUI(Rect cellRect, TreeViewItem<AssetUtilizzaElement> item, Columns column, ref RowGUIArgs args)
+		private void CellGUI(Rect cellRect, TreeViewItem<MaterialElement> item, Columns column, ref RowGUIArgs args)
 		{
 			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
 			CenterRectUsingSingleLineHeight(ref cellRect);
@@ -293,7 +293,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<AssetUtilizzaElement> model) : base(state, multiColumnHeader, model)
+		public AssetUtilizzaList(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model) : base(state, multiColumnHeader, model)
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
@@ -386,7 +386,7 @@ namespace Extenity.PainkillaTool.Editor
 			if (sortedColumns.Length == 0)
 				return;
 
-			var myTypes = rootItem.children.Cast<TreeViewItem<AssetUtilizzaElement>>();
+			var myTypes = rootItem.children.Cast<TreeViewItem<MaterialElement>>();
 			var orderedQuery = InitialOrder(myTypes, sortedColumns);
 			for (int i = 1; i < sortedColumns.Length; i++)
 			{
@@ -422,7 +422,7 @@ namespace Extenity.PainkillaTool.Editor
 			rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
 		}
 
-		private IOrderedEnumerable<TreeViewItem<AssetUtilizzaElement>> InitialOrder(IEnumerable<TreeViewItem<AssetUtilizzaElement>> myTypes, int[] history)
+		private IOrderedEnumerable<TreeViewItem<MaterialElement>> InitialOrder(IEnumerable<TreeViewItem<MaterialElement>> myTypes, int[] history)
 		{
 			SortOption sortOption = SortOptions[history[0]];
 			bool ascending = multiColumnHeader.IsSortedAscending(history[0]);
