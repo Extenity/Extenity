@@ -93,7 +93,7 @@ namespace Extenity.PainkillaTool.Editor
 		private int ActiveToolIndex;
 
 		[SerializeField]
-		private MaterialList MaterialsTool;
+		private MaterialsTool MaterialsTool;
 		//[SerializeField]
 		//private CanvasesTool CanvasesTool;
 
@@ -101,7 +101,7 @@ namespace Extenity.PainkillaTool.Editor
 		{
 			if (MaterialsTool == null)
 			{
-				MaterialsTool = new MaterialList();
+				MaterialsTool = new MaterialsTool();
 			}
 		}
 

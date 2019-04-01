@@ -11,7 +11,7 @@ namespace Extenity.PainkillaTool.Editor
 {
 
 	[Serializable]
-	public class MaterialList : AssetUtilizzaTool
+	public class MaterialsTool : AssetUtilizzaTool
 	{
 		#region GUI
 
