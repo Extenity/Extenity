@@ -16,17 +16,6 @@ namespace Extenity.PainkillaTool.Editor
 	{
 		#region Configuration
 
-		//static Texture2D[] s_TestIcons =
-		//{
-		//	EditorGUIUtility.FindTexture("Material Icon"),
-		//	EditorGUIUtility.FindTexture("Folder Icon"),
-		//	EditorGUIUtility.FindTexture("AudioSource Icon"),
-		//	EditorGUIUtility.FindTexture("Camera Icon"),
-		//	EditorGUIUtility.FindTexture("Windzone Icon"),
-		//	EditorGUIUtility.FindTexture("GameObject Icon"),
-		//	EditorGUIUtility.FindTexture("Texture Icon")
-		//};
-
 		private enum Columns
 		{
 			Preview,

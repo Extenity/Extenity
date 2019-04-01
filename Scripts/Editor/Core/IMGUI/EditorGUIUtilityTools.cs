@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.IMGUIToolbox.Editor
 {
@@ -28,6 +29,34 @@ namespace Extenity.IMGUIToolbox.Editor
 			s_TextImage.image = i;
 			s_TextImage.text = t;
 			return s_TextImage;
+		}
+
+		#endregion
+
+		#region Icons
+
+		private static Texture2D[] _UnityEditorIcons;
+		public static Texture2D[] UnityEditorIcons
+		{
+			get
+			{
+				if (_UnityEditorIcons == null)
+				{
+					_UnityEditorIcons = new[]
+					{
+						// ReSharper disable StringLiteralTypo
+						EditorGUIUtility.FindTexture("Material Icon"),
+						EditorGUIUtility.FindTexture("Folder Icon"),
+						EditorGUIUtility.FindTexture("AudioSource Icon"),
+						EditorGUIUtility.FindTexture("Camera Icon"),
+						EditorGUIUtility.FindTexture("Windzone Icon"),
+						EditorGUIUtility.FindTexture("GameObject Icon"),
+						EditorGUIUtility.FindTexture("Texture Icon"),
+						// ReSharper restore StringLiteralTypo
+					};
+				}
+				return _UnityEditorIcons;
+			}
 		}
 
 		#endregion
