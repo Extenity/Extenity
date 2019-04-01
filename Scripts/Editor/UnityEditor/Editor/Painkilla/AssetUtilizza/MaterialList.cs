@@ -11,76 +11,46 @@ namespace Extenity.PainkillaTool.Editor
 {
 
 	[Serializable]
-	public class MaterialList
+	public class MaterialList : AssetUtilizzaTool
 	{
 		#region GUI
 
-		public void OnGUI()
-		{
-			InitializeListIfNeeded();
+		private readonly GUILayoutOption[] RefreshButtonOptions = { GUILayout.Width(100f), GUILayout.Height(24f) };
+		private readonly GUIContent RefreshButtonContent = new GUIContent("Refresh", "Scans all objects.");
 
-			var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidth, GUILayout.Height(30f));
-			DrawSearchBar(rect);
-			rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidthAndHeight);
-			DrawTreeView(rect);
-			//DrawBottomToolBar();
-		}
-
-		private void DrawSearchBar(Rect rect)
+		public void OnGUI(AssetUtilizza window)
 		{
-			TreeView.searchString = SearchField.OnGUI(rect, TreeView.searchString);
-		}
+			InitializeListViewIfNeeded();
 
-		private void DrawTreeView(Rect rect)
-		{
-			TreeView.OnGUI(rect);
-		}
-
-		/*
-		private void DrawBottomToolBar()
-		{
-			GUILayout.BeginHorizontal();
+			// Top bar
 			{
-				var style = EditorStyles.miniButton;
-				if (GUILayout.Button("Expand All", style))
+				GUILayout.BeginHorizontal();
+
+				// Refresh button
+				if (GUILayout.Button(RefreshButtonContent, RefreshButtonOptions))
 				{
-					TreeView.ExpandAll();
+					GatherData();
+					window.Repaint();
 				}
 
-				if (GUILayout.Button("Collapse All", style))
-				{
-					TreeView.CollapseAll();
-				}
+				// Search field
+				GUILayout.BeginVertical();
+				GUILayout.Space(6f);
+				var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidth);
+				TreeView.searchString = SearchField.OnGUI(rect, TreeView.searchString);
+				GUILayout.EndVertical();
 
-				GUILayout.FlexibleSpace();
-
-				if (GUILayout.Button("Set sorting", style))
-				{
-					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					columnHeader.SetSortingColumns(new int[] { 4, 3, 2 }, new[] { true, false, true });
-					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
-				}
-
-				GUILayout.Label("Header: ", "minilabel");
-				if (GUILayout.Button("Large", style))
-				{
-					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.LargeHeader;
-				}
-				if (GUILayout.Button("Default", style))
-				{
-					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.DefaultHeader;
-				}
-				if (GUILayout.Button("No sort", style))
-				{
-					var columnHeader = (AssetUtilizzaColumnHeader)TreeView.multiColumnHeader;
-					columnHeader.mode = AssetUtilizzaColumnHeader.Mode.MinimumHeaderWithoutSorting;
-				}
+				GUILayout.EndHorizontal();
 			}
-			GUILayout.EndHorizontal();
+
+			GUILayout.Space(3f);
+
+			// Tree view
+			{
+				var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidthAndHeight);
+				TreeView.OnGUI(rect);
+			}
 		}
-		*/
 
 		#endregion
 
@@ -147,7 +117,7 @@ namespace Extenity.PainkillaTool.Editor
 		[NonSerialized]
 		private TreeModel<MaterialElement> TreeModel;
 
-		private void InitializeListIfNeeded()
+		private void InitializeListViewIfNeeded()
 		{
 			if (IsListViewInitialized)
 				return;

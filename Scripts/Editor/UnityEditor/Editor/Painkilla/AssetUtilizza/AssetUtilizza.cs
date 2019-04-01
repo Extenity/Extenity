@@ -1,3 +1,5 @@
+using System;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -21,7 +23,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		protected override void OnEnableDerived()
 		{
-			InitializeMaterialList();
+			InitializeTools();
 		}
 
 		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
@@ -32,44 +34,74 @@ namespace Extenity.PainkillaTool.Editor
 
 		#endregion
 
-		#region GUI - Window
+		#region GUI - Style
 
-		private readonly GUILayoutOption[] RefreshButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
-		private readonly GUIContent RefreshButtonContent = new GUIContent("Refresh", "Scans all objects.");
+		// Toolbar
+		[NonSerialized]
+		private GUIStyle _ToolbarBackgroundStyle;
+		private GUIStyle ToolbarBackgroundStyle
+		{
+			get
+			{
+				if (_ToolbarBackgroundStyle == null)
+				{
+					_ToolbarBackgroundStyle = new GUIStyle();
+					_ToolbarBackgroundStyle.margin = new RectOffset();
+					_ToolbarBackgroundStyle.padding = new RectOffset(0, 0, 6, 6);
+					_ToolbarBackgroundStyle.normal.background = EditorGUIUtilityTools.DarkerDefaultBackgroundTexture;
+				}
+				return _ToolbarBackgroundStyle;
+			}
+		}
+		private readonly GUILayoutOption[] ToolbarBackgroundLayoutOptions = { GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false) };
+		private readonly GUILayoutOption[] ToolbarLayoutOptions = { GUILayout.ExpandWidth(false), GUILayout.Height(34f) };
+		private readonly string[] Tabs = { "Materials", "Canvases" };
+
+		#endregion
+
+		#region GUI - Window
 
 		protected override void OnGUIDerived()
 		{
-			GUILayout.Space(8f);
-
-			GUILayout.BeginHorizontal();
-			if (GUILayout.Button(RefreshButtonContent, RefreshButtonOptions))
-			{
-				MaterialList.GatherData();
-				Repaint();
-			}
+			GUILayout.BeginHorizontal(ToolbarBackgroundStyle, ToolbarBackgroundLayoutOptions);
+			ActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, Tabs, ToolbarLayoutOptions);
 			GUILayout.EndHorizontal();
 
-			MaterialList.OnGUI();
+			GUILayout.Space(8f);
+
+			MaterialsTool.OnGUI(this);
 
 			if (GUI.changed)
 			{
-				//Calculate();
 				SceneView.RepaintAll();
 			}
 		}
 
 		#endregion
 
-		#region Material
+		#region Tools
+
+		public enum Tool
+		{
+			Materials,
+			Canvases,
+		}
+
+		[NonSerialized]
+		private AssetUtilizzaTool[] Tools;
+		[SerializeField]
+		private int ActiveToolIndex;
 
 		[SerializeField]
-		private MaterialList MaterialList;
+		private MaterialList MaterialsTool;
+		//[SerializeField]
+		//private CanvasesTool CanvasesTool;
 
-		private void InitializeMaterialList()
+		private void InitializeTools()
 		{
-			if (MaterialList == null)
+			if (MaterialsTool == null)
 			{
-				MaterialList = new MaterialList();
+				MaterialsTool = new MaterialList();
 			}
 		}
 
