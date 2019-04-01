@@ -7,17 +7,17 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class Snappa : ExtenityEditorWindowBase
+	public class Snapper : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
 		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			Title = "Snappa",
-			Icon = SnappaIcons.Texture_ArrowStraight,
+			Title = "Snapper",
+			Icon = SnapperIcons.Texture_ArrowStraight,
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
@@ -80,10 +80,10 @@ namespace Extenity.PainkillaTool.Editor
 			InitializeKeyboard();
 		}
 
-		[MenuItem("Edit/Snappa", false, 1000)] // Just below Unity's "Snap Settings"
+		[MenuItem("Edit/Snapper", false, 1000)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<Snappa>();
+			EditorWindowTools.ToggleWindow<Snapper>();
 		}
 
 		#endregion
@@ -92,7 +92,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private readonly GUILayoutOption[] ActiveButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
 		private readonly GUILayoutOption[] SnapButtonOptions = { GUILayout.Width(30f), GUILayout.Height(30f) };
-		private readonly GUIContent ActiveButtonContent = new GUIContent("Active", "Toggle whole Snappa tool functionality. Useful for temporarily deactivating the tool.");
+		private readonly GUIContent ActiveButtonContent = new GUIContent("Active", $"Toggle whole {nameof(Snapper)} tool functionality. Useful for temporarily deactivating the tool.");
 		private readonly GUIContent LinearSnapButtonContent = new GUIContent("P", "Snap position of selected objects.");
 		private readonly GUIContent AngularSnapButtonContent = new GUIContent("R", "Snap rotation of selected objects.");
 
@@ -290,7 +290,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private void DoMovementAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
 		{
-			Undo.RecordObject(transform, "Snappa Move");
+			Undo.RecordObject(transform, "Snapper Move");
 
 			var shift = speedModifier
 				? LinearSnappingStep * SpeedModifierFactor
@@ -315,7 +315,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		private void DoRotationAction(KeyAction action, bool speedModifier, Transform transform, Quaternion gizmoRotation)
 		{
-			Undo.RecordObject(transform, "Snappa Rotate");
+			Undo.RecordObject(transform, "Snapper Rotate");
 
 			var shift = speedModifier
 				? AngularSnappingStep * SpeedModifierFactor
@@ -380,7 +380,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			var colors = drawRed ? RedArrowColors : NormalArrowColors;
 
-			var texture = SnappaIcons.Texture_ArrowStraight;
+			var texture = SnapperIcons.Texture_ArrowStraight;
 			// Front arrow
 			GL.modelview = baseMatrix * FrontArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.Front);
@@ -388,7 +388,7 @@ namespace Extenity.PainkillaTool.Editor
 			GL.modelview = baseMatrix * BackArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.Back);
 
-			texture = SnappaIcons.Texture_ArrowBent;
+			texture = SnapperIcons.Texture_ArrowBent;
 			// Right arrow
 			GL.modelview = baseMatrix * RightArrowMatrix;
 			Graphics.DrawTexture(IdentityRect, texture, IdentityRect, 0, 0, 0, 0, colors.LeftRight);

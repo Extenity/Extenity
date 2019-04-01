@@ -1,9 +1,9 @@
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public static class SnappaIcons
+	public static class SnapperIcons
 	{
 		#region Embedded Texture - ArrowStraight
 

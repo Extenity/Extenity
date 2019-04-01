@@ -9,16 +9,16 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class UIOptimizza : ExtenityEditorWindowBase
+	public class UIOptimizer : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
 		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			Title = "UI Optimizza",
+			Title = "UI Optimizer",
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
@@ -26,10 +26,10 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Painkilla/UI Optimizza", false, 100)]
+		[MenuItem("Tools/Painkiller/UI Optimizer")]
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<UIOptimizza>();
+			EditorWindowTools.ToggleWindow<UIOptimizer>();
 		}
 
 		#endregion

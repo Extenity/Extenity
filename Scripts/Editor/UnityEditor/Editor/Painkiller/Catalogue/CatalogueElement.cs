@@ -3,21 +3,21 @@ using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public abstract class AssetUtilizzaElement<TElement> : TreeElement
-		where TElement : AssetUtilizzaElement<TElement>, new()
+	public abstract class CatalogueElement<TElement> : TreeElement
+		where TElement : CatalogueElement<TElement>, new()
 	{
 		#region Initialization
 
-		public AssetUtilizzaElement(Object asset)
+		public CatalogueElement(Object asset)
 			: base(asset.name, 0, asset.GetInstanceID())
 		{
 			Asset = asset;
 		}
 
-		public AssetUtilizzaElement()
+		public CatalogueElement()
 			: base(null, -1, 0)
 		{
 			Asset = null;

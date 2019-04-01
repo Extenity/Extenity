@@ -9,10 +9,10 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class MaterialListView : AssetUtilizzaListView<MaterialElement>
+	public class MaterialListView : CatalogueListView<MaterialElement>
 	{
 		#region Configuration
 

@@ -13,7 +13,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
 	// TODO: Add tool to check script encoding
@@ -57,7 +57,7 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Code Correct")]
+		[MenuItem("Tools/Painkiller/Code Correct")]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<CodeCorrect>();

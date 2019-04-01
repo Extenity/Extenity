@@ -3,16 +3,16 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class Selecta : ExtenityEditorWindowBase
+	public class Selector : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
 		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			Title = "Selecta",
+			Title = "Selector",
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
@@ -20,10 +20,10 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region Initialization
 
-		[MenuItem("Edit/Selecta", false, 1005)] // Just below Unity's "Snap Settings"
+		[MenuItem("Edit/Selector", false, 1005)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<Selecta>();
+			EditorWindowTools.ToggleWindow<Selector>();
 		}
 
 		#endregion
@@ -31,7 +31,7 @@ namespace Extenity.PainkillaTool.Editor
 		#region GUI - Window
 
 		private readonly GUILayoutOption[] ActiveButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
-		private readonly GUIContent ActiveButtonContent = new GUIContent("Active", "Toggle whole Selecta tool functionality. Useful for temporarily deactivating the tool.");
+		private readonly GUIContent ActiveButtonContent = new GUIContent("Active", $"Toggle whole {nameof(Selector)} tool functionality. Useful for temporarily deactivating the tool.");
 
 		protected override void OnGUIDerived()
 		{

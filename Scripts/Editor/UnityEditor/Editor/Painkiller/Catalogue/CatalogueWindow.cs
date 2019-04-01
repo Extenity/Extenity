@@ -4,16 +4,16 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class AssetUtilizza : ExtenityEditorWindowBase
+	public class CatalogueWindow : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
 		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			Title = "Asset Utilizza",
+			Title = "Catalogue",
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
@@ -26,10 +26,10 @@ namespace Extenity.PainkillaTool.Editor
 			InitializeTools();
 		}
 
-		[MenuItem("Tools/Painkilla/Asset Utilizza %&A", false, 100)]
+		[MenuItem("Tools/Painkiller/Catalogue %&A")]
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<AssetUtilizza>();
+			EditorWindowTools.ToggleWindow<CatalogueWindow>();
 		}
 
 		#endregion
@@ -88,7 +88,7 @@ namespace Extenity.PainkillaTool.Editor
 		}
 
 		[NonSerialized]
-		private AssetUtilizzaTool[] Tools;
+		private CatalogueTool[] Tools;
 		[SerializeField]
 		private int ActiveToolIndex;
 

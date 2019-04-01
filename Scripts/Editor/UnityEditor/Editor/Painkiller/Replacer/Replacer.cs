@@ -2,16 +2,16 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class Replacea : ExtenityEditorWindowBase
+	public class Replacer : ExtenityEditorWindowBase
 	{
 		#region Configuration
 
 		protected override WindowSpecifications Specifications => new WindowSpecifications
 		{
-			Title = "Replacea",
+			Title = "Replacer",
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
@@ -31,10 +31,10 @@ namespace Extenity.PainkillaTool.Editor
 			*/
 		}
 
-		[MenuItem("Edit/Replacea", false, 1010)] // Just below Unity's "Snap Settings"
+		[MenuItem("Edit/Replacer", false, 1010)] // Just below Unity's "Snap Settings"
 		private static void ToggleWindow()
 		{
-			EditorWindowTools.ToggleWindow<Replacea>();
+			EditorWindowTools.ToggleWindow<Replacer>();
 		}
 
 		#endregion

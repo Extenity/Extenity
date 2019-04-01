@@ -7,18 +7,18 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
 	[Serializable]
-	public class MaterialsTool : AssetUtilizzaTool
+	public class MaterialsTool : CatalogueTool
 	{
 		#region GUI
 
 		private readonly GUILayoutOption[] RefreshButtonOptions = { GUILayout.Width(100f), GUILayout.Height(24f) };
 		private readonly GUIContent RefreshButtonContent = new GUIContent("Refresh", "Scans all objects.");
 
-		public void OnGUI(AssetUtilizza window)
+		public void OnGUI(CatalogueWindow window)
 		{
 			InitializeListViewIfNeeded();
 

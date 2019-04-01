@@ -4,11 +4,11 @@ using Extenity.AssetToolbox.Editor;
 using Extenity.RenderingToolbox.Editor;
 using UnityEngine;
 
-namespace Extenity.PainkillaTool.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
 	[Serializable]
-	public class MaterialElement : AssetUtilizzaElement<MaterialElement>
+	public class MaterialElement : CatalogueElement<MaterialElement>
 	{
 		#region Initialization
 
