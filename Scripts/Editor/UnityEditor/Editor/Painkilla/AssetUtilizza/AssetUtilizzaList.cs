@@ -188,20 +188,6 @@ namespace Extenity.PainkillaTool.Editor
 
 		#region GUI
 
-		private GUIStyle _CenteredLabel;
-		private GUIStyle CenteredLabel
-		{
-			get
-			{
-				if (_CenteredLabel == null)
-				{
-					_CenteredLabel = new GUIStyle(EditorStyles.label);
-					_CenteredLabel.alignment = TextAnchor.UpperCenter;
-				}
-				return _CenteredLabel;
-			}
-		}
-
 		protected override void RowGUI(RowGUIArgs args)
 		{
 			var item = (TreeViewItem<MaterialElement>)args.item;
@@ -248,14 +234,14 @@ namespace Extenity.PainkillaTool.Editor
 
 				case Columns.TextureCount:
 					{
-						GUI.Label(cellRect, item.Data.TextureCount.ToString(), CenteredLabel);
+						GUI.Label(cellRect, item.Data.TextureCount.ToString(), EditorStylesTools.CenteredLabel);
 					}
 					break;
 
 				case Columns.MaxTextureSize:
 					{
 						var size = item.Data.MaxTextureSize;
-						GUI.Label(cellRect, size.IsAllZero() ? "" : size.x + ", " + size.y, CenteredLabel);
+						GUI.Label(cellRect, size.IsAllZero() ? "" : size.x + ", " + size.y, EditorStylesTools.CenteredLabel);
 					}
 					break;
 
