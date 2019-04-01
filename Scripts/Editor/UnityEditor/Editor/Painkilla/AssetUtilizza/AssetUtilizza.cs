@@ -138,7 +138,7 @@ namespace Extenity.PainkillaTool.Editor
 		[NonSerialized]
 		private SearchField SearchField;
 		[NonSerialized]
-		private AssetUtilizzaList TreeView;
+		private MaterialList TreeView;
 		[NonSerialized]
 		private TreeModel<MaterialElement> TreeModel;
 
@@ -214,7 +214,7 @@ namespace Extenity.PainkillaTool.Editor
 				TreeViewState = new TreeViewState();
 
 			var isFirstInitialization = MultiColumnHeaderState == null;
-			var headerState = AssetUtilizzaList.CreateDefaultMultiColumnHeaderState();
+			var headerState = MaterialList.CreateDefaultMultiColumnHeaderState();
 			if (MultiColumnHeaderState.CanOverwriteSerializedFields(MultiColumnHeaderState, headerState))
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
@@ -225,7 +225,7 @@ namespace Extenity.PainkillaTool.Editor
 
 			TreeModel = new TreeModel<MaterialElement>(GetData());
 
-			TreeView = new AssetUtilizzaList(TreeViewState, multiColumnHeader, TreeModel);
+			TreeView = new MaterialList(TreeViewState, multiColumnHeader, TreeModel);
 
 			SearchField = new SearchField();
 			SearchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
