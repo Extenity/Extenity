@@ -40,19 +40,19 @@ namespace Extenity.PainkillaTool.Editor
 		}
 
 		// Sorting options per column
-		private static readonly SortOption[] SortOptions =
+		private static readonly SortMethod[] SortOptions =
 		{
-			SortOption.NotApplicable,
-			SortOption.Name,
-			SortOption.TextureCount,
-			SortOption.MaxTextureSize,
-			SortOption.Instanced,
-			SortOption.ShaderName,
-			SortOption.SceneCount,
-			SortOption.AssetPath,
+			SortMethod.NotApplicable,
+			SortMethod.Name,
+			SortMethod.TextureCount,
+			SortMethod.MaxTextureSize,
+			SortMethod.Instanced,
+			SortMethod.ShaderName,
+			SortMethod.SceneCount,
+			SortMethod.AssetPath,
 		};
 
-		private enum SortOption
+		private enum SortMethod
 		{
 			NotApplicable,
 			Name,
@@ -166,7 +166,7 @@ namespace Extenity.PainkillaTool.Editor
 			// Automatically set if the column is sortable.
 			for (int iColumn = 0; iColumn < columns.Length; iColumn++)
 			{
-				columns[iColumn].canSort = SortOptions[iColumn++] != SortOption.NotApplicable;
+				columns[iColumn].canSort = SortOptions[iColumn++] != SortMethod.NotApplicable;
 			}
 
 			var state = new MultiColumnHeaderState(columns);
@@ -380,32 +380,34 @@ namespace Extenity.PainkillaTool.Editor
 			var orderedQuery = InitialOrder(myTypes, sortedColumns);
 			for (int i = 1; i < sortedColumns.Length; i++)
 			{
-				var sortOption = SortOptions[sortedColumns[i]];
+				var sortMethod = SortOptions[sortedColumns[i]];
 				var ascending = multiColumnHeader.IsSortedAscending(sortedColumns[i]);
 
-				switch (sortOption)
+				switch (sortMethod)
 				{
-					case SortOption.Name:
+					case SortMethod.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
-					case SortOption.TextureCount:
+					case SortMethod.TextureCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.TextureCount, ascending);
 						break;
-					case SortOption.MaxTextureSize:
+					case SortMethod.MaxTextureSize:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
 						break;
-					case SortOption.Instanced:
+					case SortMethod.Instanced:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.IsInstanced, ascending);
 						break;
-					case SortOption.ShaderName:
+					case SortMethod.ShaderName:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.ShaderName, ascending);
 						break;
-					case SortOption.SceneCount:
+					case SortMethod.SceneCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);
 						break;
-					case SortOption.AssetPath:
+					case SortMethod.AssetPath:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.AssetPath, ascending);
 						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 			}
 
@@ -414,31 +416,27 @@ namespace Extenity.PainkillaTool.Editor
 
 		private IOrderedEnumerable<TreeViewItem<MaterialElement>> InitialOrder(IEnumerable<TreeViewItem<MaterialElement>> myTypes, int[] history)
 		{
-			SortOption sortOption = SortOptions[history[0]];
-			bool ascending = multiColumnHeader.IsSortedAscending(history[0]);
-			switch (sortOption)
+			var sortMethod = SortOptions[history[0]];
+			var ascending = multiColumnHeader.IsSortedAscending(history[0]);
+			switch (sortMethod)
 			{
-				case SortOption.Name:
+				case SortMethod.Name:
 					return myTypes.Order(l => l.Data.name, ascending);
-				case SortOption.TextureCount:
+				case SortMethod.TextureCount:
 					return myTypes.Order(l => l.Data.TextureCount, ascending);
-				case SortOption.MaxTextureSize:
+				case SortMethod.MaxTextureSize:
 					return myTypes.Order(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
-				case SortOption.Instanced:
+				case SortMethod.Instanced:
 					return myTypes.Order(l => l.Data.IsInstanced, ascending);
-				case SortOption.ShaderName:
+				case SortMethod.ShaderName:
 					return myTypes.Order(l => l.Data.ShaderName, ascending);
-				case SortOption.SceneCount:
+				case SortMethod.SceneCount:
 					return myTypes.Order(l => l.Data.FoundInScenes.Length, ascending);
-				case SortOption.AssetPath:
+				case SortMethod.AssetPath:
 					return myTypes.Order(l => l.Data.AssetPath, ascending);
 				default:
-					Assert.IsTrue(false, $"Unhandled enum '{sortOption}'.");
-					break;
+					throw new ArgumentOutOfRangeException();
 			}
-
-			// default
-			return myTypes.Order(l => l.Data.name, ascending);
 		}
 
 		#endregion
