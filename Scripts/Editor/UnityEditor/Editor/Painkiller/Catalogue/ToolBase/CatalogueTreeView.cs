@@ -5,7 +5,7 @@ using UnityEditor.IMGUI.Controls;
 namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public abstract class CatalogueListView<TElement> : TreeViewWithTreeModel<TElement>
+	public abstract class CatalogueTreeView<TElement> : TreeViewWithTreeModel<TElement>
 		where TElement : TreeElement
 	{
 		#region Configuration
@@ -17,7 +17,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		public CatalogueListView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
+		public CatalogueTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			rowHeight = RowHeights;

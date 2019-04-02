@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.MathToolbox;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -11,14 +12,18 @@ using UnityEngine.Assertions;
 namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public class CanvasListView : CatalogueListView<CanvasElement>
+	public class MaterialTreeView : CatalogueTreeView<MaterialElement>
 	{
 		#region Configuration
 
 		private enum Columns
 		{
 			Preview,
-			Canvas,
+			Material,
+			TextureCount,
+			MaxTextureSize,
+			Instanced,
+			ShaderName,
 			Scenes,
 			AssetPath,
 		}
@@ -28,6 +33,10 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			SortMethod.NotApplicable,
 			SortMethod.Name,
+			SortMethod.TextureCount,
+			SortMethod.MaxTextureSize,
+			SortMethod.Instanced,
+			SortMethod.ShaderName,
 			SortMethod.SceneCount,
 			SortMethod.AssetPath,
 		};
@@ -36,6 +45,10 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			NotApplicable,
 			Name,
+			TextureCount,
+			MaxTextureSize,
+			Instanced,
+			ShaderName,
 			AssetPath,
 			SceneCount,
 		}
@@ -57,7 +70,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				},
 				new MultiColumnHeaderState.Column
 				{
-					headerContent = new GUIContent("Canvas"),
+					headerContent = new GUIContent("Material"),
 					headerTextAlignment = TextAlignment.Center,
 					sortedAscending = true,
 					sortingArrowAlignment = TextAlignment.Center,
@@ -65,6 +78,53 @@ namespace Extenity.PainkillerToolbox.Editor
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = false,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Textures"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 65,
+					minWidth = 65,
+					maxWidth = 65,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Largest Texture"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 105,
+					minWidth = 105,
+					maxWidth = 105,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Instanced"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 65,
+					minWidth = 65,
+					maxWidth = 65,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Shader"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 250,
+					minWidth = 60,
+					autoResize = true,
+					allowToggleVisibility = true,
 				},
 				new MultiColumnHeaderState.Column
 				{
@@ -122,7 +182,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void RowGUI(RowGUIArgs args)
 		{
-			var item = (TreeViewItem<CanvasElement>)args.item;
+			var item = (TreeViewItem<MaterialElement>)args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
@@ -130,7 +190,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 		}
 
-		private void CellGUI(Rect cellRect, TreeViewItem<CanvasElement> item, Columns column, ref RowGUIArgs args)
+		private void CellGUI(Rect cellRect, TreeViewItem<MaterialElement> item, Columns column, ref RowGUIArgs args)
 		{
 			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
 			CenterRectUsingSingleLineHeight(ref cellRect);
@@ -161,9 +221,38 @@ namespace Extenity.PainkillerToolbox.Editor
 				//	}
 				//	break;
 
-				case Columns.Canvas:
+				case Columns.Material:
 					{
-						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Canvas, typeof(Canvas), false);
+						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
+					}
+					break;
+
+				case Columns.TextureCount:
+					{
+						GUI.Label(cellRect, item.Data.TextureCount.ToString(), EditorStylesTools.CenteredLabel);
+					}
+					break;
+
+				case Columns.MaxTextureSize:
+					{
+						var size = item.Data.MaxTextureSize;
+						GUI.Label(cellRect, size.IsAllZero() ? "" : size.x + ", " + size.y, EditorStylesTools.CenteredLabel);
+					}
+					break;
+
+				case Columns.Instanced:
+					{
+						var toggleRect = cellRect;
+						toggleRect.x += (toggleRect.width - ToggleWidth) / 2;
+						toggleRect.width = ToggleWidth;
+						if (toggleRect.xMax < cellRect.xMax)
+							EditorGUI.Toggle(toggleRect, item.Data.IsInstanced); // hide when outside cell rect
+					}
+					break;
+
+				case Columns.ShaderName:
+					{
+						GUI.Label(cellRect, item.Data.ShaderName);
 					}
 					break;
 
@@ -185,7 +274,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		public CanvasListView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<CanvasElement> model)
+		public MaterialTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
@@ -275,7 +364,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (sortedColumns.Length == 0)
 				return;
 
-			var myTypes = rootItem.children.Cast<TreeViewItem<CanvasElement>>();
+			var myTypes = rootItem.children.Cast<TreeViewItem<MaterialElement>>();
 			var orderedQuery = InitialOrder(myTypes, sortedColumns);
 			for (int i = 1; i < sortedColumns.Length; i++)
 			{
@@ -286,6 +375,18 @@ namespace Extenity.PainkillerToolbox.Editor
 				{
 					case SortMethod.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
+						break;
+					case SortMethod.TextureCount:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.TextureCount, ascending);
+						break;
+					case SortMethod.MaxTextureSize:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
+						break;
+					case SortMethod.Instanced:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.IsInstanced, ascending);
+						break;
+					case SortMethod.ShaderName:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.ShaderName, ascending);
 						break;
 					case SortMethod.SceneCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);
@@ -301,7 +402,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
 		}
 
-		private IOrderedEnumerable<TreeViewItem<CanvasElement>> InitialOrder(IEnumerable<TreeViewItem<CanvasElement>> myTypes, int[] history)
+		private IOrderedEnumerable<TreeViewItem<MaterialElement>> InitialOrder(IEnumerable<TreeViewItem<MaterialElement>> myTypes, int[] history)
 		{
 			var sortMethod = SortOptions[history[0]];
 			var ascending = multiColumnHeader.IsSortedAscending(history[0]);
@@ -309,6 +410,14 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				case SortMethod.Name:
 					return myTypes.Order(l => l.Data.name, ascending);
+				case SortMethod.TextureCount:
+					return myTypes.Order(l => l.Data.TextureCount, ascending);
+				case SortMethod.MaxTextureSize:
+					return myTypes.Order(l => l.Data.MaxTextureSize.MultiplyComponents(), ascending);
+				case SortMethod.Instanced:
+					return myTypes.Order(l => l.Data.IsInstanced, ascending);
+				case SortMethod.ShaderName:
+					return myTypes.Order(l => l.Data.ShaderName, ascending);
 				case SortMethod.SceneCount:
 					return myTypes.Order(l => l.Data.FoundInScenes.Length, ascending);
 				case SortMethod.AssetPath:

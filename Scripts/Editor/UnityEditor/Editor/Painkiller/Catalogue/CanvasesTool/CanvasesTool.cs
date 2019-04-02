@@ -87,7 +87,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		private MultiColumnHeaderState MultiColumnHeaderState;
 
 		[NonSerialized]
-		private CanvasListView TreeView;
+		private CanvasTreeView TreeView;
 		[NonSerialized]
 		private TreeModel<CanvasElement> TreeModel;
 
@@ -108,7 +108,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				TreeViewState = new TreeViewState();
 
 			var isFirstInitialization = MultiColumnHeaderState == null;
-			var headerState = CanvasListView.CreateDefaultMultiColumnHeaderState();
+			var headerState = CanvasTreeView.CreateDefaultMultiColumnHeaderState();
 			if (MultiColumnHeaderState.CanOverwriteSerializedFields(MultiColumnHeaderState, headerState))
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
@@ -119,7 +119,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			TreeModel = new TreeModel<CanvasElement>(GatherCanvasesInScenes());
 
-			TreeView = new CanvasListView(TreeViewState, multiColumnHeader, TreeModel);
+			TreeView = new CanvasTreeView(TreeViewState, multiColumnHeader, TreeModel);
 
 			InitializeSearchField(TreeView.SetFocusAndEnsureSelectedItem);
 		}

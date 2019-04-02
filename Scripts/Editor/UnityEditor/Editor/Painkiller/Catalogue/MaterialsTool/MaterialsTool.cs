@@ -87,7 +87,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		private MultiColumnHeaderState MultiColumnHeaderState;
 
 		[NonSerialized]
-		private MaterialListView TreeView;
+		private MaterialTreeView TreeView;
 		[NonSerialized]
 		private TreeModel<MaterialElement> TreeModel;
 
@@ -108,7 +108,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				TreeViewState = new TreeViewState();
 
 			var isFirstInitialization = MultiColumnHeaderState == null;
-			var headerState = MaterialListView.CreateDefaultMultiColumnHeaderState();
+			var headerState = MaterialTreeView.CreateDefaultMultiColumnHeaderState();
 			if (MultiColumnHeaderState.CanOverwriteSerializedFields(MultiColumnHeaderState, headerState))
 				MultiColumnHeaderState.OverwriteSerializedFields(MultiColumnHeaderState, headerState);
 			MultiColumnHeaderState = headerState;
@@ -119,7 +119,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			TreeModel = new TreeModel<MaterialElement>(GatherMaterialsInScenes());
 
-			TreeView = new MaterialListView(TreeViewState, multiColumnHeader, TreeModel);
+			TreeView = new MaterialTreeView(TreeViewState, multiColumnHeader, TreeModel);
 
 			InitializeSearchField(TreeView.SetFocusAndEnsureSelectedItem);
 		}
