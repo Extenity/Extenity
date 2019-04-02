@@ -17,6 +17,8 @@ namespace Extenity.PainkillerToolbox.Editor
 			MinimumWindowSize = new Vector2(200f, 50f),
 		};
 
+		protected override bool EnableSavingStateToEditorPrefs => true;
+
 		#endregion
 
 		#region Initialization
@@ -65,6 +67,11 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			GUILayout.BeginHorizontal(ToolbarBackgroundStyle, ToolbarBackgroundLayoutOptions);
 			ActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, Tabs, ToolbarLayoutOptions);
+			GUILayout.FlexibleSpace();
+			if (GUILayout.Button("Reset"))
+			{
+				Relaunch(ToggleWindow, true);
+			}
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(8f);
