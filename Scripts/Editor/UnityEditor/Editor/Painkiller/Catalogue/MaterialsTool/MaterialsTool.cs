@@ -17,7 +17,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		public override void OnGUI()
 		{
-			InitializeListViewIfNeeded();
+			InitializeTreeViewIfNeeded();
 
 			// Top bar
 			{
@@ -76,10 +76,10 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#endregion
 
-		#region ListView
+		#region TreeView
 
 		[NonSerialized]
-		private bool IsListViewInitialized;
+		private bool IsTreeViewInitialized;
 
 		[SerializeField]
 		private TreeViewState TreeViewState;
@@ -97,11 +97,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			set => TreeView.searchString = value;
 		}
 
-		private void InitializeListViewIfNeeded()
+		private void InitializeTreeViewIfNeeded()
 		{
-			if (IsListViewInitialized)
+			if (IsTreeViewInitialized)
 				return;
-			IsListViewInitialized = true;
+			IsTreeViewInitialized = true;
 
 			// Check if it already exists (deserialized from window layout file or scriptable object)
 			if (TreeViewState == null)
