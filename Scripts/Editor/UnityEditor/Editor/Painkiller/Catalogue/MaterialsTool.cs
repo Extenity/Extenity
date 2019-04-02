@@ -15,7 +15,7 @@ namespace Extenity.PainkillerToolbox.Editor
 	{
 		#region GUI
 
-		public void OnGUI()
+		public override void OnGUI()
 		{
 			InitializeListViewIfNeeded();
 

@@ -16,6 +16,12 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#endregion
 
+		#region GUI
+
+		public abstract void OnGUI();
+
+		#endregion
+
 		#region Top Bar
 
 		[NonSerialized]

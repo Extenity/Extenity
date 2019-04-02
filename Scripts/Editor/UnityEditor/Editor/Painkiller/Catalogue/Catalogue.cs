@@ -66,7 +66,11 @@ namespace Extenity.PainkillerToolbox.Editor
 		protected override void OnGUIDerived()
 		{
 			GUILayout.BeginHorizontal(ToolbarBackgroundStyle, ToolbarBackgroundLayoutOptions);
-			ActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, Tabs, ToolbarLayoutOptions);
+			var newActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, Tabs, ToolbarLayoutOptions);
+			if (ActiveToolIndex != newActiveToolIndex)
+			{
+				ChangeActiveTool(newActiveToolIndex);
+			}
 			GUILayout.FlexibleSpace();
 			if (GUILayout.Button("Reset"))
 			{
@@ -76,7 +80,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			GUILayout.Space(8f);
 
-			MaterialsTool.OnGUI();
+			ActiveTool.OnGUI();
 
 			if (GUI.changed)
 			{
@@ -93,9 +97,6 @@ namespace Extenity.PainkillerToolbox.Editor
 			Materials,
 			Canvases,
 		}
-
-		[SerializeField]
-		private int ActiveToolIndex;
 
 		[SerializeField]
 		private MaterialsTool MaterialsTool;
@@ -117,6 +118,40 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 			CanvasesTool.OnRepaintRequest -= Repaint;
 			CanvasesTool.OnRepaintRequest += Repaint;
+
+			// Initialize the active tool.
+			ChangeActiveTool(ActiveToolIndex);
+		}
+
+		#endregion
+
+		#region Active Tool
+
+		[SerializeField]
+		private int ActiveToolIndex = -1;
+		[NonSerialized]
+		private CatalogueTool ActiveTool;
+
+		private void ChangeActiveTool(int newActiveToolIndex)
+		{
+			// Nope. This is not checked here. Otherwise initialization code gets complicated. Checking this in GUI instead.
+			//if (ActiveToolIndex == newActiveToolIndex)
+			//	return;
+
+			if (newActiveToolIndex < 0)
+			{
+				newActiveToolIndex = 0; // Select the first tool if initializing just now.
+			}
+
+			ActiveToolIndex = newActiveToolIndex;
+
+			switch ((Tool)ActiveToolIndex)
+			{
+				case Tool.Materials: ActiveTool = MaterialsTool; break;
+				case Tool.Canvases: ActiveTool = CanvasesTool; break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		#endregion
