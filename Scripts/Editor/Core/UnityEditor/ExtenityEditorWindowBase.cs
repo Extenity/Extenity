@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.ReflectionToolbox;
 using UnityEngine;
@@ -38,6 +39,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected void OnEnable()
 		{
+			// Load the state from EditorPrefs. This must be done as the first thing.
+			// So all values are set before initialization codes. This also allows
+			// hardcoded configuration (like the ones in Specifications) to be overwritten
+			// onto whatever the previously serialized values were.
+			if (EnableSavingStateToEditorPrefs)
+				LoadStateFromEditorPrefs();
+
 			var specs = Specifications;
 
 			SetTitleAndIcon(specs.Title, specs.Icon);
@@ -83,6 +91,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 			DeinitializeDisablingWindowOnCompilation();
 
 			OnDisableDerived();
+
+			// Save the state to EditorPrefs. This must be done as the last thing.
+			// This allows the window to delete any fields that should not be serialized.
+			if (EnableSavingStateToEditorPrefs)
+				SaveStateToEditorPrefs();
 		}
 
 		protected virtual void OnDestroyDerived() { }
@@ -249,6 +262,22 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Relaunch Window
+
+		protected void Relaunch(Action windowLauncherMethod, bool resetStateInEditorPrefs)
+		{
+			if (resetStateInEditorPrefs)
+			{
+				DeleteStateFromEditorPrefs();
+				OverrideToSkipSavingStateToEditorPrefs = true;
+			}
+			Close();
+
+			windowLauncherMethod();
+		}
+
+		#endregion
+
 		#region Title And Icon
 
 		/// <summary>
@@ -349,6 +378,61 @@ namespace Extenity.UnityEditorToolbox.Editor
 			Log.Info($"Closing '{titleContent.text}' window automatically.");
 			DeinitializeClosingWindowOnAssemblyReloadOrPlayModeChange();
 			Close();
+		}
+
+		#endregion
+
+		#region Save Window State To EditorPrefs
+
+		/// <summary>
+		/// Override this with returning 'true' for saving the editor state to EditorPrefs
+		/// when closing the window and loading the state when opening the window.
+		/// </summary>
+		protected virtual bool EnableSavingStateToEditorPrefs { get; }
+
+		[NonSerialized]
+		private bool OverrideToSkipSavingStateToEditorPrefs;
+
+		private string EditorPrefsStateKey => GetType().Name + ".State";
+
+		private void SaveStateToEditorPrefs()
+		{
+			if (OverrideToSkipSavingStateToEditorPrefs)
+				return;
+
+			try
+			{
+				var key = PlayerPrefsTools.GenerateKey(EditorPrefsStateKey, PathHashPostfix.Yes);
+				var serialized = EditorJsonUtility.ToJson(this, false);
+				EditorPrefs.SetString(key, serialized);
+			}
+			catch (Exception exception)
+			{
+				Log.Warning($"Encountered an error while saving '{GetType().Name}' window state to {nameof(EditorPrefs)}. Ignoring the error. Details: " + exception);
+			}
+		}
+
+		private void LoadStateFromEditorPrefs()
+		{
+			try
+			{
+				var key = PlayerPrefsTools.GenerateKey(EditorPrefsStateKey, PathHashPostfix.Yes);
+				var serialized = EditorPrefs.GetString(key, "");
+				if (!string.IsNullOrWhiteSpace(serialized))
+				{
+					EditorJsonUtility.FromJsonOverwrite(serialized, this);
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Warning($"Encountered an error while loading '{GetType().Name}' window state from {nameof(EditorPrefs)}. Ignoring the error. Details: " + exception);
+			}
+		}
+
+		private void DeleteStateFromEditorPrefs()
+		{
+			var key = PlayerPrefsTools.GenerateKey(EditorPrefsStateKey, PathHashPostfix.Yes);
+			EditorPrefs.DeleteKey(key);
 		}
 
 		#endregion
