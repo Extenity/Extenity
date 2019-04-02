@@ -199,7 +199,10 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				case Columns.Preview:
 					{
-						GUI.DrawTexture(cellRect, item.Data.Preview, ScaleMode.ScaleToFit);
+						if (item.Data.Preview)
+						{
+							GUI.DrawTexture(cellRect, item.Data.Preview, ScaleMode.ScaleToFit);
+						}
 					}
 					break;
 
