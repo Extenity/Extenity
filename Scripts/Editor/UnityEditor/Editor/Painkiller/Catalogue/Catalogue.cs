@@ -76,7 +76,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			GUILayout.Space(8f);
 
-			MaterialsTool.OnGUI(this);
+			MaterialsTool.OnGUI();
 
 			if (GUI.changed)
 			{
@@ -94,15 +94,13 @@ namespace Extenity.PainkillerToolbox.Editor
 			Canvases,
 		}
 
-		[NonSerialized]
-		private CatalogueTool[] Tools;
 		[SerializeField]
 		private int ActiveToolIndex;
 
 		[SerializeField]
 		private MaterialsTool MaterialsTool;
-		//[SerializeField]
-		//private CanvasesTool CanvasesTool;
+		[SerializeField]
+		private CanvasesTool CanvasesTool;
 
 		private void InitializeTools()
 		{
@@ -110,6 +108,15 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				MaterialsTool = new MaterialsTool();
 			}
+			MaterialsTool.OnRepaintRequest -= Repaint;
+			MaterialsTool.OnRepaintRequest += Repaint;
+
+			if (CanvasesTool == null)
+			{
+				CanvasesTool = new CanvasesTool();
+			}
+			CanvasesTool.OnRepaintRequest -= Repaint;
+			CanvasesTool.OnRepaintRequest += Repaint;
 		}
 
 		#endregion

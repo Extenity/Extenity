@@ -15,32 +15,13 @@ namespace Extenity.PainkillerToolbox.Editor
 	{
 		#region GUI
 
-		private readonly GUILayoutOption[] RefreshButtonOptions = { GUILayout.Width(100f), GUILayout.Height(24f) };
-		private readonly GUIContent RefreshButtonContent = new GUIContent("Refresh", "Scans all objects.");
-
-		public void OnGUI(Catalogue window)
+		public void OnGUI()
 		{
 			InitializeListViewIfNeeded();
 
 			// Top bar
 			{
-				GUILayout.BeginHorizontal();
-
-				// Refresh button
-				if (GUILayout.Button(RefreshButtonContent, RefreshButtonOptions))
-				{
-					GatherData();
-					window.Repaint();
-				}
-
-				// Search field
-				GUILayout.BeginVertical();
-				GUILayout.Space(6f);
-				var rect = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.label, GUILayoutTools.ExpandWidth);
-				TreeView.searchString = SearchField.OnGUI(rect, TreeView.searchString);
-				GUILayout.EndVertical();
-
-				GUILayout.EndHorizontal();
+				DrawTopBar();
 			}
 
 			GUILayout.Space(3f);
@@ -56,16 +37,11 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Data
 
-		public void GatherData()
+		protected override void OnRefreshButtonClicked()
 		{
-			TreeModel.SetData(GetData());
+			TreeModel.SetData(GatherMaterialsInScenes());
 			TreeView.Reload();
-		}
-
-		private IList<MaterialElement> GetData()
-		{
-			var materialsInScenes = GatherMaterialsInScenes();
-			return materialsInScenes;
+			SendRepaintRequest();
 		}
 
 		private static List<MaterialElement> GatherMaterialsInScenes()
@@ -111,11 +87,15 @@ namespace Extenity.PainkillerToolbox.Editor
 		private MultiColumnHeaderState MultiColumnHeaderState;
 
 		[NonSerialized]
-		private SearchField SearchField;
-		[NonSerialized]
 		private MaterialListView TreeView;
 		[NonSerialized]
 		private TreeModel<MaterialElement> TreeModel;
+
+		protected override string SearchString
+		{
+			get => TreeView.searchString;
+			set => TreeView.searchString = value;
+		}
 
 		private void InitializeListViewIfNeeded()
 		{
@@ -137,12 +117,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			TreeModel = new TreeModel<MaterialElement>(GetData());
+			TreeModel = new TreeModel<MaterialElement>(GatherMaterialsInScenes());
 
 			TreeView = new MaterialListView(TreeViewState, multiColumnHeader, TreeModel);
 
-			SearchField = new SearchField();
-			SearchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
+			InitializeSearchField(TreeView.SetFocusAndEnsureSelectedItem);
 		}
 
 		#endregion
