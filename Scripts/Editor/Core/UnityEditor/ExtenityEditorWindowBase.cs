@@ -61,6 +61,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 			InitializeOnCompilation();
 
 			OnEnableDerived();
+
+			// Do this after OnEnableDerived to allow the window to disable this feature.
+			if (DisableWindowGUIOnCompilation)
+			{
+				SetToDisableWindowOnCompilation();
+			}
 		}
 
 		#endregion
@@ -208,7 +214,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Disable Window On Compilation
 
-		public bool DisableWindowGUIOnCompilation;
+		public bool DisableWindowGUIOnCompilation = true;
 
 		private GUIContent CompilationMessage;
 
