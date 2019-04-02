@@ -1,4 +1,5 @@
 using Extenity.IMGUIToolbox.Editor;
+using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
 namespace Extenity.PainkillerToolbox.Editor
@@ -22,6 +23,20 @@ namespace Extenity.PainkillerToolbox.Editor
 			rowHeight = RowHeights;
 			showAlternatingRowBackgrounds = true;
 			showBorder = true;
+		}
+
+		#endregion
+
+		#region Drag and Drop
+
+		protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
+		{
+			// Drag&Drop should not allow dropping an entry as a child of another entry. Then the sorting fails miserably.
+			if (args.dragAndDropPosition == DragAndDropPosition.UponItem)
+				return DragAndDropVisualMode.Rejected;
+			if (args.parentItem.depth != -1)
+				return DragAndDropVisualMode.Rejected;
+			return base.HandleDragAndDrop(args);
 		}
 
 		#endregion
