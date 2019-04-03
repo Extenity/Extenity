@@ -57,7 +57,6 @@ namespace Extenity.PainkillerToolbox.Editor
 		}
 		private readonly GUILayoutOption[] ToolbarBackgroundLayoutOptions = { GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false) };
 		private readonly GUILayoutOption[] ToolbarLayoutOptions = { GUILayout.ExpandWidth(false), GUILayout.Height(34f) };
-		private readonly string[] Tabs = { "Materials", "Canvases" };
 
 		#endregion
 
@@ -66,7 +65,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		protected override void OnGUIDerived()
 		{
 			GUILayout.BeginHorizontal(ToolbarBackgroundStyle, ToolbarBackgroundLayoutOptions);
-			var newActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, Tabs, ToolbarLayoutOptions);
+			var newActiveToolIndex = GUILayout.Toolbar(ActiveToolIndex, ToolNames, ToolbarLayoutOptions);
 			if (ActiveToolIndex != newActiveToolIndex)
 			{
 				ChangeActiveTool(newActiveToolIndex);
@@ -97,6 +96,12 @@ namespace Extenity.PainkillerToolbox.Editor
 			Materials,
 			Canvases,
 		}
+
+		private readonly string[] ToolNames =
+		{
+			"Materials",
+			"Canvases"
+		};
 
 		[SerializeField]
 		private MaterialsTool MaterialsTool;
