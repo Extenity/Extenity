@@ -263,24 +263,53 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 
 			// Sort the roots of the existing tree items
-			SortByMultipleColumns();
+			SortChildrenByMultipleColumns(rootItem, false);
 			TreeToList(root, rows);
 			Repaint();
 		}
 
-		private void SortByMultipleColumns()
+		private void SortChildrenByMultipleColumns(TreeViewItem parentItem, bool recursive)
 		{
-			var sortedColumns = multiColumnHeader.state.sortedColumns;
+			// TODO: Recursion into children items. Recursion will be implemented when the CanvasTreeView is first used as a tree, rather than a list.
+			if (recursive)
+				throw new NotImplementedException();
 
+			var sortedColumns = multiColumnHeader.state.sortedColumns;
 			if (sortedColumns.Length == 0)
 				return;
 
-			var myTypes = rootItem.children.Cast<TreeViewItem<CanvasElement>>();
-			var orderedQuery = InitialOrder(myTypes, sortedColumns);
-			for (int i = 1; i < sortedColumns.Length; i++)
+			var children = parentItem.children.Cast<TreeViewItem<CanvasElement>>();
+
+			// First sorting column
+			IOrderedEnumerable<TreeViewItem<CanvasElement>> orderedQuery;
+			int i = 0;
 			{
-				var sortMethod = SortOptions[sortedColumns[i]];
-				var ascending = multiColumnHeader.IsSortedAscending(sortedColumns[i]);
+				var columnIndex = sortedColumns[i++];
+				var sortMethod = SortOptions[columnIndex];
+				var ascending = multiColumnHeader.IsSortedAscending(columnIndex);
+
+				switch (sortMethod)
+				{
+					case SortMethod.Name:
+						orderedQuery = children.Order(l => l.Data.name, ascending);
+						break;
+					case SortMethod.SceneCount:
+						orderedQuery = children.Order(l => l.Data.FoundInScenes.Length, ascending);
+						break;
+					case SortMethod.AssetPath:
+						orderedQuery = children.Order(l => l.Data.AssetPath, ascending);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+
+			// Following sorting columns
+			for (; i < sortedColumns.Length; i++)
+			{
+				var columnIndex = sortedColumns[i];
+				var sortMethod = SortOptions[columnIndex];
+				var ascending = multiColumnHeader.IsSortedAscending(columnIndex);
 
 				switch (sortMethod)
 				{
@@ -298,24 +327,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				}
 			}
 
-			rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
-		}
-
-		private IOrderedEnumerable<TreeViewItem<CanvasElement>> InitialOrder(IEnumerable<TreeViewItem<CanvasElement>> myTypes, int[] history)
-		{
-			var sortMethod = SortOptions[history[0]];
-			var ascending = multiColumnHeader.IsSortedAscending(history[0]);
-			switch (sortMethod)
-			{
-				case SortMethod.Name:
-					return myTypes.Order(l => l.Data.name, ascending);
-				case SortMethod.SceneCount:
-					return myTypes.Order(l => l.Data.FoundInScenes.Length, ascending);
-				case SortMethod.AssetPath:
-					return myTypes.Order(l => l.Data.AssetPath, ascending);
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			parentItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
 		}
 
 		#endregion
