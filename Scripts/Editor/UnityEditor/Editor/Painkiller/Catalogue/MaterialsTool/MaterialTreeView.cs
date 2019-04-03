@@ -223,6 +223,9 @@ namespace Extenity.PainkillerToolbox.Editor
 
 				case Columns.Material:
 					{
+						//var indent = GetContentIndent(item); Indentation is not needed since this tree is actually a list.
+						//cellRect.x += indent;
+						//cellRect.width -= indent;
 						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Material, typeof(Material), false);
 					}
 					break;

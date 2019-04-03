@@ -163,6 +163,9 @@ namespace Extenity.PainkillerToolbox.Editor
 
 				case Columns.Canvas:
 					{
+						var indent = GetContentIndent(item);
+						cellRect.x += indent;
+						cellRect.width -= indent;
 						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Canvas, typeof(Canvas), false);
 					}
 					break;
