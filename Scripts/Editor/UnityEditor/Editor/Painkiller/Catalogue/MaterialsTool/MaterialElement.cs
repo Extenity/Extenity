@@ -12,8 +12,8 @@ namespace Extenity.PainkillerToolbox.Editor
 	{
 		#region Initialization
 
-		public MaterialElement(Material material, string sceneName) 
-			: base(material)
+		public MaterialElement(Material material, string sceneName, MaterialElement parentElement)
+			: base(material, parentElement.depth + 1)
 		{
 			Material = material;
 			if (Material)

@@ -45,7 +45,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		private static List<MaterialElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes()
 		{
 			return BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<Material, MaterialElement>(
-				(canvas, sceneName) => new MaterialElement(canvas, sceneName),
+				(canvas, sceneName, parentElement) => new MaterialElement(canvas, sceneName, parentElement),
 				MaterialElement.CreateRoot);
 		}
 

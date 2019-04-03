@@ -74,12 +74,13 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Gather Object In Scene
 
-		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
+		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
 			where TObject : UnityEngine.Object
 			where TTreeElement : CatalogueElement<TTreeElement>, new()
 		{
 			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInLoadedScenes<TObject>();
 
+			var rootElement = rootCreator();
 			var elementsByObjects = new Dictionary<TObject, TTreeElement>(objectsInScenes.Sum(item => item.Value.Length));
 
 			foreach (var objectsInScene in objectsInScenes)
@@ -91,7 +92,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				{
 					if (!elementsByObjects.TryGetValue(obj, out var element))
 					{
-						element = treeElementCreator(obj, scene.name);
+						element = treeElementCreator(obj, scene.name, rootElement);
 						elementsByObjects.Add(obj, element);
 					}
 					else
@@ -102,7 +103,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 
 			var elements = elementsByObjects.Values.ToList();
-			elements.Insert(0, rootCreator());
+			elements.Insert(0, rootElement);
 			return elements;
 		}
 

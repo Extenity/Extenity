@@ -11,8 +11,8 @@ namespace Extenity.PainkillerToolbox.Editor
 	{
 		#region Initialization
 
-		public CatalogueElement(Object asset)
-			: base(asset.name, 0, asset.GetInstanceID())
+		public CatalogueElement(Object asset, int depth)
+			: base(asset.name, depth, asset.GetInstanceID())
 		{
 			Asset = asset;
 		}

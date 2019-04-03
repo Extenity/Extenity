@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -37,16 +38,70 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void OnRefreshButtonClicked()
 		{
-			TreeModel.SetData(BuildElementsListByCollectingDependenciesReferencedInLoadedScenes());
+			TreeModel.SetData(BuildCanvasElementsTreeByWalkingInLoadedScenes());
 			TreeView.Reload();
 			SendRepaintRequest();
 		}
 
-		private static List<CanvasElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes()
+		private static List<CanvasElement> BuildCanvasElementsTreeByWalkingInLoadedScenes()
 		{
-			return BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<Canvas, CanvasElement>(
-				(canvas, sceneName) => new CanvasElement(canvas, sceneName),
-				CanvasElement.CreateRoot);
+			var canvases = GameObjectTools.FindObjectsOfTypeInLoadedScenes<Canvas>(ActiveCheck.IncludingInactive);
+			return BuildCanvasElementsTree(canvases);
+		}
+
+		private static List<CanvasElement> BuildCanvasElementsTree(List<Canvas> canvases)
+		{
+			var rootElement = CanvasElement.CreateRoot();
+			var elements = new List<CanvasElement>(canvases.Count + 1); // +1 is for the root.
+			elements.Add(rootElement);
+
+			foreach (var canvas in canvases)
+			{
+				var parentCanvas = canvas.rootCanvas;
+				var isParentlessCanvas = parentCanvas == canvas;
+
+				CanvasElement parentElement = null;
+				if (isParentlessCanvas)
+				{
+					parentElement = rootElement;
+				}
+				else
+				{
+					// Find the parent's element. Thanks to how 'canvases' list is generated, it's guaranteed that
+					// the parent was already added to 'elements' list. See 1178135234.
+					foreach (var entry in elements)
+					{
+						if (entry.Canvas == parentCanvas)
+						{
+							parentElement = entry;
+							break;
+						}
+					}
+					if (parentElement == null)
+					{
+						// Something went wrong. The parent should have already been added to the 'elements' list. See 1178135234.
+						Log.InternalError(1178135234);
+					}
+				}
+
+				if (parentElement != null) // Being null is not expected. But it's just a precaution.
+				{
+					string sceneOrPrefabName;
+					if (canvas.gameObject.scene != null)
+					{
+						sceneOrPrefabName = canvas.gameObject.scene.name;
+					}
+					else
+					{
+						// TODO: Get the prefab name.
+						sceneOrPrefabName = "";
+					}
+					var element = new CanvasElement(canvas, sceneOrPrefabName, parentElement);
+					elements.Add(element);
+				}
+			}
+
+			return elements;
 		}
 
 		#endregion
@@ -92,7 +147,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			TreeModel = new TreeModel<CanvasElement>(BuildElementsListByCollectingDependenciesReferencedInLoadedScenes());
+			TreeModel = new TreeModel<CanvasElement>(BuildCanvasElementsTreeByWalkingInLoadedScenes());
 
 			TreeView = new CanvasTreeView(TreeViewState, multiColumnHeader, TreeModel);
 

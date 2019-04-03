@@ -10,8 +10,8 @@ namespace Extenity.PainkillerToolbox.Editor
 	{
 		#region Initialization
 
-		public CanvasElement(Canvas canvas, string sceneName) 
-			: base(canvas)
+		public CanvasElement(Canvas canvas, string sceneName, CanvasElement parent)
+			: base(canvas, parent.depth + 1)
 		{
 			Canvas = canvas;
 			if (Canvas)
