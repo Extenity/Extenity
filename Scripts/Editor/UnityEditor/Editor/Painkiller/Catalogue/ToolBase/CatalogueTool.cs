@@ -74,7 +74,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Gather Object In Scene
 
-		protected static List<TTreeElement> GatherObjectsInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
+		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
 			where TObject : UnityEngine.Object
 			where TTreeElement : CatalogueElement<TTreeElement>, new()
 		{

@@ -37,15 +37,14 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void OnRefreshButtonClicked()
 		{
-			TreeModel.SetData(GatherMaterialsInLoadedScenes());
+			TreeModel.SetData(BuildElementsListByCollectingDependenciesReferencedInLoadedScenes());
 			TreeView.Reload();
 			SendRepaintRequest();
 		}
 
-		
-		private static List<MaterialElement> GatherMaterialsInLoadedScenes()
+		private static List<MaterialElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes()
 		{
-			return GatherObjectsInLoadedScenes<Material, MaterialElement>(
+			return BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<Material, MaterialElement>(
 				(canvas, sceneName) => new MaterialElement(canvas, sceneName),
 				MaterialElement.CreateRoot);
 		}
@@ -93,7 +92,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			TreeModel = new TreeModel<MaterialElement>(GatherMaterialsInLoadedScenes());
+			TreeModel = new TreeModel<MaterialElement>(BuildElementsListByCollectingDependenciesReferencedInLoadedScenes());
 
 			TreeView = new MaterialTreeView(TreeViewState, multiColumnHeader, TreeModel);
 
