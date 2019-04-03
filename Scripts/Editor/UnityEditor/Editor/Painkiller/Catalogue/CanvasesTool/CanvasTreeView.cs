@@ -19,6 +19,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			Preview,
 			Canvas,
+			RenderOrder,
 			Scenes,
 			AssetPath,
 		}
@@ -28,6 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			SortMethod.NotApplicable,
 			SortMethod.Name,
+			SortMethod.RenderOrder,
 			SortMethod.SceneCount,
 			SortMethod.AssetPath,
 		};
@@ -37,6 +39,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			NotApplicable,
 			Name,
 			AssetPath,
+			RenderOrder,
 			SceneCount,
 		}
 
@@ -65,6 +68,17 @@ namespace Extenity.PainkillerToolbox.Editor
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = false,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("Order"),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 60,
+					minWidth = 60,
+					autoResize = false,
+					allowToggleVisibility = true,
 				},
 				new MultiColumnHeaderState.Column
 				{
@@ -167,6 +181,12 @@ namespace Extenity.PainkillerToolbox.Editor
 						cellRect.x += indent;
 						cellRect.width -= indent;
 						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Canvas, typeof(Canvas), false);
+					}
+					break;
+
+				case Columns.RenderOrder:
+					{
+						GUI.Label(cellRect, item.Data.RenderOrder.ToString(), EditorStylesTools.CenteredLabel);
 					}
 					break;
 
@@ -296,6 +316,9 @@ namespace Extenity.PainkillerToolbox.Editor
 					case SortMethod.Name:
 						orderedQuery = children.Order(l => l.Data.name, ascending);
 						break;
+					case SortMethod.RenderOrder:
+						orderedQuery = children.Order(l => l.Data.RenderOrder, ascending);
+						break;
 					case SortMethod.SceneCount:
 						orderedQuery = children.Order(l => l.Data.FoundInScenes.Length, ascending);
 						break;
@@ -318,6 +341,9 @@ namespace Extenity.PainkillerToolbox.Editor
 				{
 					case SortMethod.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
+						break;
+					case SortMethod.RenderOrder:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.RenderOrder, ascending);
 						break;
 					case SortMethod.SceneCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);

@@ -31,6 +31,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		#region Canvas
 
 		public Canvas Canvas;
+		public int RenderOrder => Canvas.renderOrder;
 		public string AssetPath;
 
 		#endregion
