@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
@@ -8,11 +8,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace Extenity.ReflectionToolbox.Editor
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	// TODO: Move these methods into EditorUtilityTools
-	public static class EditorReflectionTools
+	public static class EditorUtilityTools
 	{
 		#region CollectDependenciesReferencedIn...
 

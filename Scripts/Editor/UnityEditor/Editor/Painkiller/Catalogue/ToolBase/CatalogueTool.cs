@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.IMGUIToolbox.Editor;
-using Extenity.ReflectionToolbox.Editor;
+using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -78,7 +78,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			where TObject : UnityEngine.Object
 			where TTreeElement : CatalogueElement<TTreeElement>, new()
 		{
-			var objectsInScenes = EditorReflectionTools.CollectDependenciesReferencedInLoadedScenes<TObject>();
+			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInLoadedScenes<TObject>();
 
 			var elementsByObjects = new Dictionary<TObject, TTreeElement>(objectsInScenes.Sum(item => item.Value.Length));
 
