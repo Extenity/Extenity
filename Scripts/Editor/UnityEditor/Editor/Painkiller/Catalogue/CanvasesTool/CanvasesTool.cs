@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Extenity.IMGUIToolbox.Editor;
-using Extenity.ReflectionToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -39,39 +37,16 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void OnRefreshButtonClicked()
 		{
-			TreeModel.SetData(GatherCanvasesInScenes());
+			TreeModel.SetData(GatherCanvasesInLoadedScenes());
 			TreeView.Reload();
 			SendRepaintRequest();
 		}
 
-		private static List<CanvasElement> GatherCanvasesInScenes()
+		private static List<CanvasElement> GatherCanvasesInLoadedScenes()
 		{
-			var objectsInScenes = EditorReflectionTools.CollectDependenciesReferencedInLoadedScenes<Canvas>();
-
-			var elementsByObjects = new Dictionary<Canvas, CanvasElement>(objectsInScenes.Sum(item => item.Value.Length));
-
-			foreach (var objectsInScene in objectsInScenes)
-			{
-				var scene = objectsInScene.Key;
-				var objects = objectsInScene.Value;
-
-				foreach (var obj in objects)
-				{
-					if (!elementsByObjects.TryGetValue(obj, out var element))
-					{
-						element = new CanvasElement(obj, scene.name);
-						elementsByObjects.Add(obj, element);
-					}
-					else
-					{
-						element.AddScene(scene.name);
-					}
-				}
-			}
-
-			var elements = elementsByObjects.Values.ToList();
-			elements.Insert(0, CanvasElement.CreateRoot());
-			return elements;
+			return GatherObjectsInLoadedScenes<Canvas, CanvasElement>(
+				(canvas, sceneName) => new CanvasElement(canvas, sceneName),
+				CanvasElement.CreateRoot);
 		}
 
 		#endregion
@@ -117,7 +92,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (isFirstInitialization)
 				multiColumnHeader.ResizeToFit();
 
-			TreeModel = new TreeModel<CanvasElement>(GatherCanvasesInScenes());
+			TreeModel = new TreeModel<CanvasElement>(GatherCanvasesInLoadedScenes());
 
 			TreeView = new CanvasTreeView(TreeViewState, multiColumnHeader, TreeModel);
 

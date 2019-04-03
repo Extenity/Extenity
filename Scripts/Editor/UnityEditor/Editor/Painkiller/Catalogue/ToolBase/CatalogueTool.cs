@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.ReflectionToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -65,6 +68,42 @@ namespace Extenity.PainkillerToolbox.Editor
 		protected void SendRepaintRequest()
 		{
 			OnRepaintRequest?.Invoke();
+		}
+
+		#endregion
+
+		#region Gather Object In Scene
+
+		protected static List<TTreeElement> GatherObjectsInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
+			where TObject : UnityEngine.Object
+			where TTreeElement : CatalogueElement<TTreeElement>, new()
+		{
+			var objectsInScenes = EditorReflectionTools.CollectDependenciesReferencedInLoadedScenes<TObject>();
+
+			var elementsByObjects = new Dictionary<TObject, TTreeElement>(objectsInScenes.Sum(item => item.Value.Length));
+
+			foreach (var objectsInScene in objectsInScenes)
+			{
+				var scene = objectsInScene.Key;
+				var objects = objectsInScene.Value;
+
+				foreach (TObject obj in objects)
+				{
+					if (!elementsByObjects.TryGetValue(obj, out var element))
+					{
+						element = treeElementCreator(obj, scene.name);
+						elementsByObjects.Add(obj, element);
+					}
+					else
+					{
+						element.AddScene(scene.name);
+					}
+				}
+			}
+
+			var elements = elementsByObjects.Values.ToList();
+			elements.Insert(0, rootCreator());
+			return elements;
 		}
 
 		#endregion
