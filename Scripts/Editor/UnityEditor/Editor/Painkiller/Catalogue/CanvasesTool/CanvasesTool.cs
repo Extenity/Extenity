@@ -49,6 +49,13 @@ namespace Extenity.PainkillerToolbox.Editor
 			return BuildCanvasElementsTree(canvases);
 		}
 
+		private static List<CanvasElement> BuildCanvasElementsTreeByWalkingScenesAndPrefabs()
+		{
+			//var scenePaths = AssetTools.GetAllSceneAssetPaths();
+			//var prefabPaths = AssetTools.GetAllPrefabAssetPaths();
+			throw new NotImplementedException();
+		}
+
 		private static List<CanvasElement> BuildCanvasElementsTree(List<Canvas> canvases)
 		{
 			var rootElement = CanvasElement.CreateRoot();
