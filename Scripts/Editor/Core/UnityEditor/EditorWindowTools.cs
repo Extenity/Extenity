@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -47,9 +50,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		/// </summary>
 		public static bool IsWindowOpen<T>() where T : EditorWindow
 		{
-			var objects = Resources.FindObjectsOfTypeAll<T>();
-			var window = objects.Length > 0 ? (EditorWindow)objects[0] : null;
-			return window;
+			return GetAllEditorWindows<T>().Length > 0;
 		}
 
 		public static void ToggleWindow<T>() where T : EditorWindow
@@ -66,6 +67,53 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Get Editor Window
+
+		public static EditorWindow[] GetAllEditorWindows()
+		{
+			return GetAllEditorWindows<EditorWindow>();
+		}
+
+		public static EditorWindow[] GetAllEditorWindows<T>() where T : EditorWindow
+		{
+			return ((EditorWindow[])Resources.FindObjectsOfTypeAll(typeof(T)))
+				.Where(window => window != null)
+				.ToArray();
+		}
+
+		public static EditorWindow GetEditorWindowByTitle(string title)
+		{
+			var windows = GetAllEditorWindows();
+			EditorWindow foundWindow = null;
+			foreach (var window in windows)
+			{
+				if (window.titleContent.text.Equals(title, StringComparison.Ordinal))
+				{
+					if (foundWindow != null)
+					{
+						throw new Exception($"There are more than one window with the same title '{title}'.");
+					}
+					foundWindow = window;
+				}
+			}
+			if (foundWindow)
+				return foundWindow;
+			throw new Exception($"Window with title '{title}' does not exist.");
+		}
+
+		#endregion
+
+		#region Make An Editor Window Fullscreen
+
+		public static void MakeFullscreen(this EditorWindow window, bool fullscreen)
+		{
+			window.maximized = fullscreen;
+			InternalEditorUtility.RepaintAllViews();
+		}
+
+		#endregion
+
 	}
 
 }
