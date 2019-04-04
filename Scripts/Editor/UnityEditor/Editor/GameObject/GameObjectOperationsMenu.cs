@@ -127,25 +127,25 @@ namespace Extenity.GameObjectToolbox.Editor
 		#region Hierarchy Menu - List All Referenced Sprites
 
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Loaded Scenes", priority = 4001)]
-		private static void Menu_ListAllReferencedTextures_InLoadedScenes()
+		private static void Menu_ListAllReferencedSprites_InLoadedScenes()
 		{
 			SceneManagerTools.GetRootGameObjectsOfLoadedScenes().LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Active Scene", priority = 4002)]
-		private static void Menu_ListAllReferencedTextures_InActiveScene()
+		private static void Menu_ListAllReferencedSprites_InActiveScene()
 		{
 			SceneManager.GetActiveScene().GetRootGameObjects().LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Selection", priority = 4003)]
-		private static void Menu_ListAllReferencedTextures_InSelection()
+		private static void Menu_ListAllReferencedSprites_InSelection()
 		{
 			Selection.gameObjects.LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Selection And Children", priority = 4004)]
-		private static void Menu_ListAllReferencedTextures_InSelectionAndChildren()
+		private static void Menu_ListAllReferencedSprites_InSelectionAndChildren()
 		{
 			Selection.gameObjects.LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
