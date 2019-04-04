@@ -36,7 +36,11 @@ namespace Extenity.SceneManagementToolbox
 					}
 				}
 			}
-			if (includeDontDestroyOnLoadScene)
+			if (includeDontDestroyOnLoadScene
+#if UNITY_EDITOR
+				&& Application.isPlaying
+#endif
+			)
 			{
 				list.Add(GetDontDestroyOnLoadScene());
 			}
