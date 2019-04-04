@@ -46,7 +46,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(new[] { typeof(Instantiator) }, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(new[] { typeof(Instantiator) }, true, true, true, true);
 		}
 
 		[MenuItem("GameObject/Operations/Delete Empty Unreferenced GameObjects/In Active Scene", priority = 1)]
@@ -62,7 +62,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers/In Loaded Scenes", priority = 4)]
 		private static void Menu_DeleteAllDisabledStaticMeshRenderers_InLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck.InactiveOnly, true, true);
+			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck.InactiveOnly, true, true, true, true);
 		}
 
 		[MenuItem("GameObject/Operations/Delete All Disabled Static MeshRenderers/In Active Scene", priority = 5)]
@@ -129,7 +129,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Loaded Scenes", priority = 4001)]
 		private static void Menu_ListAllReferencedSprites_InLoadedScenes()
 		{
-			SceneManagerTools.GetRootGameObjectsOfLoadedScenes().LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
+			SceneManagerTools.GetRootGameObjectsOfLoadedScenes(true, true).LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
 		[MenuItem("GameObject/Operations/List All Referenced Sprites/In Active Scene", priority = 4002)]

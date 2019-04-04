@@ -74,11 +74,11 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Gather Object In Scene
 
-		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator)
+		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator, bool includeActiveScene, bool includeDontDestroyOnLoadScene)
 			where TObject : UnityEngine.Object
 			where TTreeElement : CatalogueElement<TTreeElement>, new()
 		{
-			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInLoadedScenes<TObject>();
+			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInLoadedScenes<TObject>(includeActiveScene, includeDontDestroyOnLoadScene);
 
 			var rootElement = rootCreator();
 			var elementsByObjects = new Dictionary<TObject, TTreeElement>(objectsInScenes.Sum(item => item.Value.Length));

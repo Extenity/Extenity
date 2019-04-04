@@ -77,7 +77,7 @@ namespace Extenity.DebugToolbox
 
 		public void TakeSnapshotOfAllLoadedScenes()
 		{
-			var sceneInfos = SceneManagerTools.GetLoadedScenes(true);
+			var sceneInfos = SceneManagerTools.GetLoadedScenes(true, true);
 			Scenes = sceneInfos.Select(sceneInfo => new SceneEntry(sceneInfo)).ToArray();
 
 			// Also add the DontDestroyOnLoad scene

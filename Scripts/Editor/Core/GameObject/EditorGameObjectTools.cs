@@ -23,9 +23,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			return SceneManager.GetActiveScene().FindStaticObjectsOfType<T>(leastExpectedFlags, activeCheck);
 		}
 
-		public static List<T> FindStaticObjectsOfTypeInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static List<T> FindStaticObjectsOfTypeInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			return SceneManagerTools.GetLoadedScenes().FindStaticObjectsOfType<T>(leastExpectedFlags, activeCheck);
+			return SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).FindStaticObjectsOfType<T>(leastExpectedFlags, activeCheck);
 		}
 
 		public static List<T> FindStaticObjectsOfType<T>(this IList<Scene> scenes, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -55,9 +55,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, activeCheck);
 		}
 
-		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, activeCheck));
 		}
 
 		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -82,9 +82,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			SceneManager.GetActiveScene().MakeSureNoObjectsContainingComponentExist<T>(activeCheck);
 		}
 
-		public static void MakeSureNoObjectsContainingComponentExistInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		public static void MakeSureNoObjectsContainingComponentExistInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.MakeSureNoObjectsContainingComponentExist<T>(activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.MakeSureNoObjectsContainingComponentExist<T>(activeCheck));
 		}
 
 		public static void MakeSureNoObjectsContainingComponentExist<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
@@ -116,9 +116,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			SceneManager.GetActiveScene().MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck);
 		}
 
-		public static void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck));
 		}
 
 		public static void MakeSureNoStaticObjectsContainingComponentExist<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -151,9 +151,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			SceneManager.GetActiveScene().DestroyEmptyUnreferencedGameObjects(excludedTypes, undoable, log);
 		}
 
-		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(Type[] excludedTypes, bool undoable, bool log)
+		public static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(Type[] excludedTypes, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(excludedTypes, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyEmptyUnreferencedGameObjects(excludedTypes, undoable, log));
 		}
 
 		public static void DestroyEmptyUnreferencedGameObjects(this Scene scene, Type[] excludedTypes, bool undoable, bool log)
@@ -252,9 +252,9 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy All GameObjects Containing Component
 
-		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck, bool undoable, bool log) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(activeCheck, undoable, log));
 		}
 
 		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck, bool undoable, bool log) where T : Component
@@ -295,9 +295,9 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy All Static GameObjects Containing Component
 
-		public static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool undoable, bool log) where T : Component
+		public static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllStaticGameObjectsContainingComponent<T>(leastExpectedFlags, activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllStaticGameObjectsContainingComponent<T>(leastExpectedFlags, activeCheck, undoable, log));
 		}
 
 		public static void DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool undoable, bool log) where T : Component
@@ -338,9 +338,9 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy All Components
 
-		public static void DestroyAllComponentsInLoadedScenes<T>(ActiveCheck activeCheck, bool undoable, bool log) where T : Component
+		public static void DestroyAllComponentsInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllComponents<T>(activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllComponents<T>(activeCheck, undoable, log));
 		}
 
 		public static void DestroyAllComponentsInActiveScene<T>(ActiveCheck activeCheck, bool undoable, bool log) where T : Component
@@ -381,9 +381,9 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy All Static Components
 
-		public static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool undoable, bool log) where T : Component
+		public static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllStaticComponents<T>(leastExpectedFlags, activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllStaticComponents<T>(leastExpectedFlags, activeCheck, undoable, log));
 		}
 
 		public static void DestroyAllStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool undoable, bool log) where T : Component
@@ -429,9 +429,9 @@ namespace Extenity.GameObjectToolbox.Editor
 			SceneManager.GetActiveScene().DestroyAllStaticMeshRenderersAndMeshFilters(activeCheck, undoable, log);
 		}
 
-		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene, bool undoable, bool log)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyAllStaticMeshRenderersAndMeshFilters(activeCheck, undoable, log));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllStaticMeshRenderersAndMeshFilters(activeCheck, undoable, log));
 		}
 
 		public static void DestroyAllStaticMeshRenderersAndMeshFilters(this Scene scene, ActiveCheck activeCheck, bool undoable, bool log)

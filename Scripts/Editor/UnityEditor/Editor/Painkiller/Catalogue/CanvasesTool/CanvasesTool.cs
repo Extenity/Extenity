@@ -45,7 +45,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static List<CanvasElement> BuildCanvasElementsTreeByWalkingInLoadedScenes()
 		{
-			var canvases = GameObjectTools.FindObjectsOfTypeInLoadedScenes<Canvas>(ActiveCheck.IncludingInactive);
+			var canvases = GameObjectTools.FindObjectsOfTypeInLoadedScenes<Canvas>(ActiveCheck.IncludingInactive, true, true);
 			return BuildCanvasElementsTree(canvases);
 		}
 

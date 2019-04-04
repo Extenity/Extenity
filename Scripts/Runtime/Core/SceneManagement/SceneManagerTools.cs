@@ -21,22 +21,7 @@ namespace Extenity.SceneManagementToolbox
 			return list;
 		}
 
-		public static List<Scene> GetLoadedScenes()
-		{
-			var sceneCount = SceneManager.sceneCount;
-			var list = new List<Scene>(sceneCount);
-			for (int i = 0; i < sceneCount; i++)
-			{
-				var scene = SceneManager.GetSceneAt(i);
-				if (scene.isLoaded)
-				{
-					list.Add(scene);
-				}
-			}
-			return list;
-		}
-
-		public static List<Scene> GetLoadedScenes(bool includeActiveScene)
+		public static List<Scene> GetLoadedScenes(bool includeActiveScene, bool includeDontDestroyOnLoadScene)
 		{
 			var sceneCount = SceneManager.sceneCount;
 			var list = new List<Scene>(sceneCount);
@@ -50,6 +35,10 @@ namespace Extenity.SceneManagementToolbox
 						list.Add(scene);
 					}
 				}
+			}
+			if (includeDontDestroyOnLoadScene)
+			{
+				list.Add(GetDontDestroyOnLoadScene());
 			}
 			return list;
 		}
@@ -79,7 +68,7 @@ namespace Extenity.SceneManagementToolbox
 
 		public static void ReloadAllLoadedScenes()
 		{
-			var loadedScenes = GetLoadedScenes(false);
+			var loadedScenes = GetLoadedScenes(false, false);
 			var loadedActiveScene = SceneManager.GetActiveScene();
 			if (!loadedActiveScene.IsValid())
 				return;
@@ -94,9 +83,9 @@ namespace Extenity.SceneManagementToolbox
 			}
 		}
 
-		public static List<GameObject> GetRootGameObjectsOfLoadedScenes()
+		public static List<GameObject> GetRootGameObjectsOfLoadedScenes(bool includeActiveScene, bool includeDontDestroyOnLoadScene)
 		{
-			var scenes = GetLoadedScenes();
+			var scenes = GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene);
 			var result = new List<GameObject>();
 			foreach (var scene in scenes)
 			{

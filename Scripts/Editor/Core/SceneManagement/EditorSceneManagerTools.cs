@@ -61,7 +61,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public static bool IsAnyLoadedSceneDirty(bool includeActiveScene = true)
 		{
-			return GetLoadedScenes(includeActiveScene).Any(scene => scene.isDirty);
+			return GetLoadedScenes(includeActiveScene, false).Any(scene => scene.isDirty);
 		}
 
 		#region Load Scene
@@ -118,7 +118,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public new static void ReloadAllLoadedScenes()
 		{
-			var loadedScenes = GetLoadedScenes(false);
+			var loadedScenes = GetLoadedScenes(false, false);
 			var loadedActiveScene = EditorSceneManager.GetActiveScene();
 			if (!loadedActiveScene.IsValid())
 				return;

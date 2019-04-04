@@ -410,9 +410,9 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, leastExpectedFlags, activeCheck);
+			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
 		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -420,9 +420,9 @@ namespace Extenity.BuildMachine.Editor
 			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, leastExpectedFlags, activeCheck);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, ActiveCheck activeCheck) where T : Component
+		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, activeCheck);
+			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
 		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, ActiveCheck activeCheck) where T : Component
@@ -432,9 +432,9 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags, activeCheck);
+			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
 		protected void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -444,9 +444,9 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		protected static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(activeCheck, true, true);
+			EditorGameObjectTools.DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(activeCheck, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck) where T : Component
@@ -454,9 +454,9 @@ namespace Extenity.BuildMachine.Editor
 			EditorGameObjectTools.DestroyAllGameObjectsContainingComponentInActiveScene<T>(activeCheck, true, true);
 		}
 
-		protected static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected static void DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(leastExpectedFlags, activeCheck, true, true);
+			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInLoadedScenes<T>(leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -464,9 +464,9 @@ namespace Extenity.BuildMachine.Editor
 			EditorGameObjectTools.DestroyAllStaticGameObjectsContainingComponentInActiveScene<T>(leastExpectedFlags, activeCheck, true, true);
 		}
 
-		protected static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(Type[] excludedTypes = null)
+		protected static void DestroyEmptyUnreferencedGameObjectsInLoadedScenes(bool includeActiveScene, bool includeDontDestroyOnLoadScene, Type[] excludedTypes = null)
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(excludedTypes, true, true);
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(excludedTypes, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyEmptyUnreferencedGameObjectsInActiveScene(Type[] excludedTypes = null)
@@ -476,9 +476,9 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected static void DestroyAllComponentsInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		protected static void DestroyAllComponentsInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.DestroyAllComponentsInLoadedScenes<T>(activeCheck, true, true);
+			EditorGameObjectTools.DestroyAllComponentsInLoadedScenes<T>(activeCheck, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyAllComponentsInActiveScene<T>(ActiveCheck activeCheck) where T : Component
@@ -486,9 +486,9 @@ namespace Extenity.BuildMachine.Editor
 			EditorGameObjectTools.DestroyAllComponentsInActiveScene<T>(activeCheck, true, true);
 		}
 
-		protected static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected static void DestroyAllStaticComponentsInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.DestroyAllStaticComponentsInLoadedScenes<T>(leastExpectedFlags, activeCheck, true, true);
+			EditorGameObjectTools.DestroyAllStaticComponentsInLoadedScenes<T>(leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyAllStaticComponentsInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
@@ -496,9 +496,9 @@ namespace Extenity.BuildMachine.Editor
 			EditorGameObjectTools.DestroyAllStaticComponentsInActiveScene<T>(leastExpectedFlags, activeCheck, true, true);
 		}
 
-		protected static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck)
+		protected static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene)
 		{
-			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(activeCheck, true, true);
+			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(activeCheck, includeActiveScene, includeDontDestroyOnLoadScene, true, true);
 		}
 
 		protected static void DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck activeCheck)
@@ -510,9 +510,9 @@ namespace Extenity.BuildMachine.Editor
 
 		protected void DeleteComponentsOfEditorOnlyToolsInLoadedScenes()
 		{
-			DestroyAllComponentsInLoadedScenes<SnapToGroundInEditor>(ActiveCheck.IncludingInactive);
-			DestroyAllComponentsInLoadedScenes<DontShowEditorHandler>(ActiveCheck.IncludingInactive);
-			DestroyAllComponentsInLoadedScenes<Devnote>(ActiveCheck.IncludingInactive);
+			DestroyAllComponentsInLoadedScenes<SnapToGroundInEditor>(ActiveCheck.IncludingInactive, true, false);
+			DestroyAllComponentsInLoadedScenes<DontShowEditorHandler>(ActiveCheck.IncludingInactive, true, false);
+			DestroyAllComponentsInLoadedScenes<Devnote>(ActiveCheck.IncludingInactive, true, false);
 		}
 
 		// -------------------------------------------------------------------------

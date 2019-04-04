@@ -22,7 +22,7 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 
 		public static void BlurReflectionProbesInLoadedScenes(ActiveCheck activeCheck)
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.BlurReflectionProbes(activeCheck));
+			SceneManagerTools.GetLoadedScenes(true, false).ForEach(scene => scene.BlurReflectionProbes(activeCheck));
 		}
 
 		public static void BlurReflectionProbes(this Scene scene, ActiveCheck activeCheck)

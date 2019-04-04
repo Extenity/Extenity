@@ -1024,9 +1024,9 @@ namespace Extenity.GameObjectToolbox
 			return SceneManager.GetActiveScene().FindObjectsOfType<T>(activeCheck);
 		}
 
-		public static List<T> FindObjectsOfTypeInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		public static List<T> FindObjectsOfTypeInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			return SceneManagerTools.GetLoadedScenes().FindObjectsOfType<T>(activeCheck);
+			return SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).FindObjectsOfType<T>(activeCheck);
 		}
 
 		public static List<T> FindObjectsOfType<T>(this IList<Scene> scenes, ActiveCheck activeCheck) where T : Component
@@ -1331,9 +1331,9 @@ namespace Extenity.GameObjectToolbox
 			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck);
 		}
 
-		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
+		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck));
 		}
 
 		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
@@ -1493,9 +1493,9 @@ namespace Extenity.GameObjectToolbox
 
 		#region Destroy All GameObjects Containing Component
 
-		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		public static void DestroyAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyAllGameObjectsContainingComponent<T>(activeCheck));
 		}
 
 		public static void DestroyAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck) where T : Component
@@ -1519,9 +1519,9 @@ namespace Extenity.GameObjectToolbox
 
 		#region Destroy Immediate All GameObjects Containing Component
 
-		public static void DestroyImmediateAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck) where T : Component
+		public static void DestroyImmediateAllGameObjectsContainingComponentInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes().ForEach(scene => scene.DestroyImmediateAllGameObjectsContainingComponent<T>(activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.DestroyImmediateAllGameObjectsContainingComponent<T>(activeCheck));
 		}
 
 		public static void DestroyImmediateAllGameObjectsContainingComponentInActiveScene<T>(ActiveCheck activeCheck) where T : Component
