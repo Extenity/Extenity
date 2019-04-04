@@ -19,7 +19,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			Preview,
 			Canvas,
-			RenderOrder,
+			SortingOrder,
 			Scenes,
 			AssetPath,
 		}
@@ -29,7 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			SortMethod.NotApplicable,
 			SortMethod.Name,
-			SortMethod.RenderOrder,
+			SortMethod.SortingOrder,
 			SortMethod.SceneCount,
 			SortMethod.AssetPath,
 		};
@@ -39,7 +39,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			NotApplicable,
 			Name,
 			AssetPath,
-			RenderOrder,
+			SortingOrder,
 			SceneCount,
 		}
 
@@ -184,9 +184,9 @@ namespace Extenity.PainkillerToolbox.Editor
 					}
 					break;
 
-				case Columns.RenderOrder:
+				case Columns.SortingOrder:
 					{
-						GUI.Label(cellRect, item.Data.RenderOrder.ToString(), EditorStylesTools.CenteredLabel);
+						GUI.Label(cellRect, item.Data.SortingOrder.ToString(), EditorStylesTools.CenteredLabel);
 					}
 					break;
 
@@ -316,8 +316,8 @@ namespace Extenity.PainkillerToolbox.Editor
 					case SortMethod.Name:
 						orderedQuery = children.Order(l => l.Data.name, ascending);
 						break;
-					case SortMethod.RenderOrder:
-						orderedQuery = children.Order(l => l.Data.RenderOrder, ascending);
+					case SortMethod.SortingOrder:
+						orderedQuery = children.Order(l => l.Data.SortingOrder, ascending);
 						break;
 					case SortMethod.SceneCount:
 						orderedQuery = children.Order(l => l.Data.FoundInScenes.Length, ascending);
@@ -342,8 +342,8 @@ namespace Extenity.PainkillerToolbox.Editor
 					case SortMethod.Name:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.name, ascending);
 						break;
-					case SortMethod.RenderOrder:
-						orderedQuery = orderedQuery.ThenBy(l => l.Data.RenderOrder, ascending);
+					case SortMethod.SortingOrder:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.SortingOrder, ascending);
 						break;
 					case SortMethod.SceneCount:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.FoundInScenes.Length, ascending);
