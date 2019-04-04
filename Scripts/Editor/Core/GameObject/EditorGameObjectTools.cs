@@ -424,12 +424,12 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Destroy All Disabled Static MeshRenderers And MeshFilters
 
-		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck activeCheck, bool undoable, bool log)
 		{
 			SceneManager.GetActiveScene().DestroyAllStaticMeshRenderersAndMeshFilters(activeCheck, undoable, log);
 		}
 
-		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck activeCheck, bool undoable, bool log)
+		public static void DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck activeCheck, bool undoable, bool log)
 		{
 			SceneManagerTools.GetLoadedScenes(true).ForEach(scene => scene.DestroyAllStaticMeshRenderersAndMeshFilters(activeCheck, undoable, log));
 		}
