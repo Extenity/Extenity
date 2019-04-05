@@ -303,7 +303,7 @@ namespace Extenity.BuildToolbox.Editor
 			return false;
 		}
 
-		public static IDisposable TemporarilyRemoveSplashIfPro()
+		public static SplashDisposeHandler TemporarilyRemoveSplashIfPro()
 		{
 			if (RemoveSplashIfPro())
 			{
@@ -331,13 +331,13 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static IDisposable TemporarilySetAndroidKeys(AndroidKeys setKeys, AndroidKeys resultingKeys)
+		public static AndroidKeyDisposeHandler TemporarilySetAndroidKeys(AndroidKeys setKeys, AndroidKeys resultingKeys)
 		{
 			setKeys.SetToProjectSettings(true);
 			return new AndroidKeyDisposeHandler(resultingKeys);
 		}
 
-		public static IDisposable TemporarilySetAndroidKeys(AndroidKeys setKeys)
+		public static AndroidKeyDisposeHandler TemporarilySetAndroidKeys(AndroidKeys setKeys)
 		{
 			var resultingKeys = AndroidKeys.GetFromProjectSettings();
 			return TemporarilySetAndroidKeys(setKeys, resultingKeys);
@@ -505,7 +505,7 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static IDisposable TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
+		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
 		{
 			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore);
 		}
@@ -638,7 +638,7 @@ namespace Extenity.BuildToolbox.Editor
 			#endregion
 		}
 
-		public static IDisposable TemporarilyMoveFilesAndDirectories(IEnumerable<string> originalPaths, string tempLocationBasePath)
+		public static TemporarilyMoveHandler TemporarilyMoveFilesAndDirectories(IEnumerable<string> originalPaths, string tempLocationBasePath)
 		{
 			return new TemporarilyMoveHandler(originalPaths, tempLocationBasePath);
 		}
@@ -674,7 +674,7 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static IDisposable TemporarilyIncrementVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
+		public static TemporarilyIncrementVersionHandler TemporarilyIncrementVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
 		{
 			return new TemporarilyIncrementVersionHandler(addMajor, addMinor, addBuild, saveAssets);
 		}
