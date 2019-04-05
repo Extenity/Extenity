@@ -151,7 +151,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < nonlastingPrefabs.Length; i++)
 			{
 #if LoggingEnabled
-				using (Log.Indent(this, "Instantiating nonlasting '{nonlastingPrefabs[i].name}'"))
+				using (Log.Indent(this, $"Instantiating nonlasting '{nonlastingPrefabs[i].name}'"))
 #endif
 				{
 					NonlastingInstantiate(nonlastingPrefabs[i]);
