@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Extenity.ApplicationToolbox;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -640,6 +641,42 @@ namespace Extenity.BuildToolbox.Editor
 		public static IDisposable TemporarilyMoveFilesAndDirectories(IEnumerable<string> originalPaths, string tempLocationBasePath)
 		{
 			return new TemporarilyMoveHandler(originalPaths, tempLocationBasePath);
+		}
+
+		#endregion
+
+		#region Temporarily Increment Version
+
+		public class TemporarilyIncrementVersionHandler : IDisposable
+		{
+			public bool KeepTheChange = false;
+			public readonly int AddMajor;
+			public readonly int AddMinor;
+			public readonly int AddBuild;
+			public readonly bool SaveAssets;
+
+			internal TemporarilyIncrementVersionHandler(int addMajor, int addMinor, int addBuild, bool saveAssets)
+			{
+				AddMajor = addMajor;
+				AddMinor = addMinor;
+				AddBuild = addBuild;
+				SaveAssets = saveAssets;
+				ApplicationVersion.AddToUnityVersionConfiguration(AddMajor, AddMinor, AddBuild, SaveAssets);
+			}
+
+			public void Dispose()
+			{
+				// Revert back to previous version
+				if (!KeepTheChange)
+				{
+					ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, SaveAssets);
+				}
+			}
+		}
+
+		public static IDisposable TemporarilyIncrementVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
+		{
+			return new TemporarilyIncrementVersionHandler(addMajor, addMinor, addBuild, saveAssets);
 		}
 
 		#endregion
