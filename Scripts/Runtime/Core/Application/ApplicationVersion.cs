@@ -171,9 +171,21 @@ namespace Extenity.ApplicationToolbox
 			CheckVersionConfigurationConsistency();
 
 			var version = GetUnityApplicationVersion();
-			version = version.AddVersion(addMajor, addMinor, addBuild);
 
-			Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+			if (addMajor != 0 || addMinor != 0 || addBuild != 0)
+			{
+				version = version.AddVersion(addMajor, addMinor, addBuild);
+				Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+			}
+			else
+			{
+				// Even though we don't need to change the version, we still
+				//   - check for consistency,
+				//   - get the Unity version,
+				//   - apply it to all platforms,
+				//   - then save the configuration if asked.
+				Log.Info($"Keeping current version: {version}");
+			}
 
 			// Set versions for all platforms
 			SetAllPlatformVersions(version, saveAssets);
