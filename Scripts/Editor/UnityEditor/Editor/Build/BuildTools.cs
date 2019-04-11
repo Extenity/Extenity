@@ -479,7 +479,7 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			public readonly string[] Symbols;
 
-			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore)
+			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore, bool refreshAssetDatabaseOnAdd)
 			{
 				Symbols = (string[])symbols.Clone();
 
@@ -496,6 +496,10 @@ namespace Extenity.BuildToolbox.Editor
 					}
 				}
 				AddDefineSymbols(Symbols);
+				if (refreshAssetDatabaseOnAdd)
+				{
+					AssetDatabase.Refresh();
+				}
 			}
 
 			public void Dispose()
@@ -505,9 +509,9 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
+		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore, bool refreshAssetDatabaseOnAdd)
 		{
-			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore);
+			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore, refreshAssetDatabaseOnAdd);
 		}
 
 		#endregion
