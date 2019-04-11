@@ -1,5 +1,6 @@
 using Extenity.ReflectionToolbox;
 using UnityEditor;
+using UnityEngine.TextCore;
 
 namespace TMPro.Extensions.Editor
 {
@@ -12,10 +13,8 @@ namespace TMPro.Extensions.Editor
 			// TextMesh Pro types
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(FaceInfo));
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(FontAssetCreationSettings));
-			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(GlyphValueRecord));
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_TextInfo));
 			//ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_FontAsset)); This causes an error "CS0012: The type `UnityEngine.ScriptableObject' is defined in an assembly that is not referenced." when building Extenity.
-			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_FontWeights));
 			ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_Glyph));
 			//ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_InputField.SubmitEvent)); This causes an error "CS0012: The type `UnityEngine.Events.UnityEvent`1<string>' is defined in an assembly that is not referenced." when building Extenity.
 			//ReflectionTools.KnownTypesOfGameObjectReferenceFinder.Add(typeof(TMP_InputField.SelectionEvent)); This causes an error "CS0012: The type `UnityEngine.Events.UnityEvent`1<string>' is defined in an assembly that is not referenced." when building Extenity.
