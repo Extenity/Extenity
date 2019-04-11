@@ -153,7 +153,19 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
-		#region Restart
+		#region Restart / Quit
+
+		public static void Quit()
+		{
+#if UNITY_EDITOR
+			if (UnityEditor.EditorApplication.isPlaying)
+			{
+				UnityEditor.EditorApplication.isPlaying = false;
+			}
+#else
+			Application.Quit();
+#endif
+		}
 
 		public static void Restart()
 		{
