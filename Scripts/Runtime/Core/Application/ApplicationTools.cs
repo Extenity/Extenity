@@ -114,8 +114,17 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
-		#region Launch App Store Page
+		#region Launch Mobile Market Page
 
+		public static void LaunchMarketPageAndQuit()
+		{
+			LaunchMarketPage();
+			Quit();
+		}
+
+		/// <summary>
+		/// Source: https://forum.unity.com/threads/link-to-app-on-appstore-from-in-an-other-app.31070/
+		/// </summary>
 		public static void LaunchMarketPage()
 		{
 #if UNITY_EDITOR
@@ -135,7 +144,9 @@ namespace Extenity.ApplicationToolbox
 
 		private static void LaunchMarketPage_AppStore()
 		{
-			throw new NotImplementedException();
+			var address = "itms-apps://itunes.apple.com/app/id" + Application.identifier;
+			Log.Info("Launching market page: " + address);
+			Application.OpenURL(address);
 		}
 
 #endif
