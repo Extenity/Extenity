@@ -16,6 +16,8 @@ namespace Extenity.UIToolbox
 
 		[Header("Power-Up Button")]
 		public Image IconImage;
+		public Color IconColorNormal = new Color(1f, 1f, 1f, 1f);
+		public Color IconColorCooldown = new Color(1f, 1f, 1f, 0.4f);
 		public TextMeshProUGUI CountText;
 		public UIFader CooldownFader;
 		public TextMeshProUGUI CooldownTimerText;
@@ -117,11 +119,13 @@ namespace Extenity.UIToolbox
 				this.FastInvokeRepeating(RefreshCooldown, CooldownRefreshInterval, CooldownRefreshInterval, false);
 				RefreshCooldown();
 				CooldownFader.FadeIn();
+				IconColor = IconColorCooldown;
 			}
 			else
 			{
 				CooldownStartTime = 0;
 				CooldownFader.FadeOut();
+				IconColor = IconColorNormal;
 			}
 			RefreshInteractable();
 		}
@@ -133,6 +137,7 @@ namespace Extenity.UIToolbox
 			this.CancelFastInvoke(RefreshCooldown);
 			RefreshInteractable();
 			CooldownFader.FadeOut();
+			IconColor = IconColorNormal;
 
 			if (CallbackOnButtonCooldownEnd != null)
 			{
