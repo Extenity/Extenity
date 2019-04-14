@@ -378,8 +378,8 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
-				Log.CriticalError("Tried to invoke for a null behaviour.");
-				return;
+				// Calling Invoke over a null object is handled just like calling a method of that object, which is going to throw.
+				throw new Exception("Tried to invoke over a null behaviour.");
 			}
 			var entry = CreateOrGetEntryPool();
 			entry.Initialize(behaviour, action, time, repeatRate, unscaledTime);
@@ -390,6 +390,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Invoke cancellation is a less critical operation. The invoke should already be cancelled if
+				// the object was destroyed before calling Cancel.
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
@@ -433,6 +438,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Invoke cancellation is a less critical operation. The invoke should already be cancelled if
+				// the object was destroyed before calling Cancel.
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
@@ -480,6 +490,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking if Invoke is alive feels like a less critical operation. The answer is simply
+				// "No, it's not alive".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
@@ -514,6 +529,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking if Invoke is alive feels like a less critical operation. The answer is simply
+				// "No, it's not alive".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
@@ -556,8 +576,13 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for Invoke count feels like a less critical operation. The answer is simply
+				// "Zero".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
-				return -1;
+				return 0;
 			}
 			var count = 0;
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -589,8 +614,13 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for Invoke count feels like a less critical operation. The answer is simply
+				// "Zero".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
-				return -1;
+				return 0;
 			}
 			var count = 0;
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -624,6 +654,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for remaining time feels like a less critical operation. The answer is simply
+				// "None".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
@@ -654,6 +689,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for remaining time feels like a less critical operation. The answer is simply
+				// "None".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
@@ -684,6 +724,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for remaining time feels like a less critical operation. The answer is simply
+				// "None".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
@@ -714,6 +759,11 @@ namespace Extenity.FlowToolbox
 		{
 			if (!behaviour)
 			{
+				// Checking for remaining time feels like a less critical operation. The answer is simply
+				// "None".
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
