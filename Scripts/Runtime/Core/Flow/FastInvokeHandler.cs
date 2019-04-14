@@ -54,6 +54,13 @@ namespace Extenity.FlowToolbox
 
 		private void FixedUpdate()
 		{
+#if UNITY_EDITOR
+			if (VerboseLoggingInEachFixedUpdate)
+			{
+				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(FixedUpdate));
+			}
+#endif
+
 			var now = (double)Time.time;
 
 			if (QueueInProcess.Count > 0)
@@ -124,6 +131,13 @@ namespace Extenity.FlowToolbox
 
 		private void Update()
 		{
+#if UNITY_EDITOR
+			if (VerboseLoggingInEachUpdate)
+			{
+				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(Update));
+			}
+#endif
+
 			var now = (double)Time.unscaledTime;
 
 			if (QueueInProcess.Count > 0)
@@ -696,6 +710,15 @@ namespace Extenity.FlowToolbox
 			}
 			return double.NaN;
 		}
+
+		#endregion
+
+		#region Verbose Logging
+
+#if UNITY_EDITOR
+		public static bool VerboseLoggingInEachUpdate;
+		public static bool VerboseLoggingInEachFixedUpdate;
+#endif
 
 		#endregion
 	}
