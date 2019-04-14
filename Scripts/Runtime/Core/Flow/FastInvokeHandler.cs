@@ -1,6 +1,11 @@
+//#define EnableOverkillLogging
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if EnableOverkillLogging
+using System.Linq;
+#endif
 
 namespace Extenity.FlowToolbox
 {
@@ -55,6 +60,10 @@ namespace Extenity.FlowToolbox
 				Action = action;
 				RepeatRate = repeatRate;
 				UnscaledTime = unscaledTime;
+
+#if EnableOverkillLogging
+				Log.Info($"New {(unscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
+#endif
 			}
 		}
 
@@ -100,6 +109,12 @@ namespace Extenity.FlowToolbox
 
 			// Remove the ones from queue that we will be calling now.
 			ScaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
+
+#if EnableOverkillLogging
+			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {now}:\n" +
+			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
+			         string.Join("\n", ScaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")));
+#endif
 
 			for (int i = 0; i < QueueInProcess.Count; i++)
 			{
@@ -178,6 +193,12 @@ namespace Extenity.FlowToolbox
 
 			// Remove the ones from queue that we will be calling now.
 			UnscaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
+
+#if EnableOverkillLogging
+			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {now}:\n" +
+			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
+			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")));
+#endif
 
 			for (int i = 0; i < QueueInProcess.Count; i++)
 			{

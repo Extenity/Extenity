@@ -357,29 +357,39 @@ namespace ExtenityTests.FlowToolbox
 		#endregion
 
 		#region Test System Validation
-		
-		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator TestSystemValidation_StartAtRandomTimeWorks()
+
+		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator TestSystemValidation(bool startAtRandomTime)
 		{
-			yield return InitializeTest(true);
+			yield return InitializeTest(startAtRandomTime);
 
 			// No invoke or fixed update processed yet. They are all zeros.
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 			Assert.IsFalse(Invoker.IsFastInvokingAny());
 			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
-		}
 
-		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator TestSystemValidation_StartAtFixedUpdateWorks()
-		{
-			yield return InitializeTest(false);
+			// Make sure fixed updates are called in expected delta times
+			{
+				// We need to skip to the first fixed update, since Time.time could be anything random.
+				if (startAtRandomTime)
+				{
+					yield return new WaitForFixedUpdate();
+				}
 
-			// No invoke or fixed update processed yet. They are all zeros.
-			Assert.AreEqual(0, Subject.CallbackCallCount);
-			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
-			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+				var previous = Time.time;
+				var fixedDeltaTime = Time.fixedDeltaTime;
+
+				for (int i = 0; i < 20; i++)
+				{
+					yield return new WaitForFixedUpdate();
+					var now = Time.time;
+					var diff = now - previous;
+					Assert.AreEqual(fixedDeltaTime, diff, FastInvokeHandler.Tolerance);
+					previous = now;
+				}
+
+			}
 		}
 
 		#endregion
