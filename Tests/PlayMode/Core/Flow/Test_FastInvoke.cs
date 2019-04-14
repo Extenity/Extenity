@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using Extenity.FlowToolbox;
-using Extenity.UnityTestToolbox;
 using ExtenityTests.Common;
 using NUnit.Framework;
 using UnityEngine;
@@ -10,35 +9,7 @@ using UnityEngine.TestTools;
 namespace ExtenityTests.FlowToolbox
 {
 
-	public class Test_FastInvokeSubject : MonoBehaviour
-	{
-		#region Initialization
-
-		private void Awake()
-		{
-			ResetCallback();
-		}
-
-		#endregion
-
-		#region Callback
-
-		public int CallbackCallCount;
-
-		public void ResetCallback()
-		{
-			CallbackCallCount = 0;
-		}
-
-		public void Callback()
-		{
-			CallbackCallCount++;
-		}
-
-		#endregion
-	}
-
-	public class Test_FastInvoke
+	public class Test_FastInvoke : TestBase_FastInvoke
 	{
 		private const int CheesyRepeats = 1;
 		private const int DetailedRepeats = 20;
@@ -253,65 +224,6 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
-		#region Test Initialization / Deinitialization
-
-		private bool IsInitialized;
-
-		private IEnumerator InitializeTest(bool startAtRandomTime)
-		{
-			if (!InitializeBase())
-				yield break;
-
-			if (startAtRandomTime)
-			{
-				// This will make tests start at a random Time.time.
-				yield return new WaitForEndOfFrame(); // Ignored by Code Correct
-			}
-			else
-			{
-				// This will make tests start right in FixedUpdates where Time.time is consistent.
-				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
-			}
-		}
-
-		private bool InitializeBase(float timeScale = 100f)
-		{
-			if (IsInitialized)
-			{
-				// Deinitialize first
-				DeinitializeBase();
-			}
-			IsInitialized = true;
-
-			Invoker.ResetSystem();
-			//if (Invoker.IsFastInvokingAny())
-			//{
-			//	Assert.Fail("Left a previously set invoke already in action while starting to a new test.");
-			//	return false;
-			//}
-
-			UnityTestTools.Cleanup();
-			ResetSubject();
-			//Subject.ResetCallback(); No need to call, but left this line here commented out for convenience.
-			ResetOutsiderCallback();
-
-			Time.timeScale = timeScale;
-			return true;
-		}
-
-		private void DeinitializeBase()
-		{
-			if (!IsInitialized)
-				throw new Exception("Test was not initialized.");
-			IsInitialized = false;
-
-			UnityTestTools.Cleanup();
-			Invoker.ShutdownSystem();
-			Time.timeScale = 1f;
-		}
-
-		#endregion
-
 		private IEnumerator TestUnityInvoke_Zero(int repeats)
 		{
 			for (int i = 0; i < repeats; i++)
@@ -511,45 +423,6 @@ namespace ExtenityTests.FlowToolbox
 					Invoke time: '{invokeTime}'.\n");
 			}
 		}
-
-		#region Test Subject
-
-		private Test_FastInvokeSubject _Subject;
-		private Test_FastInvokeSubject Subject
-		{
-			get
-			{
-				if (!IsInitialized)
-				{
-					throw new Exception("Test was not initialized.");
-				}
-				return _Subject;
-			}
-		}
-
-		private void ResetSubject()
-		{
-			var go = new GameObject("FastInvoke test object");
-			_Subject = go.AddComponent<Test_FastInvokeSubject>();
-		}
-
-		#endregion
-
-		#region Callback Outside Of Behaviour
-
-		private int OutsiderCallbackCallCount;
-
-		private void ResetOutsiderCallback()
-		{
-			OutsiderCallbackCallCount = 0;
-		}
-
-		private void FastInvokeOutsiderCallback()
-		{
-			OutsiderCallbackCallCount++;
-		}
-
-		#endregion
 
 		#region Tools
 
