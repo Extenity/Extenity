@@ -73,6 +73,7 @@ namespace ExtenityTests.FlowToolbox
 		#region Configuration
 
 		protected const double FloatingTolerance = 0.00001;
+		protected const float TimeScale = 100f;
 
 		#endregion
 
@@ -97,7 +98,7 @@ namespace ExtenityTests.FlowToolbox
 			}
 		}
 
-		private bool InitializeBase(float timeScale = 100f)
+		private bool InitializeBase()
 		{
 			if (IsInitialized)
 			{
@@ -118,7 +119,7 @@ namespace ExtenityTests.FlowToolbox
 			//Subject.ResetCallback(); No need to call, but left this line here commented out for convenience.
 			ResetOutsiderCallback();
 
-			Time.timeScale = timeScale;
+			Time.timeScale = TimeScale;
 			return true;
 		}
 

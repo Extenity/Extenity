@@ -15,10 +15,11 @@ namespace ExtenityTests.FlowToolbox
 		private const int CheesyRepeats = 1;
 		private const int DetailedRepeats = 20;
 		private const int OvernightRepeats = 1000;
+
 		private const int LongRunRepeats = 1; // Long runs are already taking too long. So don't repeat them.
-		private const int CheesyLongRunDuration = 100; // 1 second in realtime
-		private const int DetailedLongRunDuration = 20 * 100; // 20 seconds in realtime
-		private const int OvernightLongRunDuration = 10 * 60 * 100; // 10 minutes in realtime
+		private const double CheesyLongRunDuration = 1 * TimeScale; // 1 second in realtime
+		private const double DetailedLongRunDuration = 20 * TimeScale; // 20 seconds in realtime
+		private const double OvernightLongRunDuration = 10 * 60 * TimeScale; // 10 minutes in realtime
 
 		#endregion
 
