@@ -171,8 +171,9 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Invoke Callers
 
-		protected IEnumerator TestInvoke_Zero(int repeats, DoInvokeTemplate doInvoke)
+		protected IEnumerator TestInvoke_Zero(DoInvokeTemplate doInvoke, int repeats)
 		{
+			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
 			{
 				yield return doInvoke(0, true);
@@ -185,8 +186,9 @@ namespace ExtenityTests.FlowToolbox
 			}
 		}
 
-		protected IEnumerator TestInvoke_Various(bool startAtRandomTime, int repeats, DoInvokeTemplate doInvoke)
+		protected IEnumerator TestInvoke_Various(DoInvokeTemplate doInvoke, bool startAtRandomTime, int repeats)
 		{
+			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
 			{
 				yield return doInvoke(Time.fixedDeltaTime * 0.1, startAtRandomTime);
@@ -227,17 +229,13 @@ namespace ExtenityTests.FlowToolbox
 			}
 		}
 
-		protected IEnumerator TestInvoke(int repeats, double invokeTime, bool startAtRandomTime, DoInvokeTemplate doInvoke)
+		protected IEnumerator TestInvoke(DoInvokeTemplate doInvoke, double invokeTime, bool startAtRandomTime, int repeats)
 		{
+			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
 			{
 				yield return doInvoke(invokeTime, startAtRandomTime);
 			}
-		}
-
-		protected IEnumerator TestInvoke(double invokeTime, bool startAtRandomTime, DoInvokeTemplate doInvoke)
-		{
-			yield return doInvoke(invokeTime, startAtRandomTime);
 		}
 
 		#endregion
