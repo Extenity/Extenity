@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Extenity.FlowToolbox;
 using ExtenityTests.Common;
 using NUnit.Framework;
@@ -326,6 +327,51 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
 			Subject.CancelFastInvoke(Subject.Callback);
 			DoFastInvokingChecks(false);
+		}
+
+		#endregion
+
+		#region Stop When Destroyed
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_StopsWhenObjectDestroyed()
+		{
+			yield return InitializeTest(false);
+			var WaitForFixedUpdate = new WaitForFixedUpdate();
+			var fixedDeltaTime = Time.fixedDeltaTime;
+			var cachedSubject = Subject;
+
+			Subject.FastInvoke(Subject.Callback, 1.0);
+
+			// Wait half way. Then destroy.
+			do yield return WaitForFixedUpdate; while (Subject.RemainingTimeUntilNextFastInvoke() > 0.5);
+			var lastCallbackCallCount = Subject.CallbackCallCount;
+			GameObject.Destroy(Subject);
+
+			// Check if the callback is still called.
+			var remainingTime = 1.0;
+			while ((remainingTime -= fixedDeltaTime) > 0.0)
+			{
+				yield return WaitForFixedUpdate;
+				Assert.AreEqual(lastCallbackCallCount, cachedSubject.CallbackCallCount);
+			}
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_ThrowsWhenCalledOverADestroyedObject()
+		{
+			yield return InitializeTest(false);
+			var cachedSubject = Subject;
+			GameObject.DestroyImmediate(Subject);
+			Assert.Throws<Exception>(() => cachedSubject.FastInvoke(cachedSubject.Callback, 1.0));
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_ThrowsWhenCalledOverANullObject()
+		{
+			yield return InitializeTest(false);
+			Test_FastInvokeSubject nullRef = null;
+			Assert.Throws<Exception>(() => nullRef.FastInvoke(FastInvokeOutsiderCallback, 1.0));
 		}
 
 		#endregion
