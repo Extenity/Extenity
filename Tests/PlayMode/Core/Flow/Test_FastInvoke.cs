@@ -10,6 +10,8 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvoke : TestBase_FastInvoke
 	{
+		#region Configuration - Timing
+
 		private const int CheesyRepeats = 1;
 		private const int DetailedRepeats = 20;
 		private const int OvernightRepeats = 1000;
@@ -18,9 +20,9 @@ namespace ExtenityTests.FlowToolbox
 		private const int DetailedLongRunDuration = 20 * 100; // 20 seconds in realtime
 		private const int OvernightLongRunDuration = 10 * 60 * 100; // 10 minutes in realtime
 
-		#region Test Definitions
+		#endregion
 
-		// ---------- UnityInvoke
+		#region Timing - Unity Invoke
 
 		// UnityInvoke_Zero
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
@@ -62,7 +64,9 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
 		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, false, DoUnityInvoke); }
 
-		// ---------- FastInvoke
+		#endregion
+
+		#region Timing - Extenity FastInvoke
 
 		// FastInvoke_Zero
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
@@ -104,7 +108,9 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, false, DoFastInvoke); }
 
-		// ---------- FastInvoke Consistency
+		#endregion
+
+		#region Call Order
 
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_CalledBeforeAllFixedUpdates()
@@ -166,6 +172,10 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(5, Subject.FixedUpdateCallCount);
 		}
 
+		#endregion
+
+		#region Cancellation
+
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_Cancel()
 		{
@@ -211,6 +221,10 @@ namespace ExtenityTests.FlowToolbox
 			Subject.CancelFastInvoke(Subject.Callback);
 			DoFastInvokingChecks(false);
 		}
+
+		#endregion
+
+		#region Remaining Time
 
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_RemainingTime()
@@ -284,7 +298,9 @@ namespace ExtenityTests.FlowToolbox
 			Assert.IsTrue(double.IsNaN(Subject.RemainingTimeUntilNextFastInvoke()));
 		}
 
-		// ---------- FastInvoke Other Specialities
+		#endregion
+
+		#region AllowsRegisteringMethodsOutsideOfBehaviour
 
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_AllowsRegisteringMethodsOutsideOfBehaviour()
