@@ -113,7 +113,29 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Call Order
 
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_CalledAtFirstFixedUpdateEvenWithZeroDelay()
+		{
+			yield return InitializeTest(true);
+
+			// No invoke or fixed update processed yet. They are all zeros.
+			Assert.AreEqual(0, Subject.CallbackCallCount);
+			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
+
+			// Calling invoke with zero delay
+			Subject.FastInvoke(Subject.Callback, 0.0);
+
+			// No invoke or fixed update after just calling the FastInvoke. They are still all zeros.
+			Assert.AreEqual(0, Subject.CallbackCallCount);
+			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
+
+			yield return new WaitForFixedUpdate();
+
+			Assert.AreEqual(1, Subject.CallbackCallCount);
+			Assert.AreEqual(1, Subject.FixedUpdateCallCount);
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FastInvoke_CalledBeforeAllFixedUpdates()
 		{
 			yield return InitializeTest(true);
@@ -122,21 +144,13 @@ namespace ExtenityTests.FlowToolbox
 			//FastInvokeHandler.VerboseLoggingInEachFixedUpdate = true;
 			//Subject.EnableLogging();
 
-			// No invoke or fixed update processed yet. They are all zeros.
-			Assert.AreEqual(0, Subject.CallbackCallCount);
-			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
-
 			Subject.FastInvoke(Subject.Callback, delay);
-			// No invoke or fixed update after just calling the FastInvoke. They are still all zeros.
-			Assert.AreEqual(0, Subject.CallbackCallCount);
-			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
-
 			Subject.ExpectedInvokeCallbackCallCountInFixedUpdate = 1; // Invoke callback should be called before FixedUpdate
 			Subject.ExpectedFixedUpdateCallCountInInvokeCallback = 0; // FixedUpdate should be called after Invoke callback
 			yield return WaitForFixedUpdate;
 
 			// WaitForFixedUpdate yield us to the end of current fixed update loop. Invoke callback will be called
-			// at the start of the loop. Then FixedUpdate will be called once.
+			// at the start of the loop. Then the FixedUpdate will be called.
 			Assert.AreEqual(1, Subject.CallbackCallCount);
 			Assert.AreEqual(1, Subject.FixedUpdateCallCount);
 
@@ -159,7 +173,7 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(3, Subject.CallbackCallCount);
 			Assert.AreEqual(3, Subject.FixedUpdateCallCount);
 
-			//Subject.FastInvoke(Subject.Callback, delay); Do not call anymore
+			//Subject.FastInvoke(Subject.Callback, delay); Do not call Invoke anymore
 			yield return WaitForFixedUpdate;
 
 			// Invoke callback should stop since we are not calling the invoke anymore.
@@ -177,7 +191,7 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Cancellation
 
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FastInvoke_Cancel()
 		{
 			yield return InitializeTest(true);
@@ -227,7 +241,7 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Remaining Time
 
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FastInvoke_RemainingTime()
 		{
 			yield return InitializeTest(true);
@@ -237,7 +251,6 @@ namespace ExtenityTests.FlowToolbox
 
 			// Initially there should be no fast invoke and no remaining time.
 			Assert.IsTrue(double.IsNaN(Subject.RemainingTimeUntilNextFastInvoke()));
-			Assert.AreEqual(0, Subject.CallbackCallCount);
 
 			// Try different orders
 			Subject.FastInvoke(Subject.Callback, 5);
@@ -303,7 +316,7 @@ namespace ExtenityTests.FlowToolbox
 
 		#region AllowsRegisteringMethodsOutsideOfBehaviour
 
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
+		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FastInvoke_AllowsRegisteringMethodsOutsideOfBehaviour()
 		{
 			yield return TestInvoke(DoOutsiderFastInvoke, 0.0, true, 1);
