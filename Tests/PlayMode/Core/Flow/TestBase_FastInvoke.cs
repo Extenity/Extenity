@@ -110,13 +110,11 @@ namespace ExtenityTests.FlowToolbox
 			IsInitialized = true;
 
 			Invoker.ResetSystem();
-
 			UnityTestTools.Cleanup();
-			CreateSubject();
-			//Subject.ResetCallback(); No need to call, but left this line here commented out for convenience.
-			ResetOutsiderCallback();
-
 			Time.timeScale = TimeScale;
+
+			CreateSubject();
+			ResetOutsiderCallback();
 		}
 
 		private void DeinitializeBase()
@@ -125,8 +123,8 @@ namespace ExtenityTests.FlowToolbox
 				throw new Exception("Test was not initialized.");
 			IsInitialized = false;
 
-			UnityTestTools.Cleanup();
 			Invoker.ShutdownSystem();
+			UnityTestTools.Cleanup();
 			Time.timeScale = 1f;
 		}
 
