@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Extenity.MathToolbox;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using Random = UnityEngine.Random;

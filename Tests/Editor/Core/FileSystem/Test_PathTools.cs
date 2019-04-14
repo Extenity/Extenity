@@ -500,7 +500,7 @@ namespace ExtenityTests.FileSystemToolbox
 
 		#endregion
 
-		#region Path Info
+		#region Split Path
 
 		[Test]
 		public static void SplitPath()
@@ -589,7 +589,7 @@ namespace ExtenityTests.FileSystemToolbox
 
 		#endregion
 
-		#region Path Info
+		#region Extension
 
 		[Test]
 		public static void AddFileExtension()
