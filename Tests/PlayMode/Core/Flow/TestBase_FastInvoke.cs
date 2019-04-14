@@ -10,19 +10,6 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvokeSubject : MonoBehaviour
 	{
-		#region Initialization
-
-		public void Reset()
-		{
-			FixedUpdateCallCount = 0;
-			CallbackCallCount = 0;
-			ExpectedInvokeCallbackCallCountInFixedUpdate = -1;
-			ExpectedFixedUpdateCallCountInInvokeCallback = -1;
-			IsLoggingEnabled = false;
-		}
-
-		#endregion
-
 		#region FixedUpdate Calls
 
 		[NonSerialized]
@@ -96,8 +83,11 @@ namespace ExtenityTests.FlowToolbox
 
 		protected IEnumerator InitializeTest(bool startAtRandomTime)
 		{
-			if (!InitializeBase())
-				yield break;
+			if (IsInitialized)
+			{
+				// Deinitialize first
+				DeinitializeBase();
+			}
 
 			if (startAtRandomTime)
 			{
@@ -110,24 +100,16 @@ namespace ExtenityTests.FlowToolbox
 				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
 			}
 
-			Subject.Reset();
+			InitializeBase();
 		}
 
-		private bool InitializeBase()
+		private void InitializeBase()
 		{
 			if (IsInitialized)
-			{
-				// Deinitialize first
-				DeinitializeBase();
-			}
+				throw new Exception("Test was already initialized.");
 			IsInitialized = true;
 
 			Invoker.ResetSystem();
-			//if (Invoker.IsFastInvokingAny())
-			//{
-			//	Assert.Fail("Left a previously set invoke already in action while starting to a new test.");
-			//	return false;
-			//}
 
 			UnityTestTools.Cleanup();
 			CreateSubject();
@@ -135,7 +117,6 @@ namespace ExtenityTests.FlowToolbox
 			ResetOutsiderCallback();
 
 			Time.timeScale = TimeScale;
-			return true;
 		}
 
 		private void DeinitializeBase()

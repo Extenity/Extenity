@@ -82,7 +82,7 @@ namespace ExtenityTests.FlowToolbox
 		#region Call Order
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_CallbackNotCalledUntilNextFixedUpdate(bool startAtRandomTime)
+		public IEnumerator FastInvoke_1_CallbackNotCalledUntilNextFixedUpdate(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 
@@ -113,7 +113,7 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(bool startAtRandomTime)
+		public IEnumerator FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 
@@ -136,7 +136,7 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(bool startAtRandomTime)
+		public IEnumerator FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 
@@ -167,7 +167,7 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_CalledBeforeAllFixedUpdates(bool startAtRandomTime)
+		public IEnumerator FastInvoke_4_CalledBeforeAllFixedUpdates(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 			var WaitForFixedUpdate = new WaitForFixedUpdate();
