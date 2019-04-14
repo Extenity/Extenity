@@ -25,85 +25,85 @@ namespace ExtenityTests.FlowToolbox
 
 		// UnityInvoke_Zero
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Zero() { yield return TestUnityInvoke_Zero(CheesyRepeats); }
+		public IEnumerator UnityInvoke_Zero() { yield return TestInvoke_Zero(CheesyRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Zero_Detailed() { yield return TestUnityInvoke_Zero(DetailedRepeats); }
+		public IEnumerator UnityInvoke_Zero_Detailed() { yield return TestInvoke_Zero(DetailedRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Zero_Overnight() { yield return TestUnityInvoke_Zero(OvernightRepeats); }
+		public IEnumerator UnityInvoke_Zero_Overnight() { yield return TestInvoke_Zero(OvernightRepeats, DoUnityInvoke); }
 
 		// UnityInvoke_Various_StartsAtRandomTime
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtRandomTime() { yield return TestUnityInvoke_Various(true, CheesyRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtRandomTime() { yield return TestInvoke_Various(true, CheesyRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtRandomTime_Detailed() { yield return TestUnityInvoke_Various(true, DetailedRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtRandomTime_Detailed() { yield return TestInvoke_Various(true, DetailedRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtRandomTime_Overnight() { yield return TestUnityInvoke_Various(true, OvernightRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtRandomTime_Overnight() { yield return TestInvoke_Various(true, OvernightRepeats, DoUnityInvoke); }
 
 		// UnityInvoke_Various_StartsAtFixedUpdate
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate() { yield return TestUnityInvoke_Various(false, CheesyRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate() { yield return TestInvoke_Various(false, CheesyRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate_Detailed() { yield return TestUnityInvoke_Various(false, DetailedRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate_Detailed() { yield return TestInvoke_Various(false, DetailedRepeats, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestUnityInvoke_Various(false, OvernightRepeats); }
+		public IEnumerator UnityInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestInvoke_Various(false, OvernightRepeats, DoUnityInvoke); }
 
 		// UnityInvoke_LongRun_StartsAtRandomTime
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime() { yield return TestUnityInvoke(LongRunRepeats, CheesyLongRunDuration, true); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime() { yield return TestInvoke(LongRunRepeats, CheesyLongRunDuration, true, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestUnityInvoke(LongRunRepeats, DetailedLongRunDuration, true); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestInvoke(LongRunRepeats, DetailedLongRunDuration, true, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestUnityInvoke(LongRunRepeats, OvernightLongRunDuration, true); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, true, DoUnityInvoke); }
 
 		// UnityInvoke_LongRun_StartsAtFixedUpdate
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate() { yield return TestUnityInvoke(LongRunRepeats, CheesyLongRunDuration, false); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate() { yield return TestInvoke(LongRunRepeats, CheesyLongRunDuration, false, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestUnityInvoke(LongRunRepeats, DetailedLongRunDuration, false); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestInvoke(LongRunRepeats, DetailedLongRunDuration, false, DoUnityInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestUnityInvoke(LongRunRepeats, OvernightLongRunDuration, false); }
+		public IEnumerator UnityInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, false, DoUnityInvoke); }
 
 		// ---------- FastInvoke
 
 		// FastInvoke_Zero
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Zero() { yield return TestFastInvoke_Zero(CheesyRepeats); }
+		public IEnumerator FastInvoke_Zero() { yield return TestInvoke_Zero(CheesyRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Zero_Detailed() { yield return TestFastInvoke_Zero(DetailedRepeats); }
+		public IEnumerator FastInvoke_Zero_Detailed() { yield return TestInvoke_Zero(DetailedRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Zero_Overnight() { yield return TestFastInvoke_Zero(OvernightRepeats); }
+		public IEnumerator FastInvoke_Zero_Overnight() { yield return TestInvoke_Zero(OvernightRepeats, DoFastInvoke); }
 
 		// FastInvoke_Various_StartsAtRandomTime
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtRandomTime() { yield return TestFastInvoke_Various(true, CheesyRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtRandomTime() { yield return TestInvoke_Various(true, CheesyRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtRandomTime_Detailed() { yield return TestFastInvoke_Various(true, DetailedRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtRandomTime_Detailed() { yield return TestInvoke_Various(true, DetailedRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtRandomTime_Overnight() { yield return TestFastInvoke_Various(true, OvernightRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtRandomTime_Overnight() { yield return TestInvoke_Various(true, OvernightRepeats, DoFastInvoke); }
 
 		// FastInvoke_Various_StartsAtFixedUpdate
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate() { yield return TestFastInvoke_Various(false, CheesyRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate() { yield return TestInvoke_Various(false, CheesyRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate_Detailed() { yield return TestFastInvoke_Various(false, DetailedRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate_Detailed() { yield return TestInvoke_Various(false, DetailedRepeats, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestFastInvoke_Various(false, OvernightRepeats); }
+		public IEnumerator FastInvoke_Various_StartsAtFixedUpdate_Overnight() { yield return TestInvoke_Various(false, OvernightRepeats, DoFastInvoke); }
 
 		// FastInvoke_LongRun_StartsAtRandomTime
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime() { yield return TestFastInvoke(LongRunRepeats, CheesyLongRunDuration, true); }
+		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime() { yield return TestInvoke(LongRunRepeats, CheesyLongRunDuration, true, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestFastInvoke(LongRunRepeats, DetailedLongRunDuration, true); }
+		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Detailed() { yield return TestInvoke(LongRunRepeats, DetailedLongRunDuration, true, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestFastInvoke(LongRunRepeats, OvernightLongRunDuration, true); }
+		public IEnumerator FastInvoke_LongRun_StartsAtRandomTime_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, true, DoFastInvoke); }
 
 		// FastInvoke_LongRun_StartsAtFixedUpdate
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate() { yield return TestFastInvoke(LongRunRepeats, CheesyLongRunDuration, false); }
+		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate() { yield return TestInvoke(LongRunRepeats, CheesyLongRunDuration, false, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestFastInvoke(LongRunRepeats, DetailedLongRunDuration, false); }
+		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Detailed() { yield return TestInvoke(LongRunRepeats, DetailedLongRunDuration, false, DoFastInvoke); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue)]
-		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestFastInvoke(LongRunRepeats, OvernightLongRunDuration, false); }
+		public IEnumerator FastInvoke_LongRun_StartsAtFixedUpdate_Overnight() { yield return TestInvoke(LongRunRepeats, OvernightLongRunDuration, false, DoFastInvoke); }
 
 		// ---------- FastInvoke Consistency
 
@@ -215,124 +215,89 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue)]
 		public IEnumerator FastInvoke_AllowsRegisteringMethodsOutsideOfBehaviour()
 		{
-			yield return TestOutsiderFastInvoke(0, true);
-			yield return TestOutsiderFastInvoke(1, true);
+			yield return TestInvoke(0, true, DoOutsiderFastInvoke);
+			yield return TestInvoke(1, true, DoOutsiderFastInvoke);
 
-			yield return TestOutsiderFastInvoke(0, false);
-			yield return TestOutsiderFastInvoke(1, false);
+			yield return TestInvoke(0, false, DoOutsiderFastInvoke);
+			yield return TestInvoke(1, false, DoOutsiderFastInvoke);
 		}
 
 		#endregion
 
-		private IEnumerator TestUnityInvoke_Zero(int repeats)
+		private IEnumerator TestInvoke_Zero(int repeats, DoInvokeTemplate doInvoke)
 		{
 			for (int i = 0; i < repeats; i++)
 			{
-				yield return _TestUnityInvoke(0, true);
-				yield return _TestUnityInvoke(-1, true);
-				yield return _TestUnityInvoke(-6128, true);
+				yield return doInvoke(0, true);
+				yield return doInvoke(-1, true);
+				yield return doInvoke(-6128, true);
 
-				yield return _TestUnityInvoke(0, false);
-				yield return _TestUnityInvoke(-1, false);
-				yield return _TestUnityInvoke(-6128, false);
+				yield return doInvoke(0, false);
+				yield return doInvoke(-1, false);
+				yield return doInvoke(-6128, false);
 			}
 		}
 
-		private IEnumerator TestFastInvoke_Zero(int repeats)
+		private IEnumerator TestInvoke_Various(bool startAtRandomTime, int repeats, DoInvokeTemplate doInvoke)
 		{
 			for (int i = 0; i < repeats; i++)
 			{
-				yield return _TestFastInvoke(0, true);
-				yield return _TestFastInvoke(-1, true);
-				yield return _TestFastInvoke(-6128, true);
+				yield return doInvoke(Time.fixedDeltaTime * 0.1, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.49, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.499, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.4999, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.5, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.51, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.501, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.5001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.9, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.99, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.999, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.0, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.01, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.1, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.5, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.9, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.99, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.999, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.0, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.01, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.1, startAtRandomTime);
 
-				yield return _TestFastInvoke(0, false);
-				yield return _TestFastInvoke(-1, false);
-				yield return _TestFastInvoke(-6128, false);
-			}
-		}
-
-		private IEnumerator TestUnityInvoke_Various(bool startAtRandomTime, int repeats)
-		{
-			for (int i = 0; i < repeats; i++)
-			{
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 0.1, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 0.5, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 0.9, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 0.99, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.0, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.01, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.1, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.5, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.9, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 1.99, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 2.0, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 2.01, startAtRandomTime);
-				yield return _TestUnityInvoke(Time.fixedDeltaTime * 2.1, startAtRandomTime);
-
-				yield return _TestUnityInvoke(0.05, startAtRandomTime);
-				yield return _TestUnityInvoke(0.1, startAtRandomTime);
-				yield return _TestUnityInvoke(1, startAtRandomTime);
-				yield return _TestUnityInvoke(1.1329587, startAtRandomTime);
-				yield return _TestUnityInvoke(5.4515328, startAtRandomTime);
-				yield return _TestUnityInvoke(10, startAtRandomTime);
+				yield return doInvoke(0.05, startAtRandomTime);
+				yield return doInvoke(0.1, startAtRandomTime);
+				yield return doInvoke(1, startAtRandomTime);
+				yield return doInvoke(1.1329587, startAtRandomTime);
+				yield return doInvoke(5.4515328, startAtRandomTime);
+				yield return doInvoke(10, startAtRandomTime);
 
 				for (int iRandom = 0; iRandom < 100; iRandom++)
 				{
-					yield return _TestUnityInvoke(UnityEngine.Random.Range(0.001f, 10.0f), startAtRandomTime);
+					yield return doInvoke(UnityEngine.Random.Range(0.001f, 10.0f), startAtRandomTime);
 				}
 			}
 		}
 
-		private IEnumerator TestFastInvoke_Various(bool startAtRandomTime, int repeats)
+		private IEnumerator TestInvoke(int repeats, double invokeTime, bool startAtRandomTime, DoInvokeTemplate doInvoke)
 		{
 			for (int i = 0; i < repeats; i++)
 			{
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 0.1, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 0.5, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 0.9, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 0.99, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.0, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.01, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.1, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.5, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.9, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 1.99, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 2.0, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 2.01, startAtRandomTime);
-				yield return _TestFastInvoke(Time.fixedDeltaTime * 2.1, startAtRandomTime);
-
-				yield return _TestFastInvoke(0.05, startAtRandomTime);
-				yield return _TestFastInvoke(0.1, startAtRandomTime);
-				yield return _TestFastInvoke(1, startAtRandomTime);
-				yield return _TestFastInvoke(1.1329587, startAtRandomTime);
-				yield return _TestFastInvoke(5.4515328, startAtRandomTime);
-				yield return _TestFastInvoke(10, startAtRandomTime);
-
-				for (int iRandom = 0; iRandom < 100; iRandom++)
-				{
-					yield return _TestFastInvoke(UnityEngine.Random.Range(0.001f, 10.0f), startAtRandomTime);
-				}
+				yield return doInvoke(invokeTime, startAtRandomTime);
 			}
 		}
 
-		private IEnumerator TestUnityInvoke(int repeats, double invokeTime, bool startAtRandomTime)
+		private IEnumerator TestInvoke(double invokeTime, bool startAtRandomTime, DoInvokeTemplate doInvoke)
 		{
-			for (int i = 0; i < repeats; i++)
-			{
-				yield return _TestUnityInvoke(invokeTime, startAtRandomTime);
-			}
+			yield return doInvoke(invokeTime, startAtRandomTime);
 		}
 
-		private IEnumerator TestFastInvoke(int repeats, double invokeTime, bool startAtRandomTime)
-		{
-			for (int i = 0; i < repeats; i++)
-			{
-				yield return _TestFastInvoke(invokeTime, startAtRandomTime);
-			}
-		}
+		#region Do Invoke
 
-		private IEnumerator _TestUnityInvoke(double invokeTime, bool startAtRandomTime)
+		public delegate IEnumerator DoInvokeTemplate(double invokeTime, bool startAtRandomTime);
+
+		private IEnumerator DoUnityInvoke(double invokeTime, bool startAtRandomTime)
 		{
 			var fixedUpdateCountTolerance = 2; // +2 tolerance because it seems Unity is not good with numbers.
 
@@ -343,7 +308,7 @@ namespace ExtenityTests.FlowToolbox
 			);
 		}
 
-		private IEnumerator _TestFastInvoke(double invokeTime, bool startAtRandomTime)
+		private IEnumerator DoFastInvoke(double invokeTime, bool startAtRandomTime)
 		{
 			var fixedUpdateCountTolerance = 2; // TODO: Find a way to reduce this to zero tolerance.
 
@@ -354,7 +319,7 @@ namespace ExtenityTests.FlowToolbox
 			);
 		}
 
-		private IEnumerator TestOutsiderFastInvoke(double invokeTime, bool startAtRandomTime)
+		private IEnumerator DoOutsiderFastInvoke(double invokeTime, bool startAtRandomTime)
 		{
 			var fixedUpdateCountTolerance = 2; // TODO: Find a way to reduce this to zero tolerance.
 
@@ -364,6 +329,8 @@ namespace ExtenityTests.FlowToolbox
 				DoOutsiderFastInvokingChecks
 			);
 		}
+
+		#endregion
 
 		private IEnumerator RunWholeTest(string method, double invokeTime, bool startAtRandomTime, int fixedUpdateCountTolerance, Func<int> getCallbackCallCount, Action doInvoke, Action<bool, int> doInvokingChecks)
 		{
