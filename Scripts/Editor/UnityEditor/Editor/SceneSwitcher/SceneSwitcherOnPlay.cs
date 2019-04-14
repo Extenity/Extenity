@@ -7,6 +7,10 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
+	/// <summary>
+	/// Behind the curtains, Scene Switcher tells Unity about which scene should be loaded at starting play mode.
+	/// Unity looks for EditorSceneManager.playModeStartScene and loads the scene automatically.
+	/// </summary>
 	[InitializeOnLoad]
 	public class SceneSwitcherOnPlay : ExtenityEditorWindowBase
 	{
@@ -137,14 +141,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static bool EnableSceneSwitcherPref
 		{
-			get { return EditorPrefs.GetBool(EnableSceneSwitcherPrefKey, false); }
-			set { EditorPrefs.SetBool(EnableSceneSwitcherPrefKey, value); }
+			get => EditorPrefs.GetBool(EnableSceneSwitcherPrefKey, false);
+			set => EditorPrefs.SetBool(EnableSceneSwitcherPrefKey, value);
 		}
 
 		private static string StartScenePathPref
 		{
-			get { return EditorPrefs.GetString(StartScenePathPrefKey, ""); }
-			set { EditorPrefs.SetString(StartScenePathPrefKey, value); }
+			get => EditorPrefs.GetString(StartScenePathPrefKey, "");
+			set => EditorPrefs.SetString(StartScenePathPrefKey, value);
 		}
 
 		#endregion

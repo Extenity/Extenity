@@ -426,7 +426,7 @@ namespace ExtenityTests.FlowToolbox
 
 			yield return RunWholeTest("UnityInvoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => Subject.CallbackCallCount,
-				() => Subject.Invoke("Callback", (float)invokeTime),
+				() => Subject.Invoke(nameof(Test_FastInvokeSubject.Callback), (float)invokeTime),
 				DoUnityInvokingChecks
 			);
 		}
@@ -560,12 +560,12 @@ namespace ExtenityTests.FlowToolbox
 			if (shouldBeInvoking)
 			{
 				Assert.True(Subject.IsInvoking());
-				Assert.True(Subject.IsInvoking("Callback"));
+				Assert.True(Subject.IsInvoking(nameof(Test_FastInvokeSubject.Callback)));
 			}
 			else
 			{
 				Assert.True(!Subject.IsInvoking());
-				Assert.True(!Subject.IsInvoking("Callback"));
+				Assert.True(!Subject.IsInvoking(nameof(Test_FastInvokeSubject.Callback)));
 			}
 		}
 
