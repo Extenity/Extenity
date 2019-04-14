@@ -7,6 +7,14 @@ namespace Extenity.FlowToolbox
 
 	public class FastInvokeHandler : MonoBehaviour
 	{
+		#region Configuration
+
+		public const double Tolerance =
+			1.0 / 1000.0 // Milliseconds
+				/ 10.0; // Tenth of a millisecond
+
+		#endregion
+
 		// TODO: Consider turning this into a struct. Measure the performance impact of both. There is a heavy use of reference comparison with class implementation. Consider adding a unique ID field and use that for comparison when converting into struct.
 		public class InvokeEntry
 		{
@@ -74,6 +82,7 @@ namespace Extenity.FlowToolbox
 			{
 				var entry = ScaledInvokeQueue[i];
 				if (now >= entry.NextTime)
+				// TODO: if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
@@ -151,6 +160,7 @@ namespace Extenity.FlowToolbox
 			{
 				var entry = UnscaledInvokeQueue[i];
 				if (now >= entry.NextTime)
+				// TODO: if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}

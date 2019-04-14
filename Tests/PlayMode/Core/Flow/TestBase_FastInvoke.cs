@@ -10,6 +10,19 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvokeSubject : MonoBehaviour
 	{
+		#region Initialization
+
+		public void Reset()
+		{
+			FixedUpdateCallCount = 0;
+			CallbackCallCount = 0;
+			ExpectedInvokeCallbackCallCountInFixedUpdate = -1;
+			ExpectedFixedUpdateCallCountInInvokeCallback = -1;
+			IsLoggingEnabled = false;
+		}
+
+		#endregion
+
 		#region FixedUpdate Calls
 
 		[NonSerialized]
@@ -96,6 +109,8 @@ namespace ExtenityTests.FlowToolbox
 				// This will make tests start right in FixedUpdates where Time.time is consistent.
 				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
 			}
+
+			Subject.Reset();
 		}
 
 		private bool InitializeBase()
@@ -172,18 +187,14 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Invoke Callers
 
-		protected IEnumerator TestInvoke_Zero(DoInvokeTemplate doInvoke, int repeats)
+		protected IEnumerator TestInvoke_Zero(DoInvokeTemplate doInvoke, bool startAtRandomTime, int repeats)
 		{
 			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
 			{
-				yield return doInvoke(0, true);
-				yield return doInvoke(-1, true);
-				yield return doInvoke(-6128, true);
-
-				yield return doInvoke(0, false);
-				yield return doInvoke(-1, false);
-				yield return doInvoke(-6128, false);
+				yield return doInvoke(0, startAtRandomTime);
+				yield return doInvoke(-1, startAtRandomTime);
+				yield return doInvoke(-6128, startAtRandomTime);
 			}
 		}
 
@@ -247,7 +258,8 @@ namespace ExtenityTests.FlowToolbox
 
 		protected IEnumerator DoUnityInvoke(double invokeTime, bool startAtRandomTime)
 		{
-			var fixedUpdateCountTolerance = 2; // +2 tolerance because it seems Unity is not good with numbers.
+			// +2 tolerance because it seems Unity is not good with numbers.
+			var fixedUpdateCountTolerance = 2;
 
 			yield return RunWholeTest("Unity Invoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => Subject.CallbackCallCount,
@@ -258,7 +270,9 @@ namespace ExtenityTests.FlowToolbox
 
 		protected IEnumerator DoFastInvoke(double invokeTime, bool startAtRandomTime)
 		{
+			// Unlike Unity's implementation, there is no tolerance for FastInvoke. Because it's coded with love.
 			var fixedUpdateCountTolerance = 2; // TODO: Find a way to reduce this to zero tolerance.
+			//var fixedUpdateCountTolerance = 0;
 
 			yield return RunWholeTest("Extenity FastInvoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => Subject.CallbackCallCount,
@@ -269,7 +283,9 @@ namespace ExtenityTests.FlowToolbox
 
 		protected IEnumerator DoOutsiderFastInvoke(double invokeTime, bool startAtRandomTime)
 		{
+			// Unlike Unity's implementation, there is no tolerance for FastInvoke. Because it's coded with love.
 			var fixedUpdateCountTolerance = 2; // TODO: Find a way to reduce this to zero tolerance.
+			//var fixedUpdateCountTolerance = 0;
 
 			yield return RunWholeTest("Extenity Outsider FastInvoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => OutsiderCallbackCallCount,
