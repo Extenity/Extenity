@@ -112,58 +112,118 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(callCount, Invoker.TotalFastInvokeCount());
 		}
 
-		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(bool startAtRandomTime)
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_2_1_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return InitializeTest(startAtRandomTime);
-
-			// Calling invoke with various delays
-			var callCount = 0;
-			Subject.FastInvoke(Subject.Callback, 0.0); callCount++;
-			Subject.FastInvoke(Subject.Callback, 0.001); callCount++;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime); callCount++;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 0.5); callCount++;
-			Subject.FastInvoke(Subject.Callback, -1.0); callCount++;
-
-			// Wait for the next fixed update...
-			yield return new WaitForFixedUpdate();
-
-			// ... and all callbacks should be called by now. Because their delays are all below or equal to fixedDeltaTime.
-			Assert.AreEqual(callCount, Subject.CallbackCallCount);
-			Assert.AreEqual(callCount, Subject.FixedUpdateCallCount);
-			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.0);
 		}
 
-		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(bool startAtRandomTime)
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_2_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return InitializeTest(startAtRandomTime);
+			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.001);
+		}
 
-			// Calling invoke with various delays
-			var callCount = 0;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime + FastInvokeHandler.Tolerance * 2); callCount++;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 1.5); callCount++;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 1.9999); callCount++;
-			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 2); callCount++;
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_2_3_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		{
+			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime);
+		}
 
-			// Wait for the first fixed update...
-			yield return new WaitForFixedUpdate();
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_2_4_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		{
+			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime * 0.5);
+		}
 
-			// ... which won't cover any invokes.
-			Assert.AreEqual(0, Subject.CallbackCallCount);
-			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
-			Assert.IsTrue(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(callCount, Invoker.TotalFastInvokeCount());
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_2_5_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		{
+			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(-1.0);
+		}
 
-			// Wait for the second fixed update...
-			yield return new WaitForFixedUpdate();
+		private IEnumerator FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(double delay)
+		{
+			for (int i = 0; i < 30; i++)
+			{
+				yield return InitializeTest(false);
 
-			// ... and all callbacks should be called by now.
-			Assert.AreEqual(callCount, Subject.CallbackCallCount);
-			Assert.AreEqual(callCount, Subject.FixedUpdateCallCount);
-			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+				Subject.FastInvoke(Subject.Callback, delay);
+
+				// Invoke should be set to be called.
+				Assert.AreEqual(0, Subject.CallbackCallCount);
+				Assert.AreEqual(0, Subject.FixedUpdateCallCount);
+				Assert.IsTrue(Invoker.IsFastInvokingAny());
+				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+
+				// Wait for the next fixed update...
+				yield return new WaitForFixedUpdate();
+
+				// ... and the callback should be called by now. Because its delays is below or equal to fixedDeltaTime.
+				Assert.AreEqual(1, Subject.CallbackCallCount);
+				Assert.AreEqual(1, Subject.FixedUpdateCallCount);
+				Assert.IsFalse(Invoker.IsFastInvokingAny());
+				Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+			}
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_3_1_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		{
+			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime + FastInvokeHandler.Tolerance * 2);
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_3_2_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		{
+			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.5);
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_3_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		{
+			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.9999);
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator FastInvoke_3_4_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		{
+			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 2);
+		}
+
+		private IEnumerator FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(double delay)
+		{
+			for (int i = 0; i < 30; i++)
+			{
+				yield return InitializeTest(false);
+
+				// Calling invoke with various delays
+				Subject.FastInvoke(Subject.Callback, delay);
+
+				// Invoke should be set to be called.
+				Assert.AreEqual(0, Subject.CallbackCallCount);
+				Assert.AreEqual(0, Subject.FixedUpdateCallCount);
+				Assert.IsTrue(Invoker.IsFastInvokingAny());
+				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+
+				// Wait for the first fixed update...
+				yield return new WaitForFixedUpdate();
+
+				// ... which won't cover the invoke.
+				Assert.AreEqual(0, Subject.CallbackCallCount);
+				Assert.AreEqual(1, Subject.FixedUpdateCallCount);
+				Assert.IsTrue(Invoker.IsFastInvokingAny());
+				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+
+				// Wait for the second fixed update...
+				yield return new WaitForFixedUpdate();
+
+				// ... and the callback should be called by now.
+				Assert.AreEqual(1, Subject.CallbackCallCount);
+				Assert.AreEqual(2, Subject.FixedUpdateCallCount);
+				Assert.IsFalse(Invoker.IsFastInvokingAny());
+				Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+			}
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]

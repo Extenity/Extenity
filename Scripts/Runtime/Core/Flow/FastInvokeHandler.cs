@@ -90,8 +90,7 @@ namespace Extenity.FlowToolbox
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
 				var entry = ScaledInvokeQueue[i];
-				if (now >= entry.NextTime)
-				// TODO: if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
+				if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
@@ -174,8 +173,7 @@ namespace Extenity.FlowToolbox
 			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
 			{
 				var entry = UnscaledInvokeQueue[i];
-				if (now >= entry.NextTime)
-				// TODO: if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
+				if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
