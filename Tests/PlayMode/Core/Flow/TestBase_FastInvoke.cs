@@ -10,27 +10,59 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvokeSubject : MonoBehaviour
 	{
-		#region Initialization
+		#region FixedUpdate Calls
 
-		private void Awake()
+		[NonSerialized]
+		public int FixedUpdateCallCount;
+
+		private void FixedUpdate()
 		{
-			ResetCallback();
+			FixedUpdateCallCount++;
+			if (IsLoggingEnabled)
+				Log.Info($"FixedUpdate calls: {FixedUpdateCallCount}  (Invoke callback calls: {CallbackCallCount})");
+			if (ExpectedInvokeCallbackCallCountInFixedUpdate >= 0)
+			{
+				Assert.AreEqual(ExpectedInvokeCallbackCallCountInFixedUpdate, CallbackCallCount);
+			}
 		}
 
 		#endregion
 
-		#region Callback
+		#region Invoke Callback Calls
 
+		[NonSerialized]
 		public int CallbackCallCount;
-
-		public void ResetCallback()
-		{
-			CallbackCallCount = 0;
-		}
 
 		public void Callback()
 		{
 			CallbackCallCount++;
+			if (IsLoggingEnabled)
+				Log.Info($"Invoke callback calls: {CallbackCallCount}  (FixedUpdate calls: {FixedUpdateCallCount})");
+			if (ExpectedFixedUpdateCallCountInInvokeCallback >= 0)
+			{
+				Assert.AreEqual(ExpectedFixedUpdateCallCountInInvokeCallback, FixedUpdateCallCount);
+			}
+		}
+
+		#endregion
+
+		#region Expected Call Counts
+
+		[NonSerialized]
+		public int ExpectedInvokeCallbackCallCountInFixedUpdate = -1;
+		[NonSerialized]
+		public int ExpectedFixedUpdateCallCountInInvokeCallback = -1;
+
+		#endregion
+
+		#region Logging
+
+		[NonSerialized]
+		public bool IsLoggingEnabled;
+
+		public void EnableLogging()
+		{
+			IsLoggingEnabled = true;
 		}
 
 		#endregion
@@ -38,6 +70,12 @@ namespace ExtenityTests.FlowToolbox
 
 	public abstract class TestBase_FastInvoke
 	{
+		#region Configuration
+
+		protected const double FloatingTolerance = 0.00001;
+
+		#endregion
+
 		#region Test Initialization / Deinitialization
 
 		protected bool IsInitialized;
@@ -93,6 +131,12 @@ namespace ExtenityTests.FlowToolbox
 			UnityTestTools.Cleanup();
 			Invoker.ShutdownSystem();
 			Time.timeScale = 1f;
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			DeinitializeBase();
 		}
 
 		#endregion
@@ -272,11 +316,10 @@ namespace ExtenityTests.FlowToolbox
 			Assert.True(getCallbackCallCount() == 1);
 			doInvokingChecks(false, 0);
 
-			const double tolerance = 0.00001; // In seconds
 			var toleranceSteps = Mathf.Max(1, expectedMaxFixedUpdateCount - expectedMinFixedUpdateCount);
 			var passedTimeResult =
-				passedTime >= expectedPassedTime - tolerance &&
-				passedTime <= expectedPassedTime + fixedDeltaTime * toleranceSteps + tolerance;
+				passedTime >= expectedPassedTime - FloatingTolerance &&
+				passedTime <= expectedPassedTime + fixedDeltaTime * toleranceSteps + FloatingTolerance;
 
 			var expectedFixedUpdateCountResult =
 				fixedUpdateCount >= expectedMinFixedUpdateCount &&
