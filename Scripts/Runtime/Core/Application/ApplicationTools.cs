@@ -146,7 +146,7 @@ namespace Extenity.ApplicationToolbox
 
 		private static void LaunchMarketPage_AppStore()
 		{
-			var address = "itms-apps://itunes.apple.com/app/id" + AppStoreMarketID;
+			var address = "itms-apps://itunes.apple.com/app/" + AppStoreMarketID;
 			Log.Info("Launching market page: " + address);
 			Application.OpenURL(address);
 		}
