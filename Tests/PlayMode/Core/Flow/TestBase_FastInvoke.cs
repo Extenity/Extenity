@@ -77,6 +77,19 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
+		#region Configuration - Timing
+
+		protected const int CheesyRepeats = 1;
+		protected const int DetailedRepeats = 20;
+		protected const int OvernightRepeats = 1000;
+
+		protected const int LongRunRepeats = 1; // Long runs are already taking too long. So don't repeat them.
+		protected const double CheesyLongRunDuration = 1 * TimeScale; // 1 second in realtime
+		protected const double DetailedLongRunDuration = 20 * TimeScale; // 20 seconds in realtime
+		protected const double OvernightLongRunDuration = 10 * 60 * TimeScale; // 10 minutes in realtime
+
+		#endregion
+
 		#region Test Initialization / Deinitialization
 
 		protected bool IsInitialized;

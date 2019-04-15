@@ -11,47 +11,6 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvoke : TestBase_FastInvoke
 	{
-		#region Configuration - Timing
-
-		private const int CheesyRepeats = 1;
-		private const int DetailedRepeats = 20;
-		private const int OvernightRepeats = 1000;
-
-		private const int LongRunRepeats = 1; // Long runs are already taking too long. So don't repeat them.
-		private const double CheesyLongRunDuration = 1 * TimeScale; // 1 second in realtime
-		private const double DetailedLongRunDuration = 20 * TimeScale; // 20 seconds in realtime
-		private const double OvernightLongRunDuration = 10 * 60 * TimeScale; // 10 minutes in realtime
-
-		#endregion
-
-		#region Timing - Unity Invoke
-
-		// UnityInvoke_Zero
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Zero(bool startAtRandomTime) { yield return TestInvoke_Zero(DoUnityInvoke, startAtRandomTime, CheesyRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Zero_Detailed(bool startAtRandomTime) { yield return TestInvoke_Zero(DoUnityInvoke, startAtRandomTime, DetailedRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Zero_Overnight(bool startAtRandomTime) { yield return TestInvoke_Zero(DoUnityInvoke, startAtRandomTime, OvernightRepeats); }
-
-		// UnityInvoke_Various
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Various(bool startAtRandomTime) { yield return TestInvoke_Various(DoUnityInvoke, startAtRandomTime, CheesyRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Various_Detailed(bool startAtRandomTime) { yield return TestInvoke_Various(DoUnityInvoke, startAtRandomTime, DetailedRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_Various_Overnight(bool startAtRandomTime) { yield return TestInvoke_Various(DoUnityInvoke, startAtRandomTime, OvernightRepeats); }
-
-		// UnityInvoke_LongRun
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_LongRun(bool startAtRandomTime) { yield return TestInvoke(DoUnityInvoke, CheesyLongRunDuration, startAtRandomTime, LongRunRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_LongRun_Detailed(bool startAtRandomTime) { yield return TestInvoke(DoUnityInvoke, DetailedLongRunDuration, startAtRandomTime, LongRunRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator UnityInvoke_LongRun_Overnight(bool startAtRandomTime) { yield return TestInvoke(DoUnityInvoke, OvernightLongRunDuration, startAtRandomTime, LongRunRepeats); }
-
-		#endregion
-
 		#region Timing - Extenity FastInvoke
 
 		// FastInvoke_Zero
@@ -458,44 +417,6 @@ namespace ExtenityTests.FlowToolbox
 		{
 			yield return TestInvoke(DoOutsiderFastInvoke, 0.0, startAtRandomTime, 1);
 			yield return TestInvoke(DoOutsiderFastInvoke, 1.0, startAtRandomTime, 1);
-		}
-
-		#endregion
-
-		#region Test System Validation
-
-		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator TestSystemValidation(bool startAtRandomTime)
-		{
-			yield return InitializeTest(startAtRandomTime);
-
-			// No invoke or fixed update processed yet. They are all zeros.
-			Assert.AreEqual(0, Subject.CallbackCallCount);
-			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
-			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
-
-			// Make sure fixed updates are called in expected delta times
-			{
-				// We need to skip to the first fixed update, since Time.time could be anything random.
-				if (startAtRandomTime)
-				{
-					yield return new WaitForFixedUpdate();
-				}
-
-				var previous = Time.time;
-				var fixedDeltaTime = Time.fixedDeltaTime;
-
-				for (int i = 0; i < 20; i++)
-				{
-					yield return new WaitForFixedUpdate();
-					var now = Time.time;
-					var diff = now - previous;
-					Assert.AreEqual(fixedDeltaTime, diff, FastInvokeHandler.Tolerance);
-					previous = now;
-				}
-
-			}
 		}
 
 		#endregion
