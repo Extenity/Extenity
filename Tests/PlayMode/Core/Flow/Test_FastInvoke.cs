@@ -11,38 +11,38 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_FastInvoke : TestBase_FastInvoke
 	{
-		#region Timing - Extenity FastInvoke
+		#region Timing
 
-		// FastInvoke_Zero
+		// Zero
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Zero(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
+		public IEnumerator Timing_1_Zero(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Zero_Detailed(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
+		public IEnumerator Timing_1_Zero_Detailed(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Zero_Overnight(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
+		public IEnumerator Timing_1_Zero_Overnight(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
 
-		// FastInvoke_Various
+		// Various
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Various(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
+		public IEnumerator Timing_2_Various(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Various_Detailed(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
+		public IEnumerator Timing_2_Various_Detailed(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Various_Overnight(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
+		public IEnumerator Timing_2_Various_Overnight(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
 
-		// FastInvoke_LongRun
+		// LongRun
 		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_LongRun(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, CheesyLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		public IEnumerator Timing_3_LongRun(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, CheesyLongRunDuration, startAtRandomTime, LongRunRepeats); }
 		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_LongRun_Detailed(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, DetailedLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		public IEnumerator Timing_3_LongRun_Detailed(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, DetailedLongRunDuration, startAtRandomTime, LongRunRepeats); }
 		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_LongRun_Overnight(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, OvernightLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		public IEnumerator Timing_3_LongRun_Overnight(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, OvernightLongRunDuration, startAtRandomTime, LongRunRepeats); }
 
 		#endregion
 
 		#region Call Order
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_1_CallbackNotCalledUntilNextFixedUpdate(bool startAtRandomTime)
+		public IEnumerator CallOrder_1_CallbackNotCalledUntilNextFixedUpdate(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 
@@ -73,36 +73,36 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_2_1_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		public IEnumerator CallOrder_2_1_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.0);
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.0);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_2_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		public IEnumerator CallOrder_2_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.001);
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(0.001);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_2_3_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		public IEnumerator CallOrder_2_3_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime);
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_2_4_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		public IEnumerator CallOrder_2_4_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime * 0.5);
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime * 0.5);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_2_5_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		public IEnumerator CallOrder_2_5_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
-			yield return FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(-1.0);
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(-1.0);
 		}
 
-		private IEnumerator FastInvoke_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(double delay)
+		private IEnumerator CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(double delay)
 		{
 			for (int i = 0; i < 30; i++)
 			{
@@ -128,30 +128,30 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_3_1_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		public IEnumerator CallOrder_3_1_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
 		{
-			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime + FastInvokeHandler.Tolerance * 2);
+			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime + FastInvokeHandler.Tolerance * 2);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_3_2_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		public IEnumerator CallOrder_3_2_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
 		{
-			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.5);
+			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.5);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_3_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		public IEnumerator CallOrder_3_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
 		{
-			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.9999);
+			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.9999);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_3_4_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
+		public IEnumerator CallOrder_3_4_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
 		{
-			yield return FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 2);
+			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 2);
 		}
 
-		private IEnumerator FastInvoke_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(double delay)
+		private IEnumerator CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(double delay)
 		{
 			for (int i = 0; i < 30; i++)
 			{
@@ -187,7 +187,7 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_4_CalledBeforeAllFixedUpdates(bool startAtRandomTime)
+		public IEnumerator CallOrder_4_CalledBeforeAllFixedUpdates(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 			var WaitForFixedUpdate = new WaitForFixedUpdate();
@@ -240,10 +240,10 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
-		#region Cancellation
+		#region Halt - Cancellation
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_Cancel(bool startAtRandomTime)
+		public IEnumerator Halt_1_Cancel(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 			var fixedDeltaTime = Time.fixedDeltaTime;
@@ -290,10 +290,10 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
-		#region Stop When Destroyed
+		#region Halt - Stop When Destroyed
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_StopsWhenObjectDestroyed()
+		public IEnumerator Halt_2_StopsWhenObjectDestroyed()
 		{
 			yield return InitializeTest(false);
 			var WaitForFixedUpdate = new WaitForFixedUpdate();
@@ -316,8 +316,12 @@ namespace ExtenityTests.FlowToolbox
 			}
 		}
 
+		#endregion
+
+		#region Halt - Throws Over Null
+
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_ThrowsWhenCalledOverADestroyedObject()
+		public IEnumerator Halt_3_ThrowsWhenCalledOverADestroyedObject()
 		{
 			yield return InitializeTest(false);
 			var cachedSubject = Subject;
@@ -326,7 +330,7 @@ namespace ExtenityTests.FlowToolbox
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
-		public IEnumerator FastInvoke_ThrowsWhenCalledOverANullObject()
+		public IEnumerator Halt_4_ThrowsWhenCalledOverANullObject()
 		{
 			yield return InitializeTest(false);
 			Test_FastInvokeSubject nullRef = null;
@@ -335,10 +339,10 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
-		#region Remaining Time
+		#region Query - Remaining Time
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_RemainingTime(bool startAtRandomTime)
+		public IEnumerator Query_1_RemainingTime(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
 			var WaitForFixedUpdate = new WaitForFixedUpdate();
@@ -413,7 +417,7 @@ namespace ExtenityTests.FlowToolbox
 		#region AllowsRegisteringMethodsOutsideOfBehaviour
 
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator FastInvoke_AllowsRegisteringMethodsOutsideOfBehaviour(bool startAtRandomTime)
+		public IEnumerator AllowsRegisteringMethodsOutsideOfBehaviour(bool startAtRandomTime)
 		{
 			yield return TestInvoke(DoOutsiderFastInvoke, 0.0, startAtRandomTime, 1);
 			yield return TestInvoke(DoOutsiderFastInvoke, 1.0, startAtRandomTime, 1);
