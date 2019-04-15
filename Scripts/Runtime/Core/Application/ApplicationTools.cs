@@ -142,9 +142,11 @@ namespace Extenity.ApplicationToolbox
 
 #if UNITY_EDITOR || UNITY_IOS
 
+		public static string AppStoreMarketID;
+
 		private static void LaunchMarketPage_AppStore()
 		{
-			var address = "itms-apps://itunes.apple.com/app/id" + Application.identifier;
+			var address = "itms-apps://itunes.apple.com/app/id" + AppStoreMarketID;
 			Log.Info("Launching market page: " + address);
 			Application.OpenURL(address);
 		}
