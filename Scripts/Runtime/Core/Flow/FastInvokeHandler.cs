@@ -69,6 +69,7 @@ namespace Extenity.FlowToolbox
 
 		#region Update
 
+		// TODO: internal void CustomFixedUpdate()
 		private void FixedUpdate()
 		{
 #if UNITY_EDITOR
@@ -152,6 +153,7 @@ namespace Extenity.FlowToolbox
 			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
+		// TODO: internal void CustomUpdate()
 		private void Update()
 		{
 #if UNITY_EDITOR
