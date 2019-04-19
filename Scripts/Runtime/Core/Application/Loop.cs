@@ -2,6 +2,7 @@ using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.DesignPatternsToolbox;
+using Extenity.FlowToolbox;
 using Extenity.MessagingToolbox;
 using Extenity.ProfilingToolbox;
 using Sirenix.OdinInspector;
@@ -37,6 +38,10 @@ namespace Extenity
 			Time = UnityEngine.Time.time;
 			DeltaTime = UnityEngine.Time.deltaTime;
 			UnscaledTime = UnityEngine.Time.unscaledTime;
+
+			// FastInvokes are called before any other callbacks.
+			FastInvokeHandler.Instance.CustomFixedUpdate();
+
 			FixedUpdateCallbacks.InvokeSafe();
 		}
 
@@ -51,6 +56,9 @@ namespace Extenity
 			{
 				FPSAnalyzer.Tick(Time);
 			}
+
+			// FastInvokes are called before any other callbacks.
+			FastInvokeHandler.Instance.CustomUpdate();
 
 			UpdateCallbacks.InvokeSafe();
 		}

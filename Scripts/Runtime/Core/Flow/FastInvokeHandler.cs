@@ -67,15 +67,29 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
+		#region Singleton
+
+		internal static FastInvokeHandler Instance;
+
+		#endregion
+
+		#region Initialization
+
+		private void Awake()
+		{
+			Instance = this;
+		}
+
+		#endregion
+
 		#region Update
 
-		// TODO: internal void CustomFixedUpdate()
-		private void FixedUpdate()
+		internal void CustomFixedUpdate()
 		{
 #if UNITY_EDITOR
 			if (VerboseLoggingInEachFixedUpdate)
 			{
-				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(FixedUpdate));
+				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomFixedUpdate));
 			}
 #endif
 
@@ -153,13 +167,12 @@ namespace Extenity.FlowToolbox
 			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
-		// TODO: internal void CustomUpdate()
-		private void Update()
+		internal void CustomUpdate()
 		{
 #if UNITY_EDITOR
 			if (VerboseLoggingInEachUpdate)
 			{
-				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(Update));
+				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomUpdate));
 			}
 #endif
 
