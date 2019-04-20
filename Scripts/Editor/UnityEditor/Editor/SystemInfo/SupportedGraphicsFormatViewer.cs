@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 
-namespace Extenity.UnityTestToolbox.Editor
+namespace Extenity.UnityEditorToolbox.Editor
 {
 
 	/// <summary>
