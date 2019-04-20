@@ -8,16 +8,9 @@ namespace TMPro.Extensions
 	{
 		private static readonly char[] Buffer = new char[120];
 
-		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int32 value)
-		{
-			lock (Buffer)
-			{
-				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
-				text.SetCharArray(Buffer, startIndex, length);
-			}
-		}
+		#region SetCharArrayForInt - Int32
 
-		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int64 value)
+		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int32 value)
 		{
 			lock (Buffer)
 			{
@@ -35,25 +28,7 @@ namespace TMPro.Extensions
 			}
 		}
 
-		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int64 value, char thousandsSeparator)
-		{
-			lock (Buffer)
-			{
-				value.ToStringAsCharArray(Buffer, thousandsSeparator, out var startIndex, out var length);
-				text.SetCharArray(Buffer, startIndex, length);
-			}
-		}
-
 		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int32 value, char prefix)
-		{
-			lock (Buffer)
-			{
-				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, out var startIndex, out var length);
-				text.SetCharArray(Buffer, startIndex, length);
-			}
-		}
-
-		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int64 value, char prefix)
 		{
 			lock (Buffer)
 			{
@@ -71,6 +46,37 @@ namespace TMPro.Extensions
 			}
 		}
 
+		#endregion
+
+		#region SetCharArrayForInt - Int64
+
+		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int64 value)
+		{
+			lock (Buffer)
+			{
+				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
+				text.SetCharArray(Buffer, startIndex, length);
+			}
+		}
+
+		public static void SetCharArrayForInt(this TextMeshProUGUI text, Int64 value, char thousandsSeparator)
+		{
+			lock (Buffer)
+			{
+				value.ToStringAsCharArray(Buffer, thousandsSeparator, out var startIndex, out var length);
+				text.SetCharArray(Buffer, startIndex, length);
+			}
+		}
+
+		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int64 value, char prefix)
+		{
+			lock (Buffer)
+			{
+				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, out var startIndex, out var length);
+				text.SetCharArray(Buffer, startIndex, length);
+			}
+		}
+
 		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int64 value, char prefix, char thousandsSeparator)
 		{
 			lock (Buffer)
@@ -80,7 +86,9 @@ namespace TMPro.Extensions
 			}
 		}
 
-		#region SetCharArrayFormatted
+		#endregion
+
+		#region SetCharArrayForValue with formatting
 
 		public static void SetCharArrayForValue(this TextMeshProUGUI text, string format, uint value)
 		{
