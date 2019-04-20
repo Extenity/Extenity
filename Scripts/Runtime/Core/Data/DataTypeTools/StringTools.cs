@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Extenity.MathToolbox;
@@ -1734,6 +1735,21 @@ namespace Extenity.DataToolbox
 				? valueShell + value.ToString() + valueShell + " " + prefix
 				: valueShell + value.ToString() + valueShell + " " + prefix + "s";
 		}
+
+		#endregion
+
+		#region Current Culture Info
+
+		static StringTools()
+		{
+			CurrentNumberFormatInfo = NumberFormatInfo.CurrentInfo;
+			NumberGroupSeparator = Convert.ToChar(CurrentNumberFormatInfo.NumberGroupSeparator);
+			NumberDecimalSeparator = Convert.ToChar(CurrentNumberFormatInfo.NumberDecimalSeparator);
+		}
+
+		public static readonly NumberFormatInfo CurrentNumberFormatInfo;
+		public static readonly char NumberGroupSeparator;
+		public static readonly char NumberDecimalSeparator;
 
 		#endregion
 	}
