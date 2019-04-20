@@ -399,7 +399,7 @@ namespace ExtenityTests.DataToolbox
 
 		#endregion
 
-		#region Conversions - Int ToStringAsCharArray
+		#region Conversions - Int32 ToStringAsCharArray
 
 		[Test]
 		[Repeat(10)]
@@ -410,40 +410,14 @@ namespace ExtenityTests.DataToolbox
 
 		[Test]
 		[Repeat(10)]
-		public static void ToStringAsCharArray_Int64()
-		{
-			UnityTestTools.ApplyOverValueSet_Int64(TestValue_ToStringAsCharArray_Int64);
-		}
-
-		[Test]
-		[Repeat(10)]
 		public static void ToStringAsCharArray_WithThousandsSeparator_Int32()
 		{
 			UnityTestTools.ApplyOverValueSet_Int32(TestValue_ToStringAsCharArray_WithThousandsSeparator_Int32);
 		}
 
-		[Test]
-		[Repeat(10)]
-		public static void ToStringAsCharArray_WithThousandsSeparator_Int64()
-		{
-			UnityTestTools.ApplyOverValueSet_Int64(TestValue_ToStringAsCharArray_WithThousandsSeparator_Int64);
-		}
-
 		private static void TestValue_ToStringAsCharArray_Int32(Int32 value)
 		{
 			var chars = new char[10 + 1];
-			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, out var startIndex, out var length);
-			if (UnityTestTools.EndMemoryCheck())
-				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
-			var original = value.ToString();
-			Assert.AreEqual(original, chars.ConvertToString(startIndex, length));
-			Assert.AreEqual(original.Length, length);
-		}
-
-		private static void TestValue_ToStringAsCharArray_Int64(Int64 value)
-		{
-			var chars = new char[19 + 1];
 			UnityTestTools.BeginMemoryCheck();
 			value.ToStringAsCharArray(chars, out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
@@ -461,6 +435,36 @@ namespace ExtenityTests.DataToolbox
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
 			var original = value.ToString("N0", StringTools.CurrentNumberFormatInfo);
+			Assert.AreEqual(original, chars.ConvertToString(startIndex, length));
+			Assert.AreEqual(original.Length, length);
+		}
+
+		#endregion
+
+		#region Conversions - Int64 ToStringAsCharArray
+
+		[Test]
+		[Repeat(10)]
+		public static void ToStringAsCharArray_Int64()
+		{
+			UnityTestTools.ApplyOverValueSet_Int64(TestValue_ToStringAsCharArray_Int64);
+		}
+
+		[Test]
+		[Repeat(10)]
+		public static void ToStringAsCharArray_WithThousandsSeparator_Int64()
+		{
+			UnityTestTools.ApplyOverValueSet_Int64(TestValue_ToStringAsCharArray_WithThousandsSeparator_Int64);
+		}
+
+		private static void TestValue_ToStringAsCharArray_Int64(Int64 value)
+		{
+			var chars = new char[19 + 1];
+			UnityTestTools.BeginMemoryCheck();
+			value.ToStringAsCharArray(chars, out var startIndex, out var length);
+			if (UnityTestTools.EndMemoryCheck())
+				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
+			var original = value.ToString();
 			Assert.AreEqual(original, chars.ConvertToString(startIndex, length));
 			Assert.AreEqual(original.Length, length);
 		}
