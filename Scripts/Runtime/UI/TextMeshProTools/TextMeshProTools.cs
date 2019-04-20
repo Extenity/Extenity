@@ -48,10 +48,7 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
-				startIndex--;
-				length++;
-				Buffer[startIndex] = prefix;
+				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}
@@ -60,10 +57,25 @@ namespace TMPro.Extensions
 		{
 			lock (Buffer)
 			{
-				value.ToStringAsCharArray(Buffer, out var startIndex, out var length);
-				startIndex--;
-				length++;
-				Buffer[startIndex] = prefix;
+				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, out var startIndex, out var length);
+				text.SetCharArray(Buffer, startIndex, length);
+			}
+		}
+
+		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int32 value, char prefix, char thousandsSeparator)
+		{
+			lock (Buffer)
+			{
+				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, thousandsSeparator, out var startIndex, out var length);
+				text.SetCharArray(Buffer, startIndex, length);
+			}
+		}
+
+		public static void SetCharArrayForIntWithPrefix(this TextMeshProUGUI text, Int64 value, char prefix, char thousandsSeparator)
+		{
+			lock (Buffer)
+			{
+				value.ToStringAsCharArrayWithPrefix(Buffer, prefix, thousandsSeparator, out var startIndex, out var length);
 				text.SetCharArray(Buffer, startIndex, length);
 			}
 		}

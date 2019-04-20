@@ -755,6 +755,36 @@ namespace Extenity.DataToolbox
 			length = array.Length - i;
 		}
 
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1+1 (Digits+Minus+Prefix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPrefix(this Int32 value, char[] array, char prefix, out int startIndex, out int length)
+		{
+			value.ToStringAsCharArray(array, out startIndex, out length);
+			startIndex--;
+			length++;
+			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+1 (Digits+Minus+Prefix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPrefix(this Int64 value, char[] array, char prefix, out int startIndex, out int length)
+		{
+			value.ToStringAsCharArray(array, out startIndex, out length);
+			startIndex--;
+			length++;
+			array[startIndex] = prefix;
+		}
+
 		#endregion
 
 		#region Conversions - Int ToStringAsCharArray with ThousandsSeparator
@@ -837,6 +867,36 @@ namespace Extenity.DataToolbox
 
 			startIndex = i;
 			length = array.Length - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1+3+1 (Digits+Minus+Commas+Prefix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPrefix(this Int32 value, char[] array, char prefix, char thousandsSeparator, out int startIndex, out int length)
+		{
+			value.ToStringAsCharArray(array, thousandsSeparator, out startIndex, out length);
+			startIndex--;
+			length++;
+			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+6+1 (Digits+Minus+Commas+Prefix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPrefix(this Int64 value, char[] array, char prefix, char thousandsSeparator, out int startIndex, out int length)
+		{
+			value.ToStringAsCharArray(array, thousandsSeparator, out startIndex, out length);
+			startIndex--;
+			length++;
+			array[startIndex] = prefix;
 		}
 
 		#endregion
