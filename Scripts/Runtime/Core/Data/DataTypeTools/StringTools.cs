@@ -690,17 +690,10 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Int32 ToStringAsCharArray
 
-		/// <summary>
-		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
-		/// 
-		/// Note that maximum length needed for char array is 10+1 (Digits+Minus).
-		/// 
-		/// Array length assumed to be enough and won't be checked because of performance concerns.
-		/// </summary>
-		public static void ToStringAsCharArray(this Int32 value, char[] array, out int startIndex, out int length)
+		private static void _ToStringAsCharArray(Int32 value, char[] array, int endOffset, out int startIndex, out int length)
 		{
 			const int radix = 10;
-			var i = array.Length;
+			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
@@ -720,7 +713,52 @@ namespace Extenity.DataToolbox
 			}
 
 			startIndex = i;
-			length = array.Length - i;
+			length = array.Length - endOffset - i;
+		}
+
+		private static void _ToStringAsCharArray(Int32 value, char[] array, int endOffset, char thousandsSeparator, out int startIndex, out int length)
+		{
+			const int radix = 10;
+			var i = array.Length - endOffset;
+			var isNegative = (value < 0);
+			var thousandsCounter = 3;
+			if (value <= 0) // handles 0 and int.MinValue special cases
+			{
+				array[--i] = HexadecimalCharacters[-(value % radix)];
+				value = -(value / radix);
+				thousandsCounter--;
+			}
+
+			while (value != 0)
+			{
+				array[--i] = HexadecimalCharacters[value % radix];
+				value /= radix;
+				if (--thousandsCounter == 0 && value > 0)
+				{
+					array[--i] = thousandsSeparator;
+					thousandsCounter = 3;
+				}
+			}
+
+			if (isNegative)
+			{
+				array[--i] = '-';
+			}
+
+			startIndex = i;
+			length = array.Length - endOffset - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1 (Digits+Minus).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int32 value, char[] array, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 0, out startIndex, out length);
 		}
 
 		/// <summary>
@@ -732,10 +770,24 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static void ToStringAsCharArrayWithPrefix(this Int32 value, char[] array, char prefix, out int startIndex, out int length)
 		{
-			value.ToStringAsCharArray(array, out startIndex, out length);
+			_ToStringAsCharArray(value, array, 0, out startIndex, out length);
 			startIndex--;
 			length++;
 			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1+1 (Digits+Minus+Postfix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPostfix(this Int32 value, char[] array, char postfix, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 1, out startIndex, out length);
+			length++;
+			array[array.Length - 1] = postfix;
 		}
 
 		/// <summary>
@@ -747,35 +799,7 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static void ToStringAsCharArray(this Int32 value, char[] array, char thousandsSeparator, out int startIndex, out int length)
 		{
-			const int radix = 10;
-			var i = array.Length;
-			var isNegative = (value < 0);
-			var thousandsCounter = 3;
-			if (value <= 0) // handles 0 and int.MinValue special cases
-			{
-				array[--i] = HexadecimalCharacters[-(value % radix)];
-				value = -(value / radix);
-				thousandsCounter--;
-			}
-
-			while (value != 0)
-			{
-				array[--i] = HexadecimalCharacters[value % radix];
-				value /= radix;
-				if (--thousandsCounter == 0 && value > 0)
-				{
-					array[--i] = thousandsSeparator;
-					thousandsCounter = 3;
-				}
-			}
-
-			if (isNegative)
-			{
-				array[--i] = '-';
-			}
-
-			startIndex = i;
-			length = array.Length - i;
+			_ToStringAsCharArray(value, array, 0, thousandsSeparator, out startIndex, out length);
 		}
 
 		/// <summary>
@@ -787,27 +811,34 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static void ToStringAsCharArrayWithPrefix(this Int32 value, char[] array, char prefix, char thousandsSeparator, out int startIndex, out int length)
 		{
-			value.ToStringAsCharArray(array, thousandsSeparator, out startIndex, out length);
+			_ToStringAsCharArray(value, array, 0, thousandsSeparator, out startIndex, out length);
 			startIndex--;
 			length++;
 			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 10+1+3+1 (Digits+Minus+Commas+Postfix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPostfix(this Int32 value, char[] array, char postfix, char thousandsSeparator, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 1, thousandsSeparator, out startIndex, out length);
+			length++;
+			array[array.Length - 1] = postfix;
 		}
 
 		#endregion
 
 		#region Conversions - Int64 ToStringAsCharArray
 
-		/// <summary>
-		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
-		/// 
-		/// Note that maximum length needed for char array is 19+1 (Digits+Minus).
-		/// 
-		/// Array length assumed to be enough and won't be checked because of performance concerns.
-		/// </summary>
-		public static void ToStringAsCharArray(this Int64 value, char[] array, out int startIndex, out int length)
+		private static void _ToStringAsCharArray(Int64 value, char[] array, int endOffset, out int startIndex, out int length)
 		{
 			const int radix = 10;
-			var i = array.Length;
+			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
@@ -827,35 +858,13 @@ namespace Extenity.DataToolbox
 			}
 
 			startIndex = i;
-			length = array.Length - i;
+			length = array.Length - endOffset - i;
 		}
 
-		/// <summary>
-		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
-		/// 
-		/// Note that maximum length needed for char array is 19+1+1 (Digits+Minus+Prefix).
-		/// 
-		/// Array length assumed to be enough and won't be checked because of performance concerns.
-		/// </summary>
-		public static void ToStringAsCharArrayWithPrefix(this Int64 value, char[] array, char prefix, out int startIndex, out int length)
-		{
-			value.ToStringAsCharArray(array, out startIndex, out length);
-			startIndex--;
-			length++;
-			array[startIndex] = prefix;
-		}
-
-		/// <summary>
-		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
-		/// 
-		/// Note that maximum length needed for char array is 19+1+6 (Digits+Minus+Commas).
-		/// 
-		/// Array length assumed to be enough and won't be checked because of performance concerns.
-		/// </summary>
-		public static void ToStringAsCharArray(this Int64 value, char[] array, char thousandsSeparator, out int startIndex, out int length)
+		private static void _ToStringAsCharArray(Int64 value, char[] array, int endOffset, char thousandsSeparator, out int startIndex, out int length)
 		{
 			const int radix = 10;
-			var i = array.Length;
+			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			var thousandsCounter = 3;
 			if (value <= 0) // handles 0 and int.MinValue special cases
@@ -882,7 +891,60 @@ namespace Extenity.DataToolbox
 			}
 
 			startIndex = i;
-			length = array.Length - i;
+			length = array.Length - endOffset - i;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1 (Digits+Minus).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int64 value, char[] array, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 0, out startIndex, out length);
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+1 (Digits+Minus+Prefix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPrefix(this Int64 value, char[] array, char prefix, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 0, out startIndex, out length);
+			startIndex--;
+			length++;
+			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+1 (Digits+Minus+Postfix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPostfix(this Int64 value, char[] array, char postfix, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 1, out startIndex, out length);
+			length++;
+			array[array.Length - 1] = postfix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+6 (Digits+Minus+Commas).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArray(this Int64 value, char[] array, char thousandsSeparator, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 0, thousandsSeparator, out startIndex, out length);
 		}
 
 		/// <summary>
@@ -894,10 +956,24 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static void ToStringAsCharArrayWithPrefix(this Int64 value, char[] array, char prefix, char thousandsSeparator, out int startIndex, out int length)
 		{
-			value.ToStringAsCharArray(array, thousandsSeparator, out startIndex, out length);
+			_ToStringAsCharArray(value, array, 0, thousandsSeparator, out startIndex, out length);
 			startIndex--;
 			length++;
 			array[startIndex] = prefix;
+		}
+
+		/// <summary>
+		/// Converts the Int to String in char[] form. This is especially useful where non-alloc conversions needed. 
+		/// 
+		/// Note that maximum length needed for char array is 19+1+3+1 (Digits+Minus+Commas+Postfix).
+		/// 
+		/// Array length assumed to be enough and won't be checked because of performance concerns.
+		/// </summary>
+		public static void ToStringAsCharArrayWithPostfix(this Int64 value, char[] array, char postfix, char thousandsSeparator, out int startIndex, out int length)
+		{
+			_ToStringAsCharArray(value, array, 1, thousandsSeparator, out startIndex, out length);
+			length++;
+			array[array.Length - 1] = postfix;
 		}
 
 		#endregion
@@ -1722,18 +1798,18 @@ namespace Extenity.DataToolbox
 
 		#region Singular/Plural
 
-		public static string ToStringWithEnglishPluralPostfix(this int value, string prefix)
+		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix)
 		{
 			return value == 1
-				? value.ToString() + " " + prefix
-				: value.ToString() + " " + prefix + "s";
+				? value.ToString() + " " + postfix
+				: value.ToString() + " " + postfix + "s";
 		}
 
-		public static string ToStringWithEnglishPluralPostfix(this int value, string prefix, char valueShell)
+		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix, char valueShell)
 		{
 			return value == 1
-				? valueShell + value.ToString() + valueShell + " " + prefix
-				: valueShell + value.ToString() + valueShell + " " + prefix + "s";
+				? valueShell + value.ToString() + valueShell + " " + postfix
+				: valueShell + value.ToString() + valueShell + " " + postfix + "s";
 		}
 
 		#endregion
