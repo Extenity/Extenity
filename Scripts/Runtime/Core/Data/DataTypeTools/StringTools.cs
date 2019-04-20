@@ -218,7 +218,7 @@ namespace Extenity.DataToolbox
 
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (char.IsNumber(str[i]) || str[i] == '.' || (allowSpace && str[i] == ' '))
+				if (char.IsNumber(str[i]) || str[i] == NumberDecimalSeparator || (allowSpace && str[i] == ' '))
 					continue;
 				return false;
 			}
@@ -1742,11 +1742,16 @@ namespace Extenity.DataToolbox
 
 		static StringTools()
 		{
+			CurrentCultureInfo = Thread.CurrentThread.CurrentCulture;
 			CurrentNumberFormatInfo = NumberFormatInfo.CurrentInfo;
 			NumberGroupSeparator = Convert.ToChar(CurrentNumberFormatInfo.NumberGroupSeparator);
 			NumberDecimalSeparator = Convert.ToChar(CurrentNumberFormatInfo.NumberDecimalSeparator);
+
+			// TODO: This seems like not working (at least in Unity Editor). Changing the system regional settings does not work. Needs more tests on other platforms.
+			//Log.Info($"Separators: {CurrentCultureInfo.NumberFormat.NumberDecimalSeparator}{CurrentCultureInfo.NumberFormat.NumberGroupSeparator}{CurrentNumberFormatInfo.NumberDecimalSeparator}{CurrentNumberFormatInfo.NumberGroupSeparator}");
 		}
 
+		public static readonly CultureInfo CurrentCultureInfo;
 		public static readonly NumberFormatInfo CurrentNumberFormatInfo;
 		public static readonly char NumberGroupSeparator;
 		public static readonly char NumberDecimalSeparator;
