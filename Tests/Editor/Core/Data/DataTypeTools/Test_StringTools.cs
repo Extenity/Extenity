@@ -457,10 +457,10 @@ namespace ExtenityTests.DataToolbox
 		{
 			var chars = new char[10 + 1 + 3];
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, ',', out var startIndex, out var length);
+			value.ToStringAsCharArray(chars, StringTools.NumberGroupSeparator, out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
-			var original = value.ToString("N0");
+			var original = value.ToString("N0", StringTools.CurrentNumberFormatInfo);
 			Assert.AreEqual(original, chars.ConvertToString(startIndex, length));
 			Assert.AreEqual(original.Length, length);
 		}
@@ -469,10 +469,10 @@ namespace ExtenityTests.DataToolbox
 		{
 			var chars = new char[19 + 1 + 6];
 			UnityTestTools.BeginMemoryCheck();
-			value.ToStringAsCharArray(chars, ',', out var startIndex, out var length);
+			value.ToStringAsCharArray(chars, StringTools.NumberGroupSeparator, out var startIndex, out var length);
 			if (UnityTestTools.EndMemoryCheck())
 				Assert.Fail("Memory allocated while converting value '" + value + "' to string resulting '" + chars.ConvertToString(0, length) + "'.");
-			var original = value.ToString("N0");
+			var original = value.ToString("N0", StringTools.CurrentNumberFormatInfo);
 			Assert.AreEqual(original, chars.ConvertToString(startIndex, length));
 			Assert.AreEqual(original.Length, length);
 		}
