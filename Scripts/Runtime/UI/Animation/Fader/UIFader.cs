@@ -84,9 +84,31 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Fade Commands
+		#region State
 
 		public FadeState State { get; private set; }
+
+		public bool IsVisible
+		{
+			get
+			{
+				switch (State)
+				{
+					case FadeState.Untouched:
+						return CanvasGroup.alpha > 0f;
+					case FadeState.FadedIn:
+						return true;
+					case FadeState.FadedOut:
+						return false;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+		}
+
+		#endregion
+
+		#region Fade Commands
 
 		public class FaderEvent : UnityEvent<UIFader> { }
 
