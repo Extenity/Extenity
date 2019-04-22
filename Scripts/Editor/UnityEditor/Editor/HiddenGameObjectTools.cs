@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -41,6 +43,20 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
 
+		public bool Foldout_HiddenObjectsInLoadedScenes = true;
+		public bool Foldout_HiddenObjectsOnTheLoose = true;
+		public bool Foldout_VisibleObjectsInLoadedScenes = true;
+		public bool Foldout_VisibleObjectsOnTheLoose = true;
+
+		public enum DisplayMode
+		{
+			Name,
+			FullName,
+			AssetPath,
+		}
+
+		public DisplayMode CurrentDisplayMode = DisplayMode.Name;
+
 		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(10f);
@@ -52,10 +68,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 				if (GUILayout.Button("Unload\nUnused", BigButtonHeight, ButtonWidth))
 				{
+					// Desperately try to unload assets in memory. But still, Unity is a greedy beach and won't free most of them (if any).
+					// Also there is the possibility that we haven't looked into yet. Objects may use HideFlags.DontUnloadUnusedAsset.
 					Resources.UnloadUnusedAssets();
+					GC.Collect();
+					Resources.UnloadUnusedAssets();
+					GC.Collect();
+					EditorUtility.UnloadUnusedAssetsImmediate(true);
+					GC.Collect();
+					EditorUtility.UnloadUnusedAssetsImmediate(true);
+					GC.Collect();
 					GatherObjects();
 				}
-				if (GUILayout.Button("Test", BigButtonHeight, ButtonWidth))
+				if (GUILayout.Button("Create\nTest Object", BigButtonHeight, ButtonWidth))
 				{
 					var go = new GameObject("HiddenTestObject");
 					go.hideFlags = HideFlags.HideInHierarchy;
@@ -63,6 +88,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 			}
 			GUILayout.EndHorizontal();
+
+			CurrentDisplayMode = (DisplayMode)EditorGUILayout.EnumPopup("Display Mode", CurrentDisplayMode, GUILayout.ExpandWidth(false));
+
 			GUILayout.Space(10f);
 
 			// Search bar
@@ -71,54 +99,59 @@ namespace Extenity.UnityEditorToolbox.Editor
 				RefreshFilteredLists();
 			}
 			var isFiltering = !string.IsNullOrEmpty(SearchText);
+			GUILayout.Space(10f);
 
 			// List
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
 			{
-				GUILayout.Space(10f);
-
-				DrawGroup("Hidden Objects In Loaded Scenes", isFiltering, HiddenObjectsInLoadedScenes, DisplayedHiddenObjectsInLoadedScenes);
-				DrawGroup("Hidden Objects On The Loose", isFiltering, HiddenObjectsOnTheLoose, DisplayedHiddenObjectsOnTheLoose);
-				DrawGroup("Visible Objects In Loaded Scenes", isFiltering, VisibleObjectsInLoadedScenes, DisplayedVisibleObjectsInLoadedScenes);
-				DrawGroup("Visible Objects On The Loose", isFiltering, VisibleObjectsOnTheLoose, DisplayedVisibleObjectsOnTheLoose);
+				DrawGroup("Hidden Objects In Loaded Scenes", ref Foldout_HiddenObjectsInLoadedScenes, isFiltering, HiddenObjectsInLoadedScenes, DisplayedHiddenObjectsInLoadedScenes);
+				DrawGroup("Hidden Objects On The Loose", ref Foldout_HiddenObjectsOnTheLoose, isFiltering, HiddenObjectsOnTheLoose, DisplayedHiddenObjectsOnTheLoose);
+				DrawGroup("Visible Objects In Loaded Scenes", ref Foldout_VisibleObjectsInLoadedScenes, isFiltering, VisibleObjectsInLoadedScenes, DisplayedVisibleObjectsInLoadedScenes);
+				DrawGroup("Visible Objects On The Loose", ref Foldout_VisibleObjectsOnTheLoose, isFiltering, VisibleObjectsOnTheLoose, DisplayedVisibleObjectsOnTheLoose);
 			}
 			GUILayout.EndScrollView();
 		}
 
-		private void DrawGroup(string header, bool isFiltering, List<GameObject> objects, List<GameObject> filteredObjects)
+		private void DrawGroup(string header, ref bool foldout, bool isFiltering, List<GameObject> objects, List<GameObject> filteredObjects)
 		{
 			// Header
 			GUILayout.BeginHorizontal();
 			{
-				EditorGUILayout.LabelField(
+				foldout = EditorGUILayout.Foldout(foldout,
 					isFiltering
 						? $"{header} ({filteredObjects.Count} of {objects.Count})"
-						: $"{header} ({objects.Count})",
-					EditorStyles.boldLabel);
+						: $"{header} ({objects.Count})"
+				);
 
-				var enabled = filteredObjects.IsNotNullAndEmpty();
-
-				if (GUILayoutTools.Button("Select All", enabled, ButtonWidth))
+				if (foldout)
 				{
-					Selection.objects = filteredObjects.ToArray();
-				}
+					var enabled = filteredObjects.IsNotNullAndEmpty();
 
-				if (GUILayoutTools.Button("Reveal All", enabled, ButtonWidth))
-				{
-					RevealOrHideObjects(filteredObjects);
-				}
+					if (GUILayoutTools.Button("Select All", enabled, ButtonWidth))
+					{
+						Selection.objects = filteredObjects.ToArray();
+					}
 
-				if (GUILayoutTools.Button("Delete All", enabled, ButtonWidth))
-				{
-					DeleteObjects(filteredObjects);
+					if (GUILayoutTools.Button("Reveal All", enabled, ButtonWidth))
+					{
+						RevealOrHideObjects(filteredObjects);
+					}
+
+					if (GUILayoutTools.Button("Delete All", enabled, ButtonWidth))
+					{
+						DeleteObjects(filteredObjects);
+					}
 				}
 			}
 			GUILayout.EndHorizontal();
 
-			// Draw object lines
-			for (int i = 0; i < filteredObjects.Count; i++)
+			if (foldout)
 			{
-				DrawEntry(filteredObjects[i]);
+				// Draw object lines
+				for (int i = 0; i < filteredObjects.Count; i++)
+				{
+					DrawEntry(filteredObjects[i]);
+				}
 			}
 
 			GUILayout.Space(20f);
@@ -129,7 +162,30 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GUILayout.BeginHorizontal();
 			{
 				var gone = obj == null;
-				GUILayout.Label(gone ? "null" : obj.name);
+				string name;
+				if (gone)
+				{
+					name = "null";
+				}
+				else
+				{
+					switch (CurrentDisplayMode)
+					{
+						case DisplayMode.Name:
+							name = obj.name;
+							break;
+						case DisplayMode.FullName:
+							name = obj.FullName();
+							break;
+						case DisplayMode.AssetPath:
+							name = AssetDatabase.GetAssetPath(obj);
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				}
+
+				GUILayout.Label(name);
 				GUILayout.FlexibleSpace();
 				if (gone)
 				{
