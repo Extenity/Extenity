@@ -26,7 +26,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected override void OnEnableDerived()
 		{
-			GatherHiddenObjects();
+			GatherObjects();
 		}
 
 		[MenuItem("Tools/Hidden GameObject Tools")]
@@ -39,153 +39,89 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region GUI
 
-		private static readonly GUILayoutOption BatchOperationLabelWidth = GUILayout.Width(110);
 		private static readonly GUILayoutOption ButtonWidth = GUILayout.Width(80);
-
-		private string SearchText = "";
 
 		protected override void OnGUIDerived()
 		{
 			GUILayout.Space(10f);
 			GUILayout.BeginHorizontal();
 			{
-				if (GUILayout.Button("Refresh", BigButtonHeight))
+				if (GUILayout.Button("Refresh", BigButtonHeight, GUILayout.ExpandWidth(true)))
 				{
-					GatherHiddenObjects();
+					GatherObjects();
+				}
+				if (GUILayout.Button("Unload\nUnused", BigButtonHeight, ButtonWidth))
+				{
+					Resources.UnloadUnusedAssets();
+					GatherObjects();
 				}
 				if (GUILayout.Button("Test", BigButtonHeight, ButtonWidth))
 				{
 					var go = new GameObject("HiddenTestObject");
 					go.hideFlags = HideFlags.HideInHierarchy;
-					GatherHiddenObjects();
+					GatherObjects();
 				}
 			}
 			GUILayout.EndHorizontal();
 			GUILayout.Space(10f);
 
 			// Search bar
-			bool isFiltering;
+			if (EditorGUILayoutTools.SearchBar(ref SearchText))
 			{
-				GUILayout.BeginHorizontal();
-				if (EditorGUILayoutTools.SearchBar(ref SearchText))
-				{
-					RefreshFilteredLists();
-				}
-				isFiltering = !string.IsNullOrEmpty(SearchText);
-				GUILayout.EndHorizontal();
-
-				GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-				// Batch buttons
-				{
-					GUILayout.BeginVertical();
-					// Hidden in loaded scenes
-					GUILayout.BeginHorizontal();
-					{
-						GUILayout.Label("Hidden (Loaded):", BatchOperationLabelWidth);
-						var display = isFiltering && DisplayedHiddenObjectsInLoadedScenes.IsNotNullAndEmpty();
-						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
-						{
-							Selection.objects = DisplayedHiddenObjectsInLoadedScenes.ToArray();
-						}
-						if (GUILayoutTools.Button("Reveal All", display, ButtonWidth))
-						{
-							RevealOrHideObjects(DisplayedHiddenObjectsInLoadedScenes);
-						}
-						if (GUILayoutTools.Button("Delete All", display, ButtonWidth))
-						{
-							DeleteObjects(DisplayedHiddenObjectsInLoadedScenes);
-						}
-					}
-					GUILayout.EndHorizontal();
-
-					// Hidden
-					GUILayout.BeginHorizontal();
-					{
-						GUILayout.Label("Hidden:", BatchOperationLabelWidth);
-						var display = isFiltering && DisplayedHiddenObjects.IsNotNullAndEmpty();
-						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
-						{
-							Selection.objects = DisplayedHiddenObjects.ToArray();
-						}
-						if (GUILayoutTools.Button("Reveal All", display, ButtonWidth))
-						{
-							RevealOrHideObjects(DisplayedHiddenObjects);
-						}
-						if (GUILayoutTools.Button("Delete All", display, ButtonWidth))
-						{
-							DeleteObjects(DisplayedHiddenObjects);
-						}
-					}
-					GUILayout.EndHorizontal();
-
-					// Visible
-					GUILayout.BeginHorizontal();
-					{
-						GUILayout.Label("Visible:", BatchOperationLabelWidth);
-						var display = isFiltering && DisplayedVisibleObjects.IsNotNullAndEmpty();
-						if (GUILayoutTools.Button("Select All", display, ButtonWidth))
-						{
-							Selection.objects = DisplayedVisibleObjects.ToArray();
-						}
-						if (GUILayoutTools.Button("Hide All", display, ButtonWidth))
-						{
-							RevealOrHideObjects(DisplayedVisibleObjects);
-						}
-						if (GUILayoutTools.Button("Delete All", display, ButtonWidth))
-						{
-							DeleteObjects(DisplayedVisibleObjects);
-						}
-					}
-					GUILayout.EndHorizontal();
-					GUILayout.EndVertical();
-				}
-				GUILayout.EndHorizontal();
+				RefreshFilteredLists();
 			}
+			var isFiltering = !string.IsNullOrEmpty(SearchText);
 
 			// List
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
 			{
 				GUILayout.Space(10f);
 
-				// List hidden objects in loaded scenes
-				EditorGUILayout.LabelField(
-					isFiltering
-						? "Hidden Objects In Loaded Scenes (" + DisplayedHiddenObjectsInLoadedScenes.Count + " of " + HiddenObjectsInLoadedScenes.Count + ")"
-						: "Hidden Objects In Loaded Scenes (" + HiddenObjectsInLoadedScenes.Count + ")",
-					EditorStyles.boldLabel);
-				for (int i = 0; i < DisplayedHiddenObjectsInLoadedScenes.Count; i++)
-				{
-					DrawEntry(DisplayedHiddenObjectsInLoadedScenes[i]);
-				}
-
-				GUILayout.Space(20f);
-
-				// List hidden objects
-				EditorGUILayout.LabelField(
-					isFiltering
-						? "Hidden Objects (" + DisplayedHiddenObjects.Count + " of " + HiddenObjects.Count + ")"
-						: "Hidden Objects (" + HiddenObjects.Count + ")",
-					EditorStyles.boldLabel);
-				for (int i = 0; i < DisplayedHiddenObjects.Count; i++)
-				{
-					DrawEntry(DisplayedHiddenObjects[i]);
-				}
-
-				GUILayout.Space(20f);
-
-				// List visible objects
-				EditorGUILayout.LabelField(
-					isFiltering
-						? "Visible Objects (" + DisplayedVisibleObjects.Count + " of " + VisibleObjects.Count + ")"
-						: "Visible Objects (" + VisibleObjects.Count + ")",
-					EditorStyles.boldLabel);
-				for (int i = 0; i < DisplayedVisibleObjects.Count; i++)
-				{
-					DrawEntry(DisplayedVisibleObjects[i]);
-				}
+				DrawGroup("Hidden Objects In Loaded Scenes", isFiltering, HiddenObjectsInLoadedScenes, DisplayedHiddenObjectsInLoadedScenes);
+				DrawGroup("Hidden Objects On The Loose", isFiltering, HiddenObjectsOnTheLoose, DisplayedHiddenObjectsOnTheLoose);
+				DrawGroup("Visible Objects In Loaded Scenes", isFiltering, VisibleObjectsInLoadedScenes, DisplayedVisibleObjectsInLoadedScenes);
+				DrawGroup("Visible Objects On The Loose", isFiltering, VisibleObjectsOnTheLoose, DisplayedVisibleObjectsOnTheLoose);
 			}
 			GUILayout.EndScrollView();
+		}
+
+		private void DrawGroup(string header, bool isFiltering, List<GameObject> objects, List<GameObject> filteredObjects)
+		{
+			// Header
+			GUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.LabelField(
+					isFiltering
+						? $"{header} ({filteredObjects.Count} of {objects.Count})"
+						: $"{header} ({objects.Count})",
+					EditorStyles.boldLabel);
+
+				var enabled = filteredObjects.IsNotNullAndEmpty();
+
+				if (GUILayoutTools.Button("Select All", enabled, ButtonWidth))
+				{
+					Selection.objects = filteredObjects.ToArray();
+				}
+
+				if (GUILayoutTools.Button("Reveal All", enabled, ButtonWidth))
+				{
+					RevealOrHideObjects(filteredObjects);
+				}
+
+				if (GUILayoutTools.Button("Delete All", enabled, ButtonWidth))
+				{
+					DeleteObjects(filteredObjects);
+				}
+			}
+			GUILayout.EndHorizontal();
+
+			// Draw object lines
+			for (int i = 0; i < filteredObjects.Count; i++)
+			{
+				DrawEntry(filteredObjects[i]);
+			}
+
+			GUILayout.Space(20f);
 		}
 
 		private void DrawEntry(GameObject obj)
@@ -222,22 +158,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Hidden Objects
+		#region Gather Objects
 
-		private List<GameObject> HiddenObjects = new List<GameObject>();
-		private List<GameObject> HiddenObjectsInLoadedScenes = new List<GameObject>();
-		private List<GameObject> VisibleObjects = new List<GameObject>();
+		private readonly List<GameObject> HiddenObjectsInLoadedScenes = new List<GameObject>();
+		private readonly List<GameObject> HiddenObjectsOnTheLoose = new List<GameObject>();
+		private readonly List<GameObject> VisibleObjectsInLoadedScenes = new List<GameObject>();
+		private readonly List<GameObject> VisibleObjectsOnTheLoose = new List<GameObject>();
 
-		private List<GameObject> DisplayedHiddenObjects = new List<GameObject>();
-		private List<GameObject> DisplayedHiddenObjectsInLoadedScenes = new List<GameObject>();
-		private List<GameObject> DisplayedVisibleObjects = new List<GameObject>();
-
-
-		private void GatherHiddenObjects()
+		private void GatherObjects()
 		{
-			HiddenObjects.Clear();
 			HiddenObjectsInLoadedScenes.Clear();
-			VisibleObjects.Clear();
+			HiddenObjectsOnTheLoose.Clear();
+			VisibleObjectsInLoadedScenes.Clear();
+			VisibleObjectsOnTheLoose.Clear();
 
 			//var allObjects = FindObjectsOfType<GameObject>(); This one does not reveal objects marked as DontDestroyOnLoad.
 			var allObjects = Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[];
@@ -253,58 +186,23 @@ namespace Extenity.UnityEditorToolbox.Editor
 					}
 					else
 					{
-						HiddenObjects.Add(go);
+						HiddenObjectsOnTheLoose.Add(go);
 					}
 				}
 				else
 				{
-					VisibleObjects.Add(go);
+					if (go.scene.isLoaded)
+					{
+						VisibleObjectsInLoadedScenes.Add(go);
+					}
+					else
+					{
+						VisibleObjectsOnTheLoose.Add(go);
+					}
 				}
 			}
 
 			RefreshFilteredLists();
-
-			Repaint();
-		}
-
-		private void RefreshFilteredLists()
-		{
-			DisplayedHiddenObjects.Clear();
-			DisplayedHiddenObjectsInLoadedScenes.Clear();
-			DisplayedVisibleObjects.Clear();
-
-			foreach (var obj in HiddenObjects)
-			{
-				if (!obj ||
-					string.IsNullOrEmpty(SearchText) ||
-					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
-				)
-				{
-					DisplayedHiddenObjects.Add(obj);
-				}
-			}
-
-			foreach (var obj in HiddenObjectsInLoadedScenes)
-			{
-				if (!obj ||
-					string.IsNullOrEmpty(SearchText) ||
-					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
-				)
-				{
-					DisplayedHiddenObjectsInLoadedScenes.Add(obj);
-				}
-			}
-
-			foreach (var obj in VisibleObjects)
-			{
-				if (!obj ||
-					string.IsNullOrEmpty(SearchText) ||
-					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
-				)
-				{
-					DisplayedVisibleObjects.Add(obj);
-				}
-			}
 		}
 
 		private static bool IsHidden(GameObject go)
@@ -314,14 +212,51 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Operations
+		#region Search and Filtering
+
+		private readonly List<GameObject> DisplayedHiddenObjectsOnTheLoose = new List<GameObject>();
+		private readonly List<GameObject> DisplayedHiddenObjectsInLoadedScenes = new List<GameObject>();
+		private readonly List<GameObject> DisplayedVisibleObjectsOnTheLoose = new List<GameObject>();
+		private readonly List<GameObject> DisplayedVisibleObjectsInLoadedScenes = new List<GameObject>();
+
+		private string SearchText = "";
+
+		private void RefreshFilteredLists()
+		{
+			RefreshFilteredList(HiddenObjectsInLoadedScenes, DisplayedHiddenObjectsInLoadedScenes);
+			RefreshFilteredList(HiddenObjectsOnTheLoose, DisplayedHiddenObjectsOnTheLoose);
+			RefreshFilteredList(VisibleObjectsInLoadedScenes, DisplayedVisibleObjectsInLoadedScenes);
+			RefreshFilteredList(VisibleObjectsOnTheLoose, DisplayedVisibleObjectsOnTheLoose);
+
+			Repaint();
+		}
+
+		private void RefreshFilteredList(List<GameObject> objects, List<GameObject> filteredObjects)
+		{
+			filteredObjects.Clear();
+
+			foreach (var obj in objects)
+			{
+				if (!obj ||
+					string.IsNullOrEmpty(SearchText) ||
+					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
+				)
+				{
+					filteredObjects.Add(obj);
+				}
+			}
+		}
+
+		#endregion
+
+		#region Operations - RevealOrHide / Delete
 
 		private void RevealOrHideObject(GameObject obj)
 		{
 			EditorApplication.delayCall += () =>
 			{
 				InternalRevealOrHideObject(obj);
-				GatherHiddenObjects();
+				GatherObjects();
 			};
 		}
 
@@ -330,8 +265,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorApplication.delayCall += () =>
 			{
 				foreach (var obj in objects)
-					RevealOrHideObject(obj);
-				GatherHiddenObjects();
+					InternalRevealOrHideObject(obj);
+				GatherObjects();
 			};
 		}
 
@@ -349,7 +284,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorApplication.delayCall += () =>
 			{
 				InternalDeleteObject(obj);
-				GatherHiddenObjects();
+				GatherObjects();
 			};
 		}
 
@@ -358,8 +293,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			EditorApplication.delayCall += () =>
 			{
 				foreach (var obj in objects)
-					DeleteObject(obj);
-				GatherHiddenObjects();
+					InternalDeleteObject(obj);
+				GatherObjects();
 			};
 		}
 
