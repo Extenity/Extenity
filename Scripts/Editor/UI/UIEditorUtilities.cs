@@ -3,6 +3,7 @@ using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.GameObjectToolbox;
+using Extenity.GameObjectToolbox.Editor;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
@@ -60,6 +61,47 @@ namespace Extenity.UIToolbox.Editor
 				}
 			}
 		}
+
+		#region Get Or Add Component For Clickable
+
+		public static TNewComponent GetOrAddComponentForClickable<TTarget, TNewComponent>(this TTarget clickable, bool moveComponentAboveClickableComponent)
+			where TTarget : Selectable
+			where TNewComponent : Component
+		{
+			// Get or add the component
+			var component = clickable.gameObject.GetComponent<TNewComponent>();
+			var isCreated = false;
+			if (!component)
+			{
+				component = Undo.AddComponent<TNewComponent>(clickable.gameObject);
+				isCreated = true;
+			}
+
+			// Move it above Clickable
+			int movedBy = 0;
+			if (moveComponentAboveClickableComponent)
+			{
+				movedBy = component.MoveComponentAbove(clickable);
+			}
+
+			// Log
+			if (isCreated)
+			{
+				Log.Info($"{typeof(TNewComponent).Name} component created in object '{clickable.gameObject.name}'.", clickable.gameObject);
+			}
+			else if (movedBy != 0)
+			{
+				Log.Info($"{typeof(TNewComponent).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.gameObject.name}'.", clickable.gameObject);
+			}
+			else
+			{
+				Log.Info($"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(TNewComponent).Name}.", clickable.gameObject);
+			}
+
+			return component;
+		}
+
+		#endregion
 	}
 
 }
