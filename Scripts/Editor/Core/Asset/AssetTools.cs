@@ -25,25 +25,47 @@ namespace Extenity.AssetToolbox.Editor
 	{
 		#region Prefabs
 
-		public static List<GameObject> FindAllPrefabs()
+		public static List<GameObject> LoadAllPrefabs()
 		{
-			var assetFolderPaths = GetAllPrefabAssetPaths();
-			var assets = assetFolderPaths.Select(item => AssetDatabase.LoadAssetAtPath(item, typeof(GameObject))).Cast<GameObject>().Where(obj => obj != null);
+			var assetPaths = GetAllPrefabAssetPaths();
+			var assets = assetPaths
+				.Select(assetPath => AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject)
+				.Where(loadedAsset => loadedAsset != null);
 			var list = assets.ToList();
 			return list;
 		}
 
-		public static List<GameObject> FindAllPrefabsWhere(Func<GameObject, bool> predicate)
+		public static List<GameObject> GetPrefabsContainingComponent<TComponent>(bool includeChildren, bool alsoIncludeInactiveChildren) where TComponent : Component
 		{
-			var assetFolderPaths = GetAllPrefabAssetPaths();
-			var assets = assetFolderPaths.Select(item => AssetDatabase.LoadAssetAtPath(item, typeof(GameObject))).Cast<GameObject>().Where(obj => obj != null).Where(predicate);
-			var list = assets.ToList();
-			return list;
+			if (includeChildren)
+			{
+				return LoadAllPrefabs()
+					.Where(gameObject => gameObject.GetComponentInChildren<TComponent>(alsoIncludeInactiveChildren) != null)
+					.ToList();
+			}
+			else
+			{
+				return LoadAllPrefabs()
+					.Where(gameObject => gameObject.GetComponent<TComponent>() != null)
+					.ToList();
+			}
 		}
 
-		public static List<GameObject> FindAllPrefabsContainingComponent<TComponent>() where TComponent : Component
+		public static List<TComponent> GetComponentsInPrefabs<TComponent>(bool includeChildren, bool alsoIncludeInactiveChildren) where TComponent : Component
 		{
-			return FindAllPrefabsWhere(gameObject => gameObject.GetComponent<TComponent>() != null);
+			if (includeChildren)
+			{
+				return LoadAllPrefabs()
+					.SelectMany(gameObject => gameObject.GetComponentsInChildren<TComponent>(alsoIncludeInactiveChildren))
+					.ToList();
+			}
+			else
+			{
+				return LoadAllPrefabs()
+					.Select(gameObject => gameObject.GetComponent<TComponent>())
+					.Where(found => found != null)
+					.ToList();
+			}
 		}
 
 		#endregion
