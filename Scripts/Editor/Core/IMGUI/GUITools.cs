@@ -432,6 +432,40 @@ namespace Extenity.IMGUIToolbox.Editor
 		public static readonly GUIStyle WhiteTextureStyle = new GUIStyle { normal = new GUIStyleState { background = WhiteTexture } };
 
 		#endregion
+
+		#region Draw Texture
+
+		/// <summary>
+		/// Draw texture using <see cref="GUIStyle"/> to workaround a bug in Unity where
+		/// <see cref="GUI.DrawTexture"/> flickers when embedded inside a property drawer.
+		/// </summary>
+		public static void DrawTexture(Rect position, Texture2D texture)
+		{
+			if (Event.current.type != EventType.Repaint)
+				return;
+			
+			try
+			{
+				TemporaryStyle.normal.background = texture;
+				TemporaryStyle.Draw(position, GUIContent.none, false, false, false, false);
+			}
+			finally
+			{
+				TemporaryStyle.normal.background = null;
+			}
+		}
+
+		#endregion
+
+		#region Temporary Style
+
+		/// <summary>
+		/// Make sure to clear all changes after you use it. Better use try-finally blocks
+		/// to prevent any exceptions to break the execution of cleanup codes.
+		/// </summary>
+		public static readonly GUIStyle TemporaryStyle = new GUIStyle();
+
+		#endregion
 	}
 
 }
