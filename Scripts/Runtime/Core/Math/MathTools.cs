@@ -565,6 +565,15 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Quaternion
+
+		public static bool IsAlmostEqual(this Quaternion value1, Quaternion value2, float maxAngle)
+		{
+			return Quaternion.Angle(value1, value2) < maxAngle;
+		}
+
+		#endregion
+
 		#region Matrix4x4
 
 		public static Matrix4x4 UnscaledLocalToWorldMatrix(this Transform transform)
