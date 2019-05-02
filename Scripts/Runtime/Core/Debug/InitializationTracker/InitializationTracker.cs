@@ -292,10 +292,10 @@ namespace Extenity.DebugToolbox
 		{
 			if (IsFinalized)
 			{
-				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(InformObjectInstantiation)} called with component '{component}'.");
+				LogVerbose($"(LOGONLY)(FINALIZED) {nameof(LogObjectInstantiation)} called with component '{component}'.");
 				return; // Do absolutely nothing if the process is finalized, for optimization's sake.
 			}
-			LogInfo($"(LOGONLY) {nameof(InformObjectInstantiation)} called with component '{component}'.");
+			LogInfo($"(LOGONLY) {nameof(LogObjectInstantiation)} called with component '{component}'.");
 		}
 
 		/// <summary>
