@@ -1,43 +1,34 @@
+using System;
 using UnityEditor;
 
 namespace Extenity.DataToolbox.Editor
 {
 
-	public class BoolEditorPref
+	public class BoolEditorPref : EditorPref<bool>
 	{
-		public BoolEditorPref(string prefsKey, bool defaultValue)
+		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, bool defaultValue)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null)
 		{
-			PrefsKey = prefsKey;
-			_Value = defaultValue;
 		}
 
-		public readonly string PrefsKey;
-
-		private bool _IsInitialized;
-		private bool _Value;
-		public bool Value
+		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<bool>, bool> defaultValueOverride)
+			: base(prefsKey, appendPathHashToKey, default(bool), defaultValueOverride)
 		{
-			get
-			{
-				if (!_IsInitialized)
-				{
-					_IsInitialized = true;
-					_Value = EditorPrefs.GetBool(PrefsKey, _Value);
-				}
-				return _Value;
-			}
-			set
-			{
-				_IsInitialized = true;
-				_Value = value;
-				EditorPrefs.SetBool(PrefsKey, value);
-			}
 		}
 
-		public bool Toggle()
+		protected override bool InternalGetValue()
 		{
-			Value = !Value;
-			return Value;
+			return EditorPrefs.GetBool(ProcessedPrefsKey, _Value);
+		}
+
+		protected override void InternalSetValue(bool value)
+		{
+			EditorPrefs.SetBool(ProcessedPrefsKey, value);
+		}
+
+		protected override bool IsSame(bool oldValue, bool newValue)
+		{
+			return oldValue == newValue;
 		}
 	}
 
