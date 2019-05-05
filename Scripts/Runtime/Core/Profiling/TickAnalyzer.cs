@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.DataToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.MathToolbox;
 using UnityEngine;
@@ -15,9 +16,11 @@ namespace Extenity.ProfilingToolbox
 
 		[Tooltip("Ticks per second.")]
 		public bool OutputTPSGraph = true;
+		public string TPSDescription = "TPS";
 		public Color TPSColor = new Color(0.2f, 0.9f, 0.2f, 1f);
 		[Tooltip("Average ticks per second calculated using the average elapsed time of all samples in history.")]
 		public bool OutputAverageTPSGraph = true;
+		public string AverageTPSDescription = "Average TPS";
 		public Color AverageTPSColor = new Color(0.4f, 0.5f, 0.2f, 1f);
 
 		public TickPlotter(string title, ValueAxisRangeConfiguration rangeConfiguration, GameObject context = null)
@@ -148,16 +151,26 @@ namespace Extenity.ProfilingToolbox
 		public bool IsGraphPlottingEnabled => Plotter != null;
 		private TickPlotter Plotter;
 
-		public void EnableGraphPlotting(TickPlotter plotter)
+		public void EnableGraphPlotting(TickPlotter _plotter)
 		{
 			// Deinitialize previous plotting first.
 			DisableGraphPlotting();
 
-			Plotter = plotter;
+			Plotter = _plotter;
 
-			Graph.SetupGraphWithXYChannels(true, ref Plotter._Graph, Plotter.Title, Plotter.Context,
-				Plotter.RangeConfiguration, ref Plotter._Channels, true, true,
-				"TPS", "Average TPS", Plotter.TPSColor, Plotter.AverageTPSColor);
+			CollectionTools.ResizeIfRequired(ref Plotter._Channels, 2);
+			var channels = Plotter._Channels;
+			Graph.SetupGraph(true, ref Plotter._Graph, Plotter.Title, Plotter.Context, Plotter.RangeConfiguration);
+			var graph = Plotter._Graph;
+
+			if (Plotter.OutputTPSGraph)
+			{
+				Channel.SetupChannel(true, graph, ref channels[0], Plotter.TPSDescription, Plotter.TPSColor);
+			}
+			if (Plotter.OutputAverageTPSGraph)
+			{
+				Channel.SetupChannel(true, graph, ref channels[1], Plotter.AverageTPSDescription, Plotter.AverageTPSColor);
+			}
 		}
 
 		private void DisableGraphPlotting()
