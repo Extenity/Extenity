@@ -40,11 +40,21 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Queries
 
-		public static bool IsAnyGraphForContextExists(GameObject go)
+		public static Graph GetGraphByTitleAndContext(string title, GameObject context)
 		{
 			for (var i = 0; i < All.Count; i++)
 			{
-				if (All[i].Context == go)
+				if (All[i].Context == context && All[i].Title.Equals(title, StringComparison.Ordinal))
+					return All[i];
+			}
+			return null;
+		}
+
+		public static bool IsAnyGraphForContextExists(GameObject context)
+		{
+			for (var i = 0; i < All.Count; i++)
+			{
+				if (All[i].Context == context)
 					return true;
 			}
 			return false;

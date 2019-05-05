@@ -80,7 +80,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public string Title;
 		public GameObject Context = null;
-		
+
 		public readonly ValueAxisRangeConfiguration Range = ValueAxisRangeConfiguration.CreateAdaptive();
 
 		#endregion
@@ -248,7 +248,13 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				if (graph == null)
 				{
-					graph = new Graph(graphTitle, graphContext);
+					// Try to find a graph with the same Title and Context
+					graph = Graphs.GetGraphByTitleAndContext(graphTitle, graphContext);
+
+					if (graph == null)
+					{
+						graph = new Graph(graphTitle, graphContext);
+					}
 				}
 				else
 				{
