@@ -35,7 +35,7 @@ namespace Extenity.PainkillerToolbox.Editor
 	// TODO: Make sure IPunObservable, IPunOwnershipCallbacks, IPunInstantiateMagicCallback, IConnectionCallbacks, ILobbyCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, IOnEventCallback, IWebRpcCallback interfaces are only used in classes that derive from NetworkedBehaviour base class class.
 	// TODO: Make sure methods marked with PunRPC attribute are only exist in classes that derive from NetworkedBehaviour base class.
 	// TODO: Make sure InitializeNetworkedObjectInstantiation is the first line of every OnPhotonInstantiate(PhotonMessageInfo) method.
-	// TODO: Make sure IsRPCInvalid is checked in the first line of every PunRPC method.
+	// TODO: Make sure PreprocessRPC is checked in the first line of every PunRPC method and specified method name is correct.
 	// TODO: Debug.ClearDeveloperConsole does not work. Use EditorDebugTools.ClearDeveloperConsole instead.
 	// TODO: Make sure "using Boo." does not exist anywhere.
 
