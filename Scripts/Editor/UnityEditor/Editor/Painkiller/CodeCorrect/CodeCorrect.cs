@@ -36,6 +36,7 @@ namespace Extenity.PainkillerToolbox.Editor
 	// TODO: Make sure methods marked with PunRPC attribute are only exist in classes that derive from NetworkedBehaviour base class.
 	// TODO: Make sure InitializeNetworkedObjectInstantiation is the first line of every OnPhotonInstantiate(PhotonMessageInfo) method.
 	// TODO: Make sure PreprocessRPC is checked in the first line of every PunRPC method and specified method name is correct.
+	// TODO: Make sure PhotonView.RPC and RpcSecure are not used. NetworkedBehaviour.RPC and RpcSecure should be used instead.
 	// TODO: Debug.ClearDeveloperConsole does not work. Use EditorDebugTools.ClearDeveloperConsole instead.
 	// TODO: Make sure "using Boo." does not exist anywhere.
 
