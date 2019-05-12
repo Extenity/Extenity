@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.SceneManagementToolbox.Editor;
+using UnityEditorInternal;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -66,9 +69,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 				{
 					GatherObjects();
 				}
+				if (GUILayout.Button("Prepare For\nUnload", BigButtonHeight, ButtonWidth))
+				{
+					EditorSceneManagerTools.UnloadAllScenes(false);
+					InternalEditorUtility.RequestScriptReload();
+				}
 				if (GUILayout.Button("Unload\nUnused", BigButtonHeight, ButtonWidth))
 				{
-					// Desperately try to unload assets in memory. But still, Unity is a greedy beach and won't free most of them (if any).
+					// Desperately try to unload assets in memory. Assembly reloading helps a lot.
 					// Also there is the possibility that we haven't looked into yet. Objects may use HideFlags.DontUnloadUnusedAsset.
 					Resources.UnloadUnusedAssets();
 					GC.Collect();
@@ -78,7 +86,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 					GC.Collect();
 					EditorUtility.UnloadUnusedAssetsImmediate(true);
 					GC.Collect();
+
 					GatherObjects();
+					Log.Info("Completed unloading unused assets. Make sure to press Prepare For Unload for best cleanup.");
 				}
 				if (GUILayout.Button("Create\nTest Object", BigButtonHeight, ButtonWidth))
 				{
@@ -112,7 +122,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GUILayout.EndScrollView();
 		}
 
-		private void DrawGroup(string header, ref bool foldout, bool isFiltering, List<GameObject> objects, List<GameObject> filteredObjects)
+		private void DrawGroup(string header, ref bool foldout, bool isFiltering, List<WeakReference> objects, List<WeakReference> filteredObjects)
 		{
 			// Header
 			GUILayout.BeginHorizontal();
@@ -129,17 +139,28 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 					if (GUILayoutTools.Button("Select All", enabled, ButtonWidth))
 					{
-						Selection.objects = filteredObjects.ToArray();
+						Selection.objects = filteredObjects
+							.Where(entry => entry.IsAlive && (GameObject)entry.Target)
+							.Select(entry => (GameObject)entry.Target)
+							.ToArray();
 					}
 
 					if (GUILayoutTools.Button("Reveal All", enabled, ButtonWidth))
 					{
-						RevealOrHideObjects(filteredObjects);
+						RevealOrHideObjects(filteredObjects
+							.Where(entry => entry.IsAlive && (GameObject)entry.Target)
+							.Select(entry => (GameObject)entry.Target)
+							.ToArray()
+						);
 					}
 
 					if (GUILayoutTools.Button("Delete All", enabled, ButtonWidth))
 					{
-						DeleteObjects(filteredObjects);
+						DeleteObjects(filteredObjects
+							.Where(entry => entry.IsAlive && (GameObject)entry.Target)
+							.Select(entry => (GameObject)entry.Target)
+							.ToArray()
+						);
 					}
 				}
 			}
@@ -150,18 +171,23 @@ namespace Extenity.UnityEditorToolbox.Editor
 				// Draw object lines
 				for (int i = 0; i < filteredObjects.Count; i++)
 				{
-					DrawEntry(filteredObjects[i]);
+					var entry = filteredObjects[i];
+					if (!entry.IsAlive)
+						continue;
+					var go = (GameObject)entry.Target;
+
+					DrawEntry(go);
 				}
 			}
 
 			GUILayout.Space(20f);
 		}
 
-		private void DrawEntry(GameObject obj)
+		private void DrawEntry(GameObject go)
 		{
 			GUILayout.BeginHorizontal();
 			{
-				var gone = obj == null;
+				var gone = go == null;
 				string name;
 				if (gone)
 				{
@@ -172,13 +198,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 					switch (CurrentDisplayMode)
 					{
 						case DisplayMode.Name:
-							name = obj.name;
+							name = go.name;
 							break;
 						case DisplayMode.FullName:
-							name = obj.FullName();
+							name = go.FullName();
 							break;
 						case DisplayMode.AssetPath:
-							name = AssetDatabase.GetAssetPath(obj);
+							name = AssetDatabase.GetAssetPath(go);
 							break;
 						default:
 							throw new ArgumentOutOfRangeException();
@@ -197,15 +223,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 				{
 					if (GUILayout.Button("Select", ButtonWidth))
 					{
-						Selection.activeGameObject = obj;
+						Selection.activeGameObject = go;
 					}
-					if (GUILayout.Button(IsHidden(obj) ? "Reveal" : "Hide", ButtonWidth))
+					if (GUILayout.Button(IsHidden(go) ? "Reveal" : "Hide", ButtonWidth))
 					{
-						RevealOrHideObject(obj);
+						RevealOrHideObject(go);
 					}
 					if (GUILayout.Button("Delete", ButtonWidth))
 					{
-						DeleteObject(obj);
+						DeleteObject(go);
 					}
 				}
 			}
@@ -216,10 +242,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Gather Objects
 
-		private readonly List<GameObject> HiddenObjectsInLoadedScenes = new List<GameObject>();
-		private readonly List<GameObject> HiddenObjectsOnTheLoose = new List<GameObject>();
-		private readonly List<GameObject> VisibleObjectsInLoadedScenes = new List<GameObject>();
-		private readonly List<GameObject> VisibleObjectsOnTheLoose = new List<GameObject>();
+		private readonly List<WeakReference> HiddenObjectsInLoadedScenes = new List<WeakReference>();
+		private readonly List<WeakReference> HiddenObjectsOnTheLoose = new List<WeakReference>();
+		private readonly List<WeakReference> VisibleObjectsInLoadedScenes = new List<WeakReference>();
+		private readonly List<WeakReference> VisibleObjectsOnTheLoose = new List<WeakReference>();
 
 		private void GatherObjects()
 		{
@@ -238,22 +264,22 @@ namespace Extenity.UnityEditorToolbox.Editor
 				{
 					if (go.scene.isLoaded)
 					{
-						HiddenObjectsInLoadedScenes.Add(go);
+						HiddenObjectsInLoadedScenes.Add(new WeakReference(go));
 					}
 					else
 					{
-						HiddenObjectsOnTheLoose.Add(go);
+						HiddenObjectsOnTheLoose.Add(new WeakReference(go));
 					}
 				}
 				else
 				{
 					if (go.scene.isLoaded)
 					{
-						VisibleObjectsInLoadedScenes.Add(go);
+						VisibleObjectsInLoadedScenes.Add(new WeakReference(go));
 					}
 					else
 					{
-						VisibleObjectsOnTheLoose.Add(go);
+						VisibleObjectsOnTheLoose.Add(new WeakReference(go));
 					}
 				}
 			}
@@ -270,10 +296,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Search and Filtering
 
-		private readonly List<GameObject> DisplayedHiddenObjectsOnTheLoose = new List<GameObject>();
-		private readonly List<GameObject> DisplayedHiddenObjectsInLoadedScenes = new List<GameObject>();
-		private readonly List<GameObject> DisplayedVisibleObjectsOnTheLoose = new List<GameObject>();
-		private readonly List<GameObject> DisplayedVisibleObjectsInLoadedScenes = new List<GameObject>();
+		private readonly List<WeakReference> DisplayedHiddenObjectsOnTheLoose = new List<WeakReference>();
+		private readonly List<WeakReference> DisplayedHiddenObjectsInLoadedScenes = new List<WeakReference>();
+		private readonly List<WeakReference> DisplayedVisibleObjectsOnTheLoose = new List<WeakReference>();
+		private readonly List<WeakReference> DisplayedVisibleObjectsInLoadedScenes = new List<WeakReference>();
 
 		private string SearchText = "";
 
@@ -287,15 +313,18 @@ namespace Extenity.UnityEditorToolbox.Editor
 			Repaint();
 		}
 
-		private void RefreshFilteredList(List<GameObject> objects, List<GameObject> filteredObjects)
+		private void RefreshFilteredList(List<WeakReference> objects, List<WeakReference> filteredObjects)
 		{
 			filteredObjects.Clear();
 
 			foreach (var obj in objects)
 			{
-				if (!obj ||
+				if (!obj.IsAlive)
+					continue;
+				var go = (GameObject)obj.Target;
+				if (!go ||
 					string.IsNullOrEmpty(SearchText) ||
-					LiquidMetalStringMatcher.Score(obj.name, SearchText) > StringMatcherTolerance
+					LiquidMetalStringMatcher.Score(go.name, SearchText) > StringMatcherTolerance
 				)
 				{
 					filteredObjects.Add(obj);
