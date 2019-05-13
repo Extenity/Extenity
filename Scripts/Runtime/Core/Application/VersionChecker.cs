@@ -5,8 +5,15 @@ namespace Extenity.ApplicationToolbox
 	public enum VersionCheckStatus
 	{
 		NotCheckedYet,
+
+		// No update required
 		NoNewVersion,
+		SkippedVersionCheck,
+
+		// Failure
 		FailedToCheck,
+
+		// Update required
 		NewVersionAvailable,
 	}
 
@@ -18,6 +25,13 @@ namespace Extenity.ApplicationToolbox
 		// No need to allocate an event object for just a simple check. Since this check
 		// probably will only be made at the start of the application.
 		//public static readonly UnityEvent OnVersionChecked = new UnityEvent();
+
+		public static void InformSkippingVersionCheck(bool log)
+		{
+			Status = VersionCheckStatus.SkippedVersionCheck;
+			if (log)
+				Log.Info("Version check skipped.");
+		}
 
 		public static void InformMinVersion(string minVersionString, bool log)
 		{
