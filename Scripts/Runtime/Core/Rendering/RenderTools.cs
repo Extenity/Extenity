@@ -5,35 +5,9 @@ namespace Extenity.RenderingToolbox
 
 	public static class RenderTools
 	{
-		#region Display
+		#region Projection
 
-		public static Resolution lastWindowedScreenResolution;
-
-		public static void ToggleFullscreen(int width = 0, int height = 0)
-		{
-			if (Screen.fullScreen)
-			{
-				Screen.SetResolution(width == 0 ? lastWindowedScreenResolution.width : width, height == 0 ? lastWindowedScreenResolution.height : height, false);
-			}
-			else
-			{
-				lastWindowedScreenResolution.width = Screen.width;
-				lastWindowedScreenResolution.height = Screen.height;
-				Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
-			}
-		}
-
-		public static void HandleFullscreenKey()
-		{
-			if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Return))
-			{
-				ToggleFullscreen();
-			}
-		}
-
-		#endregion
-
-		public static void SetScissorRect(Camera cam, Rect r)
+		public static void SetScissorRect(this Camera cam, Rect r)
 		{
 			if (r.x < 0)
 			{
@@ -53,7 +27,7 @@ namespace Extenity.RenderingToolbox
 
 			cam.rect = new Rect(0, 0, 1, 1);
 			cam.ResetProjectionMatrix();
-			Matrix4x4 m = cam.projectionMatrix;
+			var m = cam.projectionMatrix;
 			//print( cam.projectionMatrix );
 			//print( Mathf.Rad2Deg * Mathf.Atan( 1 / cam.projectionMatrix[ 0 ] ) * 2 );
 			cam.rect = r;
@@ -67,8 +41,8 @@ namespace Extenity.RenderingToolbox
 			//Matrix4x4 m1 = Matrix4x4.TRS( Vector3.zero, Quaternion.identity, new Vector3( r.width, r.height, 1 ) );
 			//Matrix4x4 m2 = m1.inverse;
 			//print( m2 );
-			Matrix4x4 m2 = Matrix4x4.TRS(new Vector3((1 / r.width - 1), (1 / r.height - 1), 0), Quaternion.identity, new Vector3(1 / r.width, 1 / r.height, 1));
-			Matrix4x4 m3 = Matrix4x4.TRS(new Vector3(-r.x * 2 / r.width, -r.y * 2 / r.height, 0), Quaternion.identity, Vector3.one);
+			var m2 = Matrix4x4.TRS(new Vector3((1 / r.width - 1), (1 / r.height - 1), 0), Quaternion.identity, new Vector3(1 / r.width, 1 / r.height, 1));
+			var m3 = Matrix4x4.TRS(new Vector3(-r.x * 2 / r.width, -r.y * 2 / r.height, 0), Quaternion.identity, Vector3.one);
 			//m2[ 0, 3 ] = r.x;
 			//m2[ 1, 3 ] = r.y;
 			//print( m3 );
@@ -76,6 +50,8 @@ namespace Extenity.RenderingToolbox
 			cam.projectionMatrix = m3 * m2 * m;
 			//print( cam.projectionMatrix );		
 		}
+
+		#endregion
 	}
 
 }
