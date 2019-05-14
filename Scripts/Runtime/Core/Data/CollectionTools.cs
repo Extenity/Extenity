@@ -500,6 +500,45 @@ namespace Extenity.DataToolbox
 			return source;
 		}
 
+		/// <summary>
+		/// Moves the item at <see cref="oldIndex"/> to the <see cref="newIndex"/>
+		/// by only shifting the values in between.
+		/// 
+		/// Source: https://stackoverflow.com/questions/450233/generic-list-moving-an-item-within-the-list
+		/// </summary>
+		public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
+		{
+			if (list == null)
+				throw new ArgumentNullException();
+			if (oldIndex < 0 || oldIndex >= list.Count)
+				throw new ArgumentOutOfRangeException(nameof(oldIndex));
+			if (newIndex < 0 || newIndex >= list.Count)
+				throw new ArgumentOutOfRangeException(nameof(newIndex));
+
+			if (oldIndex == newIndex)
+				return; // Nothing to move.
+
+			T temp = list[oldIndex];
+			// Move element down and shift other elements up
+			if (oldIndex < newIndex)
+			{
+				for (var i = oldIndex; i < newIndex; i++)
+				{
+					list[i] = list[i + 1];
+				}
+			}
+			// Move element up and shift other elements down
+			else
+			{
+				for (var i = oldIndex; i > newIndex; i--)
+				{
+					list[i] = list[i - 1];
+				}
+			}
+			// Put element from position 1 to destination
+			list[newIndex] = temp;
+		}
+
 		public static void Clear(this Array array)
 		{
 			Array.Clear(array, 0, array.Length);
