@@ -38,19 +38,19 @@ namespace Extenity.FlowToolbox
 
 		#region Methods on Behaviour
 
-		public static void FastInvoke(this Behaviour behaviour, Action action, double time, bool unscaledTime = false)
+		public static void FastInvoke(this Behaviour behaviour, Action action, double time, bool unscaledTime = false, bool overwriteExisting = false)
 		{
-			Handler.Invoke(behaviour, action, time, 0.0, unscaledTime);
+			Handler.Invoke(behaviour, action, time, 0.0, unscaledTime, overwriteExisting);
 		}
 
-		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double repeatRate, bool unscaledTime = false)
+		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double repeatRate, bool unscaledTime = false, bool overwriteExisting = false)
 		{
-			Handler.Invoke(behaviour, action, repeatRate, repeatRate, unscaledTime);
+			Handler.Invoke(behaviour, action, repeatRate, repeatRate, unscaledTime, overwriteExisting);
 		}
 
-		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double initialDelay, double repeatRate, bool unscaledTime = false)
+		public static void FastInvokeRepeating(this Behaviour behaviour, Action action, double initialDelay, double repeatRate, bool unscaledTime = false, bool overwriteExisting = false)
 		{
-			Handler.Invoke(behaviour, action, initialDelay, repeatRate, unscaledTime);
+			Handler.Invoke(behaviour, action, initialDelay, repeatRate, unscaledTime, overwriteExisting);
 		}
 
 		/// <summary>

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using UnityEngine;
 #if EnableOverkillLogging
 using System.Linq;
@@ -38,9 +39,9 @@ namespace Extenity.FlowToolbox
 				UnscaledTime = false;
 			}
 
-			public void Initialize(Behaviour behaviour, Action action, double invokeTime, double repeatRate, bool unscaledTime)
+			public void Renew(double invokeTime, double repeatRate)
 			{
-				var now = unscaledTime
+				var now = UnscaledTime
 					? (double)Time.unscaledTime
 					: (double)Time.time;
 
@@ -56,14 +57,19 @@ namespace Extenity.FlowToolbox
 				}
 
 				NextTime = now + invokeTime;
-				Behaviour = behaviour;
-				Action = action;
 				RepeatRate = repeatRate;
-				UnscaledTime = unscaledTime;
 
 #if EnableOverkillLogging
 				Log.Info($"New {(unscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
 #endif
+			}
+
+			public void Initialize(Behaviour behaviour, Action action, double invokeTime, double repeatRate, bool unscaledTime)
+			{
+				Behaviour = behaviour;
+				Action = action;
+				UnscaledTime = unscaledTime;
+				Renew(invokeTime, repeatRate);
 			}
 		}
 
@@ -252,7 +258,7 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
-		#region Queue
+		#region Queues
 
 		public enum InvokeQueue
 		{
@@ -301,46 +307,207 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
-		private void AddToQueue(InvokeEntry entry)
+		#endregion
+
+		#region Queue Operations - Redirecting to related timescale queues
+
+		private void InsertIntoQueue(InvokeEntry entry)
 		{
 			if (entry.UnscaledTime)
-				_InsertIntoUpdateQueue(entry);
+				InsertIntoQueue(UnscaledInvokeQueue, entry);
 			else
-				_InsertIntoFixedUpdateQueue(entry);
+				InsertIntoQueue(ScaledInvokeQueue, entry);
 		}
 
-		private void _InsertIntoFixedUpdateQueue(InvokeEntry entry)
+		private void MoveEntryAfterItsOrderChangedInQueue(InvokeEntry entry, int index)
 		{
-			if (ScaledInvokeQueue.Count != 0)
+			if (entry.UnscaledTime)
+				MoveEntryAfterItsOrderChangedInQueue(UnscaledInvokeQueue, entry, index);
+			else
+				MoveEntryAfterItsOrderChangedInQueue(ScaledInvokeQueue, entry, index);
+		}
+
+		/// <summary>
+		/// This is the main operation behind the feature of overwriting an existing entry. This method searches if entry lists have any entries
+		/// that matches 'behaviour' and 'action'. The search is being made in both <see cref="ScaledInvokeQueue"/> and <see cref="UnscaledInvokeQueue"/>.
+		/// 
+		/// At the end of the day, the currently processing invoke operation that needed to call this method, definitely needs to add the entry in the list
+		/// that is stated by <see cref="currentlyProcessingInvokeCalledForUnscaledTime"/>. So this method first tries to get the existing entry in stated
+		/// timescale list if possible. But there are a lot of possibilities which are listed below.
+		///		=0 in SAME list and =0 in OTHER list: Returns nothing.
+		///		=1 in SAME list and =0 in OTHER list: Returns the one.
+		///		=0 in SAME list and =1 in OTHER list: Returns the one.
+		///		>1 in SAME list and =0 in OTHER list: Returns the closest one and deletes others.
+		///		=0 in SAME list and >1 in OTHER list: Returns the closest one and deletes others.
+		///		=1 in SAME list and >1 in OTHER list: Returns the one in SAME and deletes others.
+		///		>1 in SAME list and >1 in OTHER list: Returns the closest one in SAME and deletes others.
+		/// </summary>
+		private bool TryGetSingleEntryAndRemoveOthers(Behaviour behaviour, Action action, bool currentlyProcessingInvokeCalledForUnscaledTime, out InvokeEntry foundEntry, out int foundEntryIndex)
+		{
+			var sameList = currentlyProcessingInvokeCalledForUnscaledTime ? UnscaledInvokeQueue : ScaledInvokeQueue;
+			var otherList = currentlyProcessingInvokeCalledForUnscaledTime ? ScaledInvokeQueue : UnscaledInvokeQueue;
+
+			// Try to find the first entry in the SAME list. While doing that, remove all others.
+			var foundInTheSameList = TryGetSingleEntryAndRemoveOthers(sameList, behaviour, action, out foundEntry, out foundEntryIndex);
+			if (foundInTheSameList)
+			{
+				// Remove all found entries in the OTHER list, if any.
+				RemoveInQueue(otherList, behaviour, action);
+				return true;
+			}
+			else
+			{
+				// Try to find the first entry in the OTHER list. While doing that, remove all others.
+				var foundInTheOtherList = TryGetSingleEntryAndRemoveOthers(otherList, behaviour, action, out foundEntry, out foundEntryIndex);
+				if (foundInTheOtherList)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Queue Operations
+
+		private static void InsertIntoQueue(List<InvokeEntry> queue, InvokeEntry entry)
+		{
+			if (queue.Count != 0)
 			{
 				var nextTime = entry.NextTime;
-				for (int i = 0; i < ScaledInvokeQueue.Count; i++)
+				for (int i = 0; i < queue.Count; i++)
 				{
-					if (nextTime < ScaledInvokeQueue[i].NextTime)
+					if (nextTime < queue[i].NextTime)
 					{
-						ScaledInvokeQueue.Insert(i, entry);
+						queue.Insert(i, entry);
 						return;
 					}
 				}
 			}
-			ScaledInvokeQueue.Add(entry);
+			queue.Add(entry);
 		}
 
-		private void _InsertIntoUpdateQueue(InvokeEntry entry)
+		private static void MoveEntryAfterItsOrderChangedInQueue(List<InvokeEntry> queue, InvokeEntry entry, int index)
 		{
-			if (UnscaledInvokeQueue.Count != 0)
+			Debug.Assert(entry == queue[index]);
+			var nextTime = entry.NextTime;
+			if (index > 0 && queue[index - 1].NextTime > nextTime)
 			{
-				var nextTime = entry.NextTime;
-				for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+				// Should move through the beginning of the list
+				var newIndex = index - 1;
+				while (newIndex > 0 && queue[newIndex - 1].NextTime > nextTime)
+					newIndex--;
+				queue.Move(index, newIndex);
+			}
+			else if (index < queue.Count - 1 && queue[index + 1].NextTime < nextTime)
+			{
+				// Should move through the end of the list
+				var newIndex = index + 1;
+				while (newIndex < queue.Count - 1 && queue[newIndex + 1].NextTime < nextTime)
+					newIndex++;
+				queue.Move(index, newIndex);
+			}
+			//else
+			//{
+			//	Nothing to do. The order was not changed.
+			//}
+		}
+
+		private static void RemoveInQueue(List<InvokeEntry> queue, Behaviour behaviour, Action action)
+		{
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
+				// The entries in this queue may not have null values. So no need to check for null at the start.
+				if (entry.Behaviour == behaviour && entry.Action == action)
 				{
-					if (nextTime < UnscaledInvokeQueue[i].NextTime)
-					{
-						UnscaledInvokeQueue.Insert(i, entry);
-						return;
-					}
+					queue.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
 				}
 			}
-			UnscaledInvokeQueue.Add(entry);
+		}
+
+		private static void RemoveInQueue(List<InvokeEntry> queue, Behaviour behaviour)
+		{
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
+				// The entries in this queue may not have null values. So no need to check for null at the start.
+				if (entry.Behaviour == behaviour)
+				{
+					queue.RemoveAt(i);
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+		}
+
+		private static void NullifyInQueue(List<InvokeEntry> queue, Behaviour behaviour, Action action)
+		{
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
+				// The entries in this queue may have null values. So we check for null at the start.
+				if (entry != null && entry.Behaviour == behaviour && entry.Action == action)
+				{
+					queue[i] = null;
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+		}
+
+		private static void NullifyInQueue(List<InvokeEntry> queue, Behaviour behaviour)
+		{
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
+				// The entries in this queue may have null values. So we check for null at the start.
+				if (entry != null && entry.Behaviour == behaviour)
+				{
+					queue[i] = null;
+					i--;
+					PoolEntry(entry);
+					//break; Do not break. There may be more than one.
+				}
+			}
+		}
+
+		private static bool TryGetSingleEntryAndRemoveOthers(List<InvokeEntry> queue, Behaviour behaviour, Action action, out InvokeEntry foundEntry, out int foundEntryIndex)
+		{
+			foundEntry = null;
+			foundEntryIndex = -1;
+
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
+				// The entries in this queue may not have null values. So no need to check for null at the start.
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					if (foundEntryIndex < 0)
+					{
+						foundEntry = entry;
+						foundEntryIndex = i;
+					}
+					else
+					{
+						queue.RemoveAt(i);
+						i--;
+						PoolEntry(entry);
+					}
+					//break; Do not break. There may be more than one.
+				}
+			}
+
+			return foundEntryIndex >= 0;
 		}
 
 		#endregion
@@ -377,7 +544,7 @@ namespace Extenity.FlowToolbox
 			if (entry.RepeatRate > 0.0)
 			{
 				entry.NextTime += entry.RepeatRate;
-				AddToQueue(entry);
+				InsertIntoQueue(entry);
 			}
 			else
 			{
@@ -389,16 +556,38 @@ namespace Extenity.FlowToolbox
 
 		#region Invoke / Cancel
 
-		internal void Invoke(Behaviour behaviour, Action action, double time, double repeatRate, bool unscaledTime)
+		internal void Invoke(Behaviour behaviour, Action action, double time, double repeatRate, bool unscaledTime, bool overwriteExisting)
 		{
 			if (!behaviour)
 			{
 				// Calling Invoke over a null object is handled just like calling a method of that object, which is going to throw.
 				throw new Exception("Tried to invoke over a null behaviour.");
 			}
-			var entry = CreateOrGetEntryPool();
-			entry.Initialize(behaviour, action, time, repeatRate, unscaledTime);
-			AddToQueue(entry);
+
+			if (overwriteExisting && TryGetSingleEntryAndRemoveOthers(behaviour, action, unscaledTime, out var entry, out var index))
+			{
+				if (entry.UnscaledTime != unscaledTime)
+				{
+					// Wow, unscaled time option has changed. This must be rare.
+					// Rather than changing the existing entry, we just remove
+					// the previous entry from it's list and add the new entry
+					// to the other list. Can be further optimized but this would
+					// happen rarely, so no need.
+					Cancel(behaviour, action);
+					Invoke(behaviour, action, time, repeatRate, unscaledTime, false); // Overwrite existing is false. We know we have deleted the existing ones just now. So no need to check for them one more time.
+				}
+				else
+				{
+					entry.Renew(time, repeatRate);
+					MoveEntryAfterItsOrderChangedInQueue(entry, index);
+				}
+			}
+			else
+			{
+				entry = CreateOrGetEntryPool();
+				entry.Initialize(behaviour, action, time, repeatRate, unscaledTime);
+				InsertIntoQueue(entry);
+			}
 		}
 
 		internal void Cancel(Behaviour behaviour, Action action)
@@ -413,40 +602,9 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
-			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
-			{
-				var entry = ScaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour && entry.Action == action)
-				{
-					ScaledInvokeQueue.RemoveAt(i);
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
-			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
-			{
-				var entry = UnscaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour && entry.Action == action)
-				{
-					UnscaledInvokeQueue.RemoveAt(i);
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
-			for (int i = 0; i < QueueInProcess.Count; i++)
-			{
-				var entry = QueueInProcess[i];
-				if (entry != null && entry.Behaviour == behaviour && entry.Action == action)
-				{
-					//QueueInProcess.RemoveAt(i); Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
-					QueueInProcess[i] = null;
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
+			RemoveInQueue(ScaledInvokeQueue, behaviour, action);
+			RemoveInQueue(UnscaledInvokeQueue, behaviour, action);
+			NullifyInQueue(QueueInProcess, behaviour, action); // Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
 		}
 
 		internal void CancelAll(Behaviour behaviour)
@@ -461,40 +619,9 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
-			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
-			{
-				var entry = ScaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour)
-				{
-					ScaledInvokeQueue.RemoveAt(i);
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
-			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
-			{
-				var entry = UnscaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour)
-				{
-					UnscaledInvokeQueue.RemoveAt(i);
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
-			for (int i = 0; i < QueueInProcess.Count; i++)
-			{
-				var entry = QueueInProcess[i];
-				if (entry != null && entry.Behaviour == behaviour)
-				{
-					//QueueInProcess.RemoveAt(i); Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
-					QueueInProcess[i] = null;
-					i--;
-					PoolEntry(entry);
-					//break; Do not break. There may be more than one.
-				}
-			}
+			RemoveInQueue(ScaledInvokeQueue, behaviour);
+			RemoveInQueue(UnscaledInvokeQueue, behaviour);
+			NullifyInQueue(QueueInProcess, behaviour); // Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
 		}
 
 		#endregion
@@ -678,26 +805,7 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.time;
-			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
-			{
-				var entry = ScaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour && entry.Action == action)
-				{
-					return entry.NextTime - now;
-				}
-			}
-			if (CurrentlyProcessingQueue == InvokeQueue.Scaled)
-			{
-				for (int i = 0; i < QueueInProcess.Count; i++)
-				{
-					var entry = QueueInProcess[i];
-					if (entry != null && entry.Behaviour == behaviour && entry.Action == action)
-					{
-						return entry.NextTime - now;
-					}
-				}
-			}
-			return double.NaN;
+			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, action, now);
 		}
 
 		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour, Action action)
@@ -713,26 +821,7 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.unscaledTime;
-			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
-			{
-				var entry = UnscaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour && entry.Action == action)
-				{
-					return entry.NextTime - now;
-				}
-			}
-			if (CurrentlyProcessingQueue == InvokeQueue.Unscaled)
-			{
-				for (int i = 0; i < QueueInProcess.Count; i++)
-				{
-					var entry = QueueInProcess[i];
-					if (entry != null && entry.Behaviour == behaviour && entry.Action == action)
-					{
-						return entry.NextTime - now;
-					}
-				}
-			}
-			return double.NaN;
+			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, action, now);
 		}
 
 		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour)
@@ -748,26 +837,7 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.time;
-			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
-			{
-				var entry = ScaledInvokeQueue[i];
-				if (entry.Behaviour == behaviour)
-				{
-					return entry.NextTime - now;
-				}
-			}
-			if (CurrentlyProcessingQueue == InvokeQueue.Scaled)
-			{
-				for (int i = 0; i < QueueInProcess.Count; i++)
-				{
-					var entry = QueueInProcess[i];
-					if (entry != null && entry.Behaviour == behaviour)
-					{
-						return entry.NextTime - now;
-					}
-				}
-			}
-			return double.NaN;
+			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, now);
 		}
 
 		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour)
@@ -783,15 +853,44 @@ namespace Extenity.FlowToolbox
 				return double.NaN;
 			}
 			double now = (double)Time.unscaledTime;
-			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
+			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, now);
+		}
+
+		private double RemainingTimeUntilNextInvoke(List<InvokeEntry> queue, InvokeQueue currentlyProcessingQueue, Behaviour behaviour, Action action, double now)
+		{
+			for (int i = 0; i < queue.Count; i++)
 			{
-				var entry = UnscaledInvokeQueue[i];
+				var entry = queue[i];
+				if (entry.Behaviour == behaviour && entry.Action == action)
+				{
+					return entry.NextTime - now;
+				}
+			}
+			if (CurrentlyProcessingQueue == currentlyProcessingQueue)
+			{
+				for (int i = 0; i < QueueInProcess.Count; i++)
+				{
+					var entry = QueueInProcess[i];
+					if (entry != null && entry.Behaviour == behaviour && entry.Action == action)
+					{
+						return entry.NextTime - now;
+					}
+				}
+			}
+			return double.NaN;
+		}
+
+		private double RemainingTimeUntilNextInvoke(List<InvokeEntry> queue, InvokeQueue currentlyProcessingQueue, Behaviour behaviour, double now)
+		{
+			for (int i = 0; i < queue.Count; i++)
+			{
+				var entry = queue[i];
 				if (entry.Behaviour == behaviour)
 				{
 					return entry.NextTime - now;
 				}
 			}
-			if (CurrentlyProcessingQueue == InvokeQueue.Unscaled)
+			if (CurrentlyProcessingQueue == currentlyProcessingQueue)
 			{
 				for (int i = 0; i < QueueInProcess.Count; i++)
 				{
