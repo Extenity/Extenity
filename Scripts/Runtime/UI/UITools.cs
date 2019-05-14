@@ -82,6 +82,7 @@ namespace Extenity.UIToolbox
 
 		#region Input
 
+		// See 11637281.
 		public static bool IsGUIActiveInCurrentEventSystem
 		{
 			get

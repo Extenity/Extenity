@@ -1,9 +1,9 @@
 using System;
 using Extenity.FlowToolbox;
-using Extenity.UnityEditorToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace Extenity.CameraToolbox
 {
@@ -109,24 +109,22 @@ namespace Extenity.CameraToolbox
 
 		#region GUI
 
-		//private EventSystem CachedEventSystem;
-
-		//public bool IsGUIActive
-		//{
-		//	get
-		//	{
-		//		if (CachedEventSystem == null)
-		//		{
-		//			CachedEventSystem = FindObjectOfType<EventSystem>();
-		//		}
-		//		if (CachedEventSystem == null)
-		//		{
-		//			Log.Error($"Scene should have an EventSystem for camera controller on game object '{gameObject.name}' to work.", this);
-		//			return false;
-		//		}
-		//		return CachedEventSystem.currentSelectedGameObject != null;
-		//	}
-		//}
+		// Exact copy of UITools.IsGUIActiveInCurrentEventSystem because we can't reach Extenity UI DLL from here. See 11637281.
+		protected static bool IsGUIActiveInCurrentEventSystem
+		{
+			get
+			{
+				var eventSystem = EventSystem.current;
+				if (eventSystem)
+				{
+					if (eventSystem.currentSelectedGameObject != null)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
 
 		#endregion
 	}

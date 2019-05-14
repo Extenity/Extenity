@@ -71,9 +71,8 @@ namespace Extenity.CameraToolbox
 
 		private void UpdateInput()
 		{
-			// TODO: Find a way to do this check without requiring UI DLL.
-			//if (IsGUIActive)
-			//	return;
+			if (IsGUIActiveInCurrentEventSystem)
+				return;
 
 			// TODO: Find a way to properly do this.
 			//// Keyboard and joystick
