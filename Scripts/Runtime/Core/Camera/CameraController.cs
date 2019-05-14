@@ -45,13 +45,6 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
-		#region User Controls
-
-		public abstract bool IsAxisActive { get; set; }
-		public abstract bool IsMouseActive { get; set; }
-
-		#endregion
-
 		#region Input
 
 		[Tooltip("This helps fixing huge deltas when starting to drag the camera, happening on mobile WebGL.")]

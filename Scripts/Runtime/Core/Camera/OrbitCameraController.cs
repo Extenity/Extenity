@@ -8,6 +8,13 @@ namespace Extenity.CameraToolbox
 
 	public class OrbitCameraController : CameraController
 	{
+		#region Constants
+
+		private const string MouseXAxisName = "Mouse X";
+		private const string MouseYAxisName = "Mouse Y";
+
+		#endregion
+
 		#region Initialization
 
 		protected override void OnEnable()
@@ -57,9 +64,10 @@ namespace Extenity.CameraToolbox
 		[NonSerialized]
 		public float InputZoom;
 
-		public override bool IsAxisActive { get; set; }
-		public override bool IsMouseActive { get; set; }
-		//public override bool IsTouchActive { get; set; }
+		[Header("Toggle Input Methods")]
+		public bool IsAxisActive = true;
+		public bool IsMouseActive = true;
+		//public override bool IsTouchActive;
 
 		private void UpdateInput()
 		{
@@ -84,8 +92,8 @@ namespace Extenity.CameraToolbox
 					BreakIdle();
 					if (!IgnoreInitialDragOnClick || IsDragging)
 					{
-						InputRotate.y += Input.GetAxis("Mouse X") * RotationMouseSensitivity;
-						InputRotate.x -= Input.GetAxis("Mouse Y") * RotationMouseSensitivity;
+						InputRotate.y += Input.GetAxis(MouseXAxisName) * RotationMouseSensitivity;
+						InputRotate.x -= Input.GetAxis(MouseYAxisName) * RotationMouseSensitivity;
 					}
 					IsDragging = true;
 					MouseCursor.HideCursor();
@@ -99,8 +107,8 @@ namespace Extenity.CameraToolbox
 						BreakIdle();
 						if (!IgnoreInitialDragOnClick || IsDragging)
 						{
-							InputShift.x -= Input.GetAxis("Mouse X") * MovementMouseSensitivity;
-							InputShift.z -= Input.GetAxis("Mouse Y") * MovementMouseSensitivity;
+							InputShift.x -= Input.GetAxis(MouseXAxisName) * MovementMouseSensitivity;
+							InputShift.z -= Input.GetAxis(MouseYAxisName) * MovementMouseSensitivity;
 						}
 						IsDragging = true;
 					}
