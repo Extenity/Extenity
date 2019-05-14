@@ -13,36 +13,36 @@ namespace ExtenityTests.FlowToolbox
 	{
 		#region Simple
 
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator Simple(bool startAtRandomTime) { yield return TestInvoke_Simple(DoFastInvoke, startAtRandomTime); }
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(TimeRequired_Simple * 3), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator Simple(bool startAtRandomTime) { yield return TestInvoke_Simple(DoFastInvoke, 3, startAtRandomTime, 1); }
 
 		#endregion
 
 		#region Timing
 
 		// Zero
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(TimeRequired_Zero * CheesyRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_1_Zero(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Detailed), Timeout(TimeRequired_Zero * DetailedRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_1_Zero_Detailed(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Overnight), Timeout(TimeRequired_Zero * OvernightRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_1_Zero_Overnight(bool startAtRandomTime) { yield return TestInvoke_Zero(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
 
 		// Various
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(TimeRequired_Various * CheesyRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_2_Various(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, CheesyRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Detailed), Timeout(TimeRequired_Various * DetailedRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_2_Various_Detailed(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, DetailedRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		[UnityTest, Category(TestCategories.Overnight), Timeout(TimeRequired_Various * OvernightRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator Timing_2_Various_Overnight(bool startAtRandomTime) { yield return TestInvoke_Various(DoFastInvoke, startAtRandomTime, OvernightRepeats); }
 
 		// LongRun
-		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator Timing_3_LongRun(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, CheesyLongRunDuration, startAtRandomTime, LongRunRepeats); }
-		[UnityTest, Category(TestCategories.Detailed), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator Timing_3_LongRun_Detailed(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, DetailedLongRunDuration, startAtRandomTime, LongRunRepeats); }
-		[UnityTest, Category(TestCategories.Overnight), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
-		public IEnumerator Timing_3_LongRun_Overnight(bool startAtRandomTime) { yield return TestInvoke(DoFastInvoke, OvernightLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(TimeRequired_Simple * CheesyLongRunDuration * LongRunRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator Timing_3_LongRun(bool startAtRandomTime) { yield return TestInvoke_Simple(DoFastInvoke, CheesyLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		[UnityTest, Category(TestCategories.Detailed), Timeout(TimeRequired_Simple * DetailedLongRunDuration * LongRunRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator Timing_3_LongRun_Detailed(bool startAtRandomTime) { yield return TestInvoke_Simple(DoFastInvoke, DetailedLongRunDuration, startAtRandomTime, LongRunRepeats); }
+		[UnityTest, Category(TestCategories.Overnight), Timeout(TimeRequired_Simple * OvernightLongRunDuration * LongRunRepeats), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator Timing_3_LongRun_Overnight(bool startAtRandomTime) { yield return TestInvoke_Simple(DoFastInvoke, OvernightLongRunDuration, startAtRandomTime, LongRunRepeats); }
 
 		#endregion
 
@@ -426,8 +426,8 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Cheesy), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
 		public IEnumerator AllowsRegisteringMethodsOutsideOfBehaviour(bool startAtRandomTime)
 		{
-			yield return TestInvoke(DoOutsiderFastInvoke, 0.0, startAtRandomTime, 1);
-			yield return TestInvoke(DoOutsiderFastInvoke, 1.0, startAtRandomTime, 1);
+			yield return TestInvoke_Simple(DoOutsiderFastInvoke, 0.0, startAtRandomTime, 1);
+			yield return TestInvoke_Simple(DoOutsiderFastInvoke, 1.0, startAtRandomTime, 1);
 		}
 
 		#endregion

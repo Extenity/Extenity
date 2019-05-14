@@ -4,6 +4,7 @@ using Extenity.FlowToolbox;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ExtenityTests.FlowToolbox
 {
@@ -73,7 +74,7 @@ namespace ExtenityTests.FlowToolbox
 		#region Configuration
 
 		protected const double FloatingTolerance = 0.00001;
-		protected const float TimeScale = 100f;
+		protected const int TimeScale = 100;
 
 		#endregion
 
@@ -84,9 +85,14 @@ namespace ExtenityTests.FlowToolbox
 		protected const int OvernightRepeats = 1000;
 
 		protected const int LongRunRepeats = 1; // Long runs are already taking too long. So don't repeat them.
-		protected const double CheesyLongRunDuration = 1 * TimeScale; // 1 second in realtime
-		protected const double DetailedLongRunDuration = 20 * TimeScale; // 20 seconds in realtime
-		protected const double OvernightLongRunDuration = 10 * 60 * TimeScale; // 10 minutes in realtime
+		protected const int CheesyLongRunDuration = 1 * TimeScale; // 1 second in realtime
+		protected const int DetailedLongRunDuration = 20 * TimeScale; // 20 seconds in realtime
+		protected const int OvernightLongRunDuration = 10 * 60 * TimeScale; // 10 minutes in realtime
+
+		private const int TimeRequirementOverheadFactor = 2; // This overhead includes starting at random time and time passed between individual tests inside the test (not sure if there is actually an overhead though).
+		protected const int TimeRequired_Various = 1050 * TimeRequirementOverheadFactor * 1000; // Milliseconds in game time. Also needs to be multiplied by REPEAT COUNT of the test.
+		protected const int TimeRequired_Zero = 1 * TimeRequirementOverheadFactor * 1000; // Milliseconds in game time. Also needs to be multiplied by REPEAT COUNT of the test.
+		protected const int TimeRequired_Simple = TimeRequirementOverheadFactor * 1000; // Milliseconds in game time. Also needs to be multiplied by REPEAT COUNT and INVOKE TIME of the test.
 
 		#endregion
 
@@ -179,11 +185,6 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Invoke Callers
 
-		protected IEnumerator TestInvoke_Simple(DoInvokeTemplate doInvoke, bool startAtRandomTime)
-		{
-			yield return doInvoke(2.5, startAtRandomTime);
-		}
-
 		protected IEnumerator TestInvoke_Zero(DoInvokeTemplate doInvoke, bool startAtRandomTime, int repeats)
 		{
 			Assert.Greater(repeats, 0);
@@ -200,30 +201,53 @@ namespace ExtenityTests.FlowToolbox
 			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
 			{
+				// Do some tests around fixedDeltaTime. See that it works as expected around half of it, around itself, around double of it, etc.
+				yield return doInvoke(Time.fixedDeltaTime * 0.0001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.01, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.1, startAtRandomTime);
+
+				yield return doInvoke(Time.fixedDeltaTime * 0.4, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.49, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.499, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.4999, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.5, startAtRandomTime);
-				yield return doInvoke(Time.fixedDeltaTime * 0.51, startAtRandomTime);
-				yield return doInvoke(Time.fixedDeltaTime * 0.501, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.5001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.501, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.51, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.6, startAtRandomTime);
+
 				yield return doInvoke(Time.fixedDeltaTime * 0.9, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.99, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 0.999, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 0.9999, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.0, startAtRandomTime);
-				yield return doInvoke(Time.fixedDeltaTime * 1.01, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.0001, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.01, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.1, startAtRandomTime);
+
+				yield return doInvoke(Time.fixedDeltaTime * 1.4, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.49, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.499, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.4999, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.5, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.5001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.501, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.51, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.6, startAtRandomTime);
+
 				yield return doInvoke(Time.fixedDeltaTime * 1.9, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.99, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 1.999, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 1.9999, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 2.0, startAtRandomTime);
-				yield return doInvoke(Time.fixedDeltaTime * 2.01, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.0001, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 2.001, startAtRandomTime);
+				yield return doInvoke(Time.fixedDeltaTime * 2.01, startAtRandomTime);
 				yield return doInvoke(Time.fixedDeltaTime * 2.1, startAtRandomTime);
 
+				// Do some arbitrarily timed test.
 				yield return doInvoke(0.05, startAtRandomTime);
 				yield return doInvoke(0.1, startAtRandomTime);
 				yield return doInvoke(1, startAtRandomTime);
@@ -231,14 +255,15 @@ namespace ExtenityTests.FlowToolbox
 				yield return doInvoke(5.4515328, startAtRandomTime);
 				yield return doInvoke(10, startAtRandomTime);
 
+				// Do some tests for randomly picked times.
 				for (int iRandom = 0; iRandom < 100; iRandom++)
 				{
-					yield return doInvoke(UnityEngine.Random.Range(0.001f, 10.0f), startAtRandomTime);
+					yield return doInvoke(Random.Range(0.001f, 10.0f), startAtRandomTime);
 				}
 			}
 		}
 
-		protected IEnumerator TestInvoke(DoInvokeTemplate doInvoke, double invokeTime, bool startAtRandomTime, int repeats)
+		protected IEnumerator TestInvoke_Simple(DoInvokeTemplate doInvoke, double invokeTime, bool startAtRandomTime, int repeats)
 		{
 			Assert.Greater(repeats, 0);
 			for (int i = 0; i < repeats; i++)
