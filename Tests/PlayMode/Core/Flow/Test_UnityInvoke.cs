@@ -8,6 +8,13 @@ namespace ExtenityTests.FlowToolbox
 
 	public class Test_UnityInvoke : TestBase_FastInvoke
 	{
+		#region Simple
+
+		[UnityTest, Category(TestCategories.Cheesy), Timeout(int.MaxValue), TestCase(true, ExpectedResult = null), TestCase(false, ExpectedResult = null)]
+		public IEnumerator Simple(bool startAtRandomTime) { yield return TestInvoke_Simple(DoUnityInvoke, startAtRandomTime); }
+
+		#endregion
+
 		#region Timing
 
 		// Zero

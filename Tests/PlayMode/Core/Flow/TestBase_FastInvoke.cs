@@ -179,6 +179,11 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Invoke Callers
 
+		protected IEnumerator TestInvoke_Simple(DoInvokeTemplate doInvoke, bool startAtRandomTime)
+		{
+			yield return doInvoke(2.5, startAtRandomTime);
+		}
+
 		protected IEnumerator TestInvoke_Zero(DoInvokeTemplate doInvoke, bool startAtRandomTime, int repeats)
 		{
 			Assert.Greater(repeats, 0);
