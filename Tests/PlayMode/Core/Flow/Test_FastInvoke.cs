@@ -385,36 +385,36 @@ namespace ExtenityTests.FlowToolbox
 
 			// Wait for just one fixed update and see if remaining time acts accordingly.
 			yield return WaitForFixedUpdate;
-			Assert.AreEqual(1, Subject.CallbackCallCount);
+			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(2.0 - fixedDeltaTime, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
 			yield return WaitForFixedUpdate;
-			Assert.AreEqual(2, Subject.CallbackCallCount);
+			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(2.0 - 2 * fixedDeltaTime, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
 
 
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.5 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.5);
 			Assert.AreEqual(1.5, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.9 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.9);
 			Assert.AreEqual(1.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 1.9 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 1.9);
 			DoFastInvokingChecks(true, 4); // Just before invoking the first one, that is set to 2 seconds
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.0 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.0);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.9 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.9);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 3.0 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 3.0);
 			DoFastInvokingChecks(true, 2);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.0 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.0);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.4 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.4);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(0.6, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 5.0 + FloatingTolerance);
+			do yield return WaitForFixedUpdate; while (Time.time - startTime < 5.0);
 			DoFastInvokingChecks(false, 0);
 			Assert.IsTrue(double.IsNaN(Subject.RemainingTimeUntilNextFastInvoke()));
 		}
