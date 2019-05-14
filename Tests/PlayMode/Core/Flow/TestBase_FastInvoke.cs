@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Extenity;
 using Extenity.FlowToolbox;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
@@ -19,7 +20,7 @@ namespace ExtenityTests.FlowToolbox
 		private void FixedUpdate()
 		{
 			FixedUpdateCallCount++;
-			if (IsLoggingEnabled)
+			if (IsLoggingFixedUpdate)
 				Log.Info($"FixedUpdate calls: {FixedUpdateCallCount}  (Invoke callback calls: {CallbackCallCount})");
 			if (ExpectedInvokeCallbackCallCountInFixedUpdate >= 0)
 			{
@@ -37,7 +38,7 @@ namespace ExtenityTests.FlowToolbox
 		public void Callback()
 		{
 			CallbackCallCount++;
-			if (IsLoggingEnabled)
+			if (IsLoggingCallback)
 				Log.Info($"Invoke callback calls: {CallbackCallCount}  (FixedUpdate calls: {FixedUpdateCallCount})");
 			if (ExpectedFixedUpdateCallCountInInvokeCallback >= 0)
 			{
@@ -59,11 +60,14 @@ namespace ExtenityTests.FlowToolbox
 		#region Logging
 
 		[NonSerialized]
-		public bool IsLoggingEnabled;
+		public bool IsLoggingFixedUpdate;
+		[NonSerialized]
+		public bool IsLoggingCallback;
 
 		public void EnableLogging()
 		{
-			IsLoggingEnabled = true;
+			IsLoggingFixedUpdate = true;
+			IsLoggingCallback = true;
 		}
 
 		#endregion
@@ -99,6 +103,7 @@ namespace ExtenityTests.FlowToolbox
 		#region Test Initialization / Deinitialization
 
 		protected bool IsInitialized;
+		private Loop Loop;
 
 		protected IEnumerator InitializeTest(bool startAtRandomTime)
 		{
@@ -132,6 +137,7 @@ namespace ExtenityTests.FlowToolbox
 			UnityTestTools.Cleanup();
 			Time.timeScale = TimeScale;
 
+			Loop = new GameObject("_Loop", typeof(Loop)).GetComponent<Loop>();
 			CreateSubject();
 			ResetOutsiderCallback();
 		}
@@ -142,6 +148,7 @@ namespace ExtenityTests.FlowToolbox
 				throw new Exception("Test was not initialized.");
 			IsInitialized = false;
 
+			GameObject.Destroy(Loop.gameObject);
 			Invoker.ShutdownSystem();
 			UnityTestTools.Cleanup();
 			Time.timeScale = 1f;
@@ -297,7 +304,7 @@ namespace ExtenityTests.FlowToolbox
 
 			yield return RunWholeTest("Extenity FastInvoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => Subject.CallbackCallCount,
-				() => Subject.FastInvoke(Subject.Callback, invokeTime),
+				() => Subject.FastInvoke(Subject.Callback, invokeTime, false),
 				DoFastInvokingChecks
 			);
 		}
@@ -309,7 +316,7 @@ namespace ExtenityTests.FlowToolbox
 
 			yield return RunWholeTest("Extenity Outsider FastInvoke", invokeTime, startAtRandomTime, fixedUpdateCountTolerance,
 				() => OutsiderCallbackCallCount,
-				() => Subject.FastInvoke(FastInvokeOutsiderCallback, invokeTime),
+				() => Subject.FastInvoke(FastInvokeOutsiderCallback, invokeTime, false),
 				DoOutsiderFastInvokingChecks
 			);
 		}
