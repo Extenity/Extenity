@@ -19,14 +19,6 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
-		#region Deinitialization
-
-		//protected void OnDestroy()
-		//{
-		//}
-
-		#endregion
-
 		#region Update
 
 		private void Update()
@@ -120,13 +112,11 @@ namespace Extenity.CameraToolbox
 
 				if (EnableUserZoom)
 				{
-					InputZoom += -Input.mouseScrollDelta.y;
-					if (InputZoom != 0f)
+					var scrollChange = -Input.mouseScrollDelta.y;
+					if (scrollChange != 0f)
 					{
-						if (ZoomOnlyBreaksIdlingWhenNotIdle && !IsIdle)
-						{
-							BreakIdle();
-						}
+						BreakIdle();
+						InputZoom += scrollChange;
 					}
 				}
 			}
@@ -138,13 +128,6 @@ namespace Extenity.CameraToolbox
 			InputRotate = Vector3.zero;
 			InputZoom = 0f;
 		}
-
-		#endregion
-
-		#region Idle
-
-		[Header("Idle - Orbit")]
-		public bool ZoomOnlyBreaksIdlingWhenNotIdle = true;
 
 		#endregion
 
@@ -175,14 +158,21 @@ namespace Extenity.CameraToolbox
 
 		private void ResetDynamics()
 		{
+			var camera = Camera;
+
 			TargetOrbitPosition = OrbitCenter.position;
-			TargetRotation = Camera.transform.rotation;
-			TargetZoom = (Camera.transform.position - OrbitCenter.position).magnitude;
+			TargetRotation = camera
+				? camera.transform.rotation
+				: Quaternion.identity;
+			TargetZoom = camera
+				? (camera.transform.position - OrbitCenter.position).magnitude
+				: MinimumZoom;
 			CurrentZoom = TargetZoom;
 		}
 
 		private void UpdateDynamics()
 		{
+			var camera = Camera;
 			var appliedMovement = MovementSpeed * InputShift;
 			var appliedRotation = RotationSpeed * InputRotate;
 			var appliedZoom = ZoomSpeed * InputZoom;
@@ -200,7 +190,10 @@ namespace Extenity.CameraToolbox
 			if (newRotationX > MaximumPitch - tolerance)
 				newRotationX = MaximumPitch - tolerance;
 
-			TargetOrbitPosition += Quaternion.Euler(0f, Camera.transform.rotation.eulerAngles.y, 0f) * appliedMovement;
+			if (camera)
+			{
+				TargetOrbitPosition += Quaternion.Euler(0f, camera.transform.rotation.eulerAngles.y, 0f) * appliedMovement;
+			}
 			TargetRotation = Quaternion.Euler(0f, newRotationY, 0f) * Quaternion.Euler(newRotationX, 0f, 0f);
 			TargetZoom += appliedZoom;
 			if (TargetZoom > MaximumZoom)
@@ -222,8 +215,11 @@ namespace Extenity.CameraToolbox
 			var targetTotalPosition = TargetOrbitPosition - (TargetRotation * (Vector3.forward * CurrentZoom));
 
 			CurrentZoom += (TargetZoom - CurrentZoom) * ZoomSmoothingFactor;
-			Camera.transform.position += (targetTotalPosition - Camera.transform.position) * MovementSmoothingFactor;
-			Camera.transform.rotation = Quaternion.Slerp(Camera.transform.rotation, TargetRotation, RotationSmoothingFactor);
+			if (camera)
+			{
+				camera.transform.position += (targetTotalPosition - camera.transform.position) * MovementSmoothingFactor;
+				camera.transform.rotation = Quaternion.Slerp(camera.transform.rotation, TargetRotation, RotationSmoothingFactor);
+			}
 		}
 
 		#endregion
@@ -239,12 +235,16 @@ namespace Extenity.CameraToolbox
 
 		#region Debug - Gizmos
 
+#if UNITY_EDITOR
+
 		private void OnDrawGizmosSelected()
 		{
 			DebugDraw.CircleXZ(OrbitCenter.position, MaxDistanceFromOrbitCenter, Color.cyan);
 
 			//Gizmos.DrawWireCube(MovementArea.center, MovementArea.size);
 		}
+
+#endif
 
 		#endregion
 	}

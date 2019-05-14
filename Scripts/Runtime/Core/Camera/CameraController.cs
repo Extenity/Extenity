@@ -19,25 +19,29 @@ namespace Extenity.CameraToolbox
 
 		#endregion
 
-		#region Deinitialization
-
-		//protected void OnDestroy()
-		//{
-		//}
-
-		#endregion
-
-		#region Update
-
-		//protected void Update()
-		//{
-		//}
-
-		#endregion
-
 		#region Camera
 
-		public Camera Camera;
+		[SerializeField]
+		private Camera _Camera;
+		public Camera Camera
+		{
+			get
+			{
+				if (!_Camera)
+				{
+					var camerasInChildren = transform.GetComponentsInChildren<Camera>(false);
+					if (camerasInChildren.Length == 1)
+					{
+						_Camera = camerasInChildren[0];
+					}
+					else
+					{
+						Log.Error($"There should be a single camera in '{typeof(CameraController).Name}' object or its children.", this);
+					}
+				}
+				return _Camera;
+			}
+		}
 
 		#endregion
 
