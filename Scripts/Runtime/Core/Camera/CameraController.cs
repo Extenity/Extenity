@@ -1,6 +1,7 @@
 using System;
 using Extenity.FlowToolbox;
 using Extenity.UnityEditorToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -59,24 +60,38 @@ namespace Extenity.CameraToolbox
 
 		[Header("Idle")]
 		public float RequiredTimeToGoIntoIdle = 5f;
-		[ReadOnlyInInspector]
-		public bool IsIdle;
+		[ShowInInspector, ReadOnly]
+		public bool IsIdle { get; private set; }
+
+		[Tooltip("Switch this on to enable idle detection feature. Switching it off allows minimizing the overhead of idle detection.")]
+		public bool IdleDetectionEnabled = false;
+
+		private bool IsIdleDetectionInvoked;
 
 		public class IdleEvent : UnityEvent<bool> { }
 		[NonSerialized]
-		public IdleEvent OnIdleChanged = new IdleEvent();
+		public readonly IdleEvent OnIdleChanged = new IdleEvent();
 
 		public void BreakIdle()
 		{
 			InternalChangeIdle(false);
 
-			this.CancelFastInvoke(GoIntoIdle);
-			this.FastInvoke(GoIntoIdle, RequiredTimeToGoIntoIdle, true);
+			if (IdleDetectionEnabled && RequiredTimeToGoIntoIdle > 0.001f)
+			{
+				this.FastInvoke(GoIntoIdle, RequiredTimeToGoIntoIdle, true, true);
+				IsIdleDetectionInvoked = true;
+			}
+			else if (IsIdleDetectionInvoked)
+			{
+				this.CancelFastInvoke(GoIntoIdle);
+				IsIdleDetectionInvoked = false;
+			}
 		}
 
 		private void GoIntoIdle()
 		{
 			this.CancelFastInvoke(GoIntoIdle);
+			IsIdleDetectionInvoked = false;
 			InternalChangeIdle(true);
 		}
 
@@ -86,6 +101,7 @@ namespace Extenity.CameraToolbox
 			{
 				IsIdle = value;
 				OnIdleChanged.Invoke(IsIdle);
+				//Log.Info($"Camera idle state changed to '{IsIdle}'.");
 			}
 		}
 
