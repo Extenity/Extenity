@@ -564,6 +564,13 @@ namespace Extenity.FlowToolbox
 				throw new Exception("Tried to invoke over a null behaviour.");
 			}
 
+			if (overwriteExisting)
+			{
+				// Make sure you write tests for it right now, before using it.
+				// Do not delete this warning before seeing that it's running flawless.
+				Log.Warning("FastInvoke overwrite feature is not tested yet.", this);
+			}
+
 			if (overwriteExisting && TryGetSingleEntryAndRemoveOthers(behaviour, action, unscaledTime, out var entry, out var index))
 			{
 				if (entry.UnscaledTime != unscaledTime)
