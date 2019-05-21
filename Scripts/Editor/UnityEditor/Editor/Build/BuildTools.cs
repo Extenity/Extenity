@@ -274,6 +274,22 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region BuildOptions
+
+		public static BuildOptions SetAutoRunPlayer(this BuildOptions options, bool runAfterBuild)
+		{
+			if (runAfterBuild)
+			{
+				return options | BuildOptions.AutoRunPlayer;
+			}
+			else
+			{
+				return options & ~BuildOptions.AutoRunPlayer;
+			}
+		}
+
+		#endregion
+
 		#region Pro License
 
 		public class SplashDisposeHandler : IDisposable
