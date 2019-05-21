@@ -292,73 +292,53 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Pro License
 
-		public class SplashDisposeHandler : IDisposable
+		[Serializable]
+		public class TemporarilyRemoveSplashIfPro
 		{
-			private bool Result;
+			public bool PreviousState;
 
-			internal SplashDisposeHandler(bool result)
+			public static TemporarilyRemoveSplashIfPro Create()
 			{
-				Result = result;
-			}
+				var instance = new TemporarilyRemoveSplashIfPro();
 
-			public void Dispose()
-			{
-				PlayerSettings.SplashScreen.show = Result;
-				AssetDatabase.SaveAssets();
-			}
-		}
-
-		public static bool RemoveSplashIfPro()
-		{
-			if (PlayerSettings.advancedLicense)
-			{
-				if (PlayerSettings.SplashScreen.show)
+				instance.PreviousState = PlayerSettings.SplashScreen.show;
+				if (PlayerSettings.advancedLicense)
 				{
 					PlayerSettings.SplashScreen.show = false;
-					return true;
 				}
-			}
-			return false;
-		}
 
-		public static SplashDisposeHandler TemporarilyRemoveSplashIfPro()
-		{
-			if (RemoveSplashIfPro())
-			{
-				return new SplashDisposeHandler(true);
+				return instance;
 			}
-			return null;
+
+			public void Revert()
+			{
+				PlayerSettings.SplashScreen.show = PreviousState;
+			}
 		}
 
 		#endregion
 
 		#region Android Keys
 
-		public class AndroidKeyDisposeHandler : IDisposable
+		[Serializable]
+		public class TemporarilySetAndroidKeys
 		{
-			public readonly AndroidKeys ResultingKeys;
+			public AndroidKeys PreviousKeys;
 
-			internal AndroidKeyDisposeHandler(AndroidKeys resultingKeys)
+			public static TemporarilySetAndroidKeys Create(AndroidKeys setKeys)
 			{
-				ResultingKeys = resultingKeys;
+				var instance = new TemporarilySetAndroidKeys();
+
+				instance.PreviousKeys = AndroidKeys.GetFromProjectSettings();
+				setKeys.SetToProjectSettings(false);
+
+				return instance;
 			}
 
-			public void Dispose()
+			public void Revert()
 			{
-				ResultingKeys.SetToProjectSettings(true);
+				PreviousKeys.SetToProjectSettings(false);
 			}
-		}
-
-		public static AndroidKeyDisposeHandler TemporarilySetAndroidKeys(AndroidKeys setKeys, AndroidKeys resultingKeys)
-		{
-			setKeys.SetToProjectSettings(true);
-			return new AndroidKeyDisposeHandler(resultingKeys);
-		}
-
-		public static AndroidKeyDisposeHandler TemporarilySetAndroidKeys(AndroidKeys setKeys)
-		{
-			var resultingKeys = AndroidKeys.GetFromProjectSettings();
-			return TemporarilySetAndroidKeys(setKeys, resultingKeys);
 		}
 
 		#endregion
@@ -509,26 +489,25 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Temporarily Add Define Symbols
 
-		public class TemporarilyAddDefineSymbolsHandler : IDisposable
+		[Serializable]
+		public class TemporarilyAddDefineSymbols
 		{
-			public readonly string[] Symbols;
+			public string[] Symbols;
 
-			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore)
+			public static TemporarilyAddDefineSymbols Create(string[] symbols, bool ensureNotAddedBefore)
 			{
-				Symbols = (string[])symbols.Clone();
+				var instance = new TemporarilyAddDefineSymbols();
 
-				AddDefineSymbols(Symbols, ensureNotAddedBefore);
+				instance.Symbols = (string[])symbols.Clone();
+				AddDefineSymbols(instance.Symbols, ensureNotAddedBefore);
+
+				return instance;
 			}
 
-			public void Dispose()
+			public void Revert()
 			{
 				RemoveDefineSymbols(Symbols);
 			}
-		}
-
-		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
-		{
-			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore);
 		}
 
 		#endregion
@@ -588,26 +567,25 @@ namespace Extenity.BuildToolbox.Editor
 			#endregion
 		}
 
-		public class TemporarilyMoveAssetsOutsideHandler : IDisposable
+		[Serializable]
+		public class TemporarilyMoveAssetsOutside
 		{
-			public readonly MoveAssetsOutsideOperation Operation;
+			public MoveAssetsOutsideOperation Operation;
 
-			internal TemporarilyMoveAssetsOutsideHandler(MoveAssetsOutsideOperation operation)
+			public static TemporarilyMoveAssetsOutside Create(IEnumerable<string> originalPaths, string outsideLocationBasePath)
 			{
-				Operation = operation;
-				Operation.MoveToTemp();
+				var instance = new TemporarilyMoveAssetsOutside();
+
+				instance.Operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath);
+				instance.Operation.MoveToTemp();
+
+				return instance;
 			}
 
-			public void Dispose()
+			public void Revert()
 			{
 				Operation.MoveToOriginal();
 			}
-		}
-
-		public static TemporarilyMoveAssetsOutsideHandler TemporarilyMoveAssetsOutside(IEnumerable<string> originalPaths, string outsideLocationBasePath)
-		{
-			var operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath);
-			return new TemporarilyMoveAssetsOutsideHandler(operation);
 		}
 
 		public static void MoveAssetsOutside(IEnumerable<string> originalPaths, string outsideLocationBasePath)
@@ -620,36 +598,34 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Temporarily Increment Version
 
-		public class TemporarilyIncrementVersionHandler : IDisposable
+		[Serializable]
+		public class TemporarilyIncrementVersion
 		{
 			public bool KeepTheChange = false;
-			public readonly int AddMajor;
-			public readonly int AddMinor;
-			public readonly int AddBuild;
-			public readonly bool SaveAssets;
+			public int AddMajor;
+			public int AddMinor;
+			public int AddBuild;
 
-			internal TemporarilyIncrementVersionHandler(int addMajor, int addMinor, int addBuild, bool saveAssets)
+			public static TemporarilyIncrementVersion Create(int addMajor, int addMinor, int addBuild)
 			{
-				AddMajor = addMajor;
-				AddMinor = addMinor;
-				AddBuild = addBuild;
-				SaveAssets = saveAssets;
-				ApplicationVersion.AddToUnityVersionConfiguration(AddMajor, AddMinor, AddBuild, SaveAssets);
+				var instance = new TemporarilyIncrementVersion();
+
+				instance.AddMajor = addMajor;
+				instance.AddMinor = addMinor;
+				instance.AddBuild = addBuild;
+				instance.KeepTheChange = false;
+				ApplicationVersion.AddToUnityVersionConfiguration(instance.AddMajor, instance.AddMinor, instance.AddBuild, false);
+
+				return instance;
 			}
 
-			public void Dispose()
+			public void Revert()
 			{
-				// Revert back to previous version
 				if (!KeepTheChange)
 				{
-					ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, SaveAssets);
+					ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, false);
 				}
 			}
-		}
-
-		public static TemporarilyIncrementVersionHandler TemporarilyIncrementVersion(int addMajor, int addMinor, int addBuild, bool saveAssets)
-		{
-			return new TemporarilyIncrementVersionHandler(addMajor, addMinor, addBuild, saveAssets);
 		}
 
 		#endregion
