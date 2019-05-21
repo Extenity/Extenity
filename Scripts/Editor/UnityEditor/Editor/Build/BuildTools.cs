@@ -102,7 +102,7 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
 			{
-				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, true);
+				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, false);
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
 			{
-				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, true);
+				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, false);
 			}
 		}
 
