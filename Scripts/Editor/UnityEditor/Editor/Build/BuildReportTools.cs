@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
+using Extenity.ReflectionToolbox;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -34,6 +36,27 @@ namespace Extenity.BuildToolbox.Editor
 
 	public static class BuildReportTools
 	{
+		#region Build Report Tool
+
+		/// <summary>
+		/// Tell 'Build Report Tool' from Asset Store to create the build report.
+		/// </summary>
+		public static void CreateBuildReport()
+		{
+			try
+			{
+				// We don't want a hard link to the asset. So Reflection saves the day.
+				string customEditorLogPath = null;
+				ReflectionTools.CallMethodOfTypeByName("BuildReportTool.ReportGenerator, BuildReportTool.Editor", "CreateReport", BindingFlags.Static | BindingFlags.Public, null, new[] { customEditorLogPath });
+			}
+			catch (Exception exception)
+			{
+				Log.Warning("Failed to generate build report. Ignoring the error, but you probably won't see the report output. Exception: " + exception);
+			}
+		}
+
+		#endregion
+
 		#region Logging
 
 		public static void DetailedLog(this BuildReport report, string callerTag)
