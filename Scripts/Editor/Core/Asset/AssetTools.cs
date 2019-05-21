@@ -401,6 +401,8 @@ namespace Extenity.AssetToolbox.Editor
 			if (string.IsNullOrEmpty(destination))
 				throw new ArgumentNullException(nameof(destination));
 
+			AssetDatabase.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			var assetName = Path.GetFileName(source.RemoveEndingDirectorySeparatorChar());
 			var sourceMeta = source.RemoveEndingDirectorySeparatorChar() + ".meta";
 			var destinationMeta = destination.RemoveEndingDirectorySeparatorChar() + ".meta";
@@ -460,6 +462,8 @@ namespace Extenity.AssetToolbox.Editor
 		/// </summary>
 		public static void ManuallyDeleteMetaFileAndAsset(string path)
 		{
+			AssetDatabase.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (Directory.Exists(path))
 			{
 				Directory.Delete(path, true);

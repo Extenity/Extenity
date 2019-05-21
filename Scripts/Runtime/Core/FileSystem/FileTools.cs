@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox;
 
 namespace Extenity.FileSystemToolbox
 {
@@ -72,6 +73,8 @@ namespace Extenity.FileSystemToolbox
 		/// <returns>True if files are the same.</returns>
 		public static bool CompareFileContents(this FileInfo fileInfo1, FileInfo fileInfo2)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (fileInfo1.Length != fileInfo2.Length)
 				return false;
 
@@ -200,6 +203,8 @@ namespace Extenity.FileSystemToolbox
 		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
 		public static bool DeleteFileEvenIfReadOnly(this FileInfo fileInfo, bool checkIfExists = false)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (checkIfExists && !fileInfo.Exists)
 			{
 				return false;

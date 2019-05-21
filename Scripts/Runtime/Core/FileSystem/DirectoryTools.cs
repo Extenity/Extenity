@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox;
 
 namespace Extenity.FileSystemToolbox
 {
@@ -17,6 +18,8 @@ namespace Extenity.FileSystemToolbox
 
 		public static void CreateFromFilePath(string filePath)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			var directoryPath = Path.GetDirectoryName(filePath);
 			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
 			{
@@ -81,6 +84,8 @@ namespace Extenity.FileSystemToolbox
 				throw new ArgumentException("Source directory points to a file.");
 			if (!Directory.Exists(sourceDirectory))
 				return new HashSet<string>();
+
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
@@ -242,6 +247,8 @@ namespace Extenity.FileSystemToolbox
 			if (File.Exists(targetDirectory))
 				throw new ArgumentException("Target directory points to a file.");
 
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			sourceDirectory = sourceDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 			targetDirectory = targetDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
@@ -359,6 +366,8 @@ namespace Extenity.FileSystemToolbox
 
 		public static bool Delete(string path)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (Directory.Exists(path))
 			{
 				Directory.Delete(path, true);
@@ -372,6 +381,8 @@ namespace Extenity.FileSystemToolbox
 		/// </summary>
 		public static List<string> DeleteEmptySubdirectories(string directoryPath)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			List<string> failedDirectories = null;
 
 			foreach (var subdirectory in Directory.GetDirectories(directoryPath))
@@ -409,6 +420,8 @@ namespace Extenity.FileSystemToolbox
 		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
 		public static bool DeleteFilesWithExtensionInDirectory(string directoryPath, string extension, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (deletedFiles == null)
 				deletedFiles = new List<FileInfo>();
 			if (failedFiles == null)
@@ -435,6 +448,8 @@ namespace Extenity.FileSystemToolbox
 		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
 		public static bool DeleteFilesWithPatternInDirectory(string directoryPath, string searchPattern, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (deletedFiles == null)
 				deletedFiles = new List<FileInfo>();
 			if (failedFiles == null)
@@ -461,6 +476,8 @@ namespace Extenity.FileSystemToolbox
 		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
 		public static bool ClearDLLArtifacts(string directoryPath, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			if (deletedFiles == null)
 				deletedFiles = new List<FileInfo>();
 			if (failedFiles == null)
@@ -536,6 +553,8 @@ namespace Extenity.FileSystemToolbox
 
 		public static string CreateTemporaryDirectory()
 		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
 			const int maxTries = 10;
 			const int waitBetweenTries = 1000; // ms
 			for (int iTry = 0; iTry < maxTries; iTry++)
