@@ -6,12 +6,14 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Extenity.ApplicationToolbox;
+using Extenity.AssetToolbox.Editor;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace Extenity.BuildToolbox.Editor
 {
@@ -373,22 +375,34 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Add/Remove Define Symbols
 
-		public static void AddDefineSymbols(string[] symbols)
+		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
 		{
-			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
+			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, ensureNotAddedBefore);
 		}
 
 		/// <summary>
 		/// Source: https://answers.unity.com/questions/1225189/how-can-i-change-scripting-define-symbols-before-a.html
 		/// </summary>
-		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
+		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
 		{
+			if (symbols.IsNullOrEmpty())
+				throw new ArgumentNullException();
+			Log.Info($"Adding {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
+
 			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 			var allDefines = definesString.Split(';').ToList();
 
 			foreach (var symbol in symbols)
+			{
 				if (!allDefines.Contains(symbol))
+				{
 					allDefines.Add(symbol);
+				}
+				else if (ensureNotAddedBefore)
+				{
+					throw new Exception($"The symbol '{symbol}' was already added before.");
+				}
+			}
 
 			var newDefinesString = string.Join(";", allDefines);
 			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
@@ -413,6 +427,10 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static void RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
 		{
+			if (symbols.IsNullOrEmpty())
+				throw new ArgumentNullException();
+			Log.Info($"Removing {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
+
 			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 			var allDefines = definesString.Split(';').ToList();
 
@@ -479,172 +497,107 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			public readonly string[] Symbols;
 
-			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore, bool refreshAssetDatabaseOnAdd)
+			internal TemporarilyAddDefineSymbolsHandler(string[] symbols, bool ensureNotAddedBefore)
 			{
 				Symbols = (string[])symbols.Clone();
 
-				Log.Info($"Adding define symbols '{string.Join(", ", Symbols)}'.");
-
-				if (ensureNotAddedBefore)
-				{
-					foreach (var symbol in Symbols)
-					{
-						if (HasDefineSymbol(symbol))
-						{
-							throw new Exception($"The symbol '{symbol}' was already added before.");
-						}
-					}
-				}
-				AddDefineSymbols(Symbols);
-				if (refreshAssetDatabaseOnAdd)
-				{
-					AssetDatabase.Refresh();
-				}
+				AddDefineSymbols(Symbols, ensureNotAddedBefore);
 			}
 
 			public void Dispose()
 			{
-				Log.Info($"Removing define symbols '{string.Join(", ", Symbols)}'.");
 				RemoveDefineSymbols(Symbols);
 			}
 		}
 
-		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore, bool refreshAssetDatabaseOnAdd)
+		public static TemporarilyAddDefineSymbolsHandler TemporarilyAddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
 		{
-			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore, refreshAssetDatabaseOnAdd);
+			return new TemporarilyAddDefineSymbolsHandler(symbols, ensureNotAddedBefore);
 		}
 
 		#endregion
 
-		#region Temporarily Move Directories
+		#region Temporarily Move Assets Outside
 
-		public class TemporarilyMoveHandler : IDisposable
+		[Serializable]
+		public class MoveAssetsOutsideOperation
 		{
-			public readonly List<string> OriginalPaths;
-			public readonly List<string> TempPaths;
-			public readonly string TempLocationBasePath;
+			#region Initialize
 
-			internal TemporarilyMoveHandler(IEnumerable<string> originalPaths, string tempLocationBasePath)
+			public MoveAssetsOutsideOperation(IEnumerable<string> originalPaths, string outsideLocationBasePath)
 			{
 				OriginalPaths = originalPaths.Select(path => path.FixDirectorySeparatorChars('/')).ToList();
-				TempLocationBasePath = tempLocationBasePath;
+				OutsideLocationBasePath = outsideLocationBasePath;
 
-				TempPaths = OriginalPaths.Select(path =>
+				OutsidePaths = OriginalPaths.Select(path =>
 				{
 					if (!path.StartsWith("Assets/"))
 					{
 						throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
 					}
-					return tempLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
+					return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
 				}).ToList();
 
-				MoveToTemp();
-			}
-
-			public void Dispose()
-			{
-				MoveToOriginal();
-			}
-
-			#region Move
-
-			private void MoveToTemp()
-			{
-				using (Log.Indent($"Moving assets to temporary location '{TempLocationBasePath}'..."))
-				{
-					// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
-					//EditorApplicationTools.EnsureNotCompiling();
-					MakeSureNothingExists(TempPaths);
-					for (var i = 0; i < OriginalPaths.Count; i++)
-					{
-						MoveTo(OriginalPaths[i], TempPaths[i]);
-					}
-					MakeSureNothingExists(OriginalPaths); // Before refreshing AssetDatabase.
-					AssetDatabase.Refresh();
-					MakeSureNothingExists(OriginalPaths); // After refreshing AssetDatabase.
-					// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
-					//EditorApplicationTools.EnsureNotCompiling();
-				}
-			}
-
-			private void MoveToOriginal()
-			{
-				using (Log.Indent($"Moving assets back to original location from '{TempLocationBasePath}'..."))
-				{
-					// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
-					//EditorApplicationTools.EnsureNotCompiling();
-					MakeSureNothingExists(OriginalPaths);
-					for (var i = 0; i < OriginalPaths.Count; i++)
-					{
-						MoveTo(TempPaths[i], OriginalPaths[i]);
-					}
-					MakeSureNothingExists(TempPaths); // Before refreshing AssetDatabase.
-					AssetDatabase.Refresh();
-					MakeSureNothingExists(TempPaths); // After refreshing AssetDatabase.
-					// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
-					//EditorApplicationTools.EnsureNotCompiling();
-				}
-			}
-
-			private void MoveTo(string source, string destination)
-			{
-				if (string.IsNullOrEmpty(source))
-					throw new ArgumentNullException(nameof(source));
-				if (string.IsNullOrEmpty(destination))
-					throw new ArgumentNullException(nameof(destination));
-
-				var assetName = Path.GetFileName(source.RemoveEndingDirectorySeparatorChar());
-				var sourceMeta = source.RemoveEndingDirectorySeparatorChar() + ".meta";
-				var destinationMeta = destination.RemoveEndingDirectorySeparatorChar() + ".meta";
-
-				if (Directory.Exists(source))
-				{
-					Log.Info($"{assetName} (Directory)\n\tFROM: {source}\n\tTO: {destination}");
-					DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
-					Directory.Move(source, destination);
-					File.Move(sourceMeta, destinationMeta);
-				}
-				else if (File.Exists(source))
-				{
-					Log.Info($"{assetName} (File)\n\tFROM: {source}\n\tTO: {destination}");
-					DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
-					File.Move(source, destination);
-					File.Move(sourceMeta, destinationMeta);
-				}
-				else
-				{
-					Log.Info($"{assetName} (Not Found)\n\tFROM: {source}\n\tTO: {destination}");
-				}
-
-				//AssetDatabase.MoveAsset(source, destination); Won't work since we are moving outside of Assets folder.
+				Debug.Assert(OriginalPaths.Count == OutsidePaths.Count);
 			}
 
 			#endregion
 
-			#region Consistency
+			#region Data
 
-			private void MakeSureNothingExists(IEnumerable<string> paths)
+			public List<string> OriginalPaths;
+			public List<string> OutsidePaths;
+			public string OutsideLocationBasePath;
+
+			#endregion
+
+			#region Move
+
+			public void MoveToTemp()
 			{
-				foreach (var path in paths)
+				using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
 				{
-					if (Directory.Exists(path) || File.Exists(path))
-					{
-						throw new Exception($"The asset is not expected to exist at path '{path}'.");
-					}
-					var metaPath = path.RemoveEndingDirectorySeparatorChar() + ".meta";
-					if (Directory.Exists(metaPath) || File.Exists(metaPath))
-					{
-						throw new Exception($"The asset is not expected to exist at path '{metaPath}'.");
-					}
+					AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, true);
+				}
+			}
+
+			public void MoveToOriginal()
+			{
+				using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
+				{
+					AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, true);
 				}
 			}
 
 			#endregion
 		}
 
-		public static TemporarilyMoveHandler TemporarilyMoveFilesAndDirectories(IEnumerable<string> originalPaths, string tempLocationBasePath)
+		public class TemporarilyMoveAssetsOutsideHandler : IDisposable
 		{
-			return new TemporarilyMoveHandler(originalPaths, tempLocationBasePath);
+			public readonly MoveAssetsOutsideOperation Operation;
+
+			internal TemporarilyMoveAssetsOutsideHandler(MoveAssetsOutsideOperation operation)
+			{
+				Operation = operation;
+				Operation.MoveToTemp();
+			}
+
+			public void Dispose()
+			{
+				Operation.MoveToOriginal();
+			}
+		}
+
+		public static TemporarilyMoveAssetsOutsideHandler TemporarilyMoveAssetsOutside(IEnumerable<string> originalPaths, string outsideLocationBasePath)
+		{
+			var operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath);
+			return new TemporarilyMoveAssetsOutsideHandler(operation);
+		}
+
+		public static void MoveAssetsOutside(IEnumerable<string> originalPaths, string outsideLocationBasePath)
+		{
+			var operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath);
+			operation.MoveToTemp();
 		}
 
 		#endregion

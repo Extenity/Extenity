@@ -386,6 +386,73 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Manually Move Asset File Or Directory With Meta
+
+		/// <summary>
+		/// Moves a file or a directory with its meta file. You should use <see cref="AssetDatabase.MoveAsset"/> where possible.
+		/// But it does not work outside of Assets directory. This is where this method comes to play.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		public static void ManuallyMoveFileOrDirectoryWithMeta(string source, string destination)
+		{
+			if (string.IsNullOrEmpty(source))
+				throw new ArgumentNullException(nameof(source));
+			if (string.IsNullOrEmpty(destination))
+				throw new ArgumentNullException(nameof(destination));
+
+			var assetName = Path.GetFileName(source.RemoveEndingDirectorySeparatorChar());
+			var sourceMeta = source.RemoveEndingDirectorySeparatorChar() + ".meta";
+			var destinationMeta = destination.RemoveEndingDirectorySeparatorChar() + ".meta";
+
+			if (Directory.Exists(source))
+			{
+				Log.Info($"{assetName} (Directory)\n\tFROM: {source}\n\tTO: {destination}");
+				DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
+				Directory.Move(source, destination);
+				File.Move(sourceMeta, destinationMeta);
+			}
+			else if (File.Exists(source))
+			{
+				Log.Info($"{assetName} (File)\n\tFROM: {source}\n\tTO: {destination}");
+				DirectoryTools.CreateFromFilePath(destination.RemoveEndingDirectorySeparatorChar());
+				File.Move(source, destination);
+				File.Move(sourceMeta, destinationMeta);
+			}
+			else
+			{
+				Log.Info($"{assetName} (Not Found)\n\tFROM: {source}\n\tTO: {destination}");
+			}
+		}
+
+		/// <summary>
+		/// See <see cref="ManuallyMoveFileOrDirectoryWithMeta"/>.
+		/// </summary>
+		public static void ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(List<string> sourcePaths, List<string> destinationPaths, bool refreshAssetDatabase)
+		{
+			// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
+			//EditorApplicationTools.EnsureNotCompiling();
+
+			MakeSureNoAssetsExistAtPath(destinationPaths);
+			for (var i = 0; i < sourcePaths.Count; i++)
+			{
+				ManuallyMoveFileOrDirectoryWithMeta(sourcePaths[i], destinationPaths[i]);
+			}
+			// Before refreshing AssetDatabase.
+			MakeSureNoAssetsExistAtPath(sourcePaths);
+			if (refreshAssetDatabase)
+			{
+				AssetDatabase.Refresh();
+				// After refreshing AssetDatabase.
+				MakeSureNoAssetsExistAtPath(sourcePaths);
+			}
+
+			// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
+			//EditorApplicationTools.EnsureNotCompiling();
+		}
+
+		#endregion
+
 		#region Manually Delete Asset File and Meta
 
 		/// <summary>
@@ -417,6 +484,31 @@ namespace Extenity.AssetToolbox.Editor
 			var metaFile = path + ".meta";
 			if (File.Exists(metaFile))
 				FileTools.DeleteFileEvenIfReadOnly(metaFile);
+		}
+
+		#endregion
+
+		#region Check Directory For Assets
+
+		public static void MakeSureNoAssetsExistAtPath(IEnumerable<string> paths)
+		{
+			foreach (var path in paths)
+			{
+				MakeSureNoAssetExistAtPath(path);
+			}
+		}
+
+		public static void MakeSureNoAssetExistAtPath(string path)
+		{
+			if (Directory.Exists(path) || File.Exists(path))
+			{
+				throw new Exception($"The asset is not expected to exist at path '{path}'.");
+			}
+			var metaPath = path.RemoveEndingDirectorySeparatorChar() + ".meta";
+			if (Directory.Exists(metaPath) || File.Exists(metaPath))
+			{
+				throw new Exception($"The asset is not expected to exist at path '{metaPath}'.");
+			}
 		}
 
 		#endregion
