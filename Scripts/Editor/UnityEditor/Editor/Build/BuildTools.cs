@@ -18,12 +18,15 @@ using Debug = System.Diagnostics.Debug;
 namespace Extenity.BuildToolbox.Editor
 {
 
+	#region Android Keys
+
+	[Serializable]
 	public struct AndroidKeys
 	{
-		public readonly string KeystoreName;
-		public readonly string KeystorePass;
-		public readonly string KeyaliasName;
-		public readonly string KeyaliasPass;
+		public string KeystoreName;
+		public string KeystorePass;
+		public string KeyaliasName;
+		public string KeyaliasPass;
 
 		public static AndroidKeys Empty => new AndroidKeys(null, null, null, null);
 
@@ -56,6 +59,98 @@ namespace Extenity.BuildToolbox.Editor
 				PlayerSettings.Android.keyaliasPass);
 		}
 	}
+
+	#endregion
+
+	#region Move Assets Outside
+
+	[Serializable]
+	public class MoveAssetsOutsideOperation
+	{
+		#region Initialize
+
+		public MoveAssetsOutsideOperation(IEnumerable<string> originalPaths, string outsideLocationBasePath)
+		{
+			OriginalPaths = originalPaths.Select(path => path.FixDirectorySeparatorChars('/')).ToList();
+			OutsideLocationBasePath = outsideLocationBasePath;
+
+			OutsidePaths = OriginalPaths.Select(path =>
+			{
+				if (!path.StartsWith("Assets/"))
+				{
+					throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
+				}
+				return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
+			}).ToList();
+
+			Debug.Assert(OriginalPaths.Count == OutsidePaths.Count);
+		}
+
+		#endregion
+
+		#region Data
+
+		public List<string> OriginalPaths;
+		public List<string> OutsidePaths;
+		public string OutsideLocationBasePath;
+
+		#endregion
+
+		#region Move
+
+		public void MoveToTemp()
+		{
+			using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
+			{
+				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, true);
+			}
+		}
+
+		public void MoveToOriginal()
+		{
+			using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
+			{
+				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, true);
+			}
+		}
+
+		#endregion
+	}
+
+	#endregion
+
+	#region Temporary Build Operation
+
+	public abstract class TemporaryBuildOperation
+	{
+		public bool IsInitialized = false;
+		public bool KeepTheChange = false;
+
+		public abstract void DoApply();
+		public abstract void DoRevert();
+
+		protected static T Apply<T>(T instance) where T : TemporaryBuildOperation
+		{
+			instance.IsInitialized = true;
+			instance.DoApply();
+			return instance;
+		}
+	}
+
+	public static class TemporaryBuildOperationTools
+	{
+		public static void Revert(this TemporaryBuildOperation operation)
+		{
+			if (operation != null &&
+				operation.IsInitialized &&
+				!operation.KeepTheChange)
+			{
+				operation.DoRevert();
+			}
+		}
+	}
+
+	#endregion
 
 	public static class BuildTools
 	{
@@ -293,24 +388,25 @@ namespace Extenity.BuildToolbox.Editor
 		#region Pro License
 
 		[Serializable]
-		public class TemporarilyRemoveSplashIfPro
+		public class TemporarilyRemoveSplashIfPro : TemporaryBuildOperation
 		{
 			public bool PreviousState;
 
 			public static TemporarilyRemoveSplashIfPro Create()
 			{
-				var instance = new TemporarilyRemoveSplashIfPro();
+				return Apply(new TemporarilyRemoveSplashIfPro());
+			}
 
-				instance.PreviousState = PlayerSettings.SplashScreen.show;
+			public override void DoApply()
+			{
+				PreviousState = PlayerSettings.SplashScreen.show;
 				if (PlayerSettings.advancedLicense)
 				{
 					PlayerSettings.SplashScreen.show = false;
 				}
-
-				return instance;
 			}
 
-			public void Revert()
+			public override void DoRevert()
 			{
 				PlayerSettings.SplashScreen.show = PreviousState;
 			}
@@ -321,21 +417,26 @@ namespace Extenity.BuildToolbox.Editor
 		#region Android Keys
 
 		[Serializable]
-		public class TemporarilySetAndroidKeys
+		public class TemporarilySetAndroidKeys : TemporaryBuildOperation
 		{
+			public AndroidKeys SetKeys;
 			public AndroidKeys PreviousKeys;
 
 			public static TemporarilySetAndroidKeys Create(AndroidKeys setKeys)
 			{
-				var instance = new TemporarilySetAndroidKeys();
-
-				instance.PreviousKeys = AndroidKeys.GetFromProjectSettings();
-				setKeys.SetToProjectSettings(false);
-
-				return instance;
+				return Apply(new TemporarilySetAndroidKeys
+				{
+					SetKeys = setKeys
+				});
 			}
 
-			public void Revert()
+			public override void DoApply()
+			{
+				PreviousKeys = AndroidKeys.GetFromProjectSettings();
+				SetKeys.SetToProjectSettings(false);
+			}
+
+			public override void DoRevert()
 			{
 				PreviousKeys.SetToProjectSettings(false);
 			}
@@ -490,21 +591,26 @@ namespace Extenity.BuildToolbox.Editor
 		#region Temporarily Add Define Symbols
 
 		[Serializable]
-		public class TemporarilyAddDefineSymbols
+		public class TemporarilyAddDefineSymbols : TemporaryBuildOperation
 		{
 			public string[] Symbols;
+			public bool EnsureNotAddedBefore;
 
 			public static TemporarilyAddDefineSymbols Create(string[] symbols, bool ensureNotAddedBefore)
 			{
-				var instance = new TemporarilyAddDefineSymbols();
-
-				instance.Symbols = (string[])symbols.Clone();
-				AddDefineSymbols(instance.Symbols, ensureNotAddedBefore);
-
-				return instance;
+				return Apply(new TemporarilyAddDefineSymbols
+				{
+					Symbols = (string[])symbols.Clone(),
+					EnsureNotAddedBefore = ensureNotAddedBefore
+				});
 			}
 
-			public void Revert()
+			public override void DoApply()
+			{
+				AddDefineSymbols(Symbols, EnsureNotAddedBefore);
+			}
+
+			public override void DoRevert()
 			{
 				RemoveDefineSymbols(Symbols);
 			}
@@ -515,74 +621,24 @@ namespace Extenity.BuildToolbox.Editor
 		#region Temporarily Move Assets Outside
 
 		[Serializable]
-		public class MoveAssetsOutsideOperation
-		{
-			#region Initialize
-
-			public MoveAssetsOutsideOperation(IEnumerable<string> originalPaths, string outsideLocationBasePath)
-			{
-				OriginalPaths = originalPaths.Select(path => path.FixDirectorySeparatorChars('/')).ToList();
-				OutsideLocationBasePath = outsideLocationBasePath;
-
-				OutsidePaths = OriginalPaths.Select(path =>
-				{
-					if (!path.StartsWith("Assets/"))
-					{
-						throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
-					}
-					return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
-				}).ToList();
-
-				Debug.Assert(OriginalPaths.Count == OutsidePaths.Count);
-			}
-
-			#endregion
-
-			#region Data
-
-			public List<string> OriginalPaths;
-			public List<string> OutsidePaths;
-			public string OutsideLocationBasePath;
-
-			#endregion
-
-			#region Move
-
-			public void MoveToTemp()
-			{
-				using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
-				{
-					AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, true);
-				}
-			}
-
-			public void MoveToOriginal()
-			{
-				using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
-				{
-					AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, true);
-				}
-			}
-
-			#endregion
-		}
-
-		[Serializable]
-		public class TemporarilyMoveAssetsOutside
+		public class TemporarilyMoveAssetsOutside : TemporaryBuildOperation
 		{
 			public MoveAssetsOutsideOperation Operation;
 
 			public static TemporarilyMoveAssetsOutside Create(IEnumerable<string> originalPaths, string outsideLocationBasePath)
 			{
-				var instance = new TemporarilyMoveAssetsOutside();
-
-				instance.Operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath);
-				instance.Operation.MoveToTemp();
-
-				return instance;
+				return Apply(new TemporarilyMoveAssetsOutside
+				{
+					Operation = new MoveAssetsOutsideOperation(originalPaths, outsideLocationBasePath)
+				});
 			}
 
-			public void Revert()
+			public override void DoApply()
+			{
+				Operation.MoveToTemp();
+			}
+
+			public override void DoRevert()
 			{
 				Operation.MoveToOriginal();
 			}
@@ -599,32 +655,31 @@ namespace Extenity.BuildToolbox.Editor
 		#region Temporarily Increment Version
 
 		[Serializable]
-		public class TemporarilyIncrementVersion
+		public class TemporarilyIncrementVersion : TemporaryBuildOperation
 		{
-			public bool KeepTheChange = false;
 			public int AddMajor;
 			public int AddMinor;
 			public int AddBuild;
 
 			public static TemporarilyIncrementVersion Create(int addMajor, int addMinor, int addBuild)
 			{
-				var instance = new TemporarilyIncrementVersion();
-
-				instance.AddMajor = addMajor;
-				instance.AddMinor = addMinor;
-				instance.AddBuild = addBuild;
-				instance.KeepTheChange = false;
-				ApplicationVersion.AddToUnityVersionConfiguration(instance.AddMajor, instance.AddMinor, instance.AddBuild, false);
-
-				return instance;
+				return Apply(new TemporarilyIncrementVersion
+				{
+					AddMajor = addMajor,
+					AddMinor = addMinor,
+					AddBuild = addBuild,
+					KeepTheChange = false,
+				});
 			}
 
-			public void Revert()
+			public override void DoApply()
 			{
-				if (!KeepTheChange)
-				{
-					ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, false);
-				}
+				ApplicationVersion.AddToUnityVersionConfiguration(AddMajor, AddMinor, AddBuild, false);
+			}
+
+			public override void DoRevert()
+			{
+				ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, false);
 			}
 		}
 
