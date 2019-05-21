@@ -12,6 +12,7 @@ using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;
 
@@ -371,6 +372,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region BuildOptions
 
+
 		public static BuildOptions SetAutoRunPlayer(this BuildOptions options, bool runAfterBuild)
 		{
 			if (runAfterBuild)
@@ -381,6 +383,38 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				return options & ~BuildOptions.AutoRunPlayer;
 			}
+		}
+
+		#endregion
+
+		#region Tell Unity To Build
+
+		public static void TellUnityToBuild(string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, bool runAfterBuild)
+		{
+			Log.Info("Telling Unity to start the build.");
+
+			var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+			{
+				scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
+				locationPathName = outputPath,
+				targetGroup = buildTargetGroup,
+				target = buildTarget,
+				options = buildOptions.SetAutoRunPlayer(runAfterBuild),
+				//assetBundleManifestPath = ,
+			});
+
+			Log.Info($"Unity build took '{report?.summary.totalTime.ToStringHoursMinutesSecondsMilliseconds() ?? string.Empty}'.");
+
+			if (report.summary.result != BuildResult.Succeeded)
+			{
+				throw new Exception("Build failed. See logs for more detail.");
+			}
+			else
+			{
+				Log.Info("Unity reported successful build. Continuing the build process.");
+			}
+
+			BuildReportTools.CreateBuildReport();
 		}
 
 		#endregion
