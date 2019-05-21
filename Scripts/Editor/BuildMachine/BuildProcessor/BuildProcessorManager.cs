@@ -62,7 +62,7 @@ namespace Extenity.BuildMachine.Editor
 					Log.Error($"Build processor '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
 				}
 
-				buildProcessors[i] = new BuildProcessorDefinition(infoAttribute.Name, type);
+				buildProcessors[i] = new BuildProcessorDefinition(infoAttribute?.Name, type);
 			}
 
 			return buildProcessors;

@@ -718,6 +718,13 @@ namespace Extenity.BuildToolbox.Editor
 		}
 
 		#endregion
+
+		#region Tools
+
+		public static bool IsBatchMode => Application.isBatchMode;
+		public static bool IsCompiling => EditorApplication.isCompiling;
+
+		#endregion
 	}
 
 }
