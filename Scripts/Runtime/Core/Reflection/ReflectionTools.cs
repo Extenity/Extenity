@@ -84,6 +84,19 @@ namespace Extenity.ReflectionToolbox
 			return true;
 		}
 
+		public static object CallMethodOfTypeByName(string assemblyQualifiedTypeName, string methodName, BindingFlags bindingFlags, object instance, string[] parameters)
+		{
+			var type = Type.GetType(assemblyQualifiedTypeName);
+			if (type == null)
+				throw new Exception($"Type '{assemblyQualifiedTypeName}' not found.");
+
+			var method = type.GetMethod(methodName, bindingFlags);
+			if (method == null)
+				throw new Exception($"Method '{methodName}' of type '{type}' not found.");
+
+			return method.Invoke(instance, parameters);
+		}
+
 		#endregion
 
 		#region GetField
