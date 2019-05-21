@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Linq;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -38,6 +40,31 @@ namespace Extenity.BuildMachine.Editor
 				}
 				return _Definition;
 			}
+		}
+
+		#endregion
+
+		#region Start
+
+		public void Start()
+		{
+			EditorCoroutineUtility.StartCoroutineOwnerless(RunProcess());
+		}
+
+		#endregion
+
+		#region Process
+
+		// TODO: Temp
+		protected abstract IEnumerator DoBuild();
+
+		private IEnumerator RunProcess()
+		{
+			Log.Info($"{Definition.Name} build started.");
+
+			yield return DoBuild();
+
+			Log.Info($"{Definition.Name} build succeeded.");
 		}
 
 		#endregion
