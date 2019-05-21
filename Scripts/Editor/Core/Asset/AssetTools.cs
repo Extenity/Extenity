@@ -456,7 +456,7 @@ namespace Extenity.AssetToolbox.Editor
 		#region Manually Delete Asset File and Meta
 
 		/// <summary>
-		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// Deletes the file without informing Unity. You may need to do <see cref="AssetDatabase.Refresh()"/> at some point.
 		/// </summary>
 		public static void ManuallyDeleteMetaFileAndAsset(string path)
 		{
@@ -477,7 +477,7 @@ namespace Extenity.AssetToolbox.Editor
 		}
 
 		/// <summary>
-		/// Deletes the file without informing Unity. You may need to do AssetDatabase.Refresh() at some point.
+		/// Deletes the file without informing Unity. You may need to do <see cref="AssetDatabase.Refresh()"/> at some point.
 		/// </summary>
 		public static void ManuallyDeleteMetaFileOfAsset(string path)
 		{
