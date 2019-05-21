@@ -285,6 +285,11 @@ namespace Extenity.DataToolbox
 			return fieldInfo.IsPublic || fieldInfo.IsDefined<SerializeField>(true);
 		}
 
+		public static bool IsUnityNonSerialized(this FieldInfo fieldInfo)
+		{
+			return (!fieldInfo.IsPublic && !fieldInfo.IsDefined<SerializeField>(true)) || fieldInfo.IsDefined<NonSerializedAttribute>(true);
+		}
+
 		public static FieldInfo[] FilterUnitySerializedFields(this FieldInfo[] unfilteredFields)
 		{
 			if (unfilteredFields != null && unfilteredFields.Length > 0)
@@ -309,7 +314,7 @@ namespace Extenity.DataToolbox
 				var fieldsList = new List<FieldInfo>(unfilteredFields.Length);
 				for (int i = 0; i < unfilteredFields.Length; i++)
 				{
-					if (!unfilteredFields[i].IsUnitySerialized())
+					if (unfilteredFields[i].IsUnityNonSerialized())
 					{
 						fieldsList.Add(unfilteredFields[i]);
 					}
@@ -343,7 +348,7 @@ namespace Extenity.DataToolbox
 				var fieldsList = new List<KeyValuePair<FieldInfo, Attribute[]>>(unfilteredFields.Length);
 				for (int i = 0; i < unfilteredFields.Length; i++)
 				{
-					if (!unfilteredFields[i].Key.IsUnitySerialized())
+					if (unfilteredFields[i].Key.IsUnityNonSerialized())
 					{
 						fieldsList.Add(unfilteredFields[i]);
 					}
@@ -1106,7 +1111,7 @@ namespace Extenity.DataToolbox
 			}
 
 			var unfilteredField = GetPublicAndPrivateInstanceFieldByName(type, fieldName);
-			field = unfilteredField.IsUnitySerialized() ? unfilteredField : null;
+			field = unfilteredField.IsUnityNonSerialized() ? unfilteredField : null;
 
 			// Add to cache
 			LogCTG("Adding Unity-NonSerialized field info to cache for '{0}' and field name '{1}' with field '{2}'", type, fieldName, field.ToString());
