@@ -6,18 +6,6 @@ using UnityEditor;
 namespace Extenity.BuildMachine.Editor
 {
 
-	public class BuildProcessorMetadata
-	{
-		public readonly string Name;
-		public readonly Type Type;
-
-		public BuildProcessorMetadata(string name, Type type)
-		{
-			Name = name;
-			Type = type;
-		}
-	}
-
 	[InitializeOnLoad]
 	public static class BuildProcessorManager
 	{
@@ -32,13 +20,13 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Processors
 
-		public static readonly BuildProcessorMetadata[] BuildProcessors;
+		public static readonly BuildProcessorDefinition[] BuildProcessors;
 
 		#endregion
 
 		#region Gather Build Processors
 
-		private static BuildProcessorMetadata[] GatherBuildProcessorTypes()
+		private static BuildProcessorDefinition[] GatherBuildProcessorTypes()
 		{
 			var types = (
 					from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -47,7 +35,7 @@ namespace Extenity.BuildMachine.Editor
 					select type
 				).ToList();
 
-			var buildProcessors = new BuildProcessorMetadata[types.Count];
+			var buildProcessors = new BuildProcessorDefinition[types.Count];
 			for (var i = 0; i < types.Count; i++)
 			{
 				var type = types[i];
@@ -58,7 +46,7 @@ namespace Extenity.BuildMachine.Editor
 					throw new Exception($"Build processor '{type.Name}' has no '{nameof(BuildProcessorInfoAttribute)}'.");
 				}
 
-				buildProcessors[i] = new BuildProcessorMetadata(attribute.Name, type);
+				buildProcessors[i] = new BuildProcessorDefinition(attribute.Name, type);
 			}
 
 			return buildProcessors;

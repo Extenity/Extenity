@@ -23,20 +23,20 @@ namespace Extenity.BuildMachine.Editor
 	/// </remarks>
 	public abstract class BuildProcessorBase
 	{
-		#region Metadata
+		#region Definition
 
-		private BuildProcessorMetadata _Metadata;
-		public BuildProcessorMetadata Metadata
+		private BuildProcessorDefinition _Definition;
+		public BuildProcessorDefinition Definition
 		{
 			get
 			{
-				if (_Metadata == null)
+				if (_Definition == null)
 				{
 					var type = GetType();
-					_Metadata = BuildProcessorManager.BuildProcessors.First(entry => entry.Type == type);
-					Debug.Assert(_Metadata != null);
+					_Definition = BuildProcessorManager.BuildProcessors.First(entry => entry.Type == type);
+					Debug.Assert(_Definition != null);
 				}
-				return _Metadata;
+				return _Definition;
 			}
 		}
 
