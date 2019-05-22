@@ -32,11 +32,11 @@ namespace Extenity.BuildMachine.Editor
 		{
 			get
 			{
-				if (_Definition == null)
+				if (!_Definition.IsValid)
 				{
 					var type = GetType();
 					_Definition = BuildProcessorManager.BuildProcessors.First(entry => entry.Type == type);
-					Debug.Assert(_Definition != null);
+					Debug.Assert(_Definition.IsValid);
 				}
 				return _Definition;
 			}
@@ -55,14 +55,30 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Process
 
-		// TODO: Temp
-		protected abstract IEnumerator DoBuild();
+		protected abstract IEnumerator Finalize(); // TODO:
 
 		private IEnumerator RunProcess()
 		{
 			Log.Info($"{Definition.Name} build started.");
 
-			yield return DoBuild();
+			yield return null;
+			//yield return DoBuild();
+
+			/*
+			// Save the unsaved assets before making any moves.
+			AssetDatabase.SaveAssets();
+
+			// Make sure everything is imported.
+			{
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+				// And wait for scripts to compile.
+				if (EditorApplication.isCompiling)
+				{
+					throw new Exception("COMPILING");
+				}
+			}
+			*/
 
 			Log.Info($"{Definition.Name} build succeeded.");
 		}

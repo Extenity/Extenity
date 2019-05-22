@@ -3,15 +3,21 @@ using System;
 namespace Extenity.BuildMachine.Editor
 {
 
-	public class BuildProcessorDefinition
+	public struct BuildProcessorDefinition
 	{
 		public readonly string Name;
 		public readonly Type Type;
+		public readonly BuildStepDefinition[] Steps;
 
-		public BuildProcessorDefinition(string name, Type type)
+		public bool IsValid =>
+			!string.IsNullOrWhiteSpace(Name) &&
+			Type != null;
+
+		public BuildProcessorDefinition(string name, Type type, BuildStepDefinition[] steps)
 		{
 			Name = name;
 			Type = type;
+			Steps = steps;
 		}
 	}
 

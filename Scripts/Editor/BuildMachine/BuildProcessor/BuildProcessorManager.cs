@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Linq;
+using System.Reflection;
 using Extenity.DataToolbox;
 using UnityEditor;
 
@@ -13,7 +15,7 @@ namespace Extenity.BuildMachine.Editor
 
 		static BuildProcessorManager()
 		{
-			BuildProcessors = GatherBuildProcessorTypes();
+			BuildProcessors = GatherBuildProcessorInfo();
 		}
 
 		#endregion
@@ -26,7 +28,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Gather Build Processors
 
-		private static BuildProcessorDefinition[] GatherBuildProcessorTypes()
+		private static BuildProcessorDefinition[] GatherBuildProcessorInfo()
 		{
 			var types = (
 					from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -40,18 +42,20 @@ namespace Extenity.BuildMachine.Editor
 			{
 				var type = types[i];
 
+				// Make sure the class is serializable
 				if (!type.HasAttribute<SerializableAttribute>())
 				{
 					Log.Error($"Build processor '{type.Name}' has no '{nameof(SerializableAttribute)}'.");
 				}
 
+				// Get BuildProcessor class attribute
 				var infoAttribute = type.GetAttribute<BuildProcessorInfoAttribute>(true);
 				if (infoAttribute == null)
 				{
 					Log.Error($"Build processor '{type.Name}' has no '{nameof(BuildProcessorInfoAttribute)}'.");
 				}
 
-				// Serializable fields
+				// Complain about non-serializable fields
 				var nonSerializedFields = type
 					.GetNonSerializedFields()
 					.Where(field => !field.Name.StartsWith("_"))
@@ -62,10 +66,78 @@ namespace Extenity.BuildMachine.Editor
 					Log.Error($"Build processor '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
 				}
 
-				buildProcessors[i] = new BuildProcessorDefinition(infoAttribute?.Name, type);
+				// Get build step methods
+				var steps = CollectProcessorMethods(type);
+
+				buildProcessors[i] = new BuildProcessorDefinition(infoAttribute?.Name, type, steps);
 			}
 
 			return buildProcessors;
+		}
+
+		#endregion
+
+		#region Collect Processor Methods
+
+		public static BuildStepDefinition[] CollectProcessorMethods(Type type)
+		{
+			var methods = type
+				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+				.Where(method =>
+					{
+						if (!method.IsVirtual && method.ReturnType == typeof(IEnumerator))
+						{
+							var parameters = method.GetParameters();
+							if (parameters.Length == 1 &&
+								parameters[0].ParameterType == typeof(BuildStepDefinition)
+							)
+							{
+								var attribute = method.GetAttribute<BuildStepAttribute>(true);
+								if (attribute != null)
+								{
+									if (attribute.Order <= 0)
+									{
+										Log.Error($"The '{attribute.GetType().Name}' attribute should have an order above 0.");
+									}
+									return true;
+								}
+							}
+						}
+						return false;
+					}
+				)
+				.OrderBy(method => method.GetAttribute<BuildStepAttribute>(true).Order)
+				.ToList();
+
+			//methods.LogList();
+
+			// Check for duplicate Order values. Note that we already ordered it above.
+			if (methods.Count > 1)
+			{
+				var detected = false;
+				var previousMethod = methods[0];
+				var previousMethodOrder = previousMethod.GetAttribute<BuildStepAttribute>(true).Order;
+				for (int i = 1; i < methods.Count; i++)
+				{
+					var currentMethod = methods[i];
+					var currentMethodOrder = currentMethod.GetAttribute<BuildStepAttribute>(true).Order;
+
+					if (previousMethodOrder == currentMethodOrder)
+					{
+						detected = true;
+						Log.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
+					}
+
+					previousMethod = currentMethod;
+					previousMethodOrder = currentMethodOrder;
+				}
+				if (detected)
+				{
+					throw new Exception("Failed to sort processor method list because there were methods with the same order value.");
+				}
+			}
+
+			return methods.Select(method => new BuildStepDefinition(method)).ToArray();
 		}
 
 		#endregion
