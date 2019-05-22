@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Linq;
-using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -40,15 +39,6 @@ namespace Extenity.BuildMachine.Editor
 				}
 				return _Definition;
 			}
-		}
-
-		#endregion
-
-		#region Start
-
-		public void Start()
-		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(RunProcess());
 		}
 
 		#endregion

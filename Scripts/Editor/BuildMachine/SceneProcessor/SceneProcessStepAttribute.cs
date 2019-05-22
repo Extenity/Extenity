@@ -9,12 +9,6 @@ namespace Extenity.BuildMachine.Editor
 		public readonly int Order;
 		public readonly string[] Categories;
 
-		public SceneProcessStepAttribute(int order, string category)
-		{
-			Order = order;
-			Categories = new[] { category };
-		}
-
 		public SceneProcessStepAttribute(int order, params string[] categories)
 		{
 			Order = order;
