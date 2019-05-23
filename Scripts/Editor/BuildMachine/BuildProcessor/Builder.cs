@@ -34,7 +34,7 @@ namespace Extenity.BuildMachine.Editor
 				if (!_Definition.IsValid)
 				{
 					var type = GetType();
-					_Definition = BuildProcessorManager.BuildProcessors.First(entry => entry.Type == type);
+					_Definition = BuilderManager.BuildProcessors.First(entry => entry.Type == type);
 					Debug.Assert(_Definition.IsValid);
 				}
 				return _Definition;

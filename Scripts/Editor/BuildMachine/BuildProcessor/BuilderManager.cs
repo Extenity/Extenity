@@ -9,11 +9,11 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[InitializeOnLoad]
-	public static class BuildProcessorManager
+	public static class BuilderManager
 	{
 		#region Initialization
 
-		static BuildProcessorManager()
+		static BuilderManager()
 		{
 			BuildProcessors = GatherBuildProcessorInfo();
 		}
