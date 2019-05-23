@@ -4,12 +4,12 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[Serializable]
-	public struct BuildJobPhaseDefinition
+	public struct BuildPhase
 	{
 		public string Name;
 		public BuildStepType[] IncludedSteps;
 
-		public BuildJobPhaseDefinition(string name, params BuildStepType[] includedSteps)
+		public BuildPhase(string name, params BuildStepType[] includedSteps)
 		{
 			Name = name;
 			IncludedSteps = includedSteps;

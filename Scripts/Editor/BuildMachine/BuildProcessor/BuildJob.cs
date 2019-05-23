@@ -17,8 +17,8 @@ namespace Extenity.BuildMachine.Editor
 	/// build run. This feature is made possible by specifying multiple <see cref="BuildProcessor"/>
 	/// configurations.
 	///
-	/// A Build Job can work in phases (See <see cref="BuildJobPhaseDefinition"/>). A Build Phase
-	/// contains info about which Build Steps are run (See  <see cref="BuildStepAttribute"/>).
+	/// A Build Job can work in phases (See <see cref="BuildPhase"/>). A Build Phase contains info
+	/// about which Build Steps are run (See  <see cref="BuildStepAttribute"/>).
 	///
 	/// Understanding the flow of the whole build run is essential. For each Build Phase, all
 	/// Build Processors are run with the Build Steps defined in this Build Phase. This allows
@@ -31,7 +31,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildJob Create(BuildJobPhaseDefinition[] buildPhases, params BuildProcessorBase[] buildProcessors)
+		public static BuildJob Create(BuildPhase[] buildPhases, params BuildProcessorBase[] buildProcessors)
 		{
 			if (buildProcessors.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(buildProcessors));
@@ -47,7 +47,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Options
 
-		public BuildJobPhaseDefinition[] BuildPhases;
+		public BuildPhase[] BuildPhases;
 
 		#endregion
 
@@ -61,6 +61,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public int CurrentPhase = -1;
 		public int CurrentProcessor = -1;
+		public string CurrentStep = "";
 
 		#endregion
 
