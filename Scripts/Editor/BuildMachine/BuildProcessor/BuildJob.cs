@@ -93,7 +93,9 @@ namespace Extenity.BuildMachine.Editor
 
 		public int CurrentPhase = -1;
 		public int CurrentBuilder = -1;
-		public string CurrentStep = "";
+		public string LastProcessedStep = "";
+
+		public bool IsJustCreated => CurrentPhase < 0;
 
 		#endregion
 
@@ -108,7 +110,27 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Serialization
 
+		/// <summary>
+		/// Creates json string. While doing that, also test if the string deserializes correctly.
+		/// </summary>
 		public string SerializeToJson()
+		{
+			var json = InternalSerializeToJson(this);
+
+			// Consistency check
+			var deserialized = DeserializeFromJson(json);
+			var json2 = InternalSerializeToJson(deserialized);
+			if (json != json2)
+			{
+				Log.Error("Json-1:\n" + json);
+				Log.Error("Json-2:\n" + json2);
+				throw new Exception("Serialization consistency check failed.");
+			}
+
+			return json;
+		}
+
+		private static string InternalSerializeToJson(BuildJob job)
 		{
 			var config = new JsonSerializerSettings
 			{
@@ -125,16 +147,32 @@ namespace Extenity.BuildMachine.Editor
 					IndentChar = '\t',
 				})
 				{
-					(JsonSerializer.CreateDefault(config)).Serialize(jsonTextWriter, this);
+					(JsonSerializer.CreateDefault(config)).Serialize(jsonTextWriter, job);
 				}
 			}
 			return stringBuilder.ToString();
-			//return JsonConvert.SerializeObject(this, config); Unfortunately there is no way to specify IndentChar when using this single-liner.
+			//return JsonConvert.SerializeObject(job, config); Unfortunately there is no way to specify IndentChar when using this single-liner.
 
-			//return JsonUtility.ToJson(this, true); Unfortunately Unity's Json implementation does not support inheritance.
+			//return JsonUtility.ToJson(job, true); Unfortunately Unity's Json implementation does not support inheritance.
 		}
 
 		public static BuildJob DeserializeFromJson(string json)
+		{
+			var job = InternalDeserializeFromJson(json);
+
+			// Consistency check
+			var json2 = job.SerializeToJson();
+			if (json != json2)
+			{
+				Log.Error("Json-1:\n" + json);
+				Log.Error("Json-2:\n" + json2);
+				throw new Exception("Serialization consistency check failed.");
+			}
+
+			return job;
+		}
+
+		private static BuildJob InternalDeserializeFromJson(string json)
 		{
 			var config = new JsonSerializerSettings
 			{

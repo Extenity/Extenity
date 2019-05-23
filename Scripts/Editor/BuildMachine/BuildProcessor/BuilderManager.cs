@@ -17,7 +17,7 @@ namespace Extenity.BuildMachine.Editor
 		static BuilderManager()
 		{
 			BuilderInfos = GatherBuilderInfos();
-			BuildJobRunner.InitializeOnLoad();
+			BuildJobRunner.ContinueFromRunningJobAfterAssemblyReload();
 		}
 
 		#endregion
