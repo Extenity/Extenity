@@ -49,10 +49,10 @@ namespace Extenity.BuildMachine.Editor
 				}
 
 				// Get BuildProcessor class attribute
-				var infoAttribute = type.GetAttribute<BuildProcessorInfoAttribute>(true);
+				var infoAttribute = type.GetAttribute<BuilderInfoAttribute>(true);
 				if (infoAttribute == null)
 				{
-					Log.Error($"Build processor '{type.Name}' has no '{nameof(BuildProcessorInfoAttribute)}'.");
+					Log.Error($"Build processor '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
 				}
 
 				// Complain about non-serializable fields

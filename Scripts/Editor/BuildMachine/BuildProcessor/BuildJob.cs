@@ -31,15 +31,15 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildJob Create(BuildPhase[] buildPhases, params Builder[] buildProcessors)
+		public static BuildJob Create(BuildPhase[] buildPhases, params Builder[] builders)
 		{
-			if (buildProcessors.IsNullOrEmpty())
-				throw new ArgumentNullException(nameof(buildProcessors));
+			if (builders.IsNullOrEmpty())
+				throw new ArgumentNullException(nameof(builders));
 
 			return new BuildJob
 			{
 				BuildPhases = buildPhases,
-				BuildProcessors = buildProcessors,
+				Builders = builders,
 			};
 		}
 
@@ -51,9 +51,9 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Build Processors
+		#region Builders
 
-		public Builder[] BuildProcessors;
+		public Builder[] Builders;
 
 		#endregion
 

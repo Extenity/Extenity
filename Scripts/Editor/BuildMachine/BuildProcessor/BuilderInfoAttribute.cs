@@ -4,11 +4,11 @@ namespace Extenity.BuildMachine.Editor
 {
 
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class BuildProcessorInfoAttribute : Attribute
+	public class BuilderInfoAttribute : Attribute
 	{
 		public readonly string Name;
 
-		public BuildProcessorInfoAttribute(string name)
+		public BuilderInfoAttribute(string name)
 		{
 			Name = name;
 		}
