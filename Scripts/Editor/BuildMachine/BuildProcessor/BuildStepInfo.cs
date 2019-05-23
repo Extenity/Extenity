@@ -17,7 +17,7 @@ namespace Extenity.BuildMachine.Editor
 		Finalize
 	}
 
-	public struct BuildStepDefinition
+	public struct BuildStepInfo
 	{
 		public readonly BuildStepType Type;
 		public int ID => Order;
@@ -25,7 +25,7 @@ namespace Extenity.BuildMachine.Editor
 		public readonly string Name;
 		public readonly MethodInfo Method;
 
-		public BuildStepDefinition(MethodInfo method)
+		public BuildStepInfo(MethodInfo method)
 		{
 			var attribute = method.GetAttribute<BuildStepAttribute>(true);
 

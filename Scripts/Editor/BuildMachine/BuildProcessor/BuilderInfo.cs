@@ -7,13 +7,13 @@ namespace Extenity.BuildMachine.Editor
 	{
 		public readonly string Name;
 		public readonly Type Type;
-		public readonly BuildStepDefinition[] Steps;
+		public readonly BuildStepInfo[] Steps;
 
 		public bool IsValid =>
 			!string.IsNullOrWhiteSpace(Name) &&
 			Type != null;
 
-		public BuilderInfo(string name, Type type, BuildStepDefinition[] steps)
+		public BuilderInfo(string name, Type type, BuildStepInfo[] steps)
 		{
 			Name = name;
 			Type = type;

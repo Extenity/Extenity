@@ -67,7 +67,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 
 				// Get build step methods
-				var steps = CollectBuildStepMethods(type);
+				var steps = GatherBuildStepMethods(type);
 
 				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, type, steps);
 			}
@@ -75,7 +75,7 @@ namespace Extenity.BuildMachine.Editor
 			return builderInfos;
 		}
 
-		private static BuildStepDefinition[] CollectBuildStepMethods(Type type)
+		private static BuildStepInfo[] GatherBuildStepMethods(Type type)
 		{
 			var methods = type
 				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
@@ -85,7 +85,7 @@ namespace Extenity.BuildMachine.Editor
 						{
 							var parameters = method.GetParameters();
 							if (parameters.Length == 1 &&
-								parameters[0].ParameterType == typeof(BuildStepDefinition)
+								parameters[0].ParameterType == typeof(BuildStepInfo)
 							)
 							{
 								var attribute = method.GetAttribute<BuildStepAttribute>(true);
@@ -133,7 +133,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 			}
 
-			return methods.Select(method => new BuildStepDefinition(method)).ToArray();
+			return methods.Select(method => new BuildStepInfo(method)).ToArray();
 		}
 
 		#endregion
