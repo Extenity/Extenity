@@ -34,16 +34,18 @@ namespace Extenity.BuildMachine.Editor
 
 		public static BuildJob Create(BuildPlan plan)
 		{
+			return new BuildJob(plan);
+		}
+
+		private BuildJob(BuildPlan plan)
+		{
 			if (plan == null)
 				throw new ArgumentNullException(nameof(plan));
 
 			var builders = CreateBuilderInstancesMimickingBuilderOptions(plan.BuilderOptionsList);
 
-			return new BuildJob
-			{
-				Plan = plan,
-				Builders = builders,
-			};
+			Plan = plan;
+			Builders = builders;
 		}
 
 		private static Builder[] CreateBuilderInstancesMimickingBuilderOptions(BuilderOptions[] builderOptionsList)
@@ -59,7 +61,7 @@ namespace Extenity.BuildMachine.Editor
 
 				// Create Builder instance and assign its Options
 				var builder = (Builder)Activator.CreateInstance(builderInfo.Type);
-				builder.GetType().GetField("Options").SetValue(builder, builderOptions); // Unfortunately Options field is defined in the Builder<> generic class and not the Builder class.
+				builder.GetType().GetField(nameof(Builder<BuilderOptions>.Options)).SetValue(builder, builderOptions); // Unfortunately Options field is defined in the Builder<> generic class and not the Builder class.
 
 				builders[i] = builder;
 			}
@@ -70,13 +72,13 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Plan
 
-		public BuildPlan Plan;
+		public readonly BuildPlan Plan;
 
 		#endregion
 
 		#region Builders
 
-		public Builder[] Builders;
+		public readonly Builder[] Builders;
 
 		#endregion
 

@@ -11,29 +11,31 @@ namespace Extenity.BuildMachine.Editor
 
 		public static BuildPlan Create(BuildPhaseInfo[] buildPhases, params BuilderOptions[] builderOptionsList)
 		{
+			return new BuildPlan(buildPhases, builderOptionsList);
+		}
+
+		private BuildPlan(BuildPhaseInfo[] buildPhases, BuilderOptions[] builderOptionsList)
+		{
 			if (buildPhases.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(buildPhases));
 			if (builderOptionsList.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(builderOptionsList));
 
-			return new BuildPlan
-			{
-				BuildPhases = buildPhases,
-				BuilderOptionsList = builderOptionsList,
-			};
+			BuildPhases = buildPhases;
+			BuilderOptionsList = builderOptionsList;
 		}
 
 		#endregion
 
 		#region Build Phases
 
-		public BuildPhaseInfo[] BuildPhases;
+		public readonly BuildPhaseInfo[] BuildPhases;
 
 		#endregion
 
 		#region Builder Options
 
-		public BuilderOptions[] BuilderOptionsList;
+		public readonly BuilderOptions[] BuilderOptionsList;
 
 		#endregion
 	}

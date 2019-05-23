@@ -53,7 +53,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Options
 
-		public TBuilderOptions Options;
+		public readonly TBuilderOptions Options;
 
 		#endregion
 	}

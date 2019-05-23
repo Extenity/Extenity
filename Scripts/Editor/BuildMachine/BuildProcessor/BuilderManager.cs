@@ -56,7 +56,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 
 				// Get Options type
-				var optionsType = type.GetField("Options").FieldType;
+				var optionsType = type.GetField(nameof(Builder<BuilderOptions>.Options)).FieldType;
 
 				// Complain about non-serializable fields
 				var nonSerializedFields = type

@@ -6,8 +6,8 @@ namespace Extenity.BuildMachine.Editor
 	[Serializable]
 	public struct BuildPhaseInfo
 	{
-		public string Name;
-		public BuildStepType[] IncludedSteps;
+		public readonly string Name;
+		public readonly BuildStepType[] IncludedSteps;
 
 		public BuildPhaseInfo(string name, params BuildStepType[] includedSteps)
 		{
