@@ -59,7 +59,7 @@ namespace Extenity.BuildMachine.Editor
 		#region State
 
 		public int CurrentPhase = -1;
-		public int CurrentProcessor = -1;
+		public int CurrentBuilder = -1;
 		public string CurrentStep = "";
 
 		#endregion

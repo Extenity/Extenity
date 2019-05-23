@@ -24,7 +24,7 @@ namespace Extenity.BuildMachine.Editor
 			RunningJob = job;
 
 			throw new NotImplementedException();
-			//EditorCoroutineUtility.StartCoroutineOwnerless(RunProcess());
+			//EditorCoroutineUtility.StartCoroutineOwnerless(Run());
 		}
 
 		private static void Continue(BuildJob job)
@@ -36,19 +36,19 @@ namespace Extenity.BuildMachine.Editor
 			RunningJob = job;
 
 			throw new NotImplementedException();
-			//EditorCoroutineUtility.StartCoroutineOwnerless(RunProcess());
+			//EditorCoroutineUtility.StartCoroutineOwnerless(Run());
 		}
 
 		#endregion
 
 		#region MyRegion
 
-		//private IEnumerator RunProcess()
+		//private IEnumerator Run()
 		//{
 		//	//yield return DoBuild();
 		//	CheckBeforeStep()
 		//	Log.Info($"Build '{RunningJob.Plan.Name}' started.");
-		//	Log.Info($"Build '{RunningJob.Plan.Name}' continuing at phase '{RunningJob.CurrentPhase}', processor '{RunningJob.CurrentProcessor}', step '{RunningJob.CurrentStep}'.");
+		//	Log.Info($"Build '{RunningJob.Plan.Name}' continuing at phase '{RunningJob.CurrentPhase}', builder '{RunningJob.CurrentBuilder}', step '{RunningJob.CurrentStep}'.");
 		//	Log.Error($"Build '{RunningJob.Plan.Name}' failed.");
 		//	Log.Info($"Build '{RunningJob.Plan.Name}' succeeded.");
 		//}

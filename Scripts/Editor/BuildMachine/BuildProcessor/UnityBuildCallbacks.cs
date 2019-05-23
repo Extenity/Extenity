@@ -6,7 +6,7 @@ using UnityEditor.Build.Reporting;
 namespace Extenity.BuildMachine.Editor
 {
 
-	public class BuildProcessorCallbacks :
+	public class UnityBuildCallbacks :
 		IPreprocessBuildWithReport,
 		IPostprocessBuildWithReport
 	{
