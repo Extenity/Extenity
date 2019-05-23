@@ -22,7 +22,7 @@ namespace Extenity.BuildMachine.Editor
 	/// just before triggering the actual Unity build. Do any <see cref="AssetDatabase.Refresh"/>
 	/// operations there. Then we start Unity build with all assets ready to be built.
 	/// </remarks>
-	public abstract class BuildProcessorBase
+	public abstract class Builder
 	{
 		#region Definition
 

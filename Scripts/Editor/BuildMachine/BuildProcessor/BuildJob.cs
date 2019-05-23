@@ -14,7 +14,7 @@ namespace Extenity.BuildMachine.Editor
 	/// 
 	/// A Build Job can handle multiple platform builds in one go. Better yet, multiple builds
 	/// on the same platform is also supported, if needed. Failing in one platform, fails the whole
-	/// build run. This feature is made possible by specifying multiple <see cref="BuildProcessor"/>
+	/// build run. This feature is made possible by specifying multiple <see cref="Builder"/>
 	/// configurations.
 	///
 	/// A Build Job can work in phases (See <see cref="BuildPhase"/>). A Build Phase contains info
@@ -31,7 +31,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildJob Create(BuildPhase[] buildPhases, params BuildProcessorBase[] buildProcessors)
+		public static BuildJob Create(BuildPhase[] buildPhases, params Builder[] buildProcessors)
 		{
 			if (buildProcessors.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(buildProcessors));
@@ -53,7 +53,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Processors
 
-		public BuildProcessorBase[] BuildProcessors;
+		public Builder[] BuildProcessors;
 
 		#endregion
 

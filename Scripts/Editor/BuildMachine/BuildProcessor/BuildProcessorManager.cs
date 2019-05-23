@@ -33,7 +33,7 @@ namespace Extenity.BuildMachine.Editor
 			var types = (
 					from assembly in AppDomain.CurrentDomain.GetAssemblies()
 					from type in assembly.GetTypes()
-					where typeof(BuildProcessorBase).IsAssignableFrom(type) && !type.IsAbstract
+					where typeof(Builder).IsAssignableFrom(type) && !type.IsAbstract
 					select type
 				).ToList();
 
