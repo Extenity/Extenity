@@ -1,9 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
-using Extenity.DataToolbox;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace Extenity.BuildMachine.Editor
 {
@@ -33,29 +32,50 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildJob Create(BuildPhaseInfo[] buildPhases, params Builder[] builders)
+		public static BuildJob Create(BuildPlan plan)
 		{
-			if (builders.IsNullOrEmpty())
-				throw new ArgumentNullException(nameof(builders));
+			if (plan == null)
+				throw new ArgumentNullException(nameof(plan));
+
+			var builders = CreateBuilderInstancesMimickingBuilderOptions(plan.BuilderOptionsList);
 
 			return new BuildJob
 			{
-				BuildPhases = buildPhases,
+				Plan = plan,
 				Builders = builders,
 			};
 		}
 
+		private static Builder[] CreateBuilderInstancesMimickingBuilderOptions(BuilderOptions[] builderOptionsList)
+		{
+			var builders = new Builder[builderOptionsList.Length];
+			for (var i = 0; i < builderOptionsList.Length; i++)
+			{
+				var builderOptions = builderOptionsList[i];
+
+				// Find the related Builder via its BuilderOptions
+				var builderOptionsType = builderOptions.GetType();
+				var builderInfo = BuilderManager.BuilderInfos.Single(entry => entry.OptionsType == builderOptionsType);
+
+				// Create Builder instance and assign its Options
+				var builder = (Builder)Activator.CreateInstance(builderInfo.Type);
+				builder.GetType().GetField("Options").SetValue(builder, builderOptions); // Unfortunately Options field is defined in the Builder<> generic class and not the Builder class.
+
+				builders[i] = builder;
+			}
+			return builders;
+		}
+
 		#endregion
 
-		#region Options
+		#region Plan
 
-		public BuildPhaseInfo[] BuildPhases;
+		public BuildPlan Plan;
 
 		#endregion
 
 		#region Builders
 
-		[SerializeField]
 		public Builder[] Builders;
 
 		#endregion

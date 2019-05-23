@@ -55,6 +55,9 @@ namespace Extenity.BuildMachine.Editor
 					Log.Error($"Builder '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
 				}
 
+				// Get Options type
+				var optionsType = type.GetField("Options").FieldType;
+
 				// Complain about non-serializable fields
 				var nonSerializedFields = type
 					.GetNonSerializedFields()
@@ -69,7 +72,7 @@ namespace Extenity.BuildMachine.Editor
 				// Get build step methods
 				var steps = GatherBuildStepMethods(type);
 
-				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, type, steps);
+				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, type, optionsType, steps);
 			}
 
 			return builderInfos;
