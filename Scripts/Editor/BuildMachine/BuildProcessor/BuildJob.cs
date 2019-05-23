@@ -17,7 +17,7 @@ namespace Extenity.BuildMachine.Editor
 	/// build run. This feature is made possible by specifying multiple <see cref="Builder"/>
 	/// configurations.
 	///
-	/// A Build Job can work in phases (See <see cref="BuildPhase"/>). A Build Phase contains info
+	/// A Build Job can work in phases (See <see cref="BuildPhaseInfo"/>). A Build Phase contains info
 	/// about which Build Steps are run (See  <see cref="BuildStepAttribute"/>).
 	///
 	/// Understanding the flow of the whole build run is essential. For each Build Phase, all
@@ -30,7 +30,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildJob Create(BuildPhase[] buildPhases, params Builder[] builders)
+		public static BuildJob Create(BuildPhaseInfo[] buildPhases, params Builder[] builders)
 		{
 			if (builders.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(builders));
@@ -46,7 +46,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Options
 
-		public BuildPhase[] BuildPhases;
+		public BuildPhaseInfo[] BuildPhases;
 
 		#endregion
 
