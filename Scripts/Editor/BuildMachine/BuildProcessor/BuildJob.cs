@@ -1,5 +1,8 @@
 using System;
+using System.IO;
+using System.Text;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Extenity.BuildMachine.Editor
@@ -52,6 +55,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Builders
 
+		[SerializeField]
 		public Builder[] Builders;
 
 		#endregion
@@ -77,12 +81,35 @@ namespace Extenity.BuildMachine.Editor
 
 		public string SerializeToJson()
 		{
-			return JsonUtility.ToJson(this, true);
+			var config = new JsonSerializerSettings
+			{
+				Formatting = Formatting.Indented,
+				TypeNameHandling = TypeNameHandling.Auto,
+			};
+			var stringBuilder = new StringBuilder();
+			using (var stringWriter = new StringWriter(stringBuilder))
+			{
+				using (var jsonTextWriter = new JsonTextWriter(stringWriter)
+				{
+					Formatting = Formatting.Indented,
+					Indentation = 1,
+					IndentChar = '\t',
+				})
+				{
+					(JsonSerializer.CreateDefault(config)).Serialize(jsonTextWriter, this);
+				}
+			}
+			return stringBuilder.ToString();
+			//return JsonConvert.SerializeObject(this, config); Unfortunately there is no way to specify IndentChar when using this single-liner.
+
+			//return JsonUtility.ToJson(this, true); Unfortunately Unity's Json implementation does not support inheritance.
 		}
 
 		public static BuildJob DeserializeFromJson(string json)
 		{
-			return JsonUtility.FromJson<BuildJob>(json);
+			return JsonConvert.DeserializeObject<BuildJob>(json);
+
+			//return JsonUtility.FromJson<BuildJob>(json); Unfortunately Unity's Json implementation does not support inheritance.
 		}
 
 		#endregion

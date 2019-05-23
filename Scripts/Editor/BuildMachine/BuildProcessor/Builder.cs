@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,11 +23,13 @@ namespace Extenity.BuildMachine.Editor
 	/// just before triggering the actual Unity build. Do any <see cref="AssetDatabase.Refresh"/>
 	/// operations there. Then we start Unity build with all assets ready to be built.
 	/// </remarks>
+	[JsonObject(MemberSerialization.OptOut)]
 	public abstract class Builder
 	{
 		#region Info
 
 		private BuilderInfo _Info;
+		[JsonIgnore]
 		public BuilderInfo Info
 		{
 			get
