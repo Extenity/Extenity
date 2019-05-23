@@ -43,11 +43,8 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Process
 
 		protected abstract IEnumerator Finalize(); // TODO:
-
-		#endregion
 	}
 
 }
