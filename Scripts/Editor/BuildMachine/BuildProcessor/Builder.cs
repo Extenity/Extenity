@@ -46,8 +46,16 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-
 		protected abstract IEnumerator Finalize(); // TODO:
+	}
+
+	public abstract class Builder<TBuilderOptions> : Builder
+	{
+		#region Options
+
+		public TBuilderOptions Options;
+
+		#endregion
 	}
 
 }
