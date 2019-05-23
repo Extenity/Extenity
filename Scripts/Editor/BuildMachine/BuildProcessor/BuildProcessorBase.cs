@@ -47,32 +47,6 @@ namespace Extenity.BuildMachine.Editor
 
 		protected abstract IEnumerator Finalize(); // TODO:
 
-		private IEnumerator RunProcess()
-		{
-			Log.Info($"{Definition.Name} build started.");
-
-			yield return null;
-			//yield return DoBuild();
-
-			/*
-			// Save the unsaved assets before making any moves.
-			AssetDatabase.SaveAssets();
-
-			// Make sure everything is imported.
-			{
-				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-				// And wait for scripts to compile.
-				if (EditorApplication.isCompiling)
-				{
-					throw new Exception("COMPILING");
-				}
-			}
-			*/
-
-			Log.Info($"{Definition.Name} build succeeded.");
-		}
-
 		#endregion
 	}
 
