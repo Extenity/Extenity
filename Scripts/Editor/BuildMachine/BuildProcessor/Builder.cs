@@ -53,6 +53,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Options
 
+		[JsonProperty]
 		public readonly TBuilderOptions Options;
 
 		#endregion

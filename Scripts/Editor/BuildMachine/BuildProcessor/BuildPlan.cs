@@ -1,10 +1,11 @@
 using System;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 
 namespace Extenity.BuildMachine.Editor
 {
 
-	[Serializable]
+	[JsonObject]
 	public class BuildPlan
 	{
 		#region Initialization
@@ -12,6 +13,11 @@ namespace Extenity.BuildMachine.Editor
 		public static BuildPlan Create(BuildPhaseInfo[] buildPhases, params BuilderOptions[] builderOptionsList)
 		{
 			return new BuildPlan(buildPhases, builderOptionsList);
+		}
+
+		private BuildPlan()
+		{
+			// Nothing to do here. This empty constructor allows json deserialization.
 		}
 
 		private BuildPlan(BuildPhaseInfo[] buildPhases, BuilderOptions[] builderOptionsList)
@@ -29,12 +35,14 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Phases
 
+		[JsonProperty]
 		public readonly BuildPhaseInfo[] BuildPhases;
 
 		#endregion
 
 		#region Builder Options
 
+		[JsonProperty]
 		public readonly BuilderOptions[] BuilderOptionsList;
 
 		#endregion

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 using UnityEditor;
 
 namespace Extenity.BuildMachine.Editor
@@ -16,6 +17,7 @@ namespace Extenity.BuildMachine.Editor
 		static BuilderManager()
 		{
 			BuilderInfos = GatherBuilderInfos();
+			BuildJobRunner.InitializeOnLoad();
 		}
 
 		#endregion
@@ -43,9 +45,9 @@ namespace Extenity.BuildMachine.Editor
 				var type = types[i];
 
 				// Make sure the class is serializable
-				if (!type.HasAttribute<SerializableAttribute>())
+				if (!type.HasAttribute<JsonObjectAttribute>())
 				{
-					Log.Error($"Builder '{type.Name}' has no '{nameof(SerializableAttribute)}'.");
+					Log.Error($"Builder '{type.Name}' has no '{nameof(JsonObjectAttribute)}'.");
 				}
 
 				// Get BuilderInfo class attribute
@@ -58,16 +60,17 @@ namespace Extenity.BuildMachine.Editor
 				// Get Options type
 				var optionsType = type.GetField(nameof(Builder<BuilderOptions>.Options)).FieldType;
 
-				// Complain about non-serializable fields
-				var nonSerializedFields = type
-					.GetNonSerializedFields()
-					.Where(field => !field.Name.StartsWith("_"))
-					.ToArray();
-				if (nonSerializedFields.Length > 0)
-				{
-					var text = string.Join(", ", nonSerializedFields.Select(entry => entry.Name));
-					Log.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
-				}
+				// TODO: This is no longer legit. It needs to be implemented for Newtonsoft Json.
+				//// Complain about non-serializable fields
+				//var nonSerializedFields = type
+				//	.GetNonSerializedFields()
+				//	.Where(field => !field.Name.StartsWith("_"))
+				//	.ToArray();
+				//if (nonSerializedFields.Length > 0)
+				//{
+				//	var text = string.Join(", ", nonSerializedFields.Select(entry => entry.Name));
+				//	Log.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
+				//}
 
 				// Get build step methods
 				var steps = GatherBuildStepMethods(type);

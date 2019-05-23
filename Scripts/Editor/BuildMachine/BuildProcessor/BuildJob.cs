@@ -27,7 +27,7 @@ namespace Extenity.BuildMachine.Editor
 	/// multi-platform builds that first outputs the binaries and then deploys them. Designing
 	/// such builds allows failing the whole multi-platform builds if a single platform fails.
 	/// </summary>
-	[Serializable]
+	[JsonObject]
 	public class BuildJob
 	{
 		#region Initialization
@@ -35,6 +35,11 @@ namespace Extenity.BuildMachine.Editor
 		public static BuildJob Create(BuildPlan plan)
 		{
 			return new BuildJob(plan);
+		}
+
+		private BuildJob()
+		{
+			// Nothing to do here. This empty constructor allows json deserialization.
 		}
 
 		private BuildJob(BuildPlan plan)
@@ -72,12 +77,14 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Plan
 
+		[JsonProperty]
 		public readonly BuildPlan Plan;
 
 		#endregion
 
 		#region Builders
 
+		[JsonProperty]
 		public readonly Builder[] Builders;
 
 		#endregion
@@ -129,7 +136,11 @@ namespace Extenity.BuildMachine.Editor
 
 		public static BuildJob DeserializeFromJson(string json)
 		{
-			return JsonConvert.DeserializeObject<BuildJob>(json);
+			var config = new JsonSerializerSettings
+			{
+				TypeNameHandling = TypeNameHandling.Auto,
+			};
+			return JsonConvert.DeserializeObject<BuildJob>(json, config);
 
 			//return JsonUtility.FromJson<BuildJob>(json); Unfortunately Unity's Json implementation does not support inheritance.
 		}

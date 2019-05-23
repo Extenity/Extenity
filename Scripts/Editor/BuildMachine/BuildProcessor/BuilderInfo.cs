@@ -3,6 +3,7 @@ using System;
 namespace Extenity.BuildMachine.Editor
 {
 
+	//[JsonObject] Nope. This is not for serialization.
 	public struct BuilderInfo
 	{
 		public readonly string Name;

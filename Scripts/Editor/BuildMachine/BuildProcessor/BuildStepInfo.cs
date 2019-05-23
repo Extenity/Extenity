@@ -17,6 +17,7 @@ namespace Extenity.BuildMachine.Editor
 		Finalize
 	}
 
+	//[JsonObject] Nope. This is not for serialization.
 	public struct BuildStepInfo
 	{
 		public readonly BuildStepType Type;

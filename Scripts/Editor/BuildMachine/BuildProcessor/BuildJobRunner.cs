@@ -6,6 +6,14 @@ namespace Extenity.BuildMachine.Editor
 
 	public static class BuildJobRunner
 	{
+		#region Initialization
+
+		internal static void InitializeOnLoad()
+		{
+		}
+
+		#endregion
+
 		#region Running Job
 
 		public static BuildJob RunningJob;
@@ -41,7 +49,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region MyRegion
+		#region Run
 
 		//private IEnumerator Run()
 		//{
