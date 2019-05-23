@@ -15,20 +15,20 @@ namespace Extenity.BuildMachine.Editor
 
 		static BuilderManager()
 		{
-			BuildProcessors = GatherBuildProcessorInfo();
+			BuilderInfos = GatherBuilderInfos();
 		}
 
 		#endregion
 
-		#region Build Processors
+		#region Builder Infos
 
-		public static readonly BuildProcessorDefinition[] BuildProcessors;
+		public static readonly BuilderInfo[] BuilderInfos;
 
 		#endregion
 
 		#region Gather Build Processors
 
-		private static BuildProcessorDefinition[] GatherBuildProcessorInfo()
+		private static BuilderInfo[] GatherBuilderInfos()
 		{
 			var types = (
 					from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -37,7 +37,7 @@ namespace Extenity.BuildMachine.Editor
 					select type
 				).ToList();
 
-			var buildProcessors = new BuildProcessorDefinition[types.Count];
+			var buildProcessors = new BuilderInfo[types.Count];
 			for (var i = 0; i < types.Count; i++)
 			{
 				var type = types[i];
@@ -69,7 +69,7 @@ namespace Extenity.BuildMachine.Editor
 				// Get build step methods
 				var steps = CollectProcessorMethods(type);
 
-				buildProcessors[i] = new BuildProcessorDefinition(infoAttribute?.Name, type, steps);
+				buildProcessors[i] = new BuilderInfo(infoAttribute?.Name, type, steps);
 			}
 
 			return buildProcessors;

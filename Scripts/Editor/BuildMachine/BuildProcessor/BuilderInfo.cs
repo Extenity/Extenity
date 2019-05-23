@@ -3,7 +3,7 @@ using System;
 namespace Extenity.BuildMachine.Editor
 {
 
-	public struct BuildProcessorDefinition
+	public struct BuilderInfo
 	{
 		public readonly string Name;
 		public readonly Type Type;
@@ -13,7 +13,7 @@ namespace Extenity.BuildMachine.Editor
 			!string.IsNullOrWhiteSpace(Name) &&
 			Type != null;
 
-		public BuildProcessorDefinition(string name, Type type, BuildStepDefinition[] steps)
+		public BuilderInfo(string name, Type type, BuildStepDefinition[] steps)
 		{
 			Name = name;
 			Type = type;

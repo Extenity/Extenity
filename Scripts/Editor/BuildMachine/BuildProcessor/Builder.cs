@@ -24,20 +24,20 @@ namespace Extenity.BuildMachine.Editor
 	/// </remarks>
 	public abstract class Builder
 	{
-		#region Definition
+		#region Info
 
-		private BuildProcessorDefinition _Definition;
-		public BuildProcessorDefinition Definition
+		private BuilderInfo _Info;
+		public BuilderInfo Info
 		{
 			get
 			{
-				if (!_Definition.IsValid)
+				if (!_Info.IsValid)
 				{
 					var type = GetType();
-					_Definition = BuilderManager.BuildProcessors.First(entry => entry.Type == type);
-					Debug.Assert(_Definition.IsValid);
+					_Info = BuilderManager.BuilderInfos.First(entry => entry.Type == type);
+					Debug.Assert(_Info.IsValid);
 				}
-				return _Definition;
+				return _Info;
 			}
 		}
 
