@@ -21,10 +21,9 @@ namespace Extenity.BuildMachine.Editor
 	/// about which Build Steps are run (See  <see cref="BuildStepAttribute"/>).
 	///
 	/// Understanding the flow of the whole build run is essential. For each Build Phase, all
-	/// Build Processors are run with the Build Steps defined in this Build Phase. This allows
-	/// designing multi-platform builds that first outputs the binaries and then deploys them.
-	/// Designing such builds allows failing the whole multi-platform builds if a single platform
-	/// fails.
+	/// Builders are run with the Build Steps defined in this Build Phase. This allows designing
+	/// multi-platform builds that first outputs the binaries and then deploys them. Designing
+	/// such builds allows failing the whole multi-platform builds if a single platform fails.
 	/// </summary>
 	[Serializable]
 	public class BuildJob

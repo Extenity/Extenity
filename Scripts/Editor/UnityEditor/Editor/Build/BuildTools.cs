@@ -411,7 +411,7 @@ namespace Extenity.BuildToolbox.Editor
 			}
 			else
 			{
-				Log.Info("Unity reported successful build. Continuing the build process.");
+				Log.Info("Unity reported successful build.");
 			}
 
 			BuildReportTools.CreateBuildReport();

@@ -26,7 +26,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Gather Build Processors
+		#region Gather Builder and Build Step Info
 
 		private static BuilderInfo[] GatherBuilderInfos()
 		{
@@ -37,7 +37,7 @@ namespace Extenity.BuildMachine.Editor
 					select type
 				).ToList();
 
-			var buildProcessors = new BuilderInfo[types.Count];
+			var builderInfos = new BuilderInfo[types.Count];
 			for (var i = 0; i < types.Count; i++)
 			{
 				var type = types[i];
@@ -45,14 +45,14 @@ namespace Extenity.BuildMachine.Editor
 				// Make sure the class is serializable
 				if (!type.HasAttribute<SerializableAttribute>())
 				{
-					Log.Error($"Build processor '{type.Name}' has no '{nameof(SerializableAttribute)}'.");
+					Log.Error($"Builder '{type.Name}' has no '{nameof(SerializableAttribute)}'.");
 				}
 
-				// Get BuildProcessor class attribute
+				// Get BuilderInfo class attribute
 				var infoAttribute = type.GetAttribute<BuilderInfoAttribute>(true);
 				if (infoAttribute == null)
 				{
-					Log.Error($"Build processor '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
+					Log.Error($"Builder '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
 				}
 
 				// Complain about non-serializable fields
@@ -63,23 +63,19 @@ namespace Extenity.BuildMachine.Editor
 				if (nonSerializedFields.Length > 0)
 				{
 					var text = string.Join(", ", nonSerializedFields.Select(entry => entry.Name));
-					Log.Error($"Build processor '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
+					Log.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
 				}
 
 				// Get build step methods
-				var steps = CollectProcessorMethods(type);
+				var steps = CollectBuildStepMethods(type);
 
-				buildProcessors[i] = new BuilderInfo(infoAttribute?.Name, type, steps);
+				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, type, steps);
 			}
 
-			return buildProcessors;
+			return builderInfos;
 		}
 
-		#endregion
-
-		#region Collect Processor Methods
-
-		public static BuildStepDefinition[] CollectProcessorMethods(Type type)
+		private static BuildStepDefinition[] CollectBuildStepMethods(Type type)
 		{
 			var methods = type
 				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
