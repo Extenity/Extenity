@@ -352,6 +352,20 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
+		public static bool IsInRange<T>(this T[] source, int index)
+		{
+			if (source == null)
+				return false;
+			return index >= 0 && index < source.Length;
+		}
+
+		public static bool IsInRange<T>(this IList<T> source, int index)
+		{
+			if (source == null)
+				return false;
+			return index >= 0 && index < source.Count;
+		}
+
 		public static int IndexOf<T>(this T[] source, T value)
 		{
 			return Array.IndexOf(source, value);

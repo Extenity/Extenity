@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Extenity.DataToolbox;
 using Newtonsoft.Json;
 
 namespace Extenity.BuildMachine.Editor
@@ -93,9 +94,27 @@ namespace Extenity.BuildMachine.Editor
 
 		public int CurrentPhase = -1;
 		public int CurrentBuilder = -1;
-		public string LastProcessedStep = "";
+		public string PreviousStep = "";
+		public string CurrentStep = "";
+		/// <summary>
+		/// This is only used for calling the method of current step. Do not use it elsewhere.
+		/// </summary>
+		[JsonIgnore]
+		public BuildStepInfo _CurrentStepCached = BuildStepInfo.Empty;
 
 		public bool IsJustCreated => CurrentPhase < 0;
+		public bool IsLastBuilder => CurrentBuilder >= Builders.Length - 1;
+		public bool IsLastPhase => CurrentPhase >= Plan.BuildPhases.Length - 1;
+		public bool IsPreviousStepAssigned => !string.IsNullOrEmpty(PreviousStep);
+		public bool IsCurrentStepAssigned => !string.IsNullOrEmpty(CurrentStep);
+
+		#endregion
+
+		#region Profiling
+
+		public DateTime StartTime;
+		public DateTime LastStepStartTime;
+		public DateTime LastHaltTime;
 
 		#endregion
 
@@ -118,7 +137,7 @@ namespace Extenity.BuildMachine.Editor
 			var json = InternalSerializeToJson(this);
 
 			// Consistency check
-			var deserialized = DeserializeFromJson(json);
+			var deserialized = InternalDeserializeFromJson(json);
 			var json2 = InternalSerializeToJson(deserialized);
 			if (json != json2)
 			{
@@ -161,7 +180,7 @@ namespace Extenity.BuildMachine.Editor
 			var job = InternalDeserializeFromJson(json);
 
 			// Consistency check
-			var json2 = job.SerializeToJson();
+			var json2 = InternalSerializeToJson(job);
 			if (json != json2)
 			{
 				Log.Error("Json-1:\n" + json);
@@ -181,6 +200,44 @@ namespace Extenity.BuildMachine.Editor
 			return JsonConvert.DeserializeObject<BuildJob>(json, config);
 
 			//return JsonUtility.FromJson<BuildJob>(json); Unfortunately Unity's Json implementation does not support inheritance.
+		}
+
+		#endregion
+
+		#region ToString
+
+		public string ToStringCurrentPhase()
+		{
+			if (Plan == null)
+			{
+				return CurrentPhase + "-[NullPlan]";
+			}
+			if (Plan.BuildPhases.IsNullOrEmpty())
+			{
+				return CurrentPhase + "-[NullPhases]";
+			}
+			if (!Plan.BuildPhases.IsInRange(CurrentPhase))
+			{
+				return CurrentPhase + "-[OutOfRange]";
+			}
+			return CurrentPhase + "-" + Plan.BuildPhases[CurrentPhase].Name;
+		}
+
+		public string ToStringCurrentBuilder()
+		{
+			if (Builders.IsNullOrEmpty())
+			{
+				return CurrentBuilder + "-[NullBuilders]";
+			}
+			if (!Builders.IsInRange(CurrentBuilder))
+			{
+				return CurrentBuilder + "-[OutOfRange]";
+			}
+			if (Builders[CurrentBuilder] == null)
+			{
+				return CurrentBuilder + "-[NullBuilder]";
+			}
+			return CurrentBuilder + "-" + Builders[CurrentBuilder].Info.Name;
 		}
 
 		#endregion
