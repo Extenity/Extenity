@@ -206,6 +206,7 @@ namespace Extenity.BuildMachine.Editor
 								Job.CurrentBuilder = 0;
 								Job.CurrentPhase++;
 								Job.CurrentStep = GetFirstStep();
+								delayedCaller.AddDelayedCall(Job.Builders[Job.CurrentBuilder].DoBuilderInitializationForCurrentPhase);
 							}
 							else
 							{
@@ -214,7 +215,6 @@ namespace Extenity.BuildMachine.Editor
 								Job.CurrentPhase = -2;
 								Job.CurrentStep = "";
 								Job._CurrentStepCached = BuildStepInfo.Empty;
-
 								delayedCaller.AddDelayedCall(() => DoBuildRunFinalization(true));
 								yield break;
 							}
@@ -407,6 +407,8 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			UnsetRunningJob();
+
+			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
 		}
 
 		#endregion
