@@ -16,8 +16,25 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Running Job
 
-		public static BuildJob RunningJob;
+		private static BuildJob _RunningJob;
+		public static BuildJob RunningJob => _RunningJob;
 		public static bool IsRunning => RunningJob != null;
+
+		private static void SetRunningJob(BuildJob job)
+		{
+			if (_RunningJob != null)
+			{
+				throw new Exception($"Tried to set {nameof(RunningJob)} while there was already an existing one.");
+			}
+			Log.Info($"Setting the {nameof(RunningJob)}");
+			_RunningJob = job;
+		}
+
+		private static void UnsetRunningJob()
+		{
+			Log.Info($"Unsetting the {nameof(RunningJob)}. Previously was '{(_RunningJob != null ? "set" : "not set")}'.");
+			_RunningJob = null;
+		}
 
 		#endregion
 
@@ -29,7 +46,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				throw new Exception("Tried to start a build job while there is already a running one.");
 			}
-			RunningJob = job;
+			SetRunningJob(job);
 
 			Log.Info($"Build '{RunningJob.Plan.Name}' started.");
 			Debug.Assert(RunningJob.IsJustCreated);
@@ -52,12 +69,12 @@ namespace Extenity.BuildMachine.Editor
 			{
 				throw new Exception("Tried to continue a build job while there is already a running one.");
 			}
-			RunningJob = job;
+			SetRunningJob(job);
 
 			if (RunningJob.IsCurrentStepAssigned)
 			{
 				// See 11917631.
-				RunningJob = null;
+				UnsetRunningJob();
 				throw new Exception($"Build job '{job.Plan.Name}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
 			}
 
@@ -366,17 +383,30 @@ namespace Extenity.BuildMachine.Editor
 		{
 			Log.Info($"Finalizing the '{(succeeded ? "succeeded" : "failed")}' build job.");
 
-			RunningJob.BuildRunFinalization(succeeded);
+			// Execute finalization on RunningJob
+			try
+			{
+				if (RunningJob == null)
+					throw new Exception($"{nameof(RunningJob)} was not set.");
 
+				RunningJob.BuildRunFinalization(succeeded);
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Failed to execute finalization on job. Exception: " + exception);
+			}
+
+			var planName = RunningJob?.Plan?.Name ?? "[NA]";
 			if (succeeded)
 			{
-				Log.Info($"Build '{RunningJob.Plan.Name}' succeeded.");
+				Log.Info($"Build '{planName}' succeeded.");
 			}
 			else
 			{
-				Log.Error($"Build '{RunningJob.Plan.Name}' failed. See the log for details.");
+				Log.Error($"Build '{planName}' failed. See the log for details.");
 			}
-			RunningJob = null;
+
+			UnsetRunningJob();
 		}
 
 		#endregion
