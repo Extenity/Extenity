@@ -72,12 +72,25 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void OnException(Exception exception)
 		{
+			Log.Error("Exception caught in Build Step. Exception: " + exception);
+
+			// NOTE: Keep this line at the TOP, just after the log line above.
+			// Get rid of the survival file immediately, without making any moves.
+			// The build was failed. So even a slight possibility of reloading
+			// the survival file on next assembly reload is a deal breaker.
+			DeleteRunningJobFile();
+
 			if (RunningJob != null && RunningJob.IsCurrentBuilderAssigned)
 			{
 				RunningJob.Builders[RunningJob.CurrentBuilder].DoBuilderFinalizationForCurrentPhase();
 			}
 
 			DoBuildRunFinalization(false);
+
+			// NOTE: Keep this line at the BOTTOM.
+			// There is a possibility that a survival file could be created in the
+			// operations above. So make sure that file will be gone too.
+			DeleteRunningJobFile();
 		}
 
 		private static IEnumerator Run()
