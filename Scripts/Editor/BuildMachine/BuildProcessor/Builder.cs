@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEditor;
@@ -46,7 +45,12 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		protected abstract IEnumerator Finalize(); // TODO:
+		#region Finalization
+
+		public abstract void DoBuilderInitializationForCurrentPhase();
+		public abstract void DoBuilderFinalizationForCurrentPhase();
+
+		#endregion
 	}
 
 	public abstract class Builder<TBuilderOptions> : Builder

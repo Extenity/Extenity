@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.ParallelToolbox;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
@@ -40,7 +41,9 @@ namespace Extenity.BuildMachine.Editor
 			RunningJob.CurrentBuilder = 0;
 			RunningJob.StartTime = Now;
 
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run());
+			RunningJob.BuildRunInitialization();
+
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
 
 		private static void Continue(BuildJob job)
@@ -60,12 +63,22 @@ namespace Extenity.BuildMachine.Editor
 
 			Log.Info($"Continuing the build '{RunningJob.Plan.Name}' at phase '{RunningJob.ToStringCurrentPhase()}' and builder '{RunningJob.ToStringCurrentBuilder()}' with previously processed step '{RunningJob.PreviousStep}'.");
 
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run());
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
 
 		#endregion
 
 		#region Run
+
+		private static void OnException(Exception exception)
+		{
+			if (RunningJob != null && RunningJob.IsCurrentBuilderAssigned)
+			{
+				RunningJob.Builders[RunningJob.CurrentBuilder].DoBuilderFinalizationForCurrentPhase();
+			}
+
+			DoBuildRunFinalization(false);
+		}
 
 		private static IEnumerator Run()
 		{
@@ -118,6 +131,10 @@ namespace Extenity.BuildMachine.Editor
 			var Builders = RunningJob.Builders;
 			var BuildPhases = RunningJob.Plan.BuildPhases;
 
+			// Yes making it local is not wise for performance. But better for consistency.
+			// Keep it this way.
+			var delayedCaller = new DelayedCaller();
+
 			// Find the next step to be processed. If there is none left, finalize the build run.
 			try
 			{
@@ -125,6 +142,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					// Current builder is just getting started. Proceed to first step.
 					Job.CurrentStep = GetFirstStep();
+					delayedCaller.AddDelayedCall(Job.Builders[Job.CurrentBuilder].DoBuilderInitializationForCurrentPhase);
 				}
 				else
 				{
@@ -138,12 +156,16 @@ namespace Extenity.BuildMachine.Editor
 					else
 					{
 						// Finished all steps of current builder. See if there is a next builder.
+						Job.CurrentStep = "";
 						Job.PreviousStep = "";
+						delayedCaller.AddDelayedCall(Job.Builders[Job.CurrentBuilder].DoBuilderFinalizationForCurrentPhase);
+
 						if (!Job.IsLastBuilder)
 						{
 							// Proceed to next builder and start from its first step.
 							Job.CurrentBuilder++;
 							Job.CurrentStep = GetFirstStep();
+							delayedCaller.AddDelayedCall(Job.Builders[Job.CurrentBuilder].DoBuilderInitializationForCurrentPhase);
 						}
 						else
 						{
@@ -163,7 +185,7 @@ namespace Extenity.BuildMachine.Editor
 								Job.CurrentStep = "";
 								Job._CurrentStepCached = BuildStepInfo.Empty;
 
-								DoBuildRunFinalization();
+								delayedCaller.AddDelayedCall(() => DoBuildRunFinalization(true));
 								yield break;
 							}
 						}
@@ -172,6 +194,10 @@ namespace Extenity.BuildMachine.Editor
 			}
 			catch (Exception exception)
 			{
+				// The operation in this try block should be minimal and straightforward.
+				// It just selects the next build step to be executed and while doing that,
+				// determines which callback methods should be called and delays those calls.
+				// Should anything went wrong, means there is definitely an internal error.
 				throw new InternalException(1121821, exception);
 			}
 			// Save current state just after determining the current step. So the next time
@@ -179,6 +205,12 @@ namespace Extenity.BuildMachine.Editor
 			// a CurrentStep specified in it, which is unexpected and means something went wrong
 			// in the middle of step execution. See 11917631.
 			SaveRunningJobToFile();
+
+			// After saving the survival file, we can call the callbacks delayed above.
+			{
+				delayedCaller.CallAllDelayedCalls();
+				delayedCaller = null;
+			}
 
 			// Run the step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -317,13 +349,20 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Run Finalization
 
-		private static void DoBuildRunFinalization()
+		private static void DoBuildRunFinalization(bool succeeded)
 		{
-			Log.Info("Finalizing the build job.");
+			Log.Info($"Finalizing the '{(succeeded ? "succeeded" : "failed")}' build job.");
 
-			// TODO: Finalization. Do version increment, call the virtual finalization method of job, etc.
+			RunningJob.BuildRunFinalization(succeeded);
 
-			Log.Info($"Build '{RunningJob.Plan.Name}' succeeded.");
+			if (succeeded)
+			{
+				Log.Info($"Build '{RunningJob.Plan.Name}' succeeded.");
+			}
+			else
+			{
+				Log.Error($"Build '{RunningJob.Plan.Name}' failed. See the log for details.");
+			}
 			RunningJob = null;
 		}
 

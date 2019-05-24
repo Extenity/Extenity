@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
 
@@ -105,6 +106,7 @@ namespace Extenity.BuildMachine.Editor
 		public bool IsJustCreated => CurrentPhase < 0;
 		public bool IsLastBuilder => CurrentBuilder >= Builders.Length - 1;
 		public bool IsLastPhase => CurrentPhase >= Plan.BuildPhases.Length - 1;
+		public bool IsCurrentBuilderAssigned => Builders.IsInRange(CurrentBuilder);
 		public bool IsPreviousStepAssigned => !string.IsNullOrEmpty(PreviousStep);
 		public bool IsCurrentStepAssigned => !string.IsNullOrEmpty(CurrentStep);
 
@@ -118,11 +120,38 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
+		#region Version Increment
+
+		public BuildTools.TemporarilyIncrementVersion TemporarilyIncrementVersion;
+
+		#endregion
+
 		#region Start
 
 		public void Start()
 		{
 			BuildJobRunner.Start(this);
+		}
+
+		#endregion
+
+		#region Build Run Initialization
+
+		internal void BuildRunInitialization()
+		{
+			TemporarilyIncrementVersion = BuildTools.TemporarilyIncrementVersion.Create(Plan.AddMajorVersion, Plan.AddMinorVersion, Plan.AddBuildVersion);
+		}
+
+		#endregion
+
+		#region Build Run Finalization
+
+		internal void BuildRunFinalization(bool succeeded)
+		{
+			if (!succeeded)
+			{
+				TemporarilyIncrementVersion.Revert();
+			}
 		}
 
 		#endregion

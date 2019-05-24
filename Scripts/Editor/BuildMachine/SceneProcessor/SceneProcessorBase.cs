@@ -62,7 +62,13 @@ namespace Extenity.BuildMachine.Editor
 				EditorSceneManagerTools.EnforceUserToSaveAllModifiedScenes("First you need to save the scene before processing.");
 			}
 			var processorInstance = (TSceneProcessor)Activator.CreateInstance(typeof(TSceneProcessor));
-			yield return EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true));
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true), OnException);
+		}
+
+		private static void OnException(Exception exception)
+		{
+			// TODO: Reset the state of processor and make it ready for another run.
+			Log.Error("Exception catching in scene processor is not implemented yet. Exception: " + exception);
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
