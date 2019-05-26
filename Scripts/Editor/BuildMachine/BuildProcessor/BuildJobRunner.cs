@@ -87,7 +87,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Run
 
-		private static void OnException(Exception exception)
+		private static bool OnException(Exception exception)
 		{
 			Log.Error("Exception caught in Build Step. Exception: " + exception);
 
@@ -108,6 +108,8 @@ namespace Extenity.BuildMachine.Editor
 			// There is a possibility that a survival file could be created in the
 			// operations above. So make sure that file will be gone too.
 			DeleteRunningJobFile();
+
+			return false;
 		}
 
 		private static IEnumerator Run()

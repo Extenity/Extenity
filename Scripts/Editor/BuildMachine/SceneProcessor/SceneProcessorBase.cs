@@ -65,10 +65,11 @@ namespace Extenity.BuildMachine.Editor
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(processorInstance.DoProcessScene(scene, configurationName, true), OnException);
 		}
 
-		private static void OnException(Exception exception)
+		private static bool OnException(Exception exception)
 		{
 			// TODO: Reset the state of processor and make it ready for another run.
 			Log.Error("Exception catching in scene processor is not implemented yet. Exception: " + exception);
+			return false;
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
