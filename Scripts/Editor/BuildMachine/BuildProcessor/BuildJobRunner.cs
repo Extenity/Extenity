@@ -154,7 +154,10 @@ namespace Extenity.BuildMachine.Editor
 						var operations = Job.DelayedAssemblyReloadingOperations;
 						Job.DelayedAssemblyReloadingOperations = null;
 
-						operations.InvokeOneShot();
+						foreach (var operation in operations)
+						{
+							operation.Invoke();
+						}
 					}
 				}
 
@@ -301,6 +304,10 @@ namespace Extenity.BuildMachine.Editor
 
 			string GetFirstStep()
 			{
+				if (!BuildPhases.IsInRange(Job.CurrentPhase) || 
+				    !Builders.IsInRange(Job.CurrentBuilder))
+					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
+
 				var currentPhase = BuildPhases[Job.CurrentPhase];
 				var currentBuilder = Builders[Job.CurrentBuilder];
 				var firstStepOfCurrentPhase = currentBuilder.Info.Steps.FirstOrDefault(entry => currentPhase.IncludedSteps.Contains(entry.Type));
@@ -318,6 +325,9 @@ namespace Extenity.BuildMachine.Editor
 			string GetNextStep(string previousStep)
 			{
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
+				if (!BuildPhases.IsInRange(Job.CurrentPhase) || 
+				    !Builders.IsInRange(Job.CurrentBuilder))
+					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
 				var currentPhase = BuildPhases[Job.CurrentPhase];
 				var currentBuilder = Builders[Job.CurrentBuilder];

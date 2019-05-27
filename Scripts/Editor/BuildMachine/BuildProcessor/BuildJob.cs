@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -138,15 +139,14 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Delayed Assembly-Reloading Operations
 
-		[JsonIgnore]
-		internal ExtenityEvent DelayedAssemblyReloadingOperations;
+		internal List<Action> DelayedAssemblyReloadingOperations;
 
-		public void DelayAssemblyReloadingOperation(ExtenityEvent.MethodDefinition action)
+		public void DelayAssemblyReloadingOperation(Action action)
 		{
 			if (DelayedAssemblyReloadingOperations == null)
-				DelayedAssemblyReloadingOperations = new ExtenityEvent();
+				DelayedAssemblyReloadingOperations = new List<Action>();
 
-			DelayedAssemblyReloadingOperations.AddListener(action);
+			DelayedAssemblyReloadingOperations.Add(action);
 		}
 
 		#endregion
