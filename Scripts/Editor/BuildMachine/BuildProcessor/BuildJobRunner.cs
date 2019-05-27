@@ -116,8 +116,9 @@ namespace Extenity.BuildMachine.Editor
 				{
 					try
 					{
-						EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
-						EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
+						BuildMachineTools.LoadBuildMachineLayout();
+						//EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
+						//EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
 					}
 					catch
 					{
