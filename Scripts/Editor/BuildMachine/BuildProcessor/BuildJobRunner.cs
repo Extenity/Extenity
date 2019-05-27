@@ -3,9 +3,11 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using Extenity.ApplicationToolbox.Editor;
+using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
@@ -47,20 +49,27 @@ namespace Extenity.BuildMachine.Editor
 			{
 				throw new Exception("Tried to start a build job while there is already a running one.");
 			}
-			SetRunningJob(job);
 
-			Log.Info($"Build '{RunningJob.Plan.Name}' started.");
+			Log.Info($"Build '{job.Plan.Name}' started.");
+			SetRunningJob(job);
 			Debug.Assert(RunningJob.IsJustCreated);
 			Debug.Assert(RunningJob.CurrentPhase == -1);
 			Debug.Assert(RunningJob.CurrentBuilder == -1);
 			Debug.Assert(!RunningJob.IsPreviousStepAssigned);
 			Debug.Assert(!RunningJob.IsCurrentStepAssigned);
-			RunningJob.CurrentPhase = 0;
-			RunningJob.CurrentBuilder = 0;
 			RunningJob.StartTime = Now;
+
+			if (BuildTools.IsCompiling)
+			{
+				throw new Exception("Tried to start a build job in the middle of an ongoing compilation.");
+			}
+
+			ChecksBeforeStartOrContinue();
 
 			RunningJob.BuildRunInitialization();
 
+			RunningJob.CurrentPhase = 0;
+			RunningJob.CurrentBuilder = 0;
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
 
@@ -79,9 +88,38 @@ namespace Extenity.BuildMachine.Editor
 				throw new Exception($"Build job '{job.Plan.Name}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
 			}
 
+			if (BuildTools.IsCompiling)
+			{
+				throw new Exception("Tried to continue a build job in the middle of an ongoing compilation.");
+			}
+
+			ChecksBeforeStartOrContinue();
+
 			Log.Info($"Continuing the build '{RunningJob.Plan.Name}' at phase '{RunningJob.ToStringCurrentPhase()}' and builder '{RunningJob.ToStringCurrentBuilder()}' with previously processed step '{RunningJob.PreviousStep}'.");
 
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
+		}
+
+		private static void ChecksBeforeStartOrContinue()
+		{
+			// Disable auto-refresh
+			{
+				EditorPreferencesTools.DisableAutoRefresh();
+			}
+
+			// Make console fullscreen
+			if (!BuildTools.IsBatchMode)
+			{
+				try
+				{
+					EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
+					EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
+				}
+				catch
+				{
+					// Ignored
+				}
+			}
 		}
 
 		#endregion
@@ -119,6 +157,21 @@ namespace Extenity.BuildMachine.Editor
 			// Do not add variables like 'currentPhase' here.
 			var Job = RunningJob;
 
+			// The assets should be saved and refreshed at the very beginning of compilation
+			// or continuing the compilation after assembly reload.
+			{
+				var haltExecution = CheckBeforeStartingOrContinuing();
+				if (haltExecution)
+				{
+					RunningJob.LastHaltTime = Now;
+					Log.Info("Halting the execution until next assembly reload (Start/Continue).");
+					yield break;
+				}
+				else
+				{
+					RunningJob.LastHaltTime = default;
+				}
+			}
 
 			while (IsRunning)
 			{
@@ -128,7 +181,7 @@ namespace Extenity.BuildMachine.Editor
 					if (haltExecution)
 					{
 						RunningJob.LastHaltTime = Now;
-						Log.Info("Halting the execution before step, until next assembly reload.");
+						Log.Info("Halting the execution until next assembly reload (Before step).");
 						yield break;
 					}
 					else
@@ -180,7 +233,7 @@ namespace Extenity.BuildMachine.Editor
 					if (haltExecution)
 					{
 						RunningJob.LastHaltTime = Now;
-						Log.Info("Halting the execution after step, until next assembly reload.");
+						Log.Info("Halting the execution until next assembly reload (After step).");
 						yield break;
 					}
 					else
@@ -408,6 +461,36 @@ namespace Extenity.BuildMachine.Editor
 		#endregion
 
 		#region Check Before/After Step
+
+		private static bool CheckBeforeStartingOrContinuing()
+		{
+			var haltExecution = false;
+
+			// At this point, there should be no ongoing compilations. Build system
+			// would not be happy if there is a compilation while it starts the process.
+			// Otherwise execution gets really messy.
+			if (EditorApplication.isCompiling)
+			{
+				throw new Exception("Compilation is not allowed at the start of a build run or when continuing the build run.");
+			}
+
+			// Save the unsaved assets before making any moves.
+			AssetDatabase.SaveAssets();
+
+			// Make sure everything is imported.
+			{
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+				// And wait for scripts to compile.
+				if (EditorApplication.isCompiling)
+				{
+					haltExecution = true;
+					SaveRunningJobToFile();
+				}
+			}
+
+			return haltExecution;
+		}
 
 		private static bool CheckBeforeStep()
 		{
