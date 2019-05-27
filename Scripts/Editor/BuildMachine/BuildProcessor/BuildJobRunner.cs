@@ -205,6 +205,7 @@ namespace Extenity.BuildMachine.Editor
 			var delayedCaller = new DelayedCaller();
 
 			// Find the next step to be processed. If there is none left, finalize the build run.
+			var completed = false;
 			try
 			{
 				if (!Job.IsPreviousStepAssigned)
@@ -255,7 +256,7 @@ namespace Extenity.BuildMachine.Editor
 								Job.CurrentStep = "";
 								Job._CurrentStepCached = BuildStepInfo.Empty;
 								delayedCaller.AddDelayedCall(() => DoBuildRunFinalization(true));
-								yield break;
+								completed = true;
 							}
 						}
 					}
@@ -279,6 +280,11 @@ namespace Extenity.BuildMachine.Editor
 			{
 				delayedCaller.CallAllDelayedCalls();
 				delayedCaller = null;
+			}
+
+			if (completed)
+			{
+				yield break;
 			}
 
 			// Run the step
