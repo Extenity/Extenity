@@ -112,15 +112,18 @@ namespace Extenity.BuildMachine.Editor
 			// Make console fullscreen
 			if (!BuildTools.IsBatchMode)
 			{
-				try
+				EditorApplication.delayCall += () =>
 				{
-					EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
-					EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
-				}
-				catch
-				{
-					// Ignored
-				}
+					try
+					{
+						EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
+						EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
+					}
+					catch
+					{
+						// Ignored
+					}
+				};
 			}
 		}
 
