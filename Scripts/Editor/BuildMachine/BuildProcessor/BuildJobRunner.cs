@@ -43,15 +43,16 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Start
 
-		internal static void Start(BuildJob job)
+		internal static void Start(BuildJob _job)
 		{
+			var jobPlanName = _job.NameSafe();
 			if (IsRunning)
 			{
-				throw new Exception("Tried to start a build job while there is already a running one.");
+				throw new Exception($"Tried to start build job '{jobPlanName}' while there is already a running one.");
 			}
 
-			Log.Info($"Build '{job.Plan.Name}' started.");
-			SetRunningJob(job);
+			Log.Info($"Build '{jobPlanName}' started.");
+			SetRunningJob(_job);
 			Debug.Assert(RunningJob.IsJustCreated);
 			Debug.Assert(RunningJob.CurrentPhase == -1);
 			Debug.Assert(RunningJob.CurrentBuilder == -1);
@@ -73,19 +74,20 @@ namespace Extenity.BuildMachine.Editor
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
 
-		private static void Continue(BuildJob job)
+		private static void Continue(BuildJob _job)
 		{
+			var jobPlanName = _job.NameSafe();
 			if (IsRunning)
 			{
-				throw new Exception("Tried to continue a build job while there is already a running one.");
+				throw new Exception($"Tried to continue build job '{jobPlanName}' while there is already a running one.");
 			}
-			SetRunningJob(job);
+			SetRunningJob(_job);
 
 			if (RunningJob.IsCurrentStepAssigned)
 			{
 				// See 11917631.
 				UnsetRunningJob();
-				throw new Exception($"Build job '{job.Plan.Name}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
+				throw new Exception($"Build job '{jobPlanName}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
 			}
 
 			if (BuildTools.IsCompiling)
@@ -95,7 +97,7 @@ namespace Extenity.BuildMachine.Editor
 
 			ChecksBeforeStartOrContinue();
 
-			Log.Info($"Continuing the build '{RunningJob.Plan.Name}' at phase '{RunningJob.ToStringCurrentPhase()}' and builder '{RunningJob.ToStringCurrentBuilder()}' with previously processed step '{RunningJob.PreviousStep}'.");
+			Log.Info($"Continuing the build '{RunningJob.Name}' at phase '{RunningJob.ToStringCurrentPhase()}' and builder '{RunningJob.ToStringCurrentBuilder()}' with previously processed step '{RunningJob.PreviousStep}'.");
 
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
@@ -579,14 +581,13 @@ namespace Extenity.BuildMachine.Editor
 				Log.Error("Failed to execute finalization on job. Exception: " + exception);
 			}
 
-			var planName = RunningJob?.Plan?.Name ?? "[NA]";
 			if (succeeded)
 			{
-				Log.Info($"Build '{planName}' succeeded.");
+				Log.Info($"Build '{RunningJob.NameSafe()}' succeeded.");
 			}
 			else
 			{
-				Log.Error($"Build '{planName}' failed. See the log for details.");
+				Log.Error($"Build '{RunningJob.NameSafe()}' failed. See the log for details.");
 			}
 
 			UnsetRunningJob();

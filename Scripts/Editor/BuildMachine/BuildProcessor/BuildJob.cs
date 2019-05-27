@@ -79,6 +79,20 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
+		#region Metadata
+
+		public string Name
+		{
+			get
+			{
+				if (Plan == null)
+					return "[NA-Plan]";
+				return Plan.Name;
+			}
+		}
+
+		#endregion
+
 		#region Plan
 
 		[JsonProperty]
@@ -283,6 +297,20 @@ namespace Extenity.BuildMachine.Editor
 				return CurrentBuilder + "-[NullBuilder]";
 			}
 			return CurrentBuilder + "-" + Builders[CurrentBuilder].Info.Name;
+		}
+
+		#endregion
+	}
+
+	public static class BuildJobTools
+	{
+		#region Metadata
+
+		public static string NameSafe(this BuildJob job)
+		{
+			if (job == null)
+				return "[NA]";
+			return job.Name;
 		}
 
 		#endregion
