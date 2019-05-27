@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
+using Extenity.MessagingToolbox;
 using Newtonsoft.Json;
 
 namespace Extenity.BuildMachine.Editor
@@ -131,6 +132,21 @@ namespace Extenity.BuildMachine.Editor
 		public void Start()
 		{
 			BuildJobRunner.Start(this);
+		}
+
+		#endregion
+
+		#region Delayed Assembly-Reloading Operations
+
+		[JsonIgnore]
+		internal ExtenityEvent DelayedAssemblyReloadingOperations;
+
+		public void DelayAssemblyReloadingOperation(ExtenityEvent.MethodDefinition action)
+		{
+			if (DelayedAssemblyReloadingOperations == null)
+				DelayedAssemblyReloadingOperations = new ExtenityEvent();
+
+			DelayedAssemblyReloadingOperations.AddListener(action);
 		}
 
 		#endregion

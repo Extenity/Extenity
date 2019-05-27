@@ -91,8 +91,10 @@ namespace Extenity.BuildMachine.Editor
 						if (!method.IsVirtual && method.ReturnType == typeof(IEnumerator))
 						{
 							var parameters = method.GetParameters();
-							if (parameters.Length == 1 &&
-								parameters[0].ParameterType == typeof(BuildStepInfo)
+							// See 113654126.
+							if (parameters.Length == 2 &&
+								parameters[0].ParameterType == typeof(BuildJob) &&
+								parameters[1].ParameterType == typeof(BuildStepInfo)
 							)
 							{
 								var attribute = method.GetAttribute<BuildStepAttribute>(true);

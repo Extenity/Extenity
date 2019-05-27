@@ -127,7 +127,7 @@ namespace Extenity.BuildMachine.Editor
 					if (haltExecution)
 					{
 						RunningJob.LastHaltTime = Now;
-						Log.Info("Halting the execution until next assembly reload.");
+						Log.Info("Halting the execution before step, until next assembly reload.");
 						yield break;
 					}
 					else
@@ -141,6 +141,25 @@ namespace Extenity.BuildMachine.Editor
 
 				// Check after running the step
 				{
+					CheckAfterStepBeforePostStep();
+				}
+
+				// Run the post-step operations
+				{
+					if (Job.DelayedAssemblyReloadingOperations != null)
+					{
+						// Lose the registered events before we start processing them.
+						// Any exceptions thrown in those events would cause these event
+						// references to be kept indefinitely.
+						var operations = Job.DelayedAssemblyReloadingOperations;
+						Job.DelayedAssemblyReloadingOperations = null;
+
+						operations.InvokeOneShot();
+					}
+				}
+
+				// Finalize the step
+				{
 					// Mark the current step as previous step and relieve the current step.
 					// Then immediately save the assembly survival file so that we will know
 					// the process was not cut in the middle of step execution the next time
@@ -149,6 +168,21 @@ namespace Extenity.BuildMachine.Editor
 					Job.CurrentStep = "";
 					Job._CurrentStepCached = BuildStepInfo.Empty;
 					SaveRunningJobToFile();
+				}
+
+				// Check after running post-step
+				{
+					var haltExecution = CheckAfterPostStep();
+					if (haltExecution)
+					{
+						RunningJob.LastHaltTime = Now;
+						Log.Info("Halting the execution after step, until next assembly reload.");
+						yield break;
+					}
+					else
+					{
+						RunningJob.LastHaltTime = default;
+					}
 				}
 
 				yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -163,8 +197,8 @@ namespace Extenity.BuildMachine.Editor
 			var Builders = RunningJob.Builders;
 			var BuildPhases = RunningJob.Plan.BuildPhases;
 
-			// Yes making it local is not wise for performance. But better for consistency.
-			// Keep it this way.
+			// Yes making it local and instantiating it in each step is not wise for performance.
+			// But better for consistency and we are not fighting for milliseconds in Editor.
 			var delayedCaller = new DelayedCaller();
 
 			// Find the next step to be processed. If there is none left, finalize the build run.
@@ -256,7 +290,7 @@ namespace Extenity.BuildMachine.Editor
 
 				StartStep(currentStep);
 
-				var enumerator = (IEnumerator)Job._CurrentStepCached.Method.Invoke(currentBuilder, new object[] { Job._CurrentStepCached });
+				var enumerator = (IEnumerator)Job._CurrentStepCached.Method.Invoke(currentBuilder, new object[] { Job, Job._CurrentStepCached }); // See 113654126.
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 
 				EndStep(currentStep);
@@ -271,7 +305,11 @@ namespace Extenity.BuildMachine.Editor
 				var currentBuilder = Builders[Job.CurrentBuilder];
 				var firstStepOfCurrentPhase = currentBuilder.Info.Steps.FirstOrDefault(entry => currentPhase.IncludedSteps.Contains(entry.Type));
 
-				// TODO: Check if the step exists. What to do if it does not exist?
+				if (firstStepOfCurrentPhase.IsEmpty)
+				{
+					// TODO: Check if the step exists. What to do if it does not exist?
+					throw new NotImplementedException("The behaviour of not finding the first step is not implemented yet!");
+				}
 
 				Job._CurrentStepCached = firstStepOfCurrentPhase;
 				return firstStepOfCurrentPhase.Name;
@@ -285,7 +323,11 @@ namespace Extenity.BuildMachine.Editor
 				var currentBuilder = Builders[Job.CurrentBuilder];
 				var allStepsOfCurrentPhase = currentBuilder.Info.Steps.Where(entry => currentPhase.IncludedSteps.Contains(entry.Type)).ToList();
 
-				// TODO: Check if any step exists. What to do if none exist?
+				if (allStepsOfCurrentPhase.IsNullOrEmpty())
+				{
+					// TODO: Check if any step exists. What to do if none exist?
+					throw new NotImplementedException("The behaviour of not finding any steps is not implemented yet!");
+				}
 
 				var foundIndex = -1;
 				for (int i = 0; i < allStepsOfCurrentPhase.Count; i++)
@@ -344,7 +386,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Check Before Step
+		#region Check Before/After Step
 
 		private static bool CheckBeforeStep()
 		{
@@ -356,8 +398,42 @@ namespace Extenity.BuildMachine.Editor
 			// gets really messy.
 			if (EditorApplication.isCompiling)
 			{
-				throw new Exception("Compilation is not allowed in the middle of build.");
+				throw new Exception("Compilation is not allowed before starting the step.");
 			}
+
+			// Save the unsaved assets before making any moves.
+			AssetDatabase.SaveAssets();
+
+			// Make sure everything is imported.
+			{
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+				// And wait for scripts to compile.
+				if (EditorApplication.isCompiling)
+				{
+					haltExecution = true;
+					SaveRunningJobToFile();
+				}
+			}
+
+			return haltExecution;
+		}
+
+		private static void CheckAfterStepBeforePostStep()
+		{
+			// At this point, there should be no ongoing compilations.
+			// Build system does not allow any code that triggers
+			// an assembly reload in Build Step. Otherwise execution
+			// gets really messy.
+			if (EditorApplication.isCompiling)
+			{
+				throw new Exception("Compilation is not allowed in the middle of build step.");
+			}
+		}
+
+		private static bool CheckAfterPostStep()
+		{
+			var haltExecution = false;
 
 			// Save the unsaved assets before making any moves.
 			AssetDatabase.SaveAssets();
