@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox;
@@ -200,6 +201,8 @@ namespace Extenity.BuildMachine.Editor
 			var Builders = RunningJob.Builders;
 			var BuildPhases = RunningJob.Plan.BuildPhases;
 
+			EditorApplicationTools.EnsureNotCompiling(false);
+
 			// Yes making it local and instantiating it in each step is not wise for performance.
 			// But better for consistency and we are not fighting for milliseconds in Editor.
 			var delayedCaller = new DelayedCaller<Action<BuildJob>>();
@@ -278,8 +281,10 @@ namespace Extenity.BuildMachine.Editor
 
 			// After saving the survival file, we can call the callbacks delayed above.
 			{
+				EditorApplicationTools.EnsureNotCompiling(false);
 				delayedCaller.CallAllDelayedCalls(action => action(Job));
 				delayedCaller = null;
+				EditorApplicationTools.EnsureNotCompiling(false);
 			}
 
 			if (completed)
@@ -476,6 +481,7 @@ namespace Extenity.BuildMachine.Editor
 		private static void DoBuildRunFinalization(bool succeeded)
 		{
 			Log.Info($"Finalizing the '{(succeeded ? "succeeded" : "failed")}' build job.");
+			EditorApplicationTools.EnsureNotCompiling(false);
 
 			// Execute finalization on RunningJob
 			try
