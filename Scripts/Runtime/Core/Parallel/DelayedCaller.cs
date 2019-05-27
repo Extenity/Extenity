@@ -5,22 +5,22 @@ using Extenity.DataToolbox;
 namespace Extenity.ParallelToolbox
 {
 
-	public class DelayedCaller
+	public class DelayedCaller<TAction>
 	{
 		#region Initialization
 
 		public DelayedCaller(int capacity = 10)
 		{
-			delayedCalls = new List<Action>(capacity);
+			delayedCalls = new List<TAction>(capacity);
 		}
 
 		#endregion
 
 		#region Call List
 
-		public List<Action> delayedCalls;
+		public List<TAction> delayedCalls;
 
-		public void AddDelayedCall(Action method)
+		public void AddDelayedCall(TAction method)
 		{
 			delayedCalls.Add(method);
 		}
@@ -34,14 +34,14 @@ namespace Extenity.ParallelToolbox
 
 		#region Call
 
-		public void CallAllDelayedCalls(bool clearCallListAfterwards = true)
+		public void CallAllDelayedCalls(Action<TAction> caller,  bool clearCallListAfterwards = true)
 		{
 			if (delayedCalls.IsNullOrEmpty())
 				return;
 
 			foreach (var delayedCall in delayedCalls)
 			{
-				delayedCall();
+				caller(delayedCall);
 			}
 
 			if (clearCallListAfterwards)

@@ -99,7 +99,7 @@ namespace Extenity.BuildMachine.Editor
 
 			if (RunningJob != null && RunningJob.IsCurrentBuilderAssigned)
 			{
-				RunningJob.Builders[RunningJob.CurrentBuilder].DoBuilderFinalizationForCurrentPhase();
+				RunningJob.Builders[RunningJob.CurrentBuilder].DoBuilderFinalizationForCurrentPhase(RunningJob);
 			}
 
 			DoBuildRunFinalization(false);
@@ -202,7 +202,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// Yes making it local and instantiating it in each step is not wise for performance.
 			// But better for consistency and we are not fighting for milliseconds in Editor.
-			var delayedCaller = new DelayedCaller();
+			var delayedCaller = new DelayedCaller<Action<BuildJob>>();
 
 			// Find the next step to be processed. If there is none left, finalize the build run.
 			var completed = false;
@@ -255,7 +255,7 @@ namespace Extenity.BuildMachine.Editor
 								Job.CurrentPhase = -2;
 								Job.CurrentStep = "";
 								Job._CurrentStepCached = BuildStepInfo.Empty;
-								delayedCaller.AddDelayedCall(() => DoBuildRunFinalization(true));
+								delayedCaller.AddDelayedCall((job) => DoBuildRunFinalization(true));
 								completed = true;
 							}
 						}
@@ -278,7 +278,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// After saving the survival file, we can call the callbacks delayed above.
 			{
-				delayedCaller.CallAllDelayedCalls();
+				delayedCaller.CallAllDelayedCalls(action => action(Job));
 				delayedCaller = null;
 			}
 
@@ -310,8 +310,8 @@ namespace Extenity.BuildMachine.Editor
 
 			string GetFirstStep()
 			{
-				if (!BuildPhases.IsInRange(Job.CurrentPhase) || 
-				    !Builders.IsInRange(Job.CurrentBuilder))
+				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
+					!Builders.IsInRange(Job.CurrentBuilder))
 					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
 				var currentPhase = BuildPhases[Job.CurrentPhase];
@@ -331,8 +331,8 @@ namespace Extenity.BuildMachine.Editor
 			string GetNextStep(string previousStep)
 			{
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
-				if (!BuildPhases.IsInRange(Job.CurrentPhase) || 
-				    !Builders.IsInRange(Job.CurrentBuilder))
+				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
+					!Builders.IsInRange(Job.CurrentBuilder))
 					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
 				var currentPhase = BuildPhases[Job.CurrentPhase];
