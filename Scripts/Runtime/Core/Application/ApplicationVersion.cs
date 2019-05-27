@@ -55,7 +55,7 @@ namespace Extenity.ApplicationToolbox
 			Build = combinedVersion;
 
 			if (IsOutOfRange(Major, Minor, Build))
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(ToString());
 		}
 
 		public ApplicationVersion(string versionText)
