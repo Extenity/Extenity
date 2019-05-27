@@ -125,6 +125,7 @@ namespace Extenity.BuildToolbox.Editor
 	public abstract class TemporaryBuildOperation
 	{
 		public bool IsInitialized = false;
+		public bool IsFinalized = false;
 		public bool KeepTheChange = false;
 
 		public abstract void DoApply();
@@ -132,6 +133,9 @@ namespace Extenity.BuildToolbox.Editor
 
 		protected static T Apply<T>(T instance) where T : TemporaryBuildOperation
 		{
+			if (instance.IsFinalized)
+				throw new Exception($"Tried to apply a finalized build operation of type '{instance.GetType()}'.");
+
 			instance.IsInitialized = true;
 			instance.DoApply();
 			return instance;
@@ -140,13 +144,18 @@ namespace Extenity.BuildToolbox.Editor
 
 	public static class TemporaryBuildOperationTools
 	{
-		public static void Revert(this TemporaryBuildOperation operation)
+		public static void Revert(this TemporaryBuildOperation instance)
 		{
-			if (operation != null &&
-				operation.IsInitialized &&
-				!operation.KeepTheChange)
+			if (instance == null)
+				return; // Ignore.
+			if (instance.IsFinalized) // Check this before checking for IsInitialized.
+				throw new Exception($"Tried to revert an already finalized build operation of type '{instance.GetType()}'.");
+			if (!instance.IsInitialized)
+				return; // Ignore.
+
+			if (!instance.KeepTheChange)
 			{
-				operation.DoRevert();
+				instance.DoRevert();
 			}
 		}
 	}
