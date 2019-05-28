@@ -1,4 +1,5 @@
 using Extenity.UnityEditorToolbox.Editor;
+using UnityEditor;
 
 namespace TMPro.Extensions
 {
@@ -10,10 +11,19 @@ namespace TMPro.Extensions
 		[InitializeOnEditorLaunchMethod]
 		private static void CheckWarningConfiguration()
 		{
-			if (TMP_Settings.warningsDisabled)
+			// There is a possibility that TMP_Settings may not be initialized yet.
+			// So delay the call, and make sure it won't fail by wrapping in try-catch.
+			EditorApplication.delayCall += () =>
 			{
-				Log.Warning("Please note that TextMesh Pro warnings are disabled. You should enable the warnings and fix them as soon as possible.");
-			}
+				try
+				{
+					if (TMP_Settings.warningsDisabled)
+					{
+						Log.Warning("Please note that TextMesh Pro warnings are disabled. You should enable the warnings and fix them as soon as possible.");
+					}
+				}
+				catch { }
+			};
 		}
 
 		#endregion
