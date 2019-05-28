@@ -145,24 +145,34 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region OnSceneGUI
+		#region BeforeSceneGUI / DuringSceneGUI
 
 		private void InitializeOnSceneGUI()
 		{
 			// Register to the event if the method in base class is overriden.
-			if (this.IsMethodOverriden(nameof(OnSceneGUI), new Type[] { typeof(SceneView) }))
+			if (this.IsMethodOverriden(nameof(BeforeSceneGUI), new Type[] { typeof(SceneView) }))
 			{
-				SceneView.onSceneGUIDelegate -= OnSceneGUI;
-				SceneView.onSceneGUIDelegate += OnSceneGUI;
+				SceneView.beforeSceneGui -= BeforeSceneGUI;
+				SceneView.beforeSceneGui += BeforeSceneGUI;
+			}
+			if (this.IsMethodOverriden(nameof(DuringSceneGUI), new Type[] { typeof(SceneView) }))
+			{
+				SceneView.duringSceneGui -= DuringSceneGUI;
+				SceneView.duringSceneGui += DuringSceneGUI;
 			}
 		}
 
 		private void DeinitializeOnSceneGUI()
 		{
-			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			SceneView.beforeSceneGui -= BeforeSceneGUI;
+			SceneView.duringSceneGui -= DuringSceneGUI;
 		}
 
-		protected virtual void OnSceneGUI(SceneView sceneView)
+		protected virtual void BeforeSceneGUI(SceneView sceneView)
+		{
+		}
+
+		protected virtual void DuringSceneGUI(SceneView sceneView)
 		{
 		}
 

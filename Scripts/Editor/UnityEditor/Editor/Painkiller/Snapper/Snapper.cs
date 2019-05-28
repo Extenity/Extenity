@@ -124,7 +124,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private bool IsMouseDown;
 
-		protected override void OnSceneGUI(SceneView sceneView)
+		protected override void DuringSceneGUI(SceneView sceneView)
 		{
 			var currentEvent = Event.current;
 			var currentEventType = currentEvent.type;

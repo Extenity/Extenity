@@ -1,16 +1,62 @@
 // QuickPlay shortcuts are not supported outside of Windows environment.
+
 #if UNITY_EDITOR_WIN
 
 using Extenity.ApplicationToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
-	public static class QuickPlayPreferences
+	public class QuickPlaySettings : SettingsProvider
 	{
+		#region Configuration
+
+		class Styles
+		{
+			public static GUIContent TargetInterface = new GUIContent("Target Interface");
+			public static GUIContent Shortcut = new GUIContent("Shortcut");
+			public static GUIContent InvalidKey = new GUIContent("Invalid key");
+		}
+
+		#endregion
+
+		#region Initialization
+
+		public override void OnActivate(string searchContext, VisualElement rootElement)
+		{
+			base.OnActivate(searchContext, rootElement);
+		}
+
+		private QuickPlaySettings(string path, SettingsScope scope)
+			: base(path, scope)
+		{
+		}
+
+		[SettingsProvider]
+		public static SettingsProvider Create()
+		{
+			var provider = new QuickPlaySettings("Preferences/QuickPlay", SettingsScope.User);
+
+			// Automatically extract all keywords from the Styles.
+			provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
+			return provider;
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		public override void OnDeactivate()
+		{
+			base.OnDeactivate();
+		}
+
+		#endregion
+
 		#region GUI
 
 		private static string KeysAsString;
@@ -20,10 +66,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		//private static GUIStyle ShortcutKeyFieldStyle;
 
-		[PreferenceItem(nameof(QuickPlay))]
-		public static void PreferencesGUI()
+		public override void OnTitleBarGUI()
 		{
-			EditorGUILayoutTools.DrawHeader("Target Interface");
+		}
+
+		public override void OnGUI(string searchContext)
+		{
+			EditorGUILayoutTools.DrawHeader(Styles.TargetInterface);
 
 			//if (ShortcutKeyFieldStyle == null)
 			//{
@@ -50,7 +99,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			//var newKeysAsString = EditorGUILayout.DelayedTextField("Shortcut", KeysAsString, ShortcutKeyFieldStyle);
-			var newKeysAsString = EditorGUILayout.DelayedTextField("Shortcut", KeysAsString);
+			var newKeysAsString = EditorGUILayout.DelayedTextField(Styles.Shortcut, KeysAsString);
 			if (newKeysAsString != KeysAsString)
 			{
 				Invalid = false;
@@ -67,9 +116,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (Invalid)
 			{
 				GUI.color = Color.yellow;
-				GUILayout.Label("Invalid key");
+				GUILayout.Label(Styles.InvalidKey);
 			}
 		}
+
+		#endregion
+
+		#region Configure
 
 		private static void AssignKeys(string newKeysAsString)
 		{

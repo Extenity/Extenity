@@ -27,12 +27,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			Me = (Devnote)target;
 
-			SceneView.onSceneGUIDelegate += OnSceneGUIDelegate;
+			SceneView.duringSceneGui += OnSceneGUIDelegate;
 		}
 
 		private void OnDisable()
 		{
-			SceneView.onSceneGUIDelegate -= OnSceneGUIDelegate;
+			SceneView.duringSceneGui -= OnSceneGUIDelegate;
 		}
 
 		//private void OnSceneGUI()
