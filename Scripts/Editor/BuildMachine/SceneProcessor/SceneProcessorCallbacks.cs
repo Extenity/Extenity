@@ -8,8 +8,7 @@ namespace Extenity.BuildMachine.Editor
 
 	// TODO: Detect and throw error if any changes made that needs recompilation during scene processes. Try to use CompilationPipeline.assemblyCompilationStarted. See 112739521.
 
-	public class SceneProcessorCallbacks :
-		IProcessSceneWithReport
+	public class SceneProcessorCallbacks : IProcessSceneWithReport
 	{
 		public int callbackOrder => 10000;
 
@@ -21,7 +20,7 @@ namespace Extenity.BuildMachine.Editor
 				return;
 			}
 
-			Log.Info($"Build processor checking in at scene process callback for '{scene.name}'.");
+			Log.Info($"Scene processor checking in at scene process callback for scene '{scene.name}'.");
 
 			// See 713951791.
 			//DoProcessScene(scene, ...);
