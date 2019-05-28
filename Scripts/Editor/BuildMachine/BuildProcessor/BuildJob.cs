@@ -6,6 +6,7 @@ using System.Text;
 using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
+using UnityEditor;
 using Guid = System.Guid;
 
 namespace Extenity.BuildMachine.Editor
@@ -76,6 +77,8 @@ namespace Extenity.BuildMachine.Editor
 			Plan = plan;
 			Builders = builders;
 
+			UnityEditorPath = EditorApplication.applicationPath;
+
 			CurrentState = BuildJobState.JobInitialized;
 		}
 
@@ -117,6 +120,36 @@ namespace Extenity.BuildMachine.Editor
 					return "[NA-Plan]";
 				return Plan.Name;
 			}
+		}
+
+		#endregion
+
+		#region Schedule Unity Editor Restart
+
+		[JsonProperty]
+		public readonly string UnityEditorPath;
+
+		[JsonProperty]
+		public bool IsUnityEditorRestartScheduled;
+
+		public void ScheduleUnityEditorRestart()
+		{
+			Log.Info("Scheduling Unity Editor restart.");
+			IsUnityEditorRestartScheduled = true;
+			throw new NotImplementedException();
+		}
+
+		#endregion
+
+		#region Schedule Assembly Reload
+
+		[JsonProperty]
+		public bool IsAssemblyReloadScheduled = true; // Every job starts with an assembly reload first.
+
+		public void ScheduleAssemblyReload()
+		{
+			Log.Info("Scheduling assembly reload.");
+			IsAssemblyReloadScheduled = true;
 		}
 
 		#endregion
