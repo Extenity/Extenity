@@ -42,6 +42,16 @@ namespace Extenity.DataToolbox
 		{
 			return Enum.GetValues(typeof(T)).Cast<int>().Contains(value);
 		}
+
+		public static bool IsAny<T>(this T value, params T[] comparedValues) where T : Enum
+		{
+			foreach (var comparedValue in comparedValues)
+			{
+				if (value.Equals(comparedValue))
+					return true;
+			}
+			return false;
+		}
 	}
 
 }
