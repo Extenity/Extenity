@@ -53,19 +53,14 @@ namespace Extenity.BuildMachine.Editor
 
 			Log.Info($"Build '{jobPlanName}' started.");
 			SetRunningJob(_job);
-			Debug.Assert(RunningJob.IsJustCreated);
+			Debug.Assert(RunningJob.CurrentState == BuildJobState.JobInitialized, RunningJob.CurrentState.ToString());
 			Debug.Assert(RunningJob.CurrentPhase == -1);
 			Debug.Assert(RunningJob.CurrentBuilder == -1);
 			Debug.Assert(!RunningJob.IsPreviousStepAssigned);
 			Debug.Assert(!RunningJob.IsCurrentStepAssigned);
 			RunningJob.StartTime = Now;
 
-			if (BuildTools.IsCompiling)
-			{
-				throw new Exception("Tried to start a build job in the middle of an ongoing compilation.");
-			}
-
-			ChecksBeforeStartOrContinue();
+			ChecksBeforeStartOrContinue("start");
 
 			RunningJob.BuildRunInitialization();
 
@@ -81,29 +76,48 @@ namespace Extenity.BuildMachine.Editor
 			{
 				throw new Exception($"Tried to continue build job '{jobPlanName}' while there is already a running one.");
 			}
+
 			SetRunningJob(_job);
-
-			if (RunningJob.IsCurrentStepAssigned)
-			{
-				// See 11917631.
-				UnsetRunningJob();
-				throw new Exception($"Build job '{jobPlanName}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
-			}
-
-			if (BuildTools.IsCompiling)
-			{
-				throw new Exception("Tried to continue a build job in the middle of an ongoing compilation.");
-			}
-
-			ChecksBeforeStartOrContinue();
-
 			Log.Info($"Continuing the build '{RunningJob.Name}' at phase '{RunningJob.ToStringCurrentPhase()}' and builder '{RunningJob.ToStringCurrentBuilder()}' with previously processed step '{RunningJob.PreviousStep}'.");
+
+			// See 11917631.
+			switch (RunningJob.CurrentState)
+			{
+				// Expected state(s) that would be encountered when continuing after assembly reload.
+				case BuildJobState.StepHalt:
+					break;
+
+				// Unexpected states. Encountering these would mean something went wrong in build run.
+				case BuildJobState.JobInitialized:
+				case BuildJobState.StepRunning:
+				case BuildJobState.StepFinalization:
+				case BuildJobState.StepFailed:
+				case BuildJobState.StepSucceeded:
+				case BuildJobState.JobFinalization:
+				case BuildJobState.JobFailed:
+				case BuildJobState.JobSucceeded:
+					{
+						UnsetRunningJob();
+						throw new Exception($"Build job '{jobPlanName}' was disrupted in the middle for some reason. It could happen if Editor crashes during build, if not happened for an unexpected reason.");
+					}
+
+				case BuildJobState.Unknown: // That should be impossible
+				default:
+					throw new ArgumentOutOfRangeException(nameof(RunningJob.CurrentState), RunningJob.CurrentState, "Unexpected state.");
+			}
+
+			ChecksBeforeStartOrContinue("continue");
 
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), OnException);
 		}
 
-		private static void ChecksBeforeStartOrContinue()
+		private static void ChecksBeforeStartOrContinue(string description)
 		{
+			if (BuildTools.IsCompiling)
+			{
+				throw new Exception($"Tried to '{description}' a build job in the middle of an ongoing compilation.");
+			}
+
 			// Disable auto-refresh
 			{
 				EditorPreferencesTools.DisableAutoRefresh();
@@ -163,20 +177,14 @@ namespace Extenity.BuildMachine.Editor
 			// Do not add variables like 'currentPhase' here.
 			var Job = RunningJob;
 
+			RunningJob.LastHaltTime = default;
+
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
 			{
 				var haltExecution = CheckBeforeStartingOrContinuing();
 				if (haltExecution)
-				{
-					RunningJob.LastHaltTime = Now;
-					Log.Info("Halting the execution until next assembly reload (Start/Continue).");
 					yield break;
-				}
-				else
-				{
-					RunningJob.LastHaltTime = default;
-				}
 			}
 
 			while (IsRunning)
@@ -185,15 +193,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					var haltExecution = CheckBeforeStep();
 					if (haltExecution)
-					{
-						RunningJob.LastHaltTime = Now;
-						Log.Info("Halting the execution until next assembly reload (Before step).");
 						yield break;
-					}
-					else
-					{
-						RunningJob.LastHaltTime = default;
-					}
 				}
 
 				// Run the step
@@ -237,15 +237,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					var haltExecution = CheckAfterPostStep();
 					if (haltExecution)
-					{
-						RunningJob.LastHaltTime = Now;
-						Log.Info("Halting the execution until next assembly reload (After step).");
 						yield break;
-					}
-					else
-					{
-						RunningJob.LastHaltTime = default;
-					}
 				}
 
 				yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -440,6 +432,13 @@ namespace Extenity.BuildMachine.Editor
 			#endregion
 		}
 
+		private static void HaltStep(string description)
+		{
+			RunningJob.CurrentState = BuildJobState.StepHalt;
+			RunningJob.LastHaltTime = Now;
+			Log.Info($"Halting the execution until next assembly reload ({description}).");
+		}
+
 		#endregion
 
 		#region Start/End Step
@@ -491,6 +490,7 @@ namespace Extenity.BuildMachine.Editor
 				if (EditorApplication.isCompiling)
 				{
 					haltExecution = true;
+					HaltStep("Start/Continue");
 					SaveRunningJobToFile();
 				}
 			}
@@ -522,6 +522,7 @@ namespace Extenity.BuildMachine.Editor
 				if (EditorApplication.isCompiling)
 				{
 					haltExecution = true;
+					HaltStep("Before step");
 					SaveRunningJobToFile();
 				}
 			}
@@ -556,6 +557,7 @@ namespace Extenity.BuildMachine.Editor
 				if (EditorApplication.isCompiling)
 				{
 					haltExecution = true;
+					HaltStep("After step");
 					SaveRunningJobToFile();
 				}
 			}

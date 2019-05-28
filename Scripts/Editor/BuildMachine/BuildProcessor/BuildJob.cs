@@ -11,6 +11,24 @@ using Guid = System.Guid;
 namespace Extenity.BuildMachine.Editor
 {
 
+	public enum BuildJobState
+	{
+		Unknown,
+		JobInitialized,
+
+		// Step
+		StepRunning,
+		StepHalt,
+		StepFinalization,
+		StepFailed,
+		StepSucceeded,
+
+		// Build job
+		JobFinalization,
+		JobFailed,
+		JobSucceeded,
+	}
+
 	/// <summary>
 	/// A build job is created when user requests a build. It keeps the build options that are
 	/// specified by the user and also keeps track of whole build progress.
@@ -57,6 +75,8 @@ namespace Extenity.BuildMachine.Editor
 			CreatedDate = DateTime.Now;
 			Plan = plan;
 			Builders = builders;
+
+			CurrentState = BuildJobState.JobInitialized;
 		}
 
 		private static Builder[] CreateBuilderInstancesMimickingBuilderOptions(BuilderOptions[] builderOptionsList)
@@ -117,6 +137,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region State
 
+		public BuildJobState CurrentState = BuildJobState.Unknown;
 		public int CurrentPhase = -1;
 		public int CurrentBuilder = -1;
 		public string PreviousStep = "";
@@ -127,7 +148,6 @@ namespace Extenity.BuildMachine.Editor
 		[JsonIgnore]
 		public BuildStepInfo _CurrentStepCached = BuildStepInfo.Empty;
 
-		public bool IsJustCreated => CurrentPhase < 0;
 		public bool IsLastBuilder => CurrentBuilder >= Builders.Length - 1;
 		public bool IsLastPhase => CurrentPhase >= Plan.BuildPhases.Length - 1;
 		public bool IsCurrentBuilderAssigned => Builders.IsInRange(CurrentBuilder);
