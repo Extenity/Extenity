@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
-using Extenity.MessagingToolbox;
 using Newtonsoft.Json;
+using Guid = System.Guid;
 
 namespace Extenity.BuildMachine.Editor
 {
@@ -53,6 +53,8 @@ namespace Extenity.BuildMachine.Editor
 
 			var builders = CreateBuilderInstancesMimickingBuilderOptions(plan.BuilderOptionsList);
 
+			ID = Guid.NewGuid().ToString();
+			CreatedDate = DateTime.Now;
 			Plan = plan;
 			Builders = builders;
 		}
@@ -80,6 +82,12 @@ namespace Extenity.BuildMachine.Editor
 		#endregion
 
 		#region Metadata
+
+		[JsonProperty]
+		public readonly string ID;
+
+		[JsonProperty]
+		public readonly DateTime CreatedDate;
 
 		public string Name
 		{
