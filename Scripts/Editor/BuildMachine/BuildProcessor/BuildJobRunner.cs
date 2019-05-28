@@ -10,6 +10,7 @@ using Extenity.ParallelToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
+using UnityEditorInternal;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildMachine.Editor
@@ -436,6 +437,13 @@ namespace Extenity.BuildMachine.Editor
 		{
 			RunningJob.CurrentState = BuildJobState.StepHalt;
 			RunningJob.LastHaltTime = Now;
+
+			if (RunningJob.IsAssemblyReloadScheduled)
+			{
+				InternalEditorUtility.RequestScriptReload();
+				RunningJob.IsAssemblyReloadScheduled = false;
+			}
+
 			Log.Info($"Halting the execution until next assembly reload ({description}).");
 		}
 
@@ -494,7 +502,6 @@ namespace Extenity.BuildMachine.Editor
 				{
 					haltExecution = true;
 					HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					RunningJob.IsAssemblyReloadScheduled = false;
 					SaveRunningJobToFile();
 				}
 			}
@@ -530,7 +537,6 @@ namespace Extenity.BuildMachine.Editor
 				{
 					haltExecution = true;
 					HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					RunningJob.IsAssemblyReloadScheduled = false;
 					SaveRunningJobToFile();
 				}
 			}
@@ -569,7 +575,6 @@ namespace Extenity.BuildMachine.Editor
 				{
 					haltExecution = true;
 					HaltStep($"After step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					RunningJob.IsAssemblyReloadScheduled = false;
 					SaveRunningJobToFile();
 				}
 			}
