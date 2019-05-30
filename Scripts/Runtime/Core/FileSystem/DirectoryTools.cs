@@ -16,6 +16,16 @@ namespace Extenity.FileSystemToolbox
 			return Directory.GetFileSystemEntries(path).Length == 0;
 		}
 
+		public static void Create(string directoryPath)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+			{
+				Directory.CreateDirectory(directoryPath);
+			}
+		}
+
 		public static void CreateFromFilePath(string filePath)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
