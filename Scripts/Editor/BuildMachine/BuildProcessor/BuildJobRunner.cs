@@ -539,7 +539,7 @@ namespace Extenity.BuildMachine.Editor
 				Log.InternalError(11636112);
 			}
 
-			return false;
+			return true;
 		}
 
 		private static bool CatchRunStepException(Exception exception)
@@ -559,7 +559,7 @@ namespace Extenity.BuildMachine.Editor
 				Log.InternalError(11636113);
 			}
 
-			return false;
+			return true;
 		}
 
 		#endregion
