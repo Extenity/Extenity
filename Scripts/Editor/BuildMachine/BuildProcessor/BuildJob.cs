@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,26 +11,39 @@ using Guid = System.Guid;
 namespace Extenity.BuildMachine.Editor
 {
 
-	public enum BuildJobState
+	public enum BuildJobOverallState
 	{
 		Unknown,
 		JobInitialized,
+		JobRunning,
+		JobFinished,
+	}
 
-		// Step
+	//public enum BuildJobPhaseState
+	//{
+	//	Unknown,
+	//	PhaseRunning,
+	//	PhaseFinalizing,
+	//	PhaseFinished,
+	//}
+
+	public enum BuildJobStepState
+	{
+		Unknown,
 		StepRunning,
 		StepHalt,
-		StepFinalization,
-		StepFailed,
-		StepSucceeded,
+		StepFinished,
+	}
 
-		// Build job
-		JobFinalization,
-		JobFailed,
-		JobSucceeded,
+	public enum BuildJobResult
+	{
+		Incomplete,
+		Succeeded,
+		Failed,
 	}
 
 	/// <summary>
-	/// A build job is created when user requests a build. It keeps the build options that are
+	/// A Build Job is created when user requests a build. It keeps the build options that are
 	/// specified by the user and also keeps track of whole build progress.
 	///
 	/// Build Job can be serialized so the data can survive assembly reloads, recompilations and
@@ -49,6 +61,11 @@ namespace Extenity.BuildMachine.Editor
 	/// Builders are run with the Build Steps defined in this Build Phase. This allows designing
 	/// multi-platform builds that first outputs the binaries and then deploys them. Designing
 	/// such builds allows failing the whole multi-platform builds if a single platform fails.
+	///
+	/// After getting done with a <see cref="Builder"/>, a finalization procedure starts. Finalization
+	/// is there to provide what 'finally' does for try-catch blocks. Whether the build fails or
+	/// succeeds, Finalization Build Steps will be run so the user of Build Machine would revert back
+	/// any changes made in the build run.
 	/// </summary>
 	[JsonObject]
 	public class BuildJob
@@ -79,7 +96,7 @@ namespace Extenity.BuildMachine.Editor
 
 			UnityEditorPath = EditorApplication.applicationPath;
 
-			CurrentState = BuildJobState.JobInitialized;
+			OverallState = BuildJobOverallState.JobInitialized;
 		}
 
 		private static Builder[] CreateBuilderInstancesMimickingBuilderOptions(BuilderOptions[] builderOptionsList)
@@ -170,22 +187,54 @@ namespace Extenity.BuildMachine.Editor
 
 		#region State
 
-		public BuildJobState CurrentState = BuildJobState.Unknown;
+		public BuildJobOverallState OverallState = BuildJobOverallState.Unknown;
+		//public BuildJobPhaseState PhaseState = BuildJobPhaseState.Unknown;
+		public BuildJobStepState StepState = BuildJobStepState.Unknown;
+
+		/// <summary>
+		/// Tells if the job is in finalization mode. In finalization mode, <see cref="BuildJobRunner"/>
+		/// executes Finalization Build Steps.
+		///
+		/// Finalization starts for two reasons. It starts after completing all Build Steps of a
+		/// <see cref="Builder"/> or starts if anything goes wrong in the middle of a <see cref="Builder"/> execution.
+		/// </summary>
+		public bool Finalizing;
+
+		public BuildJobResult Result = BuildJobResult.Incomplete;
+
 		public int CurrentPhase = -1;
 		public int CurrentBuilder = -1;
-		public string PreviousStep = "";
-		public string CurrentStep = "";
+		public string PreviousBuildStep = "";
+		public string CurrentBuildStep = "";
+		public string PreviousFinalizationStep = "";
+		public string CurrentFinalizationStep = "";
 		/// <summary>
-		/// This is only used for calling the method of current step. Do not use it elsewhere.
+		/// This is only used for calling the method of current Step. Do not use it elsewhere.
 		/// </summary>
 		[JsonIgnore]
-		public BuildStepInfo _CurrentStepCached = BuildStepInfo.Empty;
+		public BuildStepInfo _CurrentStepInfoCached = BuildStepInfo.Empty;
 
 		public bool IsLastBuilder => CurrentBuilder >= Builders.Length - 1;
 		public bool IsLastPhase => CurrentPhase >= Plan.BuildPhases.Length - 1;
 		public bool IsCurrentBuilderAssigned => Builders.IsInRange(CurrentBuilder);
-		public bool IsPreviousStepAssigned => !string.IsNullOrEmpty(PreviousStep);
-		public bool IsCurrentStepAssigned => !string.IsNullOrEmpty(CurrentStep);
+
+		public bool IsPreviousBuildStepAssigned => !string.IsNullOrEmpty(PreviousBuildStep);
+		public bool IsCurrentBuildStepAssigned => !string.IsNullOrEmpty(CurrentBuildStep);
+		public bool IsPreviousFinalizationStepAssigned => !string.IsNullOrEmpty(PreviousFinalizationStep);
+		public bool IsCurrentFinalizationStepAssigned => !string.IsNullOrEmpty(CurrentFinalizationStep);
+
+		internal void SetResult(BuildJobResult result)
+		{
+			Log.Info($"Setting result to '{result}'");
+			if (result == BuildJobResult.Succeeded)
+			{
+				if (Result == BuildJobResult.Failed)
+				{
+					throw new Exception($"Tried to set '{BuildJobResult.Succeeded}' result over '{BuildJobResult.Failed}' job.");
+				}
+			}
+			Result = result;
+		}
 
 		#endregion
 
@@ -212,20 +261,6 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Delayed Assembly-Reloading Operations
-
-		internal List<Action> DelayedAssemblyReloadingOperations;
-
-		public void DelayAssemblyReloadingOperation(Action action)
-		{
-			if (DelayedAssemblyReloadingOperations == null)
-				DelayedAssemblyReloadingOperations = new List<Action>();
-
-			DelayedAssemblyReloadingOperations.Add(action);
-		}
-
-		#endregion
-
 		#region Build Run Initialization
 
 		internal void BuildRunInitialization()
@@ -237,13 +272,28 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Run Finalization
 
-		internal void BuildRunFinalization(bool succeeded)
+		internal void BuildRunFinalization()
 		{
-			if (!succeeded)
+			switch (Result)
 			{
-				TemporarilyIncrementVersion.Revert();
+				case BuildJobResult.Succeeded:
+					break;
+				case BuildJobResult.Failed:
+					{
+						TemporarilyIncrementVersion.Revert();
+					}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(Result), Result, "");
 			}
 		}
+
+		#endregion
+
+		#region Error Handling
+
+		[JsonIgnore]
+		public string ErrorReceivedInLastStep;
 
 		#endregion
 

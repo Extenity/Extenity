@@ -14,7 +14,7 @@ namespace Extenity.BuildMachine.Editor
 		UnityBuild,
 		PostBuild,
 		Deploy,
-		Finalize
+		Finalization,
 	}
 
 	//[JsonObject] Nope. This is not for serialization.

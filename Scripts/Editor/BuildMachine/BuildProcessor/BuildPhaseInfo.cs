@@ -9,12 +9,15 @@ namespace Extenity.BuildMachine.Editor
 		[JsonProperty]
 		public readonly string Name;
 		[JsonProperty]
-		public readonly BuildStepType[] IncludedSteps;
+		public readonly BuildStepType[] IncludedBuildSteps;
+		[JsonProperty]
+		public readonly BuildStepType[] IncludedFinalizationSteps;
 
-		public BuildPhaseInfo(string name, params BuildStepType[] includedSteps)
+		public BuildPhaseInfo(string name, BuildStepType[] includedBuildSteps, BuildStepType[] includedFinalizationSteps)
 		{
 			Name = name;
-			IncludedSteps = includedSteps;
+			IncludedBuildSteps = includedBuildSteps;
+			IncludedFinalizationSteps = includedFinalizationSteps;
 		}
 	}
 

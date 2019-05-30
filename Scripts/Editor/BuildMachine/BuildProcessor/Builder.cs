@@ -44,13 +44,6 @@ namespace Extenity.BuildMachine.Editor
 		}
 
 		#endregion
-
-		#region Finalization
-
-		public abstract void DoBuilderInitializationForCurrentPhase(BuildJob job);
-		public abstract void DoBuilderFinalizationForCurrentPhase(BuildJob job);
-
-		#endregion
 	}
 
 	public abstract class Builder<TBuilderOptions> : Builder

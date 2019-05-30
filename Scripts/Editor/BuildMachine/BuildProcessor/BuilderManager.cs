@@ -73,7 +73,7 @@ namespace Extenity.BuildMachine.Editor
 				//	Log.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
 				//}
 
-				// Get build step methods
+				// Get Build Step and Finalization Step methods
 				var steps = GatherBuildStepMethods(type);
 
 				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, type, optionsType, steps);
