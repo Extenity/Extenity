@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 
 namespace Extenity.BuildMachine.Editor
 {
@@ -7,6 +8,7 @@ namespace Extenity.BuildMachine.Editor
 	public struct BuilderInfo
 	{
 		public readonly string Name;
+		public readonly BuildTarget BuildTarget;
 		public readonly Type Type;
 		public readonly Type OptionsType;
 		public readonly BuildStepInfo[] Steps;
@@ -15,9 +17,10 @@ namespace Extenity.BuildMachine.Editor
 			!string.IsNullOrWhiteSpace(Name) &&
 			Type != null;
 
-		public BuilderInfo(string name, Type type, Type optionsType, BuildStepInfo[] steps)
+		public BuilderInfo(string name, BuildTarget buildTarget, Type type, Type optionsType, BuildStepInfo[] steps)
 		{
 			Name = name;
+			BuildTarget = buildTarget;
 			Type = type;
 			OptionsType = optionsType;
 			Steps = steps;

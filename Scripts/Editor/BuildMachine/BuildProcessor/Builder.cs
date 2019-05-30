@@ -28,6 +28,7 @@ namespace Extenity.BuildMachine.Editor
 		#region Info
 
 		private BuilderInfo _Info;
+
 		[JsonIgnore]
 		public BuilderInfo Info
 		{

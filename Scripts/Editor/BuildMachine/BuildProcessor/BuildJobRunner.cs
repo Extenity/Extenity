@@ -7,6 +7,7 @@ using Extenity.ApplicationToolbox.Editor;
 using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
@@ -170,6 +171,14 @@ namespace Extenity.BuildMachine.Editor
 				if (haltExecution)
 					yield break;
 			}
+
+			// Deselect any asset or object.
+			Selection.activeObject = null;
+			yield return null;
+
+			// Close all scenes. Hopefully this will boost the build a bit.
+			EditorSceneManagerTools.UnloadAllScenes(true);
+			yield return null;
 
 			while (IsRunning)
 			{
@@ -368,16 +377,31 @@ namespace Extenity.BuildMachine.Editor
 				SaveRunningJobToFile();
 			}
 
+			Debug.Assert(Job.Builders.IsInRange(Job.CurrentBuilder));
+			Debug.Assert(Job._CurrentStepInfoCached.Method != null);
+			var currentStep = Job._CurrentStepInfoCached.Name;
+			Debug.Assert(!string.IsNullOrEmpty(currentStep));
+			var currentBuilder = Job.Builders[Job.CurrentBuilder];
+			Debug.Assert(currentBuilder != null);
+
+			// Change Unity's active platform if required.
+			{
+				var buildTarget = currentBuilder.Info.BuildTarget;
+				var buildTargetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
+				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
+				{
+					Log.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
+					EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
+
+					var haltExecution = CheckAfterChangingActivePlatform();
+					if (haltExecution)
+						yield break;
+				}
+			}
+
 			// Run the Step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 			{
-				Debug.Assert(Job.Builders.IsInRange(Job.CurrentBuilder));
-				Debug.Assert(Job._CurrentStepInfoCached.Method != null);
-				var currentStep = Job._CurrentStepInfoCached.Name;
-				Debug.Assert(!string.IsNullOrEmpty(currentStep));
-				var currentBuilder = Job.Builders[Job.CurrentBuilder];
-				Debug.Assert(currentBuilder != null);
-
 				StartStep(currentStep);
 
 				var currentStepInfo = Job._CurrentStepInfoCached;
@@ -397,16 +421,16 @@ namespace Extenity.BuildMachine.Editor
 					!Builders.IsInRange(Job.CurrentBuilder))
 					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
-				var currentPhase = BuildPhases[Job.CurrentPhase];
-				var currentBuilder = Builders[Job.CurrentBuilder];
+				var phase = BuildPhases[Job.CurrentPhase];
+				var builder = Builders[Job.CurrentBuilder];
 				BuildStepInfo firstStepOfCurrentPhase;
 				if (finalization)
 				{
-					firstStepOfCurrentPhase = currentBuilder.Info.Steps.FirstOrDefault(entry => currentPhase.IncludedFinalizationSteps.Contains(entry.Type));
+					firstStepOfCurrentPhase = builder.Info.Steps.FirstOrDefault(entry => phase.IncludedFinalizationSteps.Contains(entry.Type));
 				}
 				else
 				{
-					firstStepOfCurrentPhase = currentBuilder.Info.Steps.FirstOrDefault(entry => currentPhase.IncludedBuildSteps.Contains(entry.Type));
+					firstStepOfCurrentPhase = builder.Info.Steps.FirstOrDefault(entry => phase.IncludedBuildSteps.Contains(entry.Type));
 				}
 
 				if (firstStepOfCurrentPhase.IsEmpty)
@@ -427,16 +451,16 @@ namespace Extenity.BuildMachine.Editor
 					!Builders.IsInRange(Job.CurrentBuilder))
 					throw new IndexOutOfRangeException($"Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
-				var currentPhase = BuildPhases[Job.CurrentPhase];
-				var currentBuilder = Builders[Job.CurrentBuilder];
+				var phase = BuildPhases[Job.CurrentPhase];
+				var builder = Builders[Job.CurrentBuilder];
 				List<BuildStepInfo> allStepsOfCurrentPhase;
 				if (finalization)
 				{
-					allStepsOfCurrentPhase = currentBuilder.Info.Steps.Where(entry => currentPhase.IncludedFinalizationSteps.Contains(entry.Type)).ToList();
+					allStepsOfCurrentPhase = builder.Info.Steps.Where(entry => phase.IncludedFinalizationSteps.Contains(entry.Type)).ToList();
 				}
 				else
 				{
-					allStepsOfCurrentPhase = currentBuilder.Info.Steps.Where(entry => currentPhase.IncludedBuildSteps.Contains(entry.Type)).ToList();
+					allStepsOfCurrentPhase = builder.Info.Steps.Where(entry => phase.IncludedBuildSteps.Contains(entry.Type)).ToList();
 				}
 
 				if (allStepsOfCurrentPhase.IsNullOrEmpty())
@@ -593,6 +617,25 @@ namespace Extenity.BuildMachine.Editor
 				{
 					haltExecution = true;
 					HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
+					SaveRunningJobToFile();
+				}
+			}
+
+			return haltExecution;
+		}
+
+		private static bool CheckAfterChangingActivePlatform()
+		{
+			var haltExecution = false;
+
+			// Check if changing the platform triggered a compilation, which obviously
+			// is expected.
+			{
+				var isCompiling = EditorApplication.isCompiling;
+				if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+				{
+					haltExecution = true;
+					HaltStep($"Platform change - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
 					SaveRunningJobToFile();
 				}
 			}

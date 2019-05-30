@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 
 namespace Extenity.BuildMachine.Editor
 {
@@ -7,10 +8,12 @@ namespace Extenity.BuildMachine.Editor
 	public class BuilderInfoAttribute : Attribute
 	{
 		public readonly string Name;
+		public readonly BuildTarget BuildTarget;
 
-		public BuilderInfoAttribute(string name)
+		public BuilderInfoAttribute(string name, BuildTarget buildTarget)
 		{
 			Name = name;
+			BuildTarget = buildTarget;
 		}
 	}
 
