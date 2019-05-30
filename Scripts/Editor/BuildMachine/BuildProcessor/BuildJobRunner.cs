@@ -195,6 +195,12 @@ namespace Extenity.BuildMachine.Editor
 						Job.SetResult(BuildJobResult.Failed);
 						SaveRunningJobToFile();
 					}
+
+					// Don't do anything if the Build Run finishes.
+					if (Job.OverallState == BuildJobOverallState.JobFinished)
+					{
+						yield break;
+					}
 				}
 
 				// Finalize the Step
