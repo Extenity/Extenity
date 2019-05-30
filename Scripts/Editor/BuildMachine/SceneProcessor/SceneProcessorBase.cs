@@ -342,6 +342,12 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Lightmap
 
+		protected void ClearGICache()
+		{
+			Lightmapping.Clear();
+			Lightmapping.ClearDiskCache();
+		}
+
 		protected void DisableAutomaticLightingForActiveScene()
 		{
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
