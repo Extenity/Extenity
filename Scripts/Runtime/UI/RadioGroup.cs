@@ -14,7 +14,7 @@ namespace Extenity.UIToolbox
 	{
 		#region Initialization
 
-		protected void Start()
+		protected void Awake()
 		{
 			InitializeRadioButtons();
 			InitializeDefaultSelection();
@@ -198,7 +198,7 @@ namespace Extenity.UIToolbox
 				{
 					SelectedButton = button;
 				}
-				button.isOn = enable;
+				button.SetIsOnWithoutNotify(enable);
 			}
 		}
 
@@ -206,25 +206,30 @@ namespace Extenity.UIToolbox
 
 		#region Internal Events - Radio Buttons
 
-		private bool SuspendToggleChangedEvents;
+		private readonly BoolCounter SuspendToggleChangedEvents = new BoolCounter();
 
 		private void OnToggleChanged(Toggle toggle, bool toggleValue)
 		{
-			if (SuspendToggleChangedEvents)
+			if (SuspendToggleChangedEvents.IsTrue)
 				return;
-			SuspendToggleChangedEvents = true;
-
-			if (toggleValue)
+			try
 			{
-				SelectButton(toggle);
-				OnButtonSelected.Invoke(SelectedButton);
-			}
-			else if (SelectedButton == toggle)
-			{
-				toggle.isOn = true;
-			}
+				SuspendToggleChangedEvents.Increase();
 
-			SuspendToggleChangedEvents = false;
+				if (toggleValue)
+				{
+					SelectButton(toggle);
+					OnButtonSelected.Invoke(SelectedButton);
+				}
+				else if (SelectedButton == toggle)
+				{
+					toggle.SetIsOnWithoutNotify(true);
+				}
+			}
+			finally
+			{
+				SuspendToggleChangedEvents.Decrease();
+			}
 		}
 
 		#endregion
