@@ -5,13 +5,13 @@ namespace Extenity.DataToolbox
 
 	public class BoolPlayerPref : PlayerPref<bool>
 	{
-		public BoolPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, bool defaultValue, float saveDelay = 0f)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null, saveDelay)
+		public BoolPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, bool defaultValue, Func<bool, bool> valueTransform = null, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null, valueTransform, saveDelay)
 		{
 		}
 
-		public BoolPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<PlayerPref<bool>, bool> defaultValueOverride, float saveDelay = 0f)
-			: base(prefsKey, appendPathHashToKey, default(bool), defaultValueOverride, saveDelay)
+		public BoolPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<PlayerPref<bool>, bool> defaultValueOverride, Func<bool, bool> valueTransform = null, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, default(bool), defaultValueOverride, valueTransform, saveDelay)
 		{
 		}
 

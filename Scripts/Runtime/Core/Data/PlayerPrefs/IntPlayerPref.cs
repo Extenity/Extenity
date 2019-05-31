@@ -6,13 +6,13 @@ namespace Extenity.DataToolbox
 
 	public class IntPlayerPref : PlayerPref<int>
 	{
-		public IntPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, int defaultValue, float saveDelay = 0f)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null, saveDelay)
+		public IntPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, int defaultValue, Func<int, int> valueTransform = null, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null, valueTransform, saveDelay)
 		{
 		}
 
-		public IntPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<PlayerPref<int>, int> defaultValueOverride, float saveDelay = 0f)
-			: base(prefsKey, appendPathHashToKey, default(int), defaultValueOverride, saveDelay)
+		public IntPlayerPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<PlayerPref<int>, int> defaultValueOverride, Func<int, int> valueTransform = null, float saveDelay = 0f)
+			: base(prefsKey, appendPathHashToKey, default(int), defaultValueOverride, valueTransform, saveDelay)
 		{
 		}
 

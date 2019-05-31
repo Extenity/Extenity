@@ -13,12 +13,13 @@ namespace Extenity.DataToolbox
 	{
 		#region Initialization
 
-		public PlayerPref([NotNull]string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<PlayerPref<T>, T> defaultValueOverride, float saveDelay)
+		public PlayerPref([NotNull]string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<PlayerPref<T>, T> defaultValueOverride, Func<T, T> valueTransform, float saveDelay)
 		{
 			PrefsKey = prefsKey;
 			_AppendPathHashToKey = appendPathHashToKey;
 			_Value = defaultValue;
 			_DefaultValueOverride = defaultValueOverride;
+			_ValueTransform = valueTransform;
 			SaveDelay = saveDelay;
 		}
 
@@ -65,7 +66,7 @@ namespace Extenity.DataToolbox
 					{
 						if (_DefaultValueOverride != null)
 						{
-							_Value = _DefaultValueOverride(this);
+							_Value = TransformValue(_DefaultValueOverride(this));
 							LogInfo($"Initialized value from override as '{_Value}'");
 						}
 						else
@@ -76,7 +77,7 @@ namespace Extenity.DataToolbox
 					}
 					else
 					{
-						_Value = InternalGetValue();
+						_Value = TransformValue(InternalGetValue());
 						LogInfo($"Initialized value as '{_Value}'");
 					}
 				}
@@ -85,21 +86,22 @@ namespace Extenity.DataToolbox
 			}
 			set
 			{
+				var transformedValue = TransformValue(value);
 				if (_IsInitialized)
 				{
 					var oldValue = Value; // This must be called before setting _IsInitialized to true;
-					LogInfo($"Setting value to '{value}' which previously was '{oldValue}'");
-					if (IsSame(oldValue, value))
+					LogInfo($"Setting value to '{transformedValue}' which previously was '{oldValue}'");
+					if (IsSame(oldValue, transformedValue))
 						return;
 				}
 				else
 				{
-					LogInfo($"Setting value to '{value}' <b>as initialization</b>");
+					LogInfo($"Setting value to '{transformedValue}' <b>as initialization</b>");
 					_IsInitialized = true;
 				}
 
-				_Value = value;
-				InternalSetValue(value);
+				_Value = transformedValue;
+				InternalSetValue(transformedValue);
 
 				if (SaveDelay > 0f)
 				{
@@ -117,8 +119,21 @@ namespace Extenity.DataToolbox
 					_DontEmitNextValueChangedEvent = false;
 				}
 				else
-					OnValueChanged.Invoke(value);
+					OnValueChanged.Invoke(transformedValue);
 			}
+		}
+
+		#endregion
+
+		#region Value Transform
+
+		private readonly Func<T, T> _ValueTransform;
+
+		private T TransformValue(T value)
+		{
+			return _ValueTransform == null
+				? value
+				: _ValueTransform(value);
 		}
 
 		#endregion
