@@ -159,56 +159,6 @@ namespace Extenity.DataToolbox
 				);
 		}
 
-		public static Color ParseHexColor(this string hex)
-		{
-			if (hex.StartsWith("0x"))
-				hex = hex.Remove(0, 2);
-			else if (hex.StartsWith("#"))
-				hex = hex.Remove(0, 1);
-
-			if (hex.Length != 6 && hex.Length != 8)
-			{
-				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
-			}
-
-			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-			byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-
-			byte a = 255; //assume fully visible unless specified in hex
-			if (hex.Length == 8)
-			{
-				a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-			}
-
-			return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
-		}
-
-		public static Color32 ParseHexColor32(this string hex)
-		{
-			if (hex.StartsWith("0x"))
-				hex = hex.Remove(0, 2);
-			else if (hex.StartsWith("#"))
-				hex = hex.Remove(0, 1);
-
-			if (hex.Length != 6 && hex.Length != 8)
-			{
-				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
-			}
-
-			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-			byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-
-			byte a = 255; //assume fully visible unless specified in hex
-			if (hex.Length == 8)
-			{
-				a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-			}
-
-			return new Color32(r, g, b, a);
-		}
-
 		#region Lerp
 
 		public static Color FastLerp(Color a, Color b, float t)
@@ -423,6 +373,65 @@ namespace Extenity.DataToolbox
 			RGB2HSL(color, out var h, out var s, out var l);
 			l *= brightness;
 			return HSL2RGBColor(h, s, l, color.a);
+		}
+
+		#endregion
+
+		#region String Conversion
+
+		public static string ToSharpHexColorRGB(this Color color)
+		{
+			return $"#{(int)(color.r * 255f):X2}{(int)(color.g * 255f):X2}{(int)(color.b * 255f):X2}";
+		}
+
+		public static Color ParseHexColor(this string hex)
+		{
+			if (hex.StartsWith("0x"))
+				hex = hex.Remove(0, 2);
+			else if (hex.StartsWith("#"))
+				hex = hex.Remove(0, 1);
+
+			if (hex.Length != 6 && hex.Length != 8)
+			{
+				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
+			}
+
+			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+			byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+			byte a = 255; //assume fully visible unless specified in hex
+			if (hex.Length == 8)
+			{
+				a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+			}
+
+			return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+		}
+
+		public static Color32 ParseHexColor32(this string hex)
+		{
+			if (hex.StartsWith("0x"))
+				hex = hex.Remove(0, 2);
+			else if (hex.StartsWith("#"))
+				hex = hex.Remove(0, 1);
+
+			if (hex.Length != 6 && hex.Length != 8)
+			{
+				throw new ArgumentException("Hex string should be length of 6 (RGB) or 8 (RGBA)", nameof(hex));
+			}
+
+			byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+			byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+			byte a = 255; //assume fully visible unless specified in hex
+			if (hex.Length == 8)
+			{
+				a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+			}
+
+			return new Color32(r, g, b, a);
 		}
 
 		#endregion
