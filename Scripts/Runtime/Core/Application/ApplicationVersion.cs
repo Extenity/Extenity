@@ -117,13 +117,18 @@ namespace Extenity.ApplicationToolbox
 		public ApplicationVersion IncrementedBuild => AddVersion(0, 0, 1);
 		public ApplicationVersion DecrementedBuild => AddVersion(0, 0, -1);
 
+		/// <summary>
+		/// Increments or decrements Major, Minor or Build versions and checks for out of range errors.
+		/// Specifying int.MinValue for a version resets that version to 1. Useful when increasing
+		/// Minor version which also requires Build version to be set to 1.
+		/// </summary>
 		public ApplicationVersion AddVersion(int addMajor, int addMinor, int addBuild)
 		{
 			Split(out var major, out var minor, out var build);
 
-			major += addMajor;
-			minor += addMinor;
-			build += addBuild;
+			major = addMajor == int.MinValue ? 1 : major + addMajor;
+			minor = addMinor == int.MinValue ? 1 : minor + addMinor;
+			build = addBuild == int.MinValue ? 1 : build + addBuild;
 
 			if (IsOutOfRange(major, minor, build))
 			{
@@ -175,7 +180,7 @@ namespace Extenity.ApplicationToolbox
 			if (addMajor != 0 || addMinor != 0 || addBuild != 0)
 			{
 				version = version.AddVersion(addMajor, addMinor, addBuild);
-				Log.Info($"New version: {version}  (increment by {addMajor}.{addMinor}.{addBuild})");
+				Log.Info($"New version: {version}  (increment by {ToIncrementString(addMajor)}.{ToIncrementString(addMinor)}.{ToIncrementString(addBuild)})");
 			}
 			else
 			{
@@ -311,6 +316,13 @@ namespace Extenity.ApplicationToolbox
 		public string ToMajorMinorString()
 		{
 			return Major + "." + Minor;
+		}
+
+		private static string ToIncrementString(int increment)
+		{
+			return increment == int.MinValue 
+				? "reset"
+				: increment.ToString();
 		}
 
 		#endregion
