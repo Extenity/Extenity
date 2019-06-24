@@ -11,42 +11,66 @@ namespace Extenity.AnimationToolbox.ScriptedAnimations
 		public bool InLocalCoordinates = true;
 		public bool InFixedUpdate = true;
 
-		private float PreviousFrameRealtime;
-
 		private void OnEnable()
 		{
-			PreviousFrameRealtime = Time.realtimeSinceStartup;
-		}
-
-		private void FixedUpdate()
-		{
-			if (!InFixedUpdate)
-				return;
-
-			Rotate(RotationSpeed * Time.fixedDeltaTime);
-		}
-
-		private void Update()
-		{
 			if (InFixedUpdate)
-				return;
-
-			var now = Time.realtimeSinceStartup;
-			var deltaRealtime = now - PreviousFrameRealtime;
-			PreviousFrameRealtime = now;
-			Rotate(RotationSpeed * deltaRealtime);
-		}
-
-		private void Rotate(float angle)
-		{
-			if (InLocalCoordinates)
 			{
-				transform.Rotate(RotationAxis, angle, Space.Self);
+				if (InLocalCoordinates)
+				{
+					Loop.FixedUpdateCallbacks.AddListener(CalculateLocalCoordinates);
+				}
+				else
+				{
+					Loop.FixedUpdateCallbacks.AddListener(CalculateWorldCoordinates);
+				}
 			}
 			else
 			{
-				transform.Rotate(RotationAxis, angle);
+				if (InLocalCoordinates)
+				{
+					Loop.UpdateCallbacks.AddListener(CalculateLocalCoordinates);
+				}
+				else
+				{
+					Loop.UpdateCallbacks.AddListener(CalculateWorldCoordinates);
+				}
 			}
+		}
+
+		private void OnDisable()
+		{
+			if (InFixedUpdate)
+			{
+				if (InLocalCoordinates)
+				{
+					Loop.FixedUpdateCallbacks.RemoveListener(CalculateLocalCoordinates);
+				}
+				else
+				{
+					Loop.FixedUpdateCallbacks.RemoveListener(CalculateWorldCoordinates);
+				}
+			}
+			else
+			{
+				if (InLocalCoordinates)
+				{
+					Loop.UpdateCallbacks.RemoveListener(CalculateLocalCoordinates);
+				}
+				else
+				{
+					Loop.UpdateCallbacks.RemoveListener(CalculateWorldCoordinates);
+				}
+			}
+		}
+
+		private void CalculateWorldCoordinates()
+		{
+			transform.Rotate(RotationAxis, RotationSpeed * Loop.DeltaTime, Space.World);
+		}
+
+		private void CalculateLocalCoordinates()
+		{
+			transform.Rotate(RotationAxis, RotationSpeed * Loop.DeltaTime, Space.Self);
 		}
 	}
 
