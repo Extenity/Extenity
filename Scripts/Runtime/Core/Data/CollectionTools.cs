@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
+using Object = UnityEngine.Object;
 
 namespace Extenity.DataToolbox
 {
@@ -167,6 +168,14 @@ namespace Extenity.DataToolbox
 				{
 					thisList.Add(otherListItem);
 				}
+			}
+		}
+
+		public static void AddIfNotNull<T>(this List<T> thisList, T item) where T : Object
+		{
+			if (item)
+			{
+				thisList.Add(item);
 			}
 		}
 
