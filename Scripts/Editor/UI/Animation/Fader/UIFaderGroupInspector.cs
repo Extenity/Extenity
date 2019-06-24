@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
@@ -33,10 +36,12 @@ namespace Extenity.UIToolbox.Editor
 				GUILayout.BeginHorizontal();
 				if (GUILayout.Button(Cached_FadeInAll, BigButtonHeight))
 				{
+					RegisterUndoForAllFaders("Fade In All");
 					Me.FadeInAllImmediate();
 				}
 				if (GUILayout.Button(Cached_FadeOutAll, BigButtonHeight))
 				{
+					RegisterUndoForAllFaders("Fade Out All");
 					Me.FadeOutAllImmediate();
 				}
 				GUILayout.EndHorizontal();
@@ -56,10 +61,14 @@ namespace Extenity.UIToolbox.Editor
 					{
 						if (GUILayout.Button(Cached_FadeIn, Cached_FadeButtonLayout))
 						{
+							// Fade-in the fader and fade-out all other faders.
+							RegisterUndoForAllFaders("Fade In");
 							Me.FadeInImmediate(fader);
 						}
 						if (GUILayout.Button(Cached_FadeOut, Cached_FadeButtonLayout))
 						{
+							// Fade-out the fader. Other faders in the group won't be affected.
+							RegisterUndoForAllFaders("Fade Out");
 							fader.FadeOutImmediate();
 						}
 					}
@@ -72,6 +81,22 @@ namespace Extenity.UIToolbox.Editor
 
 		protected override void OnAfterDefaultInspectorGUI()
 		{
+		}
+
+		private void RegisterUndoForAllFaders(string description)
+		{
+			var all = new List<Object>();
+			all.Add(Me);
+
+			foreach (var fader in Me.Faders.Where(item => item))
+			{
+				all.AddIfNotNull(fader);
+				all.AddIfNotNull(fader.Canvas);
+				all.AddIfNotNull(fader.CanvasGroup);
+				all.AddIfNotNull(fader.TriggeredAnimationOrchestrator);
+			}
+
+			Undo.RegisterCompleteObjectUndo(all.ToArray(), description);
 		}
 	}
 
