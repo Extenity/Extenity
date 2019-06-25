@@ -375,6 +375,29 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		#endregion
+
+		#region Check For Case-Sensitivity Of Platform
+
+		// Source: https://stackoverflow.com/questions/430256/how-do-i-determine-whether-the-filesystem-is-case-sensitive-in-net
+		private static bool _IsFileSystemCaseSensitiveChecked = false;
+		private static bool _IsFileSystemCaseSensitive;
+		public static bool IsFileSystemCaseSensitive
+		{
+			get
+			{
+				if (!_IsFileSystemCaseSensitiveChecked)
+				{
+					var tmp = Path.GetTempPath();
+					_IsFileSystemCaseSensitive =
+						!Directory.Exists(tmp.ToUpper()) ||
+						!Directory.Exists(tmp.ToLower());
+					_IsFileSystemCaseSensitiveChecked = true;
+				}
+				return _IsFileSystemCaseSensitive;
+			}
+		}
+
+		#endregion
 	}
 
 }
