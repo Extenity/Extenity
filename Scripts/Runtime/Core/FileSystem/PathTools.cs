@@ -334,17 +334,14 @@ namespace Extenity.FileSystemToolbox
 
 		public static bool PathCompare(this string path1, string path2)
 		{
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-			var fullPath1 = Path.GetFullPath(path1);
-			var fullPath2 = Path.GetFullPath(path2);
-			return 0 == String.Compare(
+			var fullPath1 = Path.GetFullPath(path1).RemoveEndingDirectorySeparatorChar();
+			var fullPath2 = Path.GetFullPath(path2).RemoveEndingDirectorySeparatorChar();
+			return 0 == string.Compare(
 				fullPath1,
 				fullPath2,
-				StringComparison.InvariantCultureIgnoreCase);
-#else
-		// Make sure casing won't be a problem for other platforms
-		throw new NotImplementedException();
-#endif
+				IsFileSystemCaseSensitive
+					? StringComparison.Ordinal
+					: StringComparison.OrdinalIgnoreCase);
 		}
 
 		#endregion
