@@ -16,7 +16,7 @@ namespace Extenity.BuildMachine.Editor
 
 		static BuilderManager()
 		{
-			Log.Info("Initializing BuildMachine");
+			//Log.Info("Initializing BuildMachine");
 			BuilderInfos = GatherBuilderInfos();
 			BuildJobRunner.ContinueFromRunningJobAfterAssemblyReload();
 		}
