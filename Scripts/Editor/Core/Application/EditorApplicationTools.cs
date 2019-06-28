@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Extenity.FileSystemToolbox;
 using UnityEditor;
@@ -138,6 +139,26 @@ namespace Extenity.ApplicationToolbox.Editor
 					}
 				}
 			}
+		}
+
+		#endregion
+
+		#region Check For Android SDK Installation
+
+		public static bool IsAndroidSDKInstalledWithUnity()
+		{
+#if UNITY_EDITOR_WIN
+			var adbFileName = "adb.exe";
+			var editorDirectory = UnityEditorExecutableDirectory;
+			var paths = Directory.GetFiles(editorDirectory, adbFileName, SearchOption.AllDirectories);
+			if (paths.Length == 0)
+				return false;
+			if (paths.Length == 1)
+				return true;
+			throw new Exception($"While checking if Android SDK is installed with Unity, found more than one '{adbFileName}' files under Unity Editor installation at '{editorDirectory}'.");
+#else
+			throw new NotImplementedException();
+#endif
 		}
 
 		#endregion
