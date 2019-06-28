@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -14,6 +15,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Configuration
 
 		private const string MenuPath = "Tools/Clean Up";
+
+		private static readonly string[] IgnoredDirectories =
+		{
+			".hg",
+			".git",
+		};
 
 		#endregion
 
@@ -31,10 +38,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			for (int iSubDirectory = 0; iSubDirectory < subDirectories.Length; iSubDirectory++)
 			{
-				var subDirectory = subDirectories[iSubDirectory];
+				var subDirectory = subDirectories[iSubDirectory].FixDirectorySeparatorChars();
 				if (DirectoryTools.IsDirectoryEmpty(subDirectory))
 				{
-					list.Add(subDirectory);
+					var directoryNames = subDirectory.Split(PathTools.DirectorySeparatorChar);
+					if (!directoryNames.Any(item => IgnoredDirectories.Contains(item)))
+					{
+						list.Add(subDirectory);
+					}
 				}
 			}
 
