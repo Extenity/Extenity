@@ -17,7 +17,14 @@ namespace Extenity.ApplicationToolbox.Editor
 	{
 		#region Configuration
 
-		private const string PathKey = "Path";
+#if UNITY_EDITOR_WIN
+		private const string PathKey = "PATH";
+#elif UNITY_EDITOR_OSX
+		private const string PathKey = "HOME";
+#else
+		RequiresAttention;
+#endif
+
 		private const string Menu = "Tools/Environment Variables/";
 
 		#endregion
@@ -80,12 +87,12 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Fix Android Tool Paths
 
+#if UNITY_EDITOR_WIN
+
 		[InitializeOnEditorLaunchMethod]
 		public static void EnsureAndroidToolPathsAreUnderUnityInstallation()
 		{
 			const bool log = false;
-
-#if UNITY_EDITOR_WIN
 
 			// Should not even try to run if there is no Android package installed or the Android SDK is not installed with Unity.
 			if (!EditorApplicationTools.IsAndroidSDKInstalledWithUnity())
@@ -109,17 +116,19 @@ namespace Extenity.ApplicationToolbox.Editor
 				},
 				log
 			);
+		}
+
+#elif UNITY_EDITOR_OSX
+
+		// Looks like Mac does not need any adjustments. Nothing to do here.
 
 #else
 
-			// TODO: This is currently a Windows-only feature. See if a similar solution is required on Mac.
-			throw new NotImplementedException();
+		RequiresAttention;
 
 #endif
-		}
 
-
-		private static void EnsurePathsAreUnderUnityInstallation(string[] filesThatShouldNotExistOutsideOfUnityInstallation, (string FileName, string IgnoreContaining)[] filesThatWillBeSearchedInUnityInstallation, bool log)
+		public static void EnsurePathsAreUnderUnityInstallation(string[] filesThatShouldNotExistOutsideOfUnityInstallation, (string FileName, string IgnoreContaining)[] filesThatWillBeSearchedInUnityInstallation, bool log)
 		{
 			var pathsUnderUnityInstallation = new List<string>(filesThatWillBeSearchedInUnityInstallation.Length);
 			foreach (var entry in filesThatWillBeSearchedInUnityInstallation)
