@@ -13,9 +13,7 @@ namespace Extenity.ProfilingToolbox
 		private float lastUpdateTime;
 		private int counter;
 		private int lastFPS;
-		private bool isDrawing;
 		private float qualityRatio;
-		private Color qualityColor;
 
 		public delegate void OnFPSUpdate(int fps);
 
@@ -36,7 +34,6 @@ namespace Extenity.ProfilingToolbox
 			{
 				lastFPS = counter;
 				qualityRatio = (lastFPS - qualityLowFPS) * qualityInvFPSDiff;
-				qualityColor = Color.Lerp(Color.red, Color.green, qualityRatio);
 				lastUpdateTime = Time.realtimeSinceStartup;
 				counter = 0;
 
@@ -47,26 +44,9 @@ namespace Extenity.ProfilingToolbox
 			}
 		}
 
-		void OnGUI()
-		{
-			if (!IsDrawing)
-				return;
-
-			Color previousColor = GUI.color;
-			GUI.color = qualityColor;
-			GUILayout.Label(lastFPS.ToString());
-			GUI.color = previousColor;
-		}
-
 		public int FPS
 		{
 			get { return lastFPS; }
-		}
-
-		public bool IsDrawing
-		{
-			get { return isDrawing; }
-			set { isDrawing = value; }
 		}
 	}
 

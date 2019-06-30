@@ -1,3 +1,5 @@
+#if !Release
+
 #if UNITY_EDITOR
 #define UNITY_DRAWER
 #endif
@@ -1259,3 +1261,5 @@ namespace Extenity.DebugToolbox
 	}
 
 }
+
+#endif
