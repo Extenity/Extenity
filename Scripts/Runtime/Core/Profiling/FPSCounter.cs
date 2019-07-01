@@ -1,53 +1,107 @@
+using System;
 using UnityEngine;
-using Extenity.DesignPatternsToolbox;
+using UnityEngine.Experimental.Rendering;
 
 namespace Extenity.ProfilingToolbox
 {
 
-	public class FPSCounter : SingletonUnity<FPSCounter>
+	/// <summary>
+	/// Requires Scriptable Rendering Pipeline (SRP) to get frame events. See: https://forum.unity.com/threads/onprerender-onpostrender-counterpart-in-srp.535875/#post-3530582
+	/// </summary>
+	public sealed class FPSCounter : IDisposable
 	{
-		private const int qualityLowFPS = 25;
-		private const int qualityHighFPS = 45;
-		private const float qualityInvFPSDiff = 1f / (qualityHighFPS - qualityLowFPS);
+		#region Configuration
 
-		private float lastUpdateTime;
-		private int counter;
-		private int lastFPS;
-		private float qualityRatio;
+		/// <summary>
+		/// Note that this will both affect FPS display and FPS stabilization detection method.
+		/// Increasing this will smooth out FPS display, but FPS stabilization will require more
+		/// frames to calculate.
+		/// </summary>
+		private const int MeanEntryCount = 6;
 
-		public delegate void OnFPSUpdate(int fps);
+		#endregion
 
-		public event OnFPSUpdate onFPSUpdate;
+		#region Initialization
 
-		void Awake()
+		public FPSCounter(int poorFPSBarrier = 25, int fineFPSBarrier = 45)
 		{
-			InitializeSingleton(true);
+			Debug.Assert(fineFPSBarrier > poorFPSBarrier);
+			PoorFPSBarrier = poorFPSBarrier;
+			FineFPSBarrier = fineFPSBarrier;
+			FPSQualityInvDiff = 1f / (FineFPSBarrier - PoorFPSBarrier);
 
-			lastUpdateTime = Time.realtimeSinceStartup;
+			TickAnalyzer = new TickAnalyzer(Time.realtimeSinceStartup, MeanEntryCount);
 		}
 
-		void Update()
+		#endregion
+
+		#region Deinitialization
+
+		public void Dispose()
 		{
-			counter++;
+			EndCapturing();
 
-			if (Time.realtimeSinceStartup - lastUpdateTime >= 1f)
-			{
-				lastFPS = counter;
-				qualityRatio = (lastFPS - qualityLowFPS) * qualityInvFPSDiff;
-				lastUpdateTime = Time.realtimeSinceStartup;
-				counter = 0;
-
-				if (onFPSUpdate != null)
-				{
-					onFPSUpdate(lastFPS);
-				}
-			}
+			TickAnalyzer.ClearAllEvents();
 		}
 
-		public int FPS
+		#endregion
+
+		#region Capture
+
+		public bool IsCapturing { get; private set; }
+
+		public void StartCapturing()
 		{
-			get { return lastFPS; }
+			if (IsCapturing)
+				return;
+			IsCapturing = true;
+
+			TickAnalyzer.Reset(Time.realtimeSinceStartup, MeanEntryCount);
+
+			RenderPipeline.beginFrameRendering += OnBeginFrameRendering;
 		}
+
+		public void EndCapturing()
+		{
+			if (!IsCapturing)
+				return;
+			IsCapturing = false;
+
+			RenderPipeline.beginFrameRendering -= OnBeginFrameRendering;
+
+			TickAnalyzer.Reset(0f, MeanEntryCount);
+		}
+
+		private void OnBeginFrameRendering(Camera[] cameras)
+		{
+			TickAnalyzer.Tick(Time.realtimeSinceStartup);
+		}
+
+		#endregion
+
+		#region FPS
+
+		public readonly TickAnalyzer TickAnalyzer;
+
+		// Use TickAnalyzer events instead.
+		//public readonly ExtenityEvent<float> OnFPSUpdate = new ExtenityEvent<float>();
+
+		public float FPS => (float)TickAnalyzer.MeanElapsedTime;
+
+		#endregion
+
+		#region FPS Quality
+
+		public readonly int PoorFPSBarrier;
+		public readonly int FineFPSBarrier;
+		public readonly float FPSQualityInvDiff;
+
+		public float QualityRatio
+		{
+			get { return Mathf.Clamp01((FPS - PoorFPSBarrier) * FPSQualityInvDiff); }
+		}
+
+		#endregion
 	}
 
 }

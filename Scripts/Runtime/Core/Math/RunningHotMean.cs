@@ -11,6 +11,7 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public readonly CircularArray<double> Values;
 		public int ValueCount => Values.Count;
+		public int ValueCapacity => Values.Capacity;
 
 		private bool IsInvalidated;
 

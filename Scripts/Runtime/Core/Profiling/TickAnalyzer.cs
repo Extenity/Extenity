@@ -2,6 +2,7 @@
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.MathToolbox;
+using Extenity.MessagingToolbox;
 using UnityEngine;
 
 namespace Extenity.ProfilingToolbox
@@ -60,7 +61,10 @@ namespace Extenity.ProfilingToolbox
 			TicksPerSecond = 0;
 			LastTickTime = 0;
 
-			ElapsedTimes = new RunningHotMeanDouble(historySize);
+			if (ElapsedTimes == null || ElapsedTimes.ValueCapacity != historySize)
+			{
+				ElapsedTimes = new RunningHotMeanDouble(historySize);
+			}
 		}
 
 		#endregion
@@ -107,9 +111,14 @@ namespace Extenity.ProfilingToolbox
 
 		#region Events
 
-		public delegate void AnalyzerAction(TickAnalyzer me);
-		public event AnalyzerAction OnUpdate;
-		public event AnalyzerAction OnTick;
+		public readonly ExtenityEvent OnUpdate = new ExtenityEvent();
+		public readonly ExtenityEvent OnTick = new ExtenityEvent();
+
+		public void ClearAllEvents()
+		{
+			OnUpdate.Callbacks.Clear();
+			OnTick.Callbacks.Clear();
+		}
 
 		#endregion
 
@@ -137,10 +146,10 @@ namespace Extenity.ProfilingToolbox
 					InternalTickCounter = 0;
 
 					OutputToGraph();
-					OnUpdate?.Invoke(this);
+					OnUpdate.Invoke();
 				}
 
-				OnTick?.Invoke(this);
+				OnTick.Invoke();
 			}
 		}
 
