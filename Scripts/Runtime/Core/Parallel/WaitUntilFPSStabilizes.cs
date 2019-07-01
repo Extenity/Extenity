@@ -21,6 +21,8 @@ namespace Extenity.ParallelToolbox
 		private float StartTime;
 		private float LastCheckTime;
 
+		public float FPS { get; private set; }
+
 		public WaitUntilFPSStabilizes(float maxWaitTime = 0f)
 		{
 			MaxWaitTime = maxWaitTime;
@@ -59,6 +61,7 @@ namespace Extenity.ParallelToolbox
 				if (MeanFPS.Values.IsCapacityFilled)
 				{
 					var average = (float)MeanFPS.Mean;
+					FPS = average;
 					var allowedRangeMin = average * AllowedRangeMinRatio;
 					var allowedRangeMax = average * AllowedRangeMaxRatio;
 					var values = MeanFPS.Values.Items;
