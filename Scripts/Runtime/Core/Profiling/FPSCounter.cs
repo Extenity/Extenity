@@ -30,7 +30,7 @@ namespace Extenity.ProfilingToolbox
 			FineFPSBarrier = fineFPSBarrier;
 			FPSQualityInvDiff = 1f / (FineFPSBarrier - PoorFPSBarrier);
 
-			TickAnalyzer = new TickAnalyzer(Time.realtimeSinceStartup, MeanEntryCount);
+			TickAnalyzer = new TickAnalyzer(0f, MeanEntryCount);
 		}
 
 		#endregion
