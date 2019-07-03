@@ -169,6 +169,8 @@ namespace Extenity.ApplicationToolbox
 			{
 				UnityEditor.AssetDatabase.SaveAssets();
 			}
+
+			OnProjectVersionChanged?.Invoke();
 		}
 
 		public static void AddToUnityVersionConfiguration(int addMajor, int addMinor, int addBuild, bool saveAssets)
@@ -289,6 +291,12 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
+		#region Version Change Emitter
+
+		public static event Action OnProjectVersionChanged;
+
+		#endregion
+
 		#region Consistency
 
 		private static bool IsOutOfRange(int major, int minor, int build)
@@ -320,7 +328,7 @@ namespace Extenity.ApplicationToolbox
 
 		private static string ToIncrementString(int increment)
 		{
-			return increment == int.MinValue 
+			return increment == int.MinValue
 				? "reset"
 				: increment.ToString();
 		}
