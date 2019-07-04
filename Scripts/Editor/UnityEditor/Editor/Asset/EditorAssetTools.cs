@@ -250,6 +250,23 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Assets Menu - Operations - Reserialize Assets
 
+		[MenuItem("Assets/Operations/Reserialize Project Settings", priority = 1101)]
+		public static void ReserializeProjectSettings()
+		{
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				var fullList = new List<string>();
+				var log = new StringBuilder();
+
+				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith("ProjectSettings")).ToList();
+				InternalAddToAssetList(list, fullList, "Selected Assets", log);
+
+				Log.Info(log.ToString());
+
+				ReserializeAssets(fullList);
+			};
+		}
+
 		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1102)]
 		public static void ReserializeSelectedAssets()
 		{
