@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting
@@ -21,6 +22,8 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	public class QuickGraph
 	{
 		public static readonly Dictionary<string, Graph> Graphs = new Dictionary<string, Graph>();
+
+		#region Plot - General
 
 		public static void Plot(string graphTitle, ValueAxisRangeConfiguration rangeConfiguration, float time, params QuickChannel[] quickChannels)
 		{
@@ -57,6 +60,54 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				graph.Channels[i].Sample(quickChannels[i].Value, time, frame);
 			}
 		}
+
+		#endregion
+
+		#region Plot - PID
+
+		public static readonly Color PIDInputColor = new Color(0f, 1f, 0f, 1f);
+		public static readonly Color PIDOutputColor = new Color(0.52f, 0f, 0f, 1f);
+		public static readonly Color PIDTargetColor = new Color(1f, 0.63f, 0f, 1f);
+		public static readonly float PIDPaddingFactor = 1.1f;
+
+		/// <summary>
+		/// First: PID instance ID.
+		/// Second: PID last computation time.
+		/// </summary>
+		private static readonly Dictionary<int, double> PIDLogTimes = new Dictionary<int, double>();
+
+		public static void Plot(string graphTitle, float time, PID pid)
+		{
+			// Check if results was logged for current computation step
+			{
+				var instanceID = pid.InstanceID;
+				if (PIDLogTimes.TryGetValue(instanceID, out var lastLoggedComputationTime))
+				{
+					if (pid.LastComputationTime == lastLoggedComputationTime)
+					{
+						return;
+					}
+					PIDLogTimes[instanceID] = pid.LastComputationTime;
+				}
+				else
+				{
+					PIDLogTimes.Add(instanceID, pid.LastComputationTime);
+				}
+			}
+
+			Plot(graphTitle,
+				ValueAxisRangeConfiguration.CreateFixed(
+					(float)pid.OutMin * PIDPaddingFactor,
+					(float)pid.OutMax * PIDPaddingFactor
+				),
+				time,
+				new QuickChannel("Input", PIDInputColor, (float)pid.Input),
+				new QuickChannel("Output", PIDOutputColor, (float)pid.Output),
+				new QuickChannel("Target", PIDTargetColor, (float)pid.Target)
+ 			);
+		}
+
+		#endregion
 	}
 
 }
