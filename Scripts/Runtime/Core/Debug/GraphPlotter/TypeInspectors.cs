@@ -138,15 +138,15 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			public Object GetValue(Object instance, string fieldName)
 			{
 				var quaternion = (Quaternion)instance;
-				if (fieldName == "x (euler)")
+				if (fieldName.Equals("x (euler)", StringComparison.Ordinal))
 				{
 					return quaternion.eulerAngles.x;
 				}
-				if (fieldName == "y (euler)")
+				if (fieldName.Equals("y (euler)", StringComparison.Ordinal))
 				{
 					return quaternion.eulerAngles.y;
 				}
-				if (fieldName == "z (euler)")
+				if (fieldName.Equals("z (euler)", StringComparison.Ordinal))
 				{
 					return quaternion.eulerAngles.z;
 				}
