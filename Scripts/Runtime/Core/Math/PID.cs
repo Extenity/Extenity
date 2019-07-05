@@ -35,10 +35,14 @@ namespace Extenity.MathToolbox
 		public double Output;
 		public double Input;
 		public double Target;
+		public float OutputFloat => (float)Output;
+		public float InputFloat => (float)Input;
+		public float TargetFloat => (float)Target;
 
 		private double SampleTime = 0.01f; // Seconds
 		public double LastComputationTime;
 		public double ITerm;
+		public float ITermFloat => (float)ITerm;
 		public double LastInput;
 		public double Kp;
 		public double Ki;
@@ -72,6 +76,8 @@ namespace Extenity.MathToolbox
 
 		public PID(InputInitializationTypes inputInitializationType, IntegralInitializationTypes integralInitializationType)
 		{
+			InstanceID = ++LastGeneratedInstanceID;
+
 			InputInitializationType = inputInitializationType;
 			IntegralInitializationType = integralInitializationType;
 		}
@@ -122,9 +128,18 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region ID
+		#region Metadata - InstanceID
 
-		public string ID;
+		[NonSerialized]
+		public readonly int InstanceID;
+
+		private static int LastGeneratedInstanceID = 100;
+
+		#endregion
+
+		#region Metadata - Name
+
+		public string Name;
 
 		#endregion
 
