@@ -199,11 +199,11 @@ namespace Extenity.ProfilingToolbox
 
 			if (Plotter.OutputTPSGraph)
 			{
-				Plotter._Channels[0].Sample(TicksPerSecond, (float)CurrentPeriodStartTime, Time.frameCount);
+				Plotter._Channels[0].Sample(TicksPerSecond, (float)CurrentPeriodStartTime);
 			}
 			if (Plotter.OutputAverageTPSGraph)
 			{
-				Plotter._Channels[1].Sample((float)(1.0 / ElapsedTimes.Mean), (float)CurrentPeriodStartTime, Time.frameCount);
+				Plotter._Channels[1].Sample((float)(1.0 / ElapsedTimes.Mean), (float)CurrentPeriodStartTime);
 			}
 		}
 

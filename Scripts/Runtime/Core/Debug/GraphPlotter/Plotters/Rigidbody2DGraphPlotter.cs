@@ -133,7 +133,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			var time = Time.time;
-			var frame = Time.frameCount;
 
 			if (PlotPosition)
 			{
@@ -142,9 +141,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (PlotPositionX)
-					PositionChannels[0].Sample(position.x, time, frame);
+					PositionChannels[0].Sample(position.x, time);
 				if (PlotPositionY)
-					PositionChannels[1].Sample(position.y, time, frame);
+					PositionChannels[1].Sample(position.y, time);
 			}
 
 			if (PlotRotation)
@@ -166,7 +165,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 						}
 					}
 
-					RotationChannel.Sample(rotation, time, frame);
+					RotationChannel.Sample(rotation, time);
 				}
 			}
 
@@ -177,9 +176,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				VelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (PlotVelocityX)
-					VelocityChannels[0].Sample(velocity.x, time, frame);
+					VelocityChannels[0].Sample(velocity.x, time);
 				if (PlotVelocityY)
-					VelocityChannels[1].Sample(velocity.y, time, frame);
+					VelocityChannels[1].Sample(velocity.y, time);
 			}
 
 			if (PlotAngularVelocity)
@@ -187,7 +186,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (PlotAngularVelocity)
-					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time, frame);
+					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time);
 			}
 		}
 

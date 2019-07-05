@@ -9,16 +9,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	{
 		public readonly float AxisX;
 		public readonly float AxisY;
-		public readonly int Frame;
 
-		public Sample(float axisX, float axisY, int frame)
+		public Sample(float axisX, float axisY)
 		{
 			AxisX = axisX;
 			AxisY = axisY;
-			Frame = frame;
 		}
 
-		public static readonly Sample Default = new Sample(float.NaN, float.NaN, -1);
+		public static readonly Sample Default = new Sample(float.NaN, float.NaN);
 	}
 
 	public class Channel
@@ -137,14 +135,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public void Sample(float value)
 		{
-			Sample(value, Time.time, Time.frameCount);
+			Sample(value, Time.time);
 		}
 
-		public void Sample(float value, float time, int frame)
+		public void Sample(float value, float time)
 		{
 			CheckClosed();
 
-			Samples[CurrentSampleIndex] = new Sample(time, value, frame);
+			Samples[CurrentSampleIndex] = new Sample(time, value);
 
 			Graph.InformNewEntry(value, time);
 

@@ -161,7 +161,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Range.CopyFrom(Graph.Range);
 
 			var time = Time.time;
-			var frame = Time.frameCount;
 
 			foreach (var field in ChannelFields)
 			{
@@ -186,19 +185,19 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				{
 					if (instanceType == typeof(float))
 					{
-						field.Channel.Sample((float)instance, time, frame);
+						field.Channel.Sample((float)instance, time);
 					}
 					else if (instanceType == typeof(double))
 					{
-						field.Channel.Sample(Convert.ToSingle((double)instance), time, frame);
+						field.Channel.Sample(Convert.ToSingle((double)instance), time);
 					}
 					else if (instanceType == typeof(int))
 					{
-						field.Channel.Sample((int)instance, time, frame);
+						field.Channel.Sample((int)instance, time);
 					}
 					else if (instanceType == typeof(bool))
 					{
-						field.Channel.Sample((bool)instance ? 1f : 0f, time, frame);
+						field.Channel.Sample((bool)instance ? 1f : 0f, time);
 					}
 				}
 			}

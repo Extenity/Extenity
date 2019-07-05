@@ -27,8 +27,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public static void Plot(string graphTitle, ValueAxisRangeConfiguration rangeConfiguration, float time, params QuickChannel[] quickChannels)
 		{
-			var frame = Time.frameCount;
-
 			// Create graph if necessary
 			var newGraph = !Graphs.TryGetValue(graphTitle, out var graph);
 			Graph.SetupGraph(true, ref graph, graphTitle, null, rangeConfiguration);
@@ -57,7 +55,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			// Plot
 			for (var i = 0; i < quickChannels.Length; i++)
 			{
-				graph.Channels[i].Sample(quickChannels[i].Value, time, frame);
+				graph.Channels[i].Sample(quickChannels[i].Value, time);
 			}
 		}
 

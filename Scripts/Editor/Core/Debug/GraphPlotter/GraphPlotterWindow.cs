@@ -539,14 +539,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 					var sampleValue = float.NaN;
 					var time = float.NaN;
-					var frame = -1;
 
 					if (index > -1)
 					{
 						var sample = channel.Samples[index];
 						sampleValue = sample.AxisY;
 						time = sample.AxisX;
-						frame = sample.Frame;
 					}
 
 					// Draw time marker.
@@ -558,12 +556,6 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						{
 							GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 2f, LegendWidth, 20),
 								"t = " + time, timeStyle);
-						}
-
-						if (frame > -1)
-						{
-							GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 3.5f, LegendWidth, 20),
-								"frame = " + frame, timeStyle);
 						}
 					}
 

@@ -124,7 +124,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				return;
 
 			var time = Time.time;
-			var frame = Time.frameCount;
 
 			if (PlotPosition)
 			{
@@ -133,11 +132,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (PlotPositionX)
-					PositionChannels[0].Sample(position.x, time, frame);
+					PositionChannels[0].Sample(position.x, time);
 				if (PlotPositionY)
-					PositionChannels[1].Sample(position.y, time, frame);
+					PositionChannels[1].Sample(position.y, time);
 				if (PlotPositionZ)
-					PositionChannels[2].Sample(position.z, time, frame);
+					PositionChannels[2].Sample(position.z, time);
 			}
 
 			if (PlotRotation)
@@ -147,11 +146,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				RotationRange.CopyFrom(RotationGraph.Range);
 
 				if (PlotRotationX)
-					RotationChannels[0].Sample(euler.x, time, frame);
+					RotationChannels[0].Sample(euler.x, time);
 				if (PlotRotationY)
-					RotationChannels[1].Sample(euler.y, time, frame);
+					RotationChannels[1].Sample(euler.y, time);
 				if (PlotRotationZ)
-					RotationChannels[2].Sample(euler.z, time, frame);
+					RotationChannels[2].Sample(euler.z, time);
 			}
 
 			if (PlotScale)
@@ -161,11 +160,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				ScaleRange.CopyFrom(ScaleGraph.Range);
 
 				if (PlotScaleX)
-					ScaleChannels[0].Sample(scale.x, time, frame);
+					ScaleChannels[0].Sample(scale.x, time);
 				if (PlotScaleY)
-					ScaleChannels[1].Sample(scale.y, time, frame);
+					ScaleChannels[1].Sample(scale.y, time);
 				if (PlotScaleZ)
-					ScaleChannels[2].Sample(scale.z, time, frame);
+					ScaleChannels[2].Sample(scale.z, time);
 			}
 		}
 

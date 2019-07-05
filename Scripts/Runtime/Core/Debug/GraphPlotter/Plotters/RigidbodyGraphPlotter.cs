@@ -139,7 +139,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			var time = Time.time;
-			var frame = Time.frameCount;
 
 			if (PlotPosition)
 			{
@@ -148,11 +147,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				PositionRange.CopyFrom(PositionGraph.Range);
 
 				if (PlotPositionX)
-					PositionChannels[0].Sample(position.x, time, frame);
+					PositionChannels[0].Sample(position.x, time);
 				if (PlotPositionY)
-					PositionChannels[1].Sample(position.y, time, frame);
+					PositionChannels[1].Sample(position.y, time);
 				if (PlotPositionZ)
-					PositionChannels[2].Sample(position.z, time, frame);
+					PositionChannels[2].Sample(position.z, time);
 			}
 
 			if (PlotRotation)
@@ -162,11 +161,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				RotationRange.CopyFrom(RotationGraph.Range);
 
 				if (PlotRotationX)
-					RotationChannels[0].Sample(euler.x, time, frame);
+					RotationChannels[0].Sample(euler.x, time);
 				if (PlotRotationY)
-					RotationChannels[1].Sample(euler.y, time, frame);
+					RotationChannels[1].Sample(euler.y, time);
 				if (PlotRotationZ)
-					RotationChannels[2].Sample(euler.z, time, frame);
+					RotationChannels[2].Sample(euler.z, time);
 			}
 
 			if (PlotVelocity)
@@ -176,11 +175,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				VelocityRange.CopyFrom(VelocityGraph.Range);
 
 				if (PlotVelocityX)
-					VelocityChannels[0].Sample(velocity.x, time, frame);
+					VelocityChannels[0].Sample(velocity.x, time);
 				if (PlotVelocityY)
-					VelocityChannels[1].Sample(velocity.y, time, frame);
+					VelocityChannels[1].Sample(velocity.y, time);
 				if (PlotVelocityZ)
-					VelocityChannels[2].Sample(velocity.z, time, frame);
+					VelocityChannels[2].Sample(velocity.z, time);
 			}
 
 			if (PlotAngularVelocity)
@@ -190,11 +189,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
 
 				if (PlotAngularVelocityX)
-					AngularVelocityChannels[0].Sample(angularVelocity.x, time, frame);
+					AngularVelocityChannels[0].Sample(angularVelocity.x, time);
 				if (PlotAngularVelocityY)
-					AngularVelocityChannels[1].Sample(angularVelocity.y, time, frame);
+					AngularVelocityChannels[1].Sample(angularVelocity.y, time);
 				if (PlotAngularVelocityZ)
-					AngularVelocityChannels[2].Sample(angularVelocity.z, time, frame);
+					AngularVelocityChannels[2].Sample(angularVelocity.z, time);
 			}
 		}
 
