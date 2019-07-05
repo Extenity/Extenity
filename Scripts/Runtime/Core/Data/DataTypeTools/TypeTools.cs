@@ -379,6 +379,39 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Pretty Type Names
+
+		public static readonly Dictionary<Type, string> PrettyTypeNames = new Dictionary<Type, string>
+		{
+			{ typeof(Single), "Float" },
+			{ typeof(Double), "Double" },
+			{ typeof(Int16), "Short" },
+			{ typeof(Int32), "Int" },
+			{ typeof(Int64), "Long" },
+			{ typeof(UInt16), "UShort" },
+			{ typeof(UInt32), "UInt" },
+			{ typeof(UInt64), "ULong" },
+			{ typeof(Boolean), "Bool" },
+			{ typeof(Byte), "Byte" },
+			{ typeof(SByte), "SByte" },
+			{ typeof(Vector2), "Vector2" },
+			{ typeof(Vector3), "Vector3" },
+			{ typeof(Vector4), "Vector4" },
+			{ typeof(Quaternion), "Quaternion" },
+			{ typeof(Matrix4x4), "Matrix4x4" },
+		};
+
+		public static string GetPrettyName(this Type type)
+		{
+			if (PrettyTypeNames.TryGetValue(type, out var name))
+			{
+				return name;
+			}
+			return type.Name;
+		}
+
+		#endregion
+
 		#region Get Default Value Of Type
 
 		private static Dictionary<Type, object> DefaultValues = new Dictionary<Type, object>();

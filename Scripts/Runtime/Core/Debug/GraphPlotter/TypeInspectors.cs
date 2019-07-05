@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Extenity.DataToolbox;
 using UnityEngine;
 using Object = System.Object;
 
@@ -30,21 +31,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		#region Configuration
 
 		private const BindingFlags Flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-
-		private readonly Dictionary<Type, string> PrettyTypeNames = new Dictionary<Type, string>
-		{
-			{ typeof(Single), "float" },
-			{ typeof(Double), "double" },
-			{ typeof(Int16), "short" },
-			{ typeof(Int32), "int" },
-			{ typeof(Int64), "long" },
-			{ typeof(UInt16), "ushort" },
-			{ typeof(UInt32), "uint" },
-			{ typeof(UInt64), "ulong" },
-			{ typeof(Boolean), "bool" },
-			{ typeof(Byte), "byte" },
-			{ typeof(SByte), "sbyte" },
-		};
 
 		private readonly Dictionary<Type, ITypeInspector> Inspectors = new Dictionary<Type, ITypeInspector>
 		{
@@ -95,7 +81,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				{
 					var fieldInfo = fieldInfos[i];
 
-					fieldNameStrings[i] = fieldInfo.Name + " : " + Instance.GetPrettyName(fieldInfo.FieldType);
+					fieldNameStrings[i] = fieldInfo.Name + " : " + fieldInfo.FieldType.GetPrettyName();
 
 					var field = new Field(fieldInfo.Name, fieldInfo.FieldType);
 
@@ -168,9 +154,24 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 		}
 
+		private readonly HashSet<Type> KnownTypes = new HashSet<Type>
+		{
+			typeof(Single),
+			typeof(Double),
+			typeof(Int16),
+			typeof(Int32),
+			typeof(Int64),
+			typeof(UInt16),
+			typeof(UInt32),
+			typeof(UInt64),
+			typeof(Boolean),
+			typeof(Byte),
+			typeof(SByte),
+		};
+
 		public bool IsKnownType(Type type)
 		{
-			return PrettyTypeNames.ContainsKey(type);
+			return KnownTypes.Contains(type);
 		}
 
 		public bool IsAcceptableType(Type type)
@@ -196,21 +197,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			return true;
-		}
-
-		private string GetPrettyName(Type type)
-		{
-			if (!PrettyTypeNames.TryGetValue(type, out var readable))
-			{
-				readable = type.Name;
-			}
-			return readable;
-		}
-
-		public string GetPrettyName(string typeName)
-		{
-			var type = Type.GetType(typeName);
-			return GetPrettyName(type);
 		}
 
 		public interface ITypeInspector
