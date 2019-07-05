@@ -171,7 +171,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		private float timeIntervalStartTime;
 		private float timeIntervalEndTime;
 
-		private Vector3[] points = new Vector3[2000];
+		private Vector3[] points = new Vector3[20000];
 		private Vector3[] arrowPoints = new Vector3[4];
 		private Vector3[] diamondPoints = new Vector3[5];
 		private Vector3[] horizontalLines = new Vector3[7];
