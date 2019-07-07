@@ -110,9 +110,9 @@ namespace Extenity.ApplicationToolbox.Editor
 				},
 				new[]
 				{
-					("adb.exe", null, null), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
-					("aapt.exe", null, null), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
-					("javaw.exe", null, "jre/bin") // There are 2 'javaw.exe' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
+					("adb.exe", "", ""), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
+					("aapt.exe", "", ""), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
+					("javaw.exe", "", "jre/bin") // There are 2 'javaw.exe' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
 				},
 				log
 			);
@@ -128,9 +128,9 @@ namespace Extenity.ApplicationToolbox.Editor
 				},
 				new[]
 				{
-					("adb", null, null), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
-					("aapt", null, null), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
-					("java", "MacOS", "jre/bin") // There are 2 'java' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
+					("adb", "", ""), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
+					("aapt", "", ""), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
+					("java", "MacOS", "jre/bin") // There are 4 'java' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory and under the MacOS directory, rather than the Linux directory.
 				},
 				log
 			);
