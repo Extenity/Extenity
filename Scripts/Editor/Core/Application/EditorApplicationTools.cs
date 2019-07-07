@@ -51,11 +51,35 @@ namespace Extenity.ApplicationToolbox.Editor
 					throw new NotImplementedException();
 #endif
 					{
-						throw new Exception("Unexpected Unity Editor executable location. Editor Assembly path: " + file);
+						throw new Exception("Unexpected Unity Editor executable location: " + file);
 					}
 					_UnityEditorExecutableDirectory = parentDirectory.Parent.FullName;
 				}
 				return _UnityEditorExecutableDirectory;
+			}
+		}
+
+		private static string _UnityEditorInstallationDirectory;
+		public static string UnityEditorInstallationDirectory
+		{
+			get
+			{
+				if (_UnityEditorInstallationDirectory == null)
+				{
+					var executableDirectory = new DirectoryInfo(UnityEditorExecutableDirectory);
+#if UNITY_EDITOR_WIN
+					if (executableDirectory.Name != "Editor")
+#elif UNITY_EDITOR_OSX
+					if (executableDirectory.Name != "Unity.app")
+#else
+					throw new NotImplementedException();
+#endif
+					{
+						throw new Exception("Unexpected Unity Editor executable location: " + executableDirectory.FullName);
+					}
+					_UnityEditorInstallationDirectory = executableDirectory.Parent.FullName;
+				}
+				return _UnityEditorInstallationDirectory;
 			}
 		}
 
@@ -167,16 +191,19 @@ namespace Extenity.ApplicationToolbox.Editor
 		{
 #if UNITY_EDITOR_WIN
 			var adbFileName = "adb.exe";
-			var editorDirectory = UnityEditorExecutableDirectory;
+#elif UNITY_EDITOR_OSX
+			var adbFileName = "adb";
+#else
+			var adbFileName = "";
+			throw new NotImplementedException();
+#endif
+			var editorDirectory = UnityEditorInstallationDirectory;
 			var paths = Directory.GetFiles(editorDirectory, adbFileName, SearchOption.AllDirectories);
 			if (paths.Length == 0)
 				return false;
 			if (paths.Length == 1)
 				return true;
 			throw new Exception($"While checking if Android SDK is installed with Unity, found more than one '{adbFileName}' files under Unity Editor installation at '{editorDirectory}'.");
-#else
-			throw new NotImplementedException();
-#endif
 		}
 
 		#endregion
