@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Unity.EditorCoroutines.Editor;
@@ -160,6 +161,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			{
 				currentlyExistingPaths[i] = Path.GetDirectoryName(currentlyExistingPaths[i]).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 			}
+			currentlyExistingPaths.RemoveDuplicates();
 
 			var message = new StringBuilder();
 
@@ -169,7 +171,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				var found = pathsUnderUnityInstallation.Any(pathUnderUnityInstallation => currentlyExistingPath.PathCompare(pathUnderUnityInstallation));
 				if (!found)
 				{
-					message.AppendLine("REMOVE: " + currentlyExistingPath);
+					message.AppendLine("REMOVE: \t" + currentlyExistingPath);
 				}
 			}
 
@@ -179,7 +181,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				var found = currentlyExistingPaths.Any(currentlyExistingPath => pathUnderUnityInstallation.PathCompare(currentlyExistingPath));
 				if (!found)
 				{
-					message.AppendLine("ADD: " + pathUnderUnityInstallation);
+					message.AppendLine("ADD: \t" + pathUnderUnityInstallation);
 				}
 			}
 
@@ -214,7 +216,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			if (File.Exists(fileName))
 			{
 				var fullPath = Path.GetFullPath(fileName);
-				result.Add(fullPath);
+				result.AddIfDoesNotContain(fullPath);
 			}
 
 			var paths = GetEnvironmentPaths(EnvironmentVariableTarget.Process);
@@ -225,7 +227,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				{
 					var fullPath = Path.Combine(path, fileName);
 					if (File.Exists(fullPath))
-						result.Add(fullPath);
+						result.AddIfDoesNotContain(fullPath);
 				}
 			}
 		}
