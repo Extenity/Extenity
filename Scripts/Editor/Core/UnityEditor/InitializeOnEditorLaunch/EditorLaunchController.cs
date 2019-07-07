@@ -14,11 +14,18 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[InitializeOnLoadMethod]
 		private static void LaunchMethodsWithAttributes()
 		{
-			CheckIfFirstAssemblyReloadOnEditorLifeTime();
-
-			if (IsJustLaunched)
+			try // Cover all in try-catch block because Unity is not happy with exceptions thrown in InitializeOnLoadMethod.
 			{
-				CallAttributedMethods();
+				CheckIfFirstAssemblyReloadOnEditorLifeTime();
+
+				if (IsJustLaunched)
+				{
+					CallAttributedMethods();
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Exception(exception);
 			}
 		}
 
@@ -80,7 +87,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			foreach (var method in methods)
 			{
-				method.Invoke(null, null);
+				try // Cover each method call in separate try-catch blocks so an exception in one method won't block the others.
+				{
+					method.Invoke(null, null);
+				}
+				catch (Exception exception)
+				{
+					Log.Exception(exception);
+				}
 			}
 		}
 
