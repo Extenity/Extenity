@@ -222,6 +222,8 @@ namespace Extenity.ApplicationToolbox.Editor
 		public static List<string> GetEnvironmentPaths(EnvironmentVariableTarget target)
 		{
 			var paths = Environment.GetEnvironmentVariable(PathKey, target);
+			if (paths == null || paths.Length == 0)
+				return new List<string>(0);
 			return paths.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)
 				.ToList();
 		}
@@ -430,7 +432,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		public static void LogPaths(IEnumerable<string> paths, EnvironmentVariableTarget target)
 		{
-			Log.Info($"Listing paths in environment variable of '{target}'\n{string.Join("\n", paths)}");
+			Log.Info($"Listing '{paths.Count()}' path(s) in environment variable of '{target}'\n{string.Join("\n", paths)}");
 		}
 
 		#endregion
