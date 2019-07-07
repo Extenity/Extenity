@@ -20,7 +20,7 @@ namespace Extenity.ApplicationToolbox.Editor
 #if UNITY_EDITOR_WIN
 		private const string PathKey = "PATH";
 #elif UNITY_EDITOR_OSX
-		private const string PathKey = "HOME";
+		private const string PathKey = "PATH";
 #else
 		RequiresAttention;
 #endif
@@ -87,8 +87,6 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Fix Android Tool Paths
 
-#if UNITY_EDITOR_WIN
-
 		[InitializeOnEditorLaunchMethod]
 		public static void EnsureAndroidToolPathsAreUnderUnityInstallation()
 		{
@@ -100,6 +98,8 @@ namespace Extenity.ApplicationToolbox.Editor
 				return;
 			}
 
+#if UNITY_EDITOR_WIN
+
 			EnsurePathsAreUnderUnityInstallation(
 				new[]
 				{
@@ -110,30 +110,44 @@ namespace Extenity.ApplicationToolbox.Editor
 				},
 				new[]
 				{
-					("adb.exe", null), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
-					("aapt.exe", null), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
-					("javaw.exe", "jre/bin") // There are 2 'javaw.exe' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
+					("adb.exe", null, null), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
+					("aapt.exe", null, null), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
+					("javaw.exe", null, "jre/bin") // There are 2 'javaw.exe' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
 				},
 				log
 			);
-		}
 
 #elif UNITY_EDITOR_OSX
 
-		// Looks like Mac does not need any adjustments. Nothing to do here.
+			EnsurePathsAreUnderUnityInstallation(
+				new[]
+				{
+					"adb",
+					"aapt",
+					"java",
+				},
+				new[]
+				{
+					("adb", null, null), // Android Debug Bridge tool, which will direct us into the 'platform-tools' directory.
+					("aapt", null, null), // Android Asset Packaging Tool, which will direct us into the 'build-tools' directory.
+					("java", "MacOS", "jre/bin") // There are 2 'java' exist under Unity Installation. We are interested in the one that is not under 'jre/bin' directory.
+				},
+				log
+			);
 
 #else
 
-		RequiresAttention;
+			RequiresAttention;
 
 #endif
+		}
 
-		public static void EnsurePathsAreUnderUnityInstallation(string[] filesThatShouldNotExistOutsideOfUnityInstallation, (string FileName, string IgnoreContaining)[] filesThatWillBeSearchedInUnityInstallation, bool log)
+		public static void EnsurePathsAreUnderUnityInstallation(string[] filesThatShouldNotExistOutsideOfUnityInstallation, (string FileName, string PreferContaining, string IgnoreContaining)[] filesThatWillBeSearchedInUnityInstallation, bool log)
 		{
 			var pathsUnderUnityInstallation = new List<string>(filesThatWillBeSearchedInUnityInstallation.Length);
 			foreach (var entry in filesThatWillBeSearchedInUnityInstallation)
 			{
-				var path = FindToolPathInEditorInstallation(entry.FileName, entry.IgnoreContaining, log);
+				var path = FindToolPathInEditorInstallation(entry.FileName, entry.PreferContaining, entry.IgnoreContaining, log);
 				pathsUnderUnityInstallation.Add(path);
 			}
 
@@ -173,6 +187,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			{
 				var fullMessage = "Attention required for Android SDK to work correctly. These PATH environment variables should be adjusted manually.\n" + message.ToString();
 				Log.Error(fullMessage);
+				Log.Info("Current paths:\n" + string.Join("\n", GetEnvironmentPaths(EnvironmentVariableTarget.Process)));
 			}
 		}
 
@@ -248,22 +263,22 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Find Tool Path In Editor Installation
 
-		public static string FindToolPathInEditorInstallation(string fileName, string ignoreContaining = null, bool log = true)
+		public static string FindToolPathInEditorInstallation(string fileName, string preferContaining = null, string ignoreContaining = null, bool log = true)
 		{
 			ignoreContaining = ignoreContaining.FixDirectorySeparatorChars('/');
-			var editorDirectory = EditorApplicationTools.UnityEditorExecutableDirectory;
-			List<string> paths;
+			preferContaining = preferContaining.FixDirectorySeparatorChars('/');
+			var editorDirectory = EditorApplicationTools.UnityEditorInstallationDirectory;
+			var paths = Directory.GetFiles(editorDirectory, fileName, SearchOption.AllDirectories).ToList();
 
-			if (!string.IsNullOrEmpty(ignoreContaining))
+			// Remove any paths that contain 'ignoreContaining'.
+			if (!string.IsNullOrEmpty(ignoreContaining) && paths.Count > 0)
 			{
-				paths = Directory.GetFiles(editorDirectory, fileName, SearchOption.AllDirectories)
-					.Where(path => path.FixDirectorySeparatorChars('/').Contains(ignoreContaining))
-					.ToList();
+				paths = paths.Where(path => !path.FixDirectorySeparatorChars('/').Contains(ignoreContaining)).ToList();
 			}
-			else
+			// Select the ones that contain 'preferContaining' if multiple paths were found.
+			if (!string.IsNullOrEmpty(preferContaining) && paths.Count > 1)
 			{
-				paths = Directory.GetFiles(editorDirectory, fileName, SearchOption.AllDirectories)
-					.ToList();
+				paths = paths.Where(path => path.FixDirectorySeparatorChars('/').Contains(preferContaining)).ToList();
 			}
 
 			if (paths.Count == 0)
