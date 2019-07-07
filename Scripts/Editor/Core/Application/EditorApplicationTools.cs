@@ -3,6 +3,7 @@ using UnityEngine;
 using System.IO;
 using System.Reflection;
 using Extenity.FileSystemToolbox;
+using Extenity.ProfilingToolbox;
 using UnityEditor;
 
 namespace Extenity.ApplicationToolbox.Editor
@@ -144,6 +145,16 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Check For Android SDK Installation
 
+		[MenuItem("Edit/Tell If Android SDK Is Installed With Unity", priority = 268)] // 270 is "Clear All PlayerPrefs"
+		private static void TellIfAndroidSDKInstalledWithUnity()
+		{
+			bool isInstalled;
+			using (new QuickProfilerStopwatch("Detection took {0}"))
+				isInstalled = IsAndroidSDKInstalledWithUnity();
+
+			EditorUtility.DisplayDialog("Info", $"Android SDK is {(isInstalled ? "" : "NOT ")}installed with Unity.", "Okay");
+		}		
+		
 		public static bool IsAndroidSDKInstalledWithUnity()
 		{
 #if UNITY_EDITOR_WIN
