@@ -39,11 +39,19 @@ namespace Extenity.ApplicationToolbox.Editor
 				if (_UnityEditorExecutableDirectory == null)
 				{
 					//_UnityEditorExecutableDirectory = AppDomain.CurrentDomain.BaseDirectory; This returns null for some reason.
-					var file = new FileInfo(typeof(UnityEditor.EditorApplication).Assembly.Location);
+					var file = new FileInfo(typeof(EditorApplication).Assembly.Location);
 					var directory = file.Directory;
 					var parentDirectory = directory.Parent;
+#if UNITY_EDITOR_WIN
 					if (directory.Name != "Managed" || parentDirectory.Name != "Data")
-						throw new InternalException(9776381); // Unexpected Unity Editor executable location.
+#elif UNITY_EDITOR_OSX
+					if (directory.Name != "Managed" || parentDirectory.Name != "Contents")
+#else
+					throw new NotImplementedException();
+#endif
+					{
+						throw new Exception("Unexpected Unity Editor executable location. Editor Assembly path: " + file);
+					}
 					_UnityEditorExecutableDirectory = parentDirectory.Parent.FullName;
 				}
 				return _UnityEditorExecutableDirectory;
