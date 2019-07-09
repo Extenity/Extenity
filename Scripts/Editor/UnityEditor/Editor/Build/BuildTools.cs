@@ -162,6 +162,38 @@ namespace Extenity.BuildToolbox.Editor
 
 	#endregion
 
+	#region Define Symbols
+
+	public struct DefineSymbolEntry
+	{
+		/// <summary>
+		/// The index that tells where this define symbol should be located. 0 means at the beginning. -1 means at the end.
+		/// </summary>
+		public readonly int Index;
+		public readonly string Symbol;
+
+		public bool IsAtTheEnd => Index < 0;
+
+		public DefineSymbolEntry(int index, string symbol)
+		{
+			Index = index;
+			Symbol = symbol;
+		}
+
+		public DefineSymbolEntry(string symbol)
+		{
+			Index = -1;
+			Symbol = symbol;
+		}
+
+		public override string ToString()
+		{
+			return Symbol;
+		}
+	}
+
+	#endregion
+	
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -517,26 +549,37 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
 		{
+			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), ensureNotAddedBefore);
+		}
+
+		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
+		{
+			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), targetGroup, ensureNotAddedBefore);
+		}
+
+		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, bool ensureNotAddedBefore)
+		{
 			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, ensureNotAddedBefore);
 		}
 
 		/// <summary>
 		/// Source: https://answers.unity.com/questions/1225189/how-can-i-change-scripting-define-symbols-before-a.html
 		/// </summary>
-		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
+		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
 		{
 			if (symbols.IsNullOrEmpty())
 				throw new ArgumentNullException();
 			Log.Info($"Adding {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
 
+			symbols = symbols.OrderBy(entry => entry.Index).ToArray();
 			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 			var allDefines = definesString.Split(';').ToList();
 
 			foreach (var symbol in symbols)
 			{
-				if (!allDefines.Contains(symbol))
+				if (!allDefines.Contains(symbol.Symbol))
 				{
-					allDefines.Add(symbol);
+					allDefines.Insert(symbol.Index, symbol.Symbol);
 				}
 				else if (ensureNotAddedBefore)
 				{
@@ -553,19 +596,19 @@ namespace Extenity.BuildToolbox.Editor
 			// Ensure the symbols added.
 			foreach (var symbol in symbols)
 			{
-				if (!HasDefineSymbol(symbol, targetGroup))
+				if (!HasDefineSymbol(symbol.Symbol, targetGroup))
 				{
 					throw new Exception($"Failed to complete Define Symbol Add operation for symbol(s) '{string.Join(", ", symbol)}'.");
 				}
 			}
 		}
 
-		public static void RemoveDefineSymbols(string[] symbols)
+		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols)
 		{
-			RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
+			return RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
 		}
 
-		public static void RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
+		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
 		{
 			if (symbols.IsNullOrEmpty())
 				throw new ArgumentNullException();
@@ -573,9 +616,16 @@ namespace Extenity.BuildToolbox.Editor
 
 			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 			var allDefines = definesString.Split(';').ToList();
+			var originalDefines = allDefines.Clone();
+			var removedDefines = new List<DefineSymbolEntry>();
 
 			foreach (var symbol in symbols)
-				allDefines.Remove(symbol);
+			{
+				if (allDefines.Remove(symbol))
+				{
+					removedDefines.Add(new DefineSymbolEntry(originalDefines.IndexOf(symbol), symbol));
+				}
+			}
 
 			var newDefinesString = string.Join(";", allDefines);
 			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
@@ -591,6 +641,8 @@ namespace Extenity.BuildToolbox.Editor
 					throw new Exception($"Failed to complete Define Symbol Remove operation for symbol(s) '{string.Join(", ", symbol)}'.");
 				}
 			}
+
+			return removedDefines.ToArray();
 		}
 
 		public static string GetDefineSymbols()
@@ -634,28 +686,40 @@ namespace Extenity.BuildToolbox.Editor
 		#region Temporarily Add Define Symbols
 
 		[Serializable]
-		public class TemporarilyAddDefineSymbols : TemporaryBuildOperation
+		public class TemporarilySetDefineSymbols : TemporaryBuildOperation
 		{
-			public string[] Symbols;
+			public string[] AddedSymbols;
 			public bool EnsureNotAddedBefore;
+			public string[] RemovedSymbols;
+			public DefineSymbolEntry[] ActuallyRemovedSymbols;
 
-			public static TemporarilyAddDefineSymbols Create(string[] symbols, bool ensureNotAddedBefore)
+			public static TemporarilySetDefineSymbols Create(string[] addedSymbols, bool ensureNotAddedBefore, string[] removedSymbols = null)
 			{
-				return Apply(new TemporarilyAddDefineSymbols
+				return Apply(new TemporarilySetDefineSymbols
 				{
-					Symbols = (string[])symbols.Clone(),
-					EnsureNotAddedBefore = ensureNotAddedBefore
+					AddedSymbols = (string[])addedSymbols.Clone(),
+					EnsureNotAddedBefore = ensureNotAddedBefore,
+					RemovedSymbols = (string[])removedSymbols.Clone(),
+					ActuallyRemovedSymbols = new DefineSymbolEntry[0],
 				});
 			}
 
 			public override void DoApply()
 			{
-				AddDefineSymbols(Symbols, EnsureNotAddedBefore);
+				AddDefineSymbols(AddedSymbols, EnsureNotAddedBefore);
+				if (RemovedSymbols != null && RemovedSymbols.Length > 0)
+				{
+					ActuallyRemovedSymbols = RemoveDefineSymbols(RemovedSymbols);
+				}
 			}
 
 			public override void DoRevert()
 			{
-				RemoveDefineSymbols(Symbols);
+				RemoveDefineSymbols(AddedSymbols);
+				if (ActuallyRemovedSymbols != null && ActuallyRemovedSymbols.Length > 0)
+				{
+					AddDefineSymbols(ActuallyRemovedSymbols, false);
+				}
 			}
 		}
 
