@@ -37,6 +37,24 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Copy
+
+		/// <summary>
+		/// Copy of <see cref="Stream.CopyTo"/> internals.
+		/// </summary>
+		public static void CopyTo(Stream source, Stream destination)
+		{
+			// TODO: Optimization. Search for all "new byte[" in code and see if making a ThreadSafe general buffer is more memory friendly or not. 
+			var bytes = new byte[4096];
+			int count;
+			while ((count = source.Read(bytes, 0, bytes.Length)) != 0)
+			{
+				destination.Write(bytes, 0, count);
+			}
+		}
+
+		#endregion
+
 		#region Compare
 
 		public static bool CompareStreamContents(this Stream stream1, Stream stream2)
