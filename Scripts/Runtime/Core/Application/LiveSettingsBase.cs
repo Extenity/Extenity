@@ -2,26 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 
 namespace Extenity.ApplicationToolbox
 {
 
-	public class LiveKeyAttribute : Attribute
-	{
-		public readonly string Key;
-
-		public LiveKeyAttribute(string key)
-		{
-			Key = key;
-		}
-	}
-
-	public abstract class LiveSettingsBase
+	[JsonObject(MemberSerialization.OptIn)]
+	public abstract class LiveSettingsBase<TDerived> where TDerived : LiveSettingsBase<TDerived>
 	{
 		#region Initialization
 
-		public LiveSettingsBase()
+		protected LiveSettingsBase()
 		{
 #if UNITY_EDITOR
 			CheckConsistency();
@@ -30,11 +23,65 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
-		#region Read Data
+		#region Data Structure
 
-		private delegate bool TryParseHandler<T>(string value, out T result);
+		private List<(FieldInfo FieldInfo, string Key)> GetFields()
+		{
+			return GetType()
+				.GetFields(
+					BindingFlags.Instance |
+					BindingFlags.FlattenHierarchy |
+					BindingFlags.Public |
+					BindingFlags.NonPublic)
+				.Where(field => field.GetCustomAttribute<JsonPropertyAttribute>() != null)
+				.Select(field => (field, field.GetCustomAttribute<JsonPropertyAttribute>().PropertyName))
+				.ToList();
+		}
 
-		public void ReadData(Dictionary<string, string> keyValueStore)
+#if UNITY_EDITOR
+
+		private void CheckDataStructureConsistency()
+		{
+			var fields = GetFields();
+
+			// Check if there are duplicate keys.
+			{
+				var duplicates = fields.Select(field => field.Key).Duplicates(EqualityComparer<string>.Default);
+				foreach (var duplicate in duplicates)
+				{
+					Log.Error($"There are duplicate keys for '{duplicate}' in {GetType().Name}.");
+				}
+			}
+		}
+		
+#endif
+		
+		#endregion
+
+		#region Serialize
+
+		public string Serialize(string key)
+		{
+			var json = ToJson(false);
+			return SimpleTwoWayEncryptorAES.EncryptBase64WithIV(json, key);
+		}
+
+		public string ToJson(bool pretty = false)
+		{
+			return JsonConvert.SerializeObject(this, pretty ? Formatting.Indented : Formatting.None);
+		}
+
+		#endregion
+		
+		#region Deserialize
+
+		public static TDerived Deserialize(string serialized, string key)
+		{
+			var json = SimpleTwoWayEncryptorAES.DecryptBase64WithIV(serialized, key);
+			return JsonConvert.DeserializeObject<TDerived>(json);
+		}
+		
+		public void Parse(Dictionary<string, string> keyValueStore)
 		{
 			var fields = GetFields();
 			if (fields.Count == 0)
@@ -45,11 +92,11 @@ namespace Extenity.ApplicationToolbox
 				var fieldType = field.FieldInfo.FieldType;
 				if (fieldType == typeof(float))
 				{
-					ParseLiveSetting<float>(keyValueStore, field.Key, field.FieldInfo, float.TryParse);
+					ParseFloat(keyValueStore, field.Key, field.FieldInfo);
 				}
 				else if (fieldType == typeof(int))
 				{
-					ParseLiveSetting<int>(keyValueStore, field.Key, field.FieldInfo, int.TryParse);
+					ParseInt(keyValueStore, field.Key, field.FieldInfo);
 				}
 				else
 				{
@@ -59,27 +106,28 @@ namespace Extenity.ApplicationToolbox
 			}
 		}
 
-		private List<(FieldInfo FieldInfo, string Key)> GetFields()
+		/// <summary>
+		/// Tries to parse the value inside keyValueStore. Leaves the value intact when it fails to parse.
+		/// </summary>
+		private void ParseInt(Dictionary<string, string> keyValueStore, string key, FieldInfo fieldInfo)
 		{
-			return GetType()
-				.GetFields(
-					BindingFlags.Instance |
-					BindingFlags.FlattenHierarchy |
-					BindingFlags.Public |
-					BindingFlags.NonPublic)
-				.Where(field => field.GetCustomAttribute<LiveKeyAttribute>() != null)
-				.Select(field => (field, field.GetCustomAttribute<LiveKeyAttribute>().Key))
-				.ToList();
+			if (keyValueStore.TryGetValue(key, out var text))
+			{
+				if (int.TryParse(text, out var valueInSettings))
+				{
+					fieldInfo.SetValue(this, valueInSettings);
+				}
+			}
 		}
 
 		/// <summary>
 		/// Tries to parse the value inside keyValueStore. Leaves the value intact when it fails to parse.
 		/// </summary>
-		private void ParseLiveSetting<T>(Dictionary<string, string> keyValueStore, string key, FieldInfo fieldInfo, TryParseHandler<T> tryParseHandler)
+		private void ParseFloat(Dictionary<string, string> keyValueStore, string key, FieldInfo fieldInfo)
 		{
 			if (keyValueStore.TryGetValue(key, out var text))
 			{
-				if (tryParseHandler(text, out var valueInSettings))
+				if (float.TryParse(text, out var valueInSettings))
 				{
 					fieldInfo.SetValue(this, valueInSettings);
 				}
@@ -94,16 +142,7 @@ namespace Extenity.ApplicationToolbox
 
 		private void CheckConsistency()
 		{
-			var fields = GetFields();
-
-			// Check if there are duplicate keys.
-			{
-				var duplicates = fields.Select(field => field.Key).Duplicates(EqualityComparer<string>.Default);
-				foreach (var duplicate in duplicates)
-				{
-					Log.Error($"There are duplicate keys for '{duplicate}' in {GetType().Name}.");
-				}
-			}
+			CheckDataStructureConsistency();
 		}
 
 #endif
