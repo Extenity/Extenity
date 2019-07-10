@@ -1153,6 +1153,44 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Operation - Convert To Delta Bytes
+
+		// TODO: Optimization: Conversion can be made over to the existing array.  
+
+		public static byte[] ConvertToDeltaBytes(byte[] bytes)
+		{
+			if (bytes == null || bytes.Length == 0)
+				return new byte[0];
+
+			var deltas = new byte[bytes.Length];
+			byte previous = 0;
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				var current = bytes[i];
+				deltas[i] = (byte)(current - previous);
+				previous = current;
+			}
+			return deltas;
+		}
+
+		public static byte[] ConvertFromDeltaBytes(byte[] deltas)
+		{
+			if (deltas == null || deltas.Length == 0)
+				return new byte[0];
+
+			var bytes = new byte[deltas.Length];
+			byte previous = 0;
+			for (int i = 0; i < deltas.Length; i++)
+			{
+				var current = (byte)(deltas[i] + previous);
+				bytes[i] = current;
+				previous = current;
+			}
+			return bytes;
+		}
+
+		#endregion
+		
 		#region Register To List Event and Traverse
 
 		public static void RegisterToListEvent<TItem>(this List<TItem> list, bool ignoreIfListIsNull, Action subscriptionAction, Action<TItem> actionForEachItem)
