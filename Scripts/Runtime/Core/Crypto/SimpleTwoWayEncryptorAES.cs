@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Extenity.CompressionToolbox;
 
 namespace Extenity.CryptoToolbox
 {
@@ -91,7 +92,10 @@ namespace Extenity.CryptoToolbox
 			return encrypted;
 		}
 
-		public static string EncryptHexWithIV(string plainText, string key)
+		/// <summary>
+		/// Hex can be used in URLs easily. But the data size is significantly bigger than the Base64 solution.
+		/// </summary>
+		public static string EncryptHexWithIV(string plainText, string key, CompressionMethod compressionMethod = CompressionMethod.NoCompression, int compressionLevel = -1)
 		{
 			var ivString = GetUniqueString(16);
 			using (var aes = new SimpleTwoWayEncryptorAES(key))
@@ -102,9 +106,29 @@ namespace Extenity.CryptoToolbox
 				var encryptedBytes = aes.Encrypt(plainText, iv);
 				var encryptedBytesWithIV = iv.Concat(encryptedBytes).ToArray();
 
+				encryptedBytesWithIV = encryptedBytesWithIV.CompressBytes(compressionMethod, compressionLevel);
+
 				// get hex string to send with url
 				// this hex has both IV and ciphertext
 				return ByteArrayToString(encryptedBytesWithIV);
+			}
+		}
+
+		public static string EncryptBase64WithIV(string plainText, string key, CompressionMethod compressionMethod = CompressionMethod.NoCompression, int compressionLevel = -1)
+		{
+			var ivString = GetUniqueString(16);
+			using (var aes = new SimpleTwoWayEncryptorAES(key))
+			{
+				var iv = Encoding.UTF8.GetBytes(ivString);
+
+				// get encrypted bytes (IV bytes prepended to cipher bytes)
+				var encryptedBytes = aes.Encrypt(plainText, iv);
+				var encryptedBytesWithIV = iv.Concat(encryptedBytes).ToArray();
+
+				encryptedBytesWithIV = encryptedBytesWithIV.CompressBytes(compressionMethod, compressionLevel);
+
+				// get base64 string, which has both IV and ciphertext
+				return Convert.ToBase64String(encryptedBytesWithIV);
 			}
 		}
 
@@ -141,11 +165,26 @@ namespace Extenity.CryptoToolbox
 			return plainText;
 		}
 
-		public static string DecryptHexWithIV(string hex, string key)
+		public static string DecryptHexWithIV(string hex, string key, CompressionMethod compressionMethod = CompressionMethod.NoCompression)
 		{
 			using (var aes = new SimpleTwoWayEncryptorAES(key))
 			{
 				var encryptedBytesWithIV = StringToByteArray(hex);
+				encryptedBytesWithIV = encryptedBytesWithIV.DecompressBytes(compressionMethod);
+
+				var iv = encryptedBytesWithIV.Take(16).ToArray();
+				var cipher = encryptedBytesWithIV.Skip(16).ToArray();
+
+				return aes.Decrypt(cipher, iv);
+			}
+		}
+
+		public static string DecryptBase64WithIV(string base64, string key, CompressionMethod compressionMethod = CompressionMethod.NoCompression)
+		{
+			using (var aes = new SimpleTwoWayEncryptorAES(key))
+			{
+				var encryptedBytesWithIV = Convert.FromBase64String(base64);
+				encryptedBytesWithIV = encryptedBytesWithIV.DecompressBytes(compressionMethod);
 
 				var iv = encryptedBytesWithIV.Take(16).ToArray();
 				var cipher = encryptedBytesWithIV.Skip(16).ToArray();
@@ -157,7 +196,7 @@ namespace Extenity.CryptoToolbox
 		/// <summary>
 		/// Generates a unique encryption vector using RijndaelManaged.GenerateIV() method
 		/// </summary>
-		public byte[] GenerateEncryptionVector()
+		private byte[] GenerateEncryptionVector()
 		{
 			if (Rijn == null)
 				throw new Exception("Provider is not initialized");
@@ -173,7 +212,7 @@ namespace Extenity.CryptoToolbox
 		/// Allows seeing IV in plaintext so it can be passed along a url or some message.
 		/// </summary>
 		/// <param name="numBytes"></param>
-		public static string GetUniqueString(int numBytes)
+		private static string GetUniqueString(int numBytes)
 		{
 			var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
 			var data = new byte[numBytes];
