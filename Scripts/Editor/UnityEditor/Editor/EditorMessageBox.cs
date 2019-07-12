@@ -1,5 +1,6 @@
 ﻿using System;
 using Extenity.ApplicationToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.RenderingToolbox;
 using UnityEngine;
 using UnityEditor;
@@ -38,6 +39,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private bool NeedsFocus;
 
 		private bool InternalIsCancelled = true;
+		private Vector2 ScrollPosition;
 
 		public static void Show(Vector2Int size, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
@@ -106,7 +108,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 				GUILayout.BeginVertical();
 				GUILayout.Space(20f);
 				{
-					EditorGUILayout.LabelField(Message, EditorStyles.wordWrappedLabel);
+					ScrollPosition = EditorGUILayout.BeginScrollView(ScrollPosition);
+					EditorGUILayout.LabelField(Message, EditorStylesTools.RichWordWrappedLabel);
+					EditorGUILayout.EndScrollView();
 
 					GUILayout.FlexibleSpace();
 
@@ -125,11 +129,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 							GUILayout.Space(80f);
 
 							// CTRL + V
-							if (Event.current.type == EventType.KeyUp && Event.current.modifiers == EventModifiers.Control && Event.current.keyCode == KeyCode.V)
-							{
-								userInputField.Value += Clipboard.GetClipboardText();
-								Repaint();
-							}
+							// Turns out, Unity started to support Copy&Paste in TextFields. But keep these codes here
+							// for future needs.
+							// if (Event.current.type == EventType.KeyUp && Event.current.modifiers == EventModifiers.Control && Event.current.keyCode == KeyCode.V)
+							// {
+							// 	userInputField.Value += Clipboard.GetClipboardText();
+							// 	Repaint();
+							// }
 
 							GUI.SetNextControlName("UserInputField-" + i);
 							userInputField.Value = GUILayout.TextField(userInputField.Value);

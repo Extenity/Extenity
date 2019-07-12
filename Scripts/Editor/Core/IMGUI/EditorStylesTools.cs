@@ -35,6 +35,21 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 		}
 
+		private static GUIStyle _RichWordWrappedLabel;
+		public static GUIStyle RichWordWrappedLabel
+		{
+			get
+			{
+				if (_RichWordWrappedLabel == null)
+				{
+					_RichWordWrappedLabel = new GUIStyle(EditorStyles.wordWrappedLabel);
+					_RichWordWrappedLabel.richText = true;
+					_RichWordWrappedLabel.wordWrap = true;
+				}
+				return _RichWordWrappedLabel;
+			}
+		}
+
 		private static GUIStyle _BoldFoldout;
 		public static GUIStyle BoldFoldout
 		{
