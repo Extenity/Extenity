@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -77,10 +79,14 @@ namespace Extenity.ApplicationToolbox
 
 		public static TDerived Deserialize(string serialized, string key)
 		{
+			if (string.IsNullOrEmpty(serialized))
+				throw new ArgumentNullException();
 			var json = SimpleTwoWayEncryptorAES.DecryptBase64WithIV(serialized, key);
 			return JsonConvert.DeserializeObject<TDerived>(json);
 		}
 		
+
+		/* This was the old implementation. Now we use Json serialization.
 		public void Parse(Dictionary<string, string> keyValueStore)
 		{
 			var fields = GetFields();
@@ -133,6 +139,51 @@ namespace Extenity.ApplicationToolbox
 				}
 			}
 		}
+		*/
+
+		#endregion
+
+		#region Diff
+
+#if UNITY_EDITOR
+
+		public static string Diff(LiveSettingsBase<TDerived> original, LiveSettingsBase<TDerived> modified, string linePrefix = "\t")
+		{
+			var result = new StringBuilder();
+
+			var originalJson = JsonUtility.ToJson(original, true);
+			var modifiedJson = JsonUtility.ToJson(modified, true);
+
+			var originalLines = originalJson.Split(StringTools.LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
+			var modifiedLines = modifiedJson.Split(StringTools.LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
+
+			if (originalLines.Length != modifiedLines.Length)
+				throw new Exception(); // This is not expected.
+
+			for (int i = 0; i < originalLines.Length; i++)
+			{
+				if (originalLines[i] != modifiedLines[i])
+				{
+					var separator = originalLines[i].IndexOf(':');
+					var key = originalLines[i].Substring(0, separator).Trim().Trim('\"');
+					if (originalLines[i].Substring(0, separator) != modifiedLines[i].Substring(0, separator))
+						throw new Exception(); // This is not expected.
+					var originalValue = originalLines[i].Substring(separator + 1).Trim();
+					var modifiedValue = modifiedLines[i].Substring(separator + 1).Trim();
+					if (originalValue.EndsWith(","))
+						originalValue = originalValue.Substring(0, originalValue.Length - 1);
+					if (modifiedValue.EndsWith(","))
+						modifiedValue = modifiedValue.Substring(0, modifiedValue.Length - 1);
+					result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
+				}
+			}
+
+			return result.Length == 0
+				? $"{linePrefix}No difference."
+				: result.ToString();
+		}
+
+#endif
 
 		#endregion
 
