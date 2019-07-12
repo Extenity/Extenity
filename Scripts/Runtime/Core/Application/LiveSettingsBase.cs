@@ -149,6 +149,11 @@ namespace Extenity.ApplicationToolbox
 
 		public static string Diff(LiveSettingsBase<TDerived> original, LiveSettingsBase<TDerived> modified, string linePrefix = "\t")
 		{
+			if (original == null)
+				throw new ArgumentNullException(nameof(original));
+			if (modified == null)
+				throw new ArgumentNullException(nameof(modified));
+
 			var result = new StringBuilder();
 
 			var originalJson = JsonUtility.ToJson(original, true);
@@ -158,7 +163,11 @@ namespace Extenity.ApplicationToolbox
 			var modifiedLines = modifiedJson.Split(StringTools.LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
 
 			if (originalLines.Length != modifiedLines.Length)
+			{
+				Log.Info("Original:\n" + originalJson);
+				Log.Info("Modified:\n" + modifiedJson);
 				throw new Exception(); // This is not expected.
+			}
 
 			for (int i = 0; i < originalLines.Length; i++)
 			{

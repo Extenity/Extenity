@@ -1,5 +1,4 @@
 ﻿using System;
-using Extenity.ApplicationToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.RenderingToolbox;
 using UnityEngine;
