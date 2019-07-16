@@ -95,18 +95,22 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 			Materials,
 			Canvases,
+			Resources,
 		}
 
 		private readonly string[] ToolNames =
 		{
 			"Materials",
-			"Canvases"
+			"Canvases",
+			"Resources",
 		};
 
 		[SerializeField]
 		private MaterialsTool MaterialsTool;
 		[SerializeField]
 		private CanvasesTool CanvasesTool;
+		[SerializeField]
+		private ResourcesTool ResourcesTool;
 
 		private void InitializeTools()
 		{
@@ -123,6 +127,13 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 			CanvasesTool.OnRepaintRequest -= Repaint;
 			CanvasesTool.OnRepaintRequest += Repaint;
+
+			if (ResourcesTool == null)
+			{
+				ResourcesTool = new ResourcesTool();
+			}
+			ResourcesTool.OnRepaintRequest -= Repaint;
+			ResourcesTool.OnRepaintRequest += Repaint;
 
 			// Initialize the active tool.
 			ChangeActiveTool(ActiveToolIndex);
@@ -154,6 +165,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				case Tool.Materials: ActiveTool = MaterialsTool; break;
 				case Tool.Canvases: ActiveTool = CanvasesTool; break;
+				case Tool.Resources: ActiveTool = ResourcesTool; break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

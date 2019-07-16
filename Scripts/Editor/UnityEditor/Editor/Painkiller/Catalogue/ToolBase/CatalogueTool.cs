@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
@@ -99,6 +101,58 @@ namespace Extenity.PainkillerToolbox.Editor
 					{
 						element.AddScene(scene.name);
 					}
+				}
+			}
+
+			var elements = elementsByObjects.Values.ToList();
+			elements.Insert(0, rootElement);
+			return elements;
+		}
+
+		#endregion
+
+		#region Gather Asests in Resources
+
+		protected static List<TTreeElement> BuildElementsListByCollectingResources<TObject, TTreeElement>(Func<TObject, string, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator, string loadPath, bool includeInEditorFolders)
+			where TObject : UnityEngine.Object
+			where TTreeElement : CatalogueElement<TTreeElement>, new()
+		{
+			var assets = Resources.LoadAll(loadPath, typeof(TObject)).Cast<TObject>().ToArray();
+
+			var rootElement = rootCreator();
+			var elementsByObjects = new Dictionary<TObject, TTreeElement>(assets.Length);
+
+			foreach (var asset in assets)
+			{
+				if (!asset)
+				{
+					Log.Warning($"Failed to load an asset.", asset);
+					continue;
+				}
+
+				var assetPath = AssetDatabase.GetAssetPath(asset).FixDirectorySeparatorChars();
+				var split = assetPath.Split(PathTools.DirectorySeparatorChar);
+				var editorIndex = split.IndexOf("Editor", StringComparison.OrdinalIgnoreCase);
+				var resourcesIndex = split.IndexOf("Resources", StringComparison.OrdinalIgnoreCase);
+				var resourcePath = string.Join("/", split.GetRange(resourcesIndex + 1, split.Length - (resourcesIndex + 1)));
+
+				if (!includeInEditorFolders)
+				{
+					if (editorIndex >= 0 && editorIndex < resourcesIndex) // TODO: Not sure about how an Editor folder being in Resources folder is processed by Unity. Needs more tests.
+					{
+						continue;
+					}
+				}
+
+				if (!elementsByObjects.TryGetValue(asset, out var element))
+				{
+					element = treeElementCreator(asset, assetPath, resourcePath, rootElement);
+					elementsByObjects.Add(asset, element);
+				}
+				else
+				{
+					// Asset was already added. This is not expected.
+					Log.Warning($"Asset '{asset}' was already added.", asset);
 				}
 			}
 

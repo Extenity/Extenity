@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Extenity.AssetToolbox.Editor;
 using Extenity.RenderingToolbox.Editor;
+using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.PainkillerToolbox.Editor
@@ -22,7 +22,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				var largestTexture = textures.Count > 0 ? textures.First(texture => texture.width * texture.height == textures.Max(comp => comp.width * comp.height)) : null;
 				TextureCount = textures.Count;
 				MaxTextureSize = largestTexture ? new Vector2Int(largestTexture.width, largestTexture.height) : Vector2Int.zero;
-				AssetPath = AssetTools.GetAssetPathWithoutRoot(Material);
+				AssetPath = AssetDatabase.GetAssetPath(Material);
 			}
 			FoundInScenes = new[] { sceneName };
 		}

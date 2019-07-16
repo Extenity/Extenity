@@ -1,5 +1,5 @@
 using System;
-using Extenity.AssetToolbox.Editor;
+using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.PainkillerToolbox.Editor
@@ -16,7 +16,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			Canvas = canvas;
 			if (Canvas)
 			{
-				AssetPath = AssetTools.GetAssetPathWithoutRoot(Canvas);
+				AssetPath = AssetDatabase.GetAssetPath(Canvas);
 			}
 			FoundInScenes = new[] { sceneName };
 		}
