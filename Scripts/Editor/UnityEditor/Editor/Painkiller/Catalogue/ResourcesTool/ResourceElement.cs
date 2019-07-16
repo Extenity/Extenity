@@ -1,4 +1,5 @@
 using System;
+using Extenity.FileSystemToolbox;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -19,6 +20,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				FullPath = assetPath;
 				ResourcePath = resourcePath;
 				AssetType = AssetDatabase.GetMainAssetTypeAtPath(FullPath).Name;
+				FileSize = FileTools.GetFileSize(FullPath);
 			}
 		}
 
@@ -33,6 +35,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		//public readonly Object Asset; Already exists in CatalogueElement
 		public readonly string AssetType;
+		public readonly long FileSize;
 		public readonly string ResourcePath;
 		public readonly string FullPath;
 

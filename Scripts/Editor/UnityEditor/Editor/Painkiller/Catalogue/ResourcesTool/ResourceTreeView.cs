@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -21,6 +22,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			Preview,
 			Asset,
 			AssetType,
+			FileSize,
 			ResourcePath,
 			FullPath,
 		}
@@ -31,6 +33,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			SortMethod.NotApplicable,
 			SortMethod.Name,
 			SortMethod.AssetType,
+			SortMethod.FileSize,
 			SortMethod.ResourcePath,
 			SortMethod.FullPath,
 		};
@@ -40,6 +43,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			NotApplicable,
 			Name,
 			AssetType,
+			FileSize,
 			ResourcePath,
 			FullPath,
 		}
@@ -65,7 +69,7 @@ namespace Extenity.PainkillerToolbox.Editor
 					headerTextAlignment = TextAlignment.Center,
 					sortedAscending = true,
 					sortingArrowAlignment = TextAlignment.Center,
-					width = 120,
+					width = 100,
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = false,
@@ -76,9 +80,20 @@ namespace Extenity.PainkillerToolbox.Editor
 					headerTextAlignment = TextAlignment.Center,
 					sortedAscending = true,
 					sortingArrowAlignment = TextAlignment.Center,
-					width = 100,
+					width = 140,
 					minWidth = 80,
-					autoResize = true,
+					autoResize = false,
+					allowToggleVisibility = true,
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = new GUIContent("File Size", "The size of asset file. Note that the asset file size does not tell anything about the built size."),
+					headerTextAlignment = TextAlignment.Center,
+					sortedAscending = true,
+					sortingArrowAlignment = TextAlignment.Center,
+					width = 60,
+					minWidth = 40,
+					autoResize = false,
 					allowToggleVisibility = true,
 				},
 				new MultiColumnHeaderState.Column
@@ -87,7 +102,7 @@ namespace Extenity.PainkillerToolbox.Editor
 					headerTextAlignment = TextAlignment.Center,
 					sortedAscending = true,
 					sortingArrowAlignment = TextAlignment.Center,
-					width = 180,
+					width = 140,
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = true,
@@ -182,6 +197,12 @@ namespace Extenity.PainkillerToolbox.Editor
 						//cellRect.x += indent;
 						//cellRect.width -= indent;
 						EditorGUI.ObjectField(cellRect, GUIContent.none, item.Data.Asset, typeof(Object), false);
+					}
+					break;
+
+				case Columns.FileSize:
+					{
+						GUI.Label(cellRect, item.Data.FileSize.ToFileSizeString());
 					}
 					break;
 
@@ -314,6 +335,9 @@ namespace Extenity.PainkillerToolbox.Editor
 					case SortMethod.AssetType:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.AssetType, ascending);
 						break;
+					case SortMethod.FileSize:
+						orderedQuery = orderedQuery.ThenBy(l => l.Data.FileSize, ascending);
+						break;
 					case SortMethod.ResourcePath:
 						orderedQuery = orderedQuery.ThenBy(l => l.Data.ResourcePath, ascending);
 						break;
@@ -338,6 +362,8 @@ namespace Extenity.PainkillerToolbox.Editor
 					return myTypes.Order(l => l.Data.name, ascending);
 				case SortMethod.AssetType:
 					return myTypes.Order(l => l.Data.AssetType, ascending);
+				case SortMethod.FileSize:
+					return myTypes.Order(l => l.Data.FileSize, ascending);
 				case SortMethod.ResourcePath:
 					return myTypes.Order(l => l.Data.ResourcePath, ascending);
 				case SortMethod.FullPath:
