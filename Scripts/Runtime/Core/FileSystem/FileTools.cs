@@ -91,7 +91,7 @@ namespace Extenity.FileSystemToolbox
 
 		#region File Size
 
-		public static bool TryGetFileSize(this string filePath, out long size)
+		public static bool TryGetFileSize(string filePath, out long size)
 		{
 			try
 			{
@@ -105,7 +105,7 @@ namespace Extenity.FileSystemToolbox
 			return true;
 		}
 
-		public static long GetFileSize(this string filePath)
+		public static long GetFileSize(string filePath)
 		{
 			return new FileInfo(filePath).Length;
 		}

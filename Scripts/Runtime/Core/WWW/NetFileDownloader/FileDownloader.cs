@@ -267,7 +267,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private void ResumeDownload()
 		{
-			if (!localFileName.TryGetFileSize(out var localFileSize))
+			if (!FileTools.TryGetFileSize(localFileName, out var localFileSize))
 			{
 				localFileSize = 0;
 				////todo: handle this case in future. Now in case of error we simply proceed with downloadedFileSize=0
@@ -342,7 +342,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 		{
 			try
 			{
-				if (!fileDestination.TryGetFileSize(out var seekPosition))
+				if (!FileTools.TryGetFileSize(fileDestination, out var seekPosition))
 				{
 					seekPosition = 0;
 				}
