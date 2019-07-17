@@ -164,13 +164,14 @@ namespace Extenity.BuildToolbox.Editor
 
 	#region Define Symbols
 
+	[Serializable]
 	public struct DefineSymbolEntry
 	{
 		/// <summary>
 		/// The index that tells where this define symbol should be located. 0 means at the beginning. -1 means at the end.
 		/// </summary>
-		public readonly int Index;
-		public readonly string Symbol;
+		public int Index;
+		public string Symbol;
 
 		public bool IsAtTheEnd => Index < 0;
 
@@ -722,11 +723,11 @@ namespace Extenity.BuildToolbox.Editor
 
 			public override void DoRevert()
 			{
-				RemoveDefineSymbols(AddedSymbols);
 				if (ActuallyRemovedSymbols != null && ActuallyRemovedSymbols.Length > 0)
 				{
 					AddDefineSymbols(ActuallyRemovedSymbols, false);
 				}
+				RemoveDefineSymbols(AddedSymbols);
 			}
 		}
 
