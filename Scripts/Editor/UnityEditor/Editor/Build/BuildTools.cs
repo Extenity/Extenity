@@ -579,7 +579,14 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (!allDefines.Contains(symbol.Symbol))
 				{
-					allDefines.Insert(symbol.Index, symbol.Symbol);
+					if (symbol.Index < 0 || symbol.Index >= allDefines.Count)
+					{
+						allDefines.Add(symbol.Symbol);
+					}
+					else
+					{
+						allDefines.Insert(symbol.Index, symbol.Symbol);
+					}
 				}
 				else if (ensureNotAddedBefore)
 				{
