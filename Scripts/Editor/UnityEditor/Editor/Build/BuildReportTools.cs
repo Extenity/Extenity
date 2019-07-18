@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -41,13 +42,19 @@ namespace Extenity.BuildToolbox.Editor
 		/// <summary>
 		/// Tell 'Build Report Tool' from Asset Store to create the build report.
 		/// </summary>
-		public static void CreateBuildReport()
+		public static void CreateBuildReport(BuildPlayerOptions buildPlayerOptions)
 		{
 			try
 			{
 				// We don't want a hard link to the asset. So Reflection saves the day.
+				// Here is an example usage so that it will be easier to find when searching the code base.
+				// BuildReportTool.ReportGenerator.CreateReport(buildPlayerOptions, customEditorLogPath);
 				string customEditorLogPath = null;
-				ReflectionTools.CallMethodOfTypeByName("BuildReportTool.ReportGenerator, BuildReportTool.Editor", "CreateReport", BindingFlags.Static | BindingFlags.Public, null, new[] { customEditorLogPath });
+				ReflectionTools.CallMethodOfTypeByName(
+					"BuildReportTool.ReportGenerator, BuildReportTool.Editor",
+					"CreateReport",
+					BindingFlags.Static | BindingFlags.Public, null,
+					new object[] { buildPlayerOptions, customEditorLogPath });
 			}
 			catch (Exception exception)
 			{

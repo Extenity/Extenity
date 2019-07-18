@@ -84,7 +84,7 @@ namespace Extenity.ReflectionToolbox
 			return true;
 		}
 
-		public static object CallMethodOfTypeByName(string assemblyQualifiedTypeName, string methodName, BindingFlags bindingFlags, object instance, string[] parameters)
+		public static object CallMethodOfTypeByName(string assemblyQualifiedTypeName, string methodName, BindingFlags bindingFlags, object instance, object[] parameters)
 		{
 			var type = Type.GetType(assemblyQualifiedTypeName);
 			if (type == null)

@@ -439,7 +439,7 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			Log.Info("Telling Unity to start the build.");
 
-			var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+			var buildPlayerOptions = new BuildPlayerOptions
 			{
 				scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
 				locationPathName = outputPath,
@@ -447,7 +447,9 @@ namespace Extenity.BuildToolbox.Editor
 				target = buildTarget,
 				options = buildOptions.SetAutoRunPlayer(runAfterBuild),
 				//assetBundleManifestPath = ,
-			});
+			};
+
+			var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 
 			Log.Info($"Unity build took '{report?.summary.totalTime.ToStringHoursMinutesSecondsMilliseconds() ?? string.Empty}'.");
 
@@ -460,7 +462,7 @@ namespace Extenity.BuildToolbox.Editor
 				Log.Info("Unity reported successful build.");
 			}
 
-			BuildReportTools.CreateBuildReport();
+			BuildReportTools.CreateBuildReport(buildPlayerOptions);
 		}
 
 		#endregion
