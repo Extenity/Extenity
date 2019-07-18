@@ -28,19 +28,22 @@ namespace Extenity.BuildToolbox.Editor
 		public string KeystorePass;
 		public string KeyaliasName;
 		public string KeyaliasPass;
+		public bool UseCustomKeystore;
 
-		public static AndroidKeys Empty => new AndroidKeys(null, null, null, null);
+		public static AndroidKeys Empty => new AndroidKeys(null, null, null, null, false);
 
-		public AndroidKeys(string keystoreName, string keystorePass, string keyaliasName, string keyaliasPass)
+		public AndroidKeys(string keystoreName, string keystorePass, string keyaliasName, string keyaliasPass, bool useCustomKeystore)
 		{
 			KeystoreName = keystoreName;
 			KeystorePass = keystorePass;
 			KeyaliasName = keyaliasName;
 			KeyaliasPass = keyaliasPass;
+			UseCustomKeystore = useCustomKeystore;
 		}
 
 		public void SetToProjectSettings(bool saveAssets)
 		{
+			PlayerSettings.Android.useCustomKeystore = UseCustomKeystore;
 			PlayerSettings.Android.keystoreName = KeystoreName;
 			PlayerSettings.Android.keystorePass = KeystorePass;
 			PlayerSettings.Android.keyaliasName = KeyaliasName;
@@ -57,7 +60,8 @@ namespace Extenity.BuildToolbox.Editor
 				PlayerSettings.Android.keystoreName,
 				PlayerSettings.Android.keystorePass,
 				PlayerSettings.Android.keyaliasName,
-				PlayerSettings.Android.keyaliasPass);
+				PlayerSettings.Android.keyaliasPass,
+				PlayerSettings.Android.useCustomKeystore);
 		}
 	}
 
