@@ -1317,6 +1317,22 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Conversions - Base64
+
+		public static string ToBase64(this string plainText)
+		{
+			var bytes = Encoding.UTF8.GetBytes(plainText);
+			return Convert.ToBase64String(bytes);
+		}
+
+		public static string FromBase64(this string base64EncodedData)
+		{
+			var bytes = Convert.FromBase64String(base64EncodedData);
+			return Encoding.UTF8.GetString(bytes);
+		}
+
+		#endregion
+
 		#region Whitespaces
 
 		/// <summary>
