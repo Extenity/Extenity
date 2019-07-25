@@ -69,6 +69,11 @@ namespace Extenity.FlowToolbox
 			Handler.CancelAll(behaviour);
 		}
 
+		public static void CancelCurrentFastInvoke(this Behaviour behaviour)
+		{
+			Handler.CancelCurrent(behaviour);
+		}
+
 		public static bool IsFastInvoking(this Behaviour behaviour, Action action)
 		{
 			return Handler.IsInvoking(behaviour, action);

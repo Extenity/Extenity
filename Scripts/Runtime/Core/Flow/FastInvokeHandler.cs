@@ -151,11 +151,16 @@ namespace Extenity.FlowToolbox
 				{
 					try
 					{
+						CurrentlyProcessingEntryAction = entry.Action;
 						entry.Action();
 					}
 					catch (Exception exception)
 					{
 						Log.Exception(exception);
+					}
+					finally
+					{
+						CurrentlyProcessingEntryAction = null;
 					}
 				}
 
@@ -267,6 +272,7 @@ namespace Extenity.FlowToolbox
 			Unscaled,
 		}
 
+		private Action CurrentlyProcessingEntryAction;
 		public InvokeQueue CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 
 		public readonly List<InvokeEntry> ScaledInvokeQueue = new List<InvokeEntry>(100);
@@ -566,8 +572,9 @@ namespace Extenity.FlowToolbox
 
 			if (overwriteExisting)
 			{
+				// The implementation of overwriteExisting might not be completed yet.
 				// Make sure you write tests for it right now, before using it.
-				// Do not delete this warning before seeing that it's running flawless.
+				// Do not delete this warning before seeing that it is running flawless.
 				Log.Warning("FastInvoke overwrite feature is not tested yet.", this);
 			}
 
@@ -629,6 +636,28 @@ namespace Extenity.FlowToolbox
 			RemoveInQueue(ScaledInvokeQueue, behaviour);
 			RemoveInQueue(UnscaledInvokeQueue, behaviour);
 			NullifyInQueue(QueueInProcess, behaviour); // Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
+		}
+
+		internal void CancelCurrent(Behaviour behaviour)
+		{
+			if (!behaviour)
+			{
+				// Invoke cancellation is a less critical operation. The invoke should already be cancelled if
+				// the object was destroyed before calling Cancel.
+				//
+				// Not sure about this decision of NOT throwing here, but we will stick with this until some
+				// more solid reason comes up. See 117459234.
+				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
+				return;
+			}
+			if (CurrentlyProcessingEntryAction == null)
+			{
+				Log.CriticalError("Tried to cancel current fast invoke while there is none.");
+				return;
+			}
+			RemoveInQueue(ScaledInvokeQueue, behaviour, CurrentlyProcessingEntryAction);
+			RemoveInQueue(UnscaledInvokeQueue, behaviour, CurrentlyProcessingEntryAction);
+			NullifyInQueue(QueueInProcess, behaviour, CurrentlyProcessingEntryAction); // Do not remove! Make it null instead. The process loop depends on QueueInProcess entries not being added or removed in the middle of process. See 1765136.
 		}
 
 		#endregion
