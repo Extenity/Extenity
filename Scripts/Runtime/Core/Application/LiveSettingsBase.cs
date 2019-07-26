@@ -6,7 +6,7 @@ using System.Text;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
-using UnityEngine;
+using Newtonsoft.Json.Linq;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -27,9 +27,9 @@ namespace Extenity.ApplicationToolbox
 
 		#region Data Structure
 
-		private List<(FieldInfo FieldInfo, string Key)> GetFields()
+		private static List<(FieldInfo FieldInfo, string Key)> GetFields()
 		{
-			return GetType()
+			return typeof(TDerived)
 				.GetFields(
 					BindingFlags.Instance |
 					BindingFlags.FlattenHierarchy |
@@ -55,9 +55,9 @@ namespace Extenity.ApplicationToolbox
 				}
 			}
 		}
-		
+
 #endif
-		
+
 		#endregion
 
 		#region Serialize
@@ -74,17 +74,17 @@ namespace Extenity.ApplicationToolbox
 		}
 
 		#endregion
-		
+
 		#region Deserialize
 
-		public static TDerived Deserialize(string serialized, string key)
+		public static TDerived Deserialize(string serialized, out string json, string key)
 		{
 			if (string.IsNullOrEmpty(serialized))
 				throw new ArgumentNullException();
-			var json = SimpleTwoWayEncryptorAES.DecryptBase64WithIV(serialized, key);
+			json = SimpleTwoWayEncryptorAES.DecryptBase64WithIV(serialized, key);
 			return JsonConvert.DeserializeObject<TDerived>(json);
 		}
-		
+
 
 		/* This was the old implementation. Now we use Json serialization.
 		public void Parse(Dictionary<string, string> keyValueStore)
@@ -147,49 +147,87 @@ namespace Extenity.ApplicationToolbox
 
 #if UNITY_EDITOR
 
-		public static string Diff(LiveSettingsBase<TDerived> original, LiveSettingsBase<TDerived> modified, string linePrefix = "\t")
+		private static void FindJsonDiff(JToken Current, JToken Model, StringBuilder result, string linePrefix)
 		{
-			if (original == null)
-				throw new ArgumentNullException(nameof(original));
-			if (modified == null)
-				throw new ArgumentNullException(nameof(modified));
+			if (JToken.DeepEquals(Current, Model))
+				return;
+
+			var fields = GetFields();
+
+			switch (Current.Type)
+			{
+				case JTokenType.Object:
+				{
+					var current = Current as JObject;
+					var model = Model as JObject;
+					var addedKeys = current.Properties().Select(c => c.Name).Except(model.Properties().Select(c => c.Name));
+					var removedKeys = model.Properties().Select(c => c.Name).Except(current.Properties().Select(c => c.Name));
+					var unchangedKeys = current.Properties().Where(c => JToken.DeepEquals(c.Value, Model[c.Name])).Select(c => c.Name);
+					foreach (var k in addedKeys)
+					{
+						var key = fields.FirstOrDefault(item => item.Key == k).FieldInfo?.Name ?? k;
+						var originalValue = "NEW";
+						var modifiedValue = Current[k];
+						result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
+					}
+					foreach (var k in removedKeys)
+					{
+						var key = fields.FirstOrDefault(item => item.Key == k).FieldInfo?.Name ?? k;
+						var originalValue = Model[k];
+						var modifiedValue = "DELETED";
+						result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
+					}
+					var potentiallyModifiedKeys = current.Properties().Select(c => c.Name).Except(addedKeys).Except(unchangedKeys);
+					foreach (var k in potentiallyModifiedKeys)
+					{
+						var key = fields.FirstOrDefault(item => item.Key == k).FieldInfo?.Name ?? k;
+						var newPrefix = string.IsNullOrWhiteSpace(linePrefix)
+							? linePrefix + key
+							: linePrefix + "/" + key;
+						FindJsonDiff(current[k], model[k], result, newPrefix);
+					}
+				}
+					break;
+				case JTokenType.Array:
+				{
+					result.AppendLine("WARNING! Arrays are not implemented.");
+					// var current = Current as JArray;
+					// var model = Model as JArray;
+					// diff["+"] = new JArray(current.Except(model));
+					// diff["-"] = new JArray(model.Except(current));
+				}
+					break;
+				default:
+				{
+					var originalValue = Model.ToString();
+					var modifiedValue = Current.ToString();
+					result.AppendLine($"{linePrefix} \t: {originalValue}  =>  {modifiedValue}");
+				}
+					break;
+			}
+		}
+
+		public static string Diff(string originalAsJsonText, LiveSettingsBase<TDerived> modifiedAsLiveSettingsObject, string linePrefix = "\t")
+		{
+			if (string.IsNullOrWhiteSpace(originalAsJsonText))
+				throw new ArgumentNullException(nameof(originalAsJsonText));
+			if (modifiedAsLiveSettingsObject == null)
+				throw new ArgumentNullException(nameof(modifiedAsLiveSettingsObject));
 
 			var result = new StringBuilder();
 
-			var originalJson = JsonUtility.ToJson(original, true);
-			var modifiedJson = JsonUtility.ToJson(modified, true);
+			var originalJson = JToken.Parse(originalAsJsonText);
+			var modifiedJson = JToken.Parse(modifiedAsLiveSettingsObject.ToJson());
 
-			var originalLines = originalJson.Split(StringTools.LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
-			var modifiedLines = modifiedJson.Split(StringTools.LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
+			FindJsonDiff(modifiedJson, originalJson, result, linePrefix);
 
-			if (originalLines.Length != modifiedLines.Length)
-			{
-				Log.Info("Original:\n" + originalJson);
-				Log.Info("Modified:\n" + modifiedJson);
-				throw new Exception(); // This is not expected.
-			}
-
-			for (int i = 0; i < originalLines.Length; i++)
-			{
-				if (originalLines[i] != modifiedLines[i])
-				{
-					var separator = originalLines[i].IndexOf(':');
-					var key = originalLines[i].Substring(0, separator).Trim().Trim('\"');
-					if (originalLines[i].Substring(0, separator) != modifiedLines[i].Substring(0, separator))
-						throw new Exception(); // This is not expected.
-					var originalValue = originalLines[i].Substring(separator + 1).Trim();
-					var modifiedValue = modifiedLines[i].Substring(separator + 1).Trim();
-					if (originalValue.EndsWith(","))
-						originalValue = originalValue.Substring(0, originalValue.Length - 1);
-					if (modifiedValue.EndsWith(","))
-						modifiedValue = modifiedValue.Substring(0, modifiedValue.Length - 1);
-					result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
-				}
-			}
-
-			return result.Length == 0
+			var resultText = result.Length == 0
 				? $"{linePrefix}No difference."
 				: result.ToString();
+
+			Log.Info("LiveSettings diff result:\n" + resultText);
+
+			return resultText;
 		}
 
 #endif
