@@ -12,7 +12,15 @@ namespace Extenity.FlowToolbox
 
 		static Invoker()
 		{
-			ResetSystem();
+			InitializeSystem();
+		}
+
+		public static void InitializeSystem()
+		{
+			if (!Handler)
+			{
+				ResetSystem();
+			}
 		}
 
 		public static void ResetSystem()

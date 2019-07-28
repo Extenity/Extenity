@@ -17,6 +17,7 @@ namespace Extenity
 		private void Awake()
 		{
 			InitializeSingleton(true);
+			Invoker.ResetSystem();
 		}
 
 		#endregion
