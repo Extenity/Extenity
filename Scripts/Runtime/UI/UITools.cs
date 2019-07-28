@@ -154,7 +154,7 @@ namespace Extenity.UIToolbox
 			{
 				var dragAreaSize = dragAreaTransform.sizeDelta.x;
 
-				normalizedLeverPosition = Mathf.Clamp((position.x / dragAreaSize) * 2f + 1f, -1f, 1f);
+				normalizedLeverPosition = Mathf.Clamp((position.x / dragAreaSize) * 2f, -1f, 1f);
 
 				handleTransform.anchoredPosition = new Vector2(
 					normalizedLeverPosition * (dragAreaSize / 2f),
@@ -174,7 +174,7 @@ namespace Extenity.UIToolbox
 
 				var dragAreaSize = dragAreaTransform.sizeDelta.x;
 
-				normalizedLeverPosition = Mathf.Clamp((positionInDragArea.x / dragAreaSize) * 2f + 1f, -1f, 1f);
+				normalizedLeverPosition = Mathf.Clamp((positionInDragArea.x / dragAreaSize) * 2f, -1f, 1f);
 
 				handleTransform.anchoredPosition = new Vector2(
 					normalizedLeverPosition * (dragAreaSize / 2f),
