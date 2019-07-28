@@ -200,6 +200,20 @@ namespace Extenity.UIToolbox
 			return rect;
 		}
 
+		public static void MoveTo(this RectTransform transform, RectTransform target, bool setAnchor, bool setPivot)
+		{
+			if (setPivot)
+			{
+				transform.pivot = target.pivot;
+			}
+			if (setAnchor)
+			{
+				transform.anchorMin = target.anchorMin;
+				transform.anchorMax = target.anchorMax;
+			}
+			transform.anchoredPosition = target.anchoredPosition;
+		}
+
 		#endregion
 
 		#region Layout Rebuild
