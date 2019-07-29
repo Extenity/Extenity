@@ -8,6 +8,7 @@
 #undef LoggingEnabled
 #endif
 
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.GameObjectToolbox
@@ -26,13 +27,16 @@ namespace Extenity.GameObjectToolbox
 
 		[Header("Configuration")]
 		[Tooltip("Instantiator types allows the objects to be instantiated in groups. If there are multiple instantiators in scene, instantiators will be lined up by type number. Instantiation will be postponed until every other type that has lesser type number completes their instantiation first.")]
+		[EnableIf(nameof(IsNotInScene))]
 		public InstantiatorTypes type = InstantiatorTypes.Type1;
 		[Tooltip("The parent object to be set for instantiated objects. This can be unassigned for making the objects instantiated at top level.")]
+		[EnableIf(nameof(IsNotInScene))]
 		public Transform Parent;
 
-
 		[Header("Prefabs")]
+		[EnableIf(nameof(IsNotInScene))]
 		public GameObject[] everlastingPrefabs;
+		[EnableIf(nameof(IsNotInScene))]
 		public GameObject[] nonlastingPrefabs;
 
 		void Awake()
@@ -179,6 +183,11 @@ namespace Extenity.GameObjectToolbox
 			}
 
 			return instance;
+		}
+
+		private bool IsNotInScene()
+		{
+			return !gameObject.scene.isLoaded;
 		}
 	}
 
