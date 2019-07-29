@@ -270,6 +270,7 @@ namespace Extenity.AssetToolbox.Editor
 				return "";
 			}
 
+			// TODO: What sorcery is this?
 			if (Path.GetExtension(path) != "")
 			{
 				path = path.Replace(Path.GetFileName(path), "");
