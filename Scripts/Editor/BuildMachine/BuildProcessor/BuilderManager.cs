@@ -76,7 +76,12 @@ namespace Extenity.BuildMachine.Editor
 				// Get Build Step and Finalization Step methods
 				var steps = GatherBuildStepMethods(type);
 
-				builderInfos[i] = new BuilderInfo(infoAttribute?.Name, infoAttribute?.BuildTarget ?? BuildTarget.NoTarget, type, optionsType, steps);
+				builderInfos[i] = new BuilderInfo(
+					infoAttribute?.Name,
+					infoAttribute?.BuildTarget ?? BuildTarget.NoTarget,
+					type,
+					optionsType,
+					steps);
 			}
 
 			return builderInfos;
