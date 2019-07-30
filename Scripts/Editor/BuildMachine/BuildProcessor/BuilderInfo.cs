@@ -1,4 +1,5 @@
 using System;
+using Extenity.BuildToolbox.Editor;
 using UnityEditor;
 
 namespace Extenity.BuildMachine.Editor
@@ -9,6 +10,7 @@ namespace Extenity.BuildMachine.Editor
 	{
 		public readonly string Name;
 		public readonly BuildTarget BuildTarget;
+		public BuildTargetGroup BuildTargetGroup => BuildTarget.GetBuildTargetGroup();
 		public readonly Type Type;
 		public readonly Type OptionsType;
 		public readonly BuildStepInfo[] Steps;

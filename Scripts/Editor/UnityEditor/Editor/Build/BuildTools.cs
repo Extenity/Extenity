@@ -416,6 +416,15 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region BuildTarget
+
+		public static BuildTargetGroup GetBuildTargetGroup(this BuildTarget buildTarget)
+		{
+			return BuildPipeline.GetBuildTargetGroup(buildTarget);
+		}
+
+		#endregion
+
 		#region BuildOptions
 
 

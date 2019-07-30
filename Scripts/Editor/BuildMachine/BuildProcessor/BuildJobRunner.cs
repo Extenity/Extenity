@@ -387,7 +387,7 @@ namespace Extenity.BuildMachine.Editor
 			// Change Unity's active platform if required.
 			{
 				var buildTarget = currentBuilder.Info.BuildTarget;
-				var buildTargetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
+				var buildTargetGroup = currentBuilder.Info.BuildTargetGroup;
 				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 				{
 					Log.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
@@ -396,6 +396,8 @@ namespace Extenity.BuildMachine.Editor
 					var haltExecution = CheckAfterChangingActivePlatform();
 					if (haltExecution)
 						yield break;
+
+					// TODO: There we might need an assembly reload, or a Unity restart.
 				}
 			}
 
