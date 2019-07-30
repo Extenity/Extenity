@@ -524,6 +524,7 @@ namespace Extenity.BuildMachine.Editor
 		protected void DeleteComponentsOfEditorOnlyToolsInLoadedScenes()
 		{
 			DestroyAllComponentsInLoadedScenes<SnapToGroundInEditor>(ActiveCheck.IncludingInactive, true, false);
+			DestroyAllComponentsInLoadedScenes<SnapToObjectInEditor>(ActiveCheck.IncludingInactive, true, false);
 			DestroyAllComponentsInLoadedScenes<DontShowEditorHandler>(ActiveCheck.IncludingInactive, true, false);
 			DestroyAllComponentsInLoadedScenes<Devnote>(ActiveCheck.IncludingInactive, true, false);
 		}
