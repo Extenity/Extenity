@@ -427,7 +427,6 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region BuildOptions
 
-
 		public static BuildOptions SetAutoRunPlayer(this BuildOptions options, bool runAfterBuild)
 		{
 			if (runAfterBuild)
@@ -711,28 +710,30 @@ namespace Extenity.BuildToolbox.Editor
 		[Serializable]
 		public class TemporarilySetDefineSymbols : TemporaryBuildOperation
 		{
+			public BuildTargetGroup BuildTargetGroup;
 			public string[] AddedSymbols;
 			public bool EnsureNotAddedBefore;
 			public string[] RemovedSymbols;
 			public DefineSymbolEntry[] ActuallyRemovedSymbols;
 
-			public static TemporarilySetDefineSymbols Create(string[] addedSymbols, bool ensureNotAddedBefore, string[] removedSymbols = null)
+			public static TemporarilySetDefineSymbols Create(BuildTargetGroup buildTargetGroup, string[] addedSymbols, bool ensureNotAddedBefore, string[] removedSymbols = null)
 			{
 				return Apply(new TemporarilySetDefineSymbols
 				{
-					AddedSymbols = (string[])addedSymbols.Clone(),
+					BuildTargetGroup = buildTargetGroup,
+					AddedSymbols = addedSymbols != null ? (string[])addedSymbols.Clone() : new string[0],
 					EnsureNotAddedBefore = ensureNotAddedBefore,
-					RemovedSymbols = (string[])removedSymbols.Clone(),
+					RemovedSymbols = removedSymbols != null ? (string[])removedSymbols.Clone() : new string[0],
 					ActuallyRemovedSymbols = new DefineSymbolEntry[0],
 				});
 			}
 
 			public override void DoApply()
 			{
-				AddDefineSymbols(AddedSymbols, EnsureNotAddedBefore);
+				AddDefineSymbols(AddedSymbols, BuildTargetGroup, EnsureNotAddedBefore);
 				if (RemovedSymbols != null && RemovedSymbols.Length > 0)
 				{
-					ActuallyRemovedSymbols = RemoveDefineSymbols(RemovedSymbols);
+					ActuallyRemovedSymbols = RemoveDefineSymbols(RemovedSymbols, BuildTargetGroup);
 				}
 			}
 
@@ -740,9 +741,9 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (ActuallyRemovedSymbols != null && ActuallyRemovedSymbols.Length > 0)
 				{
-					AddDefineSymbols(ActuallyRemovedSymbols, false);
+					AddDefineSymbols(ActuallyRemovedSymbols, BuildTargetGroup, false);
 				}
-				RemoveDefineSymbols(AddedSymbols);
+				RemoveDefineSymbols(AddedSymbols, BuildTargetGroup);
 			}
 		}
 
