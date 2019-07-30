@@ -188,9 +188,14 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		}
 
 		[MenuItem("Window/Graph Plotter _#%g")]
-		private static void ToggleWindow()
+		public static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<GraphPlotterWindow>();
+		}
+
+		public static void ShowWindow()
+		{
+			GetWindow<GraphPlotterWindow>();
 		}
 
 		#endregion
