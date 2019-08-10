@@ -13,6 +13,9 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+#if BeyondAudioUsesUnityAudio
+using UnityEngine.Audio;
+#endif
 
 namespace Extenity.ReflectionToolbox
 {

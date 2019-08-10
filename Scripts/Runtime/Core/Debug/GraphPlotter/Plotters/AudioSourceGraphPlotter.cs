@@ -76,14 +76,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// Input - Volume
 		// -----------------------------------------------------
 		public bool PlotVolume = false;
-		public ValueAxisRangeConfiguration VolumeRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f);
+		public ValueAxisRangeConfiguration VolumeRange = ValueAxisRangeConfiguration.CreateFixed(0f, 1f);
 		public Graph VolumeGraph;
 		private Channel VolumeChannel;
 		// -----------------------------------------------------
 		// Input - Pitch
 		// -----------------------------------------------------
 		public bool PlotPitch = false;
-		public ValueAxisRangeConfiguration PitchRange = new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, 0f, 2f);
+		public ValueAxisRangeConfiguration PitchRange = ValueAxisRangeConfiguration.CreateExpansive(0f, 2f);
 		public Graph PitchGraph;
 		private Channel PitchChannel;
 		// -----------------------------------------------------
@@ -100,7 +100,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			Graph.SetupGraphWithSingleChannel(PlotVolume && componentIsActive, ref VolumeGraph, "Volume", gameObject, VolumeRange, ref VolumeChannel, "volume", PlotColors.Red);
 			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
-			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, 0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
+			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, ValueAxisRangeConfiguration.CreateFixed(0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
 		}
 
 		#endregion
@@ -119,23 +119,22 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			var time = Time.time;
-			var frame = Time.frameCount;
 
 			if (PlotVolume)
 			{
 				VolumeRange.CopyFrom(VolumeGraph.Range);
-				VolumeChannel.Sample(AudioSource.volume, time, frame);
+				VolumeChannel.Sample(AudioSource.volume, time);
 			}
 
 			if (PlotPitch)
 			{
 				PitchRange.CopyFrom(PitchGraph.Range);
-				PitchChannel.Sample(AudioSource.pitch, time, frame);
+				PitchChannel.Sample(AudioSource.pitch, time);
 			}
 
 			if (PlotIsPlaying)
 			{
-				IsPlayingChannel.Sample(AudioSource.isPlaying ? 1f : 0f, time, frame);
+				IsPlayingChannel.Sample(AudioSource.isPlaying ? 1f : 0f, time);
 			}
 		}
 
