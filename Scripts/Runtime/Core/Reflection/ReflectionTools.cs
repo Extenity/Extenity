@@ -13,9 +13,6 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
-#if BeyondAudioUsesUnityAudio
-using UnityEngine.Audio;
-#endif
 
 namespace Extenity.ReflectionToolbox
 {
@@ -1174,9 +1171,9 @@ namespace Extenity.ReflectionToolbox
 
 			// Decide how to include referenced game objects based on referenced object's type
 #if BeyondAudioUsesUnityAudio
-			if (type.IsSameOrSubclassOf(typeof(AudioSource)))
+			if (type.IsSameOrSubclassOf(typeof(UnityEngine.AudioSource)))
 			{
-				var referencedAudioSource = referencedObject as AudioSource;
+				var referencedAudioSource = referencedObject as UnityEngine.AudioSource;
 				if (referencedAudioSource)
 				{
 					InternalAddReferencedGameObjectToResults(referencedAudioSource.gameObject, result, excludedTypes); // See 57182.
@@ -1184,21 +1181,21 @@ namespace Extenity.ReflectionToolbox
 					InternalAddReferencedObjectOfType(referencedAudioSource.outputAudioMixerGroup, result, excludedTypes);
 				}
 			}
-			else if (type.IsSameOrSubclassOf(typeof(AudioClip)))
+			else if (type.IsSameOrSubclassOf(typeof(UnityEngine.AudioClip)))
 			{
 				// Does not contain any link to game objects. So we skip.
 			}
-			else if (type.IsSameOrSubclassOf(typeof(AudioMixer)))
+			else if (type.IsSameOrSubclassOf(typeof(UnityEngine.Audio.AudioMixer)))
 			{
-				var referencedAudioMixer = referencedObject as AudioMixer;
+				var referencedAudioMixer = referencedObject as UnityEngine.Audio.AudioMixer;
 				if (referencedAudioMixer)
 				{
 					InternalAddReferencedObjectOfType(referencedAudioMixer.outputAudioMixerGroup, result, excludedTypes);
 				}
 			}
-			else if (type.IsSameOrSubclassOf(typeof(AudioMixerGroup)))
+			else if (type.IsSameOrSubclassOf(typeof(UnityEngine.Audio.AudioMixerGroup)))
 			{
-				var referencedAudioMixerGroup = referencedObject as AudioMixerGroup;
+				var referencedAudioMixerGroup = referencedObject as UnityEngine.Audio.AudioMixerGroup;
 				if (referencedAudioMixerGroup)
 				{
 					// Just as the Component is an inseparable part of a GameObject, an AudioMixerGroup
