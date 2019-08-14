@@ -1,3 +1,5 @@
+#if !DisableUnityPhysics
+
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;

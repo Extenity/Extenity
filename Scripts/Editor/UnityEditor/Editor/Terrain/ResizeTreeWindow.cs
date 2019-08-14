@@ -1,4 +1,4 @@
-﻿#if !DisableTerrain
+﻿#if !DisableUnityTerrain
 using UnityEngine;
 using UnityEditor;
 

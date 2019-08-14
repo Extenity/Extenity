@@ -1,4 +1,4 @@
-﻿#if !DisableParticleSystem
+﻿#if !DisableUnityParticleSystem
 
 using UnityEngine;
 

@@ -1,4 +1,5 @@
-#if !DisablePhysics2D
+#if !DisableUnityPhysics2D
+
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting

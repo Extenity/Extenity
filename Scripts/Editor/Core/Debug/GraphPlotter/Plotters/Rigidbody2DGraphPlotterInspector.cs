@@ -1,4 +1,5 @@
-#if !DisablePhysics2D
+#if !DisableUnityPhysics2D
+
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;

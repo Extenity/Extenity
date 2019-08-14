@@ -2055,7 +2055,7 @@ namespace Extenity.GameObjectToolbox
 				return (component as Collider).enabled;
 			if (component is LODGroup)
 				return (component as LODGroup).enabled;
-#if !DisableCloth
+#if !DisableUnityCloth
 			if (component is Cloth)
 				return (component as Cloth).enabled;
 #endif

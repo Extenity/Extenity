@@ -562,6 +562,8 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Add/Remove Define Symbols
 
+		// TODO: Move these into PlayerSettingsTools. See 11743256293.
+
 		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
 		{
 			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), ensureNotAddedBefore);

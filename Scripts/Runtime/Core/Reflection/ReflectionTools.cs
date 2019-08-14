@@ -1170,7 +1170,7 @@ namespace Extenity.ReflectionToolbox
 				return;
 
 			// Decide how to include referenced game objects based on referenced object's type
-#if BeyondAudioUsesUnityAudio
+#if !DisableUnityAudio
 			if (type.IsSameOrSubclassOf(typeof(UnityEngine.AudioSource)))
 			{
 				var referencedAudioSource = referencedObject as UnityEngine.AudioSource;
@@ -1233,7 +1233,7 @@ namespace Extenity.ReflectionToolbox
 			{
 				// Does not contain any link to game objects. So we skip.
 			}
-#if !DisableTerrain
+#if !DisableUnityTerrain
 			else if (type.IsSameOrSubclassOf(typeof(TerrainData)))
 			{
 				// Does not contain any link to game objects. So we skip.
