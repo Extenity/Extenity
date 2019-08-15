@@ -59,11 +59,35 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#endregion
 	}
 
+	public class DefineSymbolAdjusterAssetPostprocessor : AssetPostprocessor
+	{
+		private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+		{
+			if (deletedAssets == null)
+				return;
+			for (int i = 0; i < deletedAssets.Length; i++)
+			{
+				var path = deletedAssets[i];
+				if (path.StartsWith("Package") && path.EndsWith("package.json"))
+				{
+					// This means a package was removed from manifest. If the removal causes any compilation errors,
+					// Unity will not reload assemblies and will not call InitializeOnLoadMethod methods.
+					// So AdjustDefineSymbolsForInstalledModules won't be called to allow making necessary
+					// adjustments to define symbol configurations that would possibly fix the compilation errors.
+					//
+					// So we call it here manually. It's not that heavy on processor. so it's safe to call it
+					// multiple times.
+					DefineSymbolsAdjuster.AdjustDefineSymbolsForInstalledModules();
+				}
+			}
+		}
+	}
+
 	public static class DefineSymbolsAdjuster
 	{
 		#region Configuration
 
-		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new []
+		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new[]
 		{
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.audio", "DisableUnityAudio"),
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.physics", "DisableUnityPhysics"),
