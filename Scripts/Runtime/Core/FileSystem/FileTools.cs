@@ -210,10 +210,13 @@ namespace Extenity.FileSystemToolbox
 				return false;
 			}
 
-			// Try to set attributes to "Normal". Because File.Delete() fails if file is readonly.
+			// Try to remove readonly attribute because File.Delete() fails if file is readonly.
 			if (fileInfo.IsReadOnly)
 			{
-				fileInfo.Attributes = FileAttributes.Normal;
+				fileInfo.Attributes = fileInfo.Attributes & ~FileAttributes.ReadOnly;
+
+				// This was the old implementation, which was more intrusive.
+				// fileInfo.Attributes = FileAttributes.Normal;
 			}
 
 			File.Delete(fileInfo.FullName);
