@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -47,6 +48,35 @@ namespace Extenity.SubsystemManagementToolbox
 		public override void OnDeactivate()
 		{
 			base.OnDeactivate();
+		}
+
+		#endregion
+
+		#region GUI
+
+		[SerializeField]
+		private OdinEditor _OdinEditor;
+
+		private void InitializeGUI()
+		{
+			if (_OdinEditor == null)
+			{
+				_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(SubsystemSettings.Instance, typeof(OdinEditor));
+			}
+		}
+
+		public override void OnGUI(string searchContext)
+		{
+			InitializeGUI();
+
+			EditorGUI.BeginChangeCheck();
+
+			_OdinEditor.OnInspectorGUI();
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				SubsystemSettings.Instance.Save();
+			}
 		}
 
 		#endregion
