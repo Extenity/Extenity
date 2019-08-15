@@ -1,0 +1,55 @@
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace Extenity.SubsystemManagementToolbox
+{
+
+	public class SubsystemSettingsProvider : SettingsProvider
+	{
+		#region Configuration
+
+		class Styles
+		{
+			public static GUIContent TargetInterface = new GUIContent("Target Interface");
+			public static GUIContent Shortcut = new GUIContent("Shortcut");
+			public static GUIContent InvalidKey = new GUIContent("Invalid key");
+		}
+
+		#endregion
+
+		#region Initialization
+
+		public override void OnActivate(string searchContext, VisualElement rootElement)
+		{
+			base.OnActivate(searchContext, rootElement);
+		}
+
+		private SubsystemSettingsProvider(string path, SettingsScope scope)
+			: base(path, scope)
+		{
+		}
+
+		[SettingsProvider]
+		public static SettingsProvider Create()
+		{
+			var provider = new SubsystemSettingsProvider("Project/Subsystems", SettingsScope.Project);
+
+			// Automatically extract all keywords from the Styles.
+			provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
+			return provider;
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		public override void OnDeactivate()
+		{
+			base.OnDeactivate();
+		}
+
+		#endregion
+	}
+
+}
