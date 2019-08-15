@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.FileSystemToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.SceneManagementToolbox;
+using Extenity.SubsystemManagementToolbox;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -11,6 +15,9 @@ using Object = UnityEngine.Object;
 namespace Extenity.UnityEditorToolbox.Editor
 {
 
+	/// <summary>
+	/// Don't forget to see <see cref="InternalEditorUtility"/> for more goodness.
+	/// </summary>
 	public static class EditorUtilityTools
 	{
 		#region CollectDependenciesReferencedIn...
@@ -87,6 +94,37 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var cast = obj as TSearched;
 				if (cast)
 					result.Add(cast);
+			}
+		}
+
+		#endregion
+
+		#region Load / Save Asset File
+
+		public static void SaveUnityAssetFile(string path, Object obj)
+		{
+			try
+			{
+				DirectoryTools.Create(SubsystemConstants.ConfigurationDirectory);
+				InternalEditorUtility.SaveToSerializedFileAndForget(new[] {obj}, path, true);
+			}
+			catch (Exception exception)
+			{
+				throw new Exception($"Failed to save '{path}'. Careful inspection required to prevent losing any data.", exception);
+			}
+		}
+
+		public static T LoadUnityAssetFile<T>(string path) where T : Object
+		{
+			try
+			{
+				var obj = InternalEditorUtility.LoadSerializedFileAndForget(path)[0];
+				var cast = (T)obj;
+				return cast;
+			}
+			catch (Exception exception)
+			{
+				throw new Exception($"Failed to load '{path}'. Careful inspection required to prevent losing any data.", exception);
 			}
 		}
 
