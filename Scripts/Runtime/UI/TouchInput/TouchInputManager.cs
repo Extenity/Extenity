@@ -24,11 +24,18 @@ namespace Extenity.UIToolbox.TouchInput
 		#region Schemes
 
 		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = nameof(_BeginListEntry), OnEndListElementGUI = nameof(_EndListEntry))]
-		[ValidateInput(nameof(ValidateAvailableInputSchemeNames), "Available Input Schemes should not contain an empty name and should contain at least one name.", InfoMessageType.Error)]
+		[PropertySpace(20f, 10f)]
+		[InfoBox("All scheme names that will be used in the application should be defined here.")]
+		[ValidateInput(nameof(ValidateAvailableInputSchemeNames), "Available Input Schemes should not contain an empty name and should contain at least one name.", ContinuousValidationCheck = true)]
 		public List<string> AvailableInputSchemeNames = new List<string>
 		{
 			"Default",
 		};
+
+		[PropertySpace(10f, 20f)]
+		[InfoBox("The fallback scheme will be used when trying to switch to an input scheme that is not defined among Available Input Scheme Names.")]
+		[ValidateInput(nameof(ValidateFallbackInputScheme), "Fallback Scheme is not defined among " + nameof(AvailableInputSchemeNames) + ".", ContinuousValidationCheck = true)]
+		public string FallbackInputSchemeName = "Default";
 
 #if UNITY_EDITOR
 
@@ -58,6 +65,11 @@ namespace Extenity.UIToolbox.TouchInput
 			GUILayout.EndHorizontal();
 		}
 
+		private bool ValidateFallbackInputScheme(string fallbackInputSchemeName)
+		{
+			return AvailableInputSchemeNames.Contains(fallbackInputSchemeName);
+		}
+
 #endif
 
 		#endregion
@@ -73,9 +85,12 @@ namespace Extenity.UIToolbox.TouchInput
 			if (newScheme.EqualsOrBothEmpty(CurrentScheme, StringComparison.OrdinalIgnoreCase))
 				return;
 
-			if (!AvailableInputSchemeNames.Contains(newScheme))
+			// Select the Fallback Scheme if the specified one is unknown.
+			var isInvalid = !AvailableInputSchemeNames.Any(entry => newScheme.Equals(entry, StringComparison.InvariantCultureIgnoreCase));
+			if (isInvalid)
 			{
-				throw new Exception($"Input scheme '{newScheme}' is not defined.");
+				Log.Warning($"Input scheme '{newScheme}' is not defined. Falling back to '{FallbackInputSchemeName}'.");
+				newScheme = FallbackInputSchemeName;
 			}
 
 			CurrentScheme = newScheme;
