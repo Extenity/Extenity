@@ -126,6 +126,7 @@ namespace Extenity.UIToolbox.TouchInput
 				DeviceLeaningSensitivity = schemeElement.DeviceLeaningSensitivity;
 				ClickableArea = schemeElement.ClickableArea;
 				ClickableAreaGameObject = ClickableArea ? ClickableArea.gameObject : null;
+				MoveTo(DefaultLocation, 0f);
 			}
 			else
 			{
@@ -219,22 +220,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 			if (DefaultLocation)
 			{
-				var screenPosition = DefaultLocation.TransformPoint(Vector3.zero);
-
-				var position = Base.parent.InverseTransformPoint(screenPosition);
-
-				Base.anchorMin = new Vector2(0.5f, 0.5f);
-				Base.anchorMax = new Vector2(0.5f, 0.5f);
-				if (ReturnToDefaultLocationDuration > 0f)
-				{
-					AnimationRemaniningTime = ReturnToDefaultLocationDuration;
-					AnimationStartPosition = Base.anchoredPosition;
-					AnimationEndPosition = position;
-				}
-				else
-				{
-					Base.anchoredPosition = position;
-				}
+				MoveTo(DefaultLocation, ReturnToDefaultLocationDuration);
 			}
 		}
 
@@ -259,6 +245,35 @@ namespace Extenity.UIToolbox.TouchInput
 			{
 				var t = AnimationRemaniningTime / ReturnToDefaultLocationDuration;
 				Base.anchoredPosition = Vector2.Lerp(AnimationStartPosition, AnimationEndPosition, 1f - t * t);
+			}
+		}
+
+		private void MoveTo(RectTransform targetLocation, float animationDuration)
+		{
+			if (!targetLocation)
+			{
+				return; // Just ignore the movement request when target location is not set.
+			}
+			var screenPosition = targetLocation.TransformPoint(Vector3.zero);
+			var position = Base.parent.InverseTransformPoint(screenPosition);
+			MoveTo(position, animationDuration);
+		}
+
+		private void MoveTo(Vector2 position, float animationDuration)
+		{
+			// Not sure if it's the best place to setup anchors. But we will leave it for now. Feel free to investigate.
+			Base.anchorMin = new Vector2(0.5f, 0.5f);
+			Base.anchorMax = new Vector2(0.5f, 0.5f);
+
+			if (animationDuration > 0f)
+			{
+				AnimationRemaniningTime = animationDuration;
+				AnimationStartPosition = Base.anchoredPosition;
+				AnimationEndPosition = position;
+			}
+			else
+			{
+				Base.anchoredPosition = position;
 			}
 		}
 
