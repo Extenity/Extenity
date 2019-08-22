@@ -115,17 +115,19 @@ namespace Extenity.UIToolbox
 		#region Drag
 
 		/// <summary>
-		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results under some edge conditions.
 		/// </summary>
-		public static void Calculate2DLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, bool radial, ref Vector2 normalizedLeverPosition)
+		public static void Calculate2DLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform hitAreaTransform, RectTransform handleTransform, bool radial, ref Vector2 normalizedLeverPosition)
 		{
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var position))
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(hitAreaTransform, eventData.position, eventData.pressEventCamera, out _))
 			{
+				RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var positionInDragArea);
+
 				var dragAreaSize = dragAreaTransform.sizeDelta;
 
 				normalizedLeverPosition = new Vector2(
-					(position.x / dragAreaSize.x) * 2f + 1f,
-					(position.y / dragAreaSize.y) * 2f - 1f);
+					(positionInDragArea.x / dragAreaSize.x) * 2f,
+					(positionInDragArea.y / dragAreaSize.y) * 2f);
 
 				if (radial)
 				{
@@ -146,29 +148,11 @@ namespace Extenity.UIToolbox
 		}
 
 		/// <summary>
-		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
-		/// </summary>
-		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
-		{
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var position))
-			{
-				var dragAreaSize = dragAreaTransform.sizeDelta.x;
-
-				normalizedLeverPosition = Mathf.Clamp((position.x / dragAreaSize) * 2f, -1f, 1f);
-
-				handleTransform.anchoredPosition = new Vector2(
-					normalizedLeverPosition * (dragAreaSize / 2f),
-					0);
-			}
-		}
-
-		/// <summary>
-		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results in some unthought conditions.
+		/// Note that this method is not tested in depth so there is a possibility that the method may give wrong results under some edge conditions.
 		/// </summary>
 		public static void CalculateHorizontalLeverDrag(this PointerEventData eventData, RectTransform dragAreaTransform, RectTransform hitAreaTransform, RectTransform handleTransform, ref float normalizedLeverPosition)
 		{
-			Vector2 position;
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(hitAreaTransform, eventData.position, eventData.pressEventCamera, out position))
+			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(hitAreaTransform, eventData.position, eventData.pressEventCamera, out _))
 			{
 				RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaTransform, eventData.position, eventData.pressEventCamera, out var positionInDragArea);
 
