@@ -400,6 +400,14 @@ namespace Extenity.MathToolbox
 			return angle;
 		}
 
+		public static float AngleBetweenXAxis_0To360(this Vector2 vector)
+		{
+			float angle = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
+			if (angle < 0f)
+				return angle + 360f;
+			return angle;
+		}
+
 		public static float AngleBetween(this Vector2 vector1, Vector2 vector2)
 		{
 			return Mathf.Acos(Vector2.Dot(vector1.normalized, vector2.normalized));
@@ -416,6 +424,17 @@ namespace Extenity.MathToolbox
 				angle -= MathTools.TwoPI;
 
 			return angle;
+		}
+
+		public static Vector2 AngleRadianToVector2(float radian)
+		{
+			return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+		}
+
+		public static Vector2 AngleDegreeToVector2(float degree)
+		{
+			var radian = degree * Mathf.Deg2Rad;
+			return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
 		}
 
 		#endregion
