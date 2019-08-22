@@ -28,7 +28,8 @@ namespace Extenity.UIToolbox.TouchInput
 		public StickType Type = StickType.Radial;
 
 		[BoxGroup("Configuration")]
-		public float ReturnToDefaultLocationDuration = 1f;
+		[InfoBox("The Element returns to its default location after releasing the touch in Free Roam mode. This is the duration of that animation.")]
+		public float ReturnToDefaultLocationDuration = 0.15f;
 
 		[BoxGroup("Links"), PropertyOrder(10)]
 		public RectTransform Handle = default;
@@ -40,39 +41,32 @@ namespace Extenity.UIToolbox.TouchInput
 
 		#region Initialization
 
-		protected override void Start()
-		{
-			base.Start();
-
-			Loop.UpdateCallbacks.AddListener(CustomUpdate, -1000);
-		}
+		// protected override void Start()
+		// {
+		// 	base.Start();
+		// }
 
 		#endregion
 
 		#region Deinitialization
 
-		protected override void OnDestroy()
-		{
-			Loop.UpdateCallbacks.RemoveListener(CustomUpdate);
-
-			base.OnDestroy();
-		}
+		// protected override void OnDestroy()
+		// {
+		// 	base.OnDestroy();
+		// }
 
 		#endregion
 
 		#region Update and Calculations
 
-		private void CustomUpdate()
+		protected override void CustomUpdate()
 		{
 			if (UseDeviceLeaning && !IsDragging)
 			{
 				CalculateLeaningInput();
 			}
 
-			if (IsAnimating)
-			{
-				CalculateAnimation();
-			}
+			base.CustomUpdate();
 		}
 
 		private void CalculateLeaningInput()
@@ -195,14 +189,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 			if (EnableFreeRoam)
 			{
-				var screenPosition = eventData.pressPosition;
-				var position = Base.parent.InverseTransformPoint(screenPosition);
-
-				StopAnimation();
-
-				Base.anchorMin = new Vector2(0.5f, 0.5f);
-				Base.anchorMax = new Vector2(0.5f, 0.5f);
-				Base.anchoredPosition = position;
+				MoveTo(eventData.pressPosition, 0f);
 			}
 
 			OnDrag(eventData);
@@ -222,66 +209,6 @@ namespace Extenity.UIToolbox.TouchInput
 			{
 				MoveTo(DefaultLocation, ReturnToDefaultLocationDuration);
 			}
-		}
-
-		#endregion
-
-		#region Animation
-
-		private bool IsAnimating => AnimationRemaniningTime > 0f;
-		private float AnimationRemaniningTime;
-		private Vector2 AnimationStartPosition;
-		private Vector2 AnimationEndPosition;
-
-		private void CalculateAnimation()
-		{
-			AnimationRemaniningTime -= Loop.DeltaTime;
-			if (AnimationRemaniningTime <= 0f)
-			{
-				Base.anchoredPosition = AnimationEndPosition;
-				StopAnimation();
-			}
-			else
-			{
-				var t = AnimationRemaniningTime / ReturnToDefaultLocationDuration;
-				Base.anchoredPosition = Vector2.Lerp(AnimationStartPosition, AnimationEndPosition, 1f - t * t);
-			}
-		}
-
-		private void MoveTo(RectTransform targetLocation, float animationDuration)
-		{
-			if (!targetLocation)
-			{
-				return; // Just ignore the movement request when target location is not set.
-			}
-			var screenPosition = targetLocation.TransformPoint(Vector3.zero);
-			var position = Base.parent.InverseTransformPoint(screenPosition);
-			MoveTo(position, animationDuration);
-		}
-
-		private void MoveTo(Vector2 position, float animationDuration)
-		{
-			// Not sure if it's the best place to setup anchors. But we will leave it for now. Feel free to investigate.
-			Base.anchorMin = new Vector2(0.5f, 0.5f);
-			Base.anchorMax = new Vector2(0.5f, 0.5f);
-
-			if (animationDuration > 0f)
-			{
-				AnimationRemaniningTime = animationDuration;
-				AnimationStartPosition = Base.anchoredPosition;
-				AnimationEndPosition = position;
-			}
-			else
-			{
-				Base.anchoredPosition = position;
-			}
-		}
-
-		private void StopAnimation()
-		{
-			AnimationRemaniningTime = 0f;
-			AnimationStartPosition = Vector2Tools.Zero;
-			AnimationEndPosition = Vector2Tools.Zero;
 		}
 
 		#endregion

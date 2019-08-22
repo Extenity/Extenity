@@ -65,6 +65,13 @@ namespace Extenity.UIToolbox.TouchInput
 			GUILayout.EndHorizontal();
 		}
 
+		private bool ValidateAvailableInputSchemeNames(List<string> list)
+		{
+			if (list == null || list.Count == 0)
+				return false;
+			return !list.Any(string.IsNullOrWhiteSpace);
+		}
+
 		private bool ValidateFallbackInputScheme(string fallbackInputSchemeName)
 		{
 			return AvailableInputSchemeNames.Contains(fallbackInputSchemeName);
@@ -96,17 +103,6 @@ namespace Extenity.UIToolbox.TouchInput
 			CurrentScheme = newScheme;
 			OnInputSchemeChanged.Invoke(newScheme);
 		}
-
-#if UNITY_EDITOR
-
-		private bool ValidateAvailableInputSchemeNames(List<string> list)
-		{
-			if (list == null || list.Count == 0)
-				return false;
-			return !list.Any(string.IsNullOrWhiteSpace);
-		}
-
-#endif
 
 		#endregion
 	}

@@ -20,6 +20,10 @@ namespace Extenity.UIToolbox.TouchInput
 		[BoxGroup("Configuration")]
 		public ButtonType Type = ButtonType.Push;
 
+		[BoxGroup("Configuration")]
+		[InfoBox("The Element returns to its default location after releasing the touch in Free Roam mode. This is the duration of that animation.")]
+		public float ReturnToDefaultLocationDuration = 0.15f;
+
 		[BoxGroup("Links"), PropertyOrder(10)]
 		public RectTransform ButtonArea;
 
@@ -30,8 +34,6 @@ namespace Extenity.UIToolbox.TouchInput
 		// protected override void OnEnable()
 		// {
 		// 	base.OnEnable();
-		//
-		// 	Loop.UpdateCallbacks.AddListener(CustomUpdate, -1000);
 		// }
 
 		#endregion
@@ -40,8 +42,6 @@ namespace Extenity.UIToolbox.TouchInput
 
 		// protected override void OnDisable()
 		// {
-		// 	Loop.UpdateCallbacks.RemoveListener(CustomUpdate);
-		//
 		// 	base.OnDisable();
 		// }
 
@@ -49,8 +49,9 @@ namespace Extenity.UIToolbox.TouchInput
 
 		#region Update and Calculations
 
-		// private void CustomUpdate()
+		// protected override void CustomUpdate()
 		// {
+		// 	base.CustomUpdate();
 		// }
 
 		#endregion
@@ -71,6 +72,7 @@ namespace Extenity.UIToolbox.TouchInput
 				EnableFreeRoam = schemeElement.EnableFreeRoam;
 				ClickableArea = schemeElement.ClickableArea;
 				ClickableAreaGameObject = ClickableArea ? ClickableArea.gameObject : null;
+				MoveTo(DefaultLocation, 0f);
 			}
 			else
 			{
@@ -106,6 +108,11 @@ namespace Extenity.UIToolbox.TouchInput
 
 			IsPressing = true;
 
+			if (EnableFreeRoam)
+			{
+				MoveTo(eventData.pressPosition, 0f);
+			}
+
 			// TODO: Do value animation.
 			_Value = 1f;
 		}
@@ -116,6 +123,11 @@ namespace Extenity.UIToolbox.TouchInput
 				return;
 
 			IsPressing = false;
+
+			if (DefaultLocation)
+			{
+				MoveTo(DefaultLocation, ReturnToDefaultLocationDuration);
+			}
 
 			// TODO: Do value animation.
 			_Value = 0f;

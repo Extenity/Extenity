@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.MathToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ namespace Extenity.UIToolbox.TouchInput
 		protected virtual void Start()
 		{
 			InitializeSchemeElements();
+
+			Loop.UpdateCallbacks.AddListener(CustomUpdate, -1000);
 		}
 
 		#endregion
@@ -22,7 +25,21 @@ namespace Extenity.UIToolbox.TouchInput
 
 		protected virtual void OnDestroy()
 		{
+			Loop.UpdateCallbacks.RemoveListener(CustomUpdate);
+
 			DeinitializeSchemeElements();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected virtual void CustomUpdate()
+		{
+			if (IsAnimatingMovement)
+			{
+				CalculateMovementAnimation();
+			}
 		}
 
 		#endregion
@@ -99,6 +116,71 @@ namespace Extenity.UIToolbox.TouchInput
 
 		[BoxGroup("Links"), PropertyOrder(15)]
 		public UIFader Fader;
+
+		#endregion
+
+		#region Movement with Animation
+
+		private bool IsAnimatingMovement => MovementAnimationRemaniningTime > 0f;
+		private float MovementAnimationDuration;
+		private float MovementAnimationRemaniningTime;
+		private Vector2 MovementAnimationStartPosition;
+		private Vector2 MovementAnimationEndPosition;
+
+		private void CalculateMovementAnimation()
+		{
+			MovementAnimationRemaniningTime -= Loop.DeltaTime;
+			if (MovementAnimationRemaniningTime <= 0f)
+			{
+				Base.anchoredPosition = MovementAnimationEndPosition;
+				StopMovementAnimation();
+			}
+			else
+			{
+				var t = MovementAnimationRemaniningTime / MovementAnimationDuration;
+				Base.anchoredPosition = Vector2.Lerp(MovementAnimationStartPosition, MovementAnimationEndPosition, 1f - t * t);
+			}
+		}
+
+		public void MoveTo(RectTransform targetLocation, float animationDuration)
+		{
+			if (!targetLocation)
+			{
+				return; // Just ignore the movement request when target location is not set.
+			}
+			var screenPosition = targetLocation.TransformPoint(Vector3.zero);
+			MoveTo(screenPosition, animationDuration);
+		}
+
+		public void MoveTo(Vector2 screenPosition, float animationDuration)
+		{
+			// Not sure if it's the best place to setup anchors. But we will leave it for now. Feel free to investigate.
+			Base.anchorMin = new Vector2(0.5f, 0.5f);
+			Base.anchorMax = new Vector2(0.5f, 0.5f);
+
+			var position = Base.parent.InverseTransformPoint(screenPosition);
+
+			if (animationDuration > 0f)
+			{
+				MovementAnimationRemaniningTime = animationDuration;
+				MovementAnimationDuration = animationDuration;
+				MovementAnimationStartPosition = Base.anchoredPosition;
+				MovementAnimationEndPosition = position;
+			}
+			else
+			{
+				StopMovementAnimation(); // Stop if currently animating.
+				Base.anchoredPosition = position;
+			}
+		}
+
+		public void StopMovementAnimation()
+		{
+			MovementAnimationRemaniningTime = 0f;
+			MovementAnimationDuration = 0f;
+			MovementAnimationStartPosition = Vector2Tools.Zero;
+			MovementAnimationEndPosition = Vector2Tools.Zero;
+		}
 
 		#endregion
 	}
