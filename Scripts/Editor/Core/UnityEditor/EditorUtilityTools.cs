@@ -5,7 +5,6 @@ using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.SceneManagementToolbox;
-using Extenity.SubsystemManagementToolbox;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -105,7 +104,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			try
 			{
-				DirectoryTools.Create(SubsystemConstants.ConfigurationDirectory);
+				DirectoryTools.CreateFromFilePath(path);
 				InternalEditorUtility.SaveToSerializedFileAndForget(new[] {obj}, path, true);
 			}
 			catch (Exception exception)
