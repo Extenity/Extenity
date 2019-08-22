@@ -40,7 +40,7 @@ namespace Extenity.DataToolbox.Editor
 			// So the overhead is negligible.
 			var oldJson = JsonUtility.ToJson(oldValue);
 			var newJson = JsonUtility.ToJson(newValue);
-			return oldJson.EqualsOrBothEmpty(newJson);
+			return oldJson.EqualsOrBothEmpty(newJson, StringComparison.Ordinal);
 		}
 	}
 

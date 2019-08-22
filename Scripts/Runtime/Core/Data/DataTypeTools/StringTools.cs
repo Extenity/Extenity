@@ -44,13 +44,22 @@ namespace Extenity.DataToolbox
 
 		#region Equals
 
-		public static bool EqualsOrBothEmpty(this string str1, string str2)
+		public static bool EqualsOrBothEmpty(this string str1, string str2, StringComparison comparisonType)
 		{
 			if (string.IsNullOrEmpty(str1))
 			{
 				return string.IsNullOrEmpty(str2);
 			}
-			return str1.Equals(str2);
+			return str1.Equals(str2, comparisonType);
+		}
+
+		public static bool EqualsOrBothWhiteSpace(this string str1, string str2, StringComparison comparisonType)
+		{
+			if (string.IsNullOrWhiteSpace(str1))
+			{
+				return string.IsNullOrWhiteSpace(str2);
+			}
+			return str1.Equals(str2, comparisonType);
 		}
 
 		public static bool IsAllZeros(this string str)

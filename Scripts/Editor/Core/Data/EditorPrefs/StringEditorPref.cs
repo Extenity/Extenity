@@ -28,7 +28,7 @@ namespace Extenity.DataToolbox.Editor
 
 		protected override bool IsSame(string oldValue, string newValue)
 		{
-			return oldValue.EqualsOrBothEmpty(newValue);
+			return oldValue.EqualsOrBothEmpty(newValue, StringComparison.Ordinal);
 		}
 	}
 
