@@ -95,6 +95,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.cloth", "DisableUnityCloth"),
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.terrain", "DisableUnityTerrain"),
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.particlesystem", "DisableUnityParticleSystem"),
+			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.ai", "DisableUnityAI"),
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.timeline", "DisableUnityTimeline"),
 		};
 

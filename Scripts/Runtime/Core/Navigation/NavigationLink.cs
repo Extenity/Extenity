@@ -1,3 +1,5 @@
+#if !DisableUnityAI
+
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEngine.AI;
@@ -95,3 +97,5 @@ namespace Extenity.NavigationToolbox
 	}
 
 }
+
+#endif

@@ -1239,6 +1239,7 @@ namespace Extenity.ReflectionToolbox
 				// Does not contain any link to game objects. So we skip.
 			}
 #endif
+#if !DisableUnityAI
 			else if (type.IsSameOrSubclassOf(typeof(OffMeshLink)))
 			{
 				var referencedOffMeshLink = referencedObject as OffMeshLink;
@@ -1249,6 +1250,7 @@ namespace Extenity.ReflectionToolbox
 					InternalAddReferencedGameObjectToResults(referencedOffMeshLink.endTransform.gameObject, result, excludedTypes);
 				}
 			}
+#endif
 			else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
 			{
 				var unityEvent = (UnityEvent)referencedObject;

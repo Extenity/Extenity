@@ -1,3 +1,5 @@
+#if !DisableUnityAI
+
 using UnityEditor;
 using UnityEditor.AI;
 using UnityEngine;
@@ -113,3 +115,5 @@ namespace Extenity.NavigationToolbox.Editor
 	}
 
 }
+
+#endif

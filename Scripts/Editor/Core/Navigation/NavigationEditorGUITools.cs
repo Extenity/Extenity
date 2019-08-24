@@ -1,3 +1,5 @@
+#if !DisableUnityAI
+
 using System;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
@@ -369,3 +371,5 @@ namespace Extenity.NavigationToolbox.Editor
 	}
 
 }
+
+#endif
