@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEditor;
@@ -99,6 +100,31 @@ namespace Extenity.UIToolbox.Editor
 			}
 
 			return component;
+		}
+
+		#endregion
+
+		#region PlaceUIElementRoot as in UnityEditor.UI.MenuOptions
+
+		private static MethodInfo _PlaceUIElementRoot;
+
+		/// <summary>
+		/// Places the UI element just like selecting Unity UI right click menu items (buttons, texts, etc.).
+		/// </summary>
+		public static void PlaceUIElementRoot(GameObject element, MenuCommand menuCommand)
+		{
+			if (_PlaceUIElementRoot == null)
+			{
+				var menuOptionsType = typeof(UnityEditor.UI.ButtonEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
+
+				_PlaceUIElementRoot = menuOptionsType.GetMethod(nameof(PlaceUIElementRoot),
+				                                       BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+				                                       null,
+				                                       new[] {typeof(GameObject), typeof(MenuCommand)},
+				                                       null);
+			}
+
+			_PlaceUIElementRoot.Invoke(null, new object[] {element, menuCommand});
 		}
 
 		#endregion
