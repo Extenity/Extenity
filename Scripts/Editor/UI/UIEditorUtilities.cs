@@ -27,8 +27,12 @@ namespace Extenity.UIToolbox.Editor
 				foreach (var selectable in selectables)
 				{
 					var navigation = selectable.navigation;
-					navigation.mode = Navigation.Mode.None;
-					selectable.navigation = navigation;
+					if (navigation.mode != Navigation.Mode.None)
+					{
+						Undo.RecordObject(selectable, "Disable navigation");
+						navigation.mode = Navigation.Mode.None;
+						selectable.navigation = navigation;
+					}
 				}
 			}
 		}
