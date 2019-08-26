@@ -23,10 +23,10 @@ namespace Extenity.UIToolbox.TouchInput
 
 		#region Schemes
 
-		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = nameof(_BeginListEntry), OnEndListElementGUI = nameof(_EndListEntry))]
+		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = "_BeginListEntry", OnEndListElementGUI = "_EndListEntry")]
 		[PropertySpace(20f, 10f)]
 		[InfoBox("All scheme names that will be used in the application should be defined here.")]
-		[ValidateInput(nameof(ValidateAvailableInputSchemeNames), "Available Input Schemes should not contain an empty name and should contain at least one name.", ContinuousValidationCheck = true)]
+		[ValidateInput("ValidateAvailableInputSchemeNames", "Available Input Schemes should not contain an empty name and should contain at least one name.", ContinuousValidationCheck = true)]
 		public List<string> AvailableInputSchemeNames = new List<string>
 		{
 			"Default",
@@ -34,7 +34,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 		[PropertySpace(10f, 20f)]
 		[InfoBox("The fallback scheme will be used when trying to switch to an input scheme that is not defined among Available Input Scheme Names.")]
-		[ValidateInput(nameof(ValidateFallbackInputScheme), "Fallback Scheme is not defined among " + nameof(AvailableInputSchemeNames) + ".", ContinuousValidationCheck = true)]
+		[ValidateInput("ValidateFallbackInputScheme", "Fallback Scheme is not defined among " + nameof(AvailableInputSchemeNames) + ".", ContinuousValidationCheck = true)]
 		public string FallbackInputSchemeName = "Default";
 
 #if UNITY_EDITOR
