@@ -178,6 +178,7 @@ namespace Extenity.BuildToolbox.Editor
 		public string Symbol;
 
 		public bool IsAtTheEnd => Index < 0;
+		public bool IsValid => !string.IsNullOrWhiteSpace(Symbol);
 
 		public DefineSymbolEntry(int index, string symbol)
 		{
@@ -584,8 +585,11 @@ namespace Extenity.BuildToolbox.Editor
 		/// </summary>
 		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
 		{
-			if (symbols.IsNullOrEmpty())
+			if (symbols == null)
 				throw new ArgumentNullException();
+			symbols = symbols.Where(entry => entry.IsValid).ToArray();
+			if (symbols.Length == 0)
+				throw new ArgumentException();
 			Log.Info($"Adding {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
 
 			symbols = symbols.OrderBy(entry => entry.Index).ToArray();
@@ -634,8 +638,11 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
 		{
-			if (symbols.IsNullOrEmpty())
+			if (symbols == null)
 				throw new ArgumentNullException();
+			symbols = symbols.Where(entry => !string.IsNullOrWhiteSpace(entry)).ToArray();
+			if (symbols.Length == 0)
+				throw new ArgumentException();
 			Log.Info($"Removing {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
 
 			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
