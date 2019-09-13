@@ -81,11 +81,14 @@ namespace Extenity.BuildToolbox.Editor
 
 			OutsidePaths = OriginalPaths.Select(path =>
 			{
-				if (!path.StartsWith("Assets/"))
-				{
-					throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
-				}
-				return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
+				// Old implementation
+				// if (!path.StartsWith("Assets/"))
+				// {
+				// 	throw new Exception($"Original paths are expected to start with 'Assets' directory, which is not the case for path '{path}'");
+				// }
+				// return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path.Remove(0, "Assets/".Length);
+
+				return outsideLocationBasePath.AddDirectorySeparatorToEnd('/') + path;
 			}).ToList();
 
 			Debug.Assert(OriginalPaths.Count == OutsidePaths.Count);
