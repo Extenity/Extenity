@@ -293,7 +293,9 @@ namespace Extenity.ApplicationToolbox
 
 		#region Version Change Emitter
 
+#pragma warning disable 67
 		public static event Action OnProjectVersionChanged;
+#pragma warning restore 67
 
 		#endregion
 
