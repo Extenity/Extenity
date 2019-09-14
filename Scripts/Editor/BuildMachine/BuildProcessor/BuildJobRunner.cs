@@ -438,6 +438,8 @@ namespace Extenity.BuildMachine.Editor
 				if (firstStepOfCurrentPhase.IsEmpty)
 				{
 					// TODO: Check if the step exists. What to do if it does not exist?
+					// TODO: Script reload is a quick fix that prevents going into infinite loop. Delete it when implementing the behaviour.
+					InternalEditorUtility.RequestScriptReload();
 					throw new NotImplementedException("The behaviour of not finding the first step is not implemented yet!");
 				}
 
