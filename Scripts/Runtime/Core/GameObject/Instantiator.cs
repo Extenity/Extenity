@@ -228,6 +228,9 @@ namespace Extenity.GameObjectToolbox
 
 		private GameObject InternalInstantiate(GameObject prefab, bool dontDestroyOnLoad)
 		{
+			if (!prefab) // Just skip if the prefab is missing.
+				return null;
+
 			var instance = Instantiate(prefab) as GameObject;
 
 			// Remove "(Clone)" from the name and add '_' prefix.
