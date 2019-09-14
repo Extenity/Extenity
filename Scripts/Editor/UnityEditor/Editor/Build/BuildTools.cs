@@ -463,7 +463,12 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static void TellUnityToBuild(string[] scenes, string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, bool runAfterBuild)
 		{
-			Log.Info("Telling Unity to start the build.");
+			Log.Info($"Telling Unity to start the build. More info:\n" +
+			         $"\tScenes: {string.Join("\n\t\t", scenes)}\n" +
+			         $"\tOutput path: {outputPath}\n" +
+			         $"\tTarget group: {buildTargetGroup}, Target: {buildTarget}\n" +
+			         $"\tBuild options: {buildOptions}\n" +
+			         $"\tRun after build: {runAfterBuild}");
 
 			var buildPlayerOptions = new BuildPlayerOptions
 			{
