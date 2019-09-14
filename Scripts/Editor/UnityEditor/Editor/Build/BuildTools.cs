@@ -447,13 +447,27 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Tell Unity To Build
 
+		public static string[] GetUnityBuildSettingsScenes()
+		{
+			return EditorBuildSettings.scenes
+			                          .Where(scene => scene.enabled)
+			                          .Select(scene => scene.path)
+			                          .ToArray();
+		}
+
 		public static void TellUnityToBuild(string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, bool runAfterBuild)
+		{
+			var scenes = GetUnityBuildSettingsScenes();
+			TellUnityToBuild(scenes, outputPath, buildTargetGroup, buildTarget, buildOptions, runAfterBuild);
+		}
+
+		public static void TellUnityToBuild(string[] scenes, string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, bool runAfterBuild)
 		{
 			Log.Info("Telling Unity to start the build.");
 
 			var buildPlayerOptions = new BuildPlayerOptions
 			{
-				scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
+				scenes = scenes,
 				locationPathName = outputPath,
 				targetGroup = buildTargetGroup,
 				target = buildTarget,
