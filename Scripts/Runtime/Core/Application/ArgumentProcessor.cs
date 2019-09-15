@@ -225,8 +225,11 @@ namespace Extenity.ApplicationToolbox
 				var item = Entries[i];
 				stringBuilder.Append(linePrefix);
 				stringBuilder.Append(item.Key);
-				stringBuilder.Append(keyValueSeparator);
-				stringBuilder.Append(item.RawValue);
+				if (!string.IsNullOrEmpty(item.RawValue))
+				{
+					stringBuilder.Append(keyValueSeparator);
+					stringBuilder.Append(item.RawValue);
+				}
 				stringBuilder.Append(lineEnding);
 			}
 			return stringBuilder.ToString(0, Math.Max(0, stringBuilder.Length - lineEnding.Length)); // Omit the last line ending character
