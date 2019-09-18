@@ -3,7 +3,7 @@ using System;
 namespace Extenity.ParallelToolbox.Editor
 {
 
-	public static class EditorCoroutineTask
+	public static class EditorCoroutineTaskObsolete
 	{
 		public static void StartInEditorUpdate(this CoroutineTask task, bool autoRefreshUI = true, bool keepUpdatesComing = true, Action onFinished = null)
 		{

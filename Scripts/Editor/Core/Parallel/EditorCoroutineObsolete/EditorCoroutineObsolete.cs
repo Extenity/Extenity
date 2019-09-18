@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Extenity.ParallelToolbox.Editor
 {
 
-	public static class EditorCoroutine
+	public static class EditorCoroutineObsolete
 	{
 		/// <summary>
 		/// Runs coroutine inside EditorApplication.update calls. This sometimes would hang in the middle of the operation because
