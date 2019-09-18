@@ -1,5 +1,5 @@
 ﻿
-namespace ExtenityTests.Common
+namespace Extenity.Testing
 {
 
 	public static class TestCategories

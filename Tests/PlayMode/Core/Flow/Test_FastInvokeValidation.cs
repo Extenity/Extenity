@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Extenity.FlowToolbox;
-using ExtenityTests.Common;
+using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;

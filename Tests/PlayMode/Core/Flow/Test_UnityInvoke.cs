@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using ExtenityTests.Common;
+using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 

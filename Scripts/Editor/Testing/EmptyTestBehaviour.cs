@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ExtenityTests.Common
+namespace Extenity.Testing
 {
 
 	public class EmptyTestBehaviour : MonoBehaviour
