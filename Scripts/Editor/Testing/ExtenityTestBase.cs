@@ -117,6 +117,16 @@ namespace Extenity.Testing
 			throw new Exception(message);
 		}
 
+		/// <summary>
+		/// Without including any yield in the coroutine, it won't be generated properly. It can easily be overlooked
+		/// by a programmer. Use this method in simple coroutines instead of throwing directly, so that the compiler
+		/// will always show an error if there is no yield in the coroutine.
+		/// </summary>
+		protected void ThrowNotImplemented()
+		{
+			throw new NotImplementedException();
+		}
+
 		#endregion
 	}
 

@@ -1,6 +1,7 @@
 {
     "name": "Extenity.Tests.Custom",
     "references": [
+        "Extenity.Core",
         "Extenity.Testing"
     ],
     "optionalUnityReferences": [

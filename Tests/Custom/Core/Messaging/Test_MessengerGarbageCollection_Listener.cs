@@ -1,16 +1,15 @@
-/*
 using UnityEngine;
 using Extenity.MessagingToolbox;
 
 namespace Extenity.Messaging
 {
 
-	public class TEST_MessengerGarbageCollection_Listener : MonoBehaviour
+	public class Test_MessengerGarbageCollection_Listener : MonoBehaviour
 	{
 		protected void Awake()
 		{
 			Log.Info("LISTENER :: Awake", this);
-			Messenger.Global.AddListener(1001, MyMessageHandler);
+			Messenger.Global.AddListener("1001", MyMessageHandler);
 		}
 
 		protected void OnDestroy()
@@ -34,4 +33,3 @@ namespace Extenity.Messaging
 	}
 
 }
-*/
