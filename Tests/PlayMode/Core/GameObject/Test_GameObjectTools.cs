@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace ExtenityTests.DataToolbox
+namespace ExtenityTests.GameObjectToolbox
 {
 
 	public class Test_GameObjectTools : ExtenityTestBase

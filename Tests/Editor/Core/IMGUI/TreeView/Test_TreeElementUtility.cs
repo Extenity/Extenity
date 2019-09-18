@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.Testing;
 using NUnit.Framework;
 using UnityEditor;
 
-namespace Extenity.IMGUIToolbox.Editor
+namespace ExtenityTests.IMGUIToolbox.Editor
 {
 
 	public class Test_TreeElementUtility : ExtenityTestBase

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.Testing;
 using NUnit.Framework;
 
-namespace Extenity.IMGUIToolbox.Editor
+namespace ExtenityTests.IMGUIToolbox.Editor
 {
 
 	public class Test_TreeModelTests : ExtenityTestBase
