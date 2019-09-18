@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Extenity;
 using Extenity.FlowToolbox;
+using Extenity.Testing;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using UnityEngine;
@@ -73,7 +74,7 @@ namespace ExtenityTests.FlowToolbox
 		#endregion
 	}
 
-	public abstract class TestBase_FastInvoke
+	public abstract class TestBase_FastInvoke : ExtenityTestBase
 	{
 		#region Configuration
 
@@ -150,14 +151,13 @@ namespace ExtenityTests.FlowToolbox
 
 			GameObject.Destroy(Loop.gameObject);
 			Invoker.ShutdownSystem();
-			UnityTestTools.Cleanup();
 			Time.timeScale = 1f;
 		}
 
-		[TearDown]
-		public void TearDown()
+		protected override void OnDeinitialize()
 		{
 			DeinitializeBase();
+			base.OnDeinitialize();
 		}
 
 		#endregion

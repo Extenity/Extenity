@@ -6,7 +6,6 @@ using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.Testing;
-using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +14,7 @@ using UnityEngine.TestTools;
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_GameObjectTools : AssertionHelper
+	public class Test_GameObjectTools : ExtenityTestBase
 	{
 		private Scene Scene => SceneManager.GetActiveScene();
 
@@ -25,12 +24,6 @@ namespace ExtenityTests.DataToolbox
 		{
 			AssetTools.InstantiatePrefabWithTheSameNameOfThisScript();
 			yield break;
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			UnityTestTools.Cleanup();
 		}
 
 		#endregion
