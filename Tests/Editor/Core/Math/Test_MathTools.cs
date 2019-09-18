@@ -1,11 +1,12 @@
 using Extenity.MathToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine;
 
 namespace ExtenityTests.MathToolbox
 {
 
-	public class Test_MathTools : AssertionHelper
+	public class Test_MathTools : ExtenityTestBase
 	{
 		#region Int Float Double
 

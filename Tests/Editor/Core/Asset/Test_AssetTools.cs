@@ -1,12 +1,13 @@
 using System;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.AssetToolbox.Editor
 {
 
-	public class Test_AssetTools : AssertionHelper
+	public class Test_AssetTools : ExtenityTestBase
 	{
 		#region Script Asset
 

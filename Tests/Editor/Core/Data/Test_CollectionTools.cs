@@ -1,11 +1,12 @@
 using System;
 using Extenity.DataToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_CollectionTools : AssertionHelper
+	public class Test_CollectionTools : ExtenityTestBase
 	{
 		#region Array / List / Collection / Enumerable
 

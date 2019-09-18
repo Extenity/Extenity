@@ -2,12 +2,13 @@
 using System;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.FileSystemToolbox
 {
 
-	public class Test_PathTools : AssertionHelper
+	public class Test_PathTools : ExtenityTestBase
 	{
 		#region Alter File Name
 

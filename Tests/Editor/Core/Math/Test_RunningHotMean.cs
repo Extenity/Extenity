@@ -1,10 +1,11 @@
 using Extenity.MathToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.MathToolbox
 {
 
-	public class Test_RunningHotMean : AssertionHelper
+	public class Test_RunningHotMean : ExtenityTestBase
 	{
 		[Test]
 		public void Mean()

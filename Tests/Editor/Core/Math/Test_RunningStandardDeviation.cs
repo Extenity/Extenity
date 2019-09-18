@@ -1,10 +1,11 @@
 using Extenity.MathToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.MathToolbox
 {
 
-	public class Test_RunningStandardDeviation : AssertionHelper
+	public class Test_RunningStandardDeviation : ExtenityTestBase
 	{
 		[Test]
 		public void StandardDeviation()

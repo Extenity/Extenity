@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.MathToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.MathToolbox
 {
 
-	public class Test_UnityRandomTools : AssertionHelper
+	public class Test_UnityRandomTools : ExtenityTestBase
 	{
 		#region Int Float Double
 

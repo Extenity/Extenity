@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity.Testing;
 using NUnit.Framework;
 using UnityEditor;
 
 namespace Extenity.IMGUIToolbox.Editor
 {
 
-	public class Test_TreeElementUtility
+	public class Test_TreeElementUtility : ExtenityTestBase
 	{
 		class TestElement : TreeElement
 		{

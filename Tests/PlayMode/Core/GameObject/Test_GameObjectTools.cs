@@ -20,10 +20,10 @@ namespace ExtenityTests.DataToolbox
 
 		#region Initialization and Cleanup
 
-		public IEnumerator Setup()
+		protected override void OnInitialize()
 		{
 			AssetTools.InstantiatePrefabWithTheSameNameOfThisScript();
-			yield break;
+			base.OnInitialize();
 		}
 
 		#endregion
@@ -462,7 +462,6 @@ namespace ExtenityTests.DataToolbox
 
 		private IEnumerator TestFindObjectsOfType<T>(Func<List<T>> searchMethod, string[] expectedComponentPaths) where T : Component
 		{
-			yield return Setup();
 			var foundComponents = searchMethod();
 
 			// Get full names of found components. Also get MarkedTestBehaviour data
@@ -494,6 +493,8 @@ namespace ExtenityTests.DataToolbox
 				}
 				Assert.Fail("Found GameObject paths does not match the expected paths. See logs for details.");
 			}
+
+			yield break;
 		}
 
 		#endregion
@@ -524,17 +525,16 @@ namespace ExtenityTests.DataToolbox
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator IsComponentEnabled_MarkedTestBehaviour()
 		{
-			yield return Setup();
-
 			var components = Scene.FindObjectsOfType<MarkedTestBehaviour>(ActiveCheck.IncludingInactive);
 			Assert.AreEqual(2, components.Count);
 			Assert.True(components.First(component => component.Mark == "Enabled One").IsComponentEnabled());
 			Assert.False(components.First(component => component.Mark == "Disabled One").IsComponentEnabled());
+
+			yield break;
 		}
 
 		private IEnumerator TestIsComponentEnabled<T>() where T : Component
 		{
-			yield return Setup();
 			var components = Scene.FindObjectsOfType<T>(ActiveCheck.IncludingInactive);
 
 			Assert.True(components.FindSingleComponentByGameObjectPath("Cube").IsComponentEnabled());
@@ -544,6 +544,8 @@ namespace ExtenityTests.DataToolbox
 			Assert.True(components.FindSingleComponentByGameObjectPath("Container 1 (GO Disabled)/ChildCube").IsComponentEnabled());
 			Assert.False(components.FindSingleComponentByGameObjectPath("Container 3/ChildCube (Comp Disabled)").IsComponentEnabled());
 			Assert.False(components.FindSingleComponentByGameObjectPath("Container 3 (GO Disabled)/ChildCube (Comp Disabled)").IsComponentEnabled());
+
+			yield break;
 		}
 
 		#endregion

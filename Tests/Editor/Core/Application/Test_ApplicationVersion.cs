@@ -1,11 +1,12 @@
 using System;
 using Extenity.ApplicationToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.ApplicationToolbox
 {
 
-	public class Test_ApplicationVersion : AssertionHelper
+	public class Test_ApplicationVersion : ExtenityTestBase
 	{
 		[Test]
 		public static void ConstantsAreCorrect()

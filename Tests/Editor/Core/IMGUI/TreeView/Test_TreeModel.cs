@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace Extenity.IMGUIToolbox.Editor
 {
 
-	public class Test_TreeModelTests
+	public class Test_TreeModelTests : ExtenityTestBase
 	{
 		[Test]
 		public static void TreeModelCanAddElements()

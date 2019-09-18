@@ -1,11 +1,12 @@
 using System;
 using Extenity.DataToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
 
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_StringFilter : AssertionHelper
+	public class Test_StringFilter : ExtenityTestBase
 	{
 		#region String Operations
 
@@ -78,7 +79,6 @@ namespace ExtenityTests.DataToolbox
 				new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
 			).IsMatching("Good old text"));
 		}
-
 
 		#endregion
 	}

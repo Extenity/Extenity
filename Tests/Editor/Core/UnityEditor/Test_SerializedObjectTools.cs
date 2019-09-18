@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Extenity.Testing;
 using Extenity.UnityEditorToolbox;
 using NUnit.Framework;
 using UnityEditor;
@@ -11,7 +12,7 @@ using Object = UnityEngine.Object;
 namespace ExtenityTests.UnityEditorToolbox
 {
 
-	public class Test_SerializedObjectTools : AssertionHelper
+	public class Test_SerializedObjectTools : ExtenityTestBase
 	{
 
 		public class TestSerializedObject : ScriptableObject

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Extenity.Testing;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_StringTools : AssertionHelper
+	public class Test_StringTools : ExtenityTestBase
 	{
 		#region Equals
 

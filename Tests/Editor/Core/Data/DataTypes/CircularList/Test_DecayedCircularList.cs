@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Extenity.Testing;
 using NUnit.Framework;
-using UnityEngine.TestTools;
 
 namespace ExtenityTests.DataToolbox
 {
 
-	public class Test_DecayedCircularList : AssertionHelper, IPrebuildSetup
+	public class Test_DecayedCircularList : ExtenityTestBase
 	{
-		public void Setup()
-		{
-		}
-
 		#region Remove Tailing on edge conditions
 
 		[Test]
