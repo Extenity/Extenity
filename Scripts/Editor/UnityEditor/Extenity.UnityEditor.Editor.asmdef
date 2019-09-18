@@ -2,8 +2,7 @@
     "name": "Extenity.UnityEditor.Editor",
     "references": [
         "Extenity.Core",
-        "Extenity.Core.Editor",
-        "Unity.EditorCoroutines.Editor"
+        "Extenity.Core.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

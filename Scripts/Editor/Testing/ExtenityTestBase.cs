@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.ParallelToolbox.Editor;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Extenity.Testing
 		public void Initialize()
 		{
 			StartTime = Time.realtimeSinceStartup;
-			// TODO IMMEDIATE: Enable this after moving the library into Extenity. EditorCoroutine.EnsureNoRunningEditorCoroutines();
+			EditorCoroutine.EnsureNoRunningEditorCoroutines();
 			InitializeLogCatching();
 
 			OnInitialize();
@@ -41,7 +42,7 @@ namespace Extenity.Testing
 			OnDeinitialize();
 
 			DeinitializeLogCatching();
-			// TODO IMMEDIATE: Enable this after moving the library into Extenity. EditorCoroutine.EnsureNoRunningEditorCoroutines();
+			EditorCoroutine.EnsureNoRunningEditorCoroutines();
 			UnityTestTools.Cleanup();
 		}
 
