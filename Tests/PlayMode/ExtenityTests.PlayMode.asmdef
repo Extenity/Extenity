@@ -1,20 +1,19 @@
 {
-    "name": "Extenity.Tests.Editor",
+    "name": "Extenity.Tests.PlayMode",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
-        "Extenity.Tests.Common"
+        "Extenity.Testing"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

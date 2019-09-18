@@ -1,16 +1,21 @@
 {
-    "name": "Extenity.Tests.Common",
+    "name": "Extenity.Tests.Editor",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "Extenity.Core.Editor",
+        "Extenity.Testing"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

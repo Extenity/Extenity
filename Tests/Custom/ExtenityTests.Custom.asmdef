@@ -1,9 +1,7 @@
 {
-    "name": "Extenity.Tests.PlayMode",
+    "name": "Extenity.Tests.Custom",
     "references": [
-        "Extenity.Core",
-        "Extenity.Core.Editor",
-        "Extenity.Tests.Common"
+        "Extenity.Testing"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
@@ -14,5 +12,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

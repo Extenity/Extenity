@@ -1,6 +1,8 @@
 {
     "name": "Extenity.Testing",
-    "references": [],
+    "references": [
+        "Extenity.Core"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
