@@ -176,13 +176,31 @@ namespace Extenity.MathToolbox
 			get { return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
 		}
 
-		public static void FillRandomly(this char[] chars)
+		#region Random Collections
+
+		public static byte[] FillRandomly(this byte[] data, int count = -1)
 		{
-			for (int i = 0; i < chars.Length; i++)
+			if (count < 0)
+				count = data.Length;
+			for (int i = 0; i < count; i++)
 			{
-				chars[i] = (char)Random.Range((int)'a', (int)'z');
+				data[i] = (byte)Random.Range(0, 255);
 			}
+			return data; // Return the array, just for convenience.
 		}
+
+		public static char[] FillRandomly(this char[] data, int count = -1)
+		{
+			if (count < 0)
+				count = data.Length;
+			for (int i = 0; i < count; i++)
+			{
+				data[i] = (char)Random.Range((int)'a', (int)'z');
+			}
+			return data; // Return the array, just for convenience.
+		}
+
+		#endregion
 
 		#region Collection Operations - RandomIndexSelection
 
