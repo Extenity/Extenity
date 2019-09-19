@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.ParallelToolbox;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 namespace Extenity.Testing
@@ -60,9 +62,13 @@ namespace Extenity.Testing
 		protected float PassedTimeThreshold;
 		protected float PassedTime => Time.realtimeSinceStartup - StartTime;
 
+		private WaitUntilResult _WaitUntilResult;
+		protected WaitUntilResult WaitUntilResult => _WaitUntilResult ?? (_WaitUntilResult = new WaitUntilResult());
+
 		private void InitializeTiming()
 		{
 			PassedTimeThreshold = DefaultPassedTimeThreshold;
+			_WaitUntilResult = null;
 		}
 
 		protected void CheckPassedTestTimeThreshold()
@@ -99,7 +105,7 @@ namespace Extenity.Testing
 
 		private void DeinitializeLogCatching()
 		{
-			if (!DoesNotCareAboutCleanLogs)
+			if (!DoesNotCareAboutCleanLogs && TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
 			{
 				AssertExpectNoLogs();
 			}
@@ -116,7 +122,7 @@ namespace Extenity.Testing
 
 		protected void AssertExpectNoLogs()
 		{
-			Assert.AreEqual(0, Logs.Count);
+			Assert.AreEqual(0, Logs.Count, "There were unexpected log entries emitted in test.");
 		}
 
 		protected void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
@@ -159,6 +165,24 @@ namespace Extenity.Testing
 		protected void ThrowNotImplemented()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Without including any yield in the coroutine, it won't be generated properly. It can easily be overlooked
+		/// by a programmer. Use this method in simple coroutines instead of throwing directly, so that the compiler
+		/// will always show an error if there is no yield in the coroutine.
+		/// </summary>
+		protected void ThrowTimedOut()
+		{
+			throw new Exception("The operation did not complete in allowed duration.");
+		}
+
+		protected void ThrowIfWaitUntilTimedOut()
+		{
+			if (WaitUntilResult.IsTimedOut)
+			{
+				ThrowTimedOut();
+			}
 		}
 
 		#endregion
