@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Extenity.Testing
 {
 
-	public static class AssertTools
+	public static class Assertx
 	{
 		public static void AreEqual<T>(IList<T> expected, int expectedLength, IList<T> actual, int actualLength, string message = null)
 		{
