@@ -21,7 +21,12 @@ namespace Extenity.Testing
 		[SetUp]
 		public void Initialize()
 		{
+			// Note that the previous test values are persistent. So everything should be reset to its defaults here.
+
+			// This should be the very first line of the test.
 			StartTime = Time.realtimeSinceStartup;
+
+			InitializeTiming();
 			EditorCoroutine.EnsureNoRunningEditorCoroutines();
 			InitializeLogCatching();
 
@@ -51,8 +56,14 @@ namespace Extenity.Testing
 		#region Timing
 
 		protected float StartTime;
-		protected float PassedTimeThreshold = 3f;
+		private const float DefaultPassedTimeThreshold = 3f;
+		protected float PassedTimeThreshold;
 		protected float PassedTime => Time.realtimeSinceStartup - StartTime;
+
+		private void InitializeTiming()
+		{
+			PassedTimeThreshold = DefaultPassedTimeThreshold;
+		}
 
 		protected void CheckPassedTestTimeThreshold()
 		{
@@ -69,18 +80,29 @@ namespace Extenity.Testing
 
 		#region Log Catching
 
+		private const bool DefaultDoesNotCareAboutCleanLogs = false;
+		private bool DoesNotCareAboutCleanLogs;
 		protected List<(LogType Type, string Message)> Logs;
 
 		private void InitializeLogCatching()
 		{
-			Logs = new List<(LogType, string)>();
+			DoesNotCareAboutCleanLogs = DefaultDoesNotCareAboutCleanLogs;
+
+			if (Logs == null)
+				Logs = new List<(LogType, string)>(100);
+			else
+				Logs.Clear();
+
 			Application.logMessageReceived -= RegisterLogMessage; // Just in case.
 			Application.logMessageReceived += RegisterLogMessage;
 		}
 
 		private void DeinitializeLogCatching()
 		{
-			AssertExpectNoLogs();
+			if (!DoesNotCareAboutCleanLogs)
+			{
+				AssertExpectNoLogs();
+			}
 
 			Application.logMessageReceived -= RegisterLogMessage;
 		}
@@ -101,6 +123,18 @@ namespace Extenity.Testing
 		{
 			Assert.AreEqual(expectedLogs.ToList(), Logs);
 			Logs.Clear();
+		}
+
+		/// <summary>
+		/// <para>There is an assertion check at the end of all tests that looks into console log history to see if
+		/// an unexpected log has been written throughout the test.</para>
+		///
+		/// <para>This method should be called inside a test to explicitly tell the coder who takes a look at that unit
+		/// test to understand that the test does not expect a clean console log history.</para>
+		/// </summary>
+		protected void MarkThatThisTestDoesNotCareAboutCleanLogs()
+		{
+			DoesNotCareAboutCleanLogs = true;
 		}
 
 		#endregion
