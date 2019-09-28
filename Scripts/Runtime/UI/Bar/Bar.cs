@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using Extenity.MathToolbox;
 using Sirenix.OdinInspector;
@@ -8,7 +7,10 @@ namespace Extenity.UIToolbox
 {
 
 	[ExecuteAlways]
-	public class Bar : MonoBehaviour, ISerializationCallbackReceiver
+	public class Bar : MonoBehaviour
+#if UNITY_EDITOR
+	                   , ISerializationCallbackReceiver
+#endif
 	{
 		[BoxGroup("Setup")] public RectTransform BarMask;
 		[BoxGroup("Setup")] public RectTransform BarIncreaseMask;
