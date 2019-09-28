@@ -7,18 +7,18 @@ using UnityEngine;
 namespace Extenity.UIToolbox
 {
 
-	public class Bar : MonoBehaviour
+	[ExecuteAlways]
+	public class Bar : MonoBehaviour, ISerializationCallbackReceiver
 	{
-		[BoxGroup("Setup")]
-		public RectTransform BarMask;
-		[BoxGroup("Setup")]
-		public RectTransform BarIncreaseMask;
-		[BoxGroup("Setup")]
-		public CanvasGroup BarIncreaseMaskCanvasGroup;
-		[BoxGroup("Setup")]
-		public RectTransform BarDecreaseMask;
-		[BoxGroup("Setup")]
-		public CanvasGroup BarDecreaseMaskCanvasGroup;
+		[BoxGroup("Setup")] public RectTransform BarMask;
+		[BoxGroup("Setup")] public RectTransform BarIncreaseMask;
+		[BoxGroup("Setup")] public RectTransform BarDecreaseMask;
+		[BoxGroup("Setup")] public CanvasGroup BarIncreaseMaskCanvasGroup;
+		[BoxGroup("Setup")] public CanvasGroup BarDecreaseMaskCanvasGroup;
+		[BoxGroup("Setup")] public RectTransform BarMaskVisual;
+		[BoxGroup("Setup")] public RectTransform BarIncreaseMaskVisual;
+		[BoxGroup("Setup")] public RectTransform BarDecreaseMaskVisual;
+
 		[BoxGroup("Setup")]
 		public float BarSize = 100;
 		[BoxGroup("Setup")]
@@ -88,28 +88,28 @@ namespace Extenity.UIToolbox
 
 			// Check if the new value is the same as previously set new value
 			if ((!float.IsNaN(AnimationEndValue) && newSize.x.IsAlmostEqual(AnimationEndValue)) || // This line checks for the target value of ongoing animation.
-				newSize.x.IsAlmostEqual(currentSize.x)) // This line checks for the current size of bar mask. Doing this covers the cases for animationless bars.
+			    newSize.x.IsAlmostEqual(currentSize.x)) // This line checks for the current size of bar mask. Doing this covers the cases for animationless bars.
 			{
 				return;
 			}
 
 			if (AnimationDuration > 0f && !skipAnimation
 #if UNITY_EDITOR
-				&& Application.isPlaying
+			                           && Application.isPlaying
 #endif
-				)
+			)
 			{
 				AnimationEndValue = newSize.x;
 
 				if (Animation == null)
 				{
 					Animation = DOTween.To(TweenGetterX, TweenSetterX, newSize.x, AnimationDuration)
-						.SetDelay(AnimationDelay)
-						.SetEase(AnimationEasing)
-						.SetAutoKill(false)
-						.SetUpdate(UpdateType.Late)
-						.SetTarget(this)
-						.OnComplete(HideIncreaseDecreaseMasksAndEndAnimation);
+					                   .SetDelay(AnimationDelay)
+					                   .SetEase(AnimationEasing)
+					                   .SetAutoKill(false)
+					                   .SetUpdate(UpdateType.Late)
+					                   .SetTarget(this)
+					                   .OnComplete(HideIncreaseDecreaseMasksAndEndAnimation);
 				}
 				else
 				{
@@ -123,18 +123,14 @@ namespace Extenity.UIToolbox
 						if (BarDecreaseMaskCanvasGroup) // Disable the other mask first
 							BarDecreaseMaskCanvasGroup.alpha = 0f;
 						var sizeX = newSize.x - currentSize.x;
-						BarIncreaseMask.anchoredPosition = new Vector2(BarMask.anchoredPosition.x + currentSize.x, BarIncreaseMask.anchoredPosition.y);
-						BarIncreaseMask.sizeDelta = new Vector2(sizeX, BarIncreaseMask.sizeDelta.y);
-						BarIncreaseMaskCanvasGroup.alpha = 1f;
+						SetIncreaseMaskPositionAndSize(sizeX);
 					}
 					else if (BarDecreaseMaskCanvasGroup && newSize.x < currentSize.x)
 					{
 						if (BarIncreaseMaskCanvasGroup) // Disable the other mask first
 							BarIncreaseMaskCanvasGroup.alpha = 0f;
 						var sizeX = currentSize.x - newSize.x;
-						BarDecreaseMask.anchoredPosition = new Vector2(BarMask.anchoredPosition.x + currentSize.x - sizeX, BarDecreaseMask.anchoredPosition.y);
-						BarDecreaseMask.sizeDelta = new Vector2(sizeX, BarDecreaseMask.sizeDelta.y);
-						BarDecreaseMaskCanvasGroup.alpha = 1f;
+						SetDecreaseMaskPositionAndSize(sizeX);
 					}
 				}
 			}
@@ -142,6 +138,26 @@ namespace Extenity.UIToolbox
 			{
 				BarMask.sizeDelta = newSize;
 				HideIncreaseDecreaseMasksAndEndAnimation();
+			}
+		}
+
+		private void SetIncreaseMaskPositionAndSize(float sizeX)
+		{
+			if (BarIncreaseMask)
+			{
+				BarIncreaseMask.anchoredPosition = new Vector2(BarMask.anchoredPosition.x + BarMask.sizeDelta.x, BarIncreaseMask.anchoredPosition.y);
+				BarIncreaseMask.sizeDelta = new Vector2(sizeX, BarIncreaseMask.sizeDelta.y);
+				BarIncreaseMaskCanvasGroup.alpha = 1f;
+			}
+		}
+
+		private void SetDecreaseMaskPositionAndSize(float sizeX)
+		{
+			if (BarDecreaseMask)
+			{
+				BarDecreaseMask.anchoredPosition = new Vector2(BarMask.anchoredPosition.x + BarMask.sizeDelta.x - sizeX, BarDecreaseMask.anchoredPosition.y);
+				BarDecreaseMask.sizeDelta = new Vector2(sizeX, BarDecreaseMask.sizeDelta.y);
+				BarDecreaseMaskCanvasGroup.alpha = 1f;
 			}
 		}
 
@@ -176,8 +192,46 @@ namespace Extenity.UIToolbox
 			return BarMask.sizeDelta.x;
 		}
 
+		#region Editor
+
+#if UNITY_EDITOR
+
+		private void Update()
+		{
+			if (!Application.IsPlaying(gameObject))
+			{
+				var rect = GetComponent<RectTransform>();
+				rect.sizeDelta = new Vector2(BarSize, rect.sizeDelta.y);
+				if (BarMask)
+					BarMask.sizeDelta = new Vector2(BarSize, BarMask.sizeDelta.y);
+				if (BarMaskVisual)
+					BarMaskVisual.sizeDelta = new Vector2(BarSize, BarMaskVisual.sizeDelta.y);
+				if (BarIncreaseMaskVisual)
+					BarIncreaseMaskVisual.sizeDelta = new Vector2(BarSize, BarIncreaseMaskVisual.sizeDelta.y);
+				if (BarDecreaseMaskVisual)
+					BarDecreaseMaskVisual.sizeDelta = new Vector2(BarSize, BarDecreaseMaskVisual.sizeDelta.y);
+			}
+		}
+
+		public void OnBeforeSerialize()
+		{
+			SetValue(0f, true);
+			SetIncreaseMaskPositionAndSize(0f);
+			SetDecreaseMaskPositionAndSize(0f);
+			HideIncreaseDecreaseMasksAndEndAnimation();
+		}
+
+		public void OnAfterDeserialize()
+		{
+		}
+
+#endif
+
+		#endregion
+
 		#region Test
 
+		/* Currently does not work after implementing the reset mechanism in OnBeforeSerialize. Find a way to have them both coexist.
 #if UNITY_EDITOR
 #pragma warning disable 414
 
@@ -207,6 +261,7 @@ namespace Extenity.UIToolbox
 
 #pragma warning restore 414
 #endif
+		*/
 
 		#endregion
 	}
