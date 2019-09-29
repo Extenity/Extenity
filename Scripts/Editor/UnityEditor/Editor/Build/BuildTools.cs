@@ -10,6 +10,7 @@ using Extenity.AssetToolbox.Editor;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.ProjectToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
@@ -169,40 +170,6 @@ namespace Extenity.BuildToolbox.Editor
 
 	#endregion
 
-	#region Define Symbols
-
-	[Serializable]
-	public struct DefineSymbolEntry
-	{
-		/// <summary>
-		/// The index that tells where this define symbol should be located. 0 means at the beginning. -1 means at the end.
-		/// </summary>
-		public int Index;
-		public string Symbol;
-
-		public bool IsAtTheEnd => Index < 0;
-		public bool IsValid => !string.IsNullOrWhiteSpace(Symbol);
-
-		public DefineSymbolEntry(int index, string symbol)
-		{
-			Index = index;
-			Symbol = symbol;
-		}
-
-		public DefineSymbolEntry(string symbol)
-		{
-			Index = -1;
-			Symbol = symbol;
-		}
-
-		public override string ToString()
-		{
-			return Symbol;
-		}
-	}
-
-	#endregion
-	
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -583,159 +550,6 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
-		#region Add/Remove Define Symbols
-
-		// TODO: Move these into PlayerSettingsTools. See 11743256293.
-
-		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
-		{
-			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), ensureNotAddedBefore);
-		}
-
-		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
-		{
-			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), targetGroup, ensureNotAddedBefore);
-		}
-
-		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, bool ensureNotAddedBefore)
-		{
-			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, ensureNotAddedBefore);
-		}
-
-		/// <summary>
-		/// Source: https://answers.unity.com/questions/1225189/how-can-i-change-scripting-define-symbols-before-a.html
-		/// </summary>
-		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
-		{
-			if (symbols == null)
-				throw new ArgumentNullException();
-			symbols = symbols.Where(entry => entry.IsValid).ToArray();
-			if (symbols.Length == 0)
-				throw new ArgumentException();
-			Log.Info($"Adding {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
-
-			symbols = symbols.OrderBy(entry => entry.Index).ToArray();
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-			var allDefines = definesString.Split(';').ToList();
-
-			foreach (var symbol in symbols)
-			{
-				if (!allDefines.Contains(symbol.Symbol))
-				{
-					if (symbol.Index < 0 || symbol.Index >= allDefines.Count)
-					{
-						allDefines.Add(symbol.Symbol);
-					}
-					else
-					{
-						allDefines.Insert(symbol.Index, symbol.Symbol);
-					}
-				}
-				else if (ensureNotAddedBefore)
-				{
-					throw new Exception($"The symbol '{symbol}' was already added before.");
-				}
-			}
-
-			var newDefinesString = string.Join(";", allDefines);
-			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
-			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
-			}
-
-			// Ensure the symbols added.
-			foreach (var symbol in symbols)
-			{
-				if (!HasDefineSymbol(symbol.Symbol, targetGroup))
-				{
-					throw new Exception($"Failed to complete Define Symbol Add operation for symbol(s) '{string.Join(", ", symbol)}'.");
-				}
-			}
-		}
-
-		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols)
-		{
-			return RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
-		}
-
-		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
-		{
-			if (symbols == null)
-				throw new ArgumentNullException();
-			symbols = symbols.Where(entry => !string.IsNullOrWhiteSpace(entry)).ToArray();
-			if (symbols.Length == 0)
-				throw new ArgumentException();
-			Log.Info($"Removing {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
-
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-			var allDefines = definesString.Split(';').ToList();
-			var originalDefines = allDefines.Clone();
-			var removedDefines = new List<DefineSymbolEntry>();
-
-			foreach (var symbol in symbols)
-			{
-				if (allDefines.Remove(symbol))
-				{
-					removedDefines.Add(new DefineSymbolEntry(originalDefines.IndexOf(symbol), symbol));
-				}
-			}
-
-			var newDefinesString = string.Join(";", allDefines);
-			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
-			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
-			}
-
-			// Ensure the symbols removed.
-			foreach (var symbol in symbols)
-			{
-				if (HasDefineSymbol(symbol, targetGroup))
-				{
-					throw new Exception($"Failed to complete Define Symbol Remove operation for symbol(s) '{string.Join(", ", symbol)}'.");
-				}
-			}
-
-			return removedDefines.ToArray();
-		}
-
-		public static string GetDefineSymbols()
-		{
-			return GetDefineSymbols(EditorUserBuildSettings.selectedBuildTargetGroup);
-		}
-
-		public static string GetDefineSymbols(BuildTargetGroup targetGroup)
-		{
-			return PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-		}
-
-		public static bool HasDefineSymbol(string symbol)
-		{
-			return HasDefineSymbol(symbol, EditorUserBuildSettings.selectedBuildTargetGroup);
-		}
-
-		public static bool HasDefineSymbol(string symbol, BuildTargetGroup targetGroup)
-		{
-			if (string.IsNullOrWhiteSpace(symbol))
-				throw new ArgumentNullException(nameof(symbol));
-
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-			var allDefines = definesString.Split(';').ToList();
-			var result = allDefines.Contains(symbol);
-
-			// Warn the user if there is that symbol but with different letter cases.
-			if (!result)
-			{
-				if (allDefines.Contains(symbol, StringComparer.OrdinalIgnoreCase))
-				{
-					Log.Warning($"Checking for define symbol '{symbol}' for build target group '{targetGroup}' which has the symbol but with different letter cases.");
-				}
-			}
-
-			return result;
-		}
-
-		#endregion
-
 		#region Temporarily Add Define Symbols
 
 		[Serializable]
@@ -761,10 +575,10 @@ namespace Extenity.BuildToolbox.Editor
 
 			public override void DoApply()
 			{
-				AddDefineSymbols(AddedSymbols, BuildTargetGroup, EnsureNotAddedBefore);
+				PlayerSettingsTools.AddDefineSymbols(AddedSymbols, BuildTargetGroup, EnsureNotAddedBefore);
 				if (RemovedSymbols != null && RemovedSymbols.Length > 0)
 				{
-					ActuallyRemovedSymbols = RemoveDefineSymbols(RemovedSymbols, BuildTargetGroup);
+					ActuallyRemovedSymbols = PlayerSettingsTools.RemoveDefineSymbols(RemovedSymbols, BuildTargetGroup);
 				}
 			}
 
@@ -772,9 +586,9 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (ActuallyRemovedSymbols != null && ActuallyRemovedSymbols.Length > 0)
 				{
-					AddDefineSymbols(ActuallyRemovedSymbols, BuildTargetGroup, false);
+					PlayerSettingsTools.AddDefineSymbols(ActuallyRemovedSymbols, BuildTargetGroup, false);
 				}
-				RemoveDefineSymbols(AddedSymbols, BuildTargetGroup);
+				PlayerSettingsTools.RemoveDefineSymbols(AddedSymbols, BuildTargetGroup);
 			}
 		}
 

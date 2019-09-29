@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.ProjectToolbox;
 using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
+
+	#region Some Implementation Details
 
 	public enum DefineSymbolAdjustmentOperation
 	{
@@ -83,10 +86,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 	}
 
+	#endregion
+
 	public static class DefineSymbolsAdjuster
 	{
-		#region Configuration
-
 		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new[]
 		{
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.audio", "DisableUnityAudio"),
@@ -98,8 +101,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.ai", "DisableUnityAI"),
 			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.timeline", "DisableUnityTimeline"),
 		};
-
-		#endregion
 
 		#region User Configuration
 
@@ -180,7 +181,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			var packageManifest = PackageManagerTools.GetPackageManifestContent();
 			var configuration = GetCombinedDefineSymbolAdjustmentConfiguration();
-			var defineSymbolsOfPlatforms = GetAllDefineSymbolsOfAllPlatforms();
+			var defineSymbolsOfPlatforms = PlayerSettingsTools.GetAllDefineSymbolsOfAllPlatforms();
 
 			var addCount = 0;
 			var removeCount = 0;
@@ -223,59 +224,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (addCount + removeCount > 0)
 			{
 				Log.Info($"Added '{addCount}' and removed '{removeCount}' define symbol(s) in project configuration.");
-				SetAllDefineSymbolsOfAllPlatforms(defineSymbolsOfPlatforms);
+				PlayerSettingsTools.SetAllDefineSymbolsOfAllPlatforms(defineSymbolsOfPlatforms);
 				AssetDatabase.SaveAssets();
-			}
-		}
-
-		#endregion
-
-		#region Tools - Project Define Symbols
-
-		// TODO: Move these into PlayerSettingsTools. See 11743256293.
-
-		public static Dictionary<BuildTargetGroup, List<string>> GetAllDefineSymbolsOfAllPlatforms()
-		{
-			var buildTargets = Enum.GetValues(typeof(BuildTarget));
-			var result = new Dictionary<BuildTargetGroup, List<string>>(buildTargets.Length * 4); // A capacity of 4 times is the optimized size of dictionary to work fast.
-
-			foreach (BuildTarget target in buildTargets)
-			{
-				var group = BuildPipeline.GetBuildTargetGroup(target);
-				if (group == BuildTargetGroup.Unknown || result.ContainsKey(group))
-					continue;
-
-				try
-				{
-					var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group)
-						.Split(';')
-						.Select(d => d.Trim())
-						.ToList();
-
-					result.Add(group, defineSymbols);
-				}
-				catch (Exception exception)
-				{
-					Log.Error($"Failed to get define symbols for build target group '{group}'. Reason: {exception.Message}");
-				}
-			}
-
-			return result;
-		}
-
-		public static void SetAllDefineSymbolsOfAllPlatforms(Dictionary<BuildTargetGroup, List<string>> defineSymbolsByPlatforms)
-		{
-			foreach (var defineSymbols in defineSymbolsByPlatforms)
-			{
-				try
-				{
-					var joined = string.Join(";", defineSymbols.Value.ToArray());
-					PlayerSettings.SetScriptingDefineSymbolsForGroup(defineSymbols.Key, joined);
-				}
-				catch (Exception exception)
-				{
-					Log.Error($"Failed to set define symbols for build target group '{defineSymbols.Key}'. Reason: {exception.Message}");
-				}
 			}
 		}
 
