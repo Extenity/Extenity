@@ -1,0 +1,68 @@
+﻿// TODO IMMEDIATE: Will be enabled after define symbols refactor. See 11743256293.
+/*
+using UnityEditor;
+
+namespace Extenity.DebugToolbox.Editor
+{
+
+	public static class LogEditor
+	{
+		public const string Menu = "Tools/Logging/";
+
+		#region Toggle Verbose Logging Menu
+
+		[MenuItem(Menu + "Verbose Logging/Enable")]
+		private static void Menu_EnableVerboseLogging()
+		{
+			ActivateVerboseLogging(true);
+		}
+
+		[MenuItem(Menu + "Verbose Logging/Disable")]
+		private static void Menu_DisableVerboseLogging()
+		{
+			ActivateVerboseLogging(false);
+		}
+
+		[MenuItem(Menu + "Verbose Logging/Enable", validate = true)]
+		private static bool Validate_EnableVerboseLogging()
+		{
+#if DisableVerboseLogging
+			return true;
+#else
+			return false;
+#endif
+		}
+
+		[MenuItem(Menu + "Verbose Logging/Disable", validate = true)]
+		private static bool Validate_DisableVerboseLogging()
+		{
+#if DisableVerboseLogging
+			return false;
+#else
+			return true;
+#endif
+		}
+
+		#endregion
+
+		#region Toggle Verbose Logging
+
+		private const string DisableVerboseLoggingSymbol = "DisableVerboseLogging";
+
+		public static void ActivateVerboseLogging(bool active)
+		{
+			if (active)
+			{
+				PlayerSettingsTools.RemoveDefineSymbols(new[] {DisableVerboseLoggingSymbol});
+			}
+			else
+			{
+				PlayerSettingsTools.AddDefineSymbols(new[] {DisableVerboseLoggingSymbol}, false);
+			}
+		}
+
+		#endregion
+	}
+
+}
+*/

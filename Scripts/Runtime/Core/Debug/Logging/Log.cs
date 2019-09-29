@@ -19,6 +19,7 @@ using Object = UnityEngine.Object;
 
 public enum LogCategory
 {
+	Verbose,
 	Info,
 	Warning,
 	Error,
@@ -262,6 +263,7 @@ public static class Log
 	{
 		switch (category)
 		{
+			case LogCategory.Verbose: Verbose(message); break;
 			case LogCategory.Info: Info(message); break;
 			case LogCategory.Warning: Warning(message); break;
 			case LogCategory.Error: Error(message); break;
@@ -275,6 +277,7 @@ public static class Log
 	{
 		switch (category)
 		{
+			case LogCategory.Verbose: Verbose(message, context); break;
 			case LogCategory.Info: Info(message, context); break;
 			case LogCategory.Warning: Warning(message, context); break;
 			case LogCategory.Error: Error(message, context); break;
@@ -282,6 +285,22 @@ public static class Log
 			default:
 				throw new ArgumentOutOfRangeException(nameof(category), category, null);
 		}
+	}
+
+#if DisableVerboseLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#endif
+	public static void Verbose(string message)
+	{
+		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+	}
+
+#if DisableVerboseLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#endif
+	public static void Verbose(string message, Object context)
+	{
+		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 #if DisableInfoLogging
@@ -443,6 +462,18 @@ public static class Log
 	#region Debug Log
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugVerbose(string message)
+	{
+		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+	}
+
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	public static void DebugVerbose(string message, Object context)
+	{
+		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
+	}
+
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
@@ -579,13 +610,13 @@ public static class Log
 	/// <summary>
 	/// Usage: Log.LogVariable(() => myVariable);
 	/// </summary>
-	public static void Variable<T>(Expression<Func<T>> expression, string prefix = "", LogCategory category = LogCategory.Info)
+	public static void Variable<T>(Expression<Func<T>> expression, string prefix = "", LogCategory category = LogCategory.Verbose)
 	{
 		if (!string.IsNullOrEmpty(prefix))
 			prefix += ": ";
 		var body = (MemberExpression)expression.Body;
 		var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-		Log.Any(prefix + body.Member.Name + ": '" + value + "'", category);
+		Any(prefix + body.Member.Name + ": '" + value + "'", category);
 	}
 
 	#endregion
@@ -652,7 +683,7 @@ public static class LogExtensions
 {
 	#region Simple
 
-	public static void LogSimple<T>(this T obj, string prefix = "", LogCategory category = LogCategory.Info)
+	public static void LogSimple<T>(this T obj, string prefix = "", LogCategory category = LogCategory.Verbose)
 	{
 		if (obj == null)
 		{
@@ -669,7 +700,7 @@ public static class LogExtensions
 
 	#region List
 
-	public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
+	public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
 	{
 		var stringBuilder = !inSeparateLogCalls
 			? new StringBuilder()
@@ -728,7 +759,7 @@ public static class LogExtensions
 	#region Dictionary
 
 	// TODO: Add 'initialLine' parameter, like in LogList method.
-	public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
+	public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
 	{
 		if (dictionary == null)
 		{
@@ -762,7 +793,7 @@ public static class LogExtensions
 
 	#region Dump Class Data
 
-	public static void LogAllProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
+	public static void LogAllProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
@@ -779,7 +810,7 @@ public static class LogExtensions
 		Log.Any(text, category);
 	}
 
-	public static void LogAllFields<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
+	public static void LogAllFields<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
@@ -796,7 +827,7 @@ public static class LogExtensions
 		Log.Any(text, category);
 	}
 
-	public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
+	public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
 	{
 		// Initialize
 		var stringBuilder = new StringBuilder();
