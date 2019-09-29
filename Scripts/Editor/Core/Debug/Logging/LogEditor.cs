@@ -44,6 +44,42 @@ namespace Extenity.DebugToolbox.Editor
 
 		#endregion
 
+		#region Toggle Info Logging Menu
+
+		[MenuItem(Menu + "Info Logging/Enable")]
+		private static void Menu_EnableInfoLogging()
+		{
+			ActivateInfoLogging(true);
+		}
+
+		[MenuItem(Menu + "Info Logging/Disable")]
+		private static void Menu_DisableInfoLogging()
+		{
+			ActivateInfoLogging(false);
+		}
+
+		[MenuItem(Menu + "Info Logging/Enable", validate = true)]
+		private static bool Validate_EnableInfoLogging()
+		{
+#if DisableInfoLogging
+			return true;
+#else
+			return false;
+#endif
+		}
+
+		[MenuItem(Menu + "Info Logging/Disable", validate = true)]
+		private static bool Validate_DisableInfoLogging()
+		{
+#if DisableInfoLogging
+			return false;
+#else
+			return true;
+#endif
+		}
+
+		#endregion
+
 		#region Toggle Verbose Logging
 
 		private const string DisableVerboseLoggingSymbol = "DisableVerboseLogging";
@@ -57,6 +93,24 @@ namespace Extenity.DebugToolbox.Editor
 			else
 			{
 				PlayerSettingsTools.AddDefineSymbols(new[] {DisableVerboseLoggingSymbol}, false);
+			}
+		}
+
+		#endregion
+
+		#region Toggle Info Logging
+
+		private const string DisableInfoLoggingSymbol = "DisableInfoLogging";
+
+		public static void ActivateInfoLogging(bool active)
+		{
+			if (active)
+			{
+				PlayerSettingsTools.RemoveDefineSymbols(new[] {DisableInfoLoggingSymbol});
+			}
+			else
+			{
+				PlayerSettingsTools.AddDefineSymbols(new[] {DisableInfoLoggingSymbol}, false);
 			}
 		}
 
