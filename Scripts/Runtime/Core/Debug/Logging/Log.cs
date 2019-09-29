@@ -461,25 +461,41 @@ public static class Log
 
 	#region Debug Log
 
+#if DisableVerboseLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+#endif
 	public static void DebugVerbose(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
+#if DisableVerboseLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+#endif
 	public static void DebugVerbose(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
+#if DisableInfoLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+#endif
 	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
+#if DisableInfoLogging
+	[Conditional("DummyConditionThatNeverExists")]
+#else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+#endif
 	public static void DebugInfo(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct

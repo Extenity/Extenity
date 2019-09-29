@@ -1,5 +1,4 @@
-﻿// TODO IMMEDIATE: Will be enabled after define symbols refactor. See 11743256293.
-/*
+﻿using Extenity.ProjectToolbox;
 using UnityEditor;
 
 namespace Extenity.DebugToolbox.Editor
@@ -65,4 +64,3 @@ namespace Extenity.DebugToolbox.Editor
 	}
 
 }
-*/
