@@ -9,7 +9,6 @@ using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.SystemToolbox;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -990,6 +989,23 @@ namespace Extenity.ReflectionToolbox
 			{
 				return System.Runtime.InteropServices.Marshal.SizeOf(new TypeSizeProxy<T>());
 			}
+		}
+
+		#endregion
+
+		#region IsAutoProperty
+
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/2210309/how-to-find-out-if-a-property-is-an-auto-implemented-property-with-reflection
+		/// </summary>
+		public static bool IsAutoProperty(this PropertyInfo prop)
+		{
+			if (!prop.CanWrite || !prop.CanRead)
+				return false;
+
+			return prop.DeclaringType
+			           .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+			           .Any(f => f.Name.Contains("<" + prop.Name + ">"));
 		}
 
 		#endregion
