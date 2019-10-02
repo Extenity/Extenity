@@ -6,24 +6,24 @@ namespace Extenity.MathToolbox
 
 	public static class Vector3IntTools
 	{
-		public static Vector3Int zero = new Vector3Int(0, 0, 0);
-		public static Vector3Int one = new Vector3Int(1, 1, 1);
-		public static Vector3Int minValue = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
-		public static Vector3Int maxValue = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
+		public static readonly Vector3Int zero = new Vector3Int(0, 0, 0);
+		public static readonly Vector3Int one = new Vector3Int(1, 1, 1);
+		public static readonly Vector3Int minValue = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+		public static readonly Vector3Int maxValue = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
 
-		public static Vector3Int up = new Vector3Int(0, 1, 0);
-		public static Vector3Int down = new Vector3Int(0, -1, 0);
-		public static Vector3Int right = new Vector3Int(1, 0, 0);
-		public static Vector3Int left = new Vector3Int(-1, 0, 0);
-		public static Vector3Int forward = new Vector3Int(0, 0, 1);
-		public static Vector3Int back = new Vector3Int(0, 0, -1);
+		public static readonly Vector3Int up = new Vector3Int(0, 1, 0);
+		public static readonly Vector3Int down = new Vector3Int(0, -1, 0);
+		public static readonly Vector3Int right = new Vector3Int(1, 0, 0);
+		public static readonly Vector3Int left = new Vector3Int(-1, 0, 0);
+		public static readonly Vector3Int forward = new Vector3Int(0, 0, 1);
+		public static readonly Vector3Int back = new Vector3Int(0, 0, -1);
 
-		public static Vector3Int positiveX = new Vector3Int(1, 0, 0);
-		public static Vector3Int negativeX = new Vector3Int(-1, 0, 0);
-		public static Vector3Int positiveY = new Vector3Int(0, 1, 0);
-		public static Vector3Int negativeY = new Vector3Int(0, -1, 0);
-		public static Vector3Int positiveZ = new Vector3Int(0, 0, 1);
-		public static Vector3Int negativeZ = new Vector3Int(0, 0, -1);
+		public static readonly Vector3Int positiveX = new Vector3Int(1, 0, 0);
+		public static readonly Vector3Int negativeX = new Vector3Int(-1, 0, 0);
+		public static readonly Vector3Int positiveY = new Vector3Int(0, 1, 0);
+		public static readonly Vector3Int negativeY = new Vector3Int(0, -1, 0);
+		public static readonly Vector3Int positiveZ = new Vector3Int(0, 0, 1);
+		public static readonly Vector3Int negativeZ = new Vector3Int(0, 0, -1);
 
 		public static readonly Vector3Int[] directions =
 		{

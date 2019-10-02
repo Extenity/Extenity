@@ -615,7 +615,7 @@ namespace Extenity.MathToolbox
 
 		#region Bounds
 
-		public static Bounds BoundsNaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
+		public static readonly Bounds BoundsNaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
 
 		public static void Fix(this Bounds bounds)
 		{

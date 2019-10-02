@@ -23,15 +23,15 @@ namespace Extenity.MathToolbox
 		}
 
 
-		public static Vector2Int zero = new Vector2Int(0, 0);
-		public static Vector2Int one = new Vector2Int(1, 1);
-		public static Vector2Int minValue = new Vector2Int(int.MinValue, int.MinValue);
-		public static Vector2Int maxValue = new Vector2Int(int.MaxValue, int.MaxValue);
+		public static readonly Vector2Int zero = new Vector2Int(0, 0);
+		public static readonly Vector2Int one = new Vector2Int(1, 1);
+		public static readonly Vector2Int minValue = new Vector2Int(int.MinValue, int.MinValue);
+		public static readonly Vector2Int maxValue = new Vector2Int(int.MaxValue, int.MaxValue);
 
-		public static Vector2Int up = new Vector2Int(0, 1);
-		public static Vector2Int down = new Vector2Int(0, -1);
-		public static Vector2Int right = new Vector2Int(1, 0);
-		public static Vector2Int left = new Vector2Int(-1, 0);
+		public static readonly Vector2Int up = new Vector2Int(0, 1);
+		public static readonly Vector2Int down = new Vector2Int(0, -1);
+		public static readonly Vector2Int right = new Vector2Int(1, 0);
+		public static readonly Vector2Int left = new Vector2Int(-1, 0);
 
 		public static readonly Vector2Int[] directions =
 		{
