@@ -79,7 +79,7 @@ namespace Extenity.DataToolbox
 		private Object SyncRootObject;
 
 		public const int DefaultCapacity = 4;
-		private static T[] EmptyArray = new T[0];
+		private static readonly T[] EmptyArray = new T[0];
 
 		public bool IsEmpty { get { return CyclicTailIndex < 0; } }
 		public bool IsEmptyOrArranged { get { return CyclicTailIndex <= 0; } }

@@ -23,6 +23,7 @@ namespace Extenity.DataToolbox
 				else
 				{
 					var result = "^" + Regex.Escape(textWithWildcards).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+					// TODO OPTIMIZATION: Here we can keep the compiled regex for better performance. new Regex(..., RegexOptions.Compiled)
 					WildcardToRegexHistory.Add(textWithWildcards, result);
 					return result;
 				}
