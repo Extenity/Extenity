@@ -9,7 +9,7 @@ namespace Extenity.Messaging
 		protected void Awake()
 		{
 			Log.Info("LISTENER :: Awake", this);
-			Messenger.Global.AddListener("1001", MyMessageHandler);
+			Global.AddListener("1001", MyMessageHandler);
 		}
 
 		protected void OnDestroy()
@@ -28,6 +28,21 @@ namespace Extenity.Messaging
 			if (text.Contains("should NOT be delivered to MyMessageHandler"))
 			{
 				Log.Warning("Well, we have an unexpected message.", this);
+			}
+		}
+
+		private Messenger _Global;
+		public Messenger Global
+		{
+			get
+			{
+				if (!_Global)
+				{
+					var go = new GameObject("_GlobalMessenger", typeof(Messenger));
+					go.hideFlags = HideFlags.HideAndDontSave;
+					_Global = go.GetComponent<Messenger>();
+				}
+				return _Global;
 			}
 		}
 	}

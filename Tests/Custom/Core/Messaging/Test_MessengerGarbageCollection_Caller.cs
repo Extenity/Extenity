@@ -19,19 +19,19 @@ namespace Extenity.Messaging
 		{
 			if (Input.GetKeyDown(KeyCode.F3))
 			{
-				Messenger.Global.Emit("1001", "Test message...");
+				Global.Emit("1001", "Test message...");
 			}
 			if (Input.GetKeyDown(KeyCode.F4))
 			{
-				Messenger.Global.Emit("1001", "This message is emitted before calling Destroy");
+				Global.Emit("1001", "This message is emitted before calling Destroy");
 				Destroy(GetComponent<Test_MessengerGarbageCollection_Listener>());
-				Messenger.Global.Emit("1001", "This message is emitted after Destroy which should be delivered to MyMessageHandler since the object is still alive and OnDestroy is not called yet");
+				Global.Emit("1001", "This message is emitted after Destroy which should be delivered to MyMessageHandler since the object is still alive and OnDestroy is not called yet");
 			}
 			if (Input.GetKeyDown(KeyCode.F5))
 			{
-				Messenger.Global.Emit("1001", "This message is emitted before calling DestroyImmediate");
+				Global.Emit("1001", "This message is emitted before calling DestroyImmediate");
 				DestroyImmediate(GetComponent<Test_MessengerGarbageCollection_Listener>());
-				Messenger.Global.Emit("1001", "This message is emitted after DestroyImmediate which should NOT be delivered to MyMessageHandler");
+				Global.Emit("1001", "This message is emitted after DestroyImmediate which should NOT be delivered to MyMessageHandler");
 			}
 			if (Input.GetKeyDown(KeyCode.F8))
 			{
@@ -39,7 +39,22 @@ namespace Extenity.Messaging
 			}
 			if (Input.GetKeyDown(KeyCode.F12))
 			{
-				Messenger.Global.DebugLogListAllListeners();
+				Global.DebugLogListAllListeners();
+			}
+		}
+
+		private Messenger _Global;
+		public Messenger Global
+		{
+			get
+			{
+				if (!_Global)
+				{
+					var go = new GameObject("_GlobalMessenger", typeof(Messenger));
+					go.hideFlags = HideFlags.HideAndDontSave;
+					_Global = go.GetComponent<Messenger>();
+				}
+				return _Global;
 			}
 		}
 	}

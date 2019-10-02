@@ -38,6 +38,7 @@ namespace Extenity.MessagingToolbox
 
 		#region Global
 
+		/* Nope! Not happening! The application should control its own messengers. There should not be a singleton messenger.
 		private static Messenger _Global;
 		public static Messenger Global
 		{
@@ -52,6 +53,7 @@ namespace Extenity.MessagingToolbox
 				return _Global;
 			}
 		}
+		*/
 
 		#endregion
 
