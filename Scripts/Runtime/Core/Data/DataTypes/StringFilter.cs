@@ -198,4 +198,17 @@ namespace Extenity.DataToolbox
 		#endregion
 	}
 
+	public static class StringFilterTools
+	{
+		public static bool IsAnyMatching(this StringFilterEntry[] entries, string text)
+		{
+			for (int i = 0; i < entries.Length; i++)
+			{
+				if (entries[i].IsMatching(text))
+					return true;
+			}
+			return false;
+		}
+	}
+
 }
