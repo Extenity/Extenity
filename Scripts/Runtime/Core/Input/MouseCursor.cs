@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿/* The old implementation of Mouse Cursor that was necessary in ancient Unity versions. Nowadays, it should be examined.
+using UnityEngine;
 using Extenity.DesignPatternsToolbox;
 
 namespace Extenity.InputToolbox
@@ -52,10 +53,10 @@ namespace Extenity.InputToolbox
 
 		#region Mouse Lock and Hide
 
-		public static bool IsHidden { get; private set; }
-		private static bool Changed;
+		public bool IsHidden { get; private set; }
+		private bool Changed;
 
-		public static void ToggleCursor()
+		public void ToggleCursor()
 		{
 			if (IsHidden)
 			{
@@ -67,7 +68,7 @@ namespace Extenity.InputToolbox
 			}
 		}
 
-		public static void HideCursor()
+		public void HideCursor()
 		{
 			if (IsHidden)
 				return;
@@ -78,7 +79,7 @@ namespace Extenity.InputToolbox
 			//Instance.Invoke("InternalDelayedHide", 0.1f);
 		}
 
-		public static void ShowCursor()
+		public void ShowCursor()
 		{
 			if (!IsHidden)
 				return;
@@ -121,3 +122,4 @@ namespace Extenity.InputToolbox
 	}
 
 }
+*/
