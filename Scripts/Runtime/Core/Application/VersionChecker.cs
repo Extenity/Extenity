@@ -17,23 +17,23 @@ namespace Extenity.ApplicationToolbox
 		NewVersionAvailable,
 	}
 
-	public static class VersionChecker
+	public class VersionChecker
 	{
-		public static VersionCheckStatus Status { get; private set; } = VersionCheckStatus.NotCheckedYet;
+		public VersionCheckStatus Status { get; private set; } = VersionCheckStatus.NotCheckedYet;
 
 		// Commented out intentionally. Well, just poll the Status value whenever needed.
 		// No need to allocate an event object for just a simple check. Since this check
 		// probably will only be made at the start of the application.
-		//public static readonly UnityEvent OnVersionChecked = new UnityEvent();
+		//public readonly UnityEvent OnVersionChecked = new UnityEvent();
 
-		public static void InformSkippingVersionCheck(bool log)
+		public void InformSkippingVersionCheck(bool log)
 		{
 			Status = VersionCheckStatus.SkippedVersionCheck;
 			if (log)
 				Log.Info("Version check skipped.");
 		}
 
-		public static void InformMinVersion(string minVersionString, bool log)
+		public void InformMinVersion(string minVersionString, bool log)
 		{
 			if (!string.IsNullOrWhiteSpace(minVersionString))
 			{
