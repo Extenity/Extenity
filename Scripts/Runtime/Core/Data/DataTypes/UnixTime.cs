@@ -7,7 +7,7 @@ namespace Extenity.DataToolbox
 	{
 		private double time;
 
-		private static DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		private static readonly DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
 		public UnixTime(double unixTimestamp)
 		{

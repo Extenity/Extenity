@@ -11,42 +11,25 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 	public class TypeInspectors
 	{
-		#region Singleton
-
-		private static TypeInspectors _Instance = null;
-		public static TypeInspectors Instance
-		{
-			get
-			{
-				if (_Instance == null)
-				{
-					_Instance = new TypeInspectors();
-				}
-				return _Instance;
-			}
-		}
-
-		#endregion
-
 		#region Configuration
 
 		private const BindingFlags Flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-		private readonly Dictionary<Type, ITypeInspector> Inspectors = new Dictionary<Type, ITypeInspector>
+		private static readonly Dictionary<Type, ITypeInspector> Inspectors = new Dictionary<Type, ITypeInspector>
 		{
 			{ typeof(Quaternion), new QuaternionTypeInspector() }
 		};
 
 		#endregion
 
-		public void AddTypeInspector(Type type, ITypeInspector typeInspector)
+		public static void AddTypeInspector(Type type, ITypeInspector typeInspector)
 		{
 			if (Inspectors.ContainsKey(type))
 				return; // Ignore.
 			Inspectors.Add(type, typeInspector);
 		}
 
-		public ITypeInspector GetTypeInspector(Type type)
+		public static ITypeInspector GetTypeInspector(Type type)
 		{
 			if (!Inspectors.TryGetValue(type, out var inspector))
 			{
@@ -69,7 +52,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				var currentType = type;
 				while (currentType != null && currentType != typeof(UnityEngine.Object))
 				{
-					fieldInfos.AddRange(currentType.GetFields(Flags).Where(field => Instance.IsAcceptableType(field.FieldType)));
+					fieldInfos.AddRange(currentType.GetFields(Flags).Where(field => TypeInspectors.IsAcceptableType(field.FieldType)));
 					currentType = currentType.BaseType;
 				}
 
@@ -154,7 +137,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 		}
 
-		private readonly HashSet<Type> KnownTypes = new HashSet<Type>
+		private static readonly HashSet<Type> KnownTypes = new HashSet<Type>
 		{
 			typeof(Single),
 			typeof(Double),
@@ -169,12 +152,12 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			typeof(SByte),
 		};
 
-		public bool IsKnownType(Type type)
+		public static bool IsKnownType(Type type)
 		{
 			return KnownTypes.Contains(type);
 		}
 
-		public bool IsAcceptableType(Type type)
+		public static bool IsAcceptableType(Type type)
 		{
 			if (IsKnownType(type))
 			{

@@ -170,7 +170,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 				for (int level = 0; level < field.Field.Length; level++)
 				{
-					instance = TypeInspectors.Instance.GetTypeInspector(instanceType).GetValue(instance, field.Field[level]);
+					instance = TypeInspectors.GetTypeInspector(instanceType).GetValue(instance, field.Field[level]);
 					if (instance == null)
 					{
 						break;

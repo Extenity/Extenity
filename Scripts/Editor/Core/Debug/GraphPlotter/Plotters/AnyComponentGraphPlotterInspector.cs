@@ -78,9 +78,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				var level = 0;
 
-				while (instanceType != null && !TypeInspectors.Instance.IsKnownType(instanceType))
+				while (instanceType != null && !TypeInspectors.IsKnownType(instanceType))
 				{
-					var inspector = TypeInspectors.Instance.GetTypeInspector(instanceType);
+					var inspector = TypeInspectors.GetTypeInspector(instanceType);
 					var fieldNameStrings = inspector.FieldNameStrings;
 					var fields = inspector.Fields;
 
