@@ -1274,24 +1274,25 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - char[]
 
-		private static StringBuilder ReusedStringBuilder;
+		private static StringBuilder ReusedStringBuilder = new StringBuilder(1000);
 
 		public static string ConvertToString(this char[] chars, int startIndex, int length)
 		{
-			if (ReusedStringBuilder == null)
-				ReusedStringBuilder = new StringBuilder();
+			lock (ReusedStringBuilder)
+			{
+				ReusedStringBuilder.Length = 0; // Make sure it is clean before starting to use.
+				var endIndex = startIndex + length;
+				for (int i = startIndex; i < chars.Length && i < endIndex && (uint)chars[i] > 0U; ++i)
+					ReusedStringBuilder.Append(chars[i]);
+				var result = ReusedStringBuilder.ToString();
+				ReusedStringBuilder.Length = 0; // Make sure we will leave it clean after use.
 
-			var endIndex = startIndex + length;
-			for (int i = startIndex; i < chars.Length && i < endIndex && (uint)chars[i] > 0U; ++i)
-				ReusedStringBuilder.Append(chars[i]);
-			var result = ReusedStringBuilder.ToString();
-			ReusedStringBuilder.Clear();
+				// Hard limit to prevent memory bogging. We probably accept the consequences of reallocation when working that big.
+				if (ReusedStringBuilder.Capacity > 1000000)
+					ReusedStringBuilder = null;
 
-			// Hard limit to prevent memory bogging. We probably accept the consequences of reallocation when working that big.
-			if (ReusedStringBuilder.Capacity > 1000000)
-				ReusedStringBuilder = null;
-
-			return result;
+				return result;
+			}
 		}
 
 		public static int CopyTo(this string value, char[] destination)
@@ -1719,8 +1720,6 @@ namespace Extenity.DataToolbox
 
 		#region Percentage Bar
 
-		private static StringBuilder PercentageBarStringBuilder;
-
 		public static string ToStringAsPercentageBar(this double value, int barLength = 20)
 		{
 			return ToStringAsPercentageBar((float)value, barLength);
@@ -1728,17 +1727,12 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringAsPercentageBar(this float value, int barLength = 20)
 		{
-			if (PercentageBarStringBuilder == null)
+			lock (ReusedStringBuilder)
 			{
-				// ReSharper disable once InconsistentlySynchronizedField
-				PercentageBarStringBuilder = new StringBuilder(barLength + 10);
-			}
-			lock (PercentageBarStringBuilder)
-			{
-				PercentageBarStringBuilder.Length = 0;
+				ReusedStringBuilder.Length = 0; // Make sure it is clean before starting to use.
 				if (barLength > 0)
 				{
-					PercentageBarStringBuilder.Append('[');
+					ReusedStringBuilder.Append('[');
 					var clampedValue = value < 0f ? 0f : value > 1f ? 1f : value;
 					var filledCount = (int)(clampedValue * barLength);
 					if (filledCount == 0 && clampedValue > 0.00001f)
@@ -1748,16 +1742,18 @@ namespace Extenity.DataToolbox
 					var emptyCount = barLength - filledCount;
 					for (int i = 0; i < filledCount; i++)
 					{
-						PercentageBarStringBuilder.Append('\u2588'); // A full square character
+						ReusedStringBuilder.Append('\u2588'); // A full square character
 					}
 					for (int i = 0; i < emptyCount; i++)
 					{
-						PercentageBarStringBuilder.Append('\u2500'); // A full left-to-right stretching dash character
+						ReusedStringBuilder.Append('\u2500'); // A full left-to-right stretching dash character
 					}
-					PercentageBarStringBuilder.Append("] ");
+					ReusedStringBuilder.Append("] ");
 				}
-				PercentageBarStringBuilder.Append(value.ToString("P1"));
-				return PercentageBarStringBuilder.ToString();
+				ReusedStringBuilder.Append(value.ToString("P1"));
+				var result = ReusedStringBuilder.ToString();
+				ReusedStringBuilder.Length = 0; // Make sure we will leave it clean after use.
+				return result;
 			}
 		}
 

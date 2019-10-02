@@ -17,7 +17,7 @@ namespace Extenity.DataToolbox
 			public string WeeksAgo = "{0} weeks ago";
 		}
 
-		public static PrettyDateStrings StandardPrettyDateStrings = new PrettyDateStrings();
+		public static readonly PrettyDateStrings StandardPrettyDateStrings = new PrettyDateStrings();
 
 		public static string GetElapsedPrettyDate(this TimeSpan timeSpan, PrettyDateStrings prettyDateStrings = null)
 		{
