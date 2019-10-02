@@ -30,6 +30,8 @@ namespace Extenity.DataToolbox
 			Filters = filters;
 		}
 
+		#region Match
+
 		public bool IsMatching(string text)
 		{
 			// Does not match if there are no filters.
@@ -53,6 +55,8 @@ namespace Extenity.DataToolbox
 
 			return matched;
 		}
+
+		#endregion
 	}
 
 	[Serializable]
@@ -60,10 +64,12 @@ namespace Extenity.DataToolbox
 	{
 		public StringFilterType FilterType = StringFilterType.Contains;
 		public string Filter = "";
-		public StringComparison ComparisonType = StringComparison.CurrentCulture;
+		public StringComparison ComparisonType = StringComparison.InvariantCulture;
 		public bool Inverted = false;
 		[Tooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
 		public bool MustMatch = false;
+
+		#region Initialization
 
 		public StringFilterEntry()
 		{
@@ -83,6 +89,54 @@ namespace Extenity.DataToolbox
 			Inverted = inverted;
 			MustMatch = mustMatch;
 		}
+
+		#endregion
+
+		#region Creators
+
+		public static StringFilterEntry CreateSmartWildcard(string filter)
+		{
+			var seenAtTheBeginning = false;
+			for (int i = 0; i < filter.Length; i++)
+			{
+				if (filter[i] == '?')
+				{
+					// Nothing more to do about '?' matching. It's only supported by wildcards.
+					return new StringFilterEntry(StringFilterType.Wildcard, filter);
+				}
+
+				if (filter[i] == '*')
+				{
+					if (i == 0)
+					{
+						// Wildcard at the beginning
+						seenAtTheBeginning = true;
+					}
+					else if (i == filter.Length - 1)
+					{
+						// Wildcard at the end
+						return seenAtTheBeginning
+							? new StringFilterEntry(StringFilterType.Contains, filter.Substring(1, filter.Length - 2))
+							: new StringFilterEntry(StringFilterType.StartsWith, filter.Substring(0, filter.Length - 1));
+					}
+					else
+					{
+						// Wildcard in the middle
+						// Fall back to wildcard matching, which is non performant.
+						// TODO OPTIMIZATION: There are still things to do for performance.
+						return new StringFilterEntry(StringFilterType.Wildcard, filter);
+					}
+				}
+			}
+
+			return seenAtTheBeginning
+				? new StringFilterEntry(StringFilterType.EndsWith, filter.Substring(1, filter.Length - 1))
+				: new StringFilterEntry(StringFilterType.Exactly, filter);
+		}
+
+		#endregion
+
+		#region Match
 
 		public bool IsMatching(string text)
 		{
@@ -108,16 +162,21 @@ namespace Extenity.DataToolbox
 					switch (ComparisonType)
 					{
 						case StringComparison.CurrentCulture:
-							return text.CheckWildcardMatchingRegex(Filter, false, false);
+							return text.CheckWildcardMatchingRegex(Filter, false, false).InvertIf(Inverted);
+
 						case StringComparison.CurrentCultureIgnoreCase:
-							return text.CheckWildcardMatchingRegex(Filter, true, false);
+							return text.CheckWildcardMatchingRegex(Filter, true, false).InvertIf(Inverted);
+
 						case StringComparison.InvariantCulture:
-							return text.CheckWildcardMatchingRegex(Filter, false, true);
+							return text.CheckWildcardMatchingRegex(Filter, false, true).InvertIf(Inverted);
+
 						case StringComparison.InvariantCultureIgnoreCase:
-							return text.CheckWildcardMatchingRegex(Filter, true, true);
+							return text.CheckWildcardMatchingRegex(Filter, true, true).InvertIf(Inverted);
+
 						case StringComparison.Ordinal:
 						case StringComparison.OrdinalIgnoreCase:
 							throw new ArgumentException("Ordinal comparison type is not supported in wildcard filters.");
+
 						default:
 							throw new ArgumentOutOfRangeException(nameof(ComparisonType), (int)ComparisonType, "");
 					}
@@ -126,6 +185,17 @@ namespace Extenity.DataToolbox
 					throw new ArgumentOutOfRangeException(nameof(FilterType), (int)FilterType, "");
 			}
 		}
+
+		#endregion
+
+		#region ToString
+
+		public override string ToString()
+		{
+			return $"{(MustMatch ? "MustMatch " : "")}{(Inverted ? "Inverted " : "")}{FilterType} for '{Filter}' in {ComparisonType}";
+		}
+
+		#endregion
 	}
 
 }
