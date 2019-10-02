@@ -108,13 +108,13 @@ namespace Extenity.DataToolbox
 					switch (ComparisonType)
 					{
 						case StringComparison.CurrentCulture:
-							return text.CheckWildcardMatching(Filter, false, false);
+							return text.CheckWildcardMatchingRegex(Filter, false, false);
 						case StringComparison.CurrentCultureIgnoreCase:
-							return text.CheckWildcardMatching(Filter, true, false);
+							return text.CheckWildcardMatchingRegex(Filter, true, false);
 						case StringComparison.InvariantCulture:
-							return text.CheckWildcardMatching(Filter, false, true);
+							return text.CheckWildcardMatchingRegex(Filter, false, true);
 						case StringComparison.InvariantCultureIgnoreCase:
-							return text.CheckWildcardMatching(Filter, true, true);
+							return text.CheckWildcardMatchingRegex(Filter, true, true);
 						case StringComparison.Ordinal:
 						case StringComparison.OrdinalIgnoreCase:
 							throw new ArgumentException("Ordinal comparison type is not supported in wildcard filters.");

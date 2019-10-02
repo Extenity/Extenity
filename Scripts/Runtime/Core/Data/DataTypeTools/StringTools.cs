@@ -1396,6 +1396,12 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Wildcard Matching (Fast)
+
+		// TODO: Need a fast wildcard matching algorithm that will replace CheckWildcardMatchingRegex. Needs extensive testing. Also needs the ability to be precompiled (like in regexp) for extra speed.
+
+		#endregion
+
 		#region Serialization
 
 		public static string Serialize<T>(this T array, char separator = ',', int capacity = 0) where T : ICollection

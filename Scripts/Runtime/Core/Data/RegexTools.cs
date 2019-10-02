@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Extenity.DataToolbox
 {
@@ -9,12 +10,26 @@ namespace Extenity.DataToolbox
 
 		#region Wildcard
 
+		private static readonly Dictionary<string, string> WildcardToRegexHistory = new Dictionary<string, string>();
+
 		public static string WildcardToRegex(this string textWithWildcards)
 		{
-			return "^" + Regex.Escape(textWithWildcards).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+			lock (WildcardToRegexHistory)
+			{
+				if (WildcardToRegexHistory.TryGetValue(textWithWildcards, out var resultInHistory))
+				{
+					return resultInHistory;
+				}
+				else
+				{
+					var result = "^" + Regex.Escape(textWithWildcards).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+					WildcardToRegexHistory.Add(textWithWildcards, result);
+					return result;
+				}
+			}
 		}
 
-		public static bool CheckWildcardMatching(this string text, string textWithWildcards, bool ignoreCase = false, bool invariantCulture = false)
+		public static bool CheckWildcardMatchingRegex(this string text, string textWithWildcards, bool ignoreCase = false, bool invariantCulture = false)
 		{
 			var options =
 				(ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None) |
