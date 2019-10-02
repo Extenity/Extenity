@@ -8,6 +8,7 @@
 #undef LoggingEnabled
 #endif
 
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Extenity.DesignPatternsToolbox
@@ -18,42 +19,42 @@ namespace Extenity.DesignPatternsToolbox
 	//   InitializeSingleton(...); must be placed on the Awake method of derived class.
 	public class SingletonUnity<T> : MonoBehaviour where T : SingletonUnity<T>
 	{
-		private static T instance;
+		private static T _Instance;
 #pragma warning disable 414
-		private string className;
+		private string ClassName;
 #pragma warning restore
 
 		protected T InitializeSingleton(bool dontDestroyOnLoad)
 		{
-			className = typeof(T).Name;
+			ClassName = typeof(T).Name;
 #if LoggingEnabled
 			Log.Info("Instantiating singleton: " + className, this);
 #endif
-			instance = this as T;
+			_Instance = this as T;
 
 			if (dontDestroyOnLoad)
 			{
 				DontDestroyOnLoad(this);
 			}
 
-			SingletonTracker.SingletonInstantiated(className);
+			SingletonTracker.SingletonInstantiated(ClassName);
 
 			// Returning the instance for ease of use. When there are double derived singleton classes,
 			// they need to keep their own static instance fields. Returning the instance here allows
 			// these fields to be set directly in one-liner code where InitializeSingleton is called.
-			return instance;
+			return _Instance;
 		}
 
 		protected virtual void OnDestroy()
 		{
-			if (instance == null)  // To prevent errors in ExecuteInEditMode
+			if (_Instance == null)  // To prevent errors in ExecuteInEditMode
 				return;
 
 #if LoggingEnabled
 			Log.Info("Destroying singleton: " + className);
 #endif
-			instance = default(T);
-			SingletonTracker.SingletonDestroyed(className);
+			_Instance = default(T);
+			SingletonTracker.SingletonDestroyed(ClassName);
 		}
 
 		public static T CreateSingleton(string addedGameObjectName = "_")
@@ -66,25 +67,38 @@ namespace Extenity.DesignPatternsToolbox
 
 		public static void DestroySingleton()
 		{
-			if (instance.gameObject.GetComponents<Component>().Length == 2) // 1 for 'Transform' component and 1 for 'T' component
+			if (_Instance.gameObject.GetComponents<Component>().Length == 2) // 1 for 'Transform' component and 1 for 'T' component
 			{
 				// If this component is the only one left in gameobject, destroy the gameobject as well
-				Destroy(instance.gameObject);
+				Destroy(_Instance.gameObject);
 			}
 			else
 			{
 				// Destroy only this component
-				Destroy(instance);
+				Destroy(_Instance);
 			}
 		}
 
-		public static T Instance { get { return instance; } }
-		public static bool IsInstanceAvailable { get { return instance; } }
-		public static bool IsInstanceEnabled { get { return instance && instance.isActiveAndEnabled; } }
+		public static T Instance
+		{
+			[DebuggerStepThrough]
+			get => _Instance;
+		}
+		public static bool IsInstanceAvailable
+		{
+			[DebuggerStepThrough]
+			get => _Instance;
+		}
+		public static bool IsInstanceEnabled
+		{
+			[DebuggerStepThrough]
+			get => _Instance && _Instance.isActiveAndEnabled;
+		}
 
 		private static T _EditorInstance;
 		public static T EditorInstance
 		{
+			[DebuggerStepThrough]
 			get
 			{
 				if (Application.isPlaying)
@@ -105,6 +119,7 @@ namespace Extenity.DesignPatternsToolbox
 		}
 		public static bool IsEditorInstanceAvailable
 		{
+			[DebuggerStepThrough]
 			get
 			{
 				if (!_EditorInstance)

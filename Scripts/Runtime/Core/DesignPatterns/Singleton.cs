@@ -8,6 +8,8 @@
 #undef LoggingEnabled
 #endif
 
+using System.Diagnostics;
+
 namespace Extenity.DesignPatternsToolbox
 {
 
@@ -18,20 +20,20 @@ namespace Extenity.DesignPatternsToolbox
 	{
 		protected virtual void OnDestroySingleton() { }
 
-		private static T instance;
+		private static T _Instance;
 #pragma warning disable 414
-		private string className;
+		private string ClassName;
 #pragma warning restore
 
 		protected void InitializeSingleton()
 		{
-			className = typeof(T).Name;
+			ClassName = typeof(T).Name;
 #if LoggingEnabled
 			Log.Info("Instantiating singleton: " + className);
 #endif
+			_Instance = this as T;
 
-			instance = this as T;
-			SingletonTracker.SingletonInstantiated(className);
+			SingletonTracker.SingletonInstantiated(ClassName);
 		}
 
 		public void DestroySingleton()
@@ -42,13 +44,20 @@ namespace Extenity.DesignPatternsToolbox
 
 			OnDestroySingleton();
 
-			instance = default(T);
-
-			SingletonTracker.SingletonDestroyed(className);
+			_Instance = default(T);
+			SingletonTracker.SingletonDestroyed(ClassName);
 		}
 
-		public static T Instance { get { return instance; } }
-		public static bool IsInstanceAvailable { get { return instance != null; } }
+		public static T Instance
+		{
+			[DebuggerStepThrough]
+			get => _Instance;
+		}
+		public static bool IsInstanceAvailable
+		{
+			[DebuggerStepThrough]
+			get => _Instance != null;
+		}
 	}
 
 }
