@@ -1256,9 +1256,9 @@ namespace Extenity.ReflectionToolbox
 			}
 #endif
 #if !DisableUnityAI
-			else if (type.IsSameOrSubclassOf(typeof(OffMeshLink)))
+			else if (type.IsSameOrSubclassOf(typeof(UnityEngine.AI.OffMeshLink)))
 			{
-				var referencedOffMeshLink = referencedObject as OffMeshLink;
+				var referencedOffMeshLink = referencedObject as UnityEngine.AI.OffMeshLink;
 				if (referencedOffMeshLink)
 				{
 					InternalAddReferencedGameObjectToResults(referencedOffMeshLink.gameObject, result, excludedTypes); // See 57182.
