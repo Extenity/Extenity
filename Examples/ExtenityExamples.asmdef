@@ -1,0 +1,25 @@
+{
+    "name": "ExtenityExamples",
+    "references": [
+        "Extenity.Core",
+        "Extenity.Core.Editor",
+        "Extenity.DebugFlow",
+        "Extenity.DebugFlow.Editor",
+        "Extenity.Testing",
+        "Extenity.UI",
+        "Extenity.UI.Editor",
+        "Extenity.UnityEditor.Editor",
+        "Unity.TextMeshPro"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

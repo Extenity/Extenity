@@ -1,0 +1,123 @@
+;This file was created by Graph (http://www.padowan.dk)
+;Do not change this file from other programs.
+[Graph]
+Version = 4.4.2.543
+MinVersion = 2.5
+OS = Windows NT 6.2 
+
+[Axes]
+xMin = -1.22494390428519
+xMax = 2.89287873760782
+xTickUnit = 0.1
+xGridUnit = 0.1
+yMin = -1.9157652727367
+yMax = 2.2020573691563
+yTickUnit = 0.2
+yGridUnit = 0.2
+AxesColor = clBlue
+GridColor = 0x00FF9999
+ShowLegend = 1
+Radian = 1
+
+[Func1]
+FuncType = 0
+y = tanh(x*2)
+Color = clSilver
+Size = 5
+
+[Func2]
+FuncType = 0
+y = FastTanH(x*2)
+Color = clLime
+
+[Func3]
+FuncType = 0
+y = TanHLike(x)
+Color = clGreen
+Size = 2
+
+[Func4]
+FuncType = 0
+y = TanHLike(x*x*x)
+Style = 3
+Color = clGreen
+Size = 2
+
+[Func5]
+FuncType = 0
+y = TanHLikeSE(x,1.5,3.5)
+Color = clGreen
+Size = 2
+
+[Func6]
+FuncType = 0
+y = TanHLike((x-0.5)*2)*0.5+0.5
+Color = clGreen
+Size = 2
+
+[Func7]
+FuncType = 0
+y = TanHLikeInverted(x)
+From = 0
+To = 1
+Color = clLime
+Size = 2
+
+[Func8]
+FuncType = 0
+y = Hermite(x)
+Style = 3
+Color = clAqua
+Size = 2
+
+[Func9]
+FuncType = 0
+y = Hermite((x+1)/2)*2-1
+Color = clAqua
+Size = 2
+
+[Func10]
+FuncType = 0
+y = x
+Style = 2
+Color = clSilver
+Size = 2
+
+[Func11]
+FuncType = 0
+y = 2*x
+Style = 2
+Color = clSilver
+Size = 2
+
+[Func12]
+FuncType = 0
+y = sin(x*PI/2)
+Color = clLime
+Size = 2
+
+[Func13]
+FuncType = 0
+y = Decreasing(x)
+From = 0
+To = 1
+Color = clLime
+
+[Data]
+TextLabelCount = 0
+FuncCount = 13
+PointSeriesCount = 0
+ShadeCount = 0
+RelationCount = 0
+OleObjectCount = 0
+
+[CustomFunctions]
+TanHLike(x) = if(x<=-1,-1,x>=1,1,x<0,(x+1)*(x+1)-1,1-(1-x)*(1-x))
+Hermite(x) = x * x * (3 - 2 * x)
+TanHLikeSE(x,centerX,endX) = TanHLike((x-centerX)/(endX-centerX))
+a(x) = x * (135135.0 + x*x * (17325.0 + x*x * (378.0 + x*x)))
+b(x) = 135135.0 + x*x * (62370.0 + x*x * (3150.0 + x*x * 28.0))
+FastTanH(x) = a(x)/b(x)
+Decreasing(x) = 1 - (1-x)*(1-x)
+TanHLikeInverted(x) = ((x-0.5) * (x-0.5) * if(x > 0.5, 2, -2)) + 0.5
+
