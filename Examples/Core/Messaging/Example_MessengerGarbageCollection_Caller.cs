@@ -19,19 +19,19 @@ namespace Extenity.Messaging
 		{
 			if (Input.GetKeyDown(KeyCode.F3))
 			{
-				Global.Emit("1001", "Test message...");
+				Global.EmitMessage("1001", "Test message...");
 			}
 			if (Input.GetKeyDown(KeyCode.F4))
 			{
-				Global.Emit("1001", "This message is emitted before calling Destroy");
+				Global.EmitMessage("1001", "This message is emitted before calling Destroy");
 				Destroy(GetComponent<Example_MessengerGarbageCollection_Listener>());
-				Global.Emit("1001", "This message is emitted after Destroy which should be delivered to MyMessageHandler since the object is still alive and OnDestroy is not called yet");
+				Global.EmitMessage("1001", "This message is emitted after Destroy which should be delivered to MyMessageHandler since the object is still alive and OnDestroy is not called yet");
 			}
 			if (Input.GetKeyDown(KeyCode.F5))
 			{
-				Global.Emit("1001", "This message is emitted before calling DestroyImmediate");
+				Global.EmitMessage("1001", "This message is emitted before calling DestroyImmediate");
 				DestroyImmediate(GetComponent<Example_MessengerGarbageCollection_Listener>());
-				Global.Emit("1001", "This message is emitted after DestroyImmediate which should NOT be delivered to MyMessageHandler");
+				Global.EmitMessage("1001", "This message is emitted after DestroyImmediate which should NOT be delivered to MyMessageHandler");
 			}
 			if (Input.GetKeyDown(KeyCode.F8))
 			{
@@ -39,7 +39,7 @@ namespace Extenity.Messaging
 			}
 			if (Input.GetKeyDown(KeyCode.F12))
 			{
-				Global.DebugLogListAllListeners();
+				Global.DebugLogListAllMessageListeners();
 			}
 		}
 

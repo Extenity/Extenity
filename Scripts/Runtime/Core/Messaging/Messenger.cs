@@ -47,10 +47,10 @@ namespace Extenity.MessagingToolbox
 
 		protected void CustomLateUpdate()
 		{
-			if (CleanupRequired)
+			if (MessageListenerListCleanupRequired)
 			{
-				CleanupRequired = false;
-				CleanUpListenerLists();
+				MessageListenerListCleanupRequired = false;
+				CleanUpMessageListenerLists();
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Actions
+		#region Message - Actions
 
 		public delegate void MessengerAction();
 		public delegate void MessengerAction<T1>(T1 arg1);
@@ -92,9 +92,9 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Message Listeners
+		#region Message - Listeners
 
-		private struct ListenerInfo
+		private struct MessageListenerInfo
 		{
 			public string MessageId;
 			public ParameterInfo[] ParameterInfos;
@@ -114,17 +114,17 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		private readonly Dictionary<string, ListenerInfo> ListenerInfoDictionary = new Dictionary<string, ListenerInfo>();
+		private readonly Dictionary<string, MessageListenerInfo> MessageListenerInfoDictionary = new Dictionary<string, MessageListenerInfo>();
 
-		private ListenerInfo GetListenerInfo(string messageId)
+		private MessageListenerInfo GetMessageListenerInfo(string messageId)
 		{
-			ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo);
+			MessageListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo);
 			return listenerInfo;
 		}
 
-		private List<Delegate> GetDelegates(string messageId)
+		private List<Delegate> GetMessageDelegates(string messageId)
 		{
-			if (ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
+			if (MessageListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 			{
 				if (listenerInfo.IsNotEmpty)
 				{
@@ -136,13 +136,14 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Message Listeners Cleanup
+		#region Message - Listeners Cleanup
 
-		public bool CleanupRequired;
+		[NonSerialized]
+		public bool MessageListenerListCleanupRequired;
 
-		private void CleanUpListenerLists()
+		private void CleanUpMessageListenerLists()
 		{
-			foreach (var listenerInfo in ListenerInfoDictionary.Values)
+			foreach (var listenerInfo in MessageListenerInfoDictionary.Values)
 			{
 				if (!listenerInfo.IsValidAndNotEmpty)
 					continue;
@@ -171,32 +172,33 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Add Listener
+		#region Message - Add Listener
 
-		public void AddListener(string messageId, MessengerAction listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<bool> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<byte> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<Int16> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<Int32> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<Int64> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<UInt16> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<UInt32> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<UInt64> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<float> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<double> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<char> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener(string messageId, MessengerAction<string> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1>(string messageId, MessengerAction<TParam1> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2>(string messageId, MessengerAction<TParam1, TParam2> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3>(string messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { AddListener(messageId, (Delegate)listener); }
-		public void AddListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { AddListener(messageId, (Delegate)listener); }
+		/// See <see cref="AddMessageListener(string,Delegate)"/>
+		public void AddMessageListener(string messageId, MessengerAction listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<bool> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<byte> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<Int16> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<Int32> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<Int64> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<UInt16> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<UInt32> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<UInt64> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<float> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<double> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<char> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener(string messageId, MessengerAction<string> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1>(string messageId, MessengerAction<TParam1> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2>(string messageId, MessengerAction<TParam1, TParam2> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3>(string messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { AddMessageListener(messageId, (Delegate)listener); }
+		public void AddMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { AddMessageListener(messageId, (Delegate)listener); }
 
-		public void AddListener(string messageId, Delegate listener)
+		public void AddMessageListener(string messageId, Delegate listener)
 		{
 			if (listener == null)
 				throw new ArgumentNullException(nameof(listener));
@@ -209,12 +211,12 @@ namespace Extenity.MessagingToolbox
 
 			if ((listener.Target as Object) == null)
 			{
-				LogAddNonUnityObject();
+				LogError_AddingNonUnityObjectAsMessageListener();
 				return;
 			}
 
 			// Is this the first time we add a listener for this messageId?
-			if (!ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
+			if (!MessageListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 			{
 				// Do the initialization for this messageId
 				{
@@ -233,7 +235,7 @@ namespace Extenity.MessagingToolbox
 					listenerInfo.ParameterInfos = listener.Method.GetParameters();
 				}
 
-				ListenerInfoDictionary.Add(messageId, listenerInfo);
+				MessageListenerInfoDictionary.Add(messageId, listenerInfo);
 
 				// Instantly return without getting into further consistency checks.
 				return;
@@ -260,7 +262,7 @@ namespace Extenity.MessagingToolbox
 				var newListenerParameters = listener.Method.GetParameters(); // This call is bad for performance but no other workaround exists for comparing parameters of two methods.
 				if (!listenerInfo.ParameterInfos.CompareMethodParameters(newListenerParameters, false))
 				{
-					LogBadListenerParameters();
+					LogError_BadMessageListenerParameters();
 				}
 			}
 
@@ -283,39 +285,40 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Remove Listener
+		#region Message - Remove Listener
 
-		public void RemoveListener(string messageId, MessengerAction listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<bool> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<byte> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<Int16> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<Int32> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<Int64> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<UInt16> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<UInt32> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<UInt64> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<float> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<double> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<char> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener(string messageId, MessengerAction<string> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1>(string messageId, MessengerAction<TParam1> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2>(string messageId, MessengerAction<TParam1, TParam2> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3>(string messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { RemoveListener(messageId, (Delegate)listener); }
-		public void RemoveListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { RemoveListener(messageId, (Delegate)listener); }
+		/// See <see cref="RemoveMessageListener(string,Delegate)"/>
+		public bool RemoveMessageListener(string messageId, MessengerAction listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<bool> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<byte> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<Int16> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<Int32> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<Int64> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<UInt16> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<UInt32> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<UInt64> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<float> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<double> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<char> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener(string messageId, MessengerAction<string> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1>(string messageId, MessengerAction<TParam1> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2>(string messageId, MessengerAction<TParam1, TParam2> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3>(string messageId, MessengerAction<TParam1, TParam2, TParam3> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
+		public bool RemoveMessageListener<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9>(string messageId, MessengerAction<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9> listener) { return RemoveMessageListener(messageId, (Delegate)listener); }
 
-		public bool RemoveListener(string messageId, Delegate listener)
+		public bool RemoveMessageListener(string messageId, Delegate listener)
 		{
 			if (listener == null)
 				throw new ArgumentNullException(nameof(listener));
 			if (string.IsNullOrEmpty(messageId))
 				throw new ArgumentOutOfRangeException(nameof(messageId), "Message ID should not be empty.");
 
-			if (!ListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
+			if (!MessageListenerInfoDictionary.TryGetValue(messageId, out var listenerInfo))
 				return false;
 			if (listenerInfo.Delegates == null)
 				return false;
@@ -327,11 +330,11 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Emit Message
+		#region Message - Emit
 
-		public void Emit(string messageId)
+		public void EmitMessage(string messageId)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -351,16 +354,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1>(string messageId, T1 param1)
+		public void EmitMessage<T1>(string messageId, T1 param1)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -380,16 +383,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2>(string messageId, T1 param1, T2 param2)
+		public void EmitMessage<T1, T2>(string messageId, T1 param1, T2 param2)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -409,16 +412,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3>(string messageId, T1 param1, T2 param2, T3 param3)
+		public void EmitMessage<T1, T2, T3>(string messageId, T1 param1, T2 param2, T3 param3)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -438,16 +441,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4)
+		public void EmitMessage<T1, T2, T3, T4>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -467,16 +470,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4, T5>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
+		public void EmitMessage<T1, T2, T3, T4, T5>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -496,16 +499,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4, T5, T6>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6)
+		public void EmitMessage<T1, T2, T3, T4, T5, T6>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -525,16 +528,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4, T5, T6, T7>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7)
+		public void EmitMessage<T1, T2, T3, T4, T5, T6, T7>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -554,16 +557,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8)
+		public void EmitMessage<T1, T2, T3, T4, T5, T6, T7, T8>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -583,16 +586,16 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
-		public void Emit<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9)
+		public void EmitMessage<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string messageId, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9)
 		{
-			var delegates = GetDelegates(messageId);
+			var delegates = GetMessageDelegates(messageId);
 			if (delegates == null)
 				return;
 			for (int i = 0; i < delegates.Count; i++)
@@ -612,42 +615,42 @@ namespace Extenity.MessagingToolbox
 						}
 					}
 					else
-						CleanupRequired = true;
+						MessageListenerListCleanupRequired = true;
 				}
 				else
-					LogBadEmitParameters();
+					LogError_BadMessageEmitParameters();
 			}
 		}
 
 		#endregion
 
-		#region Log Errors
+		#region Message - Log Errors
 
-		private void LogAddNonUnityObject()
+		private void LogError_AddingNonUnityObjectAsMessageListener()
 		{
 			Log.CriticalError("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.", gameObject);
 		}
 
-		private void LogBadEmitParameters()
+		private void LogError_BadMessageEmitParameters()
 		{
 			Log.CriticalError("Mismatching parameter type(s) between message listener and emit request.", gameObject);
 		}
 
-		private void LogBadListenerParameters()
+		private void LogError_BadMessageListenerParameters()
 		{
 			Log.CriticalError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.", gameObject);
 		}
 
 		#endregion
 
-		#region Debug
+		#region Message - Debug
 
-		public void DebugLogListAllListeners()
+		public void DebugLogListAllMessageListeners()
 		{
 			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n", ListenerInfoDictionary.Count);
+			stringBuilder.AppendFormat("Listing all listeners (message count: {0})\n", MessageListenerInfoDictionary.Count);
 
-			foreach (var listenerInfo in ListenerInfoDictionary.Values)
+			foreach (var listenerInfo in MessageListenerInfoDictionary.Values)
 			{
 				var delegates = listenerInfo.Delegates;
 				stringBuilder.AppendFormat("   Message ID: {0}    Listeners: {1}\n",

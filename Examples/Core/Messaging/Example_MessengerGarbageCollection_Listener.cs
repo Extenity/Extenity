@@ -9,7 +9,7 @@ namespace Extenity.Messaging
 		protected void Awake()
 		{
 			Log.Info("LISTENER :: Awake", this);
-			Global.AddListener("1001", MyMessageHandler);
+			Global.AddMessageListener("1001", MyMessageHandler);
 		}
 
 		protected void OnDestroy()
