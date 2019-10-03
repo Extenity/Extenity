@@ -9,14 +9,12 @@ namespace Extenity.MessagingToolbox
 	{
 		#region Callback entries
 
-		public delegate void MethodDefinition(T1 param1);
-
 		public struct Entry
 		{
-			public MethodDefinition Callback;
+			public Action<T1> Callback;
 			public int Order;
 
-			public Entry(MethodDefinition callback, int order)
+			public Entry(Action<T1> callback, int order)
 			{
 				Callback = callback;
 				Order = order;
@@ -30,7 +28,7 @@ namespace Extenity.MessagingToolbox
 
 		public bool IsAnyListenerRegistered => Callbacks.Count > 0;
 
-		public bool IsListenerRegistered(MethodDefinition callback)
+		public bool IsListenerRegistered(Action<T1> callback)
 		{
 			for (var i = 0; i < Callbacks.Count; i++)
 			{
@@ -46,7 +44,7 @@ namespace Extenity.MessagingToolbox
 		/// is registered via AddListener, or when it's changed via ChangeListenerOrder.
 		/// </summary>
 		/// <returns>The order of specified callback. If the callback is not registered, returns int.MaxValue.</returns>
-		public int GetListenerOrder(MethodDefinition callback)
+		public int GetListenerOrder(Action<T1> callback)
 		{
 			for (var i = 0; i < Callbacks.Count; i++)
 			{
@@ -80,7 +78,7 @@ namespace Extenity.MessagingToolbox
 		#region Add / Remove Listener
 
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
-		public void AddListener(MethodDefinition callback, int order = 0)
+		public void AddListener(Action<T1> callback, int order = 0)
 		{
 			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
 				throw new ArgumentOutOfRangeException(nameof(order), order, "");
@@ -143,7 +141,7 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		public bool RemoveListener(MethodDefinition callback)
+		public bool RemoveListener(Action<T1> callback)
 		{
 			if (callback == null)
 				return false; // Silently ignore
