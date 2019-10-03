@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Events;
 
 namespace ExtenityExamples.Reflection
@@ -13,7 +12,9 @@ namespace ExtenityExamples.Reflection
 		public class CustomEvent : UnityEvent { }
 
 		public Animator Animator;
-		public OffMeshLink OffMeshLink;
+#if !DisableUnityAI
+		public UnityEngine.AI.OffMeshLink OffMeshLink;
+#endif
 		public Camera CameraLink;
 		public Material MaterialLink;
 		public Mesh MeshLink;

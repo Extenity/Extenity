@@ -24,6 +24,8 @@ namespace ExtenityExamples.BeyondAudio
 #endif
 		}
 
+#if BeyondAudioUsesUnityAudio
+
 		private void OnAllocatedAudioSource(AudioSource audioSource, string eventName)
 		{
 			Debug.LogFormat(audioSource.gameObject, "Allocating audio source '{0}' for event '{1}'", audioSource, eventName);
@@ -57,6 +59,8 @@ namespace ExtenityExamples.BeyondAudio
 			else if (count > 1)
 				Debug.Log("Internal error! More than one UI item found.");
 		}
+
+#endif
 	}
 
 }

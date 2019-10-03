@@ -17,6 +17,8 @@ namespace ExtenityExamples.BeyondAudio
 		public GameObject ReleasedIndicator;
 		public GameObject ErrorIndicator;
 
+#if BeyondAudioUsesUnityAudio
+
 		[NonSerialized]
 		public AudioSource AudioSource;
 		[NonSerialized]
@@ -76,24 +78,30 @@ namespace ExtenityExamples.BeyondAudio
 			}
 		}
 
+#endif
+
 		public void OnPointerEnter(PointerEventData eventData)
 		{
+#if BeyondAudioUsesUnityAudio
 			if (AudioSource)
 			{
 #if UNITY_EDITOR
 				UnityEditor.EditorGUIUtility.PingObject(AudioSource);
 #endif
 			}
+#endif
 		}
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
+#if BeyondAudioUsesUnityAudio
 			if (AudioSource)
 			{
 #if UNITY_EDITOR
 				UnityEditor.Selection.activeGameObject = AudioSource.gameObject;
 #endif
 			}
+#endif
 		}
 	}
 
