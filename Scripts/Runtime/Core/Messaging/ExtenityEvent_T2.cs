@@ -13,11 +13,23 @@ namespace Extenity.MessagingToolbox
 		{
 			public Action<T1, T2> Callback;
 			public int Order;
+			public ListenerLifeSpan LifeSpan;
 
-			public Entry(Action<T1, T2> callback, int order)
+			public Entry(Action<T1, T2> callback, int order, ListenerLifeSpan lifeSpan)
 			{
 				Callback = callback;
 				Order = order;
+				LifeSpan = lifeSpan;
+			}
+
+			public bool ShouldRemoveAfterEmit
+			{
+				get { return LifeSpan == ListenerLifeSpan.RemovedAtFirstEmit; }
+			}
+
+			public bool IsObjectDestroyed
+			{
+				get { return Callback == null || !(Callback.Target as Object); }
 			}
 		}
 
@@ -56,10 +68,9 @@ namespace Extenity.MessagingToolbox
 
 		public void Clear()
 		{
-			for (int i = 0; i < Callbacks.Count; i++)
+			for (int i = Callbacks.Count - 1; i >= 0; i--)
 			{
-				var callback = Callbacks[i].Callback;
-				if (callback == null || !(callback.Target as Object)) // Check if the object is destroyed
+				if (Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
 				{
 					Callbacks.RemoveAt(i);
 					i--;
@@ -78,14 +89,14 @@ namespace Extenity.MessagingToolbox
 		#region Add / Remove Listener
 
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
-		public void AddListener(Action<T1, T2> callback, int order = 0)
+		public void AddListener(Action<T1, T2> callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent)
 		{
 			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
 				throw new ArgumentOutOfRangeException(nameof(order), order, "");
 			if (callback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Tried to add a null callback with order '{order}'.");
+					Log.Info($"Tried to add a null callback with order '{order}' and life span '{lifeSpan}'.");
 				return; // Silently ignore
 			}
 			var alreadyExistingListenerOrder = GetListenerOrder(callback);
@@ -103,7 +114,7 @@ namespace Extenity.MessagingToolbox
 				else
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Tried to add an already registered callback with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+						Log.Info($"Tried to add an already registered callback with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
 					return; // Silently ignore
 				}
 			}
@@ -121,11 +132,11 @@ namespace Extenity.MessagingToolbox
 			// Just add it to the end and move on. While doing that, also cover the possibility that the order
 			// is greater(or equal) than the last item's order.
 			if (Callbacks.Count == 0 || // Line 1
-				order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
+			    order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
-				Callbacks.Add(new Entry(callback, order));
+					Log.Info($"Adding listener with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
+				Callbacks.Add(new Entry(callback, order, lifeSpan));
 				return;
 			}
 
@@ -134,8 +145,8 @@ namespace Extenity.MessagingToolbox
 				if (order < Callbacks[i].Order)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Adding listener with order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
-					Callbacks.Insert(i, new Entry(callback, order));
+						Log.Info($"Adding listener with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
+					Callbacks.Insert(i, new Entry(callback, order, lifeSpan));
 					return;
 				}
 			}
@@ -202,6 +213,15 @@ namespace Extenity.MessagingToolbox
 				CallbacksCopy.Clear();
 				CallbacksCopy.AddRange(Callbacks);
 
+				// After copying the callbacks, remove the ones that are set to be removed when emitted.
+				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				{
+					if (Callbacks[i].ShouldRemoveAfterEmit)
+					{
+						Callbacks.RemoveAt(i);
+					}
+				}
+
 				for (int i = 0; i < CallbacksCopy.Count; i++)
 				{
 					var callback = CallbacksCopy[i].Callback;
@@ -242,6 +262,15 @@ namespace Extenity.MessagingToolbox
 				CallbacksCopy = new List<Entry>(Callbacks.Count);
 			CallbacksCopy.Clear();
 			CallbacksCopy.AddRange(Callbacks);
+
+			// After copying the callbacks, remove the ones that are set to be removed when emitted.
+			for (int i = Callbacks.Count - 1; i >= 0; i--)
+			{
+				if (Callbacks[i].ShouldRemoveAfterEmit)
+				{
+					Callbacks.RemoveAt(i);
+				}
+			}
 
 			for (int i = 0; i < CallbacksCopy.Count; i++)
 			{

@@ -6,6 +6,12 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
+	public enum ListenerLifeSpan
+	{
+		Permanent,
+		RemovedAtFirstEmit,
+	}
+
 	public static class ExtenityEventTools
 	{
 		#region Log
