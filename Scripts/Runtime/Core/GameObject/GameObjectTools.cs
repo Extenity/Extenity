@@ -229,6 +229,15 @@ namespace Extenity.GameObjectToolbox
 
 		public static bool IsDestroyHistoryEnabled = false;
 		public static bool IsDetailedDestroyHistoryEnabled = false;
+		public static bool KeepDestroyHistoryOnSoftReset
+		{
+			get => true;
+			set
+			{
+				// Might be a good idea to have the ability to reset history with application soft reset.
+				throw new NotImplementedException();
+			}
+		}
 
 		public static void TrackedDestroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, historySaveType); }
 		public static void Destroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
@@ -236,7 +245,7 @@ namespace Extenity.GameObjectToolbox
 			const float delay = 0f;
 			Object.Destroy(obj);
 
-			if (historySaveType != HistorySaveType.DontSave)
+			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
@@ -245,7 +254,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			Object.Destroy(obj, delay);
 
-			if (historySaveType != HistorySaveType.DontSave)
+			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
@@ -255,7 +264,7 @@ namespace Extenity.GameObjectToolbox
 			const bool allowDestroyingAssets = false;
 			Object.DestroyImmediate(obj);
 
-			if (historySaveType != HistorySaveType.DontSave)
+			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
 		}
 
@@ -264,14 +273,14 @@ namespace Extenity.GameObjectToolbox
 		{
 			Object.DestroyImmediate(obj, allowDestroyingAssets);
 
-			if (historySaveType != HistorySaveType.DontSave)
+			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
 		}
 
 		private static void _CreateDestroyHistoryItem(Object obj, bool isImmediate, bool allowDestroyingAssets, float destroyDelay, HistorySaveType historySaveType)
 		{
-			if (!IsDestroyHistoryEnabled)
-				return;
+			// if (!IsDestroyHistoryEnabled)
+			// 	return;
 
 			var item = new DestroyHistoryItem();
 			item.ObjectName = obj.name;
