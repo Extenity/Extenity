@@ -23,9 +23,29 @@ namespace Extenity.MessagingToolbox
 
 	public class Messenger : MonoBehaviour
 	{
+		#region Initialization
+
+		protected void Awake()
+		{
+			Loop.LateUpdateCallbacks.AddListener(CustomLateUpdate);
+		}
+
+		#endregion
+
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			// TODO: Check if there is any message left to process and warn developer about that.
+
+			Loop.LateUpdateCallbacks.RemoveListener(CustomLateUpdate);
+		}
+
+		#endregion
+
 		#region Update
 
-		protected void LateUpdate()
+		protected void CustomLateUpdate()
 		{
 			if (CleanupRequired)
 			{
@@ -38,7 +58,7 @@ namespace Extenity.MessagingToolbox
 
 		#region Global
 
-		/* Nope! Not happening! The application should control its own messengers. There should not be a singleton messenger.
+		/* Nope! Not happening! Singletons are bad for software architecture. The application should create and control its own messengers. There should not be a singleton messenger.
 		private static Messenger _Global;
 		public static Messenger Global
 		{
