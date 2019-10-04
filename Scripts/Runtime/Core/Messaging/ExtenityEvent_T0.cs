@@ -50,7 +50,7 @@ namespace Extenity.MessagingToolbox
 				get
 				{
 					// First, try to get callback delegate object. If not available, get the LifeSpanTarget object.
-					if (Callback!=null)
+					if (Callback != null)
 					{
 						var obj = Callback.Target as Object;
 						if (obj)
