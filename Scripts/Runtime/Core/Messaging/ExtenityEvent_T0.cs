@@ -233,13 +233,13 @@ namespace Extenity.MessagingToolbox
 		[ThreadStatic]
 		private static List<Entry> CallbacksCopy;
 
-		public void InvokeOneShot()
+		public void InvokeOneShotUnsafe()
 		{
-			Invoke();
+			InvokeUnsafe();
 			RemoveAllListeners();
 		}
 
-		public void Invoke()
+		public void InvokeUnsafe()
 		{
 			if (IsInvoking)
 			{

@@ -12,7 +12,7 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void AlrightToInvokeInBlank()
 		{
-			TestEvent.Invoke();
+			TestEvent.InvokeUnsafe();
 			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
@@ -26,7 +26,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestEvent.AddListener(Callback);
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 		}
 
@@ -35,7 +35,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestEvent.AddListener(CreateTestEventSubject().Callback);
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
 		}
 
@@ -105,7 +105,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(ThrowingCallback, 20);
 			TestEvent.AddListener(CallbackC, 30);
 
-			Assert.Throws<Test_ExtenityEventException>(() => TestEvent.Invoke());
+			Assert.Throws<Test_ExtenityEventException>(() => TestEvent.InvokeUnsafe());
 			AssertExpectLog((LogType.Log, "Called callback A."));
 		}
 
@@ -118,17 +118,17 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.Permanent);
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
 			TestEvent.RemoveListener(Callback);
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -137,17 +137,17 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.Permanent, CreateLifeSpanTargetTestObject());
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -159,7 +159,7 @@ namespace ExtenityTests.MessagingToolbox
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -168,17 +168,17 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.Permanent);
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestEventSubject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -190,7 +190,7 @@ namespace ExtenityTests.MessagingToolbox
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestEventSubject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -200,10 +200,10 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -213,15 +213,15 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit, CreateLifeSpanTargetTestObject());
 
 			// The callback will be deregistered after this.
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 
 			// Destroying the LifeSpanTarget does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyLifeSpanTargetTestObject();
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -233,7 +233,7 @@ namespace ExtenityTests.MessagingToolbox
 			// The callback will be deregistered after this.
 			DestroyLifeSpanTargetTestObject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -243,15 +243,15 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 
 			// Destroying the Subject does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyTestEventSubject();
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -263,7 +263,7 @@ namespace ExtenityTests.MessagingToolbox
 			// The callback will be deregistered after this.
 			DestroyTestEventSubject();
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectNoLogs();
 		}
 
@@ -299,7 +299,7 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called callback with default order, added second.");
 				});
 
-			TestEvent.Invoke();
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback with order -40."),
 			                (LogType.Log, "Called callback with default order, added first."),
 			                (LogType.Log, "Called callback with default order, added second."),

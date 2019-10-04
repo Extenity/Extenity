@@ -101,7 +101,7 @@ namespace Extenity.UIToolbox.TouchInput
 			}
 
 			CurrentScheme = newScheme;
-			OnInputSchemeChanged.Invoke(newScheme);
+			OnInputSchemeChanged.InvokeSafe(newScheme);
 		}
 
 		#endregion

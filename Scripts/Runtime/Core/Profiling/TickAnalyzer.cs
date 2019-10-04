@@ -146,10 +146,10 @@ namespace Extenity.ProfilingToolbox
 					InternalTickCounter = 0;
 
 					OutputToGraph();
-					OnUpdate.Invoke();
+					OnUpdate.InvokeSafe();
 				}
 
-				OnTick.Invoke();
+				OnTick.InvokeSafe();
 			}
 		}
 
