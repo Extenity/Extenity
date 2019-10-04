@@ -11,15 +11,19 @@ namespace Extenity.MessagingToolbox
 
 		public struct Entry
 		{
-			public Action<T1, T2> Callback;
-			public int Order;
-			public ListenerLifeSpan LifeSpan;
+			public readonly Action<T1, T2> Callback;
+			public readonly int Order;
+			public readonly ListenerLifeSpan LifeSpan;
+			public readonly Object LifeSpanTarget;
+			public readonly bool IsLifeSpanTargetAssigned;
 
-			public Entry(Action<T1, T2> callback, int order, ListenerLifeSpan lifeSpan)
+			public Entry(Action<T1, T2> callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				Callback = callback;
 				Order = order;
 				LifeSpan = lifeSpan;
+				LifeSpanTarget = lifeSpanTarget;
+				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
 			}
 
 			public bool ShouldRemoveAfterEmit
@@ -29,7 +33,12 @@ namespace Extenity.MessagingToolbox
 
 			public bool IsObjectDestroyed
 			{
-				get { return Callback == null || !(Callback.Target as Object); }
+				get
+				{
+					return Callback == null ||
+					       !(Callback.Target as Object) ||
+					       (IsLifeSpanTargetAssigned && !LifeSpanTarget);
+				}
 			}
 		}
 
@@ -89,7 +98,7 @@ namespace Extenity.MessagingToolbox
 		#region Add / Remove Listener
 
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
-		public void AddListener(Action<T1, T2> callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent)
+		public void AddListener(Action<T1, T2> callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
 			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
 				throw new ArgumentOutOfRangeException(nameof(order), order, "");
@@ -135,8 +144,8 @@ namespace Extenity.MessagingToolbox
 			    order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Adding listener with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
-				Callbacks.Add(new Entry(callback, order, lifeSpan));
+					Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
+				Callbacks.Add(new Entry(callback, order, lifeSpan, lifeSpanTarget));
 				return;
 			}
 
@@ -145,8 +154,8 @@ namespace Extenity.MessagingToolbox
 				if (order < Callbacks[i].Order)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Adding listener with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
-					Callbacks.Insert(i, new Entry(callback, order, lifeSpan));
+						Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
+					Callbacks.Insert(i, new Entry(callback, order, lifeSpan, lifeSpanTarget));
 					return;
 				}
 			}
@@ -162,7 +171,7 @@ namespace Extenity.MessagingToolbox
 				if (Callbacks[i].Callback == callback)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Removing listener with order '{Callbacks[i].Order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}' at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
+						Log.Info($"Removing listener with {_Detailed_OrderForMethodAndObject(Callbacks[i].Order, callback)} at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
 					Callbacks.RemoveAt(i);
 					return true;
 				}
@@ -294,6 +303,20 @@ namespace Extenity.MessagingToolbox
 
 			IsInvoking = false;
 			CallbacksCopy.Clear();
+		}
+
+		#endregion
+
+		#region Log
+
+		private string _Detailed_OrderForMethodAndObject(int order, Delegate callback)
+		{
+			return $"order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'";
+		}
+
+		private string _Detailed_OrderAndLifeSpanForMethodAndObject(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget, Delegate callback)
+		{
+			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $"with target '{lifeSpanTarget.ToString()}'" : "")}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'";
 		}
 
 		#endregion
