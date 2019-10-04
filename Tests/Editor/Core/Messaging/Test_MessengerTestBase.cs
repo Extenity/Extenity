@@ -21,7 +21,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
-		#region Messenger
+		#region Test Messenger
 
 		private Messenger _TestMessenger;
 		public Messenger TestMessenger
