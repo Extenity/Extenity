@@ -26,6 +26,8 @@ namespace Extenity.MessagingToolbox
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
 			}
 
+			public bool IsValid => Callback != null;
+
 			public bool ShouldRemoveAfterEmit
 			{
 				get { return LifeSpan == ListenerLifeSpan.RemovedAtFirstEmit; }
@@ -59,10 +61,20 @@ namespace Extenity.MessagingToolbox
 			return false;
 		}
 
+		public Entry GetListenerInfo(Action<T1, T2> callback)
+		{
+			for (var i = 0; i < Callbacks.Count; i++)
+			{
+				if (Callbacks[i].Callback == callback)
+					return Callbacks[i];
+			}
+			return default;
+		}
+
 		/// <summary>
 		/// Finds the specified callback in registered callbacks list and tells it's order.
 		/// The order is the value that is passed into the system at the time the callback
-		/// is registered via AddListener, or when it's changed via ChangeListenerOrder.
+		/// is registered via AddListener.
 		/// </summary>
 		/// <returns>The order of specified callback. If the callback is not registered, returns int.MaxValue.</returns>
 		public int GetListenerOrder(Action<T1, T2> callback)
@@ -105,28 +117,35 @@ namespace Extenity.MessagingToolbox
 			if (callback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Tried to add a null callback with order '{order}' and life span '{lifeSpan}'.");
+					Log.Info($"Tried to add a null callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
 				return; // Silently ignore
 			}
-			var alreadyExistingListenerOrder = GetListenerOrder(callback);
-			if (alreadyExistingListenerOrder != int.MaxValue)
+
+			for (var i = 0; i < Callbacks.Count; i++)
 			{
-				if (order != alreadyExistingListenerOrder)
+				if (Callbacks[i].Callback == callback)
 				{
-					// The callback is already registered but the order is different.
-					// So just change the order.
-					// TODO: This is a quick fix. Better just change the order than removing and adding the listener again. See commented out lines below.
-					RemoveListener(callback);
-					//ChangeListenerOrder(callback, order);
-					//return; // Do not proceed to adding a new listener.
-				}
-				else
-				{
-					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Tried to add an already registered callback with order '{order}' and life span '{lifeSpan}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
-					return; // Silently ignore
+					// The callback is already registered. See if there is a change in its parameters.
+					if (Callbacks[i].Order != order ||
+					    Callbacks[i].LifeSpan != lifeSpan ||
+					    Callbacks[i].LifeSpanTarget != lifeSpanTarget)
+					{
+						// Trying to add the same callback with different parameters. Just remove the existing one and
+						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
+						_RemoveListener(i);
+					}
+					else
+					{
+						if (ExtenityEventTools.VerboseLogging)
+							Log.Info($"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)}.");
+						return; // Silently ignore
+					}
+
+					break; // No need to iterate others. Impossible to add a delegate more than once.
 				}
 			}
+
+			// TODO: Make sure non-Unity object callbacks work too.
 			if (!(callback.Target as Object))
 			{
 				Log.CriticalError("Callbacks on non-Unity or non-existing objects are not supported.");
@@ -177,14 +196,19 @@ namespace Extenity.MessagingToolbox
 				}
 			}
 			if (ExtenityEventTools.VerboseLogging)
-				Log.Info($"Failed to remove listener for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'.");
+				Log.Info($"Failed to remove listener for {_Detailed_MethodAndObject(callback)}.");
 			return false;
+		}
+
+		private void _RemoveListener(int index)
+		{
+			Callbacks.RemoveAt(index);
 		}
 
 		public void RemoveAllListeners()
 		{
 			if (ExtenityEventTools.VerboseLogging)
-				Log.Info($"Removing all listeners.");
+				Log.Info("Removing all listeners.");
 
 			Callbacks.Clear();
 		}
@@ -309,9 +333,19 @@ namespace Extenity.MessagingToolbox
 
 		#region Log
 
+		private string _Detailed_MethodAndObject(Delegate callback)
+		{
+			return $"method '{callback.Method}' of object '{callback.FullNameOfTarget()}''";
+		}
+
 		private string _Detailed_OrderForMethodAndObject(int order, Delegate callback)
 		{
 			return $"order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'";
+		}
+
+		private string _Detailed_OrderAndLifeSpan(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
+		{
+			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $"with target '{lifeSpanTarget.ToString()}'" : "")}'";
 		}
 
 		private string _Detailed_OrderAndLifeSpanForMethodAndObject(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget, Delegate callback)
