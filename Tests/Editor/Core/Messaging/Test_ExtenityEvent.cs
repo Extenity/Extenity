@@ -2,6 +2,7 @@ using System;
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -23,7 +24,7 @@ namespace ExtenityTests.MessagingToolbox
 		#region Emitting (Invoke)
 
 		[Test]
-		public void BasicInvoking()
+		public void BasicInvoking_NonUnityObject()
 		{
 			TestEvent.AddListener(Callback);
 
@@ -32,29 +33,82 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void InvokingDoesNotGetAffectedByExceptions()
+		public void BasicInvoking_UnityObject()
 		{
-			TestEvent.AddListener(Callback, 10);
-			TestEvent.AddListener(ThrowingCallback, 20);
-			TestEvent.AddListener(Callback, 30);
+			TestEvent.AddListener(CreateTestEventSubject().Callback);
 
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			AssertExpectLog((LogType.Exception, "AAAAAAAAAAA")); // TODO: Copy and paste the exception here
-			AssertExpectLog((LogType.Log, "Called callback."));
+			TestEvent.Invoke();
+			AssertExpectLog((LogType.Log, "Called Subject callback."));
 		}
 
 		[Test]
-		public void InvokingUnsafeDoesPreventFutureCallsAfterExceptions()
+		public void InvokingWithMultipleListeners_Orderless()
 		{
-			TestEvent.AddListener(Callback, 10);
-			TestEvent.AddListener(ThrowingCallback, 20);
-			TestEvent.AddListener(Callback, 30);
+			TestEvent.AddListener(CallbackA);
+			TestEvent.AddListener(CallbackB);
+			TestEvent.AddListener(CallbackC);
 
 			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			AssertExpectLog((LogType.Exception, "AAAAAAAAAAA")); // TODO: Copy and paste the exception here
-			AssertExpectNoLogs(); // The third call will not happen, hence there will be no logs.
+			AssertExpectLog((LogType.Log, "Called callback A."),
+			                (LogType.Log, "Called callback B."),
+			                (LogType.Log, "Called callback C."));
+		}
+
+		[Test]
+		public void InvokingWithMultipleListeners_NegativeOrder()
+		{
+			TestEvent.AddListener(CallbackA, -10);
+			TestEvent.AddListener(CallbackB, -20);
+			TestEvent.AddListener(CallbackC, -30);
+
+			TestEvent.InvokeSafe();
+			AssertExpectLog((LogType.Log, "Called callback C."),
+			                (LogType.Log, "Called callback B."),
+			                (LogType.Log, "Called callback A."));
+		}
+
+
+		[Test]
+		public void InvokingWithMultipleListeners_MixedOrders()
+		{
+			TestEvent.AddListener(CallbackA, -10);
+			TestEvent.AddListener(CallbackB, -10);
+			TestEvent.AddListener(CallbackC, 0);
+			TestEvent.AddListener(CallbackD, 0);
+			TestEvent.AddListener(CallbackE, 30);
+			TestEvent.AddListener(CallbackF, 30);
+
+			TestEvent.InvokeSafe();
+			AssertExpectLog((LogType.Log, "Called callback A."),
+			                (LogType.Log, "Called callback B."),
+			                (LogType.Log, "Called callback C."),
+			                (LogType.Log, "Called callback D."),
+			                (LogType.Log, "Called callback E."),
+			                (LogType.Log, "Called callback F."));
+		}
+
+		[Test]
+		public void InvokingDoesNotGetAffectedByExceptions()
+		{
+			TestEvent.AddListener(CallbackA, 10);
+			TestEvent.AddListener(ThrowingCallback, 20);
+			TestEvent.AddListener(CallbackC, 30);
+
+			TestEvent.InvokeSafe();
+			AssertExpectLog((LogType.Log, "Called callback A."),
+			                (LogType.Exception, "Test_ExtenityEventException: Called throwing callback."),
+			                (LogType.Log, "Called callback C."));
+		}
+
+		[Test]
+		public void InvokingUnsafeDoesNotCatchExceptions()
+		{
+			TestEvent.AddListener(CallbackA, 10);
+			TestEvent.AddListener(ThrowingCallback, 20);
+			TestEvent.AddListener(CallbackC, 30);
+
+			Assert.Throws<Test_ExtenityEventException>(() => TestEvent.Invoke());
+			AssertExpectLog((LogType.Log, "Called callback A."));
 		}
 
 		#endregion
@@ -228,7 +282,6 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called callback with order 60.");
 				},
 				60);
-			AssertExpectLog((LogType.Log, "Called callback with order 60."));
 
 			TestEvent.AddListener(
 				() =>
@@ -236,40 +289,37 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called callback with order -40.");
 				},
 				-40);
-			AssertExpectLog((LogType.Log, "Called callback with order -40."));
 
 			TestEvent.AddListener(() =>
 			{
 				Log.Info("Called callback with default order, added first.");
 			});
-			AssertExpectLog((LogType.Log, "Called callback with default order, added first."));
+
 			TestEvent.AddListener(
 				() =>
 				{
 					Log.Info("Called callback with default order, added second.");
 				});
-			AssertExpectLog((LogType.Log, "Called callback with default order, added second."));
 
 			TestEvent.Invoke();
-			AssertExpectLog((LogType.Log, "Called callback with order -40."));
-			AssertExpectLog((LogType.Log, "Called callback with default order, added first."));
-			AssertExpectLog((LogType.Log, "Called callback with default order, added second."));
-			AssertExpectLog((LogType.Log, "Called callback with order 60."));
+			AssertExpectLog((LogType.Log, "Called callback with order -40."),
+			                (LogType.Log, "Called callback with default order, added first."),
+			                (LogType.Log, "Called callback with default order, added second."),
+			                (LogType.Log, "Called callback with order 60."));
 		}
 
 		#endregion
 
 		#region General
 
-		private void Callback()
-		{
-			Log.Info("Called callback.");
-		}
-
-		private void ThrowingCallback()
-		{
-			throw new Exception("Called throwing callback.");
-		}
+		private void Callback() { Log.Info("Called callback."); }
+		private void CallbackA() { Log.Info("Called callback A."); }
+		private void CallbackB() { Log.Info("Called callback B."); }
+		private void CallbackC() { Log.Info("Called callback C."); }
+		private void CallbackD() { Log.Info("Called callback D."); }
+		private void CallbackE() { Log.Info("Called callback E."); }
+		private void CallbackF() { Log.Info("Called callback F."); }
+		private void ThrowingCallback() { throw new Test_ExtenityEventException("Called throwing callback."); }
 
 		#endregion
 	}

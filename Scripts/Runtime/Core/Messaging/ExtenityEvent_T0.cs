@@ -16,10 +16,12 @@ namespace Extenity.MessagingToolbox
 			public readonly ListenerLifeSpan LifeSpan;
 			public readonly Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
+			public readonly bool IsUnityObjectDelegate;
 
 			public Entry(Action callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				Callback = callback;
+				IsUnityObjectDelegate = callback.Target as Object;
 				Order = order;
 				LifeSpan = lifeSpan;
 				LifeSpanTarget = lifeSpanTarget;
@@ -38,8 +40,23 @@ namespace Extenity.MessagingToolbox
 				get
 				{
 					return Callback == null ||
-					       !(Callback.Target as Object) ||
+					       (IsUnityObjectDelegate && !(Callback.Target as Object)) ||
 					       (IsLifeSpanTargetAssigned && !LifeSpanTarget);
+				}
+			}
+
+			public Object LogObject
+			{
+				get
+				{
+					// First, try to get callback delegate object. If not available, get the LifeSpanTarget object.
+					if (Callback!=null)
+					{
+						var obj = Callback.Target as Object;
+						if (obj)
+							return obj;
+					}
+					return LifeSpanTarget;
 				}
 			}
 		}
@@ -143,13 +160,6 @@ namespace Extenity.MessagingToolbox
 
 					break; // No need to iterate others. Impossible to add a delegate more than once.
 				}
-			}
-
-			// TODO: Make sure non-Unity object callbacks work too.
-			if (!(callback.Target as Object))
-			{
-				Log.CriticalError("Callbacks on non-Unity or non-existing objects are not supported.");
-				return;
 			}
 
 			// Cover all the shortcuts that we can add the listener at the end of the list and move on.
@@ -257,10 +267,9 @@ namespace Extenity.MessagingToolbox
 
 				for (int i = 0; i < CallbacksCopy.Count; i++)
 				{
-					var callback = CallbacksCopy[i].Callback;
-					if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
+					if (!CallbacksCopy[i].IsObjectDestroyed)
 					{
-						callback();
+						CallbacksCopy[i].Callback();
 					}
 					else
 					{
@@ -307,16 +316,15 @@ namespace Extenity.MessagingToolbox
 
 			for (int i = 0; i < CallbacksCopy.Count; i++)
 			{
-				var callback = CallbacksCopy[i].Callback;
-				if (callback != null && (callback.Target as Object)) // Check if the object is not destroyed
+				if (!CallbacksCopy[i].IsObjectDestroyed)
 				{
 					try
 					{
-						callback();
+						CallbacksCopy[i].Callback();
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception, callback.Target as Object);
+						Log.Exception(exception, CallbacksCopy[i].LogObject);
 					}
 				}
 				else

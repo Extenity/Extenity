@@ -17,6 +17,9 @@ namespace ExtenityTests.MessagingToolbox
 				_TestEvent = null;
 			}
 
+			DestroyLifeSpanTargetTestObject(false);
+			DestroyTestEventSubject(false);
+
 			base.OnDeinitialize();
 		}
 
@@ -52,21 +55,24 @@ namespace ExtenityTests.MessagingToolbox
 			return LifeSpanTargetTestObject;
 		}
 
-		public void DestroyLifeSpanTargetTestObject()
+		public void DestroyLifeSpanTargetTestObject(bool ensureExists = true)
 		{
-			if (!LifeSpanTargetTestObject)
+			if (ensureExists && !LifeSpanTargetTestObject)
 				throw new Exception("The LifeSpanTarget test object was not created."); // There is something wrong with tests.
 
-			if (Application.isPlaying)
+			if (LifeSpanTargetTestObject)
 			{
-				GameObject.Destroy(LifeSpanTargetTestObject);
-			}
-			else
-			{
-				GameObject.DestroyImmediate(LifeSpanTargetTestObject);
-			}
+				if (Application.isPlaying)
+				{
+					GameObject.Destroy(LifeSpanTargetTestObject);
+				}
+				else
+				{
+					GameObject.DestroyImmediate(LifeSpanTargetTestObject);
+				}
 
-			LifeSpanTargetTestObject = null;
+				LifeSpanTargetTestObject = null;
+			}
 		}
 
 		#endregion
@@ -84,21 +90,24 @@ namespace ExtenityTests.MessagingToolbox
 			return TestEventSubject;
 		}
 
-		public void DestroyTestEventSubject()
+		public void DestroyTestEventSubject(bool ensureExists = true)
 		{
-			if (!TestEventSubject)
+			if (ensureExists && !TestEventSubject)
 				throw new Exception("The TestEventSubject test object was not created."); // There is something wrong with tests.
 
-			if (Application.isPlaying)
+			if (TestEventSubject)
 			{
-				GameObject.Destroy(TestEventSubject.gameObject);
-			}
-			else
-			{
-				GameObject.DestroyImmediate(TestEventSubject.gameObject);
-			}
+				if (Application.isPlaying)
+				{
+					GameObject.Destroy(TestEventSubject.gameObject);
+				}
+				else
+				{
+					GameObject.DestroyImmediate(TestEventSubject.gameObject);
+				}
 
-			TestEventSubject = null;
+				TestEventSubject = null;
+			}
 		}
 
 		#endregion
