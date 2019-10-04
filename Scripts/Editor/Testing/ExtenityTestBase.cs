@@ -8,6 +8,7 @@ using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace Extenity.Testing
 {
@@ -127,6 +128,14 @@ namespace Extenity.Testing
 
 		protected void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
 		{
+			foreach (var expectedExceptionLog in expectedLogs.Where(entry => entry.Type == LogType.Exception))
+			{
+				// Tell the Unity we are expecting the exception. Unity checks the logs if an exception was logged in
+				// test. We are handling the exception log in out own way, so there is no need for Unity to jump into
+				// conclusions.
+				LogAssert.Expect(LogType.Exception, expectedExceptionLog.Message);
+			}
+
 			Assert.AreEqual(expectedLogs.ToList(), Logs);
 			Logs.Clear();
 		}

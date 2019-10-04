@@ -260,9 +260,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 			EditorCoroutineUtility.StartCoroutineOwnerless(RoutineThrowingGUIException());
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
 
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "ExitGUIException: Exception of type 'UnityEngine.ExitGUIException' was thrown.");
-
 			AssertExpectLog((LogType.Log, "PreException"));
 			yield return null;
 			AssertExpectLog((LogType.Exception, "ExitGUIException: Exception of type 'UnityEngine.ExitGUIException' was thrown."));
@@ -277,9 +274,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveNestedCoroutine(5, 100, 1));
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
-
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "Exception: Nested 5 throws");
 
 			AssertExpectLog((LogType.Log, "Nested 1 start"));
 			yield return null;
@@ -309,9 +303,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveYieldedCoroutine(5, 100, 1));
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
-
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "Exception: Nested 5 throws");
 
 			AssertExpectLog((LogType.Log, "Nested 1 start"));
 			yield return null;
@@ -534,9 +525,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 			EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveNestedCoroutine(1, 100, 1, new Func<Exception, bool>[] { OnExceptionButDontCatch_Depth1, OnExceptionButDontCatch_Depth2, OnExceptionButDontCatch_Depth3, OnExceptionButDontCatch_Depth4, OnExceptionButDontCatch_Depth5 }), OnExceptionButDontCatch_Main);
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
 
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "Exception: Nested 1 throws");
-
 			AssertExpectLog((LogType.Log, "Nested 1 start"),
 							(LogType.Log, "Passed the exception (Main): Nested 1 throws"),
 							(LogType.Exception, "Exception: Nested 1 throws"));
@@ -547,9 +535,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveNestedCoroutine(2, 100, 1, new Func<Exception, bool>[] { OnExceptionButDontCatch_Depth1, OnExceptionButDontCatch_Depth2, OnExceptionButDontCatch_Depth3, OnExceptionButDontCatch_Depth4, OnExceptionButDontCatch_Depth5 }), OnExceptionButDontCatch_Main);
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
-
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "Exception: Nested 2 throws");
 
 			AssertExpectLog((LogType.Log, "Nested 1 start"));
 			yield return null;
@@ -564,9 +549,6 @@ namespace ExtenityTests.ParallelToolbox.Editor
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveNestedCoroutine(5, 100, 1, new Func<Exception, bool>[] { OnExceptionButDontCatch_Depth1, OnExceptionButDontCatch_Depth2, OnExceptionButDontCatch_Depth3, OnExceptionButDontCatch_Depth4, OnExceptionButDontCatch_Depth5 }), OnExceptionButDontCatch_Main);
 			yield return null; AssertExpectNoLogs(); yield return null; // We start to get the logs 2 frames after.
-
-			// Expect the exception in near future.
-			LogAssert.Expect(LogType.Exception, "Exception: Nested 5 throws");
 
 			AssertExpectLog((LogType.Log, "Nested 1 start"));
 			yield return null;
