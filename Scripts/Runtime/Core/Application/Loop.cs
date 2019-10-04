@@ -44,6 +44,8 @@ namespace Extenity
 			FastInvokeHandler.Instance.CustomFixedUpdate();
 
 			FixedUpdateCallbacks.InvokeSafe();
+
+			FixedUpdateCallbacks.ClearIfRequired();
 		}
 
 		private void Update()
@@ -62,6 +64,8 @@ namespace Extenity
 			FastInvokeHandler.Instance.CustomUpdate();
 
 			UpdateCallbacks.InvokeSafe();
+
+			UpdateCallbacks.ClearIfRequired();
 		}
 
 		private void LateUpdate()
@@ -71,6 +75,8 @@ namespace Extenity
 			DeltaTime = UnityEngine.Time.deltaTime;
 			UnscaledTime = UnityEngine.Time.unscaledTime;
 			LateUpdateCallbacks.InvokeSafe();
+
+			LateUpdateCallbacks.ClearIfRequired();
 		}
 
 		#endregion
