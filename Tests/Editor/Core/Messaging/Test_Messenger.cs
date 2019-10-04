@@ -220,23 +220,37 @@ namespace ExtenityTests.MessagingToolbox
 			TestMessenger.AddSwitchListener("LevelLoaded",
 			                               () =>
 			                               {
-				                               Log.Info("Called SwitchOn callback with default order.");
+				                               Log.Info("Called SwitchOn callback with default order, added first.");
 			                               },
 			                               () =>
 			                               {
-				                               Log.Info("Called SwitchOff callback with default order.");
+				                               Log.Info("Called SwitchOff callback with default order, added first.");
 			                               },
 			                               SwitchCallbackExpectation.All);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added first."));
+
+			TestMessenger.AddSwitchListener("LevelLoaded",
+			                                () =>
+			                                {
+				                                Log.Info("Called SwitchOn callback with default order, added second.");
+			                                },
+			                                () =>
+			                                {
+				                                Log.Info("Called SwitchOff callback with default order, added second.");
+			                                },
+			                                SwitchCallbackExpectation.All);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added second."));
 
 			TestMessenger.EmitSwitchOn("LevelLoaded");
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order -40."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added first."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added second."));
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order 60."));
 
 			TestMessenger.EmitSwitchOff("LevelLoaded");
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."));
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added first."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added second."));
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order 60."));
 		}
 
