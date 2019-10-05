@@ -21,19 +21,14 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void Switch_AlrightToEmitOnInBlank()
+		public void Switch_AlrightToSwitchWithoutCallbacks()
 		{
 			TestMessenger.EmitSwitchOn("LevelLoaded");
-		}
-
-		[Test]
-		public void Switch_AlrightToEmitOffInBlank()
-		{
 			TestMessenger.EmitSwitchOff("LevelLoaded");
 		}
 
 		[Test]
-		public void Switch_InitiallyConsideredSwitchedOff()
+		public void Switch_InitiallySwitchedOff()
 		{
 			var isSwitchedOn = TestMessenger.GetSwitch("LevelLoaded");
 			Assert.That(isSwitchedOn, Is.False);

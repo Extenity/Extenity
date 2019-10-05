@@ -5,9 +5,14 @@ namespace ExtenityTests.MessagingToolbox
 
 	public class Test_ExtenitySwitchSubject : MonoBehaviour
 	{
-		public void Callback()
+		public void CallbackOn()
 		{
-			Log.Info("Called Subject callback.");
+			Log.Info("Called Subject SwitchOn callback.");
+		}
+
+		public void CallbackOff()
+		{
+			Log.Info("Called Subject SwitchOff callback.");
 		}
 	}
 

@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
-	public enum ListenerLifeSpan
+	public enum ListenerLifeSpan : byte
 	{
 		Permanent,
 		RemovedAtFirstEmit,

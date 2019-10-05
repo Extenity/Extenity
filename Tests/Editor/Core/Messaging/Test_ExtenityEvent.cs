@@ -1,6 +1,8 @@
+using System;
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -22,18 +24,20 @@ namespace ExtenityTests.MessagingToolbox
 		#region Emitting (Invoke)
 
 		[Test]
-		public void BasicInvoking_NonUnityObject()
+		public void BasicInvoking_NonUnityObjectCallback()
 		{
 			TestEvent.AddListener(Callback);
+			Assert.That(new Action(Callback).Target as Object, Is.Null);
 
 			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called callback."));
 		}
 
 		[Test]
-		public void BasicInvoking_UnityObject()
+		public void BasicInvoking_UnityObjectCallback()
 		{
 			TestEvent.AddListener(CreateTestEventSubject().Callback);
+			Assert.That(new Action(TestEventSubject.Callback).Target as Object, Is.Not.Null);
 
 			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, "Called Subject callback."));
@@ -86,7 +90,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void InvokingDoesNotGetAffectedByExceptions()
+		public void InvokingSafeIsNotAffectedByExceptions()
 		{
 			TestEvent.AddListener(CallbackA, 10);
 			TestEvent.AddListener(ThrowingCallback, 20);

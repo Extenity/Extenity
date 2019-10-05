@@ -13,23 +13,27 @@ namespace Extenity.MessagingToolbox
 		public struct Entry
 		{
 			public readonly Action Callback;
+			public readonly bool IsCallbackTargetsUnityObject;
 			public readonly int Order;
 			public readonly ListenerLifeSpan LifeSpan;
 			public readonly Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
-			public readonly bool IsUnityObjectDelegate;
 
 			public Entry(Action callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				Callback = callback;
-				IsUnityObjectDelegate = callback.Target as Object;
+				IsCallbackTargetsUnityObject = callback?.Target as Object;
 				Order = order;
 				LifeSpan = lifeSpan;
 				LifeSpanTarget = lifeSpanTarget;
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
 			}
 
-			public bool IsValid => Callback != null;
+			public bool IsInvalid => Callback == null;
+
+			public bool IsCallbackTargetedUnityObjectDestroyed => IsCallbackTargetsUnityObject && !(Callback.Target as Object);
+
+			public bool IsLifeSpanTargetDestroyed => IsLifeSpanTargetAssigned && !LifeSpanTarget;
 
 			public bool ShouldRemoveAfterEmit
 			{
@@ -40,9 +44,9 @@ namespace Extenity.MessagingToolbox
 			{
 				get
 				{
-					return Callback == null ||
-					       (IsUnityObjectDelegate && !(Callback.Target as Object)) ||
-					       (IsLifeSpanTargetAssigned && !LifeSpanTarget);
+					return IsInvalid ||
+					       IsCallbackTargetedUnityObjectDestroyed ||
+					       IsLifeSpanTargetDestroyed;
 				}
 			}
 
@@ -89,22 +93,6 @@ namespace Extenity.MessagingToolbox
 			return default;
 		}
 
-		/// <summary>
-		/// Finds the specified callback in registered callbacks list and tells it's order.
-		/// The order is the value that is passed into the system at the time the callback
-		/// is registered via AddListener.
-		/// </summary>
-		/// <returns>The order of specified callback. If the callback is not registered, returns int.MaxValue.</returns>
-		public int GetListenerOrder(Action callback)
-		{
-			for (var i = 0; i < Callbacks.Count; i++)
-			{
-				if (Callbacks[i].Callback == callback)
-					return Callbacks[i].Order;
-			}
-			return int.MaxValue;
-		}
-
 		public void Clear()
 		{
 			for (int i = Callbacks.Count - 1; i >= 0; i--)
@@ -139,6 +127,7 @@ namespace Extenity.MessagingToolbox
 				return; // Silently ignore
 			}
 
+			// See if the callback was already registered.
 			for (var i = 0; i < Callbacks.Count; i++)
 			{
 				if (Callbacks[i].Callback == callback)
@@ -251,6 +240,7 @@ namespace Extenity.MessagingToolbox
 
 			try
 			{
+				// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
 				// Copy the list to allow adding and removing callbacks while processing the invoke.
 				if (CallbacksCopy == null)
 					CallbacksCopy = new List<Entry>(Callbacks.Count);
@@ -300,6 +290,7 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 
+			// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
 			// Copy the list to allow adding and removing callbacks while processing the invoke.
 			if (CallbacksCopy == null)
 				CallbacksCopy = new List<Entry>(Callbacks.Count);
