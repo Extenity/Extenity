@@ -305,6 +305,19 @@ namespace ExtenityTests.MessagingToolbox
 		#region Callback Life Span
 
 		[Test]
+		public void EndsAfterRemovingListener()
+		{
+			TestSwitch.AddListener(CallbackOn, null);
+			TestSwitch.RemoveListener(CallbackOn, null);
+
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
+			AssertExpectNoLogs();
+		}
+
+		[Test]
 		public void HavingLifeSpanOfRemovedAtFirstEmitConsideredFastTrackAndWontBeRegisteredIntoCallbacksList()
 		{
 			TestSwitch.SwitchOnSafe();

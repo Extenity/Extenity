@@ -11,95 +11,61 @@ namespace ExtenityTests.MessagingToolbox
 
 	public class Test_Messenger : Test_MessengerTestBase
 	{
+		// -----------------------------------------------------------------------------------
+		//    Switch
+		// Please note that the tests below are only the tip of the iceberg. ExtenitySwitch
+		// is used as the underlying platform and it has its own tests. The tests here only
+		// covers the ExtenitySwitch integration of Messenger.
+		// -----------------------------------------------------------------------------------
+
 		#region Switch Basics
-
-		[Test]
-		public void Switch_AlrightToRegisterToNotYetEmittedSwitch()
-		{
-			// It's alright to register to an unknown Switch.
-			TestMessenger.AddSwitchListener("LevelLoaded", null, null);
-		}
-
-		[Test]
-		public void Switch_AlrightToSwitchWithoutCallbacks()
-		{
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-		}
 
 		[Test]
 		public void Switch_InitiallySwitchedOff()
 		{
 			var isSwitchedOn = TestMessenger.GetSwitch("LevelLoaded");
-			Assert.That(isSwitchedOn, Is.False);
+			Assert.False(isSwitchedOn);
+		}
+
+		[Test]
+		public void Switch_AlrightToSwitchWithoutCallbacks()
+		{
+			TestMessenger.SwitchOn("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
+		}
+
+		[Test]
+		public void Switch_AlrightToRegisterToNotYetEmittedSwitch()
+		{
+			TestMessenger.AddSwitchListener("LevelLoaded", null, null);
 		}
 
 		#endregion
 
-		#region Switch Emitting
+		#region Switch On/Off
 
 		[Test]
-		public void Switch_All_InitiallySwitchedOff()
+		public void Switch_CallbackInstantlyInvoked_InitiallySwitchedOff()
 		{
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.All);
-
-			// Callback is immediately called whether the switch is on or off.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-		}
-
-		[Test]
-		public void Switch_All_InitiallySwitchedOn()
-		{
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.All);
-
-			// Callback is immediately called whether the switch is on or off.
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
+			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 		}
 
 		[Test]
-		public void Switch_EndsAfterRemovingListener()
+		public void Switch_CallbackInstantlyInvoked_InitiallySwitchedOn()
 		{
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.All);
+			TestMessenger.SwitchOn("LevelLoaded");
+			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			TestMessenger.RemoveSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectNoLogs();
 		}
-
-		#endregion
-
-		#region Switch Emitting - Edge Cases
 
 		[Test]
 		public void Switch_EmittingSwitchedOffAtFirstWontCallTheOffCallback()
 		{
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.All);
+			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 
-			TestMessenger.EmitSwitchOff("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
 			AssertExpectNoLogs();
 		}
 
@@ -108,154 +74,29 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			RegisterSwitchCallbacks();
 
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			TestMessenger.EmitSwitchOff("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
+			TestMessenger.SwitchOff("LevelLoaded");
 			AssertExpectNoLogs();
 
-			TestMessenger.EmitSwitchOn("LevelLoaded");
+			TestMessenger.SwitchOn("LevelLoaded");
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.EmitSwitchOn("LevelLoaded");
+			TestMessenger.SwitchOn("LevelLoaded");
+			TestMessenger.SwitchOn("LevelLoaded");
+			TestMessenger.SwitchOn("LevelLoaded");
+			TestMessenger.SwitchOn("LevelLoaded");
 			AssertExpectNoLogs();
-		}
-
-		#endregion
-
-		#region Switch Callback Expectation Modes
-
-		[Test]
-		public void Switch_CallbackExpectation_ForTheFirstOnCall_InitiallySwitchedOff()
-		{
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.ForTheFirstOnCall);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			// The callback will be deregistered after this.
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectNoLogs();
-		}
-
-		[Test]
-		public void Switch_CallbackExpectation_ForTheFirstOnCall_InitiallySwitchedOn()
-		{
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-
-			// The callback won't be registered at all. It will immediately be called and that's all.
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.ForTheFirstOnCall);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectNoLogs();
-		}
-
-		[Test]
-		public void Switch_CallbackExpectation_ForTheFirstOffCall_InitiallySwitchedOn()
-		{
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.ForTheFirstOffCall);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-
-			// The callback will be deregistered after this.
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectNoLogs();
-		}
-
-		[Test]
-		public void Switch_CallbackExpectation_ForTheFirstOffCall_InitiallySwitchedOff()
-		{
-			// The callback won't be registered at all. It will immediately be called and that's all.
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, SwitchCallbackExpectation.ForTheFirstOffCall);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectNoLogs();
-		}
-
-		#endregion
-
-		#region Switch Callback Order
-
-		[Test]
-		public void Switch_CallbackOrder()
-		{
-			TestMessenger.AddSwitchListener("LevelLoaded",
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOn callback with order 60.");
-			                               },
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOff callback with order 60.");
-			                               },
-			                               SwitchCallbackExpectation.All, 60);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order 60."));
-
-			TestMessenger.AddSwitchListener("LevelLoaded",
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOn callback with order -40.");
-			                               },
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOff callback with order -40.");
-			                               },
-			                               SwitchCallbackExpectation.All, -40);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."));
-
-			TestMessenger.AddSwitchListener("LevelLoaded",
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOn callback with default order, added first.");
-			                               },
-			                               () =>
-			                               {
-				                               Log.Info("Called SwitchOff callback with default order, added first.");
-			                               },
-			                               SwitchCallbackExpectation.All);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added first."));
-
-			TestMessenger.AddSwitchListener("LevelLoaded",
-			                                () =>
-			                                {
-				                                Log.Info("Called SwitchOn callback with default order, added second.");
-			                                },
-			                                () =>
-			                                {
-				                                Log.Info("Called SwitchOff callback with default order, added second.");
-			                                },
-			                                SwitchCallbackExpectation.All);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added second."));
-
-			TestMessenger.EmitSwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order -40."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added first."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added second."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order 60."));
-
-			TestMessenger.EmitSwitchOff("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added first."));
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with default order, added second."));
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order 60."));
 		}
 
 		#endregion
 
 		#region General
 
-		private void RegisterSwitchCallbacks(SwitchCallbackExpectation switchCallbackExpectation = SwitchCallbackExpectation.All)
+		private void RegisterSwitchCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
-			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, switchCallbackExpectation);
+			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback, order, lifeSpan, lifeSpanTarget);
 
 			if (TestMessenger.GetSwitch("LevelLoaded"))
 			{

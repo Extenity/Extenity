@@ -21,20 +21,7 @@ namespace Extenity.MessagingToolbox
 	// Feature: Ability to deregister from event easily, inside the callback. Something like Messenger.Deregister(gameObject, MyCallback) or better yet, Messenger.DeregisterCurrentCallback(). Note that DeregisterCurrentCallback should be thread safe. Also it's better to check if we really are in the process of calling the callback, and throw an error if called outside of callback.
 	// Feature: Deregistering a callback while dispatching the event should not break anything.
 
-	public enum SwitchCallbackExpectation
-	{
-		All,
-
-		/// <summary>
-		/// Deregisters itself after first On call.
-		/// </summary>
-		ForTheFirstOnCall,
-
-		/// <summary>
-		/// Deregisters itself after first Off call.
-		/// </summary>
-		ForTheFirstOffCall,
-	}
+	// TODO: Proper Switch cleanup. It would be great to have a functionality that checks the underlying system status.
 
 	public class Messenger : MonoBehaviour
 	{
@@ -182,7 +169,7 @@ namespace Extenity.MessagingToolbox
 			{
 				if (!listenerInfo.IsValidAndNotEmpty)
 					continue;
-				_DelegateCleantup(listenerInfo.Delegates);
+				_DelegateCleanup(listenerInfo.Delegates);
 			}
 		}
 
@@ -690,82 +677,18 @@ namespace Extenity.MessagingToolbox
 		private struct SwitchListenerInfo
 		{
 			public string SwitchId;
-			public bool IsSwitchedOn;
-			public List<Delegate> SwitchOnDelegates;
-			public List<Delegate> SwitchOffDelegates;
+			public ExtenitySwitch Switch;
 
-			public bool IsValid
-			{
-				get { return !string.IsNullOrEmpty(SwitchId); }
-			}
-			public bool IsSwitchOnDelegatesNotEmpty
-			{
-				get { return SwitchOnDelegates != null && SwitchOnDelegates.Count > 0; }
-			}
-			public bool IsSwitchOffDelegatesNotEmpty
-			{
-				get { return SwitchOffDelegates != null && SwitchOffDelegates.Count > 0; }
-			}
-			public bool IsValidAndNotEmpty
-			{
-				get { return IsValid && (IsSwitchOnDelegatesNotEmpty || IsSwitchOffDelegatesNotEmpty); }
-			}
+			public bool IsValid => !string.IsNullOrEmpty(SwitchId);
 		}
 
 		private readonly Dictionary<string, SwitchListenerInfo> SwitchListenerInfoDictionary = new Dictionary<string, SwitchListenerInfo>();
-
-		private SwitchListenerInfo GetSwitchListenerInfo(string switchId)
-		{
-			SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo);
-			return listenerInfo;
-		}
-
-		private List<Delegate> SetSwitchAndGetDelegatesIfChanged(string switchId, bool isSwitchedOn)
-		{
-			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
-			{
-				// There is no listener registered before. So no delegate to call.
-				return null;
-			}
-			if (listenerInfo.IsSwitchedOn != isSwitchedOn)
-			{
-				listenerInfo.IsSwitchedOn = isSwitchedOn;
-				return isSwitchedOn
-					? listenerInfo.SwitchOnDelegates
-					: listenerInfo.SwitchOffDelegates;
-			}
-			return null;
-		}
-
-		private List<Delegate> GetSwitchOnDelegates(string switchId)
-		{
-			if (SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
-			{
-				if (listenerInfo.IsSwitchOnDelegatesNotEmpty)
-				{
-					return listenerInfo.SwitchOnDelegates;
-				}
-			}
-			return null;
-		}
-
-		private List<Delegate> GetSwitchOffDelegates(string switchId)
-		{
-			if (SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
-			{
-				if (listenerInfo.IsSwitchOffDelegatesNotEmpty)
-				{
-					return listenerInfo.SwitchOffDelegates;
-				}
-			}
-			return null;
-		}
 
 		public bool GetSwitch(string switchId)
 		{
 			if (SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 			{
-				return listenerInfo.IsSwitchedOn;
+				return listenerInfo.Switch.IsSwitchedOn;
 			}
 			return false; // Default value of Switch is false.
 		}
@@ -781,10 +704,9 @@ namespace Extenity.MessagingToolbox
 		{
 			foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
 			{
-				if (!listenerInfo.IsValidAndNotEmpty)
+				if (!listenerInfo.IsValid)
 					continue;
-				_DelegateCleantup(listenerInfo.SwitchOnDelegates);
-				_DelegateCleantup(listenerInfo.SwitchOffDelegates);
+				listenerInfo.Switch.ClearIfRequired();
 			}
 		}
 
@@ -792,19 +714,7 @@ namespace Extenity.MessagingToolbox
 
 		#region Switch - Add Listener
 
-		/// See <see cref="AddSwitchListener(string,Delegate)"/>
-		public void AddSwitchListener(
-			string switchId, MessengerAction switchOnListener, MessengerAction switchOffListener,
-			SwitchCallbackExpectation callbackExpectation = SwitchCallbackExpectation.All,
-			int order = 0)
-		{
-			AddSwitchListener(switchId, (Delegate)switchOnListener, (Delegate)switchOffListener, callbackExpectation);
-		}
-
-		public void AddSwitchListener(
-			string switchId, Delegate switchOnListener, Delegate switchOffListener,
-			SwitchCallbackExpectation callbackExpectation = SwitchCallbackExpectation.All,
-			int order = 0)
+		public void AddSwitchListener(string switchId, Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
 			// It's alright to not have the listeners.
 			// if (switchOnListener == null)
@@ -814,54 +724,24 @@ namespace Extenity.MessagingToolbox
 			if (string.IsNullOrEmpty(switchId))
 				throw new ArgumentOutOfRangeException(nameof(switchId), "Switch ID should not be empty.");
 
-			if ((switchOnListener.Target as Object) == null ||
-			    (switchOffListener.Target as Object) == null)
-			{
-				LogError_AddingNonUnityObjectAsSwitchListener();
-				return;
-			}
-
 			// Is this the first time we add a listener for this switchId?
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 			{
-				// Do the initialization for this switchId
-				{
-					listenerInfo.SwitchId = switchId;
-
-					// Create a brand new delegate list and add listener to list
-					if (switchOnListener.Target != null)
-					{
-						listenerInfo.SwitchOnDelegates = new List<Delegate>(ListenerDelagateListCapacity);
-						listenerInfo.SwitchOnDelegates.Add(switchOnListener);
-					}
-					if (switchOffListener.Target != null)
-					{
-						listenerInfo.SwitchOffDelegates = new List<Delegate>(ListenerDelagateListCapacity);
-						listenerInfo.SwitchOffDelegates.Add(switchOffListener);
-					}
-				}
-
+				// WARNING! Intentional code duplication. See 1124618247.
+				// Do the initialization for this switchId. Note that this is a struct, so treat carefully.
+				listenerInfo.SwitchId = switchId;
+				listenerInfo.Switch = new ExtenitySwitch();
 				SwitchListenerInfoDictionary.Add(switchId, listenerInfo);
-
-				// Instantly return without getting into further consistency checks.
-				return;
 			}
 
-			_AddDelegateEnsuringNoDuplicates(ref listenerInfo.SwitchOnDelegates, switchOnListener);
-			_AddDelegateEnsuringNoDuplicates(ref listenerInfo.SwitchOffDelegates, switchOffListener);
+			listenerInfo.Switch.AddListener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
 		}
 
 		#endregion
 
 		#region Switch - Remove Listener
 
-		/// See <see cref="RemoveSwitchListener(string,Delegate)"/>
-		public void RemoveSwitchListener(string switchId, MessengerAction switchOnListener, MessengerAction switchOffListener)
-		{
-			RemoveSwitchListener(switchId, (Delegate)switchOnListener, (Delegate)switchOffListener);
-		}
-
-		public void RemoveSwitchListener(string switchId, Delegate switchOnListener, Delegate switchOffListener)
+		public void RemoveSwitchListener(string switchId, Action switchOnCallback, Action switchOffCallback)
 		{
 			// It's alright to not have the listeners.
 			// if (switchOnListener == null)
@@ -874,98 +754,47 @@ namespace Extenity.MessagingToolbox
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 				return;
 
-			if (listenerInfo.SwitchOnDelegates != null)
-			{
-				lock (listenerInfo.SwitchOnDelegates)
-				{
-					listenerInfo.SwitchOnDelegates.Remove(switchOnListener);
-				}
-			}
-			if (listenerInfo.SwitchOffDelegates != null)
-			{
-				lock (listenerInfo.SwitchOffDelegates)
-				{
-					listenerInfo.SwitchOffDelegates.Remove(switchOffListener);
-				}
-			}
+			listenerInfo.Switch.RemoveListener(switchOnCallback, switchOffCallback);
 		}
 
 		#endregion
 
-		#region Switch - Emit
+		#region Switch - Switch On/Off
 
-		public void EmitSwitchOn(string switchId)
+		public void SwitchOn(string switchId)
 		{
-			EmitSwitch(switchId, true);
+			Switch(switchId, true);
 		}
 
-		public void EmitSwitchOff(string switchId)
+		public void SwitchOff(string switchId)
 		{
-			EmitSwitch(switchId, false);
+			Switch(switchId, false);
 		}
 
-		public void EmitSwitch(string switchId, bool isSwitchedOn)
+		public void Switch(string switchId, bool isSwitchedOn)
 		{
-			var delegates = SetSwitchAndGetDelegatesIfChanged(switchId, isSwitchedOn);
-			if (delegates == null)
+			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
+			{
+				// There is no listener registered before. So no delegate to call. But if switching on, we must keep
+				// that information for future listeners.
+				if (isSwitchedOn)
+				{
+					// WARNING! Intentional code duplication. See 1124618247.
+					// Do the initialization for this switchId. Note that this is a struct, so treat carefully.
+					listenerInfo.SwitchId = switchId;
+					listenerInfo.Switch = new ExtenitySwitch();
+					SwitchListenerInfoDictionary.Add(switchId, listenerInfo);
+
+					listenerInfo.Switch.SwitchOnSafe();
+				}
 				return;
-			for (int i = 0; i < delegates.Count; i++)
-			{
-				var castListener = delegates[i] as MessengerAction;
-				if (castListener != null)
-				{
-					if (castListener.Target as Object) // Check if the object is not destroyed
-					{
-						try
-						{
-							castListener.Invoke();
-						}
-						catch (Exception exception)
-						{
-							Log.Exception(exception, castListener.Target as Object);
-						}
-					}
-					else
-						SwitchListenerListCleanupRequired = true;
-				}
-				else
-					Log.InternalError(1174527112); // Well, delegates are in an unexpected type, which is controlled entirely internally without user intervention. How so?
 			}
+			listenerInfo.Switch.SwitchSafe(isSwitchedOn);
 		}
 
 		#endregion
 
-		#region Switch - Log Errors
-
-		private void LogError_AddingNonUnityObjectAsSwitchListener()
-		{
-			Log.CriticalError("Switch system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.", gameObject);
-		}
-
-		#endregion
-
-		#region Switch - Debug
-
-		public void DebugLogListAllSwitchListeners()
-		{
-			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendFormat("Listing all {0} Switch listeners\n", MessageListenerInfoDictionary.Count);
-
-			foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
-			{
-				stringBuilder.AppendFormat("   Switch ID: {0}    On Listeners: {1}\n",
-				                           listenerInfo.SwitchId,
-				                           listenerInfo.SwitchOnDelegates?.Count ?? 0);
-				WriteDelegateDetails(stringBuilder, listenerInfo.SwitchOnDelegates);
-
-				stringBuilder.AppendFormat("   Switch ID: {0}    Off Listeners: {1}\n",
-				                           listenerInfo.SwitchId,
-				                           listenerInfo.SwitchOffDelegates?.Count ?? 0);
-				WriteDelegateDetails(stringBuilder, listenerInfo.SwitchOffDelegates);
-			}
-
-			Log.Info(stringBuilder.ToString(), gameObject);
-		}
+		#region General - Debug
 
 		private static void WriteDelegateDetails(StringBuilder stringBuilder, List<Delegate> delegates)
 		{
@@ -991,7 +820,7 @@ namespace Extenity.MessagingToolbox
 
 		#region General - Listener Cleanup
 
-		private static void _DelegateCleantup(List<Delegate> delegates)
+		private static void _DelegateCleanup(List<Delegate> delegates)
 		{
 			if (delegates == null || delegates.Count == 0)
 				return;
