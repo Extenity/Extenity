@@ -129,6 +129,22 @@ namespace Extenity.MessagingToolbox
 			return default;
 		}
 
+		public int CallbacksAliveAndWellCount
+		{
+			get
+			{
+				var count = 0;
+				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				{
+					if (!Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+					{
+						count++;
+					}
+				}
+				return count;
+			}
+		}
+
 		public void Clear()
 		{
 			for (int i = Callbacks.Count - 1; i >= 0; i--)

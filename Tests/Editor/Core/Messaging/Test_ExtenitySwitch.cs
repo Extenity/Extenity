@@ -297,7 +297,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void AlrightNotToHaveBothCallbacks()
 		{
 			TestSwitch.AddListener(null, null);
-			Assert.Zero(TestSwitch.Callbacks.Count);
+			AssertRegisteredCallbackCount(0);
 		}
 
 		#endregion
@@ -313,161 +313,179 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.Zero(TestSwitch.Callbacks.Count); // The callback is instantly called and not registered into the list.
 		}
 
-		/* // TODO:
 		[Test]
 		public void LifeSpan_Permanent()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.Permanent);
+			RegisterCallbacks(0, ListenerLifeSpan.Permanent);
 
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
-			TestEvent.RemoveListener(Callback);
+			TestSwitch.RemoveListener(CallbackOn, CallbackOff);
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
+			TestSwitch.SwitchOnSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_Permanent_WithLifeSpanTargetDestroyedLater()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.Permanent, CreateLifeSpanTargetTestObject());
+			RegisterCallbacks(0, ListenerLifeSpan.Permanent, CreateLifeSpanTargetTestObject());
 
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
+			TestSwitch.SwitchOnSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_Permanent_WithLifeSpanTargetDestroyedFirst()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.Permanent, CreateLifeSpanTargetTestObject());
+			RegisterCallbacks(0, ListenerLifeSpan.Permanent, CreateLifeSpanTargetTestObject());
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_Permanent_WithDelegateTargetDestroyedLater()
 		{
-			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.Permanent);
+			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called Subject callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called Subject callback."));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called Subject callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called Subject SwitchOff callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
-			DestroyTestEventSubject();
+			DestroyTestSwitchSubject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
+			TestSwitch.SwitchOnSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_Permanent_WithDelegateTargetDestroyedFirst()
 		{
-			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.Permanent);
+			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			// Destroy the Subject and the registered listener will not be called anymore.
-			DestroyTestEventSubject();
+			DestroyTestSwitchSubject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+			TestSwitch.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
+			TestSwitch.SwitchOnSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit_WithLifeSpanTargetDestroyedLater()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit, CreateLifeSpanTargetTestObject());
+			RegisterCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit, CreateLifeSpanTargetTestObject());
 
 			// The callback will be deregistered after this.
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 
 			// Destroying the LifeSpanTarget does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyLifeSpanTargetTestObject();
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit_WithLifeSpanTargetDestroyedFirst()
 		{
-			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit, CreateLifeSpanTargetTestObject());
+			RegisterCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit, CreateLifeSpanTargetTestObject());
 
 			// The callback will be deregistered after this.
 			DestroyLifeSpanTargetTestObject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit_WithDelegateTargetDestroyedLater()
 		{
-			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+			RegisterSubjectCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called Subject callback."));
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 
 			// Destroying the Subject does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
-			DestroyTestEventSubject();
-			TestEvent.InvokeSafe();
+			DestroyTestSwitchSubject();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit_WithDelegateTargetDestroyedFirst()
 		{
-			TestEvent.AddListener(CreateTestEventSubject().Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+			RegisterSubjectCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			DestroyTestEventSubject();
+			DestroyTestSwitchSubject();
+			AssertRegisteredCallbackCount(0);
 
-			TestEvent.InvokeSafe();
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
-		*/
 
 		#endregion
 
@@ -565,17 +583,24 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackOffF() { Log.Info("Called SwitchOff callback F."); }
 		private void ThrowingCallback() { throw new Test_ExtenityEventException("Called throwing callback."); }
 
-		private void RegisterCallbacks()
+		private void RegisterCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
-			TestSwitch.AddListener(CallbackOn, CallbackOff);
+			TestSwitch.AddListener(CallbackOn, CallbackOff, order, lifeSpan, lifeSpanTarget);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertRegisteredCallbackCount(1);
 		}
 
-		private void RegisterSubjectCallbacks()
+		private void RegisterSubjectCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
 			CreateTestSwitchSubject();
-			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, TestSwitchSubject.CallbackOff);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, TestSwitchSubject.CallbackOff, order, lifeSpan, lifeSpanTarget);
 			AssertExpectLog((LogType.Log, "Called Subject SwitchOff callback."));
+			AssertRegisteredCallbackCount(1);
+		}
+
+		private void AssertRegisteredCallbackCount(int expectedCount)
+		{
+			Assert.AreEqual(expectedCount, TestSwitch.CallbacksAliveAndWellCount, "Unexpected registered callback count.");
 		}
 
 		#endregion
