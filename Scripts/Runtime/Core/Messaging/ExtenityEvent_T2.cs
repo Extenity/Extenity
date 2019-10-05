@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -343,22 +344,22 @@ namespace Extenity.MessagingToolbox
 
 		private string _Detailed_MethodAndObject(Delegate callback)
 		{
-			return $"method '{callback.Method}' of object '{callback.FullNameOfTarget()}''";
+			return $"method '{callback.FullNameOfTargetAndMethod()}'";
 		}
 
 		private string _Detailed_OrderForMethodAndObject(int order, Delegate callback)
 		{
-			return $"order '{order}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'";
+			return $"order '{order}' for {_Detailed_MethodAndObject(callback)}";
 		}
 
 		private string _Detailed_OrderAndLifeSpan(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 		{
-			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $"with target '{lifeSpanTarget.ToString()}'" : "")}'";
+			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $" with target '{lifeSpanTarget.FullObjectName()}'" : "")}'";
 		}
 
 		private string _Detailed_OrderAndLifeSpanForMethodAndObject(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget, Delegate callback)
 		{
-			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $"with target '{lifeSpanTarget.ToString()}'" : "")}' for method '{callback.Method}' of object '{callback.FullNameOfTarget()}'";
+			return $"{_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)} for {_Detailed_MethodAndObject(callback)}";
 		}
 
 		#endregion

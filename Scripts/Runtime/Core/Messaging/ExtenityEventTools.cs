@@ -1,6 +1,5 @@
 using System;
 using Extenity.GameObjectToolbox;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -22,46 +21,32 @@ namespace Extenity.MessagingToolbox
 
 		#region ToString
 
-		public static string FullNameOfTarget(this Delegate del, char separator = '/')
+		public static string FullNameOfTarget(this Delegate del)
 		{
-			return FullNameOfTarget(del, 10000, separator);
+			return GameObjectTools.FullObjectName(del?.Target as Object);
 		}
 
-		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels, char separator = '/')
+		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels)
+		{
+			return GameObjectTools.FullObjectName(del?.Target as Object, maxHierarchyLevels);
+		}
+
+		public static string FullNameOfTargetAndMethod(this Delegate del, string methodAndTargetSeparator = " in ")
 		{
 			if (del != null)
 			{
-				var asComponent = del.Target as Component;
-				if (asComponent)
-				{
-					return asComponent.FullName(maxHierarchyLevels, separator);
-				}
-				var asGameObject = del.Target as GameObject;
-				if (asGameObject)
-				{
-					return asGameObject.FullName(maxHierarchyLevels, separator);
-				}
-				var asObject = del.Target as Object;
-				if (asObject)
-				{
-					return asObject.ToString();
-				}
+				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del);
 			}
-			return "[NA]";
+			return GameObjectTools.NullGameObjectNamePlaceholder;
 		}
 
-		public static string FullNameOfTargetAndMethod(this Delegate del, char separator = '/', string methodAndTargetSeparator = " in ")
-		{
-			return FullNameOfTargetAndMethod(del, 10000, separator, methodAndTargetSeparator);
-		}
-
-		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels, char separator = '/', string methodAndTargetSeparator = " in ")
+		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels, string methodAndTargetSeparator = " in ")
 		{
 			if (del != null)
 			{
-				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels, separator);
+				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
 			}
-			return "[NA]";
+			return GameObjectTools.NullGameObjectNamePlaceholder;
 		}
 
 		#endregion

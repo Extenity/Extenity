@@ -1994,13 +1994,59 @@ namespace Extenity.GameObjectToolbox
 			return me.gameObject.FullName(maxHierarchyLevels, separator);
 		}
 
+		public static string FullObjectName(this Object me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me != null)
+			{
+				var asComponent = me as Component;
+				if (asComponent)
+				{
+					return asComponent.FullName(gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator);
+				}
+				var asGameObject = me as GameObject;
+				if (asGameObject)
+				{
+					return asGameObject.FullName(separator: gameObjectNameSeparator);
+				}
+				var asObject = me as Object;
+				if (asObject)
+				{
+					return asObject.ToString();
+				}
+			}
+			return NullGameObjectNamePlaceholder;
+		}
+
+		public static string FullObjectName(this Object me, int maxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me != null)
+			{
+				var asComponent = me as Component;
+				if (asComponent)
+				{
+					return asComponent.FullName(maxHierarchyLevels, gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator);
+				}
+				var asGameObject = me as GameObject;
+				if (asGameObject)
+				{
+					return asGameObject.FullName(maxHierarchyLevels, separator: gameObjectNameSeparator);
+				}
+				var asObject = me as Object;
+				if (asObject)
+				{
+					return asObject.ToString();
+				}
+			}
+			return NullGameObjectNamePlaceholder;
+		}
+
 		/// <summary>
 		/// Only sets the name if it's not the same. Prevents firing hierarchy changed events in editor.
 		/// </summary>
 		public static bool SetNameIfRequired(this GameObject me, string newName)
 		{
 			if (!me)
-				throw new NullReferenceException("me");
+				throw new NullReferenceException(nameof(me));
 
 			if (me.name != newName)
 			{

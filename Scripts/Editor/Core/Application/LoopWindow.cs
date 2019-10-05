@@ -59,7 +59,7 @@ namespace Extenity
 				GUILayout.BeginVertical();
 				foreach (var callback in callbacks)
 				{
-					GUILayout.Label($"{callback.Order} \t {callback.Callback.FullNameOfTargetAndMethod(3, '/', " \t ")}");
+					GUILayout.Label($"{callback.Order} \t {callback.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
 				}
 				GUILayout.EndVertical();
 			}
