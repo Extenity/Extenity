@@ -702,12 +702,7 @@ namespace Extenity.MessagingToolbox
 
 		private void CleanUpSwitchListenerLists()
 		{
-			foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
-			{
-				if (!listenerInfo.IsValid)
-					continue;
-				listenerInfo.Switch.ClearIfRequired();
-			}
+			// TODO:
 		}
 
 		#endregion

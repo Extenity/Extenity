@@ -6,6 +6,8 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
+	// TODO: Use Log.Verbose
+
 	public class ExtenitySwitch
 	{
 		#region Callback entries
@@ -85,7 +87,8 @@ namespace Extenity.MessagingToolbox
 		/// <summary>
 		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
-		public readonly List<Entry> Callbacks = new List<Entry>(10);
+		public List<Entry> _Callbacks => Callbacks;
+		private readonly List<Entry> Callbacks = new List<Entry>(10);
 
 		public bool IsAnyListenerRegistered => Callbacks.Count > 0;
 
@@ -147,6 +150,9 @@ namespace Extenity.MessagingToolbox
 
 		public void Clear()
 		{
+			if (IsInvoking)
+				throw new Exception("Cleanup is not allowed while invoking.");
+
 			for (int i = Callbacks.Count - 1; i >= 0; i--)
 			{
 				if (Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
@@ -155,12 +161,6 @@ namespace Extenity.MessagingToolbox
 					i--;
 				}
 			}
-		}
-
-		public void ClearIfRequired()
-		{
-			if (CleanupRequired)
-				Clear();
 		}
 
 		#endregion
@@ -313,7 +313,7 @@ namespace Extenity.MessagingToolbox
 			{
 				throw new Exception("Tried to remove current listener outside of listener callback.");
 			}
-			CurrentListenerMarkedToBeRemoved = true;
+			throw new NotImplementedException();
 		}
 
 		public void RemoveAllListeners()
@@ -330,13 +330,8 @@ namespace Extenity.MessagingToolbox
 
 		public bool IsSwitchedOn { get; private set; }
 
-		private bool IsInvoking;
-		public bool CleanupRequired;
-
-		private bool CurrentListenerMarkedToBeRemoved;
-
-		[ThreadStatic]
-		private static List<Entry> CallbacksCopy;
+		private bool IsInvoking => InvokeIndex >= 0;
+		private int InvokeIndex = -1;
 
 		public void SwitchOnUnsafe()
 		{
@@ -358,6 +353,7 @@ namespace Extenity.MessagingToolbox
 			SwitchSafe(false);
 		}
 
+		// TODO IMMEDIATE: Do not forget to copy the changes onto SwitchSafe
 		public void SwitchUnsafe(bool isSwitchedOn)
 		{
 			if (IsInvoking)
@@ -369,55 +365,43 @@ namespace Extenity.MessagingToolbox
 			{
 				return;
 			}
-			IsInvoking = true;
+			InvokeIndex = 0; // IsInvoking = true;
 
+			// Note that isSwitchedOn will be used inside this method instead of IsSwitchedOn. It tells the state at
+			// the time of calling this method, while IsSwitchedOn might change before completing this method.
 			IsSwitchedOn = isSwitchedOn;
-			CurrentListenerMarkedToBeRemoved = false;
 
 			try
 			{
-				// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
-				// Copy the list to allow adding and removing callbacks while processing the invoke.
-				if (CallbacksCopy == null)
-					CallbacksCopy = new List<Entry>(Callbacks.Count);
-				CallbacksCopy.Clear();
-				CallbacksCopy.AddRange(Callbacks);
-
-				// After copying the callbacks, remove the ones that are set to be removed when emitted.
-				// TODO: This is wrong! What if an exception is thrown? Get rid of CallbacksCopy and move the remove functionality to right after callback call.
-				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				while (InvokeIndex < Callbacks.Count)
 				{
-					if (Callbacks[i].ShouldRemoveAfterEmit)
+					var entry = Callbacks[InvokeIndex];
+					if (entry.IsObjectDestroyed)
 					{
-						Callbacks.RemoveAt(i);
+						Callbacks.RemoveAt(InvokeIndex);
+						continue;
 					}
-				}
+					if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
+					{
+						// Remove the callback just before calling it. So that the caller can act like it's removed.
+						//
+						// Removing before the call also ensures that the callback will be removed even though
+						// an exception is thrown inside the callback.
+						Callbacks.RemoveAt(InvokeIndex--);
+					}
 
-				for (int i = 0; i < CallbacksCopy.Count; i++)
-				{
-					var callback = CallbacksCopy[i].GetCallback(IsSwitchedOn);
+					var callback = entry.GetCallback(isSwitchedOn);
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
-						if (!CallbacksCopy[i].IsObjectDestroyed)
-						{
-							callback();
-							// TODO:
-							// if (CurrentListenerMarkedToBeRemoved)
-							// {
-							// 	CurrentListenerMarkedToBeRemoved = false;
-							// }
-						}
-						else
-						{
-							CleanupRequired = true;
-						}
+						callback();
 					}
+
+					InvokeIndex++;
 				}
 			}
 			finally
 			{
-				IsInvoking = false;
-				CallbacksCopy.Clear();
+				InvokeIndex = -1;
 			}
 		}
 
@@ -432,52 +416,46 @@ namespace Extenity.MessagingToolbox
 			{
 				return;
 			}
-			IsInvoking = true;
+			InvokeIndex = 0; // IsInvoking = true;
 
+			// Note that isSwitchedOn will be used inside this method instead of IsSwitchedOn. It tells the state at
+			// the time of calling this method, while IsSwitchedOn might change before completing this method.
 			IsSwitchedOn = isSwitchedOn;
-			CurrentListenerMarkedToBeRemoved = false;
 
-			// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
-			// Copy the list to allow adding and removing callbacks while processing the invoke.
-			if (CallbacksCopy == null)
-				CallbacksCopy = new List<Entry>(Callbacks.Count);
-			CallbacksCopy.Clear();
-			CallbacksCopy.AddRange(Callbacks);
-
-			// After copying the callbacks, remove the ones that are set to be removed when emitted.
-			for (int i = Callbacks.Count - 1; i >= 0; i--)
+			while (InvokeIndex < Callbacks.Count)
 			{
-				if (Callbacks[i].ShouldRemoveAfterEmit)
+				var entry = Callbacks[InvokeIndex];
+				if (entry.IsObjectDestroyed)
 				{
-					Callbacks.RemoveAt(i);
+					Callbacks.RemoveAt(InvokeIndex);
+					continue;
 				}
-			}
+				if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
+				{
+					// Remove the callback just before calling it. So that the caller can act like it's removed.
+					//
+					// Removing before the call also ensures that the callback will be removed even though
+					// an exception is thrown inside the callback.
+					Callbacks.RemoveAt(InvokeIndex--);
+				}
 
-			for (int i = 0; i < CallbacksCopy.Count; i++)
-			{
-				var callback = CallbacksCopy[i].GetCallback(IsSwitchedOn);
+				var callback = entry.GetCallback(isSwitchedOn);
 				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
-					if (!CallbacksCopy[i].IsObjectDestroyed)
+					try
 					{
-						try
-						{
-							callback();
-						}
-						catch (Exception exception)
-						{
-							Log.Exception(exception, CallbacksCopy[i].LogObject(IsSwitchedOn));
-						}
+						callback();
 					}
-					else
+					catch (Exception exception)
 					{
-						CleanupRequired = true;
+						Log.Exception(exception, entry.LogObject(isSwitchedOn));
 					}
 				}
+
+				InvokeIndex++;
 			}
 
-			IsInvoking = false;
-			CallbacksCopy.Clear();
+			InvokeIndex = -1;
 		}
 
 		#endregion

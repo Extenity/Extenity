@@ -87,10 +87,16 @@ namespace ExtenityTests.MessagingToolbox
 				throw new Exception("The TestSwitchSubject test object was already created."); // There is something wrong with tests.
 
 			TestSwitchSubject = new GameObject("TestSwitchSubject").AddComponent<Test_ExtenitySwitchSubject>();
+			TestSwitchSubject.DestroyTestSwitchSubject = DestroyTestSwitchSubject;
 			return TestSwitchSubject;
 		}
 
-		public void DestroyTestSwitchSubject(bool ensureExists = true)
+		public void DestroyTestSwitchSubject()
+		{
+			DestroyTestSwitchSubject(true);
+		}
+
+		public void DestroyTestSwitchSubject(bool ensureExists)
 		{
 			if (ensureExists && !TestSwitchSubject)
 				throw new Exception("The TestSwitchSubject test object was not created."); // There is something wrong with tests.
