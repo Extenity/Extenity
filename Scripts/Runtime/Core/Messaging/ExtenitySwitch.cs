@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
 
@@ -145,6 +146,21 @@ namespace Extenity.MessagingToolbox
 					}
 				}
 				return count;
+			}
+		}
+
+		public bool IsAnyAliveAndWellCallbackExists
+		{
+			get
+			{
+				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				{
+					if (!Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+					{
+						return true;
+					}
+				}
+				return false;
 			}
 		}
 
@@ -484,6 +500,25 @@ namespace Extenity.MessagingToolbox
 		#endregion
 
 		#region Log
+
+		public string GetSwitchCallbackDebugInfo()
+		{
+			var stringBuilder = StringTools.SharedStringBuilder.Value;
+			lock (stringBuilder)
+			{
+				stringBuilder.Clear(); // Make sure it is clean before starting to use.
+
+				for (var i = 0; i < Callbacks.Count; i++)
+				{
+					var entry = Callbacks[i];
+					stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
+				}
+
+				var result = stringBuilder.ToString();
+				StringTools.ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
+				return result;
+			}
+		}
 
 		private string _Detailed_MethodAndObject(Delegate switchOnCallback, Delegate switchOffCallback)
 		{

@@ -707,7 +707,7 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Switch - Add Listener
+		#region Switch - Registering Listeners
 
 		public void AddSwitchListener(string switchId, Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
@@ -732,10 +732,6 @@ namespace Extenity.MessagingToolbox
 			listenerInfo.Switch.AddListener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
 		}
 
-		#endregion
-
-		#region Switch - Remove Listener
-
 		public void RemoveSwitchListener(string switchId, Action switchOnCallback, Action switchOffCallback)
 		{
 			// It's alright to not have the listeners.
@@ -750,6 +746,13 @@ namespace Extenity.MessagingToolbox
 				return;
 
 			listenerInfo.Switch.RemoveListener(switchOnCallback, switchOffCallback);
+		}
+
+		public bool IsAnySwitchListenerRegistered(string switchId)
+		{
+			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
+				return false;
+			return listenerInfo.Switch.IsAnyAliveAndWellCallbackExists;
 		}
 
 		#endregion
@@ -785,6 +788,17 @@ namespace Extenity.MessagingToolbox
 				return;
 			}
 			listenerInfo.Switch.SwitchSafe(isSwitchedOn);
+		}
+
+		#endregion
+
+		#region Switch - Debug
+
+		public string GetSwitchCallbackDebugInfo(string switchId)
+		{
+			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
+				return "";
+			return listenerInfo.Switch.GetSwitchCallbackDebugInfo();
 		}
 
 		#endregion
