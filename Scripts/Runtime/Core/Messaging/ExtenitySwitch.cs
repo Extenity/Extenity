@@ -307,6 +307,15 @@ namespace Extenity.MessagingToolbox
 			Callbacks.RemoveAt(index);
 		}
 
+		public void RemoveCurrentListener()
+		{
+			if (!IsInvoking)
+			{
+				throw new Exception("Tried to remove current listener outside of listener callback.");
+			}
+			CurrentListenerMarkedToBeRemoved = true;
+		}
+
 		public void RemoveAllListeners()
 		{
 			if (ExtenityEventTools.VerboseLogging)
@@ -323,6 +332,8 @@ namespace Extenity.MessagingToolbox
 
 		private bool IsInvoking;
 		public bool CleanupRequired;
+
+		private bool CurrentListenerMarkedToBeRemoved;
 
 		[ThreadStatic]
 		private static List<Entry> CallbacksCopy;
@@ -361,6 +372,7 @@ namespace Extenity.MessagingToolbox
 			IsInvoking = true;
 
 			IsSwitchedOn = isSwitchedOn;
+			CurrentListenerMarkedToBeRemoved = false;
 
 			try
 			{
@@ -372,6 +384,7 @@ namespace Extenity.MessagingToolbox
 				CallbacksCopy.AddRange(Callbacks);
 
 				// After copying the callbacks, remove the ones that are set to be removed when emitted.
+				// TODO: This is wrong! What if an exception is thrown? Get rid of CallbacksCopy and move the remove functionality to right after callback call.
 				for (int i = Callbacks.Count - 1; i >= 0; i--)
 				{
 					if (Callbacks[i].ShouldRemoveAfterEmit)
@@ -388,6 +401,11 @@ namespace Extenity.MessagingToolbox
 						if (!CallbacksCopy[i].IsObjectDestroyed)
 						{
 							callback();
+							// TODO:
+							// if (CurrentListenerMarkedToBeRemoved)
+							// {
+							// 	CurrentListenerMarkedToBeRemoved = false;
+							// }
 						}
 						else
 						{
@@ -417,6 +435,7 @@ namespace Extenity.MessagingToolbox
 			IsInvoking = true;
 
 			IsSwitchedOn = isSwitchedOn;
+			CurrentListenerMarkedToBeRemoved = false;
 
 			// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
 			// Copy the list to allow adding and removing callbacks while processing the invoke.

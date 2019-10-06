@@ -7,6 +7,8 @@ using Object = UnityEngine.Object;
 namespace ExtenityTests.MessagingToolbox
 {
 
+	// TODO: See region "Switching Inside Callback"
+
 	public class Test_ExtenitySwitch : Test_SwitchTestBase
 	{
 		#region Basics
@@ -302,6 +304,20 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
+		#region Switching Inside Callback
+
+		// TODO: BasicNestedCall
+		// TODO: NestedCallsWontCheckForDeadlocks
+		// TODO: RemovingListenerInsideNestedCall_FromTheEnd
+		// TODO: RemovingListenerInsideNestedCall_FromTheBeginning
+		// TODO: RemovingListenerInsideNestedCall_Self
+		// TODO: RemovingListenerInsideNestedCall_SelfAndAddSelfAgain
+		// TODO: AddingListenerInsideNestedCall_ToTheEnd
+		// TODO: AddingListenerInsideNestedCall_ToTheBeginning
+		// TODO: AddingListenerInsideNestedCall_SelfIsIgnored
+
+		#endregion
+
 		#region Callback Life Span
 
 		[Test]
@@ -316,6 +332,651 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOffSafe();
 			AssertExpectNoLogs();
 		}
+
+		[Test]
+		public void AlrightToRemoveListenerInsideCallback_ManualRemove()
+		{
+			TestSwitch.AddListener(CallbackOnAndRemove, CallbackOff);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+
+			// Callback removes itself.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+
+			// No more calls.
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOnSafe();
+			AssertExpectNoLogs();
+		}
+
+		[Test]
+		public void AlrightToRemoveListenerInsideCallback_UsingRemoveCurrentListener()
+		{
+			TestSwitch.AddListener(CallbackOnAndRemoveCurrent, CallbackOff);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+
+			// Callback removes itself.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+
+			// No more calls.
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOnSafe();
+			AssertExpectNoLogs();
+		}
+
+		[Test]
+		public void NotAlrightToCallRemoveCurrentListenerOutsideOfCallback()
+		{
+			TestSwitch.AddListener(CallbackOn, null);
+
+			Assert.Throws<Exception>(() => TestSwitch.RemoveCurrentListener());
+		}
+
+		#region RemovingListenerDoesNotAffectOtherListeners
+
+		[Test]
+		public void RemovingListenerDoesNotAffectOtherListeners_Take1()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+		}
+
+		[Test]
+		public void RemovingListenerDoesNotAffectOtherListeners_Take2()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+		}
+
+		[Test]
+		public void RemovingListenerDoesNotAffectOtherListeners_Take3()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+		}
+
+		[Test]
+		public void RemovingListenerDoesNotAffectOtherListeners_Take4()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."));
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
+
+			TestSwitch.SwitchOnSafe();
+			TestSwitch.SwitchOffSafe();
+			AssertExpectNoLogs();
+		}
+
+		#endregion
+
+		#region RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take1On()
+		{
+			TestSwitch.AddListener(CallbackOnAAndRemoveCurrent, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take2On()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnBAndRemoveCurrent, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take3On()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnCAndRemoveCurrent, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take1Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndRemoveCurrent);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take2Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveCurrent);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_ManualRemove_Take3Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveCurrent);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		#endregion
+
+		#region RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take1On()
+		{
+			TestSwitch.AddListener(CallbackOnAAndRemove, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take2On()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnBAndRemove, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take3On()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnCAndRemove, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take1Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndRemove);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take2Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemove);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingInsideListenerDoesNotAffectOtherListeners_UsingRemoveCurrentListener_Take3Off()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemove);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		#endregion
+
+		#region RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners - On
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnARemoveB()
+		{
+			TestSwitch.AddListener(CallbackOnAAndRemoveB, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnARemoveC()
+		{
+			TestSwitch.AddListener(CallbackOnAAndRemoveC, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+			//(LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnBRemoveA()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnBAndRemoveA, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnBRemoveC()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnBAndRemoveC, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+			//(LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnCRemoveA()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnCAndRemoveA, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			                (LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OnCRemoveB()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnCAndRemoveB, CallbackOffC);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			// This is where it's removed.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		#endregion
+
+		#region RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners - Off
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffARemoveB()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndRemoveB);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                //(LogType.Log, "Called SwitchOff callback B."), Removed when OffA is called.
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffARemoveC()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndRemoveC);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+			                //(LogType.Log, "Called SwitchOff callback C.")); Removed when OffA is called.
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffBRemoveA()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveA);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffB, then removed inside OffB.
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffBRemoveC()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveC);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+			                //(LogType.Log, "Called SwitchOff callback C.")); Removed when OffB is called.
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback B."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffCRemoveA()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveA);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffC, then removed inside OffC.
+			                (LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		[Test]
+		public void RemovingAnotherListenerInsideListenerDoesNotAffectOtherListeners_OffCRemoveB()
+		{
+			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
+			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
+			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveB);
+			// This is where it's removed.
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
+			                (LogType.Log, "Called SwitchOff callback C."));
+
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
+			                (LogType.Log, "Called SwitchOn callback C."));
+
+			TestSwitch.SwitchOffSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
+		}
+
+		#endregion
 
 		[Test]
 		public void HavingLifeSpanOfRemovedAtFirstEmitConsideredFastTrackAndWontBeRegisteredIntoCallbacksList()
@@ -595,6 +1256,45 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackOffE() { Log.Info("Called SwitchOff callback E."); }
 		private void CallbackOffF() { Log.Info("Called SwitchOff callback F."); }
 		private void ThrowingCallback() { throw new Test_ExtenityEventException("Called throwing callback."); }
+
+		// @formatter:off
+		private void CallbackOnAndRemove() { CallbackOn(); TestSwitch.RemoveListener(CallbackOn, CallbackOff); }
+		private void CallbackOnAndRemoveCurrent(){ CallbackOn(); TestSwitch.RemoveCurrentListener(); }
+
+		private void CallbackOnAAndRemoveCurrent(){ CallbackOnA(); TestSwitch.RemoveCurrentListener(); }
+		private void CallbackOnBAndRemoveCurrent(){ CallbackOnB(); TestSwitch.RemoveCurrentListener(); }
+		private void CallbackOnCAndRemoveCurrent(){ CallbackOnC(); TestSwitch.RemoveCurrentListener(); }
+		private void CallbackOffAAndRemoveCurrent(){ CallbackOffA(); TestSwitch.RemoveCurrentListener(); }
+		private void CallbackOffBAndRemoveCurrent(){ CallbackOffB(); TestSwitch.RemoveCurrentListener(); }
+		private void CallbackOffCAndRemoveCurrent(){ CallbackOffC(); TestSwitch.RemoveCurrentListener(); }
+
+		private void CallbackOnAAndRemove(){ CallbackOnA(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOnBAndRemove(){ CallbackOnB(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		private void CallbackOnCAndRemove(){ CallbackOnC(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+		private void CallbackOffAAndRemove(){ CallbackOffA(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOffBAndRemove(){ CallbackOffB(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		private void CallbackOffCAndRemove(){ CallbackOffC(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+
+		private void CallbackOnAAndRemoveB(){ CallbackOnA(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		private void CallbackOnAAndRemoveC(){ CallbackOnA(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+		private void CallbackOnBAndRemoveA(){ CallbackOnB(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOnBAndRemoveC(){ CallbackOnB(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+		private void CallbackOnCAndRemoveA(){ CallbackOnC(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOnCAndRemoveB(){ CallbackOnC(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		private void CallbackOffAAndRemoveB(){ CallbackOffA(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		private void CallbackOffAAndRemoveC(){ CallbackOffA(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+		private void CallbackOffBAndRemoveA(){ CallbackOffB(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOffBAndRemoveC(){ CallbackOffB(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
+		private void CallbackOffCAndRemoveA(){ CallbackOffC(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
+		private void CallbackOffCAndRemoveB(){ CallbackOffC(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+		// @formatter:on
+
+
+		private void RegisterOnlyOnCallback(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
+		{
+			TestSwitch.AddListener(CallbackOn, null, order, lifeSpan, lifeSpanTarget);
+			AssertRegisteredCallbackCount(1);
+		}
 
 		private void RegisterCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
