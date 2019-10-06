@@ -60,11 +60,12 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void InvokeUnityObjectCallback()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOn, null);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, null);
 			Assert.That(new Action(TestSwitchSubject.CallbackOn).Target as Object, Is.Not.Null);
 
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 		}
 
 		[Test]
@@ -321,6 +322,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		// Note that the system does not take the responsibility of handling these edge cases. Tests are here to show
 		// how the system should not be used, rather than presenting the very best experience.
+
 		#region Registering Edge Cases
 
 		[Test]
@@ -921,10 +923,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -941,10 +939,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
@@ -961,10 +955,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -981,10 +971,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
@@ -1001,10 +987,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -1021,10 +1003,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		#endregion
@@ -1100,11 +1078,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOff callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestSwitchSubject();
@@ -1185,7 +1163,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			AssertRegisteredCallbackCount(0);
 
 			TestSwitch.SwitchOffSafe();
@@ -1619,10 +1597,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -1639,10 +1613,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
@@ -1659,10 +1629,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -1679,10 +1645,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
@@ -1699,10 +1661,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
@@ -1719,10 +1677,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		#endregion
@@ -1732,7 +1686,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_DoesNotAffectOtherListeners_Take1()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -1745,15 +1700,16 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
+			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_DoesNotAffectOtherListeners_Take2()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffB);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
@@ -1765,16 +1721,17 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_DoesNotAffectOtherListeners_Take3()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffC);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
@@ -1785,8 +1742,8 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
+			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		#endregion
@@ -1796,7 +1753,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnAAndDestroySubject, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnAAndDestroySubject, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -1817,8 +1775,9 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnBAndDestroySubject, TestSwitchSubject.CallbackOffB);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnBAndDestroySubject, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
@@ -1838,9 +1797,10 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysC()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnCAndDestroySubject, TestSwitchSubject.CallbackOffC);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnCAndDestroySubject, TestSwitchSubject.CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
@@ -1859,7 +1819,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffADestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffAAndDestroySubject);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffAAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
@@ -1879,8 +1840,9 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffBDestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffBAndDestroySubject);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffBAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -1899,9 +1861,10 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffCDestroysC()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffCAndDestroySubject);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffCAndDestroySubject);
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
@@ -1923,8 +1886,9 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffB);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
@@ -1944,9 +1908,10 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysC()
 		{
-			TestSwitch.AddListener(CallbackOnAAndRemoveC, CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffC);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
@@ -1955,7 +1920,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-			//(LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
+			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
 
 			TestSwitch.SwitchOffSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -1965,7 +1930,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -1986,9 +1952,10 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysC()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffC);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
@@ -1997,7 +1964,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-			//(LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
+			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
 
 			TestSwitch.SwitchOffSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -2007,7 +1974,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -2028,8 +1996,9 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffB);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."),
@@ -2053,8 +2022,9 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffADestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndDestroySubject);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffB);
+			Assert.Throws<ArgumentException>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB)); // Because Subject was destroyed above. Though where does ArgumentException come from is a mystery.
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -2064,18 +2034,15 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffADestroysC()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffAAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffC);
+			Assert.Throws<ArgumentException>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC)); // Because Subject was destroyed above. Though where does ArgumentException come from is a mystery.
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
@@ -2084,16 +2051,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffBDestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
@@ -2104,18 +2068,15 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffBDestroysC()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroySubject);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnC, TestSwitchSubject.CallbackOffC);
+			Assert.Throws<ArgumentException>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC)); // Because Subject was destroyed above. Though where does ArgumentException come from is a mystery.
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
@@ -2124,16 +2085,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffCDestroysA()
 		{
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnA, TestSwitchSubject.CallbackOffA);
+			CreateTestSwitchSubject();
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroySubject);
 			// This is where it's removed.
@@ -2144,17 +2102,14 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		[Test]
 		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffCDestroysB()
 		{
+			CreateTestSwitchSubject();
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			TestSwitch.AddListener(CreateTestSwitchSubject().CallbackOnB, TestSwitchSubject.CallbackOffB);
+			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroySubject);
 			// This is where it's removed.
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
@@ -2164,10 +2119,6 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-
-			TestSwitch.SwitchOffSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
 		#endregion
@@ -2325,7 +2276,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			CreateTestSwitchSubject();
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, TestSwitchSubject.CallbackOff, order, lifeSpan, lifeSpanTarget);
-			AssertExpectLog((LogType.Log, "Called Subject SwitchOff callback."));
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 			AssertRegisteredCallbackCount(1);
 		}
 
