@@ -7,11 +7,16 @@ using Object = UnityEngine.Object;
 namespace ExtenityTests.MessagingToolbox
 {
 
-	// TODO: Find a way to call all tests for both SwitchSafe and SwitchUnsafe.
-	// TODO: See region "Switching Inside Callback"
-
+	[TestFixture(true)]
+	[TestFixture(false)]
 	public class Test_ExtenitySwitch : Test_SwitchTestBase
 	{
+		#region Initialization
+
+		public Test_ExtenitySwitch(bool usingUnsafe) : base(usingUnsafe) { }
+
+		#endregion
+
 		#region Basics
 
 		[Test]

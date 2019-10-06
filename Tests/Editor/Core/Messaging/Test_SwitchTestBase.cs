@@ -8,6 +8,15 @@ namespace ExtenityTests.MessagingToolbox
 
 	public abstract class Test_SwitchTestBase : ExtenityTestBase
 	{
+		#region Initialization
+
+		public Test_SwitchTestBase(bool usingUnsafe)
+		{
+			UsingUnsafe = usingUnsafe;
+		}
+
+		#endregion
+
 		#region Deinitialization
 
 		protected override void OnDeinitialize()
@@ -37,6 +46,36 @@ namespace ExtenityTests.MessagingToolbox
 					_TestSwitch = new ExtenitySwitch();
 				}
 				return _TestSwitch;
+			}
+		}
+
+		#endregion
+
+		#region Test Switch Wrapper
+
+		protected bool UsingUnsafe = false;
+
+		protected void SwitchOn()
+		{
+			if (UsingUnsafe)
+			{
+				TestSwitch.SwitchOnUnsafe();
+			}
+			else
+			{
+				TestSwitch.SwitchOnSafe();
+			}
+		}
+
+		protected void SwitchOff()
+		{
+			if (UsingUnsafe)
+			{
+				TestSwitch.SwitchOffUnsafe();
+			}
+			else
+			{
+				TestSwitch.SwitchOffSafe();
 			}
 		}
 
