@@ -17,11 +17,29 @@ namespace Extenity.DataToolbox
 	{
 		#region Shared Objects
 
-		private static readonly ThreadLocal<StringBuilder> SharedStringBuilder = new ThreadLocal<StringBuilder>(() => new StringBuilder(SharedStringBuilderInitialCapacity));
+		/// <summary>
+		/// CAUTION! <c>SharedStringBuilder</c> has its strict usage rules. See examples around before using it.
+		/// </summary>
+		/// <example>
+		/// <code>
+		/// var stringBuilder = StringTools.SharedStringBuilder.Value;
+		/// lock (stringBuilder)
+		/// {
+		/// 	stringBuilder.Clear(); // Make sure it is clean before starting to use.
+		///
+		/// 	...
+		///
+		/// 	var result = stringBuilder.ToString();
+		/// 	StringTools.ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
+		/// 	return result;
+		/// }
+		/// </code>
+		/// </example>
+		public static readonly ThreadLocal<StringBuilder> SharedStringBuilder = new ThreadLocal<StringBuilder>(() => new StringBuilder(SharedStringBuilderInitialCapacity));
 		private const int SharedStringBuilderInitialCapacity = 1000;
 		private const int SharedStringBuilderCapacityTolerance = 10 * 1000 * 1000; // If the StringBuilder exceeds this capacity, it will be freed.
 
-		private static void ClearSharedStringBuilder(StringBuilder stringBuilder)
+		public static void ClearSharedStringBuilder(StringBuilder stringBuilder)
 		{
 			stringBuilder.Clear();
 			if (stringBuilder.Capacity > SharedStringBuilderCapacityTolerance)
@@ -630,6 +648,7 @@ namespace Extenity.DataToolbox
 						case '\r':
 							lastWasCR = true;
 							break;
+
 						case '\n':
 							return true;
 					}
@@ -643,16 +662,14 @@ namespace Extenity.DataToolbox
 			if (string.IsNullOrEmpty(text))
 				return text;
 
-			lock (SharedStringBuilder)
-			{
-				// Check if normalization needed. Don't do any operation if not required.
-				if (!text.IsLineEndingNormalizationNeededCRLF())
-				{
-					return text;
-				}
+			// Check if normalization needed. Don't do any operation if not required.
+			if (!text.IsLineEndingNormalizationNeededCRLF())
+				return text;
 
-				var stringBuilder = SharedStringBuilder.Value;
-				stringBuilder.Clear();
+			var stringBuilder = SharedStringBuilder.Value;
+			lock (stringBuilder)
+			{
+				stringBuilder.Clear(); // Make sure it is clean before starting to use.
 
 				var lastWasCR = false;
 				foreach (char c in text)
@@ -671,16 +688,19 @@ namespace Extenity.DataToolbox
 							stringBuilder.Append("\r\n");
 							lastWasCR = true;
 							break;
+
 						case '\n':
 							stringBuilder.Append("\r\n");
 							break;
+
 						default:
 							stringBuilder.Append(c);
 							break;
 					}
 				}
+
 				var result = stringBuilder.ToString();
-				ClearSharedStringBuilder(stringBuilder);
+				ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
 				return result;
 			}
 		}
@@ -1274,23 +1294,19 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - char[]
 
-		private static StringBuilder ReusedStringBuilder = new StringBuilder(1000);
-
 		public static string ConvertToString(this char[] chars, int startIndex, int length)
 		{
-			lock (ReusedStringBuilder)
+			var stringBuilder = SharedStringBuilder.Value;
+			lock (stringBuilder)
 			{
-				ReusedStringBuilder.Length = 0; // Make sure it is clean before starting to use.
+				stringBuilder.Clear(); // Make sure it is clean before starting to use.
+
 				var endIndex = startIndex + length;
 				for (int i = startIndex; i < chars.Length && i < endIndex && (uint)chars[i] > 0U; ++i)
-					ReusedStringBuilder.Append(chars[i]);
-				var result = ReusedStringBuilder.ToString();
-				ReusedStringBuilder.Length = 0; // Make sure we will leave it clean after use.
+					stringBuilder.Append(chars[i]);
 
-				// Hard limit to prevent memory bogging. We probably accept the consequences of reallocation when working that big.
-				if (ReusedStringBuilder.Capacity > 1000000)
-					ReusedStringBuilder = null;
-
+				var result = stringBuilder.ToString();
+				ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
 				return result;
 			}
 		}
@@ -1727,12 +1743,14 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringAsPercentageBar(this float value, int barLength = 20)
 		{
-			lock (ReusedStringBuilder)
+			var stringBuilder = SharedStringBuilder.Value;
+			lock (stringBuilder)
 			{
-				ReusedStringBuilder.Length = 0; // Make sure it is clean before starting to use.
+				stringBuilder.Clear(); // Make sure it is clean before starting to use.
+
 				if (barLength > 0)
 				{
-					ReusedStringBuilder.Append('[');
+					stringBuilder.Append('[');
 					var clampedValue = value < 0f ? 0f : value > 1f ? 1f : value;
 					var filledCount = (int)(clampedValue * barLength);
 					if (filledCount == 0 && clampedValue > 0.00001f)
@@ -1742,17 +1760,18 @@ namespace Extenity.DataToolbox
 					var emptyCount = barLength - filledCount;
 					for (int i = 0; i < filledCount; i++)
 					{
-						ReusedStringBuilder.Append('\u2588'); // A full square character
+						stringBuilder.Append('\u2588'); // A full square character
 					}
 					for (int i = 0; i < emptyCount; i++)
 					{
-						ReusedStringBuilder.Append('\u2500'); // A full left-to-right stretching dash character
+						stringBuilder.Append('\u2500'); // A full left-to-right stretching dash character
 					}
-					ReusedStringBuilder.Append("] ");
+					stringBuilder.Append("] ");
 				}
-				ReusedStringBuilder.Append(value.ToString("P1"));
-				var result = ReusedStringBuilder.ToString();
-				ReusedStringBuilder.Length = 0; // Make sure we will leave it clean after use.
+				stringBuilder.Append(value.ToString("P1"));
+
+				var result = stringBuilder.ToString();
+				ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
 				return result;
 			}
 		}
