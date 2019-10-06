@@ -373,7 +373,6 @@ namespace Extenity.MessagingToolbox
 			SwitchSafe(false);
 		}
 
-		// TODO IMMEDIATE: Do not forget to copy the changes onto SwitchSafe
 		public void SwitchUnsafe(bool isSwitchedOn)
 		{
 			if (IsInvoking)

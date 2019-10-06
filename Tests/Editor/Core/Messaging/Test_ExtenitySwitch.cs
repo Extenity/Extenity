@@ -29,8 +29,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void AlrightToSwitchWithoutCallbacks()
 		{
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 		}
 
 		#endregion
@@ -47,7 +47,7 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void CallbackInstantlyInvoked_InitiallySwitchedOn()
 		{
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 		}
@@ -58,7 +58,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOn, null);
 			Assert.That(new Action(CallbackOn).Target as Object, Is.Null);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 		}
 
@@ -69,7 +69,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, null);
 			Assert.That(new Action(TestSwitchSubject.CallbackOn).Target as Object, Is.Not.Null);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 		}
 
@@ -80,7 +80,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, null);
 			TestSwitch.AddListener(CallbackOnC, null);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
@@ -93,7 +93,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, null, -20);
 			TestSwitch.AddListener(CallbackOnC, null, -30);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback A."));
@@ -110,7 +110,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnE, null, 30);
 			TestSwitch.AddListener(CallbackOnF, null, 30);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."),
@@ -119,6 +119,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOn callback F."));
 		}
 
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
 		public void InvokingSafeIsNotAffectedByExceptions()
 		{
@@ -132,6 +133,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
 
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
 		public void InvokingUnsafeDoesNotCatchExceptions()
 		{
@@ -150,9 +152,9 @@ namespace ExtenityTests.MessagingToolbox
 
 			for (int i = 0; i < 10; i++)
 			{
-				TestSwitch.SwitchOnSafe();
+				SwitchOn();
 				AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-				TestSwitch.SwitchOffSafe();
+				SwitchOff();
 				AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 			}
 		}
@@ -162,7 +164,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			RegisterCallbacks();
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -171,19 +173,19 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			RegisterCallbacks();
 
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
+			SwitchOff();
+			SwitchOff();
+			SwitchOff();
 			AssertExpectNoLogs();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
+			SwitchOn();
+			SwitchOn();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -199,7 +201,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 
 			// Note that the callback is called only once.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
@@ -219,11 +221,11 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."));
 
 			// The same SwitchOn callback called twice, since they are considered as different callback sets.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback A."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -238,12 +240,12 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffA);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 
 			// The same SwitchOff callback called twice, since they are considered as different callback sets.
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback A."));
 		}
@@ -254,16 +256,16 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(null, CallbackOffA);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectNoLogs();
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectNoLogs();
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
 		}
 
@@ -273,16 +275,16 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, null);
 			AssertExpectNoLogs();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -293,11 +295,11 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
 
 			// We don't get any calls but the callback is removed at that point.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectNoLogs();
 
 			// There is no SwitchOff callbacks anymore.
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -328,25 +330,43 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void NestedSwitchesAreNotAllowed()
 		{
-			TestSwitch.AddListener(() => TestSwitch.SwitchOffSafe(), null);
-			TestSwitch.SwitchOnSafe();
+			TestSwitch.AddListener(SwitchOff, null);
+			SwitchOn();
 			AssertExpectLog((LogType.Exception, "Exception: Invoked switch off while an invocation is ongoing."));
 		}
 
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
-		public void NestedAddListenerIsNotAllowed()
+		public void NestedAddListenerIsNotAllowed_Safe()
 		{
 			TestSwitch.AddListener(() => TestSwitch.AddListener(CallbackOn, CallbackOff), null);
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
 		}
 
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
-		public void NestedRemoveListenerIsNotAllowed()
+		public void NestedAddListenerIsNotAllowed_Unsafe()
+		{
+			TestSwitch.AddListener(() => TestSwitch.AddListener(CallbackOn, CallbackOff), null);
+			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
+		}
+
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
+		[Test]
+		public void NestedRemoveListenerIsNotAllowed_Safe()
 		{
 			TestSwitch.AddListener(() => TestSwitch.RemoveListener(CallbackOn, CallbackOff), null);
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
+		}
+
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
+		[Test]
+		public void NestedRemoveListenerIsNotAllowed_Unsafe()
+		{
+			TestSwitch.AddListener(() => TestSwitch.RemoveListener(CallbackOn, CallbackOff), null);
+			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
 		}
 
 		#endregion
@@ -372,7 +392,7 @@ namespace ExtenityTests.MessagingToolbox
 			}
 
 			TestSwitch.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.Permanent);
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called 1"));
 		}
 
@@ -394,7 +414,7 @@ namespace ExtenityTests.MessagingToolbox
 			}
 
 			TestSwitch.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called 1"),
 			                (LogType.Log, "Called 2"),
 			                (LogType.Log, "Called 3"),
@@ -413,10 +433,10 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOn, null);
 			TestSwitch.RemoveListener(CallbackOn, null);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -428,12 +448,12 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 
 			// Callback removes itself.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// No more calls.
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -444,12 +464,12 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
 
 			// Callback removes itself.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// No more calls.
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -463,8 +483,9 @@ namespace ExtenityTests.MessagingToolbox
 
 #else
 
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
-		public void NotAlrightToRemoveListenerInsideCallback()
+		public void NotAlrightToRemoveListenerInsideCallback_Safe()
 		{
 			TestSwitch.AddListener(CallbackOnAndRemove, CallbackOff);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
@@ -473,6 +494,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."),
 			                (LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
+		}
+
+		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
+		[Test]
+		public void NotAlrightToRemoveListenerInsideCallback_Unsafe()
+		{
+			TestSwitch.AddListener(CallbackOnAndRemove, CallbackOff);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+
+			// Callback removes itself.
+			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 		}
 
 #endif
@@ -491,10 +524,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -511,10 +544,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -531,10 +564,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -551,24 +584,24 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback C."));
 
 			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -588,12 +621,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -609,12 +642,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -630,12 +663,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -651,11 +684,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -671,11 +704,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -691,11 +724,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -718,12 +751,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -739,12 +772,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -760,12 +793,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -781,11 +814,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -801,11 +834,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -821,11 +854,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -848,12 +881,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -869,12 +902,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -890,12 +923,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -911,12 +944,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -932,12 +965,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -953,12 +986,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -981,7 +1014,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."), // OffA fails to remove B because it was not registered at the time it was tried to be removed.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
@@ -998,7 +1031,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C.")); // OffA fails to remove C because it was not registered at the time it was tried to be removed.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
@@ -1015,7 +1048,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1031,7 +1064,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C.")); // OffB fails to remove C because it was not registered at the time it was tried to be removed.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
@@ -1048,7 +1081,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1064,7 +1097,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1076,7 +1109,7 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void HavingLifeSpanOfRemovedAtFirstEmitConsideredFastTrackAndWontBeRegisteredIntoCallbacksList()
 		{
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			TestSwitch.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			AssertRegisteredCallbackCount(0); // The callback is instantly called and not registered into the list.
@@ -1087,19 +1120,19 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
 			TestSwitch.RemoveListener(CallbackOn, CallbackOff);
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOff();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -1109,19 +1142,19 @@ namespace ExtenityTests.MessagingToolbox
 			CreateLifeSpanTargetTestObject();
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOff();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -1135,8 +1168,8 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyLifeSpanTargetTestObject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1145,19 +1178,19 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestSwitchSubject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOff();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -1170,8 +1203,8 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyTestSwitchSubject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1181,12 +1214,12 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
-			TestSwitch.SwitchOnSafe();
+			SwitchOff();
+			SwitchOn();
 			AssertExpectNoLogs();
 		}
 
@@ -1197,17 +1230,17 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit, LifeSpanTargetTestObject);
 
 			// The callback will be deregistered after this.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 
 			// Destroying the LifeSpanTarget does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyLifeSpanTargetTestObject();
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1221,8 +1254,8 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyLifeSpanTargetTestObject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1232,17 +1265,17 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectNoLogs();
 
 			// Destroying the Subject does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyTestSwitchSubject();
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1255,8 +1288,8 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyTestSwitchSubject();
 			AssertRegisteredCallbackCount(0);
 
-			TestSwitch.SwitchOnSafe();
-			TestSwitch.SwitchOffSafe();
+			SwitchOn();
+			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
@@ -1273,13 +1306,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 			AssertRegisteredCallbackCount(2);
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1295,13 +1328,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 			AssertRegisteredCallbackCount(2);
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1317,13 +1350,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 			AssertRegisteredCallbackCount(2);
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1345,10 +1378,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyLifeSpanTargetTestObject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1366,10 +1399,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyLifeSpanTargetTestObject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1387,10 +1420,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyLifeSpanTargetTestObject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1411,12 +1444,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1433,12 +1466,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1455,12 +1488,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1477,11 +1510,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1498,11 +1531,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1519,11 +1552,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1544,12 +1577,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1566,12 +1599,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1588,12 +1621,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1610,12 +1643,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1632,12 +1665,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1654,12 +1687,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1680,7 +1713,7 @@ namespace ExtenityTests.MessagingToolbox
 			                //(LogType.Log, "Called SwitchOff callback B."), Removed when OffA is called.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1697,7 +1730,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffA is called.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 		}
@@ -1714,7 +1747,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1731,7 +1764,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffB is called.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 		}
@@ -1748,7 +1781,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1765,7 +1798,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -1787,10 +1820,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyTestSwitchSubject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1808,10 +1841,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyTestSwitchSubject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1829,10 +1862,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			DestroyTestSwitchSubject();
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1853,12 +1886,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1875,12 +1908,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1897,12 +1930,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1919,11 +1952,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1940,11 +1973,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -1961,11 +1994,11 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -1986,12 +2019,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -2008,12 +2041,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -2030,12 +2063,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -2052,12 +2085,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
@@ -2074,12 +2107,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -2096,12 +2129,12 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 
 			// This is where it's removed.
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
 			                (LogType.Log, "Called SwitchOn callback C."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
@@ -2122,7 +2155,7 @@ namespace ExtenityTests.MessagingToolbox
 			                //(LogType.Log, "Called SwitchOff callback B."), Removed when OffA is called.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -2139,7 +2172,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffA is called.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 		}
@@ -2156,7 +2189,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -2173,7 +2206,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffB is called.
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback B."));
 		}
@@ -2190,7 +2223,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."),
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -2207,7 +2240,7 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
 			                (LogType.Log, "Called SwitchOff callback C."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
@@ -2277,13 +2310,13 @@ namespace ExtenityTests.MessagingToolbox
 			);
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added second."));
 
-			TestSwitch.SwitchOnSafe();
+			SwitchOn();
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order -40."),
 			                (LogType.Log, "Called SwitchOn callback with default order, added first."),
 			                (LogType.Log, "Called SwitchOn callback with default order, added second."),
 			                (LogType.Log, "Called SwitchOn callback with order 60."));
 
-			TestSwitch.SwitchOffSafe();
+			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."),
 			                (LogType.Log, "Called SwitchOff callback with default order, added first."),
 			                (LogType.Log, "Called SwitchOff callback with default order, added second."),
