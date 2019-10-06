@@ -6,7 +6,7 @@ namespace ExtenityTests.MessagingToolbox
 
 	public class Test_ExtenitySwitchSubject : MonoBehaviour
 	{
-		// @formatter:on
+		// @formatter:off
 		public void CallbackOn()   { Log.Info("Called SwitchOn callback.");    }
 		public void CallbackOnA()  { Log.Info("Called SwitchOn callback A.");  }
 		public void CallbackOnB()  { Log.Info("Called SwitchOn callback B.");  }
@@ -29,7 +29,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void CallbackOffAAndDestroySubject() { CallbackOffA(); DestroyTestSwitchSubject(); }
 		public void CallbackOffBAndDestroySubject() { CallbackOffB(); DestroyTestSwitchSubject(); }
 		public void CallbackOffCAndDestroySubject() { CallbackOffC(); DestroyTestSwitchSubject(); }
-		// @formatter:off
+		// @formatter:on
 
 		public Action DestroyTestSwitchSubject;
 	}

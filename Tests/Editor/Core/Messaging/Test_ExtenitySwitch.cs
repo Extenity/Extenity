@@ -296,7 +296,6 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 		}
 
-
 		[Test]
 		public void AlrightNotToHaveBothCallbacks()
 		{
@@ -306,17 +305,44 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
-		#region Switching Inside Callback
+		#region Nested Operations
 
-		// TODO: BasicNestedCall
-		// TODO: NestedCallsWontCheckForDeadlocks
-		// TODO: RemovingListenerInsideNestedCall_FromTheEnd
-		// TODO: RemovingListenerInsideNestedCall_FromTheBeginning
-		// TODO: RemovingListenerInsideNestedCall_Self
-		// TODO: RemovingListenerInsideNestedCall_SelfAndAddSelfAgain
-		// TODO: AddingListenerInsideNestedCall_ToTheEnd
-		// TODO: AddingListenerInsideNestedCall_ToTheBeginning
-		// TODO: AddingListenerInsideNestedCall_SelfIsIgnored
+		// See 117418312.
+		// Nested operations are really hard to implement. So they are not allowed for now. These are some previous
+		// thoughts on that topic.
+		//    BasicNestedCall
+		//    NestedCallsWontCheckForDeadlocks
+		//    RemovingListenerInsideNestedCall_FromTheEnd
+		//    RemovingListenerInsideNestedCall_FromTheBeginning
+		//    RemovingListenerInsideNestedCall_Self
+		//    RemovingListenerInsideNestedCall_SelfAndAddSelfAgain
+		//    AddingListenerInsideNestedCall_ToTheEnd
+		//    AddingListenerInsideNestedCall_ToTheBeginning
+		//    AddingListenerInsideNestedCall_SelfIsIgnored
+
+		[Test]
+		public void NestedSwitchesAreNotAllowed()
+		{
+			TestSwitch.AddListener(() => TestSwitch.SwitchOffSafe(), null);
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Exception, "Exception: Invoked switch off while an invocation is ongoing."));
+		}
+
+		[Test]
+		public void NestedAddListenerIsNotAllowed()
+		{
+			TestSwitch.AddListener(() => TestSwitch.AddListener(CallbackOn, CallbackOff), null);
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
+		}
+
+		[Test]
+		public void NestedRemoveListenerIsNotAllowed()
+		{
+			TestSwitch.AddListener(() => TestSwitch.RemoveListener(CallbackOn, CallbackOff), null);
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
+		}
 
 		#endregion
 
@@ -325,6 +351,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		#region Registering Edge Cases
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void AddingTheListenerOnceMoreInsideTheCallbackWillBeIgnored_WithLifeSpanOfPermanent()
 		{
@@ -369,6 +396,8 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Exception, "Test_ExtenitySwitchException: Hard brakes!"));
 		}
 
+#endif
+
 		#endregion
 
 		#region Callback Life Span
@@ -386,6 +415,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 		}
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void AlrightToRemoveListenerInsideCallback_ManualRemove()
 		{
@@ -425,6 +455,22 @@ namespace ExtenityTests.MessagingToolbox
 
 			Assert.Throws<Exception>(() => TestSwitch.RemoveCurrentListener());
 		}
+
+#else
+
+		[Test]
+		public void NotAlrightToRemoveListenerInsideCallback()
+		{
+			TestSwitch.AddListener(CallbackOnAndRemove, CallbackOff);
+			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+
+			// Callback removes itself.
+			TestSwitch.SwitchOnSafe();
+			AssertExpectLog((LogType.Log, "Called SwitchOn callback."),
+			                (LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
+		}
+
+#endif
 
 		#region RemovingListener_DoesNotAffectOtherListeners
 
@@ -525,6 +571,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		#region RemovingListener_InsideListener_DoesNotAffectOtherListeners_ManualRemove
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void RemovingListener_InsideListener_DoesNotAffectOtherListeners_ManualRemove_OnARemovesA()
 		{
@@ -648,10 +695,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
+#endif
+
 		#endregion
 
 		#region RemovingListener_InsideListener_DoesNotAffectOtherListeners_UsingRemoveCurrentListener
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void RemovingListener_InsideListener_DoesNotAffectOtherListeners_UsingRemoveCurrentListener_OnARemovesSelf()
 		{
@@ -775,10 +825,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback B."));
 		}
 
+#endif
+
 		#endregion
 
 		#region RemovingAnotherListener_InsideListener_DoesNotAffectOtherListeners - On
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void RemovingAnotherListener_InsideListener_DoesNotAffectOtherListeners_OnARemovesB()
 		{
@@ -905,10 +958,13 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called SwitchOff callback C."));
 		}
 
+#endif
+
 		#endregion
 
 		#region RemovingAnotherListener_InsideListener_DoesNotAffectOtherListeners - Off
 
+#if DevelopingNestedAddRemoveListenerSupport
 		[Test]
 		public void RemovingAnotherListener_InsideListener_DoesNotAffectOtherListeners_OffARemovesB()
 		{
@@ -1007,6 +1063,8 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
 			                (LogType.Log, "Called SwitchOn callback C."));
 		}
+
+#endif
 
 		#endregion
 
@@ -2249,6 +2307,7 @@ namespace ExtenityTests.MessagingToolbox
 		private void ThrowingCallback() { throw new Test_ExtenityEventException("Called throwing callback."); }
 
 		private void CallbackOnAndRemove()     { CallbackOn(); TestSwitch.RemoveListener(CallbackOn, CallbackOff); }
+#if DevelopingNestedAddRemoveListenerSupport
 		private void CallbackOnAndRemoveSelf() { CallbackOn(); TestSwitch.RemoveCurrentListener(); }
 
 		private void CallbackOnAAndRemoveSelf()  { CallbackOnA();  TestSwitch.RemoveCurrentListener(); }
@@ -2257,6 +2316,7 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackOffAAndRemoveSelf() { CallbackOffA(); TestSwitch.RemoveCurrentListener(); }
 		private void CallbackOffBAndRemoveSelf() { CallbackOffB(); TestSwitch.RemoveCurrentListener(); }
 		private void CallbackOffCAndRemoveSelf() { CallbackOffC(); TestSwitch.RemoveCurrentListener(); }
+#endif
 
 		private void CallbackOnAAndRemoveA()  { CallbackOnA();  TestSwitch.RemoveListener(CallbackOnAAndRemoveA, CallbackOffA); }
 		private void CallbackOnBAndRemoveB()  { CallbackOnB();  TestSwitch.RemoveListener(CallbackOnBAndRemoveB, CallbackOffB); }
@@ -2265,6 +2325,7 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackOffBAndRemoveB() { CallbackOffB(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffBAndRemoveB); }
 		private void CallbackOffCAndRemoveC() { CallbackOffC(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffCAndRemoveC); }
 
+#if DevelopingNestedAddRemoveListenerSupport
 		private void CallbackOnAAndRemoveB()  { CallbackOnA();  TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
 		private void CallbackOnAAndRemoveC()  { CallbackOnA();  TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
 		private void CallbackOnBAndRemoveA()  { CallbackOnB();  TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
@@ -2277,6 +2338,7 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackOffBAndRemoveC() { CallbackOffB(); TestSwitch.RemoveListener(CallbackOnC, CallbackOffC); }
 		private void CallbackOffCAndRemoveA() { CallbackOffC(); TestSwitch.RemoveListener(CallbackOnA, CallbackOffA); }
 		private void CallbackOffCAndRemoveB() { CallbackOffC(); TestSwitch.RemoveListener(CallbackOnB, CallbackOffB); }
+#endif
 
 		private void CallbackOnAAndDestroyLifeSpanTarget()  { CallbackOnA();  DestroyLifeSpanTargetTestObject(); }
 		private void CallbackOnBAndDestroyLifeSpanTarget()  { CallbackOnB();  DestroyLifeSpanTargetTestObject(); }

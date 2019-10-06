@@ -170,6 +170,8 @@ namespace Extenity.MessagingToolbox
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
 		public void AddListener(Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
+			if (IsInvoking)
+				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
 			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
 				throw new ArgumentOutOfRangeException(nameof(order), order, "");
 			if (switchOnCallback == null && switchOffCallback == null)
@@ -218,11 +220,16 @@ namespace Extenity.MessagingToolbox
 				{
 					try
 					{
+						IsInvoking = true;
 						switchOnCallback();
 					}
 					catch (Exception exception)
 					{
 						Log.Exception(exception);
+					}
+					finally
+					{
+						IsInvoking = false;
 					}
 				}
 				return; // Go no further. Below is the callback registration part, which we don't need.
@@ -273,17 +280,25 @@ namespace Extenity.MessagingToolbox
 			{
 				try
 				{
+					IsInvoking = true;
 					callback();
 				}
 				catch (Exception exception)
 				{
 					Log.Exception(exception);
 				}
+				finally
+				{
+					IsInvoking = false;
+				}
 			}
 		}
 
 		public bool RemoveListener(Action switchOnCallback, Action switchOffCallback)
 		{
+			if (IsInvoking)
+				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
+
 			if (switchOnCallback == null && switchOffCallback == null)
 				return false; // Silently ignore
 
@@ -307,17 +322,22 @@ namespace Extenity.MessagingToolbox
 			Callbacks.RemoveAt(index);
 		}
 
+		[Obsolete("Not implemented yet! If you really need this feature, find a way to implement it.")]
 		public void RemoveCurrentListener()
 		{
 			if (!IsInvoking)
-			{
 				throw new Exception("Tried to remove current listener outside of listener callback.");
-			}
+
+			// There is a possibility that user may call RemoveCurrentListener multiple times. So we must handle that
+			// too. Consider using something like Entry.RegistryID to first look if the list has the
+			// CurrentListenerRegistryID.
 			throw new NotImplementedException();
 		}
 
 		public void RemoveAllListeners()
 		{
+			if (IsInvoking)
+				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
 			if (ExtenityEventTools.VerboseLogging)
 				Log.Info("Removing all listeners.");
 
@@ -330,7 +350,7 @@ namespace Extenity.MessagingToolbox
 
 		public bool IsSwitchedOn { get; private set; }
 
-		private bool IsInvoking => InvokeIndex >= 0;
+		private bool IsInvoking = false;
 		private int InvokeIndex = -1;
 
 		public void SwitchOnUnsafe()
@@ -365,7 +385,8 @@ namespace Extenity.MessagingToolbox
 			{
 				return;
 			}
-			InvokeIndex = 0; // IsInvoking = true;
+			IsInvoking = true;
+			InvokeIndex = 0;
 
 			// Note that isSwitchedOn will be used inside this method instead of IsSwitchedOn. It tells the state at
 			// the time of calling this method, while IsSwitchedOn might change before completing this method.
@@ -401,6 +422,7 @@ namespace Extenity.MessagingToolbox
 			}
 			finally
 			{
+				IsInvoking = false;
 				InvokeIndex = -1;
 			}
 		}
@@ -416,7 +438,8 @@ namespace Extenity.MessagingToolbox
 			{
 				return;
 			}
-			InvokeIndex = 0; // IsInvoking = true;
+			IsInvoking = true;
+			InvokeIndex = 0;
 
 			// Note that isSwitchedOn will be used inside this method instead of IsSwitchedOn. It tells the state at
 			// the time of calling this method, while IsSwitchedOn might change before completing this method.
@@ -455,6 +478,7 @@ namespace Extenity.MessagingToolbox
 				InvokeIndex++;
 			}
 
+			IsInvoking = false;
 			InvokeIndex = -1;
 		}
 
