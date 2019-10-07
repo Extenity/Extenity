@@ -1,6 +1,5 @@
 ﻿using System;
 using Extenity.GameObjectToolbox;
-using Object = UnityEngine.Object;
 
 namespace Extenity.DataToolbox
 {
@@ -28,7 +27,7 @@ namespace Extenity.DataToolbox
 
 		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
-			return GameObjectTools.FullObjectName(del?.Target as Object, maxHierarchyLevels);
+			return GameObjectTools.FullObjectName(del?.Target, maxHierarchyLevels);
 		}
 
 		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels, string methodAndTargetSeparator = " in ")
