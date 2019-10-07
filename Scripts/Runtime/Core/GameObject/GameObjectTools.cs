@@ -1935,29 +1935,14 @@ namespace Extenity.GameObjectToolbox
 			return me.name;
 		}
 
-		// TODO IMMEDIATE: Consider deleting this override method (and also search for all maxHierarchyLevels) and making maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels
-		public static string FullName(this GameObject me, char separator = '/')
+		public static string FullName(this GameObject me, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, char separator = '/')
 		{
-			if (me == null)
-				return NamingTools.NullGameObjectName;
-			var name = me.name;
-			var parent = me.transform.parent;
-			while (parent != null)
-			{
-				name = parent.name + separator + name;
-				parent = parent.parent;
-			}
-			return name;
-		}
-
-		public static string FullName(this GameObject me, int maxHierarchyLevels, char separator = '/')
-		{
-			if (me == null || maxHierarchyLevels <= 0)
+			if (!me || maxHierarchyLevels <= 0)
 				return NamingTools.NullGameObjectName;
 			var name = me.name;
 			var parent = me.transform.parent;
 			maxHierarchyLevels--;
-			while (parent != null && maxHierarchyLevels > 0)
+			while (maxHierarchyLevels > 0 && parent)
 			{
 				name = parent.name + separator + name;
 				parent = parent.parent;
@@ -1968,70 +1953,21 @@ namespace Extenity.GameObjectToolbox
 				: name;
 		}
 
-		public static string FullName(this Component me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		public static string FullName(this Component me, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
 		{
-			if (me == null)
-				return NamingTools.NullComponentName;
-			return me.gameObject.FullName(gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
-		}
-
-		public static string FullName(this Component me, int maxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
-		{
-			if (me == null)
+			if (!me)
 				return NamingTools.NullComponentName;
 			return me.gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
 		}
 
-		public static string FullGameObjectName(this Component me, char separator = '/')
+		public static string FullGameObjectName(this Component me, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, char separator = '/')
 		{
-			if (me == null)
-				return NamingTools.NullComponentName;
-			return me.gameObject.FullName(separator);
-		}
-
-		public static string FullGameObjectName(this Component me, int maxHierarchyLevels, char separator = '/')
-		{
-			if (me == null)
-				return NamingTools.NullComponentName;
+			if (!me)
+				return NamingTools.NullGameObjectName; // Note that we are interested in gameobject name rather than component name. So we return NullGameObjectName instead of NullComponentName.
 			return me.gameObject.FullName(maxHierarchyLevels, separator);
 		}
 
-		public static string FullObjectName(this object me, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
-		{
-			if (me is Component)
-			{
-				var asComponent = me as Component;
-				return asComponent
-					? asComponent.FullName(gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator)
-					: NamingTools.NullComponentName;
-			}
-			if (me is GameObject)
-			{
-				var asGameObject = me as GameObject;
-				return asGameObject
-					? asGameObject.FullName(separator: gameObjectNameSeparator)
-					: NamingTools.NullGameObjectName;
-			}
-			if (me is Object)
-			{
-				var asObject = me as Object;
-				return asObject
-					? asObject.ToString()
-					: NamingTools.NullObjectName;
-			}
-			if (me is Delegate)
-			{
-				var asDelegate = me as Delegate;
-				return asDelegate != null
-					? asDelegate.FullNameOfTargetAndMethod()
-					: NamingTools.NullDelegateName;
-			}
-			return me != null
-				? me.ToString()
-				: NamingTools.NullName;
-		}
-
-		public static string FullObjectName(this object me, int maxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		public static string FullObjectName(this object me, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
 		{
 			if (me is Component)
 			{

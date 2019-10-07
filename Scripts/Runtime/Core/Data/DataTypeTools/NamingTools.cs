@@ -15,6 +15,12 @@ namespace Extenity.DataToolbox
 		public const string NullName = "[NA]";
 
 		#endregion
+
+		#region Name In Hierarchy
+
+		public const int DefaultMaxHierarchyLevels = 100;
+
+		#endregion
 	}
 
 }

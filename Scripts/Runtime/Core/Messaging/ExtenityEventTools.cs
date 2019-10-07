@@ -24,33 +24,12 @@ namespace Extenity.MessagingToolbox
 
 		// TODO IMMEDIATE: Move these into NamingTools
 
-		public static string FullNameOfTarget(this Delegate del)
-		{
-			return GameObjectTools.FullObjectName(del?.Target as Object);
-		}
-
-		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels)
+		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels)
 		{
 			return GameObjectTools.FullObjectName(del?.Target as Object, maxHierarchyLevels);
 		}
 
-		public static string FullNameOfTargetAndMethod(this Delegate del, string methodAndTargetSeparator = " in ")
-		{
-			if (del != null)
-			{
-				if (del.IsUnityObjectTargetedAndDestroyed())
-				{
-					return NamingTools.NullDelegateNameWithMethod(del.Method.Name);
-				}
-				else
-				{
-					return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del);
-				}
-			}
-			return NamingTools.NullDelegateName;
-		}
-
-		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels, string methodAndTargetSeparator = " in ")
+		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, string methodAndTargetSeparator = " in ")
 		{
 			if (del != null)
 			{
