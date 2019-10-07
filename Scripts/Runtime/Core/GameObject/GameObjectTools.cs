@@ -1921,8 +1921,7 @@ namespace Extenity.GameObjectToolbox
 
 		// TODO IMMEDIATE: Move these into NamingTools
 
-		// TODO IMMEDIATE: Rename this to GameObjectNameSafe
-		public static string NameSafe(this Component me)
+		public static string GameObjectNameSafe(this Component me)
 		{
 			if (me == null)
 				return NamingTools.NullComponentName;

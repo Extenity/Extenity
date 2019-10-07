@@ -191,7 +191,7 @@ namespace Extenity.UIToolbox
 			{
 				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
 				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
-				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.NameSafe()}'.", this);
+				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.", this);
 				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
 			}
 
@@ -265,7 +265,7 @@ namespace Extenity.UIToolbox
 			{
 				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
 				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
-				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.NameSafe()}'.", this);
+				Log.CriticalError($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.", this);
 				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
 			}
 
