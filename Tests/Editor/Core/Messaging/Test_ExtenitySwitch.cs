@@ -27,7 +27,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void AlrightToSwitchWithoutCallbacks()
+		public void AlrightToSwitchWithoutListeners()
 		{
 			SwitchOn();
 			SwitchOff();
@@ -304,7 +304,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void AlrightNotToHaveBothCallbacks()
+		public void AlrightNotToHaveBothCallbacks_WhichIsSilentlyIgnored()
 		{
 			TestSwitch.AddListener(null, null);
 			AssertRegisteredCallbackCount(0);
@@ -2410,7 +2410,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		private void AssertRegisteredCallbackCount(int expectedCount)
 		{
-			Assert.AreEqual(expectedCount, TestSwitch.CallbacksAliveAndWellCount, "Unexpected registered callback count.");
+			Assert.AreEqual(expectedCount, TestSwitch.ListenersAliveCount, "Unexpected registered callback count.");
 		}
 
 		#endregion

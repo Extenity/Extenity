@@ -765,7 +765,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 				return false;
-			return listenerInfo.Switch.IsAnyAliveAndWellCallbackExists;
+			return listenerInfo.Switch.IsAnyAliveListenerRegistered;
 		}
 
 		public bool CheckIfAnySwitchIsOnOrHasRegisteredListeners()
@@ -773,7 +773,7 @@ namespace Extenity.MessagingToolbox
 			return SwitchListenerInfoDictionary
 			       .Values
 			       .Any(listenerInfo => listenerInfo.Switch.IsSwitchedOn ||
-			                            listenerInfo.Switch.IsAnyAliveAndWellCallbackExists);
+			                            listenerInfo.Switch.IsAnyAliveListenerRegistered);
 		}
 
 		#endregion
@@ -822,11 +822,11 @@ namespace Extenity.MessagingToolbox
 		[FoldoutGroup("Debug")]
 		public bool EnableVerboseSwitchLoggingInEveryModification = false;
 
-		public string GetSwitchCallbackDebugInfo(string switchId, string linePrefix)
+		public string GetSwitchListenerDebugInfo(string switchId, string linePrefix)
 		{
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 				return "";
-			return listenerInfo.Switch.GetSwitchCallbackDebugInfo(linePrefix);
+			return listenerInfo.Switch.GetSwitchListenerDebugInfo(linePrefix);
 		}
 
 		public string GetSwitchStatusDebugInfo()
@@ -839,8 +839,8 @@ namespace Extenity.MessagingToolbox
 				stringBuilder.AppendLine($"Listing {SwitchListenerInfoDictionary.Count} Switch entries:");
 				foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
 				{
-					stringBuilder.AppendLine($"SwitchID: {listenerInfo.SwitchId} \t Status: {listenerInfo.Switch.IsSwitchedOn} \t Listeners: {listenerInfo.Switch.CallbacksAliveAndWellCount} ({listenerInfo.Switch.CallbacksCount} including unavailable)");
-					listenerInfo.Switch.GetSwitchCallbackDebugInfo(stringBuilder, "\t");
+					stringBuilder.AppendLine($"SwitchID: {listenerInfo.SwitchId} \t Status: {listenerInfo.Switch.IsSwitchedOn} \t Listeners: {listenerInfo.Switch.ListenersAliveCount} ({listenerInfo.Switch.ListenersCount} including unavailable)");
+					listenerInfo.Switch.GetSwitchListenerDebugInfo(stringBuilder, "\t");
 				}
 
 				var result = stringBuilder.ToString();

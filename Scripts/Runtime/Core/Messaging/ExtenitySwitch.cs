@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -10,9 +9,9 @@ namespace Extenity.MessagingToolbox
 
 	public class ExtenitySwitch
 	{
-		#region Callback entries
+		#region Listeners
 
-		public struct Entry
+		public struct Listener
 		{
 			public readonly Action SwitchOnCallback;
 			public readonly Action SwitchOffCallback;
@@ -23,7 +22,7 @@ namespace Extenity.MessagingToolbox
 			public readonly Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
 
-			public Entry(Action switchOnCallback, Action switchOffCallback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
+			public Listener(Action switchOnCallback, Action switchOffCallback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				SwitchOnCallback = switchOnCallback;
 				SwitchOffCallback = switchOffCallback;
@@ -109,66 +108,62 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		// TODO IMMEDIATE: Rename to Entries or something. The name Callbacks was good in previous implementation but not anymore.
-
 		/// <summary>
 		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
-		public List<Entry> _Callbacks => Callbacks;
-		private readonly List<Entry> Callbacks = new List<Entry>(10);
+		public List<Listener> _Listeners => Listeners;
+		private readonly List<Listener> Listeners = new List<Listener>(10);
 
-		public bool IsAnyListenerRegistered => Callbacks.Count > 0;
-
-		public bool IsSwitchOnListenerRegistered(Action callback)
+		public bool IsSwitchOnCallbackRegistered(Action callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].SwitchOnCallback == callback)
+				if (Listeners[i].SwitchOnCallback == callback)
 					return true;
 			}
 			return false;
 		}
 
-		public bool IsSwitchOffListenerRegistered(Action callback)
+		public bool IsSwitchOffCallbackRegistered(Action callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].SwitchOffCallback == callback)
+				if (Listeners[i].SwitchOffCallback == callback)
 					return true;
 			}
 			return false;
 		}
 
-		public Entry GetListenerInfoBySwitchOnCallback(Action callback)
+		public Listener GetListenerBySwitchOnCallback(Action callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].SwitchOnCallback == callback)
-					return Callbacks[i];
+				if (Listeners[i].SwitchOnCallback == callback)
+					return Listeners[i];
 			}
 			return default;
 		}
 
-		public Entry GetListenerInfoBySwitchOffCallback(Action callback)
+		public Listener GetListenerBySwitchOffCallback(Action callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].SwitchOffCallback == callback)
-					return Callbacks[i];
+				if (Listeners[i].SwitchOffCallback == callback)
+					return Listeners[i];
 			}
 			return default;
 		}
 
-		public int CallbacksCount => Callbacks.Count;
+		public int ListenersCount => Listeners.Count;
 
-		public int CallbacksAliveAndWellCount
+		public int ListenersAliveCount
 		{
 			get
 			{
 				var count = 0;
-				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				for (int i = Listeners.Count - 1; i >= 0; i--)
 				{
-					if (!Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+					if (!Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
 					{
 						count++;
 					}
@@ -177,13 +172,15 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		public bool IsAnyAliveAndWellCallbackExists
+		public bool IsAnyListenerRegistered => Listeners.Count > 0;
+
+		public bool IsAnyAliveListenerRegistered
 		{
 			get
 			{
-				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				for (int i = Listeners.Count - 1; i >= 0; i--)
 				{
-					if (!Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+					if (!Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
 					{
 						return true;
 					}
@@ -197,11 +194,11 @@ namespace Extenity.MessagingToolbox
 			if (IsInvoking)
 				throw new Exception("Cleanup is not allowed while invoking.");
 
-			for (int i = Callbacks.Count - 1; i >= 0; i--)
+			for (int i = Listeners.Count - 1; i >= 0; i--)
 			{
-				if (Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+				if (Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
 				{
-					Callbacks.RemoveAt(i);
+					Listeners.RemoveAt(i);
 					i--;
 				}
 			}
@@ -221,21 +218,21 @@ namespace Extenity.MessagingToolbox
 			if (switchOnCallback == null && switchOffCallback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Verbose($"Tried to add a null callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
+					Log.Verbose($"Tried to add switch listener specifying both callbacks null with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
 				return; // Silently ignore
 			}
 			if (ExtenityEventTools.VerboseLogging && switchOnCallback == null && lifeSpan == ListenerLifeSpan.RemovedAtFirstEmit)
 				Log.Verbose($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
 
-			// See if the callback was already registered.
-			for (var i = 0; i < Callbacks.Count; i++)
+			// See if the callback pair was already registered.
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].HasCallbacks(switchOnCallback, switchOffCallback))
+				if (Listeners[i].HasCallbacks(switchOnCallback, switchOffCallback))
 				{
 					// The callback is already registered. See if there is a change in its parameters.
-					if (Callbacks[i].Order != order ||
-					    Callbacks[i].LifeSpan != lifeSpan ||
-					    Callbacks[i].LifeSpanTarget != lifeSpanTarget)
+					if (Listeners[i].Order != order ||
+					    Listeners[i].LifeSpan != lifeSpan ||
+					    Listeners[i].LifeSpanTarget != lifeSpanTarget)
 					{
 						// Trying to add the same callback with different parameters. Just remove the existing one and
 						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
@@ -244,7 +241,7 @@ namespace Extenity.MessagingToolbox
 					else
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
+							Log.Verbose($"Tried to add an already registered callback pair with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
 						return; // Silently ignore
 					}
 
@@ -252,8 +249,8 @@ namespace Extenity.MessagingToolbox
 				}
 			}
 
-			// If the switch is On and the caller needs to know about that, we don't need to register the listeners
-			// to callback list. Just call the SwitchOn callback and move on.
+			// If the switch is On and the caller needs to be RemovedAtFirstEmit, we don't need to register the listener
+			// to Listeners list. Just call the SwitchOn callback and move on.
 			var canFastTrack = lifeSpan == ListenerLifeSpan.RemovedAtFirstEmit && IsSwitchedOn;
 
 			if (canFastTrack)
@@ -286,32 +283,32 @@ namespace Extenity.MessagingToolbox
 			// Line 2: If trying to add a callback with 0 order and the last item is ordered as 0, fear not!
 			// Just add it to the end and move on. While doing that, also cover the possibility that the order
 			// is greater(or equal) than the last item's order.
-			var entry = new Entry(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
+			var listener = new Listener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
 			var done = false;
-			if (Callbacks.Count == 0 || // Line 1
-			    order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
+			if (Listeners.Count == 0 || // Line 1
+			    order >= Listeners[Listeners.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
-				Callbacks.Add(entry);
+					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at the end, resulting '{Listeners.Count + 1}' listener(s).");
+				Listeners.Add(listener);
 				done = true;
 			}
 			else
 			{
-				for (int i = 0; i < Callbacks.Count; i++)
+				for (int i = 0; i < Listeners.Count; i++)
 				{
-					if (order < Callbacks[i].Order)
+					if (order < Listeners[i].Order)
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
-						Callbacks.Insert(i, entry);
+							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Listeners.Count + 1}' listener(s).");
+						Listeners.Insert(i, listener);
 						done = true;
 						break;
 					}
 				}
 			}
-			// This is a safety belt for the developer. Whatever optimization is going on inside the lines above should
-			// only useful if it leaves us with the entry added into the list at the end.
+			// This is a safety belt for the developer. Whatever optimization is going on inside the lines above would
+			// only be useful if it leaves us with the listener added or inserted into the list no matter what.
 			if (!done)
 			{
 				throw new InternalException(117357191); // The code should not reach here.
@@ -319,7 +316,7 @@ namespace Extenity.MessagingToolbox
 
 			// See 118512052. Call the new callback instantly. It will be a safe call and there is no real reason
 			// to provide an unsafe call option for just a single callback.
-			var callback = entry.GetCallbackAndCheckIfAlive(IsSwitchedOn);
+			var callback = listener.GetCallbackAndCheckIfAlive(IsSwitchedOn);
 			if (callback != null) // Check if the callback is specified by user. See 11853135.
 			{
 				try
@@ -346,13 +343,13 @@ namespace Extenity.MessagingToolbox
 			if (switchOnCallback == null && switchOffCallback == null)
 				return false; // Silently ignore
 
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].HasCallbacks(switchOnCallback, switchOffCallback))
+				if (Listeners[i].HasCallbacks(switchOnCallback, switchOffCallback))
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(Callbacks[i].Order, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
-					Callbacks.RemoveAt(i);
+						Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(Listeners[i].Order, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+					Listeners.RemoveAt(i);
 					return true;
 				}
 			}
@@ -363,7 +360,7 @@ namespace Extenity.MessagingToolbox
 
 		private void _RemoveListener(int index)
 		{
-			Callbacks.RemoveAt(index);
+			Listeners.RemoveAt(index);
 		}
 
 		[Obsolete("Not implemented yet! If you really need this feature, find a way to implement it.")]
@@ -385,7 +382,7 @@ namespace Extenity.MessagingToolbox
 			if (ExtenityEventTools.VerboseLogging)
 				Log.Verbose("Removing all listeners.");
 
-			Callbacks.Clear();
+			Listeners.Clear();
 		}
 
 		#endregion
@@ -437,12 +434,12 @@ namespace Extenity.MessagingToolbox
 
 			try
 			{
-				while (InvokeIndex < Callbacks.Count)
+				while (InvokeIndex < Listeners.Count)
 				{
-					var entry = Callbacks[InvokeIndex];
+					var entry = Listeners[InvokeIndex];
 					if (entry.IsObjectDestroyed)
 					{
-						Callbacks.RemoveAt(InvokeIndex);
+						Listeners.RemoveAt(InvokeIndex);
 						continue;
 					}
 					if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
@@ -451,7 +448,7 @@ namespace Extenity.MessagingToolbox
 						//
 						// Removing before the call also ensures that the callback will be removed even though
 						// an exception is thrown inside the callback.
-						Callbacks.RemoveAt(InvokeIndex--);
+						Listeners.RemoveAt(InvokeIndex--);
 					}
 
 					var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
@@ -488,12 +485,12 @@ namespace Extenity.MessagingToolbox
 			// the time of calling this method, while IsSwitchedOn might change before completing this method.
 			IsSwitchedOn = isSwitchedOn;
 
-			while (InvokeIndex < Callbacks.Count)
+			while (InvokeIndex < Listeners.Count)
 			{
-				var entry = Callbacks[InvokeIndex];
+				var entry = Listeners[InvokeIndex];
 				if (entry.IsObjectDestroyed)
 				{
-					Callbacks.RemoveAt(InvokeIndex);
+					Listeners.RemoveAt(InvokeIndex);
 					continue;
 				}
 				if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
@@ -502,7 +499,7 @@ namespace Extenity.MessagingToolbox
 					//
 					// Removing before the call also ensures that the callback will be removed even though
 					// an exception is thrown inside the callback.
-					Callbacks.RemoveAt(InvokeIndex--);
+					Listeners.RemoveAt(InvokeIndex--);
 				}
 
 				var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
@@ -529,14 +526,14 @@ namespace Extenity.MessagingToolbox
 
 		#region Log
 
-		public string GetSwitchCallbackDebugInfo(string linePrefix)
+		public string GetSwitchListenerDebugInfo(string linePrefix)
 		{
 			var stringBuilder = StringTools.SharedStringBuilder.Value;
 			lock (stringBuilder)
 			{
 				stringBuilder.Clear(); // Make sure it is clean before starting to use.
 
-				GetSwitchCallbackDebugInfo(stringBuilder, linePrefix);
+				GetSwitchListenerDebugInfo(stringBuilder, linePrefix);
 
 				var result = stringBuilder.ToString();
 				StringTools.ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
@@ -544,13 +541,18 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		public void GetSwitchCallbackDebugInfo(StringBuilder stringBuilder, string linePrefix)
+		public void GetSwitchListenerDebugInfo(StringBuilder stringBuilder, string linePrefix)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				var entry = Callbacks[i];
-				var notAlivePrefix = entry.IsObjectDestroyed ? "(Unavailable) " : "";
-				stringBuilder.AppendLine(linePrefix + notAlivePrefix + _Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
+				var entry = Listeners[i];
+
+				stringBuilder.Append(linePrefix);
+				if (entry.IsObjectDestroyed)
+				{
+					stringBuilder.Append("(Unavailable) ");
+				}
+				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
 			}
 		}
 
