@@ -27,8 +27,8 @@ namespace Extenity.MessagingToolbox
 			{
 				SwitchOnCallback = switchOnCallback;
 				SwitchOffCallback = switchOffCallback;
-				IsSwitchOnCallbackTargetsUnityObject = switchOnCallback?.Target as Object;
-				IsSwitchOffCallbackTargetsUnityObject = switchOffCallback?.Target as Object;
+				IsSwitchOnCallbackTargetsUnityObject = switchOnCallback?.Target as Object; // As in: switchOnCallback.IsUnityObjectTargeted()
+				IsSwitchOffCallbackTargetsUnityObject = switchOffCallback?.Target as Object; // As in: switchOffCallback.IsUnityObjectTargeted()
 				Order = order;
 				LifeSpan = lifeSpan;
 				LifeSpanTarget = lifeSpanTarget;
@@ -37,8 +37,10 @@ namespace Extenity.MessagingToolbox
 
 			public bool IsInvalid => SwitchOnCallback == null && SwitchOffCallback == null;
 
-			public bool IsSwitchOnCallbackTargetedUnityObjectDestroyed => IsSwitchOnCallbackTargetsUnityObject && !(SwitchOnCallback.Target as Object);
-			public bool IsSwitchOffCallbackTargetedUnityObjectDestroyed => IsSwitchOffCallbackTargetsUnityObject && !(SwitchOffCallback.Target as Object);
+			public bool IsSwitchOnCallbackTargetedUnityObjectDestroyed => IsSwitchOnCallbackTargetsUnityObject && !(SwitchOnCallback.Target as Object); // As in: SwitchOnCallback.IsUnityObjectTargetedAndDestroyed
+			public bool IsSwitchOffCallbackTargetedUnityObjectDestroyed => IsSwitchOffCallbackTargetsUnityObject && !(SwitchOffCallback.Target as Object); // As in: SwitchOffCallback.IsUnityObjectTargetedAndDestroyed
+			public bool IsSwitchOnCallbackNullOrTargetedUnityObjectDestroyed => SwitchOnCallback == null || IsSwitchOnCallbackTargetedUnityObjectDestroyed;
+			public bool IsSwitchOffCallbackNullOrTargetedUnityObjectDestroyed => SwitchOffCallback == null || IsSwitchOffCallbackTargetedUnityObjectDestroyed;
 
 			public bool IsLifeSpanTargetDestroyed => IsLifeSpanTargetAssigned && !LifeSpanTarget;
 
@@ -52,8 +54,7 @@ namespace Extenity.MessagingToolbox
 				get
 				{
 					return IsInvalid ||
-					       // TODO IMMEDIATE: This should check for (IsSwitchOnCallbackNullOrTargetedUnityObjectDestroyed && IsSwitchOffCallbackNullOrTargetedUnityObjectDestroyed)
-					       (IsSwitchOnCallbackTargetedUnityObjectDestroyed && IsSwitchOffCallbackTargetedUnityObjectDestroyed) ||
+					       (IsSwitchOnCallbackNullOrTargetedUnityObjectDestroyed && IsSwitchOffCallbackNullOrTargetedUnityObjectDestroyed) ||
 					       IsLifeSpanTargetDestroyed;
 				}
 			}
@@ -76,6 +77,29 @@ namespace Extenity.MessagingToolbox
 				return isSwitchedOn
 					? SwitchOnCallback
 					: SwitchOffCallback;
+			}
+
+			public Action GetCallbackAndCheckIfAlive(bool isSwitchedOn)
+			{
+				var callback = isSwitchedOn
+					? SwitchOnCallback
+					: SwitchOffCallback;
+
+				if (callback == null)
+					return null;
+
+				if (callback.Target is Object) // The same with: callback.IsUnityObjectTargeted()
+				{
+					return callback.Target as Object // The same with: callback.IsUnityObjectTargetedAndAlive()
+						? callback
+						: null;
+				}
+				else
+				{
+					return callback.Target != null
+						? callback
+						: null;
+				}
 			}
 
 			public bool HasCallbacks(Action switchOnCallback, Action switchOffCallback)
@@ -293,7 +317,7 @@ namespace Extenity.MessagingToolbox
 
 			// See 118512052. Call the new callback instantly. It will be a safe call and there is no real reason
 			// to provide an unsafe call option for just a single callback.
-			var callback = entry.GetCallback(IsSwitchedOn);
+			var callback = entry.GetCallbackAndCheckIfAlive(IsSwitchedOn);
 			if (callback != null) // Check if the callback is specified by user. See 11853135.
 			{
 				try
@@ -428,7 +452,7 @@ namespace Extenity.MessagingToolbox
 						Callbacks.RemoveAt(InvokeIndex--);
 					}
 
-					var callback = entry.GetCallback(isSwitchedOn);
+					var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
 						callback();
@@ -479,7 +503,7 @@ namespace Extenity.MessagingToolbox
 					Callbacks.RemoveAt(InvokeIndex--);
 				}
 
-				var callback = entry.GetCallback(isSwitchedOn);
+				var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
 				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
 					try
