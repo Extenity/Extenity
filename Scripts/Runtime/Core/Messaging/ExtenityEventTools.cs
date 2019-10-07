@@ -1,4 +1,5 @@
 using System;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
 
@@ -21,6 +22,8 @@ namespace Extenity.MessagingToolbox
 
 		#region ToString
 
+		// TODO IMMEDIATE: Move these into NamingTools
+
 		public static string FullNameOfTarget(this Delegate del)
 		{
 			return GameObjectTools.FullObjectName(del?.Target as Object);
@@ -35,18 +38,32 @@ namespace Extenity.MessagingToolbox
 		{
 			if (del != null)
 			{
-				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del);
+				if (del.IsUnityObjectTargetedAndDestroyed())
+				{
+					return NamingTools.NullDelegateNameWithMethod(del.Method.Name);
+				}
+				else
+				{
+					return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del);
+				}
 			}
-			return GameObjectTools.NullGameObjectNamePlaceholder;
+			return NamingTools.NullDelegateName;
 		}
 
 		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels, string methodAndTargetSeparator = " in ")
 		{
 			if (del != null)
 			{
-				return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
+				if (del.IsUnityObjectTargetedAndDestroyed())
+				{
+					return NamingTools.NullDelegateNameWithMethod(del.Method.Name);
+				}
+				else
+				{
+					return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
+				}
 			}
-			return GameObjectTools.NullGameObjectNamePlaceholder;
+			return NamingTools.NullDelegateName;
 		}
 
 		#endregion
