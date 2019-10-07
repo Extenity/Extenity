@@ -1921,20 +1921,6 @@ namespace Extenity.GameObjectToolbox
 
 		// TODO IMMEDIATE: Move these into NamingTools
 
-		public static string GameObjectNameSafe(this Component me)
-		{
-			if (me == null)
-				return NamingTools.NullComponentName;
-			return me.gameObject.name;
-		}
-
-		public static string NameSafe(this GameObject me)
-		{
-			if (me == null)
-				return NamingTools.NullGameObjectName;
-			return me.name;
-		}
-
 		public static string FullName(this GameObject me, int maxHierarchyLevels = NamingTools.DefaultMaxHierarchyLevels, char separator = '/')
 		{
 			if (!me || maxHierarchyLevels <= 0)

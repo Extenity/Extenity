@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEngine.Events;

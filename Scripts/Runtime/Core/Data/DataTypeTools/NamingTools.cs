@@ -1,5 +1,6 @@
 ﻿using System;
 using Extenity.GameObjectToolbox;
+using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -20,6 +21,24 @@ namespace Extenity.DataToolbox
 		#region Name In Hierarchy
 
 		public const int DefaultMaxHierarchyLevels = 100;
+
+		#endregion
+
+		#region GameObject Name Safe
+
+		public static string GameObjectNameSafe(this Component me)
+		{
+			if (me == null)
+				return NullComponentName;
+			return me.gameObject.name;
+		}
+
+		public static string NameSafe(this GameObject me)
+		{
+			if (me == null)
+				return NullGameObjectName;
+			return me.name;
+		}
 
 		#endregion
 
