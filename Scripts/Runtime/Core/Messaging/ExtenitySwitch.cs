@@ -8,8 +8,6 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
-	// TODO: Use Log.Verbose
-
 	public class ExtenitySwitch
 	{
 		#region Callback entries
@@ -197,11 +195,11 @@ namespace Extenity.MessagingToolbox
 			if (switchOnCallback == null && switchOffCallback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Tried to add a null callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
+					Log.Verbose($"Tried to add a null callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
 				return; // Silently ignore
 			}
 			if (ExtenityEventTools.VerboseLogging && switchOnCallback == null && lifeSpan == ListenerLifeSpan.RemovedAtFirstEmit)
-				Log.Info($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
+				Log.Verbose($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
 
 			// See if the callback was already registered.
 			for (var i = 0; i < Callbacks.Count; i++)
@@ -220,7 +218,7 @@ namespace Extenity.MessagingToolbox
 					else
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Info($"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
+							Log.Verbose($"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
 						return; // Silently ignore
 					}
 
@@ -268,7 +266,7 @@ namespace Extenity.MessagingToolbox
 			    order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
+					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
 				Callbacks.Add(entry);
 				done = true;
 			}
@@ -279,7 +277,7 @@ namespace Extenity.MessagingToolbox
 					if (order < Callbacks[i].Order)
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
+							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
 						Callbacks.Insert(i, entry);
 						done = true;
 						break;
@@ -327,13 +325,13 @@ namespace Extenity.MessagingToolbox
 				if (Callbacks[i].HasCallbacks(switchOnCallback, switchOffCallback))
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Removing listener with {_Detailed_OrderForMethodAndObject(Callbacks[i].Order, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
+						Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(Callbacks[i].Order, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
 					Callbacks.RemoveAt(i);
 					return true;
 				}
 			}
 			if (ExtenityEventTools.VerboseLogging)
-				Log.Info($"Failed to remove listener for {_Detailed_MethodAndObject(switchOnCallback, switchOffCallback)}.");
+				Log.Verbose($"Failed to remove listener for {_Detailed_MethodAndObject(switchOnCallback, switchOffCallback)}.");
 			return false;
 		}
 
@@ -359,7 +357,7 @@ namespace Extenity.MessagingToolbox
 			if (IsInvoking)
 				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
 			if (ExtenityEventTools.VerboseLogging)
-				Log.Info("Removing all listeners.");
+				Log.Verbose("Removing all listeners.");
 
 			Callbacks.Clear();
 		}
