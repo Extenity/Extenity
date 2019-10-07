@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
@@ -702,11 +703,15 @@ namespace Extenity.MessagingToolbox
 		[NonSerialized]
 		public bool SwitchListenerListCleanupRequired;
 
-		private void CleanUpSwitchListenerLists()
+		public void CleanUpSwitchListenerLists()
 		{
-			// TODO:
-			// if (EnableVerboseLoggingInEveryModification)
-			// 	DebugLogSwitchStatus();
+			foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
+			{
+				listenerInfo.Switch.CleanUp();
+			}
+
+			if (EnableVerboseSwitchLoggingInEveryModification)
+				DebugLogSwitchStatus();
 		}
 
 		#endregion
@@ -761,6 +766,14 @@ namespace Extenity.MessagingToolbox
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 				return false;
 			return listenerInfo.Switch.IsAnyAliveAndWellCallbackExists;
+		}
+
+		public bool CheckIfAnySwitchIsOnOrHasRegisteredListeners()
+		{
+			return SwitchListenerInfoDictionary
+			       .Values
+			       .Any(listenerInfo => listenerInfo.Switch.IsSwitchedOn ||
+			                            listenerInfo.Switch.IsAnyAliveAndWellCallbackExists);
 		}
 
 		#endregion

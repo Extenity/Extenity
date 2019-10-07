@@ -109,6 +109,8 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
+		// TODO IMMEDIATE: Rename to Entries or something. The name Callbacks was good in previous implementation but not anymore.
+
 		/// <summary>
 		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
@@ -190,7 +192,7 @@ namespace Extenity.MessagingToolbox
 			}
 		}
 
-		public void Clear()
+		public void CleanUp()
 		{
 			if (IsInvoking)
 				throw new Exception("Cleanup is not allowed while invoking.");
