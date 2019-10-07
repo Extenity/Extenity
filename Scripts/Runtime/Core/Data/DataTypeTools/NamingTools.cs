@@ -1,6 +1,6 @@
 ﻿using System;
-using Extenity.GameObjectToolbox;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Extenity.DataToolbox
 {
@@ -46,7 +46,7 @@ namespace Extenity.DataToolbox
 
 		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
-			return GameObjectTools.FullObjectName(del?.Target, maxHierarchyLevels);
+			return FullObjectName(del?.Target, maxHierarchyLevels);
 		}
 
 		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels, string methodAndTargetSeparator = " in ")
@@ -63,6 +63,77 @@ namespace Extenity.DataToolbox
 				}
 			}
 			return NullDelegateName;
+		}
+
+		#endregion
+
+		#region Full Name (
+
+		public static string FullName(this GameObject me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char separator = '/')
+		{
+			if (!me || maxHierarchyLevels <= 0)
+				return NullGameObjectName;
+			var name = me.name;
+			var parent = me.transform.parent;
+			maxHierarchyLevels--;
+			while (maxHierarchyLevels > 0 && parent)
+			{
+				name = parent.name + separator + name;
+				parent = parent.parent;
+				maxHierarchyLevels--;
+			}
+			return parent
+				? "..." + separator + name
+				: name;
+		}
+
+		public static string FullName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (!me)
+				return NullComponentName;
+			return me.gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
+		}
+
+		public static string FullGameObjectName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char separator = '/')
+		{
+			if (!me)
+				return NullGameObjectName; // Note that we are interested in gameobject name rather than component name. So we return NullGameObjectName instead of NullComponentName.
+			return me.gameObject.FullName(maxHierarchyLevels, separator);
+		}
+
+		public static string FullObjectName(this object me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		{
+			if (me is Component)
+			{
+				var asComponent = me as Component;
+				return asComponent
+					? asComponent.FullName(maxHierarchyLevels, gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator)
+					: NullComponentName;
+			}
+			if (me is GameObject)
+			{
+				var asGameObject = me as GameObject;
+				return asGameObject
+					? asGameObject.FullName(maxHierarchyLevels, separator: gameObjectNameSeparator)
+					: NullGameObjectName;
+			}
+			if (me is Object)
+			{
+				var asObject = me as Object;
+				return asObject
+					? asObject.ToString()
+					: NullObjectName;
+			}
+			if (me is Delegate)
+			{
+				var asDelegate = me as Delegate;
+				return asDelegate != null
+					? asDelegate.FullNameOfTargetAndMethod()
+					: NullDelegateName;
+			}
+			return me != null
+				? me.ToString()
+				: NullName;
 		}
 
 		#endregion
