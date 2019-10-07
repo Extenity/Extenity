@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Extenity.GameObjectToolbox;
+using Object = UnityEngine.Object;
 
 namespace Extenity.DataToolbox
 {
@@ -19,6 +21,31 @@ namespace Extenity.DataToolbox
 		#region Name In Hierarchy
 
 		public const int DefaultMaxHierarchyLevels = 100;
+
+		#endregion
+
+		#region Delegate Naming
+
+		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
+			return GameObjectTools.FullObjectName(del?.Target as Object, maxHierarchyLevels);
+		}
+
+		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels, string methodAndTargetSeparator = " in ")
+		{
+			if (del != null)
+			{
+				if (del.IsUnityObjectTargetedAndDestroyed())
+				{
+					return NullDelegateNameWithMethod(del.Method.Name);
+				}
+				else
+				{
+					return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
+				}
+			}
+			return NullDelegateName;
+		}
 
 		#endregion
 	}
