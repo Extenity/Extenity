@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
@@ -53,6 +54,7 @@ namespace Extenity.MessagingToolbox
 				get
 				{
 					return IsInvalid ||
+					       // TODO IMMEDIATE: This should check for (IsSwitchOnCallbackNullOrTargetedUnityObjectDestroyed && IsSwitchOffCallbackNullOrTargetedUnityObjectDestroyed)
 					       (IsSwitchOnCallbackTargetedUnityObjectDestroyed && IsSwitchOffCallbackTargetedUnityObjectDestroyed) ||
 					       IsLifeSpanTargetDestroyed;
 				}
@@ -132,6 +134,8 @@ namespace Extenity.MessagingToolbox
 			}
 			return default;
 		}
+
+		public int CallbacksCount => Callbacks.Count;
 
 		public int CallbacksAliveAndWellCount
 		{
@@ -501,22 +505,28 @@ namespace Extenity.MessagingToolbox
 
 		#region Log
 
-		public string GetSwitchCallbackDebugInfo()
+		public string GetSwitchCallbackDebugInfo(string linePrefix)
 		{
 			var stringBuilder = StringTools.SharedStringBuilder.Value;
 			lock (stringBuilder)
 			{
 				stringBuilder.Clear(); // Make sure it is clean before starting to use.
 
-				for (var i = 0; i < Callbacks.Count; i++)
-				{
-					var entry = Callbacks[i];
-					stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
-				}
+				GetSwitchCallbackDebugInfo(stringBuilder, linePrefix);
 
 				var result = stringBuilder.ToString();
 				StringTools.ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
 				return result;
+			}
+		}
+
+		public void GetSwitchCallbackDebugInfo(StringBuilder stringBuilder, string linePrefix)
+		{
+			for (var i = 0; i < Callbacks.Count; i++)
+			{
+				var entry = Callbacks[i];
+				var notAlivePrefix = entry.IsObjectDestroyed ? "(Unavailable) " : "";
+				stringBuilder.AppendLine(linePrefix + notAlivePrefix + _Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
 			}
 		}
 

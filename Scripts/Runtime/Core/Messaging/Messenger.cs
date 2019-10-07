@@ -3,7 +3,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
+using Sirenix.OdinInspector;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -703,6 +705,8 @@ namespace Extenity.MessagingToolbox
 		private void CleanUpSwitchListenerLists()
 		{
 			// TODO:
+			// if (EnableVerboseLoggingInEveryModification)
+			// 	DebugLogSwitchStatus();
 		}
 
 		#endregion
@@ -730,6 +734,8 @@ namespace Extenity.MessagingToolbox
 			}
 
 			listenerInfo.Switch.AddListener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
+			if (EnableVerboseSwitchLoggingInEveryModification)
+				DebugLogSwitchStatus();
 		}
 
 		public void RemoveSwitchListener(string switchId, Action switchOnCallback, Action switchOffCallback)
@@ -746,6 +752,8 @@ namespace Extenity.MessagingToolbox
 				return;
 
 			listenerInfo.Switch.RemoveListener(switchOnCallback, switchOffCallback);
+			if (EnableVerboseSwitchLoggingInEveryModification)
+				DebugLogSwitchStatus();
 		}
 
 		public bool IsAnySwitchListenerRegistered(string switchId)
@@ -785,20 +793,52 @@ namespace Extenity.MessagingToolbox
 
 					listenerInfo.Switch.SwitchOnSafe();
 				}
+				if (EnableVerboseSwitchLoggingInEveryModification)
+					DebugLogSwitchStatus();
 				return;
 			}
 			listenerInfo.Switch.SwitchSafe(isSwitchedOn);
+			if (EnableVerboseSwitchLoggingInEveryModification)
+				DebugLogSwitchStatus();
 		}
 
 		#endregion
 
 		#region Switch - Debug
 
-		public string GetSwitchCallbackDebugInfo(string switchId)
+		[FoldoutGroup("Debug")]
+		public bool EnableVerboseSwitchLoggingInEveryModification = false;
+
+		public string GetSwitchCallbackDebugInfo(string switchId, string linePrefix)
 		{
 			if (!SwitchListenerInfoDictionary.TryGetValue(switchId, out var listenerInfo))
 				return "";
-			return listenerInfo.Switch.GetSwitchCallbackDebugInfo();
+			return listenerInfo.Switch.GetSwitchCallbackDebugInfo(linePrefix);
+		}
+
+		public string GetSwitchStatusDebugInfo()
+		{
+			var stringBuilder = StringTools.SharedStringBuilder.Value;
+			lock (stringBuilder)
+			{
+				stringBuilder.Clear(); // Make sure it is clean before starting to use.
+
+				stringBuilder.AppendLine($"Listing {SwitchListenerInfoDictionary.Count} Switch entries:");
+				foreach (var listenerInfo in SwitchListenerInfoDictionary.Values)
+				{
+					stringBuilder.AppendLine($"SwitchID: {listenerInfo.SwitchId} \t Status: {listenerInfo.Switch.IsSwitchedOn} \t Listeners: {listenerInfo.Switch.CallbacksAliveAndWellCount} ({listenerInfo.Switch.CallbacksCount} including unavailable)");
+					listenerInfo.Switch.GetSwitchCallbackDebugInfo(stringBuilder, "\t");
+				}
+
+				var result = stringBuilder.ToString();
+				StringTools.ClearSharedStringBuilder(stringBuilder); // Make sure we will leave it clean after use.
+				return result;
+			}
+		}
+
+		public void DebugLogSwitchStatus()
+		{
+			Log.Verbose(GetSwitchStatusDebugInfo(), this);
 		}
 
 		#endregion
