@@ -69,7 +69,6 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called callback A."));
 		}
 
-
 		[Test]
 		public void InvokingWithMultipleListeners_MixedOrders()
 		{
@@ -90,7 +89,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void InvokingSafeIsNotAffectedByExceptions()
+		public void InvokingSafe_IsNotAffectedByExceptions()
 		{
 			TestEvent.AddListener(CallbackA, 10);
 			TestEvent.AddListener(ThrowingCallback, 20);
@@ -103,7 +102,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void InvokingUnsafeDoesNotCatchExceptions()
+		public void InvokingUnsafe_DoesNotCatchExceptions()
 		{
 			TestEvent.AddListener(CallbackA, 10);
 			TestEvent.AddListener(ThrowingCallback, 20);
