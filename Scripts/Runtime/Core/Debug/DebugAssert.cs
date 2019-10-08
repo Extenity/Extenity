@@ -8,8 +8,8 @@ namespace Extenity.DebugToolbox
 
 	public class DebugAssert
 	{
-		private const int assertIgnoreMessagesFailCount = 3;
-		private static int assertFailCount = 0;
+		private const int AssertIgnoreMessagesFailCount = 3;
+		private static int AssertFailCount = 0;
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void Fail() { InternalCheck(false, null); }
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void Fail(string assertString) { InternalCheck(false, assertString); }
@@ -108,18 +108,18 @@ namespace Extenity.DebugToolbox
 		{
 			if (!condition)
 			{
-				assertFailCount++;
+				AssertFailCount++;
 
-				if (assertFailCount <= assertIgnoreMessagesFailCount)
+				if (AssertFailCount <= AssertIgnoreMessagesFailCount)
 				{
 					// TODO: unit tests fail bad here. something should be done.
 
 
-					System.Diagnostics.StackTrace myTrace = new System.Diagnostics.StackTrace(true);
-					System.Diagnostics.StackFrame myFrame = myTrace.GetFrame(2);
-					string assertInformation = "Assert failed! " + assertString + "\nFilename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
+					var trace = new StackTrace(true);
+					var frame = trace.GetFrame(2);
+					var assertInformation = $"Assertion failed! {assertString}\nFilename: {frame.GetFileName()}\nMethod: {frame.GetMethod()}\nLine: {frame.GetFileLineNumber()}";
 
-					// Loggin would be included in both Debug and UNITY_EDITOR builds
+					// Logging would be included in both Debug and UNITY_EDITOR builds
 					Log.Error(assertInformation);
 
 #if UNITY_EDITOR
