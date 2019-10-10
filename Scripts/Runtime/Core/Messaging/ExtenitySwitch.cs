@@ -236,7 +236,7 @@ namespace Extenity.MessagingToolbox
 					{
 						// Trying to add the same callback with different parameters. Just remove the existing one and
 						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
-						_RemoveListener(i);
+						Listeners.RemoveAt(i);
 					}
 					else
 					{
@@ -356,11 +356,6 @@ namespace Extenity.MessagingToolbox
 			if (ExtenityEventTools.VerboseLogging)
 				Log.Verbose($"Failed to remove listener for {_Detailed_MethodAndObject(switchOnCallback, switchOffCallback)}.");
 			return false;
-		}
-
-		private void _RemoveListener(int index)
-		{
-			Listeners.RemoveAt(index);
 		}
 
 		[Obsolete("Not implemented yet! If you really need this feature, find a way to implement it.")]
