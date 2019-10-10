@@ -72,8 +72,20 @@ namespace Extenity.MessagingToolbox
 
 		#endregion
 
-		#region Global
+		#region Global / Main
 
+		/// <summary>
+		/// The main Messenger that is used widespread. The application creates that Messenger and responsible for its
+		/// life cycle. The application can also create more than one Messenger independent of this Main Messenger,
+		/// for its specific tasks.
+		/// </summary>
+		public static Messenger Main;
+
+		// Realized that the Messenger is an essential subsystem of the application and should be reachable from
+		// anywhere that can reach to Extenity. But still, the application should create its own Messenger and assign
+		// it to this Main static field at the very beginning of its life cycle.
+
+		// Previously was:
 		/* Nope! Not happening! Singletons are bad for software architecture. The application should create and control its own messengers. There should not be a singleton messenger.
 		private static Messenger _Global;
 		public static Messenger Global
