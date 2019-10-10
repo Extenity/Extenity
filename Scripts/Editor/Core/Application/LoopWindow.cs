@@ -38,9 +38,9 @@ namespace Extenity
 
 		protected override void OnGUIDerived()
 		{
-			DrawCallbacksList("FixedUpdate", Loop.FixedUpdateCallbacks.Callbacks, ref FixedUpdateFold);
-			DrawCallbacksList("Update", Loop.UpdateCallbacks.Callbacks, ref UpdateFold);
-			DrawCallbacksList("LateUpdate", Loop.LateUpdateCallbacks.Callbacks, ref LateUpdateFold);
+			DrawListenersList("FixedUpdate", Loop.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
+			DrawListenersList("Update", Loop.UpdateCallbacks._Listeners, ref UpdateFold);
+			DrawListenersList("LateUpdate", Loop.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
 
 			var instance = Loop.Instance;
 			if (!instance)
@@ -50,17 +50,17 @@ namespace Extenity
 			}
 		}
 
-		private void DrawCallbacksList(string header, List<ExtenityEvent.Entry> callbacks, ref bool fold)
+		private void DrawListenersList(string header, List<ExtenityEvent.Listener> listeners, ref bool fold)
 		{
 			EditorGUILayoutTools.DrawHeader(header);
 
-			fold = EditorGUILayout.Foldout(fold, "Callbacks: " + callbacks.Count);
+			fold = EditorGUILayout.Foldout(fold, "Listeners: " + listeners.Count);
 			if (fold)
 			{
 				GUILayout.BeginVertical();
-				foreach (var callback in callbacks)
+				foreach (var listener in listeners)
 				{
-					GUILayout.Label($"{callback.Order} \t {callback.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
+					GUILayout.Label($"{listener.Order} \t {listener.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
 				}
 				GUILayout.EndVertical();
 			}

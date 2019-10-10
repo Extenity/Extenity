@@ -45,7 +45,7 @@ namespace Extenity
 
 			FixedUpdateCallbacks.InvokeSafe();
 
-			FixedUpdateCallbacks.ClearIfRequired();
+			// FixedUpdateCallbacks.ClearIfRequired();
 		}
 
 		private void Update()
@@ -65,7 +65,7 @@ namespace Extenity
 
 			UpdateCallbacks.InvokeSafe();
 
-			UpdateCallbacks.ClearIfRequired();
+			// UpdateCallbacks.ClearIfRequired();
 		}
 
 		private void LateUpdate()
@@ -76,7 +76,7 @@ namespace Extenity
 			UnscaledTime = UnityEngine.Time.unscaledTime;
 			LateUpdateCallbacks.InvokeSafe();
 
-			LateUpdateCallbacks.ClearIfRequired();
+			// LateUpdateCallbacks.ClearIfRequired();
 		}
 
 		#endregion

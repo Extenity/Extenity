@@ -116,8 +116,8 @@ namespace Extenity.ProfilingToolbox
 
 		public void ClearAllEvents()
 		{
-			OnUpdate.Callbacks.Clear();
-			OnTick.Callbacks.Clear();
+			OnUpdate.RemoveAllListeners();
+			OnTick.RemoveAllListeners();
 		}
 
 		#endregion
