@@ -352,23 +352,6 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
 		}
 
-		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
-		[Test]
-		public void NestedRemoveListenerIsNotAllowed_Safe()
-		{
-			TestSwitch.AddListener(() => TestSwitch.RemoveListener(CallbackOn, CallbackOff), null);
-			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Exception, "NotSupportedException: Operations while invoking are not supported."));
-		}
-
-		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
-		[Test]
-		public void NestedRemoveListenerIsNotAllowed_Unsafe()
-		{
-			TestSwitch.AddListener(() => TestSwitch.RemoveListener(CallbackOn, CallbackOff), null);
-			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
-		}
-
 		#endregion
 
 		// Note that the system does not take the responsibility of handling these edge cases. Tests are here to show

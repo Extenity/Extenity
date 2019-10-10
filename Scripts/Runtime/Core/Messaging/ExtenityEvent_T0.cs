@@ -272,16 +272,14 @@ namespace Extenity.MessagingToolbox
 			return false;
 		}
 
-		[Obsolete("Not implemented yet! If you really need this feature, find a way to implement it.")]
 		public void RemoveCurrentListener()
 		{
 			if (!IsInvoking)
 				throw new Exception("Tried to remove current listener outside of listener callback.");
 
 			// There is a possibility that user may call RemoveCurrentListener multiple times. So we must handle that
-			// too. Consider using something like Entry.RegistryID to first look if the list has the
-			// CurrentListenerRegistryID.
-			throw new NotImplementedException();
+			// too. Thankfully RemoveListener checks if the callback exists.
+			RemoveListener(InvokingCallback);
 		}
 
 		public void RemoveAllListeners()
@@ -300,6 +298,7 @@ namespace Extenity.MessagingToolbox
 
 		private bool IsInvoking = false;
 		private int InvokeIndex = -1;
+		private Action InvokingCallback;
 
 		public void InvokeUnsafe()
 		{
@@ -315,13 +314,13 @@ namespace Extenity.MessagingToolbox
 			{
 				while (InvokeIndex < Listeners.Count)
 				{
-					var entry = Listeners[InvokeIndex];
-					if (entry.IsObjectDestroyed)
+					var listener = Listeners[InvokeIndex];
+					if (listener.IsObjectDestroyed)
 					{
 						Listeners.RemoveAt(InvokeIndex);
 						continue;
 					}
-					if (entry.ShouldRemoveAfterEmit)
+					if (listener.ShouldRemoveAfterEmit)
 					{
 						// Remove the callback just before calling it. So that the caller can act like it's removed.
 						//
@@ -330,10 +329,12 @@ namespace Extenity.MessagingToolbox
 						Listeners.RemoveAt(InvokeIndex--);
 					}
 
-					var callback = entry.GetCallbackAndCheckIfAlive();
+					var callback = listener.GetCallbackAndCheckIfAlive();
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
+						InvokingCallback = listener.Callback;
 						callback();
+						InvokingCallback = null;
 					}
 
 					InvokeIndex++;
@@ -343,6 +344,7 @@ namespace Extenity.MessagingToolbox
 			{
 				IsInvoking = false;
 				InvokeIndex = -1;
+				InvokingCallback = null;
 			}
 		}
 
@@ -358,13 +360,13 @@ namespace Extenity.MessagingToolbox
 
 			while (InvokeIndex < Listeners.Count)
 			{
-				var entry = Listeners[InvokeIndex];
-				if (entry.IsObjectDestroyed)
+				var listener = Listeners[InvokeIndex];
+				if (listener.IsObjectDestroyed)
 				{
 					Listeners.RemoveAt(InvokeIndex);
 					continue;
 				}
-				if (entry.ShouldRemoveAfterEmit)
+				if (listener.ShouldRemoveAfterEmit)
 				{
 					// Remove the callback just before calling it. So that the caller can act like it's removed.
 					//
@@ -373,16 +375,18 @@ namespace Extenity.MessagingToolbox
 					Listeners.RemoveAt(InvokeIndex--);
 				}
 
-				var callback = entry.GetCallbackAndCheckIfAlive();
+				var callback = listener.GetCallbackAndCheckIfAlive();
 				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
 					try
 					{
+						InvokingCallback = listener.Callback;
 						callback();
+						InvokingCallback = null;
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception, entry.LogObject);
+						Log.Exception(exception, listener.LogObject);
 					}
 				}
 
@@ -391,6 +395,7 @@ namespace Extenity.MessagingToolbox
 
 			IsInvoking = false;
 			InvokeIndex = -1;
+			InvokingCallback = null;
 		}
 
 		#endregion
@@ -416,14 +421,14 @@ namespace Extenity.MessagingToolbox
 		{
 			for (var i = 0; i < Listeners.Count; i++)
 			{
-				var entry = Listeners[i];
+				var listener = Listeners[i];
 
 				stringBuilder.Append(linePrefix);
-				if (entry.IsObjectDestroyed)
+				if (listener.IsObjectDestroyed)
 				{
 					stringBuilder.Append("(Unavailable) ");
 				}
-				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.Callback));
+				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(listener.Order, listener.LifeSpan, listener.LifeSpanTarget, listener.Callback));
 			}
 		}
 

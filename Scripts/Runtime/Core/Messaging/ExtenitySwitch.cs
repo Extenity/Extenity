@@ -262,7 +262,11 @@ namespace Extenity.MessagingToolbox
 					try
 					{
 						IsInvoking = true;
+						InvokingSwitchOnCallback = switchOnCallback;
+						InvokingSwitchOffCallback = switchOffCallback;
 						switchOnCallback();
+						InvokingSwitchOnCallback = null;
+						InvokingSwitchOffCallback = null;
 					}
 					catch (Exception exception)
 					{
@@ -271,6 +275,8 @@ namespace Extenity.MessagingToolbox
 					finally
 					{
 						IsInvoking = false;
+						InvokingSwitchOnCallback = null;
+						InvokingSwitchOffCallback = null;
 					}
 				}
 				return; // Go no further. Below is the callback registration part, which we don't need.
@@ -322,7 +328,11 @@ namespace Extenity.MessagingToolbox
 				try
 				{
 					IsInvoking = true;
+					InvokingSwitchOnCallback = listener.SwitchOnCallback;
+					InvokingSwitchOffCallback = listener.SwitchOffCallback;
 					callback();
+					InvokingSwitchOnCallback = null;
+					InvokingSwitchOffCallback = null;
 				}
 				catch (Exception exception)
 				{
@@ -331,6 +341,8 @@ namespace Extenity.MessagingToolbox
 				finally
 				{
 					IsInvoking = false;
+					InvokingSwitchOnCallback = null;
+					InvokingSwitchOffCallback = null;
 				}
 			}
 		}
@@ -362,16 +374,14 @@ namespace Extenity.MessagingToolbox
 			return false;
 		}
 
-		[Obsolete("Not implemented yet! If you really need this feature, find a way to implement it.")]
 		public void RemoveCurrentListener()
 		{
 			if (!IsInvoking)
 				throw new Exception("Tried to remove current listener outside of listener callback.");
 
 			// There is a possibility that user may call RemoveCurrentListener multiple times. So we must handle that
-			// too. Consider using something like Entry.RegistryID to first look if the list has the
-			// CurrentListenerRegistryID.
-			throw new NotImplementedException();
+			// too. Thankfully RemoveListener checks if the callback exists.
+			RemoveListener(InvokingSwitchOnCallback, InvokingSwitchOffCallback);
 		}
 
 		public void RemoveAllListeners()
@@ -392,6 +402,8 @@ namespace Extenity.MessagingToolbox
 
 		private bool IsInvoking = false;
 		private int InvokeIndex = -1;
+		private Action InvokingSwitchOnCallback;
+		private Action InvokingSwitchOffCallback;
 
 		public void SwitchOnUnsafe()
 		{
@@ -435,13 +447,13 @@ namespace Extenity.MessagingToolbox
 			{
 				while (InvokeIndex < Listeners.Count)
 				{
-					var entry = Listeners[InvokeIndex];
-					if (entry.IsObjectDestroyed)
+					var listener = Listeners[InvokeIndex];
+					if (listener.IsObjectDestroyed)
 					{
 						Listeners.RemoveAt(InvokeIndex);
 						continue;
 					}
-					if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
+					if (isSwitchedOn && listener.ShouldRemoveAfterEmit)
 					{
 						// Remove the callback just before calling it. So that the caller can act like it's removed.
 						//
@@ -450,10 +462,14 @@ namespace Extenity.MessagingToolbox
 						Listeners.RemoveAt(InvokeIndex--);
 					}
 
-					var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
+					var callback = listener.GetCallbackAndCheckIfAlive(isSwitchedOn);
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
+						InvokingSwitchOnCallback = listener.SwitchOnCallback;
+						InvokingSwitchOffCallback = listener.SwitchOffCallback;
 						callback();
+						InvokingSwitchOnCallback = null;
+						InvokingSwitchOffCallback = null;
 					}
 
 					InvokeIndex++;
@@ -463,6 +479,8 @@ namespace Extenity.MessagingToolbox
 			{
 				IsInvoking = false;
 				InvokeIndex = -1;
+				InvokingSwitchOnCallback = null;
+				InvokingSwitchOffCallback = null;
 			}
 		}
 
@@ -486,13 +504,13 @@ namespace Extenity.MessagingToolbox
 
 			while (InvokeIndex < Listeners.Count)
 			{
-				var entry = Listeners[InvokeIndex];
-				if (entry.IsObjectDestroyed)
+				var listener = Listeners[InvokeIndex];
+				if (listener.IsObjectDestroyed)
 				{
 					Listeners.RemoveAt(InvokeIndex);
 					continue;
 				}
-				if (isSwitchedOn && entry.ShouldRemoveAfterEmit)
+				if (isSwitchedOn && listener.ShouldRemoveAfterEmit)
 				{
 					// Remove the callback just before calling it. So that the caller can act like it's removed.
 					//
@@ -501,16 +519,20 @@ namespace Extenity.MessagingToolbox
 					Listeners.RemoveAt(InvokeIndex--);
 				}
 
-				var callback = entry.GetCallbackAndCheckIfAlive(isSwitchedOn);
+				var callback = listener.GetCallbackAndCheckIfAlive(isSwitchedOn);
 				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
 					try
 					{
+						InvokingSwitchOnCallback = listener.SwitchOnCallback;
+						InvokingSwitchOffCallback = listener.SwitchOffCallback;
 						callback();
+						InvokingSwitchOnCallback = null;
+						InvokingSwitchOffCallback = null;
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception, entry.LogObject(isSwitchedOn));
+						Log.Exception(exception, listener.LogObject(isSwitchedOn));
 					}
 				}
 
@@ -519,6 +541,8 @@ namespace Extenity.MessagingToolbox
 
 			IsInvoking = false;
 			InvokeIndex = -1;
+			InvokingSwitchOnCallback = null;
+			InvokingSwitchOffCallback = null;
 		}
 
 		#endregion
@@ -544,14 +568,14 @@ namespace Extenity.MessagingToolbox
 		{
 			for (var i = 0; i < Listeners.Count; i++)
 			{
-				var entry = Listeners[i];
+				var listener = Listeners[i];
 
 				stringBuilder.Append(linePrefix);
-				if (entry.IsObjectDestroyed)
+				if (listener.IsObjectDestroyed)
 				{
 					stringBuilder.Append("(Unavailable) ");
 				}
-				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(entry.Order, entry.LifeSpan, entry.LifeSpanTarget, entry.SwitchOnCallback, entry.SwitchOffCallback));
+				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(listener.Order, listener.LifeSpan, listener.LifeSpanTarget, listener.SwitchOnCallback, listener.SwitchOffCallback));
 			}
 		}
 
