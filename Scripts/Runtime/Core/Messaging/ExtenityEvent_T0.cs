@@ -171,7 +171,7 @@ namespace Extenity.MessagingToolbox
 		public void AddListener(Action callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
 			if (IsInvoking)
-				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
+				throw new NotSupportedException("Adding listener while invoking is not supported."); // See 117418312.
 			if (order == int.MinValue || order == int.MaxValue) // These values are reserved for internal use.
 				throw new ArgumentOutOfRangeException(nameof(order), order, "");
 			if (callback == null)
@@ -247,9 +247,6 @@ namespace Extenity.MessagingToolbox
 
 		public bool RemoveListener(Action callback)
 		{
-			if (IsInvoking)
-				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
-
 			if (callback == null)
 				return false; // Silently ignore
 
@@ -259,6 +256,13 @@ namespace Extenity.MessagingToolbox
 				{
 					if (ExtenityEventTools.VerboseLogging)
 						Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(Listeners[i].Order, callback)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+
+					// Also shift the iteration index if currently invoking. Note that InvokeIndex will be -1 if not currently invoking.
+					if (InvokeIndex >= i)
+					{
+						InvokeIndex--;
+					}
+
 					Listeners.RemoveAt(i);
 					return true;
 				}
