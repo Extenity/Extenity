@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ExtenityTests.MessagingToolbox
@@ -5,10 +6,22 @@ namespace ExtenityTests.MessagingToolbox
 
 	public class Test_ExtenityEventSubject : MonoBehaviour
 	{
-		public void Callback()
-		{
-			Log.Info("Called Subject callback.");
-		}
+		// @formatter:off
+		public void Callback()   { Log.Info("Called callback.");    }
+		public void CallbackA()  { Log.Info("Called callback A.");  }
+		public void CallbackB()  { Log.Info("Called callback B.");  }
+		public void CallbackC()  { Log.Info("Called callback C.");  }
+		public void CallbackD()  { Log.Info("Called callback D.");  }
+		public void CallbackE()  { Log.Info("Called callback E.");  }
+		public void CallbackF()  { Log.Info("Called callback F.");  }
+		public void ThrowingCallback() { throw new Test_ExtenityEventException("Called throwing callback."); }
+
+		public void CallbackAAndDestroySubject()  { CallbackA();  DestroyTestEventSubject(); }
+		public void CallbackBAndDestroySubject()  { CallbackB();  DestroyTestEventSubject(); }
+		public void CallbackCAndDestroySubject()  { CallbackC();  DestroyTestEventSubject(); }
+		// @formatter:on
+
+		public Action DestroyTestEventSubject;
 	}
 
 }
