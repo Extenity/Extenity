@@ -558,7 +558,7 @@ namespace Extenity.AssetToolbox.Editor
 				//Log.Info($"Line: {iLine} (of {lines.Length}) \t Tries: {tries} \t mult: {inMultiLineComment} \t multStart: {multiLineCommentStartIndex} \t cursor: {cursor}   \n" + string.Join(Environment.NewLine, lines));
 
 				if (--tries < 0)
-					throw new InternalException(91786195);
+					throw new InternalException(11917861);
 
 				if (inMultiLineComment)
 				{

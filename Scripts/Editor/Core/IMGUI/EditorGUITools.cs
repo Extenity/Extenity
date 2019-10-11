@@ -88,7 +88,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			// Revealed internals (Unity version 2018.1.1f1)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.EditorGUI");
 			if (type == null)
-				throw new InternalException(18672); // See 837379.
+				throw new InternalException(1158672612); // See 117392721.
 
 			type.GetStaticMethodAsFunc("GetSinglePropertyHeight", out _GetSinglePropertyHeight);
 			type.GetStaticMethodAsFunc("HasVisibleChildFields", out _HasVisibleChildFields);

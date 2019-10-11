@@ -77,7 +77,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				throw new Exception("Tried to check component orders between different objects.");
 
 			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
-				throw new InternalException(176581); // That's odd. See 908157.
+				throw new InternalException(1127658121); // That's odd. See 11908157.
 
 			if (acceptOnlyJustAbove)
 				return indexMe == indexTarget - 1;
@@ -97,7 +97,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				throw new Exception("Tried to check component orders between different objects.");
 
 			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
-				throw new InternalException(276581); // That's odd. See 908157.
+				throw new InternalException(1137658121); // That's odd. See 11908157.
 
 			if (acceptOnlyJustBelow)
 				return indexMe == indexTarget + 1;
@@ -117,7 +117,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				throw new Exception("Tried to relatively move components between different objects.");
 
 			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
-				throw new InternalException(376581); // That's odd. See 908157.
+				throw new InternalException(1147658121); // That's odd. See 11908157.
 			int indexShouldBe = indexTarget;
 
 			int upTopFactor = indexMe < indexTarget ? -1 : 0;
@@ -138,7 +138,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				throw new Exception("Tried to relatively move components between different objects.");
 
 			if (!me.transform.FindComponentIndices(me, target, out var indexMe, out var indexTarget))
-				throw new InternalException(476581); // That's odd. See 908157.
+				throw new InternalException(1157658121); // That's odd. See 11908157.
 			int indexShouldBe = indexTarget + 1;
 
 			int upTopFactor = indexMe < indexTarget ? -1 : 0;

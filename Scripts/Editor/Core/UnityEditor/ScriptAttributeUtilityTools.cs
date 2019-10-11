@@ -15,7 +15,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Revealed internals (Unity version 2018.1.1f1)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.ScriptAttributeUtility");
 			if (type == null)
-				throw new InternalException(28672); // See 837379.
+				throw new InternalException(1128672612); // See 117392721.
 
 			type.GetStaticMethodAsFunc("GetHandler", out _GetHandler);
 		}

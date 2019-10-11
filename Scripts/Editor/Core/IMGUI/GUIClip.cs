@@ -13,7 +13,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			// Revealed internals (Unity version 2018.1.1f1)
 			var type = typeof(MonoBehaviour).Assembly.GetType("UnityEngine.GUIClip");
 			if (type == null)
-				throw new InternalException(48672); // See 837379.
+				throw new InternalException(1148672612); // See 117392721.
 			
 			type.GetStaticMethodAsFunc("get_topmostRect", out _topmostRect);
 			type.GetStaticMethodAsFunc("get_visibleRect", out _visibleRect);
