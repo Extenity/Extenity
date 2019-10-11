@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -31,7 +30,7 @@ namespace Extenity.UnityEditorToolbox
 		[Serializable]
 		public class ObjectReference
 		{
-			// TODO: Also support ability to specify game object path in scene, instead of game object reference. See 715971261282.
+			// TODO: Also support ability to specify game object path in scene, instead of game object reference. See 1175281214.
 			//public ReferenceType Type; GameObjectReference, GameObjectPathInScene
 			//public string PathInScene;
 
@@ -42,7 +41,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				get
 				{
-					//switch (Type) See 715971261282.
+					//switch (Type) See 1175281214.
 					//{
 					//	case ReferenceType.GameObjectReference: return Object ? Object.FullName() : "[NULL]";
 					//	case ReferenceType.GameObjectReference: return PathInScene;
