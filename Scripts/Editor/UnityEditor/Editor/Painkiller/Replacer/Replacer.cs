@@ -244,7 +244,7 @@ namespace Extenity.PainkillerToolbox.Editor
 							var root = PrefabUtility.FindRootGameObjectWithSameParentPrefab(ReplaceWithObject);
 							if (!root)
 							{
-								throw new InternalException(9811341); // Failed to find prefab root.
+								throw new InternalException(119811341); // Failed to find prefab root.
 							}
 							instantiatedObject = PrefabUtility.FindPrefabRoot(root);
 						}

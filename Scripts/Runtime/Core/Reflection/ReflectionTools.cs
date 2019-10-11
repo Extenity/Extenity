@@ -1052,13 +1052,13 @@ namespace Extenity.ReflectionToolbox
 				// If you see this exception, you probably needed to get fields of all Components of that GameObject.
 				// If so, iterate all components manually and call this method for each of them OR use other
 				// variations of this method.
-				throw new InternalException(934857);
+				throw new InternalException(11934857);
 			}
 
 			var type = obj as Type;
 			if (type != null)
 			{
-				throw new InternalException(723659); // Encountered an unexpected behaviour. Developer attention is needed. See below.
+				throw new InternalException(11723659); // Encountered an unexpected behaviour. Developer attention is needed. See below.
 			}
 			type = obj.GetType();
 			// This was the old implementation, which I'm not sure if it was a faulty copy-paste mistake as some
