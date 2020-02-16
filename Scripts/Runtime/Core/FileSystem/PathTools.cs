@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Extenity.FileSystemToolbox
 {
@@ -138,17 +139,15 @@ namespace Extenity.FileSystemToolbox
 			return FixDirectorySeparatorChars(relativePath);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsRelativePath(this string path)
 		{
-			if (string.IsNullOrEmpty(path))
-				return false;
 			return !Path.IsPathRooted(path);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsFullPath(this string path)
 		{
-			if (string.IsNullOrEmpty(path))
-				return false;
 			return Path.IsPathRooted(path);
 		}
 
@@ -156,43 +155,46 @@ namespace Extenity.FileSystemToolbox
 
 		#region String Operations - Directory Separator
 
+		public const char ForwardSlash = '/';
+		public const char BackwardSlash = '\\';
+
 		public static char DirectorySeparatorChar
 		{
-			get { return Path.DirectorySeparatorChar; }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => Path.DirectorySeparatorChar;
 		}
 
 		public static char OtherDirectorySeparatorChar
 		{
-			get { return Path.AltDirectorySeparatorChar; }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => Path.AltDirectorySeparatorChar;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsDirectorySeparatorChar(this char c)
 		{
-			return c == '/' || c == '\\';
+			return c == ForwardSlash || c == BackwardSlash;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsEndingWithDirectorySeparatorChar(this string path)
 		{
-			if (string.IsNullOrEmpty(path))
-				return false;
-			return path[path.Length - 1].IsDirectorySeparatorChar();
+			return !string.IsNullOrEmpty(path) &&
+			       path[path.Length - 1].IsDirectorySeparatorChar();
 		}
 
 		public static string RemoveEndingDirectorySeparatorChar(this string path)
 		{
-			if (path == null)
-				return null;
-			if (path.IsEndingWithDirectorySeparatorChar())
+			if (path.IsEndingWithDirectorySeparatorChar()) // This also checks for null condition
 			{
 				return path.Substring(0, path.Length - 1);
 			}
 			return path;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int IndexOfStartingDirectorySeparatorChar(this string path)
 		{
-			if (path == null)
-				return -1;
 			return IndexOfStartingDirectorySeparatorChar(path, 0);
 		}
 
@@ -200,17 +202,16 @@ namespace Extenity.FileSystemToolbox
 		{
 			if (path == null)
 				return -1;
-			int index1 = path.IndexOf('/', startIndex);
-			int index2 = path.IndexOf('\\', startIndex);
+			int index1 = path.IndexOf(ForwardSlash, startIndex);
+			int index2 = path.IndexOf(BackwardSlash, startIndex);
 			if (index1 < 0) return index2;
 			if (index2 < 0) return index1;
 			return index1 < index2 ? index1 : index2;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int IndexOfEndingDirectorySeparatorChar(this string path)
 		{
-			if (path == null)
-				return -1;
 			return IndexOfEndingDirectorySeparatorChar(path, path.Length - 1);
 		}
 
@@ -218,18 +219,35 @@ namespace Extenity.FileSystemToolbox
 		{
 			if (path == null)
 				return -1;
-			int index1 = path.LastIndexOf('/', startIndex);
-			int index2 = path.LastIndexOf('\\', startIndex);
+			int index1 = path.LastIndexOf(ForwardSlash, startIndex);
+			int index2 = path.LastIndexOf(BackwardSlash, startIndex);
 			if (index1 < 0) return index2;
 			if (index2 < 0) return index1;
 			return index1 > index2 ? index1 : index2;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string FixDirectorySeparatorChars(this string path)
 		{
 			if (path == null)
 				return null;
 			return path.Replace(OtherDirectorySeparatorChar, DirectorySeparatorChar);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string FixDirectorySeparatorCharsToForward(this string path)
+		{
+			if (path == null)
+				return null;
+			return path.Replace(BackwardSlash, ForwardSlash);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string FixDirectorySeparatorCharsToBackward(this string path)
+		{
+			if (path == null)
+				return null;
+			return path.Replace(ForwardSlash, BackwardSlash);
 		}
 
 		public static string FixDirectorySeparatorChars(this string path, char separator)
@@ -238,22 +256,19 @@ namespace Extenity.FileSystemToolbox
 				return null;
 			switch (separator)
 			{
-				case '\\':
-					return path.Replace('/', separator);
-				case '/':
-					return path.Replace('\\', separator);
+				case BackwardSlash:
+					return path.Replace(ForwardSlash, separator);
+				case ForwardSlash:
+					return path.Replace(BackwardSlash, separator);
 				default:
-					return path.Replace('/', separator).Replace('\\', separator);
+					return path.Replace(ForwardSlash, separator).Replace(BackwardSlash, separator);
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string AddDirectorySeparatorToEnd(this string path)
 		{
-			if (path == null)
-				return new string(DirectorySeparatorChar, 1);
-			if (path.IsEndingWithDirectorySeparatorChar())
-				return path;
-			return path + DirectorySeparatorChar;
+			return path.AddDirectorySeparatorToEnd(DirectorySeparatorChar);
 		}
 
 		public static string AddDirectorySeparatorToEnd(this string path, char separator)
