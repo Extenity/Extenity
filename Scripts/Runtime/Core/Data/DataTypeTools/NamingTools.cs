@@ -67,7 +67,7 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region Full Name (
+		#region Full Name
 
 		public static string FullName(this GameObject me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char separator = '/')
 		{

@@ -89,7 +89,7 @@ namespace Extenity.MessagingToolbox
 
 				if (callback.Target is Object) // The same with: callback.IsUnityObjectTargeted()
 				{
-					return callback.Target as Object // The same with: callback.IsUnityObjectTargetedAndAlive()
+					return (callback.Target as Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
 						? callback
 						: null;
 				}
