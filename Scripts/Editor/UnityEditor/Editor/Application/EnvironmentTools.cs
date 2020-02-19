@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox.Editor;
@@ -87,6 +86,11 @@ namespace Extenity.ApplicationToolbox.Editor
 		#endregion
 
 		#region Fix Android Tool Paths
+
+		/*
+		// The whole purpose of this feature was to fix Unity's way of not actually handling the SDK paths that are
+		// downloaded as part of Unity installation in Unity Hub. Since Unity has passed many versions, this should not
+		// be an issue anymore. But leave this feature here commented out for future needs.
 
 		[InitializeOnEditorLaunchMethod]
 		public static void EnsureAndroidToolPathsAreUnderUnityInstallation()
@@ -192,6 +196,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				Log.Info("Current paths:\n" + string.Join("\n", GetEnvironmentPaths(EnvironmentVariableTarget.Process)));
 			}
 		}
+		*/
 
 		#endregion
 
