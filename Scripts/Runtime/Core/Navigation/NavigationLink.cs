@@ -1,6 +1,6 @@
 #if !DisableUnityAI
 
-using Extenity.GameObjectToolbox;
+using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEngine.AI;
 
