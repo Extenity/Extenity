@@ -128,6 +128,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Script Reload
+
+		public static void RequestScriptReload()
+		{
+#if UNITY_2019_3_OR_NEWER
+			EditorUtility.RequestScriptReload();
+#else
+			InternalEditorUtility.RequestScriptReload();
+#endif
+		}
+
+		#endregion
 	}
 
 }

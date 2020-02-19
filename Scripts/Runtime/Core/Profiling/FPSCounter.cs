@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
+#if UNITY_2019_3_OR_NEWER
+using UnityEngine.Rendering;
+#else
 using UnityEngine.Experimental.Rendering;
+#endif
 
 namespace Extenity.ProfilingToolbox
 {
@@ -58,7 +62,11 @@ namespace Extenity.ProfilingToolbox
 
 			TickAnalyzer.Reset(Time.realtimeSinceStartup, MeanEntryCount);
 
+#if UNITY_2019_3_OR_NEWER
+			RenderPipelineManager.beginFrameRendering += OnBeginFrameRendering;
+#else
 			RenderPipeline.beginFrameRendering += OnBeginFrameRendering;
+#endif
 		}
 
 		public void EndCapturing()
@@ -67,12 +75,20 @@ namespace Extenity.ProfilingToolbox
 				return;
 			IsCapturing = false;
 
+#if UNITY_2019_3_OR_NEWER
+			RenderPipelineManager.beginFrameRendering -= OnBeginFrameRendering;
+#else
 			RenderPipeline.beginFrameRendering -= OnBeginFrameRendering;
+#endif
 
 			TickAnalyzer.Reset(0f, MeanEntryCount);
 		}
 
+#if UNITY_2019_3_OR_NEWER
+		private void OnBeginFrameRendering(ScriptableRenderContext context, Camera[] cameras)
+#else
 		private void OnBeginFrameRendering(Camera[] cameras)
+#endif
 		{
 			TickAnalyzer.Tick(Time.realtimeSinceStartup);
 		}

@@ -5,10 +5,8 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.SceneManagementToolbox.Editor;
-using UnityEditorInternal;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -72,7 +70,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				if (GUILayout.Button("Prepare For\nUnload", BigButtonHeight, ButtonWidth))
 				{
 					EditorSceneManagerTools.UnloadAllScenes(false);
-					InternalEditorUtility.RequestScriptReload();
+					EditorUtilityTools.RequestScriptReload();
 				}
 				if (GUILayout.Button("Unload\nUnused", BigButtonHeight, ButtonWidth))
 				{
