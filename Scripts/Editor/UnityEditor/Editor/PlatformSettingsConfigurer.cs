@@ -49,9 +49,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 							case RuntimePlatform.WindowsEditor:
 								buildTarget = BuildTarget.StandaloneWindows;
 								break;
+#if !UNITY_2019_2_OR_NEWER
 							case RuntimePlatform.LinuxPlayer:
 								buildTarget = BuildTarget.StandaloneLinux;
 								break;
+#endif
 							default:
 								throw new ArgumentOutOfRangeException("Application.platform");
 						}
