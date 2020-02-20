@@ -24,35 +24,8 @@ namespace Extenity.UIToolbox.TouchInput
 		[InfoBox("The Element returns to its default location after releasing the touch in Free Roam mode. This is the duration of that animation.")]
 		public float ReturnToDefaultLocationDuration = 0.15f;
 
-		[BoxGroup("Links"), PropertyOrder(10)]
-		public RectTransform ButtonArea;
-
-		#endregion
-
-		#region Initialization
-
-		// protected override void OnEnable()
-		// {
-		// 	base.OnEnable();
-		// }
-
-		#endregion
-
-		#region Deinitialization
-
-		// protected override void OnDisable()
-		// {
-		// 	base.OnDisable();
-		// }
-
-		#endregion
-
-		#region Update and Calculations
-
-		// protected override void CustomUpdate()
-		// {
-		// 	base.CustomUpdate();
-		// }
+		// [BoxGroup("Links"), PropertyOrder(10)]
+		// public RectTransform ButtonArea;
 
 		#endregion
 
@@ -61,7 +34,7 @@ namespace Extenity.UIToolbox.TouchInput
 		// Cached parameters of Scheme
 		private RectTransform DefaultLocation = default;
 		private bool EnableFreeRoam;
-		private RectTransform ClickableArea = default;
+		// private RectTransform ClickableArea = default;
 		private GameObject ClickableAreaGameObject = default; // Cache optimization
 
 		protected override void ApplySchemeElement(ButtonSchemeElement schemeElement)
@@ -70,7 +43,7 @@ namespace Extenity.UIToolbox.TouchInput
 			{
 				DefaultLocation = schemeElement.DefaultLocation;
 				EnableFreeRoam = schemeElement.EnableFreeRoam;
-				ClickableArea = schemeElement.ClickableArea;
+				var ClickableArea = schemeElement.ClickableArea;
 				ClickableAreaGameObject = ClickableArea ? ClickableArea.gameObject : null;
 				MoveTo(DefaultLocation, 0f);
 			}
@@ -78,7 +51,7 @@ namespace Extenity.UIToolbox.TouchInput
 			{
 				DefaultLocation = null;
 				EnableFreeRoam = false;
-				ClickableArea = null;
+				// ClickableArea = null;
 				ClickableAreaGameObject = null;
 			}
 		}

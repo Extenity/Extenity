@@ -39,24 +39,6 @@ namespace Extenity.UIToolbox.TouchInput
 
 		#endregion
 
-		#region Initialization
-
-		// protected override void Start()
-		// {
-		// 	base.Start();
-		// }
-
-		#endregion
-
-		#region Deinitialization
-
-		// protected override void OnDestroy()
-		// {
-		// 	base.OnDestroy();
-		// }
-
-		#endregion
-
 		#region Update and Calculations
 
 		protected override void CustomUpdate()
