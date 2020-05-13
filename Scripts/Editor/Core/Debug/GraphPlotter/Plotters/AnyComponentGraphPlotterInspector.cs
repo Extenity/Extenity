@@ -29,7 +29,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			EditorGUILayout.PropertyField(GetProperty("Component"));
 
 			// Axis range configuration
-			CommonEditor.DrawAxisRangeConfiguration(Me, Me.Graph, ref Me.Range);
+			CommonEditor.DrawVerticalRangeConfiguration(Me, Me.Graph, ref Me.Range);
 
 			// Sample Time
 			EditorGUILayout.PropertyField(GetProperty("SampleTime"));

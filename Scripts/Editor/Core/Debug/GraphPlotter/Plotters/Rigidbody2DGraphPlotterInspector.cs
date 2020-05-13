@@ -63,7 +63,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				GUILayout.Label("y", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.PositionGraph, ref Me.PositionRange);
+				CommonEditor.DrawVerticalRangeConfiguration(Me, Me.PositionGraph, ref Me.PositionRange);
 
 				EditorGUILayout.Space();
 			}
@@ -87,7 +87,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					Me.ClampRotation = newRotationClamp;
 				}
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.RotationGraph, ref Me.RotationRange);
+				CommonEditor.DrawVerticalRangeConfiguration(Me, Me.RotationGraph, ref Me.RotationRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -127,7 +127,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.EndHorizontal();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me,Me.VelocityGraph, ref Me.VelocityRange);
+				CommonEditor.DrawVerticalRangeConfiguration(Me,Me.VelocityGraph, ref Me.VelocityRange);
 
 				EditorGUILayout.EndVertical();
 
@@ -146,7 +146,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			{
 				EditorGUILayout.BeginVertical();
 
-				CommonEditor.DrawAxisRangeConfiguration(Me, Me.AngularVelocityGraph, ref Me.AngularVelocityRange);
+				CommonEditor.DrawVerticalRangeConfiguration(Me, Me.AngularVelocityGraph, ref Me.AngularVelocityRange);
 
 				EditorGUILayout.EndVertical();
 
