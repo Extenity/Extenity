@@ -728,8 +728,7 @@ namespace Extenity.GameObjectToolbox
 
 			if (includeSelf)
 			{
-				var component = me.GetComponent<T>();
-				if (component)
+				if (me.TryGetComponent<T>(out var component))
 					return component;
 			}
 
@@ -737,8 +736,7 @@ namespace Extenity.GameObjectToolbox
 
 			while (parent)
 			{
-				var component = parent.GetComponent<T>();
-				if (component)
+				if (parent.TryGetComponent<T>(out var component))
 					return component;
 
 				parent = parent.parent;
