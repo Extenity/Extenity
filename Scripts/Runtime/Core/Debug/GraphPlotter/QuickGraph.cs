@@ -21,19 +21,13 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 	public class QuickGraph
 	{
-		public static readonly Dictionary<string, Graph> Graphs = new Dictionary<string, Graph>();
-
 		#region Plot - General
 
 		public static void Plot(string graphTitle, VerticalRangeConfiguration verticalRangeConfiguration, float time, params QuickChannel[] quickChannels)
 		{
 			// Create graph if necessary
-			var newGraph = !Graphs.TryGetValue(graphTitle, out var graph);
+			Graph graph = null;
 			Graph.SetupGraph(true, ref graph, graphTitle, null, verticalRangeConfiguration);
-			if (newGraph)
-			{
-				Graphs.Add(graphTitle, graph);
-			}
 
 			// Create channels if necessary
 			if (graph.Channels.Count != quickChannels.Length)
@@ -103,6 +97,20 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				new QuickChannel("Output", PIDOutputColor, (float)pid.Output),
 				new QuickChannel("Target", PIDTargetColor, (float)pid.Target)
  			);
+		}
+
+		#endregion
+
+		#region Clear
+
+		public static void Clear(string graphTitle)
+		{
+			Graph graph = null;
+			graph = Graphs.GetGraphByTitleAndContext(graphTitle, null);
+			if (graph != null)
+			{
+				Graph.SafeClose(ref graph);
+			}
 		}
 
 		#endregion
