@@ -19,7 +19,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		Custom = 7,
 	}
 
-	public enum ValueAxisSizing
+	public enum VerticalSizing
 	{
 		Fixed,
 		Expansive,
@@ -34,7 +34,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	[Serializable]
 	public class VerticalRangeConfiguration
 	{
-		public ValueAxisSizing Sizing;
+		public VerticalSizing Sizing;
 		public float Min;
 		public float Max;
 
@@ -44,25 +44,25 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public static VerticalRangeConfiguration CreateFixed(float min, float max)
 		{
-			return new VerticalRangeConfiguration(ValueAxisSizing.Fixed, min, max);
+			return new VerticalRangeConfiguration(VerticalSizing.Fixed, min, max);
 		}
 
 		public static VerticalRangeConfiguration CreateExpansive(float min, float max)
 		{
-			return new VerticalRangeConfiguration(ValueAxisSizing.Expansive, min, max);
+			return new VerticalRangeConfiguration(VerticalSizing.Expansive, min, max);
 		}
 
 		public static VerticalRangeConfiguration CreateAdaptive()
 		{
-			return new VerticalRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRangeConfiguration(VerticalSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
 		public static VerticalRangeConfiguration CreateZeroBasedAdaptive()
 		{
-			return new VerticalRangeConfiguration(ValueAxisSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRangeConfiguration(VerticalSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		private VerticalRangeConfiguration(ValueAxisSizing sizing, float min, float max)
+		private VerticalRangeConfiguration(VerticalSizing sizing, float min, float max)
 		{
 			Sizing = sizing;
 			Min = min;
@@ -85,7 +85,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public void SetToDefault()
 		{
-			Sizing = ValueAxisSizing.Adaptive;
+			Sizing = VerticalSizing.Adaptive;
 			Min = float.PositiveInfinity;
 			Max = float.NegativeInfinity;
 		}

@@ -175,12 +175,12 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			switch (Range.Sizing)
 			{
-				case ValueAxisSizing.Expansive:
+				case VerticalSizing.Expansive:
 					Range.Expand(value);
 					break;
-				case ValueAxisSizing.Fixed:
-				case ValueAxisSizing.Adaptive:
-				case ValueAxisSizing.ZeroBasedAdaptive:
+				case VerticalSizing.Fixed:
+				case VerticalSizing.Adaptive:
+				case VerticalSizing.ZeroBasedAdaptive:
 					// Nothing to do.
 					break;
 				default:

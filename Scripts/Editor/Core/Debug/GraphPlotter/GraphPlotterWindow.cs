@@ -280,12 +280,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				switch (range.Sizing)
 				{
-					case ValueAxisSizing.Adaptive:
+					case VerticalSizing.Adaptive:
 						{
 							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
 						}
 						break;
-					case ValueAxisSizing.ZeroBasedAdaptive:
+					case VerticalSizing.ZeroBasedAdaptive:
 						{
 							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
 						}

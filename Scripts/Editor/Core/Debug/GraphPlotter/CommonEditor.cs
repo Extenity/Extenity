@@ -9,12 +9,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 	{
 		public static void DrawAxisRangeConfiguration(Object undoObject, Graph graph, ref VerticalRangeConfiguration range)
 		{
-			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis Sizing", range.Sizing);
+			var newSizing = (VerticalSizing)EditorGUILayout.EnumPopup("Axis Sizing", range.Sizing);
 
 			if (newSizing != range.Sizing)
 			{
 				Undo.RecordObject(undoObject, "Changed axis sizing");
-				if (newSizing == ValueAxisSizing.Fixed &&
+				if (newSizing == VerticalSizing.Fixed &&
 					float.IsPositiveInfinity(range.Min) &&
 					float.IsNegativeInfinity(range.Max))
 				{
@@ -28,8 +28,8 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			float newMin;
 			float newMax;
 
-			if (newSizing == ValueAxisSizing.Adaptive ||
-			    newSizing == ValueAxisSizing.ZeroBasedAdaptive)
+			if (newSizing == VerticalSizing.Adaptive ||
+			    newSizing == VerticalSizing.ZeroBasedAdaptive)
 			{
 				newMin = float.PositiveInfinity;
 				newMax = float.NegativeInfinity;
