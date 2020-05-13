@@ -215,7 +215,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 		}
 
-		public void CalculateValueAxisRangeInTimeWindow(float timeStart, float timeEnd, float min, float max)
+		public void CalculateVerticalRangeInTimeWindow(float timeStart, float timeEnd, float min, float max)
 		{
 			CheckClosed();
 

@@ -282,12 +282,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				{
 					case VerticalSizing.Adaptive:
 						{
-							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
+							graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
 						}
 						break;
 					case VerticalSizing.ZeroBasedAdaptive:
 						{
-							graph.CalculateValueAxisRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
+							graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
 						}
 						break;
 				}
