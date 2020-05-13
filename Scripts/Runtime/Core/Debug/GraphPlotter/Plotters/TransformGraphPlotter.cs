@@ -78,7 +78,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotPositionY = true;
 		public bool PlotPositionZ = true;
 		public CoordinateSystem PositionSpace = CoordinateSystem.World;
-		public ValueAxisRangeConfiguration PositionRange = ValueAxisRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration PositionRange = VerticalRangeConfiguration.CreateAdaptive();
 		public Graph PositionGraph;
 		public Channel[] PositionChannels;
 		// -----------------------------------------------------
@@ -89,7 +89,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotRotationY = true;
 		public bool PlotRotationZ = true;
 		public CoordinateSystem RotationSpace = CoordinateSystem.World;
-		public ValueAxisRangeConfiguration RotationRange = ValueAxisRangeConfiguration.CreateFixed(0f, 360f);
+		public VerticalRangeConfiguration RotationRange = VerticalRangeConfiguration.CreateFixed(0f, 360f);
 		public Graph RotationGraph;
 		public Channel[] RotationChannels;
 		// -----------------------------------------------------
@@ -100,7 +100,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotScaleY = true;
 		public bool PlotScaleZ = true;
 		public ScaleCoordinateSystem ScaleSpace = ScaleCoordinateSystem.Local;
-		public ValueAxisRangeConfiguration ScaleRange = ValueAxisRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration ScaleRange = VerticalRangeConfiguration.CreateAdaptive();
 		public Graph ScaleGraph;
 		public Channel[] ScaleChannels;
 		// -----------------------------------------------------

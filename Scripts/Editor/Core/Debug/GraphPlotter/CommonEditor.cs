@@ -7,7 +7,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 	public class CommonEditor
 	{
-		public static void DrawAxisRangeConfiguration(Object undoObject, Graph graph, ref ValueAxisRangeConfiguration range)
+		public static void DrawAxisRangeConfiguration(Object undoObject, Graph graph, ref VerticalRangeConfiguration range)
 		{
 			var newSizing = (ValueAxisSizing)EditorGUILayout.EnumPopup("Axis Sizing", range.Sizing);
 

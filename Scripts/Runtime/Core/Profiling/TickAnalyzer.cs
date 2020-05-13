@@ -12,7 +12,7 @@ namespace Extenity.ProfilingToolbox
 	public class TickPlotter
 	{
 		public string Title;
-		public ValueAxisRangeConfiguration RangeConfiguration;
+		public VerticalRangeConfiguration RangeConfiguration;
 		public GameObject Context;
 
 		[Tooltip("Ticks per second.")]
@@ -24,7 +24,7 @@ namespace Extenity.ProfilingToolbox
 		public string AverageTPSDescription = "Average TPS";
 		public Color AverageTPSColor = new Color(0.4f, 0.5f, 0.2f, 1f);
 
-		public TickPlotter(string title, ValueAxisRangeConfiguration rangeConfiguration, GameObject context = null)
+		public TickPlotter(string title, VerticalRangeConfiguration rangeConfiguration, GameObject context = null)
 		{
 			Title = title;
 			RangeConfiguration = rangeConfiguration;

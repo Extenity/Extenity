@@ -25,11 +25,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Plot - General
 
-		public static void Plot(string graphTitle, ValueAxisRangeConfiguration rangeConfiguration, float time, params QuickChannel[] quickChannels)
+		public static void Plot(string graphTitle, VerticalRangeConfiguration verticalRangeConfiguration, float time, params QuickChannel[] quickChannels)
 		{
 			// Create graph if necessary
 			var newGraph = !Graphs.TryGetValue(graphTitle, out var graph);
-			Graph.SetupGraph(true, ref graph, graphTitle, null, rangeConfiguration);
+			Graph.SetupGraph(true, ref graph, graphTitle, null, verticalRangeConfiguration);
 			if (newGraph)
 			{
 				Graphs.Add(graphTitle, graph);
@@ -94,7 +94,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			Plot(graphTitle,
-				ValueAxisRangeConfiguration.CreateFixed(
+				VerticalRangeConfiguration.CreateFixed(
 					(float)pid.OutMin * PIDPaddingFactor,
 					(float)pid.OutMax * PIDPaddingFactor
 				),

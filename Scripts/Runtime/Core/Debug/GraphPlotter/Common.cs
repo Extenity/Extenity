@@ -32,7 +32,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	};
 
 	[Serializable]
-	public class ValueAxisRangeConfiguration
+	public class VerticalRangeConfiguration
 	{
 		public ValueAxisSizing Sizing;
 		public float Min;
@@ -42,34 +42,34 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Initialization
 
-		public static ValueAxisRangeConfiguration CreateFixed(float min, float max)
+		public static VerticalRangeConfiguration CreateFixed(float min, float max)
 		{
-			return new ValueAxisRangeConfiguration(ValueAxisSizing.Fixed, min, max);
+			return new VerticalRangeConfiguration(ValueAxisSizing.Fixed, min, max);
 		}
 
-		public static ValueAxisRangeConfiguration CreateExpansive(float min, float max)
+		public static VerticalRangeConfiguration CreateExpansive(float min, float max)
 		{
-			return new ValueAxisRangeConfiguration(ValueAxisSizing.Expansive, min, max);
+			return new VerticalRangeConfiguration(ValueAxisSizing.Expansive, min, max);
 		}
 
-		public static ValueAxisRangeConfiguration CreateAdaptive()
+		public static VerticalRangeConfiguration CreateAdaptive()
 		{
-			return new ValueAxisRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRangeConfiguration(ValueAxisSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		public static ValueAxisRangeConfiguration CreateZeroBasedAdaptive()
+		public static VerticalRangeConfiguration CreateZeroBasedAdaptive()
 		{
-			return new ValueAxisRangeConfiguration(ValueAxisSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRangeConfiguration(ValueAxisSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		private ValueAxisRangeConfiguration(ValueAxisSizing sizing, float min, float max)
+		private VerticalRangeConfiguration(ValueAxisSizing sizing, float min, float max)
 		{
 			Sizing = sizing;
 			Min = min;
 			Max = max;
 		}
 
-		public void CopyFrom(ValueAxisRangeConfiguration other)
+		public void CopyFrom(VerticalRangeConfiguration other)
 		{
 			if (other == null)
 			{
