@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -887,6 +887,33 @@ namespace Extenity.ReflectionToolbox
 			return me == null
 				? null
 				: me.GetType();
+		}
+
+		#endregion
+
+		#region FindType
+
+		public static Type GetTypeInAllAssembliesEnsured(StringFilter typeFullNameFilter)
+		{
+			var result = SearchTypeInAllAssemblies(typeFullNameFilter);
+			if (result.Length > 1)
+			{
+				throw new Exception("Found more than one type:\n" + string.Join("\n", result.Select(entry => entry.FullName)));
+			}
+			if (result.Length == 0)
+			{
+				throw new Exception("Failed to find a type.");
+			}
+			return result[0];
+		}
+
+		public static Type[] SearchTypeInAllAssemblies(StringFilter typeFullNameFilter)
+		{
+			return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+			        from module in assembly.GetModules()
+			        from type in module.GetTypes()
+			        where typeFullNameFilter.IsMatching(type.FullName)
+			        select type).ToArray();
 		}
 
 		#endregion
