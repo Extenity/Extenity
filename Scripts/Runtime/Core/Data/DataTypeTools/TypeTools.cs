@@ -403,6 +403,10 @@ namespace Extenity.DataToolbox
 
 		public static string GetPrettyName(this Type type)
 		{
+			if (type == null)
+			{
+				return "[Unknown]";
+			}
 			if (PrettyTypeNames.TryGetValue(type, out var name))
 			{
 				return name;
