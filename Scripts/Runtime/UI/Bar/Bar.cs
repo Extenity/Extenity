@@ -115,6 +115,11 @@ namespace Extenity.UIToolbox
 				}
 				else
 				{
+#if UNITY_EDITOR
+					// Apply modified parameters in inspector.
+					Animation.SetDelay(AnimationDelay); // Seems like changing delay is not working.
+					Animation.SetEase(AnimationEasing);
+#endif
 					Animation.ChangeValues(currentSize.x, newSize.x, AnimationDuration);
 					Animation.Restart(true);
 				}
@@ -198,6 +203,25 @@ namespace Extenity.UIToolbox
 
 #if UNITY_EDITOR
 
+		[BoxGroup("Test")]
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%0"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_0() { SetValue(0.0f); }
+
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%10"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_10() { SetValue(0.1f); }
+
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%30"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_30() { SetValue(0.3f); }
+
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%50"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_50() { SetValue(0.5f); }
+
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%80"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_80() { SetValue(0.8f); }
+
+		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%100"), HorizontalGroup("Test/TestButtons")]
+		private void SetValue_100() { SetValue(1.0f); }
+
 		private void Update()
 		{
 			if (!Application.IsPlaying(gameObject))
@@ -217,10 +241,13 @@ namespace Extenity.UIToolbox
 
 		public void OnBeforeSerialize()
 		{
-			SetValue(0f, true);
-			SetIncreaseMaskPositionAndSize(0f);
-			SetDecreaseMaskPositionAndSize(0f);
-			HideIncreaseDecreaseMasksAndEndAnimation();
+			if (!Application.isPlaying)
+			{
+				SetValue(0f, true);
+				SetIncreaseMaskPositionAndSize(0f);
+				SetDecreaseMaskPositionAndSize(0f);
+				HideIncreaseDecreaseMasksAndEndAnimation();
+			}
 		}
 
 		public void OnAfterDeserialize()
