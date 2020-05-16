@@ -35,10 +35,18 @@ namespace Extenity.DebugToolbox
 
 			public ComponentEntry(Component component)
 			{
-				Type = component.GetType();
-				SerializedFields = component.GetUnitySerializedFields()
-					.Select(field => new FieldEntry(component, field))
-					.ToArray();
+				if (!component)
+				{
+					Type = null;
+					SerializedFields = Array.Empty<FieldEntry>();
+				}
+				else
+				{
+					Type = component.GetType();
+					SerializedFields = component.GetUnitySerializedFields()
+						.Select(field => new FieldEntry(component, field))
+						.ToArray();
+				}
 			}
 		}
 
@@ -80,8 +88,11 @@ namespace Extenity.DebugToolbox
 			var sceneInfos = SceneManagerTools.GetLoadedScenes(true, true);
 			Scenes = sceneInfos.Select(sceneInfo => new SceneEntry(sceneInfo)).ToArray();
 
-			// Also add the DontDestroyOnLoad scene
-			Scenes = Scenes.Add(new SceneEntry(SceneManagerTools.GetDontDestroyOnLoadScene()));
+			// Also add the DontDestroyOnLoad scene, if we are currently in play mode. (There is no DontDestroyOnLoad scene in edit mode)
+			if (Application.isPlaying)
+			{
+				Scenes = Scenes.Add(new SceneEntry(SceneManagerTools.GetDontDestroyOnLoadScene()));
+			}
 		}
 
 		public string BuildStringForGameObjectPaths()
@@ -118,7 +129,7 @@ namespace Extenity.DebugToolbox
 					OUTPUT.AppendLine(gameObjectEntry.FullPath);
 					foreach (var componentEntry in gameObjectEntry.Components)
 					{
-						OUTPUT.AppendLine("\t" + componentEntry.Type.Name);
+						OUTPUT.AppendLine("\t" + componentEntry.Type.GetPrettyName());
 						foreach (var serializedField in componentEntry.SerializedFields)
 						{
 							OUTPUT.AppendLine("\t\t" + serializedField.Name + " = " + serializedField.Value?.ToString());
