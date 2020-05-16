@@ -131,6 +131,12 @@ namespace Extenity.SceneManagementToolbox
 			GameObject temp = null;
 			try
 			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying)
+				{
+					throw new Exception("There is no DontDestroyOnLoad scene in edit mode.");
+				}
+#endif
 				temp = new GameObject();
 				Object.DontDestroyOnLoad(temp);
 				var dontDestroyOnLoadScene = temp.scene;
