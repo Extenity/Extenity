@@ -83,14 +83,14 @@ namespace Extenity.UIToolbox
 		#region Input
 
 		// See 11637281.
-		public static bool IsGUIActiveInCurrentEventSystem
+		public static bool IsUIActiveInCurrentEventSystem
 		{
 			get
 			{
 				var eventSystem = EventSystem.current;
 				if (eventSystem)
 				{
-					if (eventSystem.currentSelectedGameObject != null)
+					if (eventSystem.IsPointerOverGameObject())
 					{
 						return true;
 					}
