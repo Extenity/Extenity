@@ -22,7 +22,7 @@ namespace Extenity.OdinToolbox
 		[Conditional("ODIN_INSPECTOR")]
 		public static void Repaint()
 		{
-#if ODIN_INSPECTOR
+#if ODIN_INSPECTOR && UNITY_EDITOR
 			Sirenix.Utilities.Editor.GUIHelper.RequestRepaint();
 #endif
 		}
