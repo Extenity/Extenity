@@ -292,6 +292,46 @@ namespace Extenity.MessagingToolbox
 			Listeners.Clear();
 		}
 
+		// TODO: Needs testing (Only roughly tested). See RemoveListener(Action callback) tests and apply the same where possible. Should test with both System.Object and UnityEngine.Object targets.
+		// TODO: Copy to other ExtenityEvent generic implementations
+		public void RemoveAllListenersThatTargets(object callbackTarget)
+		{
+			if (IsInvoking)
+				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
+			if (ExtenityEventTools.VerboseLogging)
+				Log.Verbose($"Removing all listeners with {_Detailed_CallbackTarget(callbackTarget)}.");
+
+			// if (callbackTarget == null) Nope! Removing null callback targets are also supported to allow removing static method callbacks.
+			// 	return; // Silently ignore
+
+			var removedCount = 0;
+
+			for (var i = 0; i < Listeners.Count; i++)
+			{
+				if (Listeners[i].Callback != null &&
+				    Listeners[i].Callback.Target == callbackTarget)
+				{
+					if (ExtenityEventTools.VerboseLogging)
+						Log.Verbose($"Removing listener with {_Detailed_CallbackTarget(callbackTarget)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+
+					// Also shift the iteration index if currently invoking. Note that InvokeIndex will be -1 if not currently invoking.
+					if (InvokeIndex >= i)
+					{
+						InvokeIndex--;
+					}
+
+					Listeners.RemoveAt(i);
+					i--;
+					removedCount++;
+				}
+			}
+			if (removedCount == 0)
+			{
+				if (ExtenityEventTools.VerboseLogging)
+					Log.Verbose($"Failed to remove any listeners for {_Detailed_CallbackTarget(callbackTarget)}.");
+			}
+		}
+
 		#endregion
 
 		#region Invoke
@@ -430,6 +470,11 @@ namespace Extenity.MessagingToolbox
 				}
 				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(listener.Order, listener.LifeSpan, listener.LifeSpanTarget, listener.Callback));
 			}
+		}
+
+		private string _Detailed_CallbackTarget(object callbackTarget)
+		{
+			return $"callback target '{callbackTarget.FullObjectName()}'";
 		}
 
 		private string _Detailed_MethodAndObject(Delegate callback)
