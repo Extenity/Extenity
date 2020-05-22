@@ -109,7 +109,7 @@ namespace Extenity.UIToolbox
 					                   .SetDelay(AnimationDelay)
 					                   .SetEase(AnimationEasing)
 					                   .SetAutoKill(false)
-					                   .SetUpdate(UpdateType.Late)
+					                   .SetUpdate(UpdateType.Late, true)
 					                   .SetTarget(this)
 					                   .OnComplete(HideIncreaseDecreaseMasksAndEndAnimation);
 				}

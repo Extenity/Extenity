@@ -277,7 +277,8 @@ namespace Extenity.UIToolbox
 
 				DOTween.To(() => ui.RectTransform.anchoredPosition, x => ui.RectTransform.anchoredPosition = x, position, LineMoveAnimationDuration)
 					.SetTarget(ui)
-					.SetEase(LineMoveAnimationEasing);
+					.SetEase(LineMoveAnimationEasing)
+					.SetUpdate(UpdateType.Late, true);
 
 				positionY += stepY;
 			}
