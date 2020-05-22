@@ -83,20 +83,39 @@ namespace Extenity.UIToolbox
 		#region Input
 
 		// See 11637281.
-		public static bool IsUIActiveInCurrentEventSystem
+		public static bool IsPointerOverUIWithPrimaryTouchesInCurrentEventSystem
 		{
 			get
 			{
-				var eventSystem = EventSystem.current;
-				if (eventSystem)
-				{
-					if (eventSystem.IsPointerOverGameObject())
-					{
-						return true;
-					}
-				}
-				return false;
+				return EventSystem.current.IsPointerOverUIWithPrimaryTouches();
 			}
+		}
+
+		/// <summary>
+		/// Source: https://forum.unity.com/threads/ispointerovereventsystemobject-always-returns-false-on-mobile.265372/
+		/// </summary>
+		public static bool IsPointerOverUIWithPrimaryTouches(this EventSystem eventSystem)
+		{
+			if (!eventSystem)
+				return false;
+
+			// Check for mouse. Calling without parameters means it's called with PointerInputModule.kMouseLeftId
+			// parameter that checks if the mouse is hovering over a UI object. Don't mind the MouseLeftId, since we are
+			// not interested in any buttons. Note that it does not cover touch input. See below.
+			if (eventSystem.IsPointerOverGameObject())
+			{
+				return true;
+			}
+
+			// Check for touches (actually only the first touch which is considered the primary input).
+			if (Input.touchCount > 0)
+			{
+				if (eventSystem.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public static bool IsEnterHit
