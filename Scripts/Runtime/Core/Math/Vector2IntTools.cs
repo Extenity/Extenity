@@ -259,6 +259,28 @@ namespace Extenity.MathToolbox
 		}
 
 		#endregion
+		
+		#region Manipulate Components
+
+		public static void ChangeZerosTo(ref Vector2Int value, int changeTo)
+		{
+			if (value.x == 0) value.x = changeTo;
+			if (value.y == 0) value.y = changeTo;
+		}
+
+		public static Vector2Int WithX(this Vector2Int value, int overriddenX)
+		{
+			value.x = overriddenX;
+			return value;
+		}
+
+		public static Vector2Int WithY(this Vector2Int value, int overriddenY)
+		{
+			value.y = overriddenY;
+			return value;
+		}
+
+		#endregion
 	}
 
 }

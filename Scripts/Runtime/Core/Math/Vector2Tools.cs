@@ -507,6 +507,18 @@ namespace Extenity.MathToolbox
 			return vector;
 		}
 
+		public static Vector2 WithX(this Vector2 value, float overriddenX)
+		{
+			value.x = overriddenX;
+			return value;
+		}
+
+		public static Vector2 WithY(this Vector2 value, float overriddenY)
+		{
+			value.y = overriddenY;
+			return value;
+		}
+
 		#endregion
 
 		#region Flat Check
