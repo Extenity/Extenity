@@ -17,12 +17,12 @@ namespace Extenity.DataToolbox
 			return (T)obj;
 		}
 
-		// TODO: Update that in new Unity versions.
-		// Originally copied from UnityEngine.Object.CheckNullArgument (Unity version 2018.1.1f1)
+		// TODO MAINTENANCE: Update that in new Unity versions.
+		// Originally copied from UnityEngine.Object.CheckNullArgument (Unity version 2020.2.0a11)
 		public static void CheckNullArgument(object arg, string message)
 		{
 			if (arg == null)
-				throw new ArgumentException(message);
+				throw new System.ArgumentException(message);
 		}
 	}
 

@@ -84,8 +84,8 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		static EditorGUITools()
 		{
-			// TODO: Update that in new Unity versions.
-			// Revealed internals (Unity version 2018.1.1f1)
+			// TODO MAINTENANCE: Update that in new Unity versions.
+			// Revealed internals (Unity version 2020.2.0a11)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.EditorGUI");
 			if (type == null)
 				throw new InternalException(1158672612); // See 117392721.

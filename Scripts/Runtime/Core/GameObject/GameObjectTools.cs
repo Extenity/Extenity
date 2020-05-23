@@ -3,11 +3,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
-using Extenity.MessagingToolbox;
 using Extenity.SceneManagementToolbox;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace Extenity.GameObjectToolbox
@@ -1945,40 +1946,18 @@ namespace Extenity.GameObjectToolbox
 		/// </summary>
 		public static bool IsComponentEnabled(this Component component, bool defaultValueForUnknownTypes = true)
 		{
-			// TODO: Update that in new Unity versions.
-			// These are the classes that derive from Component (Unity version 2018.1.1f1)
-			// Use ReSharper to get the list quickly. Right click on Component class, Inspect -> Hierarchy.
-			//    Behaviour
-			//    CanvasGroup
-			//    CanvasRenderer
-			//    Cloth
-			//    Collider
-			//    Joint
-			//    LODGroup
-			//    MeshFilter
-			//    OcclusionArea
-			//    OcclusionPortal
-			//    ParticleAnimator
-			//    ParticleEmitter
-			//    ParticleSystem
-			//    Renderer
-			//    Rigidbody
-			//    Rigidbody2D
-			//    TextMesh
-			//    Transform
-			//    Tree
-			//    WindZone
-			//    WorldAnchor
-			//
-			// From which these are the ones that has 'enabled' property that should
-			// also mean the component is meant to be disabled if set to false
+			// TODO MAINTENANCE: Update that in new Unity versions.
+			// These are the classes that derive from Component (Unity version 2020.2.0a11)
+			// Use _FindAllComponentsThatHaveEnabledProperty below to find all Component derived types that has
+			// 'enabled' property. That should also mean the component is meant to be disabled if set to false.
+			// The current list of Components:
 			//    Behaviour
 			//    Cloth
 			//    Collider
 			//    LODGroup
 			//    Renderer
 
-			// We cannot use 'as' for checking if the conversion is successfull, since Unity overrides == and bool operator.
+			// We cannot use 'as' for checking if the conversion is successful, since Unity overrides == and bool operator.
 			if (component is Behaviour)
 				return (component as Behaviour).enabled;
 			if (component is Renderer)
@@ -1994,6 +1973,44 @@ namespace Extenity.GameObjectToolbox
 
 			return defaultValueForUnknownTypes;
 		}
+
+#if UNITY_EDITOR
+		[UnityEditor.MenuItem("Tools/Extenity/Maintenance/Find All Components That Have Enabled Property")]
+		private static void _FindAllComponentsThatHaveEnabledProperty()
+		{
+			Debug.Log("This tool is for Extenity development. It helps finding the required components that should be included in the code of GameObjectTools.IsComponentEnabled method.");
+
+			var allComponentTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+			                         from module in assembly.GetModules()
+			                         from type in module.GetTypes()
+			                         where type.IsSubclassOf(typeof(Component))
+			                         select type).ToArray();
+
+			var result = new HashSet<Type>();
+
+			foreach (var componentType in allComponentTypes)
+			{
+				if (componentType.GetMethod("get_enabled", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy) != null)
+				{
+					var type = componentType;
+					while (type != typeof(Component))
+					{
+						if (type.GetMethod("get_enabled", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) != null)
+						{
+							result.Add(type);
+						}
+						type = type.BaseType;
+					}
+				}
+				if (componentType.GetField("enabled", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy) != null)
+				{
+					Debug.LogError($"Detected a field with name 'enabled' in type '{componentType}' and don't know how to handle that.");
+				}
+			}
+
+			Debug.Log($"List of types that have 'enabled' method ({result.Count}):\n" + string.Join("\n", result.Select(type => type.FullName).OrderBy(fullName => fullName)));
+		}
+#endif
 
 		#endregion
 	}

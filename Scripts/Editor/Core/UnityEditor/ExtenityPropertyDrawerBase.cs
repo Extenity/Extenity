@@ -73,7 +73,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void DrawDefaultInspectorTheExtenityWay(Rect position, SerializedProperty property, GUIContent label)
 		{
-			// TODO: Update that in new Unity versions.
+			// TODO MAINTENANCE: Update that in new Unity versions.
 			// Originally copied from PropertyHandler.OnGUI (Unity version 2018.1.1f1)
 			// Then modified.
 

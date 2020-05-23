@@ -9,12 +9,12 @@ namespace Extenity.IMGUIToolbox.Editor
 	{
 		static GUIClip()
 		{
-			// TODO: Update that in new Unity versions.
-			// Revealed internals (Unity version 2018.1.1f1)
+			// TODO MAINTENANCE: Update that in new Unity versions.
+			// Revealed internals (Unity version 2020.2.0a11)
 			var type = typeof(MonoBehaviour).Assembly.GetType("UnityEngine.GUIClip");
 			if (type == null)
 				throw new InternalException(1148672612); // See 117392721.
-			
+
 			type.GetStaticMethodAsFunc("get_topmostRect", out _topmostRect);
 			type.GetStaticMethodAsFunc("get_visibleRect", out _visibleRect);
 			type.GetStaticMethodAsFunc("Unclip", out _UnclipVector2);

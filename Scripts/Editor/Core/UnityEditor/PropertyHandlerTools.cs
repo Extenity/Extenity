@@ -12,8 +12,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		static PropertyHandlerTools()
 		{
-			// TODO: Update that in new Unity versions.
-			// Revealed internals (Unity version 2018.1.1f1)
+			// TODO MAINTENANCE: Update that in new Unity versions.
+			// Revealed internals (Unity version 2020.2.0a11)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.PropertyHandler");
 			if (type == null)
 				throw new InternalException(1138672612); // See 117392721.
