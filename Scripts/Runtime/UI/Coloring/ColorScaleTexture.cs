@@ -1,8 +1,9 @@
 using System;
+using Extenity.ColoringToolbox;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Extenity.ColoringToolbox
+namespace Extenity.UIToolbox
 {
 
 	public class ColorScaleTexture : MonoBehaviour

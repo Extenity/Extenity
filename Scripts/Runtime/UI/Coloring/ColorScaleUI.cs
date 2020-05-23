@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using Extenity.ColoringToolbox;
 using Extenity.MathToolbox;
 using UnityEngine.UI;
 
-namespace Extenity.ColoringToolbox.UI
+namespace Extenity.UIToolbox
 {
 
 	public class ColorScaleUI : MonoBehaviour
@@ -23,14 +24,6 @@ namespace Extenity.ColoringToolbox.UI
 		protected void OnDestroy()
 		{
 			DeinitializeScaleText();
-		}
-
-		#endregion
-
-		#region Update
-
-		protected void Update()
-		{
 		}
 
 		#endregion

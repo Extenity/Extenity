@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Extenity.UI
+namespace Extenity.UIToolbox
 {
 
 	public class DevelopmentWatermark : MonoBehaviour
