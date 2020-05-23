@@ -360,6 +360,23 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Beyond Compare / File Comparison
+
+		public static void LaunchBeyondCompareFileComparison(string leftFilePath, string rightFilePath)
+		{
+			try
+			{
+				Process.Start(@"C:\Program Files\Beyond Compare 4\BComp.exe",
+				              $@"""{leftFilePath}"" ""{rightFilePath}""");
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Failed to launch file comparer. Reason: " + exception);
+			}
+		}
+
+		#endregion
+
 		#region Unity FileID Calculator
 
 		/// <summary>
