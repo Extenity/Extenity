@@ -33,26 +33,42 @@ namespace Extenity.CodingToolbox.Editor
 						for (var i = 0; i < types.Length; i++)
 						{
 							var type = types[i];
-							if (string.IsNullOrWhiteSpace(type.Namespace) ||
-							    !type.Namespace.StartsWith(namespaceShouldStartWith))
+							var name = type.Name;
+
+							// Skip compiler generated types. Source: https://stackoverflow.com/questions/187495/how-to-read-assembly-attributes
+							if (name.StartsWith("__StaticArrayInitTypeSize") ||
+							    name.StartsWith("<>") ||
+							    name.StartsWith("_<>") ||
+							    name.StartsWith("<PrivateImplementationDetails>"))
 							{
-								var name = type.Name;
+								continue;
+							}
 
-								// Skip compiler generated types. Source: https://stackoverflow.com/questions/187495/how-to-read-assembly-attributes
-								if (name.StartsWith("__StaticArrayInitTypeSize") ||
-								    name.StartsWith("<PrivateImplementationDetails>"))
-								{
-									continue;
-								}
+							// Skip mysterious types that comes out of nowhere.
+							if (name.Equals("EmbeddedAttribute") ||
+							    name.Equals("IsReadOnlyAttribute"))
+							{
+								continue;
+							}
 
-								// Skip mysterious types that comes out of nowhere.
-								if (name.Equals("EmbeddedAttribute") ||
-								    name.Equals("IsReadOnlyAttribute"))
-								{
-									continue;
-								}
+							var checkedAgainst = namespaceShouldStartWith;
 
-								Log.Error($"Namespace of type '{name}' should start with '{namespaceShouldStartWith}' instead of '{type.Namespace ?? "[NA]"}'.");
+							var overrideAttribute = type.GetAttribute<OverrideEnsuredNamespaceAttribute>();
+							if (overrideAttribute != null)
+							{
+								checkedAgainst = overrideAttribute.NamespaceShouldStartWith;
+							}
+
+							if (string.IsNullOrWhiteSpace(checkedAgainst) && string.IsNullOrWhiteSpace(type.Namespace))
+							{
+								continue; // That's alright. It can be set to have no namespace.
+							}
+
+							if (string.IsNullOrWhiteSpace(type.Namespace) ||
+							    string.IsNullOrWhiteSpace(checkedAgainst) ||
+							    !type.Namespace.StartsWith(checkedAgainst))
+							{
+								Log.Error($"Namespace of type '{name}' should start with '{checkedAgainst ?? "[NA]"}' instead of '{type.Namespace ?? "[NA]"}'.");
 							}
 						}
 					}

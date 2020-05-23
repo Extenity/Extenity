@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace Extenity.CodingToolbox
 {
@@ -8,7 +9,7 @@ namespace Extenity.CodingToolbox
 	{
 		public readonly string NamespaceShouldStartWith;
 
-		public EnsuredNamespaceAttribute(string namespaceShouldStartWith)
+		public EnsuredNamespaceAttribute([CanBeNull] string namespaceShouldStartWith)
 		{
 			NamespaceShouldStartWith = namespaceShouldStartWith;
 		}
