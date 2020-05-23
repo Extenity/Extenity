@@ -1,3 +1,4 @@
+using Extenity.CodingToolbox;
 
 namespace System.Collections.Generic.Extenity
 {
@@ -7,6 +8,7 @@ namespace System.Collections.Generic.Extenity
 	/// </summary>
 	/// <typeparam name="T1">The type of objects to compare.This type parameter is contravariant. That is, you can use either the type you specified or any type that is less derived. For more information about covariance and contravariance, see Covariance and Contravariance in Generics.</typeparam>
 	/// <typeparam name="T2">The type of objects to compare.This type parameter is contravariant. That is, you can use either the type you specified or any type that is less derived. For more information about covariance and contravariance, see Covariance and Contravariance in Generics.</typeparam>
+	[OverrideEnsuredNamespace("System.Collections.Generic.Extenity")]
 	public interface IEqualityComparer<T1, T2>
 	{
 		/// <summary>
@@ -20,6 +22,7 @@ namespace System.Collections.Generic.Extenity
 		bool Equals(T1 x, T2 y);
 	}
 
+	[OverrideEnsuredNamespace("System.Collections.Generic.Extenity")]
 	public class EqualityComparer<T1, T2> : IEqualityComparer<T1, T2>
 	{
 		public static readonly IEqualityComparer<T1, T2> Default = new EqualityComparer<T1, T2>();

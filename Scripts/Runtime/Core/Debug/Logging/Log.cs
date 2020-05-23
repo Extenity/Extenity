@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Extenity.CodingToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using Debug = UnityEngine.Debug;
@@ -17,6 +18,7 @@ using Object = UnityEngine.Object;
 //namespace Extenity.DebugToolbox
 //{
 
+[OverrideEnsuredNamespace(null)]
 public enum LogCategory
 {
 	Verbose,
@@ -26,6 +28,7 @@ public enum LogCategory
 	Critical,
 }
 
+[OverrideEnsuredNamespace(null)]
 public enum SeverityCategory
 {
 	Warning,
@@ -35,6 +38,7 @@ public enum SeverityCategory
 
 // TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
 
+[OverrideEnsuredNamespace(null)]
 public static class Log
 {
 	#region Indentation
@@ -69,6 +73,7 @@ public static class Log
 
 	#region Indentation Using 'Using'
 
+	[OverrideEnsuredNamespace(null)]
 	public class IndentationHandler : IDisposable
 	{
 		private Object Context;
@@ -695,6 +700,7 @@ public static class Log
 	#endregion
 }
 
+[OverrideEnsuredNamespace(null)]
 public static class LogExtensions
 {
 	#region Simple
@@ -942,6 +948,7 @@ public static class LogExtensions
 	#endregion
 }
 
+[OverrideEnsuredNamespace(null)]
 public class InternalException : Exception
 {
 	public InternalException(int errorCode)

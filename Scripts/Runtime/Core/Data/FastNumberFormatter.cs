@@ -37,10 +37,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using Extenity.CodingToolbox;
 
 namespace System
 {
 
+	[OverrideEnsuredNamespace("System")]
 	internal sealed partial class NumberFormatter
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
