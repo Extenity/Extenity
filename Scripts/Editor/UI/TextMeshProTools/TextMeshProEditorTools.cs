@@ -1,7 +1,8 @@
 using Extenity.UnityEditorToolbox.Editor;
+using TMPro;
 using UnityEditor;
 
-namespace TMPro.Extensions
+namespace Extenity.UIToolbox.Editor
 {
 
 	public static class TextMeshProEditorTools

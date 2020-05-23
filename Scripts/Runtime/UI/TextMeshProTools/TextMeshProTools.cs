@@ -1,7 +1,8 @@
 using System;
 using Extenity.DataToolbox;
+using TMPro;
 
-namespace TMPro.Extensions
+namespace Extenity.UIToolbox
 {
 
 	public static class TextMeshProTools

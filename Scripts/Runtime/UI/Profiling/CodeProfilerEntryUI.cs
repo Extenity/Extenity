@@ -2,7 +2,6 @@ using System;
 using Extenity.MathToolbox;
 using Extenity.ProfilingToolbox;
 using TMPro;
-using TMPro.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
