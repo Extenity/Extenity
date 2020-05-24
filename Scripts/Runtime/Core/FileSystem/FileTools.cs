@@ -302,6 +302,18 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		#endregion
+
+		#region Temp File
+
+		public static string WriteAllTextToTempDirectory(string relativeFilePath, string content)
+		{
+			var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
+			var path = Path.Combine(tempDirectory, relativeFilePath);
+			File.WriteAllText(path, content);
+			return path;
+		}
+
+		#endregion
 	}
 
 }
