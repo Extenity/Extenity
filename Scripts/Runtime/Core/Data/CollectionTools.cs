@@ -6,8 +6,6 @@ using System.Collections.Generic.Extenity;
 namespace Extenity.DataToolbox
 {
 
-	// TODO REFACTOR: Rename 'thisList' to 'list'
-
 	public static class CollectionTools
 	{
 		#region Array / List / Collection / Enumerable
@@ -127,21 +125,21 @@ namespace Extenity.DataToolbox
 			return count;
 		}
 
-		public static bool RemoveNullChecked<T>(this List<T> thisList, T item)
+		public static bool RemoveNullChecked<T>(this List<T> list, T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
-				return thisList.Remove(item);
+				return list.Remove(item);
 			}
 			return false;
 		}
 
-		public static bool RemoveNullCheckedAndRemoveAllNullItems<T>(this List<T> thisList, T item)
+		public static bool RemoveNullCheckedAndRemoveAllNullItems<T>(this List<T> list, T item)
 		{
 			// Remove nulls before removing the object, so Contains check will not count the nulls.
-			thisList.RemoveAllNullItems();
+			list.RemoveAllNullItems();
 
-			return thisList.RemoveNullChecked(item);
+			return list.RemoveNullChecked(item);
 		}
 
 		// See if the list does not contain any items other than specified items.
@@ -175,16 +173,16 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-		public static void Combine<T>(this ICollection<T> thisList, IEnumerable<T> otherList)
+		public static void Combine<T>(this ICollection<T> list, IEnumerable<T> otherList)
 		{
 			if (otherList == null)
 				throw new ArgumentNullException(nameof(otherList));
 
 			foreach (T otherListItem in otherList)
 			{
-				if (!thisList.Contains(otherListItem))
+				if (!list.Contains(otherListItem))
 				{
-					thisList.Add(otherListItem);
+					list.Add(otherListItem);
 				}
 			}
 		}
@@ -208,74 +206,74 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void AddNullChecked<T>(this List<T> thisList, T item)
+		public static void AddNullChecked<T>(this List<T> list, T item)
 		{
 			if (item != null)
 			{
-				thisList.Add(item);
+				list.Add(item);
 			}
 		}
 
-		public static bool AddUnique<T>(this List<T> thisList, T item)
+		public static bool AddUnique<T>(this List<T> list, T item)
 		{
-			if (!thisList.Contains(item))
+			if (!list.Contains(item))
 			{
-				thisList.Add(item);
+				list.Add(item);
 				return true;
 			}
 			return false;
 		}
 
-		public static bool AddUniqueNullChecked<T>(this List<T> thisList, T item)
+		public static bool AddUniqueNullChecked<T>(this List<T> list, T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
-				if (!thisList.Contains(item))
+				if (!list.Contains(item))
 				{
-					thisList.Add(item);
+					list.Add(item);
 					return true;
 				}
 			}
 			return false;
 		}
 
-		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> thisList, T item)
+		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> list, T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
-			thisList.RemoveAllNullItems();
+			list.RemoveAllNullItems();
 
-			return thisList.AddUniqueNullChecked(item);
+			return list.AddUniqueNullChecked(item);
 		}
 
-		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> thisList, T item)
+		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> list, T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
-			thisList.RemoveAllNullItems();
+			list.RemoveAllNullItems();
 
-			thisList.AddNullChecked(item);
+			list.AddNullChecked(item);
 		}
 
-		public static void AddSorted<T>(this List<T> thisList, T item) where T : IComparable<T>
+		public static void AddSorted<T>(this List<T> list, T item) where T : IComparable<T>
 		{
-			if (thisList.Count == 0)
+			if (list.Count == 0)
 			{
-				thisList.Add(item);
+				list.Add(item);
 				return;
 			}
-			if (thisList[thisList.Count - 1].CompareTo(item) <= 0)
+			if (list[list.Count - 1].CompareTo(item) <= 0)
 			{
-				thisList.Add(item);
+				list.Add(item);
 				return;
 			}
-			if (thisList[0].CompareTo(item) >= 0)
+			if (list[0].CompareTo(item) >= 0)
 			{
-				thisList.Insert(0, item);
+				list.Insert(0, item);
 				return;
 			}
-			int index = thisList.BinarySearch(item);
+			int index = list.BinarySearch(item);
 			if (index < 0)
 				index = ~index;
-			thisList.Insert(index, item);
+			list.Insert(index, item);
 		}
 
 		public static void RemoveAtStart<T>(this List<T> list, int count)
@@ -311,79 +309,79 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void MakeSameSizeAs<T1, T2>(ref T1[] thisList, T2[] otherList)
+		public static void MakeSameSizeAs<T1, T2>(ref T1[] list, T2[] otherList)
 		{
-			if (thisList == null)
+			if (list == null)
 			{
-				thisList = new T1[otherList != null ? otherList.Length : 0];
+				list = new T1[otherList != null ? otherList.Length : 0];
 			}
 			else if (otherList == null)
 			{
-				if (thisList.Length != 0)
+				if (list.Length != 0)
 				{
-					thisList = new T1[0];
+					list = new T1[0];
 				}
 			}
-			else if (thisList.Length != otherList.Length)
+			else if (list.Length != otherList.Length)
 			{
-				Array.Resize(ref thisList, otherList.Length);
+				Array.Resize(ref list, otherList.Length);
 			}
 		}
 
-		public static bool ResizeIfRequired<T>(ref T[] thisList, int length)
+		public static bool ResizeIfRequired<T>(ref T[] list, int length)
 		{
 			if (length < 0)
 				return false; // Ignored.
 
-			if (thisList == null)
+			if (list == null)
 			{
-				thisList = new T[length];
+				list = new T[length];
 				return true;
 			}
-			else if (thisList.Length != length)
+			else if (list.Length != length)
 			{
-				Array.Resize(ref thisList, length);
+				Array.Resize(ref list, length);
 				return true;
 			}
 			return false;
 		}
 
-		public static bool ResizeIfRequired<T>(ref T[] thisList, int length, Action<T[], int> processItemToBeRemoved, Action<T[], int> processItemToBeAdded)
+		public static bool ResizeIfRequired<T>(ref T[] list, int length, Action<T[], int> processItemToBeRemoved, Action<T[], int> processItemToBeAdded)
 		{
 			if (length < 0)
 				return false; // Ignored.
 
-			if (thisList == null)
+			if (list == null)
 			{
-				thisList = new T[length];
+				list = new T[length];
 				if (processItemToBeAdded != null)
 				{
 					// Array needs to be expanded. Call the callback for added items.
 					for (int i = 0; i < length; i++)
 					{
-						processItemToBeAdded(thisList, i);
+						processItemToBeAdded(list, i);
 					}
 				}
 				return true;
 			}
-			else if (thisList.Length != length)
+			else if (list.Length != length)
 			{
-				var currentLength = thisList.Length;
+				var currentLength = list.Length;
 				if (currentLength > length && processItemToBeRemoved != null)
 				{
 					// Array needs to be sized down. Call the callback for removed items.
 					for (int i = length; i < currentLength; i++)
 					{
-						processItemToBeRemoved(thisList, i);
+						processItemToBeRemoved(list, i);
 					}
 				}
-				Array.Resize(ref thisList, length);
+				Array.Resize(ref list, length);
 				if (currentLength < length && processItemToBeAdded != null)
 				{
 					// Array needs to be expanded. Call the callback for added items.
 					for (int i = currentLength; i < length; i++)
 					{
-						processItemToBeAdded(thisList, i);
+						processItemToBeAdded(list, i);
 					}
 				}
 				return true;
@@ -391,22 +389,22 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool ExpandIfRequired<T>(ref T[] thisList, int length, bool expandToDoubleSize = false)
+		public static bool ExpandIfRequired<T>(ref T[] list, int length, bool expandToDoubleSize = false)
 		{
 			if (length < 0)
 				return false; // Ignored.
 
-			if (thisList == null)
+			if (list == null)
 			{
-				thisList = new T[length];
+				list = new T[length];
 				return true;
 			}
-			else if (thisList.Length < length)
+			else if (list.Length < length)
 			{
 				int expandedSize;
 				if (expandToDoubleSize)
 				{
-					expandedSize = thisList.Length * 2;
+					expandedSize = list.Length * 2;
 					if (expandedSize < length)
 						expandedSize = length;
 				}
@@ -414,7 +412,7 @@ namespace Extenity.DataToolbox
 				{
 					expandedSize = length;
 				}
-				Array.Resize(ref thisList, expandedSize);
+				Array.Resize(ref list, expandedSize);
 				return true;
 			}
 			return false;
