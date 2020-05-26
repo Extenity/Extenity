@@ -15,6 +15,7 @@ using Extenity.FileSystemToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.ReflectionToolbox;
+using JetBrains.Annotations;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
 
@@ -321,6 +322,29 @@ namespace Extenity.AssetToolbox.Editor
 			if (path.StartsWith("Assets/"))
 				return path.Remove(0, "Assets/".Length);
 			return path;
+		}
+
+		#endregion
+
+		#region Find Assets
+
+		public static List<T> FindAssetsOfType<T>(string filter, [NotNull] params string[] searchInFolders) where T : Object
+		{
+			var result = new List<T>();
+			var guids = AssetDatabase.FindAssets(filter, searchInFolders);
+			if (guids != null)
+			{
+				foreach (var guid in guids)
+				{
+					var path = AssetDatabase.GUIDToAssetPath(guid);
+					var obj = AssetDatabase.LoadAssetAtPath<Object>(path);
+					if (obj != null && obj is T)
+					{
+						result.Add((T)obj);
+					}
+				}
+			}
+			return result;
 		}
 
 		#endregion
