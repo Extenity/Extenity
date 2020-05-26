@@ -206,7 +206,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				{
 					if (symbolShouldExist)
 					{
-						if (defineSymbolsOfPlatform.AddIfDoesNotContain(configurationEntry.Symbol))
+						if (defineSymbolsOfPlatform.AddUnique(configurationEntry.Symbol))
 						{
 							addCount++;
 						}

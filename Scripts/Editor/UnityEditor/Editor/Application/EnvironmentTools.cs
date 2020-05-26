@@ -221,7 +221,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			if (File.Exists(fileName))
 			{
 				var fullPath = Path.GetFullPath(fileName);
-				result.AddIfDoesNotContain(fullPath);
+				result.AddUnique(fullPath);
 			}
 
 			var paths = GetEnvironmentPaths(EnvironmentVariableTarget.Process);
@@ -232,7 +232,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				{
 					var fullPath = Path.Combine(path, fileName);
 					if (File.Exists(fullPath))
-						result.AddIfDoesNotContain(fullPath);
+						result.AddUnique(fullPath);
 				}
 			}
 		}

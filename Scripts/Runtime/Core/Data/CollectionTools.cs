@@ -2,10 +2,11 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
-using Object = UnityEngine.Object;
 
 namespace Extenity.DataToolbox
 {
+
+	// TODO REFACTOR: Rename 'thisList' to 'list'
 
 	public static class CollectionTools
 	{
@@ -126,6 +127,23 @@ namespace Extenity.DataToolbox
 			return count;
 		}
 
+		public static bool RemoveNullChecked<T>(this List<T> thisList, T item)
+		{
+			if (item != null) // Ensure the object is still alive
+			{
+				return thisList.Remove(item);
+			}
+			return false;
+		}
+
+		public static bool RemoveNullCheckedAndRemoveAllNullItems<T>(this List<T> thisList, T item)
+		{
+			// Remove nulls before removing the object, so Contains check will not count the nulls.
+			thisList.RemoveAllNullItems();
+
+			return thisList.RemoveNullChecked(item);
+		}
+
 		// See if the list does not contain any items other than specified items.
 		public static bool DoesNotContainOtherThan<T>(this List<T> list, params T[] items)
 		{
@@ -171,15 +189,34 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void AddIfNotNull<T>(this List<T> thisList, T item) where T : Object
+		public static void CopyTo<T>(this List<T> list, List<T> target)
 		{
-			if (item)
+			for (int i = 0; i < list.Count; i++)
+			{
+				target.Add(list[i]);
+			}
+		}
+
+		public static void CopyToUnique<T>(this List<T> list, List<T> target)
+		{
+			for (int i = 0; i < list.Count; i++)
+			{
+				if (!target.Contains(list[i]))
+				{
+					target.Add(list[i]);
+				}
+			}
+		}
+
+		public static void AddNullChecked<T>(this List<T> thisList, T item)
+		{
+			if (item != null)
 			{
 				thisList.Add(item);
 			}
 		}
 
-		public static bool AddIfDoesNotContain<T>(this List<T> thisList, T item)
+		public static bool AddUnique<T>(this List<T> thisList, T item)
 		{
 			if (!thisList.Contains(item))
 			{
@@ -187,6 +224,35 @@ namespace Extenity.DataToolbox
 				return true;
 			}
 			return false;
+		}
+
+		public static bool AddUniqueNullChecked<T>(this List<T> thisList, T item)
+		{
+			if (item != null) // Ensure the object is still alive
+			{
+				if (!thisList.Contains(item))
+				{
+					thisList.Add(item);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> thisList, T item)
+		{
+			// Remove nulls before adding the object, so Contains check will not count the nulls.
+			thisList.RemoveAllNullItems();
+
+			return thisList.AddUniqueNullChecked(item);
+		}
+
+		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> thisList, T item)
+		{
+			// Remove nulls before adding the object, so Contains check will not count the nulls.
+			thisList.RemoveAllNullItems();
+
+			thisList.AddNullChecked(item);
 		}
 
 		public static void AddSorted<T>(this List<T> thisList, T item) where T : IComparable<T>

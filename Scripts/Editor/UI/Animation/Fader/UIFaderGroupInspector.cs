@@ -90,10 +90,10 @@ namespace Extenity.UIToolbox.Editor
 
 			foreach (var fader in Me.Faders.Where(item => item))
 			{
-				all.AddIfNotNull(fader);
-				all.AddIfNotNull(fader.Canvas);
-				all.AddIfNotNull(fader.CanvasGroup);
-				all.AddIfNotNull(fader.TriggeredAnimationOrchestrator);
+				all.AddNullChecked(fader);
+				all.AddNullChecked(fader.Canvas);
+				all.AddNullChecked(fader.CanvasGroup);
+				all.AddNullChecked(fader.TriggeredAnimationOrchestrator);
 			}
 
 			Undo.RegisterCompleteObjectUndo(all.ToArray(), description);
