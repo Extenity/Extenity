@@ -18,7 +18,7 @@ namespace Extenity.AssetToolbox.Editor
 			new StringFilterEntry(StringFilterType.StartsWith, "C:") // Exclude Unity installation files. // TODO: Find a cross-platform supported, not-hardcoded approach.
 			);
 
-		private const string ValidCharactersString = "0123456789" + "/_.-+&()@ " + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz";
+		private const string ValidCharactersString = "0123456789" + "/_.-+&()@# " + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz";
 		private static readonly char[] ValidCharacters = ValidCharactersString.ToCharArray();
 
 		#endregion
