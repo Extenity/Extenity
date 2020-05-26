@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Extenity.MathToolbox
@@ -1166,6 +1167,76 @@ namespace Extenity.MathToolbox
 				Snap(value.y, snapStep, snapOffset),
 				Snap(value.z, snapStep, snapOffset),
 				Snap(value.w, snapStep, snapOffset));
+		}
+
+		#endregion
+
+		#region Math - Human Readable Rounded Value
+
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static int CalculateInsignificantDigitsForHumanReadability(this int value)
+		// {
+		// 	return CalculateInsignificantDigitsForHumanReadability((double)value);
+		// }
+		//
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static int CalculateInsignificantDigitsForHumanReadability(this long value)
+		// {
+		// 	return CalculateInsignificantDigitsForHumanReadability((double)value);
+		// }
+		//
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static int CalculateInsignificantDigitsForHumanReadability(this float value)
+		// {
+		// 	return CalculateInsignificantDigitsForHumanReadability((double)value);
+		// }
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int CalculateInsignificantDigitsForHumanReadability(this double value)
+		{
+			if (value < 0)
+				throw new NotImplementedException();
+
+			return (int)(Math.Floor(Math.Log10(value)) - 1);
+		}
+
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static int CalculateHumanReadableRoundedValue(this int value)
+		// {
+		// 	return (int)CalculateHumanReadableRoundedValue((double)value);
+		// }
+		//
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static long CalculateHumanReadableRoundedValue(this long value)
+		// {
+		// 	return (long)CalculateHumanReadableRoundedValue((double)value);
+		// }
+		//
+		// Should be tested before using
+		// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// public static float CalculateHumanReadableRoundedValue(this float value)
+		// {
+		// 	return (float)CalculateHumanReadableRoundedValue((double)value);
+		// }
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static double CalculateHumanReadableRoundedValue(this double value)
+		{
+			var insignificantDigits = value.CalculateInsignificantDigitsForHumanReadability();
+			if (insignificantDigits <= 0)
+			{
+				return Math.Round(value);
+			}
+			else
+			{
+				var clip = Math.Pow(10, insignificantDigits);
+				return Math.Round(value / clip) * clip;
+			}
 		}
 
 		#endregion
