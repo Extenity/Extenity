@@ -37,6 +37,15 @@ namespace Extenity.FileSystemToolbox
 			}
 		}
 
+		public static string CreateSubDirectory(string parentDirectory, string subDirectory)
+		{
+			// AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); Already done in Create() below
+
+			var path = Path.Combine(parentDirectory, subDirectory);
+			Create(path);
+			return path;
+		}
+
 		#region Folder Name List To Be Created
 
 		public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths)
