@@ -435,6 +435,22 @@ namespace Extenity.DataToolbox
 		}
 
 		#endregion
+
+		#region Manipulate Components
+
+		public static Color WithA(this Color color, float overriddenAlpha)
+		{
+			color.a = overriddenAlpha;
+			return color;
+		}
+
+		public static Color32 WithA(this Color32 color, byte overriddenAlpha)
+		{
+			color.a = overriddenAlpha;
+			return color;
+		}
+
+		#endregion
 	}
 
 }
