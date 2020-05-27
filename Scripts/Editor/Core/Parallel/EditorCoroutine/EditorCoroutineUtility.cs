@@ -102,7 +102,7 @@ namespace Extenity.ParallelToolbox.Editor
 		/// 	{
 		/// 		while (true)
 		/// 		{
-		/// 			Debug.Log("Running");
+		/// 			Log.Info("Running");
 		/// 			yield return null;
 		/// 		}
 		/// 	}

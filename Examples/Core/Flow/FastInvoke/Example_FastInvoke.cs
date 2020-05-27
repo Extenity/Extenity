@@ -26,12 +26,12 @@ namespace ExtenityExamples.FlowToolbox
 
 		private void Method()
 		{
-			Debug.Log("------------------------------------- 'Method' called.");
+			Log.Info("------------------------------------- 'Method' called.");
 		}
 
 		private void UnscaledTimeMethod()
 		{
-			Debug.Log("------------------------------------- 'UnscaledTimeMethod' called.");
+			Log.Info("------------------------------------- 'UnscaledTimeMethod' called.");
 		}
 	}
 

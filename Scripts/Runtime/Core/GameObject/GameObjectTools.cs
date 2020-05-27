@@ -1978,7 +1978,7 @@ namespace Extenity.GameObjectToolbox
 		[UnityEditor.MenuItem("Tools/Extenity/Maintenance/Find All Components That Have Enabled Property")]
 		private static void _FindAllComponentsThatHaveEnabledProperty()
 		{
-			Debug.Log("This tool is for Extenity development. It helps finding the required components that should be included in the code of GameObjectTools.IsComponentEnabled method.");
+			Log.Info("This tool is for Extenity development. It helps finding the required components that should be included in the code of GameObjectTools.IsComponentEnabled method.");
 
 			var allComponentTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
 			                         from module in assembly.GetModules()
@@ -2008,7 +2008,7 @@ namespace Extenity.GameObjectToolbox
 				}
 			}
 
-			Debug.Log($"List of types that have 'enabled' method ({result.Count}):\n" + string.Join("\n", result.Select(type => type.FullName).OrderBy(fullName => fullName)));
+			Log.Info($"List of types that have 'enabled' method ({result.Count}):\n" + string.Join("\n", result.Select(type => type.FullName).OrderBy(fullName => fullName)));
 		}
 #endif
 

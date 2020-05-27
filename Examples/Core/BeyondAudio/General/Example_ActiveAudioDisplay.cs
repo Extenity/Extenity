@@ -56,9 +56,9 @@ namespace ExtenityExamples.BeyondAudio
 			}
 
 			if (count == 0)
-				Debug.Log("Internal error! No UI item found.");
+				Log.Info("Internal error! No UI item found.");
 			else if (count > 1)
-				Debug.Log("Internal error! More than one UI item found.");
+				Log.Info("Internal error! More than one UI item found.");
 		}
 
 #endif

@@ -12,7 +12,7 @@ namespace ExtenityExamples.RenderingToolbox
 			Application.logMessageReceived += ApplicationOnLogMessageReceived;
 			Application.logMessageReceivedThreaded += ApplicationOnLogMessageReceived;
 
-			Debug.Log("Initializing auto native size adjuster.");
+			Log.Info("Initializing auto native size adjuster.");
 
 			ScreenManager.Instance.IsFullscreenAutoNativeSizeAdjusterLoggingEnabled = true;
 			ScreenManager.Instance.ActivateFullscreenAutoNativeSizeAdjuster(true);

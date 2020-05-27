@@ -18,7 +18,7 @@
 	/// 		while (true)
 	/// 		{
 	/// 			yield return waitForOneSecond;
-	/// 			Debug.Log("Printing each second");
+	/// 			Log.Info("Printing each second");
 	/// 		}
 	/// 	}
 	/// }

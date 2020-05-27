@@ -426,7 +426,7 @@ namespace Extenity.ParallelToolbox.Editor
 			try
 			{
 				var fields = m_Routine.GetType().GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy).Select(member => member.Name).ToList();
-				Debug.Log("Fields: " + string.Join(", ", fields));
+				Log.Info("Fields: " + string.Join(", ", fields));
 			}
 			catch { }
 		}
@@ -449,7 +449,7 @@ namespace Extenity.ParallelToolbox.Editor
 
 		public static void LogVerbose(string message)
 		{
-			Debug.Log(message);
+			Log.Info(message);
 		}
 
 		public static void LogStatus(string operation, EditorCoroutine editorCoroutine)
@@ -458,7 +458,7 @@ namespace Extenity.ParallelToolbox.Editor
 			var depth = editorCoroutine?.TryGetCurrentDepth().ToString() ?? "#";
 			var doneMark = editorCoroutine?.m_IsDone == true ? 'D' : '_';
 			var ownership = editorCoroutine?.m_ParentCoroutine != null ? "Child" : "Root";
-			Debug.Log($"#\t\t ID {id}   Depth {depth}   Move {MoveCalls}   {ownership}   {InMoveMark}{doneMark} \t\t {operation} \t\t {editorCoroutine?.m_Processor.data.type}");
+			Log.Info($"#\t\t ID {id}   Depth {depth}   Move {MoveCalls}   {ownership}   {InMoveMark}{doneMark} \t\t {operation} \t\t {editorCoroutine?.m_Processor.data.type}");
 		}
 
 		public static void DumpAllEditorCoroutines()

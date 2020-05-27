@@ -13,7 +13,7 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 			EditorMessageBox.Show(new Rect(100, 100, 300, 200), "Title here!", "This is an example message box. Use it with care.", "Got it", "",
 				() =>
 				{
-					Debug.Log("Message box closed.");
+					Log.Info("Message box closed.");
 				}
 			);
 		}
@@ -27,11 +27,11 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 				"Got it", "Naah",
 				() =>
 				{
-					Debug.Log("Message box approved.");
+					Log.Info("Message box approved.");
 				},
 				() =>
 				{
-					Debug.Log("Message box denied.");
+					Log.Info("Message box denied.");
 				}
 			);
 		}
@@ -51,11 +51,11 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 				"Got it", "Naah",
 				() =>
 				{
-					Debug.Log("Message box approved. Value: " + userInputs[0].Value);
+					Log.Info("Message box approved. Value: " + userInputs[0].Value);
 				},
 				() =>
 				{
-					Debug.Log("Message box denied. Value: " + userInputs[0].Value);
+					Log.Info("Message box denied. Value: " + userInputs[0].Value);
 				}
 			);
 		}

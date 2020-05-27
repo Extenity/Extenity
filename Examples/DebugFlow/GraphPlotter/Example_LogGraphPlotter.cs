@@ -17,7 +17,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		{
 			foreach (var log in Logs)
 			{
-				Debug.Log(log);
+				Log.Info(log);
 			}
 		}
 	}

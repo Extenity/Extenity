@@ -64,7 +64,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			// Package Manager window needs to be opened so Unity may parse the details of fetched packages and populate its internal lists.
 			UnityEditor.PackageManager.UI.Window.Open("My Assets");
 
-			Debug.Log("Fetching list of all Asset Store packages... Unity may become unresponsive.");
+			Log.Info("Fetching list of all Asset Store packages... Unity may become unresponsive.");
 
 			// Register for onListOperationStart
 			{
@@ -120,7 +120,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 					return;
 				IsGettingAssetStoreList = false;
 
-				Debug.Log("Asset list fetched. Note that Unity may still require some more time to fetch all package details. Opening My Assets view in Package Manager and scrolling through the full list manually by hand helps Unity to realize and fetch their info.");
+				Log.Info("Asset list fetched. Note that Unity may still require some more time to fetch all package details. Opening My Assets view in Package Manager and scrolling through the full list manually by hand helps Unity to realize and fetch their info.");
 
 				// Deregister from onListOperationFinish
 				{

@@ -21,23 +21,23 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		IEnumerator ExecuteRoutineYieldingArbitraryEnumerator(IEnumerator enumerator)
 		{
-			Debug.Log("PreExecution");
+			Log.Info("PreExecution");
 			yield return enumerator;
-			Debug.Log("PostExecution");
+			Log.Info("PostExecution");
 		}
 
 		IEnumerator ExecuteRoutineWithWaitForSeconds()
 		{
-			Debug.Log("PreExecution");
+			Log.Info("PreExecution");
 			yield return new EditorWaitForSeconds(waitTime);
-			Debug.Log("PostExecution");
+			Log.Info("PostExecution");
 		}
 
 		IEnumerator ExecuteNestedOwnerlessRoutinesWithWaitForSeconds()
 		{
-			Debug.Log("Outer PreExecution");
+			Log.Info("Outer PreExecution");
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(ExecuteRoutineWithWaitForSeconds());
-			Debug.Log("Outer PostExecution");
+			Log.Info("Outer PostExecution");
 		}
 
 		[UnityTest]
@@ -78,7 +78,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 				// Wait until a log appears in 5 frames. Without this wait, the test randomly fails.
 				for (int i = 0; i < 5 && Logs.Count == 0; i++)
 				{
-					Debug.Log("# extra waiting");
+					Log.Info("# extra waiting");
 					yield return null;
 				}
 
@@ -158,7 +158,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 			// Wait until a log appears in 5 frames. Without this wait, the test randomly fails.
 			for (int i = 0; i < 5 && Logs.Count == 0; i++)
 			{
-				Debug.Log("# extra waiting");
+				Log.Info("# extra waiting");
 				yield return null;
 			}
 
@@ -169,9 +169,9 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private IEnumerator NestedIEnumeratorRoutine()
 		{
-			Debug.Log("Start of nesting");
+			Log.Info("Start of nesting");
 			yield return ExecuteRoutineYieldingArbitraryEnumerator(ExecuteRoutineYieldingArbitraryEnumerator(null));
-			Debug.Log("End of nesting");
+			Log.Info("End of nesting");
 		}
 
 		[UnityTest]
@@ -247,11 +247,11 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private IEnumerator RoutineThrowingGUIException()
 		{
-			Debug.Log("PreException");
+			Log.Info("PreException");
 			yield return null;
 			GUIUtility.ExitGUI();
 			yield return null;
-			Debug.Log("PostException");
+			Log.Info("PostException");
 		}
 
 		[UnityTest]
@@ -330,9 +330,9 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private IEnumerator SimpleThrowingRoutine()
 		{
-			Debug.Log("Routine start");
+			Log.Info("Routine start");
 			Throw("Routine throws");
-			Debug.Log("Routine end"); // Nope, not happening because of the throw above.
+			Log.Info("Routine end"); // Nope, not happening because of the throw above.
 			yield break;
 		}
 
@@ -352,16 +352,16 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private IEnumerator FirstRoutine()
 		{
-			Debug.Log("First start");
+			Log.Info("First start");
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SecondRoutine(), OnExceptionAndCatch_Depth1);
-			Debug.Log("First end");
+			Log.Info("First end");
 		}
 
 		private IEnumerator SecondRoutine()
 		{
-			Debug.Log("Second start");
+			Log.Info("Second start");
 			Throw("Second routine throws");
-			Debug.Log("Second end"); // Nope, not happening because of the throw above.
+			Log.Info("Second end"); // Nope, not happening because of the throw above.
 			yield break;
 		}
 
@@ -573,7 +573,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private IEnumerator ThrowingRecursiveNestedCoroutine(int throwAtRecursion, int maxDepth, int currentDepth, Func<Exception, bool>[] registerExceptionCatchersInDepths = null)
 		{
-			Debug.Log("Nested " + currentDepth + " start");
+			Log.Info("Nested " + currentDepth + " start");
 			if (currentDepth == throwAtRecursion)
 			{
 				throw new Exception("Nested " + throwAtRecursion + " throws");
@@ -585,16 +585,16 @@ namespace ExtenityTests.ParallelToolbox.Editor
 						: null;
 				if (onException != null)
 				{
-					Debug.Log("# Registering catcher : " + onException.Method.Name);
+					Log.Info("# Registering catcher : " + onException.Method.Name);
 				}
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(ThrowingRecursiveNestedCoroutine(throwAtRecursion, maxDepth, currentDepth + 1, registerExceptionCatchersInDepths), onException);
 			}
-			Debug.Log("Nested " + currentDepth + " end");
+			Log.Info("Nested " + currentDepth + " end");
 		}
 
 		private IEnumerator ThrowingRecursiveYieldedCoroutine(int throwAtRecursion, int maxDepth, int currentDepth)
 		{
-			Debug.Log("Nested " + currentDepth + " start");
+			Log.Info("Nested " + currentDepth + " start");
 			if (currentDepth == throwAtRecursion)
 			{
 				throw new Exception("Nested " + throwAtRecursion + " throws");
@@ -603,7 +603,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 			{
 				yield return ThrowingRecursiveYieldedCoroutine(throwAtRecursion, maxDepth, currentDepth + 1);
 			}
-			Debug.Log("Nested " + currentDepth + " end");
+			Log.Info("Nested " + currentDepth + " end");
 		}
 
 		#endregion
@@ -612,73 +612,73 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		private bool OnExceptionButDontCatch_Main(Exception exception)
 		{
-			Debug.Log("Passed the exception (Main): " + exception.Message);
+			Log.Info("Passed the exception (Main): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionButDontCatch_Depth1(Exception exception)
 		{
-			Debug.Log("Passed the exception (Depth 1): " + exception.Message);
+			Log.Info("Passed the exception (Depth 1): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionButDontCatch_Depth2(Exception exception)
 		{
-			Debug.Log("Passed the exception (Depth 2): " + exception.Message);
+			Log.Info("Passed the exception (Depth 2): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionButDontCatch_Depth3(Exception exception)
 		{
-			Debug.Log("Passed the exception (Depth 3): " + exception.Message);
+			Log.Info("Passed the exception (Depth 3): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionButDontCatch_Depth4(Exception exception)
 		{
-			Debug.Log("Passed the exception (Depth 4): " + exception.Message);
+			Log.Info("Passed the exception (Depth 4): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionButDontCatch_Depth5(Exception exception)
 		{
-			Debug.Log("Passed the exception (Depth 5): " + exception.Message);
+			Log.Info("Passed the exception (Depth 5): " + exception.Message);
 			return false;
 		}
 
 		private bool OnExceptionAndCatch_Main(Exception exception)
 		{
-			Debug.Log("Caught the exception (Main): " + exception.Message);
+			Log.Info("Caught the exception (Main): " + exception.Message);
 			return true;
 		}
 
 		private bool OnExceptionAndCatch_Depth1(Exception exception)
 		{
-			Debug.Log("Caught the exception (Depth 1): " + exception.Message);
+			Log.Info("Caught the exception (Depth 1): " + exception.Message);
 			return true;
 		}
 
 		private bool OnExceptionAndCatch_Depth2(Exception exception)
 		{
-			Debug.Log("Caught the exception (Depth 2): " + exception.Message);
+			Log.Info("Caught the exception (Depth 2): " + exception.Message);
 			return true;
 		}
 
 		private bool OnExceptionAndCatch_Depth3(Exception exception)
 		{
-			Debug.Log("Caught the exception (Depth 3): " + exception.Message);
+			Log.Info("Caught the exception (Depth 3): " + exception.Message);
 			return true;
 		}
 
 		private bool OnExceptionAndCatch_Depth4(Exception exception)
 		{
-			Debug.Log("Caught the exception (Depth 4): " + exception.Message);
+			Log.Info("Caught the exception (Depth 4): " + exception.Message);
 			return true;
 		}
 
 		private bool OnExceptionAndCatch_Depth5(Exception exception)
 		{
-			Debug.Log("Caught the exception (Depth 5): " + exception.Message);
+			Log.Info("Caught the exception (Depth 5): " + exception.Message);
 			return true;
 		}
 

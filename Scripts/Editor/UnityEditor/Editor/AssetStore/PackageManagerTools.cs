@@ -91,12 +91,12 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			IEnumerator DoSearchAllViaClient()
 			{
 				var request = Client.SearchAll();
-				Debug.Log("Searching all packages");
+				Log.Info("Searching all packages");
 				while (request.IsCompleted == false)
 				{
 					yield return null;
 				}
-				Debug.Log("Listing packages");
+				Log.Info("Listing packages");
 				var packageInfos = request.Result;
 
 				if (request.Error != null)
@@ -105,10 +105,10 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 				}
 				else
 				{
-					Debug.Log($"Package infos ({packageInfos.Length}):");
+					Log.Info($"Package infos ({packageInfos.Length}):");
 					foreach (var packageInfo in packageInfos)
 					{
-						Debug.Log($"{packageInfo.name}");
+						Log.Info($"{packageInfo.name}");
 					}
 				}
 			}
@@ -121,12 +121,12 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			IEnumerator DoListPackagesViaClient()
 			{
 				var request = Client.List(false, true);
-				Debug.Log("Requesting package list");
+				Log.Info("Requesting package list");
 				while (request.IsCompleted == false)
 				{
 					yield return null;
 				}
-				Debug.Log("Listing packages");
+				Log.Info("Listing packages");
 				var collection = request.Result;
 
 				if (collection.error != null)
@@ -137,7 +137,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 				{
 					foreach (var entry in collection)
 					{
-						Debug.Log($"{entry.displayName}");
+						Log.Info($"{entry.displayName}");
 					}
 				}
 			}
@@ -149,10 +149,10 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			var method = type.GetMethod("GetAll", BindingFlags.Static | BindingFlags.NonPublic);
 			var packageInfos = method.Invoke(null, null) as PackageInfo[];
 
-			Debug.Log($"Package infos ({packageInfos.Length}):");
+			Log.Info($"Package infos ({packageInfos.Length}):");
 			foreach (var packageInfo in packageInfos)
 			{
-				Debug.Log($"{packageInfo.name}");
+				Log.Info($"{packageInfo.name}");
 			}
 		}
 	}
