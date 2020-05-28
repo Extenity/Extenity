@@ -3,20 +3,25 @@
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
+        "Extenity.Kernel",
         "Extenity.Testing",
-        "ExtenityTests.Common"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "ExtenityTests.Common",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": []
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

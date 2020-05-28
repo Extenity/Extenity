@@ -1,0 +1,15 @@
+{
+    "name": "Extenity.Kernel",
+    "references": [
+        "GUID:ab63c48ee16ce3b44b2dcefed7714f9f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
