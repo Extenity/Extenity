@@ -42,10 +42,10 @@ namespace Extenity.Kernel
 			return versionEvent;
 		}
 
-		public static void RegisterForVersionChanges(Ref id, Action callback)
+		public static void RegisterForVersionChanges(Ref id, Action callback, int order = 0)
 		{
 			// Note that we are filtering out the ownership info of Ref. See 118546802.
-			_GetVersionEventByID(id.ID).AddListener(callback);
+			_GetVersionEventByID(id.ID).AddListener(callback, order);
 		}
 
 		public static void DeregisterForVersionChanges(Ref id, Action callback)
