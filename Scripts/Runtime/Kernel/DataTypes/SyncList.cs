@@ -11,7 +11,7 @@ namespace Extenity.Kernel
 		/// <summary>
 		/// CAUTION! Do not modify this list! Use it as readonly.
 		/// </summary>
-		public List<T> List;
+		public readonly List<T> List;
 
 		public Ref ID;
 
@@ -21,6 +21,12 @@ namespace Extenity.Kernel
 		{
 			ID = Ref.Invalid;
 			List = new List<T>();
+		}
+
+		public SyncList([NotNull] IEnumerable<T> collection)
+		{
+			ID = Ref.Invalid;
+			List = new List<T>(collection);
 		}
 
 		public SyncList(int capacity)
@@ -33,6 +39,12 @@ namespace Extenity.Kernel
 		{
 			ID = id;
 			List = new List<T>();
+		}
+
+		public SyncList(Ref id, [NotNull] IEnumerable<T> collection)
+		{
+			ID = id;
+			List = new List<T>(collection);
 		}
 
 		public SyncList(Ref id, int capacity)
@@ -50,11 +62,15 @@ namespace Extenity.Kernel
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => List[index];
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => List[index] = value;
+			set
+			{
+				List[index] = value;
+				Versioning.Invalidate(ID.Reference);
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void ForEach(Action<T> action)
+		public void ForEach([NotNull] Action<T> action)
 		{
 			List.ForEach(action);
 		}
@@ -110,7 +126,7 @@ namespace Extenity.Kernel
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddRange(IEnumerable<T> collection)
+		public void AddRange([NotNull] IEnumerable<T> collection)
 		{
 			List.AddRange(collection);
 			Versioning.Invalidate(ID.Reference);
