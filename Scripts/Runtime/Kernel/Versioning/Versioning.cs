@@ -14,6 +14,7 @@ namespace Extenity.Kernel
 	{
 		#region Versions
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Invalidate(int id)
 		{
 			if (Ref.IsOwnerBitSet(id))
