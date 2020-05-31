@@ -21,7 +21,7 @@ namespace Extenity.Kernel.UnityInterface
 		#region Sync List
 
 		protected abstract TItemView InstantiateItem(TItem item);
-		protected abstract void DestroyItem(TItemView item);
+		protected abstract void DestroyItem(TItemView item); // TODO IMMEDIATE: Make this optional and use GameObjectTools.Destroy(item.gameObject)
 
 		protected abstract SyncList<TItem> GetList();
 
@@ -45,6 +45,11 @@ namespace Extenity.Kernel.UnityInterface
 				item =>
 				{
 					var itemView = InstantiateItem(item);
+					
+					// Connect the view object to kernel object.
+					itemView.DataLink.ID = item.ID;
+					itemView.RefreshDataLink();
+					
 					Views.Add(itemView);
 				},
 				(itemView, i) =>
