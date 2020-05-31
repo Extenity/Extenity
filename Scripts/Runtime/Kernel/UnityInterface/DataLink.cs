@@ -5,8 +5,7 @@ using UnityEngine;
 namespace Extenity.Kernel.UnityInterface
 {
 
-	// TODO IMMEDIATE OPTIMIZATION: Convert to struct if possible
-	public class DataLink
+	public struct DataLink
 	{
 		#region Interface Object
 
@@ -26,7 +25,7 @@ namespace Extenity.Kernel.UnityInterface
 		/// </summary>
 		[Tooltip("The ID of an object in Kernel to catch related data modification events for that object.")]
 		[BoxGroup("View Behaviour")]
-		public Ref ID = Ref.Invalid;
+		public Ref ID; // Default value is Ref.Invalid, which is default(Ref).
 
 		#endregion
 
@@ -40,12 +39,12 @@ namespace Extenity.Kernel.UnityInterface
 		/// </summary>
 		[Tooltip("The priority of data modification event. Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.")]
 		[BoxGroup("View Behaviour")]
-		public int DataInvalidationEventOrder = 0;
+		public int DataInvalidationEventOrder; // Default is 0.
 
 		[NonSerialized]
-		private Ref RegisteredID = Ref.Invalid;
+		private Ref RegisteredID; // Default value is Ref.Invalid, which is default(Ref).
 		[NonSerialized]
-		private int RegisteredDataInvalidationEventOrder = 0;
+		private int RegisteredDataInvalidationEventOrder; // Default is 0.
 
 		public void RefreshDataLink()
 		{

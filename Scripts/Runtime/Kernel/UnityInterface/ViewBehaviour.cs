@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -78,7 +77,6 @@ namespace Extenity.Kernel.UnityInterface
 
 		#region Data Link and Invalidation
 
-		// TODO OPTIMIZATION: DataLink can be embedded into ViewBehaviour to reduce overhead if required.
 		public DataLink DataLink;
 
 		public Ref ID
@@ -111,7 +109,7 @@ namespace Extenity.Kernel.UnityInterface
 			// Setup the data link before calling validation codes. So validation codes will not cause triggering events
 			// of the previously registered data link.
 			RefreshDataLink();
-			
+
 			OnValidateDerived();
 		}
 
