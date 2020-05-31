@@ -684,6 +684,8 @@ namespace Extenity.UIToolbox
 			gameObject.GetComponentsInChildren(true, list);
 			foreach (var item in list)
 			{
+				if (!item)
+					continue; // Unity might give us null components for missing or not-yet-compiled scripts.
 				var type = item.GetType();
 				var fullName = type.FullName;
 
