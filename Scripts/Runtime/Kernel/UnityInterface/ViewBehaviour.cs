@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -7,9 +8,10 @@ namespace Extenity.Kernel.UnityInterface
 
 	// TODO: Implement this.
 	// [EnsureDerivedTypesWontUseMethod(nameof(Awake), nameof(AwakeDerived))]
-	// [EnsureDerivedTypesWontUseMethod(nameof(OnEnable), nameof(OnEnableDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnDestroy), nameof(OnDestroyDerived))]
+	// [EnsureDerivedTypesWontUseMethod(nameof(OnEnable), nameof(OnEnableDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnDisable), nameof(OnDisableDerived))]
+	// [EnsureDerivedTypesWontUseMethod(nameof(OnValidate), nameof(OnValidateDerived))]
 	public abstract class ViewBehaviour : MonoBehaviour
 	{
 		#region Initialization
@@ -102,9 +104,15 @@ namespace Extenity.Kernel.UnityInterface
 
 		#region Editor
 
-		protected virtual void OnValidate() // TODO IMMEDIATE: Use Derived overriding just like Awake. Don't forget to add EnsureDerivedTypesWontUseMethod.
+		protected virtual void OnValidateDerived() { }
+
+		protected void OnValidate()
 		{
+			// Setup the data link before calling validation codes. So validation codes will not cause triggering events
+			// of the previously registered data link.
 			RefreshDataLink();
+			
+			OnValidateDerived();
 		}
 
 		#endregion
