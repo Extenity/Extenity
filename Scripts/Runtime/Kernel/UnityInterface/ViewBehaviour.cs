@@ -27,16 +27,14 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void OnEnable()
 		{
-#if UNITY_EDITOR
-			if (enabled) // Ensure 'enabled' is set to true by Unity at the time OnEnable is called. RefreshDataLink depends on it to work correctly.
-			{
-				throw new InternalException(118427123);
-			}
-#endif
+			// if (enabled) // Ensure 'enabled' is set to true by Unity at the time OnEnable is called. RefreshDataLink depends on it to work correctly.
+			// {
+			// 	throw new InternalException(118427123);
+			// }
 
 			AllActiveViewBehaviours.Add(this);
 			OnEnableDerived();
-			RefreshDataLink(); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
+			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
 
 		#endregion
@@ -54,15 +52,13 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void OnDisable()
 		{
-#if UNITY_EDITOR
 			if (enabled) // Ensure 'enabled' is set to false by Unity at the time OnDisable is called. RefreshDataLink depends on it to work correctly.
 			{
 				throw new InternalException(118427123);
 			}
-#endif
 
 			AllActiveViewBehaviours.Remove(this);
-			RefreshDataLink(); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
+			RefreshDataLink(false); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
 			OnDisableDerived();
 		}
 
@@ -93,9 +89,9 @@ namespace Extenity.Kernel.UnityInterface
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
 		}
 
-		public void RefreshDataLink()
+		public void RefreshDataLink(bool isComponentEnabled)
 		{
-			DataLink.RefreshDataLink();
+			DataLink.RefreshDataLink(isComponentEnabled);
 		}
 
 		#endregion
@@ -108,7 +104,7 @@ namespace Extenity.Kernel.UnityInterface
 		{
 			// Setup the data link before calling validation codes. So validation codes will not cause triggering events
 			// of the previously registered data link.
-			RefreshDataLink();
+			RefreshDataLink(enabled);
 
 			OnValidateDerived();
 		}

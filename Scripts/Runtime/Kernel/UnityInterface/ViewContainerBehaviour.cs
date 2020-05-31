@@ -45,11 +45,11 @@ namespace Extenity.Kernel.UnityInterface
 				item =>
 				{
 					var itemView = InstantiateItem(item);
-					
+
 					// Connect the view object to kernel object.
 					itemView.DataLink.ID = item.ID;
-					itemView.RefreshDataLink();
-					
+					itemView.RefreshDataLink(itemView.enabled); // TODO IMMEDIATE: Use itemView.IsEnabled
+
 					Views.Add(itemView);
 				},
 				(itemView, i) =>

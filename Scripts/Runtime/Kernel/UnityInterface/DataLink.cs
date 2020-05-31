@@ -46,13 +46,14 @@ namespace Extenity.Kernel.UnityInterface
 		[NonSerialized]
 		private int RegisteredDataInvalidationEventOrder; // Default is 0.
 
-		public void RefreshDataLink()
+		public void RefreshDataLink(bool isComponentEnabled)
 		{
 			// Use the ID if the object is active.
 			// Use Ref.Invalid if the object is inactive.
 			var active = Component &&
 			             Component.gameObject.activeInHierarchy &&
-			             Component.enabled;
+			             // Component.enabled; Unfortunately Unity won't properly change Component.enabled at the time of OnEnable and OnDisable callbacks. So we have to override it.
+			             isComponentEnabled;
 			var targetID = active ? ID : Ref.Invalid;
 
 			// Ignore consecutive calls if already registered.
