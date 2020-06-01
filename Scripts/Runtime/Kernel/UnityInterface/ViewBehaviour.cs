@@ -113,11 +113,14 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void OnValidate()
 		{
-			// Setup the data link before calling validation codes. So validation codes will not cause triggering events
-			// of the previously registered data link.
-			RefreshDataLink(enabled);
+			if (!Application.isPlaying) // Only run validate in edit mode.
+			{
+				// Setup the data link before calling validation codes. So validation codes will not cause triggering events
+				// of the previously registered data link.
+				RefreshDataLink(enabled);
 
-			OnValidateDerived();
+				OnValidateDerived();
+			}
 		}
 
 		#endregion
