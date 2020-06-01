@@ -2,6 +2,7 @@
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Extenity.Kernel.UnityInterface
 {
@@ -21,7 +22,20 @@ namespace Extenity.Kernel.UnityInterface
 		#region Sync List
 
 		protected abstract TItemView InstantiateItem(TItem item);
-		protected abstract void DestroyItem(TItemView item); // TODO IMMEDIATE: Make this optional and use GameObjectTools.Destroy(item.gameObject)
+
+		protected virtual void DestroyItem(TItemView item)
+		{
+			if (item)
+			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying) // Use DestroyImmediate in edit mode.
+				{
+					DestroyImmediate(item.gameObject);
+				}
+#endif
+				Destroy(item.gameObject);
+			}
+		}
 
 		protected abstract SyncList<TItem> GetList();
 
