@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
@@ -76,7 +76,10 @@ namespace Extenity.Kernel.UnityInterface
 				},
 				(itemView, i) =>
 				{
-					DestroyItem(itemView);
+					if (itemView)
+					{
+						DestroyItem(itemView);
+					}
 					Views.RemoveAt(i);
 				}
 			);
