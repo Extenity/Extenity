@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
@@ -60,7 +61,7 @@ namespace Extenity.Kernel.UnityInterface
 				ItemViewComparer.Default,
 				item =>
 				{
-					var itemView = InstantiateItem(item);
+					var itemView = InstantiateItem(item); // TODO IMMEDIATE: Cover in try-catch
 
 					// Connect the view object to kernel object.
 					itemView.DataLink.ID = item.ID;
@@ -68,13 +69,13 @@ namespace Extenity.Kernel.UnityInterface
 
 					Views.Add(itemView);
 				},
-				(itemView, iItem) =>
+				(itemView, iItemView) =>
 				{
+					Views.RemoveAt(iItemView);
 					if (itemView)
 					{
-						DestroyItem(itemView);
+						DestroyItem(itemView); // TODO IMMEDIATE: Cover in try-catch
 					}
-					Views.RemoveAt(iItem); // TODO IMMEDIATE: This is plain wrong! Find a way to get the iItemView.
 				}
 			);
 		}
