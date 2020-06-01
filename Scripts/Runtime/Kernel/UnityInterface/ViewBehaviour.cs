@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.Kernel.UnityInterface
@@ -82,6 +83,7 @@ namespace Extenity.Kernel.UnityInterface
 
 		#region Data Link and Invalidation
 
+		[InlineProperty, HideLabel]
 		public DataLink DataLink;
 
 		public Ref ID

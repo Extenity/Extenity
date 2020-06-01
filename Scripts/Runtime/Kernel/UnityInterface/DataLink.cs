@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Extenity.Kernel.UnityInterface
 {
 
+	[Serializable]
 	public struct DataLink
 	{
 		#region Interface Object
