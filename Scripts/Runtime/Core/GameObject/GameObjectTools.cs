@@ -241,26 +241,47 @@ namespace Extenity.GameObjectToolbox
 			}
 		}
 
-		public static void TrackedDestroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, historySaveType); }
+		private static void InternalDestroy(Object obj)
+		{
+#if UNITY_EDITOR
+			if (!Application.isPlaying) // Use DestroyImmediate in edit mode.
+			{
+				const bool allowDestroyingAssets = false; // Destroying assets should only be done manually calling DestroyImmediate in a controlled environment.
+				Object.DestroyImmediate(obj, allowDestroyingAssets);
+			}
+#endif
+			Object.Destroy(obj);
+		}
+
+		private static void InternalDestroy(Object obj, float delay)
+		{
+#if UNITY_EDITOR
+			if (!Application.isPlaying) // Use DestroyImmediate in edit mode.
+			{
+				const bool allowDestroyingAssets = false; // Destroying assets should only be done manually calling DestroyImmediate in a controlled environment.
+				Object.DestroyImmediate(obj, allowDestroyingAssets);
+			}
+#endif
+			Object.Destroy(obj, delay);
+		}
+
 		public static void Destroy(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			const float delay = 0f;
-			Object.Destroy(obj);
+			InternalDestroy(obj);
 
 			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
-		public static void TrackedDestroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save) { Destroy(obj, delay, historySaveType); }
 		public static void Destroy(Object obj, float delay, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			Object.Destroy(obj, delay);
+			InternalDestroy(obj, delay);
 
 			if (IsDestroyHistoryEnabled && historySaveType != HistorySaveType.DontSave)
 				_CreateDestroyHistoryItem(obj, false, false, delay, historySaveType);
 		}
 
-		public static void TrackedDestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, historySaveType); }
 		public static void DestroyImmediate(Object obj, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			const bool allowDestroyingAssets = false;
@@ -270,7 +291,6 @@ namespace Extenity.GameObjectToolbox
 				_CreateDestroyHistoryItem(obj, true, allowDestroyingAssets, 0f, historySaveType);
 		}
 
-		public static void TrackedDestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save) { DestroyImmediate(obj, allowDestroyingAssets, historySaveType); }
 		public static void DestroyImmediate(Object obj, bool allowDestroyingAssets, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
 			Object.DestroyImmediate(obj, allowDestroyingAssets);
