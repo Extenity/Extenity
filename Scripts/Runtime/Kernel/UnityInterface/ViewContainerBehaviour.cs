@@ -59,10 +59,13 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected sealed override void OnDataInvalidated()
 		{
-			var list = GetList();
+			// Item: A Kernel object, derived from KernelObject.
+			// ItemView: Interface representation of a kernel object, derived from ViewBehaviour.
+
+			var items = GetList();
 
 			Views.EqualizeTo<TItemView, TItem>(
-				list.List,
+				items.List,
 				ItemViewComparer.Default,
 				item =>
 				{
@@ -74,13 +77,13 @@ namespace Extenity.Kernel.UnityInterface
 
 					Views.Add(itemView);
 				},
-				(itemView, i) =>
+				(itemView, iItem) =>
 				{
 					if (itemView)
 					{
 						DestroyItem(itemView);
 					}
-					Views.RemoveAt(i);
+					Views.RemoveAt(iItem); // TODO IMMEDIATE: This is plain wrong! Find a way to get the iItemView.
 				}
 			);
 		}
