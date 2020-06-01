@@ -19,9 +19,13 @@ namespace Extenity.Kernel.UnityInterface
 
 		#endregion
 
-		#region Sync List
+		#region Instantiate Item
 
 		protected abstract TItemView InstantiateItem(TItem item);
+
+		#endregion
+
+		#region Destroy Item
 
 		protected virtual void DestroyItem(TItemView item)
 		{
@@ -36,6 +40,10 @@ namespace Extenity.Kernel.UnityInterface
 				Destroy(item.gameObject);
 			}
 		}
+
+		#endregion
+
+		#region Sync List
 
 		protected abstract SyncList<TItem> GetList();
 
