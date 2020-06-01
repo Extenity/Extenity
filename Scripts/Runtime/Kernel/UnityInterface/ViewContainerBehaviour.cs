@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
 namespace Extenity.Kernel.UnityInterface
 {
@@ -29,16 +29,7 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected virtual void DestroyItem(TItemView item)
 		{
-			if (item)
-			{
-#if UNITY_EDITOR
-				if (!Application.isPlaying) // Use DestroyImmediate in edit mode.
-				{
-					DestroyImmediate(item.gameObject);
-				}
-#endif
-				Destroy(item.gameObject);
-			}
+			GameObjectTools.Destroy(item.gameObject);
 		}
 
 		#endregion
