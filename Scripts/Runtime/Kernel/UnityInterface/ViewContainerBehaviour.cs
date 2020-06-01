@@ -61,20 +61,37 @@ namespace Extenity.Kernel.UnityInterface
 				ItemViewComparer.Default,
 				item =>
 				{
-					var itemView = InstantiateItem(item); // TODO IMMEDIATE: Cover in try-catch
+					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
+					{
+						var itemView = InstantiateItem(item);
 
-					// Connect the view object to kernel object.
-					itemView.DataLink.ID = item.ID;
-					itemView.RefreshDataLink(itemView.enabled); // TODO IMMEDIATE: Use itemView.IsEnabled
+						// Connect the view object to kernel object.
+						itemView.DataLink.ID = item.ID;
+						itemView.RefreshDataLink(itemView.enabled); // TODO IMMEDIATE: Use itemView.IsEnabled
 
-					Views.Add(itemView);
+						Views.Add(itemView);
+					}
+					catch (Exception exception)
+					{
+						Log.Exception(exception);
+						Log.Error($"Failed to instantiate the view of the object '{item.ID}'. See previous error for more details.");
+					}
 				},
 				(itemView, iItemView) =>
 				{
-					Views.RemoveAt(iItemView);
-					if (itemView)
+					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
 					{
-						DestroyItem(itemView); // TODO IMMEDIATE: Cover in try-catch
+						Views.RemoveAt(iItemView);
+						
+						if (itemView) // Do not allow a null object to leak into DestroyItem calls.
+						{
+							DestroyItem(itemView);
+						}
+					}
+					catch (Exception exception)
+					{
+						Log.Exception(exception);
+						Log.Error($"Failed to destroy the view of the object '{itemView.ID}'. See previous error for more details.");
 					}
 				}
 			);

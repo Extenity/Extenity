@@ -47,6 +47,9 @@ namespace Extenity.Kernel.UnityInterface
 		[NonSerialized]
 		private int RegisteredDataInvalidationEventOrder; // Default is 0.
 
+		// TODO IMMEDIATE: Cover DataInvalidationCallback calls in try-catch block.
+		// TODO IMMEDIATE: Cover Versioning callback calls in try-catch block too.
+
 		public void RefreshDataLink(bool isComponentEnabled)
 		{
 			// Use the ID if the object is active.
