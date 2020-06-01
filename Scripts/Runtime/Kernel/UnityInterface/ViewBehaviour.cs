@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.Kernel.UnityInterface
@@ -20,6 +21,8 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void Awake()
 		{
+			Log.Verbose($"Awake | enabled: {enabled} | {gameObject.FullName()}");
+
 			AllViewBehaviours.Add(this);
 			InitializeDataLink();
 			AwakeDerived();
@@ -27,6 +30,8 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void OnEnable()
 		{
+			Log.Verbose($"OnEnable | enabled: {enabled} | {gameObject.FullName()}");
+
 			// if (enabled) // Ensure 'enabled' is set to true by Unity at the time OnEnable is called. RefreshDataLink depends on it to work correctly.
 			// {
 			// 	throw new InternalException(118427123);
@@ -46,12 +51,16 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected void OnDestroy()
 		{
+			Log.Verbose($"OnDestroy | enabled: {enabled} | {gameObject.FullName()}");
+
 			AllViewBehaviours.Remove(this);
 			OnDestroyDerived();
 		}
 
 		protected void OnDisable()
 		{
+			Log.Verbose($"OnDisable | enabled: {enabled} | {gameObject.FullName()}");
+
 			if (enabled) // Ensure 'enabled' is set to false by Unity at the time OnDisable is called. RefreshDataLink depends on it to work correctly.
 			{
 				throw new InternalException(118427123);
@@ -91,6 +100,8 @@ namespace Extenity.Kernel.UnityInterface
 
 		public void RefreshDataLink(bool isComponentEnabled)
 		{
+			Log.Verbose($"RefreshDataLink | enabled: {enabled} | isComponentEnabled: {isComponentEnabled} | {gameObject.FullName()}");
+
 			DataLink.RefreshDataLink(isComponentEnabled);
 		}
 
