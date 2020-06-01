@@ -24,7 +24,7 @@ namespace Extenity.Kernel.UnityInterface
 			Log.Verbose($"Awake | enabled: {enabled} | {gameObject.FullName()}");
 
 			AllViewBehaviours.Add(this);
-			InitializeDataLink();
+			InitializeDataLinkIfRequired();
 			AwakeDerived();
 		}
 
@@ -92,7 +92,7 @@ namespace Extenity.Kernel.UnityInterface
 
 		protected abstract void OnDataInvalidated();
 
-		private void InitializeDataLink()
+		private void InitializeDataLinkIfRequired()
 		{
 			DataLink.Component = this;
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
@@ -115,8 +115,9 @@ namespace Extenity.Kernel.UnityInterface
 		{
 			if (!Application.isPlaying) // Only run validate in edit mode.
 			{
-				// Setup the data link before calling validation codes. So validation codes will not cause triggering events
-				// of the previously registered data link.
+				// Setup the data link before calling validation codes. Note that validation codes should not cause
+				// triggering events of the previously registered data link.
+				InitializeDataLinkIfRequired();
 				RefreshDataLink(enabled);
 
 				OnValidateDerived();
