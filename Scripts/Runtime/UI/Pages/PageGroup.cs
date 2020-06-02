@@ -2,7 +2,6 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI.Extensions;
 
 namespace Extenity.UIToolbox
 {
@@ -156,7 +155,7 @@ namespace Extenity.UIToolbox
 		#region Page Switching
 
 		[BoxGroup("Setup")]
-		public HorizontalScrollSnap HorizontalScrollSnap; // TODO: Use a custom solution instead of HorizontalScrollSnap. Then remove UnityUIExtensions dependency from asmdef.
+		public UnityEngine.UI.Extensions.HorizontalScrollSnap HorizontalScrollSnap; // TODO: Use a custom solution instead of HorizontalScrollSnap. Then remove UnityUIExtensions dependency from asmdef.
 
 		[NonSerialized]
 		public int ActivePageIndex = -1;
