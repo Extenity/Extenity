@@ -1,3 +1,5 @@
+#if !UseLegacyMessenger
+
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;
@@ -122,3 +124,5 @@ namespace ExtenityTests.MessagingToolbox
 	}
 
 }
+
+#endif

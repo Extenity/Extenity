@@ -1,3 +1,5 @@
+#if !UseLegacyMessenger
+
 using UnityEngine;
 using Extenity.MessagingToolbox;
 
@@ -48,3 +50,5 @@ namespace Extenity.Messaging
 	}
 
 }
+
+#endif
