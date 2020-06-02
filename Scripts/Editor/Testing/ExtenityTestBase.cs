@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.UnityTestToolbox;
@@ -192,6 +194,47 @@ namespace Extenity.Testing
 			{
 				ThrowTimedOut();
 			}
+		}
+
+		#endregion
+
+		#region Monkey Testing
+
+		protected IEnumerator PlayLikeMonkey(float testDuration, Func<int> playSingleSession)
+		{
+			MarkThatThisTestDoesNotCareAboutCleanLogs();
+
+			const float EditorRefreshIntervals = 1.5f;
+			var editorRefreshCountdown = EditorRefreshIntervals;
+			var testStartTime = Time.realtimeSinceStartup;
+			var meanSessionDuration = new RunningMean();
+			var meanMoveCount = new RunningMean();
+
+			while (Time.realtimeSinceStartup < testStartTime + testDuration)
+			{
+				if (editorRefreshCountdown < 0) // Allow editor to work without locking it down.
+				{
+					editorRefreshCountdown = EditorRefreshIntervals;
+					yield return null;
+				}
+
+				var startTime = Time.realtimeSinceStartup;
+				try
+				{
+					int moveCount = playSingleSession();
+					meanMoveCount.Push(moveCount);
+				}
+				catch (Exception exception)
+				{
+					Log.Exception(exception);
+				}
+				var endTime = Time.realtimeSinceStartup;
+
+				meanSessionDuration.Push(endTime - startTime);
+				editorRefreshCountdown -= endTime - startTime;
+			}
+
+			Log.Info($"Monkey testing finished with total of {meanSessionDuration.ValueCount} sessions, an average of {meanMoveCount.Mean} moves and an average session duration of {meanSessionDuration.Mean.ToStringMinutesSecondsMillisecondsFromSeconds()}.");
 		}
 
 		#endregion
