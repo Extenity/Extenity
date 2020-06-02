@@ -17,12 +17,7 @@ namespace Extenity.Kernel
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Invalidate(int id)
 		{
-			if (Ref.IsOwnerBitSet(id))
-			{
-				Log.CriticalError("Received an ID that has its ownership bit set. ID: " + id.ToString("X"));
-			}
-
-			_EnqueueVersionChangedEvent(id);
+			VersionChangeEventQueue.Enqueue(id);
 		}
 
 		#endregion
@@ -33,7 +28,6 @@ namespace Extenity.Kernel
 
 		private static VersionEvent _GetVersionEventByID(int id)
 		{
-			// At this point, we assume 'id' has its ownership info filtered out by the caller of this method. See 118546802.
 			if (!Events.TryGetValue(id, out var versionEvent))
 			{
 				versionEvent = new VersionEvent();
@@ -43,16 +37,14 @@ namespace Extenity.Kernel
 			return versionEvent;
 		}
 
-		public static void RegisterForVersionChanges(Ref id, Action callback, int order = 0)
+		public static void RegisterForVersionChanges(int id, Action callback, int order = 0)
 		{
-			// Note that we are filtering out the ownership info of Ref. See 118546802.
-			_GetVersionEventByID(id.ID).AddListener(callback, order);
+			_GetVersionEventByID(id).AddListener(callback, order);
 		}
 
-		public static void DeregisterForVersionChanges(Ref id, Action callback)
+		public static void DeregisterForVersionChanges(int id, Action callback)
 		{
-			// Note that we are filtering out the ownership info of Ref. See 118546802.
-			if (Events.TryGetValue(id.ID, out var versionEvent))
+			if (Events.TryGetValue(id, out var versionEvent))
 			{
 				versionEvent.RemoveListener(callback);
 			}
@@ -66,18 +58,10 @@ namespace Extenity.Kernel
 
 		public static void EnqueueVersionChangedEventForAllRegisteredIDs()
 		{
-			// Note that we know Events.Keys already has its members ownership info filtered out. See 118546802.
 			foreach (var id in Events.Keys)
 			{
-				_EnqueueVersionChangedEvent(id);
+				VersionChangeEventQueue.Enqueue(id);
 			}
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void _EnqueueVersionChangedEvent(int id)
-		{
-			// At this point, we assume 'id' has its ownership info filtered out by the caller of this method. See 118546802.
-			VersionChangeEventQueue.Enqueue(id);
 		}
 
 		public static void EmitEventsInQueue()

@@ -3,7 +3,7 @@
 namespace Extenity.Kernel
 {
 
-	public static class RefGenerator
+	public static class IDGenerator
 	{
 		/// <summary>
 		/// IDs below this value is considered to be pre-allocated.
@@ -36,9 +36,9 @@ namespace Extenity.Kernel
 			return LastGivenID;
 		}
 
-		public static Ref CreateIDAsOwner()
+		public static ID CreateID()
 		{
-			return new Ref(GenerateNewID(), true);
+			return new ID(GenerateNewID());
 		}
 	}
 

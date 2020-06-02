@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -19,30 +17,9 @@ namespace Extenity.Kernel
 
 		public static readonly Ref[] EmptyArray = new Ref[0];
 
-		/// <summary>
-		/// Creates a Ref with specified ID and Ownership information. Note that the highest bit of 'id' integer value
-		/// is used for Ownership flag. So ownership part of 'id' will be ignored and will be overridden by 'isOwner'.
-		/// </summary>
-		public Ref(int id, bool isOwner)
+		public Ref(int id)
 		{
-			// Make sure the ownership information in 'id' does not get into the resulting Value, whether it is
-			// set or not. The 'isOwner' information should override what was given in id.
-			id = ClearOwnershipBit(id);
-
-			if (isOwner)
-			{
-				id |= 1 << 31;
-			}
-
 			Value = id;
-		}
-
-		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		private Ref(int value)
-		{
-			Value = value;
 		}
 
 		#endregion
@@ -54,118 +31,58 @@ namespace Extenity.Kernel
 		/// </summary>
 		[HideLabel]
 		[SerializeField]
-		private int Value;
+		internal int Value;
 
 		public static readonly Ref Invalid = default;
 
 		#endregion
 
-		#region ID / Implicit Conversion To ID
+		#region Implicit Conversion To ID and int
 
-		public int ID
+		public static implicit operator ID(Ref me)
 		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ClearOwnershipBit(Value);
+			return new ID(me.Value);
 		}
 
 		public static implicit operator int(Ref me)
 		{
-			return me.ID;
+			return me.Value;
 		}
-
-		#endregion
-
-		#region Copy Reference
-
-		public Ref Reference => new Ref(ID, false);
-
-		#endregion
-
-		#region Ownership
-
-		public bool IsOwner => IsOwnerBitSet(Value);
 
 		#endregion
 
 		#region Validation
 
-		public bool IsValid => ID > 0;
+		public bool IsValid => Value > 0;
 
 		#endregion
 
 		#region Equality and Comparison
 
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
-		public bool Equals(Ref other)
-		{
-			return ID == other.ID;
-		}
+		// public bool Equals(ID other) { return Value == other.Value; }
+		public bool Equals(Ref other) { return Value == other.Value; }
+		public bool Equals(int other) { return Value == other; }
 
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
 		public override bool Equals(object obj)
 		{
-			return obj is Ref other && Equals(other);
+			return (obj is Ref castRef && Value == castRef.Value) ||
+			       (obj is ID castID && Value == castID.Value);
 		}
 
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
-		public static bool operator ==(Ref lhs, Ref rhs)
-		{
-			return lhs.ID == rhs.ID;
-		}
+		// public static bool operator ==(Ref lhs, Ref rhs) { return lhs.Value == rhs.Value; }
+		// public static bool operator !=(Ref lhs, Ref rhs) { return lhs.Value != rhs.Value; }
+		// public static bool operator ==(Ref lhs, ID rhs) { return lhs.Value == rhs.Value; }
+		// public static bool operator !=(Ref lhs, ID rhs) { return lhs.Value != rhs.Value; }
+		// public static bool operator ==(ID lhs, Ref rhs) { return lhs.Value == rhs.Value; }
+		// public static bool operator !=(ID lhs, Ref rhs) { return lhs.Value != rhs.Value; }
+		public static bool operator ==(Ref lhs, int rhs) { return lhs.Value == rhs; }
+		public static bool operator !=(Ref lhs, int rhs) { return lhs.Value != rhs; }
+		// public static bool operator ==(int lhs, Ref rhs) { return lhs == rhs.Value; }
+		// public static bool operator !=(int lhs, Ref rhs) { return lhs != rhs.Value; }
 
-		/// <summary>
-		/// Checks if two Refs are not equal without the Ownership information.
-		/// </summary>
-		public static bool operator !=(Ref lhs, Ref rhs)
-		{
-			return lhs.ID != rhs.ID;
-		}
-
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
-		public static bool operator ==(Ref lhs, int rhs)
-		{
-			return lhs.ID == rhs;
-		}
-
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
-		public static bool operator !=(Ref lhs, int rhs)
-		{
-			return lhs.ID != rhs;
-		}
-
-		/// <summary>
-		/// Checks if two Refs are equal without the Ownership information.
-		/// </summary>
-		public static bool operator ==(int lhs, Ref rhs)
-		{
-			return lhs == rhs.ID;
-		}
-
-		/// <summary>
-		/// Checks if two Refs are not equal without the Ownership information.
-		/// </summary>
-		public static bool operator !=(int lhs, Ref rhs)
-		{
-			return lhs != rhs.ID;
-		}
-
-		/// <summary>
-		/// Compares two Refs without the Ownership information.
-		/// </summary>
-		public int CompareTo(Ref other)
-		{
-			return ID.CompareTo(other.ID);
-		}
+		// public int CompareTo(ID other) { return Value.CompareTo(other.Value); }
+		public int CompareTo(Ref other) { return Value.CompareTo(other.Value); }
+		public int CompareTo(int other) { return Value.CompareTo(other); }
 
 		#endregion
 
@@ -174,22 +91,6 @@ namespace Extenity.Kernel
 		public override int GetHashCode()
 		{
 			return Value;
-		}
-
-		#endregion
-
-		#region Tools
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int ClearOwnershipBit(int value)
-		{
-			return value & 0x7FFFFFFF;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static bool IsOwnerBitSet(int value)
-		{
-			return (value & (1 << 31)) != 0;
 		}
 
 		#endregion
@@ -213,30 +114,5 @@ namespace Extenity.Kernel
 
 		#endregion
 	}
-
-	#region Extensions
-
-	public static class RefTools
-	{
-		public static Ref[] ToReferenceArray(this Ref[] refs)
-		{
-			var references = new Ref[refs.Length];
-			for (int i = 0; i < refs.Length; i++)
-			{
-				references[i] = refs[i].Reference;
-			}
-			return references;
-		}
-
-		public static void ToReferenceArray(this List<Ref> refs, List<Ref> targetList)
-		{
-			for (int i = 0; i < refs.Count; i++)
-			{
-				targetList.Add(refs[i].Reference);
-			}
-		}
-	}
-
-	#endregion
 
 }

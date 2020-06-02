@@ -13,41 +13,41 @@ namespace Extenity.Kernel
 		/// </summary>
 		public readonly List<T> List;
 
-		public Ref ID;
+		public ID ID;
 
 		#region Initialization
 
 		public SyncList()
 		{
-			ID = Ref.Invalid;
+			ID = ID.Invalid;
 			List = new List<T>();
 		}
 
 		public SyncList([NotNull] IEnumerable<T> collection)
 		{
-			ID = Ref.Invalid;
+			ID = ID.Invalid;
 			List = new List<T>(collection);
 		}
 
 		public SyncList(int capacity)
 		{
-			ID = Ref.Invalid;
+			ID = ID.Invalid;
 			List = new List<T>(capacity);
 		}
 
-		public SyncList(Ref id)
+		public SyncList(ID id)
 		{
 			ID = id;
 			List = new List<T>();
 		}
 
-		public SyncList(Ref id, [NotNull] IEnumerable<T> collection)
+		public SyncList(ID id, [NotNull] IEnumerable<T> collection)
 		{
 			ID = id;
 			List = new List<T>(collection);
 		}
 
-		public SyncList(Ref id, int capacity)
+		public SyncList(ID id, int capacity)
 		{
 			ID = id;
 			List = new List<T>(capacity);
@@ -65,7 +65,7 @@ namespace Extenity.Kernel
 			set
 			{
 				List[index] = value;
-				Versioning.Invalidate(ID.Reference);
+				Versioning.Invalidate(ID);
 			}
 		}
 
@@ -102,7 +102,7 @@ namespace Extenity.Kernel
 				List.Capacity = value;
 				if (List.Count != previousCount) // Invalidate the data if changing capacity caused modifications in list.
 				{
-					Versioning.Invalidate(ID.Reference);
+					Versioning.Invalidate(ID);
 				}
 			}
 		}
@@ -122,28 +122,28 @@ namespace Extenity.Kernel
 		public void Add([CanBeNull] T item)
 		{
 			List.Add(item);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddRange([NotNull] IEnumerable<T> collection)
 		{
 			List.AddRange(collection);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Insert(int index, [CanBeNull] T item)
 		{
 			List.Insert(index, item);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InsertRange(int index, [NotNull] IEnumerable<T> collection)
 		{
 			List.InsertRange(index, collection);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		#endregion
@@ -154,7 +154,7 @@ namespace Extenity.Kernel
 		public bool Remove([CanBeNull] T item)
 		{
 			var result = List.Remove(item);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 			return result;
 		}
 
@@ -162,7 +162,7 @@ namespace Extenity.Kernel
 		public int RemoveAll([NotNull] Predicate<T> match)
 		{
 			var result = List.RemoveAll(match);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 			return result;
 		}
 
@@ -170,21 +170,21 @@ namespace Extenity.Kernel
 		public void RemoveAt(int index)
 		{
 			List.RemoveAt(index);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void RemoveRange(int index, int count)
 		{
 			List.RemoveRange(index, count);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Clear()
 		{
 			List.Clear();
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		#endregion
@@ -195,42 +195,42 @@ namespace Extenity.Kernel
 		public void Reverse()
 		{
 			List.Reverse();
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Reverse(int index, int count)
 		{
 			List.Reverse(index, count);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort()
 		{
 			List.Sort();
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort([NotNull] Comparison<T> comparison)
 		{
 			List.Sort(comparison);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort(IComparer<T> comparer)
 		{
 			List.Sort(comparer);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort(int index, int count, IComparer<T> comparer)
 		{
 			List.Sort(index, count, comparer);
-			Versioning.Invalidate(ID.Reference);
+			Versioning.Invalidate(ID);
 		}
 
 		#endregion
