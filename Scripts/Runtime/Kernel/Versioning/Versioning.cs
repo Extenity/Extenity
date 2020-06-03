@@ -20,6 +20,14 @@ namespace Extenity.Kernel
 			VersionChangeEventQueue.Enqueue(id);
 		}
 
+		public static void InvalidateAllRegisteredIDs()
+		{
+			foreach (var id in Events.Keys)
+			{
+				VersionChangeEventQueue.Enqueue(id);
+			}
+		}
+
 		#endregion
 
 		#region Events
@@ -55,14 +63,6 @@ namespace Extenity.Kernel
 		#region Version Change Event Queue
 
 		public static readonly Queue<int> VersionChangeEventQueue = new Queue<int>();
-
-		public static void EnqueueVersionChangedEventForAllRegisteredIDs()
-		{
-			foreach (var id in Events.Keys)
-			{
-				VersionChangeEventQueue.Enqueue(id);
-			}
-		}
 
 		public static void EmitEventsInQueue()
 		{
