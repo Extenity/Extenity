@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.Kernel
 {
 
+	[HideMonoScript]
 	public class VersioningHandler : MonoBehaviour
 	{
 		// TODO: Ability to select where Versioning event emitting should happen as per project requirement (Update, FixedUpdate, LateUpdate). Do that by just adding Loop.GetCallbacks(someEnum) method. And add "Do not modify it on runtime" in documentation as it will not work properly.
@@ -21,6 +24,18 @@ namespace Extenity.Kernel
 		{
 			Versioning.EmitEventsInQueue();
 		}
+
+		#region Stats
+
+		[Title("Stats")]
+		[ShowInInspector, HideLabel, NotNull]
+		public Versioning.VersioningStats Stats
+		{
+			get => Versioning.Stats;
+			set => Versioning.Stats = value;
+		}
+
+		#endregion
 	}
 
 }

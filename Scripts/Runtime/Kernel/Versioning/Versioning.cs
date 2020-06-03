@@ -1,7 +1,11 @@
+// #define DisableVersioningStats
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Extenity.DataToolbox;
 using Extenity.MessagingToolbox;
+using Sirenix.OdinInspector;
 
 namespace Extenity.Kernel
 {
@@ -72,14 +76,76 @@ namespace Extenity.Kernel
 
 				if (Events.TryGetValue(id, out var versionEvent))
 				{
-					versionEvent.InvokeSafe();
+					if (versionEvent.IsAnyAliveListenerRegistered)
+					{
+						versionEvent.InvokeSafe();
+					}
+					else
+					{
+						InformBlankShot(id);
+					}
 				}
 				else
 				{
-					Log.Warning($"Event is missing for ID:{id}.");
+					InformBlankShot(id);
 				}
 			}
 		}
+
+		#endregion
+
+		#region Stats
+
+#if !DisableVersioningStats
+
+		public class VersioningStats
+		{
+			/// <summary>
+			/// First parameter: Invalidated ID.
+			/// Second parameter: Blank shot counts. How many times there wasn't any listener at the time of emitting the invalidated ID.
+			/// </summary>
+			[InfoBox("Blank shot counts. Left value: Invalidated event ID. How many times there wasn't any listener at the time of emitting the invalidated ID.")]
+			[HorizontalGroup("Buttons", Order = 3), ReadOnly]
+			public readonly Dictionary<int, int> BlankShotCounts = new Dictionary<int, int>();
+
+			[HorizontalGroup("Buttons", Width = 150)]
+			[Button(ButtonSizes.Large, Name = "Clear Stats")]
+			private void _ClearStats()
+			{
+				ClearStats();
+			}
+		}
+
+		public static VersioningStats Stats = new VersioningStats();
+
+		public static void InformBlankShot(int id)
+		{
+			Stats.BlankShotCounts.AddOrIncrement(id);
+		}
+
+		public static void ClearStats()
+		{
+			Stats = new VersioningStats();
+		}
+
+#else
+		public class VersioningStats
+		{
+		}
+
+		public static VersioningStats Stats = new VersioningStats();
+
+		[System.Diagnostics.Conditional("FALSE")]
+		public static void InformBlankShot(int id)
+		{
+		}
+
+		[System.Diagnostics.Conditional("FALSE")]
+		public static void ClearStats()
+		{
+		}
+
+#endif
 
 		#endregion
 	}
