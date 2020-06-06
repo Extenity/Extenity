@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace Extenity.Kernel
 {
 
-	public class SyncList<T>
+	public class SyncList<T> where T : KernelObject
 	{
 		/// <summary>
 		/// CAUTION! Do not modify this list! Use it as readonly.
