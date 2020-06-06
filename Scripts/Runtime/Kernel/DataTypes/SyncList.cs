@@ -81,6 +81,18 @@ namespace Extenity.Kernel
 			return List.Contains(item);
 		}
 
+		public T GetItem(Ref id)
+		{
+			for (var i = 0; i < List.Count; i++)
+			{
+				if (List[i] != null && List[i].ID == id)
+				{
+					return List[i];
+				}
+			}
+			return null;
+		}
+
 		#endregion
 
 		#region Size
