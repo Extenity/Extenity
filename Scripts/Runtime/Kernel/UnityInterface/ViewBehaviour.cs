@@ -10,6 +10,7 @@ namespace Extenity.Kernel.UnityInterface
 
 	// TODO: Implement this.
 	// [EnsureDerivedTypesWontUseMethod(nameof(Awake), nameof(AwakeDerived))]
+	// [EnsureDerivedTypesWontUseMethod(nameof(Start), nameof(StartDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnDestroy), nameof(OnDestroyDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnEnable), nameof(OnEnableDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnDisable), nameof(OnDisableDerived))]
@@ -19,6 +20,7 @@ namespace Extenity.Kernel.UnityInterface
 		#region Initialization
 
 		protected virtual void AwakeDerived() { }
+		protected virtual void StartDerived() { }
 		protected virtual void OnEnableDerived() { }
 
 		protected void Awake()
@@ -28,6 +30,15 @@ namespace Extenity.Kernel.UnityInterface
 			AllViewBehaviours.Add(this);
 			InitializeDataLinkIfRequired();
 			AwakeDerived();
+		}
+
+		protected void Start()
+		{
+			Log.Verbose($"Start | enabled: {enabled} | {gameObject.FullName()}");
+
+			StartDerived();
+			DataLink.LogInvalidIDErrorAtStart();
+			RefreshDataLink(true); // Call this after StartDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
 
 		protected void OnEnable()
@@ -41,7 +52,6 @@ namespace Extenity.Kernel.UnityInterface
 
 			AllActiveViewBehaviours.Add(this);
 			OnEnableDerived();
-			DataLink.LogInvalidIDErrorAtStart();
 			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
 

@@ -67,7 +67,7 @@ namespace Extenity.Kernel.UnityInterface
 
 						// Connect the view object to kernel object.
 						itemView.DataLink.ID = item.ID;
-						itemView.RefreshDataLink(itemView.enabled); // TODO IMMEDIATE: Use itemView.IsEnabled
+						// itemView.RefreshDataLink(); This is going to be called inside Start of ViewBehaviour. No need to call it here.
 
 						Views.Add(itemView);
 					}
