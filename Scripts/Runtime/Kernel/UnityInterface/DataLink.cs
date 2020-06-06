@@ -1,4 +1,5 @@
 ﻿using System;
+using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -27,6 +28,20 @@ namespace Extenity.Kernel.UnityInterface
 		[Tooltip("The ID of an object in Kernel to catch related data modification events for that object.")]
 		[BoxGroup("View Behaviour")]
 		public Ref ID; // Default value is Ref.Invalid, which is default(Ref).
+
+		[BoxGroup("View Behaviour")]
+		public bool DisableInvalidIDErrorAtStart;
+
+		internal void LogInvalidIDErrorAtStart()
+		{
+			if (!DisableInvalidIDErrorAtStart)
+			{
+				if (!ID.IsValid)
+				{
+					Log.Error($"Data link ID was not set for '{Component.FullName()}'.", Component ? Component.gameObject : null);
+				}
+			}
+		}
 
 		#endregion
 

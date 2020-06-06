@@ -41,6 +41,7 @@ namespace Extenity.Kernel.UnityInterface
 
 			AllActiveViewBehaviours.Add(this);
 			OnEnableDerived();
+			DataLink.LogInvalidIDErrorAtStart();
 			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
 
@@ -132,7 +133,7 @@ namespace Extenity.Kernel.UnityInterface
 
 			if (!original)
 			{
-				Log.Warning($"Tried to instantiate a non-existing object as model for '{gameObject.FullName()}'.",this);
+				Log.Warning($"Tried to instantiate a non-existing object as model for '{gameObject.FullName()}'.", this);
 				return null;
 			}
 
@@ -150,7 +151,7 @@ namespace Extenity.Kernel.UnityInterface
 
 			if (!Model)
 			{
-				Log.Warning($"Tried to set a non-existing object as model for '{gameObject.FullName()}'.",this);
+				Log.Warning($"Tried to set a non-existing object as model for '{gameObject.FullName()}'.", this);
 				return;
 			}
 			Model = model;
@@ -184,7 +185,7 @@ namespace Extenity.Kernel.UnityInterface
 		{
 			if (!Model)
 			{
-				Log.Warning($"Tried to detach a non-existing model of '{gameObject.FullName()}'.",this);
+				Log.Warning($"Tried to detach a non-existing model of '{gameObject.FullName()}'.", this);
 				return;
 			}
 			const bool worldPositionStays = false; // Preserve the local position in new parent.
