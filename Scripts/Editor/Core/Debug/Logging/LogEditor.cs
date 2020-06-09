@@ -88,11 +88,11 @@ namespace Extenity.DebugToolbox.Editor
 		{
 			if (active)
 			{
-				PlayerSettingsTools.RemoveDefineSymbols(new[] { DisableVerboseLoggingSymbol });
+				PlayerSettingsTools.RemoveDefineSymbols(new[] { DisableVerboseLoggingSymbol }, true);
 			}
 			else
 			{
-				PlayerSettingsTools.AddDefineSymbols(new[] { DisableVerboseLoggingSymbol }, false);
+				PlayerSettingsTools.AddDefineSymbols(new[] { DisableVerboseLoggingSymbol }, false, true);
 			}
 		}
 
@@ -106,11 +106,11 @@ namespace Extenity.DebugToolbox.Editor
 		{
 			if (active)
 			{
-				PlayerSettingsTools.RemoveDefineSymbols(new[] { DisableInfoLoggingSymbol });
+				PlayerSettingsTools.RemoveDefineSymbols(new[] { DisableInfoLoggingSymbol }, true);
 			}
 			else
 			{
-				PlayerSettingsTools.AddDefineSymbols(new[] { DisableInfoLoggingSymbol }, false);
+				PlayerSettingsTools.AddDefineSymbols(new[] { DisableInfoLoggingSymbol }, false, true);
 			}
 		}
 

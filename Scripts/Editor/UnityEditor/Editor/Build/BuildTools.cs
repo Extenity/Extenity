@@ -592,20 +592,22 @@ namespace Extenity.BuildToolbox.Editor
 
 			public override void DoApply()
 			{
-				PlayerSettingsTools.AddDefineSymbols(AddedSymbols, BuildTargetGroup, EnsureNotAddedBefore);
+				const bool saveAssets = false;
+				PlayerSettingsTools.AddDefineSymbols(AddedSymbols, BuildTargetGroup, EnsureNotAddedBefore, saveAssets);
 				if (RemovedSymbols != null && RemovedSymbols.Length > 0)
 				{
-					ActuallyRemovedSymbols = PlayerSettingsTools.RemoveDefineSymbols(RemovedSymbols, BuildTargetGroup);
+					ActuallyRemovedSymbols = PlayerSettingsTools.RemoveDefineSymbols(RemovedSymbols, BuildTargetGroup, saveAssets);
 				}
 			}
 
 			public override void DoRevert()
 			{
+				const bool saveAssets = false;
 				if (ActuallyRemovedSymbols != null && ActuallyRemovedSymbols.Length > 0)
 				{
-					PlayerSettingsTools.AddDefineSymbols(ActuallyRemovedSymbols, BuildTargetGroup, false);
+					PlayerSettingsTools.AddDefineSymbols(ActuallyRemovedSymbols, BuildTargetGroup, false, saveAssets);
 				}
-				PlayerSettingsTools.RemoveDefineSymbols(AddedSymbols, BuildTargetGroup);
+				PlayerSettingsTools.RemoveDefineSymbols(AddedSymbols, BuildTargetGroup, saveAssets);
 			}
 		}
 

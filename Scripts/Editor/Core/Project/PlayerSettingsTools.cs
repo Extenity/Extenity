@@ -94,26 +94,26 @@ namespace Extenity.ProjectToolbox
 
 		#region Add/Remove Define Symbols
 
-		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore)
+		public static void AddDefineSymbols(string[] symbols, bool ensureNotAddedBefore, bool saveAssets)
 		{
-			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), ensureNotAddedBefore);
+			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), ensureNotAddedBefore, saveAssets);
 		}
 
-		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
+		public static void AddDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore, bool saveAssets)
 		{
-			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), targetGroup, ensureNotAddedBefore);
+			AddDefineSymbols(symbols.Select(entry => new DefineSymbolEntry(entry)).ToArray(), targetGroup, ensureNotAddedBefore, saveAssets);
 		}
 
-		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, bool ensureNotAddedBefore)
+		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, bool ensureNotAddedBefore, bool saveAssets)
 		{
 			var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-			AddDefineSymbols(symbols, activeBuildTargetGroup, ensureNotAddedBefore);
+			AddDefineSymbols(symbols, activeBuildTargetGroup, ensureNotAddedBefore, saveAssets);
 		}
 
 		/// <summary>
 		/// Source: https://answers.unity.com/questions/1225189/how-can-i-change-scripting-define-symbols-before-a.html
 		/// </summary>
-		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore)
+		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, BuildTargetGroup targetGroup, bool ensureNotAddedBefore, bool saveAssets)
 		{
 			if (symbols == null)
 				throw new ArgumentNullException();
@@ -159,14 +159,19 @@ namespace Extenity.ProjectToolbox
 					throw new Exception($"Failed to complete Define Symbol Add operation for symbol(s) '{string.Join(", ", symbol)}'.");
 				}
 			}
+
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
+			}
 		}
 
-		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols)
+		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, bool saveAssets)
 		{
-			return RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup);
+			return RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, saveAssets);
 		}
 
-		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup)
+		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool saveAssets)
 		{
 			if (symbols == null)
 				throw new ArgumentNullException();
@@ -201,6 +206,11 @@ namespace Extenity.ProjectToolbox
 				{
 					throw new Exception($"Failed to complete Define Symbol Remove operation for symbol(s) '{string.Join(", ", symbol)}'.");
 				}
+			}
+
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
 			}
 
 			return removedDefines.ToArray();
