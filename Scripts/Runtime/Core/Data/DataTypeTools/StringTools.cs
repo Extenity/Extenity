@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Extenity.MathToolbox;
@@ -105,8 +106,7 @@ namespace Extenity.DataToolbox
 				i = text.IndexOf(character, i + 1);
 				if (i >= 0)
 					count++;
-			}
-			while (i >= 0);
+			} while (i >= 0);
 			return count;
 		}
 
@@ -372,8 +372,8 @@ namespace Extenity.DataToolbox
 				replaceEnd = endTagIndex + endTag.Length;
 			}
 			return text.Substring(0, replaceStart) +
-				   replacedWith +
-				   text.Substring(replaceEnd, text.Length - replaceEnd);
+			       replacedWith +
+			       text.Substring(replaceEnd, text.Length - replaceEnd);
 		}
 
 		/// <summary>
@@ -434,8 +434,8 @@ namespace Extenity.DataToolbox
 					replaceEnd = endTagIndex + endTag.Length;
 				}
 				text = text.Substring(0, replaceStart) +
-						 replacedWith +
-						 text.Substring(replaceEnd, text.Length - replaceEnd);
+				       replacedWith +
+				       text.Substring(replaceEnd, text.Length - replaceEnd);
 
 				if (skipTagsInReplacedText)
 				{
@@ -1058,14 +1058,17 @@ namespace Extenity.DataToolbox
 		{
 			return val.x + " " + val.y;
 		}
+
 		public static string ToSerializableString(this Vector3 val)
 		{
 			return val.x + " " + val.y + " " + val.z;
 		}
+
 		public static string ToSerializableString(this Vector4 val)
 		{
 			return val.x + " " + val.y + " " + val.z + " " + val.w;
 		}
+
 		public static string ToSerializableString(this Quaternion val)
 		{
 			return val.x + " " + val.y + " " + val.z + " " + val.w;
@@ -1094,16 +1097,19 @@ namespace Extenity.DataToolbox
 			var parts = text.Split(' ');
 			return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
 		}
+
 		public static Vector3 ParseVector3(this string text)
 		{
 			var parts = text.Split(' ');
 			return new Vector3(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]));
 		}
+
 		public static Vector4 ParseVector4(this string text)
 		{
 			var parts = text.Split(' ');
 			return new Vector4(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
 		}
+
 		public static Quaternion ParseQuaternion(this string text)
 		{
 			var parts = text.Split(' ');
@@ -1122,8 +1128,8 @@ namespace Extenity.DataToolbox
 			{
 				var character = text[i];
 				bool isHexChar = (character >= '0' && character <= '9') ||
-								 (character >= 'a' && character <= 'f') ||
-								 (character >= 'A' && character <= 'F');
+				                 (character >= 'a' && character <= 'f') ||
+				                 (character >= 'A' && character <= 'F');
 
 				if (!isHexChar)
 					return false;
@@ -1448,6 +1454,7 @@ namespace Extenity.DataToolbox
 					case '\u000D':
 					case '\u0085':
 						continue;
+
 					default:
 						copy[iDestination++] = ch;
 						break;
