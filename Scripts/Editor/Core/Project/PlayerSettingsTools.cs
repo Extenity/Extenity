@@ -168,7 +168,8 @@ namespace Extenity.ProjectToolbox
 
 		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, bool saveAssets)
 		{
-			return RemoveDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, saveAssets);
+			var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+			return RemoveDefineSymbols(symbols, activeBuildTargetGroup, saveAssets);
 		}
 
 		public static DefineSymbolEntry[] RemoveDefineSymbols(string[] symbols, BuildTargetGroup targetGroup, bool saveAssets)
@@ -222,7 +223,8 @@ namespace Extenity.ProjectToolbox
 
 		public static string GetDefineSymbols()
 		{
-			return GetDefineSymbols(EditorUserBuildSettings.selectedBuildTargetGroup);
+			var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+			return GetDefineSymbols(activeBuildTargetGroup);
 		}
 
 		public static string GetDefineSymbols(BuildTargetGroup targetGroup)
@@ -232,7 +234,8 @@ namespace Extenity.ProjectToolbox
 
 		public static bool HasDefineSymbol(string symbol)
 		{
-			return HasDefineSymbol(symbol, EditorUserBuildSettings.selectedBuildTargetGroup);
+			var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+			return HasDefineSymbol(symbol, activeBuildTargetGroup);
 		}
 
 		public static bool HasDefineSymbol(string symbol, BuildTargetGroup targetGroup)
