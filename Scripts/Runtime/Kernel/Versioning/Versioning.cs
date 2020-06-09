@@ -14,17 +14,24 @@ namespace Extenity.Kernel
 	{
 	}
 
-	public static class Versioning
+	public class Versioning
 	{
+		#region TEMP Singleton
+
+		// TODO IMMEDIATE: This is a temporary solution needed while converting Versioning to an instance class from a static class.
+		public static Versioning _TempInstance;
+
+		#endregion
+
 		#region Versions
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Invalidate(int id)
+		public void Invalidate(int id)
 		{
 			VersionChangeEventQueue.Enqueue(id);
 		}
 
-		public static void InvalidateAllRegisteredIDs()
+		public void InvalidateAllRegisteredIDs()
 		{
 			foreach (var id in Events.Keys)
 			{
@@ -36,9 +43,9 @@ namespace Extenity.Kernel
 
 		#region Events
 
-		private static readonly Dictionary<int, VersionEvent> Events = new Dictionary<int, VersionEvent>(10000);
+		private readonly Dictionary<int, VersionEvent> Events = new Dictionary<int, VersionEvent>(10000);
 
-		private static VersionEvent _GetVersionEventByID(int id)
+		private VersionEvent _GetVersionEventByID(int id)
 		{
 			if (!Events.TryGetValue(id, out var versionEvent))
 			{
@@ -49,12 +56,12 @@ namespace Extenity.Kernel
 			return versionEvent;
 		}
 
-		public static void RegisterForVersionChanges(int id, Action callback, int order = 0)
+		public void RegisterForVersionChanges(int id, Action callback, int order = 0)
 		{
 			_GetVersionEventByID(id).AddListener(callback, order);
 		}
 
-		public static void DeregisterForVersionChanges(int id, Action callback)
+		public void DeregisterForVersionChanges(int id, Action callback)
 		{
 			if (Events.TryGetValue(id, out var versionEvent))
 			{
@@ -66,9 +73,9 @@ namespace Extenity.Kernel
 
 		#region Version Change Event Queue
 
-		public static readonly Queue<int> VersionChangeEventQueue = new Queue<int>();
+		public readonly Queue<int> VersionChangeEventQueue = new Queue<int>();
 
-		public static void EmitEventsInQueue()
+		public void EmitEventsInQueue()
 		{
 			while (VersionChangeEventQueue.Count > 0)
 			{
@@ -105,25 +112,20 @@ namespace Extenity.Kernel
 			/// Second parameter: Blank shot counts. How many times there wasn't any listener at the time of emitting the invalidated ID.
 			/// </summary>
 			[InfoBox("Blank shot counts. Left value: Invalidated event ID. How many times there wasn't any listener at the time of emitting the invalidated ID.")]
-			[HorizontalGroup("Buttons", Order = 3), ReadOnly]
 			public readonly Dictionary<int, int> BlankShotCounts = new Dictionary<int, int>();
-
-			[HorizontalGroup("Buttons", Width = 150)]
-			[Button(ButtonSizes.Large, Name = "Clear Stats")]
-			private void _ClearStats()
-			{
-				ClearStats();
-			}
 		}
 
-		public static VersioningStats Stats = new VersioningStats();
+		[HorizontalGroup("StatsGroup", Order = 3), ReadOnly]
+		public VersioningStats Stats = new VersioningStats();
 
-		public static void InformBlankShot(int id)
+		public void InformBlankShot(int id)
 		{
 			Stats.BlankShotCounts.AddOrIncrement(id);
 		}
 
-		public static void ClearStats()
+		[HorizontalGroup("StatsGroup", Width = 150)]
+		[Button(ButtonSizes.Large, Name = "Clear Stats")]
+		public void ClearStats()
 		{
 			Stats = new VersioningStats();
 		}
@@ -133,15 +135,15 @@ namespace Extenity.Kernel
 		{
 		}
 
-		public static VersioningStats Stats = new VersioningStats();
+		public VersioningStats Stats = new VersioningStats();
 
 		[System.Diagnostics.Conditional("FALSE")]
-		public static void InformBlankShot(int id)
+		public void InformBlankShot(int id)
 		{
 		}
 
 		[System.Diagnostics.Conditional("FALSE")]
-		public static void ClearStats()
+		public void ClearStats()
 		{
 		}
 

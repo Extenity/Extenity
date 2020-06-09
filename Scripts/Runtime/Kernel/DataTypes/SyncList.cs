@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Extenity.Kernel
 {
@@ -19,38 +20,47 @@ namespace Extenity.Kernel
 
 		public SyncList()
 		{
-			ID = ID.Invalid;
 			List = new List<T>();
+			ID = ID.Invalid;
+			Versioning = null;
 		}
 
 		public SyncList([NotNull] IEnumerable<T> collection)
 		{
-			ID = ID.Invalid;
 			List = new List<T>(collection);
+			ID = ID.Invalid;
+			Versioning = null;
 		}
 
 		public SyncList(int capacity)
 		{
+			List = new List<T>(capacity);
 			ID = ID.Invalid;
-			List = new List<T>(capacity);
+			Versioning = null;
 		}
 
-		public SyncList(ID id)
+		public SyncList(ID id, [NotNull] Versioning versioning)
 		{
-			ID = id;
 			List = new List<T>();
+			Initialize(id, versioning);
 		}
 
-		public SyncList(ID id, [NotNull] IEnumerable<T> collection)
+		public SyncList(ID id, [NotNull] Versioning versioning, [NotNull] IEnumerable<T> collection)
 		{
-			ID = id;
 			List = new List<T>(collection);
+			Initialize(id, versioning);
 		}
 
-		public SyncList(ID id, int capacity)
+		public SyncList(ID id, [NotNull] Versioning versioning, int capacity)
+		{
+			List = new List<T>(capacity);
+			Initialize(id, versioning);
+		}
+
+		public void Initialize(ID id, Versioning versioning)
 		{
 			ID = id;
-			List = new List<T>(capacity);
+			Versioning = versioning;
 		}
 
 		#endregion
@@ -243,6 +253,29 @@ namespace Extenity.Kernel
 		{
 			List.Sort(index, count, comparer);
 			Versioning.Invalidate(ID);
+		}
+
+		#endregion
+
+		#region Versioning
+
+		// TODO IMMEDIATE: Versioning should be Kernel instead.
+		// TODO IMMEDIATE: Kernel reference should be initialized automatically on Kernel deserialization.
+
+		[NonSerialized, JsonIgnore]
+		private Versioning _Versioning;
+		private Versioning Versioning
+		{
+			get
+			{
+				if (_Versioning != null)
+				{
+					_Versioning = Versioning._TempInstance; // This is a temp solution that solves the missing reference after data deserialization.
+				}
+				return _Versioning;
+			}
+			set =>
+				_Versioning = value;
 		}
 
 		#endregion

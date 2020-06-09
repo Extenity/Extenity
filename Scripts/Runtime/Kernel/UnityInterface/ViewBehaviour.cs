@@ -139,6 +139,7 @@ namespace Extenity.Kernel.UnityInterface
 
 		private void InitializeDataLinkIfRequired()
 		{
+			DataLink.Versioning = Versioning._TempInstance;
 			DataLink.Component = this;
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
 		}

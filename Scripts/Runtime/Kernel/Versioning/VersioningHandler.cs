@@ -8,21 +8,10 @@ namespace Extenity.Kernel
 	[HideMonoScript]
 	public class VersioningHandler : MonoBehaviour
 	{
-		// TODO: Ability to select where Versioning event emitting should happen as per project requirement (Update, FixedUpdate, LateUpdate). Do that by just adding Loop.GetCallbacks(someEnum) method. And add "Do not modify it on runtime" in documentation as it will not work properly.
-
-		protected void Awake()
+		// Note that this Update should be called earlier than any View behaviours in execution order.
+		private void Update()
 		{
-			Loop.UpdateCallbacks.AddListener(CustomUpdate);
-		}
-
-		protected void OnDestroy()
-		{
-			Loop.UpdateCallbacks.RemoveListener(CustomUpdate);
-		}
-
-		private void CustomUpdate()
-		{
-			Versioning.EmitEventsInQueue();
+			Versioning._TempInstance.EmitEventsInQueue();
 		}
 
 		#region Stats
@@ -31,8 +20,8 @@ namespace Extenity.Kernel
 		[ShowInInspector, HideLabel, NotNull]
 		public Versioning.VersioningStats Stats
 		{
-			get => Versioning.Stats;
-			set => Versioning.Stats = value;
+			get => Versioning._TempInstance.Stats;
+			set => Versioning._TempInstance.Stats = value;
 		}
 
 		#endregion

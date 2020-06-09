@@ -15,6 +15,8 @@ namespace Extenity.Kernel.UnityInterface
 		internal MonoBehaviour Component;
 		[NonSerialized]
 		public Action DataInvalidationCallback;
+		[NonSerialized]
+		internal Versioning Versioning;
 
 		#endregion
 
