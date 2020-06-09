@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections;
@@ -1832,14 +1832,20 @@ namespace Extenity.DataToolbox
 
 		#region Singular/Plural
 
-		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix) { return ToStringWithEnglishPluralPostfix((long)value, postfix); }
+
+		public static string ToStringWithEnglishPluralPostfix(this long value, string postfix)
 		{
 			return value == 1
 				? value.ToString() + " " + postfix
 				: value.ToString() + " " + postfix + "s";
 		}
 
-		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix, char valueShell)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string ToStringWithEnglishPluralPostfix(this int value, string postfix, char valueShell) { return ToStringWithEnglishPluralPostfix((long)value, postfix, valueShell); }
+
+		public static string ToStringWithEnglishPluralPostfix(this long value, string postfix, char valueShell)
 		{
 			return value == 1
 				? valueShell + value.ToString() + valueShell + " " + postfix
