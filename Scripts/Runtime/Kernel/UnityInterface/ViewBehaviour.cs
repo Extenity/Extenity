@@ -8,6 +8,8 @@ using UnityEngine;
 namespace Extenity.Kernel.UnityInterface
 {
 
+	// TODO: Inspect how ViewBehaviour works with ExecuteAlways attribute. Should we support it? If not, prevent ViewBehaviour derived classes from having that attribute.
+
 	// TODO: Implement this.
 	// [EnsureDerivedTypesWontUseMethod(nameof(Awake), nameof(AwakeDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(Start), nameof(StartDerived))]
@@ -15,6 +17,9 @@ namespace Extenity.Kernel.UnityInterface
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnEnable), nameof(OnEnableDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnDisable), nameof(OnDisableDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(OnValidate), nameof(OnValidateDerived))]
+	// // [EnsureDerivedTypesWontUseMethod(nameof(Update), nameof(UpdateDerived))]
+	// // [EnsureDerivedTypesWontUseMethod(nameof(FixedUpdate), nameof(FixedUpdateDerived))]
+	// // [EnsureDerivedTypesWontUseMethod(nameof(LateUpdate), nameof(LateUpdateDerived))]
 	public abstract class ViewBehaviour : MonoBehaviour
 	{
 		#region Initialization
@@ -51,6 +56,7 @@ namespace Extenity.Kernel.UnityInterface
 			// }
 
 			AllActiveViewBehaviours.Add(this);
+			// RegisterUpdateCallbacks(); // Should come before OnEnableDerived.
 			OnEnableDerived();
 			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
@@ -81,8 +87,33 @@ namespace Extenity.Kernel.UnityInterface
 
 			AllActiveViewBehaviours.Remove(this);
 			RefreshDataLink(false); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
+			// DeregisterUpdateCallbacks(); // Should come before OnDisableDerived.
 			OnDisableDerived();
 		}
+
+		#endregion
+
+		#region Update
+
+		// protected virtual void UpdateDerived() { }
+		// protected virtual void FixedUpdateDerived() { }
+		// protected virtual void LateUpdateDerived() { }
+		//
+		// private void RegisterUpdateCallbacks()
+		// {
+		// 	// TODO OPTIMIZATION: Register only if the derived class overrides these methods. Also call RemoveListener only for registered ones, in a performance friendly way.
+		//
+		// 	Loop.UpdateCallbacks.AddListener(UpdateDerived);
+		// 	Loop.FixedUpdateCallbacks.AddListener(FixedUpdateDerived);
+		// 	Loop.LateUpdateCallbacks.AddListener(LateUpdateDerived);
+		// }
+		//
+		// private void DeregisterUpdateCallbacks()
+		// {
+		// 	Loop.UpdateCallbacks.RemoveListener(UpdateDerived);
+		// 	Loop.FixedUpdateCallbacks.RemoveListener(FixedUpdateDerived);
+		// 	Loop.LateUpdateCallbacks.RemoveListener(LateUpdateDerived);
+		// }
 
 		#endregion
 
