@@ -106,7 +106,8 @@ namespace Extenity.ProjectToolbox
 
 		public static void AddDefineSymbols(DefineSymbolEntry[] symbols, bool ensureNotAddedBefore)
 		{
-			AddDefineSymbols(symbols, EditorUserBuildSettings.selectedBuildTargetGroup, ensureNotAddedBefore);
+			var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+			AddDefineSymbols(symbols, activeBuildTargetGroup, ensureNotAddedBefore);
 		}
 
 		/// <summary>
