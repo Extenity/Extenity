@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<T> where T : KernelObject
+	public class SyncList<T> where T : KernelObject, new()
 	{
 		/// <summary>
 		/// CAUTION! Do not modify this list! Use it as readonly.
@@ -257,7 +257,26 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region Versioning
+		#region Instantiate / Destroy
+
+		public T InstantiateAndAdd()
+		{
+			var instance = Kernel.Instantiate<T>();
+			Add(instance);
+			return instance;
+		}
+
+		public void DestroyAndRemoveAt(int index)
+		{
+			// TODO: Boundary check
+			var instance = List[index];
+			RemoveAt(index);
+			Kernel.Destroy(instance);
+		}
+
+		#endregion
+
+		#region Kernel
 
 		[NonSerialized, JsonIgnore]
 		private KernelBase _Kernel;

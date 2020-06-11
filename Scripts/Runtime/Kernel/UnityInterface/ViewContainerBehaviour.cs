@@ -10,7 +10,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 	public abstract class ViewContainerBehaviour<TItem, TItemView> : ViewBehaviour
 		where TItemView : ViewBehaviour
-		where TItem : KernelObject
+		where TItem : KernelObject, new()
 	{
 		#region Views
 
