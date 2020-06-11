@@ -5,6 +5,12 @@ namespace Extenity.KernelToolbox
 
 	public abstract class KernelObject
 	{
+		#region Deinitialization
+
+		protected internal virtual void OnDestroy() { }
+
+		#endregion
+
 		#region ID
 
 		public ID ID;

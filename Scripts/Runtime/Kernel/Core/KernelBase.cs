@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Extenity.KernelToolbox
@@ -45,7 +46,7 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region Instantiate KernelObject
+		#region Instantiate/Destroy KernelObject
 
 		public T Instantiate<T>() where T : KernelObject, new()
 		{
@@ -54,6 +55,19 @@ namespace Extenity.KernelToolbox
 				ID = IDGenerator.CreateID()
 			};
 			return instance;
+		}
+
+		public void Destroy<T>([CanBeNull] T instance) where T : KernelObject
+		{
+			if (instance == null || !instance.ID.IsValid)
+			{
+				// TODO: Not sure what to do when received an invalid object.
+				return;
+			}
+
+			instance.OnDestroy();
+			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
+			instance.ID = ID.Invalid;
 		}
 
 		#endregion
