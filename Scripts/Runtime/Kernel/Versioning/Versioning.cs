@@ -21,6 +21,12 @@ namespace Extenity.KernelToolbox
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Invalidate(int id)
 		{
+			if (id == 0)
+			{
+				Log.Warning("Tried to invalidate an item with id '0'.");
+				return;
+			}
+
 			VersionChangeEventQueue.Enqueue(id);
 		}
 
