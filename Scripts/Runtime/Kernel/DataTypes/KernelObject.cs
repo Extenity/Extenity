@@ -5,21 +5,42 @@ namespace Extenity.KernelToolbox
 
 	public abstract class KernelObject
 	{
+		#region ID
+
 		public ID ID;
 
-		// TODO: Think of developing something like this.
-		// private KernelBase Kernel;
-		//
-		// public void Initialize(ID id, KernelBase kernel)
-		// {
-		// 	ID = id;
-		// 	Kernel = kernel;
-		// }
-		//
+		#endregion
+	}
+
+	public abstract class KernelObject<TKernel> : KernelObject
+		where TKernel : KernelBase<TKernel>
+	{
+		#region Kernel Link
+
+		private TKernel _Kernel;
+		public TKernel Kernel
+		{
+			get
+			{
+				if (_Kernel == null)
+				{
+					_Kernel = (TKernel)KernelBase._TempInstance;
+				}
+				return _Kernel;
+			}
+		}
+
+		#endregion
+
+		#region Invalidate
+
+		// TODO IMMEDIATE: It should be possible to implement Invalidate in KernelObject with recent changes in design.
 		// public void Invalidate()
 		// {
 		// 	Kernel.Invalidate(ID);
 		// }
+
+		#endregion
 	}
 
 }

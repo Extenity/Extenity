@@ -152,7 +152,6 @@ namespace Extenity.KernelToolbox
 		{
 			List.AddRange(collection);
 			Invalidate();
-
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
