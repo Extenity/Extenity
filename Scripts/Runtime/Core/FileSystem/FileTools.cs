@@ -309,6 +309,7 @@ namespace Extenity.FileSystemToolbox
 		{
 			var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
 			var path = Path.Combine(tempDirectory, relativeFilePath);
+			DirectoryTools.CreateFromFilePath(path);
 			File.WriteAllText(path, content);
 			return path;
 		}
