@@ -8,9 +8,10 @@ using Sirenix.OdinInspector;
 namespace Extenity.KernelToolbox.UnityInterface
 {
 
-	public abstract class ViewContainerBehaviour<TItem, TItemView> : ViewBehaviour
-		where TItemView : ViewBehaviour
+	public abstract class ViewContainerBehaviour<TItem, TItemView, TKernel> : ViewBehaviour<TKernel>
+		where TItemView : ViewBehaviour<TKernel>
 		where TItem : KernelObject, new()
+		where TKernel : KernelBase<TKernel>
 	{
 		#region Views
 
@@ -37,7 +38,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Sync List
 
-		protected abstract SyncList<TItem> GetList();
+		protected abstract SyncList<TItem, TKernel> GetList();
 
 		private class ItemViewComparer : IEqualityComparer<TItemView, TItem>
 		{

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
 namespace Extenity.KernelToolbox
@@ -21,23 +22,15 @@ namespace Extenity.KernelToolbox
 	}
 
 	public abstract class KernelObject<TKernel> : KernelObject
-		where TKernel : KernelBase
+		where TKernel : KernelBase<TKernel>
 	{
 		#region Kernel Link
 
 		[JsonIgnore]
-		private TKernel _Kernel;
-		[JsonIgnore]
 		public TKernel Kernel
 		{
-			get
-			{
-				if (_Kernel == null)
-				{
-					_Kernel = (TKernel)KernelBase._TempInstance;
-				}
-				return _Kernel;
-			}
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => KernelBase<TKernel>.Instance;
 		}
 
 		#endregion

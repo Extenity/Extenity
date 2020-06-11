@@ -20,7 +20,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 	// // [EnsureDerivedTypesWontUseMethod(nameof(Update), nameof(UpdateDerived))]
 	// // [EnsureDerivedTypesWontUseMethod(nameof(FixedUpdate), nameof(FixedUpdateDerived))]
 	// // [EnsureDerivedTypesWontUseMethod(nameof(LateUpdate), nameof(LateUpdateDerived))]
-	public abstract class ViewBehaviour : MonoBehaviour
+	public abstract class ViewBehaviour<TKernel> : MonoBehaviour
+		where TKernel : KernelBase<TKernel>
 	{
 		#region Initialization
 
@@ -119,15 +120,15 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region All ViewBehaviours
 
-		public static readonly List<ViewBehaviour> AllViewBehaviours = new List<ViewBehaviour>(1000);
-		public static readonly List<ViewBehaviour> AllActiveViewBehaviours = new List<ViewBehaviour>(1000);
+		public static readonly List<ViewBehaviour<TKernel>> AllViewBehaviours = new List<ViewBehaviour<TKernel>>(1000);
+		public static readonly List<ViewBehaviour<TKernel>> AllActiveViewBehaviours = new List<ViewBehaviour<TKernel>>(1000);
 
 		#endregion
 
 		#region Data Link and Invalidation
 
 		[InlineProperty, HideLabel]
-		public DataLink DataLink;
+		public DataLink<TKernel> DataLink;
 
 		public Ref ID
 		{
@@ -139,7 +140,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		private void InitializeDataLinkIfRequired()
 		{
-			DataLink.Kernel = KernelBase._TempInstance;
 			DataLink.Component = this;
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
 		}

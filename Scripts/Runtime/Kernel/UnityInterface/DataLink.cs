@@ -7,7 +7,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 {
 
 	[Serializable]
-	public struct DataLink
+	public struct DataLink<TKernel>
+		where TKernel : KernelBase<TKernel>
 	{
 		#region Interface Object
 
@@ -15,8 +16,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 		internal MonoBehaviour Component;
 		[NonSerialized]
 		public Action DataInvalidationCallback;
-		[NonSerialized]
-		internal KernelBase Kernel;
 
 		#endregion
 
@@ -84,7 +83,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// Deregister if previously registered for version changes.
 			if (RegisteredID.IsValid)
 			{
-				Kernel.Versioning.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
+				KernelBase<TKernel>.Instance.Versioning.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
 			}
 
 			RegisteredID = targetID;
@@ -92,8 +91,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (RegisteredID.IsValid)
 			{
-				Kernel.Versioning.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
-				Kernel.Versioning.Invalidate(RegisteredID);
+				KernelBase<TKernel>.Instance.Versioning.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
+				KernelBase<TKernel>.Instance.Versioning.Invalidate(RegisteredID);
 			}
 			else
 			{

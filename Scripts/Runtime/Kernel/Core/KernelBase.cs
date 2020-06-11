@@ -6,26 +6,60 @@ using UnityEngine;
 namespace Extenity.KernelToolbox
 {
 
-	// This might be needed in future.
-	// public abstract class KernelBase<TKernel> : KernelBase
-	// 	where TKernel : KernelBase<TKernel>
-	// {
-	// }
-
-	public abstract class KernelBase
+	public abstract class KernelBase<TKernel> : KernelBase
+		where TKernel : KernelBase<TKernel>
 	{
-		#region TEMP Singleton
+		#region Singleton
 
-		// TODO: This is a temporary solution until a reference resolver is introduced in Kernel deserialization. DataLink and SyncList keeps a reference to Kernel, but others may too. Figure out a generalized way to assign these references on deserialization.
-		public static KernelBase _TempInstance;
+		public static TKernel Instance;
 
-		public KernelBase()
+		#endregion
+
+		#region Initialization
+
+		public bool IsInitialized { get; private set; }
+
+		// TODO: Ensure initialization is called in all cases. (Deserialization, having another constructor in derived class, etc.)
+		public void Initialize()
 		{
-			_TempInstance = this;
+			if (IsInitialized)
+			{
+				throw new Exception($"Tried to initialize '{GetType().Name}' more than once.");
+			}
+			if (Instance != null)
+			{
+				throw new Exception($"Tried to initialize '{GetType().Name}' while there was already an instance in use.");
+			}
+
+			Instance = (TKernel)this;
+			IsInitialized = true;
 		}
 
 		#endregion
 
+		#region Deinitialization
+
+		public void Deinitialize()
+		{
+			if (!IsInitialized)
+			{
+				throw new Exception($"Tried to deinitialize '{GetType().Name}' more than once.");
+			}
+			IsInitialized = false;
+
+			if (Instance != this)
+			{
+				throw new Exception($"Tried to deinitialize '{GetType().Name}' but there was another singleton.");
+			}
+
+			Instance = null;
+		}
+
+		#endregion
+	}
+
+	public abstract class KernelBase
+	{
 		#region Versioning
 
 		[NonSerialized] // Versioning is only used for callbacks and does not keep any data.

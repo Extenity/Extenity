@@ -7,7 +7,9 @@ using Newtonsoft.Json;
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<T> where T : KernelObject, new()
+	public class SyncList<T, TKernel>
+		where T : KernelObject, new()
+		where TKernel : KernelBase<TKernel>
 	{
 		/// <summary>
 		/// CAUTION! Do not modify this list! Use it as readonly.
@@ -22,23 +24,26 @@ namespace Extenity.KernelToolbox
 		{
 			List = new List<T>();
 			ID = ID.Invalid;
-			Kernel = null;
 		}
 
 		public SyncList([NotNull] IEnumerable<T> collection)
 		{
 			List = new List<T>(collection);
 			ID = ID.Invalid;
-			Kernel = null;
 		}
 
 		public SyncList(int capacity)
 		{
 			List = new List<T>(capacity);
 			ID = ID.Invalid;
-			Kernel = null;
 		}
 
+		public void Initialize(ID id)
+		{
+			ID = id;
+		}
+
+		/* Old implementation where Kernel was a field of SyncList. Keep it for future needs.
 		public SyncList(ID id, [NotNull] KernelBase kernel)
 		{
 			List = new List<T>();
@@ -62,6 +67,7 @@ namespace Extenity.KernelToolbox
 			ID = id;
 			Kernel = kernel;
 		}
+		*/
 
 		#endregion
 
@@ -278,19 +284,11 @@ namespace Extenity.KernelToolbox
 
 		#region Kernel
 
-		[NonSerialized, JsonIgnore]
-		private KernelBase _Kernel;
+		[JsonIgnore]
 		private KernelBase Kernel
 		{
-			get
-			{
-				if (_Kernel != null)
-				{
-					_Kernel = KernelBase._TempInstance; // This is a temp solution that solves the missing reference after data deserialization.
-				}
-				return _Kernel;
-			}
-			set => _Kernel = value;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => KernelBase<TKernel>.Instance;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
