@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	public class SyncList<T> where T : KernelObject

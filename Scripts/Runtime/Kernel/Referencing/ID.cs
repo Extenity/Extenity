@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	// TODO STATIC CODE ANALYSIS: Ensure Ref struct size is 4 bytes.

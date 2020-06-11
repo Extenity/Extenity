@@ -1,10 +1,10 @@
-﻿using Extenity.Kernel;
+﻿using Extenity.KernelToolbox;
 using NUnit.Framework;
 
 // ReSharper disable HeapView.BoxingAllocation
 // ReSharper disable HeapView.ClosureAllocation
 
-namespace ExtenityTests.Kernel.Tests
+namespace ExtenityTests.KernelToolbox.Tests
 {
 
 	public class Tests_RefAndID

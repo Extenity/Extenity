@@ -5,7 +5,7 @@ using Extenity.GameObjectToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity.Kernel.UnityInterface
+namespace Extenity.KernelToolbox.UnityInterface
 {
 
 	// TODO: Inspect how ViewBehaviour works with ExecuteAlways attribute. Should we support it? If not, prevent ViewBehaviour derived classes from having that attribute.

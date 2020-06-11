@@ -5,7 +5,7 @@ using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Sirenix.OdinInspector;
 
-namespace Extenity.Kernel.UnityInterface
+namespace Extenity.KernelToolbox.UnityInterface
 {
 
 	public abstract class ViewContainerBehaviour<TItem, TItemView> : ViewBehaviour

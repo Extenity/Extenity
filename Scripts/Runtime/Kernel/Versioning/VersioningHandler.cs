@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	[HideMonoScript]

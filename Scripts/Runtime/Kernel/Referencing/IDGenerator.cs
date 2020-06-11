@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	public static class IDGenerator

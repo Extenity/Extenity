@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	/// <summary>

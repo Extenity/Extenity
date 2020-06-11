@@ -3,7 +3,7 @@ using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity.Kernel.UnityInterface
+namespace Extenity.KernelToolbox.UnityInterface
 {
 
 	[Serializable]

@@ -1,4 +1,4 @@
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	public class KernelObject

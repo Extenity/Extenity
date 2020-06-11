@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Extenity.FileSystemToolbox;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	/// <summary>

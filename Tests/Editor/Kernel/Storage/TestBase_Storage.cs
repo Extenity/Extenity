@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using System.Text;
-using Extenity.Kernel;
+using Extenity.KernelToolbox;
 using UnityEngine;
 
 // ReSharper disable HeapView.BoxingAllocation
 // ReSharper disable HeapView.ClosureAllocation
 
-namespace ExtenityTests.Kernel
+namespace ExtenityTests.KernelToolbox
 {
 
 	public abstract class TestBase_Storage

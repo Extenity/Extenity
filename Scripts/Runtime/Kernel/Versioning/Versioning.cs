@@ -7,7 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.MessagingToolbox;
 using Sirenix.OdinInspector;
 
-namespace Extenity.Kernel
+namespace Extenity.KernelToolbox
 {
 
 	public class VersionEvent : ExtenityEvent
