@@ -22,45 +22,45 @@ namespace Extenity.KernelToolbox
 		{
 			List = new List<T>();
 			ID = ID.Invalid;
-			Versioning = null;
+			Kernel = null;
 		}
 
 		public SyncList([NotNull] IEnumerable<T> collection)
 		{
 			List = new List<T>(collection);
 			ID = ID.Invalid;
-			Versioning = null;
+			Kernel = null;
 		}
 
 		public SyncList(int capacity)
 		{
 			List = new List<T>(capacity);
 			ID = ID.Invalid;
-			Versioning = null;
+			Kernel = null;
 		}
 
-		public SyncList(ID id, [NotNull] Versioning versioning)
+		public SyncList(ID id, [NotNull] KernelBase kernel)
 		{
 			List = new List<T>();
-			Initialize(id, versioning);
+			Initialize(id, kernel);
 		}
 
-		public SyncList(ID id, [NotNull] Versioning versioning, [NotNull] IEnumerable<T> collection)
+		public SyncList(ID id, [NotNull] KernelBase kernel, [NotNull] IEnumerable<T> collection)
 		{
 			List = new List<T>(collection);
-			Initialize(id, versioning);
+			Initialize(id, kernel);
 		}
 
-		public SyncList(ID id, [NotNull] Versioning versioning, int capacity)
+		public SyncList(ID id, [NotNull] KernelBase kernel, int capacity)
 		{
 			List = new List<T>(capacity);
-			Initialize(id, versioning);
+			Initialize(id, kernel);
 		}
 
-		public void Initialize(ID id, Versioning versioning)
+		public void Initialize(ID id, KernelBase kernel)
 		{
 			ID = id;
-			Versioning = versioning;
+			Kernel = kernel;
 		}
 
 		#endregion
@@ -75,7 +75,7 @@ namespace Extenity.KernelToolbox
 			set
 			{
 				List[index] = value;
-				Versioning.Invalidate(ID);
+				Invalidate();
 			}
 		}
 
@@ -124,7 +124,7 @@ namespace Extenity.KernelToolbox
 				List.Capacity = value;
 				if (List.Count != previousCount) // Invalidate the data if changing capacity caused modifications in list.
 				{
-					Versioning.Invalidate(ID);
+					Invalidate();
 				}
 			}
 		}
@@ -144,28 +144,29 @@ namespace Extenity.KernelToolbox
 		public void Add([CanBeNull] T item)
 		{
 			List.Add(item);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddRange([NotNull] IEnumerable<T> collection)
 		{
 			List.AddRange(collection);
-			Versioning.Invalidate(ID);
+			Invalidate();
+
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Insert(int index, [CanBeNull] T item)
 		{
 			List.Insert(index, item);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InsertRange(int index, [NotNull] IEnumerable<T> collection)
 		{
 			List.InsertRange(index, collection);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		#endregion
@@ -176,7 +177,7 @@ namespace Extenity.KernelToolbox
 		public bool Remove([CanBeNull] T item)
 		{
 			var result = List.Remove(item);
-			Versioning.Invalidate(ID);
+			Invalidate();
 			return result;
 		}
 
@@ -184,7 +185,7 @@ namespace Extenity.KernelToolbox
 		public int RemoveAll([NotNull] Predicate<T> match)
 		{
 			var result = List.RemoveAll(match);
-			Versioning.Invalidate(ID);
+			Invalidate();
 			return result;
 		}
 
@@ -192,21 +193,21 @@ namespace Extenity.KernelToolbox
 		public void RemoveAt(int index)
 		{
 			List.RemoveAt(index);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void RemoveRange(int index, int count)
 		{
 			List.RemoveRange(index, count);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Clear()
 		{
 			List.Clear();
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		#endregion
@@ -217,65 +218,69 @@ namespace Extenity.KernelToolbox
 		public void Reverse()
 		{
 			List.Reverse();
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Reverse(int index, int count)
 		{
 			List.Reverse(index, count);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort()
 		{
 			List.Sort();
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort([NotNull] Comparison<T> comparison)
 		{
 			List.Sort(comparison);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort(IComparer<T> comparer)
 		{
 			List.Sort(comparer);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Sort(int index, int count, IComparer<T> comparer)
 		{
 			List.Sort(index, count, comparer);
-			Versioning.Invalidate(ID);
+			Invalidate();
 		}
 
 		#endregion
 
 		#region Versioning
 
-		// TODO IMMEDIATE: Versioning should be Kernel instead.
 		// TODO IMMEDIATE: Kernel reference should be initialized automatically on Kernel deserialization.
 
 		[NonSerialized, JsonIgnore]
-		private Versioning _Versioning;
-		private Versioning Versioning
+		private KernelBase _Kernel;
+		private KernelBase Kernel
 		{
 			get
 			{
-				if (_Versioning != null)
+				if (_Kernel != null)
 				{
-					_Versioning = Versioning._TempInstance; // This is a temp solution that solves the missing reference after data deserialization.
+					_Kernel = KernelBase._TempInstance; // This is a temp solution that solves the missing reference after data deserialization.
 				}
-				return _Versioning;
+				return _Kernel;
 			}
-			set =>
-				_Versioning = value;
+			set => _Kernel = value;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Invalidate()
+		{
+			Kernel.Invalidate(ID);
 		}
 
 		#endregion

@@ -16,13 +16,6 @@ namespace Extenity.KernelToolbox
 
 	public class Versioning
 	{
-		#region TEMP Singleton
-
-		// TODO IMMEDIATE: This is a temporary solution needed while converting Versioning to an instance class from a static class.
-		public static Versioning _TempInstance;
-
-		#endregion
-
 		#region Versions
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

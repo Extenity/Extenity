@@ -16,7 +16,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[NonSerialized]
 		public Action DataInvalidationCallback;
 		[NonSerialized]
-		internal Versioning Versioning;
+		internal KernelBase Kernel;
 
 		#endregion
 
@@ -87,7 +87,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// Deregister if previously registered for version changes.
 			if (RegisteredID.IsValid)
 			{
-				Versioning.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
+				Kernel.Versioning.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
 			}
 
 			RegisteredID = targetID;
@@ -95,8 +95,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (RegisteredID.IsValid)
 			{
-				Versioning.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
-				Versioning.Invalidate(RegisteredID);
+				Kernel.Versioning.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
+				Kernel.Versioning.Invalidate(RegisteredID);
 			}
 			else
 			{

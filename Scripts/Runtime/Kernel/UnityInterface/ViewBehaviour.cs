@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
@@ -139,7 +139,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		private void InitializeDataLinkIfRequired()
 		{
-			DataLink.Versioning = Versioning._TempInstance;
+			DataLink.Kernel = KernelBase._TempInstance;
 			DataLink.Component = this;
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
 		}

@@ -5,18 +5,18 @@ namespace Extenity.KernelToolbox
 	{
 		public ID ID;
 
-		// TODO: Think of developing something like this. Versioning should be Kernel.
-		// private Versioning Versioning;
-
-		// public void Initialize(ID id, Versioning versioning)
+		// TODO: Think of developing something like this.
+		// private KernelBase Kernel;
+		//
+		// public void Initialize(ID id, KernelBase kernel)
 		// {
 		// 	ID = id;
-		// 	Versioning = versioning;
+		// 	Kernel = kernel;
 		// }
-
+		//
 		// public void Invalidate()
 		// {
-		// 	Versioning.Invalidate(ID);
+		// 	Kernel.Invalidate(ID);
 		// }
 	}
 

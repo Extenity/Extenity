@@ -11,7 +11,7 @@ namespace Extenity.KernelToolbox
 		// Note that this Update should be called earlier than any View behaviours in execution order.
 		private void Update()
 		{
-			Versioning._TempInstance.EmitEventsInQueue();
+			KernelBase._TempInstance.Versioning.EmitEventsInQueue();
 		}
 
 		#region Stats
@@ -20,8 +20,8 @@ namespace Extenity.KernelToolbox
 		[ShowInInspector, HideLabel, NotNull]
 		public Versioning.VersioningStats Stats
 		{
-			get => Versioning._TempInstance.Stats;
-			set => Versioning._TempInstance.Stats = value;
+			get => KernelBase._TempInstance.Versioning.Stats;
+			set => KernelBase._TempInstance.Versioning.Stats = value;
 		}
 
 		#endregion
