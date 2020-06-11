@@ -64,9 +64,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[NonSerialized]
 		private int RegisteredDataInvalidationEventOrder; // Default is 0.
 
-		// TODO IMMEDIATE: Cover DataInvalidationCallback calls in try-catch block.
-		// TODO IMMEDIATE: Cover Versioning callback calls in try-catch block too.
-
 		public void RefreshDataLink(bool isComponentEnabled)
 		{
 			// Use the ID if the object is active.
@@ -101,7 +98,19 @@ namespace Extenity.KernelToolbox.UnityInterface
 			else
 			{
 				// Immediately call the callback. That allows view to reset itself.
+				SafeInvokeDataInvalidationCallback(); // Safe invoking prevents any thrown exceptions to block RefreshDataLink execution.
+			}
+		}
+
+		private void SafeInvokeDataInvalidationCallback()
+		{
+			try
+			{
 				DataInvalidationCallback();
+			}
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
 			}
 		}
 
