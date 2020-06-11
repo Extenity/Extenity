@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Extenity.KernelToolbox
 {
 
@@ -23,7 +25,9 @@ namespace Extenity.KernelToolbox
 	{
 		#region Kernel Link
 
+		[JsonIgnore]
 		private TKernel _Kernel;
+		[JsonIgnore]
 		public TKernel Kernel
 		{
 			get
