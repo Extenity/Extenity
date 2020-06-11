@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Extenity.KernelToolbox
 {
@@ -20,7 +21,7 @@ namespace Extenity.KernelToolbox
 
 		#region Versioning
 
-		[NonSerialized]
+		[NonSerialized] // Versioning is only used for callbacks and does not keep any data.
 		public readonly Versioning Versioning = new Versioning();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -28,6 +29,13 @@ namespace Extenity.KernelToolbox
 		{
 			Versioning.Invalidate(id);
 		}
+
+		#endregion
+
+		#region ID Generator
+
+		[SerializeField]
+		public IDGenerator IDGenerator = new IDGenerator();
 
 		#endregion
 	}

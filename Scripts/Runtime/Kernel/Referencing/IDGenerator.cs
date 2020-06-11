@@ -1,9 +1,11 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Extenity.KernelToolbox
 {
 
-	public static class IDGenerator
+	[Serializable]
+	public class IDGenerator
 	{
 		/// <summary>
 		/// IDs below this value is considered to be pre-allocated.
@@ -12,34 +14,45 @@ namespace Extenity.KernelToolbox
 		private const int IDEndsAt = Int32.MaxValue - 100;
 		private const int IDAlarmsAt = Int32.MaxValue / 1000;
 
-		private static int LastGivenID = IDStartsFrom;
-		private static bool LastGivenIDOverflowWarning;
+		[SerializeField]
+		private int LastGivenID = IDStartsFrom;
 
-		private static int GenerateNewID()
+		private int GenerateNewID()
 		{
 			LastGivenID++;
 			if (LastGivenID > IDAlarmsAt)
 			{
-				if (!LastGivenIDOverflowWarning)
-				{
-					// That means we will need to turn versioning data into Int64.
-					Log.CriticalError("ID generator will overflow soon.");
-					LastGivenIDOverflowWarning = true;
-				}
-				if (LastGivenID > IDEndsAt)
-				{
-					Log.CriticalError("ID generator overflow.");
-					LastGivenID = IDStartsFrom;
-					LastGivenIDOverflowWarning = false;
-				}
+				ProcessPotentialOverflow();
 			}
 			return LastGivenID;
 		}
 
-		public static ID CreateID()
+		public ID CreateID()
 		{
 			return new ID(GenerateNewID());
 		}
+
+		#region Overflow Warning
+
+		private bool LastGivenIDOverflowWarning;
+
+		private void ProcessPotentialOverflow()
+		{
+			if (!LastGivenIDOverflowWarning)
+			{
+				// That means we will need to turn IDs into Int64.
+				Log.CriticalError("ID generator will overflow soon.");
+				LastGivenIDOverflowWarning = true;
+			}
+			if (LastGivenID > IDEndsAt)
+			{
+				Log.CriticalError("ID generator overflow.");
+				LastGivenID = IDStartsFrom;
+				LastGivenIDOverflowWarning = false;
+			}
+		}
+
+		#endregion
 	}
 
 }
