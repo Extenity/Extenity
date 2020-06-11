@@ -5,6 +5,12 @@ using UnityEngine;
 namespace Extenity.KernelToolbox
 {
 
+	// This might be needed in future.
+	// public abstract class KernelBase<TKernel> : KernelBase
+	// 	where TKernel : KernelBase<TKernel>
+	// {
+	// }
+
 	public abstract class KernelBase
 	{
 		#region TEMP Singleton
@@ -38,14 +44,10 @@ namespace Extenity.KernelToolbox
 		public IDGenerator IDGenerator = new IDGenerator();
 
 		#endregion
-	}
 
-	public abstract class KernelBase<TKernel> : KernelBase
-		where TKernel : KernelBase<TKernel>
-	{
 		#region Instantiate KernelObject
 
-		public T Instantiate<T>() where T : KernelObject<TKernel>, new()
+		public T Instantiate<T>() where T : KernelObject, new()
 		{
 			var instance = new T
 			{

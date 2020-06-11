@@ -13,7 +13,7 @@ namespace Extenity.KernelToolbox
 	}
 
 	public abstract class KernelObject<TKernel> : KernelObject
-		where TKernel : KernelBase<TKernel>
+		where TKernel : KernelBase
 	{
 		#region Kernel Link
 
