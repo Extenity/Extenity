@@ -34,11 +34,10 @@ namespace Extenity.KernelToolbox
 
 		#region Invalidate
 
-		// TODO IMMEDIATE: It should be possible to implement Invalidate in KernelObject with recent changes in design.
-		// public void Invalidate()
-		// {
-		// 	Kernel.Invalidate(ID);
-		// }
+		public void Invalidate()
+		{
+			Kernel.Invalidate(ID);
+		}
 
 		#endregion
 	}
