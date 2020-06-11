@@ -54,6 +54,7 @@ namespace Extenity.KernelToolbox
 			{
 				ID = IDGenerator.CreateID()
 			};
+			//Register(instance);
 			return instance;
 		}
 
@@ -67,8 +68,55 @@ namespace Extenity.KernelToolbox
 
 			instance.OnDestroy();
 			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
+			//Deregister(instance);
 			instance.ID = ID.Invalid;
 		}
+
+		#endregion
+
+		#region All KernelObjects
+
+		/* Disabled until finding a way to Register all already existing objects at deserialization.
+
+		// TODO OPTIMIZATION: Use something like sparse matrices to improve access times.
+
+		/// <summary>
+		/// CAUTION! Use this as readonly.
+		/// </summary>
+		[NonSerialized, JsonIgnore]
+		public readonly Dictionary<int, KernelObject> AllKernelObjects = new Dictionary<int, KernelObject>();
+
+		public T Get<T>(Ref instanceID) where T : KernelObject
+		{
+			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
+			{
+				// No need to check if instance is null. We already know any registered object is alive.
+				// if (instance == null)
+
+				// Check for type safety
+				if (instance is T cast)
+					return cast;
+
+				Log.CriticalError($"Queried object type '{typeof(T).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+				return null;
+
+			}
+			return null;
+		}
+
+		public void Register(KernelObject instance)
+		{
+			AllKernelObjects.Add(instance.ID, instance);
+		}
+
+		public void Deregister(KernelObject instance)
+		{
+			if (!instance.ID.IsValid)
+				return; // TODO: Not sure what to do when received an invalid object.
+
+			AllKernelObjects.Remove(instance.ID);
+		}
+		*/
 
 		#endregion
 	}
