@@ -260,8 +260,6 @@ namespace Extenity.KernelToolbox
 
 		#region Versioning
 
-		// TODO IMMEDIATE: Kernel reference should be initialized automatically on Kernel deserialization.
-
 		[NonSerialized, JsonIgnore]
 		private KernelBase _Kernel;
 		private KernelBase Kernel

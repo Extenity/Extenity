@@ -8,7 +8,7 @@ namespace Extenity.KernelToolbox
 	{
 		#region TEMP Singleton
 
-		// TODO IMMEDIATE: This is a temporary solution to cover up until a reference resolver is introduced in Kernel deserialization. DataLink and SyncList keeps a reference to Kernel, but others may too. Figure out a generalized way to assign these references on deserialization.
+		// TODO: This is a temporary solution until a reference resolver is introduced in Kernel deserialization. DataLink and SyncList keeps a reference to Kernel, but others may too. Figure out a generalized way to assign these references on deserialization.
 		public static KernelBase _TempInstance;
 
 		public KernelBase()
