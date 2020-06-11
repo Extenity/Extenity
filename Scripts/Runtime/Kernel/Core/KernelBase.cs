@@ -38,6 +38,19 @@ namespace Extenity.KernelToolbox
 		public IDGenerator IDGenerator = new IDGenerator();
 
 		#endregion
+
+		#region Instantiate KernelObject
+
+		public T Instantiate<T>() where T : KernelObject, new()
+		{
+			var instance = new T
+			{
+				ID = IDGenerator.CreateID()
+			};
+			return instance;
+		}
+
+		#endregion
 	}
 
 }

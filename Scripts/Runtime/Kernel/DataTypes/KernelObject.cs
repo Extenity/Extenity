@@ -1,7 +1,9 @@
 namespace Extenity.KernelToolbox
 {
 
-	public class KernelObject
+	// TODO: Find a way to prevent KernelObject to be instantiated via 'new'.
+
+	public abstract class KernelObject
 	{
 		public ID ID;
 
