@@ -71,6 +71,24 @@ namespace Extenity.KernelToolbox
 			Versioning.Invalidate(id);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InvalidateAllRegisteredIDs()
+		{
+			Versioning.InvalidateAllRegisteredIDs();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void RegisterForVersionChanges(Ref id, Action callback, int order = 0)
+		{
+			Versioning.RegisterForVersionChanges(id, callback, order);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void DeregisterForVersionChanges(Ref id, Action callback)
+		{
+			Versioning.DeregisterForVersionChanges(id, callback);
+		}
+
 		#endregion
 
 		#region ID Generator
