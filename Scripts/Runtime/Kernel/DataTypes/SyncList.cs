@@ -292,9 +292,18 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Invalidate()
+		public void Invalidate()
 		{
 			Kernel.Invalidate(ID);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InvalidateItems()
+		{
+			foreach (var item in List)
+			{
+				Kernel.Invalidate(item.ID);
+			}
 		}
 
 		#endregion
