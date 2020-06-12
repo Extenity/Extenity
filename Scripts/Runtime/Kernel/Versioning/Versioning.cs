@@ -60,12 +60,13 @@ namespace Extenity.KernelToolbox
 			_GetVersionEventByID(id).AddListener(callback, order);
 		}
 
-		public void DeregisterForVersionChanges(Ref id, Action callback)
+		public bool DeregisterForVersionChanges(Ref id, Action callback)
 		{
 			if (Events.TryGetValue(id, out var versionEvent))
 			{
-				versionEvent.RemoveListener(callback);
+				return versionEvent.RemoveListener(callback);
 			}
+			return false;
 		}
 
 		#endregion

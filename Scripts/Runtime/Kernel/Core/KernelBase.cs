@@ -84,9 +84,9 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void DeregisterForVersionChanges(Ref id, Action callback)
+		public bool DeregisterForVersionChanges(Ref id, Action callback)
 		{
-			Versioning.DeregisterForVersionChanges(id, callback);
+			return Versioning.DeregisterForVersionChanges(id, callback);
 		}
 
 		#endregion
