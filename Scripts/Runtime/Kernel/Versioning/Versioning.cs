@@ -19,11 +19,11 @@ namespace Extenity.KernelToolbox
 		#region Versions
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(int id)
+		public void Invalidate(Ref id)
 		{
 			if (id == 0)
 			{
-				Log.Warning("Tried to invalidate an item with id '0'.");
+				Log.Warning("Tried to invalidate an item with ID '0'.");
 				return;
 			}
 
@@ -44,7 +44,7 @@ namespace Extenity.KernelToolbox
 
 		private readonly Dictionary<int, VersionEvent> Events = new Dictionary<int, VersionEvent>(10000);
 
-		private VersionEvent _GetVersionEventByID(int id)
+		private VersionEvent _GetVersionEventByID(Ref id)
 		{
 			if (!Events.TryGetValue(id, out var versionEvent))
 			{
@@ -55,12 +55,12 @@ namespace Extenity.KernelToolbox
 			return versionEvent;
 		}
 
-		public void RegisterForVersionChanges(int id, Action callback, int order = 0)
+		public void RegisterForVersionChanges(Ref id, Action callback, int order = 0)
 		{
 			_GetVersionEventByID(id).AddListener(callback, order);
 		}
 
-		public void DeregisterForVersionChanges(int id, Action callback)
+		public void DeregisterForVersionChanges(Ref id, Action callback)
 		{
 			if (Events.TryGetValue(id, out var versionEvent))
 			{
@@ -72,7 +72,7 @@ namespace Extenity.KernelToolbox
 
 		#region Version Change Event Queue
 
-		public readonly Queue<int> VersionChangeEventQueue = new Queue<int>();
+		private readonly Queue<int> VersionChangeEventQueue = new Queue<int>();
 
 		public void EmitEventsInQueue()
 		{

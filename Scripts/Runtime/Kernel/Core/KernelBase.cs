@@ -66,7 +66,7 @@ namespace Extenity.KernelToolbox
 		public readonly Versioning Versioning = new Versioning();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(ID id)
+		public void Invalidate(Ref id)
 		{
 			Versioning.Invalidate(id);
 		}
