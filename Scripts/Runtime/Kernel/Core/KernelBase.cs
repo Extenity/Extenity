@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Extenity.KernelToolbox
@@ -106,7 +108,7 @@ namespace Extenity.KernelToolbox
 			{
 				ID = IDGenerator.CreateID()
 			};
-			//Register(instance);
+			Register(instance);
 			return instance;
 		}
 
@@ -120,15 +122,13 @@ namespace Extenity.KernelToolbox
 
 			instance.OnDestroy();
 			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
-			//Deregister(instance);
+			Deregister(instance);
 			instance.ID = ID.Invalid;
 		}
 
 		#endregion
 
 		#region All KernelObjects
-
-		/* Disabled until finding a way to Register all already existing objects at deserialization.
 
 		// TODO OPTIMIZATION: Use something like sparse matrices to improve access times.
 
@@ -168,7 +168,6 @@ namespace Extenity.KernelToolbox
 
 			AllKernelObjects.Remove(instance.ID);
 		}
-		*/
 
 		#endregion
 	}
