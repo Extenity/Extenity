@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<TKernelObject, TKernel>
+	public class SyncList<TKernelObject, TKernel> : KernelObject
 		where TKernelObject : KernelObject, new()
 		where TKernel : KernelBase<TKernel>
 	{
@@ -15,8 +15,6 @@ namespace Extenity.KernelToolbox
 		/// CAUTION! Do not modify this list! Use it as readonly.
 		/// </summary>
 		public readonly List<TKernelObject> List;
-
-		public ID ID;
 
 		#region Initialization
 
