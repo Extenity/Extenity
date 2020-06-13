@@ -19,12 +19,15 @@ namespace Extenity.KernelToolbox
 
 		private int GenerateNewID()
 		{
-			LastGivenID++;
-			if (LastGivenID > IDAlarmsAt)
+			lock (this)
 			{
-				ProcessPotentialOverflow();
+				LastGivenID++;
+				if (LastGivenID > IDAlarmsAt)
+				{
+					ProcessPotentialOverflow();
+				}
+				return LastGivenID;
 			}
-			return LastGivenID;
 		}
 
 		public ID CreateID()
