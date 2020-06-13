@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
@@ -16,7 +17,18 @@ namespace Extenity.KernelToolbox
 
 		#region ID
 
-		public ID ID;
+		[JsonProperty(PropertyName = "ID")]
+		protected internal ID _ID;
+		[JsonIgnore]
+		public ID ID
+		{
+			get => _ID;
+		}
+
+		internal void ResetIDOnDestroy()
+		{
+			_ID = ID.Invalid;
+		}
 
 		#endregion
 
@@ -38,6 +50,21 @@ namespace Extenity.KernelToolbox
 	public abstract class KernelObject<TKernel> : KernelObject
 		where TKernel : KernelBase<TKernel>
 	{
+		#region ID
+
+		public void SetID(ID id)
+		{
+			if (_ID.IsValid)
+			{
+				throw new Exception($"Tried to set the ID to '{id}' of an already initialized object '{ToTypeAndIDString()}'.");
+			}
+
+			_ID = id;
+			Kernel.Register(this);
+		}
+
+		#endregion
+
 		#region Kernel Link
 
 		[JsonIgnore]

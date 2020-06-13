@@ -10,7 +10,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 	public abstract class ViewContainerBehaviour<TItem, TItemView, TKernel> : ViewBehaviour<SyncList<TItem, TKernel>, TKernel>
 		where TItemView : ViewBehaviour<TItem, TKernel>
-		where TItem : KernelObject, new()
+		where TItem : KernelObject<TKernel>, new()
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Views
@@ -38,8 +38,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Sync List
 
-		protected abstract SyncList<TItem, TKernel> GetList();
-
 		private class ItemViewComparer : IEqualityComparer<TItemView, TItem>
 		{
 			public static readonly ItemViewComparer Default = new ItemViewComparer();
@@ -55,7 +53,13 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// Item: A Kernel object, derived from KernelObject.
 			// ItemView: Interface representation of a kernel object, derived from ViewBehaviour.
 
-			var items = GetList();
+			var items = Object;
+
+			if (items == null)
+			{
+				Log.Warning($"{GetType().Name} data does not exist.");
+				return;
+			}
 
 			Views.EqualizeTo<TItemView, TItem>(
 				items.List,

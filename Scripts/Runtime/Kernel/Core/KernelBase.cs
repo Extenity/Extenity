@@ -60,6 +60,34 @@ namespace Extenity.KernelToolbox
 		}
 
 		#endregion
+
+		#region Instantiate/Destroy KernelObject
+
+		public TKernelObject Instantiate<TKernelObject>()
+			where TKernelObject : KernelObject<TKernel>, new()
+		{
+			var instance = new TKernelObject();
+			instance.SetID(IDGenerator.CreateID());
+			// Register(instance); Done in SetID
+			return instance;
+		}
+
+		public void Destroy<TKernelObject>([CanBeNull] TKernelObject instance)
+			where TKernelObject : KernelObject<TKernel>
+		{
+			if (instance == null || !instance.ID.IsValid)
+			{
+				// TODO: Not sure what to do when received an invalid object.
+				return;
+			}
+
+			instance.OnDestroy();
+			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
+			Deregister(instance);
+			instance.ResetIDOnDestroy();
+		}
+
+		#endregion
 	}
 
 	public abstract class KernelBase
@@ -99,34 +127,6 @@ namespace Extenity.KernelToolbox
 
 		[SerializeField]
 		public IDGenerator IDGenerator = new IDGenerator();
-
-		#endregion
-
-		#region Instantiate/Destroy KernelObject
-
-		public T Instantiate<T>() where T : KernelObject, new()
-		{
-			var instance = new T
-			{
-				ID = IDGenerator.CreateID()
-			};
-			Register(instance);
-			return instance;
-		}
-
-		public void Destroy<T>([CanBeNull] T instance) where T : KernelObject
-		{
-			if (instance == null || !instance.ID.IsValid)
-			{
-				// TODO: Not sure what to do when received an invalid object.
-				return;
-			}
-
-			instance.OnDestroy();
-			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
-			Deregister(instance);
-			instance.ID = ID.Invalid;
-		}
 
 		#endregion
 

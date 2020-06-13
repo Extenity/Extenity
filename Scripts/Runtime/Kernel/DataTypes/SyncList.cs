@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<TKernelObject, TKernel> : KernelObject
-		where TKernelObject : KernelObject, new()
+	public class SyncList<TKernelObject, TKernel> : KernelObject<TKernel>
+		where TKernelObject : KernelObject<TKernel>, new()
 		where TKernel : KernelBase<TKernel>
 	{
 		/// <summary>
@@ -18,27 +17,10 @@ namespace Extenity.KernelToolbox
 
 		#region Initialization
 
-		public SyncList()
+		public SyncList(ID id)
 		{
-			List = new List<TKernelObject>();
-			ID = ID.Invalid;
-		}
-
-		public SyncList([NotNull] IEnumerable<TKernelObject> collection)
-		{
-			List = new List<TKernelObject>(collection);
-			ID = ID.Invalid;
-		}
-
-		public SyncList(int capacity)
-		{
-			List = new List<TKernelObject>(capacity);
-			ID = ID.Invalid;
-		}
-
-		public void Initialize(ID id)
-		{
-			ID = id;
+			List = new List<TKernelObject>(); // TODO: An override that supports specifying 'capacity' would be good.
+			SetID(id);
 		}
 
 		/* Old implementation where Kernel was a field of SyncList. Keep it for future needs.
@@ -281,19 +263,6 @@ namespace Extenity.KernelToolbox
 		#endregion
 
 		#region Kernel
-
-		[JsonIgnore]
-		private KernelBase Kernel
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => KernelBase<TKernel>.Instance;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate()
-		{
-			Kernel.Invalidate(ID);
-		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InvalidateItems()
