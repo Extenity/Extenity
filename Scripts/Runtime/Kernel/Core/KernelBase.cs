@@ -8,6 +8,8 @@ using UnityEngine;
 namespace Extenity.KernelToolbox
 {
 
+	// TODO: Implement a build time tool to check and ensure there are no fields with KernelObject derived type. All references to kernel objects should use Ref instead.
+
 	public abstract class KernelBase<TKernel> : KernelBase
 		where TKernel : KernelBase<TKernel>
 	{
@@ -151,22 +153,50 @@ namespace Extenity.KernelToolbox
 
 				Log.CriticalError($"Queried object type '{typeof(T).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
 				return null;
-
 			}
 			return null;
 		}
 
 		public void Register(KernelObject instance)
 		{
+			if (instance == null)
+			{
+				throw new Exception($"Tried to register a null {nameof(KernelObject)}'.");
+			}
+			if (instance.ID.IsInvalid)
+			{
+				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
+				// can be overridden to fill in more information.
+				throw new Exception($"Tried to register '{instance.ToTypeAndIDStringSafe()}' but it has an invalid ID. Object as string: '{instance.ToString()}'");
+			}
+
+			if (AllKernelObjects.TryGetValue(instance.ID, out var existingInstance))
+			{
+				throw new Exception($"Tried to register '{instance.ToTypeAndIDStringSafe()}' while there was an already registered object '{existingInstance.ToTypeAndIDStringSafe()}'.");
+			}
+
 			AllKernelObjects.Add(instance.ID, instance);
 		}
 
 		public void Deregister(KernelObject instance)
 		{
-			if (!instance.ID.IsValid)
-				return; // TODO: Not sure what to do when received an invalid object.
+			if (instance == null)
+			{
+				throw new Exception($"Tried to deregister a null {nameof(KernelObject)}'.");
+			}
+			if (instance.ID.IsInvalid)
+			{
+				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
+				// can be overridden to fill in more information.
+				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it has an invalid ID. Object as string: '{instance.ToString()}'");
+			}
 
-			AllKernelObjects.Remove(instance.ID);
+			var result = AllKernelObjects.Remove(instance.ID);
+
+			if (!result)
+			{
+				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it was not registered.");
+			}
 		}
 
 		#endregion
