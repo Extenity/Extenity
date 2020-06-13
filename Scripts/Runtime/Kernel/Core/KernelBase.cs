@@ -149,7 +149,13 @@ namespace Extenity.KernelToolbox
 
 				// Check for type safety
 				if (instance is TKernelObject cast)
-					return cast;
+				{
+					if (!cast.ID.IsInvalid)
+						return cast;
+
+					Log.CriticalError($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
+					return null;
+				}
 
 				Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
 				return null;
