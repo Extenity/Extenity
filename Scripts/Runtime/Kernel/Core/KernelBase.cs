@@ -140,29 +140,6 @@ namespace Extenity.KernelToolbox
 		[NonSerialized, JsonIgnore]
 		public readonly Dictionary<int, KernelObject> AllKernelObjects = new Dictionary<int, KernelObject>();
 
-		public TKernelObject Get<TKernelObject>(Ref instanceID) where TKernelObject : KernelObject
-		{
-			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
-			{
-				// No need to check if instance is null. We already know any registered object is alive.
-				// if (instance == null)
-
-				// Check for type safety
-				if (instance is TKernelObject cast)
-				{
-					if (!cast.ID.IsInvalid)
-						return cast;
-
-					Log.CriticalError($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
-					return null;
-				}
-
-				Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
-				return null;
-			}
-			return null;
-		}
-
 		public void Register(KernelObject instance)
 		{
 			if (instance == null)
@@ -203,6 +180,55 @@ namespace Extenity.KernelToolbox
 			{
 				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it was not registered.");
 			}
+		}
+
+		#endregion
+
+		#region All KernelObjects - Queries
+
+		public TKernelObject Get<TKernelObject>(Ref instanceID, bool skipQuietlyIfDestroyed = false) where TKernelObject : KernelObject
+		{
+			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
+			{
+				// No need to check if instance is null. We already know any registered object does exist.
+				// if (instance == null)
+
+				// Check for type safety
+				if (instance is TKernelObject cast)
+				{
+					if (!cast.ID.IsInvalid)
+						return cast;
+
+					if (!skipQuietlyIfDestroyed)
+					{
+						Log.CriticalError($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
+					}
+					return null;
+				}
+
+				Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+				return null;
+			}
+			return null;
+		}
+
+		public KernelObject Get(Ref instanceID, bool skipQuietlyIfDestroyed = false)
+		{
+			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
+			{
+				// No need to check if instance is null. We already know any registered object does exist.
+				// if (instance == null)
+
+				if (!instance.ID.IsInvalid)
+					return instance;
+
+				if (!skipQuietlyIfDestroyed)
+				{
+					Log.CriticalError($"Queried a destroyed object '{instance.ToTypeAndIDString()}'.");
+				}
+				return null;
+			}
+			return null;
 		}
 
 		#endregion
