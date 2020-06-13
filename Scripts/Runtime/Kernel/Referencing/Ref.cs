@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -100,12 +100,18 @@ namespace Extenity.KernelToolbox
 		public override string ToString()
 		{
 			return ToHexString();
+			// return ToHexAndTypeString(); // TODO IMMEDIATE: Implement this
 		}
 
 		public string ToHexString()
 		{
 			return Value.ToString("X");
 		}
+
+		// public string ToHexAndTypeString()
+		// {
+		// 	return Value.ToString("X") + "(" + nameof(TKernelObject) + ")";
+		// }
 
 		public static Ref FromHexString(string text)
 		{

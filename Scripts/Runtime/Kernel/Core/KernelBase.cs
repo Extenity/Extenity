@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -70,7 +70,7 @@ namespace Extenity.KernelToolbox
 		public readonly Versioning Versioning = new Versioning();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(Ref id)
+		public void Invalidate(int id)
 		{
 			Versioning.Invalidate(id);
 		}
@@ -82,13 +82,13 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void RegisterForVersionChanges(Ref id, Action callback, int order = 0)
+		public void RegisterForVersionChanges(int id, Action callback, int order = 0)
 		{
 			Versioning.RegisterForVersionChanges(id, callback, order);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool DeregisterForVersionChanges(Ref id, Action callback)
+		public bool DeregisterForVersionChanges(int id, Action callback)
 		{
 			return Versioning.DeregisterForVersionChanges(id, callback);
 		}
