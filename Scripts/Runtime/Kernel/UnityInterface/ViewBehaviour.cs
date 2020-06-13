@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -152,6 +153,17 @@ namespace Extenity.KernelToolbox.UnityInterface
 			Log.Verbose($"RefreshDataLink | enabled: {enabled} | isComponentEnabled: {isComponentEnabled} | {gameObject.FullName()}");
 
 			DataLink.RefreshDataLink(isComponentEnabled);
+		}
+
+		#endregion
+
+		#region Kernel
+
+		[JsonIgnore]
+		public TKernel Kernel
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => KernelBase<TKernel>.Instance;
 		}
 
 		#endregion
