@@ -1,5 +1,7 @@
-﻿using System;
+using System;
+using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -83,7 +85,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// Deregister if previously registered for version changes.
 			if (RegisteredID.IsValid)
 			{
-				KernelBase<TKernel>.Instance.Versioning.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
+				Kernel.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
 			}
 
 			RegisteredID = targetID;
@@ -91,8 +93,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (RegisteredID.IsValid)
 			{
-				KernelBase<TKernel>.Instance.Versioning.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
-				KernelBase<TKernel>.Instance.Versioning.Invalidate(RegisteredID);
+				Kernel.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
+				Kernel.Invalidate(RegisteredID);
 			}
 			else
 			{
@@ -111,6 +113,17 @@ namespace Extenity.KernelToolbox.UnityInterface
 			{
 				Debug.LogException(exception);
 			}
+		}
+
+		#endregion
+
+		#region Kernel
+
+		[JsonIgnore]
+		private KernelBase Kernel
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => KernelBase<TKernel>.Instance;
 		}
 
 		#endregion
