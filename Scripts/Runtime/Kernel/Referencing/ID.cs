@@ -53,6 +53,7 @@ namespace Extenity.KernelToolbox
 		#region Validation
 
 		public bool IsValid => Value > 0;
+		public bool IsInvalid => Value <= 0;
 
 		#endregion
 
