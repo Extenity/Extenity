@@ -59,6 +59,12 @@ namespace Extenity.KernelToolbox
 				throw new Exception($"Tried to set the ID to '{id}' of an already initialized object '{ToTypeAndIDString()}'.");
 			}
 
+			var existingInstance = Kernel.Get(id);
+			if (existingInstance != null)
+			{
+				throw new Exception($"Tried to set the ID to '{id}' of the object '{ToTypeAndIDString()}' while there was an already registered object '{existingInstance.ToTypeAndIDStringSafe()}'.");
+			}
+
 			_ID = id;
 			Kernel.Register(this);
 		}
