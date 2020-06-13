@@ -7,14 +7,14 @@ using Newtonsoft.Json;
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<T, TKernel>
-		where T : KernelObject, new()
+	public class SyncList<TKernelObject, TKernel>
+		where TKernelObject : KernelObject, new()
 		where TKernel : KernelBase<TKernel>
 	{
 		/// <summary>
 		/// CAUTION! Do not modify this list! Use it as readonly.
 		/// </summary>
-		public readonly List<T> List;
+		public readonly List<TKernelObject> List;
 
 		public ID ID;
 
@@ -22,19 +22,19 @@ namespace Extenity.KernelToolbox
 
 		public SyncList()
 		{
-			List = new List<T>();
+			List = new List<TKernelObject>();
 			ID = ID.Invalid;
 		}
 
-		public SyncList([NotNull] IEnumerable<T> collection)
+		public SyncList([NotNull] IEnumerable<TKernelObject> collection)
 		{
-			List = new List<T>(collection);
+			List = new List<TKernelObject>(collection);
 			ID = ID.Invalid;
 		}
 
 		public SyncList(int capacity)
 		{
-			List = new List<T>(capacity);
+			List = new List<TKernelObject>(capacity);
 			ID = ID.Invalid;
 		}
 
@@ -73,7 +73,7 @@ namespace Extenity.KernelToolbox
 
 		#region Accessors
 
-		public T this[int index]
+		public TKernelObject this[int index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => List[index];
@@ -86,18 +86,18 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void ForEach([NotNull] Action<T> action)
+		public void ForEach([NotNull] Action<TKernelObject> action)
 		{
 			List.ForEach(action);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Contains([CanBeNull] T item)
+		public bool Contains([CanBeNull] TKernelObject item)
 		{
 			return List.Contains(item);
 		}
 
-		public T GetItem(Ref id)
+		public TKernelObject GetItem(Ref id)
 		{
 			for (var i = 0; i < List.Count; i++)
 			{
@@ -147,28 +147,28 @@ namespace Extenity.KernelToolbox
 		#region Add / Insert
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Add([CanBeNull] T item)
+		public void Add([CanBeNull] TKernelObject item)
 		{
 			List.Add(item);
 			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddRange([NotNull] IEnumerable<T> collection)
+		public void AddRange([NotNull] IEnumerable<TKernelObject> collection)
 		{
 			List.AddRange(collection);
 			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Insert(int index, [CanBeNull] T item)
+		public void Insert(int index, [CanBeNull] TKernelObject item)
 		{
 			List.Insert(index, item);
 			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InsertRange(int index, [NotNull] IEnumerable<T> collection)
+		public void InsertRange(int index, [NotNull] IEnumerable<TKernelObject> collection)
 		{
 			List.InsertRange(index, collection);
 			Invalidate();
@@ -179,7 +179,7 @@ namespace Extenity.KernelToolbox
 		#region Remove / Clear
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Remove([CanBeNull] T item)
+		public bool Remove([CanBeNull] TKernelObject item)
 		{
 			var result = List.Remove(item);
 			Invalidate();
@@ -187,7 +187,7 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int RemoveAll([NotNull] Predicate<T> match)
+		public int RemoveAll([NotNull] Predicate<TKernelObject> match)
 		{
 			var result = List.RemoveAll(match);
 			Invalidate();
@@ -241,21 +241,21 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Sort([NotNull] Comparison<T> comparison)
+		public void Sort([NotNull] Comparison<TKernelObject> comparison)
 		{
 			List.Sort(comparison);
 			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Sort(IComparer<T> comparer)
+		public void Sort(IComparer<TKernelObject> comparer)
 		{
 			List.Sort(comparer);
 			Invalidate();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Sort(int index, int count, IComparer<T> comparer)
+		public void Sort(int index, int count, IComparer<TKernelObject> comparer)
 		{
 			List.Sort(index, count, comparer);
 			Invalidate();
@@ -265,9 +265,9 @@ namespace Extenity.KernelToolbox
 
 		#region Instantiate / Destroy
 
-		public T InstantiateAndAdd()
+		public TKernelObject InstantiateAndAdd()
 		{
-			var instance = Kernel.Instantiate<T>();
+			var instance = Kernel.Instantiate<TKernelObject>();
 			Add(instance);
 			return instance;
 		}
