@@ -19,6 +19,20 @@ namespace Extenity.KernelToolbox
 		public ID ID;
 
 		#endregion
+
+		#region ToString
+
+		public override string ToString()
+		{
+			return ToTypeAndIDString();
+		}
+
+		public string ToTypeAndIDString()
+		{
+			return GetType().Name + "|" + ID;
+		}
+
+		#endregion
 	}
 
 	public abstract class KernelObject<TKernel> : KernelObject
@@ -43,6 +57,16 @@ namespace Extenity.KernelToolbox
 		}
 
 		#endregion
+	}
+
+	public static class KernelObjectTools
+	{
+		public static string ToTypeAndIDStringSafe(this KernelObject instance)
+		{
+			if (instance == null)
+				return "[NA]"; // TODO: Remove hardcode
+			return instance.ToTypeAndIDString();
+		}
 	}
 
 }
