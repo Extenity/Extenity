@@ -132,12 +132,14 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[InlineProperty, HideLabel]
 		public DataLink<TKernelObject, TKernel> DataLink;
 
+		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
 		public Ref ID
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => DataLink.ID;
 		}
 
+		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
 		public TKernelObject Object => DataLink.Object;
 
 		protected abstract void OnDataInvalidated();
