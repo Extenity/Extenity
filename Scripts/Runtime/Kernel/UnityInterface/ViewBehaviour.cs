@@ -20,7 +20,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 	// // [EnsureDerivedTypesWontUseMethod(nameof(Update), nameof(UpdateDerived))]
 	// // [EnsureDerivedTypesWontUseMethod(nameof(FixedUpdate), nameof(FixedUpdateDerived))]
 	// // [EnsureDerivedTypesWontUseMethod(nameof(LateUpdate), nameof(LateUpdateDerived))]
-	public abstract class ViewBehaviour<TKernel> : MonoBehaviour
+	public abstract class ViewBehaviour<TKernelObject, TKernel> : MonoBehaviour
+		where TKernelObject : KernelObject
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Initialization
@@ -120,21 +121,23 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region All ViewBehaviours
 
-		public static readonly List<ViewBehaviour<TKernel>> AllViewBehaviours = new List<ViewBehaviour<TKernel>>(1000);
-		public static readonly List<ViewBehaviour<TKernel>> AllActiveViewBehaviours = new List<ViewBehaviour<TKernel>>(1000);
+		public static readonly List<ViewBehaviour<TKernelObject, TKernel>> AllViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+		public static readonly List<ViewBehaviour<TKernelObject, TKernel>> AllActiveViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
 
 		#endregion
 
 		#region Data Link and Invalidation
 
 		[InlineProperty, HideLabel]
-		public DataLink<TKernel> DataLink;
+		public DataLink<TKernelObject, TKernel> DataLink;
 
 		public Ref ID
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => DataLink.ID;
 		}
+
+		public TKernelObject Object => DataLink.Object;
 
 		protected abstract void OnDataInvalidated();
 

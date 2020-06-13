@@ -8,8 +8,8 @@ using Sirenix.OdinInspector;
 namespace Extenity.KernelToolbox.UnityInterface
 {
 
-	public abstract class ViewContainerBehaviour<TItem, TItemView, TKernel> : ViewBehaviour<TKernel>
-		where TItemView : ViewBehaviour<TKernel>
+	public abstract class ViewContainerBehaviour<TItem, TItemView, TKernel> : ViewBehaviour<TItem, TKernel>
+		where TItemView : ViewBehaviour<TItem, TKernel>
 		where TItem : KernelObject, new()
 		where TKernel : KernelBase<TKernel>
 	{

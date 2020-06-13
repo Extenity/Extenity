@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
@@ -9,7 +9,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 {
 
 	[Serializable]
-	public struct DataLink<TKernel>
+	public struct DataLink<TKernelObject, TKernel>
+		where TKernelObject : KernelObject
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Interface Object
@@ -45,6 +46,12 @@ namespace Extenity.KernelToolbox.UnityInterface
 				}
 			}
 		}
+
+		#endregion
+
+		#region Data
+
+		public TKernelObject Object => Kernel.Get<TKernelObject>(ID);
 
 		#endregion
 
