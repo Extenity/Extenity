@@ -110,7 +110,7 @@ namespace Extenity.KernelToolbox
 
 		// public string ToHexAndTypeString()
 		// {
-		// 	return Value.ToString("X") + "(" + nameof(TKernelObject) + ")";
+		// 	return Value.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
 		// }
 
 		public static Ref FromHexString(string text)

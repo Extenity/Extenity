@@ -140,7 +140,7 @@ namespace Extenity.KernelToolbox
 		[NonSerialized, JsonIgnore]
 		public readonly Dictionary<int, KernelObject> AllKernelObjects = new Dictionary<int, KernelObject>();
 
-		public T Get<T>(Ref instanceID) where T : KernelObject
+		public TKernelObject Get<TKernelObject>(Ref instanceID) where TKernelObject : KernelObject
 		{
 			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
 			{
@@ -148,10 +148,10 @@ namespace Extenity.KernelToolbox
 				// if (instance == null)
 
 				// Check for type safety
-				if (instance is T cast)
+				if (instance is TKernelObject cast)
 					return cast;
 
-				Log.CriticalError($"Queried object type '{typeof(T).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+				Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
 				return null;
 			}
 			return null;
