@@ -68,7 +68,7 @@ namespace Extenity.KernelToolbox
 		{
 			var instance = new TKernelObject();
 			instance.SetID(IDGenerator.CreateID());
-			// Register(instance); Done in SetID
+			Register(instance);
 			return instance;
 		}
 

@@ -66,7 +66,7 @@ namespace Extenity.KernelToolbox
 			}
 
 			_ID = id;
-			Kernel.Register(this);
+			// Kernel.Register(this); This was an idea that any ID assignment is instantly registered in Kernel. It seriously fails with serialization stuff. So rolled back to registering at instantiation.
 		}
 
 		#endregion
