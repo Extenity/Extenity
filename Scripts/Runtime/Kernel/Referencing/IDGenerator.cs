@@ -10,14 +10,14 @@ namespace Extenity.KernelToolbox
 		/// <summary>
 		/// IDs below this value is considered to be pre-allocated.
 		/// </summary>
-		private const int IDStartsFrom = 1000;
-		private const int IDEndsAt = Int32.MaxValue - 100;
-		private const int IDAlarmsAt = Int32.MaxValue / 1000;
+		private const uint IDStartsFrom = 1000;
+		private const uint IDEndsAt = UInt32.MaxValue - 100;
+		private const uint IDAlarmsAt = UInt32.MaxValue / 1000;
 
 		[SerializeField]
-		private int LastGivenID = IDStartsFrom;
+		private uint LastGivenID = IDStartsFrom;
 
-		private int GenerateNewID()
+		private uint GenerateNewID()
 		{
 			lock (this)
 			{
