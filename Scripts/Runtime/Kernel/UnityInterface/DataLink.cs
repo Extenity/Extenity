@@ -92,7 +92,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// Deregister if previously registered for version changes.
 			if (RegisteredID.IsValid)
 			{
-				Kernel.DeregisterForVersionChanges(RegisteredID, DataInvalidationCallback);
+				Kernel.DeregisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback);
 			}
 
 			RegisteredID = targetID;
@@ -100,7 +100,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (RegisteredID.IsValid)
 			{
-				Kernel.RegisterForVersionChanges(RegisteredID, DataInvalidationCallback, RegisteredDataInvalidationEventOrder);
+				Kernel.RegisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback, RegisteredDataInvalidationEventOrder);
 				Kernel.Invalidate(RegisteredID);
 			}
 			else
@@ -110,11 +110,25 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 		}
 
+		private void InvokeDataInvalidationCallback()
+		{
+			if (DataInvalidationCallback != null)
+			{
+				const bool skipQuietlyIfDestroyed = true;
+				var instance = Kernel.Get<TKernelObject>(ID, skipQuietlyIfDestroyed);
+
+				if (instance != null)
+				{
+					DataInvalidationCallback();
+				}
+			}
+		}
+
 		private void SafeInvokeDataInvalidationCallback()
 		{
 			try
 			{
-				DataInvalidationCallback();
+				InvokeDataInvalidationCallback();
 			}
 			catch (Exception exception)
 			{
