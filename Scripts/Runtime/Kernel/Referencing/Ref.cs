@@ -17,7 +17,7 @@ namespace Extenity.KernelToolbox
 
 		public static readonly Ref[] EmptyArray = new Ref[0];
 
-		public Ref(uint id)
+		public Ref(UInt32 id)
 		{
 			Value = id;
 		}
@@ -31,7 +31,7 @@ namespace Extenity.KernelToolbox
 		/// </summary>
 		[HideLabel]
 		[SerializeField]
-		internal uint Value;
+		internal UInt32 Value;
 
 		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
 		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
@@ -40,14 +40,14 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region Implicit Conversion To ID and uint
+		#region Implicit Conversion To ID and UInt32
 
 		public static implicit operator ID(Ref me)
 		{
 			return new ID(me.Value);
 		}
 
-		public static implicit operator uint(Ref me)
+		public static implicit operator UInt32(Ref me)
 		{
 			return me.Value;
 		}
@@ -66,7 +66,7 @@ namespace Extenity.KernelToolbox
 
 		// public bool Equals(ID other) { return Value == other.Value; }
 		public bool Equals(Ref other) { return Value == other.Value; }
-		public bool Equals(uint other) { return Value == other; }
+		public bool Equals(UInt32 other) { return Value == other; }
 
 		public override bool Equals(object obj)
 		{
@@ -80,14 +80,14 @@ namespace Extenity.KernelToolbox
 		// public static bool operator !=(Ref lhs, ID rhs) { return lhs.Value != rhs.Value; }
 		// public static bool operator ==(ID lhs, Ref rhs) { return lhs.Value == rhs.Value; }
 		// public static bool operator !=(ID lhs, Ref rhs) { return lhs.Value != rhs.Value; }
-		public static bool operator ==(Ref lhs, uint rhs) { return lhs.Value == rhs; }
-		public static bool operator !=(Ref lhs, uint rhs) { return lhs.Value != rhs; }
-		// public static bool operator ==(uint lhs, Ref rhs) { return lhs == rhs.Value; }
-		// public static bool operator !=(uint lhs, Ref rhs) { return lhs != rhs.Value; }
+		public static bool operator ==(Ref lhs, UInt32 rhs) { return lhs.Value == rhs; }
+		public static bool operator !=(Ref lhs, UInt32 rhs) { return lhs.Value != rhs; }
+		// public static bool operator ==(UInt32 lhs, Ref rhs) { return lhs == rhs.Value; }
+		// public static bool operator !=(UInt32 lhs, Ref rhs) { return lhs != rhs.Value; }
 
 		// public int CompareTo(ID other) { return Value.CompareTo(other.Value); }
 		public int CompareTo(Ref other) { return Value.CompareTo(other.Value); }
-		public int CompareTo(uint other) { return Value.CompareTo(other); }
+		public int CompareTo(UInt32 other) { return Value.CompareTo(other); }
 
 		#endregion
 

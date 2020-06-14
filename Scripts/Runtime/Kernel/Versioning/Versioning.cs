@@ -19,7 +19,7 @@ namespace Extenity.KernelToolbox
 		#region Versions
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(uint id)
+		public void Invalidate(UInt32 id)
 		{
 			if (id == 0)
 			{
@@ -42,9 +42,9 @@ namespace Extenity.KernelToolbox
 
 		#region Events
 
-		private readonly Dictionary<uint, VersionEvent> Events = new Dictionary<uint, VersionEvent>(10000);
+		private readonly Dictionary<UInt32, VersionEvent> Events = new Dictionary<UInt32, VersionEvent>(10000);
 
-		private VersionEvent _GetVersionEventByID(uint id)
+		private VersionEvent _GetVersionEventByID(UInt32 id)
 		{
 			if (!Events.TryGetValue(id, out var versionEvent))
 			{
@@ -55,12 +55,12 @@ namespace Extenity.KernelToolbox
 			return versionEvent;
 		}
 
-		public void RegisterForVersionChanges(uint id, Action callback, int order = 0)
+		public void RegisterForVersionChanges(UInt32 id, Action callback, int order = 0)
 		{
 			_GetVersionEventByID(id).AddListener(callback, order);
 		}
 
-		public bool DeregisterForVersionChanges(uint id, Action callback)
+		public bool DeregisterForVersionChanges(UInt32 id, Action callback)
 		{
 			if (Events.TryGetValue(id, out var versionEvent))
 			{
@@ -73,7 +73,7 @@ namespace Extenity.KernelToolbox
 
 		#region Version Change Event Queue
 
-		private readonly Queue<uint> VersionChangeEventQueue = new Queue<uint>();
+		private readonly Queue<UInt32> VersionChangeEventQueue = new Queue<UInt32>();
 
 		public void EmitEventsInQueue()
 		{
@@ -112,13 +112,13 @@ namespace Extenity.KernelToolbox
 			/// Second parameter: Blank shot counts. How many times there wasn't any listener at the time of emitting the invalidated ID.
 			/// </summary>
 			[InfoBox("Blank shot counts. Left value: Invalidated event ID. How many times there wasn't any listener at the time of emitting the invalidated ID.")]
-			public readonly Dictionary<uint, int> BlankShotCounts = new Dictionary<uint, int>();
+			public readonly Dictionary<UInt32, int> BlankShotCounts = new Dictionary<UInt32, int>();
 		}
 
 		[HorizontalGroup("StatsGroup", Order = 3), ReadOnly]
 		public VersioningStats Stats = new VersioningStats();
 
-		public void InformBlankShot(uint id)
+		public void InformBlankShot(UInt32 id)
 		{
 			Stats.BlankShotCounts.AddOrIncrement(id);
 		}
@@ -138,7 +138,7 @@ namespace Extenity.KernelToolbox
 		public VersioningStats Stats = new VersioningStats();
 
 		[System.Diagnostics.Conditional("FALSE")]
-		public void InformBlankShot(uint id)
+		public void InformBlankShot(UInt32 id)
 		{
 		}
 

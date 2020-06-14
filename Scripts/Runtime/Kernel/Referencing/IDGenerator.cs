@@ -11,14 +11,14 @@ namespace Extenity.KernelToolbox
 		/// IDs below that are considered to be pre-allocated. Also IDs should not be treated as indexes of containers.
 		/// Starting from other than 0 prevents possible misuse.
 		/// </summary>
-		private const uint IDStartsFrom = 1000;
-		private const uint IDEndsAt = UInt32.MaxValue - 100;
-		private const uint IDAlarmsAt = UInt32.MaxValue / 1000;
+		private const UInt32 IDStartsFrom = 1000;
+		private const UInt32 IDEndsAt = UInt32.MaxValue - 100;
+		private const UInt32 IDAlarmsAt = UInt32.MaxValue / 1000;
 
 		[SerializeField]
-		private uint LastGivenID = IDStartsFrom;
+		private UInt32 LastGivenID = IDStartsFrom;
 
-		private uint GenerateNewID()
+		private UInt32 GenerateNewID()
 		{
 			// Interlocked Increment and CompareExchange can be used instead of lock if performance becomes an issue.
 			// Writing tests might be a good idea in that case.

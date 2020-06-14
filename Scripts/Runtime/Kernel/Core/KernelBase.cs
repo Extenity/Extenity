@@ -104,7 +104,7 @@ namespace Extenity.KernelToolbox
 		/// CAUTION! Use this as readonly.
 		/// </summary>
 		[NonSerialized, JsonIgnore]
-		public readonly Dictionary<uint, KernelObject> AllKernelObjects = new Dictionary<uint, KernelObject>();
+		public readonly Dictionary<UInt32, KernelObject> AllKernelObjects = new Dictionary<UInt32, KernelObject>();
 
 		public void Register(KernelObject instance)
 		{
@@ -294,7 +294,7 @@ namespace Extenity.KernelToolbox
 		public readonly Versioning Versioning = new Versioning();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(uint id)
+		public void Invalidate(UInt32 id)
 		{
 			Versioning.Invalidate(id);
 		}
@@ -306,13 +306,13 @@ namespace Extenity.KernelToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void RegisterForVersionChanges(uint id, Action callback, int order = 0)
+		public void RegisterForVersionChanges(UInt32 id, Action callback, int order = 0)
 		{
 			Versioning.RegisterForVersionChanges(id, callback, order);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool DeregisterForVersionChanges(uint id, Action callback)
+		public bool DeregisterForVersionChanges(UInt32 id, Action callback)
 		{
 			return Versioning.DeregisterForVersionChanges(id, callback);
 		}
