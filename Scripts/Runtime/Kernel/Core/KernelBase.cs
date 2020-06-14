@@ -95,47 +95,6 @@ namespace Extenity.KernelToolbox
 		}
 
 		#endregion
-	}
-
-	public abstract class KernelBase
-	{
-		#region Versioning
-
-		[NonSerialized] // Versioning is only used for callbacks and does not keep any data.
-		public readonly Versioning Versioning = new Versioning();
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Invalidate(int id)
-		{
-			Versioning.Invalidate(id);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InvalidateAllRegisteredIDs()
-		{
-			Versioning.InvalidateAllRegisteredIDs();
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void RegisterForVersionChanges(int id, Action callback, int order = 0)
-		{
-			Versioning.RegisterForVersionChanges(id, callback, order);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool DeregisterForVersionChanges(int id, Action callback)
-		{
-			return Versioning.DeregisterForVersionChanges(id, callback);
-		}
-
-		#endregion
-
-		#region ID Generator
-
-		[SerializeField]
-		public IDGenerator IDGenerator = new IDGenerator();
-
-		#endregion
 
 		#region All KernelObjects
 
@@ -258,7 +217,8 @@ namespace Extenity.KernelToolbox
 
 		#region All KernelObjects - Queries
 
-		public TKernelObject Get<TKernelObject>(Ref instanceID, bool skipQuietlyIfDestroyed = false) where TKernelObject : KernelObject
+		public TKernelObject Get<TKernelObject>(Ref instanceID, bool skipQuietlyIfDestroyed = false)
+			where TKernelObject : KernelObject
 		{
 			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
 			{
@@ -322,6 +282,47 @@ namespace Extenity.KernelToolbox
 			}
 			return false;
 		}
+
+		#endregion
+	}
+
+	public abstract class KernelBase
+	{
+		#region Versioning
+
+		[NonSerialized] // Versioning is only used for callbacks and does not keep any data.
+		public readonly Versioning Versioning = new Versioning();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Invalidate(int id)
+		{
+			Versioning.Invalidate(id);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InvalidateAllRegisteredIDs()
+		{
+			Versioning.InvalidateAllRegisteredIDs();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void RegisterForVersionChanges(int id, Action callback, int order = 0)
+		{
+			Versioning.RegisterForVersionChanges(id, callback, order);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool DeregisterForVersionChanges(int id, Action callback)
+		{
+			return Versioning.DeregisterForVersionChanges(id, callback);
+		}
+
+		#endregion
+
+		#region ID Generator
+
+		[SerializeField]
+		public IDGenerator IDGenerator = new IDGenerator();
 
 		#endregion
 	}

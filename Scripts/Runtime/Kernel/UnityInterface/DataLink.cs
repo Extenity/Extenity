@@ -10,7 +10,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 	[Serializable]
 	public struct DataLink<TKernelObject, TKernel>
-		where TKernelObject : KernelObject
+		where TKernelObject : KernelObject<TKernel>
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Interface Object
@@ -141,7 +141,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		#region Kernel
 
 		[JsonIgnore]
-		private KernelBase Kernel
+		private TKernel Kernel
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => KernelBase<TKernel>.Instance;
