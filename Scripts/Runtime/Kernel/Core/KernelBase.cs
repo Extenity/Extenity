@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.KernelToolbox
@@ -75,7 +75,7 @@ namespace Extenity.KernelToolbox
 		{
 			var instance = new TKernelObject();
 			instance.SetID(IDGenerator.CreateID());
-			Register(instance);
+			Block.Register(instance);
 			return instance;
 		}
 
@@ -90,67 +90,22 @@ namespace Extenity.KernelToolbox
 
 			instance.OnDestroy();
 			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
-			Deregister(instance);
+			Block.Deregister(instance);
 			instance.ResetIDOnDestroy();
 		}
 
 		#endregion
 
-		#region All KernelObjects
+		#region Data
 
-		// TODO OPTIMIZATION: Use something like sparse matrices to improve access times.
-
-		/// <summary>
-		/// CAUTION! Use this as readonly.
-		/// </summary>
 		[NonSerialized, JsonIgnore]
-		public readonly Dictionary<UInt32, KernelObject> AllKernelObjects = new Dictionary<UInt32, KernelObject>();
-
-		public void Register(KernelObject instance)
-		{
-			if (instance == null)
-			{
-				throw new Exception($"Tried to register a null {nameof(KernelObject)}'.");
-			}
-			if (instance.ID.IsInvalid)
-			{
-				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
-				// can be overridden to fill in more information.
-				throw new Exception($"Tried to register '{instance.ToTypeAndIDStringSafe()}' but it has an invalid ID. Object as string: '{instance.ToString()}'");
-			}
-
-			if (AllKernelObjects.TryGetValue(instance.ID, out var existingInstance))
-			{
-				throw new Exception($"Tried to register '{instance.ToTypeAndIDStringSafe()}' while there was an already registered object '{existingInstance.ToTypeAndIDStringSafe()}'.");
-			}
-
-			AllKernelObjects.Add(instance.ID, instance);
-		}
-
-		public void Deregister(KernelObject instance)
-		{
-			if (instance == null)
-			{
-				throw new Exception($"Tried to deregister a null {nameof(KernelObject)}'.");
-			}
-			if (instance.ID.IsInvalid)
-			{
-				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
-				// can be overridden to fill in more information.
-				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it has an invalid ID. Object as string: '{instance.ToString()}'");
-			}
-
-			var result = AllKernelObjects.Remove(instance.ID);
-
-			if (!result)
-			{
-				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it was not registered.");
-			}
-		}
+		[ShowInInspector, ReadOnly]
+		[PropertyOrder(70_0)] // Show it at the end
+		public Block Block = new Block();
 
 		#endregion
 
-		#region All KernelObjects - Gather And Register All Fields
+		#region Data - Gather And Register All Fields
 
 		// This is a temporary solution until KernelData is introduced. The codes below are fine for a temporary
 		// solution but they actually do a terrible job at deciding whether a field should be serialized.
@@ -184,7 +139,7 @@ namespace Extenity.KernelToolbox
 				{
 					var kernelObject = (KernelObject)value;
 					// Log.Info($"Found | {(basePath + "/" + fieldInfo.Name)} : " + kernelObject.ToTypeAndIDString());
-					Register(kernelObject);
+					Block.Register(kernelObject);
 					continue;
 				}
 				// Log.Info($"{(basePath + "/" + fieldInfo.Name)}");
@@ -215,72 +170,22 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region All KernelObjects - Queries
+		#region Data - Queries
 
 		public TKernelObject Get<TKernelObject>(Ref instanceID, bool skipQuietlyIfDestroyed = false)
 			where TKernelObject : KernelObject
 		{
-			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
-			{
-				// No need to check if instance is null. We already know any registered object does exist.
-				// if (instance == null)
-
-				// Check for type safety
-				if (instance is TKernelObject cast)
-				{
-					// Ensure it's not destroyed
-					if (cast.ID.IsValid)
-						return cast;
-
-					if (!skipQuietlyIfDestroyed)
-					{
-						Log.Warning($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
-					}
-					return null;
-				}
-
-				Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
-				return null;
-			}
-			return null;
+			return Block.Get<TKernelObject>(instanceID, skipQuietlyIfDestroyed);
 		}
 
 		public KernelObject Get(Ref instanceID, bool skipQuietlyIfDestroyed = false)
 		{
-			if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
-			{
-				// No need to check if instance is null. We already know any registered object does exist.
-				// if (instance == null)
-
-				// Ensure it's not destroyed
-				if (instance.ID.IsValid)
-					return instance;
-
-				if (!skipQuietlyIfDestroyed)
-				{
-					Log.CriticalError($"Queried a destroyed object '{instance.ToTypeAndIDString()}'.");
-				}
-				return null;
-			}
-			return null;
+			return Block.Get(instanceID, skipQuietlyIfDestroyed);
 		}
 
 		public bool Exists(Ref instanceID)
 		{
-			// Ensure queried ID is valid. It's alright to check for invalid IDs.
-			if (instanceID.IsValid)
-			{
-				if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
-				{
-					// No need to check if instance is null. We already know any registered object does exist.
-					// if (instance == null)
-
-					// Ensure it's not destroyed
-					if (instance.ID.IsValid)
-						return true;
-				}
-			}
-			return false;
+			return Block.Exists(instanceID);
 		}
 
 		#endregion
