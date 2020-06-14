@@ -34,8 +34,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		protected void Awake()
 		{
-			Log.Verbose($"Awake | enabled: {enabled} | {gameObject.FullName()}");
-
 			_AllViewBehaviours.Add(this);
 			InitializeDataLinkIfRequired();
 			AwakeDerived();
@@ -43,8 +41,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		protected void Start()
 		{
-			Log.Verbose($"Start | enabled: {enabled} | {gameObject.FullName()}");
-
 			StartDerived();
 			DataLink.LogInvalidIDErrorAtStart();
 			RefreshDataLink(true); // Call this after StartDerived so that the object can initialize itself before getting the data of linked Kernel object.
@@ -52,17 +48,22 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		protected void OnEnable()
 		{
-			Log.Verbose($"OnEnable | enabled: {enabled} | {gameObject.FullName()}");
-
-			// if (enabled) // Ensure 'enabled' is set to true by Unity at the time OnEnable is called. RefreshDataLink depends on it to work correctly.
-			// {
-			// 	throw new InternalException(118427123);
-			// }
+			// Ensure the object correctly shows it's enabled state. RefreshDataLink depends on it to work correctly.
+			// Though the safest way is to override the result anyway. This check is not essential but will guide
+			// developers in case anything changes in Unity or if these queries are not consistent in every platform.
+			// But can be safely excluded from builds if performance becomes an issue.
+			var isEnabled = IsEnabled;
+			if (!isEnabled)
+			{
+				// Do not fail harshly. The result will be overridden and everything will proceed as planned.
+				Log.InternalError(118427123);
+				isEnabled = true;
+			}
 
 			_AllActiveViewBehaviours.Add(this);
 			RegisterUpdateCallbacks(); // Should come before OnEnableDerived.
 			OnEnableDerived();
-			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
+			RefreshDataLink(isEnabled); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
 		}
 
 		#endregion
@@ -74,23 +75,26 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		protected void OnDestroy()
 		{
-			Log.Verbose($"OnDestroy | enabled: {enabled} | {gameObject.FullName()}");
-
 			_AllViewBehaviours.Remove(this);
 			OnDestroyDerived();
 		}
 
 		protected void OnDisable()
 		{
-			Log.Verbose($"OnDisable | enabled: {enabled} | {gameObject.FullName()}");
-
-			if (enabled) // Ensure 'enabled' is set to false by Unity at the time OnDisable is called. RefreshDataLink depends on it to work correctly.
+			// Ensure the object correctly shows it's enabled state. RefreshDataLink depends on it to work correctly.
+			// Though the safest way is to override the result anyway. This check is not essential but will guide
+			// developers in case anything changes in Unity or if these queries are not consistent in every platform.
+			// But can be safely excluded from builds if performance becomes an issue.
+			var isEnabled = IsEnabled;
+			if (isEnabled)
 			{
-				throw new InternalException(118427123);
+				// Do not fail harshly. The result will be overridden and everything will proceed as planned.
+				Log.InternalError(118427124);
+				isEnabled = false;
 			}
 
 			_AllActiveViewBehaviours.Remove(this);
-			RefreshDataLink(false); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
+			RefreshDataLink(isEnabled); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
 			DeregisterUpdateCallbacks(); // Should come before OnDisableDerived.
 			OnDisableDerived();
 		}
@@ -305,6 +309,13 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#endregion
 
+		#region Utilities
+
+		public bool IsEnabled => enabled && // Note that 'enabled' is the MonoBehaviour's state and is not enough by itself.
+		                         gameObject.activeInHierarchy;
+
+		#endregion
+
 		#region Editor
 
 		protected virtual void OnValidateDerived() { }
@@ -316,7 +327,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 				// Setup the data link before calling validation codes. Note that validation codes should not cause
 				// triggering events of the previously registered data link.
 				InitializeDataLinkIfRequired();
-				RefreshDataLink(enabled);
+				RefreshDataLink(IsEnabled);
 
 				OnValidateDerived();
 			}
