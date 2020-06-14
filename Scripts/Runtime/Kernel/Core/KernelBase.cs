@@ -268,7 +268,8 @@ namespace Extenity.KernelToolbox
 				// Check for type safety
 				if (instance is TKernelObject cast)
 				{
-					if (!cast.ID.IsInvalid)
+					// Ensure it's not destroyed
+					if (cast.ID.IsValid)
 						return cast;
 
 					if (!skipQuietlyIfDestroyed)
@@ -291,7 +292,8 @@ namespace Extenity.KernelToolbox
 				// No need to check if instance is null. We already know any registered object does exist.
 				// if (instance == null)
 
-				if (!instance.ID.IsInvalid)
+				// Ensure it's not destroyed
+				if (instance.ID.IsValid)
 					return instance;
 
 				if (!skipQuietlyIfDestroyed)
@@ -301,6 +303,24 @@ namespace Extenity.KernelToolbox
 				return null;
 			}
 			return null;
+		}
+
+		public bool Exists(Ref instanceID)
+		{
+			// Ensure queried ID is valid. It's alright to check for invalid IDs.
+			if (instanceID.IsValid)
+			{
+				if (AllKernelObjects.TryGetValue(instanceID.Value, out var instance))
+				{
+					// No need to check if instance is null. We already know any registered object does exist.
+					// if (instance == null)
+
+					// Ensure it's not destroyed
+					if (instance.ID.IsValid)
+						return true;
+				}
+			}
+			return false;
 		}
 
 		#endregion
