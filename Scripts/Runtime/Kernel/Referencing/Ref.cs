@@ -33,6 +33,9 @@ namespace Extenity.KernelToolbox
 		[SerializeField]
 		internal int Value;
 
+		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
+		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
+		// "Something.ID == ID.Invalid". See 116451215.
 		public static readonly Ref Invalid = default;
 
 		#endregion
@@ -53,7 +56,9 @@ namespace Extenity.KernelToolbox
 
 		#region Validation
 
-		public bool IsValid => Value > 0;
+		// See 116451215.
+		public bool IsValid => Value != 0;
+		public bool IsInvalid => Value == 0;
 
 		#endregion
 
