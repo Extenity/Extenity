@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -154,7 +155,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
 		public TKernelObject Object => DataLink.Object;
 
-		protected abstract void OnDataInvalidated();
+		protected abstract void OnDataInvalidated([NotNull] TKernelObject instance);
 
 		private void InitializeDataLinkIfRequired()
 		{

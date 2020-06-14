@@ -18,7 +18,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[NonSerialized]
 		internal MonoBehaviour Component;
 		[NonSerialized]
-		public Action DataInvalidationCallback;
+		public Action<TKernelObject> DataInvalidationCallback;
 
 		#endregion
 
@@ -119,7 +119,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 				if (instance != null)
 				{
-					DataInvalidationCallback();
+					DataInvalidationCallback(instance);
 				}
 			}
 		}

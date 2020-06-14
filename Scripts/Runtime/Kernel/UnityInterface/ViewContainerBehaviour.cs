@@ -48,18 +48,10 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 		}
 
-		protected sealed override void OnDataInvalidated()
+		protected sealed override void OnDataInvalidated(SyncList<TItem, TKernel> items)
 		{
 			// Item: A Kernel object, derived from KernelObject.
 			// ItemView: Interface representation of a kernel object, derived from ViewBehaviour.
-
-			var items = Object;
-
-			if (items == null)
-			{
-				Log.Warning($"{GetType().Name} data does not exist.");
-				return;
-			}
 
 			Views.EqualizeTo<TItemView, TItem>(
 				items.List,
@@ -87,7 +79,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
 					{
 						Views.RemoveAt(iItemView);
-						
+
 						if (itemView) // Do not allow a null object to leak into DestroyItem calls.
 						{
 							DestroyItem(itemView);
