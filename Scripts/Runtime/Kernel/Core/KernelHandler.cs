@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -43,6 +42,8 @@ namespace Extenity.KernelToolbox
 		#region Kernel Link
 
 		[JsonIgnore]
+		[FoldoutGroup("Kernel")]
+		[ShowInInspector, HideLabel]
 		public TKernel Kernel
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -53,8 +54,9 @@ namespace Extenity.KernelToolbox
 
 		#region Stats
 
-		[Title("Stats")]
-		[ShowInInspector, HideLabel, NotNull]
+		[JsonIgnore]
+		[FoldoutGroup("Stats")]
+		[ShowInInspector, HideLabel]
 		public Versioning.VersioningStats Stats
 		{
 			get => Kernel.Versioning.Stats;
