@@ -99,9 +99,14 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Update
 
-		protected virtual void UpdateDerived() { }
-		protected virtual void FixedUpdateDerived() { }
-		protected virtual void LateUpdateDerived() { }
+		protected virtual void UpdateDerived(TKernelObject instance) { }
+		protected virtual void FixedUpdateDerived(TKernelObject instance) { }
+		protected virtual void LateUpdateDerived(TKernelObject instance) { }
+
+		// These Unity callbacks won't be implemented because Unity calls them even if they are not implemented by derived types.
+		// protected void Update() { }
+		// protected void FixedUpdate() { }
+		// protected void LateUpdate() { }
 
 		private void InvokeUpdate()
 		{
@@ -110,7 +115,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (instance != null)
 			{
-				UpdateDerived();
+				UpdateDerived(instance);
 			}
 		}
 
@@ -121,7 +126,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (instance != null)
 			{
-				FixedUpdateDerived();
+				FixedUpdateDerived(instance);
 			}
 		}
 
@@ -132,7 +137,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (instance != null)
 			{
-				LateUpdateDerived();
+				LateUpdateDerived(instance);
 			}
 		}
 
