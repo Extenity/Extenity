@@ -250,6 +250,22 @@ namespace Extenity.DataToolbox
 				   || value is string;
 		}
 
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/1827425/how-to-check-programmatically-if-a-type-is-a-struct-or-a-class
+		/// </summary>
+		public static bool IsStruct(this Type type)
+		{
+			// Note that Nullable types are also structs and should be implemented if required. See the source link for more.
+
+			// Enums and Primitives are also Value Types so exclude them.
+			return type.IsValueType && !type.IsEnum && !type.IsPrimitiveType();
+		}
+
+		public static bool IsClassOrStruct(this Type type)
+		{
+			return type.IsClass || type.IsStruct();
+		}
+
 		public static bool IsGenericList(this object value)
 		{
 			var type = value as Type;
