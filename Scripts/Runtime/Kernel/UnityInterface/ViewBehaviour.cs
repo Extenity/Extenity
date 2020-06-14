@@ -105,17 +105,35 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		private void InvokeUpdate()
 		{
-			UpdateDerived();
+			const bool skipQuietlyIfDestroyed = true;
+			var instance = Kernel.Get<TKernelObject>(ID, skipQuietlyIfDestroyed);
+
+			if (instance != null)
+			{
+				UpdateDerived();
+			}
 		}
 
 		private void InvokeFixedUpdate()
 		{
-			FixedUpdateDerived();
+			const bool skipQuietlyIfDestroyed = true;
+			var instance = Kernel.Get<TKernelObject>(ID, skipQuietlyIfDestroyed);
+
+			if (instance != null)
+			{
+				FixedUpdateDerived();
+			}
 		}
 
 		private void InvokeLateUpdate()
 		{
-			LateUpdateDerived();
+			const bool skipQuietlyIfDestroyed = true;
+			var instance = Kernel.Get<TKernelObject>(ID, skipQuietlyIfDestroyed);
+
+			if (instance != null)
+			{
+				LateUpdateDerived();
+			}
 		}
 
 		private void RegisterUpdateCallbacks()
