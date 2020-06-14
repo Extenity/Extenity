@@ -35,7 +35,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		{
 			Log.Verbose($"Awake | enabled: {enabled} | {gameObject.FullName()}");
 
-			AllViewBehaviours.Add(this);
+			_AllViewBehaviours.Add(this);
 			InitializeDataLinkIfRequired();
 			AwakeDerived();
 		}
@@ -58,7 +58,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			// 	throw new InternalException(118427123);
 			// }
 
-			AllActiveViewBehaviours.Add(this);
+			_AllActiveViewBehaviours.Add(this);
 			// RegisterUpdateCallbacks(); // Should come before OnEnableDerived.
 			OnEnableDerived();
 			RefreshDataLink(true); // Call this after OnEnableDerived so that the object can initialize itself before getting the data of linked Kernel object.
@@ -75,7 +75,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		{
 			Log.Verbose($"OnDestroy | enabled: {enabled} | {gameObject.FullName()}");
 
-			AllViewBehaviours.Remove(this);
+			_AllViewBehaviours.Remove(this);
 			OnDestroyDerived();
 		}
 
@@ -88,7 +88,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 				throw new InternalException(118427123);
 			}
 
-			AllActiveViewBehaviours.Remove(this);
+			_AllActiveViewBehaviours.Remove(this);
 			RefreshDataLink(false); // Call this before OnDisableDerived so that the data callback will be called before OnDisable operations. Otherwise the data callback will be called on a disabled object.
 			// DeregisterUpdateCallbacks(); // Should come before OnDisableDerived.
 			OnDisableDerived();
@@ -122,8 +122,20 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region All ViewBehaviours
 
-		public static readonly List<ViewBehaviour<TKernelObject, TKernel>> AllViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
-		public static readonly List<ViewBehaviour<TKernelObject, TKernel>> AllActiveViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllActiveViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+
+		public static List<ViewBehaviour<TQueriedKernelObject, TKernel>> GetAllViewBehaviours<TQueriedKernelObject>()
+			where TQueriedKernelObject : KernelObject
+		{
+			return ViewBehaviour<TQueriedKernelObject, TKernel>._AllViewBehaviours;
+		}
+
+		public static List<ViewBehaviour<TQueriedKernelObject, TKernel>> GetAllActiveViewBehaviours<TQueriedKernelObject>()
+			where TQueriedKernelObject : KernelObject
+		{
+			return ViewBehaviour<TQueriedKernelObject, TKernel>._AllActiveViewBehaviours;
+		}
 
 		#endregion
 
