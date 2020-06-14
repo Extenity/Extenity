@@ -1,12 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Extenity.DataToolbox;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Extenity.KernelToolbox
 {
+
+	// TODO: Implement KernelData and move AllKernelObjects mechanism into there. See 119993322.
 
 	// TODO: Implement a build time tool to check and ensure there are no fields with KernelObject derived type. All references to kernel objects should use Ref instead.
 
@@ -37,6 +42,8 @@ namespace Extenity.KernelToolbox
 
 			Instance = (TKernel)this;
 			IsInitialized = true;
+
+			RegisterAllKernelObjectFieldsInKernel();
 		}
 
 		#endregion
@@ -179,6 +186,71 @@ namespace Extenity.KernelToolbox
 			if (!result)
 			{
 				throw new Exception($"Tried to deregister '{instance.ToTypeAndIDStringSafe()}' but it was not registered.");
+			}
+		}
+
+		#endregion
+
+		#region All KernelObjects - Gather And Register All Fields
+
+		// This is a temporary solution until KernelData is introduced. The codes below are fine for a temporary
+		// solution but they actually do a terrible job at deciding whether a field should be serialized.
+		//
+		// When implementing the KernelData, there will be no need to Register each KernelObject into the data,
+		// since the data will already be there. See 119993322.
+
+		protected void RegisterAllKernelObjectFieldsInKernel()
+		{
+			IterateAllFieldsRecursively(this, "");
+		}
+
+		private void IterateAllFieldsRecursively(object obj, string basePath)
+		{
+			var allFields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			foreach (var fieldInfo in allFields)
+			{
+				if (fieldInfo.GetAttribute<NonSerializedAttribute>(false) != null ||
+				    fieldInfo.GetAttribute<JsonIgnoreAttribute>(false) != null)
+				{
+					continue;
+				}
+
+				var value = fieldInfo.GetValue(obj);
+				if (value == null)
+					continue;
+				var fieldType = fieldInfo.FieldType;
+
+				// See if its KernelObject
+				if (fieldType.InheritsOrImplements(typeof(KernelObject)))
+				{
+					var kernelObject = (KernelObject)value;
+					// Log.Info($"Found | {(basePath + "/" + fieldInfo.Name)} : " + kernelObject.ToTypeAndIDString());
+					Register(kernelObject);
+					continue;
+				}
+				// Log.Info($"{(basePath + "/" + fieldInfo.Name)}");
+
+				// See if its a container
+				if (fieldType.InheritsOrImplements(typeof(IEnumerable)) &&
+				    fieldType != typeof(string)) // string is an exception. We don't want to iterate its characters.
+				{
+					var enumerable = (IEnumerable)value;
+					foreach (var item in enumerable)
+					{
+						if (item != null)
+						{
+							IterateAllFieldsRecursively(item, basePath + "/" + fieldInfo.Name);
+						}
+					}
+					continue;
+				}
+
+				// See if its another class that may keep an ID field inside
+				if (fieldType.IsClassOrStruct())
+				{
+					IterateAllFieldsRecursively(value, basePath + "/" + fieldInfo.Name);
+					continue;
+				}
 			}
 		}
 
