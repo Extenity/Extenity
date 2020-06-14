@@ -207,8 +207,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		public void RefreshDataLink(bool isComponentEnabled)
 		{
-			Log.Verbose($"RefreshDataLink | enabled: {enabled} | isComponentEnabled: {isComponentEnabled} | {gameObject.FullName()}");
-
 			DataLink.RefreshDataLink(isComponentEnabled);
 		}
 
