@@ -211,7 +211,7 @@ namespace Extenity.ParallelToolbox.Editor
 				)
 			)
 			{
-				LogVerbose("## Owner E");
+				LogVerbose("Owner E");
 				m_IsDone = true;
 				DeregisterFromUpdate();
 				return;
@@ -231,7 +231,7 @@ namespace Extenity.ParallelToolbox.Editor
 			var root = enumerator;
 			while (enumerator.Current as IEnumerator != null)
 			{
-				LogVerbose("## Stack A");
+				LogVerbose("Stack A");
 				kIEnumeratorProcessingStack.Push(enumerator);
 				enumerator = enumerator.Current as IEnumerator;
 			}
@@ -295,7 +295,7 @@ namespace Extenity.ParallelToolbox.Editor
 
 			while (kIEnumeratorProcessingStack.Count > 1)
 			{
-				LogVerbose("## Stack B");
+				LogVerbose("Stack B");
 				if (!result)
 				{
 					result = kIEnumeratorProcessingStack.Pop().MoveNext();
@@ -306,7 +306,7 @@ namespace Extenity.ParallelToolbox.Editor
 
 			if (kIEnumeratorProcessingStack.Count > 0 && !result && root == kIEnumeratorProcessingStack.Pop())
 			{
-				LogVerbose("## Stack C");
+				LogVerbose("Stack C");
 				result = root.MoveNext();
 			}
 

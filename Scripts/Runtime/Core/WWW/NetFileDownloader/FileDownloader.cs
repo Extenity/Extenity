@@ -1,21 +1,21 @@
 ﻿/*
-## .NET File Downloader
+-- .NET File Downloader
 This is a HTTP(S) file downloader with support of caching and resuming of partially downloaded files. 
 The main goal of .NET File Downloader is to facilitate downloading of big files on bad internet connections. It supports resuming of partially downloaded files. So if the download is interrupted and restarted, only the remaining part of file would be downloaded again.
-#### Why not simply use the file download functionality from the .NET Framework? 
+---- Why not simply use the file download functionality from the .NET Framework?
 Unfortunately System.Net.WebClient.DownloadFile() has no support for resuming downloads. It might work fine for small files or over stable internet connections. Once you want to download bigger files via poor internet connections it is not sufficient anymore and downloads will fail.
-### License
+--- License
 FileDownloader is open source software, licensed under the terms of MIT license. See [LICENSE](LICENSE) for details.
-## Examples
-### Create simple fileDownloader
+-- Examples
+--- Create simple fileDownloader
 ```C#
     IFileDownloader fileDownloader = new FileDownloader.FileDownloader();
 ```
-### Create fileDownloader with download cache
+--- Create fileDownloader with download cache
 ```C#
     IFileDownloader fileDownloader = new FileDownloader.FileDownloader(new DownloadCacheImplementation());
 ```
-### Start download
+--- Start download
 ```C#
     IFileDownloader fileDownloader = new FileDownloader.FileDownloader();
     fileDownloader.DownloadFileCompleted += DownloadFileCompleted;
@@ -33,7 +33,7 @@ FileDownloader is open source software, licensed under the terms of MIT license.
             }
     }    
 ```
-### Report download progress
+--- Report download progress
 ```C#
     FileDownlaoder fileDownloader = new FileDownloader.FileDownloader();
     fileDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
@@ -46,15 +46,15 @@ FileDownloader is open source software, licensed under the terms of MIT license.
 
 ```
 
-### Cancel download
+--- Cancel download
 ```C#
     fileDownloader.CancelDownloadAsync()
 ```
-### Resume download
+--- Resume download
 
  In order to resume download, IDownloadCache should be provided to the FileDownloader constructor. DownloadCache is used to store partially downloaded files. To resume a download, simply call one of the download file methods with the same URL.
 
-## How to build FileDownlader
+-- How to build FileDownlader
 At least Visual Studio 2013 and .NET Framework 3.5 are required to build. There are no other dependencies. 
 */
 

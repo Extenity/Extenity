@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -10,7 +9,7 @@ namespace Extenity.ApplicationToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Initialize()
 		{
-			Log.Info("##### RuntimeInitializeOnLoadMethod    BeforeSceneLoad   " + SceneManager.GetActiveScene().name);
+			Log.Info("RuntimeInitializeOnLoadMethod    BeforeSceneLoad   " + SceneManager.GetActiveScene().name);
 
 			SceneManager.activeSceneChanged += OnActiveSceneChanged;
 			SceneManager.sceneLoaded += OnSceneLoaded;
@@ -20,22 +19,22 @@ namespace Extenity.ApplicationToolbox
 
 		private static void OnActiveSceneChanged(Scene scene1, Scene scene2)
 		{
-			Log.Info("##### active scene changed : " + scene1.name + "   ->   " + scene2.name);
+			Log.Info("active scene changed : " + scene1.name + "   ->   " + scene2.name);
 		}
 
 		private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
-			Log.Info("##### scene loaded : " + scene.name);
+			Log.Info("scene loaded : " + scene.name);
 		}
 		private static void OnSceneUnloaded(Scene scene)
 		{
-			Log.Info("##### scene unloaded : " + scene.name + "     active scene: " + SceneManager.GetActiveScene().name);
+			Log.Info("scene unloaded : " + scene.name + "     active scene: " + SceneManager.GetActiveScene().name);
 		}
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-		private static void AAAAAAAA()
+		private static void RuntimeInitializeOnLoadMethod()
 		{
-			Log.Info("##### RuntimeInitializeOnLoadMethod    AfterSceneLoad");
+			Log.Info("RuntimeInitializeOnLoadMethod    AfterSceneLoad");
 		}
 		*/
 	}

@@ -19,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		//{
 		//	EditorApplication.delayCall += () =>
 		//	{
-		//		Log.Info("####");
+		//		Log.Info("delayCall");
 		//	};
 		//}
 

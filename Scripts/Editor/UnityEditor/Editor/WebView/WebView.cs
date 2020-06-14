@@ -14,8 +14,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		static WebView()
 		{
-			Log.Info("########### WebView constructor");
-
 			var editorAssembly = typeof(UnityEditor.Editor).Assembly;
 			var editorWindowType = typeof(EditorWindow);
 			var webViewType = editorAssembly.GetType("UnityEditor.WebView");
@@ -57,8 +55,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void Initialize(object view, Rect rect, bool showResizeHandle)
 		{
-			Log.Info("########### WebView Initialize           UnityWebView == null : " + (UnityWebView == null));
-
 			CreateUnityWebViewIfRequired();
 
 			InitWebView(view, (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height, showResizeHandle);
