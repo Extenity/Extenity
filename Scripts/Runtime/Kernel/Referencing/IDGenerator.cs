@@ -8,7 +8,8 @@ namespace Extenity.KernelToolbox
 	public class IDGenerator
 	{
 		/// <summary>
-		/// IDs below this value is considered to be pre-allocated.
+		/// IDs below that are considered to be pre-allocated. Also IDs should not be treated as indexes of containers.
+		/// Starting from other than 0 prevents possible misuse.
 		/// </summary>
 		private const uint IDStartsFrom = 1000;
 		private const uint IDEndsAt = UInt32.MaxValue - 100;
@@ -19,6 +20,8 @@ namespace Extenity.KernelToolbox
 
 		private uint GenerateNewID()
 		{
+			// Interlocked Increment and CompareExchange can be used instead of lock if performance becomes an issue.
+			// Writing tests might be a good idea in that case.
 			lock (this)
 			{
 				LastGivenID++;
@@ -43,7 +46,7 @@ namespace Extenity.KernelToolbox
 		{
 			if (!LastGivenIDOverflowWarning)
 			{
-				// That means we will need to turn IDs into Int64.
+				// That means we might need to turn IDs into UInt64.
 				Log.CriticalError("ID generator will overflow soon.");
 				LastGivenIDOverflowWarning = true;
 			}
