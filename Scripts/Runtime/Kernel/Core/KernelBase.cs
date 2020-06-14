@@ -274,7 +274,7 @@ namespace Extenity.KernelToolbox
 
 					if (!skipQuietlyIfDestroyed)
 					{
-						Log.CriticalError($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
+						Log.Warning($"Queried a destroyed object '{cast.ToTypeAndIDString()}'.");
 					}
 					return null;
 				}
