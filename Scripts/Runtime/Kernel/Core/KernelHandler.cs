@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,7 +14,6 @@ namespace Extenity.KernelToolbox
 
 		protected virtual void Awake()
 		{
-			Kernel.Initialize();
 		}
 
 		#endregion
@@ -41,7 +42,12 @@ namespace Extenity.KernelToolbox
 
 		#region Kernel Link
 
-		public TKernel Kernel;
+		[JsonIgnore]
+		public TKernel Kernel
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => KernelBase<TKernel>.Instance;
+		}
 
 		#endregion
 
