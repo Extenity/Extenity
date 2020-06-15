@@ -51,7 +51,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Data
 
-		public TKernelObject Object => Kernel.Get<TKernelObject>(ID);
+		public TKernelObject Object => Kernel?.Get<TKernelObject>(ID);
 
 		#endregion
 

@@ -30,9 +30,11 @@ namespace Extenity.KernelToolbox
 
 		[SerializeField]
 		[JsonProperty(PropertyName = "ID")]
+		[ReadOnly, HideLabel]
 		private UInt32 _ReferencedID;
 
 		[JsonIgnore]
+		[HideInInspector]
 		public UInt32 ReferencedID
 		{
 			get => _ReferencedID;
