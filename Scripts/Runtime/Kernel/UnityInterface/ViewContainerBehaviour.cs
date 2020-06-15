@@ -62,7 +62,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
 					{
 						Debug.Assert(item != null);
-						Debug.Assert(item.IsValid);
+						Debug.Assert(item.IsAlive);
 
 						var itemView = InstantiateItem(item);
 

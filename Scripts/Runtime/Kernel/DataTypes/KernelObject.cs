@@ -39,9 +39,8 @@ namespace Extenity.KernelToolbox
 
 		#region Validation
 
-		// See 116451215.
-		public bool IsValid => _ID != 0;
-		public bool IsInvalid => _ID == 0;
+		public bool IsAlive => _ID != 0; // See 116451215.
+		public bool IsDestroyed => _ID == 0; // See 116451215.
 
 		#endregion
 
@@ -65,9 +64,9 @@ namespace Extenity.KernelToolbox
 	{
 		#region ID
 
-		public void SetID(UInt32 id)
+		public void SetID(UInt32 id) // TODO IMMEDIATE: Should be internal.
 		{
-			if (IsValid)
+			if (IsAlive)
 			{
 				throw new Exception($"Tried to set the ID to '{id}' of an already initialized object '{ToTypeAndIDString()}'.");
 			}
