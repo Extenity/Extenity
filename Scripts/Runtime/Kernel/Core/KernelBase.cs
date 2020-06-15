@@ -170,7 +170,7 @@ namespace Extenity.KernelToolbox
 
 		#region Data - Queries
 
-		public TKernelObject Get<TKernelObject>(Ref instanceID, bool skipQuietlyIfDestroyed = false)
+		public TKernelObject Get<TKernelObject>(Ref<TKernelObject> instanceID, bool skipQuietlyIfDestroyed = false)
 			where TKernelObject : KernelObject
 		{
 			return Block.Get<TKernelObject>(instanceID, skipQuietlyIfDestroyed);
@@ -181,7 +181,7 @@ namespace Extenity.KernelToolbox
 			return Block.Get(instanceID, instanceType, skipQuietlyIfDestroyed);
 		}
 
-		public bool Exists<TKernelObject>(Ref instanceID)
+		public bool Exists<TKernelObject>(Ref<TKernelObject> instanceID)
 			where TKernelObject : KernelObject
 		{
 			return Block.Exists<TKernelObject>(instanceID);

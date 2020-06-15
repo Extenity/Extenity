@@ -31,7 +31,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		/// </summary>
 		[Tooltip("The ID of an object in Kernel to catch related data modification events for that object.")]
 		[BoxGroup("View Behaviour")]
-		public Ref ID; // Default value is Ref.Invalid, which is default(Ref).
+		public Ref<TKernelObject> ID; // Default value is Ref.Invalid, which is default(Ref).
 
 		[BoxGroup("View Behaviour")]
 		public bool DisableInvalidIDErrorAtStart;
@@ -68,7 +68,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		public int DataInvalidationEventOrder; // Default is 0.
 
 		[NonSerialized]
-		private Ref RegisteredID; // Default value is Ref.Invalid, which is default(Ref).
+		private Ref<TKernelObject> RegisteredID; // Default value is Ref.Invalid, which is default(Ref).
 		[NonSerialized]
 		private int RegisteredDataInvalidationEventOrder; // Default is 0.
 
@@ -80,7 +80,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			             Component.gameObject.activeInHierarchy &&
 			             // Component.enabled; Unfortunately Unity won't properly change Component.enabled at the time of OnEnable and OnDisable callbacks. So we have to override it.
 			             isComponentEnabled;
-			var targetID = active ? ID : Ref.Invalid;
+			var targetID = active ? ID : Ref<TKernelObject>.Invalid;
 
 			// Ignore consecutive calls if already registered.
 			if (RegisteredID == targetID &&

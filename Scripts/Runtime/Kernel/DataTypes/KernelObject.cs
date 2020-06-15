@@ -75,7 +75,7 @@ namespace Extenity.KernelToolbox
 
 			if (Kernel != null)
 			{
-				var existingInstance = Kernel.Get(id, GetType());
+				var existingInstance = Kernel.Get(id, typeof(TDerived));
 				if (existingInstance != null)
 				{
 					throw new Exception($"Tried to set the ID to '{id}' of the object '{ToTypeAndIDString()}' while there was an already registered object '{existingInstance.ToTypeAndIDStringSafe()}'.");

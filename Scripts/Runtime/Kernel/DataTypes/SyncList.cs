@@ -77,7 +77,7 @@ namespace Extenity.KernelToolbox
 			return List.Contains(item);
 		}
 
-		public TKernelObject GetItem(Ref id)
+		public TKernelObject GetItem(Ref<TKernelObject> id)
 		{
 			for (var i = 0; i < List.Count; i++)
 			{
