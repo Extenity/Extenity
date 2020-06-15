@@ -23,7 +23,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 	// [EnsureDerivedTypesWontUseMethod(nameof(FixedUpdate), nameof(FixedUpdateDerived))]
 	// [EnsureDerivedTypesWontUseMethod(nameof(LateUpdate), nameof(LateUpdateDerived))]
 	public abstract class ViewBehaviour<TKernelObject, TKernel> : MonoBehaviour
-		where TKernelObject : KernelObject<TKernelObject, TKernel>
+		where TKernelObject : KernelObject<TKernel>
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Initialization
@@ -169,13 +169,13 @@ namespace Extenity.KernelToolbox.UnityInterface
 		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllActiveViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
 
 		public static List<ViewBehaviour<TQueriedKernelObject, TKernel>> GetAllViewBehaviours<TQueriedKernelObject>()
-			where TQueriedKernelObject : KernelObject<TQueriedKernelObject, TKernel>
+			where TQueriedKernelObject : KernelObject<TKernel>
 		{
 			return ViewBehaviour<TQueriedKernelObject, TKernel>._AllViewBehaviours;
 		}
 
 		public static List<ViewBehaviour<TQueriedKernelObject, TKernel>> GetAllActiveViewBehaviours<TQueriedKernelObject>()
-			where TQueriedKernelObject : KernelObject<TQueriedKernelObject, TKernel>
+			where TQueriedKernelObject : KernelObject<TKernel>
 		{
 			return ViewBehaviour<TQueriedKernelObject, TKernel>._AllActiveViewBehaviours;
 		}

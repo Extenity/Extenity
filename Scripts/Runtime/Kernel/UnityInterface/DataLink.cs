@@ -10,7 +10,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 	[Serializable]
 	public struct DataLink<TKernelObject, TKernel>
-		where TKernelObject : KernelObject<TKernelObject, TKernel>
+		where TKernelObject : KernelObject<TKernel>
 		where TKernel : KernelBase<TKernel>
 	{
 		#region Interface Object

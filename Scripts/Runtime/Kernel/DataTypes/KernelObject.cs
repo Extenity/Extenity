@@ -60,8 +60,7 @@ namespace Extenity.KernelToolbox
 		#endregion
 	}
 
-	public abstract class KernelObject<TDerived, TKernel> : KernelObject
-		where TDerived : KernelObject<TDerived, TKernel>
+	public abstract class KernelObject<TKernel> : KernelObject
 		where TKernel : KernelBase<TKernel>
 	{
 		#region ID
@@ -75,7 +74,7 @@ namespace Extenity.KernelToolbox
 
 			if (Kernel != null)
 			{
-				var existingInstance = Kernel.Get(id, typeof(TDerived));
+				var existingInstance = Kernel.Get(id, GetType());
 				if (existingInstance != null)
 				{
 					throw new Exception($"Tried to set the ID to '{id}' of the object '{ToTypeAndIDString()}' while there was an already registered object '{existingInstance.ToTypeAndIDStringSafe()}'.");
