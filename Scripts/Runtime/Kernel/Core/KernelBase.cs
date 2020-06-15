@@ -11,8 +11,6 @@ using UnityEngine;
 namespace Extenity.KernelToolbox
 {
 
-	// TODO: Implement KernelData and move AllKernelObjects mechanism into there. See 119993322.
-
 	// TODO: Implement a build time tool to check and ensure there are no fields with KernelObject derived type. All references to kernel objects should use Ref instead.
 
 	public abstract class KernelBase<TKernel> : KernelBase
@@ -75,7 +73,7 @@ namespace Extenity.KernelToolbox
 		{
 			var instance = new TKernelObject();
 			instance.SetID(IDGenerator.CreateID());
-			Block.Register(instance);
+			Block.Register<TKernelObject>(instance);
 			return instance;
 		}
 
@@ -90,7 +88,7 @@ namespace Extenity.KernelToolbox
 
 			instance.OnDestroy();
 			Invalidate(instance.ID); // Invalidate the object one last time so any listeners can refresh themselves.
-			Block.Deregister(instance);
+			Block.Deregister<TKernelObject>(instance);
 			instance.ResetIDOnDestroy();
 		}
 
@@ -139,7 +137,7 @@ namespace Extenity.KernelToolbox
 				{
 					var kernelObject = (KernelObject)value;
 					// Log.Info($"Found | {(basePath + "/" + fieldInfo.Name)} : " + kernelObject.ToTypeAndIDString());
-					Block.Register(kernelObject);
+					Block.Register(kernelObject, fieldType);
 					continue;
 				}
 				// Log.Info($"{(basePath + "/" + fieldInfo.Name)}");
@@ -178,14 +176,15 @@ namespace Extenity.KernelToolbox
 			return Block.Get<TKernelObject>(instanceID, skipQuietlyIfDestroyed);
 		}
 
-		public KernelObject Get(Ref instanceID, bool skipQuietlyIfDestroyed = false)
+		public KernelObject Get(Ref instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
 		{
-			return Block.Get(instanceID, skipQuietlyIfDestroyed);
+			return Block.Get(instanceID, instanceType, skipQuietlyIfDestroyed);
 		}
 
-		public bool Exists(Ref instanceID)
+		public bool Exists<TKernelObject>(Ref instanceID)
+			where TKernelObject : KernelObject
 		{
-			return Block.Exists(instanceID);
+			return Block.Exists<TKernelObject>(instanceID);
 		}
 
 		#endregion
