@@ -32,7 +32,7 @@ namespace Extenity.KernelToolbox
 			{
 				throw new Exception($"Tried to register a null {kernelObjectType.Name}'.");
 			}
-			if (instance.ID.IsInvalid)
+			if (instance.IsInvalid)
 			{
 				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
 				// can be overridden to fill in more information.
@@ -61,7 +61,7 @@ namespace Extenity.KernelToolbox
 			{
 				throw new Exception($"Tried to deregister a null {typeof(TKernelObject).Name}'.");
 			}
-			if (instance.ID.IsInvalid)
+			if (instance.IsInvalid)
 			{
 				// 'Object as string' at the end is there to help debugging. ToString method of the derived KernelObject
 				// can be overridden to fill in more information.
@@ -99,7 +99,7 @@ namespace Extenity.KernelToolbox
 					if (instance is TKernelObject cast)
 					{
 						// Ensure it's not destroyed
-						if (cast.ID.IsValid)
+						if (cast.IsValid)
 							return cast;
 
 						if (!skipQuietlyIfDestroyed)
@@ -129,7 +129,7 @@ namespace Extenity.KernelToolbox
 					if (instance.GetType() == instanceType)
 					{
 						// Ensure it's not destroyed
-						if (instance.ID.IsValid)
+						if (instance.IsValid)
 							return instance;
 
 						if (!skipQuietlyIfDestroyed)
@@ -178,7 +178,7 @@ namespace Extenity.KernelToolbox
 					// if (instance == null)
 
 					// Ensure it's not destroyed
-					if (instance.ID.IsValid)
+					if (instance.IsValid)
 						return true;
 				}
 			}

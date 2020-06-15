@@ -32,6 +32,14 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
+		#region Validation
+
+		// See 116451215.
+		public bool IsValid => _ID != 0;
+		public bool IsInvalid => _ID == 0;
+
+		#endregion
+
 		#region ToString
 
 		public override string ToString()
@@ -55,7 +63,7 @@ namespace Extenity.KernelToolbox
 
 		public void SetID(ID id)
 		{
-			if (_ID.IsValid)
+			if (IsValid)
 			{
 				throw new Exception($"Tried to set the ID to '{id}' of an already initialized object '{ToTypeAndIDString()}'.");
 			}

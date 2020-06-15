@@ -80,7 +80,7 @@ namespace Extenity.KernelToolbox
 		public void Destroy<TKernelObject>([CanBeNull] TKernelObject instance)
 			where TKernelObject : KernelObject<TKernelObject, TKernel>
 		{
-			if (instance == null || !instance.ID.IsValid)
+			if (instance == null || instance.IsInvalid)
 			{
 				// TODO: Not sure what to do when received an invalid object.
 				return;
