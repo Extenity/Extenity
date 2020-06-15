@@ -21,7 +21,7 @@ namespace Extenity.KernelToolbox
 
 		public Ref(UInt32 id)
 		{
-			Value = id;
+			ReferencedID = id;
 		}
 
 		#endregion
@@ -33,7 +33,7 @@ namespace Extenity.KernelToolbox
 		/// </summary>
 		[HideLabel]
 		[SerializeField]
-		internal UInt32 Value;
+		public UInt32 ReferencedID;
 
 		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
 		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
@@ -42,7 +42,7 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region Implicit Conversion Between Ref and UInt32
+		#region Conversion between Ref and UInt32
 
 		public static implicit operator Ref<TKernelObject, TKernel>(UInt32 me)
 		{
@@ -50,28 +50,40 @@ namespace Extenity.KernelToolbox
 		}
 		public static implicit operator UInt32(Ref<TKernelObject, TKernel> me)
 		{
-			return me.Value;
+			return me.ReferencedID;
 		}
+
+		#endregion
+
+		#region Conversion between Ref and Referenced Object
+
+		public static implicit operator TKernelObject(Ref<TKernelObject, TKernel> me)
+		{
+			return KernelBase<TKernel>.Instance.Get(me);
+		}
+
+		public TKernelObject Data => KernelBase<TKernel>.Instance.Get(this);
+		public bool IsValidAndDataExists => KernelBase<TKernel>.Instance.Exists(this); // TODO IMMEDIATE: Find a better name. Also see if IsValid should be renamed too.
 
 		#endregion
 
 		#region Validation
 
 		// See 116451215.
-		public bool IsValid => Value != 0;
-		public bool IsInvalid => Value == 0;
+		public bool IsValid => ReferencedID != 0;
+		public bool IsInvalid => ReferencedID == 0;
 
 		#endregion
 
 		#region Equality and Comparison
 
 		// public bool Equals(ID other) { return Value == other.Value; }
-		public bool Equals(Ref<TKernelObject, TKernel> other) { return Value == other.Value; }
-		public bool Equals(UInt32 other) { return Value == other; }
+		public bool Equals(Ref<TKernelObject, TKernel> other) { return ReferencedID == other.ReferencedID; }
+		public bool Equals(UInt32 other) { return ReferencedID == other; }
 
 		public override bool Equals(object obj)
 		{
-			return obj is Ref<TKernelObject, TKernel> castRef && Value == castRef.Value;
+			return obj is Ref<TKernelObject, TKernel> castRef && ReferencedID == castRef.ReferencedID;
 		}
 
 		// public static bool operator ==(Ref lhs, Ref rhs) { return lhs.Value == rhs.Value; }
@@ -80,14 +92,14 @@ namespace Extenity.KernelToolbox
 		// public static bool operator !=(Ref lhs, ID rhs) { return lhs.Value != rhs.Value; }
 		// public static bool operator ==(ID lhs, Ref rhs) { return lhs.Value == rhs.Value; }
 		// public static bool operator !=(ID lhs, Ref rhs) { return lhs.Value != rhs.Value; }
-		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.Value == rhs; }
-		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.Value != rhs; }
+		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID == rhs; }
+		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID != rhs; }
 		// public static bool operator ==(UInt32 lhs, Ref rhs) { return lhs == rhs.Value; }
 		// public static bool operator !=(UInt32 lhs, Ref rhs) { return lhs != rhs.Value; }
 
 		// public int CompareTo(ID other) { return Value.CompareTo(other.Value); }
-		public int CompareTo(Ref<TKernelObject, TKernel> other) { return Value.CompareTo(other.Value); }
-		public int CompareTo(UInt32 other) { return Value.CompareTo(other); }
+		public int CompareTo(Ref<TKernelObject, TKernel> other) { return ReferencedID.CompareTo(other.ReferencedID); }
+		public int CompareTo(UInt32 other) { return ReferencedID.CompareTo(other); }
 
 		#endregion
 
@@ -95,7 +107,7 @@ namespace Extenity.KernelToolbox
 
 		public override int GetHashCode()
 		{
-			return unchecked((int)Value);
+			return unchecked((int)ReferencedID);
 		}
 
 		#endregion
@@ -109,12 +121,12 @@ namespace Extenity.KernelToolbox
 
 		public string ToHexString()
 		{
-			return Value.ToString("X");
+			return ReferencedID.ToString("X");
 		}
 
 		public string ToHexAndTypeString()
 		{
-			return Value.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
+			return ReferencedID.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
 		}
 
 		public static Ref<TKernelObject, TKernel> FromHexString(string text)
