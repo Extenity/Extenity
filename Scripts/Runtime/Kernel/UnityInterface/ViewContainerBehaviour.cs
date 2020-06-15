@@ -4,6 +4,7 @@ using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Extenity.KernelToolbox.UnityInterface
 {
@@ -60,6 +61,9 @@ namespace Extenity.KernelToolbox.UnityInterface
 				{
 					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
 					{
+						Debug.Assert(item != null);
+						Debug.Assert(item.IsValid);
+
 						var itemView = InstantiateItem(item);
 
 						// Connect the view object to kernel object.
