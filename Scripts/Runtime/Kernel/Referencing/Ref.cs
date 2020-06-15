@@ -21,22 +21,25 @@ namespace Extenity.KernelToolbox
 
 		public Ref(UInt32 id)
 		{
-			ReferencedID = id;
+			_ReferencedID = id;
 		}
 
 		#endregion
 
 		#region Data
 
-		/// <summary>
-		/// CAUTION! Use it as readonly.
-		/// </summary>
-		[HideLabel]
 		[SerializeField]
-		public UInt32 ReferencedID;
+		[JsonProperty(PropertyName = "ID")]
+		private UInt32 _ReferencedID;
 
-		public bool IsSet => ReferencedID != 0; // See 116451215.
-		public bool IsNotSet => ReferencedID == 0; // See 116451215.
+		[JsonIgnore]
+		public UInt32 ReferencedID
+		{
+			get => _ReferencedID;
+		}
+
+		public bool IsSet => _ReferencedID != 0; // See 116451215.
+		public bool IsNotSet => _ReferencedID == 0; // See 116451215.
 
 		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
 		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
@@ -53,7 +56,7 @@ namespace Extenity.KernelToolbox
 		}
 		public static implicit operator UInt32(Ref<TKernelObject, TKernel> me)
 		{
-			return me.ReferencedID;
+			return me._ReferencedID;
 		}
 
 		#endregion
@@ -72,19 +75,19 @@ namespace Extenity.KernelToolbox
 
 		#region Equality and Comparison
 
-		public bool Equals(Ref<TKernelObject, TKernel> other) { return ReferencedID == other.ReferencedID; }
-		public bool Equals(UInt32 other) { return ReferencedID == other; }
+		public bool Equals(Ref<TKernelObject, TKernel> other) { return _ReferencedID == other._ReferencedID; }
+		public bool Equals(UInt32 other) { return _ReferencedID == other; }
 
 		public override bool Equals(object obj)
 		{
-			return obj is Ref<TKernelObject, TKernel> castRef && ReferencedID == castRef.ReferencedID;
+			return obj is Ref<TKernelObject, TKernel> castRef && _ReferencedID == castRef._ReferencedID;
 		}
 
-		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID == rhs; }
-		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID != rhs; }
+		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs._ReferencedID == rhs; }
+		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs._ReferencedID != rhs; }
 
-		public int CompareTo(Ref<TKernelObject, TKernel> other) { return ReferencedID.CompareTo(other.ReferencedID); }
-		public int CompareTo(UInt32 other) { return ReferencedID.CompareTo(other); }
+		public int CompareTo(Ref<TKernelObject, TKernel> other) { return _ReferencedID.CompareTo(other._ReferencedID); }
+		public int CompareTo(UInt32 other) { return _ReferencedID.CompareTo(other); }
 
 		#endregion
 
@@ -92,7 +95,7 @@ namespace Extenity.KernelToolbox
 
 		public override int GetHashCode()
 		{
-			return unchecked((int)ReferencedID);
+			return unchecked((int)_ReferencedID);
 		}
 
 		#endregion
@@ -106,12 +109,12 @@ namespace Extenity.KernelToolbox
 
 		public string ToHexString()
 		{
-			return ReferencedID.ToString("X");
+			return _ReferencedID.ToString("X");
 		}
 
 		public string ToHexAndTypeString()
 		{
-			return ReferencedID.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
+			return _ReferencedID.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
 		}
 
 		public static Ref<TKernelObject, TKernel> FromHexString(string text)

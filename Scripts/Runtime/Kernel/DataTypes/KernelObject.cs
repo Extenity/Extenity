@@ -23,7 +23,7 @@ namespace Extenity.KernelToolbox
 		public static readonly UInt32 InvalidID = default;
 
 		[JsonProperty(PropertyName = "ID")]
-		protected internal UInt32 _ID;
+		protected UInt32 _ID;
 		[JsonIgnore]
 		public UInt32 ID
 		{
