@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Extenity.KernelToolbox
 {
@@ -16,6 +17,14 @@ namespace Extenity.KernelToolbox
 		public readonly List<TKernelObject> List;
 
 		#region Initialization
+
+		/// <summary>
+		/// CAUTION! Only for serialization purposes! Use other constructors.
+		/// </summary>
+		[JsonConstructor]
+		protected SyncList()
+		{
+		}
 
 		public SyncList(UInt32 id)
 		{
