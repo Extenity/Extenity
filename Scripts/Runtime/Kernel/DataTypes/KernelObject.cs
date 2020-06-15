@@ -17,17 +17,22 @@ namespace Extenity.KernelToolbox
 
 		#region ID
 
+		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
+		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
+		// "Something.ID == ID.Invalid". See 116451215.
+		public static readonly UInt32 InvalidID = default;
+
 		[JsonProperty(PropertyName = "ID")]
-		protected internal ID _ID;
+		protected internal UInt32 _ID;
 		[JsonIgnore]
-		public ID ID
+		public UInt32 ID
 		{
 			get => _ID;
 		}
 
 		internal void ResetIDOnDestroy()
 		{
-			_ID = ID.Invalid;
+			_ID = InvalidID;
 		}
 
 		#endregion
@@ -61,7 +66,7 @@ namespace Extenity.KernelToolbox
 	{
 		#region ID
 
-		public void SetID(ID id)
+		public void SetID(UInt32 id)
 		{
 			if (IsValid)
 			{

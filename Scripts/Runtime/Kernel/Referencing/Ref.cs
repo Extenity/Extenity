@@ -40,11 +40,11 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
-		#region Implicit Conversion To ID and UInt32
+		#region Implicit Conversion Between Ref and UInt32
 
-		public static implicit operator ID(Ref me)
+		public static implicit operator Ref(UInt32 me)
 		{
-			return new ID(me.Value);
+			return new Ref(me);
 		}
 
 		public static implicit operator UInt32(Ref me)
@@ -70,8 +70,7 @@ namespace Extenity.KernelToolbox
 
 		public override bool Equals(object obj)
 		{
-			return (obj is Ref castRef && Value == castRef.Value) ||
-			       (obj is ID castID && Value == castID.Value);
+			return obj is Ref castRef && Value == castRef.Value;
 		}
 
 		// public static bool operator ==(Ref lhs, Ref rhs) { return lhs.Value == rhs.Value; }

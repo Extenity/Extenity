@@ -33,9 +33,9 @@ namespace Extenity.KernelToolbox
 			}
 		}
 
-		public ID CreateID()
+		public UInt32 CreateID()
 		{
-			return new ID(GenerateNewID());
+			return GenerateNewID();
 		}
 
 		#region Overflow Warning

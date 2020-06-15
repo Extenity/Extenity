@@ -116,11 +116,11 @@ namespace Extenity.KernelToolbox
 			return null;
 		}
 
-		public KernelObject Get(Ref instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
+		public KernelObject Get(UInt32 instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
 		{
 			if (KernelObjectsByTypes.TryGetValue(instanceType, out var kernelObjectsByIDs))
 			{
-				if (kernelObjectsByIDs.TryGetValue(instanceID.Value, out var instance))
+				if (kernelObjectsByIDs.TryGetValue(instanceID, out var instance))
 				{
 					// No need to check if instance is null. We already know any registered object does exist.
 					// if (instance == null)

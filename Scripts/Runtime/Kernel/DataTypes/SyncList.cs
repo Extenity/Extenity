@@ -17,7 +17,7 @@ namespace Extenity.KernelToolbox
 
 		#region Initialization
 
-		public SyncList(ID id)
+		public SyncList(UInt32 id)
 		{
 			List = new List<TKernelObject>(); // TODO: An override that supports specifying 'capacity' would be good.
 			SetID(id);

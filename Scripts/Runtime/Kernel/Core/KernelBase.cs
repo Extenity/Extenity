@@ -176,7 +176,7 @@ namespace Extenity.KernelToolbox
 			return Block.Get<TKernelObject>(instanceID, skipQuietlyIfDestroyed);
 		}
 
-		public KernelObject Get(Ref instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
+		public KernelObject Get(UInt32 instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
 		{
 			return Block.Get(instanceID, instanceType, skipQuietlyIfDestroyed);
 		}
