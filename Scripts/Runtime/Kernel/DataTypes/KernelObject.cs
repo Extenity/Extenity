@@ -47,7 +47,8 @@ namespace Extenity.KernelToolbox
 		#endregion
 	}
 
-	public abstract class KernelObject<TKernel> : KernelObject
+	public abstract class KernelObject<TDerived, TKernel> : KernelObject
+		where TDerived : KernelObject<TDerived, TKernel>
 		where TKernel : KernelBase<TKernel>
 	{
 		#region ID

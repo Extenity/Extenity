@@ -69,7 +69,7 @@ namespace Extenity.KernelToolbox
 		#region Instantiate/Destroy KernelObject
 
 		public TKernelObject Instantiate<TKernelObject>()
-			where TKernelObject : KernelObject<TKernel>, new()
+			where TKernelObject : KernelObject<TKernelObject, TKernel>, new()
 		{
 			var instance = new TKernelObject();
 			instance.SetID(IDGenerator.CreateID());
@@ -78,7 +78,7 @@ namespace Extenity.KernelToolbox
 		}
 
 		public void Destroy<TKernelObject>([CanBeNull] TKernelObject instance)
-			where TKernelObject : KernelObject<TKernel>
+			where TKernelObject : KernelObject<TKernelObject, TKernel>
 		{
 			if (instance == null || !instance.ID.IsValid)
 			{

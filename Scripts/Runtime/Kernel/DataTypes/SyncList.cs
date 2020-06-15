@@ -6,8 +6,8 @@ using JetBrains.Annotations;
 namespace Extenity.KernelToolbox
 {
 
-	public class SyncList<TKernelObject, TKernel> : KernelObject<TKernel>
-		where TKernelObject : KernelObject<TKernel>, new()
+	public class SyncList<TKernelObject, TKernel> : KernelObject<SyncList<TKernelObject, TKernel>, TKernel>
+		where TKernelObject : KernelObject<TKernelObject, TKernel>, new()
 		where TKernel : KernelBase<TKernel>
 	{
 		/// <summary>
