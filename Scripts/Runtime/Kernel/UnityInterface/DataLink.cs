@@ -40,7 +40,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		{
 			if (!DisableInvalidIDErrorAtStart)
 			{
-				if (!ID.IsValid)
+				if (ID.IsNotSet)
 				{
 					Log.Error($"Data link ID was not set for '{Component.FullName()}'.", Component ? Component.gameObject : null);
 				}
@@ -90,7 +90,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 
 			// Deregister if previously registered for version changes.
-			if (RegisteredID.IsValid)
+			if (RegisteredID.IsSet)
 			{
 				Kernel.DeregisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback);
 			}
@@ -98,7 +98,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			RegisteredID = targetID;
 			RegisteredDataInvalidationEventOrder = DataInvalidationEventOrder;
 
-			if (RegisteredID.IsValid)
+			if (RegisteredID.IsSet)
 			{
 				Kernel.RegisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback, RegisteredDataInvalidationEventOrder);
 				Kernel.Invalidate(RegisteredID);

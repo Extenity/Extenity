@@ -35,6 +35,9 @@ namespace Extenity.KernelToolbox
 		[SerializeField]
 		public UInt32 ReferencedID;
 
+		public bool IsSet => ReferencedID != 0; // See 116451215.
+		public bool IsNotSet => ReferencedID == 0; // See 116451215.
+
 		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
 		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
 		// "Something.ID == ID.Invalid". See 116451215.
@@ -63,21 +66,12 @@ namespace Extenity.KernelToolbox
 		}
 
 		public TKernelObject Data => KernelBase<TKernel>.Instance.Get(this);
-		public bool IsValidAndDataExists => KernelBase<TKernel>.Instance.Exists(this); // TODO IMMEDIATE: Find a better name. Also see if IsValid should be renamed too.
-
-		#endregion
-
-		#region Validation
-
-		// See 116451215.
-		public bool IsValid => ReferencedID != 0;
-		public bool IsInvalid => ReferencedID == 0;
+		public bool IsSetAndDataExists => KernelBase<TKernel>.Instance.Exists(this);
 
 		#endregion
 
 		#region Equality and Comparison
 
-		// public bool Equals(ID other) { return Value == other.Value; }
 		public bool Equals(Ref<TKernelObject, TKernel> other) { return ReferencedID == other.ReferencedID; }
 		public bool Equals(UInt32 other) { return ReferencedID == other; }
 
@@ -86,18 +80,9 @@ namespace Extenity.KernelToolbox
 			return obj is Ref<TKernelObject, TKernel> castRef && ReferencedID == castRef.ReferencedID;
 		}
 
-		// public static bool operator ==(Ref lhs, Ref rhs) { return lhs.Value == rhs.Value; }
-		// public static bool operator !=(Ref lhs, Ref rhs) { return lhs.Value != rhs.Value; }
-		// public static bool operator ==(Ref lhs, ID rhs) { return lhs.Value == rhs.Value; }
-		// public static bool operator !=(Ref lhs, ID rhs) { return lhs.Value != rhs.Value; }
-		// public static bool operator ==(ID lhs, Ref rhs) { return lhs.Value == rhs.Value; }
-		// public static bool operator !=(ID lhs, Ref rhs) { return lhs.Value != rhs.Value; }
 		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID == rhs; }
 		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.ReferencedID != rhs; }
-		// public static bool operator ==(UInt32 lhs, Ref rhs) { return lhs == rhs.Value; }
-		// public static bool operator !=(UInt32 lhs, Ref rhs) { return lhs != rhs.Value; }
 
-		// public int CompareTo(ID other) { return Value.CompareTo(other.Value); }
 		public int CompareTo(Ref<TKernelObject, TKernel> other) { return ReferencedID.CompareTo(other.ReferencedID); }
 		public int CompareTo(UInt32 other) { return ReferencedID.CompareTo(other); }
 
