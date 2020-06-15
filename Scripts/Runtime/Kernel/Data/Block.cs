@@ -7,7 +7,8 @@ namespace Extenity.KernelToolbox
 {
 
 	[Serializable]
-	public class Block
+	public class Block<TKernel>
+		where TKernel : KernelBase<TKernel>
 	{
 		#region KernelObjects
 
@@ -85,8 +86,8 @@ namespace Extenity.KernelToolbox
 
 		#region Queries
 
-		public TKernelObject Get<TKernelObject>(Ref<TKernelObject> instanceID, bool skipQuietlyIfDestroyed = false)
-			where TKernelObject : KernelObject
+		public TKernelObject Get<TKernelObject>(Ref<TKernelObject, TKernel> instanceID, bool skipQuietlyIfDestroyed = false)
+			where TKernelObject : KernelObject<TKernel>
 		{
 			if (KernelObjectsByTypes.TryGetValue(typeof(TKernelObject), out var kernelObjectsByIDs))
 			{
@@ -167,8 +168,8 @@ namespace Extenity.KernelToolbox
 		// 	return null;
 		// }
 
-		public bool Exists<TKernelObject>(Ref<TKernelObject> instanceID)
-			where TKernelObject : KernelObject
+		public bool Exists<TKernelObject>(Ref<TKernelObject, TKernel> instanceID)
+			where TKernelObject : KernelObject<TKernel>
 		{
 			if (KernelObjectsByTypes.TryGetValue(typeof(TKernelObject), out var kernelObjectsByIDs))
 			{

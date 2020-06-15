@@ -11,12 +11,13 @@ namespace Extenity.KernelToolbox
 
 	[InlineProperty]
 	[Serializable, JsonObject(MemberSerialization.Fields)]
-	public struct Ref<TKernelObject> : IComparable<Ref<TKernelObject>>, IEquatable<Ref<TKernelObject>>
-		where TKernelObject : KernelObject
+	public struct Ref<TKernelObject, TKernel> : IComparable<Ref<TKernelObject, TKernel>>, IEquatable<Ref<TKernelObject, TKernel>>
+		where TKernelObject : KernelObject<TKernel>
+		where TKernel : KernelBase<TKernel>
 	{
 		#region Initialization
 
-		public static readonly Ref<TKernelObject>[] EmptyArray = new Ref<TKernelObject>[0];
+		public static readonly Ref<TKernelObject, TKernel>[] EmptyArray = new Ref<TKernelObject, TKernel>[0];
 
 		public Ref(UInt32 id)
 		{
@@ -37,17 +38,17 @@ namespace Extenity.KernelToolbox
 		// Value 0 is defined as Invalid. Note that all validity checks should treat only being 0 is considered being
 		// Invalid. Treating greater than 0 as Valid or negative values as Invalid breaks simple comparisons like
 		// "Something.ID == ID.Invalid". See 116451215.
-		public static readonly Ref<TKernelObject> Invalid = default;
+		public static readonly Ref<TKernelObject, TKernel> Invalid = default;
 
 		#endregion
 
 		#region Implicit Conversion Between Ref and UInt32
 
-		public static implicit operator Ref<TKernelObject>(UInt32 me)
+		public static implicit operator Ref<TKernelObject, TKernel>(UInt32 me)
 		{
-			return new Ref<TKernelObject>(me);
+			return new Ref<TKernelObject, TKernel>(me);
 		}
-		public static implicit operator UInt32(Ref<TKernelObject> me)
+		public static implicit operator UInt32(Ref<TKernelObject, TKernel> me)
 		{
 			return me.Value;
 		}
@@ -65,12 +66,12 @@ namespace Extenity.KernelToolbox
 		#region Equality and Comparison
 
 		// public bool Equals(ID other) { return Value == other.Value; }
-		public bool Equals(Ref<TKernelObject> other) { return Value == other.Value; }
+		public bool Equals(Ref<TKernelObject, TKernel> other) { return Value == other.Value; }
 		public bool Equals(UInt32 other) { return Value == other; }
 
 		public override bool Equals(object obj)
 		{
-			return obj is Ref<TKernelObject> castRef && Value == castRef.Value;
+			return obj is Ref<TKernelObject, TKernel> castRef && Value == castRef.Value;
 		}
 
 		// public static bool operator ==(Ref lhs, Ref rhs) { return lhs.Value == rhs.Value; }
@@ -79,13 +80,13 @@ namespace Extenity.KernelToolbox
 		// public static bool operator !=(Ref lhs, ID rhs) { return lhs.Value != rhs.Value; }
 		// public static bool operator ==(ID lhs, Ref rhs) { return lhs.Value == rhs.Value; }
 		// public static bool operator !=(ID lhs, Ref rhs) { return lhs.Value != rhs.Value; }
-		public static bool operator ==(Ref<TKernelObject> lhs, UInt32 rhs) { return lhs.Value == rhs; }
-		public static bool operator !=(Ref<TKernelObject> lhs, UInt32 rhs) { return lhs.Value != rhs; }
+		public static bool operator ==(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.Value == rhs; }
+		public static bool operator !=(Ref<TKernelObject, TKernel> lhs, UInt32 rhs) { return lhs.Value != rhs; }
 		// public static bool operator ==(UInt32 lhs, Ref rhs) { return lhs == rhs.Value; }
 		// public static bool operator !=(UInt32 lhs, Ref rhs) { return lhs != rhs.Value; }
 
 		// public int CompareTo(ID other) { return Value.CompareTo(other.Value); }
-		public int CompareTo(Ref<TKernelObject> other) { return Value.CompareTo(other.Value); }
+		public int CompareTo(Ref<TKernelObject, TKernel> other) { return Value.CompareTo(other.Value); }
 		public int CompareTo(UInt32 other) { return Value.CompareTo(other); }
 
 		#endregion
@@ -116,9 +117,9 @@ namespace Extenity.KernelToolbox
 			return Value.ToString("X") + "(" + typeof(TKernelObject).Name + ")";
 		}
 
-		public static Ref<TKernelObject> FromHexString(string text)
+		public static Ref<TKernelObject, TKernel> FromHexString(string text)
 		{
-			return new Ref<TKernelObject>(Convert.ToUInt32(text, 16));
+			return new Ref<TKernelObject, TKernel>(Convert.ToUInt32(text, 16));
 		}
 
 		#endregion

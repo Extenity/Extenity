@@ -99,7 +99,7 @@ namespace Extenity.KernelToolbox
 		[NonSerialized, JsonIgnore]
 		[ShowInInspector, ReadOnly]
 		[PropertyOrder(70_0)] // Show it at the end
-		public Block Block = new Block();
+		public Block<TKernel> Block = new Block<TKernel>();
 
 		#endregion
 
@@ -170,10 +170,10 @@ namespace Extenity.KernelToolbox
 
 		#region Data - Queries
 
-		public TKernelObject Get<TKernelObject>(Ref<TKernelObject> instanceID, bool skipQuietlyIfDestroyed = false)
-			where TKernelObject : KernelObject
+		public TKernelObject Get<TKernelObject>(Ref<TKernelObject, TKernel> instanceID, bool skipQuietlyIfDestroyed = false)
+			where TKernelObject : KernelObject<TKernel>
 		{
-			return Block.Get<TKernelObject>(instanceID, skipQuietlyIfDestroyed);
+			return Block.Get(instanceID, skipQuietlyIfDestroyed);
 		}
 
 		public KernelObject Get(UInt32 instanceID, Type instanceType, bool skipQuietlyIfDestroyed = false)
@@ -181,10 +181,10 @@ namespace Extenity.KernelToolbox
 			return Block.Get(instanceID, instanceType, skipQuietlyIfDestroyed);
 		}
 
-		public bool Exists<TKernelObject>(Ref<TKernelObject> instanceID)
-			where TKernelObject : KernelObject
+		public bool Exists<TKernelObject>(Ref<TKernelObject, TKernel> instanceID)
+			where TKernelObject : KernelObject<TKernel>
 		{
-			return Block.Exists<TKernelObject>(instanceID);
+			return Block.Exists(instanceID);
 		}
 
 		#endregion

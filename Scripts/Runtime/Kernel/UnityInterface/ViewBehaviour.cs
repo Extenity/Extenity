@@ -188,7 +188,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		public DataLink<TKernelObject, TKernel> DataLink;
 
 		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
-		public Ref<TKernelObject> ID
+		public Ref<TKernelObject, TKernel> ID
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => DataLink.ID;
