@@ -64,7 +64,7 @@ namespace Extenity.KernelToolbox
 	{
 		#region ID
 
-		public void SetID(UInt32 id) // TODO IMMEDIATE: Should be internal.
+		internal void SetID(UInt32 id)
 		{
 			if (IsAlive)
 			{
