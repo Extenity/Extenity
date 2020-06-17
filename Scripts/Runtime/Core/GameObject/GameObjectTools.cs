@@ -248,6 +248,7 @@ namespace Extenity.GameObjectToolbox
 			{
 				const bool allowDestroyingAssets = false; // Destroying assets should only be done manually calling DestroyImmediate in a controlled environment.
 				Object.DestroyImmediate(obj, allowDestroyingAssets);
+				return;
 			}
 #endif
 			Object.Destroy(obj);
@@ -260,6 +261,7 @@ namespace Extenity.GameObjectToolbox
 			{
 				const bool allowDestroyingAssets = false; // Destroying assets should only be done manually calling DestroyImmediate in a controlled environment.
 				Object.DestroyImmediate(obj, allowDestroyingAssets);
+				return;
 			}
 #endif
 			Object.Destroy(obj, delay);
