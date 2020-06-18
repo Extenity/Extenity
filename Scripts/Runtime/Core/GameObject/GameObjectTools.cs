@@ -1450,13 +1450,30 @@ namespace Extenity.GameObjectToolbox
 
 		#region InstantiateAndGetComponent
 
-		public static GameObject Instantiate(GameObject original, Transform parent, bool setLocationToLocalZero)
+		public static GameObject Instantiate(GameObject original, Transform parent, bool setTransformToLocalZero)
 		{
 			var go = GameObject.Instantiate(original);
-			go.transform.SetParent(parent);
-			if (setLocationToLocalZero)
+			var transform = go.transform;
+			transform.SetParent(parent);
+			if (setTransformToLocalZero)
 			{
-				go.transform.ResetTransformToLocalZero();
+				transform.ResetTransformToLocalZero();
+			}
+			return go;
+		}
+
+		public static GameObject Instantiate(GameObject original, Transform parent, bool setPositionRotationToLocalZero, bool setScaleToOne)
+		{
+			var go = GameObject.Instantiate(original);
+			var transform = go.transform;
+			transform.SetParent(parent);
+			if (setPositionRotationToLocalZero)
+			{
+				transform.ResetPositionRotationToLocalZero();
+			}
+			if (setScaleToOne)
+			{
+				transform.ResetScaleToOne();
 			}
 			return go;
 		}
@@ -1473,9 +1490,15 @@ namespace Extenity.GameObjectToolbox
 			return go.GetComponent<T>();
 		}
 
-		public static T InstantiateAndGetComponent<T>(GameObject original, Transform parent, bool setLocationToLocalZero) where T : Component
+		public static T InstantiateAndGetComponent<T>(GameObject original, Transform parent, bool setTransformToLocalZero) where T : Component
 		{
-			var go = Instantiate(original, parent, setLocationToLocalZero);
+			var go = Instantiate(original, parent, setTransformToLocalZero);
+			return go.GetComponent<T>();
+		}
+
+		public static T InstantiateAndGetComponent<T>(GameObject original, Transform parent, bool setPositionRotationToLocalZero, bool setScaleToOne) where T : Component
+		{
+			var go = Instantiate(original, parent, setPositionRotationToLocalZero, setScaleToOne);
 			return go.GetComponent<T>();
 		}
 
