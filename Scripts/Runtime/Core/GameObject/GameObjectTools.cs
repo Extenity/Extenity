@@ -1715,6 +1715,12 @@ namespace Extenity.GameObjectToolbox
 
 		#region Reset Transform
 
+		public static void ResetPositionRotationToLocalZero(this Transform me)
+		{
+			me.localPosition = Vector3.zero;
+			me.localRotation = Quaternion.identity;
+		}
+
 		public static void ResetTransformToLocalZero(this Transform me)
 		{
 			me.localPosition = Vector3.zero;
@@ -1722,10 +1728,21 @@ namespace Extenity.GameObjectToolbox
 			me.localScale = Vector3.one;
 		}
 
+		public static void ResetPositionRotationToWorldZero(this Transform me)
+		{
+			me.position = Vector3.zero;
+			me.rotation = Quaternion.identity;
+		}
+
 		public static void ResetTransformToWorldZero(this Transform me)
 		{
 			me.position = Vector3.zero;
 			me.rotation = Quaternion.identity;
+			me.localScale = Vector3.one;
+		}
+
+		public static void ResetScaleToOne(this Transform me)
+		{
 			me.localScale = Vector3.one;
 		}
 
