@@ -239,7 +239,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[ShowIf("@Model"), ReadOnly]
 		public GameObject Model;
 
-		public GameObject InstantiateChildAndSetAsModel(GameObject original)
+		public GameObject InstantiateChildAndSetAsModel(GameObject original, bool setPositionRotationToLocalZero, bool setScaleToOne)
 		{
 			DestroyModel(); // Destroy current model if exists. Do it even the 'original' is null.
 
@@ -249,7 +249,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 				return null;
 			}
 
-			var model = GameObjectTools.Instantiate(original, transform, true);
+			var model = GameObjectTools.Instantiate(original, transform, setPositionRotationToLocalZero, setScaleToOne);
 			Model = model;
 			return model;
 		}
