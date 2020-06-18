@@ -78,8 +78,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static EditorWindow[] GetAllEditorWindows<T>() where T : EditorWindow
 		{
 			return ((EditorWindow[])Resources.FindObjectsOfTypeAll(typeof(T)))
-				.Where(window => window != null)
-				.ToArray();
+			       .Where(window => window != null)
+			       .ToArray();
 		}
 
 		public static EditorWindow GetEditorWindowByTitle(string title)
@@ -113,7 +113,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
-
 	}
 
 }
