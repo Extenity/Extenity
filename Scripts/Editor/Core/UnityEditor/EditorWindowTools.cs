@@ -77,7 +77,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static EditorWindow[] GetAllEditorWindows<T>() where T : EditorWindow
 		{
-			return ((EditorWindow[])Resources.FindObjectsOfTypeAll(typeof(T)))
+			return GetAllEditorWindows(typeof(T));
+		}
+
+		public static EditorWindow[] GetAllEditorWindows(Type type)
+		{
+			return ((EditorWindow[])Resources.FindObjectsOfTypeAll(type))
 			       .Where(window => window != null)
 			       .ToArray();
 		}
@@ -100,6 +105,27 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (foundWindow)
 				return foundWindow;
 			throw new Exception($"Window with title '{title}' does not exist.");
+		}
+
+		#endregion
+
+		#region Get Editor Window - Game View
+
+		private static EditorWindow _GameView;
+		public static EditorWindow GameView
+		{
+			get
+			{
+				if (_GameView == null)
+				{
+					var type = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+					var gameViews = GetAllEditorWindows(type);
+					_GameView = gameViews != null && gameViews.Length > 0
+						? gameViews[0]
+						: null;
+				}
+				return _GameView;
+			}
 		}
 
 		#endregion
