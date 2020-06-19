@@ -115,6 +115,44 @@ namespace Extenity.NavigationToolbox
 		}
 
 		#endregion
+
+		#region Layers
+
+		public static LayerMask GetAreaLayerMask(string areaName)
+		{
+			var index = NavMesh.GetAreaFromName(areaName);
+			if (index < 0)
+			{
+				Log.CriticalError($"Navigation area '{areaName}' does not exist.");
+				return 0;
+			}
+			return 1 << index;
+		}
+
+		#endregion
+
+		#region Agent
+
+		public static int GetAgentTypeID(string agentTypeName)
+		{
+			var settingsCount = NavMesh.GetSettingsCount();
+			for (int i = 0; i < settingsCount; ++i)
+			{
+				var settings = NavMesh.GetSettingsByIndex(i);
+
+				var agentTypeID = settings.agentTypeID;
+				var settingsName = NavMesh.GetSettingsNameFromID(agentTypeID);
+
+				if (settingsName.Equals(agentTypeName, StringComparison.Ordinal))
+				{
+					return agentTypeID;
+				}
+			}
+			Log.CriticalError($"Agent type '{agentTypeName}' does not exist.");
+			return -1;
+		}
+
+		#endregion
 	}
 
 }
