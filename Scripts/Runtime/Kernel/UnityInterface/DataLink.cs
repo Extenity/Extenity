@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
@@ -52,6 +52,30 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#endregion
 
+		#region Data Link Modification
+
+		public delegate void DataLinkModificationDelegate(Ref<TKernelObject, TKernel> previouslyRegisteredID, Ref<TKernelObject, TKernel> recentlyRegisteredID);
+
+		[NonSerialized]
+		public DataLinkModificationDelegate DataLinkModificationCallback;
+
+		private void SafeInvokeDataLinkModificationCallback(Ref<TKernelObject, TKernel> previouslyRegisteredID, Ref<TKernelObject, TKernel> recentlyRegisteredID)
+		{
+			try
+			{
+				if (DataLinkModificationCallback != null)
+				{
+					DataLinkModificationCallback(previouslyRegisteredID, recentlyRegisteredID);
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Exception(exception, GameObject);
+			}
+		}
+
+		#endregion
+
 		#region Data Invalidation
 
 		/// <summary>
@@ -67,6 +91,9 @@ namespace Extenity.KernelToolbox.UnityInterface
 		private Ref<TKernelObject, TKernel> RegisteredID; // Default value is Ref.Invalid, which is default(Ref).
 		[NonSerialized]
 		private int RegisteredDataInvalidationEventOrder; // Default is 0.
+
+		[NonSerialized]
+		public Action<TKernelObject> DataInvalidationCallback;
 
 		public void RefreshDataLink(bool isComponentEnabled)
 		{
@@ -91,9 +118,16 @@ namespace Extenity.KernelToolbox.UnityInterface
 				Kernel.DeregisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback);
 			}
 
+			// Change the inner values of the DataLink. Do it before calling any callbacks.
+			var previouslyRegisteredID = RegisteredID;
 			RegisteredID = targetID;
 			RegisteredDataInvalidationEventOrder = DataInvalidationEventOrder;
 
+			// Call the DataLink Modification callback. Do it before invalidating the Data and triggering any operations
+			// in View, because View would probably modify itself to accommodate itself to the new linked data.
+			SafeInvokeDataLinkModificationCallback(previouslyRegisteredID, targetID);
+
+			// Register the new ID for invalidations. Then Invalidate so that the Views renew themselves immediately.
 			if (RegisteredID.IsSet)
 			{
 				Kernel.RegisterForVersionChanges(RegisteredID, InvokeDataInvalidationCallback, RegisteredDataInvalidationEventOrder);

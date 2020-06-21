@@ -197,12 +197,15 @@ namespace Extenity.KernelToolbox.UnityInterface
 		[ShowInInspector, ReadOnly, FoldoutGroup("View Behaviour"), PropertyOrder(103)]
 		public TKernelObject Object => DataLink.Object;
 
+		protected virtual void OnDataLinkModified(Ref<TKernelObject, TKernel> previouslyRegisteredID, Ref<TKernelObject, TKernel> recentlyRegisteredID) { }
+
 		protected abstract void OnDataInvalidated([NotNull] TKernelObject instance);
 
 		private void InitializeDataLinkIfRequired()
 		{
 			DataLink.Component = this;
 			DataLink.DataInvalidationCallback = OnDataInvalidated;
+			DataLink.DataLinkModificationCallback = OnDataLinkModified;
 		}
 
 		public void RefreshDataLink(bool isComponentEnabled)
