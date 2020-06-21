@@ -18,45 +18,11 @@ namespace Extenity.KernelToolbox
 
 		#region Initialization
 
-		/// <summary>
-		/// CAUTION! Only for serialization purposes! Use other constructors.
-		/// </summary>
 		[JsonConstructor]
-		protected SyncList()
+		public SyncList()
 		{
+			List = new List<TKernelObject>();
 		}
-
-		public SyncList(UInt32 id)
-		{
-			List = new List<TKernelObject>(); // TODO: An override that supports specifying 'capacity' would be good.
-			SetID(id);
-		}
-
-		/* Old implementation where Kernel was a field of SyncList. Keep it for future needs.
-		public SyncList(ID id, [NotNull] KernelBase kernel)
-		{
-			List = new List<T>();
-			Initialize(id, kernel);
-		}
-
-		public SyncList(ID id, [NotNull] KernelBase kernel, [NotNull] IEnumerable<T> collection)
-		{
-			List = new List<T>(collection);
-			Initialize(id, kernel);
-		}
-
-		public SyncList(ID id, [NotNull] KernelBase kernel, int capacity)
-		{
-			List = new List<T>(capacity);
-			Initialize(id, kernel);
-		}
-
-		public void Initialize(ID id, KernelBase kernel)
-		{
-			ID = id;
-			Kernel = kernel;
-		}
-		*/
 
 		#endregion
 
