@@ -106,34 +106,24 @@ namespace Extenity.UIToolbox.ScreenManagement
 
 		private const string LogPrefix = "<b>[Screens]</b> ";
 
-		protected void Log(string message)
-		{
-			Debug.Log(LogPrefix + message, this);
-		}
-
 		protected void LogCreation(string message, UnityEngine.Object screenPrefab)
 		{
-			Debug.Log(LogPrefix + message, screenPrefab);
+			Log.Info(LogPrefix + message, screenPrefab);
 		}
 
 		protected void LogVisibility(string message, UnityEngine.Object screenInstance)
 		{
-			Debug.Log(LogPrefix + message, screenInstance);
+			Log.Info(LogPrefix + message, screenInstance);
 		}
 
 		protected void LogWarning(string message)
 		{
-			Debug.LogWarning(LogPrefix + message, this);
+			Log.Warning(LogPrefix + message, this);
 		}
 
 		protected void LogError(string message)
 		{
-			Debug.LogError(LogPrefix + message, this);
-		}
-
-		protected void LogCritical(string message)
-		{
-			Debug.LogException(new Exception(LogPrefix + message), this);
+			Log.Error(LogPrefix + message, this);
 		}
 
 		#endregion

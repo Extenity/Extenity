@@ -144,12 +144,12 @@ namespace Extenity.MessagingToolbox
 
 		private static void LogRegistration(string message, Object context)
 		{
-			Debug.Log(LogPrefix + message, context);
+			Log.Info(LogPrefix + message, context);
 		}
 
 		private static void LogEmit(string message)
 		{
-			Debug.Log(LogPrefix + message);
+			Log.Info(LogPrefix + message);
 		}
 
 		#endregion
