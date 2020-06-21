@@ -1207,6 +1207,28 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region FindObjectWithTagEnsured and FindSingleObjectWithTagEnsured
+
+		public static GameObject FindObjectWithTagEnsured(string tag)
+		{
+			var obj = GameObject.FindWithTag(tag);
+			if (obj == null)
+				throw new Exception("Could not find object with tag '" + tag + "'");
+			return obj;
+		}
+
+		public static GameObject FindSingleObjectWithTagEnsured(string tag)
+		{
+			var objs = GameObject.FindGameObjectsWithTag(tag);
+			if (objs == null || objs.Length == 0)
+				throw new Exception("Could not find object with tag '" + tag + "'");
+			else if (objs.Length > 1)
+				throw new Exception("There are multiple instances for object with tag '" + tag + "'");
+			return objs[0];
+		}
+
+		#endregion
+
 		#region FindChildEnsured
 
 		public static Transform FindChildEnsured(this Transform me, string name)
