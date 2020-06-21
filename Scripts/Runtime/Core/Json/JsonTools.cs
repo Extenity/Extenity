@@ -64,6 +64,8 @@ namespace Extenity.JsonToolbox
 		/// </summary>
 		public static string SerializeCrosschecked<T>(T obj, JsonSerializerSettings settings)
 		{
+			if (obj == null)
+				return null;
 			string serializedJson = SerializeObject(obj, Formatting.Indented, settings);
 			string reserializedJson = null;
 			try
