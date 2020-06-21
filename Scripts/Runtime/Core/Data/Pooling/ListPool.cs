@@ -60,7 +60,11 @@ namespace Extenity.DataToolbox
 
 		public static ListDisposer<T> Using(out List<T> list)
 		{
-			if (!Pool.TryTake(out list))
+			if (Pool.TryTake(out list))
+			{
+				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
+			}
+			else
 			{
 				list = new List<T>();
 			}
@@ -69,7 +73,11 @@ namespace Extenity.DataToolbox
 
 		public static void New(out List<T> list)
 		{
-			if (!Pool.TryTake(out list))
+			if (Pool.TryTake(out list))
+			{
+				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
+			}
+			else
 			{
 				list = new List<T>();
 			}
@@ -82,11 +90,13 @@ namespace Extenity.DataToolbox
 			var cached = listReference;
 			listReference = null;
 
+			cached.Clear();
 			Pool.Add(cached);
 		}
 
 		internal static void _Free(List<T> list)
 		{
+			list.Clear();
 			Pool.Add(list);
 		}
 
