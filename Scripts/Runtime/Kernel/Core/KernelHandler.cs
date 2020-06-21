@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -9,14 +9,6 @@ namespace Extenity.KernelToolbox
 	public abstract class KernelHandler<TKernel> : MonoBehaviour
 		where TKernel : KernelBase<TKernel>
 	{
-		#region Initialization
-
-		protected virtual void Awake()
-		{
-		}
-
-		#endregion
-
 		#region Deinitialization
 
 		protected virtual void OnDestroy()
@@ -59,7 +51,7 @@ namespace Extenity.KernelToolbox
 		[ShowInInspector, HideLabel]
 		public Versioning.VersioningStats Stats
 		{
-			get => Kernel.Versioning.Stats;
+			get => Kernel?.Versioning?.Stats;
 			set => Kernel.Versioning.Stats = value;
 		}
 

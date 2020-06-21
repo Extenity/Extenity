@@ -52,7 +52,7 @@ namespace Extenity.KernelToolbox
 		{
 			if (!IsInitialized)
 			{
-				throw new Exception($"Tried to deinitialize '{GetType().Name}' more than once.");
+				throw new Exception($"Tried to deinitialize '{GetType().Name}' but it was not initialied.");
 			}
 			IsInitialized = false;
 
