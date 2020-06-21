@@ -3,8 +3,10 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
+using Extenity.JsonToolbox;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -185,6 +187,30 @@ namespace Extenity.KernelToolbox
 			where TKernelObject : KernelObject<TKernel>
 		{
 			return Block.Exists(instanceID);
+		}
+
+		#endregion
+
+		#region Serialization
+
+		public string SerializeJson()
+		{
+			return JsonTools.SerializeCrosschecked(this, JsonTools.SerializerSettings);
+		}
+
+		public static TKernel DeserializeJson(string json, Action<JObject> upgradeMethod)
+		{
+			return JsonTools.DeserializeAndUpgradeCrosschecked<TKernel>(json, upgradeMethod, JsonTools.SerializerSettings);
+		}
+
+		public string SerializeJsonWithoutCrosscheck()
+		{
+			return JsonTools.SerializeObject(this, Formatting.Indented, JsonTools.SerializerSettings);
+		}
+
+		public static TKernel DeserializeJsonWithoutCrosscheck(string json, Action<JObject> upgradeMethod)
+		{
+			return JsonTools.DeserializeAndUpgradeObject<TKernel>(json, upgradeMethod, JsonTools.SerializerSettings);
 		}
 
 		#endregion
