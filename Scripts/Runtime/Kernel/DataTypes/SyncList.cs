@@ -86,6 +86,18 @@ namespace Extenity.KernelToolbox
 			return List.Contains(item);
 		}
 
+		public bool Contains(Ref<TKernelObject, TKernel> id)
+		{
+			for (var i = 0; i < List.Count; i++)
+			{
+				if (List[i] != null && List[i].ID == id)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public TKernelObject GetItem(Ref<TKernelObject, TKernel> id)
 		{
 			for (var i = 0; i < List.Count; i++)
@@ -173,6 +185,20 @@ namespace Extenity.KernelToolbox
 			var result = List.Remove(item);
 			Invalidate();
 			return result;
+		}
+
+		public bool Remove(Ref<TKernelObject, TKernel> id)
+		{
+			for (var i = 0; i < List.Count; i++)
+			{
+				if (List[i] != null && List[i].ID == id)
+				{
+					List.RemoveAt(i);
+					Invalidate();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
