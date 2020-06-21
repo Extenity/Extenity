@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
+using Extenity.FlowToolbox;
 using Extenity.JsonToolbox;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -97,7 +98,6 @@ namespace Extenity.KernelToolbox
 
 		#region Data
 
-		[NonSerialized, JsonIgnore]
 		[ShowInInspector, ReadOnly]
 		[PropertyOrder(70_0)] // Show it at the end
 		public Block<TKernel> Block = new Block<TKernel>();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 
 namespace Extenity.KernelToolbox
@@ -18,7 +17,6 @@ namespace Extenity.KernelToolbox
 		/// <summary>
 		/// CAUTION! Use this as readonly.
 		/// </summary>
-		[NonSerialized, JsonIgnore]
 		[ShowInInspector, ReadOnly]
 		public readonly Dictionary<Type, Dictionary<UInt32, KernelObject>> KernelObjectsByTypes = new Dictionary<Type, Dictionary<uint, KernelObject>>();
 
