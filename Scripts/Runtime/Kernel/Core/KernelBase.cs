@@ -20,28 +20,29 @@ namespace Extenity.KernelToolbox
 	{
 		#region Singleton
 
-		public static TKernel Instance;
+		private static TKernel _Instance;
+		public static TKernel Instance => _Instance;
+		public static bool IsInstanceAvailable => _Instance != null;
 
 		#endregion
 
 		#region Initialization
 
-		public bool IsInitialized { get; private set; }
+		public bool IsActive => _Instance == this;
 
 		// TODO: Ensure initialization is called in all cases. (Deserialization, having another constructor in derived class, etc.)
-		public void Initialize()
+		public void Activate()
 		{
-			if (IsInitialized)
+			if (IsActive)
 			{
 				throw new Exception($"Tried to initialize '{GetType().Name}' more than once.");
 			}
-			if (Instance != null)
+			if (IsInstanceAvailable)
 			{
 				throw new Exception($"Tried to initialize '{GetType().Name}' while there was already an instance in use.");
 			}
 
-			Instance = (TKernel)this;
-			IsInitialized = true;
+			_Instance = (TKernel)this;
 
 			RegisterAllKernelObjectFieldsInKernel();
 		}
@@ -50,20 +51,18 @@ namespace Extenity.KernelToolbox
 
 		#region Deinitialization
 
-		public void Deinitialize()
+		public void Deactivate()
 		{
-			if (!IsInitialized)
+			if (!IsInstanceAvailable)
 			{
-				throw new Exception($"Tried to deinitialize '{GetType().Name}' but it was not initialied.");
+				throw new Exception($"Tried to deinitialize '{GetType().Name}' but it was not active.");
 			}
-			IsInitialized = false;
-
-			if (Instance != this)
+			if (!IsActive)
 			{
 				throw new Exception($"Tried to deinitialize '{GetType().Name}' but there was another singleton.");
 			}
 
-			Instance = null;
+			_Instance = null;
 		}
 
 		#endregion

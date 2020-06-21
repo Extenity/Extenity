@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -13,9 +13,9 @@ namespace Extenity.KernelToolbox
 
 		protected virtual void OnDestroy()
 		{
-			if (Kernel.IsInitialized)
+			if (Kernel.IsActive)
 			{
-				Kernel.Deinitialize();
+				Kernel.Deactivate();
 			}
 		}
 
