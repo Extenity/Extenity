@@ -52,10 +52,11 @@ namespace Extenity.KernelToolbox
 
 		#region Conversion between Ref and UInt32
 
-		public static implicit operator Ref<TKernelObject, TKernel>(UInt32 me)
-		{
-			return new Ref<TKernelObject, TKernel>(me);
-		}
+		// public static implicit operator Ref<TKernelObject, TKernel>(UInt32 me) Decided not to do that. Treating an integer value as Ref is unsafe and might cause unintended conversions. Refs should be created in controlled environments.
+		// {
+		// 	return new Ref<TKernelObject, TKernel>(me);
+		// }
+		
 		public static implicit operator UInt32(Ref<TKernelObject, TKernel> me)
 		{
 			return me._ReferencedID;

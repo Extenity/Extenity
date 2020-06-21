@@ -68,7 +68,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 						var itemView = InstantiateItem(item);
 
 						// Connect the view object to kernel object.
-						itemView.DataLink.ID = item.ID;
+						itemView.DataLink.ID = new Ref<TItem, TKernel>(item.ID);
 						// itemView.RefreshDataLink(); This is going to be called inside Start of ViewBehaviour. No need to call it here.
 
 						Views.Add(itemView);
