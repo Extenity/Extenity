@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -24,13 +25,13 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Instantiate Item
 
-		protected abstract TItemView InstantiateItem(TItem item);
+		protected abstract TItemView InstantiateItem([NotNull] TItem item);
 
 		#endregion
 
 		#region Destroy Item
 
-		protected virtual void DestroyItem(TItemView item)
+		protected virtual void DestroyItem([NotNull] TItemView item)
 		{
 			GameObjectTools.Destroy(item.gameObject);
 		}
