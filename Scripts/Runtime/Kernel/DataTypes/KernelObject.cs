@@ -84,7 +84,7 @@ namespace Extenity.KernelToolbox
 			// Kernel.Register(this); This was an idea that any ID assignment is instantly registered in Kernel. It seriously fails with serialization stuff. So rolled back to registering at instantiation.
 		}
 
-		// TODO IMMEDIATE: Figure out a way to do this
+		// This is being done as Ref implicit conversion. See 113543345.
 		// public Ref<KernelObject<TKernel>, TKernel> Ref => new Ref<KernelObject<TKernel>, TKernel>(_ID);
 
 		#endregion

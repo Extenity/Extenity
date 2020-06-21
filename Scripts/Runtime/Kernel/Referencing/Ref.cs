@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -56,7 +57,15 @@ namespace Extenity.KernelToolbox
 		// {
 		// 	return new Ref<TKernelObject, TKernel>(me);
 		// }
-		
+
+		// See 113543345.
+		public static implicit operator Ref<TKernelObject, TKernel>([NotNull] TKernelObject me)
+		{
+			if (me == null)
+				throw new ArgumentNullException(nameof(me));
+			return new Ref<TKernelObject, TKernel>(me.ID);
+		}
+
 		public static implicit operator UInt32(Ref<TKernelObject, TKernel> me)
 		{
 			return me._ReferencedID;
