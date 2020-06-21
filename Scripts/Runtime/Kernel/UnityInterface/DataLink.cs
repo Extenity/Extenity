@@ -29,10 +29,8 @@ namespace Extenity.KernelToolbox.UnityInterface
 		/// Don't forget to call <see cref="RefreshDataLink"/> after modifying the ID.
 		/// </summary>
 		[Tooltip("The ID of an object in Kernel to catch related data modification events for that object.")]
-		[BoxGroup("View Behaviour")]
 		public Ref<TKernelObject, TKernel> ID; // Default value is Ref.Invalid, which is default(Ref).
 
-		[BoxGroup("View Behaviour")]
 		public bool DisableInvalidIDErrorAtStart;
 
 		internal void LogInvalidIDErrorAtStart()
@@ -63,7 +61,6 @@ namespace Extenity.KernelToolbox.UnityInterface
 		/// Don't forget to call <see cref="RefreshDataLink"/> after modifying the event order.
 		/// </summary>
 		[Tooltip("The priority of data modification event. Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.")]
-		[BoxGroup("View Behaviour")]
 		public int DataInvalidationEventOrder; // Default is 0.
 
 		[NonSerialized]

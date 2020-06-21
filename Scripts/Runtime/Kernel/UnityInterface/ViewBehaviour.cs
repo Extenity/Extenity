@@ -184,17 +184,17 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Data Link and Invalidation
 
-		[InlineProperty, HideLabel]
+		[InlineProperty, HideLabel, FoldoutGroup("View Behaviour", Order = 15000), PropertyOrder(107)]
 		public DataLink<TKernelObject, TKernel> DataLink;
 
-		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
+		[HideInInspector] // Already displayed in DataLink
 		public Ref<TKernelObject, TKernel> ID
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => DataLink.ID;
 		}
 
-		[ShowInInspector, ReadOnly, BoxGroup("Linked Object")]
+		[ShowInInspector, ReadOnly, FoldoutGroup("View Behaviour"), PropertyOrder(103)]
 		public TKernelObject Object => DataLink.Object;
 
 		protected abstract void OnDataInvalidated([NotNull] TKernelObject instance);
