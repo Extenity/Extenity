@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 
@@ -109,9 +110,11 @@ namespace Extenity.KernelToolbox
 						}
 						return null;
 					}
-
-					Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
-					return null;
+					else
+					{
+						Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+						return null;
+					}
 				}
 			}
 			return null;
@@ -139,8 +142,51 @@ namespace Extenity.KernelToolbox
 						}
 						return null;
 					}
+					else
+					{
+						Log.CriticalError($"Queried object type '{instanceType.Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+						return null;
+					}
+				}
+			}
+			return null;
+		}
 
-					Log.CriticalError($"Queried object type '{instanceType.Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+		public TKernelObject GetSingle<TKernelObject>()
+			where TKernelObject : KernelObject<TKernel>
+		{
+			if (KernelObjectsByTypes.TryGetValue(typeof(TKernelObject), out var kernelObjectsByIDs))
+			{
+				if (kernelObjectsByIDs == null || kernelObjectsByIDs.Count == 0)
+				{
+					Log.CriticalError($"There is no object with type '{typeof(TKernelObject).Name}'.");
+					return null;
+				}
+
+				if (kernelObjectsByIDs.Count > 1)
+				{
+					Log.CriticalError($"There are more than one objects with type '{typeof(TKernelObject).Name}'.");
+					return null;
+				}
+
+				var instance = kernelObjectsByIDs.Values.First(); // TODO OPTIMIZATION: Find another way that does not create garbage and does it quickly. Though that might automatically become obsolete when converting Dictionary to another structure in future.
+
+				// No need to check if instance is null. We already know any registered object does exist.
+				// if (instance == null)
+
+				// Check for type safety
+				if (instance is TKernelObject cast)
+				{
+					// Ensure it's not destroyed
+					if (cast.IsAlive)
+						return cast;
+
+					Log.CriticalError($"The object '{cast.ToTypeAndIDString()}' was destroyed.");
+					return null;
+				}
+				else
+				{
+					Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instance.ID}'.");
 					return null;
 				}
 			}

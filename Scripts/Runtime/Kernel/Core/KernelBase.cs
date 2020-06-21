@@ -188,6 +188,12 @@ namespace Extenity.KernelToolbox
 			return Block.Exists(instanceID);
 		}
 
+		public TKernelObject FindSingleObjectOfType<TKernelObject>()
+			where TKernelObject : KernelObject<TKernel>
+		{
+			return Block.GetSingle<TKernelObject>();
+		}
+
 		#endregion
 
 		#region Serialization
