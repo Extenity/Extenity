@@ -214,6 +214,20 @@ namespace Extenity.KernelToolbox
 		}
 
 		#endregion
+
+		#region Editor - Json Debug
+
+#if UNITY_EDITOR
+
+		// TODO OPTIMIZATION: Really bad for performance. Implement it using CachedPoller and OnInspectorGUI.
+
+		[JsonIgnore]
+		[ShowInInspector, FoldoutGroup("Debug - Json Serialized", false), MultiLineProperty(300), HideLabel]
+		private string _JsonSerialized => SerializeJsonWithoutCrosscheck();
+
+#endif
+
+		#endregion
 	}
 
 	public abstract class KernelBase
