@@ -85,6 +85,10 @@ namespace Extenity.DataToolbox
 
 		public static void Release(ref List<T> listReference)
 		{
+			// It's okay to pass a null list. The pooling system won't judge and just continue as if nothing has happened.
+			if (listReference == null)
+				return;
+
 			// Ensure the reference to the list at the caller side won't be accidentally used.
 			// Do it before modifying the pool to ensure thread safety.
 			var cached = listReference;
