@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
@@ -50,12 +50,20 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 		}
 
+		/// <summary>
+		/// Called when an item is added to or removed from the container. Also called whenever the container object
+		/// is invalidated. The system just assumes there might be a solid reason that required the container to be
+		/// marked as invalidated and pass that invalidation info to the implementation of this callback respectively,
+		/// even when the container is not actually modified. See 115459835.
+		/// </summary>
+		protected virtual void OnContainerModified(bool isReallyModified) { }
+
 		protected sealed override void OnDataInvalidated(SyncList<TItem, TKernel> items)
 		{
 			// Item: A Kernel object, derived from KernelObject.
 			// ItemView: Interface representation of a kernel object, derived from ViewBehaviour.
 
-			Views.EqualizeTo<TItemView, TItem>(
+			var isAnythingChanged = Views.EqualizeTo<TItemView, TItem>(
 				items.List,
 				ItemViewComparer.Default,
 				item =>
@@ -76,7 +84,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 					catch (Exception exception)
 					{
 						Log.Exception(exception);
-						Log.Error($"Failed to instantiate the view of the object '{item.ID}'. See previous error for more details.");
+						Log.Error($"Failed to instantiate the view of the object '{item.ID}'. See previous error for more details."); // TODO IMMEDIATE: Use SafeID()
 					}
 				},
 				(itemView, iItemView) =>
@@ -93,10 +101,20 @@ namespace Extenity.KernelToolbox.UnityInterface
 					catch (Exception exception)
 					{
 						Log.Exception(exception);
-						Log.Error($"Failed to destroy the view of the object '{itemView.ID}'. See previous error for more details.");
+						Log.Error($"Failed to destroy the view of the object '{itemView.ID}'. See previous error for more details."); // TODO IMMEDIATE: Use SafeID()
 					}
 				}
 			);
+
+			// Call container modification callback. See 115459835.
+			try
+			{
+				OnContainerModified(isAnythingChanged);
+			}
+			catch (Exception exception)
+			{
+				Log.Exception(exception);
+			}
 		}
 
 		#endregion
