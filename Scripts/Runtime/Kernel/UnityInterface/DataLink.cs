@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
@@ -17,8 +17,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		[NonSerialized]
 		internal MonoBehaviour Component;
-		[NonSerialized]
-		public Action<TKernelObject> DataInvalidationCallback;
+		private GameObject GameObject => Component ? Component.gameObject : null;
 
 		#endregion
 
@@ -42,7 +41,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			{
 				if (ID.IsNotSet)
 				{
-					Log.Error($"Data link ID was not set for '{Component.FullName()}'.", Component ? Component.gameObject : null);
+					Log.Error($"Data link ID was not set for '{Component.FullName()}'.", GameObject);
 				}
 			}
 		}
@@ -105,7 +104,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			else
 			{
-				// Immediately call the callback. That allows view to reset itself.
+				// Immediately call the callback. That allows View to reset itself.
 				SafeInvokeDataInvalidationCallback(); // Safe invoking prevents any thrown exceptions to block RefreshDataLink execution.
 			}
 		}
@@ -132,7 +131,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Debug.LogException(exception);
+				Log.Exception(exception, GameObject);
 			}
 		}
 
