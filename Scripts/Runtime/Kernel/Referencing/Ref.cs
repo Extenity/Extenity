@@ -10,7 +10,7 @@ namespace Extenity.KernelToolbox
 	// TODO STATIC CODE ANALYSIS: Ensure Ref struct size is 4 bytes.
 	// TODO OPTIMIZATION: Make sure aggressive inlining works in all methods.
 
-	[InlineProperty]
+	[InlineProperty, HideLabel]
 	[Serializable, JsonObject(MemberSerialization.Fields)]
 	public struct Ref<TKernelObject, TKernel> : IComparable<Ref<TKernelObject, TKernel>>, IEquatable<Ref<TKernelObject, TKernel>>
 		where TKernelObject : KernelObject<TKernel>
@@ -29,17 +29,11 @@ namespace Extenity.KernelToolbox
 
 		#region Data
 
-		[SerializeField]
-		[JsonProperty(PropertyName = "ID")]
-		[ReadOnly, HideLabel]
+		[SerializeField, JsonProperty(PropertyName = "ID")]
+		[HideInInspector]
 		private UInt32 _ReferencedID;
 
-		[JsonIgnore]
-		[HideInInspector]
-		public UInt32 ReferencedID
-		{
-			get => _ReferencedID;
-		}
+		public UInt32 ReferencedID => _ReferencedID;
 
 		public bool IsSet => _ReferencedID != 0; // See 116451215.
 		public bool IsNotSet => _ReferencedID == 0; // See 116451215.
@@ -80,6 +74,8 @@ namespace Extenity.KernelToolbox
 			return KernelBase<TKernel>.Instance.Get(me);
 		}
 
+		[ShowInInspector, HideLabel, Indent]
+		[FoldoutGroup("TheGroup", GroupName = "@($property.Parent.Name).ToString() + \"           \" + ReferencedID")]
 		public TKernelObject Data => KernelBase<TKernel>.Instance.Get(this);
 		public bool IsSetAndDataExists => KernelBase<TKernel>.Instance.Exists(this);
 
