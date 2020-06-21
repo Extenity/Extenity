@@ -224,11 +224,21 @@ namespace Extenity.KernelToolbox
 
 #if UNITY_EDITOR
 
-		// TODO OPTIMIZATION: Really bad for performance. Implement it using CachedPoller and OnInspectorGUI.
-
 		[JsonIgnore]
-		[ShowInInspector, FoldoutGroup("Debug - Json Serialized", false), MultiLineProperty(300), HideLabel]
-		private string _JsonSerialized => SerializeJsonWithoutCrosscheck();
+		[ShowInInspector, FoldoutGroup("Debug - Json Serialized", false), MultiLineProperty(400), HideLabel]
+		private string _SerializedJson
+		{
+			get
+			{
+				if (_SerializedJsonCacher.IsTimeToProcess)
+				{
+					_SerializedJsonCacher.CachedResult = SerializeJsonWithoutCrosscheck();
+				}
+				return _SerializedJsonCacher.CachedResult;
+			}
+		}
+
+		private readonly CachedPoller<string> _SerializedJsonCacher = new CachedPoller<string>(1f);
 
 #endif
 
