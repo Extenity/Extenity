@@ -353,6 +353,7 @@ namespace Extenity.BuildMachine.Editor
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
 		}
 
+		[Obsolete("The way Unity handles scene lighting configuration changed drastically in recent versions. These codes should be updated accordingly.")]
 		protected void ApplyLightingConfigurationToActiveScene(LightingConfiguration configuration)
 		{
 			Lightmapping.bakedGI = configuration.BakedGlobalIlluminationEnabled;
