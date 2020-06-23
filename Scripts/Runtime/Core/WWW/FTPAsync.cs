@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox;
-using ICSharpCode.SharpZipLib.Extensions;
 
 namespace Extenity.WWWToolbox
 {
@@ -121,7 +120,12 @@ namespace Extenity.WWWToolbox
 				if (extractCompressedFileAndDelete)
 				{
 					// Extract downloaded file and delete
-					SharpZipLibTools.ExtractSingleFileEnsured(File.OpenRead(localTempFileFullPath), localFileFullPath);
+#if UseSharpZipLib
+					ICSharpCode.SharpZipLib.Extensions.SharpZipLibTools.ExtractSingleFileEnsured(File.OpenRead(localTempFileFullPath), localFileFullPath);
+#else
+					throw new System.NotImplementedException();
+#endif
+
 					FileTools.DeleteFileEvenIfReadOnly(localTempFileFullPath);
 				}
 				else

@@ -5,7 +5,6 @@ using System.Threading;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox;
 using Extenity.WWWToolbox.FileDownloader;
-using ICSharpCode.SharpZipLib.Extensions;
 using Timer = System.Timers.Timer;
 
 namespace Extenity.WWWToolbox
@@ -137,7 +136,11 @@ namespace Extenity.WWWToolbox
 					{
 						try
 						{
-							SharpZipLibTools.ExtractSingleFileEnsured(localTempFileFullPath, memoryStream);
+#if UseSharpZipLib
+							ICSharpCode.SharpZipLib.Extensions.SharpZipLibTools.ExtractSingleFileEnsured(localTempFileFullPath, memoryStream);
+#else
+							throw new System.NotImplementedException();
+#endif
 						}
 						catch (Exception exception)
 						{
