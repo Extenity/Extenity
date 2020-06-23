@@ -55,6 +55,31 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#endregion
 
+		#region Plot - Vector
+
+		public static readonly Color VectorXColor = new Color(0f, 1f, 0f, 1f);
+		public static readonly Color VectorYColor = new Color(0.52f, 0f, 0f, 1f);
+		public static readonly Color VectorZColor = new Color(1f, 0.63f, 0f, 1f);
+
+		public static void Plot(string graphTitle, VerticalRangeConfiguration verticalRangeConfiguration, float time, Vector3 value)
+		{
+			Plot(graphTitle, verticalRangeConfiguration, time,
+			     new QuickChannel("X", VectorXColor, value.x),
+			     new QuickChannel("Y", VectorYColor, value.y),
+			     new QuickChannel("Z", VectorZColor, value.z)
+			);
+		}
+
+		public static void Plot(string graphTitle, VerticalRangeConfiguration verticalRangeConfiguration, float time, Vector2 value)
+		{
+			Plot(graphTitle, verticalRangeConfiguration, time,
+			     new QuickChannel("X", VectorXColor, value.x),
+			     new QuickChannel("Y", VectorYColor, value.y)
+			);
+		}
+
+		#endregion
+
 		#region Plot - PID
 
 		public static readonly Color PIDInputColor = new Color(0f, 1f, 0f, 1f);
