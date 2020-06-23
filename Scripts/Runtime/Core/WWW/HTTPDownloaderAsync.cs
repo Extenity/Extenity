@@ -139,6 +139,7 @@ namespace Extenity.WWWToolbox
 #if UseSharpZipLib
 							ICSharpCode.SharpZipLib.Extensions.SharpZipLibTools.ExtractSingleFileEnsured(localTempFileFullPath, memoryStream);
 #else
+#pragma warning disable 162
 							throw new System.NotImplementedException();
 #endif
 						}
