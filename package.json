@@ -1,14 +1,14 @@
 {
-    "name": "com.canbaycay.extenity",
-    "displayName": "Extenity",
-    "version": "0.1.1",
-    "unity": "2019.1",
-    "description": "A delicious common utilities library, best served cold. Years of Unity experience blended into a triple-berry smoothie.",
-    "keywords": [
-        "common",
-        "utility",
-        "tool",
-        "library"
-    ],
-    "category": "Utility"
+  "name": "com.canbaycay.extenity",
+  "displayName": "Extenity",
+  "version": "0.1.2",
+  "unity": "2019.1",
+  "description": "A delicious common utilities library, best served cold. Years of Unity experience blended into a triple-berry smoothie.",
+  "keywords": [
+    "common",
+    "utility",
+    "tool",
+    "library"
+  ],
+  "category": "Utility"
 }
