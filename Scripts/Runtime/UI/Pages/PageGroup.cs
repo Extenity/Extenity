@@ -155,7 +155,7 @@ namespace Extenity.UIToolbox
 		#region Page Switching
 
 		[BoxGroup("Setup")]
-		public UnityEngine.UI.Extensions.HorizontalScrollSnap HorizontalScrollSnap; // TODO: Use a custom solution instead of HorizontalScrollSnap. Then remove UnityUIExtensions dependency from asmdef.
+		public HorizontalScrollSnap HorizontalScrollSnap;
 
 		[NonSerialized]
 		public int ActivePageIndex = -1;
