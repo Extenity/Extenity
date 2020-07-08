@@ -1786,6 +1786,24 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Count Lines
+
+		public static Int64 CountLines(this string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return 0;
+
+			Int64 count = 1;
+			for (var i = 0; i < text.Length; i++)
+			{
+				if (text[i] == '\n')
+					count++;
+			}
+			return count;
+		}
+
+		#endregion
+
 		#region Percentage Bar
 
 		public static string ToStringAsPercentageBar(this double value, int barLength = 20)
