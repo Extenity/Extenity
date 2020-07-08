@@ -225,7 +225,9 @@ namespace Extenity.KernelToolbox
 #if UNITY_EDITOR
 
 		[JsonIgnore]
-		[ShowInInspector, FoldoutGroup("Debug - Json Serialized", false), MultiLineProperty(400), HideLabel]
+		private Int64 _SerializedJsonLineCount = 0;
+
+		[JsonIgnore]
 		private string _SerializedJson
 		{
 			get
@@ -233,12 +235,30 @@ namespace Extenity.KernelToolbox
 				if (_SerializedJsonCacher.IsTimeToProcess)
 				{
 					_SerializedJsonCacher.CachedResult = SerializeJsonWithoutCrosscheck();
+					_SerializedJsonLineCount = _SerializedJsonCacher.CachedResult.CountLines();
 				}
 				return _SerializedJsonCacher.CachedResult;
 			}
 		}
 
+		[JsonIgnore]
 		private readonly CachedPoller<string> _SerializedJsonCacher = new CachedPoller<string>(1f);
+
+		// private Vector2 _JsonScrollPosition;
+
+		[OnInspectorGUI, FoldoutGroup("Debug - Json Serialized", false), HideLabel]
+		private void _DrawSerializedJson()
+		{
+			var json = _SerializedJson;
+			var lineCount = _SerializedJsonLineCount;
+			var size = json.Length;
+
+			GUILayout.Label($"Lines: {lineCount} \tSize: {size:N0} bytes");
+
+			// _JsonScrollPosition = GUILayout.BeginScrollView(_JsonScrollPosition, GUILayout.MaxHeight(Screen.height * 0.6f));
+			GUILayout.TextArea(json);
+			// GUILayout.EndScrollView();
+		}
 
 #endif
 
