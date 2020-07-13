@@ -100,6 +100,14 @@ namespace Extenity.KernelToolbox
 
 		#endregion
 
+		#region Ref
+
+		// TODO: This is not a good way to approach that problem. Returning an object of type KernelObject<TKernel> is not really useful. The returned type should be Derived KernelObject, but currently there is no way to know that. Figure out a good way, or do not provide this functionality. See 112712367.
+		// [JsonIgnore]
+		// public Ref<KernelObject<TKernel>, TKernel> Ref => new Ref<KernelObject<TKernel>, TKernel>(ID);
+
+		#endregion
+
 		#region Invalidate
 
 		public void Invalidate()
