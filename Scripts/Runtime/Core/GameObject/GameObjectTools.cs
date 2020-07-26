@@ -1377,6 +1377,36 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region SetParentSorted
+
+		public static void SetParentSortedByName(this Transform me, Transform parent)
+		{
+			if (parent.childCount == 0)
+			{
+				me.parent = parent;
+			}
+			else
+			{
+				var childIndex = -1;
+				var childCount = parent.childCount;
+				var name = me.name;
+				for (int i = 0; i < childCount; i++)
+				{
+					var child = parent.GetChild(i);
+					if (string.Compare(child.name, name, StringComparison.Ordinal) > 0)
+					{
+						childIndex = i;
+						break;
+					}
+				}
+				me.parent = parent;
+				if (childIndex >= 0)
+					me.SetSiblingIndex(childIndex);
+			}
+		}
+
+		#endregion
+
 		#region SetParentOfAllObjectsContainingComponent
 
 		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
