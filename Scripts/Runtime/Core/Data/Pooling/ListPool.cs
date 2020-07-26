@@ -8,7 +8,7 @@ namespace Extenity.DataToolbox
 
 	// TODO: Basic memory management that always gets the largest list. Tests needed.
 	// TODO: Continue to implement Release mechanisms. Tests needed.
-	// TODO: Multithreading support. Look at how ConcurrentBag and others are implemented.
+	// TODO: Multithreading support. Look at how ConcurrentBag and others are implemented. See if ThreadStatic is needed.
 
 	/// <remarks>
 	/// Example usage for manually returning the list to the pool:
@@ -52,7 +52,8 @@ namespace Extenity.DataToolbox
 
 		#region Pool
 
-		private static readonly ConcurrentBag<List<T>> Pool = new ConcurrentBag<List<T>>();
+		[ThreadStatic]
+		private static ConcurrentBag<List<T>> Pool;
 
 		#endregion
 
@@ -60,7 +61,7 @@ namespace Extenity.DataToolbox
 
 		public static ListDisposer<T> Using(out List<T> list)
 		{
-			if (Pool.TryTake(out list))
+			if (Pool != null && Pool.TryTake(out list))
 			{
 				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
 			}
@@ -73,7 +74,7 @@ namespace Extenity.DataToolbox
 
 		public static void New(out List<T> list)
 		{
-			if (Pool.TryTake(out list))
+			if (Pool != null && Pool.TryTake(out list))
 			{
 				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
 			}
@@ -95,12 +96,16 @@ namespace Extenity.DataToolbox
 			listReference = null;
 
 			cached.Clear();
+			if (Pool == null)
+				Pool = new ConcurrentBag<List<T>>();
 			Pool.Add(cached);
 		}
 
 		internal static void _Free(List<T> list)
 		{
 			list.Clear();
+			if (Pool == null)
+				Pool = new ConcurrentBag<List<T>>();
 			Pool.Add(list);
 		}
 
