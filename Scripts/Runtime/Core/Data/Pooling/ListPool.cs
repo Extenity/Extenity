@@ -1,25 +1,22 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Extenity.DataToolbox
 {
 
-	// TODO: Basic memory management that always gets the largest list. Tests needed.
 	// TODO: Continue to implement Release mechanisms. Tests needed.
-	// TODO: Multithreading support. Look at how ConcurrentBag and others are implemented. See if ThreadStatic is needed.
 
 	/// <remarks>
 	/// Example usage for manually returning the list to the pool:
 	///
-	///    var theList = New.List<SomeType>();
+	///    var theList = New.List<ListItemType>(optionalCapacity);
 	///    // Do some stuff with theList
 	///    Release.List(ref theList);
 	///
 	/// Example usage for automatically returning the list to the pool:
 	///
-	///    using (New.List<SomeType>(out var theList))
+	///    using (New.List<ListItemType>(out var theList, optionalCapacity))
 	///    {
 	///        // Do some stuff with theList
 	///    }
@@ -52,39 +49,70 @@ namespace Extenity.DataToolbox
 
 		#region Pool
 
-		[ThreadStatic]
-		private static ConcurrentBag<List<T>> Pool;
+		private static readonly List<List<T>> Pool = new List<List<T>>();
 
 		#endregion
 
 		#region Allocate / Release Lists
 
-		public static ListDisposer<T> Using(out List<T> list)
+		internal static ListDisposer<T> Using(out List<T> list, int capacity)
 		{
-			if (Pool != null && Pool.TryTake(out list))
+			lock (Pool)
 			{
-				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
+				if (Pool.Count > 0)
+				{
+					// Get the largest capacity list from the pool. See 114572342.
+					var index = Pool.Count - 1;
+					list = Pool[index];
+					Pool.RemoveAt(index);
+
+					if (list.Count != 0)
+					{
+						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
+						// Continuing to use a released list means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled list releases and find
+						// the spots where a copy of list reference is kept after its release.
+						//
+						// The pool will just skip the list and create a fresh one. We may try to get a new one from
+						// the pool but the overhead is not worthwhile.
+						list = new List<T>();
+						Log.CriticalError("Detected a usage of released list.");
+					}
+				}
 			}
-			else
-			{
-				list = new List<T>();
-			}
+			list = new List<T>(capacity);
 			return new ListDisposer<T>(list);
 		}
 
-		public static void New(out List<T> list)
+		internal static void New(out List<T> list, int capacity)
 		{
-			if (Pool != null && Pool.TryTake(out list))
+			lock (Pool)
 			{
-				list.Clear(); // Should not be needed, but let's clear the list. Just to be on the safe side.
+				if (Pool.Count > 0)
+				{
+					// Get the largest capacity list from the pool. See 114572342.
+					var index = Pool.Count - 1;
+					list = Pool[index];
+					Pool.RemoveAt(index);
+
+					if (list.Count != 0)
+					{
+						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
+						// Continuing to use a released list means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled list releases and find
+						// the spots where a copy of list reference is kept after its release.
+						//
+						// The pool will just skip the list and create a fresh one. We may try to get a new one from
+						// the pool but the overhead is not worthwhile.
+						list = new List<T>();
+						Log.CriticalError("Detected a usage of released list.");
+					}
+				}
 			}
-			else
-			{
-				list = new List<T>();
-			}
+			list = new List<T>(capacity);
 		}
 
-		public static void Release(ref List<T> listReference)
+		internal static void Release(ref List<T> listReference)
 		{
 			// It's okay to pass a null list. The pooling system won't judge and just continue as if nothing has happened.
 			if (listReference == null)
@@ -92,21 +120,59 @@ namespace Extenity.DataToolbox
 
 			// Ensure the reference to the list at the caller side won't be accidentally used.
 			// Do it before modifying the pool to ensure thread safety.
-			var cached = listReference;
+			var list = listReference;
 			listReference = null;
 
-			cached.Clear();
-			if (Pool == null)
-				Pool = new ConcurrentBag<List<T>>();
-			Pool.Add(cached);
+			list.Clear();
+			lock (Pool)
+			{
+				if (Pool.Count == 0)
+				{
+					Pool.Add(list);
+				}
+				else
+				{
+					// Insert the released list into the pool, keeping the pool sorted by list capacity. So getting
+					// the largest capacity list will be lightning fast. See 114572342.
+					var capacity = list.Capacity;
+					for (int i = Pool.Count - 1; i >= 0; i--)
+					{
+						if (capacity > Pool[i].Capacity)
+						{
+							Pool.Insert(i + 1, list);
+							return;
+						}
+					}
+					Pool.Insert(0, list);
+				}
+			}
 		}
 
 		internal static void _Free(List<T> list)
 		{
 			list.Clear();
-			if (Pool == null)
-				Pool = new ConcurrentBag<List<T>>();
-			Pool.Add(list);
+			lock (Pool)
+			{
+				if (Pool.Count == 0)
+				{
+					Pool.Add(list);
+				}
+				else
+				{
+					// Insert the released list into the pool, keeping the pool sorted by list capacity. So getting
+					// the largest capacity list will be lightning fast. See 114572342.
+					var capacity = list.Capacity;
+					for (int i = Pool.Count - 1; i >= 0; i--)
+					{
+						if (capacity > Pool[i].Capacity)
+						{
+							Pool.Insert(i + 1, list);
+							return;
+						}
+					}
+					Pool.Insert(0, list);
+				}
+			}
 		}
 
 		#endregion
@@ -154,16 +220,16 @@ namespace Extenity.DataToolbox
 	public static partial class New
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static List<T> List<T>()
+		public static List<T> List<T>(int capacity = 0)
 		{
-			ListPool<T>.New(out var list);
+			ListPool<T>.New(out var list, capacity);
 			return list;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static ListDisposer<T> List<T>(out List<T> list)
+		public static ListDisposer<T> List<T>(out List<T> list, int capacity = 0)
 		{
-			return ListPool<T>.Using(out list);
+			return ListPool<T>.Using(out list, capacity);
 		}
 	}
 
