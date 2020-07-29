@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Extenity.FileSystemToolbox;
 using Extenity.ProfilingToolbox;
@@ -123,9 +124,33 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		public static void SyncAndOpenSolution()
 		{
-			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.SyncVS", true, true);
+			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.CodeEditorProjectSync", true, true);
 			var method = type.GetMethod("SyncAndOpenSolution", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 			method.Invoke(null, null);
+		}
+
+		[MenuItem("Assets/Open C# Project (Force Rebuild)", priority = 1000)]
+		public static void OpenCSProjectForceRebuild()
+		{
+			// Delete SLN and CSPROJ files. That will force Unity to rebuild them from ground up.
+			var files = new[] { "*.sln", "*.csproj" }
+			            .SelectMany(filter => Directory.GetFiles(UnityProjectPath, filter, SearchOption.TopDirectoryOnly))
+			            .ToArray();
+
+			foreach (var file in files)
+			{
+				try
+				{
+					File.Delete(file);
+				}
+				catch
+				{
+					Debug.LogWarning("Skipping file: " + file);
+				}
+			}
+
+			// Call Unity's regular 'Open C# Project' method.
+			SyncAndOpenSolution();
 		}
 
 		#endregion
