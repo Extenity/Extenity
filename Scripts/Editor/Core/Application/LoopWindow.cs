@@ -39,9 +39,9 @@ namespace Extenity
 
 		protected override void OnGUIDerived()
 		{
-			DrawListenersList("FixedUpdate", Loop.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
-			DrawListenersList("Update", Loop.UpdateCallbacks._Listeners, ref UpdateFold);
-			DrawListenersList("LateUpdate", Loop.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
+			DrawListenersList("FixedUpdate", Loop.Instance.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
+			DrawListenersList("Update", Loop.Instance.UpdateCallbacks._Listeners, ref UpdateFold);
+			DrawListenersList("LateUpdate", Loop.Instance.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
 
 			var instance = Loop.Instance;
 			if (!instance)

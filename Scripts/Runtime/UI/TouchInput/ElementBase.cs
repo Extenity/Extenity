@@ -16,7 +16,7 @@ namespace Extenity.UIToolbox.TouchInput
 		{
 			InitializeSchemeElements();
 
-			Loop.UpdateCallbacks.AddListener(CustomUpdate, -1000);
+			Loop.RegisterUpdate(CustomUpdate, -1000);
 		}
 
 		#endregion
@@ -25,7 +25,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 		protected virtual void OnDestroy()
 		{
-			Loop.UpdateCallbacks.RemoveListener(CustomUpdate);
+			Loop.DeregisterUpdate(CustomUpdate);
 
 			DeinitializeSchemeElements();
 		}

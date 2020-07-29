@@ -17,22 +17,22 @@ namespace Extenity.AnimationToolbox.ScriptedAnimations
 			{
 				if (InLocalCoordinates)
 				{
-					Loop.FixedUpdateCallbacks.AddListener(CalculateLocalCoordinates);
+					Loop.RegisterFixedUpdate(CalculateLocalCoordinates);
 				}
 				else
 				{
-					Loop.FixedUpdateCallbacks.AddListener(CalculateWorldCoordinates);
+					Loop.RegisterFixedUpdate(CalculateWorldCoordinates);
 				}
 			}
 			else
 			{
 				if (InLocalCoordinates)
 				{
-					Loop.UpdateCallbacks.AddListener(CalculateLocalCoordinates);
+					Loop.RegisterUpdate(CalculateLocalCoordinates);
 				}
 				else
 				{
-					Loop.UpdateCallbacks.AddListener(CalculateWorldCoordinates);
+					Loop.RegisterUpdate(CalculateWorldCoordinates);
 				}
 			}
 		}
@@ -43,22 +43,22 @@ namespace Extenity.AnimationToolbox.ScriptedAnimations
 			{
 				if (InLocalCoordinates)
 				{
-					Loop.FixedUpdateCallbacks.RemoveListener(CalculateLocalCoordinates);
+					Loop.DeregisterFixedUpdate(CalculateLocalCoordinates);
 				}
 				else
 				{
-					Loop.FixedUpdateCallbacks.RemoveListener(CalculateWorldCoordinates);
+					Loop.DeregisterFixedUpdate(CalculateWorldCoordinates);
 				}
 			}
 			else
 			{
 				if (InLocalCoordinates)
 				{
-					Loop.UpdateCallbacks.RemoveListener(CalculateLocalCoordinates);
+					Loop.DeregisterUpdate(CalculateLocalCoordinates);
 				}
 				else
 				{
-					Loop.UpdateCallbacks.RemoveListener(CalculateWorldCoordinates);
+					Loop.DeregisterUpdate(CalculateWorldCoordinates);
 				}
 			}
 		}

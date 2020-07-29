@@ -83,24 +83,30 @@ namespace Extenity
 
 		#region Callbacks
 
-		public static readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
-		public static readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
-		public static readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+
+		public static void RegisterFixedUpdate(Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterUpdate(Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterLateUpdate(Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order); }
+		public static void DeregisterFixedUpdate(Action callback) { Instance.FixedUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterUpdate(Action callback) { Instance.UpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterLateUpdate(Action callback) { Instance.LateUpdateCallbacks.RemoveListener(callback); }
 
 		#endregion
 
 		#region Counters
 
-		public static int UpdateCount;
-		public static int FixedUpdateCount;
-		public static int LateUpdateCount;
+		public int UpdateCount;
+		public int FixedUpdateCount;
+		public int LateUpdateCount;
 
 		#endregion
 
 		#region Timings
 
 #if !UNITY_EDITOR && !DEBUG
-
 		public static float Time;
 		public static float DeltaTime;
 		public static float UnscaledTime;

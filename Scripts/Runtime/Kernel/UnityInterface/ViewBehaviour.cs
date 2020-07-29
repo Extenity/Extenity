@@ -149,16 +149,16 @@ namespace Extenity.KernelToolbox.UnityInterface
 		{
 			// TODO OPTIMIZATION: Register only if the derived class overrides these methods. Also call RemoveListener only for registered ones, in a performance friendly way.
 
-			Loop.UpdateCallbacks.AddListener(InvokeUpdate);
-			Loop.FixedUpdateCallbacks.AddListener(InvokeFixedUpdate);
-			Loop.LateUpdateCallbacks.AddListener(InvokeLateUpdate);
+			Loop.RegisterUpdate(InvokeUpdate);
+			Loop.RegisterFixedUpdate(InvokeFixedUpdate);
+			Loop.RegisterLateUpdate(InvokeLateUpdate);
 		}
 
 		private void DeregisterUpdateCallbacks()
 		{
-			Loop.UpdateCallbacks.RemoveListener(InvokeUpdate);
-			Loop.FixedUpdateCallbacks.RemoveListener(InvokeFixedUpdate);
-			Loop.LateUpdateCallbacks.RemoveListener(InvokeLateUpdate);
+			Loop.DeregisterUpdate(InvokeUpdate);
+			Loop.DeregisterFixedUpdate(InvokeFixedUpdate);
+			Loop.DeregisterLateUpdate(InvokeLateUpdate);
 		}
 
 		#endregion

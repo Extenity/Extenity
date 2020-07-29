@@ -40,7 +40,7 @@ namespace Extenity.MessagingToolbox
 
 		protected void Awake()
 		{
-			Loop.LateUpdateCallbacks.AddListener(CustomLateUpdate);
+			Loop.RegisterLateUpdate(CustomLateUpdate);
 		}
 
 		#endregion
@@ -51,7 +51,7 @@ namespace Extenity.MessagingToolbox
 		{
 			// TODO: Check if there is any message left to process and warn developer about that.
 
-			Loop.LateUpdateCallbacks.RemoveListener(CustomLateUpdate);
+			Loop.DeregisterLateUpdate(CustomLateUpdate);
 		}
 
 		#endregion

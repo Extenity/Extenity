@@ -210,12 +210,12 @@ namespace Extenity.UIToolbox
 
 		private void InitializeLinePositioning()
 		{
-			Loop.LateUpdateCallbacks.AddListener(OnCustomLateUpdate);
+			Loop.RegisterLateUpdate(OnCustomLateUpdate);
 		}
 
 		private void DeinitializeLinePositioning()
 		{
-			Loop.LateUpdateCallbacks.RemoveListener(OnCustomLateUpdate);
+			Loop.DeregisterLateUpdate(OnCustomLateUpdate);
 		}
 
 		private void OnCustomLateUpdate()
