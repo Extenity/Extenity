@@ -90,9 +90,9 @@ namespace Extenity
 		public static void RegisterFixedUpdate(Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
 		public static void RegisterUpdate(Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order); }
 		public static void RegisterLateUpdate(Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order); }
-		public static void DeregisterFixedUpdate(Action callback) { Instance.FixedUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterUpdate(Action callback) { Instance.UpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterLateUpdate(Action callback) { Instance.LateUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterFixedUpdate(Action callback) { if (Instance) Instance.FixedUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterUpdate(Action callback) { if (Instance) Instance.UpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterLateUpdate(Action callback) { if (Instance) Instance.LateUpdateCallbacks.RemoveListener(callback); }
 
 		#endregion
 
