@@ -84,6 +84,16 @@ namespace Extenity.GameObjectToolbox
 			get { return Instantiated[(int)Order]; }
 		}
 
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void InitializeForSkippingDomainReload()
+		{
+			if (Instantiated != null)
+			{
+				Instantiated = null;
+				WillBeInitialized = null;
+			}
+		}
+
 		private void Awake()
 		{
 			if (Instantiated == null)
