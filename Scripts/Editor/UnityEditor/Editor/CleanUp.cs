@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Configuration
 
-		private const string MenuPath = "Tools/Clean Up";
+		private const string MenuPath = ExtenityMenu.CleanUp;
 
 		private static readonly string[] IgnoredDirectories =
 		{

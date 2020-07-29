@@ -6,6 +6,7 @@ using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace Extenity.ApplicationToolbox.Editor
 		RequiresAttention;
 #endif
 
-		private const string Menu = "Tools/Environment Variables/";
+		private const string Menu = ExtenityMenu.System + "Environment Variables/";
 
 		#endregion
 

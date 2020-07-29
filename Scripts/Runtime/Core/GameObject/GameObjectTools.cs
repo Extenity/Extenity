@@ -2089,7 +2089,7 @@ namespace Extenity.GameObjectToolbox
 		}
 
 #if UNITY_EDITOR
-		[UnityEditor.MenuItem("Tools/Extenity/Maintenance/Find All Components That Have Enabled Property")]
+		[UnityEditor.MenuItem(UnityEditorToolbox.ExtenityMenu.Maintenance + "Find All Components That Have Enabled Property")]
 		private static void _FindAllComponentsThatHaveEnabledProperty()
 		{
 			Log.Info("This tool is for Extenity development. It helps finding the required components that should be included in the code of GameObjectTools.IsComponentEnabled method.");

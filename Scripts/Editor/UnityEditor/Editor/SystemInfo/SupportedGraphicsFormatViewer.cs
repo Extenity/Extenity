@@ -15,7 +15,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		string _text;
 		Vector2 scroll;
 
-		[MenuItem("Tools/System Info/Graphics Formats")]
+		[MenuItem(ExtenityMenu.Analysis + "System Info/Graphics Formats")]
 		static void Init()
 		{
 			GetWindow<SupportedGraphicsFormatViewer>(true, "Supported Graphics Formats").Show();

@@ -1,5 +1,6 @@
 using System;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -28,7 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			InitializeTools();
 		}
 
-		[MenuItem("Tools/Painkiller/Catalogue %&A")]
+		[MenuItem(ExtenityMenu.Painkiller + "Catalogue %&A")]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<Catalogue>();

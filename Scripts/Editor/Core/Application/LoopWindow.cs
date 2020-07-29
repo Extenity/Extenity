@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.MessagingToolbox;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace Extenity
 
 		#region Initialization
 
-		[MenuItem("Tools/Loop")]
+		[MenuItem(ExtenityMenu.Application + "Loop")]
 		private static void Init()
 		{
 			EditorWindowTools.ToggleWindow<LoopWindow>();

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.TextureToolbox;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -187,7 +188,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			CreateStyles();
 		}
 
-		[MenuItem("Window/Graph Plotter _#%g")]
+		[MenuItem(ExtenityMenu.Analysis + "Graph Plotter _#%g")]
 		public static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<GraphPlotterWindow>();

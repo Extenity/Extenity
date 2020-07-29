@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.TextureToolbox;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -26,7 +26,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Painkiller/UI Optimizer")]
+		[MenuItem(ExtenityMenu.Painkiller + "UI Optimizer")]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<UIOptimizer>();

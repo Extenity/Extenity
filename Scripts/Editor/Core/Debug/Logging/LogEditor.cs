@@ -1,4 +1,5 @@
 ﻿using Extenity.ProjectToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEditor;
 
 namespace Extenity.DebugToolbox.Editor
@@ -6,7 +7,7 @@ namespace Extenity.DebugToolbox.Editor
 
 	public static class LogEditor
 	{
-		public const string Menu = "Tools/Logging/";
+		public const string Menu = ExtenityMenu.Logging;
 
 		#region Toggle Verbose Logging Menu
 

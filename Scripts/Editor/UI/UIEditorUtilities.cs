@@ -3,8 +3,8 @@ using System.Reflection;
 using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEditor;
-using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using UnityEngine.UI;
 
 namespace Extenity.UIToolbox.Editor
@@ -12,7 +12,7 @@ namespace Extenity.UIToolbox.Editor
 
 	public static class UIEditorUtilities
 	{
-		public const string Menu = "Tools/UI/";
+		public const string Menu = ExtenityMenu.UI;
 
 		[MenuItem(Menu + "Disable All Navigation In Selection")]
 		public static void DisableAllNavigationInSelectedObjectAndChildren()

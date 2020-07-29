@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Extenity.UnityEditorToolbox;
+using UnityEditor;
 
 namespace Extenity.DebugToolbox
 {
@@ -7,7 +8,7 @@ namespace Extenity.DebugToolbox
 	{
 		#region Scene Snapshot
 
-		[MenuItem("Tools/Log Scene Snapshot", priority = 22300)]
+		[MenuItem(ExtenityMenu.Analysis + "Scene/Log Scene Snapshot")]
 		public static void LogSceneSnapshot()
 		{
 			var snapshot = new SceneSnapshot();

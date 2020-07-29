@@ -9,6 +9,7 @@ using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -58,7 +59,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		[MenuItem("Tools/Painkiller/Code Correct")]
+		[MenuItem(ExtenityMenu.Painkiller + "Code Correct")]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<CodeCorrect>();

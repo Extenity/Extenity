@@ -1,4 +1,5 @@
 ﻿#if !DisableUnityTerrain
+using Extenity.UnityEditorToolbox;
 using UnityEngine;
 using UnityEditor;
 
@@ -7,7 +8,7 @@ namespace Extenity.TerrainToolbox.Editor
 
 	public class ResizeTreeWindow : EditorWindow
 	{
-		[MenuItem("Tools/Terrain/Resize Trees")]
+		[MenuItem(ExtenityMenu.Terrain + "Resize Trees")]
 		public static void ShowWindow()
 		{
 			EditorWindow.GetWindow(typeof(ResizeTreeWindow));
