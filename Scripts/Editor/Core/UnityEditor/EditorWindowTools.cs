@@ -50,7 +50,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		/// </summary>
 		public static bool IsWindowOpen<T>() where T : EditorWindow
 		{
-			return GetAllEditorWindows<T>().Length > 0;
+			return GetAllEditorWindowsOfType<T>().Length > 0;
 		}
 
 		public static void ToggleWindow<T>() where T : EditorWindow
@@ -72,15 +72,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static EditorWindow[] GetAllEditorWindows()
 		{
-			return GetAllEditorWindows<EditorWindow>();
+			return GetAllEditorWindowsOfType<EditorWindow>();
 		}
 
-		public static EditorWindow[] GetAllEditorWindows<T>() where T : EditorWindow
+		public static EditorWindow[] GetAllEditorWindowsOfType<T>() where T : EditorWindow
 		{
-			return GetAllEditorWindows(typeof(T));
+			return GetAllEditorWindowsOfType(typeof(T));
 		}
 
-		public static EditorWindow[] GetAllEditorWindows(Type type)
+		public static EditorWindow[] GetAllEditorWindowsOfType(Type type)
 		{
 			return ((EditorWindow[])Resources.FindObjectsOfTypeAll(type))
 			       .Where(window => window != null)
@@ -119,7 +119,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				if (_GameView == null)
 				{
 					var type = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
-					var gameViews = GetAllEditorWindows(type);
+					var gameViews = GetAllEditorWindowsOfType(type);
 					_GameView = gameViews != null && gameViews.Length > 0
 						? gameViews[0]
 						: null;
