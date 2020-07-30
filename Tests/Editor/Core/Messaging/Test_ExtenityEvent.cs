@@ -168,7 +168,6 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
-		/*
 		#region Nested Operations
 
 		// See 117418312.
@@ -185,19 +184,19 @@ namespace ExtenityTests.MessagingToolbox
 		//    AddingListenerInsideNestedCall_SelfIsIgnored
 
 		[Test]
-		public void NestedSwitchesAreNotAllowed()
+		public void NestedEventsAreNotAllowed()
 		{
-			TestEvent.AddListener(SwitchOff, null);
+			TestEvent.AddListener(Invoke);
 			Invoke();
-			AssertExpectLog((LogType.Exception, "Exception: Invoked switch off while an invocation is ongoing."));
+			AssertExpectLog((LogType.Exception, "Exception: Invoked event while an invocation is ongoing."));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
 		public void NestedAddListenerIsNotAllowed_Safe()
 		{
-			TestEvent.AddListener(() => TestEvent.AddListener(CallbackOn, CallbackOff), null);
-			TestSwitch.SwitchOnSafe();
+			TestEvent.AddListener(() => TestEvent.AddListener(Callback));
+			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Exception, "NotSupportedException: Adding listener while invoking is not supported."));
 		}
 
@@ -205,8 +204,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void NestedAddListenerIsNotAllowed_Unsafe()
 		{
-			TestEvent.AddListener(() => TestEvent.AddListener(CallbackOn, CallbackOff), null);
-			Assert.Throws<NotSupportedException>(() => TestSwitch.SwitchOnUnsafe());
+			TestEvent.AddListener(() => TestEvent.AddListener(Callback));
+			Assert.Throws<NotSupportedException>(() => TestEvent.InvokeUnsafe());
 		}
 
 		#endregion
@@ -228,10 +227,10 @@ namespace ExtenityTests.MessagingToolbox
 				Log.Info("Called " + callCount);
 
 				// We try to add it one more time. The system ignores because the callback already exists.
-				TestEvent.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.Permanent);
+				TestEvent.AddListener(CallbackThatAddsSelf, 0, ListenerLifeSpan.Permanent);
 			}
 
-			TestEvent.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.Permanent);
+			TestEvent.AddListener(CallbackThatAddsSelf, 0, ListenerLifeSpan.Permanent);
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called 1"));
 		}
@@ -250,15 +249,15 @@ namespace ExtenityTests.MessagingToolbox
 
 				// The callback is deregistered at this point due to RemovedAtFirstEmit. Then we try to add it one more
 				// time. But note that the system calls the callback immediately, which causes dead lock.
-				TestEvent.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+				TestEvent.AddListener(CallbackThatAddsSelf, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			}
 
-			TestEvent.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+			TestEvent.AddListener(CallbackThatAddsSelf, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called 1"),
 			                (LogType.Log, "Called 2"),
 			                (LogType.Log, "Called 3"),
-			                (LogType.Exception, "Test_ExtenitySwitchException: Hard brakes!"));
+			                (LogType.Exception, "Test_ExtenityEventException: Hard brakes!"));
 		}
 
 #endif
@@ -270,28 +269,23 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void EndsAfterRemovingListener()
 		{
-			TestEvent.AddListener(CallbackOn, null);
-			TestSwitch.RemoveListener(CallbackOn, null);
+			TestEvent.AddListener(Callback);
+			TestEvent.RemoveListener(Callback);
 
 			Invoke();
-			SwitchOff();
-			Invoke();
-			SwitchOff();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void AlrightToRemoveListenerInsideCallback_ManualRemove()
 		{
-			TestEvent.AddListener(CallbackOnAndRemove, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			TestEvent.AddListener(CallbackAndRemove);
 
 			// Callback removes itself.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// No more calls.
-			SwitchOff();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -299,15 +293,13 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void AlrightToRemoveListenerInsideCallback_UsingRemoveCurrentListener()
 		{
-			TestEvent.AddListener(CallbackOnAndRemoveSelf, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			TestEvent.AddListener(CallbackAndRemoveSelf);
 
 			// Callback removes itself.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// No more calls.
-			SwitchOff();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -315,10 +307,13 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void NotAlrightToCallRemoveCurrentListenerOutsideOfCallback()
 		{
-			TestEvent.AddListener(CallbackOn, null);
+			TestEvent.AddListener(Callback);
 
-			Assert.Throws<Exception>(() => TestSwitch.RemoveCurrentListener());
+			Assert.Throws<Exception>(() => TestEvent.RemoveCurrentListener());
 		}
+
+		#endregion // Delete this line when uncommenting below
+		/*
 
 		#region RemovingListener_DoesNotAffectOtherListeners
 
