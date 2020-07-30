@@ -1,52 +1,113 @@
+#if EnableDebugTimeControllerInBuilds || UNITY_EDITOR
+
 using UnityEngine;
 
 namespace Extenity.DebugToolbox
 {
 
-	public class DebugTimeController : MonoBehaviour
+	public static class DebugTimeController
 	{
-		private float[] timeFactors;
+		#region Configuration
 
-		private void Awake()
+		public static float[] TimeScales = new float[]
 		{
-			if (!Application.isEditor)
-			{
-				Destroy(this);
-				return;
-			}
+			0.1f,
+			0.25f,
+			0.5f,
+			0.75f,
+			1f,
+			1.25f,
+			1.5f,
+			2f,
+			5f,
+			15f,
+		};
 
-			int i = 0;
-			timeFactors = new float[9];
-			timeFactors[i++] = 0f;
-			timeFactors[i++] = 0.25f;
-			timeFactors[i++] = 0.5f;
-			timeFactors[i++] = 0.75f;
-			timeFactors[i++] = 1f;
-			timeFactors[i++] = 1.5f;
-			timeFactors[i++] = 2.0f;
-			timeFactors[i++] = 5.0f;
-			timeFactors[i++] = 20.0f;
+		#endregion
+
+		#region Initialization
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		private static void Initialize()
+		{
+			Loop.RegisterUpdate(CustomUpdate);
 		}
 
-		private void Update()
+		#endregion
+
+		#region Input
+
+		private static void CustomUpdate()
 		{
 			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
 			{
-				for (int i = 0; i < timeFactors.Length; i++)
+				if (Input.GetKeyDown(KeyCode.KeypadPlus))
 				{
-					if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-					{
-						SetTimeScale(timeFactors[i]);
-					}
+					IncreaseTimeScale();
+				}
+				if (Input.GetKeyDown(KeyCode.KeypadMinus))
+				{
+					DecreaseTimeScale();
 				}
 			}
 		}
 
-		private void SetTimeScale(float scale)
+		#endregion
+
+		#region Increase/Decrease Time Scale
+
+		public static void IncreaseTimeScale()
 		{
-			Time.timeScale = scale;
-			Log.Info("Time scale set to " + scale);
+			var currentIndex = FindClosestTimeScaleIndex(Time.timeScale);
+			_SetTimeScale(currentIndex + 1);
 		}
+
+		public static void DecreaseTimeScale()
+		{
+			var currentIndex = FindClosestTimeScaleIndex(Time.timeScale);
+			_SetTimeScale(currentIndex - 1);
+		}
+
+		private static void _SetTimeScale(int index)
+		{
+			index = Mathf.Clamp(index, 0, TimeScales.Length - 1);
+			var timeScale = TimeScales[index];
+			Time.timeScale = timeScale;
+			Log.Info("Time scale set to " + timeScale);
+#if UNITY_EDITOR
+			var type = typeof(UnityEditor.EditorWindow).Assembly.GetType("UnityEditor.GameView");
+			var gameView = UnityEditor.EditorWindow.GetWindow(type);
+			gameView.ShowNotification(new GUIContent("Time scale " + timeScale), 0.5f);
+#endif
+		}
+
+		#endregion
+
+		#region Find Closest Time Scale Configuration
+
+		private static int FindClosestTimeScaleIndex(float timeScale)
+		{
+			var closestDistance = float.MaxValue;
+			var closestDistanceIndex = -1;
+			for (int i = 0; i < TimeScales.Length; i++)
+			{
+				var distance = Mathf.Abs(TimeScales[i] - timeScale);
+				if (distance < 0.001f)
+				{
+					return i;
+				}
+				if (closestDistance > distance)
+				{
+					closestDistance = distance;
+					closestDistanceIndex = i;
+				}
+			}
+			return closestDistanceIndex;
+		}
+
+		#endregion
 	}
 
 }
+
+#endif
