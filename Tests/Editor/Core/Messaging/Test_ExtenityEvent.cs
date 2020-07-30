@@ -245,7 +245,7 @@ namespace ExtenityTests.MessagingToolbox
 				callCount++;
 				Log.Info("Called " + callCount);
 				if (callCount >= 3)
-					throw new Test_ExtenitySwitchException("Hard brakes!"); // Enough
+					throw new Test_ExtenityEventException("Hard brakes!"); // Enough
 
 				// The callback is deregistered at this point due to RemovedAtFirstEmit. Then we try to add it one more
 				// time. But note that the system calls the callback immediately, which causes dead lock.
@@ -619,35 +619,23 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
-		#endregion
-		/*
-
-		[Test]
-		public void HavingLifeSpanOfRemovedAtFirstEmitConsideredFastTrackAndWontBeRegisteredIntoCallbacksList()
-		{
-			Invoke();
-			TestEvent.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			AssertRegisteredCallbackCount(0); // The callback is instantly called and not registered into the list.
-		}
-
 		[Test]
 		public void LifeSpan_Permanent()
 		{
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
+			Invoke();
+			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
-			TestSwitch.RemoveListener(CallbackOn, CallbackOff);
+			TestEvent.RemoveListener(Callback);
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -659,17 +647,17 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
+			Invoke();
+			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -685,7 +673,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
 
@@ -695,17 +683,17 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
+			Invoke();
+			AssertExpectLog((LogType.Log, "Called callback."));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
-			DestroyTestSwitchSubject();
+			DestroyTestEventSubject();
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -716,25 +704,25 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			// Destroy the Subject and the registered listener will not be called anymore.
-			DestroyTestSwitchSubject();
+			DestroyTestEventSubject();
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
 
 		[Test]
 		public void LifeSpan_RemovedAtFirstEmit()
 		{
-			TestEvent.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
+			TestEvent.AddListener(Callback, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			Invoke();
 			AssertExpectNoLogs();
 		}
@@ -747,16 +735,16 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 
 			// Destroying the LifeSpanTarget does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
 			DestroyLifeSpanTargetTestObject();
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
 
@@ -771,7 +759,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
 
@@ -782,16 +770,16 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, "Called callback."));
 			AssertRegisteredCallbackCount(0);
 
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 
 			// Destroying the Subject does nothing after that. The listener was already deregistered, thanks to RemovedAtFirstEmit.
-			DestroyTestSwitchSubject();
+			DestroyTestEventSubject();
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
 
@@ -801,13 +789,16 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.RemovedAtFirstEmit);
 
 			// The callback will be deregistered after this.
-			DestroyTestSwitchSubject();
+			DestroyTestEventSubject();
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
-			SwitchOff();
+			Invoke();
 			AssertExpectNoLogs();
 		}
+
+		#endregion
+		/*
 
 		#region LifeSpan_RemovedAtFirstEmit_DoesNotAffectOtherListeners
 

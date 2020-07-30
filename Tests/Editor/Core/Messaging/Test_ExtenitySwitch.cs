@@ -1050,6 +1050,8 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void HavingLifeSpanOfRemovedAtFirstEmitConsideredFastTrackAndWontBeRegisteredIntoCallbacksList()
 		{
+			// Switch-on before adding the listener. That makes the switch-on callback to be immediately called.
+			// In that case, there is no need to register the callback, since it should be instantly removed afterwards.
 			SwitchOn();
 			TestSwitch.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
