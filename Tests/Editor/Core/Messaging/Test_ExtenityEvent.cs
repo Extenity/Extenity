@@ -519,7 +519,7 @@ namespace ExtenityTests.MessagingToolbox
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when OnA is called.
+			//              (LogType.Log, "Called callback B."), Removed when A is called.
 			                (LogType.Log, "Called callback C."));
 
 			Invoke();
@@ -538,7 +538,7 @@ namespace ExtenityTests.MessagingToolbox
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnA is called.
+			//              (LogType.Log, "Called callback C.")); Removed when A is called.
 
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
@@ -554,7 +554,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
@@ -574,7 +574,7 @@ namespace ExtenityTests.MessagingToolbox
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnB is called.
+			//              (LogType.Log, "Called callback C.")); Removed when B is called.
 
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
@@ -590,7 +590,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
@@ -609,7 +609,7 @@ namespace ExtenityTests.MessagingToolbox
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
 			                (LogType.Log, "Called callback C."));
 
 			Invoke();
@@ -796,8 +796,6 @@ namespace ExtenityTests.MessagingToolbox
 			Invoke();
 			AssertExpectNoLogs();
 		}
-
-		#endregion
 
 		#region LifeSpan_RemovedAtFirstEmit_DoesNotAffectOtherListeners
 
@@ -992,7 +990,7 @@ namespace ExtenityTests.MessagingToolbox
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when OnA is called.
+			//              (LogType.Log, "Called callback B."), Removed when A is called.
 			                (LogType.Log, "Called callback C."));
 
 			Invoke();
@@ -1012,7 +1010,7 @@ namespace ExtenityTests.MessagingToolbox
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnA is called.
+			//              (LogType.Log, "Called callback C.")); Removed when A is called.
 
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
@@ -1029,7 +1027,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
@@ -1050,7 +1048,7 @@ namespace ExtenityTests.MessagingToolbox
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnB is called.
+			//              (LogType.Log, "Called callback C.")); Removed when B is called.
 
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
@@ -1067,7 +1065,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
@@ -1087,7 +1085,7 @@ namespace ExtenityTests.MessagingToolbox
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
 			                (LogType.Log, "Called callback C."));
 
 			Invoke();
@@ -1155,17 +1153,15 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
-		/*
-
 		#region DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysA()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_ADestroysA()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(TestEventSubject.CallbackOnAAndDestroySubject, TestEventSubject.CallbackOffA);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
+			TestEvent.AddListener(TestEventSubject.CallbackAAndDestroySubject);
+			TestEvent.AddListener(CallbackB);
+			TestEvent.AddListener(CallbackC);
 
 			// This is where it's removed.
 			Invoke();
@@ -1173,18 +1169,18 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysB()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_BDestroysB()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(TestEventSubject.CallbackOnBAndDestroySubject, TestEventSubject.CallbackOffB);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
+			TestEvent.AddListener(CallbackA);
+			TestEvent.AddListener(TestEventSubject.CallbackBAndDestroySubject);
+			TestEvent.AddListener(CallbackC);
 
 			// This is where it's removed.
 			Invoke();
@@ -1192,18 +1188,18 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback C."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysC()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_CDestroysC()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(TestEventSubject.CallbackOnCAndDestroySubject, TestEventSubject.CallbackOffC);
+			TestEvent.AddListener(CallbackA);
+			TestEvent.AddListener(CallbackB);
+			TestEvent.AddListener(TestEventSubject.CallbackCAndDestroySubject);
 
 			// This is where it's removed.
 			Invoke();
@@ -1211,179 +1207,125 @@ namespace ExtenityTests.MessagingToolbox
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-		}
-
-		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffADestroysA()
-		{
-			CreateTestEventSubject();
-			TestEvent.AddListener(TestEventSubject.CallbackOnA, TestEventSubject.CallbackOffAAndDestroySubject);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
-			// This is where it's removed.
-
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
-
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
-		}
-
-		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffBDestroysB()
-		{
-			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(TestEventSubject.CallbackOnB, TestEventSubject.CallbackOffBAndDestroySubject);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
-			// This is where it's removed.
-
-			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
-
-			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
-		}
-
-		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OffCDestroysC()
-		{
-			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(TestEventSubject.CallbackOnC, TestEventSubject.CallbackOffCAndDestroySubject);
-			// This is where it's removed.
-
-			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-
-			SwitchOff();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
 		}
 
 		#endregion
 
-		#region DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners - On
+		#region DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysB()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_ADestroysB()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
-			TestEvent.AddListener(TestEventSubject.CallbackOnB, TestEventSubject.CallbackOffB);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
+			TestEvent.AddListener(CallbackAAndDestroySubject);
+			TestEvent.AddListener(TestEventSubject.CallbackB);
+			TestEvent.AddListener(CallbackC);
 
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when OnA is called.
+			//              (LogType.Log, "Called callback B."), Removed when A is called.
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback C."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnADestroysC()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_ADestroysC()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(TestEventSubject.CallbackOnC, TestEventSubject.CallbackOffC);
+			TestEvent.AddListener(CallbackAAndDestroySubject);
+			TestEvent.AddListener(CallbackB);
+			TestEvent.AddListener(TestEventSubject.CallbackC);
 
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnA is called.
+			//              (LogType.Log, "Called callback C.")); Removed when A is called.
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysA()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_BDestroysA()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(TestEventSubject.CallbackOnA, TestEventSubject.CallbackOffA);
-			TestEvent.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
-			TestEvent.AddListener(CallbackOnC, CallbackOffC);
+			TestEvent.AddListener(TestEventSubject.CallbackA);
+			TestEvent.AddListener(CallbackBAndDestroySubject);
+			TestEvent.AddListener(CallbackC);
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnBDestroysC()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_BDestroysC()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
-			TestEvent.AddListener(TestEventSubject.CallbackOnC, TestEventSubject.CallbackOffC);
+			TestEvent.AddListener(CallbackA);
+			TestEvent.AddListener(CallbackBAndDestroySubject);
+			TestEvent.AddListener(TestEventSubject.CallbackC);
 
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when OnB is called.
+			//              (LogType.Log, "Called callback C.")); Removed when B is called.
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback B."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysA()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_CDestroysA()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(TestEventSubject.CallbackOnA, TestEventSubject.CallbackOffA);
-			TestEvent.AddListener(CallbackOnB, CallbackOffB);
-			TestEvent.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
+			TestEvent.AddListener(TestEventSubject.CallbackA);
+			TestEvent.AddListener(CallbackB);
+			TestEvent.AddListener(CallbackCAndDestroySubject);
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
 			                (LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback B."),
 			                (LogType.Log, "Called callback C."));
 		}
 
 		[Test]
-		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_OnCDestroysB()
+		public void DestroyingDelegateTarget_InsideListener_DoesNotAffectOtherListeners_CDestroysB()
 		{
 			CreateTestEventSubject();
-			TestEvent.AddListener(CallbackOnA, CallbackOffA);
-			TestEvent.AddListener(TestEventSubject.CallbackOnB, TestEventSubject.CallbackOffB);
-			TestEvent.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
+			TestEvent.AddListener(CallbackA);
+			TestEvent.AddListener(TestEventSubject.CallbackB);
+			TestEvent.AddListener(CallbackCAndDestroySubject);
 
 			// This is where it's removed.
 			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
 			                (LogType.Log, "Called callback C."));
 
-			SwitchOff();
+			Invoke();
 			AssertExpectLog((LogType.Log, "Called callback A."),
 			                (LogType.Log, "Called callback C."));
 		}
@@ -1441,7 +1383,6 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		#endregion
-		/**/
 
 		#region General
 
