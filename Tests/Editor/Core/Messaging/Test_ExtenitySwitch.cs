@@ -146,7 +146,7 @@ namespace ExtenityTests.MessagingToolbox
 		}
 
 		[Test]
-		public void InvokingWhenSwitchingOnAndOffAndOnAndOff()
+		public void InvokingContinuouslyAsSwitchingOnAndOffAndOnAndOff()
 		{
 			RegisterCallbacks();
 
