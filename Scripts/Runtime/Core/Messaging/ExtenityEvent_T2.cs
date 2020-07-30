@@ -28,6 +28,7 @@ namespace Extenity.MessagingToolbox
 				LifeSpan = lifeSpan;
 				LifeSpanTarget = lifeSpanTarget;
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
+				throw new NotImplementedException(); // TODO: Copy ExtenityEvent_T0 into this class
 			}
 
 			public bool IsInvalid => Callback == null;
