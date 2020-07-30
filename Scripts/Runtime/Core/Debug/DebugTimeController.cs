@@ -30,6 +30,8 @@ namespace Extenity.DebugToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void Initialize()
 		{
+			if (!Loop.IsInstanceAvailable)
+				return; // Just skip if there is no Loop instance, like test scenes or when not using the loop system.
 			Loop.RegisterUpdate(CustomUpdate);
 		}
 
