@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Object = UnityEngine.Object;
 
 namespace Extenity.MessagingToolbox
@@ -9,9 +8,9 @@ namespace Extenity.MessagingToolbox
 
 	public class ExtenityEvent<T1>
 	{
-		#region Callback entries
+		#region Listeners
 
-		public struct Entry
+		public struct Listener
 		{
 			public readonly Action<T1> Callback;
 			public readonly bool IsCallbackTargetsUnityObject;
@@ -20,7 +19,7 @@ namespace Extenity.MessagingToolbox
 			public readonly Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
 
-			public Entry(Action<T1> callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
+			public Listener(Action<T1> callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				Callback = callback;
 				IsCallbackTargetsUnityObject = callback?.Target as Object;
@@ -71,37 +70,37 @@ namespace Extenity.MessagingToolbox
 		/// <summary>
 		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
-		public readonly List<Entry> Callbacks = new List<Entry>(10);
+		public readonly List<Listener> Listeners = new List<Listener>(10);
 
-		public bool IsAnyListenerRegistered => Callbacks.Count > 0;
+		public bool IsAnyListenerRegistered => Listeners.Count > 0;
 
 		public bool IsListenerRegistered(Action<T1> callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].Callback == callback)
+				if (Listeners[i].Callback == callback)
 					return true;
 			}
 			return false;
 		}
 
-		public Entry GetListenerInfo(Action<T1> callback)
+		public Listener GetListenerInfo(Action<T1> callback)
 		{
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].Callback == callback)
-					return Callbacks[i];
+				if (Listeners[i].Callback == callback)
+					return Listeners[i];
 			}
 			return default;
 		}
 
 		public void Clear()
 		{
-			for (int i = Callbacks.Count - 1; i >= 0; i--)
+			for (int i = Listeners.Count - 1; i >= 0; i--)
 			{
-				if (Callbacks[i].IsObjectDestroyed) // Check if the object is destroyed
+				if (Listeners[i].IsObjectDestroyed) // Check if the object is destroyed
 				{
-					Callbacks.RemoveAt(i);
+					Listeners.RemoveAt(i);
 					i--;
 				}
 			}
@@ -130,14 +129,14 @@ namespace Extenity.MessagingToolbox
 			}
 
 			// See if the callback was already registered.
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].Callback == callback)
+				if (Listeners[i].Callback == callback)
 				{
 					// The callback is already registered. See if there is a change in its parameters.
-					if (Callbacks[i].Order != order ||
-					    Callbacks[i].LifeSpan != lifeSpan ||
-					    Callbacks[i].LifeSpanTarget != lifeSpanTarget)
+					if (Listeners[i].Order != order ||
+					    Listeners[i].LifeSpan != lifeSpan ||
+					    Listeners[i].LifeSpanTarget != lifeSpanTarget)
 					{
 						// Trying to add the same callback with different parameters. Just remove the existing one and
 						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
@@ -161,22 +160,22 @@ namespace Extenity.MessagingToolbox
 			// Line 2: If trying to add a callback with 0 order and the last item is ordered as 0, fear not!
 			// Just add it to the end and move on. While doing that, also cover the possibility that the order
 			// is greater(or equal) than the last item's order.
-			if (Callbacks.Count == 0 || // Line 1
-			    order >= Callbacks[Callbacks.Count - 1].Order) // Line 2
+			if (Listeners.Count == 0 || // Line 1
+			    order >= Listeners[Listeners.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} as the last entry, resulting '{Callbacks.Count + 1}' listener(s).");
-				Callbacks.Add(new Entry(callback, order, lifeSpan, lifeSpanTarget));
+					Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} as the last entry, resulting '{Listeners.Count + 1}' listener(s).");
+				Listeners.Add(new Listener(callback, order, lifeSpan, lifeSpanTarget));
 				return;
 			}
 
-			for (int i = 0; i < Callbacks.Count; i++)
+			for (int i = 0; i < Listeners.Count; i++)
 			{
-				if (order < Callbacks[i].Order)
+				if (order < Listeners[i].Order)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} at index '{i}', resulting '{Callbacks.Count + 1}' listener(s).");
-					Callbacks.Insert(i, new Entry(callback, order, lifeSpan, lifeSpanTarget));
+						Log.Info($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, callback)} at index '{i}', resulting '{Listeners.Count + 1}' listener(s).");
+					Listeners.Insert(i, new Listener(callback, order, lifeSpan, lifeSpanTarget));
 					return;
 				}
 			}
@@ -187,13 +186,13 @@ namespace Extenity.MessagingToolbox
 			if (callback == null)
 				return false; // Silently ignore
 
-			for (var i = 0; i < Callbacks.Count; i++)
+			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Callbacks[i].Callback == callback)
+				if (Listeners[i].Callback == callback)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Info($"Removing listener with {_Detailed_OrderForMethodAndObject(Callbacks[i].Order, callback)} at index '{i}', resulting '{Callbacks.Count - 1}' listener(s).");
-					Callbacks.RemoveAt(i);
+						Log.Info($"Removing listener with {_Detailed_OrderForMethodAndObject(Listeners[i].Order, callback)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+					Listeners.RemoveAt(i);
 					return true;
 				}
 			}
@@ -204,7 +203,7 @@ namespace Extenity.MessagingToolbox
 
 		private void _RemoveListener(int index)
 		{
-			Callbacks.RemoveAt(index);
+			Listeners.RemoveAt(index);
 		}
 
 		public void RemoveAllListeners()
@@ -212,7 +211,7 @@ namespace Extenity.MessagingToolbox
 			if (ExtenityEventTools.VerboseLogging)
 				Log.Info("Removing all listeners.");
 
-			Callbacks.Clear();
+			Listeners.Clear();
 		}
 
 		#endregion
@@ -223,7 +222,7 @@ namespace Extenity.MessagingToolbox
 		public bool CleanupRequired;
 
 		[ThreadStatic]
-		private static List<Entry> CallbacksCopy;
+		private static List<Listener> CallbacksCopy;
 
 		public void InvokeOneShotUnsafe(T1 param1)
 		{
@@ -245,16 +244,16 @@ namespace Extenity.MessagingToolbox
 				// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
 				// Copy the list to allow adding and removing callbacks while processing the invoke.
 				if (CallbacksCopy == null)
-					CallbacksCopy = new List<Entry>(Callbacks.Count);
+					CallbacksCopy = new List<Listener>(Listeners.Count);
 				CallbacksCopy.Clear();
-				CallbacksCopy.AddRange(Callbacks);
+				CallbacksCopy.AddRange(Listeners);
 
 				// After copying the callbacks, remove the ones that are set to be removed when emitted.
-				for (int i = Callbacks.Count - 1; i >= 0; i--)
+				for (int i = Listeners.Count - 1; i >= 0; i--)
 				{
-					if (Callbacks[i].ShouldRemoveAfterEmit)
+					if (Listeners[i].ShouldRemoveAfterEmit)
 					{
-						Callbacks.RemoveAt(i);
+						Listeners.RemoveAt(i);
 					}
 				}
 
@@ -295,16 +294,16 @@ namespace Extenity.MessagingToolbox
 			// TODO OPTIMIZATION: Do not copy the list at first. Only copy it lazily when the user callback needs to change the callbacks list and then continue to iterate over that copy.
 			// Copy the list to allow adding and removing callbacks while processing the invoke.
 			if (CallbacksCopy == null)
-				CallbacksCopy = new List<Entry>(Callbacks.Count);
+				CallbacksCopy = new List<Listener>(Listeners.Count);
 			CallbacksCopy.Clear();
-			CallbacksCopy.AddRange(Callbacks);
+			CallbacksCopy.AddRange(Listeners);
 
 			// After copying the callbacks, remove the ones that are set to be removed when emitted.
-			for (int i = Callbacks.Count - 1; i >= 0; i--)
+			for (int i = Listeners.Count - 1; i >= 0; i--)
 			{
-				if (Callbacks[i].ShouldRemoveAfterEmit)
+				if (Listeners[i].ShouldRemoveAfterEmit)
 				{
-					Callbacks.RemoveAt(i);
+					Listeners.RemoveAt(i);
 				}
 			}
 

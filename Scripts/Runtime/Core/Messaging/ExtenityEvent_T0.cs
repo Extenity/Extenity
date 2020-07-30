@@ -181,7 +181,7 @@ namespace Extenity.MessagingToolbox
 				return; // Silently ignore
 			}
 
-			// See if the callback pair was already registered.
+			// See if the callback was already registered.
 			for (var i = 0; i < Listeners.Count; i++)
 			{
 				if (Listeners[i].Callback == callback)
