@@ -23,7 +23,7 @@ namespace Extenity.MessagingToolbox
 			public Listener(Action callback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
 			{
 				Callback = callback;
-				IsCallbackTargetsUnityObject = callback?.Target as Object; // As in: switchOnCallback.IsUnityObjectTargeted()
+				IsCallbackTargetsUnityObject = callback?.Target as Object; // As in: callback.IsUnityObjectTargeted()
 				Order = order;
 				LifeSpan = lifeSpan;
 				LifeSpanTarget = lifeSpanTarget;
