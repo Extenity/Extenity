@@ -80,9 +80,9 @@ namespace Extenity.MessagingToolbox
 				}
 				else
 				{
-					return Callback.Target != null
-						? Callback
-						: null;
+					return Callback;
+					// This was the previous implementation, which failed static non-UnityObject methods.
+					// return Callback.Target != null ? Callback : null;
 				}
 			}
 		}
