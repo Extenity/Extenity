@@ -19,11 +19,15 @@ namespace Extenity.UnityEditorToolbox
 		public const string UI = Path + "UI/";
 		public const string CleanUp = Path + "CleanUp/";
 
-		// Right-click context menu
+		// Right-click asset context menu
 		public const string UIContext = "GameObject/UI/";
 		public const string AssetsContext = "Assets/Extenity/";
 		public const string WidgetsContext = UIContext + "Extenity Widgets/";
 		public const string AssetOperationsContext = AssetsContext + "Asset Operations/";
+
+		// Right-click component context menu
+		public const string ComponentContext = "CONTEXT/Component/";
+
 
 		// Prioritize menu parents
 #if UNITY_EDITOR
