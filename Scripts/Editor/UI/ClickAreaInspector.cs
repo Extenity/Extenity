@@ -1,3 +1,4 @@
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace Extenity.UIToolbox.Editor
 
 #if UNITY_EDITOR
 
-		[MenuItem("GameObject/UI/Click Area", false, 2100 - 3)] // Just above EventSystem
+		[MenuItem(ExtenityMenu.WidgetsContext + "Click Area")]
 		private static void AddClickArea(MenuCommand menuCommand)
 		{
 			var go = new GameObject(nameof(ClickArea));

@@ -1,10 +1,13 @@
 #if UNITY_EDITOR
 
+using UnityEditor;
+
 namespace Extenity.UnityEditorToolbox
 {
 
 	public static class ExtenityMenu
 	{
+		// Editor window top bar menu
 		public const string Path = "Tools/Extenity/";
 		public const string Application = Path + "Application/";
 		public const string System = Path + "System/";
@@ -15,6 +18,16 @@ namespace Extenity.UnityEditorToolbox
 		public const string Analysis = Path + "Analysis/";
 		public const string UI = Path + "UI/";
 		public const string CleanUp = Path + "CleanUp/";
+
+		// Right-click context menu
+		public const string UIContext = "GameObject/UI/";
+		public const string WidgetsContext = UIContext + "Extenity Widgets/";
+
+		// Prioritize menu parents
+#if UNITY_EDITOR
+		[MenuItem(WidgetsContext, priority = 1000)] // 1000 is above all Unity default entries.
+		private static void Dummy(MenuCommand menuCommand) { }
+#endif
 	}
 
 }
