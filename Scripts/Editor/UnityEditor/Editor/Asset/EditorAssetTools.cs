@@ -9,9 +9,9 @@ using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using Extenity.FileSystemToolbox;
-using Extenity.GameObjectToolbox;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.TextureToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEditor.SceneManagement;
 
 namespace Extenity.AssetToolbox.Editor
@@ -21,46 +21,35 @@ namespace Extenity.AssetToolbox.Editor
 	{
 		#region Assets Menu - Operations - Texture
 
-		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", priority = 3105)]
+		private const string GenerateImageMenu = ExtenityMenu.AssetOperationsContext + "Generate Embedded Code For Image/";
+
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Image File", validate = true)]
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Texture As PNG", validate = true)]
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Texture As JPG", validate = true)]
+		private static bool _GenerateEmbeddedCodeForImage_Validate()
+		{
+			var objects = Selection.objects;
+			if (objects == null || objects.Length != 1)
+				return false;
+			return objects[0] is Texture2D;
+		}
+
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Image File", priority = 3101)]
 		public static void GenerateEmbeddedCodeForImageFile()
 		{
 			_GenerateEmbeddedCodeForImageFile(TextureFormat.ARGB32);
 		}
 
-		[MenuItem("Assets/Operations/Generate Embedded Code For Image File", validate = true)]
-		private static bool Validate_GenerateEmbeddedCodeForImageFile()
-		{
-			if (Selection.objects == null || Selection.objects.Length != 1)
-				return false;
-			return Selection.objects[0] is Texture2D;
-		}
-
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", priority = 3108)]
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Texture As PNG", priority = 3102)]
 		public static void GenerateEmbeddedCodeForTextureAsPNG()
 		{
 			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToPNG(), TextureFormat.ARGB32);
 		}
 
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As PNG", validate = true)]
-		private static bool Validate_GenerateEmbeddedCodeForTextureAsPNG()
-		{
-			if (Selection.objects == null || Selection.objects.Length != 1)
-				return false;
-			return Selection.objects[0] is Texture2D;
-		}
-
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", priority = 3109)]
+		[MenuItem(GenerateImageMenu + "Generate Embedded Code For Texture As JPG", priority = 3103)]
 		public static void GenerateEmbeddedCodeForTextureAsJPG()
 		{
 			_GenerateEmbeddedCodeForTexture(texture => texture.EncodeToJPG(), TextureFormat.RGB24);
-		}
-
-		[MenuItem("Assets/Operations/Generate Embedded Code For Texture As JPG", validate = true)]
-		private static bool Validate_GenerateEmbeddedCodeForTextureAsJPG()
-		{
-			if (Selection.objects == null || Selection.objects.Length != 1)
-				return false;
-			return Selection.objects[0] is Texture2D;
 		}
 
 		private static void _GenerateEmbeddedCodeForTexture(Func<Texture2D, byte[]> getDataOfTexture, TextureFormat format)
@@ -100,7 +89,21 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Assets Menu - Operations - RenderTexture
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/All", priority = 2901)]
+		private const string SaveRenderTextureMenu = ExtenityMenu.AssetOperationsContext + "Save RenderTexture To File/";
+
+		[MenuItem(SaveRenderTextureMenu + "All", validate = true)]
+		[MenuItem(SaveRenderTextureMenu + "RGBA32", validate = true)]
+		[MenuItem(SaveRenderTextureMenu + "ARGB32", validate = true)]
+		[MenuItem(SaveRenderTextureMenu + "RGB24", validate = true)]
+		[MenuItem(SaveRenderTextureMenu + "RGBAFloat", validate = true)]
+		[MenuItem(SaveRenderTextureMenu + "RGBAHalf", validate = true)]
+		private static bool Validate_SaveRenderTextureToFile()
+		{
+			var objects = Selection.objects;
+			return objects.IsNotNullAndEmpty() && objects.Any(item => item is RenderTexture);
+		}
+
+		[MenuItem(SaveRenderTextureMenu + "All", priority = 2901)]
 		public static void SaveRenderTextureToFile_All()
 		{
 			var allTextureFormats = Enum.GetValues(typeof(TextureFormat)) as TextureFormat[];
@@ -110,65 +113,35 @@ namespace Extenity.AssetToolbox.Editor
 				_SaveSelectedRenderTexturesToFile(textureFormat, false);
 			}
 		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/All", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_All()
-		{
-			return IsSelectionContainsAnyRenderTexture();
-		}
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBA32", priority = 2801)]
+		[MenuItem(SaveRenderTextureMenu + "RGBA32", priority = 2801)]
 		public static void SaveRenderTextureToFile_RGBA32()
 		{
 			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBA32, true);
 		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBA32", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_RGBA32()
-		{
-			return IsSelectionContainsAnyRenderTexture();
-		}
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/ARGB32", priority = 2802)]
+		[MenuItem(SaveRenderTextureMenu + "ARGB32", priority = 2802)]
 		public static void SaveRenderTextureToFile_ARGB32()
 		{
 			_SaveSelectedRenderTexturesToFile(TextureFormat.ARGB32, true);
 		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/ARGB32", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_ARGB32()
-		{
-			return IsSelectionContainsAnyRenderTexture();
-		}
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGB24", priority = 2803)]
+		[MenuItem(SaveRenderTextureMenu + "RGB24", priority = 2803)]
 		public static void SaveRenderTextureToFile_RGB24()
 		{
 			_SaveSelectedRenderTexturesToFile(TextureFormat.RGB24, true);
 		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGB24", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_RGB24()
-		{
-			return IsSelectionContainsAnyRenderTexture();
-		}
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAFloat", priority = 2804)]
+		[MenuItem(SaveRenderTextureMenu + "RGBAFloat", priority = 2804)]
 		public static void SaveRenderTextureToFile_RGBAFloat()
 		{
 			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBAFloat, true);
 		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAFloat", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_RGBAFloat()
-		{
-			return IsSelectionContainsAnyRenderTexture();
-		}
 
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAHalf", priority = 2805)]
+		[MenuItem(SaveRenderTextureMenu + "RGBAHalf", priority = 2805)]
 		public static void SaveRenderTextureToFile_RGBAHalf()
 		{
 			_SaveSelectedRenderTexturesToFile(TextureFormat.RGBAHalf, true);
-		}
-		[MenuItem("Assets/Operations/Save RenderTexture To File/RGBAHalf", validate = true)]
-		private static bool Validate_SaveRenderTextureToFile_RGBAHalf()
-		{
-			return IsSelectionContainsAnyRenderTexture();
 		}
 
 		private static void _SaveSelectedRenderTexturesToFile(TextureFormat format, bool linear)
@@ -240,34 +213,13 @@ namespace Extenity.AssetToolbox.Editor
 			}
 		}
 
-		private static bool IsSelectionContainsAnyRenderTexture()
-		{
-			var objects = Selection.objects;
-			return objects.IsNotNullAndEmpty() && objects.Any(item => item is RenderTexture);
-		}
-
 		#endregion
 
 		#region Assets Menu - Operations - Reserialize Assets
 
-		[MenuItem("Assets/Operations/Reserialize Project Settings", priority = 1101)]
-		public static void ReserializeProjectSettings()
-		{
-			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
-			{
-				var fullList = new List<string>();
-				var log = new StringBuilder();
+		private const string ReserializeMenu = ExtenityMenu.AssetOperationsContext + "Reserialize/";
 
-				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith("ProjectSettings")).ToList();
-				InternalAddToAssetList(list, fullList, "Selected Assets", log);
-
-				Log.Info(log.ToString());
-
-				ReserializeAssets(fullList);
-			};
-		}
-
-		[MenuItem("Assets/Operations/Reserialize Selected Assets", priority = 1102)]
+		[MenuItem(ReserializeMenu + "Reserialize Selected Assets", priority = 1101)]
 		public static void ReserializeSelectedAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -285,7 +237,24 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Assets", priority = 1103)]
+		[MenuItem(ReserializeMenu + "Reserialize Project Settings", priority = 1151)]
+		public static void ReserializeProjectSettings()
+		{
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				var fullList = new List<string>();
+				var log = new StringBuilder();
+
+				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith("ProjectSettings")).ToList();
+				InternalAddToAssetList(list, fullList, "Selected Assets", log);
+
+				Log.Info(log.ToString());
+
+				ReserializeAssets(fullList);
+			};
+		}
+
+		[MenuItem(ReserializeMenu + "Reserialize All Assets", priority = 1203)]
 		public static void ReserializeAllAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -294,7 +263,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Scenes", priority = 1104)]
+		[MenuItem(ReserializeMenu + "Reserialize All Scenes", priority = 1204)]
 		public static void ReserializeAllScenes()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -303,7 +272,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Prefabs", priority = 1105)]
+		[MenuItem(ReserializeMenu + "Reserialize All Prefabs", priority = 1205)]
 		public static void ReserializeAllPrefabs()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -312,7 +281,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Graphics Assets", priority = 1106)]
+		[MenuItem(ReserializeMenu + "Reserialize All Graphics Assets", priority = 1206)]
 		public static void ReserializeAllGraphicsAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -321,7 +290,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Audio Assets", priority = 1107)]
+		[MenuItem(ReserializeMenu + "Reserialize All Audio Assets", priority = 1207)]
 		public static void ReserializeAllAudioAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -330,7 +299,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem("Assets/Operations/Reserialize All Script Assets", priority = 1108)]
+		[MenuItem(ReserializeMenu + "Reserialize All Script Assets", priority = 1208)]
 		public static void ReserializeAllScriptAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
