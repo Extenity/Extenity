@@ -37,6 +37,7 @@ namespace Extenity.UIToolbox.Editor
 		{
 			var go = new GameObject(nameof(ClickArea));
 			go.AddComponent<ClickArea>();
+			Undo.RegisterCreatedObjectUndo(go, $"Create {nameof(ClickArea)}");
 
 			UIEditorUtilities.PlaceUIElementRoot(go, menuCommand);
 
