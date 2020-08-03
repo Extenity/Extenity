@@ -1,3 +1,11 @@
+// TODO: Replacer tool needs a rework to handle Nested Prefabs. It was a great tool for world building. Would be great to revive it again.
+/*
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
+using Extenity.IMGUIToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -21,14 +29,12 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void OnEnableDerived()
 		{
-			/*
 			ReplaceWithObjectProperty = serializedObject.FindProperty("_ReplaceWithObject");
 			ReplaceAsPrefabProperty = serializedObject.FindProperty("_ReplaceAsPrefab");
 			ReplacePrefabParentProperty = serializedObject.FindProperty("_ReplacePrefabParent");
 			OverrideRotationsProperty = serializedObject.FindProperty("_OverrideRotations");
 			OverrideScalesProperty = serializedObject.FindProperty("_OverrideScales");
 			OverrideNamesProperty = serializedObject.FindProperty("_OverrideNames");
-			*/
 		}
 
 		[MenuItem("Edit/Replacer", false, 1010)] // Just below Unity's "Snap Settings"
@@ -41,29 +47,23 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Serialized Properties
 
-		/*
 		private SerializedProperty ReplaceWithObjectProperty;
 		private SerializedProperty ReplaceAsPrefabProperty;
 		private SerializedProperty ReplacePrefabParentProperty;
 		private SerializedProperty OverrideRotationsProperty;
 		private SerializedProperty OverrideScalesProperty;
 		private SerializedProperty OverrideNamesProperty;
-		*/
 
 		#endregion
 
 		#region GUI - Window
 
-		/*
 		private readonly GUILayoutOption[] ReplaceButtonOptions = { GUILayout.Width(100f), GUILayout.Height(30f) };
 		private readonly GUIContent ReplaceButtonContent = new GUIContent("Replace", "Replaces all selected objects with the specified object.");
 		private readonly GUIContent ReplaceWithContent = new GUIContent("Replace With", "This object will be duplicated and replaced with selected objects.");
-		*/
 
 		protected override void OnGUIDerived()
 		{
-			GUILayout.Label("Not implemented yet for Nested Prefabs.");
-			/*
 			GUILayout.Space(8f);
 
 			{
@@ -157,14 +157,12 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				SceneView.RepaintAll();
 			}
-			*/
 		}
 
 		#endregion
 
 		#region Replace
 
-		/*
 #pragma warning disable 414
 
 		[SerializeField]
@@ -312,16 +310,14 @@ namespace Extenity.PainkillerToolbox.Editor
 				serializedObject.ApplyModifiedProperties();
 			}
 		}
-		*/
 
 		#endregion
 
 		#region Selection
 
-		/*
 		public List<Transform> FilteredSelection;
 
-		private void OnSelectionChanged()
+		protected override void OnSelectionChanged()
 		{
 			FilteredSelection = GetSelection();
 			Repaint();
@@ -343,9 +339,9 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 			Selection.objects = FilteredSelection.Select(transform => transform.gameObject).ToArray();
 		}
-		*/
 
 		#endregion
 	}
 
 }
+*/
