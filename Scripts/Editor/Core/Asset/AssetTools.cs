@@ -15,6 +15,7 @@ using Extenity.FileSystemToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.ReflectionToolbox;
+using Extenity.UnityEditorToolbox;
 using JetBrains.Annotations;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
@@ -852,26 +853,37 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		[MenuItem("Assets/Copy Asset Path")]
+		#region Copy Selected Asset Paths
+
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Copy Path(s)", priority = 19)]
 		public static void CopySelectedAssetPaths()
 		{
-			var stringBuilder = new StringBuilder();
-
-			foreach (Object obj in Selection.objects)
+			var selectionObjects = Selection.objects;
+			if (selectionObjects.Length > 0)
 			{
-				if (AssetDatabase.Contains(obj))
-				{
-					stringBuilder.AppendLine(AssetDatabase.GetAssetPath(obj));
-				}
-				else
-				{
-					Log.Warning($"{obj} is not a source asset.");
-				}
-			}
+				var stringBuilder = new StringBuilder();
 
-			var paths = stringBuilder.ToString().Trim();
-			Clipboard.SetClipboardText(paths, true);
+				foreach (Object obj in selectionObjects)
+				{
+					if (AssetDatabase.Contains(obj))
+					{
+						stringBuilder.AppendLine(AssetDatabase.GetAssetPath(obj));
+					}
+					else
+					{
+						Log.Warning($"{obj} is not a source asset.");
+					}
+				}
+				var paths = stringBuilder.ToString().Trim();
+				Clipboard.SetClipboardText(paths, true);
+			}
+			else
+			{
+				Log.Warning("Select one or more objects to copy their paths into clipboard.");
+			}
 		}
+
+		#endregion
 
 		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)
 		{
