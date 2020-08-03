@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -394,19 +395,19 @@ namespace __NAMESPACE__
 
 		#region Menu Commands
 
-		[MenuItem("Snippets/Create Script with Inspector")]
+		[MenuItem(ExtenityMenu.Snippets + "Create Script with Inspector")]
 		public static void CreateScriptWithInspector()
 		{
 			CreateSnippet(ScriptWithInspectorGroup);
 		}
 
-		[MenuItem("Snippets/Create Script")]
+		[MenuItem(ExtenityMenu.Snippets + "Create Script")]
 		public static void CreateScript()
 		{
 			CreateSnippet(ScriptOnlyGroup);
 		}
 
-		[MenuItem("Snippets/Create Inspector")]
+		[MenuItem(ExtenityMenu.Snippets + "Create Inspector")]
 		public static void CreateInspector()
 		{
 			CreateSnippet(InspectorOnlyGroup);
