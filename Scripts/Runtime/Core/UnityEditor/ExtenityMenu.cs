@@ -20,9 +20,7 @@ namespace Extenity.UnityEditorToolbox
 		public const string Analysis = Path + "Analysis/";
 		public const string UI = Path + "UI/";
 		public const string CleanUp = Path + "CleanUp/";
-
-		// Unity Editor window top bar Snippets menu
-		public const string Snippets = "Snippets/";
+		public const string Examples = Path + "Examples/";
 
 		// Right-click asset context menu
 		public const string UIContext = "GameObject/UI/";
