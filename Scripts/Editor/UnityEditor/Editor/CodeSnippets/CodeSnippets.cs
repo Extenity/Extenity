@@ -395,22 +395,10 @@ namespace __NAMESPACE__
 
 		#region Menu Commands
 
-		[MenuItem(ExtenityMenu.Snippets + "Create Script with Inspector")]
-		public static void CreateScriptWithInspector()
-		{
-			CreateSnippet(ScriptWithInspectorGroup);
-		}
-
-		[MenuItem(ExtenityMenu.Snippets + "Create Script")]
+		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Formatted)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
 		public static void CreateScript()
 		{
 			CreateSnippet(ScriptOnlyGroup);
-		}
-
-		[MenuItem(ExtenityMenu.Snippets + "Create Inspector")]
-		public static void CreateInspector()
-		{
-			CreateSnippet(InspectorOnlyGroup);
 		}
 
 		#endregion

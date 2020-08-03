@@ -27,6 +27,8 @@ namespace Extenity.UnityEditorToolbox
 		// Right-click asset context menu
 		public const string UIContext = "GameObject/UI/";
 		public const string AssetsBaseContext = "Assets/";
+		public const string CreateAssetBaseContext = AssetsBaseContext + "Create/";
+		public const int UnityCreateCSScriptMenuPriority = 81;
 		public const string AssetsContext = AssetsBaseContext + "Extenity/";
 		public const string WidgetsContext = UIContext + "Extenity Widgets/";
 		public const string AssetOperationsContext = AssetsContext + "Asset Operations/";
