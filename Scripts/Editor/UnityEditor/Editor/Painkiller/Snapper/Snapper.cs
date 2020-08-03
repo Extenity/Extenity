@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
@@ -112,9 +111,21 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 			GUILayout.EndHorizontal();
 
+			GUILayout.Space(8f);
+			DrawHelp();
+
 			if (GUI.changed)
 			{
 				SceneView.RepaintAll();
+			}
+		}
+
+		private void DrawHelp()
+		{
+			GUILayout.Label("Move objects with keyboard");
+			foreach (var key in Keys)
+			{
+				GUILayout.Label($"  {key.KeyCode} : {key.Action}");
 			}
 		}
 
