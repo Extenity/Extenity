@@ -29,18 +29,12 @@ namespace Extenity.UIToolbox.Editor
 			EditorGUILayout.PropertyField(RaycastTargetProperty);
 		}
 
-		#region Editor right Click Menu
-
-#if UNITY_EDITOR
+		#region Hierarchy Right Click Menu
 
 		[MenuItem(ExtenityMenu.WidgetsContext + "Click Area")]
-		private static void AddClickArea(MenuCommand menuCommand)
+		private static void AddToScene(MenuCommand menuCommand)
 		{
-			var go = new GameObject(nameof(ClickArea));
-			go.AddComponent<ClickArea>();
-			Undo.RegisterCreatedObjectUndo(go, $"Create {nameof(ClickArea)}");
-
-			UIEditorUtilities.PlaceUIElementRoot(go, menuCommand);
+			var go = UIEditorUtilities.InstantiateUIWidgetFromPrefab("Extenity/Widgets/ClickArea", menuCommand);
 
 			var defaultOffset = new Vector2(30, 30);
 			var rectTransform = go.GetComponent<RectTransform>();
@@ -73,8 +67,6 @@ namespace Extenity.UIToolbox.Editor
 				}
 			}
 		}
-
-#endif
 
 		#endregion
 	}
