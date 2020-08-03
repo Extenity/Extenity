@@ -49,7 +49,7 @@ namespace Extenity.UIToolbox
 		private Tweener Animation;
 		private float AnimationEndValue = float.NaN;
 
-		private void Awake()
+		protected void Awake()
 		{
 			if (InitialValue >= 0)
 			{
@@ -58,7 +58,7 @@ namespace Extenity.UIToolbox
 			HideIncreaseDecreaseMasksAndEndAnimation();
 		}
 
-		private void OnDestroy()
+		protected void OnDestroy()
 		{
 			if (Animation != null)
 			{
@@ -222,7 +222,7 @@ namespace Extenity.UIToolbox
 		[Button(ButtonSizes.Large, ButtonStyle.Box, Name = "%100"), HorizontalGroup("Test/TestButtons")]
 		private void SetValue_100() { SetValue(1.0f); }
 
-		private void Update()
+		protected void Update()
 		{
 			if (!Application.IsPlaying(gameObject))
 			{
