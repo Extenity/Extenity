@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Extenity.FileSystemToolbox;
 using Extenity.ProfilingToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEditor;
 
 namespace Extenity.ApplicationToolbox.Editor
@@ -129,7 +130,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			method.Invoke(null, null);
 		}
 
-		[MenuItem("Assets/Open C# Project (Force Rebuild)", priority = 1000)]
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Open C# Project (Force Rebuild)", priority = 1000)] // Priority is just below Unity's 'Open C# Project'
 		public static void OpenCSProjectForceRebuild()
 		{
 			// Delete SLN and CSPROJ files. That will force Unity to rebuild them from ground up.
@@ -202,7 +203,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Check For Android SDK Installation
 
-		[MenuItem("Edit/Tell If Android SDK Is Installed With Unity", priority = 268)] // 270 is "Clear All PlayerPrefs"
+		[MenuItem(ExtenityMenu.System + "Tell If Android SDK Is Installed With Unity")]
 		private static void TellIfAndroidSDKInstalledWithUnity()
 		{
 			bool isInstalled;

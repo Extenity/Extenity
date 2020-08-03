@@ -659,7 +659,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Reimport All - Menu Additions
 
-		[MenuItem("Assets/Reimport All Scripts", priority = 41)] // Priority is just below the Reimport All option.
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Scripts", priority = 41)] // Priority is just below the Reimport All option.
 		public static void ReimportAllScripts()
 		{
 			var paths = GetAllScriptAssetPaths().OrderByDescending(item => item).ToList();
@@ -683,7 +683,7 @@ namespace Extenity.AssetToolbox.Editor
 			Log.Info("Done.");
 		}
 
-		[MenuItem("Assets/Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
 		public static void ReimportAllShaders()
 		{
 			var paths = GetAllShaderAssetPaths(true, true, true, true).OrderByDescending(item => item).ToList();
@@ -697,7 +697,7 @@ namespace Extenity.AssetToolbox.Editor
 			Log.Info("Done.");
 		}
 
-		[MenuItem("Assets/Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
 		public static void ReimportAllPrefabs()
 		{
 			var paths = GetAllPrefabAssetPaths().OrderByDescending(item => item).ToList();
