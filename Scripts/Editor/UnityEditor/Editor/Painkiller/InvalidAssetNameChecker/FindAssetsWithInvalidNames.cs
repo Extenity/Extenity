@@ -2,7 +2,7 @@ using System.Linq;
 using Extenity.DataToolbox;
 using UnityEditor;
 
-namespace Extenity.AssetToolbox.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
 	public static class FindAssetsWithInvalidNames

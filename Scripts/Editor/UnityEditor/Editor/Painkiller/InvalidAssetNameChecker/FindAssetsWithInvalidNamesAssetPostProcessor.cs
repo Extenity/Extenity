@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace Extenity.AssetToolbox.Editor
+namespace Extenity.PainkillerToolbox.Editor
 {
 
 	public class FindAssetsWithInvalidNamesAssetPostProcessor : AssetPostprocessor
