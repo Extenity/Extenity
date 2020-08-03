@@ -1,5 +1,6 @@
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.UnityEditorToolbox;
 using UnityEditor;
 
 namespace Extenity.PainkillerToolbox.Editor
@@ -25,7 +26,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Menu
 
-		[MenuItem("Assets/Find Assets With Invalid Names")]
+		[MenuItem(ExtenityMenu.Painkiller + "Asset Name Checker/Find Assets With Invalid Names")]
 		public static void _FindAssetsWithInvalidNames()
 		{
 			Run();
