@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -79,7 +80,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			InitializeKeyboard();
 		}
 
-		[MenuItem("Edit/Snapper", false, 1000)] // Just below Unity's "Snap Settings"
+		[MenuItem(ExtenityMenu.Edit + "Snapper", priority = ExtenityMenu.UnitySnapSettingsMenuPriority)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<Snapper>();

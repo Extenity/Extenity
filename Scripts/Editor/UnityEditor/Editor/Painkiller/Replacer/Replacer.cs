@@ -6,6 +6,7 @@ using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			OverrideNamesProperty = serializedObject.FindProperty("_OverrideNames");
 		}
 
-		[MenuItem("Edit/Replacer", false, 1010)] // Just below Unity's "Snap Settings"
+		[MenuItem(ExtenityMenu.Edit + "Replacer", priority = ExtenityMenu.UnitySnapSettingsMenuPriority)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<Replacer>();

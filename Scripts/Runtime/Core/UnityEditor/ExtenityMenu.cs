@@ -31,6 +31,9 @@ namespace Extenity.UnityEditorToolbox
 		// Right-click component context menu
 		public const string ComponentContext = "CONTEXT/Component/";
 
+		// Edit menu
+		public const int UnitySnapSettingsMenuPriority = 1000; // Use this to add a MenuItem just below Unity's "Edit/Grid and Snap Settings"
+		public const string Edit = "Edit/";
 
 		// Prioritize menu parents
 #if UNITY_EDITOR
