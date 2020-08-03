@@ -12,6 +12,7 @@ namespace Extenity.UnityEditorToolbox
 		public const string Application = Path + "Application/";
 		public const string System = Path + "System/";
 		public const string Painkiller = Path + "Painkiller/";
+		public const string PackageManagerTools = Path + "Package Manager Tools/";
 		public const string Maintenance = Path + "Maintenance internals/";
 		public const string Logging = Path + "Logging/";
 		public const string Terrain = Path + "Terrain/";
