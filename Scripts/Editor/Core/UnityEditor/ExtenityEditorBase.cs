@@ -625,14 +625,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 	public static class ExtenityEditorBaseTools
 	{
-		//[MenuItem("CONTEXT/Component/Toggle Extenity Component Profiling", true)]
+		//[MenuItem(ExtenityMenu.ComponentContext + "Toggle Extenity Component Profiling", true)]
 		//private static bool ContextMenu_ToggleExtenityComponentProfiling_Validate(MenuCommand menuCommand)
 		//{
 		//	var component = menuCommand.context as Component;
 		//	return component && component.GetType().HasExtenityInspector();
 		//}
 
-		//[MenuItem("CONTEXT/Component/Toggle Extenity Component Profiling", priority = 1051)]
+		//[MenuItem(ExtenityMenu.ComponentContext + "Toggle Extenity Component Profiling", priority = 1051)]
 		//private static void ContextMenu_ToggleExtenityComponentProfiling(MenuCommand menuCommand)
 		//{
 		//	var component = menuCommand.context as Component;
