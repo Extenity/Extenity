@@ -12,6 +12,7 @@ namespace Extenity.UnityEditorToolbox
 		public const string Application = Path + "Application/";
 		public const string System = Path + "System/";
 		public const string Painkiller = Path + "Painkiller/";
+		public const string GameObjectOperations = Path + "GameObject Operations/";
 		public const string PackageManagerTools = Path + "Package Manager Tools/";
 		public const string Maintenance = Path + "Maintenance internals/";
 		public const string Logging = Path + "Logging/";
@@ -34,7 +35,10 @@ namespace Extenity.UnityEditorToolbox
 		// Prioritize menu parents
 #if UNITY_EDITOR
 		[MenuItem(WidgetsContext, priority = 1000)] // 1000 is above all Unity default entries.
-		private static void Dummy(MenuCommand menuCommand) { }
+		private static void _WidgetsContext(MenuCommand menuCommand) { }
+
+		[MenuItem(GameObjectOperations, priority = 0)]
+		private static void _GameObjectOperations() { }
 #endif
 	}
 
