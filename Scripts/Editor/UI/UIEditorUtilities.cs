@@ -132,6 +132,30 @@ namespace Extenity.UIToolbox.Editor
 		}
 
 		#endregion
+
+		#region Instantiate Widget From Prefab
+
+		public static GameObject InstantiateUIWidgetFromPrefab(string prefabPathInResources, MenuCommand menuCommand)
+		{
+			// Get prefab from editor Resources folder.
+			var prefab = Resources.Load<GameObject>(prefabPathInResources);
+			if (!prefab)
+			{
+				throw new Exception("UI widget prefab does not exist at resource path: " + prefabPathInResources);
+			}
+
+			// Instantiate the prefab.
+			var instance = GameObject.Instantiate(prefab);
+			instance.name = prefab.name;
+			Undo.RegisterCreatedObjectUndo(instance, "New " + prefab.name);
+
+			// Place the widget in scene, just like Unity does with its internal widgets.
+			PlaceUIElementRoot(instance, menuCommand);
+
+			return instance;
+		}
+
+		#endregion
 	}
 
 }
