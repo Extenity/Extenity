@@ -29,6 +29,11 @@ namespace Extenity
 			EditorWindowTools.ToggleWindow<LoopWindow>();
 		}
 
+		protected override void OnEnableDerived()
+		{
+			IsRightMouseButtonScrollingEnabled = true;
+		}
+
 		#endregion
 
 		#region GUI
@@ -46,9 +51,13 @@ namespace Extenity
 				return;
 			}
 
+			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, false, true);
+
 			DrawListenersList("FixedUpdate", Loop.Instance.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
 			DrawListenersList("Update", Loop.Instance.UpdateCallbacks._Listeners, ref UpdateFold);
 			DrawListenersList("LateUpdate", Loop.Instance.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
+
+			GUILayout.EndScrollView();
 		}
 
 		private void DrawListenersList(string header, List<ExtenityEvent.Listener> listeners, ref bool fold)
