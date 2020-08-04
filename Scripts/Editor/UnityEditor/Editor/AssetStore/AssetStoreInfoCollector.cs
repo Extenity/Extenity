@@ -24,13 +24,13 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 
 		#region Menu
 
-		[MenuItem(ExtenityMenu.PackageManagerTools + "Fetch all Asset Store packages")]
+		[MenuItem(ExtenityMenu.PackageManagerTools + "Fetch all Asset Store packages", priority = ExtenityMenu.PackageManagerToolsPriority + 1)]
 		private static void Menu_FetchAllAssetStorePackages()
 		{
 			FetchAllAssetStorePackages();
 		}
 
-		[MenuItem(ExtenityMenu.PackageManagerTools + "Log Asset Store package infos (Needs to be fetched first)")]
+		[MenuItem(ExtenityMenu.PackageManagerTools + "Log Asset Store package infos (Needs to be fetched first)", priority = ExtenityMenu.PackageManagerToolsPriority + 2)]
 		private static void Menu_ListAssets()
 		{
 			var fetchedInfos = PackageManagerTools.GrabAssetStorePackageInfosFromPackageManager(true);

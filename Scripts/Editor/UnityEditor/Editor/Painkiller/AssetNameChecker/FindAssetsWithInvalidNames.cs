@@ -26,7 +26,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Menu
 
-		[MenuItem(ExtenityMenu.Painkiller + "Asset Name Checker/Find Assets With Invalid Names")]
+		[MenuItem(ExtenityMenu.Painkiller + "Asset Name Checker/Find Assets With Invalid Names", priority = ExtenityMenu.PainkillerPriority + 7)]
 		public static void _FindAssetsWithInvalidNames()
 		{
 			Run();

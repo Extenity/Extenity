@@ -59,7 +59,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		[MenuItem(ExtenityMenu.Painkiller + "Code Correct")]
+		[MenuItem(ExtenityMenu.Painkiller + "Code Correct", priority = ExtenityMenu.PainkillerPriority + 6)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<CodeCorrect>();

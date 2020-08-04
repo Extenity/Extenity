@@ -203,7 +203,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Check For Android SDK Installation
 
-		[MenuItem(ExtenityMenu.System + "Tell If Android SDK Is Installed With Unity")]
+		[MenuItem(ExtenityMenu.System + "Tell If Android SDK Is Installed With Unity", priority = ExtenityMenu.SystemPriority + 1)]
 		private static void TellIfAndroidSDKInstalledWithUnity()
 		{
 			bool isInstalled;

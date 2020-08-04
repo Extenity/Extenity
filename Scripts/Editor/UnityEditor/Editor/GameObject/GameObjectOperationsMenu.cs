@@ -16,13 +16,13 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Delete Empty Unreferenced GameObjects
 
-		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = 0)]
+		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = ExtenityMenu.GameObjectOperationsPriority + 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InLoadedScenes()
 		{
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInLoadedScenes(new[] { typeof(Instantiator) }, true, true, true, true);
 		}
 
-		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Active Scene", priority = 1)]
+		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Active Scene", priority = ExtenityMenu.GameObjectOperationsPriority + 1)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InActiveScene()
 		{
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInActiveScene(new[] { typeof(Instantiator) }, true, true);
@@ -32,13 +32,13 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Delete All Disabled Static MeshRenderers
 
-		[MenuItem(Menu + "Delete All Disabled Static MeshRenderers/In Loaded Scenes", priority = 4)]
+		[MenuItem(Menu + "Delete All Disabled Static MeshRenderers/In Loaded Scenes", priority = ExtenityMenu.GameObjectOperationsPriority + 21)]
 		private static void Menu_DeleteAllDisabledStaticMeshRenderers_InLoadedScenes()
 		{
 			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInLoadedScenes(ActiveCheck.InactiveOnly, true, true, true, true);
 		}
 
-		[MenuItem(Menu + "Delete All Disabled Static MeshRenderers/In Active Scene", priority = 5)]
+		[MenuItem(Menu + "Delete All Disabled Static MeshRenderers/In Active Scene", priority = ExtenityMenu.GameObjectOperationsPriority + 22)]
 		private static void Menu_DeleteAllDisabledStaticMeshRenderers_InActiveScene()
 		{
 			EditorGameObjectTools.DestroyAllStaticMeshRenderersAndMeshFiltersInActiveScene(ActiveCheck.InactiveOnly, true, true);
@@ -48,7 +48,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Remove All Colliders
 
-		[MenuItem(Menu + "Remove Colliders/In Selection", priority = 101)]
+		[MenuItem(Menu + "Remove Colliders/In Selection", priority = ExtenityMenu.GameObjectOperationsPriority + 23)]
 		public static void RemoveColliders_InSelection()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
@@ -65,7 +65,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Remove Numbered Parentheses Postfix
 
-		[MenuItem(Menu + "Remove Numbered Parentheses Postfix/In Selected Object Names", priority = 2001)]
+		[MenuItem(Menu + "Remove Numbered Parentheses Postfix/In Selected Object Names", priority = ExtenityMenu.GameObjectOperationsPriority + 41)]
 		public static void RemoveNumberedParenthesesPostfix_InSelectedObjectNames()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().OrderBy(item => item.FullName()))
@@ -80,7 +80,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Remove Numbered Parentheses Postfix/In Selected Object Names (With Children)", priority = 2002)]
+		[MenuItem(Menu + "Remove Numbered Parentheses Postfix/In Selected Object Names (With Children)", priority = ExtenityMenu.GameObjectOperationsPriority + 42)]
 		public static void RemoveNumberedParenthesesPostfix_InSelectedObjectNamesWithChildren()
 		{
 			foreach (var go in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.Deep).Cast<GameObject>().OrderBy(item => item.FullName()))
@@ -99,25 +99,25 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - List All Referenced Sprites
 
-		[MenuItem(Menu + "List All Referenced Sprites/In Loaded Scenes", priority = 4001)]
+		[MenuItem(Menu + "List All Referenced Sprites/In Loaded Scenes", priority = ExtenityMenu.GameObjectOperationsPriority + 61)]
 		private static void Menu_ListAllReferencedSprites_InLoadedScenes()
 		{
 			SceneManagerTools.GetRootGameObjectsOfLoadedScenes(true, true).LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
-		[MenuItem(Menu + "List All Referenced Sprites/In Active Scene", priority = 4002)]
+		[MenuItem(Menu + "List All Referenced Sprites/In Active Scene", priority = ExtenityMenu.GameObjectOperationsPriority + 62)]
 		private static void Menu_ListAllReferencedSprites_InActiveScene()
 		{
 			SceneManager.GetActiveScene().GetRootGameObjects().LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
-		[MenuItem(Menu + "List All Referenced Sprites/In Selection", priority = 4003)]
+		[MenuItem(Menu + "List All Referenced Sprites/In Selection", priority = ExtenityMenu.GameObjectOperationsPriority + 63)]
 		private static void Menu_ListAllReferencedSprites_InSelection()
 		{
 			Selection.gameObjects.LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
 		}
 
-		[MenuItem(Menu + "List All Referenced Sprites/In Selection And Children", priority = 4004)]
+		[MenuItem(Menu + "List All Referenced Sprites/In Selection And Children", priority = ExtenityMenu.GameObjectOperationsPriority + 64)]
 		private static void Menu_ListAllReferencedSprites_InSelectionAndChildren()
 		{
 			Selection.gameObjects.LogListReferencedAssetsOfTypeInGameObjects(true, typeof(Sprite));
@@ -127,7 +127,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Hierarchy Menu - Sort Children By Name
 
-		[MenuItem(Menu + "Sort Children By Name/Ascending", priority = 7001)]
+		[MenuItem(Menu + "Sort Children By Name/Ascending", priority = ExtenityMenu.GameObjectOperationsPriority + 81)]
 		public static void SortChildrenByName_Ascending()
 		{
 			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();
@@ -137,7 +137,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Sort Children By Name/Descending", priority = 7002)]
+		[MenuItem(Menu + "Sort Children By Name/Descending", priority = ExtenityMenu.GameObjectOperationsPriorityEnd)]
 		public static void SortChildrenByName_Descending()
 		{
 			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();

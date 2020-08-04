@@ -14,7 +14,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Configuration
 
-		private const string MenuPath = ExtenityMenu.CleanUp;
+		private const string Menu = ExtenityMenu.CleanUp;
 
 		private static readonly string[] IgnoredDirectories =
 		{
@@ -80,7 +80,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Menu
 
-		[MenuItem(MenuPath + "/Clear all")]
+		[MenuItem(Menu + "/Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
 		public static void ClearAll()
 		{
 			ClearOrigFiles();
@@ -88,7 +88,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			ClearEmptyDirectories();
 		}
 
-		[MenuItem(MenuPath + "/Clear .orig files")]
+		[MenuItem(Menu + "/Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
 		public static void ClearOrigFiles()
 		{
 			var items = GetOrigFiles();
@@ -104,7 +104,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem(MenuPath + "/Clear thumbs.db files")]
+		[MenuItem(Menu + "/Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
 		public static void ClearThumbsDbFiles()
 		{
 			var items = GetThumbsDbFiles();
@@ -120,7 +120,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem(MenuPath + "/Clear empty directories")]
+		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriorityEnd)]
 		public static void ClearEmptyDirectories()
 		{
 			var tryAgain = true;

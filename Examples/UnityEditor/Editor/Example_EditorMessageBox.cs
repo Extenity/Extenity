@@ -8,7 +8,7 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 
 	public static class Example_EditorMessageBox
 	{
-		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox Without Cancel Button")]
+		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox Without Cancel Button", priority = ExtenityMenu.ExamplesPriority + 1)]
 		private static void MessageBox1()
 		{
 			EditorMessageBox.Show(new Rect(100, 100, 300, 200), "Title here!", "This is an example message box. Use it with care.", "Got it", "",
@@ -19,7 +19,7 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 			);
 		}
 
-		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox With Cancel Button")]
+		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox With Cancel Button", priority = ExtenityMenu.ExamplesPriority + 2)]
 		private static void MessageBox2()
 		{
 			EditorMessageBox.Show(new Rect(100, 100, 300, 200),
@@ -37,7 +37,7 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 			);
 		}
 
-		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox With Single User Input")]
+		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox With Single User Input", priority = ExtenityMenu.ExamplesPriority + 3)]
 		private static void MessageBox3()
 		{
 			var userInputs = new[]
@@ -61,7 +61,7 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 			);
 		}
 
-		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox Double User Inputs")]
+		[MenuItem(ExtenityMenu.Examples + "EditorMessageBox/MessageBox Double User Inputs", priority = ExtenityMenu.ExamplesPriority + 4)]
 		private static void MessageBox4()
 		{
 			var userInputs = new[]

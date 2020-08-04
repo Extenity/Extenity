@@ -26,7 +26,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		[MenuItem(ExtenityMenu.Painkiller + "UI Optimizer")]
+		[MenuItem(ExtenityMenu.Painkiller + "UI Optimizer", priority = ExtenityMenu.PainkillerPriority + 4)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<UIOptimizer>();

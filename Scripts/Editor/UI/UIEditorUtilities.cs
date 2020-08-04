@@ -14,7 +14,7 @@ namespace Extenity.UIToolbox.Editor
 	{
 		public const string Menu = ExtenityMenu.UI;
 
-		[MenuItem(Menu + "Disable All Navigation In Selection")]
+		[MenuItem(Menu + "Disable All Navigation In Selection", priority = ExtenityMenu.UIPriority + 1)]
 		public static void DisableAllNavigationInSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;
@@ -37,7 +37,7 @@ namespace Extenity.UIToolbox.Editor
 			}
 		}
 
-		[MenuItem(Menu + "Reset All Scales In Selection")]
+		[MenuItem(Menu + "Reset All Scales In Selection", priority = ExtenityMenu.UIPriority + 4)]
 		public static void ResetAllScalesInSelectedObjectAndChildren()
 		{
 			var selectedObjects = Selection.gameObjects;

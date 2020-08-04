@@ -188,7 +188,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			CreateStyles();
 		}
 
-		[MenuItem(ExtenityMenu.Analysis + "Graph Plotter _#%g")]
+		[MenuItem(ExtenityMenu.Analysis + "Graph Plotter _#%g", priority = ExtenityMenu.AnalysisPriority + 1)]
 		public static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<GraphPlotterWindow>();

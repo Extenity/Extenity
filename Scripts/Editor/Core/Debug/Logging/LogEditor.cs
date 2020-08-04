@@ -11,13 +11,13 @@ namespace Extenity.DebugToolbox.Editor
 
 		#region Toggle Verbose Logging Menu
 
-		[MenuItem(Menu + "Verbose Logging/Enable")]
+		[MenuItem(Menu + "Verbose Logging/Enable", priority = ExtenityMenu.LoggingPriority + 1)]
 		private static void Menu_EnableVerboseLogging()
 		{
 			ActivateVerboseLogging(true);
 		}
 
-		[MenuItem(Menu + "Verbose Logging/Disable")]
+		[MenuItem(Menu + "Verbose Logging/Disable", priority = ExtenityMenu.LoggingPriority + 2)]
 		private static void Menu_DisableVerboseLogging()
 		{
 			ActivateVerboseLogging(false);
@@ -47,13 +47,13 @@ namespace Extenity.DebugToolbox.Editor
 
 		#region Toggle Info Logging Menu
 
-		[MenuItem(Menu + "Info Logging/Enable")]
+		[MenuItem(Menu + "Info Logging/Enable", priority = ExtenityMenu.LoggingPriority + 3)]
 		private static void Menu_EnableInfoLogging()
 		{
 			ActivateInfoLogging(true);
 		}
 
-		[MenuItem(Menu + "Info Logging/Disable")]
+		[MenuItem(Menu + "Info Logging/Disable", priority = ExtenityMenu.LoggingPriority + 4)]
 		private static void Menu_DisableInfoLogging()
 		{
 			ActivateInfoLogging(false);

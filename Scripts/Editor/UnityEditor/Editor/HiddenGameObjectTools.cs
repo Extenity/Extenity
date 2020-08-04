@@ -32,7 +32,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GatherObjects();
 		}
 
-		[MenuItem(ExtenityMenu.Analysis + "Scene/Hidden GameObject Tools")]
+		[MenuItem(ExtenityMenu.Analysis + "Scene/Hidden GameObject Tools", priority = ExtenityMenu.AnalysisPriority + 3)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<HiddenGameObjectTools>();

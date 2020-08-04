@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox.CompilationProfiling
 
 		#region Menu
 
-		[MenuItem(ExtenityMenu.Analysis + "Toggle Compilation Profiling")]
+		[MenuItem(ExtenityMenu.Analysis + "Toggle Compilation Profiling", priority = ExtenityMenu.AnalysisPriority + 7)]
 		private static void ToggleCompilationProfiling()
 		{
 			IsEnabled = !IsEnabled;

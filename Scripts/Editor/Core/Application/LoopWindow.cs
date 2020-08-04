@@ -23,7 +23,7 @@ namespace Extenity
 
 		#region Initialization
 
-		[MenuItem(ExtenityMenu.Application + "Loop")]
+		[MenuItem(ExtenityMenu.Application + "Loop", priority = ExtenityMenu.ApplicationPriority + 1)]
 		private static void Init()
 		{
 			EditorWindowTools.ToggleWindow<LoopWindow>();

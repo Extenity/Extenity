@@ -29,7 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			InitializeTools();
 		}
 
-		[MenuItem(ExtenityMenu.Painkiller + "Catalogue %&A")]
+		[MenuItem(ExtenityMenu.Painkiller + "Catalogue %&A", priority = ExtenityMenu.PainkillerPriority + 2)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<Catalogue>();

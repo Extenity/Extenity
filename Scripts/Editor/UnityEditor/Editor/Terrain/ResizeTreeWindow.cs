@@ -8,7 +8,7 @@ namespace Extenity.TerrainToolbox.Editor
 
 	public class ResizeTreeWindow : EditorWindow
 	{
-		[MenuItem(ExtenityMenu.Terrain + "Resize Trees")]
+		[MenuItem(ExtenityMenu.Terrain + "Resize Trees", priority = ExtenityMenu.TerrainPriority + 1)]
 		public static void ShowWindow()
 		{
 			EditorWindow.GetWindow(typeof(ResizeTreeWindow));

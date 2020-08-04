@@ -32,31 +32,31 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Menu - Delete Loose Environment Paths
 
-		[MenuItem(Menu + "Delete Loose Environment Paths/Machine", priority = 1000)]
+		[MenuItem(Menu + "Delete Loose Environment Paths/Machine", priority = ExtenityMenu.SystemPriority + 1)]
 		public static void DeleteLooseEnvironmentPaths_Machine()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Machine, true));
 		}
 
-		[MenuItem(Menu + "Delete Loose Environment Paths/User", priority = 1000)]
+		[MenuItem(Menu + "Delete Loose Environment Paths/User", priority = ExtenityMenu.SystemPriority + 2)]
 		public static void DeleteLooseEnvironmentPaths_User()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.User, true));
 		}
 
-		[MenuItem(Menu + "Delete Loose Environment Paths/Process", priority = 1000)]
+		[MenuItem(Menu + "Delete Loose Environment Paths/Process", priority = ExtenityMenu.SystemPriority + 3)]
 		public static void DeleteLooseEnvironmentPaths_Process()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Process, true));
 		}
 
-		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User", priority = 1000)]
+		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User", priority = ExtenityMenu.SystemPriority + 4)]
 		public static void DeleteLooseEnvironmentPaths_MachineUser()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User }, true));
 		}
 
-		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User, Process", priority = 1000)]
+		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User, Process", priority = ExtenityMenu.SystemPriority + 5)]
 		public static void DeleteLooseEnvironmentPaths_MachineUserProcess()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User, EnvironmentVariableTarget.Process }, true));
@@ -66,19 +66,19 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Menu - Log
 
-		[MenuItem(Menu + "Log Environment Paths/Machine", priority = 2000)]
+		[MenuItem(Menu + "Log Environment Paths/Machine", priority = ExtenityMenu.SystemPriority + 21)]
 		public static void LogEnvironmentPaths_Machine()
 		{
 			LogPaths(GetEnvironmentPaths(EnvironmentVariableTarget.Machine), EnvironmentVariableTarget.Machine);
 		}
 
-		[MenuItem(Menu + "Log Environment Paths/User", priority = 2000)]
+		[MenuItem(Menu + "Log Environment Paths/User", priority = ExtenityMenu.SystemPriority + 22)]
 		public static void LogEnvironmentPaths_User()
 		{
 			LogPaths(GetEnvironmentPaths(EnvironmentVariableTarget.User), EnvironmentVariableTarget.User);
 		}
 
-		[MenuItem(Menu + "Log Environment Paths/Process", priority = 2000)]
+		[MenuItem(Menu + "Log Environment Paths/Process", priority = ExtenityMenu.SystemPriorityEnd)]
 		public static void LogEnvironmentPaths_Process()
 		{
 			LogPaths(GetEnvironmentPaths(EnvironmentVariableTarget.Process), EnvironmentVariableTarget.Process);
