@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
+using Extenity.ReflectionToolbox;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
@@ -103,14 +105,21 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region Update
 
+		// These Unity callbacks won't be implemented in this base class. Because Unity calls them even if they are not
+		// implemented by derived types and they are too costly, especially to be called for blanks.
+		// protected void Update() { }
+		// protected void FixedUpdate() { }
+		// protected void LateUpdate() { }
+
 		protected virtual void UpdateDerived(TKernelObject instance) { }
 		protected virtual void FixedUpdateDerived(TKernelObject instance) { }
 		protected virtual void LateUpdateDerived(TKernelObject instance) { }
 
-		// These Unity callbacks won't be implemented because Unity calls them even if they are not implemented by derived types.
-		// protected void Update() { }
-		// protected void FixedUpdate() { }
-		// protected void LateUpdate() { }
+		private static readonly Type[] UpdateCallbackParameters = new Type[] { typeof(TKernelObject) };
+
+		private bool _UpdateRegistered;
+		private bool _FixedUpdateRegistered;
+		private bool _LateUpdateRegistered;
 
 		private void InvokeUpdate()
 		{
@@ -147,18 +156,37 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		private void RegisterUpdateCallbacks()
 		{
-			// TODO OPTIMIZATION: Register only if the derived class overrides these methods. Also call RemoveListener only for registered ones, in a performance friendly way.
-
-			Loop.RegisterUpdate(InvokeUpdate);
-			Loop.RegisterFixedUpdate(InvokeFixedUpdate);
-			Loop.RegisterLateUpdate(InvokeLateUpdate);
+			if (this.IsMethodOverriden(nameof(UpdateDerived), UpdateCallbackParameters))
+			{
+				_UpdateRegistered = true;
+				Loop.RegisterUpdate(InvokeUpdate);
+			}
+			if (this.IsMethodOverriden(nameof(FixedUpdateDerived), UpdateCallbackParameters))
+			{
+				_FixedUpdateRegistered = true;
+				Loop.RegisterFixedUpdate(InvokeFixedUpdate);
+			}
+			if (this.IsMethodOverriden(nameof(LateUpdateDerived), UpdateCallbackParameters))
+			{
+				_LateUpdateRegistered = true;
+				Loop.RegisterLateUpdate(InvokeLateUpdate);
+			}
 		}
 
 		private void DeregisterUpdateCallbacks()
 		{
-			Loop.DeregisterUpdate(InvokeUpdate);
-			Loop.DeregisterFixedUpdate(InvokeFixedUpdate);
-			Loop.DeregisterLateUpdate(InvokeLateUpdate);
+			if (_UpdateRegistered)
+			{
+				Loop.DeregisterUpdate(InvokeUpdate);
+			}
+			if (_FixedUpdateRegistered)
+			{
+				Loop.DeregisterFixedUpdate(InvokeFixedUpdate);
+			}
+			if (_LateUpdateRegistered)
+			{
+				Loop.DeregisterLateUpdate(InvokeLateUpdate);
+			}
 		}
 
 		#endregion
