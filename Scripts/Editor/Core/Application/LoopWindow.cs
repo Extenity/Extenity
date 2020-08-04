@@ -39,16 +39,16 @@ namespace Extenity
 
 		protected override void OnGUIDerived()
 		{
-			DrawListenersList("FixedUpdate", Loop.Instance.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
-			DrawListenersList("Update", Loop.Instance.UpdateCallbacks._Listeners, ref UpdateFold);
-			DrawListenersList("LateUpdate", Loop.Instance.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
-
 			var instance = Loop.Instance;
 			if (!instance)
 			{
 				GUILayout.Label("Loop instance is not available.");
 				return;
 			}
+
+			DrawListenersList("FixedUpdate", Loop.Instance.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
+			DrawListenersList("Update", Loop.Instance.UpdateCallbacks._Listeners, ref UpdateFold);
+			DrawListenersList("LateUpdate", Loop.Instance.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
 		}
 
 		private void DrawListenersList(string header, List<ExtenityEvent.Listener> listeners, ref bool fold)
