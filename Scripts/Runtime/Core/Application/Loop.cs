@@ -98,8 +98,12 @@ namespace Extenity
 
 		#region Counters
 
+		[Title("Stats")]
+		[NonSerialized, ShowInInspector]
 		public int UpdateCount;
+		[NonSerialized, ShowInInspector]
 		public int FixedUpdateCount;
+		[NonSerialized, ShowInInspector]
 		public int LateUpdateCount;
 
 		#endregion
@@ -172,17 +176,18 @@ namespace Extenity
 
 		#region FPS Analyzer
 
-		[NonSerialized]
+		[Title("FPS Analyzer")]
+		[NonSerialized, ShowInInspector, InlineProperty, HideLabel]
 		public TickAnalyzer FPSAnalyzer;
 		private bool _IsFPSAnalyzerEnabled;
 
-		[Button, ButtonGroup("ToggleFPSAnalyzer"), DisableIf(nameof(_IsFPSAnalyzerEnabled))]
+		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), DisableIf(nameof(_IsFPSAnalyzerEnabled))]
 		public void EnableFPSAnalyzer()
 		{
 			EnableFPSAnalyzer(true);
 		}
 
-		[Button, ButtonGroup("ToggleFPSAnalyzer"), EnableIf(nameof(_IsFPSAnalyzerEnabled))]
+		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), EnableIf(nameof(_IsFPSAnalyzerEnabled))]
 		public void DisableFPSAnalyzer()
 		{
 			EnableFPSAnalyzer(false);

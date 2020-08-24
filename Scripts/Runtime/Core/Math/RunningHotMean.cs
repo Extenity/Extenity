@@ -1,5 +1,6 @@
 ﻿using System;
 using Extenity.DataToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.MathToolbox
@@ -17,6 +18,7 @@ namespace Extenity.MathToolbox
 		private bool IsInvalidated;
 
 		private double _Mean;
+		[ShowInInspector]
 		public double Mean
 		{
 			get
