@@ -13,6 +13,16 @@ namespace Extenity.MessagingToolbox
 
 	public static class Messenger
 	{
+		#region Deinitialization
+
+		// No need to call it for now. But it might be needed in future.
+		// internal static void Shutdown()
+		// {
+		// 	_DeregisterAllEvents();
+		// }
+
+		#endregion
+
 		#region Events and Registration
 
 		private static readonly Dictionary<string, ExtenityEvent> EventsByEventNames = new Dictionary<string, ExtenityEvent>();
@@ -70,6 +80,18 @@ namespace Extenity.MessagingToolbox
 			foreach (var item in EventsByEventNames)
 			{
 				item.Value.RemoveAllListenersThatTargets(callbackTarget);
+			}
+		}
+
+		private static void _DeregisterAllEvents()
+		{
+			// Commented out to prevent spam.
+			// if (IsRegistrationLoggingEnabled)
+			// 	LogRegistration("Deregistering all callbacks", null);
+
+			foreach (var item in EventsByEventNames)
+			{
+				item.Value.RemoveAllListeners();
 			}
 		}
 
