@@ -1,5 +1,6 @@
 using System;
 using Extenity.MathToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -62,10 +63,15 @@ namespace Extenity.DataToolbox
 	[Serializable]
 	public class StringFilterEntry
 	{
+		[HorizontalGroup(Width = 86), HideLabel]
 		public StringFilterType FilterType = StringFilterType.Contains;
+		[HorizontalGroup, HideLabel]
 		public string Filter = "";
+		[HorizontalGroup(Width = 190), HideLabel]
 		public StringComparison ComparisonType = StringComparison.InvariantCulture;
+		[HorizontalGroup(Width = 30), LabelWidth(52)]
 		public bool Inverted = false;
+		[HorizontalGroup(Width = 30), LabelWidth(74)]
 		[Tooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
 		public bool MustMatch = false;
 
