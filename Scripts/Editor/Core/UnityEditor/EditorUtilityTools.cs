@@ -129,6 +129,59 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
+		#region Save File Dialog
+
+		/// <summary>
+		/// Does the same as <see cref="UnityEditor.EditorUtility.SaveFilePanel"/> but with an additional operation that
+		/// allows automatically creating the 'directory'. The directory will only be created if the path is a relative
+		/// path. Otherwise, this method would create empty directories all over the system.
+		/// </summary>
+		/// <param name="alsoCreateDirectoryIfNotAbsolute">Whether 'directory' will be created if does not exist.</param>
+		public static string SaveFilePanel(string title, string directory, string defaultName, string extension, bool alsoCreateDirectoryIfNotAbsolute)
+		{
+			// Create the directory if does not exist. But only do that if it's a relative path. Otherwise we would
+			// create empty directories all over the system.
+			if (alsoCreateDirectoryIfNotAbsolute &&
+			    !string.IsNullOrWhiteSpace(directory) &&
+			    directory.IsRelativePath())
+			{
+				DirectoryTools.Create(directory);
+			}
+
+			return EditorUtility.SaveFilePanel(title, directory, defaultName, extension);
+		}
+
+		/// <summary>
+		/// Does the same as <see cref="UnityEditor.EditorUtility.SaveFilePanel"/> but with an additional operation that
+		/// tries to convert the returned path into a relative path to 'expectedBasePath'. The original path will be
+		/// returned without any modification if the path is outside of 'expectedBasePath'.
+		/// </summary>
+		/// <param name="alsoCreateDirectoryIfNotAbsolute">Whether 'directory' will be created if does not exist.</param>
+		/// <param name="expectedBasePath">The returned path will be converted to a path that is relative to 'expectedBasePath'.</param>
+		public static string SaveFilePanelWithRelativePathIfPossible(string title, string directory, string defaultName, string extension, bool alsoCreateDirectoryIfNotAbsolute, string expectedBasePath)
+		{
+			if (string.IsNullOrWhiteSpace(expectedBasePath))
+				throw new ArgumentNullException(nameof(expectedBasePath));
+
+			var path = SaveFilePanel(title, directory, defaultName, extension, alsoCreateDirectoryIfNotAbsolute);
+
+			// The path that is returned from SaveFilePanel is expected to be a full path. Ensure it really is.
+			if (path.IsFullPath())
+			{
+				var relativePath = expectedBasePath.MakeRelativePath(path);
+				// Check if the relative path is outside of expectedBasePath. Note that if the root paths are not
+				// the same, relative path will still be the full path to actual file, which is what we want.
+				if (!relativePath.StartsWith(".."))
+				{
+					return relativePath;
+				}
+			}
+
+			return path;
+		}
+
+		#endregion
+
 		#region Script Reload
 
 		public static void RequestScriptReload()
