@@ -406,7 +406,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static void CreateOrReplaceScene(string sourcePath, string destinationPath)
 		{
-			File.Copy(sourcePath, destinationPath, true);
+			FileTools.Copy(sourcePath, destinationPath, true);
 			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
 		}
 

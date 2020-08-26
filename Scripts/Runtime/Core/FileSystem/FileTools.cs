@@ -7,6 +7,12 @@ using Extenity.UnityEditorToolbox;
 namespace Extenity.FileSystemToolbox
 {
 
+	public enum CopyHelper
+	{
+		Default,
+		CreateDestinationDirectory,
+	}
+
 	public static class FileTools
 	{
 		#region String Operations - File Size
@@ -188,6 +194,34 @@ namespace Extenity.FileSystemToolbox
 					return extensions[i];
 			}
 			return null;
+		}
+
+		#endregion
+
+		#region File Copy
+
+		public static void Copy(string sourceFileName, string destFileName, CopyHelper helper = CopyHelper.CreateDestinationDirectory)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			if (helper == CopyHelper.CreateDestinationDirectory)
+			{
+				DirectoryTools.CreateFromFilePath(destFileName);
+			}
+
+			File.Copy(sourceFileName, destFileName);
+		}
+
+		public static void Copy(string sourceFileName, string destFileName, bool overwrite, CopyHelper helper = CopyHelper.CreateDestinationDirectory)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			if (helper == CopyHelper.CreateDestinationDirectory)
+			{
+				DirectoryTools.CreateFromFilePath(destFileName);
+			}
+
+			File.Copy(sourceFileName, destFileName, overwrite);
 		}
 
 		#endregion
