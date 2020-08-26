@@ -32,8 +32,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			new StringFilterEntry(StringFilterType.StartsWith, ".idea/"),
 			new StringFilterEntry(StringFilterType.StartsWith, "obj/"),
 			new StringFilterEntry(StringFilterType.StartsWith, "Temp/"),
-			new StringFilterEntry(StringFilterType.StartsWith, "Library/"),
-			new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/VersionControlSettings.asset")
+			new StringFilterEntry(StringFilterType.StartsWith, "Library/")
 			// new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/ProjectVersion.txt") Not sure it is a good idea to exclude version info.
 		);
 
