@@ -19,7 +19,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		public StringFilter Include = new StringFilter(
 			new StringFilterEntry(StringFilterType.Exactly, ".gitignore"),
 			new StringFilterEntry(StringFilterType.StartsWith, "Assets/"),
-			new StringFilterEntry(StringFilterType.Exactly, "Packages/manifest.json"),
+			new StringFilterEntry(StringFilterType.StartsWith, "Packages/"), // Including 'manifest.json' and 'packages-lock.json' which defines the dependency packages and their exact versions to be used.
 			new StringFilterEntry(StringFilterType.StartsWith, "ProjectSettings/")
 		);
 
