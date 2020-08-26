@@ -42,7 +42,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			}
 			foreach (var c in name)
 			{
-				if (!(c >= 'a' && c <= 'z') && (c != '.'))
+				if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && (c != '.'))
 				{
 					errors.Add(new ConsistencyError(this, $"Name contains invalid character: '{c}'"));
 				}
