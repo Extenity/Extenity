@@ -4,7 +4,7 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace ICSharpCode.SharpZipLib.Extensions
+namespace Extenity.CompressionToolbox
 {
 
 	public static class SharpZipLibTools
