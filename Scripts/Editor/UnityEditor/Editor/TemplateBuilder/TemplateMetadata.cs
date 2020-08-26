@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Extenity.ApplicationToolbox;
 using Extenity.ConsistencyToolbox;
-using Extenity.DataToolbox;
-using Sirenix.Utilities;
 
 namespace Extenity.UnityProjectTemplateToolbox.Editor
 {
@@ -15,10 +12,14 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		public string name = "com.yourcompany.template.yourtemplatename";
 		public string displayName = "Test Template";
 		public string version = "1.0.0";
-		public string type = "template";
-		public string host = "hub";
-		public string unity = "2020.1";
-		public string description = "A brief description that will be displayed when creating a new project from this template.";
+
+		// Note that some fields below are commented out but not removed. These are the ones that exist in
+		// Unity Hub Project templates. Keep them for future needs.
+
+		// public string type = "template";
+		// public string host = "hub";
+		// public string unity = "2020.1";
+		// public string description = "A brief description that will be displayed when creating a new project from this template.";
 
 		// Not sure how to handle dependencies field. It's key names are dynamic, which makes things difficult.
 		// Example:

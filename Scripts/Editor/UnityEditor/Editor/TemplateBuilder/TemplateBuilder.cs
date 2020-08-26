@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -7,6 +8,8 @@ using Extenity.ApplicationToolbox.Editor;
 using Extenity.ConsistencyToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityProjectTemplateToolbox.TarCs;
+using ICSharpCode.SharpZipLib.Extensions;
+using Sirenix.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,38 +18,25 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 
 	public static class TemplateBuilder
 	{
-		#region Process
+		#region Unity Hub Project Template
 
-		public static void BuildTemplate(TemplateBuilderConfiguration config)
+		public static void BuildProjectTemplateForUnityHub(TemplateBuilderConfiguration config)
 		{
-			EditorApplication.delayCall += () => DoBuildTemplate(config);
+			EditorApplication.delayCall += () => DoBuildProjectTemplateForUnityHub(config);
 		}
 
-		private static void DoBuildTemplate(TemplateBuilderConfiguration config)
+		private static void DoBuildProjectTemplateForUnityHub(TemplateBuilderConfiguration config)
 		{
-			Log.Warning("Template Builder was abandoned. It should be almost fully functional in its current state, with the exception of generating 'dependencies' field in 'packages.json'. It's abandoned for multiple reasons. Unity expects the packed file to be a TGZ (Tar GZip) which only supports maximum of 100 file name lengths. Also Unity adds default Package Manager content even though the 'dependencies' field in 'package.json' says otherwise. The template package file should be copied every time switching to a new Unity version and there is no mechanism to get the latest version of templates, which makes matters worse. Hopefully Unity will address these issues in future.");
+			Log.Warning("Unity Hub Template Builder was abandoned. It should be almost fully functional in its current state, with the exception of generating 'dependencies' field in 'packages.json'. It's abandoned for multiple reasons. Unity expects the packed file to be a TGZ (Tar GZip) which only supports maximum of 100 file name lengths. Also Unity adds default Package Manager content even though the 'dependencies' field in 'package.json' says otherwise. The template package file should be copied every time switching to a new Unity version and there is no mechanism to get the latest version of templates, which makes matters worse. Hopefully Unity will address these issues in future.");
 
 			// Consistency checks
-			config.CheckConsistencyAndThrow("Template Builder Configuration contains errors:");
+			config.CheckConsistencyAndThrow($"{nameof(TemplateBuilderConfiguration).SplitPascalCase()} contains errors:");
 
 			// Save all assets first
 			AssetDatabase.SaveAssets();
 
-			// Get all files in project directory
-			var projectPath = EditorApplicationTools.UnityProjectPath;
-			var allFiles = Directory.GetFiles(projectPath, "*", SearchOption.AllDirectories).ToList();
-			allFiles = allFiles.Select(file => projectPath.MakeRelativePath(file).FixDirectorySeparatorCharsToForward()).ToList();
-
-			// Apply 'Ignore' filter
-			var ignoreFilter = config.Ignore;
-			allFiles = allFiles.Where(file => !ignoreFilter.IsMatching(file)).ToList();
-
-			// Apply 'Include' Filter
-			var includeFilter = config.Include;
-			var files = allFiles.Where(file => includeFilter.IsMatching(file)).ToList();
-
-			// Log.Info($"All {allFiles.Count()} files:\n" + string.Join("\n", allFiles) + "\n");
-			// Log.Info($"Selected {files.Count()} files:\n" + string.Join("\n", files) + "\n");
+			// Get files in project directory and apply Include and Ignore rules over the file list
+			var files = GetProjectFilesAndApplyFilters(config);
 
 			// Create temp directory to gather all files
 			var gatherDirectory = FileUtil.GetUniqueTempPathInProject();
@@ -58,8 +48,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			foreach (var file in files)
 			{
 				var path = Path.Combine(gatherProjectDataDirectory, file);
-				DirectoryTools.CreateFromFilePath(path);
-				File.Copy(file, path);
+				FileTools.Copy(file, path);
 			}
 
 			// Create 'package.json'
@@ -70,7 +59,12 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 				File.WriteAllText(path, json);
 			}
 
-			// Ask the user for manual modifications before start packaging
+			// Remove ProductGUID and ProductName from ProjectSettings
+			{
+				RemoveProductGUIDAndProductNameFromProjectSettings(gatherDirectory);
+			}
+
+			// Ask the developer for manual modifications before start packaging (Developer tool)
 			{
 				PromptUserForManualModifications(gatherDirectory);
 			}
@@ -94,6 +88,74 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			}
 		}
 
+		#endregion
+
+		#region Project Template as Zip
+
+		public static void BuildProjectTemplateAsZip(TemplateBuilderConfiguration config)
+		{
+			EditorApplication.delayCall += () => DoBuildProjectTemplateAsZip(config);
+		}
+
+		private static void DoBuildProjectTemplateAsZip(TemplateBuilderConfiguration config)
+		{
+			// Consistency checks
+			config.CheckConsistencyAndThrow($"{nameof(TemplateBuilderConfiguration).SplitPascalCase()} contains errors:");
+
+			// Save all assets first
+			AssetDatabase.SaveAssets();
+
+			// Get files in project directory and apply Include and Ignore rules over the file list
+			var files = GetProjectFilesAndApplyFilters(config);
+
+			// Create temp directory to gather all files
+			var gatherDirectory = FileUtil.GetUniqueTempPathInProject();
+			DirectoryTools.Create(gatherDirectory);
+
+			// Copy files into temp directory
+			foreach (var file in files)
+			{
+				var path = Path.Combine(gatherDirectory, file);
+				FileTools.Copy(file, path);
+			}
+
+			// Create 'package.json'
+			{
+				const string PackageJsonPath = "package.json";
+				var path = Path.Combine(gatherDirectory, PackageJsonPath);
+				var json = JsonUtility.ToJson(config.Metadata, true);
+				File.WriteAllText(path, json);
+			}
+
+			// Remove ProductGUID and ProductName from ProjectSettings
+			{
+				RemoveProductGUIDAndProductNameFromProjectSettings(gatherDirectory);
+			}
+
+			// Ask the developer for manual modifications before start packaging (Developer tool)
+			{
+				// PromptUserForManualModifications(gatherDirectory);
+			}
+
+			// Create package
+			{
+				var outputFileName = $"{config.Metadata.name}-{config.Metadata.version}.zip";
+				var outputPath = Path.Combine(config.OutputDirectory, outputFileName).FixDirectorySeparatorCharsToBackward();
+				CreateZip(outputPath, new DirectoryInfo(gatherDirectory));
+				Log.Info($"Package for Unity Project Template '{config.Metadata.name}' created at path: {outputPath}");
+				EditorUtility.RevealInFinder(outputPath);
+			}
+
+			// Increase version
+			{
+				IncreaseVersion(config);
+			}
+		}
+
+		#endregion
+
+		#region User Prompts
+
 		private static void PromptUserForManualModifications(string gatherDirectory)
 		{
 			EditorUtility.RevealInFinder(gatherDirectory.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars());
@@ -101,6 +163,48 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 				"Waiting for manual modifications",
 				"Paused before packaging.\n\nModify the files in temp directory as required. Then press 'Continue' to proceed packaging.\n\n" + gatherDirectory,
 				"Continue");
+		}
+
+		#endregion
+
+		#region Gather Files
+
+		private static List<string> GetProjectFilesAndApplyFilters(TemplateBuilderConfiguration config)
+		{
+			var projectPath = EditorApplicationTools.UnityProjectPath;
+			var allFiles = Directory.GetFiles(projectPath, "*", SearchOption.AllDirectories).ToList();
+
+			// Convert paths relative to project directory
+			allFiles = allFiles.Select(file => projectPath.MakeRelativePath(file).FixDirectorySeparatorCharsToForward()).ToList();
+
+			// Apply 'Ignore' filter
+			var notIgnoredFiles = allFiles.Where(file => !config.Ignore.IsMatching(file)).ToList();
+
+			// Apply 'Include' Filter
+			var files = notIgnoredFiles.Where(file => config.Include.IsMatching(file)).ToList();
+
+			// Log.Info($"All {allFiles.Count} files:\n" + string.Join("\n", allFiles) + "\n");
+			// Log.Info($"Not Ignored {notIgnoredFiles.Count} files:\n" + string.Join("\n", notIgnoredFiles) + "\n");
+			// Log.Info($"Selected {files.Count} files:\n" + string.Join("\n", files) + "\n");
+
+			return files;
+		}
+
+		#endregion
+
+		#region Remove ProductGUID and ProductName from ProjectSettings
+
+		private static void RemoveProductGUIDAndProductNameFromProjectSettings(string projectDirectory)
+		{
+			var projectSettingsAssetPath = Path.Combine(projectDirectory, "ProjectSettings/ProjectSettings.asset");
+
+			var lines = File.ReadAllLines(projectSettingsAssetPath);
+
+			lines = lines.Where(line => !line.Contains("productGUID:") && // A fresh productGUID will be generated by Unity at first launch. So it won't collide with any other existing projects.
+			                            !line.Contains("productName:")) // Product name will be generated by Unity at first launch. It will be set the same as the directory name of the Unity project.
+			             .ToArray();
+
+			File.WriteAllLines(projectSettingsAssetPath, lines);
 		}
 
 		#endregion
@@ -118,7 +222,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			var basePath = inputDirectory.FullName.AddDirectorySeparatorToEnd().FixDirectorySeparatorCharsToForward();
 			var inputFiles = inputDirectory.GetFiles("*", SearchOption.AllDirectories);
 
-			// Create tgz
+			// Create the archive
 			DirectoryTools.CreateFromFilePath(outputPath);
 			using (var gzipFileStream = File.Create(outputPath))
 			using (var gzipStream = new GZipStream(gzipFileStream, CompressionMode.Compress))
@@ -135,6 +239,37 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 					}
 				}
 			}
+		}
+
+		private static void CreateZip(string outputPath, DirectoryInfo inputDirectory)
+		{
+			if (!outputPath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+			{
+				throw new Exception("Output path should be an address of '.zip' file.");
+			}
+
+			// Get all files in input directory
+			var basePath = inputDirectory.FullName.AddDirectorySeparatorToEnd().FixDirectorySeparatorCharsToForward();
+			var inputFiles = inputDirectory.GetFiles("*", SearchOption.AllDirectories)
+			                               .Select(inputFile => basePath.MakeRelativePath(inputFile.FullName).FixDirectorySeparatorCharsToForward())
+			                               .ToList();
+
+			// Create the archive
+			DirectoryTools.CreateFromFilePath(outputPath);
+			SharpZipLibTools.CompressFiles(outputPath, 9, basePath, inputFiles, "");
+		}
+
+		#endregion
+
+		#region Builder Version
+
+		private static void IncreaseVersion(TemplateBuilderConfiguration config)
+		{
+			var version = new ApplicationVersion(config.Metadata.version);
+			version = version.IncrementedBuild;
+			config.Metadata.version = version.ToString();
+			EditorUtility.SetDirty(config);
+			AssetDatabase.SaveAssets();
 		}
 
 		#endregion

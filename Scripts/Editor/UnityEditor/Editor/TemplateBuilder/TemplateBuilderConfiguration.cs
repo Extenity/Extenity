@@ -33,18 +33,19 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			new StringFilterEntry(StringFilterType.StartsWith, "obj/"),
 			new StringFilterEntry(StringFilterType.StartsWith, "Temp/"),
 			new StringFilterEntry(StringFilterType.StartsWith, "Library/"),
-			new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/ProjectVersion.txt")
+			new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/VersionControlSettings.asset")
+			// new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/ProjectVersion.txt") Not sure it is a good idea to exclude version info.
 		);
 
 		[Title("Output")]
 		[PropertySpace(10), LabelWidth(100)]
 		[FolderPath(UseBackslashes = true)]
-		public string OutputDirectory = "Export/UnityTemplate/";
+		public string OutputDirectory = "Export/UnityProjectTemplate/";
 
 		[PropertySpace(10), Button(ButtonSizes.Large)]
 		public void Build()
 		{
-			TemplateBuilder.BuildTemplate(this);
+			TemplateBuilder.BuildProjectTemplateAsZip(this);
 		}
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)
