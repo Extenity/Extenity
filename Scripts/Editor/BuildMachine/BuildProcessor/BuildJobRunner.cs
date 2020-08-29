@@ -139,7 +139,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					try
 					{
-						BuildMachineTools.LoadBuildMachineLayout();
+						BuildMachineLayout.LoadConsoleOnlyLayout();
 						//EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
 						//EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
 					}

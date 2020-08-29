@@ -13,7 +13,7 @@ namespace Extenity.BuildMachine.Editor
 		public static readonly string RunningJobSurvivalFileLogDirectory = "Library/BuildMachine/{0}/";
 
 		// Unity Editor layout
-		public static readonly string LayoutPath = "Assets/Plugins/Extenity/Scripts/Editor/BuildMachine/Layout/BuildMachine.wlt";
+		public static readonly string ConsoleOnlyLayoutFileName = "BuildMachine.wlt";
 
 		#endregion
 	}
