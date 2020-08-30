@@ -12,8 +12,10 @@ namespace Extenity.ApplicationToolbox
 
 		#region Configuration
 
-		public const int MinorDigits = 1000;
-		public const int BuildDigits = 10000;
+		// Digits are adjusted so that the resulting max value is 4999999 which is below float's integer part of
+		// 2^24=16777216. So the version can also be represented in a float value.
+		public const int MinorDigits = 100;
+		public const int BuildDigits = 1000;
 		public const int MinorAndBuildDigits = BuildDigits * MinorDigits;
 
 		// Max major version is here for no good reason. May safely be changed in future. But think wisely about how that would change other systems that uses the version.
