@@ -26,8 +26,8 @@ namespace Extenity.UIToolbox
 		[RuntimeInitializeOnLoadMethod]
 		private static void Initialize()
 		{
-			var go = new GameObject("DevelopmentWatermarkCanvas", typeof(Canvas), typeof(CanvasScaler));
-			go.hideFlags = HideFlags.HideAndDontSave;
+			var go = new GameObject("_DevelopmentWatermark", typeof(Canvas), typeof(CanvasScaler));
+			DontDestroyOnLoad(go);
 			var canvas = go.GetComponent<Canvas>();
 			var canvasScaler = go.GetComponent<CanvasScaler>();
 
@@ -38,8 +38,7 @@ namespace Extenity.UIToolbox
 			canvasScaler.matchWidthOrHeight = 0.5f;
 			canvasScaler.referenceResolution = new Vector2(800, 600);
 
-			var imageGO = new GameObject("DevelopmentWatermarkImage", typeof(CanvasRenderer), typeof(Image));
-			imageGO.hideFlags = HideFlags.HideAndDontSave;
+			var imageGO = new GameObject("Image", typeof(CanvasRenderer), typeof(Image));
 			var imageTransform = (RectTransform)imageGO.transform;
 			imageTransform.SetParent(go.transform, false);
 			var image = imageGO.GetComponent<Image>();
@@ -52,6 +51,9 @@ namespace Extenity.UIToolbox
 			imageTransform.sizeDelta = new Vector2(5f, 5f);
 			image.color = new Color(1f, 1f, 1f, 0.2f);
 			image.raycastTarget = false;
+
+			go.hideFlags = HideFlags.DontSave | HideFlags.NotEditable;
+			imageGO.hideFlags = HideFlags.DontSave | HideFlags.NotEditable;
 
 #if UNITY_EDITOR
 			Instance = go;
