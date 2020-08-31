@@ -14,7 +14,9 @@
         "UnityEditor.TestRunner",
         "Extenity.BeyondAudio"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
