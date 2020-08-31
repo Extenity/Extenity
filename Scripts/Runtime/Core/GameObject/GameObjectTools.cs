@@ -1407,32 +1407,6 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region SetParentOfAllObjectsContainingComponent
-
-		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
-		{
-			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck);
-		}
-
-		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
-		{
-			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, activeCheck));
-		}
-
-		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, ActiveCheck activeCheck) where T : Component
-		{
-			var componentTransforms = scene.FindObjectsOfType<T>(activeCheck)
-				.Select(item => item.transform);
-
-			foreach (var transform in componentTransforms)
-			{
-				transform.SetParent(parent, worldPositionStays);
-				transform.SetAsLastSibling();
-			}
-		}
-
-		#endregion
-
 		#region GetComponentEnsured
 
 		public static T GetSingleComponentEnsured<T>(this Component me) where T : Component

@@ -424,24 +424,24 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, bool skipPrefabs, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
+			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, skipPrefabs, leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
-		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected void DeparentAllStaticObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, bool skipPrefabs, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
-			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, leastExpectedFlags, activeCheck);
+			EditorGameObjectTools.SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, skipPrefabs, leastExpectedFlags, activeCheck);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		protected void DeparentAllObjectsContainingComponentInLoadedScenes<T>(bool worldPositionStays, bool skipPrefabs, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
+			EditorGameObjectTools.SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(null, worldPositionStays, skipPrefabs, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
-		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, ActiveCheck activeCheck) where T : Component
+		protected void DeparentAllObjectsContainingComponentInActiveScene<T>(bool worldPositionStays, bool skipPrefabs, ActiveCheck activeCheck) where T : Component
 		{
-			GameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, activeCheck);
+			EditorGameObjectTools.SetParentOfAllObjectsContainingComponentInActiveScene<T>(null, worldPositionStays, skipPrefabs, activeCheck);
 		}
 
 		// -------------------------------------------------------------------------

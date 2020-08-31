@@ -48,23 +48,59 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
+		#region SetParentOfAllObjectsContainingComponent
+
+		public static void SetParentOfAllObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, bool skipPrefabs, ActiveCheck activeCheck) where T : Component
+		{
+			SceneManager.GetActiveScene().SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, skipPrefabs, activeCheck);
+		}
+
+		public static void SetParentOfAllObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, bool skipPrefabs, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		{
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllObjectsContainingComponent<T>(parent, worldPositionStays, skipPrefabs, activeCheck));
+		}
+
+		public static void SetParentOfAllObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, bool skipPrefabs, ActiveCheck activeCheck) where T : Component
+		{
+			var componentTransforms = scene.FindObjectsOfType<T>(activeCheck)
+			                               .Select(item => item.transform);
+
+			if (skipPrefabs)
+			{
+				componentTransforms = componentTransforms.Where(xform => !PrefabUtility.IsPartOfNonAssetPrefabInstance(xform.gameObject));
+			}
+
+			foreach (var transform in componentTransforms)
+			{
+				transform.SetParent(parent, worldPositionStays);
+				transform.SetAsLastSibling();
+			}
+		}
+
+		#endregion
+
 		#region SetParentOfAllStaticObjectsContainingComponent
 
-		public static void SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponentInActiveScene<T>(Transform parent, bool worldPositionStays, bool skipPrefabs, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, activeCheck);
+			SceneManager.GetActiveScene().SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, skipPrefabs, leastExpectedFlags, activeCheck);
 		}
 
-		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponentInLoadedScenes<T>(Transform parent, bool worldPositionStays, bool skipPrefabs, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, leastExpectedFlags, activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.SetParentOfAllStaticObjectsContainingComponent<T>(parent, worldPositionStays, skipPrefabs, leastExpectedFlags, activeCheck));
 		}
 
-		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void SetParentOfAllStaticObjectsContainingComponent<T>(this Scene scene, Transform parent, bool worldPositionStays, bool skipPrefabs, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
 			var componentTransforms = scene.FindObjectsOfType<T>(activeCheck)
 					.Where(item => item.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags))
 					.Select(item => item.transform);
+
+			if (skipPrefabs)
+			{
+				componentTransforms = componentTransforms.Where(xform => !PrefabUtility.IsPartOfNonAssetPrefabInstance(xform.gameObject));
+			}
 
 			foreach (var transform in componentTransforms)
 			{
