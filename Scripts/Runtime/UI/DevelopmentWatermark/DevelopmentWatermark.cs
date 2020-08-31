@@ -1,3 +1,5 @@
+#if !Release
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,3 +65,5 @@ namespace Extenity.UIToolbox
 	}
 
 }
+
+#endif
