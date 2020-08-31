@@ -1,3 +1,4 @@
+/* Not needed as Unity now can save lighting configuration in assets. Keep it for future needs. See 119283231.
 using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
@@ -26,3 +27,4 @@ namespace Extenity.BuildMachine.Editor
 	}
 
 }
+*/

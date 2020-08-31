@@ -353,6 +353,7 @@ namespace Extenity.BuildMachine.Editor
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
 		}
 
+		/* Not needed as Unity now can save lighting configuration in assets. Keep it for future needs. See 119283231.
 		[Obsolete("The way Unity handles scene lighting configuration changed drastically in recent versions. These codes should be updated accordingly.")]
 		protected void ApplyLightingConfigurationToActiveScene(LightingConfiguration configuration)
 		{
@@ -364,6 +365,7 @@ namespace Extenity.BuildMachine.Editor
 			LightmapEditorSettingsTools.SetIndirectSamples(configuration.IndirectSamples);
 			LightmapEditorSettingsTools.SetBounces(configuration.Bounces);
 		}
+		*/
 
 		#endregion
 

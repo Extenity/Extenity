@@ -14,8 +14,6 @@ namespace Extenity.BuildMachine.Editor
 		public string[] ExcludedCategories;
 		public bool DontLoadAndMergeScenes;
 
-		public LightingConfiguration Lighting;
-
 		#region Consistency
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)
@@ -33,8 +31,6 @@ namespace Extenity.BuildMachine.Editor
 				if (!string.IsNullOrEmpty(existInBoth))
 					errors.Add(new ConsistencyError(this, $"Category '{existInBoth}' exists in both included and excluded list."));
 			}
-
-			Lighting.CheckConsistency(ref errors);
 		}
 
 		#endregion
