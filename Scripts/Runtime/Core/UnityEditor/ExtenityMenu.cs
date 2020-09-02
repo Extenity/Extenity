@@ -47,7 +47,7 @@ namespace Extenity.UnityEditorToolbox
 		public const int UpdatePriority = SystemPriorityEnd + Group;
 		public const string Examples = Path + "Examples/";
 		public const int ExamplesPriority = UpdatePriority + Group;
-		public const string Maintenance = Path + "Maintenance internals/";
+		public const string Maintenance = Path + "Maintenance Internals/";
 		public const int MaintenancePriority = ExamplesPriority + Subgroup;
 
 		// Right-click Asset context menu
