@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using Extenity.ApplicationToolbox.Editor;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -29,6 +31,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Configuration
 
 		public const string PackageManifestPath = "Packages/manifest.json";
+		public const string PackageLockPath = "Packages/packages-lock.json";
+		public const string ExtenityPackageName = "com.canbaycay.extenity";
 
 		#endregion
 
@@ -172,6 +176,49 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// };
 		}
 		*/
+
+		#endregion
+
+		#region Invalidate Package Lock
+
+		/// <summary>
+		/// Removes the lock entry of specified package. Then Unity will get the latest revision of that package in next
+		/// compilation.
+		/// </summary>
+		public static bool InvalidatePackageLock(string packageName, bool refreshAssetDatabase)
+		{
+			var content = File.ReadAllText(PackageLockPath);
+			if (string.IsNullOrWhiteSpace(content))
+			{
+				return false;
+			}
+
+			var jObject = (JObject)JsonConvert.DeserializeObject(content);
+
+			jObject["dependencies"]
+				.Where(x => ((string)x.Path).IndexOf(packageName, StringComparison.InvariantCulture) >= 0)
+				.ToList()
+				.ForEach(x => x.Remove());
+
+			var result = jObject.ToString();
+			File.WriteAllText(PackageLockPath, result);
+
+			if (refreshAssetDatabase)
+			{
+				AssetDatabase.Refresh();
+			}
+			return true;
+		}
+
+		#endregion
+
+		#region Editor Menu
+
+		[MenuItem(ExtenityMenu.Update + "Update Extenity", priority = ExtenityMenu.UpdatePriority)]
+		private static void Menu_UpdateExtenity()
+		{
+			InvalidatePackageLock(ExtenityPackageName, true);
+		}
 
 		#endregion
 	}

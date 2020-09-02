@@ -43,8 +43,10 @@ namespace Extenity.UnityEditorToolbox
 		public const int SystemPriority = PackageManagerToolsPriority + Subgroup;
 		public const int SystemPriorityEnd = SystemPriority + 23;
 
+		public const string Update = Path + "";
+		public const int UpdatePriority = SystemPriorityEnd + Group;
 		public const string Examples = Path + "Examples/";
-		public const int ExamplesPriority = SystemPriorityEnd + Group;
+		public const int ExamplesPriority = UpdatePriority + Group;
 		public const string Maintenance = Path + "Maintenance internals/";
 		public const int MaintenancePriority = ExamplesPriority + Subgroup;
 
