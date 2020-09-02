@@ -17,13 +17,11 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 
 		#region Snippet - Main Script
 
-		private static readonly SnippetInfo MainScript = new SnippetInfo()
-		{
-			Name = "Main",
-			Path = "__NAME__.cs",
-			Properties = new[] { "__NAME__" },
-			FileContent =
-@"using System.Collections;
+		private static readonly SnippetInfo MainScript = new SnippetInfo(
+			"Main",
+			"__NAME__.cs",
+			new[] { "__NAME__" },
+			@"using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,19 +52,17 @@ public class __NAME__ : MonoBehaviour
 	#endregion
 }
 "
-		};
+		);
 
 		#endregion
 
 		#region Snippet - Main Script (Namespace)
 
-		private static readonly SnippetInfo NamespacedMainScript = new SnippetInfo()
-		{
-			Name = "NamespacedMain",
-			Path = "__NAME__.cs",
-			Properties = new[] { "__NAME__", "__NAMESPACE__" },
-			FileContent =
-@"using System.Collections;
+		private static readonly SnippetInfo NamespacedMainScript = new SnippetInfo(
+			"NamespacedMain",
+			"__NAME__.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -102,19 +98,17 @@ namespace __NAMESPACE__
 
 }
 "
-		};
+		);
 
 		#endregion
 
 		#region Snippet - Inspector Script
 
-		private static readonly SnippetInfo InspectorScript = new SnippetInfo()
-		{
-			Name = "Inspector",
-			Path = "Editor/__NAME__Inspector.cs",
-			Properties = new[] { "__NAME__" },
-			FileContent =
-@"using System.Collections;
+		private static readonly SnippetInfo InspectorScript = new SnippetInfo(
+			"Inspector",
+			"Editor/__NAME__Inspector.cs",
+			new[] { "__NAME__" },
+			@"using System.Collections;
 using System.Collections.Generic;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
@@ -136,19 +130,17 @@ public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
 	}
 }
 "
-		};
+		);
 
 		#endregion
 
 		#region Snippet - Inspector Script (Namespace)
 
-		private static readonly SnippetInfo NamespacedInspectorScript = new SnippetInfo()
-		{
-			Name = "NamespacedInspector",
-			Path = "Editor/__NAME__Inspector.cs",
-			Properties = new[] { "__NAME__", "__NAMESPACE__" },
-			FileContent =
-@"using System.Collections;
+		private static readonly SnippetInfo NamespacedInspectorScript = new SnippetInfo(
+			"NamespacedInspector",
+			"Editor/__NAME__Inspector.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using System.Collections;
 using System.Collections.Generic;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
@@ -175,7 +167,7 @@ namespace __NAMESPACE__
 
 }
 "
-		};
+		);
 
 		#endregion
 
@@ -215,8 +207,13 @@ namespace __NAMESPACE__
 			public string[] Properties;
 			public string FileContent;
 
-			public SnippetInfo()
+			public SnippetInfo(string name, string path, string[] properties, string fileContent)
 			{
+				Name = name;
+				Path = path;
+				Properties = properties;
+				FileContent = fileContent;
+
 				_RegisterSnippetInfo(this);
 			}
 		}
