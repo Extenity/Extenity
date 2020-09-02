@@ -18,7 +18,7 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 		#region Snippet - Main Script
 
 		private static readonly SnippetInfo MainScript = new SnippetInfo(
-			"Main",
+			nameof(MainScript),
 			"__NAME__.cs",
 			new[] { "__NAME__" },
 			@"using System.Collections;
@@ -59,7 +59,7 @@ public class __NAME__ : MonoBehaviour
 		#region Snippet - Main Script (Namespace)
 
 		private static readonly SnippetInfo NamespacedMainScript = new SnippetInfo(
-			"NamespacedMain",
+			nameof(NamespacedMainScript),
 			"__NAME__.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"using System.Collections;
@@ -105,7 +105,7 @@ namespace __NAMESPACE__
 		#region Snippet - Inspector Script
 
 		private static readonly SnippetInfo InspectorScript = new SnippetInfo(
-			"Inspector",
+			nameof(InspectorScript),
 			"Editor/__NAME__Inspector.cs",
 			new[] { "__NAME__" },
 			@"using System.Collections;
@@ -137,7 +137,7 @@ public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
 		#region Snippet - Inspector Script (Namespace)
 
 		private static readonly SnippetInfo NamespacedInspectorScript = new SnippetInfo(
-			"NamespacedInspector",
+			nameof(NamespacedInspectorScript),
 			"Editor/__NAME__Inspector.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"using System.Collections;
@@ -177,21 +177,21 @@ namespace __NAMESPACE__
 		{
 			MainFileExtension = "cs",
 			AskForNamespace = true,
-			SnippetNames = new List<string> { "NamespacedMain", "NamespacedInspector" }
+			SnippetNames = new List<string> { nameof(NamespacedMainScript), nameof(NamespacedInspectorScript) }
 		};
 
 		private static SnippetGroup ScriptOnlyGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
 			AskForNamespace = true,
-			SnippetNames = new List<string> { "NamespacedMain" }
+			SnippetNames = new List<string> { nameof(NamespacedMainScript) }
 		};
 
 		private static SnippetGroup InspectorOnlyGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
 			AskForNamespace = true,
-			SnippetNames = new List<string> { "NamespacedInspector" }
+			SnippetNames = new List<string> { nameof(NamespacedInspectorScript) }
 		};
 
 		#endregion
