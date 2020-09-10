@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using UnityEngine;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using Extenity.FileSystemToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
 namespace Extenity.ApplicationToolbox.Editor
 {
@@ -89,7 +91,33 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Update Continuum
 
-		// TODO: See if EditorApplication.QueuePlayerLoopUpdate does the job.
+		/// <summary>
+		/// Calling this method inside OnDrawGizmos method or Update method of a class which is marked with
+		/// [ExecuteAlways] or [ExecuteInEditMode] will make Unity call the Update method continuously. Not only for
+		/// that particular object, but for all objects in Editor.
+		///
+		/// Note that calling Updates frequently is not processor-friendly as all objects are processed in whatever
+		/// the frame rate it can run. Think of calling this method only when required, like only when an object is
+		/// selected, or only when an animation is active, etc. Otherwise Unity editor will utilize high CPU all the
+		/// time.
+		/// </summary>
+		[Conditional("UNITY_EDITOR")]
+		public static void EnsureContinuousUpdateCallsInEditor()
+		{
+#if UNITY_EDITOR
+			if (!Application.isPlaying)
+			{
+				// QueuePlayerLoopUpdate with RepaintAll when called inside OnDrawGizmos will make the editor call
+				// Update methods frequently.
+				EditorApplication.QueuePlayerLoopUpdate();
+				SceneView.RepaintAll();
+
+				// Adding a delayed call for QueuePlayerLoopUpdate inside Update method will make the editor call
+				// Update methods infrequently.
+				EditorApplication.delayCall += EditorApplication.QueuePlayerLoopUpdate;
+			}
+#endif
+		}
 
 		/// <summary>
 		/// Creates and destroys gameobjects to keep EditorApplication.update calls coming.
