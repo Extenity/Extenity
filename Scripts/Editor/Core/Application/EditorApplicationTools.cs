@@ -11,7 +11,7 @@ using UnityEditor;
 namespace Extenity.ApplicationToolbox.Editor
 {
 
-	public class EditorApplicationTools : MonoBehaviour
+	public static class EditorApplicationTools
 	{
 		#region Paths
 
