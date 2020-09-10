@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.GameObjectToolbox;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -50,6 +52,48 @@ namespace Extenity.UnityEditorToolbox.Editor
 				return null;
 			return selected;
 		}
+
+		#endregion
+
+		#region DeselectNonChildrenIfAnyChildSelected
+
+#if UNITY_EDITOR
+
+		public static bool DeselectNonChildrenIfAnyChildSelected(this Transform transform, bool delayedSelection = true)
+		{
+			if (!transform)
+				throw new ArgumentOutOfRangeException();
+
+			var selection = Selection.transforms;
+			if (selection != null && selection.Length != 0)
+			{
+				if (selection.IsAnyTransformChildOf(transform))
+				{
+					if (!selection.IsAllTransformsChildOf(transform))
+					{
+						var filteredSelection = selection.Where(item => item.IsChildOf(transform)).Select(item => item.gameObject).ToArray();
+						// Debug.Log($"Original selection ({selection.Length}):\n" + string.Join("\n", selection.Select(entry => entry.gameObject.name).ToArray()));
+						// Debug.Log($"Filtered selection ({filteredSelection.Length}):\n" + string.Join("\n", filteredSelection.Select(entry => entry.gameObject.name).ToArray()));
+
+						if (delayedSelection)
+						{
+							EditorApplication.delayCall += () =>
+							{
+								Selection.objects = filteredSelection;
+							};
+						}
+						else
+						{
+							Selection.objects = filteredSelection;
+						}
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+#endif
 
 		#endregion
 
