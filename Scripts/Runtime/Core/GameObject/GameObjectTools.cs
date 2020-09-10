@@ -575,9 +575,9 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region IsChildOf / IsParentOf / HasComponent / IsEmpty
+		#region IsChildOf / IsParentOf / IsSiblingComponent / HasComponent / IsEmpty
 
-		public static bool IsChildOf(this GameObject me, GameObject parent, bool checkSelf = true)
+		public static bool IsChildOf(this Transform me, Transform parent, bool checkSelf = true)
 		{
 			if (me == null)
 				throw new ArgumentNullException(nameof(me));
@@ -590,63 +590,72 @@ namespace Extenity.GameObjectToolbox
 					return true;
 			}
 
-			while (true)
+			var realParent = me.parent;
+			while (realParent)
 			{
-				var parentTransform = parent.transform.parent;
-				if (!parentTransform)
-					return false;
-
-				parent = parentTransform.gameObject;
-				if (parent == me)
+				if (realParent == parent)
+				{
 					return true;
+				}
+				realParent = realParent.parent;
 			}
-		}
-
-		/// <summary>
-		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
-		/// </summary>
-		public static bool IsChildOf(this Component me, Component suspectedParent, bool checkContainingObject = true)
-		{
-			if (me == null)
-				throw new ArgumentNullException(nameof(me));
-			if (suspectedParent == null)
-				throw new ArgumentNullException(nameof(suspectedParent));
-
-			if (checkContainingObject)
-			{
-				if (me.transform.HasSiblingComponent(suspectedParent))
-					return true;
-			}
-
-			var transform = me.transform.parent;
-
-			while (transform != null)
-			{
-				if (transform.HasSiblingComponent(suspectedParent))
-					return true;
-				transform = transform.parent;
-			}
-
 			return false;
 		}
 
 		/// <summary>
-		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
+		/// Tells if any one of the transforms in list happens to be a child of 'parent'.
 		/// </summary>
-		public static bool IsParentOf(this Component me, Component suspectedChild, bool checkContainingObject = true)
+		public static bool IsAnyTransformChildOf(this Transform[] list, Transform parent, bool checkSelf = true)
+		{
+			if (list == null)
+				throw new ArgumentNullException(nameof(list));
+			if (parent == null)
+				throw new ArgumentNullException(nameof(parent));
+
+			for (int i = 0; i < list.Length; i++)
+			{
+				if (list[i].IsChildOf(parent, checkSelf))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Tells if all transforms in list happens to be a child of 'parent'.
+		/// </summary>
+		public static bool IsAllTransformsChildOf(this Transform[] list, Transform parent, bool checkSelf = true)
+		{
+			if (list == null)
+				throw new ArgumentNullException(nameof(list));
+			if (parent == null)
+				throw new ArgumentNullException(nameof(parent));
+
+			for (int i = 0; i < list.Length; i++)
+			{
+				if (!list[i].IsChildOf(parent, checkSelf))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public static bool IsParentOf(this Transform me, Transform child, bool checkSelf = true)
 		{
 			if (me == null)
 				throw new ArgumentNullException(nameof(me));
-			if (suspectedChild == null)
-				throw new ArgumentNullException(nameof(suspectedChild));
+			if (child == null)
+				throw new ArgumentNullException(nameof(child));
 
-			return suspectedChild.IsChildOf(me, checkContainingObject);
+			return child.IsChildOf(me, checkSelf);
 		}
 
 		/// <summary>
 		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
 		/// </summary>
-		public static bool HasSiblingComponent(this Component me, Component other)
+		public static bool IsSiblingComponent(this Component me, Component other)
 		{
 			if (me == null)
 				throw new ArgumentNullException(nameof(me));
@@ -662,9 +671,6 @@ namespace Extenity.GameObjectToolbox
 			return false;
 		}
 
-		/// <summary>
-		/// CAUTION! This is a performance heavy method because it uses GetComponents. Use it wisely.
-		/// </summary>
 		public static bool HasComponent(this GameObject gameObject, Component component)
 		{
 			if (gameObject == null)
@@ -672,18 +678,11 @@ namespace Extenity.GameObjectToolbox
 			if (component == null)
 				return false;
 
-			var components = gameObject.GetComponents<Component>();
-			for (int i = 0; i < components.Length; i++)
-			{
-				if (components[i] == component)
-					return true;
-			}
-			return false;
+			return component.gameObject == gameObject;
 		}
 
 		/// <summary>
 		/// Check if component is inside objects list. Also check if any gameobject in objects list has the component attached to itself.
-		/// CAUTION! This is a performance heavy method because it uses HasComponent. Use it wisely.
 		/// </summary>
 		public static bool ContainsComponentAsIsOrAttachedToGameObject(this IEnumerable<Object> objects, Component component)
 		{
