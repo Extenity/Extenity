@@ -6,12 +6,27 @@ namespace Extenity.InputToolbox
 
 	public static class InputTools
 	{
-		public static Vector3 MousePositionNormalized
+		public static Vector2 MousePositionNormalizedInScreenHeightCoordinates
 		{
 			get
 			{
-				Vector3 mousePos = Input.mousePosition;
-				return new Vector3(mousePos.x / Screen.width, mousePos.y / Screen.width, 0f);
+				var position = Input.mousePosition;
+				var oneOverHeight = 1f / Screen.height;
+				return new Vector2(
+					position.x * oneOverHeight,
+					position.y * oneOverHeight);
+			}
+		}
+
+		public static Vector2 MousePositionNormalizedInScreenWidthCoordinates
+		{
+			get
+			{
+				var position = Input.mousePosition;
+				var oneOverWidth = 1f / Screen.width;
+				return new Vector2(
+					position.x * oneOverWidth,
+					position.y * oneOverWidth);
 			}
 		}
 
