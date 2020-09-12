@@ -313,7 +313,7 @@ namespace Extenity.GameObjectToolbox
 			item.DestroyDelay = destroyDelay;
 
 			var saveDetails = historySaveType == HistorySaveType.SaveDetailed ||
-							  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
+			                  (IsDetailedDestroyHistoryEnabled && historySaveType == HistorySaveType.Save);
 
 			if (saveDetails)
 			{
@@ -415,6 +415,7 @@ namespace Extenity.GameObjectToolbox
 		}
 
 		public delegate Material AssignNewMaterialMethod(Renderer processingRenderer, int processingMaterialIndex);
+
 		public delegate Color AssignNewColorMethod(Renderer processingRenderer, int processingMaterialIndex);
 
 		public static int ChangeAllChildRendererMaterials(this GameObject gameObject, AssignNewMaterialMethod assignNewMaterialMethod, AssignNewColorMethod assignNewColorMethod = null)
@@ -912,7 +913,7 @@ namespace Extenity.GameObjectToolbox
 			var childrenList = me.FindChildrenByPrefix(value);
 
 			childrenList.Sort(
-				delegate (Transform p1, Transform p2)
+				delegate(Transform p1, Transform p2)
 				{
 					int index1 = int.Parse(p1.name.Remove(0, value.Length));
 					int index2 = int.Parse(p2.name.Remove(0, value.Length));
@@ -979,6 +980,7 @@ namespace Extenity.GameObjectToolbox
 		#endregion
 
 		// TODO: Are these really necessary?
+
 		#region Get component in children without active check
 
 		public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
@@ -1019,6 +1021,7 @@ namespace Extenity.GameObjectToolbox
 		#endregion
 
 		// TODO: Are these really necessary?
+
 		#region Get component in parent without active check
 
 		public static T GetComponentInParentRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
@@ -1081,80 +1084,83 @@ namespace Extenity.GameObjectToolbox
 			switch (activeCheck)
 			{
 				case ActiveCheck.ActiveOnly:
+				{
+					for (int i = 0; i < rootGameObjects.Count; i++)
 					{
-						for (int i = 0; i < rootGameObjects.Count; i++)
+						if (!rootGameObjects[i] || !rootGameObjects[i].activeSelf)
+							continue;
+						rootGameObjects[i].GetComponentsInChildren(false, unityReportedComponents);
+						for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
 						{
-							if (!rootGameObjects[i] || !rootGameObjects[i].activeSelf)
+							var component = unityReportedComponents[iComponent];
+							if (!component)
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(false, unityReportedComponents);
-							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
-							{
-								var component = unityReportedComponents[iComponent];
-								if (!component)
-									continue;
-								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
-									continue;
-
-								var componentEnabled = component.IsComponentEnabled(true);
-								var gameObjectEnabled = component.gameObject.activeInHierarchy;
-
-								if (gameObjectEnabled && componentEnabled)
-								{
-									results.Add(component);
-								}
-							}
-							unityReportedComponents.Clear();
-						}
-					}
-					break;
-				case ActiveCheck.IncludingInactive:
-					{
-						for (int i = 0; i < rootGameObjects.Count; i++)
-						{
-							if (!rootGameObjects[i])
+							if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
-							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
-							{
-								var component = unityReportedComponents[iComponent];
-								if (!component)
-									continue;
-								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
-									continue;
 
+							var componentEnabled = component.IsComponentEnabled(true);
+							var gameObjectEnabled = component.gameObject.activeInHierarchy;
+
+							if (gameObjectEnabled && componentEnabled)
+							{
 								results.Add(component);
 							}
-							unityReportedComponents.Clear();
 						}
+						unityReportedComponents.Clear();
 					}
+				}
 					break;
-				case ActiveCheck.InactiveOnly:
+
+				case ActiveCheck.IncludingInactive:
+				{
+					for (int i = 0; i < rootGameObjects.Count; i++)
 					{
-						for (int i = 0; i < rootGameObjects.Count; i++)
+						if (!rootGameObjects[i])
+							continue;
+						rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
+						for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
 						{
-							if (!rootGameObjects[i])
+							var component = unityReportedComponents[iComponent];
+							if (!component)
 								continue;
-							rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
-							for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
-							{
-								var component = unityReportedComponents[iComponent];
-								if (!component)
-									continue;
-								if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
-									continue;
+							if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
+								continue;
 
-								var componentEnabled = component.IsComponentEnabled(true);
-								var gameObjectEnabled = component.gameObject.activeInHierarchy;
-
-								if (!gameObjectEnabled || !componentEnabled)
-								{
-									results.Add(component);
-								}
-							}
-							unityReportedComponents.Clear();
+							results.Add(component);
 						}
+						unityReportedComponents.Clear();
 					}
+				}
 					break;
+
+				case ActiveCheck.InactiveOnly:
+				{
+					for (int i = 0; i < rootGameObjects.Count; i++)
+					{
+						if (!rootGameObjects[i])
+							continue;
+						rootGameObjects[i].GetComponentsInChildren(true, unityReportedComponents);
+						for (var iComponent = 0; iComponent < unityReportedComponents.Count; iComponent++)
+						{
+							var component = unityReportedComponents[iComponent];
+							if (!component)
+								continue;
+							if (!component.GetType().IsSameOrSubclassOf(typeof(T)))
+								continue;
+
+							var componentEnabled = component.IsComponentEnabled(true);
+							var gameObjectEnabled = component.gameObject.activeInHierarchy;
+
+							if (!gameObjectEnabled || !componentEnabled)
+							{
+								results.Add(component);
+							}
+						}
+						unityReportedComponents.Clear();
+					}
+				}
+					break;
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(activeCheck), activeCheck, null);
 			}
@@ -1828,7 +1834,7 @@ namespace Extenity.GameObjectToolbox
 				//}
 
 				if (Physics.Raycast(upperRayStartPosition, direction, out var hit, stepLengthWithErrorMargin, raycastLayerMask) ||
-					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask))
+				    Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLengthWithErrorMargin, raycastLayerMask))
 				{
 					currentPosition.y = hit.point.y + offset;
 					transform.position = currentPosition;
@@ -1846,23 +1852,25 @@ namespace Extenity.GameObjectToolbox
 				switch (rotation)
 				{
 					case SnapToGroundRotationOption.X:
+					{
+						var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
+						if (!float.IsNaN(angleZ))
 						{
-							var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
-							if (!float.IsNaN(angleZ))
-							{
-								rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
-							}
+							rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
 						}
+					}
 						break;
+
 					case SnapToGroundRotationOption.Z:
+					{
+						var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
+						if (!float.IsNaN(angleX))
 						{
-							var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
-							if (!float.IsNaN(angleX))
-							{
-								rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
-							}
+							rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
 						}
+					}
 						break;
+
 					//case SnapToGroundRotationOption.XZ: That did not work for some reason and did not bother to fix it because there is the ZX option that would be enough for now.
 					//	{
 					//		var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
@@ -1878,19 +1886,20 @@ namespace Extenity.GameObjectToolbox
 					//	}
 					//	break;
 					case SnapToGroundRotationOption.ZX:
+					{
+						var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
+						if (!float.IsNaN(angleX))
 						{
-							var angleX = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.forward, rotationCastDistanceZ, raycastLayerMask);
-							if (!float.IsNaN(angleX))
-							{
-								rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
-							}
-							var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
-							if (!float.IsNaN(angleZ))
-							{
-								rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
-							}
+							rotationResult *= Quaternion.Euler(-angleX, 0f, 0f);
 						}
+						var angleZ = InternalCalculateSnapToGroundRotationAngle(currentPosition, offset, rotationY * Vector3.right, rotationCastDistanceX, raycastLayerMask);
+						if (!float.IsNaN(angleZ))
+						{
+							rotationResult *= Quaternion.Euler(0f, 0f, angleZ);
+						}
+					}
 						break;
+
 					default:
 						throw new ArgumentOutOfRangeException(nameof(rotation), rotation, null);
 				}
@@ -1990,7 +1999,7 @@ namespace Extenity.GameObjectToolbox
 				//Debug.DrawLine(lowerRayStartPosition, lowerRayStartPosition + direction * stepLength, Color.green, 1f);
 
 				if (Physics.Raycast(upperRayStartPosition, direction, out var hit, stepLength, raycastLayerMask) ||
-					Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, raycastLayerMask))
+				    Physics.Raycast(lowerRayStartPosition, direction, out hit, stepLength, raycastLayerMask))
 				{
 					position.y = hit.point.y + offset;
 					result = position;
