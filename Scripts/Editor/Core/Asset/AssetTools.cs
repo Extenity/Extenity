@@ -283,9 +283,9 @@ namespace Extenity.AssetToolbox.Editor
 			return path;
 		}
 
-		public static string GetSelectedPathOrAssetRootPath()
+		public static string GetSelectedDirectoryPathOrAssetsRootPath()
 		{
-			var path = GetSelectedPath();
+			var path = GetSelectedDirectoryPath();
 			if (string.IsNullOrEmpty(path))
 			{
 				return EditorApplicationTools.AssetsRelativePath;
@@ -293,8 +293,7 @@ namespace Extenity.AssetToolbox.Editor
 			return path;
 		}
 
-		// TODO IMMEDIATE: Rename to make it mention its about the selected asset's directory path, not the asset path.
-		public static string GetSelectedPath()
+		public static string GetSelectedDirectoryPath()
 		{
 			var filteredSelection = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
 
@@ -1008,7 +1007,7 @@ namespace Extenity.AssetToolbox.Editor
 			string fullPath;
 			if (isPathRelativeToSelectedObjectDirectory)
 			{
-				var directory = GetSelectedPathOrAssetRootPath();
+				var directory = GetSelectedDirectoryPathOrAssetsRootPath();
 				fullPath = Path.Combine(directory, assetPath);
 			}
 			else
