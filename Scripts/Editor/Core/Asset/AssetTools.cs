@@ -842,7 +842,7 @@ namespace Extenity.AssetToolbox.Editor
 			var scriptPath = DontTouch_LeaveThisAsDefault;
 			if (relativeToProjectFolder)
 			{
-				scriptPath = ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath);
+				scriptPath = scriptPath.MakeProjectRelativeAssetDatabasePath();
 			}
 			return scriptPath;
 		}
