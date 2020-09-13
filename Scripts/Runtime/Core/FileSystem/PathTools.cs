@@ -453,6 +453,15 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		#endregion
+
+		#region Web
+
+		public static string GenerateAntiCacheAddressPostfix()
+		{
+			return "?r=" + UnityEngine.Random.Range(10000, 99999);
+		}
+
+		#endregion
 	}
 
 }
