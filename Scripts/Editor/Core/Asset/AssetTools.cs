@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Extenity.ApplicationToolbox;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -265,6 +266,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Get Asset Path Of Selection
 
+		// TODO IMMEDIATE: Delete this.
 		public static string GetAssetPathOfActiveGameObject()
 		{
 			string path = AssetDatabase.GetAssetPath(Selection.activeObject);
@@ -273,7 +275,6 @@ namespace Extenity.AssetToolbox.Editor
 				return "";
 			}
 
-			// TODO: What sorcery is this?
 			if (Path.GetExtension(path) != "")
 			{
 				path = path.Replace(Path.GetFileName(path), "");
@@ -287,11 +288,12 @@ namespace Extenity.AssetToolbox.Editor
 			var path = GetSelectedPath();
 			if (string.IsNullOrEmpty(path))
 			{
-				return "Assets";
+				return EditorApplicationTools.AssetsDirectory;
 			}
 			return path;
 		}
 
+		// TODO IMMEDIATE: Rename to make it mention its about the selected asset's directory path, not the asset path.
 		public static string GetSelectedPath()
 		{
 			var filteredSelection = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
@@ -318,6 +320,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Get Asset Path Without Root
 
+		// TODO IMMEDIATE: Delete this.
 		public static string GetAssetPathWithoutRoot(Object obj)
 		{
 			var path = AssetDatabase.GetAssetPath(obj);
@@ -342,10 +345,9 @@ namespace Extenity.AssetToolbox.Editor
 			// Convert and ensure the path is relative to project directory.
 			var relativePath = ApplicationTools.ApplicationPath.MakeRelativePath(filePath, true);
 
-			// TODO: Remove all hardcode below.
 			// See if the path is a Package path. If so, the path may need to be modified to use package name, instead
 			// of the physical path. AssetDatabase will only understand package names in such paths.
-			if (relativePath.StartsWith("Packages", StringComparison.InvariantCultureIgnoreCase))
+			if (relativePath.StartsWith(EditorApplicationTools.PackagesDirectory, StringComparison.InvariantCultureIgnoreCase))
 			{
 				// The path expected to be relative to project directory. MakeRelativePath above does that.
 				// Also the path assumed to have normalized directory separators. MakeRelativePath above does that too.
@@ -353,9 +355,9 @@ namespace Extenity.AssetToolbox.Editor
 				var separatorSecond = relativePath.IndexOf(PathTools.DirectorySeparatorChar, separatorFirst + 1);
 				var packageDirectory = relativePath.Substring(0, separatorSecond);
 				var remainderPath = relativePath.Substring(separatorSecond + 1);
-				var manifestPath = Path.Combine(packageDirectory, "package.json");
+				var manifestPath = Path.Combine(packageDirectory, PackageManagerTools.PackageJsonFileName);
 				var packageName = PackageManagerTools.GetPackageNameInManifestJson(manifestPath);
-				relativePath = Path.Combine("Packages", packageName, remainderPath);
+				relativePath = Path.Combine(EditorApplicationTools.PackagesDirectory, packageName, remainderPath);
 			}
 
 			return relativePath;
@@ -962,6 +964,7 @@ namespace Extenity.AssetToolbox.Editor
 			return list;
 		}
 
+		// TODO IMMEDIATE: Delete this.
 		public static string GenerateUniqueAssetPathAtSelectedFolder(string fileName)
 		{
 			try
@@ -990,7 +993,7 @@ namespace Extenity.AssetToolbox.Editor
 			return Directory.Exists(path);
 		}
 
-		public static T CreateAsset<T>(string assetPath = "", bool pathRelativeToActiveObject = false) where T : ScriptableObject
+		public static T CreateAsset<T>(string assetPath = "", bool isPathRelativeToSelectedObjectDirectory = false) where T : ScriptableObject
 		{
 			// Create scriptable object instance
 			T asset = ScriptableObject.CreateInstance<T>();
@@ -1003,14 +1006,10 @@ namespace Extenity.AssetToolbox.Editor
 
 			// Generate full asset path
 			string fullPath;
-			if (pathRelativeToActiveObject)
+			if (isPathRelativeToSelectedObjectDirectory)
 			{
-				string path = GetAssetPathOfActiveGameObject();
-				if (string.IsNullOrEmpty(path))
-				{
-					path = "Assets";
-				}
-				fullPath = path + "/" + assetPath;
+				var directory = GetSelectedPathOrAssetRootPath();
+				fullPath = Path.Combine(directory, assetPath);
 			}
 			else
 			{

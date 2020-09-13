@@ -1,4 +1,5 @@
 using System.IO;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		#region Configuration
 
-		private const string Path = SubsystemConstants.ConfigurationPath;
+		private static readonly string ConfigurationFilePath = Path.Combine(EditorApplicationTools.ProjectSettingsDirectory, SubsystemConstants.ConfigurationFileName);
 		private const string CurrentVersion = SubsystemConstants.Version;
 
 		#endregion
@@ -72,25 +73,25 @@ namespace Extenity.SubsystemManagementToolbox
 
 		internal static void Save(SubsystemSettings settings)
 		{
-			EditorUtilityTools.SaveUnityAssetFile(Path, settings);
+			EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, settings);
 		}
 
 		internal void Save()
 		{
-			EditorUtilityTools.SaveUnityAssetFile(Path, this);
+			EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, this);
 		}
 
 		private static SubsystemSettings LoadOrCreate()
 		{
 			SubsystemSettings settings;
 
-			if (!File.Exists(Path))
+			if (!File.Exists(ConfigurationFilePath))
 			{
 				settings = CreateNewSettingsFile();
 			}
 			else
 			{
-				settings = EditorUtilityTools.LoadUnityAssetFile<SubsystemSettings>(Path);
+				settings = EditorUtilityTools.LoadUnityAssetFile<SubsystemSettings>(ConfigurationFilePath);
 			}
 
 			settings.hideFlags = HideFlags.HideAndDontSave;

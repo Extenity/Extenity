@@ -2,6 +2,7 @@
 using UnityEditor;
 using System;
 using System.IO;
+using Extenity.ApplicationToolbox.Editor;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -154,15 +155,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Load Settings From File
 
-		private static string SettingsFilePath = "ProjectSettings/PlatformSettings.json";
+		private static readonly string ConfigurationFileName = "PlatformSettings.json";
+		private static readonly string ConfigurationFilePath = Path.Combine(EditorApplicationTools.ProjectSettingsDirectory, ConfigurationFileName);
 
 		public static void LoadSettingsFromFile()
 		{
 			try
 			{
-				if (File.Exists(SettingsFilePath))
+				if (File.Exists(ConfigurationFilePath))
 				{
-					var json = File.ReadAllText(SettingsFilePath);
+					var json = File.ReadAllText(ConfigurationFilePath);
 					Settings = JsonUtility.FromJson<DesiredPlatformSettings>(json);
 				}
 				else
@@ -179,7 +181,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static void SaveSettingsToFile()
 		{
 			var json = JsonUtility.ToJson(Settings, true);
-			File.WriteAllText(SettingsFilePath, json);
+			File.WriteAllText(ConfigurationFilePath, json);
 		}
 
 		#endregion
@@ -202,7 +204,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 			{
-				Log.Warning($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' as stated in '{SettingsFilePath}'.");
+				Log.Warning($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' as stated in '{ConfigurationFilePath}'.");
 
 				EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
 			}

@@ -782,7 +782,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// Save a copy for logging purposes.
 			{
-				var directoryPath = string.Format(BuildMachineConstants.RunningJobSurvivalFileLogDirectory, job.ID);
+				var directoryPath = string.Format(BuildMachineConstants.RunningJobSurvivalFileLogDirectoryFormat, job.ID);
 				DirectoryTools.Create(directoryPath);
 				var filePath = Path.Combine(directoryPath, BuildMachineConstants.RunningJobSurvivalFileName);
 				var availableFilePath = filePath.GenerateUniqueFilePath();

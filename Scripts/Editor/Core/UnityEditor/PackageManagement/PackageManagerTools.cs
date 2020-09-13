@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.ApplicationToolbox;
+using Extenity.ApplicationToolbox.Editor;
+using Extenity.FileSystemToolbox;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -31,9 +33,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region Configuration
 
-		public const string PackageManifestPath = "Packages/manifest.json";
-		public const string PackageLockPath = "Packages/packages-lock.json";
-		public const string ExtenityPackageName = "com.canbaycay.extenity";
+		public static readonly string PackageJsonFileName = "package.json";
+		public static readonly string PackageManifestPath = EditorApplicationTools.PackagesDirectory.AppendFileToPath("manifest.json");
+		public static readonly string PackageLockPath = EditorApplicationTools.PackagesDirectory.AppendFileToPath("packages-lock.json");
+		public static readonly string ExtenityPackageName = "com.canbaycay.extenity";
 
 		#endregion
 

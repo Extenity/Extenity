@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Extenity.ApplicationToolbox.Editor;
 using UnityEditor;
 using UnityEditor.Compilation;
 
@@ -18,7 +19,7 @@ namespace Extenity.UnityEditorToolbox.CompilationProfiling
 		private const string AssemblyReloadStartTimeKey = "AssemblyReloadStartTime";
 		private const string AssemblyCompilationLogKey = "AssemblyCompilationLog";
 		private const string IsEnabledKey = "AssemblyCompilationProfilingEnabled";
-		private static readonly int ScriptAssembliesPathLength = "Library/ScriptAssemblies/".Length;
+		private static readonly int ScriptAssembliesPathLength = (EditorApplicationTools.LibraryDirectory + "/ScriptAssemblies/").Length;
 
 		#endregion
 
