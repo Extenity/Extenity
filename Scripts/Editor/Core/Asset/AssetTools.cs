@@ -266,23 +266,6 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Get Asset Path Of Selection
 
-		// TODO IMMEDIATE: Delete this.
-		public static string GetAssetPathOfActiveGameObject()
-		{
-			string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-			if (string.IsNullOrEmpty(path))
-			{
-				return "";
-			}
-
-			if (Path.GetExtension(path) != "")
-			{
-				path = path.Replace(Path.GetFileName(path), "");
-			}
-
-			return path;
-		}
-
 		public static string GetSelectedDirectoryPathOrAssetsRootPath()
 		{
 			var path = GetSelectedDirectoryPath();
@@ -313,19 +296,6 @@ namespace Extenity.AssetToolbox.Editor
 				}
 			}
 			return "";
-		}
-
-		#endregion
-
-		#region Get Asset Path Without Root
-
-		// TODO IMMEDIATE: Delete this.
-		public static string GetAssetPathWithoutRoot(Object obj)
-		{
-			var path = AssetDatabase.GetAssetPath(obj);
-			if (path.StartsWith("Assets/"))
-				return path.Remove(0, "Assets/".Length);
-			return path;
 		}
 
 		#endregion
@@ -961,23 +931,6 @@ namespace Extenity.AssetToolbox.Editor
 			}
 
 			return list;
-		}
-
-		// TODO IMMEDIATE: Delete this.
-		public static string GenerateUniqueAssetPathAtSelectedFolder(string fileName)
-		{
-			try
-			{
-				// Private implementation of a filenaming function which puts the file at the selected path.
-				Type assetDatabase = typeof(AssetDatabase);
-				var method = assetDatabase.GetMethod("GetUniquePathNameAtSelectedPath", BindingFlags.NonPublic | BindingFlags.Static);
-				return (string)method.Invoke(assetDatabase, new object[] { fileName });
-			}
-			catch
-			{
-				// Protection against implementation changes.
-				return AssetDatabase.GenerateUniqueAssetPath("Assets/" + fileName);
-			}
 		}
 
 		public static bool IsFolderAsset(Object obj)
