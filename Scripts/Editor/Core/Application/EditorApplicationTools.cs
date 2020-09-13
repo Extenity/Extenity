@@ -15,15 +15,31 @@ namespace Extenity.ApplicationToolbox.Editor
 
 	public static class EditorApplicationTools
 	{
-		#region Paths
+		#region Paths - Project
 
-		public static string EditorTempDirectoryPath
-		{
-			get
-			{
-				return Path.Combine(ApplicationTools.ApplicationPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-			}
-		}
+		public static readonly string AssetsDirectory = "Assets";
+		public static readonly string ProjectSettingsDirectory = "ProjectSettings";
+		public static readonly string UserSettingsDirectory = "UserSettings";
+		public static readonly string LibraryDirectory = "Library";
+		public static readonly string PackagesDirectory = "Packages";
+		public static readonly string TempDirectory = "Temp";
+
+		public static string AssetsPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, AssetsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string ProjectSettingsPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, ProjectSettingsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string UserSettingsPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, UserSettingsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string LibraryPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, LibraryDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string PackagesPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, PackagesDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string TempPath =>
+			Path.Combine(ApplicationTools.ApplicationPath, TempDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+
+		#endregion
+
+		#region Paths - Unity Editor
 
 		private static string _UnityEditorExecutableDirectory;
 		public static string UnityEditorExecutableDirectory

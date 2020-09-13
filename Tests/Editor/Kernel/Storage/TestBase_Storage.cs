@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using Extenity.ApplicationToolbox.Editor;
 using Extenity.KernelToolbox;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace ExtenityTests.KernelToolbox
 
 		protected void InitializeStorage()
 		{
-			var path = Path.Combine(new DirectoryInfo(Application.dataPath).Parent.FullName, "Library", "StorageForTests");
+			var path = Path.Combine(EditorApplicationTools.LibraryPath, "StorageForTests");
 			// Log.Info("Initializing persistent path to: " + path);
 
 			// Clear the previously created repository.

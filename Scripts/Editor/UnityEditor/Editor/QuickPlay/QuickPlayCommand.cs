@@ -47,7 +47,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public QuickPlayPostponeType PostponeType { get; private set; }
 
 		private string PostponeMarkFilePath => Path.Combine(
-			EditorApplicationTools.EditorTempDirectoryPath,
+			EditorApplicationTools.TempPath,
 			PostponeMarkFilePrefix + Name + PostponeMarkFileExtension
 		);
 
