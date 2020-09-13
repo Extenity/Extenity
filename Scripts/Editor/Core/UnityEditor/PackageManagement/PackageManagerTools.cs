@@ -44,8 +44,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static List<PackageManifestEntry> GetPackageManifestContent()
 		{
-			var projectPath = ApplicationTools.ApplicationPath;
-			var path = Path.Combine(projectPath, PackageManifestPath);
+			var path = PackageManifestPath;
 
 			// Approach 1: Took 36 ms
 			// var jsonText = File.ReadAllText(path);
@@ -84,7 +83,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				return new List<PackageManifestEntry>(0);
 			}
-			return content.Select(entry => new PackageManifestEntry(entry.Key, entry.Value)).ToList();
+			var result = content.Select(entry => new PackageManifestEntry(entry.Key, entry.Value)).ToList();
+			// Log.Info(string.Join("\n", result.Select(x => x.PackageID)));
+			return result;
 		}
 
 		#endregion
