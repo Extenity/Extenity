@@ -291,7 +291,7 @@ namespace Extenity.FileSystemToolbox
 
 		#endregion
 
-		#region Split Path
+		#region Split Path / Get Path Segment
 
 		public static void SplitPath(this string path, out string root, out string directoryWithoutRoot, out string fileName)
 		{
@@ -304,6 +304,21 @@ namespace Extenity.FileSystemToolbox
 			root = path.Substring(0, rootReported.Length);
 			fileName = path.Substring(path.Length - fileNameReported.Length);
 			directoryWithoutRoot = path.Substring(rootReported.Length, path.Length - rootReported.Length - fileNameReported.Length);
+		}
+
+		public static string GetPathSegment(this string path, int segmentIndex)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentNullException(nameof(path));
+
+			// TODO OPTIMIZE: Do it without modifying the path and without using Split. Tests needed for safety.
+			var split = path.FixDirectorySeparatorCharsToForward().Split(ForwardSlash);
+			if (segmentIndex < 0 || segmentIndex >= split.Length)
+			{
+				throw new IndexOutOfRangeException($"Path segment index '{segmentIndex}' is out of range for path: '{path}'.");
+			}
+
+			return split[segmentIndex];
 		}
 
 		#endregion
