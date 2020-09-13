@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Extenity.ApplicationToolbox.Editor;
+using Extenity.ApplicationToolbox;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -40,7 +40,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static List<PackageManifestEntry> GetPackageManifestContent()
 		{
-			var path = Path.Combine(EditorApplicationTools.UnityProjectPath, PackageManifestPath);
+			var projectPath = ApplicationTools.ApplicationPath;
+			var path = Path.Combine(projectPath, PackageManifestPath);
 
 			// Approach 1: Took 36 ms
 			// var jsonText = File.ReadAllText(path);

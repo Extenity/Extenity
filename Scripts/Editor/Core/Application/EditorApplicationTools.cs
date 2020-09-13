@@ -17,22 +17,11 @@ namespace Extenity.ApplicationToolbox.Editor
 	{
 		#region Paths
 
-		public static string UnityProjectPath
-		{
-			get
-			{
-				// This does not work in threaded environment. So we use working directory instead.
-				//return ApplicationTools.ApplicationPath.AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-
-				return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-			}
-		}
-
 		public static string EditorTempDirectoryPath
 		{
 			get
 			{
-				return Path.Combine(UnityProjectPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+				return Path.Combine(ApplicationTools.ApplicationPath, "Temp").AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 			}
 		}
 
@@ -162,8 +151,9 @@ namespace Extenity.ApplicationToolbox.Editor
 		public static void OpenCSProjectForceRebuild()
 		{
 			// Delete SLN and CSPROJ files. That will force Unity to rebuild them from ground up.
+			var projectPath = ApplicationTools.ApplicationPath;
 			var files = new[] { "*.sln", "*.csproj" }
-			            .SelectMany(filter => Directory.GetFiles(UnityProjectPath, filter, SearchOption.TopDirectoryOnly))
+			            .SelectMany(filter => Directory.GetFiles(projectPath, filter, SearchOption.TopDirectoryOnly))
 			            .ToArray();
 
 			foreach (var file in files)

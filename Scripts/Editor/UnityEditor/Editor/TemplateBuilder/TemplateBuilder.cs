@@ -171,7 +171,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 
 		private static List<string> GetProjectFilesAndApplyFilters(TemplateBuilderConfiguration config)
 		{
-			var projectPath = EditorApplicationTools.UnityProjectPath;
+			var projectPath = ApplicationTools.ApplicationPath;
 			var allFiles = Directory.GetFiles(projectPath, "*", SearchOption.AllDirectories).ToList();
 
 			// Convert paths relative to project directory

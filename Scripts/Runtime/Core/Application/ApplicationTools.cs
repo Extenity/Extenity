@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -25,7 +26,10 @@ namespace Extenity.ApplicationToolbox
 				switch (Application.platform)
 				{
 					case RuntimePlatform.WindowsEditor:
-						return Application.dataPath.AddDirectorySeparatorToEnd().RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+						// This does not work in threaded environment. So we use working directory instead.
+						// return Application.dataPath.AddDirectorySeparatorToEnd().RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+						return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+
 					case RuntimePlatform.WindowsPlayer:
 						throw new NotImplementedException(); // TODO:
 

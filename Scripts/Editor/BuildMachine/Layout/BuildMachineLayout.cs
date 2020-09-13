@@ -1,6 +1,6 @@
 using System.IO;
 using System.Runtime.CompilerServices;
-using Extenity.ApplicationToolbox.Editor;
+using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;
 using UnityEditor;
 
@@ -18,7 +18,8 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void DoLoadBuildMachineLayout(string layoutFileName, [CallerFilePath] string sourceFilePath = null)
 		{
-			var path = EditorApplicationTools.UnityProjectPath.MakeRelativePath(sourceFilePath);
+			var projectPath = ApplicationTools.ApplicationPath;
+			var path = projectPath.MakeRelativePath(sourceFilePath);
 			var directory = Path.GetDirectoryName(path);
 			var layoutPath = Path.Combine(directory, layoutFileName);
 
