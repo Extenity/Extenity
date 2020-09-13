@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Extenity.ApplicationToolbox.Editor;
+using Extenity.FileSystemToolbox;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -46,10 +47,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public QuickPlayPostponeType PostponeType { get; private set; }
 
-		private string PostponeMarkFilePath => Path.Combine(
-			EditorApplicationTools.TempPath,
-			PostponeMarkFilePrefix + Name + PostponeMarkFileExtension
-		);
+		private string PostponeMarkFilePath =>
+			EditorApplicationTools.TempRelativePath.AppendFileToPath(PostponeMarkFilePrefix + Name + PostponeMarkFileExtension);
 
 		protected void PostponeAfterAssemblyReload(QuickPlayPostponeType postponeType)
 		{

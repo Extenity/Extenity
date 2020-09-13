@@ -24,18 +24,19 @@ namespace Extenity.ApplicationToolbox.Editor
 		public static readonly string PackagesDirectory = "Packages";
 		public static readonly string TempDirectory = "Temp";
 
-		public static string AssetsPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, AssetsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-		public static string ProjectSettingsPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, ProjectSettingsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-		public static string UserSettingsPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, UserSettingsDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-		public static string LibraryPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, LibraryDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-		public static string PackagesPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, PackagesDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-		public static string TempPath =>
-			Path.Combine(ApplicationTools.ApplicationPath, TempDirectory).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+		public static string AssetsRelativePath => AssetsDirectory.AddDirectorySeparatorToEnd();
+		public static string ProjectSettingsRelativePath => ProjectSettingsDirectory.AddDirectorySeparatorToEnd();
+		public static string UserSettingsRelativePath => UserSettingsDirectory.AddDirectorySeparatorToEnd();
+		public static string LibraryRelativePath => LibraryDirectory.AddDirectorySeparatorToEnd();
+		public static string PackagesRelativePath => PackagesDirectory.AddDirectorySeparatorToEnd();
+		public static string TempRelativePath => TempDirectory.AddDirectorySeparatorToEnd();
+
+		public static string AssetsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(AssetsDirectory, true);
+		public static string ProjectSettingsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(ProjectSettingsDirectory, true);
+		public static string UserSettingsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(UserSettingsDirectory, true);
+		public static string LibraryFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(LibraryDirectory, true);
+		public static string PackagesFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(PackagesDirectory, true);
+		public static string TempFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(TempDirectory, true);
 
 		#endregion
 

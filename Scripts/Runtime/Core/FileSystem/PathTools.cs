@@ -410,15 +410,21 @@ namespace Extenity.FileSystemToolbox
 			return path1 + path2;
 		}
 
-		public static string AppendFileToPath(this string basePath, string fileName)
+		public static string AppendFileToPath(this string basePath, string fileName, bool fixDirectorySeparatorChars = false)
 		{
-			return Path.Combine(basePath, fileName);
+			var path = Path.Combine(basePath, fileName);
+			if (fixDirectorySeparatorChars)
+				return path.FixDirectorySeparatorChars();
+			return path;
 		}
 
-		public static string AppendDirectoryToPath(this string basePath, string directoryName)
+		public static string AppendDirectoryToPath(this string basePath, string directoryName, bool fixDirectorySeparatorChars = false)
 		{
 			// The ending separator ensures the path will be processed as directory wherever its used.
-			return Path.Combine(basePath, directoryName).AddDirectorySeparatorToEnd();
+			var path = Path.Combine(basePath, directoryName).AddDirectorySeparatorToEnd();
+			if (fixDirectorySeparatorChars)
+				return path.FixDirectorySeparatorChars();
+			return path;
 		}
 
 		#endregion
