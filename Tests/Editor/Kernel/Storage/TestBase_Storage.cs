@@ -17,7 +17,7 @@ namespace ExtenityTests.KernelToolbox
 
 		protected void InitializeStorage()
 		{
-			var path = Path.Combine(Path.Combine(new DirectoryInfo(Application.dataPath).Parent.FullName, "Library"), "StorageForTests");
+			var path = Path.Combine(new DirectoryInfo(Application.dataPath).Parent.FullName, "Library", "StorageForTests");
 			// Log.Info("Initializing persistent path to: " + path);
 
 			// Clear the previously created repository.

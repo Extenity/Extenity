@@ -143,7 +143,7 @@ namespace Extenity.DebugToolbox
 
 		public void LogToFile(bool saveSimpleLog, bool saveDetailedLog)
 		{
-			var path = Path.Combine(Path.Combine(Application.persistentDataPath, "Log"), "SceneSnapshot - " + DateTime.Now.ToFullDateTimeMsecForFilename() + ".txt");
+			var path = Path.Combine(Application.persistentDataPath, "Log", $"SceneSnapshot - {DateTime.Now.ToFullDateTimeMsecForFilename()}.txt");
 
 			if (saveSimpleLog)
 			{
