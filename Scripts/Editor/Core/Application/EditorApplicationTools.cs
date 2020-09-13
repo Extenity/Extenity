@@ -38,6 +38,18 @@ namespace Extenity.ApplicationToolbox.Editor
 		public static string PackagesFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(PackagesDirectory, true);
 		public static string TempFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(TempDirectory, true);
 
+		/// <summary>
+		/// Checks if the specified directory is a Unity project directory. It will throw in case Path.Combine or
+		/// Directory.Exists methods are not happy with the given path.
+		/// </summary>
+		public static bool IsUnityProjectPath(string directoryPath)
+		{
+			return
+				Directory.Exists(directoryPath) &&
+				Directory.Exists(Path.Combine(directoryPath, AssetsDirectory)) &&
+				Directory.Exists(Path.Combine(directoryPath, ProjectSettingsDirectory));
+		}
+
 		#endregion
 
 		#region Paths - Unity Editor
