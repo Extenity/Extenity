@@ -39,6 +39,42 @@ namespace Extenity.ApplicationToolbox
 			}
 		}
 
+		public static string PersistentDataPath
+		{
+			get
+			{
+#if UNITY_ANDROID && !UNITY_EDITOR
+				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+				using (var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+				using (var applicationContext = currentActivity.Call<AndroidJavaObject>("getApplicationContext"))
+				{
+					var filesDir = applicationContext.Call<AndroidJavaObject>("getFilesDir");
+					return filesDir.Call<string>("getCanonicalPath");
+				}
+#else
+				return Application.persistentDataPath;
+#endif
+			}
+		}
+
+		public static string TemporaryCachePath
+		{
+			get
+			{
+#if UNITY_ANDROID && !UNITY_EDITOR
+				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+				using (var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+				using (var applicationContext = currentActivity.Call<AndroidJavaObject>("getApplicationContext"))
+				{
+					var cacheDir = applicationContext.Call<AndroidJavaObject>("getCacheDir");
+					return cacheDir.Call<string>("getCanonicalPath");
+				}
+#else
+				return Application.temporaryCachePath;
+#endif
+			}
+		}
+
 		#endregion
 
 		#region Path Hash
