@@ -6,6 +6,7 @@ using Extenity.ApplicationToolbox;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.Editor
 {
@@ -209,6 +210,23 @@ namespace Extenity.UnityEditorToolbox.Editor
 				AssetDatabase.Refresh();
 			}
 			return true;
+		}
+
+		#endregion
+
+		#region Get Package Name In Manifest Json
+
+		[Serializable]
+		private class NameOnlyPackageManifest
+		{
+			public string name;
+		}
+
+		public static string GetPackageNameInManifestJson(string manifestPath)
+		{
+			var json = File.ReadAllText(manifestPath);
+			var manifest = JsonUtility.FromJson<NameOnlyPackageManifest>(json);
+			return manifest.name;
 		}
 
 		#endregion
