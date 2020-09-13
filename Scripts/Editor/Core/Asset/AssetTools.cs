@@ -16,6 +16,7 @@ using Extenity.GameObjectToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.ReflectionToolbox;
 using Extenity.UnityEditorToolbox;
+using Extenity.UnityEditorToolbox.Editor;
 using JetBrains.Annotations;
 using Object = UnityEngine.Object;
 using SelectionMode = UnityEditor.SelectionMode;
@@ -323,6 +324,41 @@ namespace Extenity.AssetToolbox.Editor
 			if (path.StartsWith("Assets/"))
 				return path.Remove(0, "Assets/".Length);
 			return path;
+		}
+
+		#endregion
+
+		#region Convert Physical Path To AssetDatabase Path
+
+		/// <summary>
+		/// Creates a relative path to Unity project directory. Also modifies Packages paths to use package name
+		/// instead of physical path, so that AssetDatabase would understand and load assets in these paths.
+		///
+		/// CAUTION! Note that this operation involves loading the package manifest every time the method is called if
+		/// the path starts with "Packages" directory. A caching mechanism is not implemented to keep the system robust.
+		/// </summary>
+		public static string MakeProjectRelativeAssetDatabasePath(this string filePath)
+		{
+			// Convert and ensure the path is relative to project directory.
+			var relativePath = ApplicationTools.ApplicationPath.MakeRelativePath(filePath, true);
+
+			// TODO: Remove all hardcode below.
+			// See if the path is a Package path. If so, the path may need to be modified to use package name, instead
+			// of the physical path. AssetDatabase will only understand package names in such paths.
+			if (relativePath.StartsWith("Packages", StringComparison.InvariantCultureIgnoreCase))
+			{
+				// The path expected to be relative to project directory. MakeRelativePath above does that.
+				// Also the path assumed to have normalized directory separators. MakeRelativePath above does that too.
+				var separatorFirst = relativePath.IndexOf(PathTools.DirectorySeparatorChar);
+				var separatorSecond = relativePath.IndexOf(PathTools.DirectorySeparatorChar, separatorFirst + 1);
+				var packageDirectory = relativePath.Substring(0, separatorSecond);
+				var remainderPath = relativePath.Substring(separatorSecond + 1);
+				var manifestPath = Path.Combine(packageDirectory, "package.json");
+				var packageName = PackageManagerTools.GetPackageNameInManifestJson(manifestPath);
+				relativePath = Path.Combine("Packages", packageName, remainderPath);
+			}
+
+			return relativePath;
 		}
 
 		#endregion
