@@ -804,9 +804,11 @@ namespace Extenity.AssetToolbox.Editor
 		public static string GetCurrentScriptPath(bool relativeToProjectFolder = true, [CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
 		{
 			var scriptPath = DontTouch_LeaveThisAsDefault;
-			return relativeToProjectFolder
-				? ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath)
-				: scriptPath;
+			if (relativeToProjectFolder)
+			{
+				scriptPath = ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath);
+			}
+			return scriptPath;
 		}
 
 		/// <summary>
@@ -822,10 +824,13 @@ namespace Extenity.AssetToolbox.Editor
 		/// </summary>
 		public static void InstantiatePrefabWithTheSameNameOfThisScript([CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
 		{
-			var scriptPath = DontTouch_LeaveThisAsDefault;
-			scriptPath = ApplicationTools.ApplicationPath.MakeRelativePath(scriptPath);
-			var prefabPath = Path.Combine(Path.GetDirectoryName(scriptPath), Path.GetFileNameWithoutExtension(scriptPath) + ".prefab");
+			var scriptPath = GetCurrentScriptPath(true, DontTouch_LeaveThisAsDefault);
+			var prefabPath = scriptPath.ChangeFileExtension(".prefab");
 			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+			if (!prefab)
+			{
+				throw new Exception("Failed to find prefab at path: " + prefabPath);
+			}
 			GameObject.Instantiate(prefab);
 		}
 
