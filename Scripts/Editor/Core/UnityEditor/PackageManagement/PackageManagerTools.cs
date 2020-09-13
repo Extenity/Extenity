@@ -34,8 +34,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Configuration
 
 		public static readonly string PackageJsonFileName = "package.json";
-		public static readonly string PackageManifestPath = EditorApplicationTools.PackagesDirectory.AppendFileToPath("manifest.json");
-		public static readonly string PackageLockPath = EditorApplicationTools.PackagesDirectory.AppendFileToPath("packages-lock.json");
+		public static readonly string PackageManifestPath = EditorApplicationTools.PackagesRelativePath.AppendFileToPath("manifest.json");
+		public static readonly string PackageLockPath = EditorApplicationTools.PackagesRelativePath.AppendFileToPath("packages-lock.json");
 		public static readonly string ExtenityPackageName = "com.canbaycay.extenity";
 
 		#endregion

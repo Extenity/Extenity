@@ -9,7 +9,7 @@ namespace Extenity.BuildMachine.Editor
 		#region Paths
 
 		// Survival file
-		public static readonly string BuildMachineSurvivalDirectory = EditorApplicationTools.LibraryDirectory.AppendDirectoryToPath("BuildMachine");
+		public static readonly string BuildMachineSurvivalDirectory = EditorApplicationTools.LibraryRelativePath.AppendDirectoryToPath("BuildMachine");
 		public static readonly string RunningJobSurvivalFileName = "_RunningJob.json";
 		public static readonly string RunningJobSurvivalFilePath = BuildMachineSurvivalDirectory + RunningJobSurvivalFileName;
 		public static readonly string RunningJobSurvivalFileLogDirectoryFormat = BuildMachineSurvivalDirectory.AppendDirectoryToPath("{0}");

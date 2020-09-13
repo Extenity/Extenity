@@ -1,5 +1,6 @@
 using System.IO;
 using Extenity.ApplicationToolbox.Editor;
+using Extenity.FileSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		#region Configuration
 
-		private static readonly string ConfigurationFilePath = Path.Combine(EditorApplicationTools.ProjectSettingsDirectory, SubsystemConstants.ConfigurationFileName);
+		private static readonly string ConfigurationFilePath = EditorApplicationTools.ProjectSettingsRelativePath.AppendFileToPath(SubsystemConstants.ConfigurationFileName);
 		private const string CurrentVersion = SubsystemConstants.Version;
 
 		#endregion

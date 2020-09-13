@@ -288,7 +288,7 @@ namespace Extenity.AssetToolbox.Editor
 			var path = GetSelectedPath();
 			if (string.IsNullOrEmpty(path))
 			{
-				return EditorApplicationTools.AssetsDirectory;
+				return EditorApplicationTools.AssetsRelativePath;
 			}
 			return path;
 		}
