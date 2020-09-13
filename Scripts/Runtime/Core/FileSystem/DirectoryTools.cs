@@ -11,41 +11,6 @@ namespace Extenity.FileSystemToolbox
 
 	public static class DirectoryTools
 	{
-		public static bool IsDirectoryEmpty(string path)
-		{
-			return Directory.GetFileSystemEntries(path).Length == 0;
-		}
-
-		public static void Create(string directoryPath)
-		{
-			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
-
-			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
-			{
-				Directory.CreateDirectory(directoryPath);
-			}
-		}
-
-		public static void CreateFromFilePath(string filePath)
-		{
-			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
-
-			var directoryPath = Path.GetDirectoryName(filePath);
-			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
-			{
-				Directory.CreateDirectory(directoryPath);
-			}
-		}
-
-		public static string CreateSubDirectory(string parentDirectory, string subDirectory)
-		{
-			// AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); Already done in Create() below
-
-			var path = Path.Combine(parentDirectory, subDirectory);
-			Create(path);
-			return path;
-		}
-
 		#region Folder Name List To Be Created
 
 		public static List<string> GenerateFolderNameListToBeCreatedFromFilePaths(IEnumerable<string> filePaths)
@@ -91,7 +56,12 @@ namespace Extenity.FileSystemToolbox
 
 		#endregion
 
-		#region Get File List
+		#region Files In Directory
+
+		public static bool IsDirectoryEmpty(string path)
+		{
+			return Directory.GetFileSystemEntries(path).Length == 0;
+		}
 
 		public static HashSet<string> ListFilesInDirectory(string sourceDirectory, SearchOption searchOption,
 		                                                   string[] includeFilters = null, string[] excludeFilters = null,
@@ -171,6 +141,40 @@ namespace Extenity.FileSystemToolbox
 			}
 
 			return files;
+		}
+
+		#endregion
+
+		#region Create Directory
+
+		public static void Create(string directoryPath)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+			{
+				Directory.CreateDirectory(directoryPath);
+			}
+		}
+
+		public static void CreateFromFilePath(string filePath)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			var directoryPath = Path.GetDirectoryName(filePath);
+			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+			{
+				Directory.CreateDirectory(directoryPath);
+			}
+		}
+
+		public static string CreateSubDirectory(string parentDirectory, string subDirectory)
+		{
+			// AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); Already done in Create() below
+
+			var path = Path.Combine(parentDirectory, subDirectory);
+			Create(path);
+			return path;
 		}
 
 		#endregion
