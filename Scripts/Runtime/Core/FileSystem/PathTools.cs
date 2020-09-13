@@ -125,7 +125,7 @@ namespace Extenity.FileSystemToolbox
 		/// <param name="filePath">Contains the path that defines the endpoint of the relative path.</param>
 		/// <returns>The relative path from the start directory to the end path.</returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static string MakeRelativePath(this string basePath, string filePath)
+		public static string MakeRelativePath(this string basePath, string filePath, bool ensureSucceeded = false)
 		{
 			if (string.IsNullOrEmpty(basePath)) throw new ArgumentNullException(nameof(basePath));
 			if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
@@ -136,7 +136,16 @@ namespace Extenity.FileSystemToolbox
 			var relativeUri = fromUri.MakeRelativeUri(toUri);
 			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
-			return FixDirectorySeparatorChars(relativePath);
+			relativePath = FixDirectorySeparatorChars(relativePath);
+
+			if (ensureSucceeded)
+			{
+				if (!relativePath.IsRelativePath())
+				{
+					throw new Exception($"Relative path conversion failed. Input: '{filePath}'. Base: '{basePath}'. Failed result: '{relativePath}'.");
+				}
+			}
+			return relativePath;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
