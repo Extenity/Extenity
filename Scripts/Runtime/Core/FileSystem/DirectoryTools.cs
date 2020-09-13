@@ -94,8 +94,8 @@ namespace Extenity.FileSystemToolbox
 		#region Get File List
 
 		public static HashSet<string> ListFilesInDirectory(string sourceDirectory, SearchOption searchOption,
-			string[] includeFilters = null, string[] excludeFilters = null,
-			bool throwOnError = true)
+		                                                   string[] includeFilters = null, string[] excludeFilters = null,
+		                                                   bool throwOnError = true)
 		{
 			if (sourceDirectory == null)
 				throw new ArgumentNullException(nameof(sourceDirectory));
@@ -184,6 +184,7 @@ namespace Extenity.FileSystemToolbox
 				public string FilePath;
 				public Exception Exception;
 			}
+
 			public struct CopiedFile
 			{
 				public string SourcePath;
@@ -255,9 +256,9 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		public static bool Copy(string sourceDirectory, SearchOption searchOption, string targetDirectory,
-			string[] includeFilters = null, string[] excludeFilters = null,
-			bool overwrite = true, bool throwOnError = true, bool continueOnError = false,
-			CopyResult result = null)
+		                        string[] includeFilters = null, string[] excludeFilters = null,
+		                        bool overwrite = true, bool throwOnError = true, bool continueOnError = false,
+		                        CopyResult result = null)
 		{
 			if (sourceDirectory == null)
 				throw new ArgumentNullException(nameof(sourceDirectory));

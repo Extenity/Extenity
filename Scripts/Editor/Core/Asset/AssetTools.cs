@@ -33,8 +33,8 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var assetPaths = GetAllPrefabAssetPaths();
 			var assets = assetPaths
-				.Select(assetPath => AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject)
-				.Where(loadedAsset => loadedAsset != null);
+			             .Select(assetPath => AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject)
+			             .Where(loadedAsset => loadedAsset != null);
 			var list = assets.ToList();
 			return list;
 		}
@@ -44,14 +44,14 @@ namespace Extenity.AssetToolbox.Editor
 			if (includeChildren)
 			{
 				return LoadAllPrefabs()
-					.Where(gameObject => gameObject.GetComponentInChildren<TComponent>(alsoIncludeInactiveChildren) != null)
-					.ToList();
+				       .Where(gameObject => gameObject.GetComponentInChildren<TComponent>(alsoIncludeInactiveChildren) != null)
+				       .ToList();
 			}
 			else
 			{
 				return LoadAllPrefabs()
-					.Where(gameObject => gameObject.GetComponent<TComponent>() != null)
-					.ToList();
+				       .Where(gameObject => gameObject.GetComponent<TComponent>() != null)
+				       .ToList();
 			}
 		}
 
@@ -60,15 +60,15 @@ namespace Extenity.AssetToolbox.Editor
 			if (includeChildren)
 			{
 				return LoadAllPrefabs()
-					.SelectMany(gameObject => gameObject.GetComponentsInChildren<TComponent>(alsoIncludeInactiveChildren))
-					.ToList();
+				       .SelectMany(gameObject => gameObject.GetComponentsInChildren<TComponent>(alsoIncludeInactiveChildren))
+				       .ToList();
 			}
 			else
 			{
 				return LoadAllPrefabs()
-					.Select(gameObject => gameObject.GetComponent<TComponent>())
-					.Where(found => found != null)
-					.ToList();
+				       .Select(gameObject => gameObject.GetComponent<TComponent>())
+				       .Where(found => found != null)
+				       .ToList();
 			}
 		}
 
@@ -111,11 +111,11 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".fbx") ||
-					   lower.EndsWith(".dae") ||
-					   lower.EndsWith(".3ds") ||
-					   lower.EndsWith(".dxf") ||
-					   lower.EndsWith(".obj") ||
-					   lower.EndsWith(".skp");
+				       lower.EndsWith(".dae") ||
+				       lower.EndsWith(".3ds") ||
+				       lower.EndsWith(".dxf") ||
+				       lower.EndsWith(".obj") ||
+				       lower.EndsWith(".skp");
 			}).ToList();
 		}
 
@@ -125,9 +125,9 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".anim") ||
-					   lower.EndsWith(".controller") ||
-					   lower.EndsWith(".overrideController") ||
-					   lower.EndsWith(".mask");
+				       lower.EndsWith(".controller") ||
+				       lower.EndsWith(".overrideController") ||
+				       lower.EndsWith(".mask");
 			}).ToList();
 		}
 
@@ -142,9 +142,9 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return (computeShaders && lower.EndsWith(".compute")) ||
-					   (shaderGraphs && lower.EndsWith(".shadergraph")) ||
-					   (shaderVariants && lower.EndsWith(".shadervariants")) ||
-					   (shaders && lower.EndsWith(".shader"));
+				       (shaderGraphs && lower.EndsWith(".shadergraph")) ||
+				       (shaderVariants && lower.EndsWith(".shadervariants")) ||
+				       (shaders && lower.EndsWith(".shader"));
 			}).ToList();
 		}
 
@@ -154,17 +154,17 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".cubemap") ||
-					   lower.EndsWith(".bmp") ||
-					   lower.EndsWith(".exr") ||
-					   lower.EndsWith(".gif") ||
-					   lower.EndsWith(".hdr") ||
-					   lower.EndsWith(".iff") ||
-					   lower.EndsWith(".jpg") ||
-					   lower.EndsWith(".pict") ||
-					   lower.EndsWith(".png") ||
-					   lower.EndsWith(".psd") ||
-					   lower.EndsWith(".tga") ||
-					   lower.EndsWith(".tiff");
+				       lower.EndsWith(".bmp") ||
+				       lower.EndsWith(".exr") ||
+				       lower.EndsWith(".gif") ||
+				       lower.EndsWith(".hdr") ||
+				       lower.EndsWith(".iff") ||
+				       lower.EndsWith(".jpg") ||
+				       lower.EndsWith(".pict") ||
+				       lower.EndsWith(".png") ||
+				       lower.EndsWith(".psd") ||
+				       lower.EndsWith(".tga") ||
+				       lower.EndsWith(".tiff");
 			}).ToList();
 		}
 
@@ -194,17 +194,17 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".asf") ||
-					   lower.EndsWith(".avi") ||
-					   lower.EndsWith(".dv") ||
-					   lower.EndsWith(".m4v") ||
-					   lower.EndsWith(".mov") ||
-					   lower.EndsWith(".mp4") ||
-					   lower.EndsWith(".mpg") ||
-					   lower.EndsWith(".mpeg") ||
-					   lower.EndsWith(".ogv") ||
-					   lower.EndsWith(".vp8") ||
-					   lower.EndsWith(".webm") ||
-					   lower.EndsWith(".wmv");
+				       lower.EndsWith(".avi") ||
+				       lower.EndsWith(".dv") ||
+				       lower.EndsWith(".m4v") ||
+				       lower.EndsWith(".mov") ||
+				       lower.EndsWith(".mp4") ||
+				       lower.EndsWith(".mpg") ||
+				       lower.EndsWith(".mpeg") ||
+				       lower.EndsWith(".ogv") ||
+				       lower.EndsWith(".vp8") ||
+				       lower.EndsWith(".webm") ||
+				       lower.EndsWith(".wmv");
 			}).ToList();
 		}
 
@@ -214,7 +214,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".guiskin") ||
-					   lower.EndsWith(".fontsettings");
+				       lower.EndsWith(".fontsettings");
 			}).ToList();
 		}
 
@@ -224,15 +224,15 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".mixer") ||
-					   lower.EndsWith(".mp3") ||
-					   lower.EndsWith(".ogg") ||
-					   lower.EndsWith(".wav") ||
-					   lower.EndsWith(".aiff ") ||
-					   lower.EndsWith(".aif") ||
-					   lower.EndsWith(".mod") ||
-					   lower.EndsWith(".it") ||
-					   lower.EndsWith(".s3m") ||
-					   lower.EndsWith(".xm");
+				       lower.EndsWith(".mp3") ||
+				       lower.EndsWith(".ogg") ||
+				       lower.EndsWith(".wav") ||
+				       lower.EndsWith(".aiff ") ||
+				       lower.EndsWith(".aif") ||
+				       lower.EndsWith(".mod") ||
+				       lower.EndsWith(".it") ||
+				       lower.EndsWith(".s3m") ||
+				       lower.EndsWith(".xm");
 			}).ToList();
 		}
 
@@ -242,7 +242,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var lower = item.ToLowerInvariant();
 				return lower.EndsWith(".physicMaterial") ||
-					   lower.EndsWith(".physicsMaterial2D");
+				       lower.EndsWith(".physicsMaterial2D");
 			}).ToList();
 		}
 
@@ -258,8 +258,8 @@ namespace Extenity.AssetToolbox.Editor
 		public static List<string> GetAllScriptAssetPathsOfType(ScriptType scriptType)
 		{
 			return GetAllScriptAssetPaths()
-				.Where(scriptPath => CompilationPipelineTools.GetScriptType(scriptPath) == scriptType)
-				.ToList();
+			       .Where(scriptPath => CompilationPipelineTools.GetScriptType(scriptPath) == scriptType)
+			       .ToList();
 		}
 
 		#endregion
@@ -608,7 +608,9 @@ namespace Extenity.AssetToolbox.Editor
 							lines[iLine] = "";
 						}
 						cursor = 0;
-						if (++iLine >= lines.Length) break; line = lines[iLine];
+						if (++iLine >= lines.Length)
+							break;
+						line = lines[iLine];
 					}
 					else
 					{
@@ -645,13 +647,17 @@ namespace Extenity.AssetToolbox.Editor
 
 						// Continue from the next line.
 						cursor = 0;
-						if (++iLine >= lines.Length) break; line = lines[iLine];
+						if (++iLine >= lines.Length)
+							break;
+						line = lines[iLine];
 					}
 					else
 					{
 						// No comments on this line. Continue from the next line.
 						cursor = 0;
-						if (++iLine >= lines.Length) break; line = lines[iLine];
+						if (++iLine >= lines.Length)
+							break;
+						line = lines[iLine];
 					}
 				}
 			}

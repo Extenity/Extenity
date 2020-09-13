@@ -267,8 +267,10 @@ namespace Extenity.FileSystemToolbox
 			{
 				case BackwardSlash:
 					return path.Replace(ForwardSlash, separator);
+
 				case ForwardSlash:
 					return path.Replace(BackwardSlash, separator);
+
 				default:
 					return path.Replace(ForwardSlash, separator).Replace(BackwardSlash, separator);
 			}
