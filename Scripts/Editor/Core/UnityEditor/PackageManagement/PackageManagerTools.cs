@@ -219,7 +219,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[Serializable]
 		private class NameOnlyPackageManifest
 		{
-			public string name;
+			public string name = null;
 		}
 
 		public static string GetPackageNameInManifestJson(string manifestPath)
