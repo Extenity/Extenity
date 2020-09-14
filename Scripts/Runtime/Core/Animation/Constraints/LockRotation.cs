@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Extenity.AnimationToolbox.ScriptedAnimations
+namespace Extenity.AnimationToolbox
 {
 
 	public class LockRotation : MonoBehaviour
