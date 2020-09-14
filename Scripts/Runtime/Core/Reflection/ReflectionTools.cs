@@ -55,6 +55,24 @@ namespace Extenity.ReflectionToolbox
 
 		#region Method
 
+		public static bool IsGetter(this MethodInfo method)
+		{
+			return method.IsSpecialName &&
+			       method.Name.StartsWith("get_");
+		}
+
+		public static bool IsSetter(this MethodInfo method)
+		{
+			return method.IsSpecialName &&
+			       method.Name.StartsWith("set_");
+		}
+
+		public static bool IsGetterOrSetter(this MethodInfo method)
+		{
+			return method.IsSpecialName &&
+			       (method.Name.StartsWith("get_") || method.Name.StartsWith("set_"));
+		}
+
 		public static bool CompareMethodParameters(this ParameterInfo[] params1, ParameterInfo[] params2, bool compareParameterNames = false)
 		{
 			if (params1 == null)
