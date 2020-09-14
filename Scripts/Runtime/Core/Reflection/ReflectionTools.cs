@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
@@ -1485,6 +1486,176 @@ namespace Extenity.ReflectionToolbox
 					return true;
 			}
 			return false;
+		}
+
+		#endregion
+
+		#region ToStringDetails
+
+		public static void ToStringDetails(this Assembly assembly, StringBuilder stringBuilder)
+		{
+			var types = assembly.GetTypes();
+			foreach (var type in types)
+			{
+				stringBuilder.Append("Type: ");
+				stringBuilder.Append(type.FullName);
+				stringBuilder.AppendLine();
+				type.ToStringDetails(stringBuilder);
+			}
+		}
+
+		public static void ToStringDetails(this Type type, StringBuilder stringBuilder)
+		{
+			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Static |
+			                                  BindingFlags.Public | BindingFlags.NonPublic |
+			                                  BindingFlags.DeclaredOnly;
+			var fields = type.GetFields(bindingFlags);
+			var properties = type.GetProperties(bindingFlags);
+			var methods = type.GetMethods(bindingFlags);
+
+			for (var i = 0; i < fields.Length; i++)
+			{
+				stringBuilder.Append("F ");
+				fields[i].ToStringDetails(stringBuilder);
+				stringBuilder.AppendLine();
+			}
+
+			for (var i = 0; i < properties.Length; i++)
+			{
+				var getMethod = properties[i].GetMethod;
+				if (getMethod != null)
+				{
+					stringBuilder.Append("P ");
+					getMethod.ToStringDetails(stringBuilder);
+					stringBuilder.AppendLine();
+				}
+				var setMethod = properties[i].SetMethod;
+				if (setMethod != null)
+				{
+					stringBuilder.Append("P ");
+					setMethod.ToStringDetails(stringBuilder);
+					stringBuilder.AppendLine();
+				}
+			}
+
+			for (var i = 0; i < methods.Length; i++)
+			{
+				if (!methods[i].IsGetterOrSetter())
+				{
+					stringBuilder.Append("M ");
+					methods[i].ToStringDetails(stringBuilder);
+					stringBuilder.AppendLine();
+				}
+			}
+		}
+
+		public static void ToStringDetails(this MethodInfo method, StringBuilder stringBuilder)
+		{
+			if (method == null)
+			{
+				stringBuilder.Append("[NA]");
+				return;
+			}
+			if (method.IsPublic)
+				stringBuilder.Append("public ");
+			if (method.IsPrivate)
+				stringBuilder.Append("private ");
+			if (method.IsFamily)
+				stringBuilder.Append("protected ");
+			if (method.IsAbstract)
+				stringBuilder.Append("abstract ");
+			if (method.IsVirtual)
+				stringBuilder.Append("virtual ");
+			if (method.IsFinal)
+				stringBuilder.Append("final ");
+			if (method.IsStatic)
+				stringBuilder.Append("static ");
+			if (method.IsConstructor)
+				stringBuilder.Append("constructor ");
+			if (method.IsGenericMethodDefinition)
+				stringBuilder.Append("definition ");
+
+			method.ReturnParameter.ToStringDetails(stringBuilder);
+			stringBuilder.Append(" ");
+
+			stringBuilder.Append(method.Name);
+
+			if (method.IsGenericMethod)
+			{
+				method.ToStringGenericArguments(stringBuilder);
+			}
+
+			stringBuilder.Append("(");
+			method.ToStringParameters(stringBuilder);
+			stringBuilder.Append(")");
+		}
+
+		public static void ToStringGenericArguments(this MethodInfo method, StringBuilder stringBuilder)
+		{
+			var genericArguments = method.GetGenericArguments();
+			stringBuilder.Append("<");
+			if (genericArguments.Length > 0)
+			{
+				stringBuilder.Append(genericArguments[0].Name);
+				for (var i = 1; i < genericArguments.Length; i++)
+				{
+					stringBuilder.Append(",");
+					stringBuilder.Append(genericArguments[i].Name);
+				}
+			}
+			stringBuilder.Append(">");
+		}
+
+		public static void ToStringParameters(this MethodInfo method, StringBuilder stringBuilder)
+		{
+			var parameters = method.GetParameters();
+			if (parameters.Length > 0)
+			{
+				parameters[0].ToStringDetails(stringBuilder);
+				for (int i = 1; i < parameters.Length; i++)
+				{
+					stringBuilder.Append(", ");
+					parameters[i].ToStringDetails(stringBuilder);
+				}
+			}
+		}
+
+		public static void ToStringDetails(this ParameterInfo parameter, StringBuilder stringBuilder)
+		{
+			// parameter.IsRetval
+			if (parameter.IsIn)
+				stringBuilder.Append("in ");
+			if (parameter.IsOut)
+				stringBuilder.Append("out ");
+			stringBuilder.Append(parameter.ParameterType);
+			if (!string.IsNullOrWhiteSpace(parameter.Name))
+			{
+				stringBuilder.Append(" ");
+				stringBuilder.Append(parameter.Name);
+			}
+		}
+
+		public static void ToStringDetails(this FieldInfo field, StringBuilder stringBuilder)
+		{
+			if (field == null)
+			{
+				stringBuilder.Append("[NA]");
+				return;
+			}
+			if (field.IsPublic)
+				stringBuilder.Append("public ");
+			if (field.IsPrivate)
+				stringBuilder.Append("private ");
+			if (field.IsFamily)
+				stringBuilder.Append("protected ");
+			if (field.IsLiteral)
+				stringBuilder.Append("const ");
+			if (field.IsStatic)
+				stringBuilder.Append("static ");
+			if (field.IsInitOnly)
+				stringBuilder.Append("readonly ");
+			// TODO: See if FieldType.Name covers Tuples.
+			stringBuilder.Append(field.FieldType.Name + " " + field.Name);
 		}
 
 		#endregion
