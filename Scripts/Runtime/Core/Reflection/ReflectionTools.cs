@@ -137,8 +137,8 @@ namespace Extenity.ReflectionToolbox
 		private static MethodInfo InternalGetMethodInfo(Type type, string methodName, Type[] types)
 		{
 			var method = type.GetMethod(methodName,
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-				null, CallingConventions.Any, types, null);
+			                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+			                            null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
 				throw new Exception($"Type '{type}' does not have the method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
@@ -149,8 +149,8 @@ namespace Extenity.ReflectionToolbox
 		private static MethodInfo InternalGetStaticMethodInfo(Type type, string methodName, Type[] types)
 		{
 			var method = type.GetMethod(methodName,
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
-				null, CallingConventions.Any, types, null);
+			                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+			                            null, CallingConventions.Any, types, null);
 			if (method == null)
 			{
 				throw new Exception($"Type '{type}' does not have the static method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
@@ -984,8 +984,8 @@ namespace Extenity.ReflectionToolbox
 			}
 
 			var methodInfo = me.GetType().GetMethod(methodName,
-				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
-				null, CallingConventions.Any, methodParameters, null);
+			                                        BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance,
+			                                        null, CallingConventions.Any, methodParameters, null);
 
 			if (methodInfo == null)
 			{
@@ -1110,9 +1110,9 @@ namespace Extenity.ReflectionToolbox
 					throw new Exception($"Don't know what to do about field '{field.Name}' that has both 'NonSerialized' and 'SerializeField' attributes.");
 				}
 				if (!nonSerializedAttributeDefined && // See if the field is specified as not serialized on purpose
-					!field.IsReadOnly() && // Unity won't serialize readonly fields
-					!field.FieldType.IsDictionary() && // Unity won't serialize Dictionary fields
-					(field.IsPublic || serializeFieldAttributeDefined) // See if the field is meant to be serialized
+				    !field.IsReadOnly() && // Unity won't serialize readonly fields
+				    !field.FieldType.IsDictionary() && // Unity won't serialize Dictionary fields
+				    (field.IsPublic || serializeFieldAttributeDefined) // See if the field is meant to be serialized
 				)
 				{
 					fields.Add(field);
@@ -1474,7 +1474,6 @@ namespace Extenity.ReflectionToolbox
 		#region List.GetInternalArray
 
 #if !NET_STANDARD_2_0
-
 		// Source: https://stackoverflow.com/questions/4972951/listt-to-t-without-copying
 		private static class ArrayAccessor<T>
 		{
