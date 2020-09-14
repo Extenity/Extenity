@@ -1020,36 +1020,6 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		// TODO: Are these really necessary?
-
-		#region Get component in parent without active check
-
-		public static T GetComponentInParentRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
-		{
-			if (me == null)
-				return null;
-			for (var current = me.parent; current != null; current = current.parent)
-			{
-				var test = current.GetComponent<T>();
-				if (test != null)
-					return test;
-			}
-			return null;
-		}
-
-		public static T GetComponentInParentRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
-		{
-			for (var current = me; current != null; current = current.parent)
-			{
-				var test = current.GetComponent<T>();
-				if (test != null)
-					return test;
-			}
-			return null;
-		}
-
-		#endregion
-
 		#region FindObjectsOfTypeAll
 
 		public static List<T> FindObjectsOfTypeInActiveScene<T>(ActiveCheck activeCheck) where T : Component
