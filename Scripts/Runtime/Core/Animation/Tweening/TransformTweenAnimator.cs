@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 
 namespace Extenity.AnimationToolbox
 {
@@ -10,9 +9,9 @@ namespace Extenity.AnimationToolbox
 		public TransformTweenSetup Animation;
 
 		[HorizontalGroup("Playback/Buttons"), Button(ButtonSizes.Large, DrawResult = false)]
-		public Sequence Play()
+		public void Play()
 		{
-			return Play(Animation);
+			Play(Animation);
 		}
 
 		[HorizontalGroup("Playback/Buttons", Width = 40), Button(ButtonSizes.Large)]

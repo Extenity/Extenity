@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -19,7 +19,7 @@ namespace Extenity.AnimationToolbox
 		[NonSerialized]
 		public Sequence CurrentAnimation;
 
-		public Sequence Play(TransformTweenSetup sequence)
+		public void Play(TransformTweenSetup sequence)
 		{
 			Stop();
 			CurrentAnimation = DOTween.Sequence();
@@ -38,7 +38,6 @@ namespace Extenity.AnimationToolbox
 				CurrentAnimation.Insert(0f, tween);
 			}
 			CurrentAnimation.Play();
-			return CurrentAnimation;
 		}
 
 		public void Jump(TransformTweenSetup sequence)

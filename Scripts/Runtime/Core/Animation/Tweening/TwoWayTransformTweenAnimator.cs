@@ -12,9 +12,9 @@ namespace Extenity.AnimationToolbox
 		public TransformTweenSetup AnimationToA;
 
 		[HorizontalGroup("Playback/Buttons/ToB"), Button(ButtonSizes.Large, Name = "Play to B", DrawResult = false)]
-		public Sequence PlayToB()
+		public void PlayToB()
 		{
-			return Play(AnimationToB);
+			Play(AnimationToB);
 		}
 
 		[HorizontalGroup("Playback/Buttons/ToB", Width = 40), Button(ButtonSizes.Large, Name = "Jump")]
@@ -24,9 +24,9 @@ namespace Extenity.AnimationToolbox
 		}
 
 		[HorizontalGroup("Playback/Buttons/ToA"), Button(ButtonSizes.Large, Name = "Play to A", DrawResult = false)]
-		public Sequence PlayToA()
+		public void PlayToA()
 		{
-			return Play(AnimationToA);
+			Play(AnimationToA);
 		}
 
 		[HorizontalGroup("Playback/Buttons/ToA", Width = 40), Button(ButtonSizes.Large, Name = "Jump")]
