@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -10,7 +10,6 @@ namespace Extenity.AnimationToolbox
 	{
 		#region Transformed Object
 
-		[ChildGameObjectsOnly]
 		public Transform Transform;
 
 		#endregion
