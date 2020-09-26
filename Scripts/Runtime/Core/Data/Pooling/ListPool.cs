@@ -66,6 +66,7 @@ namespace Extenity.DataToolbox
 					list = Pool[index];
 					Pool.RemoveAt(index);
 
+					// Just roughly try to detect if the list is referenced and used elsewhere.
 					if (list.Count != 0)
 					{
 						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
@@ -76,8 +77,9 @@ namespace Extenity.DataToolbox
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>();
-						Log.CriticalError("Detected a usage of released list.");
+						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
 					}
+					return new ListDisposer<T>(list);
 				}
 			}
 			list = new List<T>(capacity);
@@ -95,6 +97,7 @@ namespace Extenity.DataToolbox
 					list = Pool[index];
 					Pool.RemoveAt(index);
 
+					// Just roughly try to detect if the list is referenced and used elsewhere.
 					if (list.Count != 0)
 					{
 						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
@@ -105,8 +108,9 @@ namespace Extenity.DataToolbox
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>();
-						Log.CriticalError("Detected a usage of released list.");
+						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
 					}
+					return;
 				}
 			}
 			list = new List<T>(capacity);
