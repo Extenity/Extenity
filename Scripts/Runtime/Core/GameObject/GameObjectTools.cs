@@ -34,10 +34,10 @@ namespace Extenity.GameObjectToolbox
 	{
 		#region Create
 
-		public static GameObject CreateOrGetGameObject(string name)
+		public static GameObject GetOrCreateGameObject(string name)
 		{
 			var go = GameObject.Find(name);
-			if (go != null)
+			if (go)
 				return go;
 			return new GameObject(name);
 		}
