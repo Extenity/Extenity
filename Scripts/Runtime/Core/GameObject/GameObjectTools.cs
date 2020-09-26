@@ -122,18 +122,14 @@ namespace Extenity.GameObjectToolbox
 				return;
 
 			var gameObject = component.gameObject;
-			var hasChildren = gameObject.transform.childCount > 0;
-			if (!hasChildren) // Make sure the gameobject has no sub gameobjects
+			if (gameObject.HasNoComponentAndNoChild())
 			{
-				var componentCount = gameObject.GetComponents<Component>().Length;
-				if (componentCount == 2) // 1 for Transform and 1 for the 'component'
-				{
-					Destroy(gameObject, historySaveType);
-					return;
-				}
+				Destroy(gameObject, historySaveType);
 			}
-
-			Destroy(component, historySaveType);
+			else
+			{
+				Destroy(component, historySaveType);
+			}
 		}
 
 		public static void DestroyImmediateComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
@@ -142,18 +138,14 @@ namespace Extenity.GameObjectToolbox
 				return;
 
 			var gameObject = component.gameObject;
-			var hasChildren = gameObject.transform.childCount > 0;
-			if (!hasChildren) // Make sure the gameobject has no sub gameobjects
+			if (gameObject.HasNoComponentAndNoChild())
 			{
-				var componentCount = gameObject.GetComponents<Component>().Length;
-				if (componentCount == 2) // 1 for Transform and 1 for the 'component'
-				{
-					DestroyImmediate(gameObject, historySaveType);
-					return;
-				}
+				DestroyImmediate(gameObject, historySaveType);
 			}
-
-			DestroyImmediate(component, historySaveType);
+			else
+			{
+				DestroyImmediate(component, historySaveType);
+			}
 		}
 
 		#endregion
