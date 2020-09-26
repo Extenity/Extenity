@@ -47,12 +47,14 @@ namespace Extenity.FlowToolbox
 
 				if (invokeTime < 0)
 				{
-					Log.Warning($"Received negative invoke time '{invokeTime}'.");
+					if (VerboseLoggingForNegativeTimes)
+						Log.Warning($"Received negative invoke time '{invokeTime}'.");
 					invokeTime = 0;
 				}
 				if (repeatRate < 0)
 				{
-					Log.Warning($"Received negative repeat rate '{repeatRate}'.");
+					if (VerboseLoggingForNegativeTimes)
+						Log.Warning($"Received negative repeat rate '{repeatRate}'.");
 					repeatRate = 0;
 				}
 
@@ -944,6 +946,7 @@ namespace Extenity.FlowToolbox
 
 		#region Verbose Logging
 
+		public static bool VerboseLoggingForNegativeTimes = true;
 #if UNITY_EDITOR
 		public static bool VerboseLoggingInEachUpdate;
 		public static bool VerboseLoggingInEachFixedUpdate;

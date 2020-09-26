@@ -114,6 +114,8 @@ namespace ExtenityTests.FlowToolbox
 				DeinitializeBase();
 			}
 
+			FastInvokeHandler.VerboseLoggingForNegativeTimes = false;
+
 			if (startAtRandomTime)
 			{
 				// This will make tests start at a random Time.time.
@@ -200,9 +202,7 @@ namespace ExtenityTests.FlowToolbox
 				yield return doInvoke(0, startAtRandomTime);
 				AssertExpectNoLogs();
 				yield return doInvoke(-1, startAtRandomTime); // Negative time counts as 0
-				AssertExpectLog((LogType.Warning, "Received negative invoke time '-1'."));
 				yield return doInvoke(-6128, startAtRandomTime); // Negative time counts as 0
-				AssertExpectLog((LogType.Warning, "Received negative invoke time '-6128'."));
 			}
 		}
 

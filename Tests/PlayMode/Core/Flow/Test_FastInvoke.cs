@@ -69,9 +69,7 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 0.5); callCount++;
 			Subject.FastInvoke(Subject.Callback, Time.fixedDeltaTime * 1.5); callCount++;
 			Subject.FastInvoke(Subject.Callback, 100.0); callCount++;
-			AssertExpectNoLogs();
 			Subject.FastInvoke(Subject.Callback, -1.0); callCount++;
-			AssertExpectLog((LogType.Warning, "Received negative invoke time '-1'."));
 
 			// No invoke or fixed update after just calling the FastInvoke. They are still all zeros.
 			// The calls are just queued and waiting until next FixedUpdate.
@@ -117,12 +115,7 @@ namespace ExtenityTests.FlowToolbox
 			{
 				yield return InitializeTest(false);
 
-				AssertExpectNoLogs();
 				Subject.FastInvoke(Subject.Callback, delay);
-				if (delay < 0)
-				{
-					AssertExpectLog((LogType.Warning, $"Received negative invoke time '{delay}'."));
-				}
 
 				// Invoke should be set to be called.
 				Assert.AreEqual(0, Subject.CallbackCallCount);
