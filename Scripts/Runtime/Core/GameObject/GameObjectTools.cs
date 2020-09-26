@@ -1537,34 +1537,38 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region Instance Count
+		#region Component Count
 
 		public static int GetComponentCount<T>(this GameObject me) where T : Component
 		{
-			var components = me.GetComponents<T>();
-			if (components == null)
-				return 0;
-			return components.Length;
+			var results = New.List<T>();
+			me.GetComponents(results);
+			var count = results.Count;
+			Release.List(ref results);
+			return count;
 		}
 
 		public static int GetComponentCount<T>(this Component me) where T : Component
 		{
-			var components = me.GetComponents<T>();
-			if (components == null)
-				return 0;
-			return components.Length;
+			var results = New.List<T>();
+			me.GetComponents(results);
+			var count = results.Count;
+			Release.List(ref results);
+			return count;
 		}
 
 		public static void EnsureOnlyOneComponentInstance<T>(this Component me) where T : Component
 		{
-			if (me.GetComponentCount<T>() != 1)
-				throw new Exception();
+			var count = me.GetComponentCount<T>();
+			if (count != 1)
+				throw new Exception($"Excepted only one '{typeof(T)}' component whereas '{count}' exist in object '{me.FullName()}'.");
 		}
 
 		public static void EnsureOnlyOneComponentInstance<T>(this GameObject me) where T : Component
 		{
-			if (me.GetComponentCount<T>() != 1)
-				throw new Exception();
+			var count = me.GetComponentCount<T>();
+			if (count != 1)
+				throw new Exception($"Excepted only one '{typeof(T)}' component whereas '{count}' exist in object '{me.FullName()}'.");
 		}
 
 		#endregion
