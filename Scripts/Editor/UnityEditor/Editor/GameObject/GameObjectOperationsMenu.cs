@@ -133,7 +133,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();
 			for (var i = 0; i < gameObjects.Count; i++)
 			{
-				gameObjects[i].SortChildren(false);
+				gameObjects[i].transform.SortChildren(false);
 			}
 		}
 
@@ -143,7 +143,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			var gameObjects = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable).Cast<GameObject>().ToList();
 			for (var i = 0; i < gameObjects.Count; i++)
 			{
-				gameObjects[i].SortChildren(true);
+				gameObjects[i].transform.SortChildren(true);
 			}
 		}
 

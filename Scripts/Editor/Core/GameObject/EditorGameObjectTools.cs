@@ -526,9 +526,9 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#region Sort Children
 
-		public static void SortChildren(this GameObject gameObject, bool inverse)
+		public static void SortChildren(this Transform transform, bool inverse)
 		{
-			var children = gameObject.transform.GetChildren().Select(child => (child, child.name)).ToList();
+			var children = transform.GetChildren().Select(child => (child, child.name)).ToList();
 
 			QuicksortAscending(children, 0, children.Count - 1);
 
@@ -536,7 +536,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			{
 				for (int i = children.Count - 1; i >= 0; --i)
 				{
-					Undo.SetTransformParent(children[i].Item1, gameObject.transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
+					Undo.SetTransformParent(children[i].Item1, transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
 					children[i].Item1.SetAsLastSibling();
 				}
 			}
@@ -544,7 +544,7 @@ namespace Extenity.GameObjectToolbox.Editor
 			{
 				for (int i = 0; i < children.Count; ++i)
 				{
-					Undo.SetTransformParent(children[i].Item1, gameObject.transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
+					Undo.SetTransformParent(children[i].Item1, transform, "Sort children"); // Not the best way to record undo, but could not find any other way that records the order of objects.
 					children[i].Item1.SetAsLastSibling();
 				}
 			}
