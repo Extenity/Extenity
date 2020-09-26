@@ -349,8 +349,13 @@ namespace Extenity.GameObjectToolbox
 		public static void ChangeLayersRecursively(this GameObject gameObject, int layer)
 		{
 			gameObject.layer = layer;
-			foreach (Transform child in gameObject.transform)
-				ChangeLayersRecursively(child.gameObject, layer);
+
+			var transform = gameObject.transform;
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
+			{
+				ChangeLayersRecursively(transform.GetChild(i).gameObject, layer);
+			}
 		}
 
 		#endregion
@@ -362,8 +367,13 @@ namespace Extenity.GameObjectToolbox
 			var renderer = gameObject.GetComponent<Renderer>();
 			if (renderer != null)
 				renderer.enabled = true;
-			foreach (Transform child in gameObject.transform)
-				EnableRenderersRecursively(child.gameObject);
+
+			var transform = gameObject.transform;
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
+			{
+				EnableRenderersRecursively(transform.GetChild(i).gameObject);
+			}
 		}
 
 		public static void DisableRenderersRecursively(this GameObject gameObject)
@@ -371,8 +381,13 @@ namespace Extenity.GameObjectToolbox
 			var renderer = gameObject.GetComponent<Renderer>();
 			if (renderer != null)
 				renderer.enabled = false;
-			foreach (Transform child in gameObject.transform)
-				DisableRenderersRecursively(child.gameObject);
+
+			var transform = gameObject.transform;
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
+			{
+				DisableRenderersRecursively(transform.GetChild(i).gameObject);
+			}
 		}
 
 		public static void SetRendererColorsRecursively(this GameObject gameObject, Color color)
@@ -380,8 +395,13 @@ namespace Extenity.GameObjectToolbox
 			var renderer = gameObject.GetComponent<Renderer>();
 			if (renderer != null)
 				renderer.material.color = color;
-			foreach (Transform child in gameObject.transform)
-				SetRendererColorsRecursively(child.gameObject, color);
+
+			var transform = gameObject.transform;
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
+			{
+				SetRendererColorsRecursively(transform.GetChild(i).gameObject, color);
+			}
 		}
 
 		public delegate Material AssignNewMaterialMethod(Renderer processingRenderer, int processingMaterialIndex);
@@ -746,9 +766,10 @@ namespace Extenity.GameObjectToolbox
 			if (me == null)
 				return null;
 
-			foreach (Transform child in me)
+			var childCount = me.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
-				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
+				T componentInChildren = me.GetChild(i).GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
 				if (componentInChildren != null)
 					return componentInChildren;
 			}
@@ -767,9 +788,10 @@ namespace Extenity.GameObjectToolbox
 					return component;
 			}
 
-			foreach (Transform child in me)
+			var childCount = me.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
-				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
+				T componentInChildren = me.GetChild(i).GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
 				if (componentInChildren != null)
 					return componentInChildren;
 			}
@@ -1264,8 +1286,10 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!transform)
 				throw new ArgumentNullException(nameof(transform));
-			foreach (Transform child in transform)
+			var childCount = transform.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
+				var child = transform.GetChild(i);
 				childHandler(child);
 				if (recursive)
 					InternalIterateChildren(child, childHandler, true);
@@ -1713,9 +1737,10 @@ namespace Extenity.GameObjectToolbox
 
 			me.position = center;
 
-			foreach (Transform child in me)
+			var childCount = me.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
-				child.localPosition += shift;
+				me.GetChild(i).localPosition += shift;
 			}
 		}
 
@@ -1726,9 +1751,10 @@ namespace Extenity.GameObjectToolbox
 
 			var value = Vector3.zero;
 
-			foreach (Transform child in me)
+			var childCount = me.childCount;
+			for (int i = 0; i < childCount; i++)
 			{
-				value += child.position;
+				value += me.GetChild(i).position;
 			}
 
 			return value / me.childCount;
