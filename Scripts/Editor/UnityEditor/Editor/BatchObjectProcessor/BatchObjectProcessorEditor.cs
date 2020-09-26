@@ -60,9 +60,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 				count++;
 			if (reference.IncludeChildren)
 			{
-				reference.Object.ForeachChildren(child =>
+				reference.Object.transform.ForeachChildren(child =>
 				{
-					if (ProcessObject(child, instruction, ref appliedModificationCount, ref appliedModifications))
+					if (ProcessObject(child.gameObject, instruction, ref appliedModificationCount, ref appliedModifications))
 						count++;
 				}, true);
 			}

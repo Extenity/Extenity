@@ -66,36 +66,6 @@ namespace Extenity.GameObjectToolbox
 			return go;
 		}
 
-		public static void CreateOrModifyGameObject(ref Transform transform, string name, Transform parent = null)
-		{
-			if (!transform)
-			{
-				transform = new GameObject(name).transform;
-			}
-			else
-			{
-				transform.gameObject.name = name;
-			}
-			transform.SetParent(parent, false);
-			transform.ResetTransformToLocalZero();
-		}
-
-		public static void CreateOrModifyGameObject(ref Transform transform, string name, Vector3 position, Quaternion rotation, Transform parent = null)
-		{
-			if (!transform)
-			{
-				transform = new GameObject(name).transform;
-			}
-			else
-			{
-				transform.gameObject.name = name;
-			}
-			transform.SetParent(parent, false);
-			transform.position = position;
-			transform.rotation = rotation;
-			transform.localScale = Vector3.one;
-		}
-
 		public static void CreateOrModifyGameObject(ref GameObject gameObject, string name, Transform parent = null)
 		{
 			if (!gameObject)
@@ -1283,24 +1253,22 @@ namespace Extenity.GameObjectToolbox
 
 		#region Iterate Children
 
-		public delegate void ChildHandler(GameObject child);
+		public delegate void ChildHandler(Transform child);
 
-		public static void ForeachChildren(this GameObject gameObject, ChildHandler childHandler, bool recursive)
+		public static void ForeachChildren(this Transform transform, ChildHandler childHandler, bool recursive)
 		{
-			if (!gameObject)
-				throw new ArgumentNullException(nameof(gameObject));
-			InternalIterateChildren(gameObject, childHandler, recursive);
+			InternalIterateChildren(transform, childHandler, recursive);
 		}
 
-		private static void InternalIterateChildren(GameObject gameObject, ChildHandler childHandler, bool recursive)
+		private static void InternalIterateChildren(Transform transform, ChildHandler childHandler, bool recursive)
 		{
-			if (!gameObject)
-				throw new ArgumentNullException(nameof(gameObject));
-			foreach (Transform child in gameObject.transform)
+			if (!transform)
+				throw new ArgumentNullException(nameof(transform));
+			foreach (Transform child in transform)
 			{
-				childHandler(child.gameObject);
+				childHandler(child);
 				if (recursive)
-					InternalIterateChildren(child.gameObject, childHandler, true);
+					InternalIterateChildren(child, childHandler, true);
 			}
 		}
 
@@ -1388,7 +1356,7 @@ namespace Extenity.GameObjectToolbox
 			{
 				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 			}
-			return me.gameObject.GetSingleComponentEnsured<T>();
+			return me.gameObject.InternalGetSingleComponentEnsured<T>();
 		}
 
 		public static T GetSingleComponentEnsured<T>(this GameObject me) where T : Component
@@ -1397,6 +1365,11 @@ namespace Extenity.GameObjectToolbox
 			{
 				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 			}
+			return me.InternalGetSingleComponentEnsured<T>();
+		}
+
+		private static T InternalGetSingleComponentEnsured<T>(this GameObject me) where T : Component
+		{
 			var components = me.GetComponents<T>();
 			if (components == null || components.Length == 0)
 			{
@@ -1413,12 +1386,26 @@ namespace Extenity.GameObjectToolbox
 
 		#region GetOrAddComponent
 
+		public static T GetSingleOrAddComponent<T>(this Component me) where T : Component
+		{
+			if (me == null)
+			{
+				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+			}
+			return me.gameObject.InternalGetSingleOrAddComponent<T>();
+		}
+
 		public static T GetSingleOrAddComponent<T>(this GameObject me) where T : Component
 		{
 			if (me == null)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
+			return me.InternalGetSingleOrAddComponent<T>();
+		}
+
+		private static T InternalGetSingleOrAddComponent<T>(this GameObject me) where T : Component
+		{
 			var components = me.GetComponents<T>();
 			if (components == null || components.Length == 0)
 			{
@@ -1431,12 +1418,26 @@ namespace Extenity.GameObjectToolbox
 			return components[0];
 		}
 
+		public static T GetFirstOrAddComponent<T>(this Component me) where T : Component
+		{
+			if (me == null)
+			{
+				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+			}
+			return me.gameObject.InternalGetFirstOrAddComponent<T>();
+		}
+
 		public static T GetFirstOrAddComponent<T>(this GameObject me) where T : Component
 		{
 			if (me == null)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
+			return me.InternalGetFirstOrAddComponent<T>();
+		}
+
+		private static T InternalGetFirstOrAddComponent<T>(this GameObject me) where T : Component
+		{
 			var components = me.GetComponents<T>();
 			if (components == null || components.Length == 0)
 			{
@@ -1447,7 +1448,7 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
-		#region InstantiateAndGetComponent
+		#region Instantiate GameObject
 
 		public static GameObject Instantiate(GameObject original, Transform parent, bool setTransformToLocalZero)
 		{
@@ -1983,7 +1984,7 @@ namespace Extenity.GameObjectToolbox
 		#region GameObject Name
 
 		/// <summary>
-		/// Only sets the name if it's not the same. Prevents firing hierarchy changed events in editor.
+		/// Only sets the name if it's not the same. Prevents firing hierarchy changed events in Unity Editor.
 		/// </summary>
 		public static bool SetNameIfRequired(this GameObject me, string newName)
 		{
