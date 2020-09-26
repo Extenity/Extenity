@@ -702,7 +702,7 @@ namespace Extenity.GameObjectToolbox
 			return false;
 		}
 
-		public static bool IsEmpty(this Transform transform)
+		public static bool HasNoComponentAndNoChild(this Transform transform)
 		{
 			if (!transform)
 				return false;
@@ -711,7 +711,7 @@ namespace Extenity.GameObjectToolbox
 				transform.GetComponentCount<Component>() == 1; // Only contains Transform component, which is bare minimum
 		}
 
-		public static bool IsEmpty(this GameObject gameObject)
+		public static bool HasNoComponentAndNoChild(this GameObject gameObject)
 		{
 			if (!gameObject)
 				return false;

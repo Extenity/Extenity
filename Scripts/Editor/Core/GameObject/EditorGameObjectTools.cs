@@ -227,7 +227,7 @@ namespace Extenity.GameObjectToolbox.Editor
 				for (var i = 0; i < gameObjects.Count; i++)
 				{
 					var gameObject = gameObjects[i];
-					if (!gameObject || !gameObject.IsEmpty())
+					if (!gameObject || !gameObject.HasNoComponentAndNoChild())
 						continue;
 
 					var skip = false;
