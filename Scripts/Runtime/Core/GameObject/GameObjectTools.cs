@@ -769,6 +769,45 @@ namespace Extenity.GameObjectToolbox
 
 		#endregion
 
+		#region GetComponentInChildren
+
+		public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
+		{
+			if (me == null)
+				return null;
+
+			foreach (Transform child in me)
+			{
+				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
+				if (componentInChildren != null)
+					return componentInChildren;
+			}
+			return null;
+		}
+
+		public static T GetComponentInChildrenRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
+		{
+			if (me == null)
+				return null;
+
+			//if (this.activeInHierarchy)
+			{
+				T component = me.GetComponent<T>();
+				if (component != null)
+					return component;
+			}
+
+			foreach (Transform child in me)
+			{
+				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
+				if (componentInChildren != null)
+					return componentInChildren;
+			}
+			return null;
+		}
+
+		#endregion
+
 		#region Find by path
 
 		public static T FindComponentByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
@@ -975,47 +1014,6 @@ namespace Extenity.GameObjectToolbox
 					childrenList.Add(child);
 			}
 			return childrenList;
-		}
-
-		#endregion
-
-		// TODO: Are these really necessary?
-
-		#region Get component in children without active check
-
-		public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
-		{
-			if (me == null)
-				return null;
-
-			foreach (Transform child in me)
-			{
-				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
-				if (componentInChildren != null)
-					return componentInChildren;
-			}
-			return null;
-		}
-
-		public static T GetComponentInChildrenRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
-		{
-			if (me == null)
-				return null;
-
-			//if (this.activeInHierarchy)
-			{
-				T component = me.GetComponent<T>();
-				if (component != null)
-					return component;
-			}
-
-			foreach (Transform child in me)
-			{
-				T componentInChildren = child.GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
-				if (componentInChildren != null)
-					return componentInChildren;
-			}
-			return null;
 		}
 
 		#endregion
