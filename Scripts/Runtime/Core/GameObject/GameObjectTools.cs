@@ -827,10 +827,7 @@ namespace Extenity.GameObjectToolbox
 			var found = components.FindComponentsByGameObjectPath(expectedPath);
 			if (found.Count != 1)
 			{
-				if (found.Count > 1)
-					throw new Exception($"There are more than one '{typeof(T).Name}' components at path '{expectedPath}'.");
-				else
-					throw new Exception($"There are no '{typeof(T).Name}' components at path '{expectedPath}'.");
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{found.Count}' available at path '{expectedPath}'.");
 			}
 			return found[0];
 		}
@@ -840,10 +837,7 @@ namespace Extenity.GameObjectToolbox
 			var found = components.FindComponentsByComponentPath(expectedPath);
 			if (found.Count != 1)
 			{
-				if (found.Count > 1)
-					throw new Exception($"There are more than one '{typeof(T).Name}' components at path '{expectedPath}'.");
-				else
-					throw new Exception($"There are no '{typeof(T).Name}' components at path '{expectedPath}'.");
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{found.Count}' available at path '{expectedPath}'.");
 			}
 			return found[0];
 		}
@@ -1136,7 +1130,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			var obj = Object.FindObjectOfType(type);
 			if (!obj)
-				throw new Exception("Could not find object of type '" + type.Name + "'");
+				throw new Exception($"Could not find object of type '{type.Name}'.");
 			return obj;
 		}
 
@@ -1145,29 +1139,28 @@ namespace Extenity.GameObjectToolbox
 			var type = typeof(T);
 			var obj = Object.FindObjectOfType(type);
 			if (!obj)
-				throw new Exception("Could not find object of type '" + type.Name + "'");
+				throw new Exception($"Could not find object of type '{type.Name}'.");
 			return obj as T;
 		}
 
 		public static object FindSingleObjectOfTypeEnsured(Type type)
 		{
-			var objs = Object.FindObjectsOfType(type);
-			if (objs == null || objs.Length == 0)
-				throw new Exception("Could not find object of type '" + type.Name + "'");
-			else if (objs.Length > 1)
-				throw new Exception("There are multiple instances for object of type '" + type.Name + "'");
-			return objs[0];
+			var results = Object.FindObjectsOfType(type);
+			var count = results?.Length ?? 0;
+			if (count != 1)
+				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
+			// ReSharper disable once PossibleNullReferenceException
+			return results[0];
 		}
 
 		public static T FindSingleObjectOfTypeEnsured<T>() where T : class
 		{
 			var type = typeof(T);
-			var objs = Object.FindObjectsOfType(type);
-			if (objs == null || objs.Length == 0)
-				throw new Exception("Could not find object of type '" + type.Name + "'");
-			else if (objs.Length > 1)
-				throw new Exception("There are multiple instances for object of type '" + type.Name + "'");
-			return objs[0] as T;
+			var results = Object.FindObjectsOfType(type);
+			var count = results?.Length ?? 0;
+			if (count != 1)
+				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
+			return results[0] as T;
 		}
 
 		#endregion
@@ -1178,18 +1171,18 @@ namespace Extenity.GameObjectToolbox
 		{
 			var obj = GameObject.FindWithTag(tag);
 			if (!obj)
-				throw new Exception("Could not find object with tag '" + tag + "'");
+				throw new Exception($"Could not find object with tag '{tag}'.");
 			return obj;
 		}
 
 		public static GameObject FindSingleObjectWithTagEnsured(string tag)
 		{
-			var objs = GameObject.FindGameObjectsWithTag(tag);
-			if (objs == null || objs.Length == 0)
-				throw new Exception("Could not find object with tag '" + tag + "'");
-			else if (objs.Length > 1)
-				throw new Exception("There are multiple instances for object with tag '" + tag + "'");
-			return objs[0];
+			var results = GameObject.FindGameObjectsWithTag(tag);
+			var count = results?.Length ?? 0;
+			if (count != 1)
+				throw new Exception($"Expected single object with tag '{tag}' whereas '{count}' available.");
+			// ReSharper disable once PossibleNullReferenceException
+			return results[0];
 		}
 
 		#endregion
@@ -1200,7 +1193,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			var component = me.Find(name);
 			if (!component)
-				throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
+				throw new Exception($"Could not find child '{name}' of '{me.FullGameObjectName()}'.");
 			return component;
 		}
 
@@ -1305,7 +1298,7 @@ namespace Extenity.GameObjectToolbox
 			var parent = me.parent;
 			if (!parent)
 			{
-				throw new Exception("Could not get parent of '" + me.name + "'");
+				throw new Exception($"Could not get parent of '{me.FullGameObjectName()}'.");
 			}
 			return parent;
 		}
@@ -1378,7 +1371,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.gameObject.InternalGetSingleComponentEnsured<T>();
 		}
@@ -1387,23 +1380,23 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.InternalGetSingleComponentEnsured<T>();
 		}
 
 		private static T InternalGetSingleComponentEnsured<T>(this GameObject me) where T : Component
 		{
-			var components = me.GetComponents<T>();
-			if (components == null || components.Length == 0)
+			var results = New.List<T>();
+			me.GetComponents(results);
+			if (results.Count != 1)
 			{
-				throw new Exception("Could not get component '" + typeof(T).Name + "'");
+				Release.List(ref results);
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{results.Count}' available in '{me.FullName()}'.");
 			}
-			if (components.Length != 1)
-			{
-				throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in object '" + me.name + "'");
-			}
-			return components[0];
+			var result = results[0];
+			Release.List(ref results);
+			return result;
 		}
 
 		#endregion
@@ -1414,7 +1407,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.gameObject.InternalGetSingleOrAddComponent<T>();
 		}
@@ -1423,30 +1416,35 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.InternalGetSingleOrAddComponent<T>();
 		}
 
 		private static T InternalGetSingleOrAddComponent<T>(this GameObject me) where T : Component
 		{
-			var components = me.GetComponents<T>();
-			if (components == null || components.Length == 0)
+			var results = New.List<T>();
+			me.GetComponents(results);
+			if (results.Count == 0)
 			{
+				Release.List(ref results);
 				return me.AddComponent<T>();
 			}
-			if (components.Length != 1)
+			if (results.Count > 1)
 			{
-				throw new Exception("There are more than 1 '" + typeof(T).Name + "' components in object '" + me.name + "'");
+				Release.List(ref results);
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{results.Count}' available in '{me.FullName()}'.");
 			}
-			return components[0];
+			var result = results[0];
+			Release.List(ref results);
+			return result;
 		}
 
 		public static T GetFirstOrAddComponent<T>(this Component me) where T : Component
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.gameObject.InternalGetFirstOrAddComponent<T>();
 		}
@@ -1455,19 +1453,23 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (!me)
 			{
-				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
 			}
 			return me.InternalGetFirstOrAddComponent<T>();
 		}
 
 		private static T InternalGetFirstOrAddComponent<T>(this GameObject me) where T : Component
 		{
-			var components = me.GetComponents<T>();
-			if (components == null || components.Length == 0)
+			var results = New.List<T>();
+			me.GetComponents(results);
+			if (results.Count == 0)
 			{
+				Release.List(ref results);
 				return me.AddComponent<T>();
 			}
-			return components[0];
+			var result = results[0];
+			Release.List(ref results);
+			return result;
 		}
 
 		#endregion
@@ -1561,14 +1563,18 @@ namespace Extenity.GameObjectToolbox
 		{
 			var count = me.GetComponentCount<T>();
 			if (count != 1)
-				throw new Exception($"Excepted only one '{typeof(T)}' component whereas '{count}' exist in object '{me.FullName()}'.");
+			{
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{count}' available in '{me.FullName()}'.");
+			}
 		}
 
 		public static void EnsureOnlyOneComponentInstance<T>(this GameObject me) where T : Component
 		{
 			var count = me.GetComponentCount<T>();
 			if (count != 1)
-				throw new Exception($"Excepted only one '{typeof(T)}' component whereas '{count}' exist in object '{me.FullName()}'.");
+			{
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{count}' available in '{me.FullName()}'.");
+			}
 		}
 
 		#endregion
@@ -1734,7 +1740,7 @@ namespace Extenity.GameObjectToolbox
 		public static void CenterToChildren(this Transform me)
 		{
 			if (me.childCount == 0)
-				throw new Exception("Transform has no children");
+				throw new Exception("Transform has no children.");
 
 			var center = me.CenterOfChildren();
 			var shift = me.position - center;
@@ -1751,7 +1757,7 @@ namespace Extenity.GameObjectToolbox
 		public static Vector3 CenterOfChildren(this Transform me)
 		{
 			if (me.childCount == 0)
-				throw new Exception("Transform has no children");
+				throw new Exception("Transform has no children.");
 
 			var value = Vector3.zero;
 
