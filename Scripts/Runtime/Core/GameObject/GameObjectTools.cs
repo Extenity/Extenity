@@ -118,7 +118,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static void DestroyComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			if (component == null)
+			if (!component)
 				return;
 
 			var gameObject = component.gameObject;
@@ -138,7 +138,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static void DestroyImmediateComponentThenGameObjectIfNoneLeft(Component component, HistorySaveType historySaveType = HistorySaveType.Save)
 		{
-			if (component == null)
+			if (!component)
 				return;
 
 			var gameObject = component.gameObject;
@@ -330,7 +330,7 @@ namespace Extenity.GameObjectToolbox
 				DestroyImmediate(go.GetComponent<Collider>());
 			}
 			go.name = gameObjectName;
-			if (parent != null)
+			if (parent)
 			{
 				go.transform.parent = parent;
 			}
@@ -365,7 +365,7 @@ namespace Extenity.GameObjectToolbox
 		public static void EnableRenderersRecursively(this GameObject gameObject)
 		{
 			var renderer = gameObject.GetComponent<Renderer>();
-			if (renderer != null)
+			if (renderer)
 				renderer.enabled = true;
 
 			var transform = gameObject.transform;
@@ -379,7 +379,7 @@ namespace Extenity.GameObjectToolbox
 		public static void DisableRenderersRecursively(this GameObject gameObject)
 		{
 			var renderer = gameObject.GetComponent<Renderer>();
-			if (renderer != null)
+			if (renderer)
 				renderer.enabled = false;
 
 			var transform = gameObject.transform;
@@ -393,7 +393,7 @@ namespace Extenity.GameObjectToolbox
 		public static void SetRendererColorsRecursively(this GameObject gameObject, Color color)
 		{
 			var renderer = gameObject.GetComponent<Renderer>();
-			if (renderer != null)
+			if (renderer)
 				renderer.material.color = color;
 
 			var transform = gameObject.transform;
@@ -458,7 +458,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < renderers.Length; i++)
 			{
 				var renderer = renderers[i];
-				if (renderer != null)
+				if (renderer)
 				{
 					if (initialization)
 					{
@@ -488,8 +488,8 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < meshFilters.Length; i++)
 			{
 				var meshFilter = meshFilters[i];
-				var sharedMesh = meshFilter != null ? meshFilter.sharedMesh : null;
-				if (sharedMesh != null)
+				var sharedMesh = meshFilter ? meshFilter.sharedMesh : null;
+				if (sharedMesh)
 				{
 					if (initialization)
 					{
@@ -518,8 +518,8 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < meshFilters.Length; i++)
 			{
 				var meshFilter = meshFilters[i];
-				var sharedMesh = meshFilter != null ? meshFilter.sharedMesh : null;
-				if (sharedMesh != null)
+				var sharedMesh = meshFilter ? meshFilter.sharedMesh : null;
+				if (sharedMesh)
 				{
 					if (initialization)
 					{
@@ -548,7 +548,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < colliders.Length; i++)
 			{
 				var collider = colliders[i];
-				if (collider != null)
+				if (collider)
 				{
 					if (initialization)
 					{
@@ -570,9 +570,9 @@ namespace Extenity.GameObjectToolbox
 
 		public static bool IsChildOf(this Transform me, Transform parent, bool checkSelf = true)
 		{
-			if (me == null)
+			if (!me)
 				throw new ArgumentNullException(nameof(me));
-			if (parent == null)
+			if (!parent)
 				throw new ArgumentNullException(nameof(parent));
 
 			if (checkSelf)
@@ -600,7 +600,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (list == null)
 				throw new ArgumentNullException(nameof(list));
-			if (parent == null)
+			if (!parent)
 				throw new ArgumentNullException(nameof(parent));
 
 			for (int i = 0; i < list.Length; i++)
@@ -620,7 +620,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (list == null)
 				throw new ArgumentNullException(nameof(list));
-			if (parent == null)
+			if (!parent)
 				throw new ArgumentNullException(nameof(parent));
 
 			for (int i = 0; i < list.Length; i++)
@@ -635,9 +635,9 @@ namespace Extenity.GameObjectToolbox
 
 		public static bool IsParentOf(this Transform me, Transform child, bool checkSelf = true)
 		{
-			if (me == null)
+			if (!me)
 				throw new ArgumentNullException(nameof(me));
-			if (child == null)
+			if (!child)
 				throw new ArgumentNullException(nameof(child));
 
 			return child.IsChildOf(me, checkSelf);
@@ -648,9 +648,9 @@ namespace Extenity.GameObjectToolbox
 		/// </summary>
 		public static bool IsSiblingComponent(this Component me, Component other)
 		{
-			if (me == null)
+			if (!me)
 				throw new ArgumentNullException(nameof(me));
-			if (other == null)
+			if (!other)
 				return false;
 
 			var components = me.transform.GetComponents<Component>();
@@ -664,9 +664,9 @@ namespace Extenity.GameObjectToolbox
 
 		public static bool HasComponent(this GameObject gameObject, Component component)
 		{
-			if (gameObject == null)
+			if (!gameObject)
 				throw new ArgumentNullException(nameof(gameObject));
-			if (component == null)
+			if (!component)
 				return false;
 
 			return component.gameObject == gameObject;
@@ -679,7 +679,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			if (objects == null)
 				return false;
-			if (component == null)
+			if (!component)
 				return false;
 
 			foreach (var obj in objects)
@@ -690,7 +690,7 @@ namespace Extenity.GameObjectToolbox
 
 				// Check if the component is attached to a gameobject.
 				var gameObject = obj as GameObject;
-				if (gameObject != null) // Ignore if not a gameobject
+				if (gameObject) // Ignore if not a gameobject
 				{
 					if (gameObject.HasComponent(component))
 					{
@@ -763,14 +763,14 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetComponentInChildrenRecursiveWithoutActiveCheckExcludingThis<T>(this Transform me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 				return null;
 
 			var childCount = me.childCount;
 			for (int i = 0; i < childCount; i++)
 			{
 				T componentInChildren = me.GetChild(i).GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
-				if (componentInChildren != null)
+				if (componentInChildren)
 					return componentInChildren;
 			}
 			return null;
@@ -778,13 +778,13 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetComponentInChildrenRecursiveWithoutActiveCheck<T>(this Transform me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 				return null;
 
 			//if (this.activeInHierarchy)
 			{
 				T component = me.GetComponent<T>();
-				if (component != null)
+				if (component)
 					return component;
 			}
 
@@ -792,7 +792,7 @@ namespace Extenity.GameObjectToolbox
 			for (int i = 0; i < childCount; i++)
 			{
 				T componentInChildren = me.GetChild(i).GetComponentInChildrenRecursiveWithoutActiveCheck<T>();
-				if (componentInChildren != null)
+				if (componentInChildren)
 					return componentInChildren;
 			}
 			return null;
@@ -862,7 +862,7 @@ namespace Extenity.GameObjectToolbox
 			{
 				var child = me.GetChild(i);
 				var found = child.FindChildByCustomRule(customRuleDelegate);
-				if (found != null)
+				if (found)
 					return found;
 			}
 			return null;
@@ -893,7 +893,7 @@ namespace Extenity.GameObjectToolbox
 			{
 				var child = me.GetChild(i);
 				var found = child.FindChildByNameRecursive(value);
-				if (found != null)
+				if (found)
 					return found;
 			}
 			return null;
@@ -1135,7 +1135,7 @@ namespace Extenity.GameObjectToolbox
 		public static object FindObjectOfTypeEnsured(Type type)
 		{
 			var obj = Object.FindObjectOfType(type);
-			if (obj == null)
+			if (!obj)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			return obj;
 		}
@@ -1144,7 +1144,7 @@ namespace Extenity.GameObjectToolbox
 		{
 			var type = typeof(T);
 			var obj = Object.FindObjectOfType(type);
-			if (obj == null)
+			if (!obj)
 				throw new Exception("Could not find object of type '" + type.Name + "'");
 			return obj as T;
 		}
@@ -1177,7 +1177,7 @@ namespace Extenity.GameObjectToolbox
 		public static GameObject FindObjectWithTagEnsured(string tag)
 		{
 			var obj = GameObject.FindWithTag(tag);
-			if (obj == null)
+			if (!obj)
 				throw new Exception("Could not find object with tag '" + tag + "'");
 			return obj;
 		}
@@ -1199,7 +1199,7 @@ namespace Extenity.GameObjectToolbox
 		public static Transform FindChildEnsured(this Transform me, string name)
 		{
 			var component = me.Find(name);
-			if (component == null)
+			if (!component)
 				throw new Exception("Could not find child '" + name + "' of '" + me.name + "'");
 			return component;
 		}
@@ -1303,7 +1303,7 @@ namespace Extenity.GameObjectToolbox
 		public static Transform GetParentEnsured(this Transform me)
 		{
 			var parent = me.parent;
-			if (parent == null)
+			if (!parent)
 			{
 				throw new Exception("Could not get parent of '" + me.name + "'");
 			}
@@ -1376,7 +1376,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetSingleComponentEnsured<T>(this Component me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 			}
@@ -1385,7 +1385,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetSingleComponentEnsured<T>(this GameObject me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get component '" + typeof(T).Name + "' of a null object");
 			}
@@ -1412,7 +1412,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetSingleOrAddComponent<T>(this Component me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
@@ -1421,7 +1421,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetSingleOrAddComponent<T>(this GameObject me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
@@ -1444,7 +1444,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetFirstOrAddComponent<T>(this Component me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
@@ -1453,7 +1453,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T GetFirstOrAddComponent<T>(this GameObject me) where T : Component
 		{
-			if (me == null)
+			if (!me)
 			{
 				throw new Exception("Tried to get or add component '" + typeof(T).Name + "' for a null object");
 			}
