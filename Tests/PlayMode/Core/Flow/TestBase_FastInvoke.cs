@@ -198,8 +198,11 @@ namespace ExtenityTests.FlowToolbox
 			for (int i = 0; i < repeats; i++)
 			{
 				yield return doInvoke(0, startAtRandomTime);
-				yield return doInvoke(-1, startAtRandomTime);
-				yield return doInvoke(-6128, startAtRandomTime);
+				AssertExpectNoLogs();
+				yield return doInvoke(-1, startAtRandomTime); // Negative time counts as 0
+				AssertExpectLog((LogType.Warning, "Received negative invoke time '-1'."));
+				yield return doInvoke(-6128, startAtRandomTime); // Negative time counts as 0
+				AssertExpectLog((LogType.Warning, "Received negative invoke time '-6128'."));
 			}
 		}
 
