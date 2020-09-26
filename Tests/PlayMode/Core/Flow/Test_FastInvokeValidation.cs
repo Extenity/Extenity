@@ -1,5 +1,9 @@
 ﻿using System.Collections;
+using System.Globalization;
+using System.Linq;
+using Extenity.DataToolbox;
 using Extenity.FlowToolbox;
+using Extenity.MathToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine;
@@ -31,18 +35,29 @@ namespace ExtenityTests.FlowToolbox
 					yield return new WaitForFixedUpdate();
 				}
 
-				var previous = Time.time;
-				var fixedDeltaTime = Time.fixedDeltaTime;
+				var previous = (double)Time.time;
+				var fixedDeltaTime = (double)Time.fixedDeltaTime;
+
+				var diffHistory = New.List<double>();
 
 				for (int i = 0; i < 20; i++)
 				{
 					yield return new WaitForFixedUpdate();
-					var now = Time.time;
+					var now = (double)Time.time;
 					var diff = now - previous;
-					Assert.AreEqual(fixedDeltaTime, diff, FastInvokeHandler.Tolerance);
+					diffHistory.Add(diff);
+					if (!diff.IsAlmostEqual(fixedDeltaTime, FastInvokeHandler.Tolerance))
+					{
+						Assert.Fail($"Failed at {i}. iteration. Details:\n" +
+						            $"FixedDeltaTime: {fixedDeltaTime}\n" +
+						            $"Tolerance: {FastInvokeHandler.Tolerance}\n" +
+						            $"Diff: {diff}\n" +
+						            $"Max: {fixedDeltaTime + FastInvokeHandler.Tolerance}\n" +
+						            $"Min: {fixedDeltaTime - FastInvokeHandler.Tolerance}\n" +
+						            "Diff history:\n" + string.Join("\n", diffHistory.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+					}
 					previous = now;
 				}
-
 			}
 		}
 
