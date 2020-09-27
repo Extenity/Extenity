@@ -225,16 +225,16 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				var fullList = new List<string>();
+				var fullList = New.List<string>();
 				var log = new StringBuilder();
 
 				Log.Info("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
 				var list = AssetTools.GetSelectedAssetPaths(true);
-				InternalAddToAssetList(list, fullList, "Selected Assets", log);
+				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
 
 				Log.Info(log.ToString());
 
-				ReserializeAssets(fullList);
+				ReserializeAssets(ref fullList);
 			};
 		}
 
@@ -243,15 +243,15 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				var fullList = new List<string>();
+				var fullList = New.List<string>();
 				var log = new StringBuilder();
 
 				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith(EditorApplicationTools.ProjectSettingsDirectory)).ToList();
-				InternalAddToAssetList(list, fullList, "Selected Assets", log);
+				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
 
 				Log.Info(log.ToString());
 
-				ReserializeAssets(fullList);
+				ReserializeAssets(ref fullList);
 			};
 		}
 
@@ -260,7 +260,8 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(AssetDatabase.GetAllAssetPaths());
+				var list = AssetDatabase.GetAllAssetPaths().ToPooledList();
+				ReserializeAssets(ref list);
 			};
 		}
 
@@ -328,87 +329,87 @@ namespace Extenity.AssetToolbox.Editor
 			bool script
 		)
 		{
-			var fullList = new List<string>();
+			var fullList = New.List<string>();
 			var log = new StringBuilder();
 			if (scenes)
 			{
 				var list = AssetTools.GetAllSceneAssetPaths();
-				InternalAddToAssetList(list, fullList, "Scenes", log);
+				InternalAddToAssetList(ref list, fullList, "Scenes", log);
 			}
 			if (prefabs)
 			{
 				var list = AssetTools.GetAllPrefabAssetPaths();
-				InternalAddToAssetList(list, fullList, "Prefabs", log);
+				InternalAddToAssetList(ref list, fullList, "Prefabs", log);
 			}
 			if (models)
 			{
 				var list = AssetTools.GetAllModelAssetPaths();
-				InternalAddToAssetList(list, fullList, "Models", log);
+				InternalAddToAssetList(ref list, fullList, "Models", log);
 			}
 			if (animations)
 			{
 				var list = AssetTools.GetAllAnimationAssetPaths();
-				InternalAddToAssetList(list, fullList, "Animations", log);
+				InternalAddToAssetList(ref list, fullList, "Animations", log);
 			}
 			if (materials)
 			{
 				var list = AssetTools.GetAllMaterialAssetPaths();
-				InternalAddToAssetList(list, fullList, "Materials", log);
+				InternalAddToAssetList(ref list, fullList, "Materials", log);
 			}
 			if (shaders)
 			{
 				var list = AssetTools.GetAllShaderAssetPaths(true, true, true, true);
-				InternalAddToAssetList(list, fullList, "Shaders", log);
+				InternalAddToAssetList(ref list, fullList, "Shaders", log);
 			}
 			if (textures)
 			{
 				var list = AssetTools.GetAllTextureAssetPaths();
-				InternalAddToAssetList(list, fullList, "Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Textures", log);
 			}
 			if (proceduralTextures)
 			{
 				var list = AssetTools.GetAllProceduralTextureAssetPaths();
-				InternalAddToAssetList(list, fullList, "Procedural Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Procedural Textures", log);
 			}
 			if (renderTextures)
 			{
 				var list = AssetTools.GetAllRenderTextureAssetPaths();
-				InternalAddToAssetList(list, fullList, "Render Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Render Textures", log);
 			}
 			if (lightmap)
 			{
 				var list = AssetTools.GetAllLightmapAssetPaths();
-				InternalAddToAssetList(list, fullList, "Lightmaps", log);
+				InternalAddToAssetList(ref list, fullList, "Lightmaps", log);
 			}
 			if (flares)
 			{
 				var list = AssetTools.GetAllFlareAssetPaths();
-				InternalAddToAssetList(list, fullList, "Flares", log);
+				InternalAddToAssetList(ref list, fullList, "Flares", log);
 			}
 			if (videos)
 			{
 				var list = AssetTools.GetAllVideoAssetPaths();
-				InternalAddToAssetList(list, fullList, "Videos", log);
+				InternalAddToAssetList(ref list, fullList, "Videos", log);
 			}
 			if (ui)
 			{
 				var list = AssetTools.GetAllUIAssetPaths();
-				InternalAddToAssetList(list, fullList, "UI", log);
+				InternalAddToAssetList(ref list, fullList, "UI", log);
 			}
 			if (audio)
 			{
 				var list = AssetTools.GetAllAudioAssetPaths();
-				InternalAddToAssetList(list, fullList, "Audio", log);
+				InternalAddToAssetList(ref list, fullList, "Audio", log);
 			}
 			if (physics)
 			{
 				var list = AssetTools.GetAllPhysicsAssetPaths();
-				InternalAddToAssetList(list, fullList, "Physics", log);
+				InternalAddToAssetList(ref list, fullList, "Physics", log);
 			}
 			if (script)
 			{
 				var list = AssetTools.GetAllScriptAssetPaths();
-				InternalAddToAssetList(list, fullList, "Scripts", log);
+				InternalAddToAssetList(ref list, fullList, "Scripts", log);
 			}
 
 			Log.Info(log.ToString());
@@ -420,10 +421,10 @@ namespace Extenity.AssetToolbox.Editor
 			//	EditorUtility.SetDirty(asset);
 			//}
 
-			ReserializeAssets(fullList);
+			ReserializeAssets(ref fullList);
 		}
 
-		private static void InternalAddToAssetList(List<string> list, List<string> fullList, string logTitle, StringBuilder log)
+		private static void InternalAddToAssetList(ref List<string> list, List<string> fullList, string logTitle, StringBuilder log)
 		{
 			log.AppendLine($"====  ({list.Count}) {logTitle}  ====");
 
@@ -436,9 +437,11 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				log.AppendLine(item);
 			}
+
+			Release.List(ref list);
 		}
 
-		public static void ReserializeAssets(IEnumerable<string> assetPaths)
+		public static void ReserializeAssets(ref List<string> assetPaths)
 		{
 			// This is the old way of doing it. Which somewhat worked with some flaws.
 			//MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
@@ -448,8 +451,8 @@ namespace Extenity.AssetToolbox.Editor
 			// can't handle them well if the scene is not loaded. Somehow 
 			// Unity includes all prefab data in scenes.
 			{
-				var sceneAssetPaths = new List<string>();
-				var otherAssetPaths = new List<string>();
+				var sceneAssetPaths = New.List<string>();
+				var otherAssetPaths = New.List<string>();
 				AssetTools.SplitSceneAndOtherAssetPaths(assetPaths, sceneAssetPaths, otherAssetPaths);
 				if (sceneAssetPaths.IsNotNullAndEmpty())
 				{
@@ -459,6 +462,8 @@ namespace Extenity.AssetToolbox.Editor
 
 				AssetDatabase.ForceReserializeAssets(otherAssetPaths, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
 				InternalReserializeScenes(sceneAssetPaths);
+
+				Release.List(ref assetPaths, ref sceneAssetPaths, ref otherAssetPaths);
 			}
 		}
 

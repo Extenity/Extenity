@@ -292,6 +292,21 @@ namespace Extenity.DataToolbox
 			ListPool<T>.Release(ref listReference);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void List<T>(ref List<T> listReference1, ref List<T> listReference2)
+		{
+			ListPool<T>.Release(ref listReference1);
+			ListPool<T>.Release(ref listReference2);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void List<T>(ref List<T> listReference1, ref List<T> listReference2, ref List<T> listReference3)
+		{
+			ListPool<T>.Release(ref listReference1);
+			ListPool<T>.Release(ref listReference2);
+			ListPool<T>.Release(ref listReference3);
+		}
+
 		/// <summary>
 		/// Alternative version that does not require passing the list reference as 'ref'. It won't be possible to
 		/// automatically set the reference to null which provides a safety belt to prevent continuing to accidentally

@@ -1067,7 +1067,7 @@ namespace Extenity.ReflectionToolbox
 		public static List<(FieldInfo FieldInfo, object Value)> GetUnitySerializedFieldsAndValues(this object obj, bool includeOnlyNonNullFields)
 		{
 			var fields = obj.GetUnitySerializedFields();
-			var result = new List<(FieldInfo FieldInfo, object Value)>(fields.Count);
+			var result = New.List<(FieldInfo FieldInfo, object Value)>(fields.Count);
 			if (includeOnlyNonNullFields)
 			{
 				foreach (var field in fields)
@@ -1281,12 +1281,13 @@ namespace Extenity.ReflectionToolbox
 					// An Animator may use it's children without keeping any references to them.
 					// So we need to assume they are referenced.
 					InternalAddReferencedGameObjectToResults(referencedAnimator.gameObject, result, excludedTypes); // See 57182.
-					var children = new List<GameObject>();
+					var children = New.List<GameObject>();
 					referencedAnimator.gameObject.ListAllChildrenGameObjects(children, false);
 					foreach (var childGO in children)
 					{
 						InternalAddReferencedGameObjectToResults(childGO, result, excludedTypes);
 					}
+					Release.List(ref children);
 				}
 			}
 			else if (type.IsSameOrSubclassOf(typeof(Mesh)))

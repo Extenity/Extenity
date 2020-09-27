@@ -5,7 +5,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Extenity.ApplicationToolbox;
@@ -749,7 +748,8 @@ namespace Extenity.AssetToolbox.Editor
 
 				foreach (var processedGameObject in gameObjectAndChildren)
 				{
-					var components = processedGameObject.GetComponents<Component>();
+					var components = New.List<Component>();
+					processedGameObject.GetComponents(components);
 					foreach (var component in components)
 					{
 						var fieldsAndValues = component.GetUnitySerializedFieldsAndValues(true);
@@ -764,12 +764,14 @@ namespace Extenity.AssetToolbox.Editor
 							var castValue = (Object)fieldAndValue.Value;
 							if (!resultsAsDictionary.TryGetValue(castValue, out var list))
 							{
-								list = new List<Component>();
+								list = New.List<Component>();
 								resultsAsDictionary.Add(castValue, list);
 							}
 							list.Add(component);
 						}
+						Release.List(ref fieldsAndValues);
 					}
+					Release.List(ref components);
 				}
 			}
 
@@ -779,6 +781,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var path = AssetDatabase.GetAssetPath(entry.Key);
 				sortedResults.Add((path, entry.Key, entry.Value));
+				Release.ListUnsafe(entry.Value);
 			}
 			sortedResults.Sort((item1, item2) => string.Compare(item1.AssetPath, item2.AssetPath, StringComparison.Ordinal));
 
@@ -906,7 +909,7 @@ namespace Extenity.AssetToolbox.Editor
 		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)
 		{
 			var selectionObjects = Selection.objects;
-			var list = new List<string>(selectionObjects.Length);
+			var list = New.List<string>(selectionObjects.Length);
 
 			foreach (Object obj in selectionObjects)
 			{
