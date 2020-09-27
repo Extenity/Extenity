@@ -17,7 +17,7 @@ namespace Extenity.FlowToolbox
 
 		public const double Tolerance =
 			1.0 / 1000.0 // Milliseconds
-				/ 10.0; // Tenth of a millisecond
+				/ 100.0; // A percent of a millisecond
 
 		#endregion
 

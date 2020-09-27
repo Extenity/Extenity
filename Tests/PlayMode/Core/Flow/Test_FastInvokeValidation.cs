@@ -36,7 +36,6 @@ namespace ExtenityTests.FlowToolbox
 				}
 
 				var previous = (double)Time.time;
-				var fixedDeltaTime = (double)Time.fixedDeltaTime;
 
 				var diffHistory = New.List<double>();
 
@@ -44,16 +43,18 @@ namespace ExtenityTests.FlowToolbox
 				{
 					yield return new WaitForFixedUpdate();
 					var now = (double)Time.time;
+					var fixedDeltaTime = (double)Time.fixedDeltaTime;
+					var tolerance = fixedDeltaTime * 0.001;
 					var diff = now - previous;
 					diffHistory.Add(diff);
-					if (!diff.IsAlmostEqual(fixedDeltaTime, FastInvokeHandler.Tolerance))
+					if (!diff.IsAlmostEqual(fixedDeltaTime, tolerance))
 					{
 						Assert.Fail($"Failed at {i}. iteration. Details:\n" +
 						            $"FixedDeltaTime: {fixedDeltaTime}\n" +
-						            $"Tolerance: {FastInvokeHandler.Tolerance}\n" +
+						            $"Tolerance: {tolerance}\n" +
 						            $"Diff: {diff}\n" +
-						            $"Max: {fixedDeltaTime + FastInvokeHandler.Tolerance}\n" +
-						            $"Min: {fixedDeltaTime - FastInvokeHandler.Tolerance}\n" +
+						            $"Max: {fixedDeltaTime + tolerance}\n" +
+						            $"Min: {fixedDeltaTime - tolerance}\n" +
 						            "Diff history:\n" + string.Join("\n", diffHistory.Select(x => x.ToString(CultureInfo.InvariantCulture))));
 					}
 					previous = now;

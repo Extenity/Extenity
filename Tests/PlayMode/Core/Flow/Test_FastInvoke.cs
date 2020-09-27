@@ -106,6 +106,12 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator CallOrder_2_5_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
 		{
+			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(Time.fixedDeltaTime * 0.99);
+		}
+
+		[UnityTest, Category(TestCategories.Cheesy)]
+		public IEnumerator CallOrder_2_6_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime()
+		{
 			yield return CallOrder_2_CalledAtFirstFixedUpdateAsLongAsTheDelayIsBelowDeltaTime(-1.0);
 		}
 
@@ -137,7 +143,7 @@ namespace ExtenityTests.FlowToolbox
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator CallOrder_3_1_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate()
 		{
-			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime + FastInvokeHandler.Tolerance * 2);
+			yield return CallOrder_3_AnyDelayAboveTheDeltaTimeShouldBeCalledInNextFixedUpdate(Time.fixedDeltaTime * 1.01);
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
