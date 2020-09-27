@@ -291,6 +291,18 @@ namespace Extenity.DataToolbox
 		{
 			ListPool<T>.Release(ref listReference);
 		}
+
+		/// <summary>
+		/// Alternative version that does not require passing the list reference as 'ref'. It won't be possible to
+		/// automatically set the reference to null which provides a safety belt to prevent continuing to accidentally
+		/// use the list after it's released to the pool. So it's considered an unsafe operation. Use it with caution
+		/// and DO NOT EVER try to use the list after its Release.
+		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void ListUnsafe<T>(List<T> listReference)
+		{
+			ListPool<T>.Release(ref listReference);
+		}
 	}
 
 	public readonly struct ListDisposer<T> : IDisposable
