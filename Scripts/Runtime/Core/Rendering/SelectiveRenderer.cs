@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 
 namespace Extenity.RenderingToolbox
 {
@@ -8,6 +9,16 @@ namespace Extenity.RenderingToolbox
 	[RequireComponent(typeof(Camera))]
 	public class SelectiveRenderer : MonoBehaviour
 	{
+		#region Deinitialization
+
+		protected void OnDestroy()
+		{
+			LayerHistory.Reset();
+			Release.List(ref RenderedObjects);
+		}
+
+		#endregion
+
 		#region Camera
 
 		private Camera _Camera;
@@ -75,6 +86,21 @@ namespace Extenity.RenderingToolbox
 				}
 			}
 
+			public void Reset()
+			{
+				if (ChildHistoryEntries != null)
+				{
+					for (int i = 0; i < ChildHistoryEntries.Count; i++)
+					{
+						ChildHistoryEntries[i].Reset();
+					}
+				}
+
+				GameObject = null;
+				Layer = 0;
+				Release.List(ref ChildHistoryEntries);
+			}
+
 			public void ClearOnly()
 			{
 				GameObject = null;
@@ -109,7 +135,7 @@ namespace Extenity.RenderingToolbox
 			{
 				if (ChildHistoryEntries == null)
 				{
-					ChildHistoryEntries = new List<LayerHistoryEntry>();
+					ChildHistoryEntries = New.List<LayerHistoryEntry>();
 				}
 				else
 				{
@@ -144,7 +170,16 @@ namespace Extenity.RenderingToolbox
 
 		public class LayerHistoryCollection
 		{
-			public List<LayerHistoryEntry> Entries = new List<LayerHistoryEntry>();
+			public List<LayerHistoryEntry> Entries = New.List<LayerHistoryEntry>();
+
+			public void Reset()
+			{
+				for (int i = 0; i < Entries.Count; i++)
+				{
+					Entries[i].Reset();
+				}
+				Release.List(ref Entries);
+			}
 
 			public void ClearOnly()
 			{
@@ -197,7 +232,7 @@ namespace Extenity.RenderingToolbox
 		#region Rendered Objects
 
 		[NonSerialized]
-		private List<GameObject> RenderedObjects = new List<GameObject>();
+		private List<GameObject> RenderedObjects = New.List<GameObject>();
 
 		public void AddRenderedObject(GameObject go)
 		{

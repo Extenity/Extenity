@@ -193,8 +193,9 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		#region All ViewBehaviours
 
-		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
-		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllActiveViewBehaviours = new List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+		// TODO: Try to convert these into non-static fields. Maybe move into Kernel?
+		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllViewBehaviours = New.List<ViewBehaviour<TKernelObject, TKernel>>(1000);
+		private static readonly List<ViewBehaviour<TKernelObject, TKernel>> _AllActiveViewBehaviours = New.List<ViewBehaviour<TKernelObject, TKernel>>(1000);
 
 		public static List<ViewBehaviour<TQueriedKernelObject, TKernel>> GetAllViewBehaviours<TQueriedKernelObject>()
 			where TQueriedKernelObject : KernelObject<TKernel>
