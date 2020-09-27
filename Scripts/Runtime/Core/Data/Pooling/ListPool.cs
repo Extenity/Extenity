@@ -79,6 +79,16 @@ namespace Extenity.DataToolbox
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>(capacity);
 						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						return new ListDisposer<T>(list);
+					}
+
+					// Adjust the capacity if its lower than expected. Changing capacity means allocating a memory
+					// block, which is not performance friendly. When adding a new item to the list, .NET increases
+					// the capacity by doubling current size. That allows us to omit the second half of the capacity
+					// here and not instantly do the allocation right now.
+					if (list.Capacity < capacity / 2)
+					{
+						list.Capacity = capacity;
 					}
 					return new ListDisposer<T>(list);
 				}
@@ -110,6 +120,16 @@ namespace Extenity.DataToolbox
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>(capacity);
 						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						return;
+					}
+
+					// Adjust the capacity if its lower than expected. Changing capacity means allocating a memory
+					// block, which is not performance friendly. When adding a new item to the list, .NET increases
+					// the capacity by doubling current size. That allows us to omit the second half of the capacity
+					// here and not instantly do the allocation right now.
+					if (list.Capacity < capacity / 2)
+					{
+						list.Capacity = capacity;
 					}
 					return;
 				}
@@ -142,6 +162,7 @@ namespace Extenity.DataToolbox
 						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
 						return;
 					}
+
 					list.AddRange(collection);
 					return;
 				}
