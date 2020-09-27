@@ -1087,6 +1087,7 @@ namespace Extenity.ReflectionToolbox
 					result.Add((field, value));
 				}
 			}
+			Release.List(ref fields);
 			return result;
 		}
 
@@ -1122,7 +1123,7 @@ namespace Extenity.ReflectionToolbox
 			//if (type == null)
 			//	type = obj.GetType();
 
-			var fields = new List<FieldInfo>();
+			var fields = New.List<FieldInfo>();
 			var allFields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
 			for (int i = 0; i < allFields.Length; i++)
@@ -1167,11 +1168,13 @@ namespace Extenity.ReflectionToolbox
 				throw new ArgumentNullException(nameof(component));
 			if (CheckIfTypeExcluded(component.GetType(), excludedTypes))
 				return;
-			foreach (var serializedField in component.GetUnitySerializedFields())
+			var fields = component.GetUnitySerializedFields();
+			foreach (var serializedField in fields)
 			{
 				var referencedObject = serializedField.GetValue(component);
 				InternalAddReferencedObjectOfType(referencedObject, result, excludedTypes);
 			}
+			Release.List(ref fields);
 		}
 
 		public static void FindAllReferencedGameObjectsInGameObject(this GameObject gameObject, HashSet<GameObject> result, Type[] excludedTypes)
@@ -1370,11 +1373,13 @@ namespace Extenity.ReflectionToolbox
 					Log.Warning($"Unknown object of type '{type.FullName}'. See the code for details.");
 				}
 
-				foreach (var serializedField in referencedObject.GetUnitySerializedFields())
+				var fields = referencedObject.GetUnitySerializedFields();
+				foreach (var serializedField in fields)
 				{
 					var referencedObjectInObject = serializedField.GetValue(referencedObject);
 					InternalAddReferencedObjectOfType(referencedObjectInObject, result, excludedTypes);
 				}
+				Release.List(ref fields);
 			}
 		}
 

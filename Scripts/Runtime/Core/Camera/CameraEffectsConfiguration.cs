@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity.DataToolbox;
 using Extenity.ReflectionToolbox;
 using UnityEngine;
 
@@ -83,6 +84,7 @@ namespace Extenity.CameraToolbox
 					var fieldValue = field.GetValue(effectComponent);
 					componentData.SerializedFields.Add(new CameraEffectComponentData.FieldData { Name = fieldName, Value = fieldValue });
 				}
+				Release.List(ref effectComponentSerializedFields);
 
 				newComponents.Add(componentData);
 			}
@@ -145,6 +147,8 @@ namespace Extenity.CameraToolbox
 							field.SetValue(effectComponent, fieldData.Value);
 						}
 					}
+
+					Release.List(ref effectComponentSerializedFields);
 				}
 			}
 		}
