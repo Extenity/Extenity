@@ -76,7 +76,7 @@ namespace Extenity.DataToolbox
 						//
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
-						list = new List<T>();
+						list = new List<T>(capacity);
 						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
 					}
 					return new ListDisposer<T>(list);
@@ -107,7 +107,7 @@ namespace Extenity.DataToolbox
 						//
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
-						list = new List<T>();
+						list = new List<T>(capacity);
 						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
 					}
 					return;
