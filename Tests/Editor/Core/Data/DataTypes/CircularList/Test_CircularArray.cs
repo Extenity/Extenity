@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
@@ -39,7 +38,7 @@ namespace ExtenityTests.DataToolbox
 		{
 			CircularArrayTestItem.ResetIDAssigner();
 			// Create with empty array
-			var copiedArray = new List<CircularArrayTestItem>();
+			var copiedArray = New.List<CircularArrayTestItem>();
 			Assert.Throws(typeof(Exception), () => { new CircularArray<CircularArrayTestItem>(copiedArray); });
 
 			// Create with filled array

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -229,7 +230,7 @@ namespace Extenity.UIToolbox
 
 			if (eventTrigger.triggers == null)
 			{
-				eventTrigger.triggers = new List<EventTrigger.Entry>();
+				eventTrigger.triggers = New.List<EventTrigger.Entry>();
 			}
 			eventTrigger.triggers.Add(entry);
 		}

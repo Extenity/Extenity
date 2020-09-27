@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.ProfilingToolbox;
 using UnityEngine;
 
@@ -46,10 +47,12 @@ namespace Extenity.UIToolbox
 		[Header("Code Profiler")]
 		public CodeProfilerEntryUI EntryTemplate;
 
-		private readonly List<CodeProfilerEntryUI> AllEntries = new List<CodeProfilerEntryUI>();
+		private List<CodeProfilerEntryUI> AllEntries;
 
 		private void InitializeItems()
 		{
+			AllEntries = New.List<CodeProfilerEntryUI>();
+
 			EntryTemplate.gameObject.SetActive(false);
 
 			CreateUIsForAlreadyExistingItems();
@@ -60,6 +63,7 @@ namespace Extenity.UIToolbox
 		{
 			CodeProfiler.OnEntryCreated.RemoveListener(CreateUIForItem);
 			ClearItems();
+			Release.List(ref AllEntries);
 		}
 
 		private void CreateUIsForAlreadyExistingItems()

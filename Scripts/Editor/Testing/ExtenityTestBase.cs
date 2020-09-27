@@ -98,7 +98,7 @@ namespace Extenity.Testing
 			DoesNotCareAboutCleanLogs = DefaultDoesNotCareAboutCleanLogs;
 
 			if (Logs == null)
-				Logs = new List<(LogType, string)>(100);
+				Logs = New.List<(LogType, string)>(100);
 			else
 				Logs.Clear();
 

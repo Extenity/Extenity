@@ -105,11 +105,10 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public static void ReplaceBetween()
 		{
-			var list = new List<KeyValue<string, string>>
-			{
-				new KeyValue<string, string>("OXFORD", "NOT BROGUES"),
-				new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"),
-			};
+			var list = New.List<KeyValue<string, string>>();
+			list.Add(new KeyValue<string, string>("OXFORD", "NOT BROGUES"));
+			list.Add(new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"));
+
 			TestValue_ReplaceBetween(
 				"Some text <tag>OXFORD</tag> and some more.", "<tag>", "</tag>", list, true,
 				"Some text <tag>NOT BROGUES</tag> and some more.");
@@ -137,11 +136,10 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public static void ReplaceBetweenAll()
 		{
-			var list = new List<KeyValue<string, string>>
-			{
-				new KeyValue<string, string>("OXFORD", "NOT BROGUES"),
-				new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"),
-			};
+			var list = New.List<KeyValue<string, string>>();
+			list.Add(new KeyValue<string, string>("OXFORD", "NOT BROGUES"));
+			list.Add(new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"));
+
 			TestValue_ReplaceBetweenAll(
 				"Some text <tag>OXFORD</tag> and some more.", "<tag>", "</tag>", list, true, true,
 				"Some text <tag>NOT BROGUES</tag> and some more.");

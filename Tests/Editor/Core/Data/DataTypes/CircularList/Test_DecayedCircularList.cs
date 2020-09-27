@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
@@ -253,7 +252,7 @@ namespace ExtenityTests.DataToolbox
 		{
 			var list = CreateList(10);
 			list.DecayCondition = item => item.ID <= 3;
-			var decayedItems = new List<DecayedCircularListTestItem>();
+			var decayedItems = New.List<DecayedCircularListTestItem>(); // TODO C#8: Use using
 			list.PopAllTailingIfDecayed(decayedItems);
 			int i = 0;
 			foreach (var decayedItem in decayedItems)
@@ -268,7 +267,7 @@ namespace ExtenityTests.DataToolbox
 		{
 			var list = CreateNonArrangedList(10, 3, 3);
 			list.DecayCondition = item => item.ID <= 6;
-			var decayedItems = new List<DecayedCircularListTestItem>();
+			var decayedItems = New.List<DecayedCircularListTestItem>(); // TODO C#8: Use using
 			list.PopAllTailingIfDecayed(decayedItems);
 			int i = 3;
 			foreach (var decayedItem in decayedItems)
