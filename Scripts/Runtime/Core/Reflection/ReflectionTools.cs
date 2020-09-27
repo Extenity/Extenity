@@ -1,9 +1,12 @@
+#if !NET_STANDARD_2_0
+#define ListArrayAccessorAvailable
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
@@ -13,6 +16,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+#if ListArrayAccessorAvailable
+using System.Reflection.Emit;
+#endif
 
 namespace Extenity.ReflectionToolbox
 {
@@ -1662,7 +1668,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region List.GetInternalArray
 
-#if !NET_STANDARD_2_0
+#if ListArrayAccessorAvailable
 		// Source: https://stackoverflow.com/questions/4972951/listt-to-t-without-copying
 		private static class ArrayAccessor<T>
 		{
