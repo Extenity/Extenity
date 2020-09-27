@@ -114,6 +114,8 @@ namespace Extenity.Testing
 			}
 
 			Application.logMessageReceived -= RegisterLogMessage;
+
+			Release.List(ref Logs);
 		}
 
 		private void RegisterLogMessage(string condition, string stacktrace, LogType type)

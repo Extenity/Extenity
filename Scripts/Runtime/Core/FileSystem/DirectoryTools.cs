@@ -206,10 +206,10 @@ namespace Extenity.FileSystemToolbox
 				}
 			}
 
-			private List<FailReason> _FailedFiles = null;
+			private List<FailReason> _FailedFiles = New.List<FailReason>();
 			public List<FailReason> FailedFiles { get { return _FailedFiles; } }
 			public int FailedFileCount { get { return _FailedFiles == null ? 0 : _FailedFiles.Count; } }
-			private List<CopiedFile> _CopiedFiles = null;
+			private List<CopiedFile> _CopiedFiles = New.List<CopiedFile>();
 			/// <summary>
 			/// Make sure CreateCopiedFileList set to true for accessing this list.
 			/// </summary>
@@ -234,10 +234,8 @@ namespace Extenity.FileSystemToolbox
 			public void Reset()
 			{
 				CopiedFileCount = 0;
-				if (_CopiedFiles != null)
-					_CopiedFiles.Clear();
-				if (_FailedFiles != null)
-					_FailedFiles.Clear();
+				Release.List(ref _CopiedFiles);
+				Release.List(ref _FailedFiles);
 			}
 
 			public void AddCopiedFile(string sourceFilePath, string targetFilePath)
@@ -245,16 +243,12 @@ namespace Extenity.FileSystemToolbox
 				CopiedFileCount++;
 				if (CreateCopiedFileList)
 				{
-					if (_CopiedFiles == null)
-						_CopiedFiles = New.List<CopiedFile>();
 					_CopiedFiles.Add(new CopiedFile(sourceFilePath, targetFilePath));
 				}
 			}
 
 			public void AddFailedFile(FailReason failReason)
 			{
-				if (_FailedFiles == null)
-					_FailedFiles = New.List<FailReason>();
 				_FailedFiles.Add(failReason);
 			}
 		}
