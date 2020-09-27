@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Extenity.ApplicationToolbox;
 using Extenity.ApplicationToolbox.Editor;
+using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -81,9 +81,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (content == null)
 			{
-				return new List<PackageManifestEntry>(0);
+				return New.List<PackageManifestEntry>(0);
 			}
-			var result = content.Select(entry => new PackageManifestEntry(entry.Key, entry.Value)).ToList();
+			var result = content.Select(entry => new PackageManifestEntry(entry.Key, entry.Value)).ToPooledList();
 			// Log.Info(string.Join("\n", result.Select(x => x.PackageID)));
 			return result;
 		}

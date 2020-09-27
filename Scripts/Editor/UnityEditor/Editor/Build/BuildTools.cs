@@ -213,8 +213,8 @@ namespace Extenity.BuildToolbox.Editor
 
 			// Clear unwanted files
 			{
-				var deletedFiles = new List<FileInfo>();
-				var failedFiles = new List<FileInfo>();
+				var deletedFiles = New.List<FileInfo>(); // TODO C#8: Use using
+				var failedFiles = New.List<FileInfo>();
 
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)

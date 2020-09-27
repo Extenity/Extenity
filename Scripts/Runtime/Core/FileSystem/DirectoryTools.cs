@@ -45,7 +45,7 @@ namespace Extenity.FileSystemToolbox
 
 				slicedFolders.Add(folder);
 			}
-			var list = new List<string>(slicedFolders.Count);
+			var list = New.List<string>(slicedFolders.Count);
 			foreach (var folder in slicedFolders)
 			{
 				list.Add(folder);
@@ -246,7 +246,7 @@ namespace Extenity.FileSystemToolbox
 				if (CreateCopiedFileList)
 				{
 					if (_CopiedFiles == null)
-						_CopiedFiles = new List<CopiedFile>();
+						_CopiedFiles = New.List<CopiedFile>();
 					_CopiedFiles.Add(new CopiedFile(sourceFilePath, targetFilePath));
 				}
 			}
@@ -254,7 +254,7 @@ namespace Extenity.FileSystemToolbox
 			public void AddFailedFile(FailReason failReason)
 			{
 				if (_FailedFiles == null)
-					_FailedFiles = new List<FailReason>();
+					_FailedFiles = New.List<FailReason>();
 				_FailedFiles.Add(failReason);
 			}
 		}
@@ -364,7 +364,7 @@ namespace Extenity.FileSystemToolbox
 					{
 						if (result.FailedFiles == null)
 						{
-							result.FailedFiles = new List<CopyResult.FailReason>();
+							result.FailedFiles = New.List<CopyResult.FailReason>();
 						}
 						result.FailedFiles.Add(new CopyResult.FailReason { FilePath = fileInfo.FullName, Exception = e });
 					}
@@ -431,7 +431,7 @@ namespace Extenity.FileSystemToolbox
 			catch
 			{
 				if (failedDirectories == null)
-					failedDirectories = new List<string>();
+					failedDirectories = New.List<string>();
 				failedDirectories.Add(directoryPath);
 			}
 			return failedDirectories;
@@ -447,9 +447,9 @@ namespace Extenity.FileSystemToolbox
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			if (deletedFiles == null)
-				deletedFiles = new List<FileInfo>();
+				deletedFiles = New.List<FileInfo>();
 			if (failedFiles == null)
-				failedFiles = new List<FileInfo>();
+				failedFiles = New.List<FileInfo>();
 			var error = false;
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var fileInfos = directoryInfo.GetFiles("*." + extension, searchOption).Where(fileInfo => fileInfo.Extension == "." + extension).ToList();
@@ -475,9 +475,9 @@ namespace Extenity.FileSystemToolbox
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			if (deletedFiles == null)
-				deletedFiles = new List<FileInfo>();
+				deletedFiles = New.List<FileInfo>();
 			if (failedFiles == null)
-				failedFiles = new List<FileInfo>();
+				failedFiles = New.List<FileInfo>();
 			var error = false;
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var fileInfos = directoryInfo.GetFiles(searchPattern, searchOption).ToList();
@@ -503,9 +503,9 @@ namespace Extenity.FileSystemToolbox
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			if (deletedFiles == null)
-				deletedFiles = new List<FileInfo>();
+				deletedFiles = New.List<FileInfo>();
 			if (failedFiles == null)
-				failedFiles = new List<FileInfo>();
+				failedFiles = New.List<FileInfo>();
 			var error = false;
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var fileInfos = directoryInfo.GetFiles("*.dll", searchOption).Where(fileInfo => fileInfo.Extension == ".dll").ToList();
