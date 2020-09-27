@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace Extenity.DataToolbox
 {
@@ -114,6 +115,38 @@ namespace Extenity.DataToolbox
 				}
 			}
 			list = new List<T>(capacity);
+		}
+
+		internal static void New(out List<T> list, [NotNull] IEnumerable<T> collection)
+		{
+			lock (Pool)
+			{
+				if (Pool.Count > 0)
+				{
+					// Get the largest capacity list from the pool. See 114572342.
+					var index = Pool.Count - 1;
+					list = Pool[index];
+					Pool.RemoveAt(index);
+
+					// Just roughly try to detect if the list is referenced and used elsewhere.
+					if (list.Count != 0)
+					{
+						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
+						// Continuing to use a released list means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled list releases and find
+						// the spots where a copy of list reference is kept after its release.
+						//
+						// The pool will just skip the list and create a fresh one. We may try to get a new one from
+						// the pool but the overhead is not worthwhile.
+						list = new List<T>(collection);
+						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						return;
+					}
+					list.AddRange(collection);
+					return;
+				}
+			}
+			list = new List<T>(collection);
 		}
 
 		internal static void Release(ref List<T> listReference)
@@ -231,9 +264,23 @@ namespace Extenity.DataToolbox
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static List<T> List<T>([NotNull] IEnumerable<T> collection)
+		{
+			ListPool<T>.New(out var list, collection);
+			return list;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ListDisposer<T> List<T>(out List<T> list, int capacity = 0)
 		{
 			return ListPool<T>.Using(out list, capacity);
+		}
+
+		public static List<TSource> ToPooledList<TSource>(this IEnumerable<TSource> source)
+		{
+			return source != null
+				? New.List<TSource>(source)
+				: throw new ArgumentNullException(nameof(source));
 		}
 	}
 
