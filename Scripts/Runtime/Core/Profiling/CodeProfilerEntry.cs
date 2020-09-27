@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 
 namespace Extenity.ProfilingToolbox
@@ -21,7 +22,7 @@ namespace Extenity.ProfilingToolbox
 			ID = id;
 			Parent = parent;
 			if (Parent.Children == null)
-				Parent.Children = new List<CodeProfilerEntry>(20); // Allocate some, but not too much
+				Parent.Children = New.List<CodeProfilerEntry>(20); // Allocate some, but not too much
 			Parent.Children.Add(this);
 		}
 
@@ -32,7 +33,7 @@ namespace Extenity.ProfilingToolbox
 		{
 			ID = 0;
 			Parent = null;
-			Children = new List<CodeProfilerEntry>(20); // Preallocate some, but not too much
+			Children = New.List<CodeProfilerEntry>(20); // Preallocate some, but not too much
 		}
 
 		#endregion
