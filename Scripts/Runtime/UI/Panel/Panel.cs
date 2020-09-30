@@ -692,7 +692,7 @@ namespace Extenity.UIToolbox
 				// Excluded types
 				if (type == typeof(Panel) ||
 				    type == typeof(ClickArea) ||
-				    fullName.Contains("CanvasRegistrar") || // TODO REFACTOR: Remove hardcode.
+				    type == typeof(CanvasRegistrar) ||
 				    fullName.Contains("ButtonMessenger") || // TODO REFACTOR: Remove hardcode.
 				    fullName.StartsWith("TMPro.", StringComparison.OrdinalIgnoreCase) ||
 				    fullName.StartsWith("UnityEngine.UI", StringComparison.OrdinalIgnoreCase)
