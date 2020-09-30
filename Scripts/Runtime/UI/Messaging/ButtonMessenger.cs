@@ -8,15 +8,13 @@ using UnityEngine.UI;
 namespace Extenity.UIToolbox
 {
 
-	[RequireComponent(typeof(Toggle))]
-	public class ToggleEventEmitter : PanelMonoBehaviour
+	[RequireComponent(typeof(Button))]
+	public class ButtonMessenger : PanelMonoBehaviour
 	{
 		#region Configuration
 
 		[ValueDropdown(nameof(EventNames))]
-		public string ToggleOnEventName;
-		[ValueDropdown(nameof(EventNames))]
-		public string ToggleOffEventName;
+		public string EventName;
 		public EmitTiming EmitTiming = EmitTiming.EmitOnRelease;
 
 		private static string[] EventNames => Messenger.EventNames;
@@ -25,20 +23,20 @@ namespace Extenity.UIToolbox
 
 		#region Links
 
-		private Toggle _Toggle;
-		public Toggle Toggle
+		private Button _Button;
+		public Button Button
 		{
 			get
 			{
-				if (!_Toggle)
+				if (!_Button)
 				{
-					_Toggle = GetComponent<Toggle>();
-					if (!_Toggle)
+					_Button = GetComponent<Button>();
+					if (!_Button)
 					{
-						throw new Exception($"{nameof(ToggleEventEmitter)} requires a {nameof(Toggle)} to work.");
+						throw new Exception($"{nameof(ButtonMessenger)} requires a {nameof(Button)} to work.");
 					}
 				}
-				return _Toggle;
+				return _Button;
 			}
 		}
 
@@ -61,7 +59,7 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Register To Toggle Click
+		#region Register To Button Click
 
 		protected internal override void OnAfterBecameVisible()
 		{
@@ -69,13 +67,13 @@ namespace Extenity.UIToolbox
 			{
 				case EmitTiming.EmitOnRelease:
 				{
-					Toggle.onValueChanged.AddListener(EmitEvent);
+					Button.onClick.AddListener(EmitEvent);
 					break;
 				}
 
 				case EmitTiming.EmitOnPress:
 				{
-					Toggle.RegisterToEvent(EventTriggerType.PointerDown, EmitEvent);
+					Button.RegisterToEvent(EventTriggerType.PointerDown, EmitEvent);
 					break;
 				}
 
@@ -90,13 +88,13 @@ namespace Extenity.UIToolbox
 			{
 				case EmitTiming.EmitOnRelease:
 				{
-					Toggle.onValueChanged.RemoveListener(EmitEvent);
+					Button.onClick.RemoveListener(EmitEvent);
 					break;
 				}
 
 				case EmitTiming.EmitOnPress:
 				{
-					Toggle.DeregisterFromEvent(EventTriggerType.PointerDown, EmitEvent);
+					Button.DeregisterFromEvent(EventTriggerType.PointerDown, EmitEvent);
 					break;
 				}
 
@@ -111,25 +109,12 @@ namespace Extenity.UIToolbox
 
 		private void EmitEvent(BaseEventData _)
 		{
-			InternalEmitEvent();
-		}
-
-		private void EmitEvent(bool _)
-		{
-			InternalEmitEvent();
+			Messenger.EmitEvent(EventName);
 		}
 
 		private void EmitEvent()
 		{
-			InternalEmitEvent();
-		}
-
-		private void InternalEmitEvent()
-		{
-			if (Toggle.isOn)
-				Messenger.EmitEvent(ToggleOnEventName);
-			else
-				Messenger.EmitEvent(ToggleOffEventName);
+			Messenger.EmitEvent(EventName);
 		}
 
 		#endregion
