@@ -15,6 +15,7 @@ namespace Extenity.UIToolbox
 
 		[ValueDropdown(nameof(EventNames))]
 		public string ToggleOnEventName;
+		[ValueDropdown(nameof(EventNames))]
 		public string ToggleOffEventName;
 		public EmitTiming EmitTiming = EmitTiming.EmitOnRelease;
 
