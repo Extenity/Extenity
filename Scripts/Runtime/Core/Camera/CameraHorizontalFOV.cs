@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.CameraToolbox
@@ -25,7 +26,14 @@ namespace Extenity.CameraToolbox
 
 			// Method 2: This is precise.
 			var currentAspectRatio = Camera.aspect;
-			if (LastAspectRatio != currentAspectRatio)
+			var isChanged = LastAspectRatio != currentAspectRatio;
+#if UNITY_EDITOR // Don't try to optimize in Editor edit time.
+			if (!Application.isPlaying)
+			{
+				isChanged = true;
+			}
+#endif
+			if (isChanged)
 			{
 				LastAspectRatio = currentAspectRatio;
 
