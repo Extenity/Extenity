@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Extenity.UIToolbox
 {
 
-	[RequireComponent(typeof(Button))]
+	[RequireComponent(typeof(Toggle))]
 	public class ToggleEventEmitter : PanelMonoBehaviour
 	{
 		#region Configuration
