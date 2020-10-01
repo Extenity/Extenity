@@ -87,6 +87,21 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		public static bool EqualsRGBA(this Color32 value1, Color32 value2)
+		{
+			return value1.r == value2.r &&
+			       value1.g == value2.g &&
+			       value1.b == value2.b &&
+			       value1.a == value2.a;
+		}
+
+		public static bool EqualsRGB(this Color32 value1, Color32 value2)
+		{
+			return value1.r == value2.r &&
+			       value1.g == value2.g &&
+			       value1.b == value2.b;
+		}
+
 		public static bool IsAlmostEqualRGBA(this Color value1, Color value2, float precision)
 		{
 			double rDiff = value1.r - value2.r;
