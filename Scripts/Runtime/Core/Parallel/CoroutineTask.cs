@@ -9,7 +9,7 @@ namespace Extenity.ParallelToolbox
 	/// <summary>
 	/// CoroutineTask is an alternative interface for Unity's coroutine API with additional features.
 	/// 
-	/// * Stopping and pausing without any need for changes in coroutine code like lot's of "if"s.
+	/// * Stopping and pausing without any need for changes in coroutine code like lots of "if"s.
 	/// * Coroutine status can be checked outside of the coroutine
 	/// * Callback when finished execution
 	/// * Coroutines can be started without the need for a MonoBehaviour
