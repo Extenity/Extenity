@@ -17,13 +17,32 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 
 		#region Snippet - Main Script
 
+		private static readonly SnippetInfo EmptyScript = new SnippetInfo(
+			nameof(EmptyScript),
+			"__NAME__.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using UnityEngine;
+
+namespace __NAMESPACE__
+{
+
+	public class __NAME__ : MonoBehaviour
+	{
+	}
+
+}
+"
+		);
+
+		#endregion
+
+		#region Snippet - Main Script
+
 		private static readonly SnippetInfo MainScript = new SnippetInfo(
 			nameof(MainScript),
 			"__NAME__.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
-			@"using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+			@"using UnityEngine;
 
 namespace __NAMESPACE__
 {
@@ -68,9 +87,7 @@ namespace __NAMESPACE__
 			nameof(InspectorScript),
 			"Editor/__NAME__Inspector.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
-			@"using System.Collections;
-using System.Collections.Generic;
-using Extenity.UnityEditorToolbox.Editor;
+			@"using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
 
@@ -102,21 +119,28 @@ namespace __NAMESPACE__
 
 		#region Snippet Groups
 
-		// private static SnippetGroup ScriptWithInspectorGroup = new SnippetGroup()
+		// private static readonly SnippetGroup ScriptWithInspectorGroup = new SnippetGroup()
 		// {
 		// 	MainFileExtension = "cs",
 		// 	AskForNamespace = true,
 		// 	SnippetNames = new List<string> { nameof(MainScript), nameof(InspectorScript) }
 		// };
 
-		private static SnippetGroup ScriptOnlyGroup = new SnippetGroup()
+		private static readonly SnippetGroup EmptyScriptGroup = new SnippetGroup()
+		{
+			MainFileExtension = "cs",
+			AskForNamespace = true,
+			SnippetNames = new List<string> { nameof(EmptyScript) }
+		};
+
+		private static readonly SnippetGroup MainScriptGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
 			AskForNamespace = true,
 			SnippetNames = new List<string> { nameof(MainScript) }
 		};
 
-		// private static SnippetGroup InspectorOnlyGroup = new SnippetGroup()
+		// private static readonly SnippetGroup InspectorGroup = new SnippetGroup()
 		// {
 		// 	MainFileExtension = "cs",
 		// 	AskForNamespace = true,
@@ -321,10 +345,16 @@ namespace __NAMESPACE__
 
 		#region Menu Commands
 
-		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Formatted)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
-		public static void CreateScript()
+		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced Empty)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
+		private static void _CreateScript_MainScriptGroup()
 		{
-			CreateSnippet(ScriptOnlyGroup);
+			CreateSnippet(MainScriptGroup);
+		}
+
+		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
+		private static void _CreateScript_EmptyScriptGroup()
+		{
+			CreateSnippet(EmptyScriptGroup);
 		}
 
 		#endregion
