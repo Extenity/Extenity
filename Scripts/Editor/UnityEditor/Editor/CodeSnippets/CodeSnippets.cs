@@ -17,51 +17,8 @@ namespace Extenity.CodeSnippetsToolbox.Editor
 
 		#region Snippet - Main Script
 
-		/*
 		private static readonly SnippetInfo MainScript = new SnippetInfo(
 			nameof(MainScript),
-			"__NAME__.cs",
-			new[] { "__NAME__" },
-			@"using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class __NAME__ : MonoBehaviour
-{
-	#region Initialization
-
-	//protected void Awake()
-	//{
-	//}
-
-	#endregion
-
-	#region Deinitialization
-
-	//protected void OnDestroy()
-	//{
-	//}
-
-	#endregion
-
-	#region Update
-
-	//protected void Update()
-	//{
-	//}
-
-	#endregion
-}
-"
-		);
-		*/
-
-		#endregion
-
-		#region Snippet - Main Script (Namespace)
-
-		private static readonly SnippetInfo NamespacedMainScript = new SnippetInfo(
-			nameof(NamespacedMainScript),
 			"__NAME__.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"using System.Collections;
@@ -75,25 +32,25 @@ namespace __NAMESPACE__
 	{
 		#region Initialization
 
-		//protected void Awake()
-		//{
-		//}
+		protected void Awake()
+		{
+		}
 
 		#endregion
 
 		#region Deinitialization
 
-		//protected void OnDestroy()
-		//{
-		//}
+		protected void OnDestroy()
+		{
+		}
 
 		#endregion
 
 		#region Update
 
-		//protected void Update()
-		//{
-		//}
+		protected void Update()
+		{
+		}
 
 		#endregion
 	}
@@ -109,40 +66,6 @@ namespace __NAMESPACE__
 		/*
 		private static readonly SnippetInfo InspectorScript = new SnippetInfo(
 			nameof(InspectorScript),
-			"Editor/__NAME__Inspector.cs",
-			new[] { "__NAME__" },
-			@"using System.Collections;
-using System.Collections.Generic;
-using Extenity.UnityEditorToolbox.Editor;
-using UnityEngine;
-using UnityEditor;
-
-[CustomEditor(typeof(__NAME__))]
-public class __NAME__Inspector : ExtenityEditorBase<__NAME__>
-{
-	protected override void OnEnableDerived()
-	{
-	}
-
-	protected override void OnDisableDerived()
-	{
-	}
-
-	protected override void OnAfterDefaultInspectorGUI()
-	{
-	}
-}
-"
-		);
-		*/
-
-		#endregion
-
-		#region Snippet - Inspector Script (Namespace)
-
-		/*
-		private static readonly SnippetInfo NamespacedInspectorScript = new SnippetInfo(
-			nameof(NamespacedInspectorScript),
 			"Editor/__NAME__Inspector.cs",
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"using System.Collections;
@@ -183,21 +106,21 @@ namespace __NAMESPACE__
 		// {
 		// 	MainFileExtension = "cs",
 		// 	AskForNamespace = true,
-		// 	SnippetNames = new List<string> { nameof(NamespacedMainScript), nameof(NamespacedInspectorScript) }
+		// 	SnippetNames = new List<string> { nameof(MainScript), nameof(InspectorScript) }
 		// };
 
 		private static SnippetGroup ScriptOnlyGroup = new SnippetGroup()
 		{
 			MainFileExtension = "cs",
 			AskForNamespace = true,
-			SnippetNames = new List<string> { nameof(NamespacedMainScript) }
+			SnippetNames = new List<string> { nameof(MainScript) }
 		};
 
 		// private static SnippetGroup InspectorOnlyGroup = new SnippetGroup()
 		// {
 		// 	MainFileExtension = "cs",
 		// 	AskForNamespace = true,
-		// 	SnippetNames = new List<string> { nameof(NamespacedInspectorScript) }
+		// 	SnippetNames = new List<string> { nameof(InspectorScript) }
 		// };
 
 		#endregion
