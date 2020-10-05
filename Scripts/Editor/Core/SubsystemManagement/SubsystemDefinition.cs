@@ -11,21 +11,49 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		Prefab,
 		SingletonClass,
+		Resource,
 	}
 
 	[Serializable]
 	public struct SubsystemLevel
 	{
-		[ListDrawerSettings(AlwaysAddDefaultValue = true, Expanded = true)]
-		public SubsystemDefinition[] Subsystems;
+		public string Name;
+
+		[ListDrawerSettings(Expanded = true, CustomAddFunction = "_AddSubsystemsBeforeScene")]
+		public SubsystemDefinition[] SubsystemsBeforeScene;
+
+		[ListDrawerSettings(Expanded = true, CustomAddFunction = "_AddSubsystemsAfterScene")]
+		public SubsystemDefinition[] SubsystemsAfterScene;
 
 		internal void ClearUnusedReferences()
 		{
-			foreach (var subsystem in Subsystems)
+			if (SubsystemsBeforeScene != null)
 			{
-				subsystem.ClearUnusedReferences();
+				for (var i = 0; i < SubsystemsBeforeScene.Length; i++)
+				{
+					SubsystemsBeforeScene[i].ClearUnusedReferences();
+				}
+			}
+			if (SubsystemsAfterScene != null)
+			{
+				for (var i = 0; i < SubsystemsAfterScene.Length; i++)
+				{
+					SubsystemsAfterScene[i].ClearUnusedReferences();
+				}
 			}
 		}
+
+#if UNITY_EDITOR
+		private SubsystemDefinition _AddSubsystemsBeforeScene()
+		{
+			return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = false, DontDestroyOnLoad = true };
+		}
+
+		private SubsystemDefinition _AddSubsystemsAfterScene()
+		{
+			return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = true, DontDestroyOnLoad = false };
+		}
+#endif
 	}
 
 	[Serializable]
@@ -34,15 +62,30 @@ namespace Extenity.SubsystemManagementToolbox
 		[HorizontalGroup(100f), HideLabel]
 		public SubsystemType Type;
 
-		[ShowIf(nameof(Type), SubsystemType.Prefab)]
+		[Tooltip("Set to instantiate the subsystem only once or every time the scene loads.")]
+		[HorizontalGroup, ToggleLeft]
+		[HideIf(nameof(Type), SubsystemType.SingletonClass)]
+		public bool InstantiateEveryTime;
+
+		[Tooltip("Tell Unity to mark the instantiated object to not destroy on scene changes.")]
+		[HorizontalGroup, ToggleLeft]
+		[HideIf(nameof(Type), SubsystemType.SingletonClass)]
+		public bool DontDestroyOnLoad;
+
 		[HorizontalGroup, HideLabel]
 		[AssetsOnly]
+		[ShowIf(nameof(Type), SubsystemType.Prefab)]
 		public GameObject Prefab;
 
-		[ShowIf(nameof(Type), SubsystemType.SingletonClass)]
-		[HorizontalGroup, HideLabel]
 		[InfoBox("Not implemented yet!", InfoMessageType.Error), ReadOnly]
+		[HorizontalGroup, HideLabel]
+		[ShowIf(nameof(Type), SubsystemType.SingletonClass)]
 		public string SingletonType;
+
+		[InfoBox("Not implemented yet!", InfoMessageType.Error), ReadOnly]
+		[HorizontalGroup, HideLabel]
+		[ShowIf(nameof(Type), SubsystemType.Resource)]
+		public string ResourcePath;
 
 		internal void Initialize(bool dontDestroyOnLoad)
 		{
@@ -74,6 +117,11 @@ namespace Extenity.SubsystemManagementToolbox
 					throw new NotImplementedException();
 				}
 
+				case SubsystemType.Resource:
+				{
+					throw new NotImplementedException();
+				}
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -89,6 +137,11 @@ namespace Extenity.SubsystemManagementToolbox
 			if (Type != SubsystemType.SingletonClass)
 			{
 				SingletonType = null;
+			}
+
+			if (Type != SubsystemType.Resource)
+			{
+				ResourcePath = null;
 			}
 		}
 

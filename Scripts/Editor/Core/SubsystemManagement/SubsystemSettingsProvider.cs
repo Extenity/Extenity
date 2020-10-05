@@ -75,7 +75,17 @@ namespace Extenity.SubsystemManagementToolbox
 
 			if (EditorGUI.EndChangeCheck())
 			{
+				// Save
 				SubsystemSettings.Instance.Save();
+
+				// Delayed save. This is required too. Otherwise Odin or Unity will miss the last add/remove operation
+				// on lists for some reason. This last change won't be saved into the file and the change will be
+				// reverted back on next domain reload.
+				EditorApplication.delayCall += () =>
+				{
+					EditorUtility.SetDirty(SubsystemSettings.Instance);
+					SubsystemSettings.Instance.Save();
+				};
 			}
 		}
 

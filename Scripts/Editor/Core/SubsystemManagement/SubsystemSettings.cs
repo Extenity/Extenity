@@ -48,15 +48,21 @@ namespace Extenity.SubsystemManagementToolbox
 
 		[TitleGroup("Subsystems", Alignment = TitleAlignments.Centered)]
 		[ListDrawerSettings(AlwaysAddDefaultValue = true, Expanded = true)]
-		public SubsystemLevel[] SubsystemLevels;
+		public SubsystemLevel[] SubsystemLevels = new SubsystemLevel[]
+		{
+			new SubsystemLevel() { Name = "Splash" },
+			new SubsystemLevel() { Name = "Splash Delayed" },
+			new SubsystemLevel() { Name = "Main Menu" },
+			new SubsystemLevel() { Name = "Ingame" },
+		};
 
 		private void ClearUnusedReferences()
 		{
 			if (SubsystemLevels != null)
 			{
-				foreach (var subsystemLevel in SubsystemLevels)
+				for (var i = 0; i < SubsystemLevels.Length; i++)
 				{
-					subsystemLevel.ClearUnusedReferences();
+					SubsystemLevels[i].ClearUnusedReferences();
 				}
 			}
 		}
