@@ -143,22 +143,10 @@ namespace Extenity.SubsystemManagementToolbox
 			{
 				case SubsystemType.Prefab:
 				{
-					var instance = GameObject.Instantiate(Prefab);
-
-					// Remove "(Clone)" from the name and add '_' prefix.
-					instance.name = "_" + Prefab.name;
-
-					// Set parent
-					// if (parent != null)
-					// {
-					// 	instance.transform.SetParent(parent);
-					// }
-
-					if (dontDestroyOnLoad)
+					if (Prefab)
 					{
-						GameObject.DontDestroyOnLoad(instance);
+						InstantiateGameObject(Prefab);
 					}
-
 					return;
 				}
 
@@ -169,11 +157,40 @@ namespace Extenity.SubsystemManagementToolbox
 
 				case SubsystemType.Resource:
 				{
-					throw new NotImplementedException();
+					if (!string.IsNullOrWhiteSpace(ResourcePath))
+					{
+						var prefab = Resources.Load<GameObject>(ResourcePath);
+						if (!prefab)
+						{
+							Log.Error($"Subsystem prefab does not exist at resource path '{ResourcePath}'.");
+							return;
+						}
+						InstantiateGameObject(prefab);
+					}
+					return;
 				}
 
 				default:
 					throw new ArgumentOutOfRangeException();
+			}
+
+			void InstantiateGameObject(GameObject prefab)
+			{
+				var instance = GameObject.Instantiate(prefab);
+
+				// Remove "(Clone)" from the name and add '_' prefix.
+				instance.name = "_" + prefab.name;
+
+				// Set parent
+				// if (parent != null)
+				// {
+				// 	instance.transform.SetParent(parent);
+				// }
+
+				if (dontDestroyOnLoad)
+				{
+					GameObject.DontDestroyOnLoad(instance);
+				}
 			}
 		}
 
