@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
 using Sirenix.OdinInspector;
+using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 namespace Extenity.SubsystemManagementToolbox
@@ -12,6 +13,55 @@ namespace Extenity.SubsystemManagementToolbox
 		Prefab,
 		SingletonClass,
 		Resource,
+	}
+
+	[Serializable]
+	public class SubsystemCategory
+	{
+		[ToggleLeft]
+		[Tooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
+		public bool Active = true;
+
+		[LabelWidth(60)]
+		public string Name;
+
+		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = "OnBeginListElementGUI", OnEndListElementGUI = "OnEndListElementGUI")]
+		public SubsystemLevel[] SubsystemLevels = new SubsystemLevel[]
+		{
+			new SubsystemLevel() { Name = "Splash" },
+			new SubsystemLevel() { Name = "Splash Delayed" },
+			new SubsystemLevel() { Name = "Main Menu" },
+			new SubsystemLevel() { Name = "Ingame" },
+		};
+
+		internal void ClearUnusedReferences()
+		{
+			if (SubsystemLevels != null)
+			{
+				for (var i = 0; i < SubsystemLevels.Length; i++)
+				{
+					SubsystemLevels[i].ClearUnusedReferences();
+				}
+			}
+		}
+
+#if UNITY_EDITOR
+		private void OnBeginListElementGUI(int index)
+		{
+			if (!Active)
+			{
+				GUIHelper.PushColor(new Color(1f, 1f, 1f, 0.55f));
+			}
+		}
+
+		private void OnEndListElementGUI(int index)
+		{
+			if (!Active)
+			{
+				GUIHelper.PopColor();
+			}
+		}
+#endif
 	}
 
 	[Serializable]

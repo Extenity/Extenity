@@ -46,23 +46,20 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Subsystems
 
-		[TitleGroup("Subsystems", Alignment = TitleAlignments.Centered)]
-		[ListDrawerSettings(AlwaysAddDefaultValue = true, Expanded = true)]
-		public SubsystemLevel[] SubsystemLevels = new SubsystemLevel[]
+		[TitleGroup("Categories", "An application generally needs one category. But mini games or headless server builds might need their own categories.")]
+		[ListDrawerSettings(Expanded = true)]
+		public SubsystemCategory[] SubsystemCategories = new SubsystemCategory[]
 		{
-			new SubsystemLevel() { Name = "Splash" },
-			new SubsystemLevel() { Name = "Splash Delayed" },
-			new SubsystemLevel() { Name = "Main Menu" },
-			new SubsystemLevel() { Name = "Ingame" },
+			new SubsystemCategory() { Name = "Main Game" },
 		};
 
-		private void ClearUnusedReferences()
+		internal void ClearUnusedReferences()
 		{
-			if (SubsystemLevels != null)
+			if (SubsystemCategories != null)
 			{
-				for (var i = 0; i < SubsystemLevels.Length; i++)
+				for (var i = 0; i < SubsystemCategories.Length; i++)
 				{
-					SubsystemLevels[i].ClearUnusedReferences();
+					SubsystemCategories[i].ClearUnusedReferences();
 				}
 			}
 		}
