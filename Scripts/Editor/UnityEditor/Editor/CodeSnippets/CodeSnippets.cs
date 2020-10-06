@@ -345,13 +345,13 @@ namespace __NAMESPACE__
 
 		#region Menu Commands
 
-		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced Empty)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
+		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
 		private static void _CreateScript_MainScriptGroup()
 		{
 			CreateSnippet(MainScriptGroup);
 		}
 
-		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
+		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced Empty)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
 		private static void _CreateScript_EmptyScriptGroup()
 		{
 			CreateSnippet(EmptyScriptGroup);
