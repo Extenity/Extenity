@@ -102,11 +102,11 @@ namespace Extenity.GameObjectToolbox
 				WillBeInitialized = new bool[1 + (int)InstantiatorOrder.Order5];
 			}
 
-			if (IsInstantiated)
-			{
-				DestroyImmediate(gameObject);
-				return;
-			}
+			// if (IsInstantiated) Moving Instant Prefab instantiation into start requires the Instantiator to survive until Start is called by Unity. See 115852356.
+			// {
+			// 	DestroyImmediate(gameObject);
+			// 	return;
+			// }
 
 			name = "_" + name;
 
@@ -125,6 +125,8 @@ namespace Extenity.GameObjectToolbox
 		{
 			// Initialize instant prefabs. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the Instantiator is created.
 			InstantiateInstantPrefabs();
+
+			DestroyImmediate(gameObject); // See 115852356.
 		}
 
 		private void Initialize()
