@@ -46,11 +46,34 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Subsystems
 
-		[DetailedInfoBox("Click here for some help.",
+		[DetailedInfoBox("\n" +
+		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded."+
+		                 "\n\n" +
+		                 "Click here for details." +
+		                 "\n",
+
 		                 "\n" +
-		                 "Subsystem Manager is responsible for creating subsystems of the application whenever a scene is loaded.\n\n" +
-		                 "Every scene may require different subsystems. Menu scene may only need some basic subsystems but a game level scene may both require some ingame related ones on top of that menu subsystems.\n\n" +
-		                 // TODO: Write more documentation here.
+		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded."+
+		                 "\n\n" +
+		                 "<b>What is a Subsystem?</b>" +
+		                 "\n" +
+		                 "Like an Audio Manager, Camera Manager, Network Manager, Ingame Console, etc. Subsystems are the pillars of an application. They are generally required to live throughout the entire lifetime of the application. Some of them are required to initialize with loading a scene and then deinitialize when switching to another scene." +
+		                 "\n\n" +
+		                 "<b>The Idea Behind</b>" +
+		                 "\n" +
+		                 "Subsystem Manager decouples Subsystems from Level Design practices. Designers won't have to add subsystem prefabs or scripts in any of their scenes. That solves the great pain of managing the synchronization of every game level scene in the project. The scenes may even come from asset bundles or external projects." +
+		                 "\n\n" +
+		                 "The system is designed to be foolproof. Being project-wide configuration rather than per-scene configuration, allows less human error and requires less thinking when designers create a new Level scene or a UI scene." +
+		                 "\n\n" +
+		                 "Every scene may require different subsystems. So the system allows configuring different subsystems per scene. The application may also need to initialize subsystems step by step throughout loading consecutive scenes. Let's say the Menu scene may require Audio Manager subsystem but a game level scene may both require Ingame HUD subsystem along with that Audio Manager subsystem. So the system is flexible enough to allow these consecutive loading operations too." +
+		                 "\n\n" +
+		                 "There is also that great need to press Play from any scene, and then all the required systems magically initializes themselves." +
+		                 "\n\n" +
+		                 "<b>Usage</b>" +
+		                 "\n" +
+		                 // TODO:
+		                 // What if a subsystem requires reference to an object in a scene?
+		                 "***TODO***" +
 		                 "\n")]
 		[PropertySpace(SpaceBefore = 12)]
 		[ListDrawerSettings(Expanded = true)]
