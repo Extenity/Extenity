@@ -141,7 +141,7 @@ namespace Extenity.GameObjectToolbox
 				InstantiateSubsystemPrefabs();
 				InstantiateVolatilePrefabs();
 
-				Destroy(gameObject);
+				// Destroy(gameObject); Moving Instant Prefab instantiation into start requires the Instantiator to survive until Start is called by Unity. See 115852356.
 			}
 		}
 
