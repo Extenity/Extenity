@@ -102,9 +102,6 @@ namespace Extenity.GameObjectToolbox
 				WillBeInitialized = new bool[1 + (int)InstantiatorOrder.Order5];
 			}
 
-			// Initialize instant prefabs first. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the instantiator is created.
-			InstantiateInstantPrefabs();
-
 			if (IsInstantiated)
 			{
 				DestroyImmediate(gameObject);
@@ -122,6 +119,12 @@ namespace Extenity.GameObjectToolbox
 				Initialize();
 				InitializeMarkedInstantiators();
 			}
+		}
+
+		private void Start()
+		{
+			// Initialize instant prefabs. They are not eligible for 'IsInstantiated' checks and will be instantiated whenever the Instantiator is created.
+			InstantiateInstantPrefabs();
 		}
 
 		private void Initialize()
