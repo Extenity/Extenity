@@ -18,14 +18,44 @@ namespace Extenity.SubsystemManagementToolbox
 	[Serializable]
 	public class SubsystemCategory
 	{
-		[ToggleLeft]
-		[Tooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
+		[HideInInspector]
 		public bool Active = true;
 
-		[LabelWidth(60)]
+#if UNITY_EDITOR
+		[HideIf(nameof(Active))]
+		[HorizontalGroup("NameLine", Order = 1, Width = 40)]
+		[VerticalGroup("NameLine/Toggle", Order = 1), PropertyOrder(2)]
+		[GUIColor(0.7f, 0.2f, 0.2f, 1f)]
+		[Button(ButtonHeight = 20, Name = "Off")]
+		[PropertySpace(SpaceBefore = 10)]
+		[PropertyTooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
+		private void _Activate()
+		{
+			Active = true;
+		}
+
+		[ShowIf(nameof(Active))]
+		[VerticalGroup("NameLine/Toggle"), PropertyOrder(1)]
+		[GUIColor(0.2f, 0.7f, 0.2f, 1f)]
+		[Button(ButtonHeight = 20, Name = "On")]
+		[PropertySpace(SpaceBefore = 10)]
+		[PropertyTooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
+		private void _Deactivate()
+		{
+			Active = false;
+		}
+#endif
+
+		[HorizontalGroup("NameLine/Name", Order = 2, MaxWidth = 250)]
+		[HideLabel, SuffixLabel("Category Name")]
+		[Tooltip("Name of the Subsystem Category. It's used for accessing category by its name and logging.")]
+		[PropertySpace(SpaceBefore = 10)]
 		public string Name;
 
-		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = "OnBeginListElementGUI", OnEndListElementGUI = "OnEndListElementGUI")]
+		[PropertyOrder(2)]
+		[ListDrawerSettings(OnBeginListElementGUI = "OnBeginListElementGUI", OnEndListElementGUI = "OnEndListElementGUI")]
+		[PropertySpace(SpaceAfter = 10)]
+		[PropertyTooltip("A Subsystem Level is configured to create its subsystems whenever loading a scene that matches Subsystem Level's scene filters.")] // It's called Level because the previous Levels will also be applied
 		public SubsystemLevel[] SubsystemLevels = new SubsystemLevel[]
 		{
 			new SubsystemLevel() { Name = "Splash" },
@@ -67,12 +97,19 @@ namespace Extenity.SubsystemManagementToolbox
 	[Serializable]
 	public struct SubsystemLevel
 	{
+		[HorizontalGroup("NameLine", Order = 1, MaxWidth = 250)]
+		[HideLabel, SuffixLabel("Level Name")]
+		[Tooltip("Name of the Subsystem Level.")]
+		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
 		public string Name;
 
-		[ListDrawerSettings(Expanded = true, CustomAddFunction = "_AddSubsystemsBeforeScene")]
+		[PropertyOrder(2)]
+		[ListDrawerSettings(CustomAddFunction = "_AddSubsystemsBeforeScene")]
 		public SubsystemDefinition[] SubsystemsBeforeScene;
 
-		[ListDrawerSettings(Expanded = true, CustomAddFunction = "_AddSubsystemsAfterScene")]
+		[PropertyOrder(3)]
+		[ListDrawerSettings(CustomAddFunction = "_AddSubsystemsAfterScene")]
+		[PropertySpace(SpaceAfter = 10)]
 		public SubsystemDefinition[] SubsystemsAfterScene;
 
 		internal void ClearUnusedReferences()

@@ -46,8 +46,15 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Subsystems
 
-		[TitleGroup("Categories", "An application generally needs one category. But mini games or headless server builds might need their own categories.")]
+		[DetailedInfoBox("Click here for some help.",
+		                 "\n" +
+		                 "Subsystem Manager is responsible for creating subsystems of the application whenever a scene is loaded.\n\n" +
+		                 "Every scene may require different subsystems. Menu scene may only need some basic subsystems but a game level scene may both require some ingame related ones on top of that menu subsystems.\n\n" +
+		                 // TODO: Write more documentation here.
+		                 "\n")]
+		[PropertySpace(SpaceBefore = 12)]
 		[ListDrawerSettings(Expanded = true)]
+		[PropertyTooltip("An application generally needs one category. But mini games or headless server builds might need their own categories.")]
 		public SubsystemCategory[] SubsystemCategories = new SubsystemCategory[]
 		{
 			new SubsystemCategory() { Name = "Main Game" },
