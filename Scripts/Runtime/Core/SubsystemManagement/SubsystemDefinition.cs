@@ -69,6 +69,17 @@ namespace Extenity.SubsystemManagementToolbox
 		[ListDrawerSettings(CustomAddFunction = "_AddNewSubsystem")]
 		public SubsystemDefinition[] Subsystems;
 
+		internal void ResetStatus()
+		{
+			if (Subsystems != null)
+			{
+				for (var i = 0; i < Subsystems.Length; i++)
+				{
+					Subsystems[i].ResetStatus();
+				}
+			}
+		}
+
 		internal void ClearUnusedReferences()
 		{
 			if (Subsystems != null)
@@ -102,7 +113,7 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 	[Serializable]
-	public struct SubsystemDefinition : IConsistencyChecker
+	public class SubsystemDefinition : IConsistencyChecker
 	{
 		[HorizontalGroup(100f), HideLabel]
 		public SubsystemType Type;
@@ -110,7 +121,6 @@ namespace Extenity.SubsystemManagementToolbox
 		[Tooltip("Set to instantiate the subsystem only once or every time the scene loads.")]
 		[HorizontalGroup, ToggleLeft]
 		[HideIf(nameof(Type), SubsystemType.SingletonClass)]
-		[DisableInEditorMode, DisableInPlayMode]
 		public bool InstantiateEveryTime;
 
 		[Tooltip("Tell Unity to mark the instantiated object to not destroy on scene changes.")]
@@ -132,8 +142,22 @@ namespace Extenity.SubsystemManagementToolbox
 		[ShowIf(nameof(Type), SubsystemType.Resource)]
 		public string ResourcePath;
 
+		public bool IsInstantiated { get; private set; }
+
+		internal void ResetStatus()
+		{
+			IsInstantiated = false;
+		}
+
 		internal void Initialize()
 		{
+			if (IsInstantiated && !InstantiateEveryTime)
+			{
+				// Already instantiated before. Skip.
+				return;
+			}
+			IsInstantiated = true;
+
 			switch (Type)
 			{
 				case SubsystemType.Prefab:

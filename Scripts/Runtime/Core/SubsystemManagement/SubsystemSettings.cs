@@ -106,6 +106,17 @@ namespace Extenity.SubsystemManagementToolbox
 			throw new Exception($"Subsystem group '{subsystemGroupName}' does not exist.");
 		}
 
+		internal void ResetStatus()
+		{
+			if (SubsystemGroups != null)
+			{
+				for (var i = 0; i < SubsystemGroups.Length; i++)
+				{
+					SubsystemGroups[i].ResetStatus();
+				}
+			}
+		}
+
 		internal void ClearUnusedReferences()
 		{
 			if (SubsystemGroups != null)
