@@ -1,9 +1,8 @@
-using System.IO;
 using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
-using Extenity.UnityEditorToolbox.Editor;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.SubsystemManagementToolbox
@@ -120,37 +119,16 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Save / Load
 
-		private static SubsystemSettings CreateNewSettingsFile()
-		{
-			var settings = CreateInstance<SubsystemSettings>();
-			Save(settings);
-			return settings;
-		}
-
-		internal static void Save(SubsystemSettings settings)
-		{
-			EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, settings);
-		}
-
-		internal void Save()
-		{
-			EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, this);
-		}
-
 		private static SubsystemSettings LoadOrCreate()
 		{
-			SubsystemSettings settings;
-
-			if (!File.Exists(ConfigurationFilePath))
+			var settings = AssetDatabase.LoadAssetAtPath<SubsystemSettings>(ConfigurationFilePath);
+			if (settings == null)
 			{
-				settings = CreateNewSettingsFile();
-			}
-			else
-			{
-				settings = EditorUtilityTools.LoadUnityAssetFile<SubsystemSettings>(ConfigurationFilePath);
+				settings = CreateInstance<SubsystemSettings>();
 			}
 
-			settings.hideFlags = HideFlags.HideAndDontSave;
+			// Is this needed?
+			//settings.hideFlags = HideFlags.HideAndDontSave;
 
 			if (settings.Version != CurrentVersion)
 			{
@@ -161,9 +139,23 @@ namespace Extenity.SubsystemManagementToolbox
 			return settings;
 		}
 
+		internal static void Save(SubsystemSettings settings)
+		{
+#if UNITY_EDITOR
+			UnityEditorToolbox.Editor.EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, settings);
+#endif
+		}
+
+		internal void Save()
+		{
+#if UNITY_EDITOR
+			UnityEditorToolbox.Editor.EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, this);
+#endif
+		}
+
 		#endregion
 
-		#region Migration
+		#region Backwards Compatibility / Migration
 
 		private static void ApplyMigration(SubsystemSettings settings, string targetVersion)
 		{
