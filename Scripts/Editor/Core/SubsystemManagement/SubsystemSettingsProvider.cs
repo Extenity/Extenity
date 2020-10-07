@@ -61,7 +61,7 @@ namespace Extenity.SubsystemManagementToolbox
 		{
 			if (_OdinEditor == null)
 			{
-				_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(SubsystemSettings.EditorInstance, typeof(OdinEditor));
+				_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(SubsystemSettings.Instance, typeof(OdinEditor));
 			}
 		}
 

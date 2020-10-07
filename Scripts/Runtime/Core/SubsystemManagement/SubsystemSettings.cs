@@ -19,18 +19,18 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Singleton
 
-		private static SubsystemSettings _EditorInstance;
+		private static SubsystemSettings _Instance;
 
-		public static SubsystemSettings EditorInstance
+		public static SubsystemSettings Instance
 		{
 			get
 			{
-				if (_EditorInstance == null)
+				if (_Instance == null)
 				{
-					_EditorInstance = LoadOrCreate();
+					_Instance = LoadOrCreate();
 				}
 
-				return _EditorInstance;
+				return _Instance;
 			}
 		}
 
