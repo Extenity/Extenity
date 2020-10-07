@@ -1,19 +1,18 @@
-using Extenity.ApplicationToolbox;
+using System;
 using Extenity.DataToolbox;
-using Extenity.FileSystemToolbox;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.SubsystemManagementToolbox
 {
 
 	[HideMonoScript]
+	[Serializable]
+	[ExcludeFromPresetAttribute]
 	public class SubsystemSettings : ScriptableObject, ISerializationCallbackReceiver
 	{
 		#region Configuration
 
-		private static readonly string ConfigurationFilePath = ApplicationTools.UnityProjectPaths.ProjectSettingsRelativePath.AppendFileToPath(SubsystemConstants.ConfigurationFileName);
 		private const string CurrentVersion = SubsystemConstants.Version;
 
 		#endregion
@@ -121,10 +120,16 @@ namespace Extenity.SubsystemManagementToolbox
 
 		private static SubsystemSettings LoadOrCreate()
 		{
-			var settings = AssetDatabase.LoadAssetAtPath<SubsystemSettings>(ConfigurationFilePath);
+			var settings = Resources.Load<SubsystemSettings>(SubsystemConstants.ConfigurationFileNameWithoutExtension);
 			if (settings == null)
 			{
-				settings = CreateInstance<SubsystemSettings>();
+				settings = ScriptableObject.CreateInstance<SubsystemSettings>();
+#if UNITY_EDITOR
+				// Create asset
+				var path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath(SubsystemConstants.ConfigurationDefaultFilePath);
+				UnityEditor.AssetDatabase.CreateAsset(settings, path);
+				UnityEditor.AssetDatabase.SaveAssets();
+#endif
 			}
 
 			// Is this needed?
@@ -133,24 +138,12 @@ namespace Extenity.SubsystemManagementToolbox
 			if (settings.Version != CurrentVersion)
 			{
 				ApplyMigration(settings, CurrentVersion);
-				Save(settings);
+#if UNITY_EDITOR
+				UnityEditor.EditorUtility.SetDirty(settings);
+#endif
 			}
 
 			return settings;
-		}
-
-		internal static void Save(SubsystemSettings settings)
-		{
-#if UNITY_EDITOR
-			UnityEditorToolbox.Editor.EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, settings);
-#endif
-		}
-
-		internal void Save()
-		{
-#if UNITY_EDITOR
-			UnityEditorToolbox.Editor.EditorUtilityTools.SaveUnityAssetFile(ConfigurationFilePath, this);
-#endif
 		}
 
 		#endregion
