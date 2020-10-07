@@ -94,14 +94,17 @@ namespace Extenity.SubsystemManagementToolbox
 			new SubsystemGroup() { Name = "Ingame" },
 		};
 
-		[TabGroup("Main/Tabs", "Scene Definitions")]
-		[ListDrawerSettings(Expanded = true)]
-		public SubsystemDefinitionOfScene[] Scenes = new SubsystemDefinitionOfScene[]
+		public SubsystemGroup GetSubsystemGroup(string subsystemGroupName)
 		{
-			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "Splash")) },
-			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash", "Splash Delayed", "Main Menu" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "MainMenu")) },
-			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash", "Splash Delayed", "Main Menu", "Ingame" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Wildcard, "*")) },
-		};
+			foreach (var subsystemGroup in SubsystemGroups)
+			{
+				if (subsystemGroup.Name.Equals(subsystemGroupName, StringComparison.Ordinal))
+				{
+					return subsystemGroup;
+				}
+			}
+			throw new Exception($"Subsystem group '{subsystemGroupName}' does not exist.");
+		}
 
 		internal void ClearUnusedReferences()
 		{
@@ -112,6 +115,60 @@ namespace Extenity.SubsystemManagementToolbox
 					SubsystemGroups[i].ClearUnusedReferences();
 				}
 			}
+		}
+
+		#endregion
+
+		#region Scenes
+
+		[TabGroup("Main/Tabs", "Scene Definitions")]
+		[ListDrawerSettings(Expanded = true)]
+		public SubsystemDefinitionOfScene[] Scenes = new SubsystemDefinitionOfScene[]
+		{
+			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "Splash")) },
+			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash", "Splash Delayed", "Main Menu" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "MainMenu")) },
+			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash", "Splash Delayed", "Main Menu", "Ingame" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Wildcard, "*")) },
+		};
+
+		public bool FindMatchingSceneDefinition(string sceneName, out SubsystemDefinitionOfScene definition)
+		{
+			foreach (var sceneDefinition in Scenes)
+			{
+				if (sceneDefinition.SceneNameMatch.IsMatching(sceneName))
+				{
+					definition = sceneDefinition;
+					return true;
+				}
+			}
+			definition = default;
+			return false;
+		}
+
+		#endregion
+
+		#region Instantiate Subsystems
+
+		public bool InitializeForScene(string sceneName)
+		{
+			if (FindMatchingSceneDefinition(sceneName, out var definition))
+			{
+				using (Log.Indent($"Initializing subsystems for scene '{sceneName}'."))
+				{
+					foreach (var subsystemGroupName in definition.SubsystemGroupsToBeLoaded)
+					{
+						var subsystemGroup = GetSubsystemGroup(subsystemGroupName);
+						using (Log.Indent($"Initializing subsystem group '{subsystemGroupName}'."))
+						{
+							foreach (var subsystem in subsystemGroup.Subsystems)
+							{
+								subsystem.Initialize();
+							}
+						}
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 		#endregion

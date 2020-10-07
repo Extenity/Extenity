@@ -1,42 +1,56 @@
+using Extenity.SubsystemManagementToolbox;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Extenity.ApplicationToolbox
 {
 
-	public class SubsystemManager : MonoBehaviour
+	public static class SubsystemManager
 	{
-		/*
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		// Alternatives:
+		// [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		// private static void Initialize_BeforeSceneLoad() { }
+		// [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		// private static void Initialize_AfterSceneLoad() { }
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void Initialize()
 		{
-			Log.Info("RuntimeInitializeOnLoadMethod    BeforeSceneLoad   " + SceneManager.GetActiveScene().name);
-
-			SceneManager.activeSceneChanged += OnActiveSceneChanged;
+			SceneManager.sceneLoaded -= OnSceneLoaded;
 			SceneManager.sceneLoaded += OnSceneLoaded;
-			SceneManager.sceneUnloaded += OnSceneUnloaded;
+			// SceneManager.sceneUnloaded -= OnSceneUnloaded;
+			// SceneManager.sceneUnloaded += OnSceneUnloaded;
+			// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+			// SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
-		}
+#if UNITY_EDITOR
+			if (UnityEditor.EditorSettings.enterPlayModeOptionsEnabled &&
+			    (UnityEditor.EditorSettings.enterPlayModeOptions & UnityEditor.EnterPlayModeOptions.DisableSceneReload) > 0)
+			{
+				Log.Error("Disabling Scene Reload in Enter Play Mode Options is not supported in Subsystem Manager. Expect subsystems to not be initialized when entering Play mode.");
+			}
 
-		private static void OnActiveSceneChanged(Scene scene1, Scene scene2)
-		{
-			Log.Info("active scene changed : " + scene1.name + "   ->   " + scene2.name);
+			Application.quitting -= _OnQuit;
+			Application.quitting += _OnQuit;
+
+			void _OnQuit()
+			{
+				Application.quitting -= _OnQuit;
+				SceneManager.sceneLoaded -= OnSceneLoaded;
+				// SceneManager.sceneUnloaded -= OnSceneUnloaded;
+				// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+			}
+#endif
 		}
 
 		private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
-			Log.Info("scene loaded : " + scene.name);
-		}
-		private static void OnSceneUnloaded(Scene scene)
-		{
-			Log.Info("scene unloaded : " + scene.name + "     active scene: " + SceneManager.GetActiveScene().name);
-		}
+			var sceneName = scene.name;
+			if (string.IsNullOrWhiteSpace(sceneName))
+				return;
 
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-		private static void RuntimeInitializeOnLoadMethod()
-		{
-			Log.Info("RuntimeInitializeOnLoadMethod    AfterSceneLoad");
+			SubsystemSettings.Instance.InitializeForScene(sceneName);
 		}
-		*/
 	}
 
 }

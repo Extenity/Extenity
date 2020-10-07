@@ -66,41 +66,24 @@ namespace Extenity.SubsystemManagementToolbox
 		public string Name;
 
 		[PropertyOrder(2)]
-		[ListDrawerSettings(CustomAddFunction = "_AddSubsystemsBeforeScene")]
-		public SubsystemDefinition[] SubsystemsBeforeScene;
-
-		[PropertyOrder(3)]
-		[ListDrawerSettings(CustomAddFunction = "_AddSubsystemsAfterScene")]
-		[PropertySpace(SpaceAfter = 10)]
-		public SubsystemDefinition[] SubsystemsAfterScene;
+		[ListDrawerSettings(CustomAddFunction = "_AddNewSubsystem")]
+		public SubsystemDefinition[] Subsystems;
 
 		internal void ClearUnusedReferences()
 		{
-			if (SubsystemsBeforeScene != null)
+			if (Subsystems != null)
 			{
-				for (var i = 0; i < SubsystemsBeforeScene.Length; i++)
+				for (var i = 0; i < Subsystems.Length; i++)
 				{
-					SubsystemsBeforeScene[i].ClearUnusedReferences();
-				}
-			}
-			if (SubsystemsAfterScene != null)
-			{
-				for (var i = 0; i < SubsystemsAfterScene.Length; i++)
-				{
-					SubsystemsAfterScene[i].ClearUnusedReferences();
+					Subsystems[i].ClearUnusedReferences();
 				}
 			}
 		}
 
 #if UNITY_EDITOR
-		private SubsystemDefinition _AddSubsystemsBeforeScene()
+		private SubsystemDefinition _AddNewSubsystem()
 		{
 			return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = false, DontDestroyOnLoad = true };
-		}
-
-		private SubsystemDefinition _AddSubsystemsAfterScene()
-		{
-			return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = true, DontDestroyOnLoad = false };
 		}
 #endif
 	}
@@ -114,6 +97,7 @@ namespace Extenity.SubsystemManagementToolbox
 		[Tooltip("Set to instantiate the subsystem only once or every time the scene loads.")]
 		[HorizontalGroup, ToggleLeft]
 		[HideIf(nameof(Type), SubsystemType.SingletonClass)]
+		[DisableInEditorMode, DisableInPlayMode]
 		public bool InstantiateEveryTime;
 
 		[Tooltip("Tell Unity to mark the instantiated object to not destroy on scene changes.")]
@@ -131,12 +115,11 @@ namespace Extenity.SubsystemManagementToolbox
 		[ShowIf(nameof(Type), SubsystemType.SingletonClass)]
 		public string SingletonType;
 
-		[InfoBox("Not implemented yet!", InfoMessageType.Error), ReadOnly]
 		[HorizontalGroup, HideLabel]
 		[ShowIf(nameof(Type), SubsystemType.Resource)]
 		public string ResourcePath;
 
-		internal void Initialize(bool dontDestroyOnLoad)
+		internal void Initialize()
 		{
 			switch (Type)
 			{
@@ -144,7 +127,7 @@ namespace Extenity.SubsystemManagementToolbox
 				{
 					if (Prefab)
 					{
-						InstantiateGameObject(Prefab);
+						InstantiateGameObject(Prefab, DontDestroyOnLoad);
 					}
 					return;
 				}
@@ -164,7 +147,7 @@ namespace Extenity.SubsystemManagementToolbox
 							Log.Error($"Subsystem prefab does not exist at resource path '{ResourcePath}'.");
 							return;
 						}
-						InstantiateGameObject(prefab);
+						InstantiateGameObject(prefab, DontDestroyOnLoad);
 					}
 					return;
 				}
@@ -173,7 +156,7 @@ namespace Extenity.SubsystemManagementToolbox
 					throw new ArgumentOutOfRangeException();
 			}
 
-			void InstantiateGameObject(GameObject prefab)
+			void InstantiateGameObject(GameObject prefab, bool dontDestroyOnLoad)
 			{
 				var instance = GameObject.Instantiate(prefab);
 
