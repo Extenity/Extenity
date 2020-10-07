@@ -87,6 +87,7 @@ namespace Extenity.ApplicationToolbox
 			public static readonly string LibraryDirectory = "Library";
 			public static readonly string PackagesDirectory = "Packages";
 			public static readonly string TempDirectory = "Temp";
+			public static readonly string ResourcesDirectory = "Resources";
 
 			public static string AssetsRelativePath => AssetsDirectory.AddDirectorySeparatorToEnd();
 			public static string ProjectSettingsRelativePath => ProjectSettingsDirectory.AddDirectorySeparatorToEnd();
@@ -94,6 +95,7 @@ namespace Extenity.ApplicationToolbox
 			public static string LibraryRelativePath => LibraryDirectory.AddDirectorySeparatorToEnd();
 			public static string PackagesRelativePath => PackagesDirectory.AddDirectorySeparatorToEnd();
 			public static string TempRelativePath => TempDirectory.AddDirectorySeparatorToEnd();
+			public static string TopLevelResourcesRelativePath => AssetsDirectory.AppendDirectoryToPath(ResourcesDirectory).AddDirectorySeparatorToEnd();
 
 			public static string AssetsFullPath => ApplicationPath.AppendDirectoryToPath(AssetsDirectory, true);
 			public static string ProjectSettingsFullPath => ApplicationPath.AppendDirectoryToPath(ProjectSettingsDirectory, true);
