@@ -2,7 +2,7 @@
 using UnityEditor;
 using System;
 using System.IO;
-using Extenity.ApplicationToolbox.Editor;
+using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -157,7 +157,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Load Settings From File
 
 		private static readonly string ConfigurationFileName = "PlatformSettings.json";
-		private static readonly string ConfigurationFilePath = EditorApplicationTools.ProjectSettingsRelativePath.AppendFileToPath(ConfigurationFileName);
+		private static readonly string ConfigurationFilePath = ApplicationTools.UnityProjectPaths.ProjectSettingsRelativePath.AppendFileToPath(ConfigurationFileName);
 
 		public static void LoadSettingsFromFile()
 		{

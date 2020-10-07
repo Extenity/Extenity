@@ -4,7 +4,6 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Extenity.FileSystemToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEditor;
@@ -15,43 +14,6 @@ namespace Extenity.ApplicationToolbox.Editor
 
 	public static class EditorApplicationTools
 	{
-		#region Paths - Project
-
-		public static readonly string AssetsDirectory = "Assets";
-		public static readonly string ProjectSettingsDirectory = "ProjectSettings";
-		public static readonly string UserSettingsDirectory = "UserSettings";
-		public static readonly string LibraryDirectory = "Library";
-		public static readonly string PackagesDirectory = "Packages";
-		public static readonly string TempDirectory = "Temp";
-
-		public static string AssetsRelativePath => AssetsDirectory.AddDirectorySeparatorToEnd();
-		public static string ProjectSettingsRelativePath => ProjectSettingsDirectory.AddDirectorySeparatorToEnd();
-		public static string UserSettingsRelativePath => UserSettingsDirectory.AddDirectorySeparatorToEnd();
-		public static string LibraryRelativePath => LibraryDirectory.AddDirectorySeparatorToEnd();
-		public static string PackagesRelativePath => PackagesDirectory.AddDirectorySeparatorToEnd();
-		public static string TempRelativePath => TempDirectory.AddDirectorySeparatorToEnd();
-
-		public static string AssetsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(AssetsDirectory, true);
-		public static string ProjectSettingsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(ProjectSettingsDirectory, true);
-		public static string UserSettingsFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(UserSettingsDirectory, true);
-		public static string LibraryFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(LibraryDirectory, true);
-		public static string PackagesFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(PackagesDirectory, true);
-		public static string TempFullPath => ApplicationTools.ApplicationPath.AppendDirectoryToPath(TempDirectory, true);
-
-		/// <summary>
-		/// Checks if the specified directory is a Unity project directory. It will throw in case Path.Combine or
-		/// Directory.Exists methods are not happy with the given path.
-		/// </summary>
-		public static bool IsUnityProjectPath(string directoryPath)
-		{
-			return
-				Directory.Exists(directoryPath) &&
-				Directory.Exists(Path.Combine(directoryPath, AssetsDirectory)) &&
-				Directory.Exists(Path.Combine(directoryPath, ProjectSettingsDirectory));
-		}
-
-		#endregion
-
 		#region Paths - Unity Editor
 
 		private static string _UnityEditorExecutableDirectory;

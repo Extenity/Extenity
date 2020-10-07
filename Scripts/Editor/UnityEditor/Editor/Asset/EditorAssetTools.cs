@@ -6,7 +6,6 @@ using UnityEditor;
 using UnityEngine;
 using System.Text;
 using Extenity.ApplicationToolbox;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using Extenity.FileSystemToolbox;
@@ -246,7 +245,7 @@ namespace Extenity.AssetToolbox.Editor
 				var fullList = New.List<string>();
 				var log = new StringBuilder();
 
-				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith(EditorApplicationTools.ProjectSettingsDirectory)).ToList();
+				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith(ApplicationTools.UnityProjectPaths.ProjectSettingsDirectory)).ToList();
 				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
 
 				Log.Info(log.ToString());

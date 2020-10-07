@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Extenity.ApplicationToolbox;
-using Extenity.ApplicationToolbox.Editor;
 using Extenity.CompilationToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
@@ -270,7 +269,7 @@ namespace Extenity.AssetToolbox.Editor
 			var path = GetSelectedDirectoryPath();
 			if (string.IsNullOrEmpty(path))
 			{
-				return EditorApplicationTools.AssetsRelativePath;
+				return ApplicationTools.UnityProjectPaths.AssetsRelativePath;
 			}
 			return path;
 		}
@@ -315,7 +314,7 @@ namespace Extenity.AssetToolbox.Editor
 
 			// See if the path is a Package path. If so, the path may need to be modified to use package name, instead
 			// of the physical path. AssetDatabase will only understand package names in such paths.
-			if (relativePath.StartsWith(EditorApplicationTools.PackagesDirectory, StringComparison.InvariantCultureIgnoreCase))
+			if (relativePath.StartsWith(ApplicationTools.UnityProjectPaths.PackagesDirectory, StringComparison.InvariantCultureIgnoreCase))
 			{
 				// The path expected to be relative to project directory. MakeRelativePath above does that.
 				// Also the path assumed to have normalized directory separators. MakeRelativePath above does that too.
@@ -325,7 +324,7 @@ namespace Extenity.AssetToolbox.Editor
 				var remainderPath = relativePath.Substring(separatorSecond + 1);
 				var manifestPath = Path.Combine(packageDirectory, PackageManagerTools.PackageJsonFileName);
 				var packageName = PackageManagerTools.GetPackageNameInManifestJson(manifestPath);
-				relativePath = Path.Combine(EditorApplicationTools.PackagesDirectory, packageName, remainderPath);
+				relativePath = Path.Combine(ApplicationTools.UnityProjectPaths.PackagesDirectory, packageName, remainderPath);
 			}
 
 			return relativePath;

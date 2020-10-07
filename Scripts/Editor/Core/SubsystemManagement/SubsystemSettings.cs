@@ -1,4 +1,4 @@
-using Extenity.ApplicationToolbox.Editor;
+using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Sirenix.OdinInspector;
@@ -13,7 +13,7 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		#region Configuration
 
-		private static readonly string ConfigurationFilePath = EditorApplicationTools.ProjectSettingsRelativePath.AppendFileToPath(SubsystemConstants.ConfigurationFileName);
+		private static readonly string ConfigurationFilePath = ApplicationTools.UnityProjectPaths.ProjectSettingsRelativePath.AppendFileToPath(SubsystemConstants.ConfigurationFileName);
 		private const string CurrentVersion = SubsystemConstants.Version;
 
 		#endregion

@@ -77,6 +77,46 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
+		#region Paths - Unity Project
+
+		public static class UnityProjectPaths
+		{
+			public static readonly string AssetsDirectory = "Assets";
+			public static readonly string ProjectSettingsDirectory = "ProjectSettings";
+			public static readonly string UserSettingsDirectory = "UserSettings";
+			public static readonly string LibraryDirectory = "Library";
+			public static readonly string PackagesDirectory = "Packages";
+			public static readonly string TempDirectory = "Temp";
+
+			public static string AssetsRelativePath => AssetsDirectory.AddDirectorySeparatorToEnd();
+			public static string ProjectSettingsRelativePath => ProjectSettingsDirectory.AddDirectorySeparatorToEnd();
+			public static string UserSettingsRelativePath => UserSettingsDirectory.AddDirectorySeparatorToEnd();
+			public static string LibraryRelativePath => LibraryDirectory.AddDirectorySeparatorToEnd();
+			public static string PackagesRelativePath => PackagesDirectory.AddDirectorySeparatorToEnd();
+			public static string TempRelativePath => TempDirectory.AddDirectorySeparatorToEnd();
+
+			public static string AssetsFullPath => ApplicationPath.AppendDirectoryToPath(AssetsDirectory, true);
+			public static string ProjectSettingsFullPath => ApplicationPath.AppendDirectoryToPath(ProjectSettingsDirectory, true);
+			public static string UserSettingsFullPath => ApplicationPath.AppendDirectoryToPath(UserSettingsDirectory, true);
+			public static string LibraryFullPath => ApplicationPath.AppendDirectoryToPath(LibraryDirectory, true);
+			public static string PackagesFullPath => ApplicationPath.AppendDirectoryToPath(PackagesDirectory, true);
+			public static string TempFullPath => ApplicationPath.AppendDirectoryToPath(TempDirectory, true);
+		}
+
+		/// <summary>
+		/// Checks if the specified directory is a Unity project directory. It will throw in case Path.Combine or
+		/// Directory.Exists methods are not happy with the given path.
+		/// </summary>
+		public static bool IsUnityProjectPath(string directoryPath)
+		{
+			return
+				Directory.Exists(directoryPath) &&
+				Directory.Exists(Path.Combine(directoryPath, UnityProjectPaths.AssetsDirectory)) &&
+				Directory.Exists(Path.Combine(directoryPath, UnityProjectPaths.ProjectSettingsDirectory));
+		}
+
+		#endregion
+
 		#region Path Hash
 
 		private static string _PathHash;
@@ -236,7 +276,6 @@ namespace Extenity.ApplicationToolbox
 			}
 
 #elif UNITY_ANDROID || UNITY_IOS
-
 			// Android and iOS does not provide a way to restart the application. Seems like
 			// they are not happy about the idea of applications launching themselves or other
 			// applications.
