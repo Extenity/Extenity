@@ -80,12 +80,25 @@ namespace Extenity.SubsystemManagementToolbox
 			}
 		}
 
+		#region Editor
+
 #if UNITY_EDITOR
 		private SubsystemDefinition _AddNewSubsystem()
 		{
-			return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = false, DontDestroyOnLoad = true };
+			if (Subsystems == null || Subsystems.Length == 0)
+			{
+				return new SubsystemDefinition() { Type = SubsystemType.Prefab, InstantiateEveryTime = false, DontDestroyOnLoad = true };
+			}
+			else
+			{
+				// Copy the last item's configuration.
+				var last = Subsystems[Subsystems.Length - 1];
+				return new SubsystemDefinition() { Type = last.Type, InstantiateEveryTime = last.InstantiateEveryTime, DontDestroyOnLoad = last.DontDestroyOnLoad };
+			}
 		}
 #endif
+		
+		#endregion
 	}
 
 	[Serializable]
