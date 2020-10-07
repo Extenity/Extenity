@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
+using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 namespace Extenity.SubsystemManagementToolbox
@@ -16,90 +16,30 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 	[Serializable]
-	public class SubsystemCategory
+	public struct SubsystemDefinitionOfScene
 	{
-		[HideInInspector]
-		public bool Active = true;
-
 #if UNITY_EDITOR
-		[HideIf(nameof(Active))]
-		[HorizontalGroup("NameLine", Order = 1, Width = 40)]
-		[VerticalGroup("NameLine/Toggle", Order = 1), PropertyOrder(2)]
-		[GUIColor(0.7f, 0.2f, 0.2f, 1f)]
-		[Button(ButtonHeight = 20, Name = "Off")]
 		[PropertySpace(SpaceBefore = 10)]
-		[PropertyTooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
-		private void _Activate()
-		{
-			Active = true;
-		}
-
-		[ShowIf(nameof(Active))]
-		[VerticalGroup("NameLine/Toggle"), PropertyOrder(1)]
-		[GUIColor(0.2f, 0.7f, 0.2f, 1f)]
-		[Button(ButtonHeight = 20, Name = "On")]
-		[PropertySpace(SpaceBefore = 10)]
-		[PropertyTooltip("Activate to include whole category in runtime checks. When loading a scene, only active Subsystem Categories will be checked if the scene should trigger loading of some Subsystem Levels in that Category. The active state can be changed in runtime or in a build preprocessor that selectively activates Categories by build preferences and platforms.")]
-		private void _Deactivate()
-		{
-			Active = false;
-		}
+		[OnInspectorGUI, PropertyOrder(1)]
+		private void _Separator() { }
 #endif
 
-		[HorizontalGroup("NameLine/Name", Order = 2, MaxWidth = 250)]
-		[HideLabel, SuffixLabel("Category Name")]
-		[Tooltip("Name of the Subsystem Category. It's used for accessing category by its name and logging.")]
-		[PropertySpace(SpaceBefore = 10)]
-		public string Name;
+		[BoxGroup("Scene Name Filter")]
+		[InlineProperty, HideLabel, PropertyOrder(2)]
+		public StringFilter SceneNameMatch;
 
-		[PropertyOrder(2)]
-		[ListDrawerSettings(OnBeginListElementGUI = "OnBeginListElementGUI", OnEndListElementGUI = "OnEndListElementGUI")]
+		[PropertyOrder(3)]
 		[PropertySpace(SpaceAfter = 10)]
-		[PropertyTooltip("A Subsystem Level is configured to create its subsystems whenever loading a scene that matches Subsystem Level's scene filters.")] // It's called Level because the previous Levels will also be applied
-		public SubsystemLevel[] SubsystemLevels = new SubsystemLevel[]
-		{
-			new SubsystemLevel() { Name = "Splash" },
-			new SubsystemLevel() { Name = "Splash Delayed" },
-			new SubsystemLevel() { Name = "Main Menu" },
-			new SubsystemLevel() { Name = "Ingame" },
-		};
-
-		internal void ClearUnusedReferences()
-		{
-			if (SubsystemLevels != null)
-			{
-				for (var i = 0; i < SubsystemLevels.Length; i++)
-				{
-					SubsystemLevels[i].ClearUnusedReferences();
-				}
-			}
-		}
-
-#if UNITY_EDITOR
-		private void OnBeginListElementGUI(int index)
-		{
-			if (!Active)
-			{
-				GUIHelper.PushColor(new Color(1f, 1f, 1f, 0.55f));
-			}
-		}
-
-		private void OnEndListElementGUI(int index)
-		{
-			if (!Active)
-			{
-				GUIHelper.PopColor();
-			}
-		}
-#endif
+		[ListDrawerSettings(Expanded = true)]
+		public string[] SubsystemGroups;
 	}
 
 	[Serializable]
-	public struct SubsystemLevel
+	public struct SubsystemGroup
 	{
 		[HorizontalGroup("NameLine", Order = 1, MaxWidth = 250)]
-		[HideLabel, SuffixLabel("Level Name")]
-		[Tooltip("Name of the Subsystem Level.")]
+		[HideLabel, SuffixLabel("Group Name")]
+		[Tooltip("Name of the Subsystem Group.")]
 		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
 		public string Name;
 

@@ -1,5 +1,6 @@
 using System.IO;
 using Extenity.ApplicationToolbox.Editor;
+using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Sirenix.OdinInspector;
@@ -46,14 +47,14 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Subsystems
 
+#if UNITY_EDITOR
 		[DetailedInfoBox("\n" +
-		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded."+
+		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded." +
 		                 "\n\n" +
 		                 "Click here for details." +
 		                 "\n",
-
 		                 "\n" +
-		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded."+
+		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded." +
 		                 "\n\n" +
 		                 "<b>What is a Subsystem?</b>" +
 		                 "\n" +
@@ -67,29 +68,50 @@ namespace Extenity.SubsystemManagementToolbox
 		                 "\n\n" +
 		                 "Every scene may require different subsystems. So the system allows configuring different subsystems per scene. The application may also need to initialize subsystems step by step throughout loading consecutive scenes. Let's say the Menu scene may require Audio Manager subsystem but a game level scene may both require Ingame HUD subsystem along with that Audio Manager subsystem. So the system is flexible enough to allow these consecutive loading operations too." +
 		                 "\n\n" +
-		                 "There is also that great need to press Play from any scene, and then all the required systems magically initializes themselves." +
+		                 "There is also that great need to press Play from any scene, and then all the required systems magically initialize themselves." +
 		                 "\n\n" +
 		                 "<b>Usage</b>" +
 		                 "\n" +
 		                 // TODO:
+		                 // Initialize("Splash Delayed");
 		                 // What if a subsystem requires reference to an object in a scene?
+		                 // Scene name filters are checked from top to bottom and the first matching scene definition is picked.
+		                 // Adding * wildcard as the last scene will allow applying the last entry to any other scene.
 		                 "***TODO***" +
 		                 "\n")]
-		[PropertySpace(SpaceBefore = 12)]
+		[VerticalGroup("Main")]
+		[VerticalGroup("Main/Help", Order = 1)]
+		[PropertySpace(SpaceBefore = 12), PropertyOrder(1)]
+		[OnInspectorGUI]
+		private void _InfoBox() { }
+#endif
+
+		[TabGroup("Main/Tabs", "Subsystem Groups", Order = 2)]
 		[ListDrawerSettings(Expanded = true)]
-		[PropertyTooltip("An application generally needs one category. But mini games or headless server builds might need their own categories.")]
-		public SubsystemCategory[] SubsystemCategories = new SubsystemCategory[]
+		public SubsystemGroup[] SubsystemGroups = new SubsystemGroup[]
 		{
-			new SubsystemCategory() { Name = "Main Game" },
+			new SubsystemGroup() { Name = "Splash" },
+			new SubsystemGroup() { Name = "Splash Delayed" },
+			new SubsystemGroup() { Name = "Main Menu" },
+			new SubsystemGroup() { Name = "Ingame" },
+		};
+
+		[TabGroup("Main/Tabs", "Scene Definitions")]
+		[ListDrawerSettings(Expanded = true)]
+		public SubsystemDefinitionOfScene[] Scenes = new SubsystemDefinitionOfScene[]
+		{
+			new SubsystemDefinitionOfScene() { SubsystemGroups = new string[] { "Splash" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "Splash")) },
+			new SubsystemDefinitionOfScene() { SubsystemGroups = new string[] { "Splash", "Splash Delayed", "Main Menu" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "MainMenu")) },
+			new SubsystemDefinitionOfScene() { SubsystemGroups = new string[] { "Splash", "Splash Delayed", "Main Menu", "Ingame" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Wildcard, "*")) },
 		};
 
 		internal void ClearUnusedReferences()
 		{
-			if (SubsystemCategories != null)
+			if (SubsystemGroups != null)
 			{
-				for (var i = 0; i < SubsystemCategories.Length; i++)
+				for (var i = 0; i < SubsystemGroups.Length; i++)
 				{
-					SubsystemCategories[i].ClearUnusedReferences();
+					SubsystemGroups[i].ClearUnusedReferences();
 				}
 			}
 		}
