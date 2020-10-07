@@ -19,19 +19,41 @@ namespace Extenity.SubsystemManagementToolbox
 	public struct SubsystemDefinitionOfScene
 	{
 #if UNITY_EDITOR
-		[PropertySpace(SpaceBefore = 10)]
-		[OnInspectorGUI, PropertyOrder(1)]
-		private void _Separator() { }
+		[Title("$_Title")]
+		[OnInspectorGUI, PropertyOrder(2)]
+		[PropertySpace(SpaceAfter = 6)]
+		private void _TitleDrawer() { }
+
+		private string _Title
+		{
+			get
+			{
+				var stringBuilder = StringTools.SharedStringBuilder.Value;
+				StringTools.ClearSharedStringBuilder(stringBuilder);
+				foreach (var filter in SceneNameMatch.Filters)
+				{
+					if (filter.Filter == "*")
+					{
+						stringBuilder.Append("All Others");
+					}
+					else
+					{
+						stringBuilder.Append(filter.Filter);
+					}
+					stringBuilder.Append(", ");
+				}
+				return stringBuilder.ToString(0, stringBuilder.Length - 2);
+			}
+		}
 #endif
 
-		[BoxGroup("Scene Name Filter")]
-		[InlineProperty, HideLabel, PropertyOrder(2)]
+		[InlineProperty, HideLabel, PropertyOrder(3)]
 		public StringFilter SceneNameMatch;
 
-		[PropertyOrder(3)]
+		[PropertyOrder(4)]
 		[PropertySpace(SpaceAfter = 10)]
 		[ListDrawerSettings(Expanded = true)]
-		public string[] SubsystemGroups;
+		public string[] SubsystemGroupsToBeLoaded;
 	}
 
 	[Serializable]
