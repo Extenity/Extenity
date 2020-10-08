@@ -53,7 +53,10 @@ namespace Extenity.ApplicationToolbox
 			if (string.IsNullOrWhiteSpace(sceneName))
 				return;
 
-			SubsystemSettings.Instance.InitializeForScene(sceneName);
+			if (SubsystemSettings.GetInstance(out var settings))
+			{
+				settings.InitializeForScene(sceneName);
+			}
 		}
 	}
 
