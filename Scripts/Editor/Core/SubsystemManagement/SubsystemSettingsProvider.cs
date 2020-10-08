@@ -59,9 +59,24 @@ namespace Extenity.SubsystemManagementToolbox
 
 		private void InitializeGUI()
 		{
-			if (_OdinEditor == null)
+			if (_OdinEditor == null ||
+			    _OdinEditor.target == null ||
+			    !SubsystemSettings.IsFileNameValid(_OdinEditor.target as SubsystemSettings))
 			{
-				_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(SubsystemSettings.Instance, typeof(OdinEditor));
+				if (_OdinEditor)
+				{
+					OdinEditor.DestroyImmediate(_OdinEditor);
+					_OdinEditor = null;
+				}
+
+				if (SubsystemSettings.GetInstance(out var settings))
+				{
+					_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(settings, typeof(OdinEditor));
+				}
+				else
+				{
+					_OdinEditor = null;
+				}
 			}
 		}
 
@@ -71,7 +86,17 @@ namespace Extenity.SubsystemManagementToolbox
 
 			EditorGUI.BeginChangeCheck();
 
-			_OdinEditor.OnInspectorGUI();
+			if (_OdinEditor != null)
+			{
+				_OdinEditor.OnInspectorGUI();
+			}
+			else
+			{
+				if (GUILayout.Button("Create Default Settings"))
+				{
+					SubsystemSettings.Create();
+				}
+			}
 
 			if (EditorGUI.EndChangeCheck())
 			{

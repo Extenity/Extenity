@@ -25,13 +25,34 @@ namespace Extenity.SubsystemManagementToolbox
 		{
 			get
 			{
+#if UNITY_EDITOR
+				// Check if the file name is still the one that the system requires
+				if (!IsFileNameValid(_Instance))
+				{
+					_Instance = null;
+				}
+#endif
 				if (_Instance == null)
 				{
-					_Instance = LoadOrCreate();
+					_Instance = Load();
 				}
-
 				return _Instance;
 			}
+		}
+
+		public static bool GetInstance(out SubsystemSettings settings)
+		{
+			settings = Instance;
+			return settings != null;
+		}
+
+		public static bool IsFileNameValid(SubsystemSettings settings)
+		{
+			if (settings)
+			{
+				return settings.name.Equals(SubsystemConstants.ConfigurationFileNameWithoutExtension);
+			}
+			return false;
 		}
 
 		#endregion
@@ -106,7 +127,15 @@ namespace Extenity.SubsystemManagementToolbox
 			throw new Exception($"Subsystem group '{subsystemGroupName}' does not exist.");
 		}
 
-		internal void ResetStatus()
+		internal static void ResetStatus()
+		{
+			if (GetInstance(out var settings))
+			{
+				settings._ResetStatus();
+			}
+		}
+
+		private void _ResetStatus()
 		{
 			if (SubsystemGroups != null)
 			{
@@ -186,18 +215,24 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Save / Load
 
-		private static SubsystemSettings LoadOrCreate()
+		public static SubsystemSettings Create()
+		{
+			var settings = ScriptableObject.CreateInstance<SubsystemSettings>();
+#if UNITY_EDITOR
+			// Create asset
+			var path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath(SubsystemConstants.ConfigurationDefaultFilePath);
+			UnityEditor.AssetDatabase.CreateAsset(settings, path);
+			UnityEditor.AssetDatabase.SaveAssets();
+#endif
+			return settings;
+		}
+
+		private static SubsystemSettings Load()
 		{
 			var settings = Resources.Load<SubsystemSettings>(SubsystemConstants.ConfigurationFileNameWithoutExtension);
 			if (settings == null)
 			{
-				settings = ScriptableObject.CreateInstance<SubsystemSettings>();
-#if UNITY_EDITOR
-				// Create asset
-				var path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath(SubsystemConstants.ConfigurationDefaultFilePath);
-				UnityEditor.AssetDatabase.CreateAsset(settings, path);
-				UnityEditor.AssetDatabase.SaveAssets();
-#endif
+				return null;
 			}
 
 			// Is this needed?

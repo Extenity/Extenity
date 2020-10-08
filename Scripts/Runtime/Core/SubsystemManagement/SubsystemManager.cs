@@ -16,7 +16,7 @@ namespace Extenity.ApplicationToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void Initialize()
 		{
-			SubsystemSettings.Instance.ResetStatus();
+			SubsystemSettings.ResetStatus();
 
 			SceneManager.sceneLoaded -= OnSceneLoaded;
 			SceneManager.sceneLoaded += OnSceneLoaded;
@@ -42,7 +42,7 @@ namespace Extenity.ApplicationToolbox
 				// SceneManager.sceneUnloaded -= OnSceneUnloaded;
 				// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
 
-				SubsystemSettings.Instance.ResetStatus();
+				SubsystemSettings.ResetStatus();
 			}
 #endif
 		}
