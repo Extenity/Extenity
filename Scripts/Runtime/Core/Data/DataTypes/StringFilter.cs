@@ -201,6 +201,25 @@ namespace Extenity.DataToolbox
 			return $"{(MustMatch ? "MustMatch " : "")}{(Inverted ? "Inverted " : "")}{FilterType} for '{Filter}' in {ComparisonType}";
 		}
 
+		public string ToHumanReadableString()
+		{
+			switch (FilterType)
+			{
+				case StringFilterType.Contains:
+					return "..." + Filter + "...";
+				case StringFilterType.StartsWith:
+					return Filter + "...";
+				case StringFilterType.EndsWith:
+					return "..." + Filter;
+				case StringFilterType.Exactly:
+					return Filter;
+				case StringFilterType.Wildcard:
+					return Filter;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
 		#endregion
 	}
 
