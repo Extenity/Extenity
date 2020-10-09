@@ -30,19 +30,34 @@ namespace Extenity.SubsystemManagementToolbox
 			{
 				var stringBuilder = StringTools.SharedStringBuilder.Value;
 				StringTools.ClearSharedStringBuilder(stringBuilder);
-				foreach (var filter in SceneNameMatch.Filters)
+				if (SceneNameMatch?.Filters?.Length > 0)
 				{
-					if (filter.Filter == "*")
+					if (SceneNameMatch.Filters.Length == 1 && SceneNameMatch.Filters[0].Filter == "*")
 					{
-						stringBuilder.Append("All Others");
+						stringBuilder.Append("All other scenes");
 					}
 					else
 					{
-						stringBuilder.Append(filter.Filter);
+						for (var i = 0; i < SceneNameMatch.Filters.Length; i++)
+						{
+							var filter = SceneNameMatch.Filters[i];
+							stringBuilder.Append('\'');
+							stringBuilder.Append(filter.ToHumanReadableString());
+							stringBuilder.Append('\'');
+
+							if (i < SceneNameMatch.Filters.Length - 1)
+							{
+								stringBuilder.Append(", ");
+							}
+						}
+						stringBuilder.Append(SceneNameMatch.Filters.Length > 1 ? " scenes" : " scene");
 					}
-					stringBuilder.Append(", ");
 				}
-				return stringBuilder.ToString(0, stringBuilder.Length - 2);
+				else
+				{
+					stringBuilder.Append("Not configured yet");
+				}
+				return stringBuilder.ToString();
 			}
 		}
 #endif
@@ -108,7 +123,7 @@ namespace Extenity.SubsystemManagementToolbox
 			}
 		}
 #endif
-		
+
 		#endregion
 	}
 
