@@ -46,6 +46,8 @@ namespace Extenity.ApplicationToolbox
 
 		private static void _OnQuit()
 		{
+			Log.DebugVerbose("Finalizing subsystem manager.");
+
 			Application.quitting -= _OnQuit;
 			SceneManager.sceneLoaded -= OnSceneLoaded;
 			// SceneManager.sceneUnloaded -= OnSceneUnloaded;
@@ -61,13 +63,26 @@ namespace Extenity.ApplicationToolbox
 		{
 			var sceneName = scene.name;
 			if (string.IsNullOrWhiteSpace(sceneName))
+			{
+				Log.DebugVerbose($"Skipping subsystem initialization for scene '{sceneName}'.");
 				return;
+			}
 
 			if (SubsystemSettings.GetInstance(out var settings))
 			{
 				settings.InitializeForScene(sceneName);
 			}
 		}
+
+		// private static void OnSceneUnloaded(Scene scene)
+		// {
+		// 	Log.Info($"OnSceneUnloaded: {scene.name}");
+		// }
+		//
+		// private static void OnActiveSceneChanged(Scene previous, Scene current)
+		// {
+		// 	Log.Info($"OnActiveSceneChanged previous: {previous.name} current: {current.name}");
+		// }
 	}
 
 }
