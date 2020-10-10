@@ -67,6 +67,7 @@ namespace Extenity.SubsystemManagementToolbox
 		#region Subsystems
 
 #if UNITY_EDITOR
+
 		[DetailedInfoBox("\n" +
 		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded." +
 		                 "\n\n" +
@@ -98,61 +99,69 @@ namespace Extenity.SubsystemManagementToolbox
 		                 // Adding * wildcard as the last scene will allow applying the last entry to any other scene.
 		                 "***TODO***" +
 		                 "\n")]
-		[VerticalGroup("Main")]
-		[VerticalGroup("Main/Help", Order = 1)]
-		[PropertySpace(SpaceBefore = 12), PropertyOrder(1)]
-		[OnInspectorGUI]
+		[VerticalGroup("Main", Order = 1)]
+		[OnInspectorGUI, PropertySpace(SpaceBefore = 12)]
 		private void _InfoBox() { }
+
+		// Failed to find a proper way of inserting spaces.
+		// [VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
+		// [OnInspectorGUI, PropertySpace(SpaceBefore = 20)]
+		// private static void _Separator1() { }
+		// [VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
+		// [OnInspectorGUI, PropertySpace(SpaceBefore = 20)]
+		// private static void _Separator2() { }
 #endif
 
 		[TabGroup("Main/Tabs", "Subsystem Groups", Order = 2)]
+		[VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
+		[BoxGroup("Main/Tabs/Subsystem Groups/Vertical/Application Subsystems")]
+		[ListDrawerSettings(Expanded = true), HideLabel]
+		public ApplicationSubsystemGroup ApplicationSubsystems = new ApplicationSubsystemGroup();
+
+		[VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
 		[ListDrawerSettings(Expanded = true)]
-		public SubsystemGroup[] SubsystemGroups = new SubsystemGroup[]
+		public SceneSubsystemGroup[] SceneSubsystems = new SceneSubsystemGroup[]
 		{
-			new SubsystemGroup() { Name = "Splash" },
-			new SubsystemGroup() { Name = "Splash Delayed" },
-			new SubsystemGroup() { Name = "Main Menu" },
-			new SubsystemGroup() { Name = "Ingame" },
+			new SceneSubsystemGroup() { Name = "Splash" },
+			new SceneSubsystemGroup() { Name = "Splash Delayed" },
+			new SceneSubsystemGroup() { Name = "Main Menu" },
+			new SceneSubsystemGroup() { Name = "Ingame" },
 		};
 
-		public SubsystemGroup GetSubsystemGroup(string subsystemGroupName)
+		public SceneSubsystemGroup GetSceneSubsystemGroup(string groupName)
 		{
-			foreach (var subsystemGroup in SubsystemGroups)
+			foreach (var group in SceneSubsystems)
 			{
-				if (subsystemGroup.Name.Equals(subsystemGroupName, StringComparison.Ordinal))
+				if (group.Name.Equals(groupName, StringComparison.Ordinal))
 				{
-					return subsystemGroup;
+					return group;
 				}
 			}
-			throw new Exception($"Subsystem group '{subsystemGroupName}' does not exist.");
+			throw new Exception($"Scene subsystem group '{groupName}' does not exist.");
 		}
 
-		internal static void ResetStatus()
+		internal void ResetStatus()
 		{
-			if (GetInstance(out var settings))
-			{
-				settings._ResetStatus();
-			}
-		}
+			ApplicationSubsystems.ResetStatus();
 
-		private void _ResetStatus()
-		{
-			if (SubsystemGroups != null)
+			if (SceneSubsystems != null)
 			{
-				for (var i = 0; i < SubsystemGroups.Length; i++)
+				for (var i = 0; i < SceneSubsystems.Length; i++)
 				{
-					SubsystemGroups[i].ResetStatus();
+					SceneSubsystems[i].ResetStatus();
 				}
 			}
 		}
 
 		internal void ClearUnusedReferences()
 		{
-			if (SubsystemGroups != null)
+			ApplicationSubsystems.ClearUnusedReferences();
+
+			if (SceneSubsystems != null)
 			{
-				for (var i = 0; i < SubsystemGroups.Length; i++)
+				for (var i = 0; i < SceneSubsystems.Length; i++)
 				{
-					SubsystemGroups[i].ClearUnusedReferences();
+					SceneSubsystems[i].ClearUnusedReferences();
 				}
 			}
 		}
@@ -161,7 +170,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Scenes
 
-		[TabGroup("Main/Tabs", "Scene Definitions")]
+		[TabGroup("Main/Tabs", "Scene Definitions", Order = 3)]
 		[ListDrawerSettings(Expanded = true)]
 		public SubsystemDefinitionOfScene[] Scenes = new SubsystemDefinitionOfScene[]
 		{
@@ -188,6 +197,17 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Instantiate Subsystems
 
+		public void InitializeForApplication()
+		{
+			using (Log.Indent("Initializing application subsystems."))
+			{
+				foreach (var subsystem in ApplicationSubsystems.Subsystems)
+				{
+					subsystem.Initialize();
+				}
+			}
+		}
+
 		public bool InitializeForScene(string sceneName)
 		{
 			if (FindMatchingSceneDefinition(sceneName, out var definition))
@@ -196,7 +216,7 @@ namespace Extenity.SubsystemManagementToolbox
 				{
 					foreach (var subsystemGroupName in definition.SubsystemGroupsToBeLoaded)
 					{
-						var subsystemGroup = GetSubsystemGroup(subsystemGroupName);
+						var subsystemGroup = GetSceneSubsystemGroup(subsystemGroupName);
 						using (Log.Indent($"Initializing subsystem group '{subsystemGroupName}'."))
 						{
 							foreach (var subsystem in subsystemGroup.Subsystems)

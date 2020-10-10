@@ -16,7 +16,12 @@ namespace Extenity.ApplicationToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void Initialize()
 		{
-			SubsystemSettings.ResetStatus();
+			if (!SubsystemSettings.GetInstance(out var settings))
+			{
+				return;
+			}
+
+			settings.ResetStatus();
 
 			SceneManager.sceneLoaded -= OnSceneLoaded;
 			SceneManager.sceneLoaded += OnSceneLoaded;
@@ -29,22 +34,27 @@ namespace Extenity.ApplicationToolbox
 			if (UnityEditor.EditorSettings.enterPlayModeOptionsEnabled &&
 			    (UnityEditor.EditorSettings.enterPlayModeOptions & UnityEditor.EnterPlayModeOptions.DisableSceneReload) > 0)
 			{
-				Log.Error("Disabling Scene Reload in Enter Play Mode Options is not supported in Subsystem Manager. Expect subsystems to not be initialized when entering Play mode.");
+				Log.Error("Disabling Scene Reload in Enter Play Mode Options is not supported in Subsystem Manager. Expect scene subsystems to not be initialized when entering Play mode.");
 			}
 
 			Application.quitting -= _OnQuit;
 			Application.quitting += _OnQuit;
-
-			void _OnQuit()
-			{
-				Application.quitting -= _OnQuit;
-				SceneManager.sceneLoaded -= OnSceneLoaded;
-				// SceneManager.sceneUnloaded -= OnSceneUnloaded;
-				// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
-
-				SubsystemSettings.ResetStatus();
-			}
 #endif
+
+			settings.InitializeForApplication();
+		}
+
+		private static void _OnQuit()
+		{
+			Application.quitting -= _OnQuit;
+			SceneManager.sceneLoaded -= OnSceneLoaded;
+			// SceneManager.sceneUnloaded -= OnSceneUnloaded;
+			// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+
+			if (SubsystemSettings.GetInstance(out var settings))
+			{
+				settings.ResetStatus();
+			}
 		}
 
 		private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)

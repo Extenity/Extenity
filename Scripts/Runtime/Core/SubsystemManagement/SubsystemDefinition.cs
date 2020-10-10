@@ -72,7 +72,37 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 	[Serializable]
-	public struct SubsystemGroup
+	public struct ApplicationSubsystemGroup
+	{
+		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
+		[ListDrawerSettings(Expanded = true)]
+		public ApplicationSubsystemDefinition[] Subsystems;
+
+		internal void ResetStatus()
+		{
+			if (Subsystems != null)
+			{
+				for (var i = 0; i < Subsystems.Length; i++)
+				{
+					Subsystems[i].ResetStatus();
+				}
+			}
+		}
+
+		internal void ClearUnusedReferences()
+		{
+			if (Subsystems != null)
+			{
+				for (var i = 0; i < Subsystems.Length; i++)
+				{
+					Subsystems[i].ClearUnusedReferences();
+				}
+			}
+		}
+	}
+
+	[Serializable]
+	public struct SceneSubsystemGroup
 	{
 		[HorizontalGroup("NameLine", Order = 1, MaxWidth = 250)]
 		[HideLabel, SuffixLabel("Group Name")]
@@ -123,6 +153,124 @@ namespace Extenity.SubsystemManagementToolbox
 			}
 		}
 #endif
+
+		#endregion
+	}
+
+	[Serializable]
+	public class ApplicationSubsystemDefinition : IConsistencyChecker
+	{
+		[HorizontalGroup(100f), HideLabel]
+		public SubsystemType Type;
+
+		[HorizontalGroup, HideLabel]
+		[AssetsOnly]
+		[ShowIf(nameof(Type), SubsystemType.Prefab)]
+		public GameObject Prefab;
+
+		[InfoBox("Not implemented yet!", InfoMessageType.Error), ReadOnly]
+		[HorizontalGroup, HideLabel]
+		[ShowIf(nameof(Type), SubsystemType.SingletonClass)]
+		public string SingletonType;
+
+		[HorizontalGroup, HideLabel]
+		[ShowIf(nameof(Type), SubsystemType.Resource)]
+		public string ResourcePath;
+
+		public bool IsInstantiated { get; private set; }
+
+		internal void ResetStatus()
+		{
+			IsInstantiated = false;
+		}
+
+		internal void Initialize()
+		{
+			if (IsInstantiated)
+			{
+				// Already instantiated before. Skip.
+				return;
+			}
+			IsInstantiated = true;
+
+			switch (Type)
+			{
+				case SubsystemType.Prefab:
+				{
+					if (Prefab)
+					{
+						InstantiateGameObject(Prefab, true);
+					}
+					return;
+				}
+
+				case SubsystemType.SingletonClass:
+				{
+					throw new NotImplementedException();
+				}
+
+				case SubsystemType.Resource:
+				{
+					if (!string.IsNullOrWhiteSpace(ResourcePath))
+					{
+						var prefab = Resources.Load<GameObject>(ResourcePath);
+						if (!prefab)
+						{
+							Log.Error($"Subsystem prefab does not exist at resource path '{ResourcePath}'.");
+							return;
+						}
+						InstantiateGameObject(prefab, true);
+					}
+					return;
+				}
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			void InstantiateGameObject(GameObject prefab, bool dontDestroyOnLoad)
+			{
+				var instance = GameObject.Instantiate(prefab);
+
+				// Remove "(Clone)" from the name and add '_' prefix.
+				instance.name = "_" + prefab.name;
+
+				// Set parent
+				// if (parent != null)
+				// {
+				// 	instance.transform.SetParent(parent);
+				// }
+
+				if (dontDestroyOnLoad)
+				{
+					GameObject.DontDestroyOnLoad(instance);
+				}
+			}
+		}
+
+		internal void ClearUnusedReferences()
+		{
+			if (Type != SubsystemType.Prefab)
+			{
+				Prefab = null;
+			}
+
+			if (Type != SubsystemType.SingletonClass)
+			{
+				SingletonType = null;
+			}
+
+			if (Type != SubsystemType.Resource)
+			{
+				ResourcePath = null;
+			}
+		}
+
+		#region Consistency
+
+		public void CheckConsistency(ref List<ConsistencyError> errors)
+		{
+		}
 
 		#endregion
 	}
