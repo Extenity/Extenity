@@ -292,17 +292,13 @@ public static class Log
 		}
 	}
 
-#if DisableVerboseLogging
-	[Conditional("DummyConditionThatNeverExists")]
-#endif
+	[Conditional("EnableVerboseLogging")]
 	public static void Verbose(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
-#if DisableVerboseLogging
-	[Conditional("DummyConditionThatNeverExists")]
-#endif
+	[Conditional("EnableVerboseLogging")]
 	public static void Verbose(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -466,20 +462,20 @@ public static class Log
 
 	#region Debug Log
 
-#if DisableVerboseLogging
-	[Conditional("DummyConditionThatNeverExists")]
+#if EnableVerboseLogging
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] // This translates to: EnableVerboseLogging && (UNITY_EDITOR || DEBUG)
 #else
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	[Conditional("DummyConditionThatNeverExists")]
 #endif
 	public static void DebugVerbose(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
-#if DisableVerboseLogging
-	[Conditional("DummyConditionThatNeverExists")]
+#if EnableVerboseLogging
+	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] // This translates to: EnableVerboseLogging && (UNITY_EDITOR || DEBUG)
 #else
-	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	[Conditional("DummyConditionThatNeverExists")]
 #endif
 	public static void DebugVerbose(string message, Object context)
 	{

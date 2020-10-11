@@ -26,21 +26,17 @@ namespace Extenity.DebugToolbox.Editor
 		[MenuItem(Menu + "Verbose Logging/Enable", validate = true)]
 		private static bool Validate_EnableVerboseLogging()
 		{
-#if DisableVerboseLogging
-			return true;
-#else
+#if EnableVerboseLogging
 			return false;
+#else
+			return true;
 #endif
 		}
 
 		[MenuItem(Menu + "Verbose Logging/Disable", validate = true)]
 		private static bool Validate_DisableVerboseLogging()
 		{
-#if DisableVerboseLogging
-			return false;
-#else
-			return true;
-#endif
+			return !Validate_EnableVerboseLogging();
 		}
 
 		#endregion
@@ -72,28 +68,24 @@ namespace Extenity.DebugToolbox.Editor
 		[MenuItem(Menu + "Info Logging/Disable", validate = true)]
 		private static bool Validate_DisableInfoLogging()
 		{
-#if DisableInfoLogging
-			return false;
-#else
-			return true;
-#endif
+			return !Validate_EnableInfoLogging();
 		}
 
 		#endregion
 
 		#region Toggle Verbose Logging
 
-		private const string DisableVerboseLoggingSymbol = "DisableVerboseLogging";
+		private const string EnableVerboseLoggingSymbol = "EnableVerboseLogging";
 
 		public static void ActivateVerboseLogging(bool active)
 		{
 			if (active)
 			{
-				PlayerSettingsTools.RemoveDefineSymbols(new[] { DisableVerboseLoggingSymbol }, true);
+				PlayerSettingsTools.AddDefineSymbols(new[] { EnableVerboseLoggingSymbol }, false, true);
 			}
 			else
 			{
-				PlayerSettingsTools.AddDefineSymbols(new[] { DisableVerboseLoggingSymbol }, false, true);
+				PlayerSettingsTools.RemoveDefineSymbols(new[] { EnableVerboseLoggingSymbol }, true);
 			}
 		}
 
