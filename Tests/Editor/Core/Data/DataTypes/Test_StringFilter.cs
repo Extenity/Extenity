@@ -48,36 +48,36 @@ namespace ExtenityTests.DataToolbox
 
 			// Multiple conditions
 			Assert.IsTrue(new StringFilter( // Matching any one filter succeeds
-				new StringFilterEntry(StringFilterType.Contains, "old"),
-				new StringFilterEntry(StringFilterType.EndsWith, "NOPE")
-			).IsMatching("Good old text"));
+				              new StringFilterEntry(StringFilterType.Contains, "old"),
+				              new StringFilterEntry(StringFilterType.EndsWith, "NOPE")
+			              ).IsMatching("Good old text"));
 			Assert.IsTrue(new StringFilter( // Matching any one filter succeeds
-				new StringFilterEntry(StringFilterType.Contains, "NOPE"),
-				new StringFilterEntry(StringFilterType.EndsWith, "text")
-			).IsMatching("Good old text"));
+				              new StringFilterEntry(StringFilterType.Contains, "NOPE"),
+				              new StringFilterEntry(StringFilterType.EndsWith, "text")
+			              ).IsMatching("Good old text"));
 			Assert.IsFalse(new StringFilter( // Matching any one filter succeeds
-				new StringFilterEntry(StringFilterType.Contains, "NO"),
-				new StringFilterEntry(StringFilterType.EndsWith, "NOPE")
-			).IsMatching("Good old text"));
+				               new StringFilterEntry(StringFilterType.Contains, "NO"),
+				               new StringFilterEntry(StringFilterType.EndsWith, "NOPE")
+			               ).IsMatching("Good old text"));
 			Assert.IsTrue(new StringFilter( // All 'MustMatch' checks must match
-				new StringFilterEntry(StringFilterType.Contains, "old"),
-				new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
-			).IsMatching("Good old text"));
+				              new StringFilterEntry(StringFilterType.Contains, "old"),
+				              new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
+			              ).IsMatching("Good old text"));
 			Assert.IsTrue(new StringFilter( // All 'MustMatch' checks must match
-				new StringFilterEntry(StringFilterType.Contains, "old"),
-				new StringFilterEntry(StringFilterType.StartsWith, "Good") { MustMatch = true },
-				new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
-			).IsMatching("Good old text"));
+				              new StringFilterEntry(StringFilterType.Contains, "old"),
+				              new StringFilterEntry(StringFilterType.StartsWith, "Good") { MustMatch = true },
+				              new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
+			              ).IsMatching("Good old text"));
 			Assert.IsFalse(new StringFilter( // All 'MustMatch' checks must match
-				new StringFilterEntry(StringFilterType.Contains, "old"),
-				new StringFilterEntry(StringFilterType.StartsWith, "Good") { MustMatch = true },
-				new StringFilterEntry(StringFilterType.EndsWith, "NOPE") { MustMatch = true }
-			).IsMatching("Good old text"));
+				               new StringFilterEntry(StringFilterType.Contains, "old"),
+				               new StringFilterEntry(StringFilterType.StartsWith, "Good") { MustMatch = true },
+				               new StringFilterEntry(StringFilterType.EndsWith, "NOPE") { MustMatch = true }
+			               ).IsMatching("Good old text"));
 			Assert.IsFalse(new StringFilter( // All 'MustMatch' checks must match
-				new StringFilterEntry(StringFilterType.Contains, "old"),
-				new StringFilterEntry(StringFilterType.StartsWith, "NOPE") { MustMatch = true },
-				new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
-			).IsMatching("Good old text"));
+				               new StringFilterEntry(StringFilterType.Contains, "old"),
+				               new StringFilterEntry(StringFilterType.StartsWith, "NOPE") { MustMatch = true },
+				               new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
+			               ).IsMatching("Good old text"));
 		}
 
 		#endregion
