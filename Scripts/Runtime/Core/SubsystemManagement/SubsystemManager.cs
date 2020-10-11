@@ -16,7 +16,7 @@ namespace Extenity.ApplicationToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void Initialize()
 		{
-			if (!SubsystemSettings.GetInstance(out var settings))
+			if (!SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 			{
 				return;
 			}
@@ -53,7 +53,7 @@ namespace Extenity.ApplicationToolbox
 			// SceneManager.sceneUnloaded -= OnSceneUnloaded;
 			// SceneManager.activeSceneChanged -= OnActiveSceneChanged;
 
-			if (SubsystemSettings.GetInstance(out var settings))
+			if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 			{
 				settings.ResetStatus();
 			}
@@ -68,7 +68,7 @@ namespace Extenity.ApplicationToolbox
 				return;
 			}
 
-			if (SubsystemSettings.GetInstance(out var settings))
+			if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 			{
 				settings.InitializeForScene(sceneName);
 			}

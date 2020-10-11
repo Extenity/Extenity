@@ -9,58 +9,11 @@ namespace Extenity.SubsystemManagementToolbox
 	[HideMonoScript]
 	[Serializable]
 	[ExcludeFromPresetAttribute]
-	public class SubsystemSettings : ScriptableObject, ISerializationCallbackReceiver
+	public class SubsystemSettings : ExtenityScriptableObject<SubsystemSettings>
 	{
 		#region Configuration
 
-		private const string CurrentVersion = SubsystemConstants.Version;
-
-		#endregion
-
-		#region Singleton
-
-		private static SubsystemSettings _Instance;
-
-		public static SubsystemSettings Instance
-		{
-			get
-			{
-#if UNITY_EDITOR
-				// Check if the file name is still the one that the system requires
-				if (!IsFileNameValid(_Instance))
-				{
-					_Instance = null;
-				}
-#endif
-				if (_Instance == null)
-				{
-					_Instance = Load();
-				}
-				return _Instance;
-			}
-		}
-
-		public static bool GetInstance(out SubsystemSettings settings)
-		{
-			settings = Instance;
-			return settings != null;
-		}
-
-		public static bool IsFileNameValid(SubsystemSettings settings)
-		{
-			if (settings)
-			{
-				return settings.name.Equals(SubsystemConstants.ConfigurationFileNameWithoutExtension);
-			}
-			return false;
-		}
-
-		#endregion
-
-		#region Version
-
-		[HideInInspector]
-		public string Version = CurrentVersion;
+		protected override string LatestVersion => SubsystemConstants.Version;
 
 		#endregion
 
@@ -233,49 +186,20 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#endregion
 
-		#region Save / Load
+		#region Validation
 
-		public static SubsystemSettings Create()
+		public override bool IsFileNameValid()
 		{
-			var settings = ScriptableObject.CreateInstance<SubsystemSettings>();
-#if UNITY_EDITOR
-			// Create asset
-			var path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath(SubsystemConstants.ConfigurationDefaultFilePath);
-			UnityEditor.AssetDatabase.CreateAsset(settings, path);
-			UnityEditor.AssetDatabase.SaveAssets();
-#endif
-			return settings;
-		}
-
-		private static SubsystemSettings Load()
-		{
-			var settings = Resources.Load<SubsystemSettings>(SubsystemConstants.ConfigurationFileNameWithoutExtension);
-			if (settings == null)
-			{
-				return null;
-			}
-
-			// Is this needed?
-			//settings.hideFlags = HideFlags.HideAndDontSave;
-
-			if (settings.Version != CurrentVersion)
-			{
-				ApplyMigration(settings, CurrentVersion);
-#if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(settings);
-#endif
-			}
-
-			return settings;
+			return name.Equals(SubsystemConstants.ConfigurationFileNameWithoutExtension, StringComparison.Ordinal);
 		}
 
 		#endregion
 
-		#region Backwards Compatibility / Migration
+		#region Version and Migration
 
-		private static void ApplyMigration(SubsystemSettings settings, string targetVersion)
+		protected override void ApplyMigration(string targetVersion)
 		{
-			switch (settings.Version)
+			switch (Version)
 			{
 				// Example
 				case "0":
@@ -284,35 +208,26 @@ namespace Extenity.SubsystemManagementToolbox
 					// MigrationsToUpdateFromVersion0ToVersion1();
 
 					// Mark the settings with resulting migration.
-					settings.Version = "1";
+					Version = "1";
 					break;
 				}
 
 				default:
-					settings.Version = targetVersion;
+					Version = targetVersion;
 					return;
 			}
 
 			// Apply migration over and over until we reach the target version.
-			ApplyMigration(settings, targetVersion);
+			ApplyMigration(targetVersion);
 		}
 
 		#endregion
 
 		#region Serialization
 
-		public void OnBeforeSerialize()
+		protected override void OnBeforeSerializeDerived()
 		{
 			ClearUnusedReferences();
-
-			if (Version != CurrentVersion)
-			{
-				ApplyMigration(this, CurrentVersion);
-			}
-		}
-
-		public void OnAfterDeserialize()
-		{
 		}
 
 		#endregion

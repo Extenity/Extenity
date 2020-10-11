@@ -6,9 +6,9 @@ namespace Extenity.SubsystemManagementToolbox
 
 	public static class SubsystemConstants
 	{
-		internal const string ConfigurationFileNameWithoutExtension = "SubsystemSettings";
-		internal const string ConfigurationFileName = ConfigurationFileNameWithoutExtension + ".asset";
-		internal static readonly string ConfigurationDefaultFilePath = ApplicationTools.UnityProjectPaths.TopLevelResourcesRelativePath.AppendFileToPath(ConfigurationFileName);
+		public const string ConfigurationFileNameWithoutExtension = "SubsystemSettings";
+		public const string ConfigurationFileName = ConfigurationFileNameWithoutExtension + ".asset";
+		public static readonly string ConfigurationDefaultFilePath = ApplicationTools.UnityProjectPaths.TopLevelResourcesRelativePath.AppendFileToPath(ConfigurationFileName);
 
 		internal const string Version = "1";
 	}

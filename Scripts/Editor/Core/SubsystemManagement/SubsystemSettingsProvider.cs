@@ -61,7 +61,7 @@ namespace Extenity.SubsystemManagementToolbox
 		{
 			if (_OdinEditor == null ||
 			    _OdinEditor.target == null ||
-			    !SubsystemSettings.IsFileNameValid(_OdinEditor.target as SubsystemSettings))
+			    !(_OdinEditor.target as SubsystemSettings).IsFileNameValid())
 			{
 				if (_OdinEditor)
 				{
@@ -69,7 +69,7 @@ namespace Extenity.SubsystemManagementToolbox
 					_OdinEditor = null;
 				}
 
-				if (SubsystemSettings.GetInstance(out var settings))
+				if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 				{
 					_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(settings, typeof(OdinEditor));
 				}
@@ -94,7 +94,7 @@ namespace Extenity.SubsystemManagementToolbox
 			{
 				if (GUILayout.Button("Create Default Settings"))
 				{
-					SubsystemSettings.Create();
+					SubsystemSettings.Create(SubsystemConstants.ConfigurationDefaultFilePath);
 				}
 			}
 
