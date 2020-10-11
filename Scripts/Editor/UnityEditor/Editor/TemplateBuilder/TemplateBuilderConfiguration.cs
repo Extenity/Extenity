@@ -14,6 +14,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		[InlineProperty, HideLabel]
 		public TemplateMetadata Metadata;
 
+		[InfoBox("First, include filters, then ignore filters are applied to the list of all files in project directory.")]
 		[Title("Include Filters"), PropertySpace(10)]
 		[InlineProperty, HideLabel]
 		public StringFilter Include = new StringFilter(
@@ -34,7 +35,8 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		[FolderPath(UseBackslashes = true)]
 		public string OutputDirectory = "Export/UnityProjectTemplate/";
 
-		[PropertySpace(10), Button(ButtonSizes.Large)]
+		[HorizontalGroup("BuildLine", Order = 6, MarginLeft = 0.25f, MarginRight = 0.25f)]
+		[PropertySpace(10), Button(ButtonSizes.Gigantic)]
 		public void Build()
 		{
 			TemplateBuilder.BuildProjectTemplateAsZip(this);
