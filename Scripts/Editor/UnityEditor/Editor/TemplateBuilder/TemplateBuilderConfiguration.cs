@@ -26,13 +26,6 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		[Title("Ignore Filters")]
 		[InlineProperty, HideLabel]
 		public StringFilter Ignore = new StringFilter(
-			new StringFilterEntry(StringFilterType.StartsWith, ".git/"),
-			new StringFilterEntry(StringFilterType.StartsWith, ".hg/"),
-			new StringFilterEntry(StringFilterType.StartsWith, ".vs/"),
-			new StringFilterEntry(StringFilterType.StartsWith, ".idea/"),
-			new StringFilterEntry(StringFilterType.StartsWith, "obj/"),
-			new StringFilterEntry(StringFilterType.StartsWith, "Temp/"),
-			new StringFilterEntry(StringFilterType.StartsWith, "Library/")
 			// new StringFilterEntry(StringFilterType.Exactly, "ProjectSettings/ProjectVersion.txt") Not sure it is a good idea to exclude version info.
 		);
 
