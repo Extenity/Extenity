@@ -13,6 +13,7 @@ namespace Extenity.DataToolbox
 		EndsWith = 2,
 		Exactly = 3,
 		Wildcard = 4,
+		Any = 5,
 		//RegExp = 8, Not implemented yet
 		//LiquidMetal = 9, Not implemented yet
 	}
@@ -21,6 +22,8 @@ namespace Extenity.DataToolbox
 	public class StringFilter
 	{
 		public StringFilterEntry[] Filters;
+
+		public static StringFilter Any => new StringFilter(new StringFilterEntry(StringFilterType.Any, ""));
 
 		public StringFilter()
 		{
@@ -66,6 +69,7 @@ namespace Extenity.DataToolbox
 		[HorizontalGroup(Width = 86), HideLabel]
 		public StringFilterType FilterType = StringFilterType.Contains;
 		[HorizontalGroup, HideLabel]
+		[InfoBox("$_FilterWarning", InfoMessageType.Warning, VisibleIf = "_IsFilterWarning")]
 		public string Filter = "";
 		[HorizontalGroup(Width = 190), HideLabel]
 		public StringComparison ComparisonType = StringComparison.InvariantCulture;
@@ -115,6 +119,11 @@ namespace Extenity.DataToolbox
 				{
 					if (i == 0)
 					{
+						if (filter.Length == 1)
+						{
+							return new StringFilterEntry(StringFilterType.Any, "");
+						}
+
 						// Wildcard at the beginning
 						seenAtTheBeginning = true;
 					}
@@ -147,8 +156,11 @@ namespace Extenity.DataToolbox
 		public bool IsMatching(string text)
 		{
 			// Does not match if filter is not specified.
-			if (string.IsNullOrEmpty(Filter))
+			if (string.IsNullOrEmpty(Filter) &&
+			    FilterType != StringFilterType.Any) // Except, the type Any is not interested in Filter.
+			{
 				return false;
+			}
 
 			switch (FilterType)
 			{
@@ -187,6 +199,9 @@ namespace Extenity.DataToolbox
 							throw new ArgumentOutOfRangeException(nameof(ComparisonType), (int)ComparisonType, "");
 					}
 
+				case StringFilterType.Any:
+					return true.InvertIf(Inverted); // Ignore whatever the Filter has to say. Always accept the text as matched.
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(FilterType), (int)FilterType, "");
 			}
@@ -207,18 +222,46 @@ namespace Extenity.DataToolbox
 			{
 				case StringFilterType.Contains:
 					return "..." + Filter + "...";
+
 				case StringFilterType.StartsWith:
 					return Filter + "...";
+
 				case StringFilterType.EndsWith:
 					return "..." + Filter;
+
 				case StringFilterType.Exactly:
 					return Filter;
+
 				case StringFilterType.Wildcard:
 					return Filter;
+
+				case StringFilterType.Any:
+					return "...";
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
+
+		#endregion
+
+		#region Editor
+
+#if UNITY_EDITOR
+		private string _FilterWarning
+		{
+			get
+			{
+				if (FilterType == StringFilterType.Any)
+				{
+					if (!string.IsNullOrEmpty(Filter))
+						return $"Filter value is ignored when using {StringFilterType.Any} filter type.";
+				}
+				return null;
+			}
+		}
+		private bool _IsFilterWarning => !string.IsNullOrEmpty(_FilterWarning);
+#endif
 
 		#endregion
 	}

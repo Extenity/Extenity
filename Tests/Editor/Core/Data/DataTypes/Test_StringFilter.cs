@@ -11,7 +11,7 @@ namespace ExtenityTests.DataToolbox
 		#region String Operations
 
 		[Test]
-		public void StringFilter()
+		public void StringFilterUsage()
 		{
 			// Does not match if not setup correctly
 			Assert.IsFalse(new StringFilter().IsMatching("Good old text"));
@@ -26,6 +26,9 @@ namespace ExtenityTests.DataToolbox
 			Assert.IsTrue(new StringFilter(new StringFilterEntry(StringFilterType.StartsWith, "Good")).IsMatching("Good old text"));
 			Assert.IsFalse(new StringFilter(new StringFilterEntry(StringFilterType.EndsWith, "old")).IsMatching("Good old text"));
 			Assert.IsTrue(new StringFilter(new StringFilterEntry(StringFilterType.EndsWith, "text")).IsMatching("Good old text"));
+			Assert.IsTrue(new StringFilter(new StringFilterEntry(StringFilterType.Any, "")).IsMatching("Good old text"));
+			Assert.IsTrue(new StringFilter(new StringFilterEntry(StringFilterType.Any, "Filter is ignored for this type")).IsMatching("Good old text"));
+			Assert.IsTrue(StringFilter.Any.IsMatching("Good old text")); // This is the shortcut for 'Any'. Good for using as a default value.
 
 			// Case insensitive
 			Assert.IsFalse(new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "Good OLD text")).IsMatching("Good old text"));
@@ -78,6 +81,14 @@ namespace ExtenityTests.DataToolbox
 				               new StringFilterEntry(StringFilterType.StartsWith, "NOPE") { MustMatch = true },
 				               new StringFilterEntry(StringFilterType.EndsWith, "text") { MustMatch = true }
 			               ).IsMatching("Good old text"));
+			Assert.IsTrue(new StringFilter( // One 'Any' is enough to override the others, which makes it nonsensical to be used in multiple conditions.
+				              new StringFilterEntry(StringFilterType.Any, ""),
+				              new StringFilterEntry(StringFilterType.Contains, "NOPE")
+			              ).IsMatching("Good old text"));
+			Assert.IsTrue(new StringFilter( // One 'Any' is enough to override the others, which makes it nonsensical to be used in multiple conditions.
+				              new StringFilterEntry(StringFilterType.Contains, "NOPE"),
+				              new StringFilterEntry(StringFilterType.Any, "")
+			              ).IsMatching("Good old text"));
 		}
 
 		#endregion
