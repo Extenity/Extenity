@@ -62,11 +62,13 @@ namespace Extenity.ApplicationToolbox
 		private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
 			var sceneName = scene.name;
-			if (string.IsNullOrWhiteSpace(sceneName))
-			{
-				Log.DebugVerbose($"Skipping subsystem initialization for scene '{sceneName}'.");
-				return;
-			}
+
+			// Not doing this anymore. Empty scenes should be initialized too, if empty name matches any of the name filters.
+			// if (string.IsNullOrWhiteSpace(sceneName))
+			// {
+			// 	Log.DebugVerbose($"Skipping subsystem initialization for scene '{sceneName}'.");
+			// 	return;
+			// }
 
 			if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 			{
