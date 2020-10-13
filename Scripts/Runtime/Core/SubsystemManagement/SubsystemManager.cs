@@ -7,15 +7,40 @@ namespace Extenity.ApplicationToolbox
 
 	public static class SubsystemManager
 	{
-		// Alternatives:
-		// [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-		// private static void Initialize_BeforeSceneLoad() { }
-		// [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-		// private static void Initialize_AfterSceneLoad() { }
-
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void Initialize_SubsystemRegistration()
+		{
+#if !UNITY_EDITOR
+			Log.Info("Subsystem Manager checking in at SubsystemRegistration.");
+#endif
+		}
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+		private static void Initialize_AfterAssembliesLoaded()
+		{
+#if !UNITY_EDITOR
+			Log.Info("Subsystem Manager checking in at AfterAssembliesLoaded.");
+#endif
+		}
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		private static void Initialize_AfterSceneLoad()
+		{
+#if !UNITY_EDITOR
+			Log.Info("Subsystem Manager checking in at AfterSceneLoad.");
+#endif
+		}
+
+		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea. It works in
+		// Editor but observed not working in Windows builds. Game objects are destroyed just before BeforeSceneLoad
+		// for some reason. So decided to initialize our subsystems at BeforeSceneLoad stage.
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Initialize()
 		{
+#if !UNITY_EDITOR
+			Log.Info("Subsystem Manager checking in at BeforeSceneLoad.");
+#endif
+
 			if (!SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
 			{
 				return;
