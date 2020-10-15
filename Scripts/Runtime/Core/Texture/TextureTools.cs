@@ -194,7 +194,7 @@ namespace Extenity.TextureToolbox
 			stringBuilder.AppendLine("#if OverrideTextures");
 			stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = LoadTexture(\"" + textureName + "\");");
 			stringBuilder.AppendLine("#else");
-			stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = new Texture2D(1, 1, TextureFormat." + format + ", " + mipmapEnabled.ToString().ToLower() + ", " + linear.ToString().ToLower() + ");");
+			stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + " = new Texture2D(2, 2, TextureFormat." + format + ", " + mipmapEnabled.ToString().ToLower() + ", " + linear.ToString().ToLower() + ");");
 			stringBuilder.AppendLine(indentation + "			_Texture_" + textureName + ".LoadImage(_TextureData_" + textureName + ", true);");
 			stringBuilder.AppendLine("#endif");
 			stringBuilder.AppendLine(indentation + "			Texture.DontDestroyOnLoad(_Texture_" + textureName + ");");
@@ -206,22 +206,26 @@ namespace Extenity.TextureToolbox
 			stringBuilder.AppendLine();
 			stringBuilder.AppendLine(indentation + "private static readonly byte[] _TextureData_" + textureName + " = ");
 			stringBuilder.AppendLine(indentation + "{");
+			stringBuilder.AppendLine(indentation + "	// @formatter:off");
 			stringBuilder.Append(indentation + '	');
 			var counter = 0;
 			for (int i = 0; i < data.Length; i++)
 			{
-				stringBuilder.Append(((int)data[i]) + ",");
+				stringBuilder.Append(((int)data[i]).ToString());
+				stringBuilder.Append(',');
 				if (++counter > 50)
 				{
 					counter = 0;
-					stringBuilder.Length--;
 					if (i < data.Length - 1) // Line break if there are more bytes to write
 					{
-						stringBuilder.Append(Environment.NewLine + indentation + '	');
+						stringBuilder.AppendLine();
+						stringBuilder.Append(indentation + '	');
 					}
 				}
 			}
-			stringBuilder.AppendLine(Environment.NewLine + indentation + "};");
+			stringBuilder.AppendLine();
+			stringBuilder.AppendLine(indentation + "	// @formatter:on");
+			stringBuilder.AppendLine(indentation + "};");
 			stringBuilder.AppendLine();
 			stringBuilder.AppendLine(indentation + "#endregion");
 			return "Texture_" + textureName;

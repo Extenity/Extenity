@@ -17,7 +17,7 @@ namespace Extenity.PainkillerToolbox.Editor
 #if OverrideTextures
 					_Texture_ArrowStraight = LoadTexture("ArrowStraight");
 #else
-					_Texture_ArrowStraight = new Texture2D(1, 1, TextureFormat.ARGB32, false, false);
+					_Texture_ArrowStraight = new Texture2D(2, 2, TextureFormat.ARGB32, false, false);
 					_Texture_ArrowStraight.LoadImage(_TextureData_ArrowStraight, true);
 #endif
 					Texture.DontDestroyOnLoad(_Texture_ArrowStraight);
@@ -29,6 +29,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static readonly byte[] _TextureData_ArrowStraight =
 		{
+			// @formatter:off
 			137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,118,0,0,0,128,8,4,0,0,0,116,101,85,158,0,0,11,220,73,68,65,84,120,218,229,91,203,142,93,87,17,93,
 			85,253,116,12,73,48,208,61,32,32,66,236,240,7,48,77,79,8,19,62,1,49,96,132,252,3,201,16,38,246,144,73,104,38,72,32,139,31,96,68,16,194,67,200,31,68,81,35,164,208,8,
 			117,39,116,26,9,199,142,31,187,24,220,115,206,173,215,190,143,238,179,175,251,38,87,114,119,223,247,89,167,86,173,90,85,117,12,60,135,219,249,253,179,63,226,139,113,59,191,127,42,39,242,
@@ -90,6 +91,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			252,18,12,133,239,123,214,162,197,243,166,130,171,173,160,207,239,226,254,187,196,90,228,236,52,251,236,124,169,36,77,93,9,131,185,86,89,219,72,141,139,43,50,197,76,37,88,185,165,210,116,
 			196,182,146,58,171,219,116,54,26,237,45,164,237,109,225,114,119,13,28,148,31,172,216,235,141,179,13,94,237,146,132,53,152,84,248,221,142,173,158,211,230,61,203,212,252,254,149,109,4,226,133,
 			63,126,160,22,55,181,217,36,106,252,219,255,1,225,162,23,112,55,196,233,245,0,0,0,0,73,69,78,68,174,66,96,130,
+			// @formatter:on
 		};
 
 		#endregion
@@ -106,7 +108,7 @@ namespace Extenity.PainkillerToolbox.Editor
 #if OverrideTextures
 					_Texture_ArrowBent = LoadTexture("ArrowBent");
 #else
-					_Texture_ArrowBent = new Texture2D(1, 1, TextureFormat.ARGB32, false, false);
+					_Texture_ArrowBent = new Texture2D(2, 2, TextureFormat.ARGB32, false, false);
 					_Texture_ArrowBent.LoadImage(_TextureData_ArrowBent, true);
 #endif
 					Texture.DontDestroyOnLoad(_Texture_ArrowBent);
@@ -118,6 +120,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static readonly byte[] _TextureData_ArrowBent =
 		{
+			// @formatter:off
 			137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,128,0,0,0,110,8,4,0,0,0,69,121,211,178,0,0,13,88,73,68,65,84,120,218,229,93,91,108,92,87,21,93,
 			103,99,199,198,113,192,182,84,187,226,163,41,207,134,38,2,4,18,36,56,41,216,4,68,249,162,162,8,161,22,37,3,8,1,82,219,160,146,132,138,8,42,181,18,161,65,180,8,181,124,240,
 			113,49,95,20,33,170,162,66,250,147,68,162,161,80,9,41,72,81,157,144,54,137,90,149,54,51,173,90,247,145,104,252,58,135,143,251,218,123,159,115,39,51,158,59,241,184,51,209,140,61,119,
@@ -187,6 +190,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			171,223,53,4,0,181,205,56,230,174,50,254,175,194,117,24,254,170,254,47,52,68,82,124,26,211,120,153,43,2,87,106,201,179,38,30,181,45,213,90,213,85,93,205,213,92,205,85,93,173,247,
 			254,218,80,109,75,173,86,117,49,9,213,222,252,99,75,213,45,213,90,173,119,225,167,142,80,235,93,248,0,80,189,162,127,108,237,255,44,33,19,125,168,217,68,199,0,0,0,0,73,69,78,
 			68,174,66,96,130,
+			// @formatter:on
 		};
 
 		#endregion
