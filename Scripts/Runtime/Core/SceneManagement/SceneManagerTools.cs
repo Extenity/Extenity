@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -97,6 +99,54 @@ namespace Extenity.SceneManagementToolbox
 			}
 			return result;
 		}
+
+		#region Collect Scene List From Build Settings
+
+		public static string[] CollectSceneListFromBuildSettings()
+		{
+			return CollectSceneListFromBuildSettings(new StringFilter(new StringFilterEntry(StringFilterType.Any, "")));
+		}
+
+		public static string[] CollectSceneListFromBuildSettings(StringFilter sceneNameFilter)
+		{
+			Log.Verbose("Collecting scene list");
+			var duplicateNameChecker = new HashSet<string>();
+			var result = New.List<string>();
+			var sceneCount = SceneManager.sceneCountInBuildSettings;
+			for (int i = 0; i < sceneCount; i++)
+			{
+				var scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+				var sceneName = Path.GetFileNameWithoutExtension(scenePath);
+#if UNITY_EDITOR
+				// SceneUtility.GetScenePathByBuildIndex also counts disabled scenes in Build Settings.
+				// So extra work required to ignore them in Editor.
+				// TODO IMMEDIATE: Ensure GetScenePathByBuildIndex skips disabled scenes in builds. Otherwise find another method of detecting disabled scenes.
+				if (!UnityEditor.EditorBuildSettings.scenes[i].enabled)
+				{
+					Log.Verbose($"   {i}. {sceneName} (Disabled)");
+					continue;
+				}
+#endif
+				Log.Verbose($"   {i}. {sceneName}");
+				if (!string.IsNullOrWhiteSpace(sceneName))
+				{
+					if (!duplicateNameChecker.Add(sceneName))
+					{
+						Log.CriticalError($"Duplicate scene names are not allowed. Rename the scene '{sceneName}'.");
+					}
+
+					if (sceneNameFilter.IsMatching(sceneName))
+					{
+						result.Add(sceneName);
+					}
+				}
+			}
+			var resultArray = result.ToArray();
+			Release.List(ref result);
+			return resultArray;
+		}
+
+		#endregion
 
 		#region DontDestroyOnLoad Scene
 
