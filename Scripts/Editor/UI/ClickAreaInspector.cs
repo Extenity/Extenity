@@ -31,7 +31,7 @@ namespace Extenity.UIToolbox.Editor
 
 		#region Hierarchy Right Click Menu
 
-		[MenuItem(ExtenityMenu.WidgetsContext + "Click Area")]
+		[MenuItem(ExtenityMenu.WidgetsContext + "Click Area" + ExtenityMenu.WidgetsContextPostfix)]
 		private static void AddToScene(MenuCommand menuCommand)
 		{
 			var go = UIEditorUtilities.InstantiateUIWidgetFromPrefab("Extenity/Widgets/ClickArea", menuCommand);

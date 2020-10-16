@@ -58,7 +58,8 @@ namespace Extenity.UnityEditorToolbox
 
 		// Right-click Game Object context menu
 		public const string UIContext = "GameObject/UI/";
-		public const string WidgetsContext = UIContext + "Extenity Widgets" + RefreshHelper + "/";
+		public const string WidgetsContext = UIContext;
+		public const string WidgetsContextPostfix = " - Extenity";
 
 		// Right-click Component context menu
 		public const string ComponentContext = "CONTEXT/Component/";
