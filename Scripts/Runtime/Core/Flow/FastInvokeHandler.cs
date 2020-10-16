@@ -275,7 +275,7 @@ namespace Extenity.FlowToolbox
 		}
 
 		private Action CurrentlyProcessingEntryAction;
-		public InvokeQueue CurrentlyProcessingQueue = InvokeQueue.Unspecified;
+		private InvokeQueue CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 
 		public readonly List<InvokeEntry> ScaledInvokeQueue = new List<InvokeEntry>(100);
 		public readonly List<InvokeEntry> UnscaledInvokeQueue = new List<InvokeEntry>(100);
