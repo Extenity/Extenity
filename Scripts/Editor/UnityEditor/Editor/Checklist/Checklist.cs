@@ -7,10 +7,6 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox
 {
 
-	// TODO: Inspector design:
-	// Ability to add/remove items on the fly. In other words, items are not hardcoded.
-	// Hide details of completed steps and show them as a single line.
-
 	// TODO: Fail the build if the list is not completed. Not every item should fail though.
 
 	[CreateAssetMenu(fileName = "Checklist", menuName = "Checklist")]

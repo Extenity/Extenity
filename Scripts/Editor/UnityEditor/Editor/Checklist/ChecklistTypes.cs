@@ -113,7 +113,12 @@ namespace Extenity.UnityEditorToolbox
 			GUILayout.EndHorizontal();
 
 			// Details
-			if (IsFoldout || string.IsNullOrWhiteSpace(Title))
+			if (string.IsNullOrWhiteSpace(Title))
+			{
+				// Enforce opening the details when first adding an item.
+				IsFoldout = true;
+			}
+			if (IsFoldout)
 			{
 				GUILayout.Space(6f);
 				GUILayout.BeginHorizontal();
