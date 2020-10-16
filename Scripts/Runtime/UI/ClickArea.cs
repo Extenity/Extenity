@@ -14,6 +14,7 @@ namespace Extenity.UIToolbox
 	/// <summary>
 	/// Transparent, clickable-only UI element.
 	/// </summary>
+	[RequireComponent(typeof(CanvasRenderer))]
 	public class ClickArea : Graphic, ICanvasRaycastFilter
 	{
 		public ClickAreaShape Shape = ClickAreaShape.Square;

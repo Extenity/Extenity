@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 800025176408127582}
+  - component: {fileID: -4098742406498716286}
   - component: {fileID: 683796969332274677}
   m_Layer: 5
   m_Name: ClickArea
@@ -36,6 +37,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &-4098742406498716286
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029652479059966929}
+  m_CullTransparentMesh: 0
 --- !u!114 &683796969332274677
 MonoBehaviour:
   m_ObjectHideFlags: 0
