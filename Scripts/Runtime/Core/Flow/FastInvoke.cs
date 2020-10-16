@@ -37,7 +37,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (Handler)
 			{
-				GameObject.DestroyImmediate(Handler);
+				GameObject.DestroyImmediate(Handler.gameObject);
 				Handler = null;
 			}
 		}
