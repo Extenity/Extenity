@@ -29,7 +29,7 @@ namespace Extenity.FlowToolbox
 
 			var go = new GameObject("_FastInvokeHandler");
 			GameObject.DontDestroyOnLoad(go);
-			go.hideFlags = HideFlags.HideInHierarchy;
+			go.hideFlags = HideFlags.NotEditable;
 			Handler = go.AddComponent<FastInvokeHandler>();
 		}
 
