@@ -446,6 +446,43 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Build Output Directories
+
+		public static (BuildTarget BuildTarget, string DirectoryName)[] OutputDirectories = new []
+		{
+			(BuildTarget.StandaloneWindows64, "Win64"),
+			(BuildTarget.StandaloneWindows, "Win32"),
+			(BuildTarget.WSAPlayer, "WSA"),
+			(BuildTarget.StandaloneLinux64, "Linux64"),
+			(BuildTarget.StandaloneOSX, "MacOS"),
+			(BuildTarget.iOS, "iOS"),
+			(BuildTarget.tvOS, "tvOS"),
+			(BuildTarget.Android, "Android"),
+			(BuildTarget.WebGL, "WebGL"),
+			(BuildTarget.PS4, "PS4"),
+			(BuildTarget.XboxOne, "XboxOne"),
+			(BuildTarget.Lumin, "Lumin"),
+			(BuildTarget.Stadia, "Stadia"),
+		};
+
+		public static void CreateBuildOutputDirectoriesForAvailablePlatforms(string directoryBasePath = "Builds/")
+		{
+			CreateBuildOutputDirectoriesForAvailablePlatforms(OutputDirectories, directoryBasePath);
+		}
+
+		public static void CreateBuildOutputDirectoriesForAvailablePlatforms((BuildTarget BuildTarget, string DirectoryName)[] outputDirectories, string directoryBasePath = "Builds/")
+		{
+			foreach (var target in outputDirectories)
+			{
+				if (IsPlatformAvailable(target.BuildTarget))
+				{
+					DirectoryTools.Create(directoryBasePath + target.DirectoryName);
+				}
+			}
+		}
+
+		#endregion
+
 		#region Tell Unity To Build
 
 		public static string[] GetUnityBuildSettingsScenes()
