@@ -450,10 +450,10 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static (BuildTarget BuildTarget, string DirectoryName)[] OutputDirectories = new []
 		{
-			(BuildTarget.StandaloneWindows64, "Win64"),
-			(BuildTarget.StandaloneWindows, "Win32"),
-			(BuildTarget.WSAPlayer, "WSA"),
-			(BuildTarget.StandaloneLinux64, "Linux64"),
+			(BuildTarget.StandaloneWindows64, "Windows"),
+			// (BuildTarget.StandaloneWindows, "Win32"), Decided not to put that, since 32 bit is no longer used in practice.
+			(BuildTarget.WSAPlayer, "WindowsStore"),
+			(BuildTarget.StandaloneLinux64, "Linux"),
 			(BuildTarget.StandaloneOSX, "MacOS"),
 			(BuildTarget.iOS, "iOS"),
 			(BuildTarget.tvOS, "tvOS"),
