@@ -104,7 +104,7 @@ namespace Extenity.SceneManagementToolbox
 
 		public static string[] CollectSceneListFromBuildSettings()
 		{
-			return CollectSceneListFromBuildSettings(new StringFilter(new StringFilterEntry(StringFilterType.Any, "")));
+			return CollectSceneListFromBuildSettings(StringFilter.Any);
 		}
 
 		public static string[] CollectSceneListFromBuildSettings(StringFilter sceneNameFilter)

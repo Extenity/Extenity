@@ -14,6 +14,8 @@ namespace Extenity.DataToolbox
 		Exactly = 3,
 		Wildcard = 4,
 		Any = 5,
+		Empty = 6,
+		EmptyOrWhitespace = 7,
 		//RegExp = 8, Not implemented yet
 		//LiquidMetal = 9, Not implemented yet
 	}
@@ -24,6 +26,7 @@ namespace Extenity.DataToolbox
 		public StringFilterEntry[] Filters;
 
 		public static StringFilter Any => new StringFilter(new StringFilterEntry(StringFilterType.Any, ""));
+		public static StringFilter Empty => new StringFilter(new StringFilterEntry(StringFilterType.Empty, ""));
 
 		public StringFilter()
 		{
@@ -157,7 +160,9 @@ namespace Extenity.DataToolbox
 		{
 			// Does not match if filter is not specified.
 			if (string.IsNullOrEmpty(Filter) &&
-			    FilterType != StringFilterType.Any) // Except, the type Any is not interested in Filter.
+			    FilterType != StringFilterType.Any &&
+			    FilterType != StringFilterType.Empty &&
+			    FilterType != StringFilterType.EmptyOrWhitespace) // Except, the types Any, Empty and EmptyOrWhitespace are not interested in Filter.
 			{
 				return false;
 			}
@@ -202,6 +207,12 @@ namespace Extenity.DataToolbox
 				case StringFilterType.Any:
 					return true.InvertIf(Inverted); // Ignore whatever the Filter has to say. Always accept the text as matched.
 
+				case StringFilterType.Empty:
+					return string.IsNullOrEmpty(text).InvertIf(Inverted); // Ignore whatever the Filter has to say. Accept the text as matched if the text is empty.
+
+				case StringFilterType.EmptyOrWhitespace:
+					return string.IsNullOrWhiteSpace(text).InvertIf(Inverted); // Ignore whatever the Filter has to say. Accept the text as matched if the text is empty.
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(FilterType), (int)FilterType, "");
 			}
@@ -238,6 +249,10 @@ namespace Extenity.DataToolbox
 				case StringFilterType.Any:
 					return "...";
 
+				case StringFilterType.Empty:
+				case StringFilterType.EmptyOrWhitespace:
+					return "[NONE]";
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -252,10 +267,12 @@ namespace Extenity.DataToolbox
 		{
 			get
 			{
-				if (FilterType == StringFilterType.Any)
+				if (FilterType == StringFilterType.Any ||
+				    FilterType == StringFilterType.Empty ||
+				    FilterType == StringFilterType.EmptyOrWhitespace)
 				{
 					if (!string.IsNullOrEmpty(Filter))
-						return $"Filter value is ignored when using {StringFilterType.Any} filter type.";
+						return $"Filter value is ignored when using {FilterType} filter type.";
 				}
 				return null;
 			}
