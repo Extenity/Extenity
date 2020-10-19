@@ -413,6 +413,23 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Check If Platform Available
+
+		public static bool IsPlatformAvailable(BuildTarget buildTarget)
+		{
+			var moduleManager = Type.GetType("UnityEditor.Modules.ModuleManager,UnityEditor.dll");
+			Debug.Assert(moduleManager != null);
+			var isPlatformSupportLoaded = moduleManager.GetMethod("IsPlatformSupportLoaded", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+			Debug.Assert(isPlatformSupportLoaded != null);
+			var getTargetStringFromBuildTarget = moduleManager.GetMethod("GetTargetStringFromBuildTarget", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+			Debug.Assert(getTargetStringFromBuildTarget != null);
+
+			var targetString = (string)getTargetStringFromBuildTarget.Invoke(null, new object[] { buildTarget });
+			return (bool)isPlatformSupportLoaded.Invoke(null, new object[] { targetString });
+		}
+
+		#endregion
+
 		#region BuildOptions
 
 		public static BuildOptions SetAutoRunPlayer(this BuildOptions options, bool runAfterBuild)
