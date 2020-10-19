@@ -165,19 +165,26 @@ namespace Extenity.SubsystemManagementToolbox
 		{
 			if (FindMatchingSceneDefinition(sceneName, out var definition))
 			{
-				using (Log.Indent($"Initializing subsystems for scene '{sceneName}'."))
+				if (definition.SubsystemGroupsToBeLoaded.IsNotNullAndEmpty())
 				{
-					foreach (var subsystemGroupName in definition.SubsystemGroupsToBeLoaded)
+					using (Log.Indent($"Initializing subsystems for scene '{sceneName}'."))
 					{
-						var subsystemGroup = GetSceneSubsystemGroup(subsystemGroupName);
-						using (Log.Indent($"Initializing subsystem group '{subsystemGroupName}'."))
+						foreach (var subsystemGroupName in definition.SubsystemGroupsToBeLoaded)
 						{
-							foreach (var subsystem in subsystemGroup.Subsystems)
+							var subsystemGroup = GetSceneSubsystemGroup(subsystemGroupName);
+							using (Log.Indent($"Initializing subsystem group '{subsystemGroupName}'."))
 							{
-								subsystem.Initialize();
+								foreach (var subsystem in subsystemGroup.Subsystems)
+								{
+									subsystem.Initialize();
+								}
 							}
 						}
 					}
+				}
+				else
+				{
+					Log.Info($"Skipped subsystem initialization for scene '{sceneName}' that has no groups defined.");
 				}
 				return true;
 			}
