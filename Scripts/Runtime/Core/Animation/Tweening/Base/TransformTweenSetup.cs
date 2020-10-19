@@ -16,6 +16,8 @@ namespace Extenity.AnimationToolbox
 		public Ease MovementEase = Ease.OutCubic;
 		[HorizontalGroup("Rotation")]
 		public Ease RotationEase = Ease.OutCubic;
+		[HorizontalGroup("Scale")]
+		public Ease ScaleEase = Ease.OutCubic;
 
 		[Required]
 		public Transform EndLocation;
@@ -30,6 +32,12 @@ namespace Extenity.AnimationToolbox
 		public void RemoveRotationAnimation()
 		{
 			RotationEase = Ease.Unset;
+		}
+
+		[HorizontalGroup("Scale", MaxWidth = 120), Button(ButtonSizes.Small, Name = "Do Not Animate")]
+		public void RemoveScaleAnimation()
+		{
+			ScaleEase = Ease.Unset;
 		}
 	}
 

@@ -37,6 +37,13 @@ namespace Extenity.AnimationToolbox
 				                     .SetEase(sequence.RotationEase);
 				CurrentAnimation.Insert(0f, tween);
 			}
+			if (sequence.ScaleEase != Ease.Unset)
+			{
+				var tween = Transform.DOScale(sequence.EndLocation.localScale, sequence.Duration)
+				                     .SetDelay(sequence.Delay)
+				                     .SetEase(sequence.ScaleEase);
+				CurrentAnimation.Insert(0f, tween);
+			}
 			CurrentAnimation.Play();
 		}
 
@@ -50,6 +57,10 @@ namespace Extenity.AnimationToolbox
 			if (sequence.RotationEase != Ease.Unset)
 			{
 				Transform.rotation = sequence.EndLocation.rotation;
+			}
+			if (sequence.ScaleEase != Ease.Unset)
+			{
+				Transform.localScale = sequence.EndLocation.localScale;
 			}
 		}
 
