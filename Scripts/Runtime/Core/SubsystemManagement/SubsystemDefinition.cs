@@ -32,7 +32,10 @@ namespace Extenity.SubsystemManagementToolbox
 				StringTools.ClearSharedStringBuilder(stringBuilder);
 				if (SceneNameMatch?.Filters?.Length > 0)
 				{
-					if (SceneNameMatch.Filters.Length == 1 && SceneNameMatch.Filters[0].Filter == "*")
+					if (SceneNameMatch.Filters.Length == 1 && (
+						(SceneNameMatch.Filters[0].FilterType == StringFilterType.Wildcard && SceneNameMatch.Filters[0].Filter == "*") ||
+						(SceneNameMatch.Filters[0].FilterType == StringFilterType.Any)
+					))
 					{
 						stringBuilder.Append("All other scenes");
 					}
