@@ -147,17 +147,19 @@ namespace Extenity.FileSystemToolbox
 
 		#region Create Directory
 
-		public static void Create(string directoryPath)
+		public static bool Create(string directoryPath)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
 			{
 				Directory.CreateDirectory(directoryPath);
+				return true;
 			}
+			return false;
 		}
 
-		public static void CreateFromFilePath(string filePath)
+		public static bool CreateFromFilePath(string filePath)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
@@ -165,7 +167,9 @@ namespace Extenity.FileSystemToolbox
 			if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
 			{
 				Directory.CreateDirectory(directoryPath);
+				return true;
 			}
+			return false;
 		}
 
 		public static string CreateSubDirectory(string parentDirectory, string subDirectory)
