@@ -476,7 +476,11 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (IsPlatformAvailable(target.BuildTarget))
 				{
-					DirectoryTools.Create(directoryBasePath + target.DirectoryName);
+					var path = directoryBasePath + target.DirectoryName;
+					if (DirectoryTools.Create(path))
+					{
+						Log.Info("Creating build output directory: " + path);
+					}
 				}
 			}
 		}
