@@ -43,11 +43,11 @@ namespace Extenity.UnityEditorToolbox
 			return true;
 		}
 
-		public bool CheckIfAllCategoriesAreCompletedOrUnimportant()
+		public bool CheckIfAllCategoriesAreCompletedOrSkipped()
 		{
 			foreach (var category in Categories)
 			{
-				if (!category.CheckIfAllGroupsAreCompletedOrUnimportant())
+				if (!category.CheckIfAllGroupsAreCompletedOrSkipped())
 				{
 					return false;
 				}
@@ -72,11 +72,11 @@ namespace Extenity.UnityEditorToolbox
 			return false;
 		}
 
-		public bool CheckIfAllCategoriesAreCompletedOrUnimportantUntil(string categoryTitle)
+		public bool CheckIfAllCategoriesAreCompletedOrSkippedUntil(string categoryTitle)
 		{
 			foreach (var category in Categories)
 			{
-				if (!category.CheckIfAllGroupsAreCompletedOrUnimportant())
+				if (!category.CheckIfAllGroupsAreCompletedOrSkipped())
 				{
 					return false;
 				}

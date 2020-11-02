@@ -10,18 +10,13 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox
 {
 
-	public enum ChecklistItemType
-	{
-		Regular = 0,
-		Unimportant = 1,
-	}
-
 	public enum ChecklistItemStatus
 	{
 		NotStarted = 0,
 		InProgress = 1,
 		NeedsAttention = 2,
 		Completed = 3,
+		Skipped = 4,
 	}
 
 	[Serializable]
@@ -32,9 +27,6 @@ namespace Extenity.UnityEditorToolbox
 
 		[HideInInspector]
 		public string Description;
-
-		[HideInInspector]
-		public ChecklistItemType Type;
 
 		[HideInInspector]
 		public ChecklistItemStatus Status;
@@ -67,9 +59,9 @@ namespace Extenity.UnityEditorToolbox
 			return Status == ChecklistItemStatus.Completed;
 		}
 
-		public bool CheckIfCompletedOrUnimportant()
+		public bool CheckIfCompletedOrSkipped()
 		{
-			return CheckIfCompleted() || Type == ChecklistItemType.Unimportant;
+			return CheckIfCompleted() || Status == ChecklistItemStatus.Skipped;
 		}
 
 		#endregion
@@ -89,7 +81,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				// Icon
 				{
-					var icon = CheckIfCompletedOrUnimportant()
+					var icon = CheckIfCompletedOrSkipped()
 						? ChecklistIcons.Texture_Accept
 						: ChecklistIcons.Texture_Reject;
 					if (GUILayout.Button(icon, GUI.skin.GetStyle("Label"), ChecklistConstants.SmallIconLayoutOptions))
@@ -131,24 +123,6 @@ namespace Extenity.UnityEditorToolbox
 				{
 					GUILayout.Label(nameof(Title));
 					Title = GUILayout.TextField(Title);
-				}
-
-				GUILayout.Space(6f);
-
-				// Type
-				{
-					GUILayout.Label(nameof(Type));
-					GUILayout.BeginHorizontal();
-					var rect = GUILayoutUtility.GetRect(90, ChecklistConstants.SmallIconSize, GUILayout.Width(90));
-					rect.y += 2;
-					var newType = EnumSelector<ChecklistItemType>.DrawEnumField(rect, GUIContent.none, Type, null);
-					if (Type == ChecklistItemType.Unimportant)
-					{
-						GUILayout.Space(2f);
-						GUILayout.Label($"'{nameof(ChecklistItemType.Unimportant)}' immediately marks the item as completed regardless of its state.");
-					}
-					Type = newType;
-					GUILayout.EndHorizontal();
 				}
 
 				GUILayout.Space(6f);
@@ -224,11 +198,11 @@ namespace Extenity.UnityEditorToolbox
 			return true;
 		}
 
-		public bool CheckIfAllItemsAreCompletedOrUnimportant()
+		public bool CheckIfAllItemsAreCompletedOrSkipped()
 		{
 			foreach (var item in Items)
 			{
-				if (!item.CheckIfCompletedOrUnimportant())
+				if (!item.CheckIfCompletedOrSkipped())
 				{
 					return false;
 				}
@@ -244,7 +218,7 @@ namespace Extenity.UnityEditorToolbox
 		[HorizontalGroup("Title", Width = ChecklistConstants.MidIconSize), PropertyOrder(-1)]
 		private void _DrawIcon()
 		{
-			var icon = CheckIfAllItemsAreCompletedOrUnimportant()
+			var icon = CheckIfAllItemsAreCompletedOrSkipped()
 				? ChecklistIcons.Texture_Accept
 				: ChecklistIcons.Texture_Reject;
 			GUILayout.Label(icon, ChecklistConstants.MidIconLayoutOptions);
@@ -292,11 +266,11 @@ namespace Extenity.UnityEditorToolbox
 			return true;
 		}
 
-		public bool CheckIfAllGroupsAreCompletedOrUnimportant()
+		public bool CheckIfAllGroupsAreCompletedOrSkipped()
 		{
 			foreach (var group in Groups)
 			{
-				if (!group.CheckIfAllItemsAreCompletedOrUnimportant())
+				if (!group.CheckIfAllItemsAreCompletedOrSkipped())
 				{
 					return false;
 				}
@@ -312,7 +286,7 @@ namespace Extenity.UnityEditorToolbox
 		[HorizontalGroup("Title", Width = ChecklistConstants.BigIconSize), PropertyOrder(-1)]
 		private void _DrawIcon()
 		{
-			var icon = CheckIfAllGroupsAreCompletedOrUnimportant()
+			var icon = CheckIfAllGroupsAreCompletedOrSkipped()
 				? ChecklistIcons.Texture_Accept
 				: ChecklistIcons.Texture_Reject;
 			GUILayout.Label(icon, ChecklistConstants.BigIconLayoutOptions);
