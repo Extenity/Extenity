@@ -60,7 +60,21 @@ namespace Extenity.FileSystemToolbox
 
 		public static bool IsDirectoryEmpty(string path)
 		{
-			return Directory.GetFileSystemEntries(path).Length == 0;
+			// The old implementation. It was not performance friendly.
+			// return Directory.GetFileSystemEntries(path).Length == 0;
+
+			try
+			{
+				var items = Directory.EnumerateFileSystemEntries(path);
+				using (var enumerator = items.GetEnumerator())
+				{
+					return !enumerator.MoveNext();
+				}
+			}
+			catch (DirectoryNotFoundException)
+			{
+				return true;
+			}
 		}
 
 		public static HashSet<string> ListFilesInDirectory(string sourceDirectory, SearchOption searchOption,
