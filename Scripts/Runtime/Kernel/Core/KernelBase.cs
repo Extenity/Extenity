@@ -15,6 +15,8 @@ namespace Extenity.KernelToolbox
 {
 
 	// TODO: Implement a build time tool to check and ensure there are no fields with KernelObject derived type. All references to kernel objects should use Ref instead.
+	// TODO: Think of a way to provide behaviours for UI and Panels, just like ViewBehaviours.
+	// TODO: Mark the kernel as RequiresCleanup (or something like it) whenever encountered a destroyed KernelObject and remove these from lists at the start of the application loop.
 
 	public abstract class KernelBase<TKernel> : KernelBase
 		where TKernel : KernelBase<TKernel>
