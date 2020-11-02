@@ -6,6 +6,7 @@ using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Extenity.UnityEditorToolbox
 {
@@ -72,8 +73,10 @@ namespace Extenity.UnityEditorToolbox
 		private bool IsFoldout;
 
 		[OnInspectorGUI]
-		private void DrawStatusIcon()
+		private void DrawStatusIcon(InspectorProperty property)
 		{
+			EditorGUI.BeginChangeCheck();
+
 			GUILayout.BeginVertical();
 
 			// Summary line
@@ -152,6 +155,21 @@ namespace Extenity.UnityEditorToolbox
 			}
 
 			GUILayout.EndVertical();
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				var serializationRoot = property.SerializationRoot;
+				for (int index = 0; index < serializationRoot.ValueEntry.ValueCount; ++index)
+				{
+					Object weakValue = serializationRoot.ValueEntry.WeakValues[index] as Object;
+					if (weakValue)
+					{
+						EditorUtility.SetDirty(weakValue);
+						// TODO: Figure out a way to make Undo work.
+						// Undo.RegisterCompleteObjectUndo(weakValue, "Checklist modification");
+					}
+				}
+			}
 		}
 
 		public bool IsMatch(string searchString)
