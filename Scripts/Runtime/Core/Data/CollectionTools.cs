@@ -626,6 +626,16 @@ namespace Extenity.DataToolbox
 			list[newIndex] = temp;
 		}
 
+		public static T[] NewFilledArray<T>(int length, T initialValue)
+		{
+			var array = new T[length];
+			for (int i = 0; i < array.Length; i++)
+			{
+				array[i] = initialValue;
+			}
+			return array;
+		}
+
 		public static void Clear(this Array array)
 		{
 			Array.Clear(array, 0, array.Length);
