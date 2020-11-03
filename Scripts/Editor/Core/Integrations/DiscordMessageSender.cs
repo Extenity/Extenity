@@ -34,7 +34,7 @@ namespace Extenity.IntegrationToolbox
 			WebClient.Dispose();
 		}
 
-		public void SendMessage(string msgSend)
+		public void SendMessage(string message)
 		{
 			if (string.IsNullOrWhiteSpace(WebhookURL))
 			{
@@ -42,7 +42,7 @@ namespace Extenity.IntegrationToolbox
 			}
 
 			Values.Remove("content");
-			Values.Add("content", msgSend);
+			Values.Add("content", message);
 
 			WebClient.UploadValues(WebhookURL, Values);
 		}
