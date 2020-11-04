@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -21,6 +23,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 			".hg",
 			".git",
 		};
+
+		private static readonly string OrigFileFilter = "*.orig";
+		private static readonly string ThumbsDBFileFilter = "thumbs.db";
 
 		#endregion
 
@@ -54,75 +59,39 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Get files
+		#region Clear Files and Directories
 
-		public static string[] GetOrigFiles()
+		private static IEnumerator DoClearFiles(string fileNameFilter, bool refreshAssetDatabase)
 		{
-			return GetOrigFiles(Application.dataPath);
-		}
+			int progressId = Progress.Start("Clear thumbs.db files");
+			yield return null;
 
-		public static string[] GetOrigFiles(string path)
-		{
-			return Directory.GetFiles(path, "*.orig", SearchOption.AllDirectories);
-		}
-
-		public static string[] GetThumbsDbFiles()
-		{
-			return GetThumbsDbFiles(Application.dataPath);
-		}
-
-		public static string[] GetThumbsDbFiles(string path)
-		{
-			return Directory.GetFiles(path, "thumbs.db", SearchOption.AllDirectories);
-		}
-
-		#endregion
-
-		#region Menu
-
-		[MenuItem(Menu + "/Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
-		public static void ClearAll()
-		{
-			ClearOrigFiles();
-			ClearThumbsDbFiles();
-			ClearEmptyDirectories();
-		}
-
-		[MenuItem(Menu + "/Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
-		public static void ClearOrigFiles()
-		{
-			var items = GetOrigFiles();
+			var path = Application.dataPath;
+			var items = Directory.GetFiles(path, fileNameFilter, SearchOption.AllDirectories);
 			for (int i = 0; i < items.Length; i++)
 			{
 				AssetTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+				Progress.Report(progressId, (float)(i + 1) / items.Length);
+				yield return null;
 			}
 
-			Log.Info("Cleared '.orig' files: " + items.Length);
+			Log.Info($"Cleared '{fileNameFilter}' files: " + items.Length);
 			if (items.Length > 0)
 				items.LogList();
 
-			AssetDatabase.Refresh();
-		}
-
-		[MenuItem(Menu + "/Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
-		public static void ClearThumbsDbFiles()
-		{
-			var items = GetThumbsDbFiles();
-			for (int i = 0; i < items.Length; i++)
+			if (refreshAssetDatabase)
 			{
-				AssetTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+				AssetDatabase.Refresh();
 			}
 
-			Log.Info("Cleared 'thumbs.db' files: " + items.Length);
-			if (items.Length > 0)
-				items.LogList();
-
-			AssetDatabase.Refresh();
+			Progress.Remove(progressId);
 		}
 
-		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriorityEnd)]
-		public static void ClearEmptyDirectories()
+		private static IEnumerator DoClearEmptyDirectories(bool refreshAssetDatabase)
 		{
+			int progressId = Progress.Start("Clear empty directories");
+			yield return null;
+
 			var tryAgain = true;
 			var clearedItems = new List<string>();
 
@@ -132,6 +101,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 				for (int i = 0; i < items.Count; i++)
 				{
 					AssetTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+					Progress.Report(progressId, (float)(i + 1) / items.Count); // This is not the correct way to display the progress, but it's better than nothing.
+					yield return null;
 				}
 
 				clearedItems.Combine(items);
@@ -142,7 +113,47 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (clearedItems.Count > 0)
 				clearedItems.LogList();
 
-			AssetDatabase.Refresh();
+			if (refreshAssetDatabase)
+			{
+				AssetDatabase.Refresh();
+			}
+
+			Progress.Remove(progressId);
+		}
+
+		private static IEnumerator DoClearAll()
+		{
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, false));
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, false));
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
+		}
+
+		#endregion
+
+		#region Menu
+
+		[MenuItem(Menu + "/Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
+		public static void ClearAll()
+		{
+			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
+		}
+
+		[MenuItem(Menu + "/Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
+		public static void ClearOrigFiles()
+		{
+			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, true));
+		}
+
+		[MenuItem(Menu + "/Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
+		public static void ClearThumbsDbFiles()
+		{
+			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, true));
+		}
+
+		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriorityEnd)]
+		public static void ClearEmptyDirectories()
+		{
+			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
 		}
 
 		#endregion
