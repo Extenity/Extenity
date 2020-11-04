@@ -17,7 +17,7 @@ namespace Extenity.UnityEditorToolbox
 
 		public const string CleanUp = Path + "Clean Up/";
 		public const int CleanUpPriority = Start;
-		public const int CleanUpPriorityEnd = CleanUpPriority + 23;
+		public const int CleanUpPriorityEnd = CleanUpPriority + 42;
 
 		public const string Analysis = Path + "Analysis/";
 		public const int AnalysisPriority = CleanUpPriorityEnd + Group;

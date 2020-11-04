@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
+using Extenity.DataToolbox.Editor;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
@@ -26,6 +27,21 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static readonly string OrigFileFilter = "*.orig";
 		private static readonly string ThumbsDBFileFilter = "thumbs.db";
+
+		#endregion
+
+		#region Cleanup at Editor launch
+
+		private static BoolEditorPref EnableRunAtEditorLaunch => new BoolEditorPref("RunAtEditorLaunch", PathHashPostfix.Yes, true);
+
+		[InitializeOnEditorLaunchMethod]
+		private static void RunAtEditorLaunch()
+		{
+			if (EnableRunAtEditorLaunch.Value)
+			{
+				EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
+			}
+		}
 
 		#endregion
 
@@ -75,13 +91,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 				yield return null;
 			}
 
-			Log.Info($"Cleared '{fileNameFilter}' files: " + items.Length);
 			if (items.Length > 0)
+			{
+				Log.Info($"Cleared '{fileNameFilter}' files: " + items.Length);
 				items.LogList();
 
-			if (refreshAssetDatabase)
-			{
-				AssetDatabase.Refresh();
+				if (refreshAssetDatabase)
+				{
+					AssetDatabase.Refresh();
+				}
 			}
 
 			Progress.Remove(progressId);
@@ -109,13 +127,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 				tryAgain = items.Count > 0;
 			}
 
-			Log.Info("Cleared empty directories: " + clearedItems.Count);
 			if (clearedItems.Count > 0)
+			{
+				Log.Info("Cleared empty directories: " + clearedItems.Count);
 				clearedItems.LogList();
 
-			if (refreshAssetDatabase)
-			{
-				AssetDatabase.Refresh();
+				if (refreshAssetDatabase)
+				{
+					AssetDatabase.Refresh();
+				}
 			}
 
 			Progress.Remove(progressId);
@@ -136,24 +156,52 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static void ClearAll()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
+			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "/Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
 		public static void ClearOrigFiles()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, true));
+			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "/Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
 		public static void ClearThumbsDbFiles()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, true));
+			Log.Info("Cleanup finished.");
 		}
 
-		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriorityEnd)]
+		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriority + 23)]
 		public static void ClearEmptyDirectories()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
+			Log.Info("Cleanup finished.");
+		}
+
+		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Enable", priority = ExtenityMenu.CleanUpPriority + 41)]
+		public static void EnableAutoCleanUpAtEditorLaunch()
+		{
+			EnableRunAtEditorLaunch.Value = true;
+		}
+
+		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Enable", validate = true)]
+		public static bool EnableAutoCleanUpAtEditorLaunch_Validate()
+		{
+			return !EnableRunAtEditorLaunch.Value;
+		}
+
+		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Disable", priority = ExtenityMenu.CleanUpPriorityEnd)]
+		public static void DisableAutoCleanUpAtEditorLaunch()
+		{
+			EnableRunAtEditorLaunch.Value = false;
+		}
+
+		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Disable", validate = true)]
+		public static bool DisableAutoCleanUpAtEditorLaunch_Validate()
+		{
+			return EnableRunAtEditorLaunch.Value;
 		}
 
 		#endregion
