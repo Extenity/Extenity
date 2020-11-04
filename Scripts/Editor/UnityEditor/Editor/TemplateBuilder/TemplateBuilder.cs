@@ -91,12 +91,12 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 
 		#region Project Template as Zip
 
-		public static void BuildProjectTemplateAsZip(TemplateBuilderConfiguration config, Action onCompleted = null)
+		public static void BuildProjectTemplateAsZip(TemplateBuilderConfiguration config, bool dryRun, Action onCompleted = null)
 		{
-			EditorApplication.delayCall += () => DoBuildProjectTemplateAsZip(config, onCompleted);
+			EditorApplication.delayCall += () => DoBuildProjectTemplateAsZip(config, dryRun, onCompleted);
 		}
 
-		private static void DoBuildProjectTemplateAsZip(TemplateBuilderConfiguration config, Action onCompleted)
+		private static void DoBuildProjectTemplateAsZip(TemplateBuilderConfiguration config, bool dryRun, Action onCompleted)
 		{
 			// Consistency checks
 			config.CheckConsistencyAndThrow($"{nameof(TemplateBuilderConfiguration).SplitPascalCase()} contains errors:");
@@ -146,6 +146,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			}
 
 			// Increase version
+			if (!dryRun)
 			{
 				IncreaseVersion(config);
 			}

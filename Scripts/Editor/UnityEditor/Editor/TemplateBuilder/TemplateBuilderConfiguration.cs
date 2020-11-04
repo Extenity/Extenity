@@ -35,12 +35,14 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		[FolderPath(UseBackslashes = true)]
 		public string OutputDirectory = "Export/UnityProjectTemplate/";
 
-		[HorizontalGroup("BuildLine", Order = 6, MarginLeft = 0.25f, MarginRight = 0.25f)]
-		[PropertySpace(10), Button(ButtonSizes.Gigantic)]
-		public void Build()
-		{
-			TemplateBuilder.BuildProjectTemplateAsZip(this);
-		}
+		// Decided not to provide this functionality in Configuration. Template build operation is generally triggered
+		// in one of the steps of larger build operations and putting that Build button here might be confusing.
+		// [HorizontalGroup("BuildLine", Order = 6, MarginLeft = 0.25f, MarginRight = 0.25f)]
+		// [PropertySpace(10), Button(ButtonSizes.Gigantic)]
+		// public void Build()
+		// {
+		// 	TemplateBuilder.BuildProjectTemplateAsZip(this);
+		// }
 
 		public void CheckConsistency(ref List<ConsistencyError> errors)
 		{
