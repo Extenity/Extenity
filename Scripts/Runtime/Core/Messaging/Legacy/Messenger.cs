@@ -27,7 +27,8 @@ namespace Extenity.MessagingToolbox
 
 		private static readonly Dictionary<string, ExtenityEvent> EventsByEventNames = new Dictionary<string, ExtenityEvent>();
 
-		public static void RegisterEvent(string eventName, Action callback)
+		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
+		public static void RegisterEvent(string eventName, Action callback, int order = 0)
 		{
 			if (string.IsNullOrEmpty(eventName) ||
 			    callback == null ||
@@ -45,7 +46,7 @@ namespace Extenity.MessagingToolbox
 				events = new ExtenityEvent();
 				EventsByEventNames[eventName] = events;
 			}
-			events.AddListener(callback);
+			events.AddListener(callback, order);
 		}
 
 		public static void DeregisterEvent(string eventName, Action callback)
