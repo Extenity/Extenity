@@ -12,7 +12,7 @@ namespace Extenity.AnimationToolbox
 		protected void FixedUpdate()
 		{
 			var followerPosition = Follower.position;
-			Follower.position = followerPosition + (Target.position - followerPosition) * (MovementSmoothingFactor * Time.deltaTime);
+			Follower.position = followerPosition + (Target.position - followerPosition) * Mathf.Clamp01(MovementSmoothingFactor * Time.deltaTime);
 		}
 	}
 

@@ -24,7 +24,7 @@ namespace Extenity.AnimationToolbox
 			if (EnableSmoothing)
 			{
 				var targetRotation = Quaternion.LookRotation(RotatedObject.position - CameraTransform.position, Vector3.up);
-				RotatedObject.rotation = Quaternion.Slerp(RotatedObject.rotation, targetRotation, SmoothingSpeed * Time.deltaTime);
+				RotatedObject.rotation = Quaternion.Slerp(RotatedObject.rotation, targetRotation, Mathf.Clamp01(SmoothingSpeed * Time.deltaTime));
 			}
 			else
 			{

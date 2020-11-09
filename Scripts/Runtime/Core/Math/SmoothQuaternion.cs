@@ -9,7 +9,8 @@ namespace Extenity.MathToolbox
 	{
 		#region Configuration
 
-		public float SmoothingFactor = 0.02f;
+		public float SmoothingFactor = 20f;
+		public bool ApplyDeltaTime = true;
 
 		#endregion
 
@@ -26,7 +27,14 @@ namespace Extenity.MathToolbox
 
 		public void Calculate()
 		{
-			Current = Quaternion.Slerp(Current, Target, SmoothingFactor);
+			if (ApplyDeltaTime)
+			{
+				Current = Quaternion.Slerp(Current, Target, Mathf.Clamp01(SmoothingFactor * Time.deltaTime));
+			}
+			else
+			{
+				Current = Quaternion.Slerp(Current, Target, Mathf.Clamp01(SmoothingFactor));
+			}
 		}
 
 		public void Calculate(Quaternion target)
