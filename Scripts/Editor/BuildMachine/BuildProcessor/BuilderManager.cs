@@ -90,34 +90,34 @@ namespace Extenity.BuildMachine.Editor
 		private static BuildStepInfo[] GatherBuildStepMethods(Type type)
 		{
 			var methods = type
-				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-				.Where(method =>
-					{
-						if (!method.IsVirtual && method.ReturnType == typeof(IEnumerator))
-						{
-							var parameters = method.GetParameters();
-							// See 113654126.
-							if (parameters.Length == 2 &&
-								parameters[0].ParameterType == typeof(BuildJob) &&
-								parameters[1].ParameterType == typeof(BuildStepInfo)
-							)
-							{
-								var attribute = method.GetAttribute<BuildStepAttribute>(true);
-								if (attribute != null)
-								{
-									if (attribute.Order <= 0)
-									{
-										Log.Error($"The '{attribute.GetType().Name}' attribute should have an order above 0.");
-									}
-									return true;
-								}
-							}
-						}
-						return false;
-					}
-				)
-				.OrderBy(method => method.GetAttribute<BuildStepAttribute>(true).Order)
-				.ToList();
+			              .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+			              .Where(method =>
+				              {
+					              if (!method.IsVirtual && method.ReturnType == typeof(IEnumerator))
+					              {
+						              var parameters = method.GetParameters();
+						              // See 113654126.
+						              if (parameters.Length == 2 &&
+						                  parameters[0].ParameterType == typeof(BuildJob) &&
+						                  parameters[1].ParameterType == typeof(BuildStepInfo)
+						              )
+						              {
+							              var attribute = method.GetAttribute<BuildStepAttribute>(true);
+							              if (attribute != null)
+							              {
+								              if (attribute.Order <= 0)
+								              {
+									              Log.Error($"The '{attribute.GetType().Name}' attribute should have an order above 0.");
+								              }
+								              return true;
+							              }
+						              }
+					              }
+					              return false;
+				              }
+			              )
+			              .OrderBy(method => method.GetAttribute<BuildStepAttribute>(true).Order)
+			              .ToList();
 
 			//methods.LogList();
 
