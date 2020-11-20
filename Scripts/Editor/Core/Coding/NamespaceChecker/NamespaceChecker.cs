@@ -1,7 +1,7 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using Extenity.ProfilingToolbox;
-using Sirenix.Utilities;
 using UnityEditor.Callbacks;
 
 namespace Extenity.CodingToolbox.Editor
@@ -14,7 +14,7 @@ namespace Extenity.CodingToolbox.Editor
 		{
 			using (new QuickProfilerStopwatch($"{nameof(NamespaceChecker)} calculations took {{0}}", 1f))
 			{
-				var assemblies = AssemblyUtilities.GetAllAssemblies();
+				var assemblies = Sirenix.Utilities.AssemblyUtilities.GetAllAssemblies();
 				foreach (var assembly in assemblies)
 				{
 					var attributes = assembly.GetCustomAttributes<EnsuredNamespaceAttribute>().ToArray();
@@ -36,26 +36,27 @@ namespace Extenity.CodingToolbox.Editor
 							var name = type.Name;
 
 							// Skip compiler generated types. Source: https://stackoverflow.com/questions/187495/how-to-read-assembly-attributes
-							if (name.StartsWith("__StaticArrayInitTypeSize") ||
-							    name.StartsWith("<>") ||
-							    name.StartsWith("_<>") ||
-							    name.StartsWith("<PrivateImplementationDetails>"))
+							if (name.StartsWith("__StaticArrayInitTypeSize", StringComparison.Ordinal) ||
+							    name.StartsWith("<>", StringComparison.Ordinal) ||
+							    name.StartsWith("_<>", StringComparison.Ordinal) ||
+							    name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 							{
 								continue;
 							}
 
 							// Skip mysterious types that comes out of nowhere.
-							if (name.Equals("EmbeddedAttribute") ||
-							    name.Equals("IsReadOnlyAttribute"))
+							if (name.Equals("EmbeddedAttribute", StringComparison.Ordinal) ||
+							    name.Equals("IsReadOnlyAttribute", StringComparison.Ordinal))
 							{
 								continue;
 							}
 
 							var checkedAgainst = namespaceShouldStartWith;
 
-							var overrideAttribute = type.GetAttribute<OverrideEnsuredNamespaceAttribute>();
-							if (overrideAttribute != null)
+							var overrideAttributesEnumerator = type.GetCustomAttributes<OverrideEnsuredNamespaceAttribute>();
+							if (overrideAttributesEnumerator.Any())
 							{
+								var overrideAttribute = overrideAttributesEnumerator.First(); // No need to check if there are multiple attributes since its AllowMultiple is disabled.
 								checkedAgainst = overrideAttribute.NamespaceShouldStartWith;
 							}
 
@@ -66,7 +67,7 @@ namespace Extenity.CodingToolbox.Editor
 
 							if (string.IsNullOrWhiteSpace(type.Namespace) ||
 							    string.IsNullOrWhiteSpace(checkedAgainst) ||
-							    !type.Namespace.StartsWith(checkedAgainst))
+							    !type.Namespace.StartsWith(checkedAgainst, StringComparison.Ordinal))
 							{
 								Log.Error($"Namespace of type '{name}' should start with '{checkedAgainst ?? "[NA]"}' instead of '{type.Namespace ?? "[NA]"}'.");
 							}
