@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Extenity.DataToolbox;
@@ -31,14 +33,72 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Gather Builder and Build Step Info
 
+		private static List<Type> CollectBuilderTypes()
+		{
+			var result = new List<Type>();
+			var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+			var assemblies = new List<Assembly>(allAssemblies.Length);
+
+			var assetsDirectoryString = Path.DirectorySeparatorChar + "Assets" + Path.DirectorySeparatorChar;
+			var scriptAssembliesDirectoryString = Path.DirectorySeparatorChar + "ScriptAssemblies" + Path.DirectorySeparatorChar;
+
+			foreach (var assembly in allAssemblies)
+			{
+				if (!assembly.IsDynamic &&
+				    (assembly.Location.Contains(assetsDirectoryString, StringComparison.Ordinal) ||
+				     assembly.Location.Contains(scriptAssembliesDirectoryString, StringComparison.Ordinal)))
+				{
+					var name = assembly.FullName;
+					if (!name.StartsWith("UnityEngine", StringComparison.Ordinal) &&
+					    !name.StartsWith("UnityEditor", StringComparison.Ordinal) &&
+					    !name.StartsWith("Unity.", StringComparison.Ordinal) &&
+					    !name.StartsWith("com.unity.", StringComparison.Ordinal) &&
+					    !name.StartsWith("ExCSS", StringComparison.Ordinal) &&
+					    !name.StartsWith("System.", StringComparison.Ordinal) &&
+					    !name.StartsWith("mscorlib", StringComparison.Ordinal) &&
+					    !name.StartsWith("netstandard", StringComparison.Ordinal) &&
+					    !name.StartsWith("Mono.", StringComparison.Ordinal) &&
+					    !name.StartsWith("Extenity.", StringComparison.Ordinal) &&
+					    !name.StartsWith("Google.", StringComparison.Ordinal) &&
+					    !name.StartsWith("Newtonsoft.", StringComparison.Ordinal) &&
+					    !name.StartsWith("nunit.", StringComparison.Ordinal) &&
+					    !name.StartsWith("Cinemachine", StringComparison.Ordinal) &&
+					    !name.StartsWith("DOTween", StringComparison.Ordinal) &&
+					    !name.StartsWith("StompyRobot", StringComparison.Ordinal) &&
+					    !name.StartsWith("SRDebugger", StringComparison.Ordinal) &&
+					    !name.StartsWith("ICSharpCode", StringComparison.Ordinal) &&
+					    !name.StartsWith("CodeStage", StringComparison.Ordinal) &&
+					    !name.StartsWith("Sirenix", StringComparison.Ordinal))
+					{
+						assemblies.Add(assembly);
+					}
+				}
+			}
+
+			// foreach (var assembly in assemblies.OrderBy(item => item.Location))
+			// {
+			// 	Log.Info("assembly:   " + assembly.Location);
+			// }
+
+			for (var iAssembly = 0; iAssembly < assemblies.Count; iAssembly++)
+			{
+				var assembly = assemblies[iAssembly];
+				var types = assembly.GetTypes();
+				for (var iType = 0; iType < types.Length; iType++)
+				{
+					var type = types[iType];
+					if (typeof(Builder).IsAssignableFrom(type) && !type.IsAbstract)
+					{
+						result.Add(type);
+					}
+				}
+			}
+			return result;
+		}
+
 		private static BuilderInfo[] GatherBuilderInfos()
 		{
-			var types = (
-					from assembly in AppDomain.CurrentDomain.GetAssemblies()
-					from type in assembly.GetTypes()
-					where typeof(Builder).IsAssignableFrom(type) && !type.IsAbstract
-					select type
-				).ToList();
+			var types = CollectBuilderTypes();
 
 			var builderInfos = new BuilderInfo[types.Count];
 			for (var i = 0; i < types.Count; i++)
