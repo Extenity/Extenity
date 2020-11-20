@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
+using Extenity.ProfilingToolbox;
 using Extenity.ProjectToolbox;
 using UnityEditor;
 using UnityEngine;
@@ -179,53 +180,58 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[InitializeOnLoadMethod]
 		public static void AdjustDefineSymbolsForInstalledModules()
 		{
-			var packageManifest = PackageManagerTools.GetPackageManifestContent();
-			var configuration = GetCombinedDefineSymbolAdjustmentConfiguration();
-			var defineSymbolsOfPlatforms = PlayerSettingsTools.GetAllDefineSymbolsOfAllPlatforms();
-
-			var addCount = 0;
-			var removeCount = 0;
-
-			foreach (var configurationEntry in configuration)
+			using (new QuickProfilerStopwatch($"{nameof(DefineSymbolsAdjuster)} calculations took {{0}}", 1f))
 			{
-				var moduleExists = packageManifest.IsPackageDefinedInManifest(configurationEntry.Module);
-				bool symbolShouldExist;
-				switch (configurationEntry.Operation)
-				{
-					case DefineSymbolAdjustmentOperation.DefineWithModuleExistence:
-						symbolShouldExist = moduleExists;
-						break;
-					case DefineSymbolAdjustmentOperation.UndefineWithModuleExistence:
-						symbolShouldExist = !moduleExists;
-						break;
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
+				var packageManifest = PackageManagerTools.GetPackageManifestContent();
+				var configuration = GetCombinedDefineSymbolAdjustmentConfiguration();
+				var defineSymbolsOfPlatforms = PlayerSettingsTools.GetAllDefineSymbolsOfAllPlatforms();
 
-				foreach (var defineSymbolsOfPlatform in defineSymbolsOfPlatforms.Values)
+				var addCount = 0;
+				var removeCount = 0;
+
+				foreach (var configurationEntry in configuration)
 				{
-					if (symbolShouldExist)
+					var moduleExists = packageManifest.IsPackageDefinedInManifest(configurationEntry.Module);
+					bool symbolShouldExist;
+					switch (configurationEntry.Operation)
 					{
-						if (defineSymbolsOfPlatform.AddUnique(configurationEntry.Symbol))
+						case DefineSymbolAdjustmentOperation.DefineWithModuleExistence:
+							symbolShouldExist = moduleExists;
+							break;
+
+						case DefineSymbolAdjustmentOperation.UndefineWithModuleExistence:
+							symbolShouldExist = !moduleExists;
+							break;
+
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+
+					foreach (var defineSymbolsOfPlatform in defineSymbolsOfPlatforms.Values)
+					{
+						if (symbolShouldExist)
 						{
-							addCount++;
+							if (defineSymbolsOfPlatform.AddUnique(configurationEntry.Symbol))
+							{
+								addCount++;
+							}
+						}
+						else
+						{
+							if (defineSymbolsOfPlatform.Remove(configurationEntry.Symbol))
+							{
+								removeCount++;
+							}
 						}
 					}
-					else
-					{
-						if (defineSymbolsOfPlatform.Remove(configurationEntry.Symbol))
-						{
-							removeCount++;
-						}
-					}
 				}
-			}
 
-			if (addCount + removeCount > 0)
-			{
-				Log.Info($"Added '{addCount}' and removed '{removeCount}' define symbol(s) in project configuration.");
-				PlayerSettingsTools.SetAllDefineSymbolsOfAllPlatforms(defineSymbolsOfPlatforms);
-				AssetDatabase.SaveAssets();
+				if (addCount + removeCount > 0)
+				{
+					Log.Info($"Added '{addCount}' and removed '{removeCount}' define symbol(s) in project configuration.");
+					PlayerSettingsTools.SetAllDefineSymbolsOfAllPlatforms(defineSymbolsOfPlatforms);
+					AssetDatabase.SaveAssets();
+				}
 			}
 		}
 
