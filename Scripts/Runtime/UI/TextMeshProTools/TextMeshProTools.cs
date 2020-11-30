@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using Extenity.DataToolbox;
 using TMPro;
+using UnityEngine;
 
 namespace Extenity.UIToolbox
 {
@@ -187,6 +189,41 @@ namespace Extenity.UIToolbox
 			{
 				var length = value.ToStringAsCharArray(format, Buffer);
 				text.SetCharArray(Buffer, 0, length);
+			}
+		}
+
+		#endregion
+
+		#region Text Animation
+
+		public static Coroutine DoTextAnimation(this TextMeshProUGUI me, string text, float characterPeriod, bool initiallyStopAllCoroutines = true)
+		{
+			if (initiallyStopAllCoroutines)
+			{
+				me.StopAllCoroutines();
+			}
+			return me.StartCoroutine(InternalDoTextAnimation(me, text.ToCharArray(), characterPeriod));
+		}
+
+		public static Coroutine DoTextAnimation(this TextMeshProUGUI me, char[] text, float characterPeriod, bool initiallyStopAllCoroutines = true)
+		{
+			if (initiallyStopAllCoroutines)
+			{
+				me.StopAllCoroutines();
+			}
+			return me.StartCoroutine(InternalDoTextAnimation(me, text, characterPeriod));
+		}
+
+		private static IEnumerator InternalDoTextAnimation(TextMeshProUGUI me, char[] text, float characterPeriod)
+		{
+			var startTime = Time.time;
+			while (true)
+			{
+				var characters = Mathf.CeilToInt((Time.time - startTime) / characterPeriod);
+				me.SetCharArray(text, 0, Mathf.Min(characters, text.Length));
+				yield return new WaitForEndOfFrame(); // TODO OPTIMIZE:
+				if (characters >= text.Length)
+					break;
 			}
 		}
 
