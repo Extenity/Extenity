@@ -14,8 +14,10 @@ using Object = UnityEngine.Object;
 namespace Extenity.MessagingToolbox
 {
 
-	// TODO: Consider these before starting to use Messenger.
+	// TODO: These features are completed. They need to be documented.
 	// User should have the ability to order event calls. Maybe by specifying a 'priority' parameter.
+
+	// TODO: Consider these before starting to use Messenger.
 	// Event dispatching should be exception proof. A thrown exception should not break the operation. Better yet, this can be controlled by specifying per registration.
 	// Event registration and deregistration should not allocate memory frequently.
 	// Consider making a class alternative to UnityEvent that can be used as a field to a class. Forget about making it inspector friendly. It should not work in inspector, since this is a really bad design issue. If linking callbacks inside Unity Editor is required, user should use a UnityEvent for this, instead of using Messenger system.
