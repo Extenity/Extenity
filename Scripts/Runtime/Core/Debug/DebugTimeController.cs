@@ -1,4 +1,4 @@
-#if (EnableDebugTimeControllerInBuilds || UNITY_EDITOR) && ENABLE_INPUT_SYSTEM
+#if (EnableDebugTimeControllerInBuilds || UNITY_EDITOR) && !ENABLE_INPUT_SYSTEM
 
 using UnityEngine;
 
