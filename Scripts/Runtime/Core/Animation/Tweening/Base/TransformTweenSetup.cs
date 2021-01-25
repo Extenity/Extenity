@@ -2,6 +2,7 @@
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Extenity.AnimationToolbox
 {
@@ -9,6 +10,10 @@ namespace Extenity.AnimationToolbox
 	[Serializable]
 	public class TransformTweenSetup
 	{
+		[FormerlySerializedAs("EndLocation")]
+		[Required]
+		public Transform Location;
+
 		public float Delay = 0f;
 		public float Duration = 0.5f;
 
@@ -18,9 +23,6 @@ namespace Extenity.AnimationToolbox
 		public Ease RotationEase = Ease.OutCubic;
 		[HorizontalGroup("Scale")]
 		public Ease ScaleEase = Ease.OutCubic;
-
-		[Required]
-		public Transform EndLocation;
 
 		[HorizontalGroup("Movement", MaxWidth = 120), Button(ButtonSizes.Small, Name = "Do Not Animate")]
 		public void RemoveMovementAnimation()

@@ -25,21 +25,21 @@ namespace Extenity.AnimationToolbox
 			CurrentAnimation = DOTween.Sequence();
 			if (sequence.MovementEase != Ease.Unset)
 			{
-				var tween = Transform.DOMove(sequence.EndLocation.position, sequence.Duration)
+				var tween = Transform.DOMove(sequence.Location.position, sequence.Duration)
 				                     .SetDelay(sequence.Delay)
 				                     .SetEase(sequence.MovementEase);
 				CurrentAnimation.Insert(0f, tween);
 			}
 			if (sequence.RotationEase != Ease.Unset)
 			{
-				var tween = Transform.DORotateQuaternion(sequence.EndLocation.rotation, sequence.Duration)
+				var tween = Transform.DORotateQuaternion(sequence.Location.rotation, sequence.Duration)
 				                     .SetDelay(sequence.Delay)
 				                     .SetEase(sequence.RotationEase);
 				CurrentAnimation.Insert(0f, tween);
 			}
 			if (sequence.ScaleEase != Ease.Unset)
 			{
-				var tween = Transform.DOScale(sequence.EndLocation.localScale, sequence.Duration)
+				var tween = Transform.DOScale(sequence.Location.localScale, sequence.Duration)
 				                     .SetDelay(sequence.Delay)
 				                     .SetEase(sequence.ScaleEase);
 				CurrentAnimation.Insert(0f, tween);
@@ -52,15 +52,15 @@ namespace Extenity.AnimationToolbox
 			Stop();
 			if (sequence.MovementEase != Ease.Unset)
 			{
-				Transform.position = sequence.EndLocation.position;
+				Transform.position = sequence.Location.position;
 			}
 			if (sequence.RotationEase != Ease.Unset)
 			{
-				Transform.rotation = sequence.EndLocation.rotation;
+				Transform.rotation = sequence.Location.rotation;
 			}
 			if (sequence.ScaleEase != Ease.Unset)
 			{
-				Transform.localScale = sequence.EndLocation.localScale;
+				Transform.localScale = sequence.Location.localScale;
 			}
 		}
 
