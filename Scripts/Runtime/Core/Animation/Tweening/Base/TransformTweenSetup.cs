@@ -24,6 +24,15 @@ namespace Extenity.AnimationToolbox
 		[HorizontalGroup("Scale")]
 		public Ease ScaleEase = Ease.OutCubic;
 
+		[HorizontalGroup("LocalPosition", LabelWidth = 110, MaxWidth = 10), ToggleLeft]
+		public bool UseLocalPosition;
+		[HorizontalGroup("LocalRotation", LabelWidth = 110, MaxWidth = 10), ToggleLeft]
+		public bool UseLocalRotation;
+		[HorizontalGroup("LocalPosition", LabelWidth = 110, MaxWidth = 10), ToggleLeft]
+		public bool MoveInLocal;
+		[HorizontalGroup("LocalRotation", LabelWidth = 110, MaxWidth = 10), ToggleLeft]
+		public bool RotateInLocal;
+
 		[HorizontalGroup("Movement", MaxWidth = 120), Button(ButtonSizes.Small, Name = "Do Not Animate")]
 		public void RemoveMovementAnimation()
 		{

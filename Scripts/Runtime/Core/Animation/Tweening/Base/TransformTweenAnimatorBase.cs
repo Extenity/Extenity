@@ -25,16 +25,26 @@ namespace Extenity.AnimationToolbox
 			CurrentAnimation = DOTween.Sequence();
 			if (sequence.MovementEase != Ease.Unset)
 			{
-				var tween = Transform.DOMove(sequence.Location.position, sequence.Duration)
-				                     .SetDelay(sequence.Delay)
-				                     .SetEase(sequence.MovementEase);
+				var position = sequence.UseLocalPosition
+					? sequence.Location.localPosition
+					: sequence.Location.position;
+				var tween = sequence.MoveInLocal
+					? Transform.DOLocalMove(position, sequence.Duration)
+					: Transform.DOMove(position, sequence.Duration);
+				tween = tween.SetDelay(sequence.Delay)
+				             .SetEase(sequence.MovementEase);
 				CurrentAnimation.Insert(0f, tween);
 			}
 			if (sequence.RotationEase != Ease.Unset)
 			{
-				var tween = Transform.DORotateQuaternion(sequence.Location.rotation, sequence.Duration)
-				                     .SetDelay(sequence.Delay)
-				                     .SetEase(sequence.RotationEase);
+				var rotation = sequence.UseLocalRotation
+					? sequence.Location.localRotation
+					: sequence.Location.rotation;
+				var tween = sequence.RotateInLocal
+					? Transform.DOLocalRotateQuaternion(rotation, sequence.Duration)
+					: Transform.DORotateQuaternion(rotation, sequence.Duration);
+				tween = tween.SetDelay(sequence.Delay)
+				             .SetEase(sequence.RotationEase);
 				CurrentAnimation.Insert(0f, tween);
 			}
 			if (sequence.ScaleEase != Ease.Unset)
@@ -52,11 +62,15 @@ namespace Extenity.AnimationToolbox
 			Stop();
 			if (sequence.MovementEase != Ease.Unset)
 			{
-				Transform.position = sequence.Location.position;
+				Transform.position = sequence.UseLocalPosition
+					? sequence.Location.localPosition
+					: sequence.Location.position;
 			}
 			if (sequence.RotationEase != Ease.Unset)
 			{
-				Transform.rotation = sequence.Location.rotation;
+				Transform.rotation = sequence.UseLocalRotation
+					? sequence.Location.localRotation
+					: sequence.Location.rotation;
 			}
 			if (sequence.ScaleEase != Ease.Unset)
 			{
