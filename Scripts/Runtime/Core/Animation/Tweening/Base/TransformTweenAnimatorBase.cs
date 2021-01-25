@@ -66,9 +66,9 @@ namespace Extenity.AnimationToolbox
 					? sequence.Location.localPosition
 					: sequence.Location.position;
 				if (sequence.MoveInLocal)
-					Transform.position = position;
-				else
 					Transform.localPosition = position;
+				else
+					Transform.position = position;
 			}
 			if (sequence.RotationEase != Ease.Unset)
 			{
@@ -76,9 +76,9 @@ namespace Extenity.AnimationToolbox
 					? sequence.Location.localRotation
 					: sequence.Location.rotation;
 				if (sequence.MoveInLocal)
-					Transform.rotation = rotation;
-				else
 					Transform.localRotation = rotation;
+				else
+					Transform.rotation = rotation;
 			}
 			if (sequence.ScaleEase != Ease.Unset)
 			{
