@@ -30,8 +30,11 @@ namespace Extenity.DebugToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void Initialize()
 		{
+			DefaultFixedDeltaTime = Time.fixedDeltaTime;
+
 			if (!Loop.IsInstanceAvailable)
 				return; // Just skip if there is no Loop instance, like test scenes or when not using the loop system.
+
 			Loop.RegisterUpdate(CustomUpdate);
 		}
 
@@ -58,6 +61,9 @@ namespace Extenity.DebugToolbox
 
 		#region Increase/Decrease Time Scale
 
+		public static bool AlsoMatchFixedDeltaTimeOnSlowTimeScales = true;
+		public static float DefaultFixedDeltaTime;
+
 		public static void IncreaseTimeScale()
 		{
 			var currentIndex = FindClosestTimeScaleIndex(Time.timeScale);
@@ -75,7 +81,15 @@ namespace Extenity.DebugToolbox
 			index = Mathf.Clamp(index, 0, TimeScales.Length - 1);
 			var timeScale = TimeScales[index];
 			Time.timeScale = timeScale;
-			Log.Info("Time scale set to " + timeScale);
+			if (AlsoMatchFixedDeltaTimeOnSlowTimeScales)
+			{
+				Time.fixedDeltaTime = timeScale < 1f ? DefaultFixedDeltaTime * timeScale : DefaultFixedDeltaTime;
+				Log.Info("Time scale set to " + timeScale + " with fixedDeltaTime " + Time.fixedDeltaTime);
+			}
+			else
+			{
+				Log.Info("Time scale set to " + timeScale);
+			}
 #if UNITY_EDITOR
 			var type = typeof(UnityEditor.EditorWindow).Assembly.GetType("UnityEditor.GameView");
 			var gameView = UnityEditor.EditorWindow.GetWindow(type);
