@@ -1,10 +1,36 @@
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Extenity.DesignPatternsToolbox
 {
 
 	internal static class SingletonTracker
 	{
+		#region Initialization / Deinitialization
+
+#if UNITY_EDITOR
+
+		[InitializeOnLoadMethod]
+		private static void Initialize()
+		{
+			EditorApplication.playModeStateChanged -= Deinitialize;
+			EditorApplication.playModeStateChanged += Deinitialize;
+		}
+
+		private static void Deinitialize(PlayModeStateChange change)
+		{
+			EditorApplication.playModeStateChanged -= Deinitialize;
+
+			// Clear all static data to support Enable Play Mode Options.
+			_SingletonCalls.Clear();
+		}
+
+#endif
+
+		#endregion
+
 		#region Singleton Tracker
 
 		private static Dictionary<string, int> _SingletonCalls = new Dictionary<string, int>();
