@@ -21,10 +21,13 @@ namespace Extenity.DesignPatternsToolbox
 
 		private static void Deinitialize(PlayModeStateChange change)
 		{
-			EditorApplication.playModeStateChanged -= Deinitialize;
+			if (change == PlayModeStateChange.ExitingPlayMode)
+			{
+				EditorApplication.playModeStateChanged -= Deinitialize;
 
-			// Clear all static data to support Enable Play Mode Options.
-			_SingletonCalls.Clear();
+				// Clear all static data to support Enable Play Mode Options.
+				_SingletonCalls.Clear();
+			}
 		}
 
 #endif
