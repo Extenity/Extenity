@@ -681,7 +681,7 @@ namespace Extenity.MathToolbox
 		#region Point Inside Polygon
 
 		/// <summary>
-		/// See also <seealso cref="Polygon"/> for bounds checking.
+		/// See also <seealso cref="Polygon2In3"/> for bounds checking.
 		///
 		/// Source: https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 		/// </summary>
@@ -701,7 +701,7 @@ namespace Extenity.MathToolbox
 		}
 
 		/// <summary>
-		/// See also <seealso cref="Polygon"/> for bounds checking.
+		/// See also <seealso cref="Polygon2In3"/> for bounds checking.
 		///
 		/// Source: https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 		/// </summary>
