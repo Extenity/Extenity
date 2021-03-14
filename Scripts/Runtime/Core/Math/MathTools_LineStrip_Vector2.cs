@@ -426,6 +426,30 @@ namespace Extenity.MathToolbox
 		}
 
 		#endregion
+
+		#region Point Inside Polygon
+
+		/// <summary>
+		/// See also <seealso cref="Polygon"/> for bounds checking.
+		///
+		/// Source: https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
+		/// </summary>
+		public static bool IsPointInsidePolygon(this IList<Vector2> polygon, Vector2 point)
+		{
+			// https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+			bool inside = false;
+			for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
+			{
+				if ((polygon[i].y > point.y) != (polygon[j].y > point.y) &&
+				    point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)
+				{
+					inside = !inside;
+				}
+			}
+			return inside;
+		}
+
+		#endregion
 	}
 
 }
