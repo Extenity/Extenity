@@ -169,12 +169,15 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>Is point contained in the bounding box?</para>
 		/// </summary>
-		public bool Contains(Vector2 point)
+		public bool Contains(Vector2 point, float tolerance = 0.0001f)
 		{
-			throw new NotImplementedException();
+			return point.x > center.x - extents.x - tolerance &&
+			       point.x < center.x + extents.x + tolerance &&
+			       point.y > center.y - extents.y - tolerance &&
+			       point.y < center.y + extents.y + tolerance;
 			//return Bounds.Contains_Injected(ref this, ref point);
 		}
-
+		
 		/// <summary>
 		///   <para>The smallest squared distance between the point and this bounding box.</para>
 		/// </summary>
