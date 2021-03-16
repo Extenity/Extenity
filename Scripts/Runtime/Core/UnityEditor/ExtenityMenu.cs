@@ -37,9 +37,10 @@ namespace Extenity.UnityEditorToolbox
 
 		public const string Painkiller = Path + "Painkiller/";
 		public const int PainkillerPriority = TerrainPriority + Group;
+		public const int PainkillerPriorityEnd = PainkillerPriority + 8;
 
 		public const string PackageManagerTools = Path + "Package Manager Tools/";
-		public const int PackageManagerToolsPriority = PainkillerPriority + Group;
+		public const int PackageManagerToolsPriority = PainkillerPriorityEnd + Group;
 		public const string System = Path + "System/";
 		public const int SystemPriority = PackageManagerToolsPriority + Subgroup;
 		public const int SystemPriorityEnd = SystemPriority + 23;

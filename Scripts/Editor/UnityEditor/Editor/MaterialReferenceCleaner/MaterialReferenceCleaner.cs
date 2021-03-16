@@ -23,8 +23,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GetSelectedMaterial();
 		}
 
-		[MenuItem(ExtenityMenu.Analysis + "Toggle Compilation Profiling", priority = ExtenityMenu.AnalysisPriority + 7)]
-		[MenuItem("Tools/Material Reference Cleaner")] // TODO:
+		[MenuItem(ExtenityMenu.Painkiller + "Material Reference Cleaner", priority = ExtenityMenu.PainkillerPriorityEnd)]
 		public static void ShowWindow()
 		{
 			EditorWindowTools.ToggleWindow<MaterialReferenceCleaner>();
