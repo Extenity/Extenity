@@ -1296,7 +1296,7 @@ namespace Extenity.DataToolbox
 		public static string ConvertToAscii(this string text)
 		{
 			Encoding ascii = Encoding.ASCII;
-			Encoding unicode = Encoding.Unicode;
+			Encoding unicode = Encoding.UTF8;
 
 			var utf8Array = Encoding.UTF8.GetBytes(text);
 			var asciiArray = Encoding.Convert(unicode, ascii, utf8Array);
