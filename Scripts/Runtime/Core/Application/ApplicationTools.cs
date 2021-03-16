@@ -33,6 +33,9 @@ namespace Extenity.ApplicationToolbox
 					case RuntimePlatform.WindowsPlayer:
 						throw new NotImplementedException(); // TODO:
 
+					case RuntimePlatform.OSXEditor:
+						return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+
 					default:
 						throw new NotImplementedException();
 				}
