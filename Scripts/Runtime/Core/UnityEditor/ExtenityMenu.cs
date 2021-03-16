@@ -24,8 +24,9 @@ namespace Extenity.UnityEditorToolbox
 
 		public const string Application = Path + "Application/";
 		public const int ApplicationPriority = AnalysisPriority + Group;
+		public const int ApplicationPriorityEnd = ApplicationPriority + 2;
 		public const string GameObjectOperations = Path + "GameObject Operations/";
-		public const int GameObjectOperationsPriority = ApplicationPriority + Subgroup;
+		public const int GameObjectOperationsPriority = ApplicationPriorityEnd + Subgroup;
 		public const int GameObjectOperationsPriorityEnd = GameObjectOperationsPriority + 82;
 		public const string Logging = Path + "Logging/";
 		public const int LoggingPriority = GameObjectOperationsPriorityEnd + Subgroup; // TODO: Something causes the Logging entry to be listed as a new group, rather than listed right after GameObject Operations.
