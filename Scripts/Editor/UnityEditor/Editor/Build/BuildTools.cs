@@ -712,27 +712,43 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			public int AddMajor;
 			public int AddMinor;
+#if !BuildlessVersioning
 			public int AddBuild;
+#endif
 
+#if !BuildlessVersioning
 			public static TemporarilyIncrementVersion Create(int addMajor, int addMinor, int addBuild)
+#else
+			public static TemporarilyIncrementVersion Create(int addMajor, int addMinor)
+#endif
 			{
 				return Apply(new TemporarilyIncrementVersion
 				{
 					AddMajor = addMajor,
 					AddMinor = addMinor,
+#if !BuildlessVersioning
 					AddBuild = addBuild,
+#endif
 					KeepTheChange = false,
 				});
 			}
 
 			public override void DoApply()
 			{
+#if !BuildlessVersioning
 				ApplicationVersion.AddToUnityVersionConfiguration(AddMajor, AddMinor, AddBuild, false);
+#else
+				ApplicationVersion.AddToUnityVersionConfiguration(AddMajor, AddMinor, false);
+#endif
 			}
 
 			public override void DoRevert()
 			{
+#if !BuildlessVersioning
 				ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, -AddBuild, false);
+#else
+				ApplicationVersion.AddToUnityVersionConfiguration(-AddMajor, -AddMinor, false);
+#endif
 			}
 		}
 

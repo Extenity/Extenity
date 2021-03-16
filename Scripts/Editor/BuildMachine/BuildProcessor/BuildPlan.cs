@@ -10,9 +10,9 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildPlan Create(string name, int addMajorVersion, int addMinorVersion, int addBuildVersion, BuildPhaseInfo[] buildPhases, params BuilderOptions[] builderOptionsList)
+		public static BuildPlan Create(string name, BuildPhaseInfo[] buildPhases, params BuilderOptions[] builderOptionsList)
 		{
-			return new BuildPlan(name, addMajorVersion, addMinorVersion, addBuildVersion, buildPhases, builderOptionsList);
+			return new BuildPlan(name, buildPhases, builderOptionsList);
 		}
 
 		private BuildPlan()
@@ -20,7 +20,7 @@ namespace Extenity.BuildMachine.Editor
 			// Nothing to do here. This empty constructor allows json deserialization.
 		}
 
-		private BuildPlan(string name, int addMajorVersion, int addMinorVersion, int addBuildVersion, BuildPhaseInfo[] buildPhases, BuilderOptions[] builderOptionsList)
+		private BuildPlan(string name, BuildPhaseInfo[] buildPhases, BuilderOptions[] builderOptionsList)
 		{
 			if (buildPhases.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(buildPhases));
@@ -28,9 +28,6 @@ namespace Extenity.BuildMachine.Editor
 				throw new ArgumentNullException(nameof(builderOptionsList));
 
 			Name = name;
-			AddMajorVersion = addMajorVersion;
-			AddMinorVersion = addMinorVersion;
-			AddBuildVersion = addBuildVersion;
 			BuildPhases = buildPhases;
 			BuilderOptionsList = builderOptionsList;
 		}
@@ -41,14 +38,6 @@ namespace Extenity.BuildMachine.Editor
 
 		[JsonProperty]
 		public readonly string Name;
-
-		#endregion
-
-		#region Version Options
-
-		public int AddMajorVersion = 0;
-		public int AddMinorVersion = 0;
-		public int AddBuildVersion = 0;
 
 		#endregion
 

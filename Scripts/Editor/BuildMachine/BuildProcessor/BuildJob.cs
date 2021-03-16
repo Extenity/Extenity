@@ -248,7 +248,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Version Increment
 
-		public BuildTools.TemporarilyIncrementVersion TemporarilyIncrementVersion;
+		// public BuildTools.TemporarilyIncrementVersion TemporarilyIncrementVersion;
 
 		#endregion
 
@@ -265,7 +265,8 @@ namespace Extenity.BuildMachine.Editor
 
 		internal void BuildRunInitialization()
 		{
-			TemporarilyIncrementVersion = BuildTools.TemporarilyIncrementVersion.Create(Plan.AddMajorVersion, Plan.AddMinorVersion, Plan.AddBuildVersion);
+			// Commented out for future needs.
+			//TemporarilyIncrementVersion = BuildTools.TemporarilyIncrementVersion.Create(Plan.AddMajorVersion, Plan.AddMinorVersion, Plan.AddBuildVersion);
 		}
 
 		#endregion
@@ -280,7 +281,7 @@ namespace Extenity.BuildMachine.Editor
 					break;
 				case BuildJobResult.Failed:
 					{
-						TemporarilyIncrementVersion.Revert();
+						// TemporarilyIncrementVersion.Revert();
 					}
 					break;
 				default:
