@@ -144,25 +144,19 @@ namespace Extenity.ApplicationToolbox
 
 		#region Company And Product Name
 
-		private static string _AsciiCompanyName;
 		public static string AsciiCompanyName
 		{
 			get
 			{
-				if (_AsciiCompanyName == null)
-					_AsciiCompanyName = Application.companyName.ConvertToAscii();
-				return _AsciiCompanyName;
+				return Application.companyName.ConvertToAscii();
 			}
 		}
 
-		private static string _AsciiProductName;
 		public static string AsciiProductName
 		{
 			get
 			{
-				if (_AsciiProductName == null)
-					_AsciiProductName = Application.productName.ConvertToAscii();
-				return _AsciiProductName;
+				return Application.productName.ConvertToAscii();
 			}
 		}
 
