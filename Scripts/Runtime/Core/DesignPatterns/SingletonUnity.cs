@@ -8,6 +8,7 @@
 #undef LoggingEnabled
 #endif
 
+using System;
 using System.Diagnostics;
 using UnityEngine;
 
@@ -36,6 +37,13 @@ namespace Extenity.DesignPatternsToolbox
 			{
 				DontDestroyOnLoad(this);
 			}
+
+#if DEBUG
+			if (!typeof(T).FullName.Equals(GetType().FullName, StringComparison.Ordinal))
+			{
+				Log.CriticalError($"Singleton '{typeof(T).Name}' is derived from a different generic class '{GetType().Name}'.");
+			}
+#endif
 
 			SingletonTracker.SingletonInstantiated(ClassName);
 
