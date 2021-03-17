@@ -35,9 +35,13 @@ namespace Extenity.TextureToolbox
 			return newTexture;
 		}
 
+		#region Create Simple Textures
+
 		public static Texture2D CreateSimpleTexture(int width, int height, Color color)
 		{
 			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+			texture.hideFlags = HideFlags.DontSave;
+			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
 			for (int y = 0; y < texture.height; y++)
 			{
 				for (int x = 0; x < texture.width; x++)
@@ -46,13 +50,14 @@ namespace Extenity.TextureToolbox
 				}
 			}
 			texture.Apply(false, true);
-			texture.hideFlags = HideFlags.DontSave;
 			return texture;
 		}
 
 		public static Texture2D CreateSimpleTexture(Color color)
 		{
 			var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+			texture.hideFlags = HideFlags.DontSave;
+			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
 			texture.SetPixels(0, 0, 4, 4, new[]
 			{
 				color, color, color, color,
@@ -61,14 +66,17 @@ namespace Extenity.TextureToolbox
 				color, color, color, color,
 			});
 			texture.Apply(false, true);
-			texture.hideFlags = HideFlags.DontSave;
 			return texture;
 		}
 
-		public static Texture2D CreateVerticalGradientTexture(params Color32[] colors)
+		#endregion
+
+		#region Create Gradient Textures
+
+		public static Texture2D CreateVerticalGradientTexture(params Color32[] colorStops)
 		{
 			var width = 2;
-			var height = colors.Length;
+			var height = colorStops.Length;
 			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
 			texture.hideFlags = HideFlags.DontSave;
 			texture.wrapMode = TextureWrapMode.Clamp;
@@ -76,7 +84,7 @@ namespace Extenity.TextureToolbox
 			var i = 0;
 			for (int y = 0; y < height; y++)
 			{
-				var color = colors[height - y - 1];
+				var color = colorStops[height - y - 1];
 				for (int x = 0; x < width; x++)
 				{
 					pixels[i++] = color;
@@ -87,10 +95,10 @@ namespace Extenity.TextureToolbox
 			return texture;
 		}
 
-		public static Texture2D CreateHorizontalGradientTexture(params Color32[] colors)
+		public static Texture2D CreateHorizontalGradientTexture(params Color32[] colorStops)
 		{
 			var height = 2;
-			var width = colors.Length;
+			var width = colorStops.Length;
 			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
 			texture.hideFlags = HideFlags.DontSave;
 			texture.wrapMode = TextureWrapMode.Clamp;
@@ -100,13 +108,15 @@ namespace Extenity.TextureToolbox
 			{
 				for (int x = 0; x < width; x++)
 				{
-					pixels[i++] = colors[x];
+					pixels[i++] = colorStops[x];
 				}
 			}
 			texture.SetPixels32(pixels);
 			texture.Apply(false);
 			return texture;
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Source: https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
