@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Extenity.DataToolbox;
 using UnityEngine;
 
 namespace Extenity.TextureToolbox
@@ -37,34 +38,18 @@ namespace Extenity.TextureToolbox
 
 		#region Create Simple Textures
 
-		public static Texture2D CreateSimpleTexture(int width, int height, Color color)
+		public static Texture2D CreateSimpleTexture(Color32 color)
+		{
+			return CreateSimpleTexture(4, 4, color);
+		}
+
+		public static Texture2D CreateSimpleTexture(int width, int height, Color32 color)
 		{
 			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
 			texture.hideFlags = HideFlags.DontSave;
 			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
-			for (int y = 0; y < texture.height; y++)
-			{
-				for (int x = 0; x < texture.width; x++)
-				{
-					texture.SetPixel(x, y, color);
-				}
-			}
-			texture.Apply(false, true);
-			return texture;
-		}
-
-		public static Texture2D CreateSimpleTexture(Color color)
-		{
-			var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
-			texture.hideFlags = HideFlags.DontSave;
-			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
-			texture.SetPixels(0, 0, 4, 4, new[]
-			{
-				color, color, color, color,
-				color, color, color, color,
-				color, color, color, color,
-				color, color, color, color,
-			});
+			var pixels = CollectionTools.NewFilledArray(width * height, color);
+			texture.SetPixels32(pixels);
 			texture.Apply(false, true);
 			return texture;
 		}
