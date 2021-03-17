@@ -35,7 +35,7 @@ namespace ExtenityTests.DataToolbox
 			var go = new GameObject("NamingToolsTestObject");
 			var component = go.AddComponent<Test_NamingToolsTestComponent>();
 			component.SomeDelegate = component.SomeMethod;
-			var texture = TextureTools.CreateSimpleTexture(2, 2, Color.black);
+			var texture = TextureTools.CreateSimpleTexture(Color.black);
 			Action delegateAsAction = component.SomeDelegate;
 			Delegate delegateAsDelegate = component.SomeDelegate;
 

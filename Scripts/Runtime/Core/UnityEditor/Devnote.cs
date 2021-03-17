@@ -28,7 +28,7 @@ namespace Extenity.UnityEditorToolbox
 			if (!TEXCreated)
 			{
 				TEXCreated = true;
-				TEX = TextureToolbox.TextureTools.CreateSimpleTexture(16, 16, Color.green);
+				TEX = TextureToolbox.TextureTools.CreateSimpleTexture(Color.green);
 				Log.Info("TEX: " + TEX);
 			}
 

@@ -97,7 +97,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			var background = TagPaneThings.TagBackgroundStyle.normal.background;
 			var tintedBackground = background != null
 				? TextureTools.Tint(background.CopyTextureAsReadable(), backgroundTintColor)
-				: TextureTools.CreateSimpleTexture(4, 4, backgroundTintColor);
+				: TextureTools.CreateSimpleTexture(backgroundTintColor);
 			TagPaneThings.TagEditingBackgroundStyle.normal.background = tintedBackground;
 			TagPaneThings.TagLabelStyle = new GUIStyle(GUI.skin.label);
 			TagPaneThings.TagEditingPlusButtonLayoutOptions = new[] { GUILayout.Width(TagPaneThings.ButtonSize), GUILayout.Height(TagPaneThings.ButtonSize) };

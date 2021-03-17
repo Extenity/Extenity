@@ -57,9 +57,9 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				ListEntryStyleActive = new GUIStyle(EditorStyles.toggle);
 				ListEntryStyleActive.alignment = TextAnchor.MiddleLeft;
-				ListEntryStyleActive.normal.background = TextureTools.CreateSimpleTexture(4, 4, Color.blue);
+				ListEntryStyleActive.normal.background = TextureTools.CreateSimpleTexture(Color.blue);
 				ListEntryStyleInactive = new GUIStyle(ListEntryStyleActive);
-				ListEntryStyleInactive.normal.background = TextureTools.CreateSimpleTexture(4, 4, Color.grey);
+				ListEntryStyleInactive.normal.background = TextureTools.CreateSimpleTexture(Color.grey);
 			}
 
 			GUILayout.Space(8f);

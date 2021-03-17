@@ -108,7 +108,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				{
 					_NoteLabelStyle = new GUIStyle(EditorStyles.label);
 					_NoteLabelStyle.alignment = TextAnchor.UpperLeft; // For some reason, UpperCenter does not work. So we do this by hand.
-					_NoteLabelStyle.normal.background = TextureTools.CreateSimpleTexture(4, 4, new Color(0.5f, 0.1f, 0.2f, 0.8f));
+					_NoteLabelStyle.normal.background = TextureTools.CreateSimpleTexture(new Color(0.5f, 0.1f, 0.2f, 0.8f));
 					_NoteLabelStyle.padding = new RectOffset(10, 10, 10, 10);
 				}
 				return _NoteLabelStyle;

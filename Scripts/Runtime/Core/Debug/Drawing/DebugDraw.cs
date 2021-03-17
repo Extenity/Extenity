@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
+using Extenity.TextureToolbox;
 
 namespace Extenity.DebugToolbox
 {
@@ -144,13 +145,13 @@ namespace Extenity.DebugToolbox
 
 		private static void InitializeTextures()
 		{
-			TextureRed = CreateColoredTexture(Color.red);
-			TextureOrange = CreateColoredTexture(new Color(1f, 0.4f, 0f, 1f));
-			TextureYellow = CreateColoredTexture(Color.yellow);
-			TextureGreen = CreateColoredTexture(Color.green);
-			TextureCyan = CreateColoredTexture(Color.cyan);
-			TextureBlue = CreateColoredTexture(Color.blue);
-			TexturePurple = CreateColoredTexture(new Color(0.3f, 0f, 0.8f, 1f));
+			TextureRed = TextureTools.CreateSimpleTexture(Color.red);
+			TextureOrange = TextureTools.CreateSimpleTexture(new Color(1f, 0.4f, 0f, 1f));
+			TextureYellow = TextureTools.CreateSimpleTexture(Color.yellow);
+			TextureGreen = TextureTools.CreateSimpleTexture(Color.green);
+			TextureCyan = TextureTools.CreateSimpleTexture(Color.cyan);
+			TextureBlue = TextureTools.CreateSimpleTexture(Color.blue);
+			TexturePurple = TextureTools.CreateSimpleTexture(new Color(0.3f, 0f, 0.8f, 1f));
 
 			ColoredTextures = new[]
 			{
@@ -162,21 +163,6 @@ namespace Extenity.DebugToolbox
 				TextureBlue,
 				TexturePurple,
 			};
-		}
-
-		private static Texture2D CreateColoredTexture(Color color)
-		{
-			var texture = new Texture2D(4, 4, TextureFormat.ARGB32, false);
-			texture.SetPixels(0, 0, 4, 4, new[]
-			{
-				color, color, color, color,
-				color, color, color, color,
-				color, color, color, color,
-				color, color, color, color,
-			});
-
-			texture.Apply(false, true);
-			return texture;
 		}
 
 		#endregion

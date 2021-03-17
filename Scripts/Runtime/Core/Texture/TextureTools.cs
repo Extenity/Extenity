@@ -38,16 +38,29 @@ namespace Extenity.TextureToolbox
 		public static Texture2D CreateSimpleTexture(int width, int height, Color color)
 		{
 			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-
-			for (int y = 0; y < texture.height; ++y)
+			for (int y = 0; y < texture.height; y++)
 			{
-				for (int x = 0; x < texture.width; ++x)
+				for (int x = 0; x < texture.width; x++)
 				{
 					texture.SetPixel(x, y, color);
 				}
 			}
+			texture.Apply(false, true);
+			texture.hideFlags = HideFlags.DontSave;
+			return texture;
+		}
 
-			texture.Apply(false);
+		public static Texture2D CreateSimpleTexture(Color color)
+		{
+			var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+			texture.SetPixels(0, 0, 4, 4, new[]
+			{
+				color, color, color, color,
+				color, color, color, color,
+				color, color, color, color,
+				color, color, color, color,
+			});
+			texture.Apply(false, true);
 			texture.hideFlags = HideFlags.DontSave;
 			return texture;
 		}

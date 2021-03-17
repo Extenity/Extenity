@@ -77,7 +77,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			{
 				if (!_DefaultBackgroundTexture)
 				{
-					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(2, 2, DefaultBackgroundColor);
+					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(DefaultBackgroundColor);
 				}
 				return _DefaultBackgroundTexture;
 			}
@@ -90,7 +90,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			{
 				if (!_DefaultBackgroundTexture)
 				{
-					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(2, 2, DefaultBackgroundColor.AdjustBrightness(0.8f));
+					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(DefaultBackgroundColor.AdjustBrightness(0.8f));
 				}
 				return _DefaultBackgroundTexture;
 			}
