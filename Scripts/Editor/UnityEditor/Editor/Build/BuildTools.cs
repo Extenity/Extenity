@@ -175,7 +175,9 @@ namespace Extenity.BuildToolbox.Editor
 		#region Windows Build Cleanup
 
 		public static void ClearWindowsBuild(string outputExecutablePath,
-			bool simplifyDataFolderName, bool deleteDLLArtifacts, bool deleteCrashHandlerExecutable,
+			bool simplifyDataFolderName,
+			bool deleteDebugSymbolsFolder, bool deleteDLLArtifacts,
+			bool deleteCrashHandlerExecutable,
 			string[] deleteFilesWithExtensions, string[] deleteFilesWithFileNamePatterns)
 		{
 			var outputDirectory = Path.GetDirectoryName(outputExecutablePath);
@@ -216,6 +218,13 @@ namespace Extenity.BuildToolbox.Editor
 				var deletedFiles = New.List<FileInfo>(); // TODO C#8: Use using
 				var failedFiles = New.List<FileInfo>();
 
+				// Clear debug symbols folder
+				if (deleteDebugSymbolsFolder)
+				{
+					var directoryToBeDeleted = executableNameWithoutExtension + "_BackUpThisFolder_ButDontShipItWithYourGame";
+					var path = Path.Combine(outputDirectory, directoryToBeDeleted);
+					DirectoryTools.Delete(path);
+				}
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)
 				{
