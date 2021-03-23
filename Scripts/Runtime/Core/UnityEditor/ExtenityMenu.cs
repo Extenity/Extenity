@@ -68,6 +68,7 @@ namespace Extenity.UnityEditorToolbox
 
 		// Edit menu
 		public const int UnitySnapSettingsMenuPriority = 1000; // Use this to add a MenuItem just below Unity's "Edit/Grid and Snap Settings"
+		public const int UnityPlayMenuPriority_BelowDuplicate = 120; // Use this to add a MenuItem just below Unity's "Edit/Duplicate"
 		public const int UnityPlayMenuPriority_AbovePlay = 159; // Use this to add a MenuItem just above Unity's "Edit/Play"
 		public const string Edit = "Edit/";
 
