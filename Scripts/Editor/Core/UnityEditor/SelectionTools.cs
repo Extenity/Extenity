@@ -137,27 +137,29 @@ namespace Extenity.UnityEditorToolbox.Editor
 		/// </summary>
 		public static void Duplicate()
 		{
-			// Need to focus a scene view first. Create one if there is none.
-			var sceneView = SceneView.lastActiveSceneView;
-			if (!sceneView)
-			{
-				sceneView = SceneView.currentDrawingSceneView;
-				if (!sceneView)
-				{
-					var allSceneViews = SceneView.sceneViews;
-					if (allSceneViews == null || allSceneViews.Count == 0)
-					{
-						// That crashes Unity so we need to figure out another way if this functionality really needed. 
-						//EditorWindow.GetWindow<SceneView>();
-						throw new Exception("There must be a visible Scene window for duplication to work.");
-					}
-					else
-					{
-						sceneView = (SceneView)allSceneViews[0];
-					}
-				}
-			}
-			sceneView.Focus();
+			// Disabled. It prevents duplication in Project window and is not fully compatible with how Unity handles
+			// Hierarchy duplication. Keep the codes commented out for future needs.
+			// // Need to focus a scene view first. Create one if there is none.
+			// var sceneView = SceneView.lastActiveSceneView;
+			// if (!sceneView)
+			// {
+			// 	sceneView = SceneView.currentDrawingSceneView;
+			// 	if (!sceneView)
+			// 	{
+			// 		var allSceneViews = SceneView.sceneViews;
+			// 		if (allSceneViews == null || allSceneViews.Count == 0)
+			// 		{
+			// 			// That crashes Unity so we need to figure out another way if this functionality really needed.
+			// 			//EditorWindow.GetWindow<SceneView>();
+			// 			throw new Exception("There must be a visible Scene window for duplication to work.");
+			// 		}
+			// 		else
+			// 		{
+			// 			sceneView = (SceneView)allSceneViews[0];
+			// 		}
+			// 	}
+			// }
+			// sceneView.Focus();
 
 			EditorWindow.focusedWindow.SendEvent(EditorGUIUtility.CommandEvent("Duplicate"));
 		}
