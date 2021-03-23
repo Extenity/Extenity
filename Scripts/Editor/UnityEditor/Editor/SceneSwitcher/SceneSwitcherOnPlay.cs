@@ -46,7 +46,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			SetToCloseWindowOnAssemblyReloadOrPlayModeChange();
 		}
 
-		[MenuItem(ExtenityMenu.Edit + "Scene Switcher on Play", priority = ExtenityMenu.UnityPlayMenuPriority)]
+		[MenuItem(ExtenityMenu.Edit + "Scene Switcher on Play", priority = ExtenityMenu.UnityPlayMenuPriority_AbovePlay)]
 		private static void ToggleWindow()
 		{
 			EditorWindowTools.ToggleWindow<SceneSwitcherOnPlay>();
