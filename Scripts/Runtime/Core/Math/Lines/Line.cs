@@ -344,7 +344,8 @@ namespace Extenity.MathToolbox
 			Log.Info($"Starting to edit '{gameObject.FullName()}'");
 
 			IsEditing = true;
-			gameObject.GetSingleOrAddComponent<DontShowEditorHandler>();
+			var helper = gameObject.GetSingleOrAddComponent<DontShowEditorHandler>();
+			helper.hideFlags = HideFlags.DontSave;
 
 			UnityEditor.Selection.selectionChanged -= CheckIfNeedToStopEditing;
 			UnityEditor.Selection.selectionChanged += CheckIfNeedToStopEditing;
