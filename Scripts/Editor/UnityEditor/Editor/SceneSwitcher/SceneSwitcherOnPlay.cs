@@ -101,16 +101,30 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (GUILayoutTools.Button("Enable", !isEnabled && scene != null))
 			{
-				EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(StartScenePathPref);
-				EnableSceneSwitcherPref = true;
+				Enable();
 			}
 			if (GUILayoutTools.Button("Disable", isEnabled))
 			{
-				EditorSceneManager.playModeStartScene = null;
-				EnableSceneSwitcherPref = false;
+				Disable();
 			}
 
 			GUILayout.EndHorizontal();
+		}
+
+		#endregion
+
+		#region Enable / Disable
+
+		public static void Enable()
+		{
+			EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(StartScenePathPref);
+			EnableSceneSwitcherPref = true;
+		}
+
+		public static void Disable()
+		{
+			EditorSceneManager.playModeStartScene = null;
+			EnableSceneSwitcherPref = false;
 		}
 
 		#endregion
@@ -139,13 +153,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
-		private static bool EnableSceneSwitcherPref
+		public static bool EnableSceneSwitcherPref
 		{
 			get => EditorPrefs.GetBool(EnableSceneSwitcherPrefKey, false);
 			set => EditorPrefs.SetBool(EnableSceneSwitcherPrefKey, value);
 		}
 
-		private static string StartScenePathPref
+		public static string StartScenePathPref
 		{
 			get => EditorPrefs.GetString(StartScenePathPrefKey, "");
 			set => EditorPrefs.SetString(StartScenePathPrefKey, value);
@@ -155,7 +169,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Tools
 
-		public static void SetPlayModeStartScene(string scenePath)
+		private static void SetPlayModeStartScene(string scenePath)
 		{
 			if (string.IsNullOrWhiteSpace(scenePath))
 			{
