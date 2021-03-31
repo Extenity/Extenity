@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using Extenity.ApplicationToolbox;
 using Extenity.AssetToolbox.Editor;
 using Extenity.CryptoToolbox;
@@ -221,6 +222,8 @@ namespace Extenity.BuildToolbox.Editor
 				// Clear debug symbols folder
 				if (deleteDebugSymbolsFolder)
 				{
+					Thread.Sleep(2000); // Just wait for couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
+
 					var directoryToBeDeleted = executableNameWithoutExtension + "_BackUpThisFolder_ButDontShipItWithYourGame";
 					var path = Path.Combine(outputDirectory, directoryToBeDeleted);
 					DirectoryTools.Delete(path);
