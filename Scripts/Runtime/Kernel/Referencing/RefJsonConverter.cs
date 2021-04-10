@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Extenity.KernelToolbox
 {
 
-	// TODO IMMEDIATE: Use this converter in Json serialization.
+	// TODO: Use this converter in Json serialization.
 
 	/// <summary>
 	/// Converts a <see cref="Ref"/> to and from a Hex string (e.g. <c>"3FA61"</c>).
@@ -51,7 +51,7 @@ namespace Extenity.KernelToolbox
 
 		public override bool CanConvert(Type objectType)
 		{
-			return false; // TODO IMMEDIATE: Figure out a way to detect if type is Ref<Anything>.
+			return false; // TODO: Figure out a way to detect if type is Ref<Anything>.
 			// return objectType == typeof(Ref);
 		}
 	}

@@ -95,7 +95,7 @@ namespace Extenity.SceneManagementToolbox
 #if UNITY_EDITOR
 				// SceneUtility.GetScenePathByBuildIndex also counts disabled scenes in Build Settings.
 				// So extra work required to ignore them in Editor.
-				// TODO IMMEDIATE: Ensure GetScenePathByBuildIndex skips disabled scenes in builds. Otherwise find another method of detecting disabled scenes.
+				// TODO: Ensure GetScenePathByBuildIndex skips disabled scenes in builds. Otherwise find another method of detecting disabled scenes.
 				if (!UnityEditor.EditorBuildSettings.scenes[i].enabled)
 				{
 					Log.Verbose($"   {i}. {sceneName} (Disabled)");

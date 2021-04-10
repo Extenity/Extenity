@@ -18,7 +18,7 @@ namespace Extenity.DataToolbox
 	{
 		#region Shared Objects
 
-		// TODO IMMEDIATE: Convert this to StringBuilderPool. Then use the pool where "new StringBuilder" is used.
+		// TODO: Convert this to StringBuilderPool. Then use the pool where "new StringBuilder" is used.
 
 		/// <summary>
 		/// CAUTION! <c>SharedStringBuilder</c> has its strict usage rules. See examples around before using it.
