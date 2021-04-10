@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -55,10 +54,10 @@ namespace Extenity.SceneManagementToolbox
 
 		private void RegisterForBuildSettingsSceneListChanges()
 		{
-			EditorBuildSettings.sceneListChanged -= InitializeLevelSceneList; // Deregister first, for every condition.
+			UnityEditor.EditorBuildSettings.sceneListChanged -= InitializeLevelSceneList; // Deregister first, for every condition.
 			if (!Application.isPlaying)
 			{
-				EditorBuildSettings.sceneListChanged += InitializeLevelSceneList;
+				UnityEditor.EditorBuildSettings.sceneListChanged += InitializeLevelSceneList;
 			}
 		}
 
