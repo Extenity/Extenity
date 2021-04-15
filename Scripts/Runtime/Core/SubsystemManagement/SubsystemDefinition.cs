@@ -79,6 +79,7 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
 		[ListDrawerSettings(Expanded = true)]
+		[LabelText("Application Subsystems")]
 		public ApplicationSubsystemDefinition[] Subsystems;
 
 		internal void ResetStatus()
@@ -115,7 +116,12 @@ namespace Extenity.SubsystemManagementToolbox
 
 		[PropertyOrder(2)]
 		[ListDrawerSettings(CustomAddFunction = "_AddNewSubsystem")]
+		[LabelText("$_SubsystemsLabelText")]
 		public SubsystemDefinition[] Subsystems;
+
+#if UNITY_EDITOR
+		private string _SubsystemsLabelText => $"Subsystems to be initialized in '{Name}' group";
+#endif
 
 		internal void ResetStatus()
 		{

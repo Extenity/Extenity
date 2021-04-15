@@ -2,6 +2,7 @@ using System;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Extenity.SubsystemManagementToolbox
 {
@@ -24,24 +25,36 @@ namespace Extenity.SubsystemManagementToolbox
 		[DetailedInfoBox("\n" +
 		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded." +
 		                 "\n\n" +
-		                 "Click here for details." +
+		                 "<b>Click here for details.</b>" +
 		                 "\n",
 		                 "\n" +
 		                 "Subsystem Manager initializes subsystems of the application whenever a scene is loaded." +
 		                 "\n\n" +
 		                 "<b>What is a Subsystem?</b>" +
 		                 "\n" +
-		                 "Like an Audio Manager, Camera Manager, Network Manager, Ingame Console, etc. Subsystems are the pillars of an application. They are generally required to live throughout the entire lifetime of the application. Some of them are required to initialize with loading a scene and then deinitialize when switching to another scene." +
+		                 "Like an Audio Manager, Camera Manager, Network Manager, Ingame Console, etc. Subsystems " +
+		                 "are the pillars of an application, which are generally required to live throughout the entire " +
+		                 "lifetime of the application. Some of them are required to initialize with loading a scene " +
+		                 "and then deinitialize when switching to another scene." +
 		                 "\n\n" +
 		                 "<b>The Idea Behind</b>" +
 		                 "\n" +
-		                 "Subsystem Manager decouples Subsystems from Level Design practices. Designers won't have to add subsystem prefabs or scripts in any of their scenes. That solves the great pain of managing the synchronization of every game level scene in the project. The scenes may even come from asset bundles or external projects." +
+		                 "Subsystem Manager decouples Subsystems from Level Design practices. Designers won't have to " +
+		                 "add subsystem prefabs or scripts in any of their scenes. That solves the great pain of " +
+		                 "managing the synchronization of every game level scene in the project. The scenes may even " +
+		                 "come from asset bundles or external projects." +
 		                 "\n\n" +
-		                 "The system is designed to be foolproof. Being project-wide configuration rather than per-scene configuration, allows less human error and requires less thinking when designers create a new Level scene or a UI scene." +
+		                 "There is also that great need to press Play from any scene, and then all the required "+
+		                 "systems magically initialize themselves." +
 		                 "\n\n" +
-		                 "Every scene may require different subsystems. So the system allows configuring different subsystems per scene. The application may also need to initialize subsystems step by step throughout loading consecutive scenes. Let's say the Menu scene may require Audio Manager subsystem but a game level scene may both require Ingame HUD subsystem along with that Audio Manager subsystem. So the system is flexible enough to allow these consecutive loading operations too." +
+		                 "The system is designed to be foolproof. Being project-wide configuration rather than " +
+		                 "per-scene configuration, allows less human error and requires less thinking when designers " +
+		                 "create a new Level scene or a UI scene." +
 		                 "\n\n" +
-		                 "There is also that great need to press Play from any scene, and then all the required systems magically initialize themselves." +
+		                 "The system is flexible enough to provide different sets of subsystems to be initialized for " +
+		                 "different scenes. Let's say the Menu scene may require Audio Manager subsystem but a game " +
+		                 "level scene may both require Ingame HUD subsystem along with that Audio Manager subsystem. " +
+		                 "So the system is flexible enough to allow these consecutive loading operations too." +
 		                 "\n\n" +
 		                 "<b>Usage</b>" +
 		                 "\n" +
@@ -65,15 +78,20 @@ namespace Extenity.SubsystemManagementToolbox
 		// private static void _Separator2() { }
 #endif
 
-		[TabGroup("Main/Tabs", "Subsystem Groups", Order = 2)]
-		[VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
-		[BoxGroup("Main/Tabs/Subsystem Groups/Vertical/Application Subsystems")]
+		[TabGroup("Main/Tabs", "Application Subsystems", Order = 2)]
+		[InfoBox("Application Subsystems are created before ALL game objects at the time of Unity's " +
+		         "<i>RuntimeInitializeLoadType.BeforeSceneLoad</i> call. They will automatically be marked with " +
+		         "DontDestroyOnLoad.")]
 		[ListDrawerSettings(Expanded = true), HideLabel]
-		public ApplicationSubsystemGroup ApplicationSubsystems = new ApplicationSubsystemGroup();
+		[FormerlySerializedAs("ApplicationSubsystems")]
+		public ApplicationSubsystemGroup ApplicationSubsystemGroup = new ApplicationSubsystemGroup();
 
-		[VerticalGroup("Main/Tabs/Subsystem Groups/Vertical")]
+		[TabGroup("Main/Tabs", "Scene Subsystems", Order = 3)]
+		[InfoBox("The groups defined here will be initialized for scenes as defined in <b>Scene Setup</b> page.")]
+		[VerticalGroup("Main/Tabs/Scene Subsystems/Vertical")]
 		[ListDrawerSettings(Expanded = true)]
-		public SceneSubsystemGroup[] SceneSubsystems = new SceneSubsystemGroup[]
+		[FormerlySerializedAs("SceneSubsystems")]
+		public SceneSubsystemGroup[] SceneSubsystemGroups = new SceneSubsystemGroup[]
 		{
 			new SceneSubsystemGroup() { Name = "Splash" },
 			new SceneSubsystemGroup() { Name = "Splash Delayed" },
@@ -83,7 +101,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		public SceneSubsystemGroup GetSceneSubsystemGroup(string groupName)
 		{
-			foreach (var group in SceneSubsystems)
+			foreach (var group in SceneSubsystemGroups)
 			{
 				if (group.Name.Equals(groupName, StringComparison.Ordinal))
 				{
@@ -95,26 +113,26 @@ namespace Extenity.SubsystemManagementToolbox
 
 		internal void ResetStatus()
 		{
-			ApplicationSubsystems.ResetStatus();
+			ApplicationSubsystemGroup.ResetStatus();
 
-			if (SceneSubsystems != null)
+			if (SceneSubsystemGroups != null)
 			{
-				for (var i = 0; i < SceneSubsystems.Length; i++)
+				for (var i = 0; i < SceneSubsystemGroups.Length; i++)
 				{
-					SceneSubsystems[i].ResetStatus();
+					SceneSubsystemGroups[i].ResetStatus();
 				}
 			}
 		}
 
 		internal void ClearUnusedReferences()
 		{
-			ApplicationSubsystems.ClearUnusedReferences();
+			ApplicationSubsystemGroup.ClearUnusedReferences();
 
-			if (SceneSubsystems != null)
+			if (SceneSubsystemGroups != null)
 			{
-				for (var i = 0; i < SceneSubsystems.Length; i++)
+				for (var i = 0; i < SceneSubsystemGroups.Length; i++)
 				{
-					SceneSubsystems[i].ClearUnusedReferences();
+					SceneSubsystemGroups[i].ClearUnusedReferences();
 				}
 			}
 		}
@@ -123,8 +141,13 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Scenes
 
-		[TabGroup("Main/Tabs", "Scene Definitions", Order = 3)]
+		[TabGroup("Main/Tabs", "Scene Setup", Order = 4)]
 		[ListDrawerSettings(Expanded = true)]
+		[InfoBox("Whenever the application loads a scene, the system will determine which subsystems needs to be " +
+		         "loaded for that scene. The system does that by looking up the name of the scene for each filter in " +
+		         "this list one by one. The first filter that matches the scene name will be selected and its " +
+		         "<i>`Subsystem Groups To Be Loaded`</i> list will be executed. All other filters will be discarded.")]
+		[LabelText("Scene Filters")]
 		public SubsystemDefinitionOfScene[] Scenes = new SubsystemDefinitionOfScene[]
 		{
 			new SubsystemDefinitionOfScene() { SubsystemGroupsToBeLoaded = new string[] { "Splash" }, SceneNameMatch = new StringFilter(new StringFilterEntry(StringFilterType.Exactly, "Splash")) },
@@ -154,7 +177,7 @@ namespace Extenity.SubsystemManagementToolbox
 		{
 			using (Log.Indent("Initializing application subsystems."))
 			{
-				foreach (var subsystem in ApplicationSubsystems.Subsystems)
+				foreach (var subsystem in ApplicationSubsystemGroup.Subsystems)
 				{
 					subsystem.Initialize();
 				}
