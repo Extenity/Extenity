@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using Extenity.CodingToolbox;
+﻿using Extenity.CodingToolbox;
 
-[assembly: InternalsVisibleTo("ExtenityTests.Editor")]
 [assembly: EnsuredNamespace("Extenity.KernelToolbox")]
+
+#if UNITY_EDITOR
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Extenity.Kernel.Editor")]
+#endif
