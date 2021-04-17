@@ -40,12 +40,11 @@ namespace Extenity
 			DeltaTime = UnityEngine.Time.deltaTime;
 			UnscaledTime = UnityEngine.Time.unscaledTime;
 
-			// FastInvokes are called before any other callbacks.
+			// FastInvokes are called before any other callbacks. Note that Loop.FixedUpdate is executed before
+			// LoopPreExecutionOrderHelper.FixedUpdate as defined in Script Execution Order Project Settings.
 			FastInvokeHandler.Instance.CustomFixedUpdate();
 
-			FixedUpdateCallbacks.InvokeSafe();
-
-			// FixedUpdateCallbacks.ClearIfRequired();
+			// Instance.FixedUpdateCallbacks.ClearIfRequired();
 		}
 
 		private void Update()
@@ -60,12 +59,11 @@ namespace Extenity
 				FPSAnalyzer.Tick(Time);
 			}
 
-			// FastInvokes are called before any other callbacks.
+			// FastInvokes are called before any other callbacks. Note that Loop.Update is executed before
+			// LoopPreExecutionOrderHelper.Update as defined in Script Execution Order Project Settings.
 			FastInvokeHandler.Instance.CustomUpdate();
 
-			UpdateCallbacks.InvokeSafe();
-
-			// UpdateCallbacks.ClearIfRequired();
+			// Instance.UpdateCallbacks.ClearIfRequired();
 		}
 
 		private void LateUpdate()
@@ -74,18 +72,32 @@ namespace Extenity
 			Time = UnityEngine.Time.time;
 			DeltaTime = UnityEngine.Time.deltaTime;
 			UnscaledTime = UnityEngine.Time.unscaledTime;
-			LateUpdateCallbacks.InvokeSafe();
 
-			// LateUpdateCallbacks.ClearIfRequired();
+			// Instance.LateUpdateCallbacks.ClearIfRequired();
 		}
 
 		#endregion
 
 		#region Callbacks
 
-		public readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
-		public readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
-		public readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent PreLateUpdateCallbacks = new ExtenityEvent();
+
+		internal readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+
+		internal readonly ExtenityEvent PostFixedUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
+		internal readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
+
+		public static void RegisterPreFixedUpdate(Action callback, int order = 0) { Instance.PreFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPreUpdate(Action callback, int order = 0) { Instance.PreUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPreLateUpdate(Action callback, int order = 0) { Instance.PreLateUpdateCallbacks.AddListener(callback, order); }
+		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance) Instance.PreFixedUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterPreUpdate(Action callback) { if (Instance) Instance.PreUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterPreLateUpdate(Action callback) { if (Instance) Instance.PreLateUpdateCallbacks.RemoveListener(callback); }
 
 		public static void RegisterFixedUpdate(Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
 		public static void RegisterUpdate(Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order); }
@@ -93,6 +105,13 @@ namespace Extenity
 		public static void DeregisterFixedUpdate(Action callback) { if (Instance) Instance.FixedUpdateCallbacks.RemoveListener(callback); }
 		public static void DeregisterUpdate(Action callback) { if (Instance) Instance.UpdateCallbacks.RemoveListener(callback); }
 		public static void DeregisterLateUpdate(Action callback) { if (Instance) Instance.LateUpdateCallbacks.RemoveListener(callback); }
+
+		public static void RegisterPostFixedUpdate(Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPostUpdate(Action callback, int order = 0) { Instance.PostUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPostLateUpdate(Action callback, int order = 0) { Instance.PostLateUpdateCallbacks.AddListener(callback, order); }
+		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance) Instance.PostFixedUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterPostUpdate(Action callback) { if (Instance) Instance.PostUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterPostLateUpdate(Action callback) { if (Instance) Instance.PostLateUpdateCallbacks.RemoveListener(callback); }
 
 		#endregion
 
