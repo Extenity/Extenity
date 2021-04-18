@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.ReflectionToolbox;
@@ -64,6 +64,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			if (autoRepaintOnSceneChange != specs.AutoRepaintOnSceneChange)
 				autoRepaintOnSceneChange = specs.AutoRepaintOnSceneChange;
 
+			InitializeAutoRepaint();
 			InitializeOnSceneGUI();
 			InitializeOnSelectionChanged();
 			InitializeOnCompilation();
@@ -75,6 +76,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				SetToDisableWindowOnCompilation();
 			}
+
+			InitializeUpdate();
 		}
 
 		#endregion
@@ -85,6 +88,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		protected void OnDisable()
 		{
+			DeinitializeUpdate();
 			DeinitializeOnSceneGUI();
 			DeinitializeOnSelectionChanged();
 			DeinitializeOnCompilation();
@@ -105,6 +109,146 @@ namespace Extenity.UnityEditorToolbox.Editor
 			DeinitializeClosingWindowOnAssemblyReloadOrPlayModeChange();
 
 			OnDestroyDerived();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected virtual void Update() { }
+		protected virtual void _InternalUpdate() { }
+		public int RequestedUpdateRegistrationCount { get; private set; }
+
+		private void InitializeUpdate()
+		{
+			// Do not register for updates just yet. Will register only when necessary.
+			// RegisterUpdate();
+		}
+
+		private void DeinitializeUpdate()
+		{
+			DeregisterUpdate(true);
+		}
+
+		private void UpdateInternal()
+		{
+			// if (Me == null)
+			// 	return;
+
+			Update();
+			UpdateAutoRepaint();
+			_InternalUpdate();
+		}
+
+		public void RegisterUpdate()
+		{
+			RequestedUpdateRegistrationCount++;
+			if (RequestedUpdateRegistrationCount > 1)
+				return;
+			EditorApplication.update += UpdateInternal;
+		}
+
+		public void DeregisterUpdate(bool force = false)
+		{
+			RequestedUpdateRegistrationCount--;
+			if (force || RequestedUpdateRegistrationCount <= 0)
+			{
+				EditorApplication.update -= UpdateInternal;
+			}
+		}
+
+		#endregion
+
+		#region Auto Repaint
+
+		public float AutoRepaintSceneViewPeriod = 0.08f;
+		[NonSerialized]
+		private float LastRepaintSceneViewTime;
+		[NonSerialized]
+		private bool _IsAutoRepaintSceneViewEnabled;
+		public bool IsAutoRepaintSceneViewEnabled
+		{
+			get { return _IsAutoRepaintSceneViewEnabled; }
+			set
+			{
+				if (value == _IsAutoRepaintSceneViewEnabled)
+					return;
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsAutoRepaintSceneViewEnabled = value;
+			}
+		}
+
+		public float AutoRepaintInspectorPeriod = 0.08f;
+		[NonSerialized]
+		private float LastRepaintInspectorTime;
+		[NonSerialized]
+		private bool _IsAutoRepaintInspectorEnabled;
+		public bool IsAutoRepaintInspectorEnabled
+		{
+			get { return _IsAutoRepaintInspectorEnabled; }
+			set
+			{
+				if (value == _IsAutoRepaintInspectorEnabled)
+					return;
+
+				if (value)
+					RegisterUpdate();
+				else
+					DeregisterUpdate();
+
+				_IsAutoRepaintInspectorEnabled = value;
+			}
+		}
+
+
+		private void InitializeAutoRepaint()
+		{
+			_IsAutoRepaintSceneViewEnabled = false;
+			_IsAutoRepaintInspectorEnabled = false;
+
+			LastRepaintSceneViewTime = 0f;
+			LastRepaintInspectorTime = 0f;
+		}
+
+		private void UpdateAutoRepaint()
+		{
+			var currentTime = Time.realtimeSinceStartup;
+
+			// SceneView
+			if (LastRepaintSceneViewTime + AutoRepaintSceneViewPeriod < currentTime ||
+			    LastRepaintSceneViewTime > currentTime) // Fix for Time.realtimeSinceStartup being reset between play mode changes.
+			{
+				SceneView.RepaintAll();
+				LastRepaintSceneViewTime = currentTime;
+			}
+
+			// Inspector
+			if (LastRepaintInspectorTime + AutoRepaintInspectorPeriod < currentTime ||
+			    LastRepaintInspectorTime > currentTime) // Fix for Time.realtimeSinceStartup being reset between play mode changes.
+			{
+				Repaint();
+				LastRepaintInspectorTime = currentTime;
+			}
+		}
+
+		//public override bool RequiresConstantRepaint() // This method is abandoned to provide RepaintPeriod functionality by using EditorApplication.update callback
+		//{
+		//	return base.RequiresConstantRepaint() || AutoRepaintEnabled;
+		//}
+
+		public void RepaintCurrentSceneView()
+		{
+			HandleUtility.Repaint();
+		}
+
+		public void RepaintAllSceneViews()
+		{
+			SceneView.RepaintAll();
 		}
 
 		#endregion
