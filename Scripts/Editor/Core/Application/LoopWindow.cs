@@ -32,6 +32,8 @@ namespace Extenity
 		protected override void OnEnableDerived()
 		{
 			IsRightMouseButtonScrollingEnabled = true;
+			IsAutoRepaintInspectorEnabled = true;
+			AutoRepaintInspectorPeriod = 0.2f;
 		}
 
 		#endregion
