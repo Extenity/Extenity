@@ -53,29 +53,56 @@ namespace Extenity
 
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, false, true);
 
-			DrawListenersList("FixedUpdate", Loop.Instance.FixedUpdateCallbacks._Listeners, ref FixedUpdateFold);
-			DrawListenersList("Update", Loop.Instance.UpdateCallbacks._Listeners, ref UpdateFold);
-			DrawListenersList("LateUpdate", Loop.Instance.LateUpdateCallbacks._Listeners, ref LateUpdateFold);
+			DrawListenersList("FixedUpdate",
+			                  instance.PreFixedUpdateCallbacks._Listeners,
+			                  instance.FixedUpdateCallbacks._Listeners,
+			                  instance.PostFixedUpdateCallbacks._Listeners,
+			                  ref FixedUpdateFold);
+
+			DrawListenersList("Update",
+			                  instance.PreUpdateCallbacks._Listeners,
+			                  instance.UpdateCallbacks._Listeners,
+			                  instance.PostUpdateCallbacks._Listeners,
+			                  ref UpdateFold);
+
+			DrawListenersList("LateUpdate",
+			                  instance.PreLateUpdateCallbacks._Listeners,
+			                  instance.LateUpdateCallbacks._Listeners,
+			                  instance.PostLateUpdateCallbacks._Listeners,
+			                  ref LateUpdateFold);
 
 			GUILayout.EndScrollView();
 		}
 
-		private void DrawListenersList(string header, List<ExtenityEvent.Listener> listeners, ref bool fold)
+		private void DrawListenersList(string header,
+		                               List<ExtenityEvent.Listener> preListeners,
+		                               List<ExtenityEvent.Listener> defaultListeners,
+		                               List<ExtenityEvent.Listener> postListeners,
+		                               ref bool fold)
 		{
 			EditorGUILayoutTools.DrawHeader(header);
 
-			fold = EditorGUILayout.Foldout(fold, "Listeners: " + listeners.Count);
+			var totalCount = preListeners.Count + defaultListeners.Count + postListeners.Count;
+			fold = EditorGUILayout.Foldout(fold, "Listeners: " + totalCount);
 			if (fold)
 			{
 				GUILayout.BeginVertical();
-				foreach (var listener in listeners)
-				{
-					GUILayout.Label($"{listener.Order} \t {listener.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
-				}
+				DrawListenersList("Listeners (pre-step): ", preListeners);
+				DrawListenersList("Listeners (default-step): ", defaultListeners);
+				DrawListenersList("Listeners (post-step): ", postListeners);
 				GUILayout.EndVertical();
 			}
 
 			GUILayout.Space(20f);
+		}
+
+		private static void DrawListenersList(string title, List<ExtenityEvent.Listener> listeners)
+		{
+			GUILayout.Label(title + listeners.Count);
+			foreach (var listener in listeners)
+			{
+				GUILayout.Label($"{listener.Order} \t {listener.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
+			}
 		}
 
 		#endregion
