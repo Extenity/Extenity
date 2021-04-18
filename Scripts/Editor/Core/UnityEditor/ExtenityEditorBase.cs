@@ -30,12 +30,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 			OnEnableBase();
 			OnEnableDerived();
 
-			//RegisterUpdate();
+			InitializeUpdate();
 		}
 
 		protected void OnDisable()
 		{
-			DeregisterUpdate(true);
+			DeinitializeUpdate();
 
 			OnDisableDerived();
 			OnDisableBase();
@@ -48,6 +48,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 		protected virtual void Update() { }
 		protected virtual void _InternalUpdate() { }
 		public int RequestedUpdateRegistrationCount { get; private set; }
+
+		private void InitializeUpdate()
+		{
+			// Do not register for updates just yet. Will register only when necessary.
+			// RegisterUpdate();
+		}
+
+		private void DeinitializeUpdate()
+		{
+			DeregisterUpdate(true);
+		}
 
 		private void UpdateInternal()
 		{
