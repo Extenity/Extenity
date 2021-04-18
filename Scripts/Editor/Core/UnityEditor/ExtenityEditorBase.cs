@@ -27,6 +27,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			Me = target as T;
 			Configuration = new SerializedObject(target);
 
+			InitializeAutoRepaint();
+
 			OnEnableBase();
 			OnEnableDerived();
 
@@ -92,7 +94,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Auto Repaint
 
 		public float AutoRepaintSceneViewPeriod = 0.08f;
+		[NonSerialized]
 		private float LastRepaintSceneViewTime;
+		[NonSerialized]
 		private bool _IsAutoRepaintSceneViewEnabled;
 		public bool IsAutoRepaintSceneViewEnabled
 		{
@@ -112,7 +116,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		public float AutoRepaintInspectorPeriod = 0.08f;
+		[NonSerialized]
 		private float LastRepaintInspectorTime;
+		[NonSerialized]
 		private bool _IsAutoRepaintInspectorEnabled;
 		public bool IsAutoRepaintInspectorEnabled
 		{
@@ -129,6 +135,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 				_IsAutoRepaintInspectorEnabled = value;
 			}
+		}
+
+
+		private void InitializeAutoRepaint()
+		{
+			_IsAutoRepaintSceneViewEnabled = false;
+			_IsAutoRepaintInspectorEnabled = false;
+
+			LastRepaintSceneViewTime = 0f;
+			LastRepaintInspectorTime = 0f;
 		}
 
 		private void UpdateAutoRepaint()
