@@ -37,6 +37,7 @@ public enum SeverityCategory
 }
 
 // TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
+// TODO: Investigate: Find a way to hide wrapper methods like Info, Warning, etc. from Unity's console stacktrace and make it go to caller's line on double clicking over the log entry.
 
 [OverrideEnsuredNamespace(null)]
 public static class Log
@@ -264,6 +265,7 @@ public static class Log
 
 	#region Log
 
+	// [DebuggerHidden]
 	public static void Any(string message, LogCategory category)
 	{
 		switch (category)
@@ -278,6 +280,7 @@ public static class Log
 		}
 	}
 
+	// [DebuggerHidden]
 	public static void Any(string message, LogCategory category, Object context)
 	{
 		switch (category)
@@ -293,12 +296,14 @@ public static class Log
 	}
 
 	[Conditional("EnableVerboseLogging")]
+	// [DebuggerHidden]
 	public static void Verbose(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("EnableVerboseLogging")]
+	// [DebuggerHidden]
 	public static void Verbose(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -307,6 +312,7 @@ public static class Log
 #if DisableInfoLogging
 	[Conditional("DummyConditionThatNeverExists")]
 #endif
+	// [DebuggerHidden]
 	public static void Info(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
@@ -315,11 +321,13 @@ public static class Log
 #if DisableInfoLogging
 	[Conditional("DummyConditionThatNeverExists")]
 #endif
+	// [DebuggerHidden]
 	public static void Info(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void Severe(string message, SeverityCategory severity)
 	{
 		switch (severity)
@@ -332,6 +340,7 @@ public static class Log
 		}
 	}
 
+	// [DebuggerHidden]
 	public static void Severe(string message, SeverityCategory severity, Object context)
 	{
 		switch (severity)
@@ -344,32 +353,38 @@ public static class Log
 		}
 	}
 
+	// [DebuggerHidden]
 	public static void Warning(string message)
 	{
 		Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void Warning(string message, Object context)
 	{
 		Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void Error(string message)
 	{
 		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ErrorAndBreak(string message)
 	{
 		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 		Debug.Break();
 	}
 
+	// [DebuggerHidden]
 	public static void Error(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ErrorAndBreak(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -379,6 +394,7 @@ public static class Log
 	/// <summary>
 	/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void CriticalError(string message)
 	{
 		Debug.LogException(new Exception(message)); // Ignored by Code Correct
@@ -387,6 +403,7 @@ public static class Log
 	/// <summary>
 	/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void CriticalError(string message, Exception innerException)
 	{
 		Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
@@ -395,6 +412,7 @@ public static class Log
 	/// <summary>
 	/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void CriticalError(string message, Object context)
 	{
 		Debug.LogException(new Exception(message), context); // Ignored by Code Correct
@@ -403,6 +421,7 @@ public static class Log
 	/// <summary>
 	/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void CriticalError(string message, Object context, Exception innerException)
 	{
 		Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
@@ -413,6 +432,7 @@ public static class Log
 	///
 	/// See also 'InternalException'.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void InternalError(int errorCode)
 	{
 		Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
@@ -423,36 +443,43 @@ public static class Log
 	///
 	/// See also 'InternalException'.
 	/// </summary>
+	// [DebuggerHidden]
 	public static void InternalError(int errorCode, Object context)
 	{
 		Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void Exception(Exception exception)
 	{
 		Debug.LogException(exception); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void Exception(Exception exception, Object context)
 	{
 		Debug.LogException(exception, context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ExceptionAsError(Exception exception)
 	{
 		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ExceptionAsError(Exception exception, Object context)
 	{
 		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ExceptionAsErrorDetailed(this Exception exception)
 	{
 		Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 	}
 
+	// [DebuggerHidden]
 	public static void ExceptionAsErrorDetailed(this Exception exception, Object context)
 	{
 		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
@@ -467,6 +494,7 @@ public static class Log
 #else
 	[Conditional("DummyConditionThatNeverExists")]
 #endif
+	// [DebuggerHidden]
 	public static void DebugVerbose(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
@@ -477,6 +505,7 @@ public static class Log
 #else
 	[Conditional("DummyConditionThatNeverExists")]
 #endif
+	// [DebuggerHidden]
 	public static void DebugVerbose(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -487,6 +516,7 @@ public static class Log
 #else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 #endif
+	// [DebuggerHidden]
 	public static void DebugInfo(string message)
 	{
 		Debug.Log(CreateMessage(message)); // Ignored by Code Correct
@@ -497,12 +527,14 @@ public static class Log
 #else
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 #endif
+	// [DebuggerHidden]
 	public static void DebugInfo(string message, Object context)
 	{
 		Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugSevere(string message, SeverityCategory severity)
 	{
 		switch (severity)
@@ -516,6 +548,7 @@ public static class Log
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugSevere(string message, SeverityCategory severity, Object context)
 	{
 		switch (severity)
@@ -530,24 +563,28 @@ public static class Log
 
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugWarning(string message)
 	{
 		Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugWarning(string message, Object context)
 	{
 		Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugError(string message)
 	{
 		Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugError(string message, Object context)
 	{
 		Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
@@ -559,6 +596,7 @@ public static class Log
 	/// See also 'InternalException'.
 	/// </summary>
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugInternalError(int errorCode)
 	{
 		Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
@@ -570,42 +608,49 @@ public static class Log
 	/// See also 'InternalException'.
 	/// </summary>
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugInternalError(int errorCode, Object context)
 	{
 		Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugException(Exception exception)
 	{
 		Debug.LogException(exception); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugException(Exception exception, Object context)
 	{
 		Debug.LogException(exception, context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugExceptionAsError(Exception exception)
 	{
 		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugExceptionAsError(Exception exception, Object context)
 	{
 		Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugExceptionAsErrorDetailed(this Exception exception)
 	{
 		Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 	}
 
 	[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
+	// [DebuggerHidden]
 	public static void DebugExceptionAsErrorDetailed(this Exception exception, Object context)
 	{
 		Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
@@ -627,6 +672,7 @@ public static class Log
 	/// <summary>
 	/// Usage: Log.LogVariable(() => myVariable);
 	/// </summary>
+	// [DebuggerHidden]
 	public static void Variable<T>(Expression<Func<T>> expression, string prefix = "", LogCategory category = LogCategory.Verbose)
 	{
 		if (!string.IsNullOrEmpty(prefix))
@@ -640,11 +686,13 @@ public static class Log
 
 	#region Log Tools - Methods
 
+	// [DebuggerHidden]
 	public static void CurrentMethodNotImplemented()
 	{
 		CriticalError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 	}
 
+	// [DebuggerHidden]
 	public static void CurrentMethod(string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
@@ -652,6 +700,7 @@ public static class Log
 			DebugReflection.PreviousMethodNameWithType + " : " + additionalText);
 	}
 
+	// [DebuggerHidden]
 	public static void PreviousMethod(string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
@@ -659,6 +708,7 @@ public static class Log
 			DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText);
 	}
 
+	// [DebuggerHidden]
 	public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
@@ -666,6 +716,7 @@ public static class Log
 			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
 	}
 
+	// [DebuggerHidden]
 	public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
 		Info(string.IsNullOrEmpty(additionalText) ?
