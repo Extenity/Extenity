@@ -3,6 +3,7 @@ using Extenity.ApplicationToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.DesignPatternsToolbox;
 using Extenity.FlowToolbox;
+using Extenity.GameObjectToolbox;
 using Extenity.MessagingToolbox;
 using Extenity.ProfilingToolbox;
 using Sirenix.OdinInspector;
@@ -18,6 +19,11 @@ namespace Extenity
 		{
 			InitializeSingleton(true);
 			Invoker.ResetSystem();
+
+			// Automatically add Execution Order Helpers if required.
+			this.GetFirstOrAddComponent<LoopPreExecutionOrderHelper>();
+			this.GetFirstOrAddComponent<LoopDefaultExecutionOrderHelper>();
+			this.GetFirstOrAddComponent<LoopPostExecutionOrderHelper>();
 		}
 
 		#endregion
