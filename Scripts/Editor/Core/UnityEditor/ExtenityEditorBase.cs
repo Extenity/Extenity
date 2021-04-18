@@ -136,14 +136,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var currentTime = Time.realtimeSinceStartup;
 
 			// SceneView
-			if (LastRepaintSceneViewTime + AutoRepaintSceneViewPeriod < currentTime)
+			if (LastRepaintSceneViewTime + AutoRepaintSceneViewPeriod < currentTime ||
+			    LastRepaintSceneViewTime > currentTime) // Fix for Time.realtimeSinceStartup being reset between play mode changes.
 			{
 				SceneView.RepaintAll();
 				LastRepaintSceneViewTime = currentTime;
 			}
 
 			// Inspector
-			if (LastRepaintInspectorTime + AutoRepaintInspectorPeriod < currentTime)
+			if (LastRepaintInspectorTime + AutoRepaintInspectorPeriod < currentTime ||
+			    LastRepaintInspectorTime > currentTime) // Fix for Time.realtimeSinceStartup being reset between play mode changes.
 			{
 				Repaint();
 				LastRepaintInspectorTime = currentTime;
