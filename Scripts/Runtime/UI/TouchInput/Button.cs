@@ -76,9 +76,6 @@ namespace Extenity.UIToolbox.TouchInput
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
-			if (eventData.pointerPressRaycast.gameObject != ClickableAreaGameObject)
-				return;
-
 			IsPressing = true;
 
 			if (EnableFreeRoam)
@@ -92,9 +89,6 @@ namespace Extenity.UIToolbox.TouchInput
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
-			if (eventData.pointerPressRaycast.gameObject != ClickableAreaGameObject)
-				return;
-
 			IsPressing = false;
 
 			if (DefaultLocation)
