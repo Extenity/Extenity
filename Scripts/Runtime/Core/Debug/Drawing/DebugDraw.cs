@@ -63,7 +63,7 @@ namespace Extenity.DebugToolbox
 
 		#region GUI
 
-		private void OnGUI()
+		private void OnGUI() // Ignored by Code Correct
 		{
 			if (DebugDrawingDisabled)
 				return;
