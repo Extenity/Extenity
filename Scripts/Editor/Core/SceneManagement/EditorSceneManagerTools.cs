@@ -14,14 +14,16 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 	public class EditorSceneManagerTools : SceneManagerTools
 	{
-		public static void EnforceUserToSaveAllModifiedScenes(string failMessage, bool showMessageBox = false, string messageBoxTitle = "Attention Required", string okayButtonText = "Okay")
+		public static void EnforceUserToSaveAllModifiedScenes(string failMessage = "Currently loaded scene has unsaved changes. You must save or discard them first.",
+		                                                      bool showMessageBox = true,
+		                                                      string messageBoxTitle = "Attention Required",
+		                                                      string okayButtonText = "Okay")
 		{
 			var isAnySceneDirty = IsAnyLoadedSceneDirty();
 			if (isAnySceneDirty)
 			{
-				EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
-				var isSceneStillDirty = IsAnyLoadedSceneDirty();
-				if (isSceneStillDirty)
+				var isNotCancelled = EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+				if (!isNotCancelled)
 				{
 					if (showMessageBox)
 					{
