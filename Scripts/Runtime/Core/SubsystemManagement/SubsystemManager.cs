@@ -2,11 +2,24 @@ using Extenity.SubsystemManagementToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Extenity.ApplicationToolbox
+namespace Extenity.SubsystemManagementToolbox
 {
 
 	public static class SubsystemManager
 	{
+		#region Settings Asset
+
+		public static SubsystemSettings Settings
+		{
+			get
+			{
+				SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension);
+				return settings;
+			}
+		}
+
+		#endregion
+
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void Initialize_SubsystemRegistration()
 		{
@@ -41,7 +54,8 @@ namespace Extenity.ApplicationToolbox
 			Log.Info("Subsystem Manager checking in at BeforeSceneLoad.");
 #endif
 
-			if (!SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
+			var settings = Settings;
+			if (!settings)
 			{
 				return;
 			}
