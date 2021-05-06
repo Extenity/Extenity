@@ -1,7 +1,9 @@
 using System.Collections.Generic;
-using Extenity.BeyondAudio;
 using UnityEngine;
 using UnityEngine.UI;
+#if BeyondAudioUsesUnityAudio
+using Extenity.BeyondAudio;
+#endif
 
 namespace ExtenityExamples.BeyondAudio
 {
