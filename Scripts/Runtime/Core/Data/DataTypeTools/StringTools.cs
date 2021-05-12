@@ -711,10 +711,23 @@ namespace Extenity.DataToolbox
 
 		#region StringBuilder
 
-		public static void Clear(this StringBuilder value)
+		public static void Clear(this StringBuilder stringBuilder)
 		{
-			value.Length = 0;
-			//value.Capacity = 0; This is not a good idea since we want to reuse the already allocated memory
+			stringBuilder.Length = 0;
+			//stringBuilder.Capacity = 0; This is not a good idea since we want to reuse the already allocated memory
+		}
+
+		public static void AppendLine(this StringBuilder stringBuilder, string linePart1, string linePart2)
+		{
+			stringBuilder.Append(linePart1);
+			stringBuilder.AppendLine(linePart2);
+		}
+
+		public static void AppendLine(this StringBuilder stringBuilder, string linePart1, string linePart2, string linePart3)
+		{
+			stringBuilder.Append(linePart1);
+			stringBuilder.Append(linePart2);
+			stringBuilder.AppendLine(linePart3);
 		}
 
 		#endregion
