@@ -24,7 +24,7 @@ namespace Extenity.DebugToolbox
 			VerboseLoggingActive = false;
 		}
 
-		public LogRep CreateStandardPrefix(string prefix, Object context = null)
+		public static LogRep CreateStandardPrefix(string prefix, Object context = null)
 		{
 			return new LogRep($"<b>[{prefix}]</b> ", context);
 		}
@@ -38,7 +38,7 @@ namespace Extenity.DebugToolbox
 		/// creating the log message, the caller may also check if verbose logging is active via VerboseLoggingActive.
 		/// </remarks>
 		// [Conditional("EnableVerboseLogging")] Nope! Note that LogRep uses its own configuration that is applied separately to each LogRep.
-		public void Verbose(string message)
+		public readonly void Verbose(string message)
 		{
 			if (VerboseLoggingActive)
 			{
@@ -46,27 +46,27 @@ namespace Extenity.DebugToolbox
 			}
 		}
 
-		public void Info(string message)
+		public readonly void Info(string message)
 		{
 			Debug.Log(Prefix + message, Context); // Ignored by Code Correct
 		}
 
-		public void Warning(string message)
+		public readonly void Warning(string message)
 		{
 			Debug.LogWarning(Prefix + message, Context); // Ignored by Code Correct
 		}
 
-		public void Error(string message)
+		public readonly void Error(string message)
 		{
 			Debug.LogError(Prefix + message, Context); // Ignored by Code Correct
 		}
 
-		public void Critical(string message)
+		public readonly void Critical(string message)
 		{
 			Debug.LogException(new Exception(Prefix + message), Context); // Ignored by Code Correct
 		}
 
-		public void Exception(Exception exception)
+		public readonly void Exception(Exception exception)
 		{
 			Debug.LogException(exception, Context); // Ignored by Code Correct
 		}
