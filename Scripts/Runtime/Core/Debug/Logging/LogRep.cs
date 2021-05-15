@@ -5,13 +5,12 @@ using Object = UnityEngine.Object;
 namespace Extenity.DebugToolbox
 {
 
-	public struct LogRep
+	public readonly struct LogRep
 	{
 		#region Setup
 
 		public readonly string Prefix;
 		public readonly Object Context;
-		public bool VerboseLoggingActive;
 
 		#endregion
 
@@ -21,7 +20,6 @@ namespace Extenity.DebugToolbox
 		{
 			Prefix = prefix;
 			Context = context;
-			VerboseLoggingActive = false;
 		}
 
 		public static LogRep CreateStandardPrefix(string prefix, Object context = null)
@@ -35,15 +33,13 @@ namespace Extenity.DebugToolbox
 
 		/// <remarks>
 		/// Creating the log message might require some allocations for formatted messages. To avoid the overhead of
-		/// creating the log message, the caller may also check if verbose logging is active via VerboseLoggingActive.
+		/// creating the log message, the caller should implement a check if verbose logging is active.
 		/// </remarks>
 		// [Conditional("EnableVerboseLogging")] Nope! Note that LogRep uses its own configuration that is applied separately to each LogRep.
 		public readonly void Verbose(string message)
 		{
-			if (VerboseLoggingActive)
-			{
-				Debug.Log(Prefix + message, Context); // Ignored by Code Correct
-			}
+			// if (VerboseLoggingActive) Nope! Should be done by the caller in a way that prevents message string creation overhead.
+			Debug.Log(Prefix + message, Context); // Ignored by Code Correct
 		}
 
 		public readonly void Info(string message)
