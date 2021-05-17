@@ -304,6 +304,34 @@ namespace Extenity.BuildToolbox.Editor
 
 		#endregion
 
+		#region Git
+
+		public static void EnsureGitRepositoryDoesNotContainAnyChanges()
+		{
+			string output;
+			int exitCode;
+			try
+			{
+				exitCode = RunConsoleCommandAndCaptureOutput("git", "status --porcelain", out output);
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Could not get status of Git repository.", exception);
+			}
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not get status of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			output = output.Trim().Trim(new[] { '\r', '\n' });
+
+			if (!string.IsNullOrWhiteSpace(output))
+			{
+				throw new Exception("There are some modifications in Git repository. Details:\n" + output);
+			}
+		}
+
+		#endregion
+
 		#region Mercurial
 
 		public static void EnsureMercurialRepositoryDoesNotContainAnyChanges()
