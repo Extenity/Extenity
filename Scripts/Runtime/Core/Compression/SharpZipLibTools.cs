@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Core;
@@ -242,6 +243,26 @@ namespace Extenity.CompressionToolbox
 					{
 						StreamUtils.Copy(zipStream, streamWriter, buffer);
 					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region Load
+
+		public static string[] LoadLinesFromTextFileInZip(string archivePath, string filePathInArchive)
+		{
+			using (var zipFileStream = File.Open(archivePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+			using (var zipFile = new ZipFile(zipFileStream))
+			{
+				var zipEntry = zipFile.GetEntry(filePathInArchive);
+				var zipStream = zipFile.GetInputStream(zipEntry);
+
+				using (var streamReader = new StreamReader(zipStream))
+				{
+					var text = streamReader.ReadToEnd();
+					return text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 				}
 			}
 		}
