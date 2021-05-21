@@ -694,7 +694,8 @@ namespace Extenity.UIToolbox
 				    type == typeof(ClickArea) ||
 				    type == typeof(CanvasRegistrar) ||
 				    fullName.StartsWith("TMPro.", StringComparison.OrdinalIgnoreCase) ||
-				    fullName.StartsWith("UnityEngine.UI", StringComparison.OrdinalIgnoreCase)
+				    fullName.StartsWith("UnityEngine.UI", StringComparison.OrdinalIgnoreCase) ||
+				    fullName.Equals("JoshH.UI.UIGradient", StringComparison.OrdinalIgnoreCase)
 				)
 				{
 					continue;
