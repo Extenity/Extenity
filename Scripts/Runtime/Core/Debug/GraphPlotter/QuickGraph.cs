@@ -78,27 +78,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Graph graph = null;
 			Graph.SetupGraph(true, ref graph, graphTitle, null, verticalRange);
 
-			// Create channels if necessary
-			if (graph.Channels.Count != quickChannels.Count)
-			{
-				// Close all open channels first.
-				foreach (var channel in graph.Channels)
-				{
-					channel.Close();
-				}
-
-				// Create channels
-				foreach (var quickChannel in quickChannels)
-				{
-					Channel dummy = null;
-					Channel.SetupChannel(true, graph, ref dummy, quickChannel.Name, quickChannel.Color);
-				}
-			}
-
-			// Plot
 			for (var i = 0; i < quickChannels.Count; i++)
 			{
-				graph.Channels[i].Sample(quickChannels[i].Value, time);
+				// Get or create channel if necessary
+				Channel channel = null;
+				Channel.SetupChannel(true, graph, ref channel, quickChannels[i].Name, quickChannels[i].Color);
+
+				// Plot
+				channel.Sample(quickChannels[i].Value, time);
 			}
 		}
 

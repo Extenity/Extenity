@@ -207,7 +207,13 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				if (channel == null)
 				{
-					channel = new Channel(graph, channelName, channelColor);
+					// Try to find a channel with the same Name in graph
+					channel = graph.GetChannelByName(channelName);
+
+					if (channel == null)
+					{
+						channel = new Channel(graph, channelName, channelColor);
+					}
 				}
 				else
 				{

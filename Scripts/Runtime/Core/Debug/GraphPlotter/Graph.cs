@@ -118,6 +118,18 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Channels.Remove(channel);
 		}
 
+		public Channel GetChannelByName(string name)
+		{
+			for (var i = 0; i < Channels.Count; i++)
+			{
+				if (Channels[i].Description.Equals(name, StringComparison.Ordinal))
+				{
+					return Channels[i];
+				}
+			}
+			return null;
+		}
+
 		#endregion
 
 		#region Tags
