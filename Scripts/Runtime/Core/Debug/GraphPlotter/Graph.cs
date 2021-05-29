@@ -122,7 +122,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		{
 			for (var i = 0; i < Channels.Count; i++)
 			{
-				if (Channels[i].Description.Equals(name, StringComparison.Ordinal))
+				if (Channels[i].Name.Equals(name, StringComparison.Ordinal))
 				{
 					return Channels[i];
 				}
@@ -322,9 +322,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			SetupGraphWithXYZChannels(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration, ref channels, channelActiveX, channelActiveY, channelActiveZ);
 			if (activeCondition)
 			{
-				channels[0].Description = channelNameX;
-				channels[1].Description = channelNameY;
-				channels[2].Description = channelNameZ;
+				channels[0].Name = channelNameX;
+				channels[1].Name = channelNameY;
+				channels[2].Name = channelNameZ;
 				channels[0].Color = channelColorX;
 				channels[1].Color = channelColorY;
 				channels[2].Color = channelColorZ;
@@ -352,8 +352,8 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			SetupGraphWithXYChannels(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration, ref channels, channelActiveX, channelActiveY);
 			if (activeCondition)
 			{
-				channels[0].Description = channelNameX;
-				channels[1].Description = channelNameY;
+				channels[0].Name = channelNameX;
+				channels[1].Name = channelNameY;
 				channels[0].Color = channelColorX;
 				channels[1].Color = channelColorY;
 			}

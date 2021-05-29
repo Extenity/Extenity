@@ -621,7 +621,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						sampleValueString = " = " + sampleValue.ToString();
 					}
 
-					var valueText = channel.Description + sampleValueString;
+					var valueText = channel.Name + sampleValueString;
 
 					GUI.color = new Color(1f, 1f, 1f, 1f);
 					valueTextStyle.normal.textColor = Color.white;

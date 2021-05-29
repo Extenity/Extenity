@@ -87,7 +87,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		{
 			if (_IsClosed)
 			{
-				throw new Exception($"Tried to do an operation on closed channel '{Description}'.");
+				throw new Exception($"Tried to do an operation on closed channel '{Name}'.");
 			}
 		}
 
@@ -101,12 +101,12 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Metadata
 
-		public string Description;
+		public string Name;
 		public Color Color;
 
-		private void InitializeMetadata(string description, Color color)
+		private void InitializeMetadata(string name, Color color)
 		{
-			Description = description;
+			Name = name;
 			Color = color;
 		}
 
@@ -217,7 +217,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				}
 				else
 				{
-					channel.Description = channelName;
+					channel.Name = channelName;
 					channel.Color = channelColor;
 				}
 			}
