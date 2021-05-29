@@ -100,7 +100,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public string Title;
 		public GameObject Context = null;
 
-		public VerticalRangeConfiguration Range = VerticalRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration Range = VerticalRangeConfiguration.Adaptive();
 
 		#endregion
 

@@ -79,7 +79,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotPosition = false;
 		public bool PlotPositionX = true;
 		public bool PlotPositionY = true;
-		public VerticalRangeConfiguration PositionRange = VerticalRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration PositionRange = VerticalRangeConfiguration.Adaptive();
 		public Graph PositionGraph;
 		private Channel[] PositionChannels;
 		// -----------------------------------------------------
@@ -87,7 +87,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool PlotRotation = false;
 		public bool ClampRotation = true;
-		public VerticalRangeConfiguration RotationRange = VerticalRangeConfiguration.CreateFixed(0f, 360f);
+		public VerticalRangeConfiguration RotationRange = VerticalRangeConfiguration.Fixed(0f, 360f);
 		public Graph RotationGraph;
 		private Channel RotationChannel;
 		// -----------------------------------------------------
@@ -96,14 +96,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotVelocity = false;
 		public bool PlotVelocityX = true;
 		public bool PlotVelocityY = true;
-		public VerticalRangeConfiguration VelocityRange = VerticalRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration VelocityRange = VerticalRangeConfiguration.Adaptive();
 		public Graph VelocityGraph;
 		private Channel[] VelocityChannels;
 		// -----------------------------------------------------
 		// Input - Angular Velocity
 		// -----------------------------------------------------
 		public bool PlotAngularVelocity = false;
-		public VerticalRangeConfiguration AngularVelocityRange = VerticalRangeConfiguration.CreateAdaptive();
+		public VerticalRangeConfiguration AngularVelocityRange = VerticalRangeConfiguration.Adaptive();
 		public Graph AngularVelocityGraph;
 		private Channel AngularVelocityChannel;
 		// -----------------------------------------------------

@@ -19,7 +19,7 @@ namespace Extenity.ProfilingToolbox
 			if (!Analyzers.TryGetValue(label, out var analyzer))
 			{
 				analyzer = new TickAnalyzer(
-					new TickPlotter(label, VerticalRangeConfiguration.CreateZeroBasedAdaptive()),
+					new TickPlotter(label, VerticalRangeConfiguration.ZeroBasedAdaptive()),
 					now);
 				Analyzers.Add(label, analyzer);
 			}

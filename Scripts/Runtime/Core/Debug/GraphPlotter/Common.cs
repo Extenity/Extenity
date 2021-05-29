@@ -42,22 +42,22 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Initialization
 
-		public static VerticalRangeConfiguration CreateFixed(float min, float max)
+		public static VerticalRangeConfiguration Fixed(float min, float max)
 		{
 			return new VerticalRangeConfiguration(VerticalSizing.Fixed, min, max);
 		}
 
-		public static VerticalRangeConfiguration CreateExpansive(float min, float max)
+		public static VerticalRangeConfiguration Expansive(float min, float max)
 		{
 			return new VerticalRangeConfiguration(VerticalSizing.Expansive, min, max);
 		}
 
-		public static VerticalRangeConfiguration CreateAdaptive()
+		public static VerticalRangeConfiguration Adaptive()
 		{
 			return new VerticalRangeConfiguration(VerticalSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		public static VerticalRangeConfiguration CreateZeroBasedAdaptive()
+		public static VerticalRangeConfiguration ZeroBasedAdaptive()
 		{
 			return new VerticalRangeConfiguration(VerticalSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}

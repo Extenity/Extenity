@@ -227,7 +227,7 @@ namespace Extenity
 			if (enabled)
 			{
 				FPSAnalyzer = new TickAnalyzer(
-					new TickPlotter("FPS", VerticalRangeConfiguration.CreateZeroBasedAdaptive(), gameObject),
+					new TickPlotter("FPS", VerticalRangeConfiguration.ZeroBasedAdaptive(), gameObject),
 					Time,
 					TickAnalyzer.HistorySizeFor(60, 5));
 			}

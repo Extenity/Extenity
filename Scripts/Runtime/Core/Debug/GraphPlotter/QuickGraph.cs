@@ -126,7 +126,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			Plot(graphTitle,
-				VerticalRangeConfiguration.CreateFixed(
+				VerticalRangeConfiguration.Fixed(
 					(float)pid.OutMin * PIDPaddingFactor,
 					(float)pid.OutMax * PIDPaddingFactor
 				),
