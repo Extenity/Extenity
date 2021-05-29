@@ -126,15 +126,15 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			Plot(graphTitle,
-				VerticalRange.Fixed(
-					(float)pid.OutMin * PIDPaddingFactor,
-					(float)pid.OutMax * PIDPaddingFactor
-				),
-				time,
-				new QuickChannel("Input", PIDInputColor, (float)pid.Input),
-				new QuickChannel("Output", PIDOutputColor, (float)pid.Output),
-				new QuickChannel("Target", PIDTargetColor, (float)pid.Target)
- 			);
+			     VerticalRange.Fixed(
+				     (float)pid.OutMin * PIDPaddingFactor,
+				     (float)pid.OutMax * PIDPaddingFactor
+			     ),
+			     time,
+			     new QuickChannel("Input", PIDInputColor, (float)pid.Input),
+			     new QuickChannel("Output", PIDOutputColor, (float)pid.Output),
+			     new QuickChannel("Target", PIDTargetColor, (float)pid.Target)
+			);
 		}
 
 		#endregion

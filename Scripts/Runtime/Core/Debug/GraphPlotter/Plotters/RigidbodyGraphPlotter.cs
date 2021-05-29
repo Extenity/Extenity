@@ -32,7 +32,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Graph.SafeClose(ref VelocityGraph);
 			Graph.SafeClose(ref AngularVelocityGraph);
 		}
-		
+
 		protected void OnDisable()
 		{
 			SetupGraph();
