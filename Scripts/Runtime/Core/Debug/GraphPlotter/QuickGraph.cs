@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
 
@@ -23,14 +24,62 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	{
 		#region Plot - General
 
-		public static void Plot(string graphTitle, VerticalRange verticalRange, float time, params QuickChannel[] quickChannels)
+		public static void Plot(string graphTitle, VerticalRange verticalRange, float time,
+		                        string channelName, Color channelColor, float channelValue)
+		{
+			var channels = New.List<QuickChannel>(1);
+			channels.Add(new QuickChannel(channelName, channelColor, channelValue));
+			Plot(graphTitle, verticalRange, time, channels);
+			Release.List(ref channels);
+		}
+
+		public static void Plot(string graphTitle, VerticalRange verticalRange, float time,
+		                        string channelName1, Color channelColor1, float channelValue1,
+		                        string channelName2, Color channelColor2, float channelValue2)
+		{
+			var channels = New.List<QuickChannel>(2);
+			channels.Add(new QuickChannel(channelName1, channelColor1, channelValue1));
+			channels.Add(new QuickChannel(channelName2, channelColor2, channelValue2));
+			Plot(graphTitle, verticalRange, time, channels);
+			Release.List(ref channels);
+		}
+
+		public static void Plot(string graphTitle, VerticalRange verticalRange, float time,
+		                        string channelName1, Color channelColor1, float channelValue1,
+		                        string channelName2, Color channelColor2, float channelValue2,
+		                        string channelName3, Color channelColor3, float channelValue3)
+		{
+			var channels = New.List<QuickChannel>(3);
+			channels.Add(new QuickChannel(channelName1, channelColor1, channelValue1));
+			channels.Add(new QuickChannel(channelName2, channelColor2, channelValue2));
+			channels.Add(new QuickChannel(channelName3, channelColor3, channelValue3));
+			Plot(graphTitle, verticalRange, time, channels);
+			Release.List(ref channels);
+		}
+
+		public static void Plot(string graphTitle, VerticalRange verticalRange, float time,
+		                        string channelName1, Color channelColor1, float channelValue1,
+		                        string channelName2, Color channelColor2, float channelValue2,
+		                        string channelName3, Color channelColor3, float channelValue3,
+		                        string channelName4, Color channelColor4, float channelValue4)
+		{
+			var channels = New.List<QuickChannel>(4);
+			channels.Add(new QuickChannel(channelName1, channelColor1, channelValue1));
+			channels.Add(new QuickChannel(channelName2, channelColor2, channelValue2));
+			channels.Add(new QuickChannel(channelName3, channelColor3, channelValue3));
+			channels.Add(new QuickChannel(channelName4, channelColor4, channelValue4));
+			Plot(graphTitle, verticalRange, time, channels);
+			Release.List(ref channels);
+		}
+
+		public static void Plot(string graphTitle, VerticalRange verticalRange, float time, List<QuickChannel> quickChannels)
 		{
 			// Create graph if necessary
 			Graph graph = null;
 			Graph.SetupGraph(true, ref graph, graphTitle, null, verticalRange);
 
 			// Create channels if necessary
-			if (graph.Channels.Count != quickChannels.Length)
+			if (graph.Channels.Count != quickChannels.Count)
 			{
 				// Close all open channels first.
 				foreach (var channel in graph.Channels)
@@ -47,7 +96,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			}
 
 			// Plot
-			for (var i = 0; i < quickChannels.Length; i++)
+			for (var i = 0; i < quickChannels.Count; i++)
 			{
 				graph.Channels[i].Sample(quickChannels[i].Value, time);
 			}
@@ -61,9 +110,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		public static void Plot(string graphTitle, VerticalRange verticalRange, float time, float value)
 		{
-			Plot(graphTitle, verticalRange, time,
-			     new QuickChannel("Value", FloatColor, value)
-			);
+			Plot(graphTitle, verticalRange, time, "Value", FloatColor, value);
 		}
 
 		#endregion
@@ -77,17 +124,17 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public static void Plot(string graphTitle, VerticalRange verticalRange, float time, Vector3 value)
 		{
 			Plot(graphTitle, verticalRange, time,
-			     new QuickChannel("X", VectorXColor, value.x),
-			     new QuickChannel("Y", VectorYColor, value.y),
-			     new QuickChannel("Z", VectorZColor, value.z)
+			     "X", VectorXColor, value.x,
+			     "Y", VectorYColor, value.y,
+			     "Z", VectorZColor, value.z
 			);
 		}
 
 		public static void Plot(string graphTitle, VerticalRange verticalRange, float time, Vector2 value)
 		{
 			Plot(graphTitle, verticalRange, time,
-			     new QuickChannel("X", VectorXColor, value.x),
-			     new QuickChannel("Y", VectorYColor, value.y)
+			     "X", VectorXColor, value.x,
+			     "Y", VectorYColor, value.y
 			);
 		}
 
@@ -131,9 +178,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				     (float)pid.OutMax * PIDPaddingFactor
 			     ),
 			     time,
-			     new QuickChannel("Input", PIDInputColor, (float)pid.Input),
-			     new QuickChannel("Output", PIDOutputColor, (float)pid.Output),
-			     new QuickChannel("Target", PIDTargetColor, (float)pid.Target)
+			     "Input", PIDInputColor, (float)pid.Input,
+			     "Output", PIDOutputColor, (float)pid.Output,
+			     "Target", PIDTargetColor, (float)pid.Target
 			);
 		}
 
