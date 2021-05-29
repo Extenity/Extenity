@@ -16,11 +16,26 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Context = context;
 
 			Graphs.Register(this);
+
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+			UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+#endif
 		}
 
 		#endregion
 
 		#region Deinitialization
+
+#if UNITY_EDITOR
+		private void OnPlayModeStateChanged(UnityEditor.PlayModeStateChange state)
+		{
+			if (state == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+			{
+				Close();
+			}
+		}
+#endif
 
 		private bool _IsClosed;
 		public bool IsClosed => _IsClosed;
@@ -35,6 +50,10 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Channel.SafeClose(Channels);
 
 			Graphs.Deregister(this);
+
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+#endif
 		}
 
 		public static void SafeClose(ref Graph graph)
