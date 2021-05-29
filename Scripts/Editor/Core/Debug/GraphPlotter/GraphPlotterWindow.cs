@@ -38,6 +38,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		//private const int DefaultWindowWidth = 1200;
 		//private const int DefaultWindowHeight = 800;
 
+		private const float LegendTextOffset = 10f;
+		private const float ExtraScrollSpace = 30f;
+
 		// Graph sizing
 		private const float SpaceAboveGraph = 30f;
 		private const float SpaceBelowGraph = 20f;
@@ -151,10 +154,6 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		private float scrollPositionTime = 0f;
 		private float scrollPositionTimeMax = 0f;
 
-		private float totalGraphHeight;
-		private float legendTextOffset = 10f;
-		private float extraScrollSpace = 30f;
-
 		private Channel selectedChannel;
 
 		// Graph height resizing
@@ -224,7 +223,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			var height = position.height;
 			var graphWidth = width - LegendWidth - 5f;
 
-			totalGraphHeight = GraphHeight - SpaceAboveGraph - SpaceBelowGraph;
+			var totalGraphHeight = GraphHeight - SpaceAboveGraph - SpaceBelowGraph;
 
 			// Top bar
 			var topBarRect = new Rect(0f, 0f, position.width, 32f);
@@ -560,7 +559,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 						if (!float.IsNaN(time))
 						{
-							GUI.Label(new Rect(legendTextOffset, graphAreaRect.yMax - legendTextOffset * 2f, LegendWidth, 20),
+							GUI.Label(new Rect(LegendTextOffset, graphAreaRect.yMax - LegendTextOffset * 2f, LegendWidth, 20),
 								"t = " + time, timeStyle);
 						}
 					}
@@ -735,7 +734,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			}
 
 			// Scrollbar
-			var scrollMaxY = GraphHeight * FilteredGraphs.Count + extraScrollSpace;
+			var scrollMaxY = GraphHeight * FilteredGraphs.Count + ExtraScrollSpace;
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - topBarRect.height);
 
 			GUI.color = Color.white;
