@@ -7,22 +7,22 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 	public class CommonEditor
 	{
-		public static void DrawVerticalRangeConfiguration(Object undoObject, Graph graph, ref VerticalRangeConfiguration range)
+		public static void DrawVerticalRangeConfiguration(Object undoObject, Graph graph, ref VerticalRange verticalRange)
 		{
-			var newSizing = (VerticalSizing)EditorGUILayout.EnumPopup("Axis Sizing", range.Sizing);
+			var newSizing = (VerticalSizing)EditorGUILayout.EnumPopup("Axis Sizing", verticalRange.Sizing);
 
-			if (newSizing != range.Sizing)
+			if (newSizing != verticalRange.Sizing)
 			{
 				Undo.RecordObject(undoObject, "Changed axis sizing");
 				if (newSizing == VerticalSizing.Fixed &&
-					float.IsPositiveInfinity(range.Min) &&
-					float.IsNegativeInfinity(range.Max))
+					float.IsPositiveInfinity(verticalRange.Min) &&
+					float.IsNegativeInfinity(verticalRange.Max))
 				{
-					range.Min = -1f;
-					range.Max = 1f;
+					verticalRange.Min = -1f;
+					verticalRange.Max = 1f;
 				}
 
-				range.Sizing = newSizing;
+				verticalRange.Sizing = newSizing;
 			}
 
 			float newMin;
@@ -44,25 +44,25 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				var inputFieldWidth = Mathf.Max(0f, halfWidth - labelWidth);
 				var height = position.height;
 				GUI.Label(new Rect(position.x, position.y, labelWidth, height), "Min:");
-				newMin = EditorGUI.FloatField(new Rect(position.x + labelWidth, position.y, inputFieldWidth, height), range.Min);
+				newMin = EditorGUI.FloatField(new Rect(position.x + labelWidth, position.y, inputFieldWidth, height), verticalRange.Min);
 				GUI.Label(new Rect(position.x + halfWidth, position.y, labelWidth, height), "Max:");
-				newMax = EditorGUI.FloatField(new Rect(position.x + halfWidth + labelWidth, position.y, inputFieldWidth, height), range.Max);
+				newMax = EditorGUI.FloatField(new Rect(position.x + halfWidth + labelWidth, position.y, inputFieldWidth, height), verticalRange.Max);
 				EditorGUILayout.EndHorizontal();
 
-				if (newMin != range.Min)
+				if (newMin != verticalRange.Min)
 				{
 					Undo.RecordObject(undoObject, "Changed axis range minimum");
 				}
 
-				if (newMax != range.Max)
+				if (newMax != verticalRange.Max)
 				{
 					Undo.RecordObject(undoObject, "Changed axis range maximum");
 				}
 			}
 
-			if (range.Min != newMin)
+			if (verticalRange.Min != newMin)
 			{
-				range.Min = newMin;
+				verticalRange.Min = newMin;
 
 				if (graph != null)
 				{
@@ -70,9 +70,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				}
 			}
 
-			if (range.Max != newMax)
+			if (verticalRange.Max != newMax)
 			{
-				range.Max = newMax;
+				verticalRange.Max = newMax;
 
 				if (graph != null)
 				{

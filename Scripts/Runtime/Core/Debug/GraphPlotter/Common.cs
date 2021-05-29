@@ -32,7 +32,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	};
 
 	[Serializable]
-	public struct VerticalRangeConfiguration
+	public struct VerticalRange
 	{
 		public VerticalSizing Sizing;
 		public float Min;
@@ -42,27 +42,27 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#region Initialization
 
-		public static VerticalRangeConfiguration Fixed(float min, float max)
+		public static VerticalRange Fixed(float min, float max)
 		{
-			return new VerticalRangeConfiguration(VerticalSizing.Fixed, min, max);
+			return new VerticalRange(VerticalSizing.Fixed, min, max);
 		}
 
-		public static VerticalRangeConfiguration Expansive(float min, float max)
+		public static VerticalRange Expansive(float min, float max)
 		{
-			return new VerticalRangeConfiguration(VerticalSizing.Expansive, min, max);
+			return new VerticalRange(VerticalSizing.Expansive, min, max);
 		}
 
-		public static VerticalRangeConfiguration Adaptive()
+		public static VerticalRange Adaptive()
 		{
-			return new VerticalRangeConfiguration(VerticalSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRange(VerticalSizing.Adaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		public static VerticalRangeConfiguration ZeroBasedAdaptive()
+		public static VerticalRange ZeroBasedAdaptive()
 		{
-			return new VerticalRangeConfiguration(VerticalSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
+			return new VerticalRange(VerticalSizing.ZeroBasedAdaptive, float.PositiveInfinity, float.NegativeInfinity);
 		}
 
-		private VerticalRangeConfiguration(VerticalSizing sizing, float min, float max)
+		private VerticalRange(VerticalSizing sizing, float min, float max)
 		{
 			Sizing = sizing;
 			Min = min;

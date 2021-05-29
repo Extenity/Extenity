@@ -12,7 +12,7 @@ namespace Extenity.ProfilingToolbox
 	public class TickPlotter
 	{
 		public string Title;
-		public VerticalRangeConfiguration RangeConfiguration;
+		public VerticalRange VerticalRange;
 		public GameObject Context;
 
 		[Tooltip("Ticks per second.")]
@@ -24,10 +24,10 @@ namespace Extenity.ProfilingToolbox
 		public string AverageTPSDescription = "Average TPS";
 		public Color AverageTPSColor = new Color(0.4f, 0.5f, 0.2f, 1f);
 
-		public TickPlotter(string title, VerticalRangeConfiguration rangeConfiguration, GameObject context = null)
+		public TickPlotter(string title, VerticalRange verticalRange, GameObject context = null)
 		{
 			Title = title;
-			RangeConfiguration = rangeConfiguration;
+			VerticalRange = verticalRange;
 			Context = context;
 		}
 
@@ -169,7 +169,7 @@ namespace Extenity.ProfilingToolbox
 
 			CollectionTools.ResizeIfRequired(ref Plotter._Channels, 2);
 			var channels = Plotter._Channels;
-			Graph.SetupGraph(true, ref Plotter._Graph, Plotter.Title, Plotter.Context, Plotter.RangeConfiguration);
+			Graph.SetupGraph(true, ref Plotter._Graph, Plotter.Title, Plotter.Context, Plotter.VerticalRange);
 			var graph = Plotter._Graph;
 
 			if (Plotter.OutputTPSGraph)

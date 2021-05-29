@@ -90,7 +90,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// -----------------------------------------------------
 		[HideInInspector] // Not meant to be shown in raw format
 		public List<ChannelField> ChannelFields = new List<ChannelField>();
-		public VerticalRangeConfiguration Range = VerticalRangeConfiguration.Adaptive();
+		public VerticalRange Range = VerticalRange.Adaptive();
 		public Graph Graph;
 		// -----------------------------------------------------
 

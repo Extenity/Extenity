@@ -100,7 +100,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public string Title;
 		public GameObject Context = null;
 
-		public VerticalRangeConfiguration Range = VerticalRangeConfiguration.Adaptive();
+		public VerticalRange Range = VerticalRange.Adaptive();
 
 		#endregion
 
@@ -251,7 +251,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Range.Max = max;
 		}
 
-		public void SetRangeConfiguration(VerticalRangeConfiguration range)
+		public void SetRangeConfiguration(VerticalRange range)
 		{
 			CheckClosed();
 
@@ -261,7 +261,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		#region Tools
 
 		public static void SetupGraph(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration)
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration)
 		{
 			if (activeCondition)
 			{
@@ -290,7 +290,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		public static void SetupGraphWithSingleChannel(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration,
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration,
 			ref Channel channel, string channelName, Color channelColor)
 		{
 			SetupGraph(activeCondition, ref graph, graphTitle, graphContext, rangeConfiguration);
@@ -298,7 +298,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		public static void SetupGraphWithXYZChannels(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration,
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration,
 			ref Channel[] channels, bool channelActiveX, bool channelActiveY, bool channelActiveZ,
 			string channelNameX, string channelNameY, string channelNameZ, Color channelColorX, Color channelColorY, Color channelColorZ)
 		{
@@ -315,7 +315,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		public static void SetupGraphWithXYZChannels(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration,
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration,
 			ref Channel[] channels, bool channelActiveX, bool channelActiveY, bool channelActiveZ)
 		{
 			CollectionTools.ResizeIfRequired(ref channels, 3);
@@ -326,7 +326,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		public static void SetupGraphWithXYChannels(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration,
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration,
 			ref Channel[] channels, bool channelActiveX, bool channelActiveY,
 			string channelNameX, string channelNameY, Color channelColorX, Color channelColorY)
 		{
@@ -341,7 +341,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		public static void SetupGraphWithXYChannels(bool activeCondition,
-			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRangeConfiguration rangeConfiguration,
+			ref Graph graph, string graphTitle, GameObject graphContext, VerticalRange rangeConfiguration,
 			ref Channel[] channels, bool channelActiveX, bool channelActiveY)
 		{
 			CollectionTools.ResizeIfRequired(ref channels, 2);

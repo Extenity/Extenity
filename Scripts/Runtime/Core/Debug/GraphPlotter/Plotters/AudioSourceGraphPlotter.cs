@@ -76,14 +76,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// Input - Volume
 		// -----------------------------------------------------
 		public bool PlotVolume = false;
-		public VerticalRangeConfiguration VolumeRange = VerticalRangeConfiguration.Fixed(0f, 1f);
+		public VerticalRange VolumeRange = VerticalRange.Fixed(0f, 1f);
 		public Graph VolumeGraph;
 		private Channel VolumeChannel;
 		// -----------------------------------------------------
 		// Input - Pitch
 		// -----------------------------------------------------
 		public bool PlotPitch = false;
-		public VerticalRangeConfiguration PitchRange = VerticalRangeConfiguration.Expansive(0f, 2f);
+		public VerticalRange PitchRange = VerticalRange.Expansive(0f, 2f);
 		public Graph PitchGraph;
 		private Channel PitchChannel;
 		// -----------------------------------------------------
@@ -100,7 +100,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			Graph.SetupGraphWithSingleChannel(PlotVolume && componentIsActive, ref VolumeGraph, "Volume", gameObject, VolumeRange, ref VolumeChannel, "volume", PlotColors.Red);
 			Graph.SetupGraphWithSingleChannel(PlotPitch && componentIsActive, ref PitchGraph, "Pitch", gameObject, PitchRange, ref PitchChannel, "pitch", PlotColors.Green);
-			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, VerticalRangeConfiguration.Fixed(0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
+			Graph.SetupGraphWithSingleChannel(PlotIsPlaying && componentIsActive, ref IsPlayingGraph, "Is playing", gameObject, VerticalRange.Fixed(0f, 1f), ref IsPlayingChannel, "isPlaying", PlotColors.Red);
 		}
 
 		#endregion
