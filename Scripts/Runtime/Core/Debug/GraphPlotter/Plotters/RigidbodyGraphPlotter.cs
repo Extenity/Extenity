@@ -146,7 +146,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var position = Rigidbody.position;
 
-				PositionRange.CopyFrom(PositionGraph.Range);
+				PositionRange = PositionGraph.Range;
 
 				if (PlotPositionX)
 					PositionChannels[0].Sample(position.x, time);
@@ -160,7 +160,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var euler = Rigidbody.rotation.eulerAngles;
 
-				RotationRange.CopyFrom(RotationGraph.Range);
+				RotationRange = RotationGraph.Range;
 
 				if (PlotRotationX)
 					RotationChannels[0].Sample(euler.x, time);
@@ -174,7 +174,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var velocity = Rigidbody.velocity;
 
-				VelocityRange.CopyFrom(VelocityGraph.Range);
+				VelocityRange = VelocityGraph.Range;
 
 				if (PlotVelocityX)
 					VelocityChannels[0].Sample(velocity.x, time);
@@ -188,7 +188,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var angularVelocity = Rigidbody.angularVelocity;
 
-				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
+				AngularVelocityRange = AngularVelocityGraph.Range;
 
 				if (PlotAngularVelocityX)
 					AngularVelocityChannels[0].Sample(angularVelocity.x, time);

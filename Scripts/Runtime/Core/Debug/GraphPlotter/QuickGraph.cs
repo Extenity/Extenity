@@ -55,6 +55,19 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 		#endregion
 
+		#region Plot - Float
+
+		public static readonly Color FloatColor = new Color(0f, 1f, 0f, 1f);
+
+		public static void Plot(string graphTitle, VerticalRangeConfiguration verticalRangeConfiguration, float time, float value)
+		{
+			Plot(graphTitle, verticalRangeConfiguration, time,
+			     new QuickChannel("Value", FloatColor, value)
+			);
+		}
+
+		#endregion
+
 		#region Plot - Vector
 
 		public static readonly Color VectorXColor = new Color(0f, 1f, 0f, 1f);

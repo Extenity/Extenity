@@ -158,7 +158,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			if (Component == null)
 				return;
 
-			Range.CopyFrom(Graph.Range);
+			Range = Graph.Range;
 
 			var time = Time.time;
 

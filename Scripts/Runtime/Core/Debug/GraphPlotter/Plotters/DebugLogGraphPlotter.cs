@@ -68,7 +68,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		{
 			var componentIsActive = enabled && gameObject.activeInHierarchy;
 
-			Graph.SetupGraph(componentIsActive, ref Graph, "Debug.Log", gameObject, null);
+			Graph.SetupGraph(componentIsActive, ref Graph, "Debug.Log", gameObject, VerticalRangeConfiguration.CreateZeroBasedAdaptive());
 		}
 
 		#endregion

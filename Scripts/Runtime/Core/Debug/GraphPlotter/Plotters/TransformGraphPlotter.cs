@@ -129,7 +129,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var position = PositionSpace == CoordinateSystem.Local ? Transform.localPosition : Transform.position;
 
-				PositionRange.CopyFrom(PositionGraph.Range);
+				PositionRange = PositionGraph.Range;
 
 				if (PlotPositionX)
 					PositionChannels[0].Sample(position.x, time);
@@ -143,7 +143,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var euler = (RotationSpace == CoordinateSystem.Local ? Transform.localRotation : Transform.rotation).eulerAngles;
 
-				RotationRange.CopyFrom(RotationGraph.Range);
+				RotationRange = RotationGraph.Range;
 
 				if (PlotRotationX)
 					RotationChannels[0].Sample(euler.x, time);
@@ -157,7 +157,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var scale = ScaleSpace == ScaleCoordinateSystem.Local ? Transform.localScale : Transform.lossyScale;
 
-				ScaleRange.CopyFrom(ScaleGraph.Range);
+				ScaleRange = ScaleGraph.Range;
 
 				if (PlotScaleX)
 					ScaleChannels[0].Sample(scale.x, time);

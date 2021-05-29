@@ -32,7 +32,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	};
 
 	[Serializable]
-	public class VerticalRangeConfiguration
+	public struct VerticalRangeConfiguration
 	{
 		public VerticalSizing Sizing;
 		public float Min;
@@ -67,20 +67,6 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			Sizing = sizing;
 			Min = min;
 			Max = max;
-		}
-
-		public void CopyFrom(VerticalRangeConfiguration other)
-		{
-			if (other == null)
-			{
-				SetToDefault();
-			}
-			else
-			{
-				Sizing = other.Sizing;
-				Min = other.Min;
-				Max = other.Max;
-			}
 		}
 
 		public void SetToDefault()

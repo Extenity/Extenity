@@ -122,13 +122,13 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (PlotVolume)
 			{
-				VolumeRange.CopyFrom(VolumeGraph.Range);
+				VolumeRange = VolumeGraph.Range;
 				VolumeChannel.Sample(AudioSource.volume, time);
 			}
 
 			if (PlotPitch)
 			{
-				PitchRange.CopyFrom(PitchGraph.Range);
+				PitchRange = PitchGraph.Range;
 				PitchChannel.Sample(AudioSource.pitch, time);
 			}
 

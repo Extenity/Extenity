@@ -139,7 +139,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var position = Rigidbody2D.position;
 
-				PositionRange.CopyFrom(PositionGraph.Range);
+				PositionRange = PositionGraph.Range;
 
 				if (PlotPositionX)
 					PositionChannels[0].Sample(position.x, time);
@@ -149,7 +149,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (PlotRotation)
 			{
-				RotationRange.CopyFrom(RotationGraph.Range);
+				RotationRange = RotationGraph.Range;
 
 				if (PlotRotation)
 				{
@@ -174,7 +174,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 			{
 				var velocity = Rigidbody2D.velocity;
 
-				VelocityRange.CopyFrom(AngularVelocityGraph.Range);
+				VelocityRange = AngularVelocityGraph.Range;
 
 				if (PlotVelocityX)
 					VelocityChannels[0].Sample(velocity.x, time);
@@ -184,7 +184,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (PlotAngularVelocity)
 			{
-				AngularVelocityRange.CopyFrom(AngularVelocityGraph.Range);
+				AngularVelocityRange = AngularVelocityGraph.Range;
 
 				if (PlotAngularVelocity)
 					AngularVelocityChannel.Sample(Rigidbody2D.angularVelocity, time);
