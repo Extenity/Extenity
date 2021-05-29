@@ -249,9 +249,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			}
 
 			if (currentEventType == EventType.MouseDown &&
-				mousePosition.x > LegendWidth && // Left legend area
-				mousePosition.x < (width - 14f) && // Right scrollbar
-				mousePosition.y > topBarRect.height) // Top bar
+			    mousePosition.x > LegendWidth && // Left legend area
+			    mousePosition.x < (width - 14f) && // Right scrollbar
+			    mousePosition.y > topBarRect.height) // Top bar
 			{
 				Debug.Break();
 			}
@@ -281,14 +281,15 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				switch (range.Sizing)
 				{
 					case VerticalSizing.Adaptive:
-						{
-							graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
-						}
+					{
+						graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, float.PositiveInfinity, float.NegativeInfinity);
+					}
 						break;
+
 					case VerticalSizing.ZeroBasedAdaptive:
-						{
-							graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
-						}
+					{
+						graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
+					}
 						break;
 				}
 
@@ -535,7 +536,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						int sampleIndex_b = (sampleIndex_a + 1) % channel.Samples.Length;
 
 						if (mouseTime >= channel.Samples[sampleIndex_a].AxisX &&
-							mouseTime <= channel.Samples[sampleIndex_b].AxisX)
+						    mouseTime <= channel.Samples[sampleIndex_b].AxisX)
 						{
 							index = Mathf.Abs(channel.Samples[sampleIndex_a].AxisX - mouseTime) <= Mathf.Abs(channel.Samples[sampleIndex_b].AxisX - mouseTime) ? sampleIndex_a : sampleIndex_b;
 							break;
@@ -560,7 +561,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						if (!float.IsNaN(time))
 						{
 							GUI.Label(new Rect(LegendTextOffset, graphAreaRect.yMax - LegendTextOffset * 2f, LegendWidth, 20),
-								"t = " + time, timeStyle);
+							          "t = " + time, timeStyle);
 						}
 					}
 
@@ -673,7 +674,6 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					GUI.DrawTexture(new Rect(10 + 1, graphAreaRect.yMin + offset + 20 * j + 7, 5, 5), GUITools.WhiteTexture, ScaleMode.StretchToFill);
 
 					GUI.color = new Color(1f, 1f, 1f, 1f);
-
 				}
 
 				// Not cool to copy the list in every gui call. But simplifies the design, and the list is not too big anyway.
@@ -730,7 +730,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				// separator line
 				Handles.color = Color.grey;
 				Handles.DrawLine(new Vector3(0f, (i + 1) * GraphHeight + topBarRect.height - scrollPositionY, 0f),
-								  new Vector3(width, (i + 1) * GraphHeight + topBarRect.height - scrollPositionY, 0f));
+				                 new Vector3(width, (i + 1) * GraphHeight + topBarRect.height - scrollPositionY, 0f));
 			}
 
 			// Scrollbar
@@ -738,8 +738,8 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - topBarRect.height);
 
 			GUI.color = Color.white;
-			scrollPositionY = GUI.VerticalScrollbar(new Rect(
-				position.width - 15, topBarRect.height, 15f, position.height - topBarRect.height),
+			scrollPositionY = GUI.VerticalScrollbar(
+				new Rect(position.width - 15, topBarRect.height, 15f, position.height - topBarRect.height),
 				scrollPositionY, visibleHeightY, 0f, scrollMaxY);
 			scrollPositionY = Mathf.Max(scrollPositionY, 0f);
 
