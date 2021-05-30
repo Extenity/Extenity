@@ -384,8 +384,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				DrawTickLines(graphRect, timeStart, timeEnd);
 
-				foreach (var channel in graph.Channels)
+				for (var iChannel = 0; iChannel < graph.Channels.Count; iChannel++)
 				{
+					var channel = graph.Channels[iChannel];
 					var deselectedColor = channel.Color;
 					deselectedColor.a = DeselectedChannelAlpha;
 
@@ -680,12 +681,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				TagEntries.Clear();
 				graph.GetTagEntries(timeEnd - TimeWindow, timeEnd, TagEntries);
 
-				foreach (var entry in TagEntries)
+				for (var iTag = 0; iTag < TagEntries.Count; iTag++)
 				{
 					var eventColor = Color.yellow;
 					Handles.color = eventColor;
 
-					var normalizedX = (entry.Time - timeStart) / TimeWindow;
+					var normalizedX = (TagEntries[iTag].Time - timeStart) / TimeWindow;
 					if (normalizedX * graphRect.width >= 5f)
 					{
 						Handles.DrawLine(
@@ -710,7 +711,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 						GUI.color = eventColor;
 						GUI.contentColor = Color.white;
-						GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), entry.Text, simpleStyle);
+						GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), TagEntries[iTag].Text, simpleStyle);
 					}
 				}
 			}
@@ -753,9 +754,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					// Find the maximum time span in samples.
 					var minTime = LatestTimeOfFilteredGraphs;
 					var maxTime = LatestTimeOfFilteredGraphs;
-					foreach (var graph in FilteredGraphs)
+					for (var iGraph = 0; iGraph < FilteredGraphs.Count; iGraph++)
 					{
-						graph.GetMinMaxTime(out var graphMinTime, out var graphMaxTime);
+						FilteredGraphs[iGraph].GetMinMaxTime(out var graphMinTime, out var graphMaxTime);
 						if (minTime > graphMinTime)
 							minTime = graphMinTime;
 						if (maxTime < graphMaxTime)
@@ -970,8 +971,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			if (ContextFilter != null)
 			{
 				FilteredGraphs.Clear();
-				foreach (var graph in Graphs.All)
+				for (var i = 0; i < Graphs.All.Count; i++)
 				{
+					var graph = Graphs.All[i];
 					if (graph.Context == ContextFilter)
 					{
 						FilteredGraphs.Add(graph);
