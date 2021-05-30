@@ -340,27 +340,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				if (graphAreaRect.yMin > position.height || graphAreaRect.yMax < 0f)
 					continue;
 
-				Handles.color = GraphBoundsLineColor;
-				var ratio = Mathf.Clamp(graphRect.height * range.Min / span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
-
-				horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
-				horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
-				horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
-
-				if (range.Min <= 0f && range.Max >= 0f)
-				{
-					horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
-				}
-				else
-				{
-					horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
-				}
-
-				horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
-				horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
-				horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
-
-				Handles.DrawPolyLine(horizontalLines);
+				DrawHorizontalLines(graphRect, range);
 
 				if (isInPauseMode)
 				{
@@ -835,6 +815,31 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			Repaint();
 
 			wasInPauseMode = isInPauseMode;
+		}
+
+		private void DrawHorizontalLines(Rect graphRect, VerticalRange range)
+		{
+			Handles.color = GraphBoundsLineColor;
+			var ratio = Mathf.Clamp(graphRect.height * range.Min / range.Span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
+
+			horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
+			horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
+			horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
+
+			if (range.Min <= 0f && range.Max >= 0f)
+			{
+				horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
+			}
+			else
+			{
+				horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
+			}
+
+			horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
+			horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
+			horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
+
+			Handles.DrawPolyLine(horizontalLines);
 		}
 
 		#endregion
