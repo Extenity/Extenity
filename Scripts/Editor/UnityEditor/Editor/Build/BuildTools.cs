@@ -112,6 +112,14 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
 			{
+				// Delete Outside Location if it exists and contains only empty directories.
+				if (Directory.Exists(OutsideLocationBasePath) &&
+				    DirectoryTools.IsDirectoryEmptyOrOnlyContainsEmptySubdirectories(OutsideLocationBasePath))
+				{
+					Log.Info($"Removing empty directories at temporary location '{OutsideLocationBasePath}'.");
+					Directory.Delete(OutsideLocationBasePath, true);
+				}
+
 				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, false);
 			}
 		}
@@ -175,7 +183,8 @@ namespace Extenity.BuildToolbox.Editor
 	{
 		#region Windows Build Cleanup
 
-		public static void ClearWindowsBuild(string outputExecutablePath,
+		public static void ClearWindowsBuild(
+			string outputExecutablePath,
 			bool simplifyDataFolderName,
 			bool deleteDebugSymbolsFolder, bool deleteDLLArtifacts,
 			bool deleteCrashHandlerExecutable,
@@ -488,7 +497,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Build Output Directories
 
-		public static (BuildTarget BuildTarget, string DirectoryName)[] OutputDirectories = new []
+		public static (BuildTarget BuildTarget, string DirectoryName)[] OutputDirectories = new[]
 		{
 			(BuildTarget.StandaloneWindows64, "Windows"),
 			// (BuildTarget.StandaloneWindows, "Win32"), Decided not to put that, since 32 bit is no longer used in practice.
@@ -652,10 +661,10 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				var inputField = new UserInputField(key, false);
 				EditorMessageBox.Show(new Vector2Int(300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
-					() =>
-					{
-						EditorPrefs.SetString(key, inputField.Value.Trim());
-					}
+				                      () =>
+				                      {
+					                      EditorPrefs.SetString(key, inputField.Value.Trim());
+				                      }
 				);
 				throw new Exception($"Set the key and restart the process.");
 			}
