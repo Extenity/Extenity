@@ -427,6 +427,8 @@ namespace Extenity.AssetToolbox.Editor
 		/// <param name="destination"></param>
 		public static void ManuallyMoveFileOrDirectoryWithMeta(string source, string destination)
 		{
+			// TODO: It throws access violation exceptions for C++ dlls that is loaded by Unity editor. AssetDatabase.DeleteAsset might work. So this method should do "File.Copy and AssetDatabase.DeleteAsset source" rather than "File.Move".
+
 			if (string.IsNullOrEmpty(source))
 				throw new ArgumentNullException(nameof(source));
 			if (string.IsNullOrEmpty(destination))
