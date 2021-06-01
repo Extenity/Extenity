@@ -77,6 +77,13 @@ namespace Extenity.FileSystemToolbox
 			}
 		}
 
+		public static bool IsDirectoryEmptyOrOnlyContainsEmptySubdirectories(string path)
+		{
+			// Note that EnumerateFiles is performance friendly. It will stop looking for files
+			// the moment it finds a file, instead of traversing the full directory tree.
+			return !Directory.EnumerateFiles(path).Any();
+		}
+
 		public static HashSet<string> ListFilesInDirectory(string sourceDirectory, SearchOption searchOption,
 		                                                   string[] includeFilters = null, string[] excludeFilters = null,
 		                                                   bool throwOnError = true)
