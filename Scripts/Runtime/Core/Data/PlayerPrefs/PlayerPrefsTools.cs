@@ -18,9 +18,8 @@ namespace Extenity.DataToolbox
 
 	public class DeferredSaveHelper : AutoSingletonUnity<DeferredSaveHelper>
 	{
-		protected void Awake()
+		protected override void AwakeDerived()
 		{
-			InitializeSingleton();
 			DontDestroyOnLoad(this);
 		}
 

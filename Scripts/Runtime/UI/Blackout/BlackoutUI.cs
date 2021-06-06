@@ -10,10 +10,8 @@ namespace Extenity.UIToolbox
 	{
 		#region Initialization
 
-		private void Awake()
+		protected override void AwakeDerived()
 		{
-			InitializeSingleton();
-
 			InitializeDebug();
 		}
 

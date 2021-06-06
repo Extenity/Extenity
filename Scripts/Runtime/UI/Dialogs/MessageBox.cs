@@ -26,15 +26,6 @@ namespace Extenity.UIToolbox
 	/// </summary>
 	public class MessageBox : SingletonUnity<MessageBox>
 	{
-		#region Initialization
-
-		protected void Awake()
-		{
-			InitializeSingleton();
-		}
-
-		#endregion
-
 		#region Dialog Instantiation
 
 		[SerializeField]

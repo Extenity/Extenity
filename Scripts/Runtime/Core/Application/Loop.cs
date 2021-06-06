@@ -11,15 +11,15 @@ using Sirenix.OdinInspector;
 namespace Extenity
 {
 
+	// TODO: Make Loop a standalone system. Maybe convert to AutoSingletonUnity?
 	public class Loop : SingletonUnity<Loop>
 	{
 		#region Initialization
 
-		private void Awake()
+		protected override void AwakeDerived()
 		{
-			InitializeSingleton();
 			DontDestroyOnLoad(this);
-			
+
 			Invoker.ResetSystem();
 
 			// Automatically add Execution Order Helpers if required.

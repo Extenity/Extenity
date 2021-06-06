@@ -20,12 +20,20 @@ namespace Extenity.DesignPatternsToolbox
 	//   InitializeSingleton(...); must be placed on the Awake method of derived class.
 	public class SingletonUnity<T> : MonoBehaviour where T : SingletonUnity<T>
 	{
-		protected virtual void OnDestroyDerived() { }
-
 		private static T _Instance;
 #pragma warning disable 414
 		private string ClassName;
 #pragma warning restore
+
+#if !ManuallyInitializeSingletons
+		protected virtual void AwakeDerived() { }
+		protected void Awake()
+		{
+			InitializeSingleton();
+
+			AwakeDerived();
+		}
+#endif
 
 		protected T InitializeSingleton(bool dontDestroyOnLoad = false)
 		{
@@ -52,8 +60,14 @@ namespace Extenity.DesignPatternsToolbox
 			// Returning the instance for ease of use. When there are double derived singleton classes,
 			// they need to keep their own static instance fields. Returning the instance here allows
 			// these fields to be set directly in one-liner code where InitializeSingleton is called.
+			//
+			// Note that with strict initialization of singletons, InitializeSingleton is called by
+			// singleton itself. So you need to define ManuallyInitializeSingletons directive and
+			// initialize singletons by yourself.
 			return _Instance;
 		}
+
+		protected virtual void OnDestroyDerived() { }
 
 		/// <summary>
 		/// Derived classes should implement OnDestroyDerived.

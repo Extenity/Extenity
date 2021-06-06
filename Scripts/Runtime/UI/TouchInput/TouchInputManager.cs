@@ -12,15 +12,6 @@ namespace Extenity.UIToolbox.TouchInput
 
 	public class TouchInputManager : SingletonUnity<TouchInputManager>
 	{
-		#region Initialization
-
-		protected void Awake()
-		{
-			InitializeSingleton();
-		}
-
-		#endregion
-
 		#region Schemes
 
 		[ListDrawerSettings(Expanded = true, OnBeginListElementGUI = "_BeginListEntry", OnEndListElementGUI = "_EndListEntry")]

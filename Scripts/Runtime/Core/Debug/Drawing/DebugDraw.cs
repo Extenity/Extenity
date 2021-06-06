@@ -34,10 +34,8 @@ namespace Extenity.DebugToolbox
 
 		#region Initialization
 
-		private void Awake()
+		protected override void AwakeDerived()
 		{
-			InitializeSingleton();
-
 			InitializeTextures();
 
 #if !UNITY_DRAWER

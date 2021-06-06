@@ -16,10 +16,8 @@ namespace Extenity.RenderingToolbox
 
 		#region Initialization
 
-		private void Awake()
+		protected override void AwakeDerived()
 		{
-			InitializeSingleton();
-
 			Calculate();
 		}
 
