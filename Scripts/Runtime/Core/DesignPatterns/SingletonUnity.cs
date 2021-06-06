@@ -25,7 +25,7 @@ namespace Extenity.DesignPatternsToolbox
 		private string ClassName;
 #pragma warning restore
 
-		protected T InitializeSingleton(bool dontDestroyOnLoad)
+		protected T InitializeSingleton(bool dontDestroyOnLoad = false)
 		{
 			ClassName = typeof(T).Name;
 #if LoggingEnabled
