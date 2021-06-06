@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Extenity.ApplicationToolbox;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -41,10 +42,15 @@ namespace Extenity.DesignPatternsToolbox
 		{
 			if (_SingletonCalls.ContainsKey(className))
 			{
+				if (_SingletonCalls[className] < 0)
+				{
+					Log.Error($"Singleton '{className}' tracker was below zero");
+					_SingletonCalls[className] = 0;
+				}
 				_SingletonCalls[className]++;
 				if (_SingletonCalls[className] > 1)
 				{
-					Log.Error("Singleton '" + className + "' instantiated " + _SingletonCalls[className] + " times");
+					Log.Error($"Singleton '{className}' instantiated {_SingletonCalls[className]} times");
 				}
 			}
 			else
@@ -55,6 +61,23 @@ namespace Extenity.DesignPatternsToolbox
 
 		public static void SingletonDestroyed(string className)
 		{
+			// Enter Playmode Options is a funny tool. It will leave static variables
+			// in all kinds of unpleasant states. So this was the easiest way. Just stop
+			// tracking singletons when quitting play mode.
+			//
+			// This behaviour needs a bit more inspection to be fair, but SingletonTracker
+			// is just a helper tool to track singleton instantiation at runtime and it's
+			// okay not to track singletons when closing the application.
+			if (ApplicationTools.IsShuttingDown)
+			{
+				// Clearing is required, because calling order between playModeStateChanged
+				// and OnDestroy will vary wildly depending on the singleton script
+				// having ExecuteAlways attribute. So just clear _SingletonCalls in both
+				// occasions to make sure everything works smooth.
+				_SingletonCalls.Clear();
+				return;
+			}
+
 			if (_SingletonCalls.ContainsKey(className))
 			{
 				_SingletonCalls[className]--;
