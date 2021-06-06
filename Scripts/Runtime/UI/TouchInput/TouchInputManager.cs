@@ -5,7 +5,6 @@ using Extenity.DataToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.MessagingToolbox;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
 namespace Extenity.UIToolbox.TouchInput
 {
@@ -16,7 +15,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 		protected void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
 		}
 
 		#endregion

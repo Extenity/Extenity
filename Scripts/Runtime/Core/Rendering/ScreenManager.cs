@@ -18,7 +18,7 @@ namespace Extenity.RenderingToolbox
 
 		private void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
 
 			Calculate();
 		}

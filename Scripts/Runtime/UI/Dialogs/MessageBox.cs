@@ -30,7 +30,7 @@ namespace Extenity.UIToolbox
 
 		protected void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
 		}
 
 		#endregion

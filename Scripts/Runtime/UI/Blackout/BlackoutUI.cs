@@ -12,7 +12,7 @@ namespace Extenity.UIToolbox
 
 		private void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
 
 			InitializeDebug();
 		}

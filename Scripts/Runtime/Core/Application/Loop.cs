@@ -17,7 +17,9 @@ namespace Extenity
 
 		private void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
+			DontDestroyOnLoad(this);
+			
 			Invoker.ResetSystem();
 
 			// Automatically add Execution Order Helpers if required.

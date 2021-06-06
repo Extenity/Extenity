@@ -20,7 +20,8 @@ namespace Extenity.DataToolbox
 	{
 		protected void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
+			DontDestroyOnLoad(this);
 		}
 
 		#region Test

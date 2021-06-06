@@ -10,7 +10,7 @@ namespace Extenity.UIToolbox
 
 		protected void Awake()
 		{
-			InitializeSingleton(this);
+			InitializeSingleton();
 		}
 	}
 

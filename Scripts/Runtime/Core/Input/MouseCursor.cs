@@ -11,7 +11,7 @@ namespace Extenity.InputToolbox
 
 		protected void Awake()
 		{
-			InitializeSingleton(true);
+			InitializeSingleton();
 		}
 
 		#endregion
