@@ -19,6 +19,8 @@ namespace Extenity.DesignPatternsToolbox
 	//   InitializeSingleton(...); must be placed on the Awake method of derived class.
 	public class AutoSingletonUnity<T> : MonoBehaviour where T : AutoSingletonUnity<T>
 	{
+		protected virtual void OnDestroyDerived() { }
+
 		private static T _Instance;
 #pragma warning disable 414
 		private string ClassName;
@@ -45,7 +47,10 @@ namespace Extenity.DesignPatternsToolbox
 			return _Instance;
 		}
 
-		protected virtual void OnDestroy()
+		/// <summary>
+		/// Derived classes should implement OnDestroyDerived.
+		/// </summary>
+		protected void OnDestroy()
 		{
 			if (_Instance == null)  // To prevent errors in ExecuteInEditMode
 				return;
@@ -55,6 +60,8 @@ namespace Extenity.DesignPatternsToolbox
 #endif
 			_Instance = default(T);
 			SingletonTracker.SingletonDestroyed(ClassName);
+
+			OnDestroyDerived();
 		}
 
 		public static T CreateSingleton(string addedGameObjectName = "_")
