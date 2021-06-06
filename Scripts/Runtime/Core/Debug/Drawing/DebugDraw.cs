@@ -15,7 +15,7 @@ using Extenity.TextureToolbox;
 namespace Extenity.DebugToolbox
 {
 
-	public class DebugDraw : SingletonUnity<DebugDraw>
+	public class DebugDraw : AutoSingletonUnity<DebugDraw>
 	{
 		public static bool DebugDrawingDisabled = false;
 
