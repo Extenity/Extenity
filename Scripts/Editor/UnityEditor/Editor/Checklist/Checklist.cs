@@ -18,7 +18,7 @@ namespace Extenity.UnityEditorToolbox
 	{
 		#region Configuration
 
-		protected override string LatestVersion => ChecklistConstants.Version;
+		protected override string LatestVersion => "1";
 
 		#endregion
 

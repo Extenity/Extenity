@@ -72,37 +72,6 @@ namespace Extenity.UnityEditorToolbox
 		[NonSerialized]
 		private bool IsFoldout;
 
-		private GUIStyle _StatusDropdownStyle;
-		private GUIStyle StatusDropdownStyle
-		{
-			get
-			{
-				if (_StatusDropdownStyle == null)
-				{
-					_StatusDropdownStyle = new GUIStyle(EditorStyles.popup);
-					_StatusDropdownStyle.fixedHeight = ChecklistConstants.SmallIconSize;
-					_StatusDropdownStyle.margin = new RectOffset();
-					_StatusDropdownStyle.border = new RectOffset();
-				}
-				return _StatusDropdownStyle;
-			}
-		}
-
-		private GUIStyle _IconStyle;
-		private GUIStyle IconStyle
-		{
-			get
-			{
-				if (_IconStyle == null)
-				{
-					_IconStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
-					_IconStyle.margin = new RectOffset();
-					_IconStyle.padding = new RectOffset(2, 2, 2, 2);
-				}
-				return _IconStyle;
-			}
-		}
-
 		[OnInspectorGUI]
 		private void DrawStatusIcon(InspectorProperty property)
 		{
@@ -118,7 +87,7 @@ namespace Extenity.UnityEditorToolbox
 					var icon = CheckIfCompletedOrSkipped()
 						? ChecklistIcons.Texture_Accept
 						: ChecklistIcons.Texture_Reject;
-					if (GUILayout.Button(icon, IconStyle, ChecklistConstants.SmallIconLayoutOptions))
+					if (GUILayout.Button(icon, ChecklistStyles.IconStyle, ChecklistStyles.SmallIconLayoutOptions))
 					{
 						if (Status == ChecklistItemStatus.Completed)
 						{
@@ -133,8 +102,8 @@ namespace Extenity.UnityEditorToolbox
 
 				// Status
 				{
-					var rect = GUILayoutUtility.GetRect(112, ChecklistConstants.SmallIconSize, GUILayout.Width(112));
-					Status = EnumSelector<ChecklistItemStatus>.DrawEnumField(rect, GUIContent.none, Status, StatusDropdownStyle);
+					var rect = GUILayoutUtility.GetRect(112, ChecklistStyles.SmallIconSize, GUILayout.Width(112));
+					Status = EnumSelector<ChecklistItemStatus>.DrawEnumField(rect, GUIContent.none, Status, ChecklistStyles.StatusDropdownStyle);
 				}
 
 				// Foldout title
@@ -154,7 +123,7 @@ namespace Extenity.UnityEditorToolbox
 			{
 				GUILayout.Space(6f);
 				GUILayout.BeginHorizontal();
-				GUILayout.Space(ChecklistConstants.SmallIconSize + 8);
+				GUILayout.Space(ChecklistStyles.SmallIconSize + 8);
 				SirenixEditorGUI.BeginBox();
 				GUILayout.BeginVertical();
 				GUILayout.Space(6f);
@@ -270,13 +239,13 @@ namespace Extenity.UnityEditorToolbox
 		#region Editor
 
 		[OnInspectorGUI, PropertySpace(SpaceBefore = 18)]
-		[HorizontalGroup("Title", Width = ChecklistConstants.MidIconSize), PropertyOrder(-1)]
+		[HorizontalGroup("Title", Width = ChecklistStyles.MidIconSize), PropertyOrder(-1)]
 		private void _DrawIcon()
 		{
 			var icon = CheckIfAllItemsAreCompletedOrSkipped()
 				? ChecklistIcons.Texture_Accept
 				: ChecklistIcons.Texture_Reject;
-			GUILayout.Label(icon, ChecklistConstants.MidIconLayoutOptions);
+			GUILayout.Label(icon, ChecklistStyles.MidIconLayoutOptions);
 		}
 
 		public bool IsMatch(string searchString)
@@ -338,13 +307,13 @@ namespace Extenity.UnityEditorToolbox
 		#region Editor
 
 		[OnInspectorGUI, PropertySpace(SpaceBefore = 12)]
-		[HorizontalGroup("Title", Width = ChecklistConstants.BigIconSize), PropertyOrder(-1)]
+		[HorizontalGroup("Title", Width = ChecklistStyles.BigIconSize), PropertyOrder(-1)]
 		private void _DrawIcon()
 		{
 			var icon = CheckIfAllGroupsAreCompletedOrSkipped()
 				? ChecklistIcons.Texture_Accept
 				: ChecklistIcons.Texture_Reject;
-			GUILayout.Label(icon, ChecklistConstants.BigIconLayoutOptions);
+			GUILayout.Label(icon, ChecklistStyles.BigIconLayoutOptions);
 		}
 
 		public bool IsMatch(string searchString)
