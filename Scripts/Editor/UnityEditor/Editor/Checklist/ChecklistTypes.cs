@@ -72,6 +72,37 @@ namespace Extenity.UnityEditorToolbox
 		[NonSerialized]
 		private bool IsFoldout;
 
+		private GUIStyle _StatusDropdownStyle;
+		private GUIStyle StatusDropdownStyle
+		{
+			get
+			{
+				if (_StatusDropdownStyle == null)
+				{
+					_StatusDropdownStyle = new GUIStyle(EditorStyles.popup);
+					_StatusDropdownStyle.fixedHeight = ChecklistConstants.SmallIconSize;
+					_StatusDropdownStyle.margin = new RectOffset();
+					_StatusDropdownStyle.border = new RectOffset();
+				}
+				return _StatusDropdownStyle;
+			}
+		}
+
+		private GUIStyle _IconStyle;
+		private GUIStyle IconStyle
+		{
+			get
+			{
+				if (_IconStyle == null)
+				{
+					_IconStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
+					_IconStyle.margin = new RectOffset();
+					_IconStyle.padding = new RectOffset(2, 2, 2, 2);
+				}
+				return _IconStyle;
+			}
+		}
+
 		[OnInspectorGUI]
 		private void DrawStatusIcon(InspectorProperty property)
 		{
@@ -87,17 +118,23 @@ namespace Extenity.UnityEditorToolbox
 					var icon = CheckIfCompletedOrSkipped()
 						? ChecklistIcons.Texture_Accept
 						: ChecklistIcons.Texture_Reject;
-					if (GUILayout.Button(icon, GUI.skin.GetStyle("Label"), ChecklistConstants.SmallIconLayoutOptions))
+					if (GUILayout.Button(icon, IconStyle, ChecklistConstants.SmallIconLayoutOptions))
 					{
-						IsFoldout = !IsFoldout;
+						if (Status == ChecklistItemStatus.Completed)
+						{
+							Status = ChecklistItemStatus.NeedsAttention;
+						}
+						else
+						{
+							Status = ChecklistItemStatus.Completed;
+						}
 					}
 				}
 
 				// Status
 				{
 					var rect = GUILayoutUtility.GetRect(112, ChecklistConstants.SmallIconSize, GUILayout.Width(112));
-					rect.y += 2;
-					Status = EnumSelector<ChecklistItemStatus>.DrawEnumField(rect, GUIContent.none, Status, null);
+					Status = EnumSelector<ChecklistItemStatus>.DrawEnumField(rect, GUIContent.none, Status, StatusDropdownStyle);
 				}
 
 				// Foldout title
