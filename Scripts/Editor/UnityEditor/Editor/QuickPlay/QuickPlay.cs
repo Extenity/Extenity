@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using Extenity.ApplicationToolbox;
-using Sirenix.Utilities;
 using UnityEditor;
 using UnityEditor.Callbacks;
 
@@ -173,7 +172,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 						// Ignored.
 					}
 
-					if (_ShortcutKeyCombination.IsNullOrEmpty())
+					if (_ShortcutKeyCombination == null || _ShortcutKeyCombination.Length == 0)
 					{
 						_ShortcutKeyCombination = DefaultShortcutKeyCombination;
 					}
