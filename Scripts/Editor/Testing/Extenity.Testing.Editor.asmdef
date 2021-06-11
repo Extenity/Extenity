@@ -1,18 +1,23 @@
 {
     "name": "Extenity.Testing",
+    "rootNamespace": "",
     "references": [
         "Extenity.Core",
-        "Extenity.Core.Editor"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Extenity.Core.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": []
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -1,5 +1,6 @@
 {
     "name": "Extenity.Tests.Editor",
+    "rootNamespace": "",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",

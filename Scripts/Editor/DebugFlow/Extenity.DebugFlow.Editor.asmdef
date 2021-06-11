@@ -1,11 +1,11 @@
 {
     "name": "Extenity.DebugFlow.Editor",
+    "rootNamespace": "",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
         "Extenity.DebugFlow"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -13,8 +13,10 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [
         "EnableDebugFlow"
-    ]
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

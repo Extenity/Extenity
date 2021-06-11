@@ -1,9 +1,9 @@
 {
     "name": "Extenity.Core.Editor",
+    "rootNamespace": "",
     "references": [
         "Extenity.Core"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -11,6 +11,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

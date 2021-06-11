@@ -1,5 +1,6 @@
 {
     "name": "Extenity.UI.Editor",
+    "rootNamespace": "",
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
@@ -8,7 +9,6 @@
         "Unity.TextMeshPro.Editor",
         "DOTweenModules"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -16,6 +16,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
