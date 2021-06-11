@@ -6,8 +6,7 @@
         "Extenity.Core.Editor",
         "Extenity.UI",
         "Unity.TextMeshPro",
-        "Unity.TextMeshPro.Editor",
-        "DOTweenModules"
+        "Unity.TextMeshPro.Editor"
     ],
     "includePlatforms": [
         "Editor"
