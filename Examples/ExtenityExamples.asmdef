@@ -4,15 +4,8 @@
     "references": [
         "Extenity.Core",
         "Extenity.Core.Editor",
-        "Extenity.DebugFlow",
-        "Extenity.DebugFlow.Editor",
-        "Extenity.Testing",
-        "Extenity.UI",
-        "Extenity.UI.Editor",
         "Extenity.UnityEditor.Editor",
         "Unity.TextMeshPro",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
         "Extenity.BeyondAudio"
     ],
     "includePlatforms": [
