@@ -2,8 +2,9 @@
     "name": "Extenity.DebugFlow.Editor",
     "rootNamespace": "",
     "references": [
+        "Extenity.DebugFlow",
         "Extenity.Core",
-        "Extenity.DebugFlow"
+        "Extenity.Core.Editor"
     ],
     "includePlatforms": [
         "Editor"
