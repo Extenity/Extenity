@@ -707,33 +707,33 @@ public static class Log
 	// [DebuggerHidden]
 	public static void CurrentMethod(string additionalText = null)
 	{
-		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PreviousMethodNameWithType :
-			DebugReflection.PreviousMethodNameWithType + " : " + additionalText);
+		Info(string.IsNullOrEmpty(additionalText)
+			     ? DebugReflection.PreviousMethodNameWithType
+			     : DebugReflection.PreviousMethodNameWithType + " : " + additionalText);
 	}
 
 	// [DebuggerHidden]
 	public static void PreviousMethod(string additionalText = null)
 	{
-		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PrePreviousMethodNameWithType :
-			DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText);
+		Info(string.IsNullOrEmpty(additionalText)
+			     ? DebugReflection.PrePreviousMethodNameWithType
+			     : DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText);
 	}
 
 	// [DebuggerHidden]
 	public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
-		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")" :
-			DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
+		Info(string.IsNullOrEmpty(additionalText)
+			     ? DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
+			     : DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
 	}
 
 	// [DebuggerHidden]
 	public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
 	{
-		Info(string.IsNullOrEmpty(additionalText) ?
-			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")" :
-			DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
+		Info(string.IsNullOrEmpty(additionalText)
+			     ? DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
+			     : DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
 	}
 
 	#endregion
