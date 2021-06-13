@@ -319,23 +319,11 @@ namespace Extenity.MathToolbox
 			if (value.z == 0) value.z = changeTo;
 		}
 
-		public static Vector3Int WithX(this Vector3Int value, int overriddenX)
-		{
-			value.x = overriddenX;
-			return value;
-		}
-
-		public static Vector3Int WithY(this Vector3Int value, int overriddenY)
-		{
-			value.y = overriddenY;
-			return value;
-		}
-
-		public static Vector3Int WithZ(this Vector3Int value, int overriddenZ)
-		{
-			value.z = overriddenZ;
-			return value;
-		}
+		// @formatter:off
+		public static Vector3Int WithX(this Vector3Int value, int overriddenX) { value.x = overriddenX; return value; }
+		public static Vector3Int WithY(this Vector3Int value, int overriddenY) { value.y = overriddenY; return value; }
+		public static Vector3Int WithZ(this Vector3Int value, int overriddenZ) { value.z = overriddenZ; return value; }
+		// @formatter:on
 
 		#endregion
 	}

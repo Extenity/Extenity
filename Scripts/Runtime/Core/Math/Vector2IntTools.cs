@@ -268,17 +268,10 @@ namespace Extenity.MathToolbox
 			if (value.y == 0) value.y = changeTo;
 		}
 
-		public static Vector2Int WithX(this Vector2Int value, int overriddenX)
-		{
-			value.x = overriddenX;
-			return value;
-		}
-
-		public static Vector2Int WithY(this Vector2Int value, int overriddenY)
-		{
-			value.y = overriddenY;
-			return value;
-		}
+		// @formatter:off
+		public static Vector2Int WithX(this Vector2Int value, int overriddenX) { value.x = overriddenX; return value; }
+		public static Vector2Int WithY(this Vector2Int value, int overriddenY) { value.y = overriddenY; return value; }
+		// @formatter:on
 
 		#endregion
 	}

@@ -496,28 +496,13 @@ namespace Extenity.MathToolbox
 			return val;
 		}
 
-		public static Vector2 ScaleX(this Vector2 vector, float scale)
-		{
-			vector.x *= scale;
-			return vector;
-		}
-		public static Vector2 ScaleY(this Vector2 vector, float scale)
-		{
-			vector.y *= scale;
-			return vector;
-		}
+		// @formatter:off
+		public static Vector2 ScaleX(this Vector2 vector, float scale) { vector.x *= scale; return vector; }
+		public static Vector2 ScaleY(this Vector2 vector, float scale) { vector.y *= scale; return vector; }
 
-		public static Vector2 WithX(this Vector2 value, float overriddenX)
-		{
-			value.x = overriddenX;
-			return value;
-		}
-
-		public static Vector2 WithY(this Vector2 value, float overriddenY)
-		{
-			value.y = overriddenY;
-			return value;
-		}
+		public static Vector2 WithX(this Vector2 value, float overriddenX) { value.x = overriddenX; return value; }
+		public static Vector2 WithY(this Vector2 value, float overriddenY) { value.y = overriddenY; return value; }
+		// @formatter:on
 
 		#endregion
 
