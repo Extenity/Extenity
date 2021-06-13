@@ -705,35 +705,41 @@ public static class Log
 	}
 
 	// [DebuggerHidden]
-	public static void CurrentMethod(string additionalText = null)
+	public static void CurrentMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 	{
-		Info(string.IsNullOrEmpty(additionalText)
-			     ? DebugReflection.PreviousMethodNameWithType
-			     : DebugReflection.PreviousMethodNameWithType + " : " + additionalText);
+		Any(string.IsNullOrEmpty(additionalText)
+			    ? DebugReflection.PreviousMethodNameWithType
+			    : DebugReflection.PreviousMethodNameWithType + " : " + additionalText,
+		    category);
 	}
 
 	// [DebuggerHidden]
-	public static void PreviousMethod(string additionalText = null)
+	public static void PreviousMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 	{
-		Info(string.IsNullOrEmpty(additionalText)
-			     ? DebugReflection.PrePreviousMethodNameWithType
-			     : DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText);
+		Any(string.IsNullOrEmpty(additionalText)
+			    ? DebugReflection.PrePreviousMethodNameWithType
+			    : DebugReflection.PrePreviousMethodNameWithType + " : " + additionalText,
+		    category);
 	}
 
 	// [DebuggerHidden]
-	public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
+	public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
 	{
-		Info(string.IsNullOrEmpty(additionalText)
-			     ? DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
-			     : DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
+		Any(string.IsNullOrEmpty(additionalText)
+			    ? DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
+			    : DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText,
+		    category,
+		    me);
 	}
 
 	// [DebuggerHidden]
-	public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null)
+	public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
 	{
-		Info(string.IsNullOrEmpty(additionalText)
-			     ? DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
-			     : DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText);
+		Any(string.IsNullOrEmpty(additionalText)
+			    ? DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
+			    : DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText,
+		    category,
+		    me);
 	}
 
 	#endregion
