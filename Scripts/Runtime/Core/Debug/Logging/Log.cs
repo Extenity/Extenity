@@ -270,11 +270,13 @@ public static class Log
 	{
 		switch (category)
 		{
-			case LogCategory.Verbose: Verbose(message); break;
-			case LogCategory.Info: Info(message); break;
-			case LogCategory.Warning: Warning(message); break;
-			case LogCategory.Error: Error(message); break;
+			// @formatter:off
+			case LogCategory.Verbose:  Verbose(message);       break;
+			case LogCategory.Info:     Info(message);          break;
+			case LogCategory.Warning:  Warning(message);       break;
+			case LogCategory.Error:    Error(message);         break;
 			case LogCategory.Critical: CriticalError(message); break;
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(category), category, null);
 		}
@@ -285,11 +287,13 @@ public static class Log
 	{
 		switch (category)
 		{
-			case LogCategory.Verbose: Verbose(message, context); break;
-			case LogCategory.Info: Info(message, context); break;
-			case LogCategory.Warning: Warning(message, context); break;
-			case LogCategory.Error: Error(message, context); break;
+			// @formatter:off
+			case LogCategory.Verbose:  Verbose(message, context);       break;
+			case LogCategory.Info:     Info(message, context);          break;
+			case LogCategory.Warning:  Warning(message, context);       break;
+			case LogCategory.Error:    Error(message, context);         break;
 			case LogCategory.Critical: CriticalError(message, context); break;
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(category), category, null);
 		}
@@ -332,9 +336,11 @@ public static class Log
 	{
 		switch (severity)
 		{
-			case SeverityCategory.Warning: Warning(message); break;
-			case SeverityCategory.Error: Error(message); break;
+			// @formatter:off
+			case SeverityCategory.Warning:  Warning(message);       break;
+			case SeverityCategory.Error:    Error(message);         break;
 			case SeverityCategory.Critical: CriticalError(message); break;
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
@@ -345,9 +351,11 @@ public static class Log
 	{
 		switch (severity)
 		{
-			case SeverityCategory.Warning: Warning(message, context); break;
-			case SeverityCategory.Error: Error(message, context); break;
+			// @formatter:off
+			case SeverityCategory.Warning:  Warning(message, context);       break;
+			case SeverityCategory.Error:    Error(message, context);         break;
 			case SeverityCategory.Critical: CriticalError(message, context); break;
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
@@ -539,9 +547,11 @@ public static class Log
 	{
 		switch (severity)
 		{
-			case SeverityCategory.Warning: DebugWarning(message); break;
-			case SeverityCategory.Error: DebugError(message); break;
+			// @formatter:off
+			case SeverityCategory.Warning:  DebugWarning(message);  break;
+			case SeverityCategory.Error:    DebugError(message);    break;
 			case SeverityCategory.Critical: CriticalError(message); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
@@ -553,9 +563,11 @@ public static class Log
 	{
 		switch (severity)
 		{
-			case SeverityCategory.Warning: DebugWarning(message, context); break;
-			case SeverityCategory.Error: DebugError(message, context); break;
+			// @formatter:off
+			case SeverityCategory.Warning:  DebugWarning(message, context);  break;
+			case SeverityCategory.Error:    DebugError(message, context);    break;
 			case SeverityCategory.Critical: CriticalError(message, context); break; // Use the non-debug variant of CriticalError because there is no debug variant one.
+			// @formatter:on
 			default:
 				throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 		}
