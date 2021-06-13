@@ -323,6 +323,10 @@ namespace Extenity.MathToolbox
 		public static Vector3Int WithX(this Vector3Int value, int overriddenX) { value.x = overriddenX; return value; }
 		public static Vector3Int WithY(this Vector3Int value, int overriddenY) { value.y = overriddenY; return value; }
 		public static Vector3Int WithZ(this Vector3Int value, int overriddenZ) { value.z = overriddenZ; return value; }
+
+		public static Vector3Int AddX(this Vector3Int value, int addedX) { value.x += addedX; return value; }
+		public static Vector3Int AddY(this Vector3Int value, int addedY) { value.y += addedY; return value; }
+		public static Vector3Int AddZ(this Vector3Int value, int addedZ) { value.z += addedZ; return value; }
 		// @formatter:on
 
 		#endregion

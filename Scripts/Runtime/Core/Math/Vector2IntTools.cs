@@ -271,6 +271,9 @@ namespace Extenity.MathToolbox
 		// @formatter:off
 		public static Vector2Int WithX(this Vector2Int value, int overriddenX) { value.x = overriddenX; return value; }
 		public static Vector2Int WithY(this Vector2Int value, int overriddenY) { value.y = overriddenY; return value; }
+
+		public static Vector2Int AddX(this Vector2Int value, int addedX) { value.x += addedX; return value; }
+		public static Vector2Int AddY(this Vector2Int value, int addedY) { value.y += addedY; return value; }
 		// @formatter:on
 
 		#endregion

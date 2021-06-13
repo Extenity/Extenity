@@ -703,6 +703,10 @@ namespace Extenity.MathToolbox
 		public static Vector3 WithX(this Vector3 value, float overriddenX) { value.x = overriddenX; return value; }
 		public static Vector3 WithY(this Vector3 value, float overriddenY) { value.y = overriddenY; return value; }
 		public static Vector3 WithZ(this Vector3 value, float overriddenZ) { value.z = overriddenZ; return value; }
+
+		public static Vector3 AddX(this Vector3 value, int addedX) { value.x += addedX; return value; }
+		public static Vector3 AddY(this Vector3 value, int addedY) { value.y += addedY; return value; }
+		public static Vector3 AddZ(this Vector3 value, int addedZ) { value.z += addedZ; return value; }
 		// @formatter:on
 
 		#endregion
