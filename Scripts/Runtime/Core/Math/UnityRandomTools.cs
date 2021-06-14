@@ -123,26 +123,24 @@ namespace Extenity.MathToolbox
 
 		#region Random Collections
 
-		public static byte[] FillRandomly(this byte[] data, int count = -1)
+		public static void FillRandom(this IList<byte> data, byte minInclusive = 0, byte maxExclusive = 255, int count = -1)
 		{
 			if (count < 0)
-				count = data.Length;
+				count = data.Count;
 			for (int i = 0; i < count; i++)
 			{
-				data[i] = (byte)Random.Range(0, 255);
+				data[i] = (byte)Random.Range(minInclusive, maxExclusive);
 			}
-			return data; // Return the array, just for convenience.
 		}
 
-		public static char[] FillRandomly(this char[] data, int count = -1)
+		public static void FillRandomLowerLetters(this IList<char> data, int count = -1)
 		{
 			if (count < 0)
-				count = data.Length;
+				count = data.Count;
 			for (int i = 0; i < count; i++)
 			{
 				data[i] = (char)Random.Range((int)'a', (int)'z');
 			}
-			return data; // Return the array, just for convenience.
 		}
 
 		#endregion
