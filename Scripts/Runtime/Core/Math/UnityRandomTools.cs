@@ -103,10 +103,12 @@ namespace Extenity.MathToolbox
 		{
 			return Random.Range(min, max);
 		}
+
 		public static int RandomRangeIncludingMax(int min, int max)
 		{
 			return Random.Range(min, max + 1);
 		}
+
 		public static Color RandomColor
 		{
 			get { return new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)); }
@@ -133,6 +135,7 @@ namespace Extenity.MathToolbox
 		{
 			get { return 0.5f > Random.value; }
 		}
+
 		public static bool RandomBoolRatio(float ratio)
 		{
 			return ratio > Random.value;
@@ -147,26 +150,32 @@ namespace Extenity.MathToolbox
 		{
 			return new Vector2(Random.Range(-range, range), Random.Range(-range, range));
 		}
+
 		public static Vector3 RandomVector3(float range)
 		{
 			return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range));
 		}
+
 		public static Vector2 RandomVector2(float rangeX, float rangeY)
 		{
 			return new Vector2(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY));
 		}
+
 		public static Vector3 RandomVector3(float rangeX, float rangeY, float rangeZ)
 		{
 			return new Vector3(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY), Random.Range(-rangeZ, rangeZ));
 		}
+
 		public static Vector2 RandomVector2(Vector2 range)
 		{
 			return new Vector2(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y));
 		}
+
 		public static Vector3 RandomVector3(Vector3 range)
 		{
 			return new Vector3(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y), Random.Range(-range.z, range.z));
 		}
+
 		public static Vector2 RandomUnitVector2
 		{
 			get { return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
@@ -210,24 +219,28 @@ namespace Extenity.MathToolbox
 				return -1;
 			return Random.Range(0, list.Length);
 		}
+
 		public static int RandomIndexSelection<T>(this T[] list, System.Random random)
 		{
 			if (list.Length == 0)
 				return -1;
 			return random.Next(0, list.Length);
 		}
+
 		public static int RandomIndexSelection<T>(this ICollection<T> collection)
 		{
 			if (collection.Count == 0)
 				return -1;
 			return Random.Range(0, collection.Count);
 		}
+
 		public static int RandomIndexSelection<T>(this ICollection<T> collection, System.Random random)
 		{
 			if (collection.Count == 0)
 				return -1;
 			return random.Next(0, collection.Count);
 		}
+
 		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromList)
 		{
 			if (list.Count == 0)
@@ -237,6 +250,7 @@ namespace Extenity.MathToolbox
 				list.RemoveAt(index);
 			return index;
 		}
+
 		public static int RandomIndexSelection<T>(this IList<T> list, bool removeFromList, System.Random random)
 		{
 			if (list.Count == 0)
@@ -257,24 +271,28 @@ namespace Extenity.MathToolbox
 				return default(T);
 			return list[Random.Range(0, list.Length)];
 		}
+
 		public static T RandomSelection<T>(this T[] list, System.Random random)
 		{
 			if (list.Length == 0)
 				return default(T);
 			return list[random.Next(0, list.Length)];
 		}
+
 		public static T RandomSelection<T>(this IList<T> list)
 		{
 			if (list.Count == 0)
 				return default(T);
 			return list[Random.Range(0, list.Count)];
 		}
+
 		public static T RandomSelection<T>(this IList<T> list, System.Random random)
 		{
 			if (list.Count == 0)
 				return default(T);
 			return list[random.Next(0, list.Count)];
 		}
+
 		public static T RandomSelection<T>(this IList<T> list, bool removeFromlist)
 		{
 			if (list.Count == 0)
@@ -285,6 +303,7 @@ namespace Extenity.MathToolbox
 				list.RemoveAt(index);
 			return val;
 		}
+
 		public static T RandomSelection<T>(this IList<T> list, bool removeFromlist, System.Random random)
 		{
 			if (list.Count == 0)
@@ -341,6 +360,7 @@ namespace Extenity.MathToolbox
 				return list.RandomSelection(); // All items are equal to the excluded item. Select one of them randomly.
 			return default(T);
 		}
+
 		/// <summary>
 		/// Selects a random item from list while excluding any items that is equal to excludeItem.
 		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
@@ -409,6 +429,7 @@ namespace Extenity.MathToolbox
 				return item;
 			}
 		}
+
 		/// <summary>
 		/// Selects a random item from list while excluding any items that is equal to excludeItem.
 		/// A neat trick would be to pass null as excludeItem, which excludes all null items from
