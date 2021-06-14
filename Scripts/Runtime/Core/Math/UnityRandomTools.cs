@@ -110,7 +110,7 @@ namespace Extenity.MathToolbox
 		public static float Random360 => 360f * Random.value;
 		public static bool RandomBool => 0.5f > Random.value;
 		public static bool RandomBoolRatio(float ratio) { return ratio > Random.value; }
-		public static float RandomPosNeg => RandomBool ? -1f : 1f;
+		public static float RandomSign => RandomBool ? -1f : 1f;
 
 		public static Vector2 RandomVector2(float range) { return new Vector2(Random.Range(-range, range), Random.Range(-range, range)); }
 		public static Vector3 RandomVector3(float range) { return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range)); }
