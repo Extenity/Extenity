@@ -636,6 +636,24 @@ namespace Extenity.DataToolbox
 			return array;
 		}
 
+		public static void Fill<T>(this IList<T> list, T value)
+		{
+			for (int i = 0; i < list.Count; i++)
+			{
+				list[i] = value;
+			}
+		}
+
+		public static void Fill<T>(this IList<T> list, T value, int startIndex, int count = -1)
+		{
+			if (count < 0)
+				count = list.Count;
+			for (int i = startIndex; i < count; i++)
+			{
+				list[i] = value;
+			}
+		}
+
 		public static void Clear(this Array array)
 		{
 			Array.Clear(array, 0, array.Length);
