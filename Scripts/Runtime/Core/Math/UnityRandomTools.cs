@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Extenity.DataToolbox;
 using Random = UnityEngine.Random;
 
 namespace Extenity.MathToolbox
@@ -141,6 +142,75 @@ namespace Extenity.MathToolbox
 			{
 				data[i] = (char)Random.Range((int)'a', (int)'z');
 			}
+		}
+
+		public static void FillRandomPositionsInSphere(this IList<Vector3> list, Vector3 sphereCenter, float sphereRadius)
+		{
+			for (int i = 0; i < list.Count; i++)
+			{
+				var position = Random.insideUnitSphere * sphereRadius + sphereCenter;
+				list[i] = position;
+			}
+		}
+
+		public static bool FillRandomPositionsInSphere(this IList<Vector3> list, Vector3 sphereCenter, float sphereRadius, float minimumSeparationBetweenPositions)
+		{
+			var minimumSeparationBetweenPositionsSqr = minimumSeparationBetweenPositions * minimumSeparationBetweenPositions;
+
+			var tryCountForWholeOperation = 50;
+			while (tryCountForWholeOperation-- > 0)
+			{
+				var failedToFindAvailableSpacesForAll = false;
+
+				for (int i = 0; i < list.Count; i++)
+				{
+					var foundAnAvailableSpace = false;
+					var tryCountForSinglePosition = 50;
+					while (tryCountForSinglePosition-- > 0)
+					{
+						// Select a position randomly.
+						var position = Random.insideUnitSphere * sphereRadius + sphereCenter;
+
+						// See if the selected random position overlaps with any of the previously selected positions.
+						var detectedAnOverlapWithPreviousPositions = false;
+						for (int iAlreadyPlaced = 0; iAlreadyPlaced < i; iAlreadyPlaced++)
+						{
+							var distanceSqr = list[iAlreadyPlaced].SqrDistanceTo(position);
+							if (distanceSqr < minimumSeparationBetweenPositionsSqr)
+							{
+								detectedAnOverlapWithPreviousPositions = true;
+								break;
+							}
+						}
+
+						// See if an overlap is detected. If not, accept the position and save it into the list. If there
+						// is an overlap, try one more time with a new randomly picked position.
+						if (!detectedAnOverlapWithPreviousPositions)
+						{
+							foundAnAvailableSpace = true;
+							list[i] = position;
+							break;
+						}
+					}
+
+					if (!foundAnAvailableSpace)
+					{
+						// Failed to find an available space for the picked position after many tries. Let's give it
+						// a chance by starting the operation from the beginning with freshly picked positions.
+						failedToFindAvailableSpacesForAll = true;
+						break;
+					}
+				}
+
+				if (!failedToFindAvailableSpacesForAll)
+				{
+					return true;
+				}
+			}
+
+			// So, accept the defeat. Fill whole array with NaN so the caller won't use the list accidentally.
+			list.Fill(Vector3Tools.NaN);
+			return false;
 		}
 
 		#endregion
