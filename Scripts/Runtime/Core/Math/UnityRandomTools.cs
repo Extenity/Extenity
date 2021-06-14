@@ -99,91 +99,27 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public static int RandomRange(int min, int max)
-		{
-			return Random.Range(min, max);
-		}
+		public static int RandomRange(int min, int max) { return Random.Range(min, max); }
+		public static int RandomRangeIncludingMax(int min, int max) { return Random.Range(min, max + 1); }
 
-		public static int RandomRangeIncludingMax(int min, int max)
-		{
-			return Random.Range(min, max + 1);
-		}
+		public static Color RandomColor => new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 
-		public static Color RandomColor
-		{
-			get { return new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)); }
-		}
+		public static float RandomPI => Mathf.PI * Random.value;
+		public static float RandomHalfPI => Mathf.PI * 0.5f * Random.value;
+		public static float Random180 => 180f * Random.value;
+		public static float Random360 => 360f * Random.value;
+		public static bool RandomBool => 0.5f > Random.value;
+		public static bool RandomBoolRatio(float ratio) { return ratio > Random.value; }
+		public static float RandomPosNeg => RandomBool ? -1f : 1f;
 
-		public static float RandomPI
-		{
-			get { return Mathf.PI * Random.value; }
-		}
-		public static float RandomHalfPI
-		{
-			get { return Mathf.PI * 0.5f * Random.value; }
-		}
-		public static float Random180
-		{
-			get { return 180f * Random.value; }
-		}
-		public static float Random360
-		{
-			get { return 360f * Random.value; }
-		}
-
-		public static bool RandomBool
-		{
-			get { return 0.5f > Random.value; }
-		}
-
-		public static bool RandomBoolRatio(float ratio)
-		{
-			return ratio > Random.value;
-		}
-
-		public static float RandomPosNeg
-		{
-			get { return RandomBool ? -1f : 1f; }
-		}
-
-		public static Vector2 RandomVector2(float range)
-		{
-			return new Vector2(Random.Range(-range, range), Random.Range(-range, range));
-		}
-
-		public static Vector3 RandomVector3(float range)
-		{
-			return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range));
-		}
-
-		public static Vector2 RandomVector2(float rangeX, float rangeY)
-		{
-			return new Vector2(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY));
-		}
-
-		public static Vector3 RandomVector3(float rangeX, float rangeY, float rangeZ)
-		{
-			return new Vector3(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY), Random.Range(-rangeZ, rangeZ));
-		}
-
-		public static Vector2 RandomVector2(Vector2 range)
-		{
-			return new Vector2(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y));
-		}
-
-		public static Vector3 RandomVector3(Vector3 range)
-		{
-			return new Vector3(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y), Random.Range(-range.z, range.z));
-		}
-
-		public static Vector2 RandomUnitVector2
-		{
-			get { return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
-		}
-		public static Vector3 RandomUnitVector3
-		{
-			get { return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); }
-		}
+		public static Vector2 RandomVector2(float range) { return new Vector2(Random.Range(-range, range), Random.Range(-range, range)); }
+		public static Vector3 RandomVector3(float range) { return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range)); }
+		public static Vector2 RandomVector2(float rangeX, float rangeY) { return new Vector2(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY)); }
+		public static Vector3 RandomVector3(float rangeX, float rangeY, float rangeZ) { return new Vector3(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY), Random.Range(-rangeZ, rangeZ)); }
+		public static Vector2 RandomVector2(Vector2 range) { return new Vector2(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y)); }
+		public static Vector3 RandomVector3(Vector3 range) { return new Vector3(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y), Random.Range(-range.z, range.z)); }
+		public static Vector2 RandomUnitVector2 => new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+		public static Vector3 RandomUnitVector3 => new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
 
 		#region Random Collections
 
