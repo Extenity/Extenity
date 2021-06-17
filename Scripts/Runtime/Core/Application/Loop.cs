@@ -1,137 +1,74 @@
 using System;
-using Extenity.ApplicationToolbox;
-using Extenity.DebugToolbox.GraphPlotting;
-using Extenity.DesignPatternsToolbox;
 using Extenity.FlowToolbox;
-using Extenity.GameObjectToolbox;
-using Extenity.MessagingToolbox;
-using Extenity.ProfilingToolbox;
-using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Extenity
 {
 
-	// TODO: Make Loop a standalone system. Maybe convert to AutoSingletonUnity?
-	public class Loop : SingletonUnity<Loop>
+	public static class Loop
 	{
+		#region Singleton
+
+		internal static LoopHelper Instance;
+
+		#endregion
+
 		#region Initialization
 
-		protected override void AwakeDerived()
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void Instantiate()
 		{
-			DontDestroyOnLoad(this);
-
-			Invoker.ResetSystem();
-
-			// Automatically add Execution Order Helpers if required.
-			this.GetFirstOrAddComponent<LoopPreExecutionOrderHelper>();
-			this.GetFirstOrAddComponent<LoopDefaultExecutionOrderHelper>();
-			this.GetFirstOrAddComponent<LoopPostExecutionOrderHelper>();
+			Debug.Assert(Instance == null);
+			InitializeSystem();
 		}
 
-		#endregion
-
-		#region Deinitialization
-
-		private void OnApplicationQuit()
+		public static void InitializeSystem()
 		{
-			ApplicationTools.IsShuttingDown = true;
+			DeinitializeSystem();
+
+			Invoker.InitializeSystem();
+
+			var go = new GameObject("_Loop");
+			Instance = go.AddComponent<LoopHelper>();
+			go.AddComponent<LoopPreExecutionOrderHelper>().LoopHelper = Instance;
+			go.AddComponent<LoopDefaultExecutionOrderHelper>().LoopHelper = Instance;
+			go.AddComponent<LoopPostExecutionOrderHelper>().LoopHelper = Instance;
 		}
 
-		#endregion
-
-		#region Update
-
-		private void FixedUpdate()
+		public static void DeinitializeSystem()
 		{
-			FixedUpdateCount++;
-			Time = UnityEngine.Time.time;
-			DeltaTime = UnityEngine.Time.deltaTime;
-			UnscaledTime = UnityEngine.Time.unscaledTime;
-
-			// FastInvokes are called before any other callbacks. Note that Loop.FixedUpdate is executed before
-			// LoopPreExecutionOrderHelper.FixedUpdate as defined in Script Execution Order Project Settings.
-			FastInvokeHandler.Instance.CustomFixedUpdate();
-
-			// Instance.FixedUpdateCallbacks.ClearIfRequired();
-		}
-
-		private void Update()
-		{
-			UpdateCount++;
-			Time = UnityEngine.Time.time;
-			DeltaTime = UnityEngine.Time.deltaTime;
-			UnscaledTime = UnityEngine.Time.unscaledTime;
-
-			if (FPSAnalyzer != null)
+			if (Instance)
 			{
-				FPSAnalyzer.Tick(Time);
+				GameObject.DestroyImmediate(Instance.gameObject);
 			}
-
-			// FastInvokes are called before any other callbacks. Note that Loop.Update is executed before
-			// LoopPreExecutionOrderHelper.Update as defined in Script Execution Order Project Settings.
-			FastInvokeHandler.Instance.CustomUpdate();
-
-			// Instance.UpdateCallbacks.ClearIfRequired();
-		}
-
-		private void LateUpdate()
-		{
-			LateUpdateCount++;
-			Time = UnityEngine.Time.time;
-			DeltaTime = UnityEngine.Time.deltaTime;
-			UnscaledTime = UnityEngine.Time.unscaledTime;
-
-			// Instance.LateUpdateCallbacks.ClearIfRequired();
 		}
 
 		#endregion
 
 		#region Callbacks
 
-		internal readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PreLateUpdateCallbacks = new ExtenityEvent();
+		// @formatter:off
+		public static void RegisterPreFixedUpdate  (Action callback, int order = 0) { Instance.PreFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPreUpdate       (Action callback, int order = 0) { Instance.PreUpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterPreLateUpdate   (Action callback, int order = 0) { Instance.PreLateUpdateCallbacks.AddListener(callback, order);  }
+		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance) Instance.PreFixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterPreUpdate     (Action callback) { if (Instance) Instance.PreUpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterPreLateUpdate (Action callback) { if (Instance) Instance.PreLateUpdateCallbacks.RemoveListener(callback);       }
 
-		internal readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+		public static void RegisterFixedUpdate  (Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterUpdate       (Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterLateUpdate   (Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order);  }
+		public static void DeregisterFixedUpdate(Action callback) { if (Instance) Instance.FixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterUpdate     (Action callback) { if (Instance) Instance.UpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterLateUpdate (Action callback) { if (Instance) Instance.LateUpdateCallbacks.RemoveListener(callback);       }
 
-		internal readonly ExtenityEvent PostFixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
-
-		public static void RegisterPreFixedUpdate(Action callback, int order = 0) { Instance.PreFixedUpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterPreUpdate(Action callback, int order = 0) { Instance.PreUpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterPreLateUpdate(Action callback, int order = 0) { Instance.PreLateUpdateCallbacks.AddListener(callback, order); }
-		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance) Instance.PreFixedUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterPreUpdate(Action callback) { if (Instance) Instance.PreUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterPreLateUpdate(Action callback) { if (Instance) Instance.PreLateUpdateCallbacks.RemoveListener(callback); }
-
-		public static void RegisterFixedUpdate(Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterUpdate(Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterLateUpdate(Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order); }
-		public static void DeregisterFixedUpdate(Action callback) { if (Instance) Instance.FixedUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterUpdate(Action callback) { if (Instance) Instance.UpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterLateUpdate(Action callback) { if (Instance) Instance.LateUpdateCallbacks.RemoveListener(callback); }
-
-		public static void RegisterPostFixedUpdate(Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterPostUpdate(Action callback, int order = 0) { Instance.PostUpdateCallbacks.AddListener(callback, order); }
-		public static void RegisterPostLateUpdate(Action callback, int order = 0) { Instance.PostLateUpdateCallbacks.AddListener(callback, order); }
-		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance) Instance.PostFixedUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterPostUpdate(Action callback) { if (Instance) Instance.PostUpdateCallbacks.RemoveListener(callback); }
-		public static void DeregisterPostLateUpdate(Action callback) { if (Instance) Instance.PostLateUpdateCallbacks.RemoveListener(callback); }
-
-		#endregion
-
-		#region Counters
-
-		[Title("Stats")]
-		[NonSerialized, ShowInInspector]
-		public int UpdateCount;
-		[NonSerialized, ShowInInspector]
-		public int FixedUpdateCount;
-		[NonSerialized, ShowInInspector]
-		public int LateUpdateCount;
+		public static void RegisterPostFixedUpdate  (Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPostUpdate       (Action callback, int order = 0) { Instance.PostUpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterPostLateUpdate   (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks.AddListener(callback, order);  }
+		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance) Instance.PostFixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterPostUpdate     (Action callback) { if (Instance) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterPostLateUpdate (Action callback) { if (Instance) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
+		// @formatter:on
 
 		#endregion
 
@@ -198,47 +135,6 @@ namespace Extenity
 		}
 
 #endif
-
-		#endregion
-
-		#region FPS Analyzer
-
-		[Title("FPS Analyzer")]
-		[NonSerialized, ShowInInspector, InlineProperty, HideLabel]
-		public TickAnalyzer FPSAnalyzer;
-		private bool _IsFPSAnalyzerEnabled;
-
-		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), DisableIf(nameof(_IsFPSAnalyzerEnabled))]
-		public void EnableFPSAnalyzer()
-		{
-			EnableFPSAnalyzer(true);
-		}
-
-		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), EnableIf(nameof(_IsFPSAnalyzerEnabled))]
-		public void DisableFPSAnalyzer()
-		{
-			EnableFPSAnalyzer(false);
-		}
-
-		public void EnableFPSAnalyzer(bool enable)
-		{
-			if (enable == _IsFPSAnalyzerEnabled)
-				return;
-
-			_IsFPSAnalyzerEnabled = enabled;
-			if (enabled)
-			{
-				FPSAnalyzer = new TickAnalyzer(
-					new TickPlotter("FPS", VerticalRange.ZeroBasedAdaptive(), gameObject),
-					Time,
-					TickAnalyzer.HistorySizeFor(60, 5));
-			}
-			else
-			{
-				// Deinitialize existing one.
-				FPSAnalyzer = null;
-			}
-		}
 
 		#endregion
 	}

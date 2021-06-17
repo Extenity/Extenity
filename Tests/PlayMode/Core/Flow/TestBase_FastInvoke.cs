@@ -104,7 +104,6 @@ namespace ExtenityTests.FlowToolbox
 		#region Test Initialization / Deinitialization
 
 		protected bool IsInitialized;
-		private Loop Loop;
 
 		protected IEnumerator InitializeTest(bool startAtRandomTime)
 		{
@@ -136,11 +135,11 @@ namespace ExtenityTests.FlowToolbox
 				throw new Exception("Test was already initialized.");
 			IsInitialized = true;
 
-			Invoker.ResetSystem();
+			Invoker.InitializeSystem();
 			UnityTestTools.Cleanup();
 			Time.timeScale = TimeScale;
 
-			Loop = new GameObject("_Loop", typeof(Loop)).GetComponent<Loop>();
+			Loop.InitializeSystem();
 			CreateSubject();
 			ResetOutsiderCallback();
 		}
@@ -151,7 +150,7 @@ namespace ExtenityTests.FlowToolbox
 				throw new Exception("Test was not initialized.");
 			IsInitialized = false;
 
-			GameObject.Destroy(Loop.gameObject);
+			Loop.DeinitializeSystem();
 			Invoker.ShutdownSystem();
 			Time.timeScale = 1f;
 		}

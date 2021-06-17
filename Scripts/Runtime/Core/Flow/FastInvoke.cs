@@ -10,20 +10,12 @@ namespace Extenity.FlowToolbox
 
 		private static FastInvokeHandler Handler;
 
-		static Invoker()
-		{
-			InitializeSystem();
-		}
+		// static Invoker()
+		// {
+		// 	InitializeSystem();
+		// }
 
 		public static void InitializeSystem()
-		{
-			if (!Handler)
-			{
-				ResetSystem();
-			}
-		}
-
-		public static void ResetSystem()
 		{
 			ShutdownSystem();
 

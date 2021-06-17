@@ -7,19 +7,21 @@ namespace Extenity
 	[HideMonoScript]
 	public class LoopDefaultExecutionOrderHelper : MonoBehaviour
 	{
+		internal LoopHelper LoopHelper;
+
 		private void FixedUpdate()
 		{
-			Loop.Instance.FixedUpdateCallbacks.InvokeSafe();
+			LoopHelper.FixedUpdateCallbacks.InvokeSafe();
 		}
 
 		private void Update()
 		{
-			Loop.Instance.UpdateCallbacks.InvokeSafe();
+			LoopHelper.UpdateCallbacks.InvokeSafe();
 		}
 
 		private void LateUpdate()
 		{
-			Loop.Instance.LateUpdateCallbacks.InvokeSafe();
+			LoopHelper.LateUpdateCallbacks.InvokeSafe();
 		}
 	}
 

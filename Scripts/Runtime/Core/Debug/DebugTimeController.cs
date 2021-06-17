@@ -31,10 +31,6 @@ namespace Extenity.DebugToolbox
 		private static void Initialize()
 		{
 			DefaultFixedDeltaTime = Time.fixedDeltaTime;
-
-			if (!Loop.IsInstanceAvailable)
-				return; // Just skip if there is no Loop instance, like test scenes or when not using the loop system.
-
 			Loop.RegisterUpdate(CustomUpdate);
 		}
 
