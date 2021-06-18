@@ -29,6 +29,7 @@ namespace Extenity
 			Invoker.InitializeSystem();
 
 			var go = new GameObject("_Loop");
+			GameObject.DontDestroyOnLoad(go);
 			Instance = go.AddComponent<LoopHelper>();
 			go.AddComponent<LoopPreExecutionOrderHelper>().LoopHelper = Instance;
 			go.AddComponent<LoopDefaultExecutionOrderHelper>().LoopHelper = Instance;
