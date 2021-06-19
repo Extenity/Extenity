@@ -308,6 +308,8 @@ namespace Extenity.DebugToolbox
 
 		public static void RectangleXZ(Rectangle rect, float height, Color color, float duration = 0f, bool depthTest = true)
 		{
+			if (DebugDrawingDisabled) return;
+
 			var points = rect.GetPointsXZ(height);
 
 			Line(points[0], points[1], color, duration, depthTest);
@@ -322,6 +324,7 @@ namespace Extenity.DebugToolbox
 
 		public static void Plane(Vector3 center, Vector3 normal, float size, float duration = 0f, bool depthTest = true)
 		{
+			if (DebugDrawingDisabled) return;
 			Plane(center, normal, size, DefaultColor, duration, depthTest);
 		}
 
