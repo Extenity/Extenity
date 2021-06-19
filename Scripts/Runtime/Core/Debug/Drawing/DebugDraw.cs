@@ -1,5 +1,3 @@
-#if !Release
-
 #if UNITY_EDITOR
 #define UNITY_DRAWER
 #endif
@@ -47,6 +45,7 @@ namespace Extenity.DebugToolbox
 
 		#region Update
 
+#if UNITY_DRAWER
 		private void Update()
 		{
 			if (DebugDrawingDisabled)
@@ -56,11 +55,13 @@ namespace Extenity.DebugToolbox
 			OnUpdateWriteScreen();
 			OnUpdateWriteScene();
 		}
+#endif
 
 		#endregion
 
 		#region GUI
 
+#if UNITY_DRAWER
 		private void OnGUI() // Ignored by Code Correct
 		{
 			if (DebugDrawingDisabled)
@@ -70,6 +71,7 @@ namespace Extenity.DebugToolbox
 			DrawWriteScreen();
 			DrawWriteScene();
 		}
+#endif
 
 		#endregion
 
@@ -1248,5 +1250,3 @@ namespace Extenity.DebugToolbox
 	}
 
 }
-
-#endif
