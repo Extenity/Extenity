@@ -1,14 +1,17 @@
 #if UNITY_EDITOR
 #define UNITY_DRAWER
+#define DebugDrawAvailable
 #endif
 
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Extenity.DataToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
 using Extenity.TextureToolbox;
+using Debug = UnityEngine.Debug;
 
 namespace Extenity.DebugToolbox
 {
@@ -171,12 +174,14 @@ namespace Extenity.DebugToolbox
 
 		#region Line
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Line(Vector3 start, Vector3 end, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Line(start, end, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Line(Vector3 start, Vector3 end, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -188,12 +193,14 @@ namespace Extenity.DebugToolbox
 #endif
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Line(Vector3 start, Vector3 end, Vector3 offset, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Line(start, end, offset, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Line(Vector3 start, Vector3 end, Vector3 offset, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -204,12 +211,14 @@ namespace Extenity.DebugToolbox
 
 		#region Ray
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Ray(Ray ray, float length, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Ray(ray, length, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Ray(Ray ray, float length, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -220,12 +229,14 @@ namespace Extenity.DebugToolbox
 
 		#region Plus and Cross
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Plus(Vector3 worldPosition, float size, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Plus(worldPosition, size, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Plus(Vector3 worldPosition, float size, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -238,12 +249,14 @@ namespace Extenity.DebugToolbox
 			Line(worldPosition - diffZ, worldPosition + diffZ, color, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Cross(Vector3 worldPosition, float size, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Cross(worldPosition, size, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Cross(Vector3 worldPosition, float size, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -266,12 +279,14 @@ namespace Extenity.DebugToolbox
 
 		#region Circle
 
+		[Conditional("DebugDrawAvailable")]
 		public static void CircleXZ(Circle circle, Transform transform, Color color, float angleStep = 0.4f, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			CircleXZ(circle.center, circle.radius, transform, color, angleStep, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void CircleXZ(Vector3 worldPosition, float radius, Color color, float angleStep = 0.4f, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -288,6 +303,7 @@ namespace Extenity.DebugToolbox
 			Line(start, worldPosition + new Vector3(radius, 0f, 0f), color, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void CircleXZ(Vector3 localPosition, float radius, Transform transform, Color color, float angleStep = 0.4f, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -308,6 +324,7 @@ namespace Extenity.DebugToolbox
 
 		#region Rectangle
 
+		[Conditional("DebugDrawAvailable")]
 		public static void RectangleXZ(Rectangle rect, float height, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -324,12 +341,14 @@ namespace Extenity.DebugToolbox
 
 		#region Plane
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Plane(Vector3 center, Vector3 normal, float size, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			Plane(center, normal, size, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void Plane(Vector3 center, Vector3 normal, float size, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -375,36 +394,42 @@ namespace Extenity.DebugToolbox
 
 		#region AAB
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Bounds bounds, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			AAB(bounds.min, bounds.max, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Bounds bounds, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			AAB(bounds.min, bounds.max, color, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Bounds bounds, Transform transform, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			AAB(bounds.min, bounds.max, transform, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Bounds bounds, Transform transform, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			AAB(bounds.min, bounds.max, transform, color, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Vector3 min, Vector3 max, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
 			AAB(min, max, DefaultColor, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Vector3 min, Vector3 max, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -472,6 +497,7 @@ namespace Extenity.DebugToolbox
 			//Line(new Vector3(max.x, max.y, min.z), new Vector3(max.x, max.y, max.z), color, duration, depthTest);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void AAB(Vector3 min, Vector3 max, Transform transform, Color color, float duration = 0f, bool depthTest = true)
 		{
 			if (DebugDrawingDisabled) return;
@@ -1048,6 +1074,7 @@ namespace Extenity.DebugToolbox
 		private List<WriteScreenData> writeScreenData = new List<WriteScreenData>(20);
 		private const int writeScreenTextAreaHeight = 20;
 
+		[Conditional("DebugDrawAvailable")]
 		public static void WriteScreenRectSeparated(string prefix, Rect value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
@@ -1056,12 +1083,14 @@ namespace Extenity.DebugToolbox
 			WriteScreen(prefix + ".height = " + value.height, lineIndexStart + 3, anchor, textColor, duration, textAreaWidth);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void WriteScreenVector2Separated(string prefix, Vector2 value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
 			WriteScreen(prefix + ".y = " + value.y, lineIndexStart + 1, anchor, textColor, duration, textAreaWidth);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void WriteScreenVector3Separated(string prefix, Vector3 value, int lineIndexStart, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			WriteScreen(prefix + ".x = " + value.x, lineIndexStart, anchor, textColor, duration, textAreaWidth);
@@ -1069,6 +1098,7 @@ namespace Extenity.DebugToolbox
 			WriteScreen(prefix + ".z = " + value.z, lineIndexStart + 2, anchor, textColor, duration, textAreaWidth);
 		}
 
+		[Conditional("DebugDrawAvailable")]
 		public static void WriteScreen(string text, int lineIndex, NineSliceAnchor anchor, Color textColor, float duration = 1f, int textAreaWidth = 250)
 		{
 			if (!IsInstanceAvailable)
@@ -1168,6 +1198,7 @@ namespace Extenity.DebugToolbox
 		private List<WriteSceneData> writeSceneData = new List<WriteSceneData>(20);
 		private const int writeSceneTextAreaHeight = 20;
 
+		[Conditional("DebugDrawAvailable")]
 		public static void WriteScene(string text, int lineIndex, Vector3 position, Color textColor, float duration = 1f)
 		{
 			if (!IsInstanceAvailable)
