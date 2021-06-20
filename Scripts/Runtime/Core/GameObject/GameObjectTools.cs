@@ -1377,10 +1377,42 @@ namespace Extenity.GameObjectToolbox
 			return me.InternalGetSingleComponentEnsured<T>();
 		}
 
+		public static T GetSingleComponentInChildrenEnsured<T>(this Component me, bool includeInactive) where T : Component
+		{
+			if (!me)
+			{
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
+			}
+			return me.gameObject.InternalGetSingleComponentInChildrenEnsured<T>(includeInactive);
+		}
+
+		public static T GetSingleComponentInChildrenEnsured<T>(this GameObject me, bool includeInactive) where T : Component
+		{
+			if (!me)
+			{
+				throw new Exception($"Tried to get component '{typeof(T).Name}' of a null object.");
+			}
+			return me.InternalGetSingleComponentInChildrenEnsured<T>(includeInactive);
+		}
+
 		private static T InternalGetSingleComponentEnsured<T>(this GameObject me) where T : Component
 		{
 			var results = New.List<T>();
 			me.GetComponents(results);
+			if (results.Count != 1)
+			{
+				Release.List(ref results);
+				throw new Exception($"Expected single '{typeof(T).Name}' whereas '{results.Count}' available in '{me.FullName()}'.");
+			}
+			var result = results[0];
+			Release.List(ref results);
+			return result;
+		}
+
+		private static T InternalGetSingleComponentInChildrenEnsured<T>(this GameObject me, bool includeInactive) where T : Component
+		{
+			var results = New.List<T>();
+			me.GetComponentsInChildren(includeInactive, results);
 			if (results.Count != 1)
 			{
 				Release.List(ref results);
