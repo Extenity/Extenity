@@ -155,7 +155,7 @@ namespace Extenity.ApplicationToolbox.Editor
 				}
 				catch
 				{
-					Debug.LogWarning("Skipping file: " + file);
+					Log.Warning("Skipping file: " + file);
 				}
 			}
 
