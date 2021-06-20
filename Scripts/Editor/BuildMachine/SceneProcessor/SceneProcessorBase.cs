@@ -448,14 +448,14 @@ namespace Extenity.BuildMachine.Editor
 
 		// -------------------------------------------------------------------------
 
-		protected void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		protected void EnsureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
+			EditorGameObjectTools.EnsureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(leastExpectedFlags, activeCheck, includeActiveScene, includeDontDestroyOnLoadScene);
 		}
 
-		protected void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		protected void EnsureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
-			EditorGameObjectTools.MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags, activeCheck);
+			EditorGameObjectTools.EnsureNoStaticObjectsContainingComponentExistInActiveScene<T>(leastExpectedFlags, activeCheck);
 		}
 
 		// -------------------------------------------------------------------------

@@ -111,19 +111,19 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
-		#region MakeSureNoObjectsContainingComponentExist
+		#region EnsureNoObjectsContainingComponentExist
 
-		public static void MakeSureNoObjectsContainingComponentExistInActiveScene<T>(ActiveCheck activeCheck) where T : Component
+		public static void EnsureNoObjectsContainingComponentExistInActiveScene<T>(ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().MakeSureNoObjectsContainingComponentExist<T>(activeCheck);
+			SceneManager.GetActiveScene().EnsureNoObjectsContainingComponentExist<T>(activeCheck);
 		}
 
-		public static void MakeSureNoObjectsContainingComponentExistInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		public static void EnsureNoObjectsContainingComponentExistInLoadedScenes<T>(ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.MakeSureNoObjectsContainingComponentExist<T>(activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.EnsureNoObjectsContainingComponentExist<T>(activeCheck));
 		}
 
-		public static void MakeSureNoObjectsContainingComponentExist<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
+		public static void EnsureNoObjectsContainingComponentExist<T>(this Scene scene, ActiveCheck activeCheck) where T : Component
 		{
 			var components = scene.FindObjectsOfType<T>(activeCheck);
 
@@ -145,19 +145,19 @@ namespace Extenity.GameObjectToolbox.Editor
 
 		#endregion
 
-		#region MakeSureNoStaticObjectsContainingComponentExist
+		#region EnsureNoStaticObjectsContainingComponentExist
 
-		public static void MakeSureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void EnsureNoStaticObjectsContainingComponentExistInActiveScene<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
-			SceneManager.GetActiveScene().MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck);
+			SceneManager.GetActiveScene().EnsureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck);
 		}
 
-		public static void MakeSureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
+		public static void EnsureNoStaticObjectsContainingComponentExistInLoadedScenes<T>(StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck, bool includeActiveScene, bool includeDontDestroyOnLoadScene) where T : Component
 		{
-			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.MakeSureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck));
+			SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene).ForEach(scene => scene.EnsureNoStaticObjectsContainingComponentExist<T>(leastExpectedFlags, activeCheck));
 		}
 
-		public static void MakeSureNoStaticObjectsContainingComponentExist<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
+		public static void EnsureNoStaticObjectsContainingComponentExist<T>(this Scene scene, StaticEditorFlags leastExpectedFlags, ActiveCheck activeCheck) where T : Component
 		{
 			var components = scene.FindObjectsOfType<T>(activeCheck)
 				.Where(item => item.gameObject.IsStaticEditorFlagsSetToAtLeast(leastExpectedFlags));

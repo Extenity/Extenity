@@ -468,18 +468,18 @@ namespace Extenity.AssetToolbox.Editor
 			// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
 			//EditorApplicationTools.EnsureNotCompiling();
 
-			MakeSureNoAssetsExistAtPath(destinationPaths);
+			EnsureNoAssetsExistAtPath(destinationPaths);
 			for (var i = 0; i < sourcePaths.Count; i++)
 			{
 				ManuallyMoveFileOrDirectoryWithMeta(sourcePaths[i], destinationPaths[i]);
 			}
 			// Before refreshing AssetDatabase.
-			MakeSureNoAssetsExistAtPath(sourcePaths);
+			EnsureNoAssetsExistAtPath(sourcePaths);
 			if (refreshAssetDatabase)
 			{
 				AssetDatabase.Refresh();
 				// After refreshing AssetDatabase.
-				MakeSureNoAssetsExistAtPath(sourcePaths);
+				EnsureNoAssetsExistAtPath(sourcePaths);
 			}
 
 			// Initial idea was to move scripts in a safe environment with no ongoing compilations. But that's a fairy tale.
@@ -527,15 +527,15 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Check Directory For Assets
 
-		public static void MakeSureNoAssetsExistAtPath(IEnumerable<string> paths)
+		public static void EnsureNoAssetsExistAtPath(IEnumerable<string> paths)
 		{
 			foreach (var path in paths)
 			{
-				MakeSureNoAssetExistAtPath(path);
+				EnsureNoAssetExistAtPath(path);
 			}
 		}
 
-		public static void MakeSureNoAssetExistAtPath(string path)
+		public static void EnsureNoAssetExistAtPath(string path)
 		{
 			if (Directory.Exists(path) || File.Exists(path))
 			{
