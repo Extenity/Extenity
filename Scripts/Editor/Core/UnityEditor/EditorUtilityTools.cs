@@ -21,9 +21,9 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		#region CollectDependenciesReferencedIn...
 
-		public static KeyValue<Scene, TSearched[]>[] CollectDependenciesReferencedInLoadedScenes<TSearched>(bool includeActiveScene, bool includeDontDestroyOnLoadScene) where TSearched : Object
+		public static KeyValue<Scene, TSearched[]>[] CollectDependenciesReferencedInScenes<TSearched>(SceneListFilter sceneListFilter) where TSearched : Object
 		{
-			var scenes = SceneManagerTools.GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene);
+			var scenes = SceneManagerTools.GetScenes(sceneListFilter);
 			var objectsInScenes = new KeyValue<Scene, TSearched[]>[scenes.Count];
 			var objects = new HashSet<TSearched>();
 			for (var i = 0; i < scenes.Count; i++)

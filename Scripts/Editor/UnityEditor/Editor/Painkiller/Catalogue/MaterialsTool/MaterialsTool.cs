@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.SceneManagementToolbox;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -44,10 +45,10 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static List<MaterialElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes()
 		{
-			return BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<Material, MaterialElement>(
+			return BuildElementsListByCollectingDependenciesReferencedInScenes<Material, MaterialElement>(
 				(canvas, sceneName, parentElement) => new MaterialElement(canvas, sceneName, parentElement),
 				MaterialElement.CreateRoot,
-				true, true);
+				SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene);
 		}
 
 		#endregion

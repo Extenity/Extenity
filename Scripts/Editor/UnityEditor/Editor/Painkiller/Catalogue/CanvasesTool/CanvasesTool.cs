@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.SceneManagementToolbox;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -45,7 +46,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static List<CanvasElement> BuildCanvasElementsTreeByWalkingInLoadedScenes()
 		{
-			var canvases = GameObjectTools.FindObjectsOfTypeInLoadedScenes<Canvas>(ActiveCheck.IncludingInactive, true, true);
+			var canvases = GameObjectTools.FindObjectsOfTypeInScenes<Canvas>(ActiveCheck.IncludingInactive, SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene);
 			return BuildCanvasElementsTree(canvases);
 		}
 

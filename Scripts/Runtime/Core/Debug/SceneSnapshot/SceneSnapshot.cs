@@ -85,7 +85,7 @@ namespace Extenity.DebugToolbox
 
 		public void TakeSnapshotOfAllLoadedScenes()
 		{
-			var sceneInfos = SceneManagerTools.GetLoadedScenes(true, true);
+			var sceneInfos = SceneManagerTools.GetScenes(SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene);
 			Scenes = sceneInfos.Select(sceneInfo => new SceneEntry(sceneInfo)).ToArray();
 
 			// Also add the DontDestroyOnLoad scene, if we are currently in play mode. (There is no DontDestroyOnLoad scene in edit mode)

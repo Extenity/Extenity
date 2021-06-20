@@ -9,21 +9,21 @@ using Object = UnityEngine.Object;
 namespace Extenity.SceneManagementToolbox
 {
 
+	[Flags]
+	public enum SceneListFilter
+	{
+		None = 0,
+		LoadedActiveScene = 1 << 1,
+		LoadedInactiveScenes = 1 << 2,
+		LoadedScenes = LoadedActiveScene | LoadedInactiveScenes,
+		NotLoadedScenes = 1 << 3,
+		DontDestroyOnLoadScene = 1 << 4,
+		LoadedScenesAndDontDestroyOnLoadScene = LoadedScenes | DontDestroyOnLoadScene,
+	}
+
 	public class SceneManagerTools
 	{
-		public static List<Scene> GetScenes()
-		{
-			var sceneCount = SceneManager.sceneCount;
-			var list = new List<Scene>(sceneCount);
-			for (int i = 0; i < sceneCount; i++)
-			{
-				var scene = SceneManager.GetSceneAt(i);
-				list.Add(scene);
-			}
-			return list;
-		}
-
-		public static List<Scene> GetLoadedScenes(bool includeActiveScene, bool includeDontDestroyOnLoadScene)
+		public static List<Scene> GetScenes(SceneListFilter filter)
 		{
 			var sceneCount = SceneManager.sceneCount;
 			var list = new List<Scene>(sceneCount);
@@ -32,15 +32,32 @@ namespace Extenity.SceneManagementToolbox
 				var scene = SceneManager.GetSceneAt(i);
 				if (scene.isLoaded)
 				{
-					if (!scene.IsActive() || includeActiveScene)
+					if (scene.IsActive())
+					{
+						if ((filter & SceneListFilter.LoadedActiveScene) != 0)
+						{
+							list.Add(scene);
+						}
+					}
+					else
+					{
+						if ((filter & SceneListFilter.LoadedInactiveScenes) != 0)
+						{
+							list.Add(scene);
+						}
+					}
+				}
+				else
+				{
+					if ((filter & SceneListFilter.NotLoadedScenes) != 0)
 					{
 						list.Add(scene);
 					}
 				}
 			}
-			if (includeDontDestroyOnLoadScene
+			if (((filter & SceneListFilter.DontDestroyOnLoadScene) != 0)
 #if UNITY_EDITOR
-				&& Application.isPlaying
+			    && Application.isPlaying
 #endif
 			)
 			{
@@ -74,7 +91,7 @@ namespace Extenity.SceneManagementToolbox
 
 		public static void ReloadAllLoadedScenes()
 		{
-			var loadedScenes = GetLoadedScenes(false, false);
+			var loadedScenes = GetScenes(SceneListFilter.LoadedInactiveScenes);
 			var loadedActiveScene = SceneManager.GetActiveScene();
 			if (!loadedActiveScene.IsValid())
 				return;
@@ -89,9 +106,9 @@ namespace Extenity.SceneManagementToolbox
 			}
 		}
 
-		public static List<GameObject> GetRootGameObjectsOfLoadedScenes(bool includeActiveScene, bool includeDontDestroyOnLoadScene)
+		public static List<GameObject> GetRootGameObjectsOfScenes(SceneListFilter filter)
 		{
-			var scenes = GetLoadedScenes(includeActiveScene, includeDontDestroyOnLoadScene);
+			var scenes = GetScenes(filter);
 			var result = new List<GameObject>();
 			foreach (var scene in scenes)
 			{

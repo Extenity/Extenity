@@ -12,7 +12,7 @@ namespace Extenity.UnityTestToolbox
 
 		public static void Cleanup()
 		{
-			SceneManagerTools.GetLoadedScenes(true, false).ForEach(scene =>
+			SceneManagerTools.GetScenes(SceneListFilter.LoadedScenes).ForEach(scene =>
 			{
 				foreach (var rootObject in scene.GetRootGameObjects())
 				{

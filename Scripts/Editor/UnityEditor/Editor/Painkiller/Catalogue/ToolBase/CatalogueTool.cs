@@ -4,6 +4,7 @@ using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.SceneManagementToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -76,11 +77,11 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Gather Object In Scene
 
-		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInLoadedScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator, bool includeActiveScene, bool includeDontDestroyOnLoadScene)
+		protected static List<TTreeElement> BuildElementsListByCollectingDependenciesReferencedInScenes<TObject, TTreeElement>(Func<TObject, string, TTreeElement, TTreeElement> treeElementCreator, Func<TTreeElement> rootCreator, SceneListFilter sceneListFilter)
 			where TObject : UnityEngine.Object
 			where TTreeElement : CatalogueElement<TTreeElement>, new()
 		{
-			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInLoadedScenes<TObject>(includeActiveScene, includeDontDestroyOnLoadScene);
+			var objectsInScenes = EditorUtilityTools.CollectDependenciesReferencedInScenes<TObject>(sceneListFilter);
 
 			var rootElement = rootCreator();
 			var elementsByObjects = new Dictionary<TObject, TTreeElement>(objectsInScenes.Sum(item => item.Value.Length));

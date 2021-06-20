@@ -15,14 +15,10 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 	{
 		#region Reflection Probe Blurring
 
-		public static void BlurReflectionProbesInActiveScene(ActiveCheck activeCheck)
+		public static void BlurReflectionProbesInScenes(ActiveCheck activeCheck, SceneListFilter sceneListFilter)
 		{
-			SceneManager.GetActiveScene().BlurReflectionProbes(activeCheck);
-		}
-
-		public static void BlurReflectionProbesInLoadedScenes(ActiveCheck activeCheck)
-		{
-			SceneManagerTools.GetLoadedScenes(true, false).ForEach(scene => scene.BlurReflectionProbes(activeCheck));
+			SceneManagerTools.GetScenes(sceneListFilter)
+			                 .ForEach(scene => scene.BlurReflectionProbes(activeCheck));
 		}
 
 		public static void BlurReflectionProbes(this Scene scene, ActiveCheck activeCheck)
