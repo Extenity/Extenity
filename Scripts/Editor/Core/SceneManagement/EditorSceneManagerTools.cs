@@ -151,7 +151,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 	{
 		public static List<string> GetPaths(this IEnumerable<SceneSetup> sceneSetups)
 		{
-			var list = new List<string>();
+			var list = New.List<string>();
 			foreach (var sceneSetup in sceneSetups)
 			{
 				if (sceneSetup != null)
@@ -164,7 +164,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public static List<string> GetPaths(this IEnumerable<Scene> scenes)
 		{
-			var list = new List<string>();
+			var list = New.List<string>();
 			foreach (var scene in scenes)
 			{
 				//if (scene != null)

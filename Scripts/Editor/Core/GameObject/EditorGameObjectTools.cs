@@ -32,7 +32,6 @@ namespace Extenity.GameObjectToolbox.Editor
 				var list = scenes[i].FindStaticObjectsOfType<T>(leastExpectedFlags, activeCheck);
 				results.AddRange(list);
 			}
-
 			return results;
 		}
 

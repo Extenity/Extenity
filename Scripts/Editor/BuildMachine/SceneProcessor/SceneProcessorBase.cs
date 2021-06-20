@@ -13,7 +13,6 @@ using Extenity.ParallelToolbox.Editor;
 using Extenity.SceneManagementToolbox;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox;
-using Extenity.UnityEditorToolbox.Editor;
 using Extenity.UnityEditorToolbox.ImageMagick;
 using UnityEditor;
 using UnityEditor.SceneManagement;
