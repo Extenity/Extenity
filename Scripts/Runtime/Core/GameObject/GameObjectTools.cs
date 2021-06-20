@@ -446,16 +446,16 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			}
 
-			var initialization = true;
+			var isInitialized = false;
 			for (int i = 0; i < renderers.Length; i++)
 			{
 				var renderer = renderers[i];
 				if (renderer)
 				{
-					if (initialization)
+					if (!isInitialized)
 					{
 						bounds = renderer.bounds;
-						initialization = false;
+						isInitialized = true;
 					}
 					else
 					{
@@ -463,7 +463,7 @@ namespace Extenity.GameObjectToolbox
 					}
 				}
 			}
-			return initialization; // false if never initialized
+			return isInitialized;
 		}
 
 		public static bool CalculateMeshLocalBoundsRecursively(this GameObject go, out Bounds bounds)
@@ -476,17 +476,17 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			}
 
-			var initialization = true;
+			var isInitialized = false;
 			for (int i = 0; i < meshFilters.Length; i++)
 			{
 				var meshFilter = meshFilters[i];
 				var sharedMesh = meshFilter ? meshFilter.sharedMesh : null;
 				if (sharedMesh)
 				{
-					if (initialization)
+					if (!isInitialized)
 					{
 						bounds = meshFilter.transform.TransformBounds(sharedMesh.bounds, baseTransform);
-						initialization = false;
+						isInitialized = true;
 					}
 					else
 					{
@@ -494,7 +494,7 @@ namespace Extenity.GameObjectToolbox
 					}
 				}
 			}
-			return initialization; // false if never initialized
+			return isInitialized;
 		}
 
 		public static bool CalculateMeshWorldBoundsRecursively(this GameObject go, out Bounds bounds)
@@ -506,17 +506,17 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			}
 
-			var initialization = true;
+			var isInitialized = false;
 			for (int i = 0; i < meshFilters.Length; i++)
 			{
 				var meshFilter = meshFilters[i];
 				var sharedMesh = meshFilter ? meshFilter.sharedMesh : null;
 				if (sharedMesh)
 				{
-					if (initialization)
+					if (!isInitialized)
 					{
 						bounds = meshFilter.transform.TransformBounds(sharedMesh.bounds);
-						initialization = false;
+						isInitialized = true;
 					}
 					else
 					{
@@ -524,7 +524,7 @@ namespace Extenity.GameObjectToolbox
 					}
 				}
 			}
-			return initialization; // false if never initialized
+			return isInitialized;
 		}
 
 		public static bool CalculateColliderWorldBoundsRecursively(this GameObject go, out Bounds bounds)
@@ -536,16 +536,16 @@ namespace Extenity.GameObjectToolbox
 				return false;
 			}
 
-			var initialization = true;
+			var isInitialized = false;
 			for (int i = 0; i < colliders.Length; i++)
 			{
 				var collider = colliders[i];
 				if (collider)
 				{
-					if (initialization)
+					if (!isInitialized)
 					{
 						bounds = collider.bounds;
-						initialization = false;
+						isInitialized = true;
 					}
 					else
 					{
@@ -553,7 +553,7 @@ namespace Extenity.GameObjectToolbox
 					}
 				}
 			}
-			return initialization; // false if never initialized
+			return isInitialized;
 		}
 
 		#endregion
