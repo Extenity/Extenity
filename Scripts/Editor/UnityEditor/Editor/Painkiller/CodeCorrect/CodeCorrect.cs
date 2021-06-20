@@ -148,7 +148,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 						if (GUILayout.Button("Open", ButtonWidth))
 						{
-							AssetTools.OpenScriptInIDE(result.ScriptPath);
+							AssetDatabaseTools.OpenScriptInIDE(result.ScriptPath);
 						}
 
 						GUILayout.Label(result.ScriptPath);
@@ -217,7 +217,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				GUILayout.BeginHorizontal();
 				if (GUILayout.Button("Go", ButtonWidth))
 				{
-					AssetTools.OpenScriptInIDE(scriptPath, entry.Line);
+					AssetDatabaseTools.OpenScriptInIDE(scriptPath, entry.Line);
 				}
 
 				GUILayout.Label(entry.GUIContent);
@@ -303,7 +303,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		public static List<InspectionResult> Inspect(InspectionConfiguration configuration)
 		{
-			var scriptPaths = AssetTools.GetAllScriptAssetPathsOfType(ScriptType.Runtime);
+			var scriptPaths = AssetDatabaseTools.GetAllScriptAssetPathsOfType(ScriptType.Runtime);
 			return Inspect(configuration, scriptPaths);
 		}
 
@@ -355,7 +355,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				}
 
 				// Delete commented out parts.
-				AssetTools.DeleteCommentsInScriptAssetContents(lines);
+				AssetDatabaseTools.DeleteCommentsInScriptAssetContents(lines);
 
 				// Delete lines marked as ignored by coder.
 				if (ignoredLineIndices != null)

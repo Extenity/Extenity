@@ -22,7 +22,7 @@ namespace ExtenityTests.GameObjectToolbox
 
 		protected override void OnInitialize()
 		{
-			AssetTools.InstantiatePrefabWithTheSameNameOfThisScript();
+			AssetDatabaseTools.InstantiatePrefabWithTheSameNameOfThisScript();
 			base.OnInitialize();
 		}
 

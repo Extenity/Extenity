@@ -51,8 +51,8 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		private static List<CanvasElement> BuildCanvasElementsTreeByWalkingScenesAndPrefabs()
 		{
-			//var scenePaths = AssetTools.GetAllSceneAssetPaths();
-			//var prefabPaths = AssetTools.GetAllPrefabAssetPaths();
+			//var scenePaths = AssetDatabaseTools.GetAllSceneAssetPaths();
+			//var prefabPaths = AssetDatabaseTools.GetAllPrefabAssetPaths();
 			throw new NotImplementedException();
 		}
 

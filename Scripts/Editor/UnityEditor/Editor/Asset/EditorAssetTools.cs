@@ -228,7 +228,7 @@ namespace Extenity.AssetToolbox.Editor
 				var log = new StringBuilder();
 
 				Log.Info("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
-				var list = AssetTools.GetSelectedAssetPaths(true);
+				var list = AssetDatabaseTools.GetSelectedAssetPaths(true);
 				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
 
 				Log.Info(log.ToString());
@@ -332,82 +332,82 @@ namespace Extenity.AssetToolbox.Editor
 			var log = new StringBuilder();
 			if (scenes)
 			{
-				var list = AssetTools.GetAllSceneAssetPaths();
+				var list = AssetDatabaseTools.GetAllSceneAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Scenes", log);
 			}
 			if (prefabs)
 			{
-				var list = AssetTools.GetAllPrefabAssetPaths();
+				var list = AssetDatabaseTools.GetAllPrefabAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Prefabs", log);
 			}
 			if (models)
 			{
-				var list = AssetTools.GetAllModelAssetPaths();
+				var list = AssetDatabaseTools.GetAllModelAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Models", log);
 			}
 			if (animations)
 			{
-				var list = AssetTools.GetAllAnimationAssetPaths();
+				var list = AssetDatabaseTools.GetAllAnimationAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Animations", log);
 			}
 			if (materials)
 			{
-				var list = AssetTools.GetAllMaterialAssetPaths();
+				var list = AssetDatabaseTools.GetAllMaterialAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Materials", log);
 			}
 			if (shaders)
 			{
-				var list = AssetTools.GetAllShaderAssetPaths(true, true, true, true);
+				var list = AssetDatabaseTools.GetAllShaderAssetPaths(true, true, true, true);
 				InternalAddToAssetList(ref list, fullList, "Shaders", log);
 			}
 			if (textures)
 			{
-				var list = AssetTools.GetAllTextureAssetPaths();
+				var list = AssetDatabaseTools.GetAllTextureAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Textures", log);
 			}
 			if (proceduralTextures)
 			{
-				var list = AssetTools.GetAllProceduralTextureAssetPaths();
+				var list = AssetDatabaseTools.GetAllProceduralTextureAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Procedural Textures", log);
 			}
 			if (renderTextures)
 			{
-				var list = AssetTools.GetAllRenderTextureAssetPaths();
+				var list = AssetDatabaseTools.GetAllRenderTextureAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Render Textures", log);
 			}
 			if (lightmap)
 			{
-				var list = AssetTools.GetAllLightmapAssetPaths();
+				var list = AssetDatabaseTools.GetAllLightmapAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Lightmaps", log);
 			}
 			if (flares)
 			{
-				var list = AssetTools.GetAllFlareAssetPaths();
+				var list = AssetDatabaseTools.GetAllFlareAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Flares", log);
 			}
 			if (videos)
 			{
-				var list = AssetTools.GetAllVideoAssetPaths();
+				var list = AssetDatabaseTools.GetAllVideoAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Videos", log);
 			}
 			if (ui)
 			{
-				var list = AssetTools.GetAllUIAssetPaths();
+				var list = AssetDatabaseTools.GetAllUIAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "UI", log);
 			}
 			if (audio)
 			{
-				var list = AssetTools.GetAllAudioAssetPaths();
+				var list = AssetDatabaseTools.GetAllAudioAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Audio", log);
 			}
 			if (physics)
 			{
-				var list = AssetTools.GetAllPhysicsAssetPaths();
+				var list = AssetDatabaseTools.GetAllPhysicsAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Physics", log);
 			}
 			if (script)
 			{
-				var list = AssetTools.GetAllScriptAssetPaths();
+				var list = AssetDatabaseTools.GetAllScriptAssetPaths();
 				InternalAddToAssetList(ref list, fullList, "Scripts", log);
 			}
 
@@ -452,7 +452,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				var sceneAssetPaths = New.List<string>();
 				var otherAssetPaths = New.List<string>();
-				AssetTools.SplitSceneAndOtherAssetPaths(assetPaths, sceneAssetPaths, otherAssetPaths);
+				AssetDatabaseTools.SplitSceneAndOtherAssetPaths(assetPaths, sceneAssetPaths, otherAssetPaths);
 				if (sceneAssetPaths.IsNotNullAndEmpty())
 				{
 					// Check if the current scene has modifications and warn user

@@ -120,7 +120,7 @@ namespace Extenity.BuildToolbox.Editor
 					Directory.Delete(OutsideLocationBasePath, true);
 				}
 
-				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, false);
+				AssetDatabaseTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, false);
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace Extenity.BuildToolbox.Editor
 		{
 			using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
 			{
-				AssetTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, false);
+				AssetDatabaseTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, false);
 			}
 		}
 

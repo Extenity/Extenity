@@ -86,7 +86,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var items = Directory.GetFiles(path, fileNameFilter, SearchOption.AllDirectories);
 			for (int i = 0; i < items.Length; i++)
 			{
-				AssetTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+				AssetDatabaseTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 				Progress.Report(progressId, (float)(i + 1) / items.Length);
 				yield return null;
 			}
@@ -118,7 +118,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var items = GetEmptyDirectories();
 				for (int i = 0; i < items.Count; i++)
 				{
-					AssetTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+					AssetDatabaseTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 					Progress.Report(progressId, (float)(i + 1) / items.Count); // This is not the correct way to display the progress, but it's better than nothing.
 					yield return null;
 				}

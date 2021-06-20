@@ -298,7 +298,7 @@ namespace __NAMESPACE__
 
 		private static void CreateSnippet(SnippetGroup snippetGroup)
 		{
-			var path = EditorUtility.SaveFilePanel("Give a name to your script", AssetTools.GetSelectedDirectoryPathOrAssetsRootPath(), "", snippetGroup.MainFileExtension);
+			var path = EditorUtility.SaveFilePanel("Give a name to your script", AssetDatabaseTools.GetSelectedDirectoryPathOrAssetsRootPath(), "", snippetGroup.MainFileExtension);
 
 			if (string.IsNullOrEmpty(path))
 				return;
