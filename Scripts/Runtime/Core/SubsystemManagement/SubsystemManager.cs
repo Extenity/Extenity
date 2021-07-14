@@ -1,4 +1,3 @@
-using Extenity.SubsystemManagementToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,9 +43,10 @@ namespace Extenity.SubsystemManagementToolbox
 #endif
 		}
 
-		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea. It works in
-		// Editor but observed not working in Windows builds. Game objects are destroyed just before BeforeSceneLoad
-		// for some reason. So decided to initialize our subsystems at BeforeSceneLoad stage.
+		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea.
+		// It works in Editor but observed not working in Windows and Android builds and probably other
+		// platforms too. Game objects are destroyed just before BeforeSceneLoad for some reason.
+		// So decided to initialize our subsystems at BeforeSceneLoad stage. See 119392241.
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Initialize()
 		{
