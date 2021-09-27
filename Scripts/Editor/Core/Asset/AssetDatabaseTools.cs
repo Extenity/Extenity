@@ -909,7 +909,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)
 		{
-			var selectionObjects = Selection.objects;
+			var selectionObjects = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
 			var list = New.List<string>(selectionObjects.Length);
 
 			foreach (Object obj in selectionObjects)
