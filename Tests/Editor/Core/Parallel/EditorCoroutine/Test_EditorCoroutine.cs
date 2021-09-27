@@ -3,6 +3,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
+using Extenity;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.Testing;
 using UnityEngine.TestTools;

@@ -1,4 +1,5 @@
 using System;
+using Extenity;
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;

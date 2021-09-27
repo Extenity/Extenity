@@ -1,4 +1,5 @@
 using System;
+using Extenity;
 using UnityEngine;
 
 namespace ExtenityTests.MessagingToolbox

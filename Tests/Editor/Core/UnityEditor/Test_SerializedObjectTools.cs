@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Extenity;
 using Extenity.Testing;
 using Extenity.UnityEditorToolbox;
 using NUnit.Framework;

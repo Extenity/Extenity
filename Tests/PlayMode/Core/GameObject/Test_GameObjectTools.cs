@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Extenity;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;

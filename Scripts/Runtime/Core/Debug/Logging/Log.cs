@@ -15,10 +15,9 @@ using Extenity.DebugToolbox;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-//namespace Extenity.DebugToolbox
-//{
+namespace Extenity
+{
 
-[OverrideEnsuredNamespace(null)]
 public enum LogCategory
 {
 	Verbose,
@@ -28,7 +27,6 @@ public enum LogCategory
 	Critical,
 }
 
-[OverrideEnsuredNamespace(null)]
 public enum SeverityCategory
 {
 	Warning,
@@ -39,7 +37,6 @@ public enum SeverityCategory
 // TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
 // TODO: Investigate: Find a way to hide wrapper methods like Info, Warning, etc. from Unity's console stacktrace and make it go to caller's line on double clicking over the log entry.
 
-[OverrideEnsuredNamespace(null)]
 public static class Log
 {
 	#region Indentation
@@ -74,7 +71,6 @@ public static class Log
 
 	#region Indentation Using 'Using'
 
-	[OverrideEnsuredNamespace(null)]
 	public class IndentationHandler : IDisposable
 	{
 		private Object Context;
@@ -765,7 +761,6 @@ public static class Log
 	#endregion
 }
 
-[OverrideEnsuredNamespace(null)]
 public static class LogExtensions
 {
 	#region Simple
@@ -1013,7 +1008,6 @@ public static class LogExtensions
 	#endregion
 }
 
-[OverrideEnsuredNamespace(null)]
 public class InternalException : Exception
 {
 	public InternalException(int errorCode)
@@ -1027,4 +1021,4 @@ public class InternalException : Exception
 	}
 }
 
-//}
+}
