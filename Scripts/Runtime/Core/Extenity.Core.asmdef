@@ -1,7 +1,9 @@
 {
     "name": "Extenity.Core",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "ICSharpCode.SharpZipLib"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
