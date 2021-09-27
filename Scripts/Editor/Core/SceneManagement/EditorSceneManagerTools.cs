@@ -117,7 +117,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 			EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 			if (unloadUnusedAssets)
 			{
-				EditorUtility.UnloadUnusedAssetsImmediate(false);
+				EditorUtility.UnloadUnusedAssetsImmediate(true);
 			}
 		}
 
