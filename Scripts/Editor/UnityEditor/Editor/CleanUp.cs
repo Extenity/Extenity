@@ -152,53 +152,53 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Menu
 
-		[MenuItem(Menu + "/Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
+		[MenuItem(Menu + "Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
 		public static void ClearAll()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
 			Log.Info("Cleanup finished.");
 		}
 
-		[MenuItem(Menu + "/Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
+		[MenuItem(Menu + "Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
 		public static void ClearOrigFiles()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, true));
 			Log.Info("Cleanup finished.");
 		}
 
-		[MenuItem(Menu + "/Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
+		[MenuItem(Menu + "Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
 		public static void ClearThumbsDbFiles()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, true));
 			Log.Info("Cleanup finished.");
 		}
 
-		[MenuItem(Menu + "/Clear empty directories", priority = ExtenityMenu.CleanUpPriority + 23)]
+		[MenuItem(Menu + "Clear empty directories", priority = ExtenityMenu.CleanUpPriority + 23)]
 		public static void ClearEmptyDirectories()
 		{
 			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
 			Log.Info("Cleanup finished.");
 		}
 
-		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Enable", priority = ExtenityMenu.CleanUpPriority + 41)]
+		[MenuItem(Menu + "Auto Cleanup at Editor launch/Enable", priority = ExtenityMenu.CleanUpPriority + 41)]
 		public static void EnableAutoCleanUpAtEditorLaunch()
 		{
 			EnableRunAtEditorLaunch.Value = true;
 		}
 
-		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Enable", validate = true)]
+		[MenuItem(Menu + "Auto Cleanup at Editor launch/Enable", validate = true)]
 		public static bool EnableAutoCleanUpAtEditorLaunch_Validate()
 		{
 			return !EnableRunAtEditorLaunch.Value;
 		}
 
-		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Disable", priority = ExtenityMenu.CleanUpPriorityEnd)]
+		[MenuItem(Menu + "Auto Cleanup at Editor launch/Disable", priority = ExtenityMenu.CleanUpPriorityEnd)]
 		public static void DisableAutoCleanUpAtEditorLaunch()
 		{
 			EnableRunAtEditorLaunch.Value = false;
 		}
 
-		[MenuItem(Menu + "/Auto Cleanup at Editor launch/Disable", validate = true)]
+		[MenuItem(Menu + "Auto Cleanup at Editor launch/Disable", validate = true)]
 		public static bool DisableAutoCleanUpAtEditorLaunch_Validate()
 		{
 			return EnableRunAtEditorLaunch.Value;
