@@ -227,9 +227,8 @@ namespace Extenity.AssetToolbox.Editor
 				var fullList = New.List<string>();
 				var log = new StringBuilder();
 
-				Log.Info("NOTE! If you want to include files in a folder, make sure you select the folder <b>in right column</b> if you use Two-Column Layout project window.");
 				var list = AssetDatabaseTools.GetSelectedAssetPaths(true);
-				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
+				InternalAddToAssetList(ref list, fullList, "Selected Asset", log);
 
 				Log.Info(log.ToString());
 
@@ -246,7 +245,7 @@ namespace Extenity.AssetToolbox.Editor
 				var log = new StringBuilder();
 
 				var list = AssetDatabase.GetAllAssetPaths().Where(path => path.StartsWith(ApplicationTools.UnityProjectPaths.ProjectSettingsDirectory)).ToList();
-				InternalAddToAssetList(ref list, fullList, "Selected Assets", log);
+				InternalAddToAssetList(ref list, fullList, "Project Settings Asset", log);
 
 				Log.Info(log.ToString());
 
@@ -333,82 +332,82 @@ namespace Extenity.AssetToolbox.Editor
 			if (scenes)
 			{
 				var list = AssetDatabaseTools.GetAllSceneAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Scenes", log);
+				InternalAddToAssetList(ref list, fullList, "Scene", log);
 			}
 			if (prefabs)
 			{
 				var list = AssetDatabaseTools.GetAllPrefabAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Prefabs", log);
+				InternalAddToAssetList(ref list, fullList, "Prefab", log);
 			}
 			if (models)
 			{
 				var list = AssetDatabaseTools.GetAllModelAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Models", log);
+				InternalAddToAssetList(ref list, fullList, "Model", log);
 			}
 			if (animations)
 			{
 				var list = AssetDatabaseTools.GetAllAnimationAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Animations", log);
+				InternalAddToAssetList(ref list, fullList, "Animation", log);
 			}
 			if (materials)
 			{
 				var list = AssetDatabaseTools.GetAllMaterialAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Materials", log);
+				InternalAddToAssetList(ref list, fullList, "Material", log);
 			}
 			if (shaders)
 			{
 				var list = AssetDatabaseTools.GetAllShaderAssetPaths(true, true, true, true);
-				InternalAddToAssetList(ref list, fullList, "Shaders", log);
+				InternalAddToAssetList(ref list, fullList, "Shader", log);
 			}
 			if (textures)
 			{
 				var list = AssetDatabaseTools.GetAllTextureAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Texture", log);
 			}
 			if (proceduralTextures)
 			{
 				var list = AssetDatabaseTools.GetAllProceduralTextureAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Procedural Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Procedural Texture", log);
 			}
 			if (renderTextures)
 			{
 				var list = AssetDatabaseTools.GetAllRenderTextureAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Render Textures", log);
+				InternalAddToAssetList(ref list, fullList, "Render Texture", log);
 			}
 			if (lightmap)
 			{
 				var list = AssetDatabaseTools.GetAllLightmapAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Lightmaps", log);
+				InternalAddToAssetList(ref list, fullList, "Lightmap", log);
 			}
 			if (flares)
 			{
 				var list = AssetDatabaseTools.GetAllFlareAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Flares", log);
+				InternalAddToAssetList(ref list, fullList, "Flare Asset", log);
 			}
 			if (videos)
 			{
 				var list = AssetDatabaseTools.GetAllVideoAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Videos", log);
+				InternalAddToAssetList(ref list, fullList, "Video", log);
 			}
 			if (ui)
 			{
 				var list = AssetDatabaseTools.GetAllUIAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "UI", log);
+				InternalAddToAssetList(ref list, fullList, "UI Asset", log);
 			}
 			if (audio)
 			{
 				var list = AssetDatabaseTools.GetAllAudioAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Audio", log);
+				InternalAddToAssetList(ref list, fullList, "Audio Asset", log);
 			}
 			if (physics)
 			{
 				var list = AssetDatabaseTools.GetAllPhysicsAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Physics", log);
+				InternalAddToAssetList(ref list, fullList, "Physics Asset", log);
 			}
 			if (script)
 			{
 				var list = AssetDatabaseTools.GetAllScriptAssetPaths();
-				InternalAddToAssetList(ref list, fullList, "Scripts", log);
+				InternalAddToAssetList(ref list, fullList, "Script", log);
 			}
 
 			Log.Info(log.ToString());
@@ -425,7 +424,7 @@ namespace Extenity.AssetToolbox.Editor
 
 		private static void InternalAddToAssetList(ref List<string> list, List<string> fullList, string logTitle, StringBuilder log)
 		{
-			log.AppendLine($"====  ({list.Count}) {logTitle}  ====");
+			log.AppendLine($"====  Reserialized {list.Count.ToStringWithEnglishPluralPostfix(logTitle)}  ====");
 
 			if (list.Count == 0)
 				return;
