@@ -37,10 +37,10 @@ namespace Extenity.CameraToolbox
 			{
 				LastAspectRatio = currentAspectRatio;
 
-				var hFOVrad = HorizontalFOV * Mathf.Deg2Rad;
-				var camH = Mathf.Tan(hFOVrad * 0.5f) / currentAspectRatio;
-				var vFOVrad = Mathf.Atan(camH) * 2f;
-				Camera.fieldOfView = vFOVrad * Mathf.Rad2Deg;
+				var horizontalFOVRad = HorizontalFOV * Mathf.Deg2Rad;
+				var camH = Mathf.Tan(horizontalFOVRad * 0.5f) / currentAspectRatio;
+				var verticalFOVRad = Mathf.Atan(camH) * 2f;
+				Camera.fieldOfView = verticalFOVRad * Mathf.Rad2Deg;
 			}
 		}
 

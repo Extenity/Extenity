@@ -234,17 +234,17 @@ namespace Extenity.KernelToolbox
 		{
 			get
 			{
-				if (_SerializedJsonCacher.IsTimeToProcess)
+				if (_SerializedJsonCache.IsTimeToProcess)
 				{
-					_SerializedJsonCacher.CachedResult = SerializeJsonWithoutCrosscheck();
-					_SerializedJsonLineCount = _SerializedJsonCacher.CachedResult.CountLines();
+					_SerializedJsonCache.CachedResult = SerializeJsonWithoutCrosscheck();
+					_SerializedJsonLineCount = _SerializedJsonCache.CachedResult.CountLines();
 				}
-				return _SerializedJsonCacher.CachedResult;
+				return _SerializedJsonCache.CachedResult;
 			}
 		}
 
 		[JsonIgnore]
-		private readonly CachedPoller<string> _SerializedJsonCacher = new CachedPoller<string>(1f);
+		private readonly CachedPoller<string> _SerializedJsonCache = new CachedPoller<string>(1f);
 
 		// private Vector2 _JsonScrollPosition;
 

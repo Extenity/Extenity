@@ -184,12 +184,12 @@ namespace Extenity.MathToolbox
 		public static bool IsAllAboveOrEqualZero(this Vector3Int vector) { return vector.x >= 0 && vector.y >= 0 && vector.z >= 0; }
 		public static bool IsAnyAboveOrEqualZero(this Vector3Int vector) { return vector.x >= 0 || vector.y >= 0 || vector.z >= 0; }
 
-		public static bool IsAllMininum(this Vector3Int vector) { return vector.x == int.MinValue && vector.y == int.MinValue && vector.z == int.MinValue; }
+		public static bool IsAllMinimum(this Vector3Int vector) { return vector.x == int.MinValue && vector.y == int.MinValue && vector.z == int.MinValue; }
 		public static bool IsAllMaximum(this Vector3Int vector) { return vector.x == int.MaxValue && vector.y == int.MaxValue && vector.z == int.MaxValue; }
-		public static bool IsAnyMininum(this Vector3Int vector) { return vector.x == int.MinValue || vector.y == int.MinValue || vector.z == int.MinValue; }
+		public static bool IsAnyMinimum(this Vector3Int vector) { return vector.x == int.MinValue || vector.y == int.MinValue || vector.z == int.MinValue; }
 		public static bool IsAnyMaximum(this Vector3Int vector) { return vector.x == int.MaxValue || vector.y == int.MaxValue || vector.z == int.MaxValue; }
 
-		public static bool IsAllMininumOrMaximum(this Vector3Int vector)
+		public static bool IsAllMinimumOrMaximum(this Vector3Int vector)
 		{
 			return
 				(vector.x == int.MinValue || vector.x == int.MaxValue) &&
@@ -197,7 +197,7 @@ namespace Extenity.MathToolbox
 				(vector.z == int.MinValue || vector.z == int.MaxValue);
 		}
 
-		public static bool IsAnyMininumOrMaximum(this Vector3Int vector)
+		public static bool IsAnyMinimumOrMaximum(this Vector3Int vector)
 		{
 			return
 				(vector.x == int.MinValue || vector.x == int.MaxValue) ||

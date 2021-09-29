@@ -121,23 +121,23 @@ namespace Extenity.UIToolbox.TouchInput
 
 		#region Movement with Animation
 
-		private bool IsAnimatingMovement => MovementAnimationRemaniningTime > 0f;
+		private bool IsAnimatingMovement => MovementAnimationRemainingTime > 0f;
 		private float MovementAnimationDuration;
-		private float MovementAnimationRemaniningTime;
+		private float MovementAnimationRemainingTime;
 		private Vector2 MovementAnimationStartPosition;
 		private Vector2 MovementAnimationEndPosition;
 
 		private void CalculateMovementAnimation()
 		{
-			MovementAnimationRemaniningTime -= Loop.DeltaTime;
-			if (MovementAnimationRemaniningTime <= 0f)
+			MovementAnimationRemainingTime -= Loop.DeltaTime;
+			if (MovementAnimationRemainingTime <= 0f)
 			{
 				Base.anchoredPosition = MovementAnimationEndPosition;
 				StopMovementAnimation();
 			}
 			else
 			{
-				var t = MovementAnimationRemaniningTime / MovementAnimationDuration;
+				var t = MovementAnimationRemainingTime / MovementAnimationDuration;
 				Base.anchoredPosition = Vector2.Lerp(MovementAnimationStartPosition, MovementAnimationEndPosition, 1f - t * t);
 			}
 		}
@@ -162,7 +162,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 			if (animationDuration > 0f)
 			{
-				MovementAnimationRemaniningTime = animationDuration;
+				MovementAnimationRemainingTime = animationDuration;
 				MovementAnimationDuration = animationDuration;
 				MovementAnimationStartPosition = Base.anchoredPosition;
 				MovementAnimationEndPosition = position;
@@ -176,7 +176,7 @@ namespace Extenity.UIToolbox.TouchInput
 
 		public void StopMovementAnimation()
 		{
-			MovementAnimationRemaniningTime = 0f;
+			MovementAnimationRemainingTime = 0f;
 			MovementAnimationDuration = 0f;
 			MovementAnimationStartPosition = Vector2Tools.Zero;
 			MovementAnimationEndPosition = Vector2Tools.Zero;

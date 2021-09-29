@@ -647,7 +647,7 @@ namespace ExtenityTests.DataToolbox
 		}
 
 		[Test]
-		public void RemoveTwoTailings_ThenAddTwoNewItems_WhenCapacityAllows()
+		public void RemoveTwoTailing_ThenAddTwoNewItems_WhenCapacityAllows()
 		{
 			var array = CreateAndFillArray(12, 10);
 			array.RemoveTailing();
@@ -668,7 +668,7 @@ namespace ExtenityTests.DataToolbox
 		}
 
 		[Test]
-		public void RemoveTwoTailings_ThenAddTwoNewItems_WhenCapacityExceeds()
+		public void RemoveTwoTailing_ThenAddTwoNewItems_WhenCapacityExceeds()
 		{
 			var array = CreateAndFillArray(10, 10);
 			array.RemoveTailing();
@@ -689,7 +689,7 @@ namespace ExtenityTests.DataToolbox
 		}
 
 		[Test]
-		public void RemoveTwoTailings_ThenAddThreeNewItems_WhenCapacityExceedsForOnlyOne()
+		public void RemoveTwoTailing_ThenAddThreeNewItems_WhenCapacityExceedsForOnlyOne()
 		{
 			var array = CreateAndFillArray(11, 10);
 			array.RemoveTailing();
@@ -722,7 +722,7 @@ namespace ExtenityTests.DataToolbox
 		}
 
 		[Test]
-		public void RemoveAllTailings_ThenAddNewItems_ShouldRearrange()
+		public void RemoveAllTailing_ThenAddNewItems_ShouldRearrange()
 		{
 			var array = CreateAndFillNonArrangedArray(10, 3, 3);
 			Expect(array.IsArranged == false);

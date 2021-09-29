@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// ReSharper disable IdentifierTypo
+
 namespace Extenity.MathToolbox
 {
 

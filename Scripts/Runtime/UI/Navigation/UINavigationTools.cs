@@ -69,9 +69,9 @@ namespace Extenity.UIToolbox
 				return false;
 
 			// If it's an input field, also set the text caret.
-			var inputfield = selectable.GetComponent<InputField>();
-			if (inputfield != null)
-				inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+			var inputField = selectable.GetComponent<InputField>();
+			if (inputField != null)
+				inputField.OnPointerClick(new PointerEventData(EventSystem.current));
 
 			EventSystem.current.SetSelectedGameObject(selectable.gameObject, new BaseEventData(EventSystem.current));
 			return true;

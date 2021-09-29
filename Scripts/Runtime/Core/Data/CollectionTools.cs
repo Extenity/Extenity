@@ -699,7 +699,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static IEnumerable<T> Duplicates<T>(this IEnumerable<T> source, IEqualityComparer<T> equaltyComparer)
+		public static IEnumerable<T> Duplicates<T>(this IEnumerable<T> source, IEqualityComparer<T> equalityComparer)
 		{
 			if (source == null)
 				yield break;
@@ -709,9 +709,9 @@ namespace Extenity.DataToolbox
 
 			foreach (T item in source)
 			{
-				if (itemsSeen.Contains(item, equaltyComparer))
+				if (itemsSeen.Contains(item, equalityComparer))
 				{
-					if (!itemsYielded.Contains(item, equaltyComparer))
+					if (!itemsYielded.Contains(item, equalityComparer))
 					{
 						itemsYielded.Add(item);
 						yield return item;
@@ -725,7 +725,7 @@ namespace Extenity.DataToolbox
 		}
 
 		/// <summary>
-		/// Removes all duplicate items in list. Keeps only the last occurences of duplicate items.
+		/// Removes all duplicate items in list. Keeps only the last occurrences of duplicate items.
 		/// </summary>
 		public static void RemoveDuplicates<T>(this List<T> source)
 		{

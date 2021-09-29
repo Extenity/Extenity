@@ -92,13 +92,13 @@ namespace Extenity.ProfilingToolbox
 		private static bool IsProfilingActive;
 		private static int ProfilingActivator;
 
-		public static void RequestAcivation()
+		public static void RequestActivation()
 		{
 			ProfilingActivator++;
 			IsProfilingActive = ProfilingActivator > 0;
 		}
 
-		public static void ReleaseAcivation()
+		public static void ReleaseActivation()
 		{
 			ProfilingActivator--;
 			IsProfilingActive = ProfilingActivator > 0;

@@ -252,7 +252,7 @@ namespace Extenity.UIToolbox
 
 				_lerp = true;
 				CurrentPage = _currentPage + 1;
-				GetPositionforPage(_currentPage, ref _lerp_target);
+				GetPositionForPage(_currentPage, ref _lerp_target);
 				ScreenChange();
 			}
 		}
@@ -266,7 +266,7 @@ namespace Extenity.UIToolbox
 
 				_lerp = true;
 				CurrentPage = _currentPage - 1;
-				GetPositionforPage(_currentPage, ref _lerp_target);
+				GetPositionForPage(_currentPage, ref _lerp_target);
 				ScreenChange();
 			}
 		}
@@ -284,7 +284,7 @@ namespace Extenity.UIToolbox
 
 				_lerp = true;
 				CurrentPage = screenIndex;
-				GetPositionforPage(_currentPage, ref _lerp_target);
+				GetPositionForPage(_currentPage, ref _lerp_target);
 				ScreenChange();
 			}
 		}
@@ -294,7 +294,7 @@ namespace Extenity.UIToolbox
 		/// </summary>
 		/// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
 		/// <returns>Closest Page number (zero indexed array value)</returns>
-		internal int GetPageforPosition(Vector3 pos)
+		internal int GetPageForPosition(Vector3 pos)
 		{
 			return _isVertical ? -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) : -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
 		}
@@ -314,7 +314,7 @@ namespace Extenity.UIToolbox
 		/// </summary>
 		/// <param name="page">Page that the position is required for (Zero indexed array value)</param>
 		/// <param name="target">Outputs the local position for the selected page</param>
-		internal void GetPositionforPage(int page, ref Vector3 target)
+		internal void GetPositionForPage(int page, ref Vector3 target)
 		{
 			_childPos = -_childSize * page;
 			if (_isVertical)
@@ -333,8 +333,8 @@ namespace Extenity.UIToolbox
 		internal void ScrollToClosestElement()
 		{
 			_lerp = true;
-			CurrentPage = GetPageforPosition(_screensContainer.localPosition);
-			GetPositionforPage(_currentPage, ref _lerp_target);
+			CurrentPage = GetPageForPosition(_screensContainer.localPosition);
+			GetPositionForPage(_currentPage, ref _lerp_target);
 			ChangeBulletsInfo(_currentPage);
 		}
 

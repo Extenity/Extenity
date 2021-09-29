@@ -126,11 +126,11 @@ namespace Extenity.NavigationToolbox.Editor
 				for (var i = 0; i < count; i++)
 				{
 					var id = NavMesh.GetSettingsByIndex(i).agentTypeID;
-					var sname = NavMesh.GetSettingsNameFromID(id);
+					var settingsName = NavMesh.GetSettingsNameFromID(id);
 
 					var showSelected = show && AgentMaskHasSelectedAgentTypeID(agentMask, id);
 					var userData = new object[] { agentMask, id, !showSelected };
-					menu.AddItem(new GUIContent(sname), showSelected, ToggleAgentMaskItem, userData);
+					menu.AddItem(new GUIContent(settingsName), showSelected, ToggleAgentMaskItem, userData);
 				}
 
 				menu.DropDown(popupRect);

@@ -53,7 +53,7 @@ namespace Extenity.UIToolbox
 				}
 			}
 
-			CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+			CurrentPage = GetPageForPosition(_screensContainer.localPosition);
 
 			//If the container is moving check if it needs to settle on a page
 			if (!_pointerDown)

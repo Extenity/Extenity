@@ -132,12 +132,12 @@ namespace Extenity.NetworkToolbox
 
 				//Debug.Write("IP Addresses:");
 
-				foreach (UnicastIPAddressInformation uipi in networkInterface.GetIPProperties().UnicastAddresses)
+				foreach (UnicastIPAddressInformation info in networkInterface.GetIPProperties().UnicastAddresses)
 				{
 					//Debug.Write(string.Format("\t{0} / {1}", uipi.Address, uipi.IPv4Mask));
-					if (!uipi.Address.IsNullOrZero() && !uipi.IPv4Mask.IsNullOrZero())
+					if (!info.Address.IsNullOrZero() && !info.IPv4Mask.IsNullOrZero())
 					{
-						var broadcastIPAddress = uipi.Address.GetBroadcastAddress(uipi.IPv4Mask);
+						var broadcastIPAddress = info.Address.GetBroadcastAddress(info.IPv4Mask);
 						if (!broadcastIPAddress.IsNullOrZero())
 						{
 							list.Add(broadcastIPAddress);
@@ -187,16 +187,16 @@ namespace Extenity.NetworkToolbox
 
 		public static IPAddress GetNetworkAddress(this IPAddress address, IPAddress subnetMask)
 		{
-			byte[] ipAdressBytes = address.GetAddressBytes();
+			byte[] ipAddressBytes = address.GetAddressBytes();
 			byte[] subnetMaskBytes = subnetMask.GetAddressBytes();
 
-			if (ipAdressBytes.Length != subnetMaskBytes.Length)
+			if (ipAddressBytes.Length != subnetMaskBytes.Length)
 				throw new ArgumentException("Lengths of IP address and subnet mask do not match.");
 
-			byte[] broadcastAddress = new byte[ipAdressBytes.Length];
+			byte[] broadcastAddress = new byte[ipAddressBytes.Length];
 			for (int i = 0; i < broadcastAddress.Length; i++)
 			{
-				broadcastAddress[i] = (byte)(ipAdressBytes[i] & (subnetMaskBytes[i]));
+				broadcastAddress[i] = (byte)(ipAddressBytes[i] & (subnetMaskBytes[i]));
 			}
 			return new IPAddress(broadcastAddress);
 		}

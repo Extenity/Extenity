@@ -58,9 +58,9 @@ namespace Extenity.RenderingToolbox
 			int depth = 24,
 			RenderTextureFormat format = RenderTextureFormat.Default,
 			RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default,
-			bool hideInHierarcy = true)
+			bool hideInHierarchy = true)
 		{
-			return Create(null, Vector2.one, depth, format, readWrite, hideInHierarcy);
+			return Create(null, Vector2.one, depth, format, readWrite, hideInHierarchy);
 		}
 
 		public static AutoSizedRenderTexture Create(
@@ -68,14 +68,14 @@ namespace Extenity.RenderingToolbox
 			int depth = 24,
 			RenderTextureFormat format = RenderTextureFormat.Default,
 			RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default,
-			bool hideInHierarcy = true)
+			bool hideInHierarchy = true)
 		{
-			return Create(onRenderTextureChanged, Vector2.one, depth, format, readWrite, hideInHierarcy);
+			return Create(onRenderTextureChanged, Vector2.one, depth, format, readWrite, hideInHierarchy);
 		}
 
-		public static AutoSizedRenderTexture Create(UnityAction<RenderTexture> onRenderTextureChanged, Vector2 screenSizeFactor, int depth = 24, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default, bool hideInHierarcy = true)
+		public static AutoSizedRenderTexture Create(UnityAction<RenderTexture> onRenderTextureChanged, Vector2 screenSizeFactor, int depth = 24, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default, bool hideInHierarchy = true)
 		{
-			var me = CreateGameObject(hideInHierarcy);
+			var me = CreateGameObject(hideInHierarchy);
 			me.ScreenSizeFactor = screenSizeFactor;
 			me.Depth = depth;
 			me.Format = format;
@@ -90,12 +90,12 @@ namespace Extenity.RenderingToolbox
 			return me;
 		}
 
-		private static AutoSizedRenderTexture CreateGameObject(bool hideInHierarcy)
+		private static AutoSizedRenderTexture CreateGameObject(bool hideInHierarchy)
 		{
 			var go = new GameObject();
 			go.name = "_AutoSizedRenderTexture-" + go.GetInstanceID();
 
-			if (hideInHierarcy)
+			if (hideInHierarchy)
 			{
 				go.hideFlags = HideFlags.HideInHierarchy;
 			}

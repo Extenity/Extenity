@@ -42,17 +42,17 @@ namespace Extenity.MathToolbox.Editor
 
 				const int MinMaxLabelWidth = 30;
 
-				var textboxPosition = contentPosition;
-				textboxPosition.x += MinMaxLabelWidth;
-				textboxPosition.width -= MinMaxLabelWidth;
+				var textBoxPosition = contentPosition;
+				textBoxPosition.x += MinMaxLabelWidth;
+				textBoxPosition.width -= MinMaxLabelWidth;
 				GUI.Label(contentPosition, "Min");
-				EditorGUI.PropertyField(textboxPosition, minProperty, GUIContent.none);
+				EditorGUI.PropertyField(textBoxPosition, minProperty, GUIContent.none);
 
 				contentPosition.x += contentPosition.width;
 
-				textboxPosition.x = contentPosition.x + MinMaxLabelWidth;
+				textBoxPosition.x = contentPosition.x + MinMaxLabelWidth;
 				GUI.Label(contentPosition, "Max");
-				EditorGUI.PropertyField(textboxPosition, maxProperty, GUIContent.none);
+				EditorGUI.PropertyField(textBoxPosition, maxProperty, GUIContent.none);
 			}
 
 			EditorGUI.EndProperty();

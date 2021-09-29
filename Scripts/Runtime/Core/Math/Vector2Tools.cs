@@ -378,9 +378,9 @@ namespace Extenity.MathToolbox
 
 		public static Vector2 Rotate(this Vector2 vector, float angleInRadians)
 		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector2(cosa * vector.x - sina * vector.y, sina * vector.x + cosa * vector.y);
+			float cos = Mathf.Cos(angleInRadians);
+			float sin = Mathf.Sin(angleInRadians);
+			return new Vector2(cos * vector.x - sin * vector.y, sin * vector.x + cos * vector.y);
 		}
 
 		#endregion

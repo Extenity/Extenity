@@ -16,6 +16,7 @@ namespace Extenity.CryptoToolbox
 	/// </summary>
 	public class SimpleTwoWayEncryptorAES : IDisposable
 	{
+		// ReSharper disable once IdentifierTypo
 		private RijndaelManaged Rijn;
 
 		/// <summary>

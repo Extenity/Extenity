@@ -15,7 +15,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		[NonSerialized]
 		public Quaternion SomeRotation;
 
-		private Example_Subclass HiddenSubobject = new Example_Subclass();
+		private Example_Subclass HiddenSubObject = new Example_Subclass();
 
 #pragma warning restore 414
 
@@ -28,7 +28,7 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 		{
 			SomeRandomNumber = Random.value.Remap(0f, 1f, 0.00f, 0.25f);
 			SomeHiddenRandomNumber = Random.value.Remap(0f, 1f, 0.25f, 0.50f);
-			HiddenSubobject.SomeRandomNumberInSubclass = Random.value.Remap(0f, 1f, 0.50f, 0.75f);
+			HiddenSubObject.SomeRandomNumberInSubclass = Random.value.Remap(0f, 1f, 0.50f, 0.75f);
 			SomeRotation = Quaternion.Euler(Mathf.Sin(Time.time).Remap(-1, 1f, 0.75f, 1.00f), 0f, 0f);
 		}
 	}

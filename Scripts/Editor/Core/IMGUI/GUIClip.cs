@@ -2,6 +2,8 @@
 using Extenity.ReflectionToolbox;
 using UnityEngine;
 
+// ReSharper disable IdentifierTypo
+
 namespace Extenity.IMGUIToolbox.Editor
 {
 

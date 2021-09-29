@@ -39,6 +39,8 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using Extenity.CodingToolbox;
 
+// ReSharper disable IdentifierTypo
+
 namespace System
 {
 

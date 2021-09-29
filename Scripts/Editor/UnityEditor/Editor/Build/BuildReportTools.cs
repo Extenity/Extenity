@@ -221,14 +221,14 @@ namespace Extenity.BuildToolbox.Editor
 
 			void Title(string message)
 			{
-				stringBuilder.AppendLine(indentation + ClipMesage(message));
+				stringBuilder.AppendLine(indentation + ClipMessage(message));
 				IncreaseIndent();
 			}
 			void Line(string message)
 			{
-				stringBuilder.AppendLine(indentation + ClipMesage(message));
+				stringBuilder.AppendLine(indentation + ClipMessage(message));
 			}
-			string ClipMesage(string message)
+			string ClipMessage(string message)
 			{
 				var index = message.IndexOfNextLineEnding(0);
 				if (index < 0)

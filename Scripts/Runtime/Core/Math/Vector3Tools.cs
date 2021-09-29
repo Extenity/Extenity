@@ -575,23 +575,23 @@ namespace Extenity.MathToolbox
 
 		public static Vector3 RotateAroundZ(this Vector3 vector, float angleInRadians)
 		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(cosa * vector.x - sina * vector.y, sina * vector.x + cosa * vector.y, 0f);
+			float cos = Mathf.Cos(angleInRadians);
+			float sin = Mathf.Sin(angleInRadians);
+			return new Vector3(cos * vector.x - sin * vector.y, sin * vector.x + cos * vector.y, 0f);
 		}
 
 		public static Vector3 RotateAroundY(this Vector3 vector, float angleInRadians)
 		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(cosa * vector.x - sina * vector.z, 0f, sina * vector.x + cosa * vector.z);
+			float cos = Mathf.Cos(angleInRadians);
+			float sin = Mathf.Sin(angleInRadians);
+			return new Vector3(cos * vector.x - sin * vector.z, 0f, sin * vector.x + cos * vector.z);
 		}
 
 		public static Vector3 RotateAroundX(this Vector3 vector, float angleInRadians)
 		{
-			float cosa = Mathf.Cos(angleInRadians);
-			float sina = Mathf.Sin(angleInRadians);
-			return new Vector3(0f, cosa * vector.y - sina * vector.z, sina * vector.y + cosa * vector.z);
+			float cos = Mathf.Cos(angleInRadians);
+			float sin = Mathf.Sin(angleInRadians);
+			return new Vector3(0f, cos * vector.y - sin * vector.z, sin * vector.y + cos * vector.z);
 		}
 
 		#endregion

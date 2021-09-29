@@ -146,14 +146,14 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		#region Search Bar
 
-		private static GUIStyle _Style_ToolbarSeachTextField;
-		public static GUIStyle Style_ToolbarSeachTextField
+		private static GUIStyle _Style_ToolbarSearchTextField;
+		public static GUIStyle Style_ToolbarSearchTextField
 		{
 			get
 			{
-				if (_Style_ToolbarSeachTextField == null)
-					_Style_ToolbarSeachTextField = GUI.skin.FindStyle("ToolbarSeachTextField");
-				return _Style_ToolbarSeachTextField;
+				if (_Style_ToolbarSearchTextField == null)
+					_Style_ToolbarSearchTextField = GUI.skin.FindStyle("ToolbarSearchTextField");
+				return _Style_ToolbarSearchTextField;
 			}
 		}
 
@@ -168,14 +168,14 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 		}
 
-		private static GUIStyle _Style_ToolbarSeachCancelButton;
-		public static GUIStyle Style_ToolbarSeachCancelButton
+		private static GUIStyle _Style_ToolbarSearchCancelButton;
+		public static GUIStyle Style_ToolbarSearchCancelButton
 		{
 			get
 			{
-				if (_Style_ToolbarSeachCancelButton == null)
-					_Style_ToolbarSeachCancelButton = GUI.skin.FindStyle("ToolbarSeachCancelButton");
-				return _Style_ToolbarSeachCancelButton;
+				if (_Style_ToolbarSearchCancelButton == null)
+					_Style_ToolbarSearchCancelButton = GUI.skin.FindStyle("ToolbarSearchCancelButton");
+				return _Style_ToolbarSearchCancelButton;
 			}
 		}
 
@@ -187,8 +187,8 @@ namespace Extenity.IMGUIToolbox.Editor
 		public static bool SearchBar(ref string searchInput)
 		{
 			GUILayout.BeginHorizontal(Style_Toolbar, GUILayoutTools.ExpandWidth);
-			var newSearchInput = GUILayout.TextField(searchInput, Style_ToolbarSeachTextField, GUILayoutTools.ExpandWidth);
-			if (GUILayout.Button(GUIContent.none, Style_ToolbarSeachCancelButton))
+			var newSearchInput = GUILayout.TextField(searchInput, Style_ToolbarSearchTextField, GUILayoutTools.ExpandWidth);
+			if (GUILayout.Button(GUIContent.none, Style_ToolbarSearchCancelButton))
 			{
 				newSearchInput = "";
 				GUI.FocusControl(null);

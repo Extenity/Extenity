@@ -12,7 +12,7 @@ namespace Extenity.UIToolbox
 
 		protected override void OnEnable()
 		{
-			CodeProfiler.RequestAcivation();
+			CodeProfiler.RequestActivation();
 			InitializeItems();
 		}
 
@@ -22,7 +22,7 @@ namespace Extenity.UIToolbox
 
 		protected override void OnDisable()
 		{
-			CodeProfiler.ReleaseAcivation();
+			CodeProfiler.ReleaseActivation();
 			DeinitializeItems();
 		}
 

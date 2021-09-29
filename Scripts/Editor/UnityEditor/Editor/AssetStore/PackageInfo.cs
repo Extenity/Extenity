@@ -15,6 +15,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 		{
 			Main,
 			Screenshot,
+			// ReSharper disable once IdentifierTypo
 			Sketchfab,
 			Youtube,
 		}

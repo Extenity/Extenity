@@ -116,11 +116,11 @@ namespace Extenity.OperatingSystemToolbox
 			var hGlobal = GetClipboardData(ClipboardFormats.UnicodeText);
 			if (hGlobal != IntPtr.Zero)
 			{
-				var lpwcstr = GlobalLock(hGlobal);
-				if (lpwcstr != IntPtr.Zero)
+				var stringPointer = GlobalLock(hGlobal);
+				if (stringPointer != IntPtr.Zero)
 				{
-					data = Marshal.PtrToStringUni(lpwcstr);
-					GlobalUnlock(lpwcstr);
+					data = Marshal.PtrToStringUni(stringPointer);
+					GlobalUnlock(stringPointer);
 				}
 			}
 			CloseClipboard();

@@ -67,10 +67,10 @@ namespace Extenity.UnityProjectTemplateToolbox.TarCs
 		/// <summary>
 		/// Read data from a current file to a Stream.
 		/// </summary>
-		/// <param name="dataDestanation">A stream to read data to</param>
+		/// <param name="dataDestination">A stream to read data to</param>
 		///
 		/// <seealso cref="MoveNext"/>
-		public void Read(Stream dataDestanation)
+		public void Read(Stream dataDestination)
 		{
 			Debug.WriteLine("tar stream position Read in: " + inStream.Position);
 			int readBytes;
@@ -78,7 +78,7 @@ namespace Extenity.UnityProjectTemplateToolbox.TarCs
 			while ((readBytes = Read(out read)) != -1)
 			{
 				Debug.WriteLine("tar stream position Read while(...) : " + inStream.Position);
-				dataDestanation.Write(read, 0, readBytes);
+				dataDestination.Write(read, 0, readBytes);
 			}
 			Debug.WriteLine("tar stream position Read out: " + inStream.Position);
 		}
@@ -159,8 +159,8 @@ namespace Extenity.UnityProjectTemplateToolbox.TarCs
 				// Skip to the end of file.
 				if (inStream.CanSeek)
 				{
-					long remainer = (remainingBytesInFile % 512);
-					inStream.Seek(remainingBytesInFile + (512 - (remainer == 0 ? 512 : remainer)), SeekOrigin.Current);
+					long remainder = (remainingBytesInFile % 512);
+					inStream.Seek(remainingBytesInFile + (512 - (remainder == 0 ? 512 : remainder)), SeekOrigin.Current);
 				}
 				else
 				{

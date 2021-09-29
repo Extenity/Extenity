@@ -297,24 +297,24 @@ namespace Extenity.MathToolbox
 			return list[random.Next(0, list.Count)];
 		}
 
-		public static T RandomSelection<T>(this IList<T> list, bool removeFromlist)
+		public static T RandomSelection<T>(this IList<T> list, bool removeFromList)
 		{
 			if (list.Count == 0)
 				return default(T);
 			int index = Random.Range(0, list.Count);
 			T val = list[index];
-			if (removeFromlist)
+			if (removeFromList)
 				list.RemoveAt(index);
 			return val;
 		}
 
-		public static T RandomSelection<T>(this IList<T> list, bool removeFromlist, System.Random random)
+		public static T RandomSelection<T>(this IList<T> list, bool removeFromList, System.Random random)
 		{
 			if (list.Count == 0)
 				return default(T);
 			int index = random.Next(0, list.Count);
 			T val = list[index];
-			if (removeFromlist)
+			if (removeFromList)
 				list.RemoveAt(index);
 			return val;
 		}

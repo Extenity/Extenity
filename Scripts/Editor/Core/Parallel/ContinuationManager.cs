@@ -7,7 +7,7 @@ namespace Extenity.ParallelToolbox.Editor
 {
 
 	/// <summary>
-	/// Provides a simulated multithreading manager for invoking callbacks on the main unity thread.
+	/// Provides a simulated multithreading manager for invoking callbacks on the main Unity thread.
 	/// </summary>
 	public static class ContinuationManager
 	{
@@ -135,7 +135,7 @@ namespace Extenity.ParallelToolbox.Editor
 				throw new ThreadStateException("Can only be called from the main unity thread.");
 			}
 
-			// locking the jobs queue here means that any other calls to Update, Run or RunSyncronously will
+			// locking the jobs queue here means that any other calls to Update, Run or RunSynchronously will
 			// be blocked until all jobs have been processed.
 			lock (jobQueue)
 			{
@@ -170,7 +170,7 @@ namespace Extenity.ParallelToolbox.Editor
 		/// Called bu unity automatically and sets auto update to true.
 		/// </summary>
 		[InitializeOnLoadMethod]
-		private static void Initilize()
+		private static void Initialize()
 		{
 			if (MainThread != null)
 			{
@@ -182,14 +182,14 @@ namespace Extenity.ParallelToolbox.Editor
 		}
 
 		/// <summary>
-		/// Runs a callback syncronously.
+		/// Runs a callback synchronously.
 		/// </summary>
 		/// <param name="callback">The callback to be invoked.</param>
 		/// <returns></returns>
-		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
-		public static void RunSyncronously(Action callback)
+		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initialize"/> method has not been previously called.</exception>
+		public static void RunSynchronously(Action callback)
 		{
-			RunSyncronously(new Func<object>(() =>
+			RunSynchronously(new Func<object>(() =>
 			{
 				callback();
 				return null;
@@ -197,13 +197,13 @@ namespace Extenity.ParallelToolbox.Editor
 		}
 
 		/// <summary>
-		/// Runs a callback syncronously.
+		/// Runs a callback synchronously.
 		/// </summary>
 		/// <typeparam name="T">The return type.</typeparam>
 		/// <param name="callback">The callback to be invoked.</param>
 		/// <returns></returns>
-		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initilize"/> method has not been previously called.</exception>
-		public static T RunSyncronously<T>(Func<T> callback)
+		/// <exception cref="ThreadStateException">Thrown if the <see cref="Initialize"/> method has not been previously called.</exception>
+		public static T RunSynchronously<T>(Func<T> callback)
 		{
 			// setup a default return value
 			T result = default(T);

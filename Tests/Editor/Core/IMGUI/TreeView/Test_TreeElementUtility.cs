@@ -83,18 +83,18 @@ namespace ExtenityTests.IMGUIToolbox.Editor
 			list.Add(new TestElement("Bchild", 2));
 
 			// Test
-			bool catchedException = false;
+			bool caughtException = false;
 			try
 			{
 				TreeElementUtility.ListToTree(list);
 			}
 			catch (Exception)
 			{
-				catchedException = true;
+				caughtException = true;
 			}
 
 			// Assert
-			Assert.IsTrue(catchedException, "We require the root.depth to be -1, here it is: " + list[0].depth);
+			Assert.IsTrue(caughtException, "We require the root.depth to be -1, here it is: " + list[0].depth);
 		}
 
 		[Test]
