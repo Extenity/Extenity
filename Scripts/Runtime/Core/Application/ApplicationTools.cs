@@ -280,6 +280,21 @@ namespace Extenity.ApplicationToolbox
 		}
 
 		#endregion
+
+		#region Batch Mode
+
+		public static bool IsBatchMode
+		{
+			get
+			{
+				// There are also these alternatives in case its needed.
+				// UnityEditorInternal.InternalEditorUtility.inBatchMode
+				// UnityEditorInternal.InternalEditorUtility.isHumanControllingUs
+				return Application.isBatchMode;
+			}
+		}
+
+		#endregion
 	}
 
 }
