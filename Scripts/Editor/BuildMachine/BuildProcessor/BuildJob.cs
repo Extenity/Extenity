@@ -291,6 +291,16 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
+		#region Quit In Batch Mode
+
+		/// <summary>
+		/// Automatically quits Unity Editor after finishing the build job if the Editor is launched in batch mode.
+		/// Disable this in a build step or before running the job if Unity Editor should continue to live.
+		/// </summary>
+		public bool IsSetToQuitInBatchMode = true;
+
+		#endregion
+
 		#region Error Handling
 
 		[JsonIgnore]

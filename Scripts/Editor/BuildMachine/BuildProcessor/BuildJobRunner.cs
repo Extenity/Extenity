@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Extenity.ApplicationToolbox;
 using Extenity.ApplicationToolbox.Editor;
 using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
@@ -740,7 +741,18 @@ namespace Extenity.BuildMachine.Editor
 			UnsetRunningJob();
 			DeleteRunningJobFile();
 
-			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+			// Close the editor in batch mode OR let the Editor live.
+			// Note that asset database refresh is a heavy operation
+			// and will only be done if Editor will continue to run.
+			if (ApplicationTools.IsBatchMode && RunningJob.IsSetToQuitInBatchMode)
+			{
+				var exitCode = RunningJob.Result == BuildJobResult.Succeeded ? 0 : -1;
+				EditorApplication.Exit(exitCode);
+			}
+			else
+			{
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+			}
 		}
 
 		#endregion
