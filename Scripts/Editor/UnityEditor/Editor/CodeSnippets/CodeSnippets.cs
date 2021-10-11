@@ -117,6 +117,209 @@ namespace __NAMESPACE__
 
 		#endregion
 
+		#region Snippet - Test Assemblies
+
+		private static readonly SnippetInfo TestAssemblyReadme = new SnippetInfo(
+			nameof(TestAssemblyReadme),
+			"__NAME__.Tests/Readme.txt",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"Tests can be run on a device or can be run inside Unity Editor.
+It's always a good idea to try setting up tests to run on all
+platforms if possible which uncovers platform specific problems.
+
+- EditAndPlayModes
+All tests should be put here whenever applicable. They will be run
+as EditMode tests when working in Editor and can easily be
+converted to PlayMode tests via ""Tools > Extenity > Tests"" menu.
+Also Build Machine can automatically convert them for test builds.
+
+- EditModeOnly
+Put the tests here which can only be run in Editor or won't be
+meaningful to run on all platforms.
+
+- PlayModeOnly
+Put the tests here which requires Unity Play Mode to be run.
+"
+		);
+
+		private static readonly SnippetInfo TestAsmdef_EditAndPlayModes = new SnippetInfo(
+			nameof(TestAsmdef_EditAndPlayModes),
+			"__NAME__.Tests/EditAndPlayModes/__NAME__.Tests.EditAndPlayModes.asmdef",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"{
+	""name"": ""__NAME__.Tests.EditAndPlayModes"",
+	""rootNamespace"": """",
+	""references"": [
+		""Extenity.Core"",
+		""Extenity.Testing"",
+		""UnityEngine.TestRunner"",
+		""UnityEditor.TestRunner""
+	],
+	""includePlatforms"": [
+		""Editor""
+	],
+	""excludePlatforms"": [],
+	""allowUnsafeCode"": false,
+	""overrideReferences"": true,
+	""precompiledReferences"": [
+		""nunit.framework.dll""
+	],
+	""autoReferenced"": false,
+	""defineConstraints"": [
+		""UNITY_INCLUDE_TESTS""
+	],
+	""versionDefines"": [],
+	""noEngineReferences"": false
+}
+"
+		);
+
+		private static readonly SnippetInfo TestScript_EditAndPlayModes = new SnippetInfo(
+			nameof(TestScript_EditAndPlayModes),
+			"__NAME__.Tests/EditAndPlayModes/Test___NAME__.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"/*
+using System.Collections;
+using NUnit.Framework;
+using UnityEngine.TestTools;
+
+namespace __NAMESPACE__.Tests
+{
+
+	public class Test___NAME__
+	{
+		[Test]
+		public void NewTestScriptSimplePasses()
+		{
+			// Use the Assert class to test conditions.
+		}
+	}
+
+}
+*/
+"
+		);
+
+		private static readonly SnippetInfo TestAsmdef_EditModeOnly = new SnippetInfo(
+			nameof(TestAsmdef_EditModeOnly),
+			"__NAME__.Tests/EditModeOnly/__NAME__.Tests.EditModeOnly.asmdef",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"{
+	""name"": ""__NAME__.Tests.EditModeOnly"",
+	""rootNamespace"": """",
+	""references"": [
+		""Extenity.Core"",
+		""Extenity.Testing"",
+		""UnityEngine.TestRunner"",
+		""UnityEditor.TestRunner""
+	],
+	""includePlatforms"": [
+		""Editor""
+	],
+	""excludePlatforms"": [],
+	""allowUnsafeCode"": false,
+	""overrideReferences"": true,
+	""precompiledReferences"": [
+		""nunit.framework.dll""
+	],
+	""autoReferenced"": false,
+	""defineConstraints"": [
+		""UNITY_INCLUDE_TESTS""
+	],
+	""versionDefines"": [],
+	""noEngineReferences"": false
+}
+"
+		);
+
+		private static readonly SnippetInfo TestScript_EditModeOnly = new SnippetInfo(
+			nameof(TestScript_EditModeOnly),
+			"__NAME__.Tests/EditModeOnly/Test___NAME__.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"/*
+using System.Collections;
+using NUnit.Framework;
+using UnityEngine.TestTools;
+
+namespace __NAMESPACE__.Tests
+{
+
+	public class Test___NAME__
+	{
+		[Test]
+		public void NewTestScriptSimplePasses()
+		{
+			// Use the Assert class to test conditions.
+		}
+	}
+
+}
+*/
+"
+		);
+
+		private static readonly SnippetInfo TestAsmdef_PlayModeOnly = new SnippetInfo(
+			nameof(TestAsmdef_PlayModeOnly),
+			"__NAME__.Tests/PlayModeOnly/__NAME__.Tests.PlayModeOnly.asmdef",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"{
+	""name"": ""__NAME__.Tests.PlayModeOnly"",
+	""rootNamespace"": """",
+	""references"": [
+		""Extenity.Core"",
+		""Extenity.Testing"",
+		""UnityEngine.TestRunner"",
+		""UnityEditor.TestRunner""
+	],
+	""includePlatforms"": [],
+	""excludePlatforms"": [],
+	""allowUnsafeCode"": false,
+	""overrideReferences"": true,
+	""precompiledReferences"": [
+		""nunit.framework.dll""
+	],
+	""autoReferenced"": false,
+	""defineConstraints"": [
+		""UNITY_INCLUDE_TESTS""
+	],
+	""versionDefines"": [],
+	""noEngineReferences"": false
+}
+"
+		);
+
+		private static readonly SnippetInfo TestScript_PlayModeOnly = new SnippetInfo(
+			nameof(TestScript_PlayModeOnly),
+			"__NAME__.Tests/PlayModeOnly/Test___NAME__.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"/*
+using System.Collections;
+using NUnit.Framework;
+using UnityEngine.TestTools;
+
+namespace __NAMESPACE__.Tests
+{
+
+	public class Test___NAME__
+	{
+		// A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
+		// `yield return null;` to skip a frame.
+		[UnityTest]
+		public IEnumerator NewTestScriptWithEnumeratorPasses()
+		{
+			// Use the Assert class to test conditions.
+			// Use yield to skip a frame.
+			yield return null;
+		}
+	}
+
+}
+*/
+"
+		);
+
+		#endregion
+
 		#region Snippet Groups
 
 		// private static readonly SnippetGroup ScriptWithInspectorGroup = new SnippetGroup()
@@ -146,6 +349,22 @@ namespace __NAMESPACE__
 		// 	AskForNamespace = true,
 		// 	SnippetNames = new List<string> { nameof(InspectorScript) }
 		// };
+
+		private static readonly SnippetGroup TestAssembliesGroup = new SnippetGroup()
+		{
+			MainFileExtension = "Tests",
+			AskForNamespace = true,
+			SnippetNames = new List<string>
+			{
+				nameof(TestAssemblyReadme),
+				nameof(TestAsmdef_EditAndPlayModes),
+				nameof(TestScript_EditAndPlayModes),
+				nameof(TestAsmdef_EditModeOnly),
+				nameof(TestScript_EditModeOnly),
+				nameof(TestAsmdef_PlayModeOnly),
+				nameof(TestScript_PlayModeOnly),
+			}
+		};
 
 		#endregion
 
@@ -356,6 +575,13 @@ namespace __NAMESPACE__
 		{
 			CreateSnippet(EmptyScriptGroup);
 		}
+
+		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Tests Assembly Triple Folders Setup", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
+		private static void _CreateScript_TestAssembliesGroup()
+		{
+			CreateSnippet(TestAssembliesGroup);
+		}
+
 
 		#endregion
 	}
