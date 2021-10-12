@@ -18,13 +18,13 @@ namespace ExtenityTests.ApplicationToolbox
 #endif
 
 			Assert.AreEqual(49, ApplicationVersion.MaxMajorVersion);
-			Assert.AreEqual(999, ApplicationVersion.MaxMinorVersion);
+			Assert.AreEqual(99, ApplicationVersion.MaxMinorVersion);
 #if !BuildlessVersioning
-			Assert.AreEqual(9999, ApplicationVersion.MaxBuildVersion);
+			Assert.AreEqual(999, ApplicationVersion.MaxBuildVersion);
 #endif
 
-			Assert.AreEqual(1000, ApplicationVersion.MinorDigits);
-			Assert.AreEqual(10000, ApplicationVersion.BuildDigits);
+			Assert.AreEqual(100, ApplicationVersion.MinorDigits);
+			Assert.AreEqual(1000, ApplicationVersion.BuildDigits);
 		}
 
 		[Test]
@@ -55,15 +55,15 @@ namespace ExtenityTests.ApplicationToolbox
 		public static void Combined()
 		{
 #if !BuildlessVersioning
-			Assert.AreEqual(10000000, new ApplicationVersion(1, 0, 0).Combined);
-			Assert.AreEqual(10020003, new ApplicationVersion(1, 2, 3).Combined);
-			Assert.AreEqual(10210043, new ApplicationVersion(1, 21, 43).Combined);
-			Assert.AreEqual(499999999, new ApplicationVersion(49, 999, 9999).Combined);
+			Assert.AreEqual(100000, new ApplicationVersion(1, 0, 0).Combined);
+			Assert.AreEqual(102003, new ApplicationVersion(1, 2, 3).Combined);
+			Assert.AreEqual(121043, new ApplicationVersion(1, 21, 43).Combined);
+			Assert.AreEqual(4999999, new ApplicationVersion(49, 99, 999).Combined);
 #else
-			Assert.AreEqual(10000000, new ApplicationVersion(1, 0).Combined);
-			Assert.AreEqual(10020000, new ApplicationVersion(1, 2).Combined);
-			Assert.AreEqual(10210000, new ApplicationVersion(1, 21).Combined);
-			Assert.AreEqual(499990000, new ApplicationVersion(49, 999).Combined);
+			Assert.AreEqual(100000, new ApplicationVersion(1, 0).Combined);
+			Assert.AreEqual(102000, new ApplicationVersion(1, 2).Combined);
+			Assert.AreEqual(121000, new ApplicationVersion(1, 21).Combined);
+			Assert.AreEqual(4999999, new ApplicationVersion(49, 99).Combined);
 #endif
 		}
 
@@ -116,33 +116,33 @@ namespace ExtenityTests.ApplicationToolbox
 			// Throws if Major is below 1
 			Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(ApplicationVersion.MinorAndBuildDigits - 1));
 			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(ApplicationVersion.MinorAndBuildDigits)); // This line is just here to make sure we use "MinorAndBuildDigits-1" above properly.
-			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(1 * 1000 * 10000));
+			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(1 * 100 * 1000));
 
 			// Throws if Major is above 49
-			Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(500000000));
+			Assert.Throws<ArgumentOutOfRangeException>(() => new ApplicationVersion(5000000));
 #if !BuildlessVersioning
-			Assert.AreEqual(new ApplicationVersion(49, 999, 9999), new ApplicationVersion(499999999));
+			Assert.AreEqual(new ApplicationVersion(49, 99, 999), new ApplicationVersion(4999999));
 #else
-			Assert.AreEqual(new ApplicationVersion(49, 999), new ApplicationVersion(499990000));
+			Assert.AreEqual(new ApplicationVersion(49, 99), new ApplicationVersion(4999000));
 #endif
 
 			// Some random examples
 #if !BuildlessVersioning
-			Assert.AreEqual(new ApplicationVersion(1, 0, 1), new ApplicationVersion(10000001));
-			Assert.AreEqual(new ApplicationVersion(1, 0, 3), new ApplicationVersion(10000003));
-			Assert.AreEqual(new ApplicationVersion(1, 2, 3), new ApplicationVersion(10020003));
-			Assert.AreEqual(new ApplicationVersion(3, 5, 8), new ApplicationVersion(30050008));
-			Assert.AreEqual(new ApplicationVersion(9, 21, 43), new ApplicationVersion(90210043));
-			Assert.AreEqual(new ApplicationVersion(15, 121, 5443), new ApplicationVersion(151215443));
-			Assert.AreEqual(new ApplicationVersion(1, 999, 9999), new ApplicationVersion(19999999));
+			Assert.AreEqual(new ApplicationVersion(1, 0, 1), new ApplicationVersion(100001));
+			Assert.AreEqual(new ApplicationVersion(1, 0, 3), new ApplicationVersion(100003));
+			Assert.AreEqual(new ApplicationVersion(1, 2, 3), new ApplicationVersion(102003));
+			Assert.AreEqual(new ApplicationVersion(3, 5, 8), new ApplicationVersion(305008));
+			Assert.AreEqual(new ApplicationVersion(9, 21, 43), new ApplicationVersion(921043));
+			Assert.AreEqual(new ApplicationVersion(15, 81, 543), new ApplicationVersion(1581543));
+			Assert.AreEqual(new ApplicationVersion(1, 99, 999), new ApplicationVersion(199999));
 #else
-			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(10000000));
-			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(10000000));
-			Assert.AreEqual(new ApplicationVersion(1, 2), new ApplicationVersion(10020000));
-			Assert.AreEqual(new ApplicationVersion(3, 5), new ApplicationVersion(30050000));
-			Assert.AreEqual(new ApplicationVersion(9, 21), new ApplicationVersion(90210000));
-			Assert.AreEqual(new ApplicationVersion(15, 121), new ApplicationVersion(151210000));
-			Assert.AreEqual(new ApplicationVersion(1, 999), new ApplicationVersion(19990000));
+			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(100000));
+			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion(100000));
+			Assert.AreEqual(new ApplicationVersion(1, 2), new ApplicationVersion(102000));
+			Assert.AreEqual(new ApplicationVersion(3, 5), new ApplicationVersion(305000));
+			Assert.AreEqual(new ApplicationVersion(9, 21), new ApplicationVersion(921000));
+			Assert.AreEqual(new ApplicationVersion(15, 81), new ApplicationVersion(1581000));
+			Assert.AreEqual(new ApplicationVersion(1, 99), new ApplicationVersion(199000));
 #endif
 		}
 
@@ -155,30 +155,30 @@ namespace ExtenityTests.ApplicationToolbox
 			Assert.AreEqual(new ApplicationVersion(1, 0, 1), new ApplicationVersion("1.0.1"));
 			Assert.AreEqual(new ApplicationVersion(2, 3, 4), new ApplicationVersion("2.3.4"));
 			Assert.AreEqual(new ApplicationVersion(12, 34, 56), new ApplicationVersion("12.34.56"));
-			Assert.AreEqual(new ApplicationVersion(1, 999, 9999), new ApplicationVersion("1.999.9999"));
-			Assert.AreEqual(new ApplicationVersion(49, 999, 9999), new ApplicationVersion("49.999.9999"));
+			Assert.AreEqual(new ApplicationVersion(1, 99, 999), new ApplicationVersion("1.99.999"));
+			Assert.AreEqual(new ApplicationVersion(49, 99, 999), new ApplicationVersion("49.99.999"));
 
 			// Throws out of range
 			Assert.Throws<Exception>(() => new ApplicationVersion("0.0.0"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("-1.0.0"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("50.0.0"));
-			Assert.Throws<Exception>(() => new ApplicationVersion("1.1000.0"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.100.0"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("1.-1.0"));
-			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.10000"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.1000"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("1.0.-1"));
 #else
 			Assert.AreEqual(new ApplicationVersion(1, 0), new ApplicationVersion("1.0"));
 			Assert.AreEqual(new ApplicationVersion(1, 1), new ApplicationVersion("1.1"));
 			Assert.AreEqual(new ApplicationVersion(2, 3), new ApplicationVersion("2.3"));
 			Assert.AreEqual(new ApplicationVersion(12, 34), new ApplicationVersion("12.34"));
-			Assert.AreEqual(new ApplicationVersion(1, 999), new ApplicationVersion("1.999"));
-			Assert.AreEqual(new ApplicationVersion(49, 999), new ApplicationVersion("49.999"));
+			Assert.AreEqual(new ApplicationVersion(1, 99), new ApplicationVersion("1.99"));
+			Assert.AreEqual(new ApplicationVersion(49, 99), new ApplicationVersion("49.99"));
 
 			// Throws out of range
 			Assert.Throws<Exception>(() => new ApplicationVersion("0.0"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("-1.0"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("50.0"));
-			Assert.Throws<Exception>(() => new ApplicationVersion("1.1000"));
+			Assert.Throws<Exception>(() => new ApplicationVersion("1.100"));
 			Assert.Throws<Exception>(() => new ApplicationVersion("1.-1"));
 #endif
 
