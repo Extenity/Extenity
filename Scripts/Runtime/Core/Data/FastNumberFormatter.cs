@@ -795,7 +795,7 @@ namespace Extenity.DataToolbox
 				return userFormatProvider;
 			}
 
-			var res = threadNumberFormatter;
+			FastNumberFormatter res = threadNumberFormatter;
 			threadNumberFormatter = null;
 			if (res == null)
 				return new FastNumberFormatter (Thread.CurrentThread);
@@ -811,7 +811,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, uint value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, Int32DefPrecision);
 			var size = inst.IntegerToString (format, fp, buffer);
 			inst.Release();
@@ -820,7 +820,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, int value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, UInt32DefPrecision);
 			var size = inst.IntegerToString (format, fp, buffer);
 			inst.Release();
@@ -829,7 +829,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, ulong value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			var size = inst.IntegerToString (format, fp, buffer);
 			inst.Release();
@@ -838,7 +838,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, long value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			var size = inst.IntegerToString (format, fp, buffer);
 			inst.Release();
@@ -847,7 +847,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, float value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, SingleDefPrecision);
 			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
 			int size;
@@ -889,7 +889,7 @@ namespace Extenity.DataToolbox
 
 		public static int NumberToString (string format, decimal value, IFormatProvider fp, char[] buffer)
 		{
-			var inst = GetInstance (fp);
+			FastNumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			var size = inst.NumberToString (format, inst.GetNumberFormatInstance(fp), buffer);
 			inst.Release();
@@ -898,7 +898,7 @@ namespace Extenity.DataToolbox
 
 		private int IntegerToString (string format, IFormatProvider fp, char[] buffer)
 		{
-			var nfi = GetNumberFormatInstance (fp);
+			NumberFormatInfo nfi = GetNumberFormatInstance (fp);
 			switch (_specifier) {
 			case 'C':
 				return FormatCurrency (_precision, nfi, buffer);
@@ -1114,7 +1114,7 @@ namespace Extenity.DataToolbox
 			//return new string (_cbuf, 0, _ind);
 		}
 
-		private unsafe int FormatHexadecimal (int precision, char[] buffer)
+		unsafe private int FormatHexadecimal (int precision, char[] buffer)
 		{
 			int size = Math.Max (precision, _decPointPos);
 			char* digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
@@ -1157,7 +1157,7 @@ namespace Extenity.DataToolbox
 
 		private int FormatRoundtrip(double origval, NumberFormatInfo nfi, char[] buffer)
 		{
-			var nfc = GetClone ();
+			FastNumberFormatter nfc = GetClone ();
 			if (origval >= MinRoundtripVal && origval <= MaxRoundtripVal) {
 				var length = FormatGeneral (_defPrecision, nfi, buffer);
 				if (origval == Double.Parse (buffer.ConvertToString(0, length), nfi))
@@ -1168,7 +1168,7 @@ namespace Extenity.DataToolbox
 
 		private int FormatRoundtrip(float origval, NumberFormatInfo nfi, char[] buffer)
 		{
-			var nfc = GetClone ();
+			FastNumberFormatter nfc = GetClone ();
 			var length = FormatGeneral (_defPrecision, nfi, buffer);
 			// Check roundtrip only for "normal" double values.
 			if (origval == Single.Parse (buffer.ConvertToString(0, length), nfi))
