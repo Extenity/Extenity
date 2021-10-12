@@ -325,7 +325,7 @@ namespace Extenity.DataToolbox
 		{
 			//_cbuf = EmptyArray<char>.Value;
 			// --- Custom Implementation Start
-			_cbuf = new char[0];
+			_cbuf = Array.Empty<char>();
 			// --- Custom Implementation End
 
 			if (current == null)
