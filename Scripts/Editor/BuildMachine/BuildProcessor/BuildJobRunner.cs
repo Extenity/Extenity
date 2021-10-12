@@ -738,15 +738,18 @@ namespace Extenity.BuildMachine.Editor
 				Log.Error($"Build '{RunningJob.NameSafe()}' failed. See the log for details.");
 			}
 
+			BuildJobResult result = RunningJob.Result;
+			bool isSetToQuitInBatchMode = RunningJob.IsSetToQuitInBatchMode;
+
 			UnsetRunningJob();
 			DeleteRunningJobFile();
 
 			// Close the editor in batch mode OR let the Editor live.
 			// Note that asset database refresh is a heavy operation
 			// and will only be done if Editor will continue to run.
-			if (ApplicationTools.IsBatchMode && RunningJob.IsSetToQuitInBatchMode)
+			if (ApplicationTools.IsBatchMode && isSetToQuitInBatchMode)
 			{
-				var exitCode = RunningJob.Result == BuildJobResult.Succeeded ? 0 : -1;
+				var exitCode = result == BuildJobResult.Succeeded ? 0 : -1;
 				EditorApplication.Exit(exitCode);
 			}
 			else
