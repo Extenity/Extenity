@@ -319,7 +319,7 @@ namespace Extenity.DataToolbox
 			{
 				if (list.Length != 0)
 				{
-					list = new T1[0];
+					list = Array.Empty<T1>();
 				}
 			}
 			else if (list.Length != otherList.Length)
@@ -1252,7 +1252,7 @@ namespace Extenity.DataToolbox
 		public static byte[] ConvertToDeltaBytes(byte[] bytes)
 		{
 			if (bytes == null || bytes.Length == 0)
-				return new byte[0];
+				return Array.Empty<byte>();
 
 			var deltas = new byte[bytes.Length];
 			byte previous = 0;
@@ -1268,7 +1268,7 @@ namespace Extenity.DataToolbox
 		public static byte[] ConvertFromDeltaBytes(byte[] deltas)
 		{
 			if (deltas == null || deltas.Length == 0)
-				return new byte[0];
+				return Array.Empty<byte>();
 
 			var bytes = new byte[deltas.Length];
 			byte previous = 0;
@@ -1499,8 +1499,6 @@ namespace Extenity.DataToolbox
 
 		#region Search Pattern - Byte Array
 
-		private static readonly int[] EmptyIntArray = new int[0];
-
 		public static int Locate(this byte[] self, byte[] candidate, int searchStartIndex = 0, int searchEndIndex = 0)
 		{
 			if (IsEmptyLocate(self, candidate))
@@ -1524,9 +1522,9 @@ namespace Extenity.DataToolbox
 		public static int[] LocateMultiple(this byte[] self, byte[] candidate, int searchStartIndex = 0, int searchEndIndex = 0)
 		{
 			if (IsEmptyLocate(self, candidate))
-				return EmptyIntArray;
+				return Array.Empty<int>();
 			if (searchStartIndex >= self.Length)
-				return EmptyIntArray;
+				return Array.Empty<int>();
 			if (searchEndIndex > self.Length)
 				searchEndIndex = self.Length;
 
@@ -1540,7 +1538,7 @@ namespace Extenity.DataToolbox
 				list.Add(i);
 			}
 
-			return list.Count == 0 ? EmptyIntArray : list.ToArray();
+			return list.Count == 0 ? Array.Empty<int>() : list.ToArray();
 		}
 
 		private static bool IsMatch(byte[] array, int position, byte[] candidate)
@@ -1563,12 +1561,6 @@ namespace Extenity.DataToolbox
 				   || candidate.Length == 0
 				   || candidate.Length > array.Length;
 		}
-
-		#endregion
-
-		#region Helpers
-
-		public static readonly object[] EmptyObjectArray = new object[0];
 
 		#endregion
 	}

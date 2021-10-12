@@ -320,7 +320,7 @@ namespace Extenity.DataToolbox
 				}
 				return fieldsList.ToArray();
 			}
-			return new FieldInfo[0];
+			return Array.Empty<FieldInfo>();
 		}
 
 		public static FieldInfo[] FilterUnityNonSerializedFields(this FieldInfo[] unfilteredFields)
@@ -337,7 +337,7 @@ namespace Extenity.DataToolbox
 				}
 				return fieldsList.ToArray();
 			}
-			return new FieldInfo[0];
+			return Array.Empty<FieldInfo>();
 		}
 
 		private static KeyValuePair<FieldInfo, Attribute[]>[] FilterUnitySerializedFields(KeyValuePair<FieldInfo, Attribute[]>[] unfilteredFields)
@@ -354,7 +354,7 @@ namespace Extenity.DataToolbox
 				}
 				return fieldsList.ToArray();
 			}
-			return new KeyValuePair<FieldInfo, Attribute[]>[0];
+			return Array.Empty<KeyValuePair<FieldInfo, Attribute[]>>();
 		}
 
 		private static KeyValuePair<FieldInfo, Attribute[]>[] FilterUnityNonSerializedFields(KeyValuePair<FieldInfo, Attribute[]>[] unfilteredFields)
@@ -371,7 +371,7 @@ namespace Extenity.DataToolbox
 				}
 				return fieldsList.ToArray();
 			}
-			return new KeyValuePair<FieldInfo, Attribute[]>[0];
+			return Array.Empty<KeyValuePair<FieldInfo, Attribute[]>>();
 		}
 
 		#endregion

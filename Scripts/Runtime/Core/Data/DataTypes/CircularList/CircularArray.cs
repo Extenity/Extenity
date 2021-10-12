@@ -718,7 +718,7 @@ namespace Extenity.DataToolbox
 		public T[] ToArray()
 		{
 			if (CyclicTailIndex < 0) // Means the collection is empty.
-				return new T[0];
+				return Array.Empty<T>();
 
 			var count = Count;
 			var outputArray = new T[count];

@@ -192,7 +192,7 @@ namespace Extenity.ReflectionToolbox
 			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = instance =>
 			{
-				method.Invoke(instance, CollectionTools.EmptyObjectArray);
+				method.Invoke(instance, Array.Empty<object>());
 			};
 		}
 
@@ -367,7 +367,7 @@ namespace Extenity.ReflectionToolbox
 			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = (instance) =>
 			{
-				var ret = method.Invoke(instance, CollectionTools.EmptyObjectArray);
+				var ret = method.Invoke(instance, Array.Empty<object>());
 				return (TResult)ret;
 			};
 		}
@@ -552,7 +552,7 @@ namespace Extenity.ReflectionToolbox
 			var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
 			result = () =>
 			{
-				method.Invoke(null, new object[] { CollectionTools.EmptyObjectArray });
+				method.Invoke(null, new object[] { Array.Empty<object>() });
 			};
 		}
 
@@ -727,7 +727,7 @@ namespace Extenity.ReflectionToolbox
 			var method = InternalGetStaticMethodInfo(type, methodName, new Type[0]);
 			result = () =>
 			{
-				var ret = method.Invoke(null, CollectionTools.EmptyObjectArray);
+				var ret = method.Invoke(null, Array.Empty<object>());
 				return (TResult)ret;
 			};
 		}

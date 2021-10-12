@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Extenity.DataToolbox
@@ -46,7 +47,7 @@ namespace Extenity.DataToolbox
 		public static string[] SplitCamelCasedAdjointWords(this string input)
 		{
 			if (string.IsNullOrEmpty(input))
-				return new string[0];
+				return Array.Empty<string>();
 			return CamelCasedAdjointWordSeparatorRegex.Split(input).Where(item => !string.IsNullOrEmpty(item)).ToArray();
 		}
 

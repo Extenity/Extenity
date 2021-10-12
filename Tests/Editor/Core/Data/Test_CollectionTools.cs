@@ -16,7 +16,7 @@ namespace ExtenityTests.DataToolbox
 			int[] array = null;
 			Assert.Throws<NullReferenceException>(() => array.Insert(0));
 
-			array = new int[0];
+			array = Array.Empty<int>();
 			Assert.Throws<ArgumentOutOfRangeException>(() => array.Insert(-1));
 			Assert.Throws<ArgumentOutOfRangeException>(() => array.Insert(1));
 			array = array.Insert(0);
@@ -63,7 +63,7 @@ namespace ExtenityTests.DataToolbox
 			int[] array = null;
 			Assert.Throws<NullReferenceException>(() => array.Insert(0, 84));
 
-			array = new int[0];
+			array = Array.Empty<int>();
 			Assert.Throws<ArgumentOutOfRangeException>(() => array.Insert(-1, 84));
 			Assert.Throws<ArgumentOutOfRangeException>(() => array.Insert(1, 84));
 			array = array.Insert(0, 84);

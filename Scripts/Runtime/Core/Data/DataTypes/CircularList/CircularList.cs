@@ -79,7 +79,7 @@ namespace Extenity.DataToolbox
 		private Object SyncRootObject;
 
 		public const int DefaultCapacity = 4;
-		private static readonly T[] EmptyArray = new T[0];
+		private static readonly T[] EmptyArray = Array.Empty<T>();
 
 		public bool IsEmpty { get { return CyclicTailIndex < 0; } }
 		public bool IsEmptyOrArranged { get { return CyclicTailIndex <= 0; } }
@@ -784,7 +784,7 @@ namespace Extenity.DataToolbox
 		public T[] ToArray()
 		{
 			if (CyclicTailIndex < 0) // Means the collection is empty.
-				return new T[0];
+				return Array.Empty<T>();
 
 			var count = Count;
 			var outputArray = new T[count];

@@ -106,7 +106,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region User Configuration
 
 		// TODO: Implement user configuration UI. The UI can be placed in Project Settings window. It should also show Extenity defaults as readonly entries that can't be altered by user. BUT they can be overriden by defining a new user entry that exactly matches the Module+Symbol of an existing Extenity default entry, so that it is possible to change the Operation of that default entry. Though the UI should state that it is not a wise idea to do so. Note that GetCombinedDefineSymbolAdjustmentConfiguration is tested and works alright.
-		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_User => new DefineSymbolAdjustmentEntry[0];
+		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_User => Array.Empty<DefineSymbolAdjustmentEntry>();
 
 		#endregion
 

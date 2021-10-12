@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Extenity.KernelToolbox;
 using NUnit.Framework;
 
@@ -32,7 +33,7 @@ namespace ExtenityTests.KernelToolbox
 		public void ShouldReturnEmptyObjectIDWhenSavingEmptyData()
 		{
 			{
-				var id = Storage.Save(new byte[0]);
+				var id = Storage.Save(Array.Empty<byte>());
 				Assert.AreEqual(OID.Empty, id);
 			}
 			{
@@ -45,7 +46,7 @@ namespace ExtenityTests.KernelToolbox
 		public void ShouldReturnEmptyBytesWhenLoadingEmptyData()
 		{
 			var bytes = Storage.Load(OID.Empty);
-			Assert.AreEqual(new byte[0], bytes);
+			Assert.AreEqual(Array.Empty<byte>(), bytes);
 		}
 
 		#endregion

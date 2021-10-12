@@ -33,7 +33,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void DeselectAll()
 		{
-			Selection.objects = new Object[0];
+			Selection.objects = Array.Empty<Object>();
 		}
 
 		#endregion

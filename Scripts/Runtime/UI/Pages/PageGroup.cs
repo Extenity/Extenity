@@ -111,7 +111,7 @@ namespace Extenity.UIToolbox
 						// HorizontalScrollSnap.enabled = true;
 
 						// Just let it reset itself.
-						HorizontalScrollSnap.ChildObjects = new GameObject[0];
+						HorizontalScrollSnap.ChildObjects = Array.Empty<GameObject>();
 					}
 
 					OnPageCountChanged.Invoke();

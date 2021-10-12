@@ -86,7 +86,7 @@ namespace Extenity.KernelToolbox
 		public bool IsEmpty => Hash.Equals(EmptyDataHash, StringComparison.Ordinal);
 
 		public static readonly OID Empty = new OID(EmptyDataHash);
-		public static readonly byte[] EmptyData = new byte[0];
+		public static readonly byte[] EmptyData = Array.Empty<byte>();
 
 		#endregion
 

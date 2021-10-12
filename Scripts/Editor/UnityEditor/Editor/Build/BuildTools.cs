@@ -690,10 +690,10 @@ namespace Extenity.BuildToolbox.Editor
 				return Apply(new TemporarilySetDefineSymbols
 				{
 					BuildTargetGroup = buildTargetGroup,
-					AddedSymbols = addedSymbols != null ? (string[])addedSymbols.Clone() : new string[0],
+					AddedSymbols = addedSymbols != null ? (string[])addedSymbols.Clone() : Array.Empty<string>(),
 					EnsureNotAddedBefore = ensureNotAddedBefore,
-					RemovedSymbols = removedSymbols != null ? (string[])removedSymbols.Clone() : new string[0],
-					ActuallyRemovedSymbols = new DefineSymbolEntry[0],
+					RemovedSymbols = removedSymbols != null ? (string[])removedSymbols.Clone() : Array.Empty<string>(),
+					ActuallyRemovedSymbols = Array.Empty<DefineSymbolEntry>(),
 				});
 			}
 

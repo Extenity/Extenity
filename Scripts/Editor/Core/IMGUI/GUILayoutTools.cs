@@ -109,7 +109,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 			if (tags == null)
 			{
-				tags = new string[0];
+				tags = Array.Empty<string>();
 			}
 
 			GUILayout.BeginVertical(GUILayout.MaxWidth(maxWidth));

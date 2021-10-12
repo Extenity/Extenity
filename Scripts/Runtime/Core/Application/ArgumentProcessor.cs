@@ -80,7 +80,7 @@ namespace Extenity.ApplicationToolbox
 
 			if (string.IsNullOrWhiteSpace(arguments))
 			{
-				return new Arguments(new Argument[0], null);
+				return new Arguments(Array.Empty<Argument>(), null);
 			}
 
 			// Having line feeds in input data is not supported. In order to support that, some modifications needed

@@ -255,7 +255,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			var assetPath = AssetDatabase.GetAssetPath(obj);
 			return string.IsNullOrEmpty(assetPath)
-				? new string[0]
+				? Array.Empty<string>()
 				: new[] { assetPath };
 		}
 

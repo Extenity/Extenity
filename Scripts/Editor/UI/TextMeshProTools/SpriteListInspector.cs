@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
@@ -45,7 +46,7 @@ namespace Extenity.UIToolbox
 			}
 
 			if (SpriteNames == null)
-				SpriteNames = new string[0];
+				SpriteNames = Array.Empty<string>();
 			var newSpriteIndex  = EditorGUILayout.Popup(SelectedSpriteIndex, SpriteNames);
 			if (SelectedSpriteIndex != newSpriteIndex)
 			{

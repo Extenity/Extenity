@@ -18,7 +18,7 @@ namespace Extenity.KernelToolbox
 	{
 		#region Initialization
 
-		public static readonly Ref<TKernelObject, TKernel>[] EmptyArray = new Ref<TKernelObject, TKernel>[0];
+		public static readonly Ref<TKernelObject, TKernel>[] EmptyArray = Array.Empty<Ref<TKernelObject, TKernel>>();
 
 		public Ref(UInt32 id)
 		{
