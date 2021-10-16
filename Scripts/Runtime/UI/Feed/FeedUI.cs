@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using Extenity.DataToolbox;
 using Extenity.FlowToolbox;
 using Sirenix.OdinInspector;
@@ -41,6 +40,27 @@ namespace Extenity.UIToolbox
 		protected void OnDestroy()
 		{
 			DeinitializeLinePositioning();
+		}
+
+		#endregion
+
+		#region Update
+
+		protected void LateUpdate()
+		{
+			foreach (var line in Lines)
+			{
+				var position = line.UI.RectTransform.anchoredPosition;
+				var diffY = line.UI.TargetPosition.y - position.y;
+				if (diffY > 0.01f)
+				{
+					var t = Time.unscaledDeltaTime * LineMoveAnimationSpeed;
+					if (t > 1f)
+						t = 1f;
+					position.y += diffY * t;
+					line.UI.RectTransform.anchoredPosition = position;
+				}
+			}
 		}
 
 		#endregion
@@ -89,9 +109,9 @@ namespace Extenity.UIToolbox
 			if (Lines.Count == 0)
 				return;
 
-			var ui = Lines.TailingItem.UI;
+			var uiToBeRemoved = Lines.TailingItem.UI;
 			Lines.RemoveTailing();
-			AddToPool(ui);
+			AddToPool(uiToBeRemoved);
 			InvalidateLinePositions();
 		}
 
@@ -101,9 +121,9 @@ namespace Extenity.UIToolbox
 
 			while (Lines.Count > 0 && Lines.TailingItem.ExpireTime <= now + 0.01f)
 			{
-				var ui = Lines.TailingItem.UI;
+				var uiToBeRemoved = Lines.TailingItem.UI;
 				Lines.RemoveTailing();
-				AddToPool(ui);
+				AddToPool(uiToBeRemoved);
 				InvalidateLinePositions();
 			}
 
@@ -154,7 +174,6 @@ namespace Extenity.UIToolbox
 		{
 			Debug.Assert(!PooledLineUIs.Contains(ui));
 
-			DOTween.Kill(ui, false); // Kill any animations before adding into the pool.
 			ui.gameObject.SetActive(false);
 			PooledLineUIs.Add(ui);
 		}
@@ -169,10 +188,8 @@ namespace Extenity.UIToolbox
 
 		[Header("Animations")]
 		public float LineAppearanceOffsetY = 20f;
-		[Range(0f, 3f)]
-		[Tooltip("Zero means no animation which also means no overhead of animation system.")]
-		public float LineMoveAnimationDuration = 0f;
-		public Ease LineMoveAnimationEasing = Ease.OutCubic;
+		[Range(1f, 20f)]
+		public float LineMoveAnimationSpeed = 10f;
 
 		private bool IsLinePositionsInvalidated;
 
@@ -190,15 +207,7 @@ namespace Extenity.UIToolbox
 		{
 			if (IsLinePositionsInvalidated)
 			{
-				if (LineMoveAnimationDuration > 0f)
-				{
-					RecalculateLinePositionsWithAnimation();
-				}
-				else
-				{
-					RecalculateLinePositionsWithoutAnimation();
-				}
-
+				RecalculateLinePositions();
 				IsLinePositionsInvalidated = false;
 			}
 		}
@@ -208,7 +217,7 @@ namespace Extenity.UIToolbox
 			IsLinePositionsInvalidated = true;
 		}
 
-		private void RecalculateLinePositionsWithoutAnimation()
+		private void RecalculateLinePositions()
 		{
 			var stepY = LinePositionStepY;
 			var positionY = InverseLines
@@ -218,31 +227,14 @@ namespace Extenity.UIToolbox
 			foreach (var line in Lines)
 			{
 				var ui = line.UI;
-				ui.RectTransform.anchoredPosition = new Vector2(0f, positionY);
-				positionY += stepY;
-			}
-		}
 
-		private void RecalculateLinePositionsWithAnimation()
-		{
-			var stepY = LinePositionStepY;
-			var positionY = InverseLines
-				? -stepY * (Lines.Count - 1)
-				: 0f;
+				ui.TargetPosition = new Vector2(0f, positionY);
 
-			foreach (var line in Lines)
-			{
-				var ui = line.UI;
-				var position = new Vector2(0f, positionY);
-				var justBeingCreated = ui.RectTransform.anchoredPosition.y < 0;
+				var justBeingCreated = ui.RectTransform.anchoredPosition.y < -10;
 				if (justBeingCreated)
 				{
-					ui.RectTransform.anchoredPosition = position + new Vector2(0f, LineAppearanceOffsetY);
+					ui.RectTransform.anchoredPosition = ui.TargetPosition + new Vector2(0f, LineAppearanceOffsetY);
 				}
-
-				ui.RectTransform.DOAnchorPos(position, LineMoveAnimationDuration)
-				  .SetEase(LineMoveAnimationEasing)
-				  .SetUpdate(UpdateType.Late, true);
 
 				positionY += stepY;
 			}

@@ -183,8 +183,7 @@ MonoBehaviour:
   InverseLines: 1
   LinePositionStepY: -30
   LineAppearanceOffsetY: -30
-  LineMoveAnimationDuration: 0.2
-  LineMoveAnimationEasing: 9
+  LineMoveAnimationSpeed: 10
 --- !u!114 &76517035
 MonoBehaviour:
   m_ObjectHideFlags: 0

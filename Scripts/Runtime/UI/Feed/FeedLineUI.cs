@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ namespace Extenity.UIToolbox
 	{
 		public TextMeshProUGUI Text;
 		public RectTransform RectTransform;
+
+		[NonSerialized]
+		public Vector2 TargetPosition;
 	}
 
 }
