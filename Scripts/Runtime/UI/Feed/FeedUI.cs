@@ -129,10 +129,6 @@ namespace Extenity.UIToolbox
 		public FeedLineUI LineTemplate;
 
 		private List<FeedLineUI> PooledLineUIs;
-		/// <summary>
-		/// Used by the animation system to know if a line should be placed before animation begins.
-		/// </summary>
-		private List<int> LineUIInstanceIDsThatAreJustBeingCreated;
 
 		private void InitializeLineUIs()
 		{
@@ -147,8 +143,6 @@ namespace Extenity.UIToolbox
 #endif
 				PooledLineUIs.Add(lineUI);
 			}
-
-			LineUIInstanceIDsThatAreJustBeingCreated = new List<int>(LineCount);
 		}
 
 		private FeedLineUI GetLineUIFromPool()
@@ -160,7 +154,7 @@ namespace Extenity.UIToolbox
 			var ui = PooledLineUIs[index];
 			PooledLineUIs.RemoveAt(index);
 			ui.gameObject.SetActive(true);
-			LineUIInstanceIDsThatAreJustBeingCreated.Add(ui.GetInstanceID());
+			ui.RectTransform.anchoredPosition = new Vector2(0f, -100f);
 			return ui;
 		}
 
@@ -266,24 +260,18 @@ namespace Extenity.UIToolbox
 			{
 				var ui = line.UI;
 				var position = new Vector2(0f, positionY);
-				var justBeingCreated = LineUIInstanceIDsThatAreJustBeingCreated.Contains(ui.GetInstanceID());
+				var justBeingCreated = ui.RectTransform.anchoredPosition.y < 0;
 				if (justBeingCreated)
 				{
 					ui.RectTransform.anchoredPosition = position + new Vector2(0f, LineAppearanceOffsetY);
 				}
 
-				// This didn't do good for some reason, when instantiating many lines rapidly. 
-				//ui.RectTransform.DOAnchorPos(position, LineMoveAnimationDuration, false).SetEase(LineMoveAnimationEasing);
-
-				DOTween.To(() => ui.RectTransform.anchoredPosition, x => ui.RectTransform.anchoredPosition = x, position, LineMoveAnimationDuration)
-					.SetTarget(ui)
-					.SetEase(LineMoveAnimationEasing)
-					.SetUpdate(UpdateType.Late, true);
+				ui.RectTransform.DOAnchorPos(position, LineMoveAnimationDuration)
+				  .SetEase(LineMoveAnimationEasing)
+				  .SetUpdate(UpdateType.Late, true);
 
 				positionY += stepY;
 			}
-
-			LineUIInstanceIDsThatAreJustBeingCreated.Clear();
 		}
 
 		#endregion
