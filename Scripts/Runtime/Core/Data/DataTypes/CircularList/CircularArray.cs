@@ -11,7 +11,7 @@ namespace Extenity.DataToolbox
 	/// <summary>
 	/// Fixed length circular array.
 	/// </summary>
-	public class CircularArray<T> : ICollection//, ICollection<T>
+	public class CircularArray<T> : IEnumerable<T>, IEnumerable, ICollection//, ICollection<T>
 	{
 		#region Initialization
 
@@ -548,33 +548,51 @@ namespace Extenity.DataToolbox
 			return true;
 		}
 
-		public IEnumerator<T> GetEnumerator()
+		#endregion
+
+		#region Enumerator
+
+		// These enumerator codes are based on System.Collections.Generic.List.
+		// Source: https://referencesource.microsoft.com/#mscorlib/system/collections/generic/list.cs
+
+		// Returns an enumerator for this list with the given
+		// permission for removal of elements. If modifications made to the list
+		// while an enumeration is in progress, the MoveNext and
+		// GetObject methods of the enumerator will throw an exception.
+		public Enumerator GetEnumerator()
 		{
 			return new Enumerator(this);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator()
+		/// <internalonly/>
+		IEnumerator<T> IEnumerable<T>.GetEnumerator()
 		{
 			return new Enumerator(this);
 		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
+
 
 		[Serializable]
-		public struct Enumerator : IEnumerator<T>
+		public struct Enumerator : IEnumerator<T>, System.Collections.IEnumerator
 		{
-			private CircularArray<T> Array;
+			private CircularArray<T> Collection;
 			private int Index;
 			private int Remaining;
 			private int Capacity;
 			private int Version;
 			private T _Current;
 
-			internal Enumerator(CircularArray<T> array)
+			internal Enumerator(CircularArray<T> collection)
 			{
-				Array = array;
-				Index = array.CyclicTailIndex;
-				Remaining = array.Count;
-				Capacity = array.Capacity;
-				Version = array.Version;
+				Collection = collection;
+				Index = collection.CyclicTailIndex;
+				Remaining = collection.Count;
+				Capacity = collection.Capacity;
+				Version = collection.Version;
 				_Current = default(T);
 			}
 
@@ -584,15 +602,17 @@ namespace Extenity.DataToolbox
 
 			public bool MoveNext()
 			{
-				var localCollection = Array;
+				var localCollection = Collection;
 
 				if (Remaining > 0 && Version == localCollection.Version)
 				{
-					if (Index == Capacity)
-						Index = 0;
 					_Current = localCollection.Items[Index];
 					Index++;
 					Remaining--;
+					if (Index == Capacity)
+					{
+						Index = 0;
+					}
 					return true;
 				}
 				return MoveNextRare();
@@ -600,7 +620,7 @@ namespace Extenity.DataToolbox
 
 			private bool MoveNextRare()
 			{
-				if (Version != Array.Version)
+				if (Version != Collection.Version)
 				{
 					throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
 				}
@@ -622,7 +642,7 @@ namespace Extenity.DataToolbox
 			{
 				get
 				{
-					if (Index == Array.CyclicTailIndex || Index == -1)
+					if (Index == Collection.CyclicTailIndex || Index == -1)
 					{
 						throw new InvalidOperationException("Enumeration has either not started or has already finished.");
 					}
@@ -632,12 +652,12 @@ namespace Extenity.DataToolbox
 
 			void System.Collections.IEnumerator.Reset()
 			{
-				if (Version != Array.Version)
+				if (Version != Collection.Version)
 				{
 					throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
 				}
 
-				Index = Array.CyclicTailIndex;
+				Index = Collection.CyclicTailIndex;
 				_Current = default(T);
 			}
 		}
