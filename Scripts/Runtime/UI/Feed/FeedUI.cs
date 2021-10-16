@@ -45,14 +45,6 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Update
-
-		//protected void Update()
-		//{
-		//}
-
-		#endregion
-
 		#region Lines
 
 		[Header("Lines")]
@@ -166,24 +158,6 @@ namespace Extenity.UIToolbox
 			ui.gameObject.SetActive(false);
 			PooledLineUIs.Add(ui);
 		}
-
-		#endregion
-
-		#region ID
-
-		/*
-		private static int _LastGivenID = 100;
-
-		private static int GenerateID()
-		{
-			++_LastGivenID;
-			if (_LastGivenID > 1000000000)
-			{
-				_LastGivenID = 100; // Prevent overflow.
-			}
-			return _LastGivenID;
-		}
-		*/
 
 		#endregion
 
