@@ -79,7 +79,7 @@ namespace Extenity.UIToolbox
 			}
 
 			var lineUI = GetLineUIFromPool();
-			lineUI.Set(content);
+			lineUI.Text.SetText(content);
 			Lines.Add(new FeedLine(Loop.Time + LineDuration, lineUI));
 			InvalidateLinePositions();
 		}
