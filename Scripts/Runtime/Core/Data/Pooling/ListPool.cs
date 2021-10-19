@@ -6,8 +6,6 @@ using JetBrains.Annotations;
 namespace Extenity.DataToolbox
 {
 
-	// TODO: Continue to implement Release mechanisms. Tests needed.
-
 	/// <remarks>
 	/// Example usage for manually returning the list to the pool:
 	///
@@ -26,11 +24,11 @@ namespace Extenity.DataToolbox
 	{
 		#region Initialization
 
-		// static ListPool()
-		// {
-		// 	Log.Verbose($"Creating ListPool<{typeof(T).Name}>");
-		// 	ListPoolTools.RegisterForRelease(ReleaseAllListsOfType);
-		// }
+		static ListPool()
+		{
+			Log.Verbose($"Creating ListPool<{typeof(T).Name}>");
+			ListPoolTools.RegisterForRelease(ReleaseAllListsOfType);
+		}
 
 		#endregion
 
@@ -40,17 +38,20 @@ namespace Extenity.DataToolbox
 		// {
 		// 	ListPoolTools.ReleaseAllListsOfAllTypes();
 		// }
-		//
-		// public static void ReleaseAllListsOfType()
-		// {
-		// 	Pool.Clear();
-		// }
+
+		public static void ReleaseAllListsOfType()
+		{
+			lock (Pool)
+			{
+				Pool.Clear();
+			}
+		}
 
 		#endregion
 
 		#region Pool
 
-		private static readonly List<List<T>> Pool = new List<List<T>>();
+		internal static readonly List<List<T>> Pool = new List<List<T>>();
 
 		#endregion
 
@@ -250,27 +251,27 @@ namespace Extenity.DataToolbox
 
 		#region Release Pools
 
-		// private static event Action AllReleaseCallbacks;
-		// private static object ReleaseLock = new object();
-		//
-		// public static void ReleaseAllListsOfAllTypes()
-		// {
-		// 	lock (ReleaseLock)
-		// 	{
-		// 		if (AllReleaseCallbacks != null)
-		// 		{
-		// 			AllReleaseCallbacks();
-		// 		}
-		// 	}
-		// }
-		//
-		// public static void RegisterForRelease(Action releaseAllListsOfTypeCallback)
-		// {
-		// 	lock (ReleaseLock)
-		// 	{
-		// 		AllReleaseCallbacks += releaseAllListsOfTypeCallback;
-		// 	}
-		// }
+		private static event Action AllReleaseCallbacks;
+		private static readonly object ReleaseLock = new object();
+
+		public static void ReleaseAllListsOfAllTypes()
+		{
+			lock (ReleaseLock)
+			{
+				if (AllReleaseCallbacks != null)
+				{
+					AllReleaseCallbacks();
+				}
+			}
+		}
+
+		public static void RegisterForRelease(Action releaseAllListsOfTypeCallback)
+		{
+			lock (ReleaseLock)
+			{
+				AllReleaseCallbacks += releaseAllListsOfTypeCallback;
+			}
+		}
 
 		#endregion
 	}
