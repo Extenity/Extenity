@@ -175,29 +175,7 @@ namespace Extenity.DataToolbox
 			var collection = collectionReference;
 			collectionReference = null;
 
-			collection.Clear();
-			lock (Pool)
-			{
-				if (Pool.Count == 0)
-				{
-					Pool.Add(collection);
-				}
-				else
-				{
-					// Insert the released collection into the pool, keeping the pool sorted by collection capacity.
-					// So getting the largest capacity collection will be lightning fast. See 114572342.
-					var capacity = collection.Capacity;
-					for (int i = Pool.Count - 1; i >= 0; i--)
-					{
-						if (capacity > Pool[i].Capacity)
-						{
-							Pool.Insert(i + 1, collection);
-							return;
-						}
-					}
-					Pool.Insert(0, collection);
-				}
-			}
+			_Free(collection);
 		}
 
 		internal static void _Free(List<T> collection)
