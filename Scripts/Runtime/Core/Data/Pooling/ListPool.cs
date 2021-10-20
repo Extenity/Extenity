@@ -26,7 +26,7 @@ namespace Extenity.DataToolbox
 
 		static ListPool()
 		{
-			Log.Verbose($"Creating ListPool<{typeof(T).Name}>");
+			Log.Verbose($"Creating {nameof(ListPool<T>)}<{typeof(T).Name}>");
 			ListPoolTools.RegisterForRelease(ReleaseAllListsOfType);
 		}
 
@@ -74,7 +74,7 @@ namespace Extenity.DataToolbox
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>(capacity);
-						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return new ListDisposer<T>(list);
 					}
 
@@ -115,7 +115,7 @@ namespace Extenity.DataToolbox
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>(capacity);
-						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return;
 					}
 
@@ -160,7 +160,7 @@ namespace Extenity.DataToolbox
 						// The pool will just skip the list and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
 						list = new List<T>(collection);
-						Log.CriticalError($"Detected a usage of released list of type '{typeof(T).Name}'.");
+						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return;
 					}
 
