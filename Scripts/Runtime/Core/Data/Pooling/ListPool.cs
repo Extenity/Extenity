@@ -52,7 +52,35 @@ namespace Extenity.DataToolbox
 
 		#region Allocate / Release Collections
 
-		private static void AdjustCapacity(List<T> collection, int capacity)
+		private static List<T> _GetNextItemInPool()
+		{
+			// Get the largest capacity collection from the pool. See 114572342.
+			var index = Pool.Count - 1;
+			var collection = Pool[index];
+			Pool.RemoveAt(index);
+			return collection;
+		}
+
+		private static bool _RoughlyCheckIfCollectionWasUsedElsewhere(List<T> collection)
+		{
+			// Just roughly try to detect if the collection is referenced and used elsewhere.
+			// Hopefully .NET will provide a way to get the Version info of collection in future.
+			return collection.Count != 0;
+		}
+
+		private static void _LogErrorForUnexpectedlyUsedCollection()
+		{
+			// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
+			// Continuing to use a released collection means serious problems, so a critical error will be logged
+			// to warn the developer. The developer then have to look through pooled collection releases and find
+			// the spots where a copy of collection reference is kept after its release.
+			//
+			// The pool will just skip the collection and create a fresh one. We may try to get a new one from
+			// the pool but the overhead is not worthwhile.
+			Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
+		}
+
+		private static void _AdjustCapacity(List<T> collection, int capacity)
 		{
 			// Adjust the capacity if its lower than expected.
 			// When adding a new item to the collection, .NET increases the capacity by doubling current size.
@@ -75,27 +103,16 @@ namespace Extenity.DataToolbox
 			{
 				if (Pool.Count > 0)
 				{
-					// Get the largest capacity collection from the pool. See 114572342.
-					var index = Pool.Count - 1;
-					collection = Pool[index];
-					Pool.RemoveAt(index);
+					collection = _GetNextItemInPool();
 
-					// Just roughly try to detect if the collection is referenced and used elsewhere.
-					if (collection.Count != 0)
+					if (_RoughlyCheckIfCollectionWasUsedElsewhere(collection))
 					{
-						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
-						// Continuing to use a released collection means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled collection releases and find
-						// the spots where a copy of collection reference is kept after its release.
-						//
-						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
-						// the pool but the overhead is not worthwhile.
+						_LogErrorForUnexpectedlyUsedCollection();
 						collection = new List<T>(capacity);
-						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return new ListDisposer<T>(collection);
 					}
 
-					AdjustCapacity(collection, capacity);
+					_AdjustCapacity(collection, capacity);
 					return new ListDisposer<T>(collection);
 				}
 			}
@@ -109,27 +126,16 @@ namespace Extenity.DataToolbox
 			{
 				if (Pool.Count > 0)
 				{
-					// Get the largest capacity collection from the pool. See 114572342.
-					var index = Pool.Count - 1;
-					collection = Pool[index];
-					Pool.RemoveAt(index);
+					collection = _GetNextItemInPool();
 
-					// Just roughly try to detect if the collection is referenced and used elsewhere.
-					if (collection.Count != 0)
+					if (_RoughlyCheckIfCollectionWasUsedElsewhere(collection))
 					{
-						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
-						// Continuing to use a released collection means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled collection releases and find
-						// the spots where a copy of collection reference is kept after its release.
-						//
-						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
-						// the pool but the overhead is not worthwhile.
+						_LogErrorForUnexpectedlyUsedCollection();
 						collection = new List<T>(capacity);
-						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return;
 					}
 
-					AdjustCapacity(collection, capacity);
+					_AdjustCapacity(collection, capacity);
 					return;
 				}
 			}
@@ -142,23 +148,12 @@ namespace Extenity.DataToolbox
 			{
 				if (Pool.Count > 0)
 				{
-					// Get the largest capacity collection from the pool. See 114572342.
-					var index = Pool.Count - 1;
-					collection = Pool[index];
-					Pool.RemoveAt(index);
+					collection = _GetNextItemInPool();
 
-					// Just roughly try to detect if the collection is referenced and used elsewhere.
-					if (collection.Count != 0)
+					if (_RoughlyCheckIfCollectionWasUsedElsewhere(collection))
 					{
-						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
-						// Continuing to use a released collection means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled collection releases and find
-						// the spots where a copy of collection reference is kept after its release.
-						//
-						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
-						// the pool but the overhead is not worthwhile.
+						_LogErrorForUnexpectedlyUsedCollection();
 						collection = new List<T>(otherCollection);
-						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return;
 					}
 
