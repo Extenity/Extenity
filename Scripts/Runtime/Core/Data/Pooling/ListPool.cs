@@ -7,17 +7,17 @@ namespace Extenity.DataToolbox
 {
 
 	/// <remarks>
-	/// Example usage for manually returning the list to the pool:
+	/// Example usage for manually returning the List to the pool:
 	///
-	///    var theList = New.List<ItemType>(optionalCapacity);
-	///    // Do some stuff with theList
-	///    Release.List(ref theList);
+	///    var theCollection = New.List<ItemType>(optionalCapacity);
+	///    // Do some stuff with theCollection
+	///    Release.List(ref theCollection);
 	///
-	/// Example usage for automatically returning the list to the pool:
+	/// Example usage for automatically returning the List to the pool:
 	///
-	///    using (New.List<ItemType>(out var theList, optionalCapacity))
+	///    using (New.List<ItemType>(out var theCollection, optionalCapacity))
 	///    {
-	///        // Do some stuff with theList
+	///        // Do some stuff with theCollection
 	///    }
 	/// </remarks>
 	internal static class ListPool<T>
@@ -50,186 +50,191 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region Allocate / Release Lists
+		#region Allocate / Release Collections
 
-		internal static ListDisposer<T> Using(out List<T> list, int capacity)
+		internal static ListDisposer<T> Using(out List<T> collection, int capacity)
 		{
 			lock (Pool)
 			{
 				if (Pool.Count > 0)
 				{
-					// Get the largest capacity list from the pool. See 114572342.
+					// Get the largest capacity collection from the pool. See 114572342.
 					var index = Pool.Count - 1;
-					list = Pool[index];
+					collection = Pool[index];
 					Pool.RemoveAt(index);
 
-					// Just roughly try to detect if the list is referenced and used elsewhere.
-					if (list.Count != 0)
+					// Just roughly try to detect if the collection is referenced and used elsewhere.
+					if (collection.Count != 0)
 					{
-						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
-						// Continuing to use a released list means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled list releases and find
-						// the spots where a copy of list reference is kept after its release.
+						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
+						// Continuing to use a released collection means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled collection releases and find
+						// the spots where a copy of collection reference is kept after its release.
 						//
-						// The pool will just skip the list and create a fresh one. We may try to get a new one from
+						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
-						list = new List<T>(capacity);
+						collection = new List<T>(capacity);
 						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
-						return new ListDisposer<T>(list);
-					}
-
-					// Adjust the capacity if its lower than expected. Changing capacity means allocating a memory
-					// block, which is not performance friendly. When adding a new item to the list, .NET increases
-					// the capacity by doubling current size. That allows us to omit the second half of the capacity
-					// here and not instantly do the allocation right now.
-					if (list.Capacity < capacity / 2)
-					{
-						list.Capacity = capacity;
-					}
-					return new ListDisposer<T>(list);
-				}
-			}
-			list = new List<T>(capacity);
-			return new ListDisposer<T>(list);
-		}
-
-		internal static void New(out List<T> list, int capacity)
-		{
-			lock (Pool)
-			{
-				if (Pool.Count > 0)
-				{
-					// Get the largest capacity list from the pool. See 114572342.
-					var index = Pool.Count - 1;
-					list = Pool[index];
-					Pool.RemoveAt(index);
-
-					// Just roughly try to detect if the list is referenced and used elsewhere.
-					if (list.Count != 0)
-					{
-						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
-						// Continuing to use a released list means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled list releases and find
-						// the spots where a copy of list reference is kept after its release.
-						//
-						// The pool will just skip the list and create a fresh one. We may try to get a new one from
-						// the pool but the overhead is not worthwhile.
-						list = new List<T>(capacity);
-						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
-						return;
+						return new ListDisposer<T>(collection);
 					}
 
 					// Adjust the capacity if its lower than expected.
-					// When adding a new item to the list, .NET increases the capacity by doubling current size.
+					// When adding a new item to the collection, .NET increases the capacity by doubling current size.
 					// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
 					// which is not performance friendly. So even though the capacity is lower than the expected here,
 					// we don't immediately increase the capacity and do an allocation if the capacity is already
 					// greater than the half of what is expected. Because if the user would fill the collection
 					// that much, .NET would already be increasing the size. It's smart not to increase it here
-					// right now for the possibility that the user may not fill the list to above its current capacity.
-					// Otherwise we might end up increasing it unnecessarily.
-					if (list.Capacity < capacity / 2)
+					// right now for the possibility that the user may not fill the collection to above its current
+					// capacity. Otherwise we might end up increasing it unnecessarily.
+					if (collection.Capacity < capacity / 2)
 					{
-						list.Capacity = capacity;
+						collection.Capacity = capacity;
 					}
-					return;
+					return new ListDisposer<T>(collection);
 				}
 			}
-			list = new List<T>(capacity);
+			collection = new List<T>(capacity);
+			return new ListDisposer<T>(collection);
 		}
 
-		internal static void New(out List<T> list, [NotNull] IEnumerable<T> collection)
+		internal static void New(out List<T> collection, int capacity)
 		{
 			lock (Pool)
 			{
 				if (Pool.Count > 0)
 				{
-					// Get the largest capacity list from the pool. See 114572342.
+					// Get the largest capacity collection from the pool. See 114572342.
 					var index = Pool.Count - 1;
-					list = Pool[index];
+					collection = Pool[index];
 					Pool.RemoveAt(index);
 
-					// Just roughly try to detect if the list is referenced and used elsewhere.
-					if (list.Count != 0)
+					// Just roughly try to detect if the collection is referenced and used elsewhere.
+					if (collection.Count != 0)
 					{
-						// This is unexpected and might mean the list is referenced elsewhere and currently in use.
-						// Continuing to use a released list means serious problems, so a critical error will be logged
-						// to warn the developer. The developer then have to look through pooled list releases and find
-						// the spots where a copy of list reference is kept after its release.
+						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
+						// Continuing to use a released collection means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled collection releases and find
+						// the spots where a copy of collection reference is kept after its release.
 						//
-						// The pool will just skip the list and create a fresh one. We may try to get a new one from
+						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
 						// the pool but the overhead is not worthwhile.
-						list = new List<T>(collection);
+						collection = new List<T>(capacity);
 						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 						return;
 					}
 
-					list.AddRange(collection);
+					// Adjust the capacity if its lower than expected.
+					// When adding a new item to the collection, .NET increases the capacity by doubling current size.
+					// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
+					// which is not performance friendly. So even though the capacity is lower than the expected here,
+					// we don't immediately increase the capacity and do an allocation if the capacity is already
+					// greater than the half of what is expected. Because if the user would fill the collection
+					// that much, .NET would already be increasing the size. It's smart not to increase it here
+					// right now for the possibility that the user may not fill the collection to above its current
+					// capacity. Otherwise we might end up increasing it unnecessarily.
+					if (collection.Capacity < capacity / 2)
+					{
+						collection.Capacity = capacity;
+					}
 					return;
 				}
 			}
-			list = new List<T>(collection);
+			collection = new List<T>(capacity);
 		}
 
-		internal static void Release(ref List<T> listReference)
+		internal static void New(out List<T> collection, [NotNull] IEnumerable<T> otherCollection)
 		{
-			// It's okay to pass a null list. The pooling system won't judge and just continue as if nothing has happened.
-			if (listReference == null)
+			lock (Pool)
+			{
+				if (Pool.Count > 0)
+				{
+					// Get the largest capacity collection from the pool. See 114572342.
+					var index = Pool.Count - 1;
+					collection = Pool[index];
+					Pool.RemoveAt(index);
+
+					// Just roughly try to detect if the collection is referenced and used elsewhere.
+					if (collection.Count != 0)
+					{
+						// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
+						// Continuing to use a released collection means serious problems, so a critical error will be logged
+						// to warn the developer. The developer then have to look through pooled collection releases and find
+						// the spots where a copy of collection reference is kept after its release.
+						//
+						// The pool will just skip the collection and create a fresh one. We may try to get a new one from
+						// the pool but the overhead is not worthwhile.
+						collection = new List<T>(otherCollection);
+						Log.CriticalError($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
+						return;
+					}
+
+					collection.AddRange(otherCollection);
+					return;
+				}
+			}
+			collection = new List<T>(otherCollection);
+		}
+
+		internal static void Release(ref List<T> collectionReference)
+		{
+			// It's okay to pass a null collection. The pooling system won't judge and just continue as if nothing has happened.
+			if (collectionReference == null)
 				return;
 
-			// Ensure the reference to the list at the caller side won't be accidentally used.
+			// Ensure the reference to the collection at the caller side won't be accidentally used.
 			// Do it before modifying the pool to ensure thread safety.
-			var list = listReference;
-			listReference = null;
+			var collection = collectionReference;
+			collectionReference = null;
 
-			list.Clear();
+			collection.Clear();
 			lock (Pool)
 			{
 				if (Pool.Count == 0)
 				{
-					Pool.Add(list);
+					Pool.Add(collection);
 				}
 				else
 				{
-					// Insert the released list into the pool, keeping the pool sorted by list capacity. So getting
-					// the largest capacity list will be lightning fast. See 114572342.
-					var capacity = list.Capacity;
+					// Insert the released collection into the pool, keeping the pool sorted by collection capacity.
+					// So getting the largest capacity collection will be lightning fast. See 114572342.
+					var capacity = collection.Capacity;
 					for (int i = Pool.Count - 1; i >= 0; i--)
 					{
 						if (capacity > Pool[i].Capacity)
 						{
-							Pool.Insert(i + 1, list);
+							Pool.Insert(i + 1, collection);
 							return;
 						}
 					}
-					Pool.Insert(0, list);
+					Pool.Insert(0, collection);
 				}
 			}
 		}
 
-		internal static void _Free(List<T> list)
+		internal static void _Free(List<T> collection)
 		{
-			list.Clear();
+			collection.Clear();
 			lock (Pool)
 			{
 				if (Pool.Count == 0)
 				{
-					Pool.Add(list);
+					Pool.Add(collection);
 				}
 				else
 				{
-					// Insert the released list into the pool, keeping the pool sorted by list capacity. So getting
-					// the largest capacity list will be lightning fast. See 114572342.
-					var capacity = list.Capacity;
+					// Insert the released collection into the pool, keeping the pool sorted by collection capacity.
+					// So getting the largest capacity collection will be lightning fast. See 114572342.
+					var capacity = collection.Capacity;
 					for (int i = Pool.Count - 1; i >= 0; i--)
 					{
 						if (capacity > Pool[i].Capacity)
 						{
-							Pool.Insert(i + 1, list);
+							Pool.Insert(i + 1, collection);
 							return;
 						}
 					}
-					Pool.Insert(0, list);
+					Pool.Insert(0, collection);
 				}
 			}
 		}
@@ -242,8 +247,8 @@ namespace Extenity.DataToolbox
 		#region Release
 
 		// It was a good idea but decided not to implement this. Because we lose the ability to assign null to
-		// the variable at the caller side like in 'ListPool<T>(ref List<T> listReference)'.
-		// public static void Release<T>(this List<T> listReference)
+		// the variable at the caller side like in 'ListPool<T>(ref List<T> collectionReference)'.
+		// public static void Release<T>(this List<T> collectionReference)
 		// {
 		// }
 
@@ -279,8 +284,8 @@ namespace Extenity.DataToolbox
 	public static partial class New
 	{
 		/// <summary>
-		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
-		/// to return the collection to the pool via Release.List<T>().
+		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
+		/// Make sure to return the collection to the pool via Release.List<T>().
 		/// </summary>
 		/// <param name="capacity">
 		/// The pooling system will give the collection with largest capacity first. A new container will be created
@@ -291,29 +296,29 @@ namespace Extenity.DataToolbox
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static List<T> List<T>(int capacity = 0)
 		{
-			ListPool<T>.New(out var list, capacity);
-			return list;
+			ListPool<T>.New(out var collection, capacity);
+			return collection;
 		}
 
 		/// <summary>
-		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
-		/// to return the collection to the pool via Release.List<T>().
+		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
+		/// Make sure to return the collection to the pool via Release.List<T>().
 		/// </summary>
-		/// <param name="collection">
+		/// <param name="otherCollection">
 		/// Initialize the collection with given enumerable values. Note that the pooling system will give
 		/// the collection with largest capacity first. So expect getting much bigger capacity even though the specified
 		/// collection might be tiny in size.
 		/// </param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static List<T> List<T>([NotNull] IEnumerable<T> collection)
+		public static List<T> List<T>([NotNull] IEnumerable<T> otherCollection)
 		{
-			ListPool<T>.New(out var list, collection);
-			return list;
+			ListPool<T>.New(out var collection, otherCollection);
+			return collection;
 		}
 
 		/// <summary>
-		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
-		/// to return the collection to the pool via Release.List<T>().
+		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
+		/// Make sure to return the collection to the pool via Release.List<T>().
 		/// </summary>
 		/// <param name="capacity">
 		/// The pooling system will give the collection with largest capacity first. A new container will be created
@@ -322,9 +327,9 @@ namespace Extenity.DataToolbox
 		/// capacity in a smart way. See the description in code for details about how smart it is.
 		/// </param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static ListDisposer<T> List<T>(out List<T> list, int capacity = 0)
+		public static ListDisposer<T> List<T>(out List<T> collection, int capacity = 0)
 		{
-			return ListPool<T>.Using(out list, capacity);
+			return ListPool<T>.Using(out collection, capacity);
 		}
 
 		public static List<TSource> ToPooledList<TSource>(this IEnumerable<TSource> source)
@@ -338,51 +343,51 @@ namespace Extenity.DataToolbox
 	public static partial class Release
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void List<T>(ref List<T> listReference)
+		public static void List<T>(ref List<T> collectionReference)
 		{
-			ListPool<T>.Release(ref listReference);
+			ListPool<T>.Release(ref collectionReference);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void List<T>(ref List<T> listReference1, ref List<T> listReference2)
+		public static void List<T>(ref List<T> collectionReference1, ref List<T> collectionReference2)
 		{
-			ListPool<T>.Release(ref listReference1);
-			ListPool<T>.Release(ref listReference2);
+			ListPool<T>.Release(ref collectionReference1);
+			ListPool<T>.Release(ref collectionReference2);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void List<T>(ref List<T> listReference1, ref List<T> listReference2, ref List<T> listReference3)
+		public static void List<T>(ref List<T> collectionReference1, ref List<T> collectionReference2, ref List<T> collectionReference3)
 		{
-			ListPool<T>.Release(ref listReference1);
-			ListPool<T>.Release(ref listReference2);
-			ListPool<T>.Release(ref listReference3);
+			ListPool<T>.Release(ref collectionReference1);
+			ListPool<T>.Release(ref collectionReference2);
+			ListPool<T>.Release(ref collectionReference3);
 		}
 
 		/// <summary>
-		/// Alternative version that does not require passing the list reference as 'ref'. It won't be possible to
+		/// Alternative version that does not require passing the collection reference as 'ref'. It won't be possible to
 		/// automatically set the reference to null which provides a safety belt to prevent continuing to accidentally
-		/// use the list after it's released to the pool. So it's considered an unsafe operation. Use it with caution
-		/// and DO NOT EVER try to use the list after its Release.
+		/// use the collection after it's released to the pool. So it's considered an unsafe operation. Use it with
+		/// caution and DO NOT EVER try to use the collection after its Release.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ListUnsafe<T>(List<T> listReference)
+		public static void ListUnsafe<T>(List<T> collectionReference)
 		{
-			ListPool<T>.Release(ref listReference);
+			ListPool<T>.Release(ref collectionReference);
 		}
 	}
 
 	public readonly struct ListDisposer<T> : IDisposable
 	{
-		private readonly List<T> List;
+		private readonly List<T> Collection;
 
-		public ListDisposer(List<T> list)
+		public ListDisposer(List<T> collection)
 		{
-			List = list;
+			Collection = collection;
 		}
 
 		public void Dispose()
 		{
-			ListPool<T>._Free(List);
+			ListPool<T>._Free(Collection);
 		}
 	}
 
