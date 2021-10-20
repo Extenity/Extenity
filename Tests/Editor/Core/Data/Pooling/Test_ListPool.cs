@@ -11,13 +11,13 @@ namespace ExtenityTests.DataToolbox
 		protected override void OnInitialize()
 		{
 			// Release previous pools from previously ran tests if there were any left.
-			ListPoolTools.ReleaseAllListsOfAllTypes();
+			ListPoolTools.ReleaseAllPoolsOfAllTypes();
 		}
 
 		protected override void OnDeinitialize()
 		{
 			// Release pools of last ran test.
-			ListPoolTools.ReleaseAllListsOfAllTypes();
+			ListPoolTools.ReleaseAllPoolsOfAllTypes();
 		}
 
 		[Test]
@@ -107,7 +107,7 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(ListPool<string>.Pool.Count, 3);
 			Assert.AreEqual(ListPool<float>.Pool.Count, 1);
 
-			ListPoolTools.ReleaseAllListsOfAllTypes();
+			ListPoolTools.ReleaseAllPoolsOfAllTypes();
 
 			Assert.AreEqual(ListPool<int>.Pool.Count, 0);
 			Assert.AreEqual(ListPool<string>.Pool.Count, 0);

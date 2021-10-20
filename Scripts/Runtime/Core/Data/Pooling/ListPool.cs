@@ -27,14 +27,14 @@ namespace Extenity.DataToolbox
 		static ListPool()
 		{
 			Log.Verbose($"Creating {nameof(ListPool<T>)}<{typeof(T).Name}>");
-			ListPoolTools.RegisterForRelease(ReleaseAllListsOfType);
+			ListPoolTools.RegisterForAllPoolsRelease(ReleasePool);
 		}
 
 		#endregion
 
 		#region Deinitialization / Release the pool itself
 
-		public static void ReleaseAllListsOfType()
+		public static void ReleasePool()
 		{
 			lock (Pool)
 			{
@@ -251,25 +251,25 @@ namespace Extenity.DataToolbox
 
 		#region Release Pools
 
-		private static event Action AllReleaseCallbacks;
+		private static event Action AllPoolReleaseCallbacks;
 		private static readonly object ReleaseLock = new object();
 
-		public static void ReleaseAllListsOfAllTypes()
+		public static void ReleaseAllPoolsOfAllTypes()
 		{
 			lock (ReleaseLock)
 			{
-				if (AllReleaseCallbacks != null)
+				if (AllPoolReleaseCallbacks != null)
 				{
-					AllReleaseCallbacks();
+					AllPoolReleaseCallbacks();
 				}
 			}
 		}
 
-		public static void RegisterForRelease(Action releaseAllListsOfTypeCallback)
+		public static void RegisterForAllPoolsRelease(Action releasePoolCallback)
 		{
 			lock (ReleaseLock)
 			{
-				AllReleaseCallbacks += releaseAllListsOfTypeCallback;
+				AllPoolReleaseCallbacks += releasePoolCallback;
 			}
 		}
 
