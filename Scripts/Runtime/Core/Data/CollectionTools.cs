@@ -575,15 +575,17 @@ namespace Extenity.DataToolbox
 
 		public static T[] Add<T>(this T[] source, T item)
 		{
-			Array.Resize(ref source, source.Length + 1);
-			source[source.Length - 1] = item;
+			var sourceLength = source != null ? source.Length : 0;
+			Array.Resize(ref source, sourceLength + 1);
+			source[sourceLength] = item;
 			return source;
 		}
 
 		public static T[] AddRange<T>(this T[] source, T[] items)
 		{
-			Array.Resize(ref source, source.Length + items.Length);
-			Array.Copy(items, 0, source, source.Length - items.Length, items.Length);
+			var sourceLength = source != null ? source.Length : 0;
+			Array.Resize(ref source, sourceLength + items.Length);
+			Array.Copy(items, 0, source, sourceLength, items.Length);
 			return source;
 		}
 
