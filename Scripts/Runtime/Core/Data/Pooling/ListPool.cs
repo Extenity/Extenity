@@ -9,13 +9,13 @@ namespace Extenity.DataToolbox
 	/// <remarks>
 	/// Example usage for manually returning the list to the pool:
 	///
-	///    var theList = New.List<ListItemType>(optionalCapacity);
+	///    var theList = New.List<ItemType>(optionalCapacity);
 	///    // Do some stuff with theList
 	///    Release.List(ref theList);
 	///
 	/// Example usage for automatically returning the list to the pool:
 	///
-	///    using (New.List<ListItemType>(out var theList, optionalCapacity))
+	///    using (New.List<ItemType>(out var theList, optionalCapacity))
 	///    {
 	///        // Do some stuff with theList
 	///    }
@@ -33,11 +33,6 @@ namespace Extenity.DataToolbox
 		#endregion
 
 		#region Deinitialization / Release the pool itself
-
-		// public static void ReleaseAllListsOfAllTypes()
-		// {
-		// 	ListPoolTools.ReleaseAllListsOfAllTypes();
-		// }
 
 		public static void ReleaseAllListsOfType()
 		{
@@ -124,10 +119,15 @@ namespace Extenity.DataToolbox
 						return;
 					}
 
-					// Adjust the capacity if its lower than expected. Changing capacity means allocating a memory
-					// block, which is not performance friendly. When adding a new item to the list, .NET increases
-					// the capacity by doubling current size. That allows us to omit the second half of the capacity
-					// here and not instantly do the allocation right now.
+					// Adjust the capacity if its lower than expected.
+					// When adding a new item to the list, .NET increases the capacity by doubling current size.
+					// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
+					// which is not performance friendly. So even though the capacity is lower than the expected here,
+					// we don't immediately increase the capacity and do an allocation if the capacity is already
+					// greater than the half of what is expected. Because if the user would fill the collection
+					// that much, .NET would already be increasing the size. It's smart not to increase it here
+					// right now for the possibility that the user may not fill the list to above its current capacity.
+					// Otherwise we might end up increasing it unnecessarily.
 					if (list.Capacity < capacity / 2)
 					{
 						list.Capacity = capacity;
@@ -278,6 +278,16 @@ namespace Extenity.DataToolbox
 
 	public static partial class New
 	{
+		/// <summary>
+		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
+		/// to return the collection to the pool via Release.List<T>().
+		/// </summary>
+		/// <param name="capacity">
+		/// The pooling system will give the collection with largest capacity first. A new container will be created
+		/// with specified capacity if the pool is empty. If the pool has collections available but not one that matches
+		/// the required capacity, then the system will get the next largest collection in pool and increase its
+		/// capacity in a smart way. See the description in code for details about how smart it is.
+		/// </param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static List<T> List<T>(int capacity = 0)
 		{
@@ -285,6 +295,15 @@ namespace Extenity.DataToolbox
 			return list;
 		}
 
+		/// <summary>
+		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
+		/// to return the collection to the pool via Release.List<T>().
+		/// </summary>
+		/// <param name="collection">
+		/// Initialize the collection with given enumerable values. Note that the pooling system will give
+		/// the collection with largest capacity first. So expect getting much bigger capacity even though the specified
+		/// collection might be tiny in size.
+		/// </param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static List<T> List<T>([NotNull] IEnumerable<T> collection)
 		{
@@ -292,6 +311,16 @@ namespace Extenity.DataToolbox
 			return list;
 		}
 
+		/// <summary>
+		/// Gets the next available List in pool or creates a new one if pool doesn't have any available. Make sure
+		/// to return the collection to the pool via Release.List<T>().
+		/// </summary>
+		/// <param name="capacity">
+		/// The pooling system will give the collection with largest capacity first. A new container will be created
+		/// with specified capacity if the pool is empty. If the pool has collections available but not one that matches
+		/// the required capacity, then the system will get the next largest collection in pool and increase its
+		/// capacity in a smart way. See the description in code for details about how smart it is.
+		/// </param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ListDisposer<T> List<T>(out List<T> list, int capacity = 0)
 		{
