@@ -52,6 +52,23 @@ namespace Extenity.DataToolbox
 
 		#region Allocate / Release Collections
 
+		private static void AdjustCapacity(List<T> collection, int capacity)
+		{
+			// Adjust the capacity if its lower than expected.
+			// When adding a new item to the collection, .NET increases the capacity by doubling current size.
+			// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
+			// which is not performance friendly. So even though the capacity is lower than the expected here,
+			// we don't immediately increase the capacity and do an allocation if the capacity is already
+			// greater than the half of what is expected. Because if the user would fill the collection
+			// that much, .NET would already be increasing the size. It's smart not to increase it here
+			// right now for the possibility that the user may not fill the collection to above its current
+			// capacity. Otherwise we might end up increasing it unnecessarily.
+			if (collection.Capacity < capacity / 2)
+			{
+				collection.Capacity = capacity;
+			}
+		}
+
 		internal static ListDisposer<T> Using(out List<T> collection, int capacity)
 		{
 			lock (Pool)
@@ -78,19 +95,7 @@ namespace Extenity.DataToolbox
 						return new ListDisposer<T>(collection);
 					}
 
-					// Adjust the capacity if its lower than expected.
-					// When adding a new item to the collection, .NET increases the capacity by doubling current size.
-					// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
-					// which is not performance friendly. So even though the capacity is lower than the expected here,
-					// we don't immediately increase the capacity and do an allocation if the capacity is already
-					// greater than the half of what is expected. Because if the user would fill the collection
-					// that much, .NET would already be increasing the size. It's smart not to increase it here
-					// right now for the possibility that the user may not fill the collection to above its current
-					// capacity. Otherwise we might end up increasing it unnecessarily.
-					if (collection.Capacity < capacity / 2)
-					{
-						collection.Capacity = capacity;
-					}
+					AdjustCapacity(collection, capacity);
 					return new ListDisposer<T>(collection);
 				}
 			}
@@ -124,19 +129,7 @@ namespace Extenity.DataToolbox
 						return;
 					}
 
-					// Adjust the capacity if its lower than expected.
-					// When adding a new item to the collection, .NET increases the capacity by doubling current size.
-					// Knowing that allows us to act smart here. Changing capacity means allocating a memory block,
-					// which is not performance friendly. So even though the capacity is lower than the expected here,
-					// we don't immediately increase the capacity and do an allocation if the capacity is already
-					// greater than the half of what is expected. Because if the user would fill the collection
-					// that much, .NET would already be increasing the size. It's smart not to increase it here
-					// right now for the possibility that the user may not fill the collection to above its current
-					// capacity. Otherwise we might end up increasing it unnecessarily.
-					if (collection.Capacity < capacity / 2)
-					{
-						collection.Capacity = capacity;
-					}
+					AdjustCapacity(collection, capacity);
 					return;
 				}
 			}
