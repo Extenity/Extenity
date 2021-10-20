@@ -24,7 +24,7 @@ namespace Extenity.DataToolbox
 			return array.Length;
 		}
 
-		public static bool IsEqual<T>(this IEnumerable<T> source, IEnumerable<T> other)
+		public static bool IsEqual<T>(this IEnumerable<T> source, in IEnumerable<T> other)
 		{
 			return new CollectionComparer<T>().Equals(source, other);
 		}
@@ -125,7 +125,7 @@ namespace Extenity.DataToolbox
 			return count;
 		}
 
-		public static bool RemoveNullChecked<T>(this List<T> list, T item)
+		public static bool RemoveNullChecked<T>(this List<T> list, in T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
@@ -134,7 +134,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool RemoveNullCheckedAndRemoveAllNullItems<T>(this List<T> list, T item)
+		public static bool RemoveNullCheckedAndRemoveAllNullItems<T>(this List<T> list, in T item)
 		{
 			// Remove nulls before removing the object, so Contains check will not count the nulls.
 			list.RemoveAllNullItems();
@@ -165,7 +165,7 @@ namespace Extenity.DataToolbox
 			return source.GetRange(0, source.Count);
 		}
 
-		public static T[] Combine<T>(this T[] thisArray, T[] appendedArray)
+		public static T[] Combine<T>(this T[] thisArray, in T[] appendedArray)
 		{
 			var result = new T[thisArray.Length + appendedArray.Length];
 			Array.Copy(thisArray, result, thisArray.Length);
@@ -173,7 +173,7 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-		public static void Combine<T>(this ICollection<T> list, IEnumerable<T> otherList)
+		public static void Combine<T>(this ICollection<T> list, in IEnumerable<T> otherList)
 		{
 			if (otherList == null)
 				throw new ArgumentNullException(nameof(otherList));
@@ -206,7 +206,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void AddNullChecked<T>(this List<T> list, T item)
+		public static void AddNullChecked<T>(this List<T> list, in T item)
 		{
 			if (item != null)
 			{
@@ -214,7 +214,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static bool AddUnique<T>(this List<T> list, T item)
+		public static bool AddUnique<T>(this List<T> list, in T item)
 		{
 			if (!list.Contains(item))
 			{
@@ -224,7 +224,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool AddUniqueNullChecked<T>(this List<T> list, T item)
+		public static bool AddUniqueNullChecked<T>(this List<T> list, in T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
@@ -237,7 +237,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> list, T item)
+		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> list, in T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
 			list.RemoveAllNullItems();
@@ -245,7 +245,7 @@ namespace Extenity.DataToolbox
 			return list.AddUniqueNullChecked(item);
 		}
 
-		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> list, T item)
+		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> list, in T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
 			list.RemoveAllNullItems();
@@ -253,7 +253,7 @@ namespace Extenity.DataToolbox
 			list.AddNullChecked(item);
 		}
 
-		public static void AddSorted<T>(this List<T> list, T item) where T : IComparable<T>
+		public static void AddSorted<T>(this List<T> list, in T item) where T : IComparable<T>
 		{
 			if (list.Count == 0)
 			{
@@ -309,7 +309,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void MakeSameSizeAs<T1, T2>(ref T1[] list, T2[] otherList)
+		public static void MakeSameSizeAs<T1, T2>(ref T1[] list, in T2[] otherList)
 		{
 			if (list == null)
 			{
@@ -439,17 +439,17 @@ namespace Extenity.DataToolbox
 			return index >= 0 && index < source.Count;
 		}
 
-		public static int IndexOf<T>(this T[] source, T value)
+		public static int IndexOf<T>(this T[] source, in T value)
 		{
 			return Array.IndexOf(source, value);
 		}
 
-		public static int IndexOf<T>(this T[] source, T value, int startIndex)
+		public static int IndexOf<T>(this T[] source, in T value, int startIndex)
 		{
 			return Array.IndexOf(source, value, startIndex);
 		}
 
-		public static int IndexOf<T>(this T[] source, T value, int startIndex, int count)
+		public static int IndexOf<T>(this T[] source, in T value, int startIndex, int count)
 		{
 			return Array.IndexOf(source, value, startIndex, count);
 		}
@@ -486,7 +486,7 @@ namespace Extenity.DataToolbox
 			return -1;
 		}
 
-		public static T[] Remove<T>(this T[] source, T[] removedArray)
+		public static T[] Remove<T>(this T[] source, in T[] removedArray)
 		{
 			var array = source;
 			foreach (var removedItem in removedArray)
@@ -500,7 +500,7 @@ namespace Extenity.DataToolbox
 			return array;
 		}
 
-		public static T[] Remove<T>(this T[] source, T value)
+		public static T[] Remove<T>(this T[] source, in T value)
 		{
 			var index = source.IndexOf(value);
 			if (index < 0)
@@ -542,7 +542,7 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-		public static T[] Insert<T>(this T[] source, int index, T obj)
+		public static T[] Insert<T>(this T[] source, int index, in T obj)
 		{
 			if (index < 0 || index > source.Length)
 				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
@@ -573,7 +573,7 @@ namespace Extenity.DataToolbox
 			return source;
 		}
 
-		public static T[] Add<T>(this T[] source, T item)
+		public static T[] Add<T>(this T[] source, in T item)
 		{
 			var sourceLength = source != null ? source.Length : 0;
 			Array.Resize(ref source, sourceLength + 1);
@@ -581,7 +581,7 @@ namespace Extenity.DataToolbox
 			return source;
 		}
 
-		public static T[] AddRange<T>(this T[] source, T[] items)
+		public static T[] AddRange<T>(this T[] source, in T[] items)
 		{
 			var sourceLength = source != null ? source.Length : 0;
 			Array.Resize(ref source, sourceLength + items.Length);
@@ -628,7 +628,7 @@ namespace Extenity.DataToolbox
 			list[newIndex] = temp;
 		}
 
-		public static T[] NewFilledArray<T>(int length, T initialValue)
+		public static T[] NewFilledArray<T>(int length, in T initialValue)
 		{
 			var array = new T[length];
 			for (int i = 0; i < array.Length; i++)
@@ -638,7 +638,7 @@ namespace Extenity.DataToolbox
 			return array;
 		}
 
-		public static void Fill<T>(this IList<T> list, T value)
+		public static void Fill<T>(this IList<T> list, in T value)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -646,7 +646,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void Fill<T>(this IList<T> list, T value, int startIndex, int count = -1)
+		public static void Fill<T>(this IList<T> list, in T value, int startIndex, int count = -1)
 		{
 			if (count < 0)
 				count = list.Count;
@@ -777,7 +777,7 @@ namespace Extenity.DataToolbox
 		/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T" is the item that's going to be removed from "this list". Second parameter "int" is the index of the item in "this list". It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 		/// <param name="onUnchanged">Called when an item in "this list" appears to be in "other list" too. First parameter "T" is the item in "this list". Second parameter "T" is the item in "other list". It's possible not to specify a method. In this case, no extra calculations will be made for detecting unchanged items. No manual modifications should be made to the list.</param>
 		/// <returns>True if anything in "this list" changed. False otherwise.</returns>
-		public static bool EqualizeTo<T>(this IList<T> thisList, IList<T> otherList,
+		public static bool EqualizeTo<T>(this IList<T> thisList, in IList<T> otherList,
 			Action<T> onAdd = null,
 			Action<T, int> onRemove = null,
 			Action<T, T> onUnchanged = null)
@@ -883,7 +883,7 @@ namespace Extenity.DataToolbox
 		/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T" is the item that's going to be removed from "this list". Second parameter "int" is the index of the item in "this list". It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 		/// <param name="onUnchanged">Called when an item in "this list" appears to be in "other list" too. First parameter "T" is the item in "this list". Second parameter "T" is the item in "other list". It's possible not to specify a method. In this case, no extra calculations will be made for detecting unchanged items. No manual modifications should be made to the list.</param>
 		/// <returns>True if anything in "this list" changed. False otherwise.</returns>
-		public static bool EqualizeTo<T>(this IList<T> thisList, IList<T> otherList,
+		public static bool EqualizeTo<T>(this IList<T> thisList, in IList<T> otherList,
 			IEqualityComparer<T> comparer,
 			Action<T> onAdd = null,
 			Action<T, int> onRemove = null,
@@ -993,7 +993,7 @@ namespace Extenity.DataToolbox
 		/// <param name="onRemove">Called when an item in "this list" does not appear to be in "other list". First parameter "T1" is the item that's going to be removed from "this list". Second parameter "int" is the index of the item in "this list". It's possible not to specify a method. In this case, the item will be removed automatically from "this list". But in case a method is specified, the item must be removed from "this list" manually in this method. Only the item sent to this method should be removed and no other modifications should be made to the list.</param>
 		/// <param name="onUnchanged">Called when an item in "this list" appears to be in "other list" too. First parameter "T1" is the item in "this list". Second parameter "T2" is the item in "other list". It's possible not to specify a method. In this case, no extra calculations will be made for detecting unchanged items. No manual modifications should be made to the list.</param>
 		/// <returns>True if anything in "this list" changed. False otherwise.</returns>
-		public static bool EqualizeTo<T1, T2>(this IList<T1> thisList, IList<T2> otherList,
+		public static bool EqualizeTo<T1, T2>(this IList<T1> thisList, in IList<T2> otherList,
 			IEqualityComparer<T1, T2> comparer,
 			Action<T2> onAdd,
 			Action<T1, int> onRemove = null,
@@ -1090,7 +1090,7 @@ namespace Extenity.DataToolbox
 
 		#region ContentEquals
 
-		public static bool ContentEquals<T1, T2>(this IList<T1> thisList, IList<T2> otherList,
+		public static bool ContentEquals<T1, T2>(this IList<T1> thisList, in IList<T2> otherList,
 			IEqualityComparer<T1, T2> comparer)
 		{
 			if (thisList == null)
@@ -1336,7 +1336,7 @@ namespace Extenity.DataToolbox
 			return dictionary;
 		}
 
-		public static bool HasSameKeys<TKey, TValue>(this Dictionary<TKey, TValue> thisObj, Dictionary<TKey, TValue> otherObj)
+		public static bool HasSameKeys<TKey, TValue>(this Dictionary<TKey, TValue> thisObj, in Dictionary<TKey, TValue> otherObj)
 		{
 			if (thisObj.Count != otherObj.Count)
 				return false;
@@ -1351,7 +1351,7 @@ namespace Extenity.DataToolbox
 			//return dictionary1.OrderBy(kvp => kvp.Key).SequenceEqual(dictionary2.OrderBy(kvp => kvp.Key));
 		}
 
-		public static bool HasSameKeys<TKey, TValue>(this List<TKey> thisObj, Dictionary<TKey, TValue> dictionary)
+		public static bool HasSameKeys<TKey, TValue>(this List<TKey> thisObj, in Dictionary<TKey, TValue> dictionary)
 		{
 			if (thisObj.Count != dictionary.Count)
 				return false;
@@ -1365,7 +1365,7 @@ namespace Extenity.DataToolbox
 			return true;
 		}
 
-		public static bool HasSameValues<TKey, TValue>(this List<TValue> thisObj, Dictionary<TKey, TValue> dictionary)
+		public static bool HasSameValues<TKey, TValue>(this List<TValue> thisObj, in Dictionary<TKey, TValue> dictionary)
 		{
 			if (thisObj.Count != dictionary.Count)
 				return false;
@@ -1390,8 +1390,7 @@ namespace Extenity.DataToolbox
 		/// <param name="dictionary">Dictionary to access</param>
 		/// <param name="key">Key to lookup</param>
 		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
-													   TKey key)
+		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key)
 			where TValue : new()
 		{
 			if (!dictionary.TryGetValue(key, out var ret))
@@ -1413,9 +1412,7 @@ namespace Extenity.DataToolbox
 		/// <param name="key">Key to lookup</param>
 		/// <param name="valueProvider">Delegate to provide new value if required</param>
 		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
-													   TKey key,
-													   Func<TValue> valueProvider)
+		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, Func<TValue> valueProvider)
 		{
 			if (!dictionary.TryGetValue(key, out var ret))
 			{
@@ -1435,9 +1432,7 @@ namespace Extenity.DataToolbox
 		/// <param name="key">Key to lookup</param>
 		/// <param name="defaultValue">Value to use when key is missing</param>
 		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
-													   TKey key,
-													   TValue defaultValue)
+		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, TValue defaultValue)
 		{
 			if (!dictionary.TryGetValue(key, out var ret))
 			{
@@ -1457,9 +1452,7 @@ namespace Extenity.DataToolbox
 		/// <param name="key">Key to lookup</param>
 		/// <param name="defaultValue">Value to use when key is missing</param>
 		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
-													   TKey key,
-													   TValue defaultValue)
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, TValue defaultValue)
 		{
 			if (!dictionary.TryGetValue(key, out var ret))
 			{
@@ -1468,9 +1461,7 @@ namespace Extenity.DataToolbox
 			return ret;
 		}
 
-		public static void AppendOrCreate<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary,
-			TKey key,
-			TValue value)
+		public static void AppendOrCreate<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
 		{
 			if (!dictionary.TryGetValue(key, out var list) || list == null)
 			{
@@ -1480,9 +1471,7 @@ namespace Extenity.DataToolbox
 			list.Add(value);
 		}
 
-		public static int AddOrIncrement<TKey>(this IDictionary<TKey, int> dictionary,
-			TKey key,
-			int initialValue = 1)
+		public static int AddOrIncrement<TKey>(this IDictionary<TKey, int> dictionary, in TKey key, int initialValue = 1)
 		{
 			if (dictionary.TryGetValue(key, out var ret))
 			{
