@@ -13,11 +13,11 @@ namespace Extenity.BuildMachine.Editor
 
 			if (IsProcessorRunning)
 			{
-				//Log.Info("Skipping backup scene modification checks.");
+				//BuilderLog.Info("Skipping backup scene modification checks.");
 				return paths;
 			}
 
-			//Log.Info("Saving assets: \n" + paths.Serialize('\n'));
+			//BuilderLog.Info("Saving assets: \n" + paths.Serialize('\n'));
 
 			for (var i = 0; i < paths.Length; i++)
 			{

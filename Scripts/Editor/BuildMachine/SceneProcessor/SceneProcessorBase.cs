@@ -55,7 +55,7 @@ namespace Extenity.BuildMachine.Editor
 			EnsureNotCompiling("Tried to start scene processing while compiling.");
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
-				throw new Exception("Tried to start scene processing while in play mode.");
+				throw new Exception(BuilderLog.Prefix + "Tried to start scene processing while in play mode.");
 			}
 			if (askUserForUnsavedChanges)
 			{
@@ -68,14 +68,14 @@ namespace Extenity.BuildMachine.Editor
 		private static bool OnException(Exception exception)
 		{
 			// TODO: Reset the state of processor and make it ready for another run.
-			Log.Error("Exception catching in scene processor is not implemented yet. Exception: " + exception);
+			BuilderLog.Error("Exception catching in scene processor is not implemented yet. Exception: " + exception);
 			return false;
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
 		{
 			if (IsProcessorRunning)
-				throw new Exception("Scene processor was already running.");
+				throw new Exception(BuilderLog.Prefix + "Scene processor was already running.");
 			IsProcessorRunning = true;
 
 			var indented = false;
@@ -91,18 +91,18 @@ namespace Extenity.BuildMachine.Editor
 				);
 				if (definition == null)
 				{
-					Log.Info($"Skipping scene processing for scene '{scene.name}'.");
+					BuilderLog.Info($"Skipping scene processing for scene '{scene.name}'.");
 					yield break;
 				}
 
 				// Get process configuration
 				if (!Configurations.TryGetValue(configurationName, out var configuration))
 				{
-					throw new Exception($"Configuration '{configurationName}' does not exist.");
+					throw new Exception(BuilderLog.Prefix + $"Configuration '{configurationName}' does not exist.");
 				}
 				configuration.CheckConsistencyAndThrow();
 
-				Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
+				BuilderLog.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
 				Log.IncreaseIndent();
 				indented = true;
 
@@ -117,7 +117,7 @@ namespace Extenity.BuildMachine.Editor
 					MergeScenesIntoProcessedScene(definition);
 				}
 
-				Log.Info("Scene is ready to be processed. Starting the process.");
+				BuilderLog.Info("Scene is ready to be processed. Starting the process.");
 
 				// Call initialization process
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(OnBeforeSceneProcess(definition, configuration, runAsync));
@@ -151,7 +151,7 @@ namespace Extenity.BuildMachine.Editor
 				yield return null;
 				AggressivelySaveOpenScenes();
 
-				Log.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
+				BuilderLog.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
 
 				ClearProgressBar();
 			}
@@ -190,7 +190,7 @@ namespace Extenity.BuildMachine.Editor
 				var result = EditorSceneManager.SaveScene(activeScene, definition.ProcessedScenePath, false);
 				if (!result)
 				{
-					throw new Exception("Could not copy main scene to processed scene path.");
+					throw new Exception(BuilderLog.Prefix + "Could not copy main scene to processed scene path.");
 				}
 			}
 
@@ -206,7 +206,7 @@ namespace Extenity.BuildMachine.Editor
 				var processingScene = EditorSceneManager.GetSceneByPath(definition.ProcessedScenePath);
 				if (!processingScene.IsValid())
 				{
-					throw new Exception($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
+					throw new Exception(BuilderLog.Prefix + $"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
 				}
 
 				// Merge other scenes into processing scene.
@@ -216,7 +216,7 @@ namespace Extenity.BuildMachine.Editor
 					{
 						if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
 						{
-							throw new Exception($"Merged scene could not be found at path '{mergedScenePath}'.");
+							throw new Exception(BuilderLog.Prefix + $"Merged scene could not be found at path '{mergedScenePath}'.");
 						}
 
 						// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
@@ -300,7 +300,7 @@ namespace Extenity.BuildMachine.Editor
 					if (previousMethodOrder == currentMethodOrder)
 					{
 						detected = true;
-						Log.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
+						BuilderLog.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
 					}
 
 					previousMethod = currentMethod;
@@ -308,7 +308,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 				if (detected)
 				{
-					throw new Exception("Failed to sort processor method list because there were methods with the same order value.");
+					throw new Exception(BuilderLog.Prefix + "Failed to sort processor method list because there were methods with the same order value.");
 				}
 			}
 
@@ -326,14 +326,14 @@ namespace Extenity.BuildMachine.Editor
 			CurrentStep++;
 			CurrentStepStartTime = now;
 
-			Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
+			BuilderLog.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
 			DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
 		}
 
 		private static void EndStep()
 		{
 			var duration = ProcessStopwatch.Elapsed - CurrentStepStartTime;
-			Log.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
+			BuilderLog.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
 			CurrentStepTitle = null;
 			CurrentStepStartTime = new TimeSpan();
 		}
@@ -413,7 +413,7 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (EditorApplication.isCompiling)
 			{
-				throw new Exception(message);
+				throw new Exception(BuilderLog.Prefix + message);
 			}
 		}
 

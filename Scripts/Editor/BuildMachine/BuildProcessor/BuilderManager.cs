@@ -18,7 +18,7 @@ namespace Extenity.BuildMachine.Editor
 
 		static BuilderManager()
 		{
-			//Log.Info("Initializing BuildMachine");
+			//BuilderLog.Info("Initializing BuildMachine");
 			BuilderInfos = GatherBuilderInfos();
 			BuildJobRunner.ContinueFromRunningJobAfterAssemblyReload();
 		}
@@ -77,7 +77,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// foreach (var assembly in assemblies.OrderBy(item => item.Location))
 			// {
-			// 	Log.Info("assembly:   " + assembly.Location);
+			// 	BuilderLog.Info("assembly:   " + assembly.Location);
 			// }
 
 			for (var iAssembly = 0; iAssembly < assemblies.Count; iAssembly++)
@@ -108,14 +108,14 @@ namespace Extenity.BuildMachine.Editor
 				// Make sure the class is serializable
 				if (!type.HasAttribute<JsonObjectAttribute>())
 				{
-					Log.Error($"Builder '{type.Name}' has no '{nameof(JsonObjectAttribute)}'.");
+					BuilderLog.Error($"Builder '{type.Name}' has no '{nameof(JsonObjectAttribute)}'.");
 				}
 
 				// Get BuilderInfo class attribute
 				var infoAttribute = type.GetAttribute<BuilderInfoAttribute>(true);
 				if (infoAttribute == null)
 				{
-					Log.Error($"Builder '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
+					BuilderLog.Error($"Builder '{type.Name}' has no '{nameof(BuilderInfoAttribute)}'.");
 				}
 
 				// Get Options type
@@ -130,7 +130,7 @@ namespace Extenity.BuildMachine.Editor
 				//if (nonSerializedFields.Length > 0)
 				//{
 				//	var text = string.Join(", ", nonSerializedFields.Select(entry => entry.Name));
-				//	Log.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
+				//	BuilderLog.Error($"Builder '{type.Name}' has non-serializable field(s) '{text}' which is not allowed to prevent any confusion. Builders need to be fully serializable to prevent losing data between assembly reloads and Unity Editor relaunches. Start the name with '_' to ignore this check if the non-serialized field is essential.");
 				//}
 
 				// Get Build Step and Finalization Step methods
@@ -167,7 +167,7 @@ namespace Extenity.BuildMachine.Editor
 							              {
 								              if (attribute.Order <= 0)
 								              {
-									              Log.Error($"The '{attribute.GetType().Name}' attribute should have an order above 0.");
+									              BuilderLog.Error($"The '{attribute.GetType().Name}' attribute should have an order above 0.");
 								              }
 								              return true;
 							              }
@@ -195,7 +195,7 @@ namespace Extenity.BuildMachine.Editor
 					if (previousMethodOrder == currentMethodOrder)
 					{
 						detected = true;
-						Log.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
+						BuilderLog.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
 					}
 
 					previousMethod = currentMethod;
@@ -203,7 +203,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 				if (detected)
 				{
-					throw new Exception("Failed to sort Build Step method list because there were methods with the same order value.");
+					throw new Exception(BuilderLog.Prefix + "Failed to sort Build Step method list because there were methods with the same order value.");
 				}
 			}
 

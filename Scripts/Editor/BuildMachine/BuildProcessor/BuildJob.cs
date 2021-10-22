@@ -151,7 +151,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public void ScheduleUnityEditorRestart()
 		{
-			Log.Info("Scheduling Unity Editor restart.");
+			BuilderLog.Info("Scheduling Unity Editor restart.");
 			IsUnityEditorRestartScheduled = true;
 			throw new NotImplementedException();
 		}
@@ -165,7 +165,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public void ScheduleAssemblyReload()
 		{
-			Log.Info("Scheduling assembly reload.");
+			BuilderLog.Info("Scheduling assembly reload.");
 			IsAssemblyReloadScheduled = true;
 		}
 
@@ -225,12 +225,12 @@ namespace Extenity.BuildMachine.Editor
 
 		internal void SetResult(BuildJobResult result)
 		{
-			Log.Info($"Setting result to '{result}'");
+			BuilderLog.Info($"Setting result to '{result}'");
 			if (result == BuildJobResult.Succeeded)
 			{
 				if (Result == BuildJobResult.Failed)
 				{
-					throw new Exception($"Tried to set '{BuildJobResult.Succeeded}' result over '{BuildJobResult.Failed}' job.");
+					throw new Exception(BuilderLog.Prefix + $"Tried to set '{BuildJobResult.Succeeded}' result over '{BuildJobResult.Failed}' job.");
 				}
 			}
 			Result = result;
@@ -322,9 +322,9 @@ namespace Extenity.BuildMachine.Editor
 			var json2 = InternalSerializeToJson(deserialized);
 			if (json != json2)
 			{
-				Log.Error("Json-1:\n" + json);
-				Log.Error("Json-2:\n" + json2);
-				throw new Exception("Serialization consistency check failed.");
+				BuilderLog.Error("Json-1:\n" + json);
+				BuilderLog.Error("Json-2:\n" + json2);
+				throw new Exception(BuilderLog.Prefix + "Serialization consistency check failed.");
 			}
 
 			return json;
@@ -364,9 +364,9 @@ namespace Extenity.BuildMachine.Editor
 			var json2 = InternalSerializeToJson(job);
 			if (json != json2)
 			{
-				Log.Error("Json-1:\n" + json);
-				Log.Error("Json-2:\n" + json2);
-				throw new Exception("Serialization consistency check failed.");
+				BuilderLog.Error("Json-1:\n" + json);
+				BuilderLog.Error("Json-2:\n" + json2);
+				throw new Exception(BuilderLog.Prefix + "Serialization consistency check failed.");
 			}
 
 			return job;
