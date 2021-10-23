@@ -9,13 +9,13 @@ namespace Extenity.DataToolbox
 	/// <remarks>
 	/// Example usage for manually returning the FastHashSet to the pool:
 	///
-	///    var theCollection = New.FastHashSet<ItemType>(optionalCapacity);
+	///    var theCollection = New.FastHashSet<ItemType>(optionalCapacity, optionalEqualityComparer);
 	///    // Do some stuff with theCollection
 	///    Release.FastHashSet(ref theCollection);
 	///
 	/// Example usage for automatically returning the FastHashSet to the pool:
 	///
-	///    using (New.FastHashSet<ItemType>(out var theCollection, optionalCapacity))
+	///    using (New.FastHashSet<ItemType>(out var theCollection, optionalCapacity, optionalEqualityComparer))
 	///    {
 	///        // Do some stuff with theCollection
 	///    }
