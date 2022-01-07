@@ -392,25 +392,25 @@ namespace Extenity.UnityEditorToolbox.Editor
 			DisableWindowGUIOnCompilation = true;
 			CompilationMessage = new GUIContent(message);
 
-			CompilationPipeline.assemblyCompilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
-			CompilationPipeline.assemblyCompilationStarted += _OnAssemblyCompilationStarted_ForDisablingWindow;
-			CompilationPipeline.assemblyCompilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
-			CompilationPipeline.assemblyCompilationFinished += _OnAssemblyCompilationFinished_ForDisablingWindow;
+			CompilationPipeline.compilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.compilationStarted += _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.compilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
+			CompilationPipeline.compilationFinished += _OnAssemblyCompilationFinished_ForDisablingWindow;
 		}
 
 		private void DeinitializeDisablingWindowOnCompilation()
 		{
-			CompilationPipeline.assemblyCompilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
-			CompilationPipeline.assemblyCompilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
+			CompilationPipeline.compilationStarted -= _OnAssemblyCompilationStarted_ForDisablingWindow;
+			CompilationPipeline.compilationFinished -= _OnAssemblyCompilationFinished_ForDisablingWindow;
 		}
 
-		private void _OnAssemblyCompilationStarted_ForDisablingWindow(string outputAssemblyPath)
+		private void _OnAssemblyCompilationStarted_ForDisablingWindow(object _)
 		{
 			ShowNotification(CompilationMessage);
 			Repaint();
 		}
 
-		private void _OnAssemblyCompilationFinished_ForDisablingWindow(string outputAssemblyPath, CompilerMessage[] compilerMessages)
+		private void _OnAssemblyCompilationFinished_ForDisablingWindow(object _)
 		{
 			RemoveNotification();
 			Repaint();
