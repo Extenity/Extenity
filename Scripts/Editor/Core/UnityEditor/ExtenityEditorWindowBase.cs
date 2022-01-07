@@ -67,7 +67,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			InitializeAutoRepaint();
 			InitializeOnSceneGUI();
 			InitializeOnSelectionChanged();
-			InitializeOnCompilation();
+			// InitializeOnCompilation();
 
 			OnEnableDerived();
 
@@ -91,7 +91,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			DeinitializeUpdate();
 			DeinitializeOnSceneGUI();
 			DeinitializeOnSelectionChanged();
-			DeinitializeOnCompilation();
+			// DeinitializeOnCompilation();
 			DeinitializeDisablingWindowOnCompilation();
 
 			OnDisableDerived();
@@ -347,6 +347,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region On Compilation
 
+		/*
 		private void InitializeOnCompilation()
 		{
 			// Register to the event if the method in base class is overriden.
@@ -376,6 +377,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		protected virtual void OnAssemblyCompilationFinished(string outputAssemblyPath, CompilerMessage[] compilerMessages)
 		{
 		}
+		*/
 
 		#endregion
 
