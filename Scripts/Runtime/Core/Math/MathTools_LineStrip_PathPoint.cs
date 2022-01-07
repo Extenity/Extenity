@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using UnityEngine;
 
 namespace Extenity.MathToolbox

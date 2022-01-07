@@ -1,7 +1,5 @@
 ﻿#if UseLegacyMessenger
 
-using System;
-
 namespace Extenity.MessagingToolbox
 {
 

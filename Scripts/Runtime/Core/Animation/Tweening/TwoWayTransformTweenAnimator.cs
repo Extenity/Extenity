@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 
 namespace Extenity.AnimationToolbox
 {
