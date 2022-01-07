@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Extenity.BuildToolbox.Editor;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
 using UnityEditor;

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 {

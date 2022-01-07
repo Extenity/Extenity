@@ -7,7 +7,6 @@ using System.Reflection;
 using Extenity.ProfilingToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEditor;
-using Debug = UnityEngine.Debug;
 
 namespace Extenity.ApplicationToolbox.Editor
 {
@@ -32,7 +31,7 @@ namespace Extenity.ApplicationToolbox.Editor
 #elif UNITY_EDITOR_OSX
 					if (directory.Name != "Managed" || parentDirectory.Name != "Contents")
 #else
-					throw new NotImplementedException();
+					throw new System.NotImplementedException();
 #endif
 					{
 						throw new Exception("Unexpected Unity Editor executable location: " + file);
@@ -56,7 +55,7 @@ namespace Extenity.ApplicationToolbox.Editor
 #elif UNITY_EDITOR_OSX
 					if (executableDirectory.Name != "Unity.app")
 #else
-					throw new NotImplementedException();
+					throw new System.NotImplementedException();
 #endif
 					{
 						throw new Exception("Unexpected Unity Editor executable location: " + executableDirectory.FullName);
@@ -230,7 +229,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			var adbFileName = "adb";
 #else
 			var adbFileName = "";
-			throw new NotImplementedException();
+			throw new System.NotImplementedException();
 #endif
 			var editorDirectory = UnityEditorInstallationDirectory;
 			var paths = Directory.GetFiles(editorDirectory, adbFileName, SearchOption.AllDirectories);
