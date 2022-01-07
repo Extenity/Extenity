@@ -27,6 +27,8 @@ namespace Extenity.CodingToolbox.Editor
 						}
 						var namespaceShouldStartWith = attributes[0].NamespaceShouldStartWith;
 
+						var ignoreAttributes = assembly.GetCustomAttributes<IgnoreEnsuredNamespaceAttribute>();
+
 						// Log.Info($"Checking if all classes in assembly '{assembly}' have namespaces that start with '{namespaceShouldStartWith}'.");
 
 						var types = assembly.GetTypes();
@@ -53,23 +55,42 @@ namespace Extenity.CodingToolbox.Editor
 
 							var checkedAgainst = namespaceShouldStartWith;
 
-							var overrideAttributesEnumerator = type.GetCustomAttributes<OverrideEnsuredNamespaceAttribute>();
-							if (overrideAttributesEnumerator.Any())
+							// No need to check if there are multiple attributes since its AllowMultiple is disabled.
+							var overrideAttribute = type.GetCustomAttribute<OverrideEnsuredNamespaceAttribute>();
+							if (overrideAttribute != null)
 							{
-								var overrideAttribute = overrideAttributesEnumerator.First(); // No need to check if there are multiple attributes since its AllowMultiple is disabled.
 								checkedAgainst = overrideAttribute.NamespaceShouldStartWith;
 							}
 
-							if (string.IsNullOrWhiteSpace(checkedAgainst) && string.IsNullOrWhiteSpace(type.Namespace))
+							var typeNamespace = type.Namespace;
+							var typeNamespaceIsEmpty = string.IsNullOrWhiteSpace(typeNamespace);
+							if (string.IsNullOrWhiteSpace(checkedAgainst) && typeNamespaceIsEmpty)
 							{
 								continue; // That's alright. It can be set to have no namespace.
 							}
 
-							if (string.IsNullOrWhiteSpace(type.Namespace) ||
+							if (typeNamespaceIsEmpty ||
 							    string.IsNullOrWhiteSpace(checkedAgainst) ||
-							    !type.Namespace.StartsWith(checkedAgainst, StringComparison.Ordinal))
+							    !typeNamespace.StartsWith(checkedAgainst, StringComparison.Ordinal))
 							{
-								Log.Error($"Namespace of type '{name}' should start with '{checkedAgainst ?? "[NA]"}' instead of '{type.Namespace ?? "[NA]"}'.");
+								// Namespace does not meet expectations. But before finalizing the decision
+								// that it's not okay, check if the namespace should be ignored.
+								var shouldIgnore = false;
+								if (!typeNamespaceIsEmpty)
+								{
+									foreach (var ignoreAttribute in ignoreAttributes)
+									{
+										if (typeNamespace.StartsWith(ignoreAttribute.IgnoreNamespacesThatStartWith, StringComparison.Ordinal))
+										{
+											shouldIgnore = true;
+											break;
+										}
+									}
+								}
+								if (!shouldIgnore)
+								{
+									Log.Error($"Namespace of type '{name}' should start with '{checkedAgainst ?? "[NA]"}' instead of '{(typeNamespaceIsEmpty ? "[NA]" : typeNamespace)}'.");
+								}
 							}
 						}
 					}
