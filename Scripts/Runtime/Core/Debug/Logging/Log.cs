@@ -375,23 +375,9 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void ErrorAndBreak(string message)
-		{
-			Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
-			Debug.Break();
-		}
-
-		// [DebuggerHidden]
 		public static void Error(string message, Object context)
 		{
 			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
-		}
-
-		// [DebuggerHidden]
-		public static void ErrorAndBreak(string message, Object context)
-		{
-			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
-			Debug.Break();
 		}
 
 		/// <summary>
@@ -670,23 +656,6 @@ namespace Extenity
 		public static string BuildInternalErrorMessage(int errorCode)
 		{
 			return "Internal error " + errorCode + "!";
-		}
-
-		#endregion
-
-		#region Log Tools - Methods
-
-		/// <summary>
-		/// Usage: Log.LogVariable(() => myVariable);
-		/// </summary>
-		// [DebuggerHidden]
-		public static void Variable<T>(Expression<Func<T>> expression, string prefix = "", LogCategory category = LogCategory.Verbose)
-		{
-			if (!string.IsNullOrEmpty(prefix))
-				prefix += ": ";
-			var body = (MemberExpression)expression.Body;
-			var value = ((FieldInfo)body.Member).GetValue(((ConstantExpression)body.Expression).Value);
-			Any(prefix + body.Member.Name + ": '" + value + "'", category);
 		}
 
 		#endregion
