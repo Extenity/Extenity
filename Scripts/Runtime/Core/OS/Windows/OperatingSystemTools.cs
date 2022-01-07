@@ -1,4 +1,6 @@
-﻿#if UNITY_STANDALONE_WIN
+﻿// ReSharper disable RedundantUsingDirective
+
+#if UNITY_STANDALONE_WIN
 using System;
 #endif
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
