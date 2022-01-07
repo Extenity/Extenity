@@ -3,6 +3,19 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sirenix.OdinInspector.Attributes">
+      <HintPath>..\..\..\UniversalDependencies\Sirenix.OdinInspector.Attributes.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
