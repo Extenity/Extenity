@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -46,3 +48,5 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 }
+
+#endif

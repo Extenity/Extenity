@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Extenity.MathToolbox;
 using Extenity.MeshToolbox;
@@ -88,3 +90,5 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 }
+
+#endif

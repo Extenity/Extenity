@@ -1,3 +1,5 @@
+#if UNITY
+
 using System.Text;
 using Extenity.DataToolbox;
 using UnityEngine;
@@ -242,3 +244,5 @@ namespace Extenity.TextureToolbox
 	}
 
 }
+
+#endif

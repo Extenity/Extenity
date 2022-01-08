@@ -1,3 +1,5 @@
+#if UNITY
+
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,3 +13,5 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 }
+
+#endif

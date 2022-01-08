@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
@@ -36,3 +38,5 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 }
+
+#endif

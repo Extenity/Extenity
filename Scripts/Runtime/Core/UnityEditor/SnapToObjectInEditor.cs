@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
@@ -143,3 +145,5 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 }
+
+#endif
