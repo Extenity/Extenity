@@ -2,7 +2,8 @@
     "name": "Extenity.Core.Editor",
     "rootNamespace": "",
     "references": [
-        "Extenity.Core"
+        "Extenity.Core",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [
         "Editor"
