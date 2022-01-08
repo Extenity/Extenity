@@ -251,24 +251,14 @@ namespace Extenity.MathToolbox
 			return (pow(E, x) - pow(E, -x)) / (pow(E, x) + pow(E, -x));
 		}
 
-		public static int Abs(this int value)
-		{
-			return abs(value);
-		}
-
-		public static float Abs(this float value)
-		{
-			return abs(value);
-		}
-
-		public static float Round(this float value)
-		{
-			return round(value);
-		}
-
 		public static int FloorToInt(this float val)
 		{
 			return val >= 0.0f ? (int)val : (int)val - 1;
+		}
+
+		public static int FloorToInt(this double val)
+		{
+			return val >= 0.0 ? (int)val : (int)val - 1;
 		}
 
 		public static int RoundToInt(this float val)
@@ -279,11 +269,6 @@ namespace Extenity.MathToolbox
 		public static int RoundToInt(this double val)
 		{
 			return val >= 0.0 ? (int)(val + 0.5) : (int)(val - 0.5);
-		}
-
-		public static long RoundToLong(this double val)
-		{
-			return val >= 0.0 ? (long)(val + 0.5) : (long)(val - 0.5);
 		}
 
 		/// <summary>
