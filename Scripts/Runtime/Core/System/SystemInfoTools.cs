@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Extenity.CryptoToolbox;
 using Extenity.DataToolbox;
@@ -302,3 +304,5 @@ namespace Extenity.SystemToolbox
 	}
 
 }
+
+#endif

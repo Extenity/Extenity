@@ -1,5 +1,4 @@
 using System;
-using Object = UnityEngine.Object;
 
 namespace Extenity.SystemToolbox
 {
@@ -366,9 +365,11 @@ namespace Extenity.SystemToolbox
 
 		#region Unity Object Null Check
 
+#if UNITY
+
 		public static bool IsNullRespectingUnityObject(this object obj)
 		{
-			if (obj is Object cast)
+			if (obj is UnityEngine.Object cast)
 			{
 				return !cast;
 			}
@@ -377,12 +378,14 @@ namespace Extenity.SystemToolbox
 
 		public static bool IsNotNullRespectingUnityObject(this object obj)
 		{
-			if (obj is Object cast)
+			if (obj is UnityEngine.Object cast)
 			{
 				return cast;
 			}
 			return obj != null;
 		}
+
+#endif
 
 		#endregion
 	}
