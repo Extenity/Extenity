@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="Sirenix.OdinInspector.Attributes">
-      <HintPath>..\..\..\UniversalDependencies\Sirenix.OdinInspector.Attributes.dll</HintPath>
+      <HintPath>..\..\..\.UniversalDependencies\OdinInspector\Sirenix.OdinInspector.Attributes.dll</HintPath>
     </Reference>
   </ItemGroup>
 
