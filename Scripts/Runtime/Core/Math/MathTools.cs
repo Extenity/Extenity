@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
+#if UNITY
+using UnityEngine;
+#endif
 
 namespace Extenity.MathToolbox
 {
@@ -1024,7 +1027,7 @@ namespace Extenity.MathToolbox
 			if (value < 0)
 				throw new NotImplementedException();
 
-			return (int)(Math.Floor(Math.Log10(value)) - 1);
+			return FloorToInt(log10(value)) - 1;
 		}
 
 		// Should be tested before using
@@ -1054,12 +1057,12 @@ namespace Extenity.MathToolbox
 			var insignificantDigits = value.CalculateInsignificantDigitsForHumanReadability();
 			if (insignificantDigits <= 0)
 			{
-				return Math.Round(value);
+				return round(value);
 			}
 			else
 			{
-				var clip = Math.Pow(10, insignificantDigits);
-				return Math.Round(value / clip) * clip;
+				var clip = pow(10, insignificantDigits);
+				return round(value / clip) * clip;
 			}
 		}
 
