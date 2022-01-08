@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.DebugToolbox
 {
@@ -34,16 +34,14 @@ namespace Extenity.DebugToolbox
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsEqual(object value1, object value2, string assertString) { InternalCheck(value1.Equals(value2), assertString); }
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsNotEqual(object value1, object value2) { InternalCheck(!value1.Equals(value2), null); }
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsNotEqual(object value1, object value2, string assertString) { InternalCheck(!value1.Equals(value2), assertString); }
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(int value1, int value2, int tolerance) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, null); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(int value1, int value2, int tolerance, string assertString) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, assertString); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(long value1, long value2, long tolerance) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, null); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(long value1, long value2, long tolerance, string assertString) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, assertString); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(float value1, float value2, float tolerance) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, null); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(float value1, float value2, float tolerance, string assertString) { InternalCheck(UnityEngine.Mathf.Abs(value1 - value2) <= tolerance, assertString); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(double value1, double value2, double tolerance) { InternalCheck(Math.Abs(value1 - value2) <= tolerance, null); }
-		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(double value1, double value2, double tolerance, string assertString) { InternalCheck(Math.Abs(value1 - value2) <= tolerance, assertString); }
-#endif
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(int value1, int value2, int tolerance) { InternalCheck(abs(value1 - value2) <= tolerance, null); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(int value1, int value2, int tolerance, string assertString) { InternalCheck(abs(value1 - value2) <= tolerance, assertString); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(long value1, long value2, long tolerance) { InternalCheck(abs(value1 - value2) <= tolerance, null); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(long value1, long value2, long tolerance, string assertString) { InternalCheck(abs(value1 - value2) <= tolerance, assertString); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(float value1, float value2, float tolerance) { InternalCheck(abs(value1 - value2) <= tolerance, null); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(float value1, float value2, float tolerance, string assertString) { InternalCheck(abs(value1 - value2) <= tolerance, assertString); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(double value1, double value2, double tolerance) { InternalCheck(abs(value1 - value2) <= tolerance, null); }
+		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsAlmostEqual(double value1, double value2, double tolerance, string assertString) { InternalCheck(abs(value1 - value2) <= tolerance, assertString); }
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsZero(int value) { InternalCheck(value == 0, null); }
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")] public static void IsZero(int value, string assertString) { InternalCheck(value == 0, assertString); }

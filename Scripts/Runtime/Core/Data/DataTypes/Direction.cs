@@ -1,4 +1,5 @@
-﻿#if UNITY
+﻿using static Unity.Mathematics.math;
+#if UNITY
 using UnityEngine;
 #endif
 
@@ -85,29 +86,29 @@ namespace Extenity.DataToolbox
 
 		public static CardinalDirection4 ToCardinalDirection4(this Vector2 vector)
 		{
-			var angle = Mathf.Atan2(vector.y, vector.x);
-			var octant = Mathf.Round(4 * angle / (2 * Mathf.PI) + 4) % 4;
+			var angle = atan2(vector.y, vector.x);
+			var octant = round(4 * angle / (2 * PI) + 4) % 4;
 			return (CardinalDirection4)(octant + 1);
 		}
 
 		public static CardinalDirection4 ToCardinalDirection4XZ(this Vector3 vector)
 		{
-			var angle = Mathf.Atan2(vector.z, vector.x);
-			var octant = Mathf.Round(4 * angle / (2 * Mathf.PI) + 4) % 4;
+			var angle = atan2(vector.z, vector.x);
+			var octant = round(4 * angle / (2 * PI) + 4) % 4;
 			return (CardinalDirection4)(octant + 1);
 		}
 
 		public static CardinalDirection8 ToCardinalDirection8(this Vector2 vector)
 		{
-			var angle = Mathf.Atan2(vector.y, vector.x);
-			var octant = Mathf.Round(8 * angle / (2 * Mathf.PI) + 8) % 8;
+			var angle = atan2(vector.y, vector.x);
+			var octant = round(8 * angle / (2 * PI) + 8) % 8;
 			return (CardinalDirection8)(octant + 1);
 		}
 
 		public static CardinalDirection8 ToCardinalDirection8XZ(this Vector3 vector)
 		{
-			var angle = Mathf.Atan2(vector.z, vector.x);
-			var octant = Mathf.Round(8 * angle / (2 * Mathf.PI) + 8) % 8;
+			var angle = atan2(vector.z, vector.x);
+			var octant = round(8 * angle / (2 * PI) + 8) % 8;
 			return (CardinalDirection8)(octant + 1);
 		}
 

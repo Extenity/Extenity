@@ -2,6 +2,7 @@
 
 using System.IO;
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -41,7 +42,7 @@ namespace Extenity.MathToolbox
 			var dx = b.x - a.x;
 			var dy = b.y - a.y;
 			var dz = b.z - a.z;
-			return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+			return sqrt(dx * dx + dy * dy + dz * dz);
 		}
 
 		public static int SqrDistance(Vector3Int a, Vector3Int b)
@@ -65,16 +66,16 @@ namespace Extenity.MathToolbox
 		public static Vector3Int Abs(this Vector3Int vector)
 		{
 			return new Vector3Int(
-				Mathf.Abs(vector.x),
-				Mathf.Abs(vector.y),
-				Mathf.Abs(vector.z));
+				abs(vector.x),
+				abs(vector.y),
+				abs(vector.z));
 		}
 
 		public static int MinComponent(this Vector3Int vector)
 		{
-			int xAbs = Mathf.Abs(vector.x);
-			int yAbs = Mathf.Abs(vector.y);
-			int zAbs = Mathf.Abs(vector.z);
+			int xAbs = abs(vector.x);
+			int yAbs = abs(vector.y);
+			int zAbs = abs(vector.z);
 
 			// TODO: optimize like MaxComponent
 			if (xAbs <= yAbs && xAbs <= zAbs) return vector.x;
@@ -84,9 +85,9 @@ namespace Extenity.MathToolbox
 
 		public static int MaxComponent(this Vector3Int vector)
 		{
-			int xAbs = Mathf.Abs(vector.x);
-			int yAbs = Mathf.Abs(vector.y);
-			int zAbs = Mathf.Abs(vector.z);
+			int xAbs = abs(vector.x);
+			int yAbs = abs(vector.y);
+			int zAbs = abs(vector.z);
 
 			if (xAbs > yAbs)
 			{

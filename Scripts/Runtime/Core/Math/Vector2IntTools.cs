@@ -2,6 +2,7 @@
 
 using System.IO;
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -47,7 +48,7 @@ namespace Extenity.MathToolbox
 		{
 			var dx = b.x - a.x;
 			var dy = b.y - a.y;
-			return Mathf.Sqrt(dx * dx + dy * dy);
+			return sqrt(dx * dx + dy * dy);
 		}
 
 		public static int SqrDistance(Vector2Int a, Vector2Int b)
@@ -69,14 +70,14 @@ namespace Extenity.MathToolbox
 		public static Vector2Int Abs(this Vector2Int vector)
 		{
 			return new Vector2Int(
-				Mathf.Abs(vector.x),
-				Mathf.Abs(vector.y));
+				abs(vector.x),
+				abs(vector.y));
 		}
 
 		public static int MinComponent(this Vector2Int vector)
 		{
-			int xAbs = Mathf.Abs(vector.x);
-			int yAbs = Mathf.Abs(vector.y);
+			int xAbs = abs(vector.x);
+			int yAbs = abs(vector.y);
 
 			if (xAbs < yAbs)
 				return vector.x;
@@ -86,8 +87,8 @@ namespace Extenity.MathToolbox
 
 		public static int MaxComponent(this Vector2Int vector)
 		{
-			int xAbs = Mathf.Abs(vector.x);
-			int yAbs = Mathf.Abs(vector.y);
+			int xAbs = abs(vector.x);
+			int yAbs = abs(vector.y);
 
 			if (xAbs > yAbs)
 				return vector.x;
