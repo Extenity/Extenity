@@ -686,6 +686,8 @@ namespace Extenity
 			    category);
 		}
 
+#if UNITY
+
 		// [DebuggerHidden]
 		public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
 		{
@@ -705,6 +707,8 @@ namespace Extenity
 			    category,
 			    me);
 		}
+
+#endif
 
 		#endregion
 
