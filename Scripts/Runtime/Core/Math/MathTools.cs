@@ -21,11 +21,11 @@ namespace Extenity.MathToolbox
 	{
 		#region Int Float Double
 
-		public const float PI = Mathf.PI;
-		public const float NegPI = -Mathf.PI;
-		public const float PosPI = Mathf.PI;
-		public const float TwoPI = 2f * Mathf.PI;
-		public const float HalfPI = 0.5f * Mathf.PI;
+		public const float PI = math.PI;
+		public const float NegPI = -math.PI;
+		public const float PosPI = math.PI;
+		public const float TwoPI = 2f * math.PI;
+		public const float HalfPI = 0.5f * math.PI;
 		public const float E = 2.7182818284590452353602874f;
 
 		public const float ZeroTolerance = 1e-5f;
@@ -251,22 +251,22 @@ namespace Extenity.MathToolbox
 
 		public static float Tanh(float x)
 		{
-			return (Mathf.Pow(E, x) - Mathf.Pow(E, -x)) / (Mathf.Pow(E, x) + Mathf.Pow(E, -x));
+			return (pow(E, x) - pow(E, -x)) / (pow(E, x) + pow(E, -x));
 		}
 
 		public static int Abs(this int value)
 		{
-			return Mathf.Abs(value);
+			return abs(value);
 		}
 
 		public static float Abs(this float value)
 		{
-			return Mathf.Abs(value);
+			return abs(value);
 		}
 
 		public static float Round(this float value)
 		{
-			return Mathf.Round(value);
+			return round(value);
 		}
 
 		public static int RoundToInt(this float value)
@@ -397,8 +397,8 @@ namespace Extenity.MathToolbox
 		public static float SignedSqrt(this float value)
 		{
 			if (value < 0f)
-				return -Mathf.Sqrt(-value);
-			return Mathf.Sqrt(value);
+				return -sqrt(-value);
+			return sqrt(value);
 		}
 
 		public static float SignedSqr(this float value)
@@ -411,8 +411,8 @@ namespace Extenity.MathToolbox
 		public static float SignedPow(this float value, float power)
 		{
 			if (value < 0f)
-				return -Mathf.Pow(-value, power);
-			return Mathf.Pow(value, power);
+				return -pow(-value, power);
+			return pow(value, power);
 		}
 
 		public static float Min(float value1, float value2) { return Math.Min(value1, value2); }
@@ -427,7 +427,7 @@ namespace Extenity.MathToolbox
 
 		public static float Distance(this float value1, float value2)
 		{
-			return Mathf.Abs(value1 - value2);
+			return abs(value1 - value2);
 		}
 
 		public static float ToNeg180Pos180(this float value)
@@ -508,8 +508,8 @@ namespace Extenity.MathToolbox
 		public static float RoundToDigits(this float value, int digitsAfterDecimalPoint)
 		{
 			if (digitsAfterDecimalPoint < 0) digitsAfterDecimalPoint = 0;
-			float factor = Mathf.Pow(10, digitsAfterDecimalPoint);
-			return ((int)Mathf.Round(value * factor)) / factor;
+			float factor = pow(10, digitsAfterDecimalPoint);
+			return ((int)round(value * factor)) / factor;
 		}
 
 		public static double RoundToDigits(this double value, int digitsAfterDecimalPoint)
@@ -546,7 +546,7 @@ namespace Extenity.MathToolbox
 
 		public static float AngleOfTriangle(float neighbourSide1, float neighbourSide2, float oppositeSide)
 		{
-			return Mathf.Acos(
+			return acos(
 				(neighbourSide1 * neighbourSide1 + neighbourSide2 * neighbourSide2 - oppositeSide * oppositeSide)
 				/
 				(2f * neighbourSide1 * neighbourSide2)
@@ -555,7 +555,7 @@ namespace Extenity.MathToolbox
 
 		public static float AngleOfRightTriangle(float neighbourSideTo90Angle, float hypotenuse)
 		{
-			return Mathf.Acos(neighbourSideTo90Angle / hypotenuse);
+			return acos(neighbourSideTo90Angle / hypotenuse);
 		}
 
 		public static bool IsValidTriangle(Vector3 point1, Vector3 point2, Vector3 point3)
@@ -785,13 +785,13 @@ namespace Extenity.MathToolbox
 
 		public static Rect Combined(this Rect rect1, Rect rect2)
 		{
-			var xMin = Mathf.Min(rect1.xMin, rect2.xMin);
-			var yMin = Mathf.Min(rect1.yMin, rect2.yMin);
+			var xMin = min(rect1.xMin, rect2.xMin);
+			var yMin = min(rect1.yMin, rect2.yMin);
 			return new Rect(
 				xMin,
 				yMin,
-				Mathf.Max(rect1.xMax, rect2.xMax) - xMin,
-				Mathf.Max(rect1.yMax, rect2.yMax) - yMin);
+				max(rect1.xMax, rect2.xMax) - xMin,
+				max(rect1.yMax, rect2.yMax) - yMin);
 		}
 
 		public static Rect Expanded(this Rect rect, float expand)
