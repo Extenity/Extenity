@@ -355,13 +355,13 @@ namespace Extenity.WWWToolbox
 
 		#region Response
 
-		public static void WriteJsonOutputResponse<T>(HttpListenerContext context, T obj, bool indentedFormatting = true)
+		public void WriteJsonOutputResponse<T>(HttpListenerContext context, T obj, bool indentedFormatting = true)
 		{
 			var text = JsonConvert.SerializeObject(obj, indentedFormatting ? Formatting.Indented : Formatting.None);
 			WriteTextOutputResponse(context, text);
 		}
 
-		public static void WriteTextOutputResponse(HttpListenerContext context, string text)
+		public void WriteTextOutputResponse(HttpListenerContext context, string text)
 		{
 			LogVerbose("Serving response:\n" + text);
 
@@ -374,13 +374,13 @@ namespace Extenity.WWWToolbox
 			context.Response.OutputStream.Write(bytes, 0, bytes.Length);
 		}
 
-		public static void WriteErrorJsonOutputResponse<T>(HttpListenerContext context, T errorObj, bool indentedFormatting = true, HttpStatusCode httpStatusCode = HttpStatusCode.NotAcceptable)
+		public void WriteErrorJsonOutputResponse<T>(HttpListenerContext context, T errorObj, bool indentedFormatting = true, HttpStatusCode httpStatusCode = HttpStatusCode.NotAcceptable)
 		{
 			var text = JsonConvert.SerializeObject(errorObj, indentedFormatting ? Formatting.Indented : Formatting.None);
 			WriteErrorTextOutputResponse(context, text, httpStatusCode);
 		}
 
-		public static void WriteErrorTextOutputResponse(HttpListenerContext context, string errorMessage, HttpStatusCode httpStatusCode = HttpStatusCode.NotAcceptable)
+		public void WriteErrorTextOutputResponse(HttpListenerContext context, string errorMessage, HttpStatusCode httpStatusCode = HttpStatusCode.NotAcceptable)
 		{
 			LogVerbose("Serving error response:\n" + errorMessage);
 
@@ -397,7 +397,7 @@ namespace Extenity.WWWToolbox
 
 		#region Tools
 
-		private static int FindEmptyPort()
+		private int FindEmptyPort()
 		{
 			var listener = new TcpListener(IPAddress.Loopback, 0);
 			listener.Start();
