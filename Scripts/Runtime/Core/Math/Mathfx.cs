@@ -1,3 +1,5 @@
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+
 using UnityEngine;
 
 // ReSharper disable IdentifierTypo
@@ -131,3 +133,5 @@ namespace Extenity.MathToolbox
 	}
 
 }
+
+#endif

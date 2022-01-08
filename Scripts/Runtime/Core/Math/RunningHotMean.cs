@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+
+using System;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -226,3 +228,5 @@ namespace Extenity.MathToolbox
 	}
 
 }
+
+#endif
