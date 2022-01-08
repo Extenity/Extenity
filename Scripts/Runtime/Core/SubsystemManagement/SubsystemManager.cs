@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -127,3 +129,5 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 }
+
+#endif

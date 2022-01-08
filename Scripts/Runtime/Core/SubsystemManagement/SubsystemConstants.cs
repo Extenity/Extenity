@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;
 
@@ -14,3 +16,5 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
@@ -413,3 +415,5 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 }
+
+#endif

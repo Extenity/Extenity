@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
@@ -264,3 +266,5 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 }
+
+#endif
