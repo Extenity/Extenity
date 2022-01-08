@@ -15,22 +15,6 @@ using IDisposable = System.IDisposable;
 namespace Extenity
 {
 
-	public enum LogCategory
-	{
-		Verbose,
-		Info,
-		Warning,
-		Error,
-		Critical,
-	}
-
-	public enum SeverityCategory
-	{
-		Warning,
-		Error,
-		Critical,
-	}
-
 	// TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
 	// TODO: Investigate: Find a way to hide wrapper methods like Info, Warning, etc. from Unity's console stacktrace and make it go to caller's line on double clicking over the log entry.
 
