@@ -59,7 +59,13 @@ namespace Extenity.MathToolbox
 
 		public float NormalizedValue
 		{
-			get { return Mathf.Clamp01((float)(value - min) / (max - min)); }
+            get
+            {
+                var normalized = (float)(value - min) / (max - min);
+                if (normalized < 0) return 0f;
+                if (normalized > 1) return 1f;
+                return normalized;
+            }
 			set { this.value = (int)(min + value * (max - min)); }
 		}
 
