@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
@@ -283,3 +285,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
@@ -283,3 +285,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

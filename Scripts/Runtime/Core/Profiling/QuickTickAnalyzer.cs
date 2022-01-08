@@ -1,3 +1,5 @@
+#if UNITY
+
 using System.Collections.Generic;
 using Extenity.DebugToolbox.GraphPlotting;
 using UnityEngine;
@@ -29,3 +31,5 @@ namespace Extenity.ProfilingToolbox
 	}
 
 }
+
+#endif

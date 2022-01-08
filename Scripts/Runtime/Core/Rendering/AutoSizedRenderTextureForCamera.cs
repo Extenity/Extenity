@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY
+
+using UnityEngine;
 
 namespace Extenity.RenderingToolbox
 {
@@ -122,3 +124,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

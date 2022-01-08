@@ -1,4 +1,6 @@
-﻿//using AdvancedInspector;
+﻿#if UNITY
+
+//using AdvancedInspector;
 
 using UnityEngine;
 #if UNITY_EDITOR
@@ -191,3 +193,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

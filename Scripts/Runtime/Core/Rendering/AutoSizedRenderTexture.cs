@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY
+
+using UnityEngine;
 using UnityEngine.Events;
 
 // TODO: Keeping a reference to PreviouslyInvokedRenderTexture is bad for garbage collection. Change the way it works. Use OnValidate to detect changed values as needed.
@@ -156,3 +158,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

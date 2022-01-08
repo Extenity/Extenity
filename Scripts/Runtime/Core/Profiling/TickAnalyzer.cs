@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.MathToolbox;
@@ -220,3 +222,5 @@ namespace Extenity.ProfilingToolbox
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,3 +26,5 @@ namespace Extenity.RenderingToolbox
 	}
 
 }
+
+#endif

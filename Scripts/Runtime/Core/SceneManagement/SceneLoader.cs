@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -68,3 +70,5 @@ namespace Extenity.SceneManagementToolbox
 	}
 
 }
+
+#endif
