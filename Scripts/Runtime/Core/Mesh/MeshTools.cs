@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -525,3 +527,5 @@ namespace Extenity.MeshToolbox
 	}
 
 }
+
+#endif

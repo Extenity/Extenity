@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.MathToolbox;
@@ -167,3 +169,5 @@ namespace Extenity.MeshToolbox
 	}
 
 }
+
+#endif

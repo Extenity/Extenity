@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -180,3 +182,5 @@ namespace Extenity.MeshToolbox
 	}
 
 }
+
+#endif
