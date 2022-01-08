@@ -1,6 +1,16 @@
-using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using Exception = System.Exception;
+
+// This is the way that Log system supports various Context types in different environments like
+// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
+// in this code file to prevent any possible confusions. Use 'using' selectively, like
+// 'using Exception = System.Exception;'
+// See 11746845.
+#if UNITY
+using ContextObject = UnityEngine.Object;
+#else
+using ContextObject = System.Object;
+#endif
 
 namespace Extenity.DebugToolbox
 {
@@ -10,19 +20,19 @@ namespace Extenity.DebugToolbox
 		#region Setup
 
 		public readonly string Prefix;
-		public readonly Object Context;
+		public readonly ContextObject Context;
 
 		#endregion
 
 		#region Initialization
 
-		public LogRep(string prefix, Object context = null)
+		public LogRep(string prefix, ContextObject context = null)
 		{
 			Prefix = prefix;
 			Context = context;
 		}
 
-		public static LogRep CreateStandardPrefix(string prefix, Object context = null)
+		public static LogRep CreateStandardPrefix(string prefix, ContextObject context = null)
 		{
 			return new LogRep($"<b>[{prefix}]</b> ", context);
 		}

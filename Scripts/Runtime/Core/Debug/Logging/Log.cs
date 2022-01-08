@@ -6,11 +6,21 @@ using System.Reflection;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
 using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
 using Exception = System.Exception;
 using ArgumentNullException = System.ArgumentNullException;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using IDisposable = System.IDisposable;
+
+// This is the way that Log system supports various Context types in different environments like
+// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
+// in this code file to prevent any possible confusions. Use 'using' selectively, like
+// 'using Exception = System.Exception;'
+// See 11746845.
+#if UNITY
+using ContextObject = UnityEngine.Object;
+#else
+using ContextObject = System.Object;
+#endif
 
 namespace Extenity
 {
@@ -54,10 +64,10 @@ namespace Extenity
 
 		public class IndentationHandler : IDisposable
 		{
-			private Object Context;
+			private ContextObject Context;
 			private string EndText;
 
-			internal IndentationHandler(Object context = null, string endText = null)
+			internal IndentationHandler(ContextObject context = null, string endText = null)
 			{
 				Context = context;
 				EndText = endText;
@@ -91,7 +101,7 @@ namespace Extenity
 			return new IndentationHandler(null, endText);
 		}
 
-		public static IDisposable Indent(Object context, string startText, string endText = null)
+		public static IDisposable Indent(ContextObject context, string startText, string endText = null)
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
@@ -105,9 +115,9 @@ namespace Extenity
 		#region Prefix
 
 		public static readonly Dictionary<int, string> RegisteredPrefixes = new Dictionary<int, string>(100);
-		public static readonly Dictionary<int, Object> RegisteredPrefixObjects = new Dictionary<int, Object>(100);
+		public static readonly Dictionary<int, ContextObject> RegisteredPrefixObjects = new Dictionary<int, ContextObject>(100);
 
-		public static void RegisterPrefix(Object obj, string prefix)
+		public static void RegisterPrefix(ContextObject obj, string prefix)
 		{
 			if (!obj)
 				throw new ArgumentNullException(nameof(obj));
@@ -121,7 +131,7 @@ namespace Extenity
 				RegisteredPrefixes.Add(id, prefix);
 		}
 
-		public static void DeregisterPrefix(Object obj)
+		public static void DeregisterPrefix(ContextObject obj)
 		{
 			if (!obj)
 			{
@@ -189,7 +199,7 @@ namespace Extenity
 				return CurrentIndentationString + prefix + PrefixSeparator + message.NormalizeLineEndingsCRLF();
 		}
 
-		public static string CreateMessage(string message, Object obj)
+		public static string CreateMessage(string message, ContextObject obj)
 		{
 			if (message == null)
 				return CurrentIndentationString + "[NullStr]";
@@ -212,7 +222,7 @@ namespace Extenity
 				return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
 		}
 
-		public static string CreateDetailedExceptionMessage(Exception exception, Object obj)
+		public static string CreateDetailedExceptionMessage(Exception exception, ContextObject obj)
 		{
 			if (exception == null)
 				return CurrentIndentationString + "[NullExc]";
@@ -260,7 +270,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void Any(string message, LogCategory category, Object context)
+		public static void Any(string message, LogCategory category, ContextObject context)
 		{
 			switch (category)
 			{
@@ -285,7 +295,7 @@ namespace Extenity
 
 		[Conditional("EnableVerboseLogging")]
 		// [DebuggerHidden]
-		public static void Verbose(string message, Object context)
+		public static void Verbose(string message, ContextObject context)
 		{
 			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -303,7 +313,7 @@ namespace Extenity
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		// [DebuggerHidden]
-		public static void Info(string message, Object context)
+		public static void Info(string message, ContextObject context)
 		{
 			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -324,7 +334,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void Severe(string message, SeverityCategory severity, Object context)
+		public static void Severe(string message, SeverityCategory severity, ContextObject context)
 		{
 			switch (severity)
 			{
@@ -345,7 +355,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void Warning(string message, Object context)
+		public static void Warning(string message, ContextObject context)
 		{
 			Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -357,7 +367,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void Error(string message, Object context)
+		public static void Error(string message, ContextObject context)
 		{
 			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -384,7 +394,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		// [DebuggerHidden]
-		public static void CriticalError(string message, Object context)
+		public static void CriticalError(string message, ContextObject context)
 		{
 			Debug.LogException(new Exception(message), context); // Ignored by Code Correct
 		}
@@ -393,7 +403,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		// [DebuggerHidden]
-		public static void CriticalError(string message, Object context, Exception innerException)
+		public static void CriticalError(string message, ContextObject context, Exception innerException)
 		{
 			Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
 		}
@@ -415,7 +425,7 @@ namespace Extenity
 		/// See also 'InternalException'.
 		/// </summary>
 		// [DebuggerHidden]
-		public static void InternalError(int errorCode, Object context)
+		public static void InternalError(int errorCode, ContextObject context)
 		{
 			Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 		}
@@ -427,7 +437,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void Exception(Exception exception, Object context)
+		public static void Exception(Exception exception, ContextObject context)
 		{
 			Debug.LogException(exception, context); // Ignored by Code Correct
 		}
@@ -439,7 +449,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void ExceptionAsError(Exception exception, Object context)
+		public static void ExceptionAsError(Exception exception, ContextObject context)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 		}
@@ -451,7 +461,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void ExceptionAsErrorDetailed(this Exception exception, Object context)
+		public static void ExceptionAsErrorDetailed(this Exception exception, ContextObject context)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 		}
@@ -477,7 +487,7 @@ namespace Extenity
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		// [DebuggerHidden]
-		public static void DebugVerbose(string message, Object context)
+		public static void DebugVerbose(string message, ContextObject context)
 		{
 			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -499,7 +509,7 @@ namespace Extenity
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 #endif
 		// [DebuggerHidden]
-		public static void DebugInfo(string message, Object context)
+		public static void DebugInfo(string message, ContextObject context)
 		{
 			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -522,7 +532,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugSevere(string message, SeverityCategory severity, Object context)
+		public static void DebugSevere(string message, SeverityCategory severity, ContextObject context)
 		{
 			switch (severity)
 			{
@@ -546,7 +556,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugWarning(string message, Object context)
+		public static void DebugWarning(string message, ContextObject context)
 		{
 			Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -560,7 +570,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugError(string message, Object context)
+		public static void DebugError(string message, ContextObject context)
 		{
 			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
@@ -584,7 +594,7 @@ namespace Extenity
 		/// </summary>
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugInternalError(int errorCode, Object context)
+		public static void DebugInternalError(int errorCode, ContextObject context)
 		{
 			Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 		}
@@ -598,7 +608,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugException(Exception exception, Object context)
+		public static void DebugException(Exception exception, ContextObject context)
 		{
 			Debug.LogException(exception, context); // Ignored by Code Correct
 		}
@@ -612,7 +622,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugExceptionAsError(Exception exception, Object context)
+		public static void DebugExceptionAsError(Exception exception, ContextObject context)
 		{
 			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 		}
@@ -626,7 +636,7 @@ namespace Extenity
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
-		public static void DebugExceptionAsErrorDetailed(this Exception exception, Object context)
+		public static void DebugExceptionAsErrorDetailed(this Exception exception, ContextObject context)
 		{
 			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 		}
@@ -672,7 +682,7 @@ namespace Extenity
 
 		#region Log Tools - Stack Trace
 
-		public static void StackTrace(string headerMessage, Object context = null)
+		public static void StackTrace(string headerMessage, ContextObject context = null)
 		{
 			using (Indent(context, headerMessage))
 			{

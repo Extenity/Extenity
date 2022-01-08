@@ -1,6 +1,16 @@
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
-using Object = UnityEngine.Object;
+
+// This is the way that Log system supports various Context types in different environments like
+// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
+// in this code file to prevent any possible confusions. Use 'using' selectively, like
+// 'using Exception = System.Exception;'
+// See 11746845.
+#if UNITY
+using ContextObject = UnityEngine.Object;
+#else
+using ContextObject = System.Object;
+#endif
 
 namespace Extenity.ProfilingToolbox
 {
@@ -89,7 +99,7 @@ namespace Extenity.ProfilingToolbox
 			LogInfo(profilerMessageFormat);
 		}
 
-		public void EndAndLog(Object context, string profilerMessageFormat)
+		public void EndAndLog(ContextObject context, string profilerMessageFormat)
 		{
 			End();
 			LogInfo(context, profilerMessageFormat);
@@ -102,7 +112,7 @@ namespace Extenity.ProfilingToolbox
 			Log.Info(string.Format(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds()));
 		}
 
-		public void LogInfo(Object context, string profilerMessageFormat)
+		public void LogInfo(ContextObject context, string profilerMessageFormat)
 		{
 			Log.Info(string.Format(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds()), context);
 		}
@@ -112,7 +122,7 @@ namespace Extenity.ProfilingToolbox
 			Log.Info(string.Format(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds()));
 		}
 
-		public void LogInfoCumulative(Object context, string profilerMessageFormat)
+		public void LogInfoCumulative(ContextObject context, string profilerMessageFormat)
 		{
 			Log.Info(string.Format(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds()), context);
 		}
