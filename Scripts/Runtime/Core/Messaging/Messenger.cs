@@ -1,3 +1,5 @@
+#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
+
 #if !UseLegacyMessenger
 
 using System;
@@ -925,5 +927,7 @@ namespace Extenity.MessagingToolbox
 	}
 
 }
+
+#endif
 
 #endif

@@ -1,3 +1,5 @@
+#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -603,3 +605,5 @@ namespace Extenity.MessagingToolbox
 	}
 
 }
+
+#endif
