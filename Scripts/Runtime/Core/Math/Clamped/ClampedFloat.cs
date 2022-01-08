@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
-using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
@@ -29,11 +28,17 @@ namespace Extenity.MathToolbox
 
 		#region Data
 
-		[SerializeField]
+#if UNITY
+		[UnityEngine.SerializeField]
+#endif
 		private float value;
-		[SerializeField]
+#if UNITY
+		[UnityEngine.SerializeField]
+#endif
 		private float min;
-		[SerializeField]
+#if UNITY
+		[UnityEngine.SerializeField]
+#endif
 		private float max;
 
 		public float RawValue
