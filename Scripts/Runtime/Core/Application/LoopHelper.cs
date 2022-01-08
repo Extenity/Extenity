@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
@@ -139,3 +141,5 @@ namespace Extenity
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 using Extenity.DataToolbox;
 
@@ -57,3 +59,5 @@ namespace Extenity.ColoringToolbox
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting
@@ -172,3 +174,5 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	}
 
 }
+
+#endif

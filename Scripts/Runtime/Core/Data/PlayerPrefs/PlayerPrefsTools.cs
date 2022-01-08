@@ -4,7 +4,9 @@ using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.FlowToolbox;
+#if UNITY
 using UnityEngine;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -15,6 +17,8 @@ namespace Extenity.DataToolbox
 		Yes = 1,
 		OnlyInEditor = 2,
 	}
+
+#if UNITY
 
 	public class DeferredSaveHelper : AutoSingletonUnity<DeferredSaveHelper>
 	{
@@ -47,16 +51,26 @@ namespace Extenity.DataToolbox
 		#endregion
 	}
 
+#endif
+
 	public static class PlayerPrefsTools
 	{
 		public static void SetBool(string key, bool value)
 		{
+#if UNITY
 			PlayerPrefs.SetInt(key, value ? 1 : 0);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		public static bool GetBool(string key, bool defaultValue = default(bool))
 		{
+#if UNITY
 			return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) != 0;
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		#region Path Hash Postfix
@@ -68,7 +82,11 @@ namespace Extenity.DataToolbox
 			{
 				if (string.IsNullOrEmpty(_PathHash))
 				{
+#if UNITY
 					_PathHash = "-" + ApplicationTools.PathHash;
+#else
+					throw new System.NotImplementedException();
+#endif
 				}
 				return _PathHash;
 			}
@@ -87,10 +105,14 @@ namespace Extenity.DataToolbox
 				case PathHashPostfix.Yes:
 					return key + PathHash;
 				case PathHashPostfix.OnlyInEditor:
-					if (Application.isEditor)
+#if UNITY
+					if (UnityEngine.Application.isEditor)
 						return key + PathHash;
 					else
 						return key;
+#else
+					throw new System.NotImplementedException();
+#endif
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -108,6 +130,7 @@ namespace Extenity.DataToolbox
 		/// <param name="delay"></param>
 		public static void DeferredSave(float delay)
 		{
+#if UNITY
 			var now = Time.unscaledTime;
 
 			if (DeferredSaveTriggerTime > 0f)
@@ -130,15 +153,22 @@ namespace Extenity.DataToolbox
 			Log.Info($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
 #endif
 			DeferredSaveHelper.Instance.FastInvoke(OnTimeToSave, delay, true);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		private static void OnTimeToSave()
 		{
+#if UNITY
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred saving triggered at '{Time.unscaledTime}'");
 #endif
 			DeferredSaveTriggerTime = -1f;
 			PlayerPrefs.Save();
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		#endregion

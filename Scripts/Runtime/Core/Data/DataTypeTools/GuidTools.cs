@@ -10,6 +10,8 @@
 
 		#region Create Random
 
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+
 		/// <summary>
 		/// Generates a guid that depends on UnityEngine.Random's seed. Makes sure the generated guid is always the same if you give it the same seed. 
 		/// Note that this method of generating a guid is not reliable to be unique. The randomness properties of the guid is actually the same as the 
@@ -24,6 +26,8 @@
 			}
 			return new System.Guid(data);
 		}
+
+#endif
 
 		#endregion
 	}

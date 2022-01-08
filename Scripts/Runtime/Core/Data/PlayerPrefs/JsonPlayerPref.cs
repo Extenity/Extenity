@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -18,16 +17,24 @@ namespace Extenity.DataToolbox
 
 		protected override TSerialized InternalGetValue()
 		{
-			var defaultValueText = JsonUtility.ToJson(_Value);
-			var text = PlayerPrefs.GetString(ProcessedPrefsKey, defaultValueText);
-			var json = JsonUtility.FromJson<TSerialized>(text);
+#if UNITY
+			var defaultValueText = UnityEngine.JsonUtility.ToJson(_Value);
+			var text = UnityEngine.PlayerPrefs.GetString(ProcessedPrefsKey, defaultValueText);
+			var json = UnityEngine.JsonUtility.FromJson<TSerialized>(text);
 			return json;
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		protected override void InternalSetValue(TSerialized value)
 		{
-			var json = JsonUtility.ToJson(value);
-			PlayerPrefs.SetString(ProcessedPrefsKey, json);
+#if UNITY
+			var json = UnityEngine.JsonUtility.ToJson(value);
+            UnityEngine.PlayerPrefs.SetString(ProcessedPrefsKey, json);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		protected override bool IsSame(TSerialized oldValue, TSerialized newValue)
@@ -37,9 +44,13 @@ namespace Extenity.DataToolbox
 			// Otherwise, the user would have to implement something like IEquatable
 			// for every TSerialized class. IsSame is only used when setting the pref.
 			// So the overhead is negligible.
-			var oldJson = JsonUtility.ToJson(oldValue);
-			var newJson = JsonUtility.ToJson(newValue);
+#if UNITY
+			var oldJson = UnityEngine.JsonUtility.ToJson(oldValue);
+			var newJson = UnityEngine.JsonUtility.ToJson(newValue);
 			return oldJson.EqualsOrBothEmpty(newJson, StringComparison.Ordinal);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 	}
 

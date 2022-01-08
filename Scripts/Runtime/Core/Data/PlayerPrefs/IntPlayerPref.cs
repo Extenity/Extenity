@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -18,12 +17,20 @@ namespace Extenity.DataToolbox
 
 		protected override int InternalGetValue()
 		{
-			return PlayerPrefs.GetInt(ProcessedPrefsKey, _Value);
+#if UNITY
+			return UnityEngine.PlayerPrefs.GetInt(ProcessedPrefsKey, _Value);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		protected override void InternalSetValue(int value)
 		{
-			PlayerPrefs.SetInt(ProcessedPrefsKey, value);
+#if UNITY
+            UnityEngine.PlayerPrefs.SetInt(ProcessedPrefsKey, value);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		protected override bool IsSame(int oldValue, int newValue)

@@ -9,7 +9,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Extenity.MathToolbox;
 using JetBrains.Annotations;
+#if UNITY
 using UnityEngine;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -1071,6 +1073,8 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Vector2/Vector3/Quaternion
 
+#if UNITY
+
 		public static string ToSerializableString(this Vector2 val)
 		{
 			return val.x + " " + val.y;
@@ -1132,6 +1136,8 @@ namespace Extenity.DataToolbox
 			var parts = text.Split(' ');
 			return new Quaternion(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
 		}
+
+#endif
 
 		#endregion
 
@@ -1585,6 +1591,8 @@ namespace Extenity.DataToolbox
 			return array;
 		}
 
+#if UNITY
+
 		public static ICollection<Vector2> DeserializeVector2(this string text, char separator = ',')
 		{
 			if (text.Length == 0)
@@ -1626,6 +1634,8 @@ namespace Extenity.DataToolbox
 
 			return array;
 		}
+
+#endif
 
 		#endregion
 

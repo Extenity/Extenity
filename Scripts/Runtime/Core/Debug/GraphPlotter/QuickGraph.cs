@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY
+
+using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
@@ -189,3 +191,5 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	}
 
 }
+
+#endif

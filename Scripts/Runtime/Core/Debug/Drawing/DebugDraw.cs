@@ -1,3 +1,5 @@
+#if UNITY
+
 #if UNITY_EDITOR
 #define UNITY_DRAWER
 #define DebugDrawAvailable
@@ -1281,3 +1283,5 @@ namespace Extenity.DebugToolbox
 	}
 
 }
+
+#endif

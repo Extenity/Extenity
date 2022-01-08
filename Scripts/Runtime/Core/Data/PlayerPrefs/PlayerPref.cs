@@ -3,8 +3,10 @@
 using System;
 using System.Diagnostics;
 using JetBrains.Annotations;
+#if UNITY
 using UnityEngine;
 using UnityEngine.Events;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -59,6 +61,7 @@ namespace Extenity.DataToolbox
 		{
 			get
 			{
+#if UNITY
 				if (!_IsInitialized)
 				{
 					_IsInitialized = true;
@@ -83,9 +86,13 @@ namespace Extenity.DataToolbox
 				}
 				LogInfo($"Got the value '{_Value}'");
 				return _Value;
+#else
+				throw new System.NotImplementedException();
+#endif
 			}
 			set
 			{
+#if UNITY
 				var transformedValue = TransformValue(value);
 				if (_IsInitialized)
 				{
@@ -120,6 +127,9 @@ namespace Extenity.DataToolbox
 				}
 				else
 					OnValueChanged.Invoke(transformedValue);
+#else
+				throw new System.NotImplementedException();
+#endif
 			}
 		}
 
@@ -139,6 +149,8 @@ namespace Extenity.DataToolbox
 		#endregion
 
 		#region Value Changed Event
+
+#if UNITY // TODO-UniversalExtenity: Convert these to ExtenityEvent after implementing it into Universal project.
 
 		public class ValueChangedEvent : UnityEvent<T> { }
 		public readonly ValueChangedEvent OnValueChanged = new ValueChangedEvent();
@@ -166,6 +178,8 @@ namespace Extenity.DataToolbox
 			_DontEmitNextValueChangedEvent = true;
 		}
 
+#endif
+
 		#endregion
 
 		#region Saving, Loading and Comparing Values
@@ -182,7 +196,11 @@ namespace Extenity.DataToolbox
 
 		public void Save()
 		{
-			PlayerPrefs.Save();
+#if UNITY
+            UnityEngine.PlayerPrefs.Save();
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		public void DeferredSave(float saveDelay)

@@ -1,6 +1,5 @@
 using System;
 using Extenity.MathToolbox;
-using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -19,12 +18,20 @@ namespace Extenity.DataToolbox
 
 		protected override float InternalGetValue()
 		{
-			return PlayerPrefs.GetFloat(ProcessedPrefsKey, _Value);
-		}
+#if UNITY
+			return UnityEngine.PlayerPrefs.GetFloat(ProcessedPrefsKey, _Value);
+#else
+			throw new System.NotImplementedException();
+#endif
+        }
 
 		protected override void InternalSetValue(float value)
 		{
-			PlayerPrefs.SetFloat(ProcessedPrefsKey, value);
+#if UNITY
+			UnityEngine.PlayerPrefs.SetFloat(ProcessedPrefsKey, value);
+#else
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		protected override bool IsSame(float oldValue, float newValue)

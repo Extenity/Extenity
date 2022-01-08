@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Extenity.MathToolbox;
 using Extenity.PhysicsToolbox;
@@ -141,3 +143,5 @@ namespace Extenity.AnimationToolbox
 	}
 
 }
+
+#endif

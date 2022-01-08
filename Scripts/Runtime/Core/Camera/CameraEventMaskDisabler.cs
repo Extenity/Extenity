@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.CameraToolbox
@@ -18,3 +20,5 @@ namespace Extenity.CameraToolbox
 	}
 
 }
+
+#endif

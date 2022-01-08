@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY
+using UnityEngine;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -79,6 +81,8 @@ namespace Extenity.DataToolbox
 
 		#region Vector2/3 To CardinalDirection4/8
 
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+
 		public static CardinalDirection4 ToCardinalDirection4(this Vector2 vector)
 		{
 			var angle = Mathf.Atan2(vector.y, vector.x);
@@ -106,6 +110,8 @@ namespace Extenity.DataToolbox
 			var octant = Mathf.Round(8 * angle / (2 * Mathf.PI) + 8) % 8;
 			return (CardinalDirection8)(octant + 1);
 		}
+
+#endif
 
 		#endregion
 	}

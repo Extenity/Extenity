@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 using Extenity.MathToolbox;
 
@@ -374,3 +376,5 @@ namespace Extenity.DebugToolbox
 	}
 
 }
+
+#endif

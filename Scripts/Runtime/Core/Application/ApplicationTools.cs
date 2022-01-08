@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -298,3 +300,5 @@ namespace Extenity.ApplicationToolbox
 	}
 
 }
+
+#endif

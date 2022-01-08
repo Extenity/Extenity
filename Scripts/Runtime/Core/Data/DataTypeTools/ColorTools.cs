@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -469,3 +471,5 @@ namespace Extenity.DataToolbox
 	}
 
 }
+
+#endif

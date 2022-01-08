@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 
 namespace Extenity.GameObjectToolbox
@@ -65,3 +67,5 @@ namespace Extenity.GameObjectToolbox
 	}
 
 }
+
+#endif

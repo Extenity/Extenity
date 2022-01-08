@@ -240,10 +240,14 @@ namespace Extenity.ApplicationToolbox
 
 		#region Get From Unity and Project Configuration
 
+#if UNITY
+
 		public static ApplicationVersion GetUnityApplicationVersion()
 		{
 			return new ApplicationVersion(UnityEngine.Application.version);
 		}
+
+#endif
 
 #if UNITY_EDITOR
 

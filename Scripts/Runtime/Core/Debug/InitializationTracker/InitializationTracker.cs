@@ -1,3 +1,5 @@
+#if UNITY
+
 #define InitializationTrackerLogging
 //#define InitializationTrackerVerboseLogging
 
@@ -488,3 +490,5 @@ namespace Extenity.DebugToolbox
 	}
 
 }
+
+#endif

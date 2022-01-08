@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 using UnityEngine;
@@ -374,3 +376,5 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	}
 
 }
+
+#endif

@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+#if UNITY
 using UnityEngine;
 using UnityEngine.Events;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -99,6 +101,7 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
+#if UNITY
 		public static bool IsUnityBaseType(this Type type)
 		{
 			return
@@ -109,6 +112,7 @@ namespace Extenity.DataToolbox
 				type == typeof(UnityEngine.Object) ||
 				type == typeof(System.Object);
 		}
+#endif
 
 		public static bool HasAttribute<T>(this Type type)
 		{
@@ -296,6 +300,8 @@ namespace Extenity.DataToolbox
 
 		#region Unity Serialized Fields
 
+#if UNITY
+
 		public static bool IsUnitySerialized(this FieldInfo fieldInfo)
 		{
 			return fieldInfo.IsPublic || fieldInfo.IsDefined<SerializeField>(true);
@@ -374,9 +380,13 @@ namespace Extenity.DataToolbox
 			return Array.Empty<KeyValuePair<FieldInfo, Attribute[]>>();
 		}
 
+#endif
+
 		#endregion
 
 		#region Component Helpers
+
+#if UNITY
 
 		public static List<FieldInfo> GetNotAssignedSerializedComponentFields(this Component component)
 		{
@@ -392,6 +402,8 @@ namespace Extenity.DataToolbox
 						 && (Component)field.GetValue(component) == null // Converting to Component is required so Unity can run internal == operator on Components.
 			).ToList();
 		}
+
+#endif
 
 		#endregion
 
@@ -508,16 +520,18 @@ namespace Extenity.DataToolbox
 			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
-			if (!IsUnityBaseType(baseType))
+#if UNITY
+			if (IsUnityBaseType(baseType))
 			{
-				var baseFields = GetPublicAndPrivateInstanceFields(baseType);
-				fields = type.GetFields(bindingFlags);
-				fields = fields.AddRange(baseFields);
+                fields = type.GetFields(bindingFlags);
 			}
 			else
-			{
-				fields = type.GetFields(bindingFlags);
-			}
+#endif
+            {
+                var baseFields = GetPublicAndPrivateInstanceFields(baseType);
+                fields = type.GetFields(bindingFlags);
+                fields = fields.AddRange(baseFields);
+            }
 
 			// Add to cache
 			LogCTG("Adding field info to cache for '{0}' with fields ({1}): \n{2}", type, fields.Length, fields.Serialize('\n'));
@@ -730,15 +744,17 @@ namespace Extenity.DataToolbox
 			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
-			if (!IsUnityBaseType(baseType))
+#if UNITY
+			if (IsUnityBaseType(baseType))
 			{
-				var baseProperties = GetPublicAndPrivateInstanceProperties(baseType);
-				properties = type.GetProperties(bindingFlags);
-				properties = properties.AddRange(baseProperties);
+                properties = type.GetProperties(bindingFlags);
 			}
 			else
+#endif
 			{
-				properties = type.GetProperties(bindingFlags);
+				var baseProperties = GetPublicAndPrivateInstanceProperties(baseType);
+                properties = type.GetProperties(bindingFlags);
+                properties = properties.AddRange(baseProperties);
 			}
 
 			// Add to cache
@@ -932,6 +948,8 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
+#if UNITY
+
 		private static Dictionary<Type, FieldInfo[]> SerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
 
 		/// <summary>
@@ -957,6 +975,8 @@ namespace Extenity.DataToolbox
 			return fields;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - Serialized Fields By Name
@@ -965,6 +985,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -998,6 +1020,8 @@ namespace Extenity.DataToolbox
 			return field;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - Serialized Fields Of Type
@@ -1006,6 +1030,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1039,6 +1065,8 @@ namespace Extenity.DataToolbox
 			return fields;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - Serialized Fields With/Without Attribute
@@ -1047,6 +1075,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
@@ -1099,6 +1129,8 @@ namespace Extenity.DataToolbox
 			return fieldsWithoutAttributes;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - NonSerialized Fields
@@ -1107,6 +1139,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		private static Dictionary<Type, FieldInfo[]> NonSerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
 
@@ -1133,6 +1167,8 @@ namespace Extenity.DataToolbox
 			return fields;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - NonSerialized Fields By Name
@@ -1141,6 +1177,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1174,6 +1212,8 @@ namespace Extenity.DataToolbox
 			return field;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - NonSerialized Fields Of Type
@@ -1182,6 +1222,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1215,6 +1257,8 @@ namespace Extenity.DataToolbox
 			return fields;
 		}
 
+#endif
+
 		#endregion
 
 		#region Cached Type Getters - NonSerialized Fields With/Without Attribute
@@ -1223,6 +1267,8 @@ namespace Extenity.DataToolbox
 		// ---- NOTE: These codes are duplicated between Cached Type Getters.
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
+
+#if UNITY
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
@@ -1274,6 +1320,8 @@ namespace Extenity.DataToolbox
 			NonSerializedFieldsWithoutAttributeIncludingBaseTypes.Add(thisTypeAndAttributeTypeCombination, fieldsWithoutAttributes);
 			return fieldsWithoutAttributes;
 		}
+
+#endif
 
 		#endregion
 	}

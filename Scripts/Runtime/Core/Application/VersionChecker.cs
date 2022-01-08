@@ -1,3 +1,4 @@
+#if UNITY
 
 namespace Extenity.ApplicationToolbox
 {
@@ -75,3 +76,5 @@ namespace Extenity.ApplicationToolbox
 	}
 
 }
+
+#endif

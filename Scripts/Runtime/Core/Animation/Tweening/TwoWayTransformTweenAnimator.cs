@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿#if UNITY
+
+using Sirenix.OdinInspector;
 
 namespace Extenity.AnimationToolbox
 {
@@ -36,3 +38,5 @@ namespace Extenity.AnimationToolbox
 	}
 
 }
+
+#endif

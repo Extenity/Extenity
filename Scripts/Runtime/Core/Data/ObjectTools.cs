@@ -12,10 +12,12 @@ namespace Extenity.DataToolbox
 			return obj;
 		}
 
+#if UNITY
 		public static T Cast<T>(this UnityEngine.Object obj) where T : UnityEngine.Object
 		{
 			return (T)obj;
 		}
+#endif
 
 		// TODO MAINTENANCE: Update that in new Unity versions.
 		// Originally copied from UnityEngine.Object.CheckNullArgument (Unity version 2020.2.0a11)

@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -83,3 +85,5 @@ namespace Extenity.ColoringToolbox
 	}
 
 }
+
+#endif

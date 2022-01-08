@@ -1,3 +1,5 @@
+#if UNITY
+
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -26,3 +28,5 @@ namespace Extenity
 	}
 
 }
+
+#endif

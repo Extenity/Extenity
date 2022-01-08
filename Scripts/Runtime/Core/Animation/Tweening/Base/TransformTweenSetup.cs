@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -53,3 +55,5 @@ namespace Extenity.AnimationToolbox
 	}
 
 }
+
+#endif

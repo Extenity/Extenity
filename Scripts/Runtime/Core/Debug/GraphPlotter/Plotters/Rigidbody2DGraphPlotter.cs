@@ -1,3 +1,5 @@
+#if UNITY
+
 #if !DisableUnityPhysics2D
 
 using UnityEngine;
@@ -195,5 +197,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 	}
 
 }
+
+#endif
 
 #endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.AnimationToolbox
@@ -17,3 +19,5 @@ namespace Extenity.AnimationToolbox
 	}
 
 }
+
+#endif

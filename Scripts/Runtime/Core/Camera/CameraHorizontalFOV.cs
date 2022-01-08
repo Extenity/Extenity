@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿#if UNITY
+
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.CameraToolbox
@@ -50,3 +52,5 @@ namespace Extenity.CameraToolbox
 	}
 
 }
+
+#endif

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -140,3 +142,5 @@ namespace Extenity.DataToolbox
 	}
 
 }
+
+#endif

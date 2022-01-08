@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -121,3 +123,5 @@ namespace Extenity.DataToolbox
 	}
 
 }
+
+#endif
