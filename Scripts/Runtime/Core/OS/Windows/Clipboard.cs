@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+#if UNITY
 using UnityEngine;
+#endif
 
 namespace Extenity.OperatingSystemToolbox
 {
