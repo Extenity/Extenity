@@ -810,34 +810,57 @@ namespace Extenity
 
 		#region Dictionary
 
-		// TODO: Add 'initialLine' parameter, like in LogList method.
-		public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
+		public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
 		{
-			if (dictionary == null)
-			{
-				Log.Any("[NullDict]", category);
-				return;
-			}
+			var stringBuilder = !inSeparateLogCalls
+				? new StringBuilder()
+				: null;
 
-			// TODO: OPTIMIZATION: Use StringBuilder, like in LogList method.
-			string text = "";
-
-			foreach (KeyValuePair<TKey, TValue> item in dictionary)
+			// Initial line
+			if (!string.IsNullOrEmpty(initialLine))
 			{
-				var line = (item.Key == null ? "[Null]" : item.Key.ToString()) + ": '" + (item.Value == null ? "[Null]" : item.Value.ToString()) + "'";
 				if (inSeparateLogCalls)
 				{
-					Log.Any(line, category);
+					Log.Any(initialLine, category);
 				}
 				else
 				{
-					text += line + "\n";
+					stringBuilder.AppendLine(initialLine);
+				}
+			}
+
+			// Check if dictionary is null
+			if (dictionary == null)
+			{
+				if (inSeparateLogCalls)
+				{
+					Log.Any("[NullDict]", category);
+				}
+				else
+				{
+					stringBuilder.AppendLine("[NullDict]");
+				}
+			}
+			else
+			{
+				// Log dictionary
+				foreach (KeyValuePair<TKey, TValue> item in dictionary)
+				{
+					var line = (item.Key == null ? "[Null]" : item.Key.ToString()) + ": '" + (item.Value == null ? "[Null]" : item.Value.ToString()) + "'";
+					if (inSeparateLogCalls)
+					{
+						Log.Any(line, category);
+					}
+					else
+					{
+						stringBuilder.AppendLine(line);
+					}
 				}
 			}
 
 			if (!inSeparateLogCalls)
 			{
-				Log.Any(text.ToString(), category);
+				Log.Any(stringBuilder.ToString(), category);
 			}
 		}
 
