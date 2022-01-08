@@ -668,30 +668,6 @@ namespace Extenity
 			    category);
 		}
 
-#if UNITY
-
-		// [DebuggerHidden]
-		public static void CurrentMethodOfGameObject(this UnityEngine.MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
-		{
-			Any(string.IsNullOrEmpty(additionalText)
-				    ? DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
-				    : DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText,
-			    category,
-			    me);
-		}
-
-		// [DebuggerHidden]
-		public static void PreviousMethodOfGameObject(this UnityEngine.MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
-		{
-			Any(string.IsNullOrEmpty(additionalText)
-				    ? DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
-				    : DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ") : " + additionalText,
-			    category,
-			    me);
-		}
-
-#endif
-
 		#endregion
 
 		#region Log Tools - Stack Trace
