@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using UnityEngine;
 using System.Collections;
@@ -315,3 +317,5 @@ namespace Extenity.ParallelToolbox
 	}
 
 }
+
+#endif

@@ -1,4 +1,6 @@
-﻿using Extenity.MathToolbox;
+﻿#if UNITY
+
+using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity.ParallelToolbox
@@ -82,3 +84,5 @@ namespace Extenity.ParallelToolbox
 	}
 
 }
+
+#endif

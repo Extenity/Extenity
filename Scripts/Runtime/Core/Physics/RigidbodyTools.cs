@@ -1,3 +1,5 @@
+#if UNITY
+
 using UnityEngine;
 
 namespace Extenity.PhysicsToolbox
@@ -37,3 +39,5 @@ namespace Extenity.PhysicsToolbox
 	}
 
 }
+
+#endif

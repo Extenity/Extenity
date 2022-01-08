@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY
+
+using UnityEngine;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -22,3 +24,5 @@ namespace Extenity.ApplicationToolbox
 	}
 
 }
+
+#endif

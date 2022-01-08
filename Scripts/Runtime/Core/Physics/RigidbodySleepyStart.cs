@@ -1,3 +1,5 @@
+#if UNITY
+
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 
@@ -72,3 +74,5 @@ namespace Extenity.PhysicsToolbox
 	}
 
 }
+
+#endif

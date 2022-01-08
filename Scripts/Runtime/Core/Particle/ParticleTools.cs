@@ -1,4 +1,6 @@
-﻿#if !DisableUnityParticleSystem
+﻿#if UNITY
+
+#if !DisableUnityParticleSystem
 
 using UnityEngine;
 
@@ -91,5 +93,7 @@ namespace Extenity.ParticleToolbox
 	}
 
 }
+
+#endif
 
 #endif

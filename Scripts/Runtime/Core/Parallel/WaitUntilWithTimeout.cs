@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY
+
+using System;
 using UnityEngine;
 
 namespace Extenity.ParallelToolbox
@@ -63,3 +65,5 @@ namespace Extenity.ParallelToolbox
 	}
 
 }
+
+#endif
