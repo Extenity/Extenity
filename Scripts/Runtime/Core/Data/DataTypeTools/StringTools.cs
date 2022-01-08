@@ -759,7 +759,8 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringClampedBetween0To99(this int value)
 		{
-			value = Mathf.Clamp(value, 0, 99);
+            if (value < 0) value = 0;
+			else if (value > 99) value = 99;
 			if (value < 10)
 				return NumbersFrom0To9[value];
 			else
@@ -768,7 +769,8 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringClampedBetween00To99(this int value)
 		{
-			value = Mathf.Clamp(value, 0, 99);
+            if (value < 0) value = 0;
+            else if (value > 99) value = 99;
 			if (value < 10)
 				return NumbersFrom00To09[value];
 			else

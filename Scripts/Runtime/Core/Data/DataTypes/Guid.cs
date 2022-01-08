@@ -1,7 +1,6 @@
 ﻿using System;
 using Extenity.MathToolbox;
 using Newtonsoft.Json;
-using Random = UnityEngine.Random;
 
 namespace Extenity.DataToolbox
 {
@@ -133,7 +132,7 @@ namespace Extenity.DataToolbox
 			var data = new byte[16];
 			for (int i = 0; i < 16; i++)
 			{
-				data[i] = (byte)(Random.value * 256f);
+				data[i] = (byte)(UnityEngine.Random.value * 256f);
 			}
 
 			if (randomizeAfterwards)

@@ -79,7 +79,7 @@ namespace Extenity.DataToolbox
 		[HorizontalGroup(Width = 30), LabelWidth(52)]
 		public bool Inverted = false;
 		[HorizontalGroup(Width = 30), LabelWidth(74)]
-		[Tooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
+		[PropertyTooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
 		public bool MustMatch = false;
 
 		#region Initialization

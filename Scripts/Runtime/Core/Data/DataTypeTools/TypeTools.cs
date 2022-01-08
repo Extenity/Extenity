@@ -102,10 +102,10 @@ namespace Extenity.DataToolbox
 		public static bool IsUnityBaseType(this Type type)
 		{
 			return
-				type == typeof(MonoBehaviour) ||
-				type == typeof(ScriptableObject) ||
-				type == typeof(Behaviour) ||
-				type == typeof(Component) ||
+				type == typeof(UnityEngine.MonoBehaviour) ||
+				type == typeof(UnityEngine.ScriptableObject) ||
+				type == typeof(UnityEngine.Behaviour) ||
+				type == typeof(UnityEngine.Component) ||
 				type == typeof(UnityEngine.Object) ||
 				type == typeof(System.Object);
 		}
@@ -410,11 +410,13 @@ namespace Extenity.DataToolbox
 			{ typeof(Boolean), "Bool" },
 			{ typeof(Byte), "Byte" },
 			{ typeof(SByte), "SByte" },
-			{ typeof(Vector2), "Vector2" },
-			{ typeof(Vector3), "Vector3" },
-			{ typeof(Vector4), "Vector4" },
-			{ typeof(Quaternion), "Quaternion" },
-			{ typeof(Matrix4x4), "Matrix4x4" },
+#if UNITY
+			{ typeof(UnityEngine.Vector2), "Vector2" },
+			{ typeof(UnityEngine.Vector3), "Vector3" },
+			{ typeof(UnityEngine.Vector4), "Vector4" },
+			{ typeof(UnityEngine.Quaternion), "Quaternion" },
+			{ typeof(UnityEngine.Matrix4x4), "Matrix4x4" },
+#endif
 		};
 
 		public static string GetPrettyName(this Type type)

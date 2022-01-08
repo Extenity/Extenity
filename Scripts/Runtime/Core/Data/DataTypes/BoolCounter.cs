@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Extenity.DataToolbox
 {
@@ -56,6 +55,7 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public int Counter => counter;
 		[SerializeField]
+		[UnityEngine.SerializeField]
 		private int counter;
 
 		/// <summary>

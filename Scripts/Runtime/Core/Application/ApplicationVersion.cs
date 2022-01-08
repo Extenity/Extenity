@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Extenity.ApplicationToolbox
 {
@@ -243,7 +242,7 @@ namespace Extenity.ApplicationToolbox
 
 		public static ApplicationVersion GetUnityApplicationVersion()
 		{
-			return new ApplicationVersion(Application.version);
+			return new ApplicationVersion(UnityEngine.Application.version);
 		}
 
 #if UNITY_EDITOR
