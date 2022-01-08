@@ -1,3 +1,5 @@
+#if UNITY
+
 //#define LogSingletonInEditor
 //#define LogSingletonInBuilds
 #define LogSingletonInDebugBuilds
@@ -161,3 +163,5 @@ namespace Extenity.DesignPatternsToolbox
 	}
 
 }
+
+#endif

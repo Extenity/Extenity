@@ -458,8 +458,12 @@ namespace Extenity.FileSystemToolbox
 
 		public static string GenerateAntiCacheAddressPostfix()
 		{
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 			return "?r=" + UnityEngine.Random.Range(10000, 99999);
-		}
+#else
+            throw new System.NotImplementedException();
+#endif
+        }
 
 		#endregion
 	}

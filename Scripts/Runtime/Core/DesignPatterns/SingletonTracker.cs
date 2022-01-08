@@ -61,6 +61,7 @@ namespace Extenity.DesignPatternsToolbox
 
 		public static void SingletonDestroyed(string className)
 		{
+#if UNITY
 			// Enter Playmode Options is a funny tool. It will leave static variables
 			// in all kinds of unpleasant states. So this was the easiest way. Just stop
 			// tracking singletons when quitting play mode.
@@ -77,6 +78,7 @@ namespace Extenity.DesignPatternsToolbox
 				_SingletonCalls.Clear();
 				return;
 			}
+#endif
 
 			if (_SingletonCalls.ContainsKey(className))
 			{
