@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
-using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
@@ -980,14 +979,14 @@ namespace Extenity.MathToolbox
 
 		public static float2 Snap(this float2 value, float snapStep, float snapOffset)
 		{
-			return new Vector2(
+			return new float2(
 				Snap(value.x, snapStep, snapOffset),
 				Snap(value.y, snapStep, snapOffset));
 		}
 
 		public static float3 Snap(this float3 value, float snapStep, float snapOffset)
 		{
-			return new Vector3(
+			return new float3(
 				Snap(value.x, snapStep, snapOffset),
 				Snap(value.y, snapStep, snapOffset),
 				Snap(value.z, snapStep, snapOffset));
@@ -995,7 +994,7 @@ namespace Extenity.MathToolbox
 
 		public static float4 Snap(this float4 value, float snapStep, float snapOffset)
 		{
-			return new Vector4(
+			return new float4(
 				Snap(value.x, snapStep, snapOffset),
 				Snap(value.y, snapStep, snapOffset),
 				Snap(value.z, snapStep, snapOffset),
