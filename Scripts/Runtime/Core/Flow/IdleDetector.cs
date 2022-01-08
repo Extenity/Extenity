@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -57,3 +59,5 @@ namespace Extenity.FlowToolbox
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY
+
 //#define LogInstantiatorInEditor
 //#define LogInstantiatorInBuilds
 
@@ -264,3 +266,5 @@ namespace Extenity.GameObjectToolbox
 	}
 
 }
+
+#endif

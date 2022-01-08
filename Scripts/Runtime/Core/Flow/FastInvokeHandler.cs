@@ -1,3 +1,5 @@
+#if UNITY
+
 //#define EnableOverkillLogging
 
 using System;
@@ -956,3 +958,5 @@ namespace Extenity.FlowToolbox
 	}
 
 }
+
+#endif

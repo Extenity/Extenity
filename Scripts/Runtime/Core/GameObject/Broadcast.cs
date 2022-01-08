@@ -1,3 +1,5 @@
+#if UNITY
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -81,3 +83,5 @@ namespace Extenity.GameObjectToolbox
 	}
 
 }
+
+#endif

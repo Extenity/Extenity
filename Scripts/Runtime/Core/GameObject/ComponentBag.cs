@@ -1,3 +1,5 @@
+#if UNITY
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -74,3 +76,5 @@ namespace Extenity.GameObjectToolbox
 	}
 
 }
+
+#endif

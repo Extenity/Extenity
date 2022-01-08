@@ -1,3 +1,5 @@
+#if UNITY
+
 using System;
 using UnityEngine;
 
@@ -132,3 +134,5 @@ namespace Extenity.FlowToolbox
 	}
 
 }
+
+#endif
