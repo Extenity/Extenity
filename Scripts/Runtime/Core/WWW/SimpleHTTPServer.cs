@@ -10,8 +10,8 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Extenity.DebugToolbox;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace Extenity.WWWToolbox
 {
@@ -133,7 +133,7 @@ namespace Extenity.WWWToolbox
 		/// </summary>
 		public void Stop()
 		{
-			LogVerbose($"Closing server at {Port}");
+			Log.Verbose($"Closing server at {Port}");
 			DeinitializeCustomProcessors();
 			DeinitializeListening();
 		}
@@ -167,7 +167,7 @@ namespace Extenity.WWWToolbox
 
 		private void ListenThread()
 		{
-			LogVerbose($"Listening at {Port}");
+			Log.Verbose($"Listening at {Port}");
 			Listener = new HttpListener();
 			Listener.Prefixes.Add("http://*:" + Port.ToString() + "/");
 			Listener.Start();
@@ -184,7 +184,7 @@ namespace Extenity.WWWToolbox
 				}
 				catch (Exception exception)
 				{
-					LogException(exception);
+					Log.Exception(exception);
 				}
 			}
 		}
@@ -199,7 +199,7 @@ namespace Extenity.WWWToolbox
 			try
 			{
 				path = context.Request.Url.AbsolutePath;
-				LogVerbose("Get: " + path);
+				Log.Verbose("Get: " + path);
 				path = path.Substring(1);
 
 				// See if any custom processor is eager to process this path.
@@ -220,7 +220,7 @@ namespace Extenity.WWWToolbox
 					if (!IsServingDirectory)
 					{
 						// Nothing to do here. The server is not configured for serving files in a directory.
-						LogVerbose("Not found.");
+						Log.Verbose("Not found.");
 						context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 						return;
 					}
@@ -272,7 +272,7 @@ namespace Extenity.WWWToolbox
 					// Debug.Log("Open file: " + path);
 					using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
 					{
-						LogVerbose("Serving file at: " + path);
+						Log.Verbose("Serving file at: " + path);
 
 						// Adding permanent http response headers
 						context.Response.ContentType = MimeTypes.TryGetValue(Path.GetExtension(path), out var mime) ? mime : "application/octet-stream";
@@ -294,17 +294,17 @@ namespace Extenity.WWWToolbox
 			}
 			catch (DirectoryNotFoundException)
 			{
-				LogVerbose("Directory not found: " + path);
+				Log.Verbose("Directory not found: " + path);
 				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			}
 			catch (FileNotFoundException)
 			{
-				LogVerbose("File not found: " + path);
+				Log.Verbose("File not found: " + path);
 				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			}
 			catch (Exception exception)
 			{
-				LogException(exception);
+				Log.Exception(exception);
 				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 			}
 			finally
@@ -363,7 +363,7 @@ namespace Extenity.WWWToolbox
 
 		public void WriteTextOutputResponse(HttpListenerContext context, string text)
 		{
-			LogVerbose("Serving response:\n" + text);
+			Log.Verbose("Serving response:\n" + text);
 
 			var bytes = Encoding.UTF8.GetBytes(text);
 
@@ -382,7 +382,7 @@ namespace Extenity.WWWToolbox
 
 		public void WriteErrorTextOutputResponse(HttpListenerContext context, string errorMessage, HttpStatusCode httpStatusCode = HttpStatusCode.NotAcceptable)
 		{
-			LogVerbose("Serving error response:\n" + errorMessage);
+			Log.Verbose("Serving error response:\n" + errorMessage);
 
 			var bytes = Encoding.UTF8.GetBytes(errorMessage);
 
@@ -410,27 +410,7 @@ namespace Extenity.WWWToolbox
 
 		#region Log
 
-		private const string LogPrefix = "<b>[HTTPServer]</b> ";
-
-		public static bool EnableVerboseLogging = false;
-
-		private static void Log(string message)
-		{
-			Debug.Log(LogPrefix + message);
-		}
-
-		private static void LogVerbose(string message)
-		{
-			if (EnableVerboseLogging)
-			{
-				Debug.Log(LogPrefix + message);
-			}
-		}
-
-		private static void LogException(Exception exception)
-		{
-			Debug.Log(LogPrefix + exception);
-		}
+        private LogRep Log = new LogRep("HTTPServer");
 
 		#endregion
 	}
