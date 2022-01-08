@@ -526,6 +526,7 @@ namespace Extenity.MathToolbox
 
 		#region Transform
 
+#if UNITY
 		public static bool IsPointBehind(this Transform transform, Vector3 point)
 		{
 			return Vector3.Dot(transform.forward, point - transform.position) < 0.0f;
@@ -535,6 +536,7 @@ namespace Extenity.MathToolbox
 		{
 			return me.position - other.position;
 		}
+#endif
 
 		#endregion
 
@@ -579,6 +581,7 @@ namespace Extenity.MathToolbox
 
 		#region Matrix4x4
 
+#if UNITY
 		public static Matrix4x4 UnscaledLocalToWorldMatrix(this Transform transform)
 		{
 			return Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
@@ -613,6 +616,7 @@ namespace Extenity.MathToolbox
 			point = inverseCurrentMatrix.MultiplyPoint(point);
 			return newMatrix.MultiplyPoint(point);
 		}
+#endif
 
 		#endregion
 
@@ -705,6 +709,7 @@ namespace Extenity.MathToolbox
 				new Vector3(float.MinValue, float.MinValue, float.MinValue));
 		}
 
+#if UNITY
 		// Source: http://answers.unity3d.com/questions/361275/cant-convert-bounds-from-world-coordinates-to-loca.html
 		public static Bounds TransformBounds(this Transform transform, Bounds localBounds)
 		{
@@ -741,7 +746,7 @@ namespace Extenity.MathToolbox
 
 			return new Bounds { center = center, extents = extents };
 		}
-
+#endif
 
 		#endregion
 
