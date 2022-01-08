@@ -16,10 +16,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		Unspecified,
 
-		[Tooltip("Adds the symbol into defines, it the module exists. Removes if the module does not exist.")]
+		[Tooltip("Adds the symbol into defines if not already added.")]
+		Define,
+
+		[Tooltip("Removes the symbol from defines if added before.")]
+		Undefine,
+
+		[Tooltip("Adds the symbol into defines, if the module exists. Removes if the module does not exist.")]
 		DefineWithModuleExistence,
 
-		[Tooltip("Removes the symbol from defines, it the module exists. Adds if the module does not exist.")]
+		[Tooltip("Removes the symbol from defines, if the module exists. Adds if the module does not exist.")]
 		UndefineWithModuleExistence,
 	}
 
@@ -29,20 +35,47 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public string Module;
 		public string Symbol;
 
-		public DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation operation, string module, string symbol)
+		private DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation operation, string module, string symbol)
 		{
 			Operation = operation;
 			Module = module;
 			Symbol = symbol;
 		}
 
+		public static DefineSymbolAdjustmentEntry Define(string symbol)
+		{
+			return new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.Define, null, symbol);
+		}
+
+		public static DefineSymbolAdjustmentEntry Undefine(string symbol)
+		{
+			return new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.Undefine, null, symbol);
+		}
+
+		public static DefineSymbolAdjustmentEntry DefineWithModuleExistence(string module, string symbol)
+		{
+			return new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.DefineWithModuleExistence, module, symbol);
+		}
+
+		public static DefineSymbolAdjustmentEntry UndefineWithModuleExistence(string module, string symbol)
+		{
+			return new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, module, symbol);
+		}
+
 		#region Equality
 
 		public bool ModuleAndSymbolEquals(DefineSymbolAdjustmentEntry other)
 		{
-			return
-				Module.Equals(other.Module, StringComparison.OrdinalIgnoreCase) &&
-				Symbol.Equals(other.Symbol, StringComparison.OrdinalIgnoreCase);
+			if ((string.IsNullOrWhiteSpace(Module) && string.IsNullOrWhiteSpace(other.Module)) ||
+			    string.Equals(Module, other.Module, StringComparison.OrdinalIgnoreCase))
+			{
+				if ((string.IsNullOrWhiteSpace(Symbol) && string.IsNullOrWhiteSpace(other.Symbol)) ||
+				    string.Equals(Symbol, other.Symbol, StringComparison.OrdinalIgnoreCase))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public class ModuleAndSymbolEqualityComparer : IEqualityComparer<DefineSymbolAdjustmentEntry>
@@ -93,14 +126,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new[]
 		{
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.audio", "DisableUnityAudio"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.physics", "DisableUnityPhysics"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.physics2d", "DisableUnityPhysics2D"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.cloth", "DisableUnityCloth"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.terrain", "DisableUnityTerrain"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.particlesystem", "DisableUnityParticleSystem"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.modules.ai", "DisableUnityAI"),
-			new DefineSymbolAdjustmentEntry(DefineSymbolAdjustmentOperation.UndefineWithModuleExistence, "com.unity.timeline", "DisableUnityTimeline"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.audio", "DisableUnityAudio"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics", "DisableUnityPhysics"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics2d", "DisableUnityPhysics2D"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.cloth", "DisableUnityCloth"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.terrain", "DisableUnityTerrain"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.particlesystem", "DisableUnityParticleSystem"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.ai", "DisableUnityAI"),
+			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.timeline", "DisableUnityTimeline"),
 		};
 
 		#region User Configuration
@@ -191,16 +224,29 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 				foreach (var configurationEntry in configuration)
 				{
-					var moduleExists = packageManifest.IsPackageDefinedInManifest(configurationEntry.Module);
 					bool symbolShouldExist;
 					switch (configurationEntry.Operation)
 					{
+						case DefineSymbolAdjustmentOperation.Define:
+							symbolShouldExist = true;
+							break;
+
+						case DefineSymbolAdjustmentOperation.Undefine:
+							symbolShouldExist = false;
+							break;
+
 						case DefineSymbolAdjustmentOperation.DefineWithModuleExistence:
+						{
+							var moduleExists = packageManifest.IsPackageDefinedInManifest(configurationEntry.Module);
 							symbolShouldExist = moduleExists;
+						}
 							break;
 
 						case DefineSymbolAdjustmentOperation.UndefineWithModuleExistence:
+						{
+							var moduleExists = packageManifest.IsPackageDefinedInManifest(configurationEntry.Module);
 							symbolShouldExist = !moduleExists;
+						}
 							break;
 
 						default:
