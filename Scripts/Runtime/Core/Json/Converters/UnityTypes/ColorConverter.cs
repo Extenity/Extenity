@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY
+
+using UnityEngine;
 
 namespace Extenity.JsonToolbox.Converters
 {
@@ -20,3 +22,5 @@ namespace Extenity.JsonToolbox.Converters
 	}
 
 }
+
+#endif

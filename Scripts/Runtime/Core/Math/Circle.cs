@@ -1,3 +1,5 @@
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+
 using UnityEngine;
 
 namespace Extenity.MathToolbox
@@ -17,3 +19,5 @@ namespace Extenity.MathToolbox
 	}
 
 }
+
+#endif
