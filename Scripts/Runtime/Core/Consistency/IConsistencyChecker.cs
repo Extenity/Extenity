@@ -46,7 +46,7 @@ namespace Extenity.ConsistencyToolbox
 		public static List<ConsistencyError> CheckConsistency(this IConsistencyChecker me)
 		{
 			if (me == null)
-				throw new ArgumentNullException(nameof(me));
+				throw new ArgumentNullException(nameof(me), "Tried to do consistency check on a null object.");
 
 			var errors = new List<ConsistencyError>();
 			me.CheckConsistency(ref errors);
@@ -60,10 +60,7 @@ namespace Extenity.ConsistencyToolbox
 
 		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityCategory severityCategory, ContextObject context = null)
 		{
-			var meObject = me as UnityEngine.Object;
-			var titleMessage = meObject != null
-				? "'" + meObject.name + "' has some inconsistencies."
-				: null;
+            var titleMessage = GenerateCommonTitleMessageForObject(me);
 			return CheckConsistencyAndLog(me, titleMessage, severityCategory, context);
 		}
 
@@ -88,11 +85,8 @@ namespace Extenity.ConsistencyToolbox
 		}
 
 		public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
-		{
-			var meObject = me as UnityEngine.Object;
-			var titleMessage = meObject != null
-				? "'" + meObject.name + "' has some inconsistencies."
-				: null;
+        {
+            var titleMessage = GenerateCommonTitleMessageForObject(me);
 			CheckConsistencyAndThrow(me, titleMessage);
 		}
 
@@ -108,6 +102,27 @@ namespace Extenity.ConsistencyToolbox
 
 				throw new Exception(message);
 			}
+		}
+
+        private static string GenerateCommonTitleMessageForObject(IConsistencyChecker me)
+        {
+#if UNITY
+            // Try to get Unity Object info.
+			var meAsUnityObject = me as UnityEngine.Object;
+            if (meAsUnityObject != null)
+            {
+                return $"'{meAsUnityObject.FullObjectName()}' has some inconsistencies.";
+            }
+#endif
+	        if (me != null)
+	        {
+		        var meType = me.GetType();
+		        return $"'{meType.FullName}' has some inconsistencies.";
+	        }
+	        else
+	        {
+		        return "Tried to do consistency check on a null object.";
+	        }
 		}
 	}
 
