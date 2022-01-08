@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +54,7 @@ namespace Extenity.JsonToolbox.Converters
 				var _value = _pair["Value"].ToObject(_args[1], serializer);
 
 				if (!_result.Contains(_key)) _result.Add(_key, _value);
-				else Debug.LogWarningFormat("Ignore pair with repeat key: {0}", _pair.ToString(Formatting.None));
+				else Log.Warning($"Ignore pair with repeat key: {_pair.ToString(Formatting.None)}");
 			}
 
 			return _result;
