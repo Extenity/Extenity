@@ -2,7 +2,8 @@
     "name": "Extenity.Core",
     "rootNamespace": "",
     "references": [
-        "ICSharpCode.SharpZipLib"
+        "ICSharpCode.SharpZipLib",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
