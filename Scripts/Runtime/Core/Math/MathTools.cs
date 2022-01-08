@@ -553,11 +553,11 @@ namespace Extenity.MathToolbox
 			return acos(neighbourSideTo90Angle / hypotenuse);
 		}
 
-		public static bool IsValidTriangle(Vector3 point1, Vector3 point2, Vector3 point3)
+		public static bool IsValidTriangle(float3 point1, float3 point2, float3 point3)
 		{
-			var a = point1.DistanceTo(point2);
-			var b = point1.DistanceTo(point3);
-			var c = point2.DistanceTo(point3);
+			var a = distance(point1, point2);
+			var b = distance(point1, point3);
+			var c = distance(point2, point3);
 
 			return
 				a + b > c &&
