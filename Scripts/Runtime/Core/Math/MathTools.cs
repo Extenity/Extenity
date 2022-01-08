@@ -717,39 +717,6 @@ namespace Extenity.MathToolbox
 			rect.y += translationY;
 		}
 
-
-		public static Rect MovedCopy(this Rect rect, Vector2 translation)
-		{
-			rect.x += translation.x;
-			rect.y += translation.y;
-			return rect;
-		}
-
-		public static Rect MovedCopy(this Rect rect, float translationX, float translationY)
-		{
-			rect.x += translationX;
-			rect.y += translationY;
-			return rect;
-		}
-
-		public static Rect MovedCopyX(this Rect rect, float translationX)
-		{
-			rect.x += translationX;
-			return rect;
-		}
-
-		public static Rect MovedCopyY(this Rect rect, float translationY)
-		{
-			rect.y += translationY;
-			return rect;
-		}
-
-
-		public static bool CheckLineRectIntersection(this Rect rect, Vector2 point1, Vector2 point2)
-		{
-			throw new NotImplementedException();
-		}
-
 		#endregion
 
 		#region Alignment
