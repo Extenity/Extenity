@@ -1,5 +1,3 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -725,6 +723,7 @@ namespace Extenity.MathToolbox
 
 		#region Plane
 
+#if UNITY
 		public static bool IsAllPointsOnPlane(this IList<Vector3> points, Vector3 planeNormal, float tolerance = 0.0001f)
 		{
 			var plane = new Plane(planeNormal, points[0]);
@@ -782,11 +781,13 @@ namespace Extenity.MathToolbox
 			var distanceSqr = (proximityCheckingPoint - intersection).sqrMagnitude;
 			return distanceSqr < proximityCheckingRadius * proximityCheckingRadius;
 		}
+#endif
 
 		#endregion
 
 		#region Polygon / Surface
 
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 		public static float CalculateTriangleArea(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
 		{
 			var cross = Vector3.Cross(vertex2 - vertex1, vertex3 - vertex1);
@@ -894,6 +895,7 @@ namespace Extenity.MathToolbox
 
 			return true;
 		}
+#endif
 
 		#endregion
 
@@ -1081,5 +1083,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
