@@ -1,6 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Exception = System.Exception;
+using ArgumentNullException = System.ArgumentNullException;
+
+// This is the way that Log system supports various Context types in different environments like
+// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
+// in this code file to prevent any possible confusions. Use 'using' selectively, like
+// 'using Exception = System.Exception;'
+// See 11746845.
+#if UNITY
+using ContextObject = UnityEngine.Object;
+#else
+using ContextObject = System.Object;
+#endif
 
 namespace Extenity.ConsistencyToolbox
 {
@@ -41,12 +53,12 @@ namespace Extenity.ConsistencyToolbox
 			return errors;
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, ContextObject context = null)
 		{
 			return CheckConsistencyAndLog(me, SeverityCategory.Error, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityCategory severityCategory, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityCategory severityCategory, ContextObject context = null)
 		{
 			var meObject = me as UnityEngine.Object;
 			var titleMessage = meObject != null
@@ -55,12 +67,12 @@ namespace Extenity.ConsistencyToolbox
 			return CheckConsistencyAndLog(me, titleMessage, severityCategory, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, ContextObject context = null)
 		{
 			return CheckConsistencyAndLog(me, titleMessage, SeverityCategory.Error, context);
 		}
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, SeverityCategory severityCategory, UnityEngine.Object context = null)
+		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, SeverityCategory severityCategory, ContextObject context = null)
 		{
 			var errors = me.CheckConsistency();
 			if (errors.Count > 0)
