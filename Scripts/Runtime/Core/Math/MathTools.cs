@@ -975,7 +975,7 @@ namespace Extenity.MathToolbox
 
 		public static float TancantFilter(float x, float rampScale)
 		{
-			return (float)((Math.Tanh((x - rampScale * 0.5) * 6.0 / rampScale) + 1.0) * 0.5);
+			return (float)((tanh((x - rampScale * 0.5) * 6.0 / rampScale) + 1.0) * 0.5);
 		}
 
 		#endregion
@@ -1028,7 +1028,7 @@ namespace Extenity.MathToolbox
 
 		public static float Snap(this float value, float snapStep, float snapOffset)
 		{
-			return Mathf.Round((value + snapOffset) / snapStep) * snapStep - snapOffset;
+			return round((value + snapOffset) / snapStep) * snapStep - snapOffset;
 		}
 
 		public static float2 Snap(this float2 value, float snapStep, float snapOffset)

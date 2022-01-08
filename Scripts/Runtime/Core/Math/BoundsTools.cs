@@ -110,10 +110,10 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < points.Count; i++)
 			{
 				var q = points[i];
-				minX = Mathf.Min(q.x, minX);
-				maxX = Mathf.Max(q.x, maxX);
-				minY = Mathf.Min(q.y, minY);
-				maxY = Mathf.Max(q.y, maxY);
+				minX = min(q.x, minX);
+				maxX = max(q.x, maxX);
+				minY = min(q.y, minY);
+				maxY = max(q.y, maxY);
 			}
 			var bounds = new Bounds2();
 			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
@@ -129,10 +129,10 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < points.Count; i++)
 			{
 				var q = points[i];
-				minX = Mathf.Min(q.x, minX);
-				maxX = Mathf.Max(q.x, maxX);
-				minY = Mathf.Min(q.y, minY);
-				maxY = Mathf.Max(q.y, maxY);
+				minX = min(q.x, minX);
+				maxX = max(q.x, maxX);
+				minY = min(q.y, minY);
+				maxY = max(q.y, maxY);
 			}
 			var bounds = new Bounds2();
 			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
@@ -148,10 +148,10 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < points.Count; i++)
 			{
 				var q = points[i];
-				minX = Mathf.Min(q.x, minX);
-				maxX = Mathf.Max(q.x, maxX);
-				minY = Mathf.Min(q.z, minY);
-				maxY = Mathf.Max(q.z, maxY);
+				minX = min(q.x, minX);
+				maxX = max(q.x, maxX);
+				minY = min(q.z, minY);
+				maxY = max(q.z, maxY);
 			}
 			var bounds = new Bounds2();
 			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
