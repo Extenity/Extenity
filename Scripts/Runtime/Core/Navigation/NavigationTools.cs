@@ -1,3 +1,5 @@
+#if UNITY
+
 #if !DisableUnityAI
 
 using System;
@@ -156,5 +158,7 @@ namespace Extenity.NavigationToolbox
 	}
 
 }
+
+#endif
 
 #endif
