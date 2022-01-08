@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
@@ -654,7 +653,7 @@ namespace Extenity
 
 		public static string BuildInternalErrorMessage(int errorCode)
 		{
-			return "Internal error " + errorCode + "!";
+			return $"Internal error {errorCode}!";
 		}
 
 		#endregion
@@ -977,19 +976,6 @@ namespace Extenity
 		}
 
 		#endregion
-	}
-
-	public class InternalException : Exception
-	{
-		public InternalException(int errorCode)
-			: base(Log.BuildInternalErrorMessage(errorCode))
-		{
-		}
-
-		public InternalException(int errorCode, Exception innerException)
-			: base(Log.BuildInternalErrorMessage(errorCode), innerException)
-		{
-		}
 	}
 
 }
