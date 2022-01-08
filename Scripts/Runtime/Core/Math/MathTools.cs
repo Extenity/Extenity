@@ -569,10 +569,12 @@ namespace Extenity.MathToolbox
 
 		#region Quaternion
 
+#if UNITY
 		public static bool IsAlmostEqual(this Quaternion value1, Quaternion value2, float maxAngle)
 		{
 			return Quaternion.Angle(value1, value2) < maxAngle;
 		}
+#endif
 
 		#endregion
 
@@ -619,6 +621,7 @@ namespace Extenity.MathToolbox
 
 		#region Rect
 
+#if UNITY
 		public static bool IsZero(this Rect me)
 		{
 			return me.x == 0 && me.y == 0 && me.width == 0 && me.height == 0;
@@ -716,6 +719,7 @@ namespace Extenity.MathToolbox
 		{
 			rect.y += translationY;
 		}
+#endif
 
 		#endregion
 
