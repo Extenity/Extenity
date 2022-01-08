@@ -1,6 +1,7 @@
 #if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 // ReSharper disable IdentifierTypo
 
@@ -11,7 +12,7 @@ namespace Extenity.MathToolbox
 	{
 		public static float Hermite(float start, float end, float value)
 		{
-			return Mathf.Lerp(start, end, value * value * (3.0f - 2.0f * value));
+			return lerp(start, end, value * value * (3.0f - 2.0f * value));
 		}
 		public static float Hermite(float x)
 		{
@@ -34,24 +35,24 @@ namespace Extenity.MathToolbox
 
 		public static float Sinerp(float start, float end, float value)
 		{
-			return Mathf.Lerp(start, end, Mathf.Sin(value * Mathf.PI * 0.5f));
+			return lerp(start, end, sin(value * PI * 0.5f));
 		}
 
 		public static float Coserp(float start, float end, float value)
 		{
-			return Mathf.Lerp(start, end, 1.0f - Mathf.Cos(value * Mathf.PI * 0.5f));
+			return lerp(start, end, 1.0f - cos(value * PI * 0.5f));
 		}
 
 		public static float Berp(float start, float end, float value)
 		{
 			value = Mathf.Clamp01(value);
-			value = (Mathf.Sin(value * Mathf.PI * (0.2f + 2.5f * value * value * value)) * Mathf.Pow(1f - value, 2.2f) + value) * (1f + (1.2f * (1f - value)));
+			value = (sin(value * PI * (0.2f + 2.5f * value * value * value)) * pow(1f - value, 2.2f) + value) * (1f + (1.2f * (1f - value)));
 			return start + (end - start) * value;
 		}
 
 		public static float SmoothStep(float x, float min, float max)
 		{
-			x = Mathf.Clamp(x, min, max);
+			x = clamp(x, min, max);
 			float v1 = (x - min) / (max - min);
 			float v2 = (x - min) / (max - min);
 			return -2 * v1 * v1 * v1 + 3 * v2 * v2;
@@ -74,22 +75,22 @@ namespace Extenity.MathToolbox
 			Vector3 fullDirection = lineEnd - lineStart;
 			Vector3 lineDirection = Vector3.Normalize(fullDirection);
 			float closestPoint = Vector3.Dot((point - lineStart), lineDirection) / Vector3.Dot(lineDirection, lineDirection);
-			return lineStart + (Mathf.Clamp(closestPoint, 0.0f, Vector3.Magnitude(fullDirection)) * lineDirection);
+			return lineStart + (clamp(closestPoint, 0.0f, Vector3.Magnitude(fullDirection)) * lineDirection);
 		}
 		public static float Bounce(float x)
 		{
-			return Mathf.Abs(Mathf.Sin(6.28f * (x + 1f) * (x + 1f)) * (1f - x));
+			return abs(sin(6.28f * (x + 1f) * (x + 1f)) * (1f - x));
 		}
 		public static float BounceOnce(float x)
 		{
-			return Mathf.Sin(x * Mathf.PI);
+			return sin(x * PI);
 		}
 
 		// test for value that is near specified float (due to floating point inprecision)
 		// all thanks to Opless for this!
 		public static bool Approx(float val, float about, float range)
 		{
-			return ((Mathf.Abs(val - about) < range));
+			return ((abs(val - about) < range));
 		}
 
 		// test if a Vector3 is close to another Vector3 (due to floating point inprecision)
@@ -110,7 +111,7 @@ namespace Extenity.MathToolbox
 		{
 			float min = 0.0f;
 			float max = 360.0f;
-			float half = Mathf.Abs((max - min) / 2.0f);//half the distance between min and max
+			float half = abs((max - min) / 2.0f);//half the distance between min and max
 			float retval = 0.0f;
 			float diff = 0.0f;
 

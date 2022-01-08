@@ -1,7 +1,5 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using Extenity.DebugToolbox;
-using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -195,11 +193,11 @@ namespace Extenity.MathToolbox
 				else if (bias >= 1.0f) return x > 0.0f ? 1.0f : 0.0f;
 				else if (bias == 0.5f) return x;
 
-				context.lastExponent = Mathf.Log(bias) * -1.4427f;
+				context.lastExponent = log(bias) * -1.4427f;
 				context.lastBias = bias;
 			}
 
-			return Mathf.Pow(x, context.lastExponent);
+			return pow(x, context.lastExponent);
 		}
 
 		private static float BiasRaw(float x, float bias)
@@ -211,23 +209,23 @@ namespace Extenity.MathToolbox
 			else if (bias >= 1.0f) return x > 0.0f ? 1.0f : 0.0f;
 			else if (bias == 0.5f) return x;
 
-			var exponent = Mathf.Log(bias) * -1.4427f;
-			return Mathf.Pow(x, exponent);
+			var exponent = log(bias) * -1.4427f;
+			return pow(x, exponent);
 		}
 
 		public static float BiasedLerp(float x, float bias)
 		{
 			var result = bias <= 0.5f
-				? BiasRaw(Mathf.Abs(x), bias)
-				: 1.0f - BiasRaw(1.0f - Mathf.Abs(x), 1.0f - bias);
+				? BiasRaw(abs(x), bias)
+				: 1.0f - BiasRaw(1.0f - abs(x), 1.0f - bias);
 			return x < 0.0f ? -result : result;
 		}
 
 		public static float BiasedLerp(float x, float bias, BiasLerpContext context)
 		{
 			var result = bias <= 0.5f
-				? BiasWithContext(Mathf.Abs(x), bias, context)
-				: 1.0f - BiasWithContext(1.0f - Mathf.Abs(x), 1.0f - bias, context);
+				? BiasWithContext(abs(x), bias, context)
+				: 1.0f - BiasWithContext(1.0f - abs(x), 1.0f - bias, context);
 			return x < 0.0f ? -result : result;
 		}
 
@@ -235,5 +233,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif

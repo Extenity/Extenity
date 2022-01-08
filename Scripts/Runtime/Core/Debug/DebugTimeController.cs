@@ -1,6 +1,7 @@
 #if (EnableDebugTimeControllerInBuilds || UNITY_EDITOR) && !ENABLE_INPUT_SYSTEM
 
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.DebugToolbox
 {
@@ -103,7 +104,7 @@ namespace Extenity.DebugToolbox
 			var closestDistanceIndex = -1;
 			for (int i = 0; i < TimeScales.Length; i++)
 			{
-				var distance = Mathf.Abs(TimeScales[i] - timeScale);
+				var distance = abs(TimeScales[i] - timeScale);
 				if (distance < 0.001f)
 				{
 					return i;
