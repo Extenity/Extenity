@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -689,7 +688,7 @@ namespace Extenity
 #if UNITY
 
 		// [DebuggerHidden]
-		public static void CurrentMethodOfGameObject(this MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
+		public static void CurrentMethodOfGameObject(this UnityEngine.MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
 		{
 			Any(string.IsNullOrEmpty(additionalText)
 				    ? DebugReflection.PreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
@@ -699,7 +698,7 @@ namespace Extenity
 		}
 
 		// [DebuggerHidden]
-		public static void PreviousMethodOfGameObject(this MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
+		public static void PreviousMethodOfGameObject(this UnityEngine.MonoBehaviour me, string additionalText = null, LogCategory category = LogCategory.Info)
 		{
 			Any(string.IsNullOrEmpty(additionalText)
 				    ? DebugReflection.PrePreviousMethodNameWithType + " (" + (me == null ? "[Null]" : me.name) + ")"
