@@ -1346,11 +1346,11 @@ namespace Extenity.DataToolbox
 			//return string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
 
 			// Round to milliseconds
-			totalSeconds = MathTools.FastRoundToInt(totalSeconds * 1000.0) / 1000.0;
+			totalSeconds = (totalSeconds * 1000.0).RoundToInt() / 1000.0;
 
 			var minutes = (long)(totalSeconds / 60);
 			var seconds = (int)(totalSeconds % 60);
-			var milliseconds = MathTools.FastRoundToInt((totalSeconds - Math.Truncate(totalSeconds)) * 1000);
+			var milliseconds = ((totalSeconds - Math.Truncate(totalSeconds)) * 1000).RoundToInt();
 			return $"{minutes}:{seconds:00}.{milliseconds:000}";
 		}
 
