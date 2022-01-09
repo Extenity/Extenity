@@ -1,6 +1,4 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using UnityEngine;
+using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
 // ReSharper disable IdentifierTypo
@@ -45,7 +43,7 @@ namespace Extenity.MathToolbox
 
 		public static float Berp(float start, float end, float value)
 		{
-			value = Mathf.Clamp01(value);
+			value = clamp(value, 0f, 1f);
 			value = (sin(value * PI * (0.2f + 2.5f * value * value * value)) * pow(1f - value, 2.2f) + value) * (1f + (1.2f * (1f - value)));
 			return start + (end - start) * value;
 		}
@@ -63,19 +61,19 @@ namespace Extenity.MathToolbox
 			return ((1.0f - value) * start) + (value * end);
 		}
 
-		public static Vector3 NearestPoint(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
+		public static float3 NearestPoint(float3 lineStart, float3 lineEnd, float3 point)
 		{
-			Vector3 lineDirection = Vector3.Normalize(lineEnd - lineStart);
-			float closestPoint = Vector3.Dot((point - lineStart), lineDirection) / Vector3.Dot(lineDirection, lineDirection);
+			float3 lineDirection = normalize(lineEnd - lineStart);
+			float closestPoint = dot((point - lineStart), lineDirection) / dot(lineDirection, lineDirection);
 			return lineStart + (closestPoint * lineDirection);
 		}
 
-		public static Vector3 NearestPointStrict(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
+		public static float3 NearestPointStrict(float3 lineStart, float3 lineEnd, float3 point)
 		{
-			Vector3 fullDirection = lineEnd - lineStart;
-			Vector3 lineDirection = Vector3.Normalize(fullDirection);
-			float closestPoint = Vector3.Dot((point - lineStart), lineDirection) / Vector3.Dot(lineDirection, lineDirection);
-			return lineStart + (clamp(closestPoint, 0.0f, Vector3.Magnitude(fullDirection)) * lineDirection);
+			float3 fullDirection = lineEnd - lineStart;
+			float3 lineDirection = normalize(fullDirection);
+			float closestPoint = dot((point - lineStart), lineDirection) / dot(lineDirection, lineDirection);
+			return lineStart + (clamp(closestPoint, 0.0f, length(fullDirection)) * lineDirection);
 		}
 		public static float Bounce(float x)
 		{
@@ -96,9 +94,9 @@ namespace Extenity.MathToolbox
 		// test if a Vector3 is close to another Vector3 (due to floating point inprecision)
 		// compares the square of the distance to the square of the range as this 
 		// avoids calculating a square root which is much slower than squaring the range
-		public static bool Approx(Vector3 val, Vector3 about, float range)
+		public static bool Approx(float3 val, float3 about, float range)
 		{
-			return ((val - about).sqrMagnitude < range * range);
+			return lengthsq(val - about) < range * range;
 		}
 
 		/*
@@ -134,5 +132,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
