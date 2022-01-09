@@ -254,6 +254,8 @@ namespace Extenity.MathToolbox
 			return (pow(E, x) - pow(E, -x)) / (pow(E, x) + pow(E, -x));
 		}
 
+		// TODO OPTIMIZATION: Floor, Ceil and Round operations should be tested and benchmarked on devices, especially when run with IL2CPP compiled code.
+
 		public static int FloorToInt(this float val)
 		{
 			return val >= 0.0f ? (int)val : (int)val - 1;
@@ -262,6 +264,16 @@ namespace Extenity.MathToolbox
 		public static int FloorToInt(this double val)
 		{
 			return val >= 0.0 ? (int)val : (int)val - 1;
+		}
+
+		public static int CeilToInt(this float val)
+		{
+			return (int)Math.Ceiling(val);
+		}
+
+		public static int CeilToInt(this double val)
+		{
+			return (int)Math.Ceiling(val);
 		}
 
 		public static int RoundToInt(this float val)

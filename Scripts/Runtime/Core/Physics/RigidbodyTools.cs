@@ -1,6 +1,7 @@
 #if UNITY
 
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.PhysicsToolbox
 {
@@ -21,7 +22,7 @@ namespace Extenity.PhysicsToolbox
 		public static float HorizontalSpeed(this Rigidbody rigidbody)
 		{
 			var velocity = rigidbody.velocity;
-			return Mathf.Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+			return sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 		}
 
 		public static float ForwardSpeed(this Rigidbody rigidbody)

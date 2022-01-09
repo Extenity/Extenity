@@ -1,6 +1,7 @@
 using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
+using static Unity.Mathematics.math;
 
 namespace Extenity.DebugToolbox.GraphPlotting.Editor
 {
@@ -41,7 +42,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				var position = EditorGUILayout.GetControlRect(false, 20f);
 				const float labelWidth = 40f;
 				var halfWidth = position.width * 0.5f;
-				var inputFieldWidth = Mathf.Max(0f, halfWidth - labelWidth);
+				var inputFieldWidth = max(0f, halfWidth - labelWidth);
 				var height = position.height;
 				GUI.Label(new Rect(position.x, position.y, labelWidth, height), "Min:");
 				newMin = EditorGUI.FloatField(new Rect(position.x + labelWidth, position.y, inputFieldWidth, height), verticalRange.Min);

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Extenity.IMGUIToolbox.Editor;
+using Extenity.MathToolbox;
 using Extenity.TextureToolbox;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.DebugToolbox.GraphPlotting.Editor
 {
@@ -238,7 +240,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			var currentEventType = Event.current.type;
 			var mousePosition = Event.current.mousePosition;
 
-			mousePosition.x = Mathf.Min(mousePosition.x, width);
+			mousePosition.x = min(mousePosition.x, width);
 
 			var isInPauseMode = EditorApplication.isPlaying && EditorApplication.isPaused;
 
@@ -319,7 +321,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					if (currentEventType == EventType.MouseDrag && IsResizingGraphHeight)
 					{
 						GraphHeightResizeDelta = (mousePosition.y - MouseYPositionBeforeResizingGraphHeight);
-						GraphHeight = GraphHeightBeforeResizing + Mathf.FloorToInt(GraphHeightResizeDelta / (HeightResizingGraphIndex + 1));
+						GraphHeight = GraphHeightBeforeResizing + (GraphHeightResizeDelta / (HeightResizingGraphIndex + 1)).FloorToInt();
 
 						if (GraphHeight < MinimumGraphHeight)
 							GraphHeight = MinimumGraphHeight;
@@ -350,7 +352,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					{
 						if (currentEventType == EventType.MouseDown)
 						{
-							timeIntervalStartTime = Mathf.Max(0f, time);
+							timeIntervalStartTime = max(0f, time);
 							timeIntervalEndTime = timeIntervalStartTime;
 							timeIntervalSelectionGraph = graph;
 						}
@@ -358,7 +360,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 					if (timeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
 					{
-						timeIntervalEndTime = Mathf.Max(0f, time);
+						timeIntervalEndTime = max(0f, time);
 					}
 				}
 
@@ -445,8 +447,8 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				{
 					GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
 
-					var selectionTime_left = Mathf.Max(0f, Mathf.Min(timeIntervalStartTime, timeIntervalEndTime));
-					var selectionTime_right = Mathf.Max(0f, Mathf.Max(timeIntervalStartTime, timeIntervalEndTime));
+					var selectionTime_left = max(0f, min(timeIntervalStartTime, timeIntervalEndTime));
+					var selectionTime_right = max(0f, max(timeIntervalStartTime, timeIntervalEndTime));
 
 					var left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
 					var right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
@@ -491,10 +493,10 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				if (isInPauseMode)
 				{
-					mouseTime = Mathf.Lerp(timeStart, timeEnd, (mousePosition.x - graphRect.xMin) / graphRect.width);
+					mouseTime = lerp(timeStart, timeEnd, (mousePosition.x - graphRect.xMin) / graphRect.width);
 				}
 
-				mouseTime = Mathf.Max(mouseTime, 0f);
+				mouseTime = max(mouseTime, 0f);
 
 				Handles.color = TimeCursorLineColor;
 				var x = (mouseTime - timeStart) / (timeEnd - timeStart) * graphRect.width + graphRect.xMin;
@@ -519,7 +521,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						if (mouseTime >= channel.Samples[sampleIndex_a].AxisX &&
 						    mouseTime <= channel.Samples[sampleIndex_b].AxisX)
 						{
-							index = Mathf.Abs(channel.Samples[sampleIndex_a].AxisX - mouseTime) <= Mathf.Abs(channel.Samples[sampleIndex_b].AxisX - mouseTime) ? sampleIndex_a : sampleIndex_b;
+							index = abs(channel.Samples[sampleIndex_a].AxisX - mouseTime) <= abs(channel.Samples[sampleIndex_b].AxisX - mouseTime) ? sampleIndex_a : sampleIndex_b;
 							break;
 						}
 					}
@@ -716,13 +718,13 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 			// Scrollbar
 			var scrollMaxY = GraphHeight * FilteredGraphs.Count + ExtraScrollSpace;
-			var visibleHeightY = Mathf.Min(scrollMaxY, position.height - topBarRect.height);
+			var visibleHeightY = min(scrollMaxY, position.height - topBarRect.height);
 
 			GUI.color = Color.white;
 			scrollPositionY = GUI.VerticalScrollbar(
 				new Rect(position.width - 15, topBarRect.height, 15f, position.height - topBarRect.height),
 				scrollPositionY, visibleHeightY, 0f, scrollMaxY);
-			scrollPositionY = Mathf.Max(scrollPositionY, 0f);
+			scrollPositionY = max(scrollPositionY, 0f);
 
 			if (isInPauseMode)
 			{
@@ -750,12 +752,12 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				scrollPositionTime = GUI.HorizontalScrollbar(
 					new Rect(LegendWidth, height - 15f, width - LegendWidth - 15f, 15f),
 					scrollPositionTime,
-					Mathf.Min(scrollPositionTimeMax, TimeWindow),
+					min(scrollPositionTimeMax, TimeWindow),
 					-scrollPositionTimeMax + TimeWindow,
 					TimeWindow
 				);
 
-				scrollPositionTime = Mathf.Min(0f, scrollPositionTime);
+				scrollPositionTime = min(0f, scrollPositionTime);
 			}
 
 			// Top bar
@@ -803,7 +805,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 			if (currentEventType == EventType.MouseDrag && legendResize)
 			{
-				LegendWidth = Mathf.FloorToInt(mousePosition.x);
+				LegendWidth = mousePosition.x.FloorToInt();
 				EditorPrefs.SetInt(EditorSettings.LegendWidth, LegendWidth);
 			}
 
@@ -820,7 +822,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		private void DrawHorizontalLines(Rect graphRect, VerticalRange range)
 		{
 			Handles.color = GraphBoundsLineColor;
-			var ratio = Mathf.Clamp(graphRect.height * range.Min / range.Span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
+			var ratio = clamp(graphRect.height * range.Min / range.Span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
 
 			horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
 			horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
@@ -882,7 +884,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			// Sub tick lines
 			{
 				var n = 0;
-				var startTime = Mathf.CeilToInt(timeStart / SubSecondLinesInterval) * SubSecondLinesInterval;
+				var startTime = (timeStart / SubSecondLinesInterval).CeilToInt() * SubSecondLinesInterval;
 				var t = startTime;
 
 				if (TimeWindow < TimeWindowForSubSecondLinesToAppear)
@@ -910,7 +912,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			{
 				Handles.color = SecondLinesColor;
 				var n = 0;
-				var startTime = Mathf.CeilToInt(timeStart);
+				var startTime = timeStart.CeilToInt();
 				var t = startTime;
 
 				while (t < timeEnd)
