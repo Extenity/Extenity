@@ -1,5 +1,6 @@
 ﻿using System;
 using Extenity.DataToolbox;
+using Extenity.MathToolbox;
 using UnityEditor;
 using UnityEngine;
 
@@ -124,10 +125,10 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		public static UnwrapParam UnwrapParam(UnwrapParam unwrapParam, bool showResetButton)
 		{
-			unwrapParam.hardAngle = EditorGUILayout.IntSlider(UnwrapParamContent_HardAngle, Mathf.RoundToInt(unwrapParam.hardAngle), 0, 180);
-			unwrapParam.packMargin = EditorGUILayout.IntSlider(UnwrapParamContent_PackMargin, Mathf.RoundToInt(unwrapParam.packMargin * 1024f), 1, 64) / 1024f;
-			unwrapParam.angleError = EditorGUILayout.IntSlider(UnwrapParamContent_AngleDistortion, Mathf.RoundToInt(unwrapParam.angleError * 100f), 1, 75) / 100f;
-			unwrapParam.areaError = EditorGUILayout.IntSlider(UnwrapParamContent_AreaDistortion, Mathf.RoundToInt(unwrapParam.areaError * 100f), 1, 75) / 100f;
+			unwrapParam.hardAngle = EditorGUILayout.IntSlider(UnwrapParamContent_HardAngle, (unwrapParam.hardAngle).RoundToInt(), 0, 180);
+			unwrapParam.packMargin = EditorGUILayout.IntSlider(UnwrapParamContent_PackMargin, (unwrapParam.packMargin * 1024f).RoundToInt(), 1, 64) / 1024f;
+			unwrapParam.angleError = EditorGUILayout.IntSlider(UnwrapParamContent_AngleDistortion, (unwrapParam.angleError * 100f).RoundToInt(), 1, 75) / 100f;
+			unwrapParam.areaError = EditorGUILayout.IntSlider(UnwrapParamContent_AreaDistortion, (unwrapParam.areaError * 100f).RoundToInt(), 1, 75) / 100f;
 
 			if (showResetButton)
 			{

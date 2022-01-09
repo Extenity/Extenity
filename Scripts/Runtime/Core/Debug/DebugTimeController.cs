@@ -75,7 +75,7 @@ namespace Extenity.DebugToolbox
 
 		private static void _SetTimeScale(int index)
 		{
-			index = Mathf.Clamp(index, 0, TimeScales.Length - 1);
+			index = clamp(index, 0, TimeScales.Length - 1);
 			var timeScale = TimeScales[index];
 			Time.timeScale = timeScale;
 			if (AlsoMatchFixedDeltaTimeOnSlowTimeScales)

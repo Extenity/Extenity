@@ -9,6 +9,7 @@ using Extenity.FlowToolbox;
 using Extenity.GameObjectToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 // TODO: Implement fade animation. See 118548391.
 
@@ -60,7 +61,7 @@ namespace Extenity.UIToolbox
 				// This is how it's going to be when implementing Fade or other types of animations. See 118548391.
 				// if (EnableFadeInAnimation)
 				// {
-				// 	max = Mathf.Max(max, FadeInDuration + FadeInDelay);
+				// 	max = max(max, FadeInDuration + FadeInDelay);
 				// }
 				return max;
 			}
@@ -78,7 +79,7 @@ namespace Extenity.UIToolbox
 				// This is how it's going to be when implementing Fade or other types of animations. See 118548391.
 				// if (EnableFadeInAnimation)
 				// {
-				// 	max = Mathf.Max(max, FadeOutDuration + FadeOutDelay);
+				// 	max = max(max, FadeOutDuration + FadeOutDelay);
 				// }
 				return max;
 			}
@@ -116,18 +117,18 @@ namespace Extenity.UIToolbox
 				if (!enabled)
 					return 0; // That makes the length to be counted as zero which helps parents to calculate delays correctly.
 
-				var max = _AnimationLengthOfBecomingVisible;
+				var maxFound = _AnimationLengthOfBecomingVisible;
 
 				// Also aggregate animation length of children
 				for (var i = 0; i < Children.Count; i++)
 				{
 					if (Children[i])
 					{
-						max = Mathf.Max(max, Children[i].AnimationLengthOfBecomingVisibleIncludingChildren); // Recursive call
+						maxFound = max(maxFound, Children[i].AnimationLengthOfBecomingVisibleIncludingChildren); // Recursive call
 					}
 				}
 
-				return max;
+				return maxFound;
 			}
 		}
 
@@ -139,18 +140,18 @@ namespace Extenity.UIToolbox
 				if (!enabled)
 					return 0; // That makes the length to be counted as zero which helps parents to calculate delays correctly.
 
-				var max = _AnimationLengthOfBecomingInvisible;
+				var maxFound = _AnimationLengthOfBecomingInvisible;
 
 				// Also aggregate animation length of children
 				for (var i = 0; i < Children.Count; i++)
 				{
 					if (Children[i])
 					{
-						max = Mathf.Max(max, Children[i].AnimationLengthOfBecomingInvisibleIncludingChildren); // Recursive call
+						maxFound = max(maxFound, Children[i].AnimationLengthOfBecomingInvisibleIncludingChildren); // Recursive call
 					}
 				}
 
-				return max;
+				return maxFound;
 			}
 		}
 

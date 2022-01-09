@@ -1,6 +1,7 @@
 ﻿#if UNITY
 
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.AnimationToolbox
 {
@@ -28,7 +29,7 @@ namespace Extenity.AnimationToolbox
 		{
 			var ratio = (Time.time - lastColorChangeTime) / FadeDuration;
 			ratio = Mathf.Clamp01(ratio);
-			material.color = Color.Lerp(startColor, endColor, Mathf.Sqrt(ratio));
+			material.color = Color.Lerp(startColor, endColor, sqrt(ratio));
 			//material.color = Color.Lerp(startColor, endColor, ratio * ratio);
 			//material.color = Color.Lerp(startColor, endColor, ratio);
 
