@@ -1,7 +1,5 @@
-﻿using static Unity.Mathematics.math;
-#if UNITY
-using UnityEngine;
-#endif
+﻿using Unity.Mathematics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.DataToolbox
 {
@@ -82,37 +80,33 @@ namespace Extenity.DataToolbox
 
 		#region Vector2/3 To CardinalDirection4/8
 
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-		public static CardinalDirection4 ToCardinalDirection4(this Vector2 vector)
+		public static CardinalDirection4 ToCardinalDirection4(this float2 vector)
 		{
 			var angle = atan2(vector.y, vector.x);
 			var octant = round(4 * angle / (2 * PI) + 4) % 4;
 			return (CardinalDirection4)(octant + 1);
 		}
 
-		public static CardinalDirection4 ToCardinalDirection4XZ(this Vector3 vector)
+		public static CardinalDirection4 ToCardinalDirection4XZ(this float3 vector)
 		{
 			var angle = atan2(vector.z, vector.x);
 			var octant = round(4 * angle / (2 * PI) + 4) % 4;
 			return (CardinalDirection4)(octant + 1);
 		}
 
-		public static CardinalDirection8 ToCardinalDirection8(this Vector2 vector)
+		public static CardinalDirection8 ToCardinalDirection8(this float2 vector)
 		{
 			var angle = atan2(vector.y, vector.x);
 			var octant = round(8 * angle / (2 * PI) + 8) % 8;
 			return (CardinalDirection8)(octant + 1);
 		}
 
-		public static CardinalDirection8 ToCardinalDirection8XZ(this Vector3 vector)
+		public static CardinalDirection8 ToCardinalDirection8XZ(this float3 vector)
 		{
 			var angle = atan2(vector.z, vector.x);
 			var octant = round(8 * angle / (2 * PI) + 8) % 8;
 			return (CardinalDirection8)(octant + 1);
 		}
-
-#endif
 
 		#endregion
 	}
