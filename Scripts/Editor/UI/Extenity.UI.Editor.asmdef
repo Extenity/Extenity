@@ -5,7 +5,8 @@
         "Extenity.Core",
         "Extenity.Core.Editor",
         "Extenity.UI",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [
         "Editor"
