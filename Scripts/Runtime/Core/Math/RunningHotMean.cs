@@ -1,9 +1,7 @@
-﻿#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using System;
+﻿using System;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Extenity.MathToolbox
 {
@@ -172,19 +170,19 @@ namespace Extenity.MathToolbox
 		}
 	}
 
-	public class RunningHotMeanVector3
+	public class RunningHotMeanFloat3
 	{
 		/// <summary>
 		/// CAUTION! Use it as readonly, do not modify. Use 'Push' and 'Clear' instead.
 		/// </summary>
-		public readonly CircularArray<Vector3> Values;
+		public readonly CircularArray<float3> Values;
 		public int ValueCount => Values.Count;
 		public int ValueCapacity => Values.Capacity;
 
 		private bool IsInvalidated;
 
-		private Vector3 _Mean;
-		public Vector3 Mean
+		private float3 _Mean;
+		public float3 Mean
 		{
 			get
 			{
@@ -196,19 +194,19 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		private Vector3 CalculateMean()
+		private float3 CalculateMean()
 		{
 			var valueCount = Values.Count;
 			if (valueCount == 0)
 				return default;
-			Vector3 total = default;
+			float3 total = default;
 			Values.ForEach(item => total += item);
 			return total / valueCount;
 		}
 
-		public RunningHotMeanVector3(int size)
+		public RunningHotMeanFloat3(int size)
 		{
-			Values = new CircularArray<Vector3>(size);
+			Values = new CircularArray<float3>(size);
 			IsInvalidated = false;
 			_Mean = default;
 		}
@@ -220,7 +218,7 @@ namespace Extenity.MathToolbox
 			_Mean = default;
 		}
 
-		public void Push(Vector3 value)
+		public void Push(float3 value)
 		{
 			IsInvalidated = true;
 			Values.Add(value);
@@ -228,5 +226,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif

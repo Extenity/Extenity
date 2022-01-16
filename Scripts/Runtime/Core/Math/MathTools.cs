@@ -28,6 +28,9 @@ namespace Extenity.MathToolbox
 		public const float HalfPI = 0.5f * math.PI;
 		public const float E = 2.7182818284590452353602874f;
 
+		public const float Deg2Rad = 0.0174532925f;
+		public const float Rad2Deg = 57.295779513f;
+
 		public const float ZeroTolerance = 1e-5f;
 
 		public static bool IsZero(this float value)

@@ -1,4 +1,4 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+#if UNITY
 
 using System;
 using System.Collections.Generic;

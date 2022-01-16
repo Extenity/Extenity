@@ -7,9 +7,7 @@ namespace Extenity.MathToolbox
 	{
 		public const float RadiansPerSecondToRPM = 9.54929659643f;
 		public const float RPMToRadiansPerSecond = 1f / RadiansPerSecondToRPM;
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-		public const float RPMToDegreesPerSecond = UnityEngine.Mathf.Rad2Deg / RadiansPerSecondToRPM;
-#endif
+		public const float RPMToDegreesPerSecond = MathTools.Rad2Deg / RadiansPerSecondToRPM;
 
 		public const float MetersPerSecondToKMH = 3.6f;
 		public const float RPMToLinearVelocityInMetersPerSecond = 0.10472f;
