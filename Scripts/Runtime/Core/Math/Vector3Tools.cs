@@ -163,60 +163,6 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Four Basic Math Operations on Vector Arrays
-
-		public static void Plus(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] += value;
-		}
-
-		public static void Plus(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x += value.x;
-				array[i].y += value.y;
-				array[i].z += value.z;
-			}
-		}
-
-		public static void Minus(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] -= value;
-		}
-
-		public static void Minus(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x -= value.x;
-				array[i].y -= value.y;
-				array[i].z -= value.z;
-			}
-		}
-
-		public static void Mul(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Mul(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Div(this Vector3[] array, Vector3 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		public static void Div(this Vector3[] array, Vector3Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		#endregion
-
 		#region Mid
 
 		public static Vector3 Mid(this Vector3 va, Vector3 vb)

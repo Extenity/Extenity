@@ -175,58 +175,6 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		#region Four Basic Math Operations on Vector Arrays
-
-		public static void Plus(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] += value;
-		}
-
-		public static void Plus(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x += value.x;
-				array[i].y += value.y;
-			}
-		}
-
-		public static void Minus(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] -= value;
-		}
-
-		public static void Minus(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].x -= value.x;
-				array[i].y -= value.y;
-			}
-		}
-
-		public static void Mul(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Mul(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Mul(array[i], value);
-		}
-
-		public static void Div(this Vector2[] array, Vector2 value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		public static void Div(this Vector2[] array, Vector2Int value)
-		{
-			for (int i = 0; i < array.Length; i++) array[i] = Div(array[i], value);
-		}
-
-		#endregion
-
 		#region Mid
 
 		public static Vector2 Mid(this Vector2 va, Vector2 vb)
