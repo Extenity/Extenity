@@ -25,7 +25,7 @@ namespace Extenity.DataToolbox
 			Orientation = orientation;
 		}
 
-		public static readonly OrientedPoint NaN = new OrientedPoint(Vector3Tools.NaN, Vector3Tools.NaN);
+		public static readonly OrientedPoint NaN = new OrientedPoint(float3Tools.NaN, float3Tools.NaN);
 
 		public bool IsAnyNaN => Position.IsAnyNaN() || Orientation.IsAnyNaN();
 

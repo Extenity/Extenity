@@ -1,19 +1,22 @@
-﻿#if UNITY
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEngine;
 using static Unity.Mathematics.math;
+#if UNITY
+using UnityEngine;
+#endif
 
 namespace Extenity.MathToolbox
 {
 
 	public static class BoundsTools
 	{
+#if UNITY
 		public static readonly Bounds NaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
+#endif
 
 		#region Fix and Reset Bounds
 
+#if UNITY
 		public static void Fix(this Bounds bounds)
 		{
 			var min = bounds.min;
@@ -97,6 +100,7 @@ namespace Extenity.MathToolbox
 				float3Tools.MaxValue,
 				float3Tools.MinValue);
 		}
+#endif
 
 		#endregion
 
@@ -206,5 +210,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif

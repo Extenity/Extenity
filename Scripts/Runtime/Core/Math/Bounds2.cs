@@ -1,8 +1,8 @@
-﻿#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using Unity.Mathematics;
 using UnityEngine;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -14,17 +14,21 @@ namespace Extenity.MathToolbox
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Bounds2
 	{
-		[SerializeField]
-		private Vector2 m_Center;
-		[SerializeField]
-		private Vector2 m_Extents;
+#if UNITY
+		[UnityEngine.SerializeField]
+#endif
+		private float2 m_Center;
+#if UNITY
+		[UnityEngine.SerializeField]
+#endif
+		private float2 m_Extents;
 
 		/// <summary>
 		///   <para>Creates a new Bounds.</para>
 		/// </summary>
 		/// <param name="center">The location of the origin of the Bounds.</param>
 		/// <param name="size">The dimensions of the Bounds.</param>
-		public Bounds2(Vector2 center, Vector2 size)
+		public Bounds2(float2 center, float2 size)
 		{
 			m_Center = center;
 			m_Extents = size * 0.5F;
@@ -46,32 +50,32 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>The center of the bounding box.</para>
 		/// </summary>
-		public Vector2 center { get { return m_Center; } set { m_Center = value; } }
+		public float2 center { get { return m_Center; } set { m_Center = value; } }
 
 		/// <summary>
 		///   <para>The total size of the box. This is always twice as large as the extents.</para>
 		/// </summary>
-		public Vector2 size { get { return m_Extents * 2.0F; } set { m_Extents = value * 0.5F; } }
+		public float2 size { get { return m_Extents * 2.0F; } set { m_Extents = value * 0.5F; } }
 
 		/// <summary>
 		///   <para>The extents of the Bounding Box. This is always half of the size of the Bounds.</para>
 		/// </summary>
-		public Vector2 extents { get { return m_Extents; } set { m_Extents = value; } }
+		public float2 extents { get { return m_Extents; } set { m_Extents = value; } }
 
 		/// <summary>
 		///   <para>The minimal point of the box. This is always equal to center-extents.</para>
 		/// </summary>
-		public Vector2 min { get { return center - extents; } set { SetMinMax(value, max); } }
+		public float2 min { get { return center - extents; } set { SetMinMax(value, max); } }
 
 		/// <summary>
 		///   <para>The maximal point of the box. This is always equal to center+extents.</para>
 		/// </summary>
-		public Vector2 max { get { return center + extents; } set { SetMinMax(min, value); } }
+		public float2 max { get { return center + extents; } set { SetMinMax(min, value); } }
 
 		public static bool operator ==(Bounds2 lhs, Bounds2 rhs)
 		{
 			// Returns false in the presence of NaN values.
-			return (lhs.center == rhs.center && lhs.extents == rhs.extents);
+			return all(lhs.center == rhs.center) && all(lhs.extents == rhs.extents);
 		}
 
 		public static bool operator !=(Bounds2 lhs, Bounds2 rhs)
@@ -83,7 +87,7 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>Sets the bounds to the min and max value of the box.</para>
 		/// </summary>
-		public void SetMinMax(Vector2 min, Vector2 max)
+		public void SetMinMax(float2 min, float2 max)
 		{
 			extents = (max - min) * 0.5F;
 			center = min + extents;
@@ -92,9 +96,9 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>Grows the Bounds to include the point.</para>
 		/// </summary>
-		public void Encapsulate(Vector2 point)
+		public void Encapsulate(float2 point)
 		{
-			SetMinMax(Vector2.Min(min, point), Vector2.Max(max, point));
+			SetMinMax(min(min, point), max(max, point));
 		}
 
 		/// <summary>
@@ -112,13 +116,13 @@ namespace Extenity.MathToolbox
 		public void Expand(float amount)
 		{
 			amount *= .5f;
-			extents += new Vector2(amount, amount);
+			extents += new float2(amount, amount);
 		}
 
 		/// <summary>
 		///   <para>Expand the bounds by increasing its size by amount along each side.</para>
 		/// </summary>
-		public void Expand(Vector2 amount)
+		public void Expand(float2 amount)
 		{
 			extents += amount * .5f;
 		}
@@ -163,15 +167,15 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>Returns a nicely formatted string for the bounds.</para>
 		/// </summary>
-		public string ToString(string format)
+		public string ToString(string format, IFormatProvider formatProvider)
 		{
-			return $"Center: {m_Center.ToString(format)}, Extents: {m_Extents.ToString(format)}";
+			return $"Center: {m_Center.ToString(format, formatProvider)}, Extents: {m_Extents.ToString(format, formatProvider)}";
 		}
 
 		/// <summary>
 		///   <para>Is point contained in the bounding box?</para>
 		/// </summary>
-		public bool Contains(Vector2 point, float tolerance = 0.0001f)
+		public bool Contains(float2 point, float tolerance = 0.0001f)
 		{
 			return point.x > center.x - extents.x - tolerance &&
 			       point.x < center.x + extents.x + tolerance &&
@@ -183,7 +187,7 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>The smallest squared distance between the point and this bounding box.</para>
 		/// </summary>
-		public float SqrDistance(Vector2 point)
+		public float SqrDistance(float2 point)
 		{
 			throw new NotImplementedException();
 			//return Bounds.SqrDistance_Injected(ref this, ref point);
@@ -196,15 +200,13 @@ namespace Extenity.MathToolbox
 		/// <returns>
 		///   <para>The point on the bounding box or inside the bounding box.</para>
 		/// </returns>
-		public Vector2 ClosestPoint(Vector2 point)
+		public float2 ClosestPoint(float2 point)
 		{
 			throw new NotImplementedException();
-			//Vector2 ret;
+			//float2 ret;
 			//Bounds.ClosestPoint_Injected(ref this, ref point, out ret);
 			//return ret;
 		}
 	}
 
 }
-
-#endif
