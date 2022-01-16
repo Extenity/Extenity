@@ -1,6 +1,3 @@
-#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
-//#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
@@ -109,5 +106,3 @@ namespace Extenity.ProfilingToolbox
 	}
 
 }
-
-#endif

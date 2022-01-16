@@ -1,6 +1,4 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Extenity.MathToolbox
 {
@@ -10,8 +8,8 @@ namespace Extenity.MathToolbox
 		#region Line Intersection
 
 		public static bool CheckLineLineIntersection(
-			Vector2 line1Point1, Vector2 line1Point2,
-			Vector2 line2Point1, Vector2 line2Point2)
+			float2 line1Point1, float2 line1Point2,
+			float2 line2Point1, float2 line2Point2)
 		{
 			var b = line1Point2 - line1Point1;
 			var d = line2Point2 - line2Point1;
@@ -34,22 +32,22 @@ namespace Extenity.MathToolbox
 
 		#region Spline Operations - Bezier, CatmullRom
 
-		public static Vector3 GetBezierPoint(Vector3 p1, Vector3 p2, Vector3 p3, float t)
+		public static float3 GetBezierPoint(float3 p1, float3 p2, float3 p3, float t)
 		{
 			var it = 1 - t;
 			var it2 = it * it;
 			var itt = it * t;
 			var t2 = t * t;
 
-			return new Vector3(
+			return new float3(
 				(p1.x * it2 + 2 * p2.x * itt + p3.x * t2),
 				(p1.y * it2 + 2 * p2.y * itt + p3.y * t2),
 				(p1.z * it2 + 2 * p2.z * itt + p3.z * t2)
 				);
 		}
 
-		public static Vector3 GetCatmullRomPoint(
-			Vector3 previous, Vector3 start, Vector3 end, Vector3 next,
+		public static float3 GetCatmullRomPoint(
+			float3 previous, float3 start, float3 end, float3 next,
 			float percentage)
 		{
 			// References used:
@@ -80,5 +78,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
