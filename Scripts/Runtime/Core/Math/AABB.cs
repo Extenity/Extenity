@@ -1,8 +1,7 @@
-﻿#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -11,8 +10,8 @@ namespace Extenity.MathToolbox
 	{
 		public const float Epsilon = 0.00001f;
 
-		public Vector2 Max;
-		public Vector2 Min;
+		public float2 Max;
+		public float2 Min;
 
 		public AABB(AABB aabb)
 		{
@@ -20,13 +19,13 @@ namespace Extenity.MathToolbox
 			Max = aabb.Max;
 		}
 
-		public AABB(Vector2 min, Vector2 max)
+		public AABB(float2 min, float2 max)
 		{
 			Min = min;
 			Max = max;
 		}
 
-		public AABB(Vector2 singlePoint)
+		public AABB(float2 singlePoint)
 		{
 			Min = singlePoint;
 			Max = singlePoint;
@@ -54,11 +53,11 @@ namespace Extenity.MathToolbox
 		/// Gets or sets the center of the AABB
 		/// </summary>
 		/// <value>The center.</value>
-		public Vector2 Center
+		public float2 Center
 		{
 			get
 			{
-				return new Vector2((Min.x + Max.x) / 2f, (Min.y + Max.y) / 2f);
+				return new float2((Min.x + Max.x) / 2f, (Min.y + Max.y) / 2f);
 			}
 			set
 			{
@@ -75,16 +74,16 @@ namespace Extenity.MathToolbox
 		/// Gets the vertices of the AABB.
 		/// </summary>
 		/// <returns>The corners of the AABB</returns>
-		public List<Vector2> Vertices
+		public List<float2> Vertices
 		{
 			get
 			{
-				return new List<Vector2>
+				return new List<float2>
 			{
 				Min,
-				new Vector2(Min.x, Max.y),
+				new float2(Min.x, Max.y),
 				Max,
-				new Vector2(Max.x, Min.y)
+				new float2(Max.x, Min.y)
 			};
 			}
 		}
@@ -108,7 +107,7 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		/// <param name="point">The point.</param>
 		/// <returns>The distance</returns>
-		public float DistanceTo(Vector2 point)
+		public float DistanceTo(float2 point)
 		{
 			var xDistance = Math.Abs(point.x - ((Max.x + Min.x) / 2f)) - (Max.x - Min.x) / 2f;
 			var yDistance = Math.Abs(point.y - ((Max.y + Min.y) / 2f)) - (Max.y - Min.y) / 2f;
@@ -127,7 +126,7 @@ namespace Extenity.MathToolbox
 		/// Encapsulates the AABB with specified point.
 		/// </summary>
 		/// <param name="point">The point.</param>
-		public void Encapsulate(Vector2 point)
+		public void Encapsulate(float2 point)
 		{
 			if (point.x < Min.x) Min.x = point.x;
 			if (point.x > Max.x) Max.x = point.x;
@@ -139,7 +138,7 @@ namespace Extenity.MathToolbox
 		/// Encapsulates the AABB with specified points.
 		/// </summary>
 		/// <param name="points">The points.</param>
-		public void Encapsulate(List<Vector2> points)
+		public void Encapsulate(List<float2> points)
 		{
 			if (points == null || points.Count == 0)
 				return;
@@ -168,7 +167,7 @@ namespace Extenity.MathToolbox
 		/// Resets the AABB with specified points.
 		/// </summary>
 		/// <param name="points">The points.</param>
-		public void Reset(List<Vector2> points)
+		public void Reset(List<float2> points)
 		{
 			if (points == null || points.Count == 0)
 			{
@@ -191,7 +190,7 @@ namespace Extenity.MathToolbox
 		/// Resets the AABB with specified points.
 		/// </summary>
 		/// <param name="points">The points.</param>
-		public void ResetXY(List<Vector3> points)
+		public void ResetXY(List<float3> points)
 		{
 			if (points == null || points.Count == 0)
 			{
@@ -199,7 +198,7 @@ namespace Extenity.MathToolbox
 				return;
 			}
 
-			Max = Min = points[0];
+			Max = Min = points[0].xy;
 			for (int i = 1; i < points.Count; i++)
 			{
 				var point = points[i];
@@ -214,7 +213,7 @@ namespace Extenity.MathToolbox
 		/// Resets the AABB with specified points.
 		/// </summary>
 		/// <param name="points">The points.</param>
-		public void ResetXZ(List<Vector3> points)
+		public void ResetXZ(List<float3> points)
 		{
 			if (points == null || points.Count == 0)
 			{
@@ -222,7 +221,7 @@ namespace Extenity.MathToolbox
 				return;
 			}
 
-			Max = Min = points[0];
+			Max = Min = points[0].xz;
 			for (int i = 1; i < points.Count; i++)
 			{
 				var point = points[i];
@@ -238,8 +237,8 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public void Reset()
 		{
-			Min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-			Max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+			Min = new float2(float.PositiveInfinity, float.PositiveInfinity);
+			Max = new float2(float.NegativeInfinity, float.NegativeInfinity);
 		}
 
 		/// <summary>
@@ -249,7 +248,7 @@ namespace Extenity.MathToolbox
 		/// <returns>
 		/// 	<c>true</c> if it contains the specified point; otherwise, <c>false</c>.
 		/// </returns>
-		public bool Contains(Vector2 point)
+		public bool Contains(float2 point)
 		{
 			return
 				point.x > (Min.x - Epsilon) &&
@@ -290,7 +289,7 @@ namespace Extenity.MathToolbox
 
 		public bool Equals(AABB other)
 		{
-			return ((Min == other.Min) && (Max == other.Max));
+			return (all(Min == other.Min) && all(Max == other.Max));
 		}
 
 		#endregion
@@ -305,7 +304,7 @@ namespace Extenity.MathToolbox
 
 		public bool Equals(ref AABB other)
 		{
-			return ((Min == other.Min) && (Max == other.Max));
+			return (all(Min == other.Min) && all(Max == other.Max));
 		}
 
 		public override int GetHashCode()
@@ -325,5 +324,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
