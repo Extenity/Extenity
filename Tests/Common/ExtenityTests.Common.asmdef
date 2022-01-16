@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Extenity.Core",
+        "Unity.Mathematics",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

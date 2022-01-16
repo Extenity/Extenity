@@ -5,6 +5,7 @@
         "Extenity.Core",
         "Extenity.Core.Editor",
         "Extenity.Testing",
+        "Unity.Mathematics",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
