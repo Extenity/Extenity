@@ -3,6 +3,7 @@
 using System;
 using Extenity.MathToolbox;
 using Extenity.MeshToolbox;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -13,14 +14,14 @@ namespace Extenity.UnityEditorToolbox
 		#region Path
 
 		public static void DrawPathLines(
-			Func<int, Vector3> pointGetter, int pointCount, bool loop,
+			Func<int, float3> pointGetter, int pointCount, bool loop,
 			Color lineColor)
 		{
 			DrawPath(pointGetter, pointCount, loop, true, lineColor, false, default(Color), float.NaN, float.NaN);
 		}
 
 		public static void DrawPath(
-			Func<int, Vector3> pointGetter, int pointCount, bool loop,
+			Func<int, float3> pointGetter, int pointCount, bool loop,
 			bool drawLines, Color lineColor,
 			bool drawPoints, Color pointColor,
 			float pointSize, float firstPointSizeFactor = 1f)

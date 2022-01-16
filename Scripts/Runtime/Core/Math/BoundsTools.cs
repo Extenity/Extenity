@@ -1,6 +1,7 @@
-﻿#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+﻿#if UNITY
 
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using static Unity.Mathematics.math;
 
@@ -15,8 +16,8 @@ namespace Extenity.MathToolbox
 
 		public static void Fix(this Bounds bounds)
 		{
-			Vector3 min = bounds.min;
-			Vector3 max = bounds.max;
+			var min = bounds.min;
+			var max = bounds.max;
 
 			bool switchX = min.x > max.x;
 			bool switchY = min.y > max.y;
@@ -29,14 +30,14 @@ namespace Extenity.MathToolbox
 					if (switchZ)
 					{
 						bounds.SetMinMax(
-							new Vector3(max.x, max.y, max.z),
-							new Vector3(min.x, min.y, min.z));
+							float3(max.x, max.y, max.z),
+							float3(min.x, min.y, min.z));
 					}
 					else
 					{
 						bounds.SetMinMax(
-							new Vector3(max.x, max.y, min.z),
-							new Vector3(min.x, min.y, max.z));
+							float3(max.x, max.y, min.z),
+							float3(min.x, min.y, max.z));
 					}
 				}
 				else
@@ -44,14 +45,14 @@ namespace Extenity.MathToolbox
 					if (switchZ)
 					{
 						bounds.SetMinMax(
-							new Vector3(max.x, min.y, max.z),
-							new Vector3(min.x, max.y, min.z));
+							float3(max.x, min.y, max.z),
+							float3(min.x, max.y, min.z));
 					}
 					else
 					{
 						bounds.SetMinMax(
-							new Vector3(max.x, min.y, min.z),
-							new Vector3(min.x, max.y, max.z));
+							float3(max.x, min.y, min.z),
+							float3(min.x, max.y, max.z));
 					}
 				}
 			}
@@ -62,14 +63,14 @@ namespace Extenity.MathToolbox
 					if (switchZ)
 					{
 						bounds.SetMinMax(
-							new Vector3(min.x, max.y, max.z),
-							new Vector3(max.x, min.y, min.z));
+							float3(min.x, max.y, max.z),
+							float3(max.x, min.y, min.z));
 					}
 					else
 					{
 						bounds.SetMinMax(
-							new Vector3(min.x, max.y, min.z),
-							new Vector3(max.x, min.y, max.z));
+							float3(min.x, max.y, min.z),
+							float3(max.x, min.y, max.z));
 					}
 				}
 				else
@@ -77,14 +78,14 @@ namespace Extenity.MathToolbox
 					if (switchZ)
 					{
 						bounds.SetMinMax(
-							new Vector3(min.x, min.y, max.z),
-							new Vector3(max.x, max.y, min.z));
+							float3(min.x, min.y, max.z),
+							float3(max.x, max.y, min.z));
 					}
 					else
 					{
 						bounds.SetMinMax(
-							new Vector3(min.x, min.y, min.z),
-							new Vector3(max.x, max.y, max.z));
+							float3(min.x, min.y, min.z),
+							float3(max.x, max.y, max.z));
 					}
 				}
 			}
@@ -93,15 +94,15 @@ namespace Extenity.MathToolbox
 		public static void Reset(this Bounds bounds)
 		{
 			bounds.SetMinMax(
-				new Vector3(float.MaxValue, float.MaxValue, float.MaxValue),
-				new Vector3(float.MinValue, float.MinValue, float.MinValue));
+				float3Tools.MaxValue,
+				float3Tools.MinValue);
 		}
 
 		#endregion
 
 		#region Calculate Bounds Of Points
 
-		public static Bounds2 CalculateBounds(this IList<Vector2> points)
+		public static Bounds2 CalculateBounds(this IList<float2> points)
 		{
 			var minX = points[0].x;
 			var maxX = points[0].x;
@@ -116,11 +117,11 @@ namespace Extenity.MathToolbox
 				maxY = max(q.y, maxY);
 			}
 			var bounds = new Bounds2();
-			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
+			bounds.SetMinMax(float2(minX, minY), float2(maxX, maxY));
 			return bounds;
 		}
 
-		public static Bounds2 CalculateBoundsXY(this IList<Vector3> points)
+		public static Bounds2 CalculateBoundsXY(this IList<float3> points)
 		{
 			var minX = points[0].x;
 			var maxX = points[0].x;
@@ -135,11 +136,11 @@ namespace Extenity.MathToolbox
 				maxY = max(q.y, maxY);
 			}
 			var bounds = new Bounds2();
-			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
+			bounds.SetMinMax(float2(minX, minY), float2(maxX, maxY));
 			return bounds;
 		}
 
-		public static Bounds2 CalculateBoundsXZ(this IList<Vector3> points)
+		public static Bounds2 CalculateBoundsXZ(this IList<float3> points)
 		{
 			var minX = points[0].x;
 			var maxX = points[0].x;
@@ -154,7 +155,7 @@ namespace Extenity.MathToolbox
 				maxY = max(q.z, maxY);
 			}
 			var bounds = new Bounds2();
-			bounds.SetMinMax(new Vector2(minX, minY), new Vector2(maxX, maxY));
+			bounds.SetMinMax(float2(minX, minY), float2(maxX, maxY));
 			return bounds;
 		}
 

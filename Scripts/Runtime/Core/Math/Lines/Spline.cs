@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
+using Unity.Mathematics;
 using UnityEngine.Events;
 
 namespace Extenity.MathToolbox
@@ -49,7 +50,7 @@ namespace Extenity.MathToolbox
 		#region Points - Raw
 
 		[Header("Data")]
-		public List<Vector3> RawPoints;
+		public List<float3> RawPoints;
 
 		public bool IsAnyRawPointAvailable => RawPoints != null && RawPoints.Count > 0;
 
@@ -58,26 +59,26 @@ namespace Extenity.MathToolbox
 			RawPoints?.Clear();
 		}
 
-		public Vector3 GetRawPointPosition(int index)
+		public float3 GetRawPointPosition(int index)
 		{
 			return RawPoints[index];
 		}
 
-		public Vector3 GetRawPointLocalPosition(int index)
+		public float3 GetRawPointLocalPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? RawPoints[index]
 				: transform.InverseTransformPoint(RawPoints[index]);
 		}
 
-		public Vector3 GetRawPointWorldPosition(int index)
+		public float3 GetRawPointWorldPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? transform.TransformPoint(RawPoints[index])
 				: RawPoints[index];
 		}
 
-		public int SortRawLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
+		public int SortRawLineStripUsingClosestSequentialPointsMethod(float3 initialPointReference)
 		{
 			return RawPoints.SortLineStripUsingClosestSequentialPointsMethod(initialPointReference);
 		}
@@ -87,7 +88,7 @@ namespace Extenity.MathToolbox
 		#region Points - Processed
 
 		[NonSerialized]
-		public List<Vector3> ProcessedPoints;
+		public List<float3> ProcessedPoints;
 
 		public bool IsAnyProcessedPointAvailable => ProcessedPoints != null && ProcessedPoints.Count > 0;
 
@@ -106,19 +107,19 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		public Vector3 GetProcessedPointPosition(int index)
+		public float3 GetProcessedPointPosition(int index)
 		{
 			return ProcessedPoints[index];
 		}
 
-		public Vector3 GetProcessedPointLocalPosition(int index)
+		public float3 GetProcessedPointLocalPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? ProcessedPoints[index]
 				: transform.InverseTransformPoint(ProcessedPoints[index]);
 		}
 
-		public Vector3 GetProcessedPointWorldPosition(int index)
+		public float3 GetProcessedPointWorldPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? transform.TransformPoint(ProcessedPoints[index])
@@ -137,7 +138,7 @@ namespace Extenity.MathToolbox
 				// Clear previous points
 				if (ProcessedPoints == null)
 				{
-					ProcessedPoints = new List<Vector3>();
+					ProcessedPoints = new List<float3>();
 				}
 				else
 				{
@@ -154,7 +155,7 @@ namespace Extenity.MathToolbox
 			InvalidateProcessedLine();
 		}
 
-		private static void ProcessPointsUsingSmoothing(List<Vector3> smoothedPoints, List<Vector3> points)
+		private static void ProcessPointsUsingSmoothing(List<float3> smoothedPoints, List<float3> points)
 		{
 			if (points == null || points.Count == 0)
 				return;
@@ -267,36 +268,36 @@ namespace Extenity.MathToolbox
 
 		#region Calculations - Raw
 
-		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, Space space)
+		public float3 GetRawPointAtDistanceFromStart(float distanceFromStart, Space space)
 		{
 			var position = RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetRawPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
+		public float3 GetRawPointAtDistanceFromStart(float distanceFromStart, ref float3 part, Space space)
 		{
 			var position = RawPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnRawLine(Vector3 point, Space space)
+		public float3 ClosestPointOnRawLine(float3 point, Space space)
 		{
 			var position = RawPoints.ClosestPointOnLineStrip(point, Loop);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnRawLine(Vector3 point, ref Vector3 part, Space space)
+		public float3 ClosestPointOnRawLine(float3 point, ref float3 part, Space space)
 		{
 			var position = RawPoints.ClosestPointOnLineStrip(point, Loop, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public float DistanceFromStartOfClosestPointOnRawLine(Vector3 point)
+		public float DistanceFromStartOfClosestPointOnRawLine(float3 point)
 		{
 			return RawPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPointOnRawLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
+		public float3 GetPointAheadOfClosestPointOnRawLine(float3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			var position = RawPoints.GetPointAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalRawLength);
 			return TransformFromDataSpace(position, space);
@@ -306,36 +307,36 @@ namespace Extenity.MathToolbox
 
 		#region Calculations - Processed
 
-		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, Space space)
+		public float3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, Space space)
 		{
 			var position = ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
+		public float3 GetProcessedPointAtDistanceFromStart(float distanceFromStart, ref float3 part, Space space)
 		{
 			var position = ProcessedPoints.GetPointAtDistanceFromStart(Loop, distanceFromStart, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnProcessedLine(Vector3 point, Space space)
+		public float3 ClosestPointOnProcessedLine(float3 point, Space space)
 		{
 			var position = ProcessedPoints.ClosestPointOnLineStrip(point, Loop);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointOnProcessedLine(Vector3 point, ref Vector3 part, Space space)
+		public float3 ClosestPointOnProcessedLine(float3 point, ref float3 part, Space space)
 		{
 			var position = ProcessedPoints.ClosestPointOnLineStrip(point, Loop, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public float DistanceFromStartOfClosestPointOnProcessedLine(Vector3 point)
+		public float DistanceFromStartOfClosestPointOnProcessedLine(float3 point)
 		{
 			return ProcessedPoints.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointAheadOfClosestPointOnProcessedLine(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
+		public float3 GetPointAheadOfClosestPointOnProcessedLine(float3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			var position = ProcessedPoints.GetPointAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalProcessedLength);
 			return TransformFromDataSpace(position, space);
@@ -473,7 +474,7 @@ namespace Extenity.MathToolbox
 
 		#region Space Transformation
 
-		public Vector3 TransformFromDataSpace(Vector3 pointInDataSpace, Space targetSpace)
+		public float3 TransformFromDataSpace(float3 pointInDataSpace, Space targetSpace)
 		{
 			switch (targetSpace)
 			{

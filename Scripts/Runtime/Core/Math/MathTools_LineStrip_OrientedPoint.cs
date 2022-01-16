@@ -1,9 +1,8 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
-using UnityEngine;
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -77,10 +76,10 @@ namespace Extenity.MathToolbox
 
 		#region GetPointPositionAtDistanceFromStart
 
-		public static Vector3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
+		public static float3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -110,10 +109,10 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, ref Vector3 part, int bufferSize = -1)
+		public static float3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -161,10 +160,10 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, int bufferSize = -1)
+		public static float3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -193,10 +192,10 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, int bufferSize = -1)
+		public static float3 GetPointPositionAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -246,10 +245,10 @@ namespace Extenity.MathToolbox
 
 		#region GetLinePartAtDistanceFromStart
 
-		public static Vector3 GetLinePartAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, ref int startingPointIndexOfPart, ref Vector3 part, int bufferSize = -1)
+		public static float3 GetLinePartAtDistanceFromStart(this IList<OrientedPoint> points, float distanceFromStart, ref int startingPointIndexOfPart, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -260,7 +259,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i].Position;
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -280,10 +279,10 @@ namespace Extenity.MathToolbox
 			return previousPoint;
 		}
 
-		public static Vector3 GetLinePartAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, ref int startingPointIndexOfPart, ref Vector3 part, int bufferSize = -1)
+		public static float3 GetLinePartAtDistanceFromStart(this IList<OrientedPoint> points, bool loop, float distanceFromStart, ref int startingPointIndexOfPart, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1 || distanceFromStart < 0f)
 				return points[0].Position;
 
@@ -294,7 +293,7 @@ namespace Extenity.MathToolbox
 			for (int i = 1; i < bufferSize; i++)
 			{
 				var currentPoint = points[i].Position;
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -313,7 +312,7 @@ namespace Extenity.MathToolbox
 			if (loop)
 			{
 				var currentPoint = points[0].Position;
-				var distance = Vector3.Distance(previousPoint, currentPoint);
+				var distance = previousPoint.DistanceTo(currentPoint);
 
 				if (distanceFromStart - totalDistance < distance)
 				{
@@ -336,10 +335,10 @@ namespace Extenity.MathToolbox
 
 		#region ClosestPointPositionOnLineStrip
 
-		public static Vector3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, Vector3 point, int bufferSize = -1)
+		public static float3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, float3 point, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1)
 				return points[0].Position;
 
@@ -353,7 +352,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[i].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -367,10 +366,10 @@ namespace Extenity.MathToolbox
 			return closestPoint;
 		}
 
-		public static Vector3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, Vector3 point, ref Vector3 part, int bufferSize = -1)
+		public static float3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, float3 point, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1)
 				return points[0].Position;
 
@@ -384,7 +383,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[i].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -399,10 +398,10 @@ namespace Extenity.MathToolbox
 			return closestPoint;
 		}
 
-		public static Vector3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, Vector3 point, bool loop, int bufferSize = -1)
+		public static float3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, float3 point, bool loop, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1)
 				return points[0].Position;
 
@@ -416,7 +415,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[i].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -431,7 +430,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[0].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -445,10 +444,10 @@ namespace Extenity.MathToolbox
 			return closestPoint;
 		}
 
-		public static Vector3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, Vector3 point, bool loop, ref Vector3 part, int bufferSize = -1)
+		public static float3 ClosestPointPositionOnLineStrip(this IList<OrientedPoint> points, float3 point, bool loop, ref float3 part, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			if (points.Count == 1)
 				return points[0].Position;
 
@@ -462,7 +461,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[i].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -478,7 +477,7 @@ namespace Extenity.MathToolbox
 				var currentPoint = points[0].Position;
 
 				var currentSegmentClosestPoint = ClosestPointOnLineSegment(previousPoint, currentPoint, point);
-				var sqrDistance = (currentSegmentClosestPoint - point).sqrMagnitude;
+				var sqrDistance = lengthsq(currentSegmentClosestPoint - point);
 
 				if (closestPointSqrDistance > sqrDistance)
 				{
@@ -497,7 +496,7 @@ namespace Extenity.MathToolbox
 
 		#region DistanceFromStartOfClosestPointOnLineStrip
 
-		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<OrientedPoint> points, Vector3 point, int bufferSize = -1)
+		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<OrientedPoint> points, float3 point, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
 				return float.NaN;
@@ -532,7 +531,7 @@ namespace Extenity.MathToolbox
 			return distanceFromStartOfClosestPoint;
 		}
 
-		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<OrientedPoint> points, Vector3 point, bool loop, int bufferSize = -1)
+		public static float DistanceFromStartOfClosestPointOnLineStrip(this IList<OrientedPoint> points, float3 point, bool loop, int bufferSize = -1)
 		{
 			if (points == null || points.Count == 0)
 				return float.NaN;
@@ -588,21 +587,21 @@ namespace Extenity.MathToolbox
 
 		#region GetPointPositionAheadOfClosestPoint
 
-		public static Vector3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, Vector3 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
+		public static float3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, float3 point, float resultingPointDistanceToClosestPoint, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			var resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
 			return points.GetPointPositionAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
-		public static Vector3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, Vector3 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
+		public static float3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, float3 point, float resultingPointDistanceToClosestPoint, out float resultingPointDistanceFromStart, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, bufferSize);
 			resultingPointDistanceFromStart = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
 			return points.GetPointPositionAtDistanceFromStart(resultingPointDistanceFromStart, bufferSize);
 		}
 
-		public static Vector3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, Vector3 point, float resultingPointDistanceToClosestPoint, bool loop, float precalculatedTotalLength = -1f, int bufferSize = -1)
+		public static float3 GetPointPositionAheadOfClosestPoint(this IList<OrientedPoint> points, float3 point, float resultingPointDistanceToClosestPoint, bool loop, float precalculatedTotalLength = -1f, int bufferSize = -1)
 		{
 			var distanceFromStartOfClosestPointOnLine = points.DistanceFromStartOfClosestPointOnLineStrip(point, loop, bufferSize);
 			var distanceFromStartOfResultingPoint = distanceFromStartOfClosestPointOnLine + resultingPointDistanceToClosestPoint;
@@ -621,7 +620,7 @@ namespace Extenity.MathToolbox
 
 		#region FindClosestValueIndex
 
-		public static int FindClosestValueIndex(this IList<OrientedPoint> values, Vector3 targetValue, int startIndex = 0)
+		public static int FindClosestValueIndex(this IList<OrientedPoint> values, float3 targetValue, int startIndex = 0)
 		{
 			int closestIndex = -1;
 			float closestSqrDistance = float.PositiveInfinity;
@@ -638,7 +637,7 @@ namespace Extenity.MathToolbox
 			return closestIndex;
 		}
 
-		public static int FindClosestValueIndex(this OrientedPoint[] values, Vector3 targetValue, int startIndex = 0)
+		public static int FindClosestValueIndex(this OrientedPoint[] values, float3 targetValue, int startIndex = 0)
 		{
 			int closestIndex = -1;
 			float closestSqrDistance = float.PositiveInfinity;
@@ -683,7 +682,7 @@ namespace Extenity.MathToolbox
 
 		#region SortLineStripUsingClosestSequentialPointsMethod
 
-		public static int SortLineStripUsingClosestSequentialPointsMethod(this IList<OrientedPoint> points, Vector3 initialPointReference)
+		public static int SortLineStripUsingClosestSequentialPointsMethod(this IList<OrientedPoint> points, float3 initialPointReference)
 		{
 			var swapCount = 0;
 
@@ -724,5 +723,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif

@@ -5,6 +5,7 @@ using Extenity.ApplicationToolbox;
 using UnityEngine;
 using UnityEditor;
 using Extenity.DataToolbox;
+using Unity.Mathematics;
 
 namespace Extenity.MathToolbox.Editor
 {
@@ -35,7 +36,7 @@ namespace Extenity.MathToolbox.Editor
 
 		#region Generalization
 
-		private List<Vector3> Points => Me.RawPoints;
+		private List<float3> Points => Me.RawPoints;
 
 		protected override bool IsEditing => Me.IsEditing;
 
@@ -69,7 +70,7 @@ namespace Extenity.MathToolbox.Editor
 
 		protected override void TransformPointFromLocalToLocal(int pointIndex, Matrix4x4 currentMatrix, Matrix4x4 newMatrix)
 		{
-			Points[pointIndex] = Points[pointIndex].TransformPointFromLocalToLocal(currentMatrix, newMatrix);
+			Points[pointIndex] = ((Vector3)Points[pointIndex]).TransformPointFromLocalToLocal(currentMatrix, newMatrix);
 		}
 
 		#endregion

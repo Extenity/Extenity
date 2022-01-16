@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
+using Unity.Mathematics;
 using UnityEngine.Events;
 using static Unity.Mathematics.math;
 
@@ -57,19 +58,19 @@ namespace Extenity.MathToolbox
 			Points?.Clear();
 		}
 
-		public Vector3 GetPointPosition(int index)
+		public float3 GetPointPosition(int index)
 		{
 			return Points[index].Position;
 		}
 
-		public Vector3 GetPointLocalPosition(int index)
+		public float3 GetPointLocalPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? Points[index].Position
 				: transform.InverseTransformPoint(Points[index].Position);
 		}
 
-		public Vector3 GetPointWorldPosition(int index)
+		public float3 GetPointWorldPosition(int index)
 		{
 			return KeepDataInLocalCoordinates
 				? transform.TransformPoint(Points[index].Position)
@@ -95,7 +96,7 @@ namespace Extenity.MathToolbox
 				: Points[index];
 		}
 
-		public int SortLineStripUsingClosestSequentialPointsMethod(Vector3 initialPointReference)
+		public int SortLineStripUsingClosestSequentialPointsMethod(float3 initialPointReference)
 		{
 			return Points.SortLineStripUsingClosestSequentialPointsMethod(initialPointReference);
 		}
@@ -150,36 +151,36 @@ namespace Extenity.MathToolbox
 
 		#region Calculations
 
-		public Vector3 GetPointPositionAtDistanceFromStart(float distanceFromStart, Space space)
+		public float3 GetPointPositionAtDistanceFromStart(float distanceFromStart, Space space)
 		{
 			var position = Points.GetPointPositionAtDistanceFromStart(Loop, distanceFromStart);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 GetPointPositionAtDistanceFromStart(float distanceFromStart, ref Vector3 part, Space space)
+		public float3 GetPointPositionAtDistanceFromStart(float distanceFromStart, ref float3 part, Space space)
 		{
 			var position = Points.GetPointPositionAtDistanceFromStart(Loop, distanceFromStart, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointPositionOnLine(Vector3 point, Space space)
+		public float3 ClosestPointPositionOnLine(float3 point, Space space)
 		{
 			var position = Points.ClosestPointPositionOnLineStrip(point, Loop);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public Vector3 ClosestPointPositionOnLine(Vector3 point, ref Vector3 part, Space space)
+		public float3 ClosestPointPositionOnLine(float3 point, ref float3 part, Space space)
 		{
 			var position = Points.ClosestPointPositionOnLineStrip(point, Loop, ref part);
 			return TransformFromDataSpace(position, space);
 		}
 
-		public float DistanceFromStartOfClosestPointOnLine(Vector3 point)
+		public float DistanceFromStartOfClosestPointOnLine(float3 point)
 		{
 			return Points.DistanceFromStartOfClosestPointOnLineStrip(point, Loop);
 		}
 
-		public Vector3 GetPointPositionAheadOfClosestPoint(Vector3 point, float resultingPointDistanceToClosestPoint, Space space)
+		public float3 GetPointPositionAheadOfClosestPoint(float3 point, float resultingPointDistanceToClosestPoint, Space space)
 		{
 			var position = Points.GetPointPositionAheadOfClosestPoint(point, resultingPointDistanceToClosestPoint, Loop, TotalLength);
 			return TransformFromDataSpace(position, space);
@@ -313,7 +314,7 @@ namespace Extenity.MathToolbox
 
 		#region Space Transformation
 
-		public Vector3 TransformFromDataSpace(Vector3 pointInDataSpace, Space targetSpace)
+		public float3 TransformFromDataSpace(float3 pointInDataSpace, Space targetSpace)
 		{
 			switch (targetSpace)
 			{

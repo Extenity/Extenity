@@ -789,27 +789,26 @@ namespace Extenity.MathToolbox
 
 		#region Polygon / Surface
 
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-		public static float CalculateTriangleArea(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
+		public static float CalculateTriangleArea(float3 vertex1, float3 vertex2, float3 vertex3)
 		{
-			var cross = Vector3.Cross(vertex2 - vertex1, vertex3 - vertex1);
-			return cross.magnitude / 2f;
+			var crossed = cross(vertex2 - vertex1, vertex3 - vertex1);
+			return length(crossed) / 2f;
 		}
 
-		public static float CalculatePolygonArea(this IList<Vector3> polygonPoints)
+		public static float CalculatePolygonArea(this IList<float3> polygonPoints)
 		{
 			var pointCount = polygonPoints.Count;
-			var crossTotal = Vector3.zero;
+			var crossTotal = float3Tools.Zero;
 
 			for (int i = 0; i < pointCount; ++i)
 			{
 				var j = (i + 1) % pointCount;
-				crossTotal += Vector3.Cross(polygonPoints[i], polygonPoints[j]);
+				crossTotal += cross(polygonPoints[i], polygonPoints[j]);
 			}
-			return crossTotal.magnitude / 2f;
+			return length(crossTotal) / 2f;
 		}
 
-		public static float CalculateTriangleArea(this IList<Vector3> allPoints, IList<int> triangleIndices)
+		public static float CalculateTriangleArea(this IList<float3> allPoints, IList<int> triangleIndices)
 		{
 			var triangleCount = triangleIndices.Count / 3;
 
@@ -818,30 +817,30 @@ namespace Extenity.MathToolbox
 				throw new Exception("Triangle indices list length should be multiple of 3.");
 			}
 
-			var crossTotal = Vector3.zero;
+			var crossTotal = float3Tools.Zero;
 
 			for (int i = 0; i < triangleIndices.Count; i += 3)
 			{
 				var mid = allPoints[triangleIndices[i + 1]];
 				var line1 = mid - allPoints[triangleIndices[i]];
 				var line2 = mid - allPoints[triangleIndices[i + 2]];
-				crossTotal += Vector3.Cross(line1, line2);
+				crossTotal += cross(line1, line2);
 			}
-			return crossTotal.magnitude / 2f;
+			return length(crossTotal) / 2f;
 		}
 
 		/// <summary>
 		/// Newell's Method
 		/// Source: https://www.opengl.org/wiki/Calculating_a_Surface_Normal
 		/// </summary>
-		public static Vector3 CalculatePolygonNormal(this IList<Vector3> polygonPoints)
+		public static float3 CalculatePolygonNormal(this IList<float3> polygonPoints)
 		{
 			if (polygonPoints == null || polygonPoints.Count < 3)
 			{
-				return Vector3Tools.NaN;
+				return float3Tools.NaN;
 			}
 
-			var normal = Vector3.zero;
+			var normal = float3Tools.Zero;
 			for (int i = 0; i < polygonPoints.Count; i++)
 			{
 				var current = polygonPoints[i];
@@ -851,12 +850,12 @@ namespace Extenity.MathToolbox
 				normal.y += (current.z - next.z) * (current.x + next.x);
 				normal.z += (current.x - next.x) * (current.y + next.y);
 			}
-			return normal.normalized;
+			return normalize(normal);
 		}
 
-		public static Vector3 CalculatePolygonCenter(this IList<Vector3> polygonPoints)
+		public static float3 CalculatePolygonCenter(this IList<float3> polygonPoints)
 		{
-			var center = Vector3.zero;
+			var center = float3Tools.Zero;
 
 			for (int i = 0; i < polygonPoints.Count; i++)
 			{
@@ -866,7 +865,7 @@ namespace Extenity.MathToolbox
 			return center / polygonPoints.Count;
 		}
 
-		public static bool IsPolygon(this IList<Vector2> polygonPoints, float lineCheckTolerance = 0.001f)
+		public static bool IsPolygon(this IList<float2> polygonPoints, float lineCheckTolerance = 0.001f)
 		{
 			if (polygonPoints == null || polygonPoints.Count < 3)
 				return false;
@@ -897,7 +896,6 @@ namespace Extenity.MathToolbox
 
 			return true;
 		}
-#endif
 
 		#endregion
 

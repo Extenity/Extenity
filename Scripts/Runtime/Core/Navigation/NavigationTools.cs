@@ -3,7 +3,9 @@
 #if !DisableUnityAI
 
 using System;
+using System.Collections.Generic;
 using Extenity.MathToolbox;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -112,8 +114,10 @@ namespace Extenity.NavigationToolbox
 		/// </summary>
 		public static float CalculateTotalLength(this NavMeshPath path, ref Vector3[] buffer, int maxBufferExtensionSize = 100)
 		{
-			var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
-			return buffer.CalculateLineStripLength(0, count);
+			// Reimplement this whenever needed. Need a way to cast Vector3[] to IList<float3>.
+			throw new NotImplementedException();
+			// var count = path.GetCornersNonAllocDynamic(ref buffer, maxBufferExtensionSize);
+			// return buffer.CalculateLineStripLength(0, count);
 		}
 
 		#endregion

@@ -1,18 +1,16 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Extenity.MathToolbox
 {
 
 	public struct Polygon2In3
 	{
-		public IList<Vector3> Points;
+		public IList<float3> Points;
 		public Bounds2 Bounds;
 
-		public Polygon2In3(IList<Vector3> polygon, Bounds2 bounds)
+		public Polygon2In3(IList<float3> polygon, Bounds2 bounds)
 		{
 			if (polygon == null || polygon.Count < 2)
 			{
@@ -23,17 +21,17 @@ namespace Extenity.MathToolbox
 			Bounds = bounds;
 		}
 
-		public static Polygon2In3 CreateXY(IList<Vector3> polygon)
+		public static Polygon2In3 CreateXY(IList<float3> polygon)
 		{
 			return new Polygon2In3(polygon, polygon.CalculateBoundsXY());
 		}
 
-		public static Polygon2In3 CreateXZ(IList<Vector3> polygon)
+		public static Polygon2In3 CreateXZ(IList<float3> polygon)
 		{
 			return new Polygon2In3(polygon, polygon.CalculateBoundsXZ());
 		}
 
-		public bool IsPointInsidePolygonXY(Vector2 point)
+		public bool IsPointInsidePolygonXY(float2 point)
 		{
 			if (!Bounds.Contains(point))
 			{
@@ -42,7 +40,7 @@ namespace Extenity.MathToolbox
 			return Points.IsPointInsidePolygonXY(point);
 		}
 
-		public bool IsPointInsidePolygonXZ(Vector2 point)
+		public bool IsPointInsidePolygonXZ(float2 point)
 		{
 			if (!Bounds.Contains(point))
 			{
@@ -53,5 +51,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
