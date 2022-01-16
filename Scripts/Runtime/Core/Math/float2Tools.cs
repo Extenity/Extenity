@@ -16,6 +16,8 @@ namespace Extenity.MathToolbox
 		public static readonly float2 Right = float2(1f, 0f);
 		public static readonly float2 PositiveInfinity = float2(float.PositiveInfinity, float.PositiveInfinity);
 		public static readonly float2 NegativeInfinity = float2(float.NegativeInfinity, float.NegativeInfinity);
+		public static readonly float2 MaxValue = float2(float.MaxValue, float.MaxValue);
+		public static readonly float2 MinValue = float2(float.MinValue, float.MinValue);
 		public static readonly float2 NaN = float2(float.NaN, float.NaN);
 
 		#region Basic Checks - Zero
@@ -211,6 +213,52 @@ namespace Extenity.MathToolbox
 		public static float MultiplyComponents(this float2 value)
 		{
 			return value.x * value.y;
+		}
+
+		#endregion
+
+		#region Magnitude
+
+		public static float Magnitude(this float2 value)
+		{
+			return sqrt(value.x * value.x + value.y * value.y);
+		}
+
+		public static float SqrMagnitude(this float2 value)
+		{
+			return value.x * value.x + value.y * value.y;
+		}
+
+		#endregion
+
+		#region Dot
+
+		public static float Dot(this float2 lhs, float2 rhs)
+		{
+			return lhs.x * rhs.x + lhs.y * rhs.y;
+		}
+
+		#endregion
+
+		#region Distance and Difference
+
+		public static float SqrDistanceTo(this float2 a, float2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return dx * dx + dy * dy;
+		}
+
+		public static float DistanceTo(this float2 a, float2 b)
+		{
+			var dx = b.x - a.x;
+			var dy = b.y - a.y;
+			return sqrt(dx * dx + dy * dy);
+		}
+
+		public static float2 DifferenceTo(this float2 a, float2 b)
+		{
+			return new float2(b.x - a.x, b.y - a.y);
 		}
 
 		#endregion

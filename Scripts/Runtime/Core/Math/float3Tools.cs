@@ -18,6 +18,8 @@ namespace Extenity.MathToolbox
 		public static readonly float3 Right = float3(1f, 0f, 0f);
 		public static readonly float3 PositiveInfinity = float3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
 		public static readonly float3 NegativeInfinity = float3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
+		public static readonly float3 MaxValue = float3(float.MaxValue, float.MaxValue, float.MaxValue);
+		public static readonly float3 MinValue = float3(float.MinValue, float.MinValue, float.MinValue);
 		public static readonly float3 NaN = float3(float.NaN, float.NaN, float.NaN);
 
 		#region Basic Checks - Zero
