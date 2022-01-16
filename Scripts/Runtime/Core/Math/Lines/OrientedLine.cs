@@ -7,6 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEngine.Events;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -288,7 +289,7 @@ namespace Extenity.MathToolbox
 
 			for (var i = 0; i < Points.Count; i++)
 			{
-				Points[i] = Points[i].WithOrientation(Points[i].Orientation.normalized);
+				Points[i] = Points[i].WithOrientation(normalize(Points[i].Orientation));
 			}
 
 			Invalidate();

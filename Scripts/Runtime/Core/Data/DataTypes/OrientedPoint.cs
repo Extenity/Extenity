@@ -1,8 +1,10 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
 using Extenity.MathToolbox;
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
+#if UNITY
 using UnityEngine;
+#endif
 
 namespace Extenity.DataToolbox
 {
@@ -10,14 +12,14 @@ namespace Extenity.DataToolbox
 	[Serializable]
 	public struct OrientedPoint
 	{
-		public Vector3 Position;
+		public float3 Position;
 
 		/// <summary>
 		/// This field can be used as forward vector, up vector or euler angles in the context.
 		/// </summary>
-		public Vector3 Orientation;
+		public float3 Orientation;
 
-		public OrientedPoint(Vector3 position, Vector3 orientation)
+		public OrientedPoint(float3 position, float3 orientation)
 		{
 			Position = position;
 			Orientation = orientation;
@@ -30,36 +32,37 @@ namespace Extenity.DataToolbox
 		public OrientedPoint Mid(OrientedPoint other)
 		{
 			var orientation = (Orientation + other.Orientation) * 0.5f;
-			var length = (Orientation.magnitude + other.Orientation.magnitude) * 0.5f;
-			orientation = orientation.normalized * length;
+			var lengths = (length(Orientation) + length(other.Orientation)) * 0.5f;
+			orientation = normalize(orientation) * lengths;
 			return new OrientedPoint(
 				(Position + other.Position) * 0.5f,
 				orientation);
 		}
 
-		public Vector3 MidPosition(OrientedPoint other)
+		public float3 MidPosition(OrientedPoint other)
 		{
 			return (Position + other.Position) * 0.5f;
 		}
 
-		public Vector3 MidOrientation(OrientedPoint other)
+		public float3 MidOrientation(OrientedPoint other)
 		{
 			var orientation = (Orientation + other.Orientation) * 0.5f;
-			var length = (Orientation.magnitude + other.Orientation.magnitude) * 0.5f;
-			return orientation.normalized * length;
+			var lengths = (length(Orientation) + length(other.Orientation)) * 0.5f;
+			return normalize(orientation) * lengths;
 		}
 
-		public OrientedPoint WithPosition(Vector3 position)
+		public OrientedPoint WithPosition(float3 position)
 		{
 			return new OrientedPoint(position, Orientation);
 		}
 
-		public OrientedPoint WithOrientation(Vector3 orientation)
+		public OrientedPoint WithOrientation(float3 orientation)
 		{
 			return new OrientedPoint(Position, orientation);
 		}
 	}
 
+#if UNITY
 	public static class OrientedPointTools
 	{
 		public static OrientedPoint TransformOrientedPoint(this Transform transform, OrientedPoint point)
@@ -104,7 +107,6 @@ namespace Extenity.DataToolbox
 			return point;
 		}
 	}
+#endif
 
 }
-
-#endif
