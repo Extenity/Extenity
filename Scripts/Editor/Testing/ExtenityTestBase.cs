@@ -5,12 +5,14 @@ using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
-using Extenity.ParallelToolbox.Editor;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
 using UnityEngine.TestTools;
+#if UNITY_EDITOR
+using Extenity.ParallelToolbox.Editor;
+#endif
 
 namespace Extenity.Testing
 {
@@ -32,7 +34,9 @@ namespace Extenity.Testing
 			StartTime = Time.realtimeSinceStartup;
 
 			InitializeTiming();
+#if UNITY_EDITOR
 			EditorCoroutine.EnsureNoRunningEditorCoroutines();
+#endif
 			InitializeLogCatching();
 
 			OnInitialize();
@@ -52,7 +56,9 @@ namespace Extenity.Testing
 			OnDeinitialize();
 
 			DeinitializeLogCatching();
+#if UNITY_EDITOR
 			EditorCoroutine.EnsureNoRunningEditorCoroutines();
+#endif
 			UnityTestTools.Cleanup();
 		}
 

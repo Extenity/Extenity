@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Extenity;
-using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using Extenity.Testing;
@@ -11,6 +10,9 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+#if UNITY_EDITOR
+using Extenity.AssetToolbox.Editor;
+#endif
 
 namespace ExtenityTests.GameObjectToolbox
 {
@@ -23,7 +25,11 @@ namespace ExtenityTests.GameObjectToolbox
 
 		protected override void OnInitialize()
 		{
+#if UNITY_EDITOR
 			AssetDatabaseTools.InstantiatePrefabWithTheSameNameOfThisScript();
+#else
+			throw new System.NotImplementedException("Find a way to load test assets for device compilations.");
+#endif
 			base.OnInitialize();
 		}
 
