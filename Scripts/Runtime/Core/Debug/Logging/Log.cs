@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Reflection;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
-using Debug = UnityEngine.Debug;
 using Exception = System.Exception;
 using ArgumentNullException = System.ArgumentNullException;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
@@ -290,14 +289,14 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void Verbose(string message)
 		{
-			Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 		[Conditional("EnableVerboseLogging")]
 		// [DebuggerHidden]
 		public static void Verbose(string message, ContextObject context)
 		{
-			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 #if DisableInfoLogging
@@ -306,7 +305,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void Info(string message)
 		{
-			Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 #if DisableInfoLogging
@@ -315,7 +314,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void Info(string message, ContextObject context)
 		{
-			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
@@ -351,25 +350,25 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void Warning(string message)
 		{
-			Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void Warning(string message, ContextObject context)
 		{
-			Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void Error(string message)
 		{
-			Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void Error(string message, ContextObject context)
 		{
-			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -378,7 +377,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void CriticalError(string message)
 		{
-			Debug.LogException(new Exception(message)); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new Exception(message)); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -387,7 +386,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void CriticalError(string message, Exception innerException)
 		{
-			Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -396,7 +395,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void CriticalError(string message, ContextObject context)
 		{
-			Debug.LogException(new Exception(message), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new Exception(message), context); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -405,7 +404,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void CriticalError(string message, ContextObject context, Exception innerException)
 		{
-			Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -416,7 +415,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void InternalError(int errorCode)
 		{
-			Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -427,43 +426,43 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void InternalError(int errorCode, ContextObject context)
 		{
-			Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void Exception(Exception exception)
 		{
-			Debug.LogException(exception); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void Exception(Exception exception, ContextObject context)
 		{
-			Debug.LogException(exception, context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void ExceptionAsError(Exception exception)
 		{
-			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void ExceptionAsError(Exception exception, ContextObject context)
 		{
-			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception)
 		{
-			Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 		}
 
 		// [DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception, ContextObject context)
 		{
-			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 		}
 
 		#endregion
@@ -478,7 +477,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugVerbose(string message)
 		{
-			Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 #if EnableVerboseLogging
@@ -489,7 +488,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugVerbose(string message, ContextObject context)
 		{
-			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 #if DisableInfoLogging
@@ -500,7 +499,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugInfo(string message)
 		{
-			Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 #if DisableInfoLogging
@@ -511,7 +510,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugInfo(string message, ContextObject context)
 		{
-			Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.Log(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
@@ -551,28 +550,28 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugWarning(string message)
 		{
-			Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugWarning(string message, ContextObject context)
 		{
-			Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogWarning(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugError(string message)
 		{
-			Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugError(string message, ContextObject context)
 		{
-			Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(message, context), context); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -584,7 +583,7 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugInternalError(int errorCode)
 		{
-			Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
 		}
 
 		/// <summary>
@@ -596,49 +595,49 @@ namespace Extenity
 		// [DebuggerHidden]
 		public static void DebugInternalError(int errorCode, ContextObject context)
 		{
-			Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugException(Exception exception)
 		{
-			Debug.LogException(exception); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugException(Exception exception, ContextObject context)
 		{
-			Debug.LogException(exception, context); // Ignored by Code Correct
+            UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugExceptionAsError(Exception exception)
 		{
-			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString())); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugExceptionAsError(Exception exception, ContextObject context)
 		{
-			Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateMessage(exception == null ? "[NullExc]" : exception.ToString(), context), context); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugExceptionAsErrorDetailed(this Exception exception)
 		{
-			Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
+            UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 		// [DebuggerHidden]
 		public static void DebugExceptionAsErrorDetailed(this Exception exception, ContextObject context)
 		{
-			Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
+			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception, context), context); // Ignored by Code Correct
 		}
 
 		#endregion
