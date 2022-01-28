@@ -48,32 +48,56 @@ namespace Extenity.DebugToolbox
 		public readonly void Verbose(string message)
 		{
 			// if (VerboseLoggingActive) Nope! Should be done by the caller in a way that prevents message string creation overhead.
+#if UNITY
 			UnityEngine.Debug.Log(Prefix + message, Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(Prefix + message);
+#endif
 		}
 
 		public readonly void Info(string message)
 		{
+#if UNITY
 			UnityEngine.Debug.Log(Prefix + message, Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(Prefix + message);
+#endif
 		}
 
 		public readonly void Warning(string message)
 		{
+#if UNITY
 			UnityEngine.Debug.LogWarning(Prefix + message, Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(Prefix + message);
+#endif
 		}
 
 		public readonly void Error(string message)
 		{
+#if UNITY
 			UnityEngine.Debug.LogError(Prefix + message, Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(Prefix + message);
+#endif
 		}
 
 		public readonly void Critical(string message)
 		{
+#if UNITY
 			UnityEngine.Debug.LogException(new Exception(Prefix + message), Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(new Exception(Prefix + message).ToString());
+#endif
 		}
 
 		public readonly void Exception(Exception exception)
 		{
+#if UNITY
 			UnityEngine.Debug.LogException(exception, Context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(exception.ToString());
+#endif
 		}
 
 		#endregion
