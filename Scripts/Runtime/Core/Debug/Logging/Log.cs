@@ -118,7 +118,7 @@ namespace Extenity
 
 		public static void RegisterPrefix(ContextObject obj, string prefix)
 		{
-			if (!obj)
+			if (obj == null)
 				throw new ArgumentNullException(nameof(obj));
 
 			ClearDestroyedObjectPrefixes();
@@ -132,7 +132,7 @@ namespace Extenity
 
 		public static void DeregisterPrefix(ContextObject obj)
 		{
-			if (!obj)
+			if (obj == null)
 			{
 				// It's okay. Maybe the object was destroyed before reaching at this point. Just trigger a cleanup.
 				ClearDestroyedObjectPrefixes();
@@ -158,7 +158,7 @@ namespace Extenity
 				retry = false;
 				foreach (var item in RegisteredPrefixObjects)
 				{
-					if (!item.Value)
+					if (item.Value == null)
 					{
 						var id = item.Key;
 						RegisteredPrefixes.Remove(id);
