@@ -1,5 +1,3 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 // Reference: http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 
 using System;
@@ -259,5 +257,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
