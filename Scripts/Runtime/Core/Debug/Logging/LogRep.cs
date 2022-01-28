@@ -1,4 +1,3 @@
-using UnityEngine;
 using Exception = System.Exception;
 
 // This is the way that Log system supports various Context types in different environments like
@@ -49,32 +48,32 @@ namespace Extenity.DebugToolbox
 		public readonly void Verbose(string message)
 		{
 			// if (VerboseLoggingActive) Nope! Should be done by the caller in a way that prevents message string creation overhead.
-			Debug.Log(Prefix + message, Context); // Ignored by Code Correct
+			UnityEngine.Debug.Log(Prefix + message, Context); // Ignored by Code Correct
 		}
 
 		public readonly void Info(string message)
 		{
-			Debug.Log(Prefix + message, Context); // Ignored by Code Correct
+			UnityEngine.Debug.Log(Prefix + message, Context); // Ignored by Code Correct
 		}
 
 		public readonly void Warning(string message)
 		{
-			Debug.LogWarning(Prefix + message, Context); // Ignored by Code Correct
+			UnityEngine.Debug.LogWarning(Prefix + message, Context); // Ignored by Code Correct
 		}
 
 		public readonly void Error(string message)
 		{
-			Debug.LogError(Prefix + message, Context); // Ignored by Code Correct
+			UnityEngine.Debug.LogError(Prefix + message, Context); // Ignored by Code Correct
 		}
 
 		public readonly void Critical(string message)
 		{
-			Debug.LogException(new Exception(Prefix + message), Context); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(new Exception(Prefix + message), Context); // Ignored by Code Correct
 		}
 
 		public readonly void Exception(Exception exception)
 		{
-			Debug.LogException(exception, Context); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(exception, Context); // Ignored by Code Correct
 		}
 
 		#endregion
