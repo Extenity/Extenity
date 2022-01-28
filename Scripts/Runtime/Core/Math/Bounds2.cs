@@ -137,7 +137,7 @@ namespace Extenity.MathToolbox
 		}
 
 		/// <summary>
-		///   <para>Does another bounding box intersect with this bounding box?</para>
+        ///   <para>Does ray intersect this bounding box?</para>
 		/// </summary>
 		public bool IntersectRay(Ray ray)
 		{
