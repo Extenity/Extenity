@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Unity.Mathematics;
-using UnityEngine;
 using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
@@ -139,7 +138,7 @@ namespace Extenity.MathToolbox
 		/// <summary>
         ///   <para>Does ray intersect this bounding box?</para>
 		/// </summary>
-		public bool IntersectRay(Ray ray)
+		public bool IntersectRay(UnityEngine.Ray ray)
 		{
 			throw new NotImplementedException();
 			//float dist;
@@ -149,7 +148,7 @@ namespace Extenity.MathToolbox
 		/// <summary>
 		///   <para>Does ray intersect this bounding box?</para>
 		/// </summary>
-		public bool IntersectRay(Ray ray, out float distance)
+		public bool IntersectRay(UnityEngine.Ray ray, out float distance)
 		{
 			throw new NotImplementedException();
 			//return IntersectRayAABB(ray, this, out distance);
