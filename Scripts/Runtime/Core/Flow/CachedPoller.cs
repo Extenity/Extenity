@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using System;
 
 namespace Extenity.FlowToolbox
 {
@@ -7,9 +7,10 @@ namespace Extenity.FlowToolbox
 	{
 		#region Initialization
 
-		public CachedPoller(float interval)
+		public CachedPoller(float interval, Func<float> timeGetter)
 		{
 			Interval = interval;
+			TimeGetter = timeGetter;
 		}
 
 		#endregion
@@ -23,7 +24,7 @@ namespace Extenity.FlowToolbox
 			set
 			{
 				_CachedResult = value;
-				NextProcessTime = Time.realtimeSinceStartup + Interval;
+				NextProcessTime = TimeGetter() + Interval;
 			}
 		}
 
@@ -33,8 +34,9 @@ namespace Extenity.FlowToolbox
 
 		public float NextProcessTime = float.MinValue;
 		public float Interval;
+		private Func<float> TimeGetter;
 
-		public bool IsTimeToProcess => NextProcessTime < Time.realtimeSinceStartup;
+		public bool IsTimeToProcess => NextProcessTime < TimeGetter();
 
 		public void Invalidate()
 		{

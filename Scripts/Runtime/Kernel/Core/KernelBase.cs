@@ -244,7 +244,7 @@ namespace Extenity.KernelToolbox
 		}
 
 		[JsonIgnore]
-		private readonly CachedPoller<string> _SerializedJsonCache = new CachedPoller<string>(1f);
+		private readonly CachedPoller<string> _SerializedJsonCache = new CachedPoller<string>(1f, () => Time.realtimeSinceStartup);
 
 		// private Vector2 _JsonScrollPosition;
 
