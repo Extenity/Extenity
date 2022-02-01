@@ -1,7 +1,12 @@
 ﻿using System;
+#if UNITY
 using Extenity.SceneManagementToolbox;
 using UnityEngine;
+#endif
+
+#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 using Random = UnityEngine.Random;
+#endif
 
 namespace Extenity.UnityTestToolbox
 {
@@ -12,6 +17,7 @@ namespace Extenity.UnityTestToolbox
 
 		public static void Cleanup()
 		{
+#if UNITY
 			SceneManagerTools.GetScenes(SceneListFilter.LoadedScenes).ForEach(scene =>
 			{
 				foreach (var rootObject in scene.GetRootGameObjects())
@@ -22,6 +28,7 @@ namespace Extenity.UnityTestToolbox
 					}
 				}
 			});
+#endif
 		}
 
 		#endregion
@@ -78,10 +85,12 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
+#if UNITY
 			for (Int32 value = -10000; value < 10000; value += Random.Range(1, 500))
 			{
 				tester(value);
 			}
+#endif
 			tester(-99999);
 			tester(-999999);
 			tester(-9999999);
@@ -130,10 +139,12 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
+#if UNITY
 			for (Int64 value = -10000; value < 10000; value += Random.Range(1, 500))
 			{
 				tester(value);
 			}
+#endif
 			tester(-99999);
 			tester(-999999);
 			tester(-9999999);
@@ -241,10 +252,12 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
+#if UNITY
 			for (double value = -10000d; value < 10000d; value += Random.Range(0.1f, 500.0f))
 			{
 				tester(value);
 			}
+#endif
 			tester(-99999);
 			tester(-999999);
 			tester(-9999999);
