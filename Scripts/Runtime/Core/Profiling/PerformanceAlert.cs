@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Extenity.ProfilingToolbox
+﻿namespace Extenity.ProfilingToolbox
 {
 
 	public class PerformanceAlert
@@ -27,14 +25,13 @@ namespace Extenity.ProfilingToolbox
 			MinimumLogInterval = minimumLogInterval;
 		}
 
-		public void StartMeasurement()
+		public void StartMeasurement(float now)
 		{
-			StartTime = Time.realtimeSinceStartup;
+			StartTime = now;
 		}
 
-		public void FinalizeMeasurement(object obj, string methodName)
+		public void FinalizeMeasurement(float now, object obj, string methodName)
 		{
-			var now = Time.realtimeSinceStartup;
 			var elapsed = (int)((now - StartTime) * 1000);
 			if (elapsed > Tolerance)
 			{
