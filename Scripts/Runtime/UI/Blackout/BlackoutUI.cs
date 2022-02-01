@@ -1,6 +1,7 @@
 ﻿//#define EnableBlackoutUILog
 
 using System.Diagnostics;
+using Extenity.DebugToolbox;
 using Extenity.DesignPatternsToolbox;
 
 namespace Extenity.UIToolbox
@@ -12,7 +13,7 @@ namespace Extenity.UIToolbox
 
 		protected override void AwakeDerived()
 		{
-			InitializeDebug();
+			gameObject.SetAsLogContext(ref Log);
 		}
 
 		#endregion
@@ -27,9 +28,9 @@ namespace Extenity.UIToolbox
 		public void Blackout(bool immediate = false)
 		{
 			//var justSwitchedOn = RequestCounter.Increase();
-			//Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
+			//LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
 
-			Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested");
+			LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested");
 
 			//if (justSwitchedOn) // Do not apply fading on consecutive calls.
 			{
@@ -47,9 +48,9 @@ namespace Extenity.UIToolbox
 		public void Clear(bool immediate = false)
 		{
 			//var justSwitchedOff = RequestCounter.Decrease();
-			//Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
+			//LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
 
-			Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested");
+			LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested");
 
 			//if (justSwitchedOff) // Do not apply fading on consecutive calls.
 			{
@@ -86,17 +87,14 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Debug
+		#region Log
 
-		private void InitializeDebug()
-		{
-			Log.RegisterPrefix(this, "BLK");
-		}
+		private static LogRep Log = new LogRep("BlackoutUI");
 
 		[Conditional("EnableBlackoutUILog")]
-		private void Info(string message)
+		private void LogInfo(string message)
 		{
-			Log.Info(message, this);
+			Log.Info(message);
 		}
 
 		#endregion

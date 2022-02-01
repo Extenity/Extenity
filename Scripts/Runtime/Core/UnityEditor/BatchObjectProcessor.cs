@@ -224,7 +224,6 @@ namespace Extenity.UnityEditorToolbox
 				{
 					if (!UnityEditor.EditorApplication.isPlaying)
 					{
-						Log.RegisterPrefix(this, "BatchObjectProcessor");
 						this.CheckConsistencyAndLog($"{nameof(BatchObjectProcessor)} has some inconsistencies.", this);
 					}
 				}
