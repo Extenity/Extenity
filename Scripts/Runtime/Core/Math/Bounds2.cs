@@ -135,6 +135,8 @@ namespace Extenity.MathToolbox
 				(min.y <= bounds.max.y) && (max.y >= bounds.min.y);
 		}
 
+#if UNITY
+
 		/// <summary>
         ///   <para>Does ray intersect this bounding box?</para>
 		/// </summary>
@@ -154,6 +156,7 @@ namespace Extenity.MathToolbox
 			//return IntersectRayAABB(ray, this, out distance);
 		}
 
+#endif
 
 		/// <summary>
 		///   <para>Returns a nicely formatted string for the bounds.</para>
