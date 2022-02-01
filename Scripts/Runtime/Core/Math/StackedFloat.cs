@@ -1,60 +1,49 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Extenity.MathToolbox
 {
 
 	public class StackedFloat
 	{
-		public class StackedValue
+		public struct StackedValue
 		{
-			public float value;
-			public float endTime;
+			public float Value;
+			public float EndTime;
+
+			public StackedValue(float value, float endTime)
+			{
+				Value = value;
+				EndTime = endTime;
+			}
 		}
 
-		private List<StackedValue> values = new List<StackedValue>();
+		private List<StackedValue> Values = new List<StackedValue>();
 
-		public StackedValue AddValue(float value, float duration = 0f)
+		public void AddValue(float value, float endTime)
 		{
-			var newValue = new StackedValue
-			{
-				value = value,
-				endTime = Time.time + duration,
-			};
-			values.Add(newValue);
-			return newValue;
+			Values.Add(new StackedValue(value, endTime));
 		}
 
-		internal void Update()
+		public void Update(float now)
 		{
-			if (values == null)
-				return;
-
-			var now = Time.time;
-
-			for (int i = values.Count - 1; i >= 0; i--)
+			for (int i = Values.Count - 1; i >= 0; i--)
 			{
-				var value = values[i];
-
-				// Remove if duration passed
-				if (value.endTime > 0f && value.endTime <= now)
+				// Remove if end time passed
+				if (Values[i].EndTime <= now)
 				{
-					values.RemoveAt(i);
+					Values.RemoveAt(i);
 				}
 			}
 		}
 
-		public float Value
+		public float TotalValue
 		{
 			get
 			{
-				if (values == null)
-					return 0;
-
 				float totalValue = 0;
-				for (int i = 0; i < values.Count; i++)
+				for (int i = 0; i < Values.Count; i++)
 				{
-					totalValue += values[i].value;
+					totalValue += Values[i].Value;
 				}
 				return totalValue;
 			}
@@ -64,7 +53,7 @@ namespace Extenity.MathToolbox
 		{
 			get
 			{
-				return values == null ? 0 : values.Count;
+				return Values.Count;
 			}
 		}
 	}
