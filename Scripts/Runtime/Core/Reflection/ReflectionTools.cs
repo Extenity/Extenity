@@ -9,6 +9,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Extenity.DataToolbox;
+#if ListArrayAccessorAvailable
+using System.Reflection.Emit;
+#endif
+
+#if UNITY
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.SystemToolbox;
@@ -16,8 +21,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
-#if ListArrayAccessorAvailable
-using System.Reflection.Emit;
 #endif
 
 namespace Extenity.ReflectionToolbox
@@ -1064,6 +1067,8 @@ namespace Extenity.ReflectionToolbox
 
 		#region Get Unity-Serialized Fields
 
+#if UNITY
+		
 		public static List<(FieldInfo FieldInfo, object Value)> GetUnitySerializedFieldsAndValues(this object obj, bool includeOnlyNonNullFields)
 		{
 			var fields = obj.GetUnitySerializedFields();
@@ -1148,9 +1153,13 @@ namespace Extenity.ReflectionToolbox
 			return fields;
 		}
 
+#endif
+
 		#endregion
 
 		#region FindAllReferencedGameObjects...
+
+#if UNITY
 
 		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result, Type[] excludedTypes)
 		{
@@ -1397,6 +1406,8 @@ namespace Extenity.ReflectionToolbox
 			}
 		}
 
+#endif
+
 		private static bool CheckIfTypeExcluded(Type type, Type[] excludedTypes)
 		{
 			if (excludedTypes != null)
@@ -1415,6 +1426,8 @@ namespace Extenity.ReflectionToolbox
 		#endregion
 
 		#region FindAllReferencedGameObjects... Unknown Type Ignore List
+
+#if UNITY
 
 		private static HashSet<Type> _KnownTypesOfGameObjectReferenceFinder;
 		/// <summary>
@@ -1470,9 +1483,13 @@ namespace Extenity.ReflectionToolbox
 			}
 		}
 
+#endif
+
 		#endregion
 
 		#region Referenced Object Checks
+
+#if UNITY
 
 		public static bool IsFieldReferencesUnityObject(this Object unityObject, FieldInfo fieldOfUnityObject, Object expectedUnityObject)
 		{
@@ -1499,6 +1516,8 @@ namespace Extenity.ReflectionToolbox
 			}
 			return false;
 		}
+
+#endif
 
 		#endregion
 
