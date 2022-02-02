@@ -13,6 +13,7 @@ using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ProjectToolbox;
 using Extenity.UnityEditorToolbox.Editor;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -179,6 +180,52 @@ namespace Extenity.BuildToolbox.Editor
 
 	#endregion
 
+	#region Git Command Runner
+	public class GitCommandRunner
+	{
+		public string ExecutablePath { get; }
+		public string WorkingDirectory { get; }
+
+		public GitCommandRunner(string workingDirectory = null)
+		{
+			ExecutablePath = "git";
+			WorkingDirectory = workingDirectory ?? "";
+		}
+
+		public string Run(string arguments,out int exitCode)
+		{
+			var info = new ProcessStartInfo(ExecutablePath, arguments)
+			{
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+				WorkingDirectory = WorkingDirectory,
+			};
+			
+			var process = new Process
+			{
+				StartInfo = info,
+			};
+			
+			process.Start();
+			
+			var output = process.StandardOutput.ReadToEnd();
+			
+			process.WaitForExit();
+
+			var error = process.StandardError.ReadToEnd();
+
+			Log.Info(error);
+
+			output += error;
+			
+			exitCode = process.ExitCode;
+
+			return output;
+		}
+	}
+	#endregion
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -339,6 +386,64 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
+		public static void StashAllLocalGitChanges(string path = null,string stashName = null,bool stashSubmodules = true)
+		{
+			string output;
+
+			int exitCode;
+
+			var commandRunner = new GitCommandRunner(path);
+			
+			try
+			{
+				output = commandRunner.Run("add .", out exitCode);
+				output = commandRunner.Run($"stash {stashName ?? ""}", out exitCode);
+				if (stashSubmodules)
+				{
+					output = commandRunner.Run($"submodule foreach git add .", out exitCode);
+					output = commandRunner.Run($"submodule foreach git stash {stashName}", out exitCode);
+					
+				}
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Could not stash changes of Git repository.", exception);
+			}
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			
+			Log.Info(output);
+		}
+
+		public static void ApplyLastGitStash(string repoPath = null,bool includeSubmodules = true)
+		{
+			string output;
+
+			int exitCode;
+
+			var commandRunner = new GitCommandRunner(repoPath);
+			
+			try
+			{
+				output = commandRunner.Run("stash pop 0", out exitCode);
+				if (includeSubmodules)
+				{
+					output = commandRunner.Run($"submodule foreach stash pop 0", out exitCode);
+				}
+			}
+			catch (Exception exception)
+			{
+				throw new Exception("Could apply stash of Git repository.", exception);
+			}
+			if (exitCode != 0)
+			{
+				throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+			}
+			
+			Log.Info(output);
+		}
 		#endregion
 
 		#region Mercurial
