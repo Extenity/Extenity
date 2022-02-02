@@ -9,8 +9,7 @@
         "ExtenityTests.Common",
         "Unity.Mathematics",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Extenity.UnityEditor.Editor"
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
