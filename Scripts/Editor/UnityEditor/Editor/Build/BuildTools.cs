@@ -396,14 +396,14 @@ namespace Extenity.BuildToolbox.Editor
 			
 			try
 			{
-				output = commandRunner.Run("add .", out exitCode);
-				output = commandRunner.Run($"stash {stashName ?? ""}", out exitCode);
 				if (stashSubmodules)
 				{
-					output = commandRunner.Run($"submodule foreach git add .", out exitCode);
-					output = commandRunner.Run($"submodule foreach git stash {stashName}", out exitCode);
+					output = commandRunner.Run("submodule foreach git add .", out exitCode);
+					output = commandRunner.Run("submodule foreach git stash", out exitCode);
 					
 				}
+				output = commandRunner.Run("add .", out exitCode);
+				output = commandRunner.Run("stash", out exitCode);
 			}
 			catch (Exception exception)
 			{
@@ -427,11 +427,11 @@ namespace Extenity.BuildToolbox.Editor
 			
 			try
 			{
-				output = commandRunner.Run("stash pop 0", out exitCode);
 				if (includeSubmodules)
 				{
-					output = commandRunner.Run($"submodule foreach stash pop 0", out exitCode);
+					output = commandRunner.Run($"submodule foreach git stash pop 0", out exitCode);
 				}
+				output = commandRunner.Run("stash pop 0", out exitCode);
 			}
 			catch (Exception exception)
 			{
