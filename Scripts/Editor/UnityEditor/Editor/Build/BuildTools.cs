@@ -180,6 +180,7 @@ namespace Extenity.BuildToolbox.Editor
 	#endregion
 
 	#region Git Command Runner
+
 	public class GitCommandRunner
 	{
 		public string ExecutablePath { get; }
@@ -191,7 +192,7 @@ namespace Extenity.BuildToolbox.Editor
 			WorkingDirectory = workingDirectory ?? "";
 		}
 
-		public string Run(string arguments,out int exitCode)
+		public string Run(string arguments, out int exitCode)
 		{
 			var info = new ProcessStartInfo(ExecutablePath, arguments)
 			{
@@ -201,16 +202,16 @@ namespace Extenity.BuildToolbox.Editor
 				UseShellExecute = false,
 				WorkingDirectory = WorkingDirectory,
 			};
-			
+
 			var process = new Process
 			{
 				StartInfo = info,
 			};
-			
+
 			process.Start();
-			
+
 			var output = process.StandardOutput.ReadToEnd();
-			
+
 			process.WaitForExit();
 
 			var error = process.StandardError.ReadToEnd();
@@ -218,13 +219,15 @@ namespace Extenity.BuildToolbox.Editor
 			Log.Info(error);
 
 			output += error;
-			
+
 			exitCode = process.ExitCode;
 
 			return output;
 		}
 	}
+
 	#endregion
+
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -385,21 +388,20 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static void StashAllLocalGitChanges(string path = null,string stashName = null,bool stashSubmodules = true)
+		public static void StashAllLocalGitChanges(string path = null, string stashName = null, bool stashSubmodules = true)
 		{
 			string output;
 
 			int exitCode;
 
 			var commandRunner = new GitCommandRunner(path);
-			
+
 			try
 			{
 				if (stashSubmodules)
 				{
 					output = commandRunner.Run("submodule foreach git add .", out exitCode);
 					output = commandRunner.Run("submodule foreach git stash", out exitCode);
-					
 				}
 				output = commandRunner.Run("add .", out exitCode);
 				output = commandRunner.Run("stash", out exitCode);
@@ -412,18 +414,18 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
 			}
-			
+
 			Log.Info(output);
 		}
 
-		public static void ApplyLastGitStash(string repoPath = null,bool includeSubmodules = true)
+		public static void ApplyLastGitStash(string repoPath = null, bool includeSubmodules = true)
 		{
 			string output;
 
 			int exitCode;
 
 			var commandRunner = new GitCommandRunner(repoPath);
-			
+
 			try
 			{
 				if (includeSubmodules)
@@ -440,9 +442,10 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
 			}
-			
+
 			Log.Info(output);
 		}
+
 		#endregion
 
 		#region Mercurial
