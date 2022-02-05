@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using Extenity.BuildToolbox.Editor;
 using Extenity.FileSystemToolbox;
 using NUnit.Framework;
