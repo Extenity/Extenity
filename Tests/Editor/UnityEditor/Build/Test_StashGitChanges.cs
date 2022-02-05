@@ -8,7 +8,7 @@ using Debug = UnityEngine.Debug;
 namespace ExtenityTests.Build
 {
 
-	public class Test_StashGitChangesTests
+	public class Test_StashGitChanges
 	{
 		private static readonly string _dummyRepoPath = Path.Combine(Application.persistentDataPath, "DummyRepo").FixDirectorySeparatorChars();
 		private static readonly string _dummySubmodulePath = Path.Combine(Application.persistentDataPath, "Submodule").FixDirectorySeparatorChars();
