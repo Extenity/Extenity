@@ -388,63 +388,81 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		public static void StashAllLocalGitChanges(string path = null, string stashName = null, bool stashSubmodules = true)
-		{
-			string output;
+		delegate string GitOperation(out int exitCode);
+        public static void StashAllLocalGitChanges(string path = null, string stashName = null, bool includeSubmodules = true)
+        {
+            var commandRunner = new GitCommandRunner(path);
+            
+            var commands = New.List<GitOperation>();
+            
+            if (includeSubmodules)
+            {
+                commands.Add((out int code) => commandRunner.Run("submodule foreach git add .", out code));
+                commands.Add((out int code) => commandRunner.Run("submodule foreach git stash", out code));
+            }
 
-			int exitCode;
+            commands.Add((out int code) => commandRunner.Run("add .", out code));
+            commands.Add((out int code) => commandRunner.Run("stash", out code));
 
-			var commandRunner = new GitCommandRunner(path);
+            try
+            {
+                foreach (var gitOperation in commands)
+                {
+                    var output = gitOperation.Invoke(out var exitCode);
 
-			try
-			{
-				if (stashSubmodules)
-				{
-					output = commandRunner.Run("submodule foreach git add .", out exitCode);
-					output = commandRunner.Run("submodule foreach git stash", out exitCode);
-				}
-				output = commandRunner.Run("add .", out exitCode);
-				output = commandRunner.Run("stash", out exitCode);
-			}
-			catch (Exception exception)
-			{
-				throw new Exception("Could not stash changes of Git repository.", exception);
-			}
-			if (exitCode != 0)
-			{
-				throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
-			}
+                    if (exitCode != 0)
+                    {
+                        throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                    }
 
-			Log.Info(output);
-		}
+                    Log.Info(output);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Could not stash changes of Git repository.", exception);
+            }
+            finally
+            {
+                Release.List(ref commands);
+            }
+        }
 
-		public static void ApplyLastGitStash(string repoPath = null, bool includeSubmodules = true)
-		{
-			string output;
+        public static void ApplyLastGitStash(string repoPath = null, bool includeSubmodules = true)
+        {
+            var commandRunner = new GitCommandRunner(repoPath);
+            
+            var commands = New.List<GitOperation>();
 
-			int exitCode;
+            if (includeSubmodules)
+            {
+                commands.Add((out int code) => commandRunner.Run($"submodule foreach git stash pop 0", out code));
+            }
+            
+            commands.Add((out int code) => commandRunner.Run("stash pop 0", out code));
 
-			var commandRunner = new GitCommandRunner(repoPath);
+            try
+            {
+                foreach (var gitOperation in commands)
+                {
+                    var output = gitOperation.Invoke(out var exitCode);
 
-			try
-			{
-				if (includeSubmodules)
-				{
-					output = commandRunner.Run($"submodule foreach git stash pop 0", out exitCode);
-				}
-				output = commandRunner.Run("stash pop 0", out exitCode);
-			}
-			catch (Exception exception)
-			{
-				throw new Exception("Could apply stash of Git repository.", exception);
-			}
-			if (exitCode != 0)
-			{
-				throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
-			}
-
-			Log.Info(output);
-		}
+                    if (exitCode != 0)
+                    {
+                        throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                    }
+                    Log.Info(output);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Could apply stash of Git repository.", exception);
+            }
+            finally
+            {
+                Release.List(ref commands);
+            }
+        }
 
 		#endregion
 
