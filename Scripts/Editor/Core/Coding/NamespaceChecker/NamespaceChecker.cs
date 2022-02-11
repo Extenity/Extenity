@@ -38,15 +38,19 @@ namespace Extenity.CodingToolbox.Editor
 							var name = type.Name;
 
 							// Skip compiler generated types. Source: https://stackoverflow.com/questions/187495/how-to-read-assembly-attributes
-							if (name.StartsWith("__StaticArrayInitTypeSize", StringComparison.Ordinal) ||
-							    name.StartsWith("<>", StringComparison.Ordinal) ||
-							    name.StartsWith("_<>", StringComparison.Ordinal) ||
-							    name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+							// Needed for:
+							//    <PrivateImplementationDetails>
+							//    __StaticArrayInitTypeSize=
+							//    <>f__AnonymousType
+							//    $BurstDirectCallInitializer
+							if (name.StartsWith('_') ||
+							    name.StartsWith('<') ||
+							    name.StartsWith('$'))
 							{
 								continue;
 							}
 
-							// Skip mysterious types that comes out of nowhere.
+							// Skip mysterious types that come out of nowhere.
 							if (name.Equals("EmbeddedAttribute", StringComparison.Ordinal) ||
 							    name.Equals("IsReadOnlyAttribute", StringComparison.Ordinal))
 							{
