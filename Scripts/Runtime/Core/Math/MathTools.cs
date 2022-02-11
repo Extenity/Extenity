@@ -140,13 +140,6 @@ namespace Extenity.MathToolbox
 			variable1 = temp;
 		}
 
-		public static T Swap<T>(this T variable1, ref T variable2)
-		{
-			var temp = variable2;
-			variable2 = variable1;
-			return temp;
-		}
-
 		public static int Sign(this sbyte value) { return value > 0 ? 1 : (value < 0 ? -1 : 0); }
 		public static int Sign(this Int16 value) { return value > 0 ? 1 : (value < 0 ? -1 : 0); }
 		public static int Sign(this Int32 value) { return value > 0 ? 1 : (value < 0 ? -1 : 0); }
@@ -172,27 +165,6 @@ namespace Extenity.MathToolbox
 		public static bool IsOdd(this UInt16 val) { return (val & 1) != 0; }
 		public static bool IsOdd(this UInt32 val) { return (val & 1) != 0; }
 		public static bool IsOdd(this UInt64 val) { return (val & 1) != 0; }
-
-		public static void Plus(this int[] array, int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-				array[i] += value;
-		}
-		public static void Plus(this float[] array, float value)
-		{
-			for (int i = 0; i < array.Length; i++)
-				array[i] += value;
-		}
-		public static void Mul(this int[] array, int value)
-		{
-			for (int i = 0; i < array.Length; i++)
-				array[i] *= value;
-		}
-		public static void Mul(this float[] array, float value)
-		{
-			for (int i = 0; i < array.Length; i++)
-				array[i] *= value;
-		}
 
 		public static bool IsPowerOfTwo(this int val)
 		{
