@@ -28,6 +28,8 @@ namespace Extenity.ScreenToolbox
 
 			panelThatFitsIntoSafeAreaOfCanvas.anchorMin = anchorMin;
 			panelThatFitsIntoSafeAreaOfCanvas.anchorMax = anchorMax;
+			panelThatFitsIntoSafeAreaOfCanvas.sizeDelta = Vector2.zero;
+			panelThatFitsIntoSafeAreaOfCanvas.anchoredPosition = Vector2.zero;
 		}
 
 		#endregion
