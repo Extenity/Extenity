@@ -85,7 +85,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		static EditorGUITools()
 		{
 			// TODO MAINTENANCE: Update that in new Unity versions.
-			// Revealed internals (Unity version 2020.2.0a11)
+			// Revealed internals (Unity version 2021.2.3f1)
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.EditorGUI");
 			if (type == null)
 				throw new InternalException(1158672612); // See 117392721.
@@ -100,11 +100,11 @@ namespace Extenity.IMGUIToolbox.Editor
 		//internal static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label)
 
 		private static readonly Func<SerializedProperty, GUIContent, float> _GetSinglePropertyHeight;
-		private static readonly Func<SerializedProperty, bool> _HasVisibleChildFields;
+		private static readonly Func<SerializedProperty, bool, bool> _HasVisibleChildFields;
 		private static readonly Func<Rect, SerializedProperty, GUIContent, bool> _DefaultPropertyField;
 
 		public static float GetSinglePropertyHeight(SerializedProperty property, GUIContent label) { return _GetSinglePropertyHeight(property, label); }
-		public static bool HasVisibleChildFields(SerializedProperty property) { return _HasVisibleChildFields(property); }
+		public static bool HasVisibleChildFields(SerializedProperty property, bool isUIElements = false) { return _HasVisibleChildFields(property, isUIElements); }
 		public static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label) { return _DefaultPropertyField(position, property, label); }
 
 		#endregion
