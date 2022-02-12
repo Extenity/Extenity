@@ -130,11 +130,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Make An Editor Window Fullscreen
+		#region Make An Editor Window Full-Screen
 
-		public static void MakeFullscreen(this EditorWindow window, bool fullscreen)
+		public static void MakeFullScreen(this EditorWindow window, bool fullScreen)
 		{
-			window.maximized = fullscreen;
+			window.maximized = fullScreen;
 			InternalEditorUtility.RepaintAllViews();
 		}
 

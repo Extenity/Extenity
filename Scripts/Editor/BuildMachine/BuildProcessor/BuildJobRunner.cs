@@ -133,7 +133,7 @@ namespace Extenity.BuildMachine.Editor
 				EditorPreferencesTools.DisableAutoRefresh();
 			}
 
-			// Make console fullscreen
+			// Make console full-screen
 			if (!BuildTools.IsBatchMode)
 			{
 				EditorApplication.delayCall += () =>
@@ -142,7 +142,7 @@ namespace Extenity.BuildMachine.Editor
 					{
 						BuildMachineLayout.LoadConsoleOnlyLayout();
 						//EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
-						//EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullscreen(true);
+						//EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullScreen(true);
 					}
 					catch
 					{

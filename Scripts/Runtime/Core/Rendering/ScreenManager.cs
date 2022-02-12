@@ -23,24 +23,24 @@ namespace Extenity.RenderingToolbox
 
 		private void Update()
 		{
-			if (IsFullscreenAutoNativeSizeAdjusterEnabled)
-				CalculateFullscreenAutoNativeSizeAdjuster();
+			if (IsFullScreenAutoNativeSizeAdjusterEnabled)
+				CalculateFullScreenAutoNativeSizeAdjuster();
 
-			var isFullscreen = Screen.fullScreen ? 1 : 0;
+			var isFullScreen = Screen.fullScreen ? 1 : 0;
 			if (
 				currentScreenWidth == Screen.width &&
 				currentScreenHeight == Screen.height &&
-				previousFullscreen == isFullscreen
+				previousFullScreen == isFullScreen
 			)
 				return;
 
 			Calculate();
 			OnScreenSizeChanged.Invoke();
 
-			if (previousFullscreen != isFullscreen)
+			if (previousFullScreen != isFullScreen)
 			{
-				previousFullscreen = isFullscreen;
-				OnFullscreenChanged.Invoke(isFullscreen == 1);
+				previousFullScreen = isFullScreen;
+				OnFullScreenChanged.Invoke(isFullScreen == 1);
 			}
 		}
 
@@ -48,32 +48,32 @@ namespace Extenity.RenderingToolbox
 
 		#region Events
 
-		public class FullscreenEvent : UnityEvent<bool> { }
+		public class FullScreenEvent : UnityEvent<bool> { }
 
 		public UnityEvent OnScreenSizeChanged = new UnityEvent();
-		public FullscreenEvent OnFullscreenChanged = new FullscreenEvent();
+		public FullScreenEvent OnFullScreenChanged = new FullScreenEvent();
 
 		#endregion
 
-		#region Fullscreen Auto Native Size Adjuster
+		#region Full-Screen Auto Native Size Adjuster
 
-		private bool FullscreenAutoNativeSizeAdjuster_WasFullscreen;
-		private int FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+		private bool FullScreenAutoNativeSizeAdjuster_WasFullScreen;
+		private int FullScreenAutoNativeSizeAdjuster_PostponeCounter = -1;
 
-		private bool IsFullscreenAutoNativeSizeAdjusterEnabled;
-		public bool IsFullscreenAutoNativeSizeAdjusterLoggingEnabled { get; set; }
+		private bool IsFullScreenAutoNativeSizeAdjusterEnabled;
+		public bool IsFullScreenAutoNativeSizeAdjusterLoggingEnabled { get; set; }
 
-		public void ActivateFullscreenAutoNativeSizeAdjuster(bool activate)
+		public void ActivateFullScreenAutoNativeSizeAdjuster(bool activate)
 		{
-			if (IsFullscreenAutoNativeSizeAdjusterEnabled == activate)
+			if (IsFullScreenAutoNativeSizeAdjusterEnabled == activate)
 				return;
-			IsFullscreenAutoNativeSizeAdjusterEnabled = activate;
+			IsFullScreenAutoNativeSizeAdjusterEnabled = activate;
 
 			if (activate)
 			{
 				// Just activated
-				FullscreenAutoNativeSizeAdjuster_WasFullscreen = !Screen.fullScreen; // This will make sure calculation below will be invalidated
-				CalculateFullscreenAutoNativeSizeAdjuster();
+				FullScreenAutoNativeSizeAdjuster_WasFullScreen = !Screen.fullScreen; // This will make sure calculation below will be invalidated
+				CalculateFullScreenAutoNativeSizeAdjuster();
 			}
 			else
 			{
@@ -81,33 +81,33 @@ namespace Extenity.RenderingToolbox
 			}
 		}
 
-		private void CalculateFullscreenAutoNativeSizeAdjuster()
+		private void CalculateFullScreenAutoNativeSizeAdjuster()
 		{
-			if (FullscreenAutoNativeSizeAdjuster_PostponeCounter >= 0)
+			if (FullScreenAutoNativeSizeAdjuster_PostponeCounter >= 0)
 			{
 				if (!Screen.fullScreen)
 				{
-					FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+					FullScreenAutoNativeSizeAdjuster_PostponeCounter = -1;
 				}
-				else if (--FullscreenAutoNativeSizeAdjuster_PostponeCounter == 0)
+				else if (--FullScreenAutoNativeSizeAdjuster_PostponeCounter == 0)
 				{
-					FullscreenAutoNativeSizeAdjuster_PostponeCounter = -1;
-					InternalSetToNativeSizeInFullscreen();
+					FullScreenAutoNativeSizeAdjuster_PostponeCounter = -1;
+					InternalSetToNativeSizeInFullScreen();
 				}
 			}
 
-			var isFullscreen = Screen.fullScreen;
-			if (FullscreenAutoNativeSizeAdjuster_WasFullscreen != isFullscreen)
+			var isFullScreen = Screen.fullScreen;
+			if (FullScreenAutoNativeSizeAdjuster_WasFullScreen != isFullScreen)
 			{
-				FullscreenAutoNativeSizeAdjuster_WasFullscreen = isFullscreen;
-				if (isFullscreen)
+				FullScreenAutoNativeSizeAdjuster_WasFullScreen = isFullScreen;
+				if (isFullScreen)
 				{
-					FullscreenAutoNativeSizeAdjuster_PostponeCounter = 2;
+					FullScreenAutoNativeSizeAdjuster_PostponeCounter = 2;
 				}
 			}
 		}
 
-		private void InternalSetToNativeSizeInFullscreen()
+		private void InternalSetToNativeSizeInFullScreen()
 		{
 			var activeDisplayIndex = GetActiveDisplayIndex();
 			if (activeDisplayIndex >= 0)
@@ -117,7 +117,7 @@ namespace Extenity.RenderingToolbox
 				var height = activeDisplay.systemHeight;
 				if (width > 0 && height > 0)
 				{
-					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+					if (IsFullScreenAutoNativeSizeAdjusterLoggingEnabled)
 						Log.Info($"Adjusting screen resolution to native {width}x{height} on monitor {activeDisplayIndex}.");
 					//activeDisplay.SetParams(width, height, 0, 0);
 					//activeDisplay.SetRenderingResolution(width, height);
@@ -125,13 +125,13 @@ namespace Extenity.RenderingToolbox
 				}
 				else
 				{
-					if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+					if (IsFullScreenAutoNativeSizeAdjusterLoggingEnabled)
 						Log.Info($"Failed to get screen resolution of active monitor {activeDisplayIndex}.");
 				}
 			}
 			else
 			{
-				if (IsFullscreenAutoNativeSizeAdjusterLoggingEnabled)
+				if (IsFullScreenAutoNativeSizeAdjusterLoggingEnabled)
 					Log.Info("Failed to find active display.");
 			}
 		}
@@ -204,7 +204,7 @@ namespace Extenity.RenderingToolbox
 		private int previousScreenHeight = int.MinValue;
 		private int currentScreenWidth = int.MinValue;
 		private int currentScreenHeight = int.MinValue;
-		private int previousFullscreen = int.MinValue;
+		private int previousFullScreen = int.MinValue;
 
 		private float screenWidthInches = float.NaN;
 		private float screenHeightInches = float.NaN;

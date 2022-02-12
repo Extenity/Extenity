@@ -15,8 +15,8 @@ namespace ExtenityExamples.RenderingToolbox
 
 			Log.Info("Initializing auto native size adjuster.");
 
-			ScreenManager.Instance.IsFullscreenAutoNativeSizeAdjusterLoggingEnabled = true;
-			ScreenManager.Instance.ActivateFullscreenAutoNativeSizeAdjuster(true);
+			ScreenManager.Instance.IsFullScreenAutoNativeSizeAdjusterLoggingEnabled = true;
+			ScreenManager.Instance.ActivateFullScreenAutoNativeSizeAdjuster(true);
 		}
 
 		private List<string> Logs = new List<string>();
