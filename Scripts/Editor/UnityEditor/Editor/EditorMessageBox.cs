@@ -1,6 +1,6 @@
 ﻿using System;
 using Extenity.IMGUIToolbox.Editor;
-using Extenity.RenderingToolbox;
+using Extenity.ScreenToolbox;
 using UnityEngine;
 using UnityEditor;
 
@@ -42,13 +42,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void Show(Vector2Int size, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
-			var rect = ScreenManager.GetCenteredRect(size.x, size.y);
+			var rect = ScreenTools.GetCenteredRect(size.x, size.y);
 			Show(rect, title, message, okButton, cancelButton, onContinue, onCancel);
 		}
 
 		public static void Show(Vector2Int size, string title, string message, UserInputField[] userInputFields, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
-			var rect = ScreenManager.GetCenteredRect(size.x, size.y);
+			var rect = ScreenTools.GetCenteredRect(size.x, size.y);
 			Show(rect, title, message, userInputFields, okButton, cancelButton, onContinue, onCancel);
 		}
 

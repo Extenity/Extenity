@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using Extenity.ColoringToolbox;
 using Extenity.DataToolbox;
-using Extenity.RenderingToolbox;
+using Extenity.ScreenToolbox;
 using UnityEngine;
 
 namespace Extenity.IMGUIToolbox.Editor
@@ -88,7 +88,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		public static Vector2 OrthographicCameraPoint(Camera camera, NineSliceAnchor anchor, float offsetX = 0, float offsetY = 0)
 		{
 			var orthographicSizeY = camera.orthographicSize;
-			var orthographicSizeX = orthographicSizeY / ScreenManager.Instance.CurrentAspectRatio;
+			var orthographicSizeX = orthographicSizeY / ScreenTracker.Info.AspectRatio;
 
 			switch (anchor)
 			{
