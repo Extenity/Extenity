@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -109,7 +109,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Get Editor Window - Game View
+		#region Unity Built-in Editor Windows
 
 		private static EditorWindow _GameView;
 		public static EditorWindow GameView
@@ -135,7 +135,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static void MakeFullScreen(this EditorWindow window, bool fullScreen)
 		{
 			window.maximized = fullScreen;
-			InternalEditorUtility.RepaintAllViews();
+			EditorGUITools.SafeRepaintAllViews();
+		}
+
+		#endregion
+
+		#region Repaint All Editor Windows
+
+		public static void RepaintAllViews()
+		{
+			EditorGUITools.SafeRepaintAllViews();
 		}
 
 		#endregion
