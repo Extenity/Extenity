@@ -10,12 +10,6 @@ namespace Extenity.RenderingToolbox
 
 	public class ScreenManager : SingletonUnity<ScreenManager>
 	{
-		#region Configuration
-
-		public float heightBaseInches = 2.31f; // iPhone 5 size
-
-		#endregion
-
 		#region Initialization
 
 		protected override void AwakeDerived()
@@ -176,18 +170,12 @@ namespace Extenity.RenderingToolbox
 				screenDiagonalInches = Mathf.Sqrt(
 					screenWidthInches * screenWidthInches +
 					screenHeightInches * screenHeightInches);
-
-				heightBasedSizeFactor = screenHeightInches / heightBaseInches;
-				heightBasedSizeFactorInverted = 1f / heightBasedSizeFactor;
 			}
 			else
 			{
 				screenWidthInches = float.NaN;
 				screenHeightInches = float.NaN;
 				screenDiagonalInches = float.NaN;
-
-				heightBasedSizeFactor = 1f;
-				heightBasedSizeFactorInverted = 1f;
 			}
 		}
 
@@ -222,9 +210,6 @@ namespace Extenity.RenderingToolbox
 		private float screenHeightInches = float.NaN;
 		private float screenDiagonalInches = float.NaN;
 		private bool screenSizeInchesAvailable = false;
-
-		private float heightBasedSizeFactor = float.NaN;
-		private float heightBasedSizeFactorInverted = float.NaN;
 
 		public float CurrentAspectRatio
 		{
@@ -269,16 +254,6 @@ namespace Extenity.RenderingToolbox
 		public bool ScreenSizeInchesAvailable
 		{
 			get { return screenSizeInchesAvailable; }
-		}
-
-		public float HeightBasedSizeFactor
-		{
-			get { return heightBasedSizeFactor; }
-		}
-
-		public float HeightBasedSizeFactorInverted
-		{
-			get { return heightBasedSizeFactorInverted; }
 		}
 
 		#endregion
