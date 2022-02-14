@@ -31,15 +31,15 @@ namespace Extenity.MathToolbox
 			return true;
 		}
 
-		public static bool Linecast(this Plane plane, float3 line1, float3 line2)
+		public static bool Linecast(this Plane plane, float3 lineStart, float3 lineEnd)
 		{
-			return !plane.SameSide(line1, line2);
+			return !plane.SameSide(lineStart, lineEnd);
 		}
 
-		public static bool Linecast(this Plane plane, float3 line1, float3 line2, out float3 intersection)
+		public static bool Linecast(this Plane plane, float3 lineStart, float3 lineEnd, out float3 intersection)
 		{
-			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
-			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
+			var distanceToPoint1 = plane.GetDistanceToPoint(lineStart);
+			var distanceToPoint2 = plane.GetDistanceToPoint(lineEnd);
 			var notIntersected = distanceToPoint1 > 0.0f && distanceToPoint2 > 0.0f ||
 			                     distanceToPoint1 <= 0.0f && distanceToPoint2 <= 0.0f;
 			if (notIntersected)
@@ -50,14 +50,14 @@ namespace Extenity.MathToolbox
 
 			var totalDistance = distanceToPoint1 - distanceToPoint2;
 			var ratio = distanceToPoint1 / totalDistance;
-			intersection = line1 + (line2 - line1) * ratio;
+			intersection = lineStart + (lineEnd - lineStart) * ratio;
 			return true;
 		}
 
-		public static bool LinecastWithProximity(this Plane plane, float3 line1, float3 line2, float3 proximityCheckingPoint, float proximityCheckingRadius)
+		public static bool LinecastWithProximity(this Plane plane, float3 lineStart, float3 lineEnd, float3 proximityCheckingPoint, float proximityCheckingRadius)
 		{
-			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
-			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
+			var distanceToPoint1 = plane.GetDistanceToPoint(lineStart);
+			var distanceToPoint2 = plane.GetDistanceToPoint(lineEnd);
 			var notIntersected = distanceToPoint1 > 0.0f && distanceToPoint2 > 0.0f ||
 			                     distanceToPoint1 <= 0.0f && distanceToPoint2 <= 0.0f;
 			if (notIntersected)
@@ -67,7 +67,7 @@ namespace Extenity.MathToolbox
 
 			var totalDistance = distanceToPoint1 - distanceToPoint2;
 			var ratio = distanceToPoint1 / totalDistance;
-			var intersection = line1 + (line2 - line1) * ratio;
+			var intersection = lineStart + (lineEnd - lineStart) * ratio;
 
 			var distanceSqr = lengthsq(proximityCheckingPoint - intersection);
 			return distanceSqr < proximityCheckingRadius * proximityCheckingRadius;
