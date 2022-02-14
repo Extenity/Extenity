@@ -38,7 +38,7 @@ namespace Extenity.UIToolbox
 #if UNITY_EDITOR
 		private string RectTransformFixTooltip;
 
-		private bool IsRectTransformNeedsFixing => RunRectTransformFixer(true);
+		private bool IsRectTransformNeedsFixing => !Application.isPlaying && RunRectTransformFixer(true);
 
 		[Button(ButtonSizes.Large)]
 		[PropertySpace(SpaceBefore = 20)]
