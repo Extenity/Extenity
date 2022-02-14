@@ -593,8 +593,14 @@ namespace Extenity.MathToolbox
 
 		#region Plane
 
+		public static float3 ProjectPointOnPlane(float3 planeNormal, float3 planePoint, float3 point)
+		{
+			var distance = -dot(normalize(planeNormal), point - planePoint);
+			return point + planeNormal * distance;
+		}
+
 #if UNITY
-		public static bool IsAllPointsOnPlane(this IList<Vector3> points, Vector3 planeNormal, float tolerance = 0.0001f)
+		public static bool IsAllPointsOnPlane(this IList<float3> points, float3 planeNormal, float tolerance = 0.0001f)
 		{
 			var plane = new Plane(planeNormal, points[0]);
 			for (int i = 1; i < points.Count; i++)
@@ -606,25 +612,20 @@ namespace Extenity.MathToolbox
 			return true;
 		}
 
-		public static Vector3 ProjectPointOnPlane(Vector3 planeNormal, Vector3 planePoint, Vector3 point)
-		{
-			var distance = -Vector3.Dot(planeNormal.normalized, point - planePoint);
-			return point + planeNormal * distance;
-		}
-
-		public static bool Linecast(this Plane plane, Vector3 line1, Vector3 line2)
+		public static bool Linecast(this Plane plane, float3 line1, float3 line2)
 		{
 			return !plane.SameSide(line1, line2);
 		}
 
-		public static bool Linecast(this Plane plane, Vector3 line1, Vector3 line2, out Vector3 intersection)
+		public static bool Linecast(this Plane plane, float3 line1, float3 line2, out float3 intersection)
 		{
 			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
 			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
-			var notIntersected = distanceToPoint1 > 0.0 && distanceToPoint2 > 0.0 || distanceToPoint1 <= 0.0 && distanceToPoint2 <= 0.0;
+			var notIntersected = distanceToPoint1 > 0.0f && distanceToPoint2 > 0.0f ||
+			                     distanceToPoint1 <= 0.0f && distanceToPoint2 <= 0.0f;
 			if (notIntersected)
 			{
-				intersection = Vector3Tools.NaN;
+				intersection = float3Tools.NaN;
 				return false;
 			}
 
@@ -634,11 +635,12 @@ namespace Extenity.MathToolbox
 			return true;
 		}
 
-		public static bool LinecastWithProximity(this Plane plane, Vector3 line1, Vector3 line2, Vector3 proximityCheckingPoint, float proximityCheckingRadius)
+		public static bool LinecastWithProximity(this Plane plane, float3 line1, float3 line2, float3 proximityCheckingPoint, float proximityCheckingRadius)
 		{
 			var distanceToPoint1 = plane.GetDistanceToPoint(line1);
 			var distanceToPoint2 = plane.GetDistanceToPoint(line2);
-			var notIntersected = distanceToPoint1 > 0.0 && distanceToPoint2 > 0.0 || distanceToPoint1 <= 0.0 && distanceToPoint2 <= 0.0;
+			var notIntersected = distanceToPoint1 > 0.0f && distanceToPoint2 > 0.0f ||
+			                     distanceToPoint1 <= 0.0f && distanceToPoint2 <= 0.0f;
 			if (notIntersected)
 			{
 				return false;
@@ -648,7 +650,7 @@ namespace Extenity.MathToolbox
 			var ratio = distanceToPoint1 / totalDistance;
 			var intersection = line1 + (line2 - line1) * ratio;
 
-			var distanceSqr = (proximityCheckingPoint - intersection).sqrMagnitude;
+			var distanceSqr = lengthsq(proximityCheckingPoint - intersection);
 			return distanceSqr < proximityCheckingRadius * proximityCheckingRadius;
 		}
 #endif
