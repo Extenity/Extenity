@@ -61,8 +61,8 @@ namespace Extenity.ScreenToolbox
 				{
 					// Log.Info($"Using safe area override for iOS device {generation}: " + safeArea);
 					return ScreenTracker.Info.IsPortrait
-						? safeArea.Portrait
-						: safeArea.Landscape;
+						? safeArea.Portrait.MultipliedAndRounded(ScreenTracker.Info.Resolution)
+						: safeArea.Landscape.MultipliedAndRounded(ScreenTracker.Info.Resolution);
 				}
 #endif
 				return Screen.safeArea;
