@@ -2,6 +2,7 @@
 
 using System;
 using Sirenix.OdinInspector;
+using Unity.Mathematics;
 using UnityEngine;
 using static Unity.Mathematics.math;
 
@@ -14,6 +15,7 @@ namespace Extenity.ScreenToolbox
 		public ScreenOrientation ScreenOrientation;
 		public int Width;
 		public int Height;
+		public int2 Resolution => int2(Width, Height);
 		public float Diagonal => sqrt(Width * Width + Height * Height);
 		public float AspectRatio => (float)Height / Width;
 		public bool IsPortrait => Height > Width;
