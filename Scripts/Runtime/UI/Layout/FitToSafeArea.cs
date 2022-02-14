@@ -45,6 +45,22 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
+		#region Simulation
+
+#if UNITY_IOS || UNITY_EDITOR
+
+		[PropertySpace(SpaceBefore = 20f)]
+		[ShowInInspector]
+		private UnityEngine.iOS.DeviceGeneration IOSSafeAreaDeviceSimulation
+		{
+			get => ScreenTools.IOSSafeAreaDeviceSimulation;
+			set => ScreenTools.IOSSafeAreaDeviceSimulation = value;
+		}
+
+#endif
+
+		#endregion
+
 		#region Fix RectTransform
 
 #if UNITY_EDITOR
