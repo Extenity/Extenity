@@ -8,6 +8,22 @@ namespace Extenity.MathToolbox
 
 	public static class RectTools
 	{
+		public static Rect FromMinMax(float minX, float minY, float maxX, float maxY)
+		{
+			return new Rect(minX,
+			                minY,
+			                maxX - minX,
+			                maxY - minY);
+		}
+
+		public static Rect FromMinMax(Vector2 min, Vector2 max)
+		{
+			return new Rect(min.x,
+			                min.y,
+			                max.x - min.x,
+			                max.y - min.y);
+		}
+
 		public static bool IsZero(this Rect me)
 		{
 			return me.x == 0 && me.y == 0 && me.width == 0 && me.height == 0;
