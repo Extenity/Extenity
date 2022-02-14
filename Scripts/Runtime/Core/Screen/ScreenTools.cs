@@ -33,24 +33,24 @@ namespace Extenity.ScreenToolbox
 			// TODO: Portrait modes needs configuration.
 
 			// @formatter:off
-			{ DeviceGeneration.iPhoneX       , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhoneXR      , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhoneXS      , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhoneXSMax   , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhoneX       , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhoneXR      , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhoneXS      , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhoneXSMax   , new (RectTools.FromMinMax(0.034f, 0f, 0.966f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 
-			{ DeviceGeneration.iPhone11      , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone11Pro   , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone11ProMax, new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone11      , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone11Pro   , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone11ProMax, new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 
-			{ DeviceGeneration.iPhone12      , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone12Pro   , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone12ProMax, new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone12Mini  , new (RectTools.FromMinMax(0.045f, 0f, 0.955f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone12      , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone12Pro   , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone12ProMax, new (RectTools.FromMinMax(0.035f, 0f, 0.965f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone12Mini  , new (RectTools.FromMinMax(0.042f, 0f, 0.958f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 
-			{ DeviceGeneration.iPhone13      , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone13Pro   , new (RectTools.FromMinMax(0.040f, 0f, 0.960f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone13ProMax, new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
-			{ DeviceGeneration.iPhone13Mini  , new (RectTools.FromMinMax(0.045f, 0f, 0.955f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone13      , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone13Pro   , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone13ProMax, new (RectTools.FromMinMax(0.035f, 0f, 0.965f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+			{ DeviceGeneration.iPhone13Mini  , new (RectTools.FromMinMax(0.042f, 0f, 0.958f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 			// @formatter:on
 		};
 #endif
