@@ -1326,6 +1326,15 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Conversions - Bool
+
+		public static string ToIntString(this bool me)
+		{
+			return me ? "1" : "0";
+		}
+
+		#endregion
+
 		#region Conversions - String
 
 		public static string ToEmptyIfNull(this string text)

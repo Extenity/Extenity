@@ -710,11 +710,6 @@ namespace Extenity.MathToolbox
 			return me ? 1 : 0;
 		}
 
-		public static string ToIntString(this bool me)
-		{
-			return me ? "1" : "0";
-		}
-
 		public static bool InvertIf(this bool me, bool doInvert)
 		{
 			return doInvert ? !me : me;
