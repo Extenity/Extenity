@@ -179,6 +179,55 @@ namespace Extenity.BuildToolbox.Editor
 
 	#endregion
 
+	#region Git Command Runner
+
+	public class GitCommandRunner
+	{
+		public string ExecutablePath { get; }
+		public string WorkingDirectory { get; }
+
+		public GitCommandRunner(string workingDirectory = null)
+		{
+			ExecutablePath = "git";
+			WorkingDirectory = workingDirectory ?? "";
+		}
+
+		public string Run(string arguments, out int exitCode)
+		{
+			var info = new ProcessStartInfo(ExecutablePath, arguments)
+			{
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+				WorkingDirectory = WorkingDirectory,
+			};
+
+			var process = new Process
+			{
+				StartInfo = info,
+			};
+
+			process.Start();
+
+			var output = process.StandardOutput.ReadToEnd();
+
+			process.WaitForExit();
+
+			var error = process.StandardError.ReadToEnd();
+
+			Log.Info(error);
+
+			output += error;
+
+			exitCode = process.ExitCode;
+
+			return output;
+		}
+	}
+
+	#endregion
+
 	public static class BuildTools
 	{
 		#region Windows Build Cleanup
@@ -338,6 +387,82 @@ namespace Extenity.BuildToolbox.Editor
 				throw new Exception("There are some modifications in Git repository. Details:\n" + output);
 			}
 		}
+
+		delegate string GitOperation(out int exitCode);
+        public static void StashAllLocalGitChanges(string path = null, string stashName = null, bool includeSubmodules = true)
+        {
+            var commandRunner = new GitCommandRunner(path);
+            
+            var commands = New.List<GitOperation>();
+            
+            if (includeSubmodules)
+            {
+                commands.Add((out int code) => commandRunner.Run("submodule foreach git add .", out code));
+                commands.Add((out int code) => commandRunner.Run("submodule foreach git stash", out code));
+            }
+
+            commands.Add((out int code) => commandRunner.Run("add .", out code));
+            commands.Add((out int code) => commandRunner.Run("stash", out code));
+
+            try
+            {
+                foreach (var gitOperation in commands)
+                {
+                    var output = gitOperation.Invoke(out var exitCode);
+
+                    if (exitCode != 0)
+                    {
+                        throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                    }
+
+                    Log.Info(output);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Could not stash changes of Git repository.", exception);
+            }
+            finally
+            {
+                Release.List(ref commands);
+            }
+        }
+
+        public static void ApplyLastGitStash(string repoPath = null, bool includeSubmodules = true)
+        {
+            var commandRunner = new GitCommandRunner(repoPath);
+            
+            var commands = New.List<GitOperation>();
+
+            if (includeSubmodules)
+            {
+                commands.Add((out int code) => commandRunner.Run($"submodule foreach git stash pop 0", out code));
+            }
+            
+            commands.Add((out int code) => commandRunner.Run("stash pop 0", out code));
+
+            try
+            {
+                foreach (var gitOperation in commands)
+                {
+                    var output = gitOperation.Invoke(out var exitCode);
+
+                    if (exitCode != 0)
+                    {
+                        throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                    }
+                    Log.Info(output);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Could apply stash of Git repository.", exception);
+            }
+            finally
+            {
+                Release.List(ref commands);
+            }
+        }
 
 		#endregion
 
