@@ -30,7 +30,7 @@ namespace Extenity.UIToolbox
 
 		private void OnScreenModified(ScreenInfo info)
 		{
-			ScreenTools.ApplySafeArea(ContainerCanvas, PanelThatFitsIntoSafeAreaOfCanvas);
+			ScreenTools.ApplyCustomizableSafeArea(ContainerCanvas, PanelThatFitsIntoSafeAreaOfCanvas);
 		}
 
 		#region Fix RectTransform
