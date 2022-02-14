@@ -25,6 +25,7 @@ namespace Extenity.ScreenToolbox
 	{
 		#region Customizable SafeArea
 
+#if UNITY_IOS || UNITY_EDITOR
 		public static Dictionary<DeviceGeneration, MobileSafeAreaOverride> IOSSafeAreaOverrides = new Dictionary<DeviceGeneration, MobileSafeAreaOverride>()
 		{
 			// TODO: Portrait modes needs configuration.
@@ -50,6 +51,7 @@ namespace Extenity.ScreenToolbox
 			{ DeviceGeneration.iPhone13Mini  , new (RectTools.FromMinMax(0.045f, 0f, 0.955f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 			// @formatter:on
 		};
+#endif
 
 		public static Rect SafeArea
 		{
