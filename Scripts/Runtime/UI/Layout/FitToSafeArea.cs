@@ -33,6 +33,18 @@ namespace Extenity.UIToolbox
 			ScreenTools.ApplyCustomizableSafeArea(ContainerCanvas, PanelThatFitsIntoSafeAreaOfCanvas);
 		}
 
+		#region Display SafeArea In Inspector
+
+#if UNITY_EDITOR
+
+		[PropertySpace(SpaceBefore = 20f)]
+		[ShowInInspector, InlineProperty]
+		private static Rect CurrentSafeArea => ScreenTools.SafeArea;
+
+#endif
+
+		#endregion
+
 		#region Fix RectTransform
 
 #if UNITY_EDITOR
