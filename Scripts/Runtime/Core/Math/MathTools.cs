@@ -827,20 +827,10 @@ namespace Extenity.MathToolbox
 				IsSnapped(value.z, snapStep, snapOffset, precision);
 		}
 
-		public static bool IsSnapped(this float4 value, float snapStep, float snapOffset, float precision = 0.001f)
-		{
-			return
-				IsSnapped(value.x, snapStep, snapOffset, precision) &&
-				IsSnapped(value.y, snapStep, snapOffset, precision) &&
-				IsSnapped(value.z, snapStep, snapOffset, precision) &&
-				IsSnapped(value.w, snapStep, snapOffset, precision);
-		}
-
 #if UNITY
 		// Old Math library support.
 		public static bool IsSnapped(this Vector2 value, float snapStep, float snapOffset, float precision = 0.001f) { return IsSnapped(float2(value), snapStep, snapOffset, precision); }
 		public static bool IsSnapped(this Vector3 value, float snapStep, float snapOffset, float precision = 0.001f) { return IsSnapped(float3(value), snapStep, snapOffset, precision); }
-		public static bool IsSnapped(this Vector4 value, float snapStep, float snapOffset, float precision = 0.001f) { return IsSnapped(float4(value), snapStep, snapOffset, precision); }
 #endif
 
 		public static float Snap(this float value, float snapStep, float snapOffset)
@@ -863,20 +853,10 @@ namespace Extenity.MathToolbox
 				Snap(value.z, snapStep, snapOffset));
 		}
 
-		public static float4 Snap(this float4 value, float snapStep, float snapOffset)
-		{
-			return new float4(
-				Snap(value.x, snapStep, snapOffset),
-				Snap(value.y, snapStep, snapOffset),
-				Snap(value.z, snapStep, snapOffset),
-				Snap(value.w, snapStep, snapOffset));
-		}
-
 #if UNITY
 		// Old Math library support.
 		public static Vector2 Snap(this Vector2 value, float snapStep, float snapOffset) { return Snap(float2(value), snapStep, snapOffset); }
 		public static Vector3 Snap(this Vector3 value, float snapStep, float snapOffset) { return Snap(float3(value), snapStep, snapOffset); }
-		public static Vector4 Snap(this Vector4 value, float snapStep, float snapOffset) { return Snap(float4(value), snapStep, snapOffset); }
 #endif
 
 		#endregion
