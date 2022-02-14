@@ -1,5 +1,6 @@
 #if UNITY
 
+using Unity.Mathematics;
 using UnityEngine;
 using static Unity.Mathematics.math;
 
@@ -51,6 +52,22 @@ namespace Extenity.MathToolbox
 		public static Vector2 MaxPoint(this Rect rect)
 		{
 			return new Vector2(rect.xMax, rect.yMax);
+		}
+
+		public static Rect Multiplied(this Rect rect, Vector2 xy)
+		{
+			return new Rect(rect.xMin * xy.x,
+			                rect.yMin * xy.y,
+			                rect.width * xy.x,
+			                rect.height * xy.y);
+		}
+
+		public static Rect MultipliedAndRounded(this Rect rect, int2 xy)
+		{
+			return new Rect(round(rect.xMin * xy.x),
+			                round(rect.yMin * xy.y),
+			                round(rect.width * xy.x),
+			                round(rect.height * xy.y));
 		}
 
 		public static Rect Combined(this Rect rect1, Rect rect2)
