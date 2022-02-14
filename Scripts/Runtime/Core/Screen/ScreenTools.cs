@@ -26,6 +26,8 @@ namespace Extenity.ScreenToolbox
 		#region Customizable SafeArea
 
 #if UNITY_IOS || UNITY_EDITOR
+		public static DeviceGeneration IOSSafeAreaDeviceSimulation = DeviceGeneration.Unknown;
+
 		public static Dictionary<DeviceGeneration, MobileSafeAreaOverride> IOSSafeAreaOverrides = new Dictionary<DeviceGeneration, MobileSafeAreaOverride>()
 		{
 			// TODO: Portrait modes needs configuration.
@@ -58,7 +60,9 @@ namespace Extenity.ScreenToolbox
 			get
 			{
 #if UNITY_IOS || UNITY_EDITOR
-				var generation = Device.generation;
+				var generation = IOSSafeAreaDeviceSimulation != DeviceGeneration.Unknown
+					? IOSSafeAreaDeviceSimulation
+					: Device.generation;
 				if (IOSSafeAreaOverrides.TryGetValue(generation, out var safeArea))
 				{
 					// Log.Info($"Using safe area override for iOS device {generation}: " + safeArea);
