@@ -961,14 +961,14 @@ namespace Extenity.DebugToolbox
 
 			switch (data.anchor)
 			{
-				case NineSliceAnchor.TopLeft: MathTools.Move(ref rectArea, BarAreaMargin, BarAreaMargin); break;
-				case NineSliceAnchor.Top: MathTools.MoveY(ref rectArea, BarAreaMargin); break;
-				case NineSliceAnchor.TopRight: MathTools.Move(ref rectArea, -BarAreaMargin, BarAreaMargin); break;
-				case NineSliceAnchor.Right: MathTools.MoveX(ref rectArea, -BarAreaMargin); break;
-				case NineSliceAnchor.BottomRight: MathTools.Move(ref rectArea, -BarAreaMargin, -BarAreaMargin); break;
-				case NineSliceAnchor.Bottom: MathTools.MoveY(ref rectArea, -BarAreaMargin); break;
-				case NineSliceAnchor.BottomLeft: MathTools.Move(ref rectArea, BarAreaMargin, -BarAreaMargin); break;
-				case NineSliceAnchor.Left: MathTools.MoveX(ref rectArea, BarAreaMargin); break;
+				case NineSliceAnchor.TopLeft: RectTools.Move(ref rectArea, BarAreaMargin, BarAreaMargin); break;
+				case NineSliceAnchor.Top: RectTools.MoveY(ref rectArea, BarAreaMargin); break;
+				case NineSliceAnchor.TopRight: RectTools.Move(ref rectArea, -BarAreaMargin, BarAreaMargin); break;
+				case NineSliceAnchor.Right: RectTools.MoveX(ref rectArea, -BarAreaMargin); break;
+				case NineSliceAnchor.BottomRight: RectTools.Move(ref rectArea, -BarAreaMargin, -BarAreaMargin); break;
+				case NineSliceAnchor.Bottom: RectTools.MoveY(ref rectArea, -BarAreaMargin); break;
+				case NineSliceAnchor.BottomLeft: RectTools.Move(ref rectArea, BarAreaMargin, -BarAreaMargin); break;
+				case NineSliceAnchor.Left: RectTools.MoveX(ref rectArea, BarAreaMargin); break;
 				default: throw new ArgumentOutOfRangeException();
 			}
 
