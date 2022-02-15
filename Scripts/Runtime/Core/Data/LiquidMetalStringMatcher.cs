@@ -16,7 +16,7 @@ namespace Extenity.DataToolbox
 		public const float TrailingScore = 0.8f;
 		public const float TrailingButStartedScore = 0.9f;
 		public const float BufferScore = 0.85f;
-		public const string WordSeparators = " \t_-";
+		public const string WordSeparators = " \t_-/\\|";
 
 		#endregion
 
