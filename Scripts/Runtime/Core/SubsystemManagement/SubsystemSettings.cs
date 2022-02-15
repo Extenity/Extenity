@@ -270,7 +270,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		internal static bool CheckSearchFilter(SubsystemType type, GameObject prefab, string singletonType, string resourcePath, string searchString)
 		{
-			const float MatchThreshold = 0.2f;
+			const float MatchThreshold = 0.6f;
 
 			if (string.IsNullOrWhiteSpace(searchString))
 				return false;
@@ -284,9 +284,13 @@ namespace Extenity.SubsystemManagementToolbox
 					if (prefab)
 					{
 						var name = prefab.name;
+						if (name.Contains(searchString, StringComparison.InvariantCultureIgnoreCase))
+							return true;
 						if (LiquidMetalStringMatcher.Score(name, searchString) > MatchThreshold)
 							return true;
 						var assetPath = UnityEditor.AssetDatabase.GetAssetPath(prefab);
+						if (assetPath.Contains(searchString, StringComparison.InvariantCultureIgnoreCase))
+							return true;
 						return LiquidMetalStringMatcher.Score(assetPath, searchString) > MatchThreshold;
 					}
 					break;
@@ -295,6 +299,8 @@ namespace Extenity.SubsystemManagementToolbox
 				case SubsystemType.SingletonClass:
 					if (!string.IsNullOrWhiteSpace(singletonType))
 					{
+						if (singletonType.Contains(searchString, StringComparison.InvariantCultureIgnoreCase))
+							return true;
 						return LiquidMetalStringMatcher.Score(singletonType, searchString) > MatchThreshold;
 					}
 					break;
@@ -303,6 +309,8 @@ namespace Extenity.SubsystemManagementToolbox
 				{
 					if (!string.IsNullOrWhiteSpace(resourcePath))
 					{
+						if (resourcePath.Contains(searchString, StringComparison.InvariantCultureIgnoreCase))
+							return true;
 						return LiquidMetalStringMatcher.Score(resourcePath, searchString) > MatchThreshold;
 					}
 					break;
