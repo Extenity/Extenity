@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using Extenity.MathToolbox;
 using JetBrains.Annotations;
 using UnityEngine;
+#if UNITY_IOS || UNITY_EDITOR
 using UnityEngine.iOS;
+#endif
 
 namespace Extenity.ScreenToolbox
 {
