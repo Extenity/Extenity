@@ -81,6 +81,7 @@ namespace Extenity.SubsystemManagementToolbox
 	{
 		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
 		[ListDrawerSettings(Expanded = true)]
+		[Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
 		[LabelText("Application Subsystems")]
 		public ApplicationSubsystemDefinition[] Subsystems;
 
@@ -118,6 +119,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		[PropertyOrder(2)]
 		[ListDrawerSettings(CustomAddFunction = "_AddNewSubsystem")]
+		[Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
 		[LabelText("$_SubsystemsLabelText")]
 		public SubsystemDefinition[] Subsystems;
 
@@ -170,6 +172,9 @@ namespace Extenity.SubsystemManagementToolbox
 
 	[Serializable]
 	public class ApplicationSubsystemDefinition : IConsistencyChecker
+#if UNITY_EDITOR
+	                                              , ISearchFilterable
+#endif
 	{
 		[HorizontalGroup(100f), HideLabel]
 		public SubsystemType Type;
@@ -279,15 +284,29 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ref List<ConsistencyError> errors) { }
+
+		#endregion
+
+		#region Search
+
+#if UNITY_EDITOR
+
+		public bool IsMatch(string searchString)
 		{
+			return SubsystemSettings.CheckSearchFilter(Type, Prefab, SingletonType, ResourcePath, searchString);
 		}
+
+#endif
 
 		#endregion
 	}
 
 	[Serializable]
 	public class SubsystemDefinition : IConsistencyChecker
+#if UNITY_EDITOR
+	                                   , ISearchFilterable
+#endif
 	{
 		[HorizontalGroup(100f), HideLabel]
 		public SubsystemType Type;
@@ -407,9 +426,20 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ref List<ConsistencyError> errors) { }
+
+		#endregion
+
+		#region Search
+
+#if UNITY_EDITOR
+
+		public bool IsMatch(string searchString)
 		{
+			return SubsystemSettings.CheckSearchFilter(Type, Prefab, SingletonType, ResourcePath, searchString);
 		}
+
+#endif
 
 		#endregion
 	}

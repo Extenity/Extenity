@@ -263,6 +263,61 @@ namespace Extenity.SubsystemManagementToolbox
 		}
 
 		#endregion
+
+		#region Search
+
+#if UNITY_EDITOR
+
+		internal static bool CheckSearchFilter(SubsystemType type, GameObject prefab, string singletonType, string resourcePath, string searchString)
+		{
+			const float MatchThreshold = 0.2f;
+
+			if (string.IsNullOrWhiteSpace(searchString))
+				return false;
+
+			searchString = searchString.Replace(" ", "");
+
+			switch (type)
+			{
+				case SubsystemType.Prefab:
+				{
+					if (prefab)
+					{
+						var name = prefab.name;
+						if (LiquidMetalStringMatcher.Score(name, searchString) > MatchThreshold)
+							return true;
+						var assetPath = UnityEditor.AssetDatabase.GetAssetPath(prefab);
+						return LiquidMetalStringMatcher.Score(assetPath, searchString) > MatchThreshold;
+					}
+					break;
+				}
+
+				case SubsystemType.SingletonClass:
+					if (!string.IsNullOrWhiteSpace(singletonType))
+					{
+						return LiquidMetalStringMatcher.Score(singletonType, searchString) > MatchThreshold;
+					}
+					break;
+
+				case SubsystemType.Resource:
+				{
+					if (!string.IsNullOrWhiteSpace(resourcePath))
+					{
+						return LiquidMetalStringMatcher.Score(resourcePath, searchString) > MatchThreshold;
+					}
+					break;
+				}
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			return false;
+		}
+
+#endif
+
+		#endregion
 	}
 
 }
