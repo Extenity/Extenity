@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Extenity.DataToolbox
 {
@@ -25,14 +24,12 @@ namespace Extenity.DataToolbox
 
 		public static float Score(string text, string searchPattern)
 		{
-			List<float> scoreArray;
-			return Score(text, searchPattern, out scoreArray);
+			List<float> resultingScoreArray = null;
+			return Score(text, searchPattern, ref resultingScoreArray);
 		}
 
-		public static float Score(string text, string searchPattern, out List<float> scoreArray)
+		public static float Score(string text, string searchPattern, ref List<float> resultingScoreArray)
 		{
-			scoreArray = null;
-
 			// short circuits
 			if (string.IsNullOrEmpty(searchPattern))
 				return TrailingScore;
@@ -40,18 +37,29 @@ namespace Extenity.DataToolbox
 				return NoMatchScore;
 
 			// match & score all
-			var allScores = new List<List<float>>();
+			var allScores = New.List<List<float>>();
+			var scoresShared = New.List<float>();
 			var search = text.ToLowerInvariant();
 			searchPattern = searchPattern.ToLowerInvariant();
-			ScoreAll(text, search, searchPattern, -1, 0, new List<float>(), allScores);
+			ScoreAll(text, search, searchPattern, -1, 0, scoresShared, allScores);
 
 			// complete miss
 			if (allScores.Count == 0)
+			{
+				// Release lists to pools.
+				for (int i = 0; i < allScores.Count; i++)
+				{
+					Release.ListUnsafe(allScores[i]);
+				}
+				Release.ListUnsafe(allScores);
+				Release.ListUnsafe(scoresShared);
 				return 0f;
+			}
 
 			// sum per-character scores into overall scores,
 			// selecting the maximum score
 			var maxScore = 0f;
+			List<float> maxScoreArray = null;
 			for (var i = 0; i < allScores.Count; i++)
 			{
 				var scores = allScores[i];
@@ -63,7 +71,7 @@ namespace Extenity.DataToolbox
 				if (scoreSum > maxScore)
 				{
 					maxScore = scoreSum;
-					scoreArray = scores;
+					maxScoreArray = scores;
 				}
 			}
 
@@ -71,6 +79,18 @@ namespace Extenity.DataToolbox
 			// s. t. the perfect match score = 1
 			maxScore /= text.Length;
 
+			if (maxScoreArray != null && resultingScoreArray != null)
+			{
+				resultingScoreArray.AddRange(maxScoreArray);
+			}
+
+			// Release lists to pools.
+			for (int i = 0; i < allScores.Count; i++)
+			{
+				Release.ListUnsafe(allScores[i]);
+			}
+			Release.ListUnsafe(allScores);
+			Release.ListUnsafe(scoresShared);
 			return maxScore;
 		}
 
@@ -83,7 +103,7 @@ namespace Extenity.DataToolbox
 				var started = search[0] == searchPattern[0];
 				var trailScore = started ? TrailingButStartedScore : TrailingScore;
 				FillArray(scores, trailScore, scores.Count, text.Length);
-				allScores.Add(scores.ToList()); // save score clone (since reference is persisted in scores)
+				allScores.Add(New.List(scores)); // save score clone (since reference is persisted in scores)
 				return;
 			}
 
