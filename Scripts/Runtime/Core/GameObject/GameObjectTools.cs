@@ -666,6 +666,39 @@ namespace Extenity.GameObjectToolbox
 			return component.gameObject == gameObject;
 		}
 
+		public static bool HasAnyComponentOfType<TComponent>(this GameObject gameObject)
+			where TComponent : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			return gameObject.TryGetComponent<TComponent>(out _);
+		}
+
+		public static bool HasAnyComponentOfType<TComponent1, TComponent2>(this GameObject gameObject)
+			where TComponent1 : Component
+			where TComponent2 : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			return gameObject.TryGetComponent<TComponent1>(out _) ||
+			       gameObject.TryGetComponent<TComponent2>(out _);
+		}
+
+		public static bool HasAnyComponentOfType<TComponent1, TComponent2, TComponent3>(this GameObject gameObject)
+			where TComponent1 : Component
+			where TComponent2 : Component
+			where TComponent3 : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			return gameObject.TryGetComponent<TComponent1>(out _) ||
+			       gameObject.TryGetComponent<TComponent2>(out _) ||
+			       gameObject.TryGetComponent<TComponent3>(out _);
+		}
+
 		/// <summary>
 		/// Check if component is inside objects list. Also check if any gameobject in objects list has the component attached to itself.
 		/// </summary>
