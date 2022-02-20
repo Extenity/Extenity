@@ -699,6 +699,55 @@ namespace Extenity.GameObjectToolbox
 			       gameObject.TryGetComponent<TComponent3>(out _);
 		}
 
+		public static bool HasAnyComponentOfTypeInChildren<TComponent>(this GameObject gameObject, bool includeSelf, bool includeInactive)
+			where TComponent : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			if (includeSelf && gameObject.HasAnyComponentOfType<TComponent>())
+			{
+				return true;
+			}
+
+			return gameObject.GetComponentInChildren<TComponent>(includeInactive) != null;
+		}
+
+
+		public static bool HasAnyComponentOfTypeInChildren<TComponent1, TComponent2>(this GameObject gameObject, bool includeSelf, bool includeInactive)
+			where TComponent1 : Component
+			where TComponent2 : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			if (includeSelf && gameObject.HasAnyComponentOfType<TComponent1, TComponent2>())
+			{
+				return true;
+			}
+
+			return gameObject.GetComponentInChildren<TComponent1>(includeInactive) != null ||
+			       gameObject.GetComponentInChildren<TComponent2>(includeInactive) != null;
+		}
+
+		public static bool HasAnyComponentOfTypeInChildren<TComponent1, TComponent2, TComponent3>(this GameObject gameObject, bool includeSelf, bool includeInactive)
+			where TComponent1 : Component
+			where TComponent2 : Component
+			where TComponent3 : Component
+		{
+			// if (!gameObject) Won't be doing null check in here for performance reasons. It's caller's responsibility.
+			// 	throw new ArgumentNullException(nameof(gameObject));
+
+			if (includeSelf && gameObject.HasAnyComponentOfType<TComponent1, TComponent2, TComponent3>())
+			{
+				return true;
+			}
+
+			return gameObject.GetComponentInChildren<TComponent1>(includeInactive) != null ||
+			       gameObject.GetComponentInChildren<TComponent2>(includeInactive) != null ||
+			       gameObject.GetComponentInChildren<TComponent3>(includeInactive) != null;
+		}
+
 		/// <summary>
 		/// Check if component is inside objects list. Also check if any gameobject in objects list has the component attached to itself.
 		/// </summary>
