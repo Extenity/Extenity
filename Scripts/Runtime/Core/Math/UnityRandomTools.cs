@@ -7,6 +7,9 @@ using Extenity.DataToolbox;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
+
 namespace Extenity.MathToolbox
 {
 
@@ -113,14 +116,12 @@ namespace Extenity.MathToolbox
 		public static bool Bool => 0.5f > Random.value;
 		public static float Sign => Bool ? -1f : 1f;
 
-		public static Vector2 Vector2(float range) { return new Vector2(Range(-range, range), Range(-range, range)); }
-		public static Vector3 Vector3(float range) { return new Vector3(Range(-range, range), Range(-range, range), Range(-range, range)); }
-		public static Vector2 Vector2(float rangeX, float rangeY) { return new Vector2(Range(-rangeX, rangeX), Range(-rangeY, rangeY)); }
-		public static Vector3 Vector3(float rangeX, float rangeY, float rangeZ) { return new Vector3(Range(-rangeX, rangeX), Range(-rangeY, rangeY), Range(-rangeZ, rangeZ)); }
-		public static Vector2 Vector2(Vector2 range) { return new Vector2(Range(-range.x, range.x), Range(-range.y, range.y)); }
-		public static Vector3 Vector3(Vector3 range) { return new Vector3(Range(-range.x, range.x), Range(-range.y, range.y), Range(-range.z, range.z)); }
-		public static Vector2 UnitVector2 => new Vector2(Range(-1f, 1f), Range(-1f, 1f));
-		public static Vector3 UnitVector3 => new Vector3(Range(-1f, 1f), Range(-1f, 1f), Range(-1f, 1f));
+		public static float2 Float2(float min, float max) { return float2(Range(min, max), Range(min, max)); }
+		public static float3 Float3(float min, float max) { return float3(Range(min, max), Range(min, max), Range(min, max)); }
+		public static float2 Float2(float minX, float maxX, float minY, float maxY) { return float2(Range(minX, maxX), Range(minY, maxY)); }
+		public static float3 Float3(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) { return float3(Range(minX, maxX), Range(minY, maxY), Range(minZ, maxZ)); }
+		public static float2 UnitFloat2 => float2(Range(-1f, 1f), Range(-1f, 1f));
+		public static float3 UnitFloat3 => float3(Range(-1f, 1f), Range(-1f, 1f), Range(-1f, 1f));
 
 		public static float3 InsideUnitSphere
 		{
@@ -162,16 +163,16 @@ namespace Extenity.MathToolbox
 			}
 		}
 
-		public static void FillRandomPositionsInSphere(this IList<Vector3> list, Vector3 sphereCenter, float sphereRadius)
+		public static void FillRandomPositionsInSphere(this IList<float3> list, float3 sphereCenter, float sphereRadius)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
-				var position = Random.insideUnitSphere * sphereRadius + sphereCenter;
+				var position = InsideUnitSphere * sphereRadius + sphereCenter;
 				list[i] = position;
 			}
 		}
 
-		public static bool FillRandomPositionsInSphere(this IList<Vector3> list, Vector3 sphereCenter, float sphereRadius, float minimumSeparationBetweenPositions)
+		public static bool TryFillRandomPositionsInSphereWithMinimumSeparation(this IList<float3> list, float3 sphereCenter, float sphereRadius, float minimumSeparationBetweenPositions)
 		{
 			var minimumSeparationBetweenPositionsSqr = minimumSeparationBetweenPositions * minimumSeparationBetweenPositions;
 
@@ -187,7 +188,7 @@ namespace Extenity.MathToolbox
 					while (tryCountForSinglePosition-- > 0)
 					{
 						// Select a position randomly.
-						var position = Random.insideUnitSphere * sphereRadius + sphereCenter;
+						var position = InsideUnitSphere * sphereRadius + sphereCenter;
 
 						// See if the selected random position overlaps with any of the previously selected positions.
 						var detectedAnOverlapWithPreviousPositions = false;
@@ -227,7 +228,7 @@ namespace Extenity.MathToolbox
 			}
 
 			// So, accept the defeat. Fill whole array with NaN so the caller won't use the list accidentally.
-			list.Fill(Vector3Tools.NaN);
+			list.Fill(float3Tools.NaN);
 			return false;
 		}
 
