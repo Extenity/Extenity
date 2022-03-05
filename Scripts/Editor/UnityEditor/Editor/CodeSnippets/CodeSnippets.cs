@@ -148,8 +148,9 @@ Put the tests here which requires Unity Play Mode to be run.
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"{
 	""name"": ""__NAME__.Tests.EditAndPlayModes"",
-	""rootNamespace"": """",
+	""rootNamespace"": ""__NAMESPACE__"",
 	""references"": [
+		""__NAME__"",
 		""Extenity.Core"",
 		""Extenity.Testing"",
 		""UnityEngine.TestRunner"",
@@ -174,6 +175,16 @@ Put the tests here which requires Unity Play Mode to be run.
 "
 		);
 
+		private static readonly SnippetInfo TestAssemblyInfo_EditAndPlayModes = new SnippetInfo(
+			nameof(TestAssemblyInfo_EditAndPlayModes),
+			"__NAME__.Tests/EditAndPlayModes/AssemblyInfo.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using Extenity.CodingToolbox;
+
+[assembly: EnsuredNamespace(""__NAMESPACE__"")]
+"
+		);
+
 		private static readonly SnippetInfo TestScript_EditAndPlayModes = new SnippetInfo(
 			nameof(TestScript_EditAndPlayModes),
 			"__NAME__.Tests/EditAndPlayModes/Test___NAME__.cs",
@@ -183,7 +194,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
-namespace __NAMESPACE__.Tests
+namespace __NAMESPACE__
 {
 
 	public class Test___NAME__
@@ -206,8 +217,9 @@ namespace __NAMESPACE__.Tests
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"{
 	""name"": ""__NAME__.Tests.EditModeOnly"",
-	""rootNamespace"": """",
+	""rootNamespace"": ""__NAMESPACE__"",
 	""references"": [
+		""__NAME__"",
 		""Extenity.Core"",
 		""Extenity.Testing"",
 		""UnityEngine.TestRunner"",
@@ -232,6 +244,17 @@ namespace __NAMESPACE__.Tests
 "
 		);
 
+
+		private static readonly SnippetInfo TestAssemblyInfo_EditModeOnly = new SnippetInfo(
+			nameof(TestAssemblyInfo_EditModeOnly),
+			"__NAME__.Tests/EditModeOnly/AssemblyInfo.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using Extenity.CodingToolbox;
+
+[assembly: EnsuredNamespace(""__NAMESPACE__"")]
+"
+		);
+
 		private static readonly SnippetInfo TestScript_EditModeOnly = new SnippetInfo(
 			nameof(TestScript_EditModeOnly),
 			"__NAME__.Tests/EditModeOnly/Test___NAME__.cs",
@@ -241,7 +264,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
-namespace __NAMESPACE__.Tests
+namespace __NAMESPACE__
 {
 
 	public class Test___NAME__
@@ -264,8 +287,9 @@ namespace __NAMESPACE__.Tests
 			new[] { "__NAME__", "__NAMESPACE__" },
 			@"{
 	""name"": ""__NAME__.Tests.PlayModeOnly"",
-	""rootNamespace"": """",
+	""rootNamespace"": ""__NAMESPACE__"",
 	""references"": [
+		""__NAME__"",
 		""Extenity.Core"",
 		""Extenity.Testing"",
 		""UnityEngine.TestRunner"",
@@ -288,6 +312,16 @@ namespace __NAMESPACE__.Tests
 "
 		);
 
+		private static readonly SnippetInfo TestAssemblyInfo_PlayModeOnly = new SnippetInfo(
+			nameof(TestAssemblyInfo_PlayModeOnly),
+			"__NAME__.Tests/PlayModeOnly/AssemblyInfo.cs",
+			new[] { "__NAME__", "__NAMESPACE__" },
+			@"using Extenity.CodingToolbox;
+
+[assembly: EnsuredNamespace(""__NAMESPACE__"")]
+"
+		);
+
 		private static readonly SnippetInfo TestScript_PlayModeOnly = new SnippetInfo(
 			nameof(TestScript_PlayModeOnly),
 			"__NAME__.Tests/PlayModeOnly/Test___NAME__.cs",
@@ -297,7 +331,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
-namespace __NAMESPACE__.Tests
+namespace __NAMESPACE__
 {
 
 	public class Test___NAME__
@@ -357,11 +391,17 @@ namespace __NAMESPACE__.Tests
 			SnippetNames = new List<string>
 			{
 				nameof(TestAssemblyReadme),
+
 				nameof(TestAsmdef_EditAndPlayModes),
+				nameof(TestAssemblyInfo_EditAndPlayModes),
 				nameof(TestScript_EditAndPlayModes),
+
 				nameof(TestAsmdef_EditModeOnly),
+				nameof(TestAssemblyInfo_EditModeOnly),
 				nameof(TestScript_EditModeOnly),
+
 				nameof(TestAsmdef_PlayModeOnly),
+				nameof(TestAssemblyInfo_PlayModeOnly),
 				nameof(TestScript_PlayModeOnly),
 			}
 		};
@@ -515,7 +555,7 @@ namespace __NAMESPACE__.Tests
 
 		#region Create Snippet
 
-		private static void CreateSnippet(SnippetGroup snippetGroup)
+		private static void CreateSnippet(SnippetGroup snippetGroup, Func<string, string> overrideDefaultNamespaceProcessor = null)
 		{
 			var path = EditorUtility.SaveFilePanel("Give a name to your script", AssetDatabaseTools.GetSelectedDirectoryPathOrAssetsRootPath(), "", snippetGroup.MainFileExtension);
 
@@ -526,7 +566,9 @@ namespace __NAMESPACE__.Tests
 
 			if (snippetGroup.AskForNamespace)
 			{
-				var rootNamespace = EditorSettings.projectGenerationRootNamespace;
+				var rootNamespace = overrideDefaultNamespaceProcessor != null
+					? overrideDefaultNamespaceProcessor(scriptName)
+					: EditorSettings.projectGenerationRootNamespace;
 				var inputField = new[] { new UserInputField("Namespace", string.IsNullOrEmpty(rootNamespace) ? "" : rootNamespace, false) };
 				EditorMessageBox.Show(new Vector2Int(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
 					() =>
@@ -579,7 +621,7 @@ namespace __NAMESPACE__.Tests
 		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Tests Assembly Triple Folders Setup", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
 		private static void _CreateScript_TestAssembliesGroup()
 		{
-			CreateSnippet(TestAssembliesGroup);
+			CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
 		}
 
 
