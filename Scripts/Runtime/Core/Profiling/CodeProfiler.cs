@@ -1,3 +1,5 @@
+#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
+
 using System;
 using System.Collections.Generic;
 using Extenity.ApplicationToolbox;
@@ -157,3 +159,5 @@ namespace Extenity.ProfilingToolbox
 	}
 
 }
+
+#endif
