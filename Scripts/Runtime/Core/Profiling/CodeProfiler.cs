@@ -1,10 +1,8 @@
-#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
-
 using System;
 using System.Collections.Generic;
 using Extenity.ApplicationToolbox;
-using UnityEngine;
-using UnityEngine.Events;
+using Extenity.DebugToolbox;
+using Extenity.MessagingToolbox;
 
 namespace Extenity.ProfilingToolbox
 {
@@ -14,7 +12,7 @@ namespace Extenity.ProfilingToolbox
 		public static readonly CodeProfilerEntry BaseEntry = new CodeProfilerEntry();
 		public static CodeProfilerEntry CurrentEntry = BaseEntry;
 
-		public class EntryEvent : UnityEvent<CodeProfilerEntry> { }
+		public class EntryEvent : ExtenityEvent<CodeProfilerEntry> { }
 		public static readonly EntryEvent OnEntryCreated = new EntryEvent();
 
 		public static void ForeachChildren(CodeProfilerEntry parentEntry, Action<CodeProfilerEntry> onItem)
@@ -56,7 +54,7 @@ namespace Extenity.ProfilingToolbox
 			// Set current entry as the child.
 			if (CurrentEntry.GetOrAddChild(id, out CurrentEntry))
 			{
-				OnEntryCreated.Invoke(CurrentEntry);
+				OnEntryCreated.InvokeUnsafe(CurrentEntry);
 			}
 
 			//Profiler.BeginSample(title);
@@ -72,7 +70,7 @@ namespace Extenity.ProfilingToolbox
 			var now = PrecisionTiming.PreciseTime;
 			//Profiler.EndSample();
 
-			Debug.Assert(CurrentEntry.StartTime > 0.0);
+			DebugAssert.IsTrue(CurrentEntry.StartTime > 0.0);
 			var duration = now - CurrentEntry.StartTime;
 			if (duration < 0.0)
 			{
@@ -159,5 +157,3 @@ namespace Extenity.ProfilingToolbox
 	}
 
 }
-
-#endif
