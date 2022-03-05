@@ -1,27 +1,24 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
-using UnityEngine;
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
 
 	public struct LineSegment
 	{
-		public Vector3 p1;
-		public Vector3 p2;
+		public float3 p1;
+		public float3 p2;
 
-		public LineSegment(Vector3 p1, Vector3 p2)
+		public LineSegment(float3 p1, float3 p2)
 		{
 			this.p1 = p1;
 			this.p2 = p2;
 		}
 
-		public Vector3 Direction
+		public float3 Direction
 		{
-			get { return (p2 - p1).normalized; }
+			get { return normalize(p2 - p1); }
 		}
 	}
 
 }
-
-#endif
