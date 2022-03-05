@@ -107,8 +107,6 @@ namespace Extenity.DataToolbox
 			return new Guid(System.Guid.NewGuid());
 		}
 
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 		/// <summary>
 		/// Generates a pseudo-GUID that depends on UnityEngine.Random's seed. Makes sure the
 		/// generated GUID is always the same if you give it the same seed. Note that this
@@ -134,7 +132,7 @@ namespace Extenity.DataToolbox
 			var data = new byte[16];
 			for (int i = 0; i < 16; i++)
 			{
-				data[i] = (byte)(UnityEngine.Random.value * 256f);
+				data[i] = (byte)RandomTools.RangeIncludingMax(0, byte.MaxValue);
 			}
 
 			if (randomizeAfterwards)
@@ -142,8 +140,6 @@ namespace Extenity.DataToolbox
 
 			return new Guid { Data = data };
 		}
-
-#endif
 
 		#endregion
 
