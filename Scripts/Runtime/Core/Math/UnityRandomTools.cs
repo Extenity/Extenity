@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Extenity.DataToolbox;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 using Unity.Mathematics;
@@ -111,7 +110,9 @@ namespace Extenity.MathToolbox
 		public static int RangeIncludingMax(int minInclusive, int maxInclusive) { return Range(minInclusive, maxInclusive + 1); }
 		public static float Range(float minInclusive, float maxInclusive) { return Random.Range(minInclusive, maxInclusive); }
 
-		public static Color ColorRGB => new Color(Range(0f, 1f), Range(0f, 1f), Range(0f, 1f));
+#if UNITY
+		public static UnityEngine.Color ColorRGB => new(Range(0f, 1f), Range(0f, 1f), Range(0f, 1f));
+#endif
 
 		public static bool Bool => 0.5f > Random.value;
 		public static float Sign => Bool ? -1f : 1f;
