@@ -2,9 +2,9 @@
 
 using System;
 using System.Diagnostics;
+using Extenity.MessagingToolbox;
 using JetBrains.Annotations;
 using UnityEditor;
-using UnityEngine.Events;
 
 namespace Extenity.DataToolbox.Editor
 {
@@ -106,7 +106,7 @@ namespace Extenity.DataToolbox.Editor
 					_DontEmitNextValueChangedEvent = false;
 				}
 				else
-					OnValueChanged.Invoke(value);
+					OnValueChanged.InvokeSafe(value);
 			}
 		}
 
@@ -114,12 +114,12 @@ namespace Extenity.DataToolbox.Editor
 
 		#region Value Changed Event
 
-		public class ValueChangedEvent : UnityEvent<T> { }
+		public class ValueChangedEvent : ExtenityEvent<T> { }
 		public readonly ValueChangedEvent OnValueChanged = new ValueChangedEvent();
 
 		private bool _DontEmitNextValueChangedEvent;
 
-		public void AddOnValueChangedListenerAndInvoke(UnityAction<T> listener)
+		public void AddOnValueChangedListenerAndInvoke(Action<T> listener)
 		{
 			if (listener == null)
 				throw new ArgumentNullException();
@@ -131,7 +131,7 @@ namespace Extenity.DataToolbox.Editor
 		public void InvokeValueChanged()
 		{
 			LogInfo("Invoking value change event");
-			OnValueChanged.Invoke(Value);
+			OnValueChanged.InvokeSafe(Value);
 		}
 
 		public void SuppressNextValueChangedEvent()

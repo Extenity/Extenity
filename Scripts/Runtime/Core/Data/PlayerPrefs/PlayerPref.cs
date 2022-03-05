@@ -2,10 +2,10 @@
 
 using System;
 using System.Diagnostics;
+using Extenity.MessagingToolbox;
 using JetBrains.Annotations;
 #if UNITY
 using UnityEngine;
-using UnityEngine.Events;
 #endif
 
 namespace Extenity.DataToolbox
@@ -126,7 +126,7 @@ namespace Extenity.DataToolbox
 					_DontEmitNextValueChangedEvent = false;
 				}
 				else
-					OnValueChanged.Invoke(transformedValue);
+					OnValueChanged.InvokeSafe(transformedValue);
 #else
 				throw new System.NotImplementedException();
 #endif
@@ -150,14 +150,12 @@ namespace Extenity.DataToolbox
 
 		#region Value Changed Event
 
-#if UNITY // TODO-UniversalExtenity: Convert these to ExtenityEvent after implementing it into Universal project.
-
-		public class ValueChangedEvent : UnityEvent<T> { }
+		public class ValueChangedEvent : ExtenityEvent<T> { }
 		public readonly ValueChangedEvent OnValueChanged = new ValueChangedEvent();
 
 		private bool _DontEmitNextValueChangedEvent;
 
-		public void AddOnValueChangedListenerAndInvoke(UnityAction<T> listener)
+		public void AddOnValueChangedListenerAndInvoke(Action<T> listener)
 		{
 			if (listener == null)
 				throw new ArgumentNullException();
@@ -169,7 +167,7 @@ namespace Extenity.DataToolbox
 		public void InvokeValueChanged()
 		{
 			LogInfo("Invoking value change event");
-			OnValueChanged.Invoke(Value);
+			OnValueChanged.InvokeSafe(Value);
 		}
 
 		public void SuppressNextValueChangedEvent()
@@ -177,8 +175,6 @@ namespace Extenity.DataToolbox
 			LogInfo("Suppressing next value change event");
 			_DontEmitNextValueChangedEvent = true;
 		}
-
-#endif
 
 		#endregion
 
