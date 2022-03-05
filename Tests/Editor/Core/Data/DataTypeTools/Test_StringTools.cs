@@ -848,11 +848,11 @@ namespace ExtenityTests.DataToolbox
 			// Seems like the collision will be rare below 5.000 items.
 			// Above that, we start to see collisions.
 			// Above 100.000, we rarely see the test succeeds without collision.
-			UnityRandomTools.RandomizeGenerator();
+			RandomTools.RandomizeGenerator();
 			var buffer = new char[10];
 			for (int i = 0; i < 100000; i++)
 			{
-				UnityRandomTools.FillRandomly(buffer);
+				RandomTools.FillRandomly(buffer);
 				var value = buffer.ConvertToString(0, Random.Range(1, 10));
 				if (!TestValue_GetHashCodeGuaranteed(valueBag, history, value))
 					i--;

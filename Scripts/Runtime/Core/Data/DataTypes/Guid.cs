@@ -129,7 +129,7 @@ namespace Extenity.DataToolbox
 		public static Guid NewPseudoGuid(bool randomizeBeforehand = false, bool randomizeAfterwards = false)
 		{
 			if (randomizeBeforehand)
-				UnityRandomTools.RandomizeGenerator();
+				RandomTools.RandomizeGenerator();
 
 			var data = new byte[16];
 			for (int i = 0; i < 16; i++)
@@ -138,7 +138,7 @@ namespace Extenity.DataToolbox
 			}
 
 			if (randomizeAfterwards)
-				UnityRandomTools.RandomizeGenerator();
+				RandomTools.RandomizeGenerator();
 
 			return new Guid { Data = data };
 		}
