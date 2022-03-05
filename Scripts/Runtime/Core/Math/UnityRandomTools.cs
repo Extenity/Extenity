@@ -1,11 +1,9 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+// #define UseSystemRandom
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Extenity.DataToolbox;
-using Random = UnityEngine.Random;
-
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
@@ -14,9 +12,57 @@ namespace Extenity.MathToolbox
 
 	public static class UnityRandomTools
 	{
+		#region Random Number Generator
+
+#if !UNITY || UseSystemRandom
+		private static System.Random Generator;
+#endif
+
+		public static void SetSeed(int seed)
+		{
+#if !UNITY || UseSystemRandom
+			Generator = new System.Random(seed);
+#else
+			UnityEngine.Random.InitState(seed);
+#endif
+		}
+
+		private static float _Float
+		{
+			get
+			{
+#if !UNITY || UseSystemRandom
+				return (float)Generator.NextDouble();
+				// return (float)(Generator.Next() / (double)Int32.MaxValue); // Not extensively tested.
+#else
+				return UnityEngine.Random.value;
+#endif
+			}
+		}
+
+		private static int _Range(int minInclusive, int maxExclusive)
+		{
+#if !UNITY || UseSystemRandom
+			return Generator.Next(minInclusive, maxExclusive);
+#else
+			return UnityEngine.Random.Range(minInclusive, maxExclusive);
+#endif
+		}
+
+		private static float _Range(float minInclusive, float maxInclusive)
+		{
+#if !UNITY || UseSystemRandom
+			return (float)((Generator.NextDouble() * ((double)maxInclusive - (double)minInclusive)) + (double)minInclusive);
+#else
+			return UnityEngine.Random.Range(minInclusive, maxInclusive);
+#endif
+		}
+
+		#endregion
+
 		#region Randomize Generator
 
-		// Randomize Unity's random number generator by giving it a seed that is created
+		// Randomize internal random number generator by giving it a seed that is created
 		// using system's current timestamp. The algorithm will fall back to alternative
 		// timestamp options if required. Also it's safe to call this method rapidly
 		// without worrying about getting the same timestamp value because of timestamp
@@ -27,7 +73,7 @@ namespace Extenity.MathToolbox
 		public static void RandomizeGenerator()
 		{
 			var seed = GenerateTimestampedSeed();
-			Random.InitState(seed);
+			SetSeed(seed);
 		}
 
 		private static int _Lubricant = 8156491; // It's named lubricant, because why not. The value is just a random value which does not mean anything.
@@ -106,23 +152,46 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public static int Range(int minInclusive, int maxExclusive) { return Random.Range(minInclusive, maxExclusive); }
-		public static int RangeIncludingMax(int minInclusive, int maxInclusive) { return Range(minInclusive, maxInclusive + 1); }
-		public static float Range(float minInclusive, float maxInclusive) { return Random.Range(minInclusive, maxInclusive); }
+		public static int Range(int minInclusive, int maxExclusive) { return _Range(minInclusive, maxExclusive); }
+		public static int RangeIncludingMax(int minInclusive, int maxInclusive) { return _Range(minInclusive, maxInclusive + 1); }
+		public static float Range(float minInclusive, float maxInclusive) { return _Range(minInclusive, maxInclusive); }
 
 #if UNITY
 		public static UnityEngine.Color ColorRGB => new(Range(0f, 1f), Range(0f, 1f), Range(0f, 1f));
 #endif
 
-		public static bool Bool => 0.5f > Random.value;
-		public static float Sign => Bool ? -1f : 1f;
+		// @formatter:off
+		public static float2 RangeFloat2(float min , float max                                                   ) => float2(Range(min , max ), Range(min , max )                   );
+		public static float3 RangeFloat3(float min , float max                                                   ) => float3(Range(min , max ), Range(min , max ), Range(min , max ));
+		public static float2 RangeFloat2(float minX, float maxX,  float minY, float maxY                         ) => float2(Range(minX, maxX), Range(minY, maxY)                   );
+		public static float3 RangeFloat3(float minX, float maxX,  float minY, float maxY,  float minZ, float maxZ) => float3(Range(minX, maxX), Range(minY, maxY), Range(minZ, maxZ));
+		public static float  Float      => _Float;
+		public static float2 Float2     => float2(_Float, _Float);
+		public static float3 Float3     => float3(_Float, _Float, _Float);
+		public static float  UnitFloat  => Range      (-1f, 1f);
+		public static float2 UnitFloat2 => RangeFloat2(-1f, 1f);
+		public static float3 UnitFloat3 => RangeFloat3(-1f, 1f);
+		public static bool   Bool       => Float > 0.5f;
+		public static float  Sign       => Bool ? -1f : 1f;
+		// @formatter:on
 
-		public static float2 Float2(float min, float max) { return float2(Range(min, max), Range(min, max)); }
-		public static float3 Float3(float min, float max) { return float3(Range(min, max), Range(min, max), Range(min, max)); }
-		public static float2 Float2(float minX, float maxX, float minY, float maxY) { return float2(Range(minX, maxX), Range(minY, maxY)); }
-		public static float3 Float3(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) { return float3(Range(minX, maxX), Range(minY, maxY), Range(minZ, maxZ)); }
-		public static float2 UnitFloat2 => float2(Range(-1f, 1f), Range(-1f, 1f));
-		public static float3 UnitFloat3 => float3(Range(-1f, 1f), Range(-1f, 1f), Range(-1f, 1f));
+		public static float2 InsideUnitCircle
+		{
+			get
+			{
+				while (true)
+				{
+					// Generate a point in unit square. Then make sure it is inside the unit square. If not, try again.
+					// This (hopefully) provides homogeneous random distribution.
+					var value = UnitFloat2;
+
+					if (lengthsq(value) <= 1f)
+					{
+						return value;
+					}
+				}
+			}
+		}
 
 		public static float3 InsideUnitSphere
 		{
@@ -131,7 +200,7 @@ namespace Extenity.MathToolbox
 				while (true)
 				{
 					// Generate a point in unit cube. Then make sure it is inside the unit sphere. If not, try again.
-					// This provides homogeneous random distribution.
+					// This (hopefully) provides homogeneous random distribution.
 					var value = UnitFloat3;
 
 					if (lengthsq(value) <= 1f)
@@ -512,5 +581,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
