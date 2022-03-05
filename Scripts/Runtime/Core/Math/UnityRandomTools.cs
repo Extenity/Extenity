@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Extenity.DataToolbox;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Extenity.MathToolbox
@@ -103,27 +104,23 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
-		public static int RandomRange(int min, int max) { return Random.Range(min, max); }
-		public static int RandomRangeIncludingMax(int min, int max) { return Random.Range(min, max + 1); }
+		public static int Range(int minInclusive, int maxExclusive) { return Random.Range(minInclusive, maxExclusive); }
+		public static int RangeIncludingMax(int minInclusive, int maxInclusive) { return Range(minInclusive, maxInclusive + 1); }
+		public static float Range(float minInclusive, float maxInclusive) { return Random.Range(minInclusive, maxInclusive); }
 
-		public static Color RandomColor => new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+		public static Color ColorRGB => new Color(Range(0f, 1f), Range(0f, 1f), Range(0f, 1f));
 
-		public static float RandomPI => Mathf.PI * Random.value;
-		public static float RandomHalfPI => Mathf.PI * 0.5f * Random.value;
-		public static float Random180 => 180f * Random.value;
-		public static float Random360 => 360f * Random.value;
-		public static bool RandomBool => 0.5f > Random.value;
-		public static bool RandomBoolRatio(float ratio) { return ratio > Random.value; }
-		public static float RandomSign => RandomBool ? -1f : 1f;
+		public static bool Bool => 0.5f > Random.value;
+		public static float Sign => Bool ? -1f : 1f;
 
-		public static Vector2 RandomVector2(float range) { return new Vector2(Random.Range(-range, range), Random.Range(-range, range)); }
-		public static Vector3 RandomVector3(float range) { return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range)); }
-		public static Vector2 RandomVector2(float rangeX, float rangeY) { return new Vector2(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY)); }
-		public static Vector3 RandomVector3(float rangeX, float rangeY, float rangeZ) { return new Vector3(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY), Random.Range(-rangeZ, rangeZ)); }
-		public static Vector2 RandomVector2(Vector2 range) { return new Vector2(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y)); }
-		public static Vector3 RandomVector3(Vector3 range) { return new Vector3(Random.Range(-range.x, range.x), Random.Range(-range.y, range.y), Random.Range(-range.z, range.z)); }
-		public static Vector2 RandomUnitVector2 => new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-		public static Vector3 RandomUnitVector3 => new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+		public static Vector2 Vector2(float range) { return new Vector2(Range(-range, range), Range(-range, range)); }
+		public static Vector3 Vector3(float range) { return new Vector3(Range(-range, range), Range(-range, range), Range(-range, range)); }
+		public static Vector2 Vector2(float rangeX, float rangeY) { return new Vector2(Range(-rangeX, rangeX), Range(-rangeY, rangeY)); }
+		public static Vector3 Vector3(float rangeX, float rangeY, float rangeZ) { return new Vector3(Range(-rangeX, rangeX), Range(-rangeY, rangeY), Range(-rangeZ, rangeZ)); }
+		public static Vector2 Vector2(Vector2 range) { return new Vector2(Range(-range.x, range.x), Range(-range.y, range.y)); }
+		public static Vector3 Vector3(Vector3 range) { return new Vector3(Range(-range.x, range.x), Range(-range.y, range.y), Range(-range.z, range.z)); }
+		public static Vector2 UnitVector2 => new Vector2(Range(-1f, 1f), Range(-1f, 1f));
+		public static Vector3 UnitVector3 => new Vector3(Range(-1f, 1f), Range(-1f, 1f), Range(-1f, 1f));
 
 		#region Random Collections
 
@@ -133,7 +130,7 @@ namespace Extenity.MathToolbox
 				count = data.Count;
 			for (int i = 0; i < count; i++)
 			{
-				data[i] = (byte)Random.Range(minInclusive, maxExclusive);
+				data[i] = (byte)Range(minInclusive, maxExclusive);
 			}
 		}
 
@@ -143,7 +140,7 @@ namespace Extenity.MathToolbox
 				count = data.Count;
 			for (int i = 0; i < count; i++)
 			{
-				data[i] = (char)Random.Range((int)'a', (int)'z');
+				data[i] = (char)Range((int)'a', (int)'z');
 			}
 		}
 
@@ -224,7 +221,7 @@ namespace Extenity.MathToolbox
 		{
 			if (list.Length == 0)
 				return -1;
-			return Random.Range(0, list.Length);
+			return Range(0, list.Length);
 		}
 
 		public static int RandomIndexSelection<T>(this T[] list, System.Random random)
@@ -238,7 +235,7 @@ namespace Extenity.MathToolbox
 		{
 			if (collection.Count == 0)
 				return -1;
-			return Random.Range(0, collection.Count);
+			return Range(0, collection.Count);
 		}
 
 		public static int RandomIndexSelection<T>(this ICollection<T> collection, System.Random random)
@@ -252,7 +249,7 @@ namespace Extenity.MathToolbox
 		{
 			if (list.Count == 0)
 				return -1;
-			int index = Random.Range(0, list.Count);
+			int index = Range(0, list.Count);
 			if (removeFromList)
 				list.RemoveAt(index);
 			return index;
@@ -276,7 +273,7 @@ namespace Extenity.MathToolbox
 		{
 			if (list.Length == 0)
 				return default(T);
-			return list[Random.Range(0, list.Length)];
+			return list[Range(0, list.Length)];
 		}
 
 		public static T RandomSelection<T>(this T[] list, System.Random random)
@@ -290,7 +287,7 @@ namespace Extenity.MathToolbox
 		{
 			if (list.Count == 0)
 				return default(T);
-			return list[Random.Range(0, list.Count)];
+			return list[Range(0, list.Count)];
 		}
 
 		public static T RandomSelection<T>(this IList<T> list, System.Random random)
@@ -304,7 +301,7 @@ namespace Extenity.MathToolbox
 		{
 			if (list.Count == 0)
 				return default(T);
-			int index = Random.Range(0, list.Count);
+			int index = Range(0, list.Count);
 			T val = list[index];
 			if (removeFromList)
 				list.RemoveAt(index);
@@ -474,7 +471,7 @@ namespace Extenity.MathToolbox
 			while (n > 1)
 			{
 				n--;
-				var k = Random.Range(0, n + 1);
+				var k = Range(0, n + 1);
 				var value = list[k];
 				list[k] = list[n];
 				list[n] = value;
@@ -488,7 +485,7 @@ namespace Extenity.MathToolbox
 		public static T RandomSelection<T>()
 		{
 			var values = Enum.GetValues(typeof(T));
-			return (T)values.GetValue(Random.Range(0, values.Length));
+			return (T)values.GetValue(Range(0, values.Length));
 		}
 
 		#endregion
