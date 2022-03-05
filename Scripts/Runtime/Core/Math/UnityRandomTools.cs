@@ -122,6 +122,24 @@ namespace Extenity.MathToolbox
 		public static Vector2 UnitVector2 => new Vector2(Range(-1f, 1f), Range(-1f, 1f));
 		public static Vector3 UnitVector3 => new Vector3(Range(-1f, 1f), Range(-1f, 1f), Range(-1f, 1f));
 
+		public static float3 InsideUnitSphere
+		{
+			get
+			{
+				while (true)
+				{
+					// Generate a point in unit cube. Then make sure it is inside the unit sphere. If not, try again.
+					// This provides homogeneous random distribution.
+					var value = UnitFloat3;
+
+					if (lengthsq(value) <= 1f)
+					{
+						return value;
+					}
+				}
+			}
+		}
+
 		#region Random Collections
 
 		public static void FillRandom(this IList<byte> data, byte minInclusive = 0, byte maxExclusive = 255, int count = -1)
