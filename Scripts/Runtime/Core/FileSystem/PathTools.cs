@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Extenity.MathToolbox;
 
 namespace Extenity.FileSystemToolbox
 {
@@ -458,11 +459,7 @@ namespace Extenity.FileSystemToolbox
 
 		public static string GenerateAntiCacheAddressPostfix()
 		{
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-			return "?r=" + UnityEngine.Random.Range(10000, 99999);
-#else
-            throw new System.NotImplementedException();
-#endif
+			return "?r=" + RandomTools.Range(10000, 99999);
         }
 
 		#endregion
