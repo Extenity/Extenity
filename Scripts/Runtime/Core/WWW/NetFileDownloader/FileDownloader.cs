@@ -270,7 +270,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 			if (!FileTools.TryGetFileSize(localFileName, out var localFileSize))
 			{
 				localFileSize = 0;
-				////todo: handle this case in future. Now in case of error we simply proceed with downloadedFileSize=0
+				// Handle this case in future. Now in case of error we simply proceed with downloadedFileSize=0
 			}
 
 			if (localFileSize > TotalBytesToReceive)
