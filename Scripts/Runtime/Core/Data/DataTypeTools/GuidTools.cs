@@ -1,4 +1,6 @@
-﻿namespace Extenity.DataToolbox
+﻿using Extenity.MathToolbox;
+
+namespace Extenity.DataToolbox
 {
 
 	public static class GuidTools
@@ -10,8 +12,6 @@
 
 		#region Create Random
 
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 		/// <summary>
 		/// Generates a guid that depends on UnityEngine.Random's seed. Makes sure the generated guid is always the same if you give it the same seed. 
 		/// Note that this method of generating a guid is not reliable to be unique. The randomness properties of the guid is actually the same as the 
@@ -22,12 +22,10 @@
 			var data = new byte[16];
 			for (int i = 0; i < 16; i++)
 			{
-				data[i] = (byte)(UnityEngine.Random.value * 256f);
+				data[i] = (byte)RandomTools.RangeIncludingMax(0, byte.MaxValue);
 			}
 			return new System.Guid(data);
 		}
-
-#endif
 
 		#endregion
 	}
