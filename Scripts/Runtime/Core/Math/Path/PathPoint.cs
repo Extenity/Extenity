@@ -1,7 +1,5 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Extenity.MathToolbox
 {
@@ -9,7 +7,7 @@ namespace Extenity.MathToolbox
 	[Serializable]
 	public struct PathPoint
 	{
-		public Vector3 Position;
+		public float3 Position;
 
 		/// <summary>
 		/// Total distance between this point and next point on path.
@@ -21,7 +19,7 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public float TotalLengthUntilThisPoint;
 
-		public PathPoint(Vector3 position) : this()
+		public PathPoint(float3 position) : this()
 		{
 			Position = position;
 			SegmentLength = 0f;
@@ -36,5 +34,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
