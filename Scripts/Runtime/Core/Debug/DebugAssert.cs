@@ -111,9 +111,6 @@ namespace Extenity.DebugToolbox
 
 				if (AssertFailCount <= AssertIgnoreMessagesFailCount)
 				{
-					// TODO: unit tests fail bad here. something should be done.
-
-
 					var trace = new StackTrace(true);
 					var frame = trace.GetFrame(2);
 					var assertInformation = $"Assertion failed! {assertString}\nFilename: {frame.GetFileName()}\nMethod: {frame.GetMethod()}\nLine: {frame.GetFileLineNumber()}";
