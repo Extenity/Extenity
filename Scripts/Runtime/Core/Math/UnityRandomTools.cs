@@ -1,7 +1,6 @@
 #if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Extenity.DataToolbox;
@@ -60,8 +59,10 @@ namespace Extenity.MathToolbox
 
 				if (seed > -100 && seed < 100)
 				{
+#if UNITY
 					// Alright. Something fishy going on, but we won't stop trying.
-					seed = (int)(Time.realtimeSinceStartup * 100000f);
+					seed = (int)(UnityEngine.Time.realtimeSinceStartup * 100000f);
+#endif
 
 					if (seed > -100 && seed < 100)
 					{
