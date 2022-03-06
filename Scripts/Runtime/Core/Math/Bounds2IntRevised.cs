@@ -1,8 +1,7 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
-
 using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
+using Unity.Mathematics;
+using static Unity.Mathematics.math;
 
 namespace Extenity.MathToolbox
 {
@@ -12,25 +11,17 @@ namespace Extenity.MathToolbox
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Bounds2IntRevised
 	{
-		[SerializeField]
-		public Vector2Int min;
-		[SerializeField]
-		public Vector2Int max;
-
-		//public Bounds2Int()
-		//{
-		//	min = Vector2Int.maxValue;
-		//	max = Vector2Int.minValue;
-		//}
+		public int2 min;
+		public int2 max;
 
 		public static Bounds2Int CreateInvalid()
 		{
 			return new Bounds2Int(
-				Vector2IntTools.maxValue,
-				Vector2IntTools.minValue);
+				int2(int.MaxValue),
+				int2(int.MinValue));
 		}
 
-		public Bounds2IntRevised(Vector2Int min, Vector2Int max)
+		public Bounds2IntRevised(int2 min, int2 max)
 		{
 			this.min = min;
 			this.max = max;
@@ -38,17 +29,17 @@ namespace Extenity.MathToolbox
 
 		public Bounds2IntRevised(int minX, int minY, int maxX, int maxY)
 		{
-			min = new Vector2Int(minX, minY);
-			max = new Vector2Int(maxX, maxY);
+			min = new int2(minX, minY);
+			max = new int2(maxX, maxY);
 		}
 
 		public void Reset()
 		{
-			min = Vector2IntTools.maxValue;
-			max = Vector2IntTools.minValue;
+			min = int2(int.MaxValue);
+			max = int2(int.MinValue);
 		}
 
-		public bool Contains(Vector2Int point)
+		public bool Contains(int2 point)
 		{
 			return
 				point.x >= min.x &&
@@ -57,13 +48,13 @@ namespace Extenity.MathToolbox
 				point.y <= max.y;
 		}
 
-		public bool Contains(Vector2 point)
+		public bool Contains(float2 point)
 		{
 			return
-				Mathf.FloorToInt(point.x) >= min.x &&
-				Mathf.FloorToInt(point.y) >= min.y &&
-				Mathf.CeilToInt(point.x) <= max.x &&
-				Mathf.CeilToInt(point.y) <= max.y;
+				point.x.FloorToInt() >= min.x &&
+				point.y.FloorToInt() >= min.y &&
+				point.x.CeilToInt() <= max.x &&
+				point.y.CeilToInt() <= max.y;
 		}
 
 		public void Encapsulate(Bounds2Int bounds)
@@ -72,7 +63,7 @@ namespace Extenity.MathToolbox
 			Encapsulate(bounds.max);
 		}
 
-		public void Encapsulate(Vector2Int point)
+		public void Encapsulate(int2 point)
 		{
 			if (min.x > point.x) min.x = point.x;
 			if (min.y > point.y) min.y = point.y;
@@ -98,7 +89,7 @@ namespace Extenity.MathToolbox
 			max.y += amount;
 		}
 
-		public void Expand(Vector2Int amount)
+		public void Expand(int2 amount)
 		{
 			min.x -= amount.x;
 			min.y -= amount.y;
@@ -111,7 +102,7 @@ namespace Extenity.MathToolbox
 		//public bool IntersectRay(Ray ray, out float distance);
 		//public bool Intersects(Bounds bounds);
 
-		public void SetMinMax(Vector2Int min, Vector2Int max)
+		public void SetMinMax(int2 min, int2 max)
 		{
 			this.min = min;
 			this.max = max;
@@ -121,41 +112,31 @@ namespace Extenity.MathToolbox
 		//public override string ToString();
 		//public string ToString(string format);
 
-		public Vector2Int CenterInt
+		public int2 CenterInt
 		{
 			get
 			{
-				return new Vector2Int(
+				return int2(
 					(max.x + min.x) / 2,
 					(max.y + min.y) / 2);
 			}
 		}
 
-		public Vector2 Center
+		public float2 Center
 		{
 			get
 			{
-				return new Vector2(
+				return float2(
 					(max.x + min.x) * 0.5f,
 					(max.y + min.y) * 0.5f);
 			}
 		}
 
-		public Vector2Int Size
+		public int2 Size
 		{
 			get
 			{
-				return new Vector2Int(
-					max.x - min.x,
-					max.y - min.y);
-			}
-		}
-
-		public Vector2 SizeVector2
-		{
-			get
-			{
-				return new Vector2(
+				return int2(
 					max.x - min.x,
 					max.y - min.y);
 			}
@@ -163,12 +144,7 @@ namespace Extenity.MathToolbox
 
 		public float Diagonal
 		{
-			get { return Size.magnitude; }
-		}
-
-		public float HalfDiagonal
-		{
-			get { return Size.magnitude * 0.5f; }
+			get { return length(float2(Size)); }
 		}
 
 		public bool IsInvalid
@@ -183,5 +159,3 @@ namespace Extenity.MathToolbox
 	}
 
 }
-
-#endif
