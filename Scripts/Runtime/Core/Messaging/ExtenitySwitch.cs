@@ -1,10 +1,26 @@
-#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
+#if UNITY
+#define UnityFeatures
+#endif
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
-using Object = UnityEngine.Object;
+using Action = System.Action;
+using Delegate = System.Delegate;
+using Exception = System.Exception;
+using NotSupportedException = System.NotSupportedException;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+
+// This is the way that Log system supports various Context types in different environments like
+// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
+// in this code file to prevent any possible confusions. Use 'using' selectively, like
+// 'using Exception = System.Exception;'
+// See 11746845.
+#if UNITY
+using ContextObject = UnityEngine.Object;
+#else
+using ContextObject = System.Object;
+#endif
 
 namespace Extenity.MessagingToolbox
 {
@@ -17,39 +33,54 @@ namespace Extenity.MessagingToolbox
 		{
 			public readonly Action SwitchOnCallback;
 			public readonly Action SwitchOffCallback;
+#if UnityFeatures
 			public readonly bool IsSwitchOnCallbackTargetsUnityObject;
 			public readonly bool IsSwitchOffCallbackTargetsUnityObject;
+#endif
 			public readonly int Order;
 			public readonly ListenerLifeSpan LifeSpan;
-			public readonly Object LifeSpanTarget;
+#if UnityFeatures
+			public readonly UnityEngine.Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
+#endif
 
-			public Listener(Action switchOnCallback, Action switchOffCallback, int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
+#if UnityFeatures
+			public Listener(Action switchOnCallback, Action switchOffCallback, int order, ListenerLifeSpan lifeSpan, UnityEngine.Object lifeSpanTarget)
+#else
+			public Listener(Action switchOnCallback, Action switchOffCallback, int order, ListenerLifeSpan lifeSpan)
+#endif
 			{
 				SwitchOnCallback = switchOnCallback;
 				SwitchOffCallback = switchOffCallback;
-				IsSwitchOnCallbackTargetsUnityObject = switchOnCallback?.Target as Object; // As in: switchOnCallback.IsUnityObjectTargeted()
-				IsSwitchOffCallbackTargetsUnityObject = switchOffCallback?.Target as Object; // As in: switchOffCallback.IsUnityObjectTargeted()
+#if UnityFeatures
+				IsSwitchOnCallbackTargetsUnityObject = switchOnCallback?.Target as UnityEngine.Object; // As in: switchOnCallback.IsUnityObjectTargeted()
+				IsSwitchOffCallbackTargetsUnityObject = switchOffCallback?.Target as UnityEngine.Object; // As in: switchOffCallback.IsUnityObjectTargeted()
+#endif
 				Order = order;
 				LifeSpan = lifeSpan;
+#if UnityFeatures
 				LifeSpanTarget = lifeSpanTarget;
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
+#endif
 			}
 
 			public bool IsInvalid => SwitchOnCallback == null && SwitchOffCallback == null;
 
-			public bool IsSwitchOnCallbackTargetedUnityObjectDestroyed => IsSwitchOnCallbackTargetsUnityObject && !(SwitchOnCallback.Target as Object); // As in: SwitchOnCallback.IsUnityObjectTargetedAndDestroyed
-			public bool IsSwitchOffCallbackTargetedUnityObjectDestroyed => IsSwitchOffCallbackTargetsUnityObject && !(SwitchOffCallback.Target as Object); // As in: SwitchOffCallback.IsUnityObjectTargetedAndDestroyed
+#if UnityFeatures
+			public bool IsSwitchOnCallbackTargetedUnityObjectDestroyed => IsSwitchOnCallbackTargetsUnityObject && !(SwitchOnCallback.Target as UnityEngine.Object); // As in: SwitchOnCallback.IsUnityObjectTargetedAndDestroyed
+			public bool IsSwitchOffCallbackTargetedUnityObjectDestroyed => IsSwitchOffCallbackTargetsUnityObject && !(SwitchOffCallback.Target as UnityEngine.Object); // As in: SwitchOffCallback.IsUnityObjectTargetedAndDestroyed
 			public bool IsSwitchOnCallbackNullOrTargetedUnityObjectDestroyed => SwitchOnCallback == null || IsSwitchOnCallbackTargetedUnityObjectDestroyed;
 			public bool IsSwitchOffCallbackNullOrTargetedUnityObjectDestroyed => SwitchOffCallback == null || IsSwitchOffCallbackTargetedUnityObjectDestroyed;
 
 			public bool IsLifeSpanTargetDestroyed => IsLifeSpanTargetAssigned && !LifeSpanTarget;
+#endif
 
 			public bool ShouldRemoveAfterEmit
 			{
 				get { return LifeSpan == ListenerLifeSpan.RemovedAtFirstEmit; }
 			}
 
+#if UnityFeatures
 			public bool IsObjectDestroyed
 			{
 				get
@@ -59,18 +90,28 @@ namespace Extenity.MessagingToolbox
 					       IsLifeSpanTargetDestroyed;
 				}
 			}
+#endif
 
-			public Object LogObject(bool isSwitchedOn)
+			public ContextObject LogObject(bool isSwitchedOn)
 			{
+#if UnityFeatures
 				// First, try to get callback delegate object. If not available, get the LifeSpanTarget object.
-				var callback = GetCallback(isSwitchedOn);
-				if (callback != null) // Check if the callback is specified by user. See 11853135.
+				var Callback = GetCallback(isSwitchedOn);
+				if (Callback != null) // Check if the callback is specified by user. See 11853135.
 				{
-					var obj = callback.Target as Object;
+					var obj = Callback.Target as UnityEngine.Object;
 					if (obj)
 						return obj;
 				}
 				return LifeSpanTarget;
+#else
+				var Callback = GetCallback(isSwitchedOn);
+				if (Callback != null) // Check if the callback is specified by user. See 11853135.
+				{
+					return Callback.Target as ContextObject;
+				}
+				return null;
+#endif
 			}
 
 			public Action GetCallback(bool isSwitchedOn)
@@ -82,24 +123,24 @@ namespace Extenity.MessagingToolbox
 
 			public Action GetCallbackAndCheckIfAlive(bool isSwitchedOn)
 			{
-				var callback = isSwitchedOn
-					? SwitchOnCallback
-					: SwitchOffCallback;
+				var Callback = GetCallback(isSwitchedOn);
 
-				if (callback == null)
+				if (Callback == null)
 					return null;
 
-				if (callback.Target is Object) // The same with: callback.IsUnityObjectTargeted()
+#if UnityFeatures
+				if (Callback.Target is UnityEngine.Object) // The same with: callback.IsUnityObjectTargeted()
 				{
-					return (callback.Target as Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
-						? callback
+					return (Callback.Target as UnityEngine.Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
+						? Callback
 						: null;
 				}
 				else
+#endif
 				{
-					return callback.Target != null
-						? callback
-						: null;
+					return Callback;
+					// This was the previous implementation, which failed static non-UnityObject methods.
+					// return Callback.Target != null ? Callback : null;
 				}
 			}
 
@@ -158,6 +199,7 @@ namespace Extenity.MessagingToolbox
 
 		public int ListenersCount => Listeners.Count;
 
+#if UnityFeatures
 		public int ListenersAliveCount
 		{
 			get
@@ -173,9 +215,11 @@ namespace Extenity.MessagingToolbox
 				return count;
 			}
 		}
+#endif
 
 		public bool IsAnyListenerRegistered => Listeners.Count > 0;
 
+#if UnityFeatures
 		public bool IsAnyAliveListenerRegistered
 		{
 			get
@@ -205,13 +249,18 @@ namespace Extenity.MessagingToolbox
 				}
 			}
 		}
+#endif
 
 		#endregion
 
 		#region Add / Remove Listener
 
 		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
-		public void AddListener(Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
+#if UnityFeatures
+		public void AddListener(Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, UnityEngine.Object lifeSpanTarget = null)
+#else
+		public void AddListener(Action switchOnCallback, Action switchOffCallback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent)
+#endif
 		{
 			if (IsInvoking)
 				throw new NotSupportedException("Adding listener while invoking is not supported."); // See 117418312.
@@ -220,11 +269,23 @@ namespace Extenity.MessagingToolbox
 			if (switchOnCallback == null && switchOffCallback == null)
 			{
 				if (ExtenityEventTools.VerboseLogging)
+				{
+#if UnityFeatures
 					Log.Verbose($"Tried to add switch listener specifying both callbacks null with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}.");
+#else
+					Log.Verbose($"Tried to add switch listener specifying both callbacks null with {_Detailed_OrderAndLifeSpan(order, lifeSpan)}.");
+#endif
+				}
 				return; // Silently ignore
 			}
 			if (ExtenityEventTools.VerboseLogging && switchOnCallback == null && lifeSpan == ListenerLifeSpan.RemovedAtFirstEmit)
-				Log.Verbose($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
+			{
+#if UnityFeatures
+				Log.Verbose($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(new Listener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget))}.");
+#else
+				Log.Verbose($"Not usual to add listener with no SwitchOn callback when giving it a life span of {ListenerLifeSpan.RemovedAtFirstEmit}. See the listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(new Listener(switchOnCallback, switchOffCallback, order, lifeSpan))}.");
+#endif
+			}
 
 			// See if the callback pair was already registered.
 			for (var i = 0; i < Listeners.Count; i++)
@@ -233,8 +294,11 @@ namespace Extenity.MessagingToolbox
 				{
 					// The callback is already registered. See if there is a change in its parameters.
 					if (Listeners[i].Order != order ||
-					    Listeners[i].LifeSpan != lifeSpan ||
-					    Listeners[i].LifeSpanTarget != lifeSpanTarget)
+					    Listeners[i].LifeSpan != lifeSpan
+#if UnityFeatures
+					    || Listeners[i].LifeSpanTarget != lifeSpanTarget
+#endif
+					    )
 					{
 						// Trying to add the same callback with different parameters. Just remove the existing one and
 						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
@@ -243,7 +307,7 @@ namespace Extenity.MessagingToolbox
 					else
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Tried to add an already registered callback pair with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)}.");
+							Log.Verbose($"Tried to add an already registered callback pair with {_Detailed_OrderAndLifeSpanForMethodAndObject(Listeners[i])}.");
 						return; // Silently ignore
 					}
 
@@ -291,13 +355,17 @@ namespace Extenity.MessagingToolbox
 			// Line 2: If trying to add a callback with 0 order and the last item is ordered as 0, fear not!
 			// Just add it to the end and move on. While doing that, also cover the possibility that the order
 			// is greater(or equal) than the last item's order.
+#if UnityFeatures
 			var listener = new Listener(switchOnCallback, switchOffCallback, order, lifeSpan, lifeSpanTarget);
+#else
+			var listener = new Listener(switchOnCallback, switchOffCallback, order, lifeSpan);
+#endif
 			var done = false;
 			if (Listeners.Count == 0 || // Line 1
 			    order >= Listeners[Listeners.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at the end, resulting '{Listeners.Count + 1}' listener(s).");
+					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} at the end, resulting '{Listeners.Count + 1}' listener(s).");
 				Listeners.Add(listener);
 				done = true;
 			}
@@ -308,7 +376,7 @@ namespace Extenity.MessagingToolbox
 					if (order < Listeners[i].Order)
 					{
 						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(order, lifeSpan, lifeSpanTarget, switchOnCallback, switchOffCallback)} at index '{i}', resulting '{Listeners.Count + 1}' listener(s).");
+							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} at index '{i}', resulting '{Listeners.Count + 1}' listener(s).");
 						Listeners.Insert(i, listener);
 						done = true;
 						break;
@@ -396,6 +464,49 @@ namespace Extenity.MessagingToolbox
 			Listeners.Clear();
 		}
 
+		// TODO: Needs testing (Only roughly tested). See RemoveListener(Action callback) tests and apply the same where possible. Should test with both System.Object and UnityEngine.Object targets.
+		// TODO: Copy to other ExtenityEvent generic implementations
+		public void RemoveAllListenersThatTargets(object callbackTarget)
+		{
+			if (IsInvoking)
+				throw new NotSupportedException("Operations while invoking are not supported."); // See 117418312.
+			if (ExtenityEventTools.VerboseLogging)
+				Log.Verbose($"Removing all listeners with {_Detailed_CallbackTarget(callbackTarget)}.");
+
+			// if (callbackTarget == null) Nope! Removing null callback targets are also supported to allow removing static method callbacks.
+			// 	return; // Silently ignore
+
+			var removedCount = 0;
+
+			for (var i = 0; i < Listeners.Count; i++)
+			{
+				if ((Listeners[i].SwitchOnCallback != null &&
+				     Listeners[i].SwitchOnCallback.Target == callbackTarget)
+				    ||
+				    (Listeners[i].SwitchOffCallback != null &&
+				     Listeners[i].SwitchOffCallback.Target == callbackTarget))
+				{
+					if (ExtenityEventTools.VerboseLogging)
+						Log.Verbose($"Removing listener with {_Detailed_CallbackTarget(callbackTarget)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+
+					// Also shift the iteration index if currently invoking. Note that InvokeIndex will be -1 if not currently invoking.
+					if (InvokeIndex >= i)
+					{
+						InvokeIndex--;
+					}
+
+					Listeners.RemoveAt(i);
+					i--;
+					removedCount++;
+				}
+			}
+			if (removedCount == 0)
+			{
+				if (ExtenityEventTools.VerboseLogging)
+					Log.Verbose($"Failed to remove any listeners for {_Detailed_CallbackTarget(callbackTarget)}.");
+			}
+		}
+
 		#endregion
 
 		#region Switch
@@ -450,11 +561,13 @@ namespace Extenity.MessagingToolbox
 				while (InvokeIndex < Listeners.Count)
 				{
 					var listener = Listeners[InvokeIndex];
+#if UnityFeatures
 					if (listener.IsObjectDestroyed)
 					{
 						Listeners.RemoveAt(InvokeIndex);
 						continue;
 					}
+#endif
 					if (isSwitchedOn && listener.ShouldRemoveAfterEmit)
 					{
 						// Remove the callback just before calling it. So that the caller can act like it's removed.
@@ -507,11 +620,13 @@ namespace Extenity.MessagingToolbox
 			while (InvokeIndex < Listeners.Count)
 			{
 				var listener = Listeners[InvokeIndex];
+#if UnityFeatures
 				if (listener.IsObjectDestroyed)
 				{
 					Listeners.RemoveAt(InvokeIndex);
 					continue;
 				}
+#endif
 				if (isSwitchedOn && listener.ShouldRemoveAfterEmit)
 				{
 					// Remove the callback just before calling it. So that the caller can act like it's removed.
@@ -573,12 +688,19 @@ namespace Extenity.MessagingToolbox
 				var listener = Listeners[i];
 
 				stringBuilder.Append(linePrefix);
+#if UnityFeatures
 				if (listener.IsObjectDestroyed)
 				{
 					stringBuilder.Append("(Unavailable) ");
 				}
-				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(listener.Order, listener.LifeSpan, listener.LifeSpanTarget, listener.SwitchOnCallback, listener.SwitchOffCallback));
+#endif
+				stringBuilder.AppendLine(_Detailed_OrderAndLifeSpanForMethodAndObject(listener));
 			}
+		}
+
+		private string _Detailed_CallbackTarget(object callbackTarget)
+		{
+			return $"callback target '{callbackTarget.FullObjectName()}'";
 		}
 
 		private string _Detailed_MethodAndObject(Delegate switchOnCallback, Delegate switchOffCallback)
@@ -591,19 +713,33 @@ namespace Extenity.MessagingToolbox
 			return $"order '{order}' for {_Detailed_MethodAndObject(switchOnCallback, switchOffCallback)}";
 		}
 
-		private string _Detailed_OrderAndLifeSpan(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget)
+		private string _Detailed_OrderAndLifeSpan(in Listener listener)
+		{
+#if UnityFeatures
+			return _Detailed_OrderAndLifeSpan(listener.Order, listener.LifeSpan, listener.LifeSpanTarget);
+#else
+			return _Detailed_OrderAndLifeSpan(listener.Order, listener.LifeSpan);
+#endif
+		}
+
+#if UnityFeatures
+		private string _Detailed_OrderAndLifeSpan(int order, ListenerLifeSpan lifeSpan, UnityEngine.Object lifeSpanTarget)
 		{
 			return $"order '{order}' and life span '{lifeSpan}{(lifeSpanTarget ? $" with target '{lifeSpanTarget.FullObjectName()}'" : "")}'";
 		}
-
-		private string _Detailed_OrderAndLifeSpanForMethodAndObject(int order, ListenerLifeSpan lifeSpan, Object lifeSpanTarget, Delegate switchOnCallback, Delegate switchOffCallback)
+#else
+		private string _Detailed_OrderAndLifeSpan(int order, ListenerLifeSpan lifeSpan)
 		{
-			return $"{_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)} for {_Detailed_MethodAndObject(switchOnCallback, switchOffCallback)}";
+			return $"order '{order}' and life span '{lifeSpan}'";
+		}
+#endif
+
+		private string _Detailed_OrderAndLifeSpanForMethodAndObject(in Listener listener)
+		{
+			return $"{_Detailed_OrderAndLifeSpan(listener)} for {_Detailed_MethodAndObject(listener.SwitchOnCallback, listener.SwitchOffCallback)}";
 		}
 
 		#endregion
 	}
 
 }
-
-#endif
