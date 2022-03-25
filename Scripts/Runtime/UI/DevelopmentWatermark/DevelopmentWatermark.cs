@@ -1,3 +1,5 @@
+#if EnableDevelopmentWatermark
+
 #if !Release
 
 using UnityEngine;
@@ -65,5 +67,7 @@ namespace Extenity.UIToolbox
 	}
 
 }
+
+#endif
 
 #endif
