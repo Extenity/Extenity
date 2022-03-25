@@ -1,6 +1,6 @@
 #if UNITY
 
-using System.Collections.Generic;
+using Extenity.DataToolbox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,7 +13,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static void ToScene(string methodName)
 		{
-			var roots = new List<GameObject>(); // TODO: OPTIMIZATION: Use pooled lists.
+			var roots = New.List<GameObject>();
 
 			var sceneCount = SceneManager.sceneCount;
 			for (int iScene = 0; iScene < sceneCount; iScene++)
@@ -29,11 +29,12 @@ namespace Extenity.GameObjectToolbox
 					roots.Clear();
 				}
 			}
+			Release.ListUnsafe(roots);
 		}
 
 		public static void ToScene(string methodName, object parameter)
 		{
-			var roots = new List<GameObject>(); // TODO: OPTIMIZATION: Use pooled lists.
+			var roots = New.List<GameObject>();
 
 			var sceneCount = SceneManager.sceneCount;
 			for (int iScene = 0; iScene < sceneCount; iScene++)
@@ -49,6 +50,7 @@ namespace Extenity.GameObjectToolbox
 					roots.Clear();
 				}
 			}
+			Release.ListUnsafe(roots);
 		}
 
 		/* Old but gold. Keep them commented out.

@@ -598,8 +598,7 @@ namespace Extenity.UIToolbox
 
 			// Copy the list just before invoking the callbacks to prevent side effects of modifying the list in the middle
 			// of the process.
-			//var panels = ListPool<PanelMonoBehaviour>.Get(); // TODO OPTIMIZATION: Use pooling
-			var panels = new List<PanelMonoBehaviour>();
+			var panels = New.List<PanelMonoBehaviour>();
 			RegisteredPanelMonoBehaviours.CopyTo(panels);
 
 			for (var i = 0; i < panels.Count; i++)
@@ -639,7 +638,7 @@ namespace Extenity.UIToolbox
 				}
 			}
 
-			// panels.ReturnToPool(); // TODO OPTIMIZATION: Use pooling
+			Release.ListUnsafe(panels);
 		}
 
 		#endregion
@@ -680,8 +679,7 @@ namespace Extenity.UIToolbox
 
 		private void EnsurePanelScriptsDontHaveOnEnabledOrOnDisabled()
 		{
-			// var list = ListPool<MonoBehaviour>.Get(); // TODO OPTIMIZATION: Use pooling
-			var list = new List<MonoBehaviour>();
+			var list = New.List<MonoBehaviour>();
 			gameObject.GetComponentsInChildren(true, list);
 			foreach (var item in list)
 			{
@@ -709,7 +707,7 @@ namespace Extenity.UIToolbox
 					Log.CriticalError($"'OnEnable' and 'OnDisable' is not allowed in script '{type}'. Use {nameof(Panel)} visibility callbacks instead, by deriving from '{nameof(PanelMonoBehaviour)}'.", gameObject);
 				}
 			}
-			// list.ReturnToPool(); // TODO OPTIMIZATION: Use pooling
+			Release.ListUnsafe(list);
 		}
 
 #endif
