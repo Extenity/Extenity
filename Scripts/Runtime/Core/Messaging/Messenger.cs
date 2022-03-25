@@ -1,4 +1,4 @@
-#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
+#if UNITY // TODO-UniversalExtenity: Implement Messenger for Universal project.
 
 #if !UseLegacyMessenger
 

@@ -150,8 +150,6 @@ namespace Extenity.DataToolbox
 
 		#region Value Changed Event
 
-#if UNITY // TODO-UniversalExtenity: Implement ExtenityEvent for Universal project.
-
 		public class ValueChangedEvent : ExtenityEvent<T> { }
 		public readonly ValueChangedEvent OnValueChanged = new ValueChangedEvent();
 
@@ -177,8 +175,6 @@ namespace Extenity.DataToolbox
 			LogInfo("Suppressing next value change event");
 			_DontEmitNextValueChangedEvent = true;
 		}
-
-#endif
 
 		#endregion
 
