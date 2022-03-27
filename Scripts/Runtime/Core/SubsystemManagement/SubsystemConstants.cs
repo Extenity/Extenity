@@ -1,4 +1,4 @@
-#if UNITY
+#if UNITY && !DisableExtenitySubsystems
 
 using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;

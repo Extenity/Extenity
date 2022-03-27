@@ -1,4 +1,4 @@
-#if UNITY
+#if UNITY && !DisableExtenitySubsystems
 
 using UnityEngine;
 using UnityEngine.SceneManagement;

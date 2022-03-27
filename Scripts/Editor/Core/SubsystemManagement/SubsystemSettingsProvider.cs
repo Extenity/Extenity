@@ -1,3 +1,5 @@
+#if UNITY && !DisableExtenitySubsystems
+
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -107,3 +109,5 @@ namespace Extenity.SubsystemManagementToolbox
 	}
 
 }
+
+#endif
