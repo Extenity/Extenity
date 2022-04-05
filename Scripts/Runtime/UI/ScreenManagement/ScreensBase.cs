@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityScreenManagement
+
+using System;
 using System.Linq;
 using System.Reflection;
 using Extenity.MessagingToolbox;
@@ -130,3 +132,5 @@ namespace Extenity.UIToolbox.ScreenManagement
 	}
 
 }
+
+#endif

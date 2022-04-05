@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿#if !DisableExtenityScreenManagement
+
+using System.Reflection;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -95,3 +97,5 @@ namespace Extenity.UIToolbox
 	}
 
 }
+
+#endif

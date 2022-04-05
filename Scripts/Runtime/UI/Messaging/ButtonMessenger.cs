@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityScreenManagement
+
+using System;
 using Extenity.MessagingToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -121,3 +123,5 @@ namespace Extenity.UIToolbox
 	}
 
 }
+
+#endif
