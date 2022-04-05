@@ -165,7 +165,7 @@ namespace Extenity.WWWToolbox
 			}
 		}
 
-		private void ListenThread()
+		private async void ListenThread()
 		{
 			Log.Verbose($"Listening at {Port}");
 			Listener = new HttpListener();
@@ -175,7 +175,7 @@ namespace Extenity.WWWToolbox
 			{
 				try
 				{
-					var context = Listener.GetContext();
+					var context = await Listener.GetContextAsync();
 					ProcessRequest(context);
 				}
 				catch (ThreadAbortException)
