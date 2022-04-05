@@ -386,8 +386,8 @@ namespace Extenity.UIToolbox
 
 		private void CancelProcessInvokes()
 		{
-			CancelInvoke(nameof(ProcessAfterBecomingVisibleAnimations));
-			CancelInvoke(nameof(ProcessAfterBecomingInvisibleAnimations));
+			this.CancelFastInvoke(ProcessAfterBecomingVisibleAnimations);
+			this.CancelFastInvoke(ProcessAfterBecomingInvisibleAnimations);
 		}
 
 		private void ProcessBeforeBecomingInvisibleAnimations()
