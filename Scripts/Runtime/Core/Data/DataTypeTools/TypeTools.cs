@@ -307,6 +307,11 @@ namespace Extenity.DataToolbox
 			return fieldInfo.IsLiteral && !fieldInfo.IsInitOnly;
 		}
 
+		public static bool IsStaticReadOnlyValueType(this FieldInfo fieldInfo)
+		{
+			return fieldInfo.IsStatic && fieldInfo.IsInitOnly && fieldInfo.FieldType.IsValueType;
+		}
+
 		#region Unity Serialized Fields
 
 #if UNITY
