@@ -300,7 +300,11 @@ namespace Extenity.DataToolbox
 
 		public static bool IsConst(this FieldInfo fieldInfo)
 		{
-			return fieldInfo.IsLiteral;
+			// Source: https://stackoverflow.com/questions/10261824/how-can-i-get-all-constants-of-a-type-by-reflection
+			// IsLiteral determines if its value is written at compile time and not changeable.
+			// IsInitOnly determines if the field can be set in the body of the constructor.
+			// For C# a field which is readonly keyword would have both true but a const field would have only IsLiteral equal to true.
+			return fieldInfo.IsLiteral && !fieldInfo.IsInitOnly;
 		}
 
 		#region Unity Serialized Fields
