@@ -267,14 +267,6 @@ namespace Extenity.DataToolbox
 			return text.Length <= maxCharacters ? text : text.Substring(0, maxCharacters);
 		}
 
-		/// <summary>
-		/// Allows using StringComparison with Contains check, which is not supported in .NET by default.
-		/// </summary>
-		public static bool Contains(this string text, string value, StringComparison comparisonType)
-		{
-			return text.IndexOf(value, comparisonType) >= 0;
-		}
-
 		public static string SubstringBetween(this string text, string startTag, string endTag, int startIndex = 0)
 		{
 			if (text == null)
