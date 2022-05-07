@@ -288,6 +288,11 @@ namespace Extenity.DataToolbox
 				   type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 		}
 
+		public static bool IsIndexer(this PropertyInfo propertyInfo)
+		{
+			return propertyInfo.GetIndexParameters().Length > 0;
+		}
+
 		public static bool IsReadOnly(this FieldInfo fieldInfo)
 		{
 			return fieldInfo.IsInitOnly;
