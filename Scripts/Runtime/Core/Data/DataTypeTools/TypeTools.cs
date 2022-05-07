@@ -312,6 +312,15 @@ namespace Extenity.DataToolbox
 			return fieldInfo.IsStatic && fieldInfo.IsInitOnly && fieldInfo.FieldType.IsValueType;
 		}
 
+		/// <summary>
+		/// Tells if the value of the field is not expected to change in any way.
+		/// Note that reference types may get modified even if they are marked as static readonly.
+		/// </summary>
+		public static bool IsConstOrStaticReadOnlyValueType(this FieldInfo fieldInfo)
+		{
+			return fieldInfo.IsConst() || fieldInfo.IsStaticReadOnlyValueType();
+		}
+
 		#region Unity Serialized Fields
 
 #if UNITY
