@@ -527,6 +527,83 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region String Operations - Count and Replace Tags
+
+		/// <returns>True if succeeds, even there are no tags detected.
+		/// False if there is a missing tag character or there is a nested tag inside another tag.
+		/// TagCount will be int.MinValue when failed.</returns>
+		public static bool CountTags(this string text, char tagStartCharacter, char tagEndCharacter, out int tagCount)
+		{
+			// TODO-IMMEDIATE: Check if for every start tag, there is an end tag. And ensure there are no nested tags.
+
+			// Temp implementation.
+			var tagStartCharacterCount = text.CountCharacters(tagStartCharacter);
+			var tagEndCharacterCount = text.CountCharacters(tagEndCharacter);
+			if (tagStartCharacterCount != tagEndCharacterCount)
+			{
+				tagCount = int.MinValue;
+				return false;
+			}
+			tagCount = tagStartCharacterCount;
+			return true;
+		}
+
+		public interface IReplaceTagProcessor
+		{
+			void AppendText(ReadOnlySpan<char> partOfText);
+			void AppendTag(ReadOnlySpan<char> tag);
+		}
+
+		public enum ReplaceTagResult
+		{
+			Succeeded = 1,
+			NoTagsFound = 2,
+			EmptyInputText = 3,
+			MismatchingTagBraces = 4,
+		}
+
+		public static ReplaceTagResult ReplaceTags(this string text, char tagStartCharacter, char tagEndCharacter, IReplaceTagProcessor processor)
+		{
+			if (string.IsNullOrEmpty(text))
+			{
+				return ReplaceTagResult.EmptyInputText;
+			}
+
+			// Check for mismatching start and end tags.
+			if (!text.CountTags(tagStartCharacter, tagEndCharacter, out int tagCount))
+			{
+				return ReplaceTagResult.MismatchingTagBraces;
+			}
+
+			if (tagCount == 0)
+			{
+				processor.AppendText(text.AsSpan());
+				return ReplaceTagResult.NoTagsFound;
+			}
+
+			int indexAfterTheEndTag = 0;
+			for (int iTag = 0; iTag < tagCount; iTag++)
+			{
+				int startTagIndex = text.IndexOf(tagStartCharacter, indexAfterTheEndTag);
+				int indexAfterTheStartTag = startTagIndex + 1;
+
+				// Append the text to the left of the tag
+				processor.AppendText(text.AsSpan(indexAfterTheEndTag, startTagIndex - indexAfterTheEndTag));
+
+				var endTagIndex = text.IndexOf(tagEndCharacter, indexAfterTheStartTag);
+				indexAfterTheEndTag = endTagIndex + 1;
+
+				// Append the tag
+				processor.AppendTag(text.AsSpan(indexAfterTheStartTag, endTagIndex - indexAfterTheStartTag));
+			}
+
+			// Append the text to the right of the tag
+			processor.AppendText(text.AsSpan(indexAfterTheEndTag, text.Length - indexAfterTheEndTag));
+			return ReplaceTagResult.Succeeded;
+		}
+
+		#endregion
+
 		#region Number At The End
 
 		public static int GetNumberAtTheEnd(this string text)
