@@ -87,7 +87,6 @@ namespace ExtenityTests.Build
 
 		private void RunGit(string repoPath, string command)
 		{
-			Log.Info("Running: git " + command);
 			new GitCommandRunner(repoPath).Run(command, out var exitCode);
 			Assert.AreEqual(0, exitCode);
 		}

@@ -208,6 +208,11 @@ namespace Extenity.BuildToolbox.Editor
 				StartInfo = info,
 			};
 
+			if (logOutput)
+			{
+				Log.Info($"Running: {ExecutablePath} {arguments}");
+			}
+
 			process.Start();
 			process.WaitForExit();
 			exitCode = process.ExitCode;
@@ -217,7 +222,7 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (logOutput)
 				{
-					Log.Info(output);
+					Log.Info("[git] " + output);
 				}
 			}
 
@@ -228,7 +233,7 @@ namespace Extenity.BuildToolbox.Editor
 				{
 					if (logError)
 					{
-						Log.Error(error);
+						Log.Error("[git] " + error);
 					}
 				}
 			}
