@@ -252,7 +252,7 @@ namespace ExtenityTests.DataToolbox
 		{
 			var list = CreateList(10);
 			list.DecayCondition = item => item.ID <= 3;
-			var decayedItems = New.List<DecayedCircularListTestItem>(); // TODO C#8: Use using
+			using var _ = New.List<DecayedCircularListTestItem>(out var decayedItems);
 			list.PopAllTailingIfDecayed(decayedItems);
 			int i = 0;
 			foreach (var decayedItem in decayedItems)
@@ -267,7 +267,7 @@ namespace ExtenityTests.DataToolbox
 		{
 			var list = CreateNonArrangedList(10, 3, 3);
 			list.DecayCondition = item => item.ID <= 6;
-			var decayedItems = New.List<DecayedCircularListTestItem>(); // TODO C#8: Use using
+			using var _ = New.List<DecayedCircularListTestItem>(out var decayedItems);
 			list.PopAllTailingIfDecayed(decayedItems);
 			int i = 3;
 			foreach (var decayedItem in decayedItems)

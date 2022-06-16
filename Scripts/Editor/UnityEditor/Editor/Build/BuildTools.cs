@@ -274,8 +274,8 @@ namespace Extenity.BuildToolbox.Editor
 
 			// Clear unwanted files
 			{
-				var deletedFiles = New.List<FileInfo>(); // TODO C#8: Use using
-				var failedFiles = New.List<FileInfo>();
+				using var _1 = New.List<FileInfo>(out var deletedFiles);
+				using var _2 = New.List<FileInfo>(out var failedFiles);
 
 				// Clear debug symbols folder
 				if (deleteDebugSymbolsFolder)

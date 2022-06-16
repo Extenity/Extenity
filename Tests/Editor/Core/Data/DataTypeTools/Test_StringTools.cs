@@ -106,7 +106,7 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public static void ReplaceBetween()
 		{
-			var list = New.List<KeyValue<string, string>>(); // TODO C#8: Use using
+			using var _ = New.List<KeyValue<string, string>>(out var list);
 			list.Add(new KeyValue<string, string>("OXFORD", "NOT BROGUES"));
 			list.Add(new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"));
 
@@ -137,7 +137,7 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public static void ReplaceBetweenAll()
 		{
-			var list = New.List<KeyValue<string, string>>(); // TODO C#8: Use using
+			using var _ = New.List<KeyValue<string, string>>(out var list);
 			list.Add(new KeyValue<string, string>("OXFORD", "NOT BROGUES"));
 			list.Add(new KeyValue<string, string>("INNER", "Start <tag>OXFORD</tag> End"));
 
