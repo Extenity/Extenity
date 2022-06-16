@@ -57,7 +57,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					var cachedMaterial = SelectedMaterial;
 					EditorApplication.delayCall += () =>
 					{
-						RemoveAllUnusedReferencesAndParameters(cachedMaterial);
+						RemoveAllUnusedReferencesAndParameters(cachedMaterial, true);
 						Repaint();
 					};
 				}
@@ -160,7 +160,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Remove All Unused References And Parameters
 
-		public static void RemoveAllUnusedReferencesAndParameters(Material material)
+		public static void RemoveAllUnusedReferencesAndParameters(Material material, bool saveAssets)
 		{
 			var serializedObject = new SerializedObject(material);
 
@@ -168,7 +168,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 			_RemoveAll(serializedObject, material, "m_SavedProperties.m_Floats");
 			_RemoveAll(serializedObject, material, "m_SavedProperties.m_Colors");
 
-			AssetDatabase.SaveAssets();
+			if (saveAssets)
+			{
+				AssetDatabase.SaveAssets();
+			}
 		}
 
 		private static void _RemoveAll(SerializedObject serializedObject, Material material, string path)
