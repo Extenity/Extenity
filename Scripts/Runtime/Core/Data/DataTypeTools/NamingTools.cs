@@ -114,31 +114,27 @@ namespace Extenity.DataToolbox
 		public static string FullObjectName(this object me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
 		{
 #if UNITY
-			if (me is Component)
+			if (me is Component component)
 			{
-				var asComponent = me as Component;
-				return asComponent
-					? asComponent.FullName(maxHierarchyLevels, gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator)
+				return component
+					? component.FullName(maxHierarchyLevels, gameObjectNameSeparator: gameObjectNameSeparator, componentNameSeparator: componentNameSeparator)
 					: NullComponentName;
 			}
-			if (me is GameObject)
+			if (me is GameObject gameObject)
 			{
-				var asGameObject = me as GameObject;
-				return asGameObject
-					? asGameObject.FullName(maxHierarchyLevels, separator: gameObjectNameSeparator)
+				return gameObject
+					? gameObject.FullName(maxHierarchyLevels, separator: gameObjectNameSeparator)
 					: NullGameObjectName;
 			}
-			if (me is UnityEngine.Object)
+			if (me is UnityEngine.Object unityObject)
 			{
-				var asObject = me as UnityEngine.Object;
-				return asObject
-					? asObject.ToString()
+				return unityObject
+					? unityObject.ToString()
 					: NullObjectName;
 			}
 #endif
-			if (me is Delegate)
+			if (me is Delegate asDelegate)
 			{
-				var asDelegate = me as Delegate;
 				return asDelegate != null
 					? asDelegate.FullNameOfTargetAndMethod()
 					: NullDelegateName;
