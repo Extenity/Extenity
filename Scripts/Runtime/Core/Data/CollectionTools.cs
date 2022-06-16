@@ -1471,19 +1471,19 @@ namespace Extenity.DataToolbox
 			list.Add(value);
 		}
 
-		public static int AddOrIncrement<TKey>(this IDictionary<TKey, int> dictionary, in TKey key, int initialValue = 1)
+		public static int AddOrIncrease<TKey>(this IDictionary<TKey, int> dictionary, in TKey key, int increment = 1, int initialValue = 1)
 		{
-			if (dictionary.TryGetValue(key, out var ret))
+			if (dictionary.TryGetValue(key, out var value))
 			{
-				ret++;
-				dictionary[key] = ret;
+				value += increment;
+				dictionary[key] = value;
 			}
 			else
 			{
-				ret = initialValue;
-				dictionary.Add(key, ret);
+				value = initialValue;
+				dictionary.Add(key, value);
 			}
-			return ret;
+			return value;
 		}
 
 		#endregion

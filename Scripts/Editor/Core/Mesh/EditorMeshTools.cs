@@ -244,7 +244,7 @@ namespace Extenity.MeshToolbox
 
 			if (isMeshAsset)
 			{
-				result.ProcessedMeshAssets.AddOrIncrement(meshPath);
+				result.ProcessedMeshAssets.AddOrIncrease(meshPath);
 			}
 
 			// Use mesh asset file name if the mesh data is kept in a file.
@@ -332,7 +332,7 @@ namespace Extenity.MeshToolbox
 							case SubmeshSplitOverwriteRule.AlwaysOverwrite:
 								{
 									// Keep output path intact. AssetDatabase.CreateAsset will overwrite.
-									result.OverwrittenAssets.AddOrIncrement(outputAssetPath);
+									result.OverwrittenAssets.AddOrIncrease(outputAssetPath);
 								}
 								break;
 							default:

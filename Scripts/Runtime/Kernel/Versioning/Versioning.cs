@@ -120,7 +120,7 @@ namespace Extenity.KernelToolbox
 
 		public void InformBlankShot(UInt32 id)
 		{
-			Stats.BlankShotCounts.AddOrIncrement(id);
+			Stats.BlankShotCounts.AddOrIncrease(id);
 		}
 
 		[HorizontalGroup("StatsGroup", Width = 150)]
