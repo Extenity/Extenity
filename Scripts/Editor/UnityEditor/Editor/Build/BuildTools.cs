@@ -192,7 +192,7 @@ namespace Extenity.BuildToolbox.Editor
 			WorkingDirectory = workingDirectory ?? "";
 		}
 
-		public string Run(string arguments, out int exitCode)
+		public void Run(string arguments, out int exitCode, bool logOutput = true, bool logError = true)
 		{
 			var info = new ProcessStartInfo(ExecutablePath, arguments)
 			{
@@ -209,20 +209,29 @@ namespace Extenity.BuildToolbox.Editor
 			};
 
 			process.Start();
-
-			var output = process.StandardOutput.ReadToEnd();
-
 			process.WaitForExit();
-
-			var error = process.StandardError.ReadToEnd();
-
-			Log.Info(error);
-
-			output += error;
-
 			exitCode = process.ExitCode;
 
-			return output;
+			var output = process.StandardOutput.ReadToEnd();
+			if (!string.IsNullOrEmpty(output))
+			{
+				if (logOutput)
+				{
+					Log.Info(output);
+				}
+			}
+
+			if (exitCode != 0)
+			{
+				var error = process.StandardError.ReadToEnd();
+				if (!string.IsNullOrEmpty(error))
+				{
+					if (logError)
+					{
+						Log.Error(error);
+					}
+				}
+			}
 		}
 	}
 
@@ -388,12 +397,12 @@ namespace Extenity.BuildToolbox.Editor
 			}
 		}
 
-		delegate string GitOperation(out int exitCode);
-        public static void StashAllLocalGitChanges(string path = null, string stashName = null, bool includeSubmodules = true)
+		private delegate void GitOperation(out int exitCode);
+
+        public static void StashAllLocalGitChanges(string path = null, bool includeSubmodules = true)
         {
             var commandRunner = new GitCommandRunner(path);
-            
-            var commands = New.List<GitOperation>();
+            using var _ = New.List<GitOperation>(out var commands);
             
             if (includeSubmodules)
             {
@@ -408,31 +417,24 @@ namespace Extenity.BuildToolbox.Editor
             {
                 foreach (var gitOperation in commands)
                 {
-                    var output = gitOperation.Invoke(out var exitCode);
+                    gitOperation.Invoke(out var exitCode);
 
                     if (exitCode != 0)
                     {
-                        throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                        throw new Exception("Could not stash changes of Git repository. Exit code is " + exitCode);
                     }
-
-                    Log.Info(output);
                 }
             }
             catch (Exception exception)
             {
                 throw new Exception("Could not stash changes of Git repository.", exception);
             }
-            finally
-            {
-                Release.List(ref commands);
-            }
         }
 
         public static void ApplyLastGitStash(string repoPath = null, bool includeSubmodules = true)
         {
             var commandRunner = new GitCommandRunner(repoPath);
-            
-            var commands = New.List<GitOperation>();
+            using var _ = New.List<GitOperation>(out var commands);
 
             if (includeSubmodules)
             {
@@ -445,22 +447,17 @@ namespace Extenity.BuildToolbox.Editor
             {
                 foreach (var gitOperation in commands)
                 {
-                    var output = gitOperation.Invoke(out var exitCode);
+                    gitOperation.Invoke(out var exitCode);
 
                     if (exitCode != 0)
                     {
-                        throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode + ". Output: '" + output + "'");
+                        throw new Exception("Could not apply stash of Git repository. Exit code is " + exitCode);
                     }
-                    Log.Info(output);
                 }
             }
             catch (Exception exception)
             {
                 throw new Exception("Could apply stash of Git repository.", exception);
-            }
-            finally
-            {
-                Release.List(ref commands);
             }
         }
 

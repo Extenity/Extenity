@@ -1,41 +1,46 @@
 ﻿using System.IO;
+using Extenity;
 using Extenity.BuildToolbox.Editor;
 using Extenity.FileSystemToolbox;
 using NUnit.Framework;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace ExtenityTests.Build
 {
 
 	public class Test_StashGitChanges
 	{
-		private static readonly string _dummyRepoPath = Path.Combine(Application.persistentDataPath, "DummyRepo").FixDirectorySeparatorChars();
-		private static readonly string _dummySubmodulePath = Path.Combine(Application.persistentDataPath, "Submodule").FixDirectorySeparatorChars();
-
-		private GitCommandRunner _commandRunner;
+		private string DummyRepoPath;
+		private string DummySubmodulePath;
 
 		[OneTimeSetUp]
 		public void Setup()
 		{
-			CreateDummyRepo(_dummyRepoPath);
-			CreateDummyRepo(_dummySubmodulePath);
+			DummyRepoPath = Path.Combine(Application.persistentDataPath, "DummyRepo").FixDirectorySeparatorChars();
+			DummySubmodulePath = Path.Combine(Application.persistentDataPath, "Submodule").FixDirectorySeparatorChars();
+			Log.Info($"DummyRepoPath: {DummyRepoPath}");
+			Log.Info($"DummySubmodulePath: {DummySubmodulePath}");
 
-			CreateDummyFiles(_dummyRepoPath);
-			CreateDummyFiles(_dummySubmodulePath);
+			DeleteDummyRepoFolders();
 
-			CommitDummyFiles(_dummyRepoPath);
-			CommitDummyFiles(_dummySubmodulePath);
+			CreateDummyRepo(DummyRepoPath);
+			CreateDummyRepo(DummySubmodulePath);
 
-			CreateDummyFiles(_dummySubmodulePath);
+			CreateDummyFiles(DummyRepoPath);
+			CreateDummyFiles(DummySubmodulePath);
 
-			AddSubmoduleToTheDummyRepo(_dummyRepoPath, _dummySubmodulePath);
+			CommitDummyFiles(DummyRepoPath);
+			CommitDummyFiles(DummySubmodulePath);
 
-			CommitDummyFiles(_dummyRepoPath);
+			CreateDummyFiles(DummySubmodulePath);
 
-			CreateDummyFiles(_dummyRepoPath);
+			AddSubmoduleToTheDummyRepo(DummyRepoPath, DummySubmodulePath);
 
-			CreateDummyFiles(Path.Combine(_dummyRepoPath, "Sub"));
+			CommitDummyFiles(DummyRepoPath);
+
+			CreateDummyFiles(DummyRepoPath);
+
+			CreateDummyFiles(Path.Combine(DummyRepoPath, "Sub"));
 		}
 
 		[OneTimeTearDown]
@@ -44,84 +49,72 @@ namespace ExtenityTests.Build
 			DeleteDummyRepoFolders();
 		}
 
-		private void CreateDummyRepo(string path)
+		private void CreateDummyRepo(string repoPath)
 		{
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
-			_commandRunner = new GitCommandRunner(path);
+			DirectoryTools.Create(repoPath);
 
-			var output = _commandRunner.Run($"init . -b master", out int exitCode);
+			RunGit(repoPath, "init");
+			RunGit(repoPath, "config core.safecrlf false"); // Disable CRLF line ending conversion warnings.
+		}
 
-			Debug.Log(output);
+		private void DeleteDummyRepoFolders()
+		{
+			DirectoryTools.Delete(DummySubmodulePath);
+			DirectoryTools.Delete(DummyRepoPath);
 		}
 
 		private void CreateDummyFiles(string repoPath)
 		{
-			var directoryInfo = new DirectoryInfo(repoPath);
-
-			var files = directoryInfo.GetFiles();
+			var files = new DirectoryInfo(repoPath).GetFiles();
 
 			for (int i = files.Length; i < files.Length + 5; i++)
 			{
-				File.WriteAllText(Path.Combine(repoPath, $"File{i}.txt"), i.ToString());
+				File.WriteAllText(Path.Combine(repoPath, $"File{i}.txt"), "File content for " + i);
 			}
 		}
 
 		private void CommitDummyFiles(string repoPath)
 		{
-			_commandRunner = new GitCommandRunner(repoPath);
-			_commandRunner.Run("add .", out int exitCode);
-			_commandRunner.Run("commit -m 'test'", out exitCode);
-
-			Assert.AreEqual(0, exitCode);
+			RunGit(repoPath, "add .");
+			RunGit(repoPath, "commit -m 'test'");
 		}
 
-		private void AddSubmoduleToTheDummyRepo(string repo, string submodule)
+		private void AddSubmoduleToTheDummyRepo(string repoPath, string submodule)
 		{
-			_commandRunner = new GitCommandRunner(repo);
-			_commandRunner.Run($"submodule add {submodule}  Sub", out var exitCode);
-			_commandRunner.Run("submodule update --init --force --remote", out exitCode);
-			Assert.AreEqual(0, exitCode);
+			RunGit(repoPath, $"submodule add {submodule} Sub");
+			RunGit(repoPath, "submodule update --init --force --remote");
 		}
 
-		[Test, Order(0)]
-		public void StashAllGitLocalChanges()
+		private void RunGit(string repoPath, string command)
 		{
-			BuildTools.StashAllLocalGitChanges(_dummyRepoPath, null, false);
+			Log.Info("Running: git " + command);
+			new GitCommandRunner(repoPath).Run(command, out var exitCode);
+			Assert.AreEqual(0, exitCode);
 		}
 
 		[Test, Order(1)]
-		public void StashAllGitLocalChangesIncludingSubmodules()
+		public void Step1_StashAllGitLocalChanges()
 		{
-			BuildTools.StashAllLocalGitChanges(_dummyRepoPath);
+			BuildTools.StashAllLocalGitChanges(DummyRepoPath, false);
 		}
 
 		[Test, Order(2)]
-		public void ApplyLastStash()
+		public void Step2_StashAllGitLocalChangesIncludingSubmodules()
 		{
-			BuildTools.ApplyLastGitStash(_dummyRepoPath, false);
+			BuildTools.StashAllLocalGitChanges(DummyRepoPath, true);
 		}
 
 		[Test, Order(3)]
-		public void ApplyLastStashIncludingSubmodules()
+		public void Step3_ApplyLastStash()
 		{
-			StashAllGitLocalChangesIncludingSubmodules();
-			BuildTools.ApplyLastGitStash(_dummyRepoPath);
+			BuildTools.ApplyLastGitStash(DummyRepoPath, false);
 		}
 
-
-		private void DeleteDummyRepoFolders()
+		[Test, Order(4)]
+		public void Step4_ApplyLastStashIncludingSubmodules()
 		{
-			if (Directory.Exists(_dummySubmodulePath))
-			{
-				Directory.Delete(_dummySubmodulePath, true);
-			}
-			if (Directory.Exists(_dummyRepoPath))
-			{
-				Directory.Delete(_dummyRepoPath, true);
-			}
+			BuildTools.StashAllLocalGitChanges(DummyRepoPath, true);
+			BuildTools.ApplyLastGitStash(DummyRepoPath, true);
 		}
 	}
 
