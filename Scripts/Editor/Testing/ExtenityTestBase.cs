@@ -133,7 +133,10 @@ namespace Extenity.Testing
 
 		protected void AssertExpectNoLogs()
 		{
-			Assert.AreEqual(0, Logs.Count, "There were unexpected log entries emitted in test.");
+			if (Logs.Count > 0)
+			{
+				Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test.");
+			}
 		}
 
 		protected void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
