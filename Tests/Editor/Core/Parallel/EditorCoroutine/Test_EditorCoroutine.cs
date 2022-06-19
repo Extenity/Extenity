@@ -30,7 +30,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 		IEnumerator ExecuteRoutineWithWaitForSeconds()
 		{
 			Log.Info("PreExecution");
-			yield return new EditorWaitForSeconds(waitTime);
+			yield return new WaitForSeconds(waitTime);
 			Log.Info("PostExecution");
 		}
 

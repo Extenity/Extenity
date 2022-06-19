@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -45,11 +46,21 @@ namespace Extenity.ParallelToolbox.Editor
 				var type = yield.GetType();
 				var dataType = DataType.None;
 				double targetTime = -1;
-				if (type == typeof(EditorWaitForSeconds))
+				if (type == typeof(WaitForSeconds))
 				{
-					targetTime = EditorApplication.timeSinceStartup + (yield as EditorWaitForSeconds).WaitTime;
+					targetTime = EditorApplication.timeSinceStartup + (float)ReflectionTools.GetFieldValue(((WaitForSeconds)yield), "m_Seconds");
 					dataType = DataType.WaitForSeconds;
 				}
+				// else if (type == typeof(WaitForSecondsRealtime)) Tried to support WaitForSecondsRealtime but there was another error with it. Activate EditorCoroutineDebugging and write tests to see what's going on.
+				// {
+				// 	targetTime = EditorApplication.timeSinceStartup + ((WaitForSecondsRealtime)yield).waitTime;
+				// 	dataType = DataType.WaitForSeconds;
+				// }
+				// else if (type == typeof(EditorWaitForSeconds)) Not needed anymore. Use WaitForSeconds instead.
+				// {
+				// 	targetTime = EditorApplication.timeSinceStartup + (yield as EditorWaitForSeconds).WaitTime;
+				// 	dataType = DataType.WaitForSeconds;
+				// }
 				else if (type == typeof(EditorCoroutine))
 				{
 					dataType = DataType.EditorCoroutine;
