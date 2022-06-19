@@ -18,7 +18,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 	[TestFixture]
 	public class Test_EditorCoroutine : ExtenityTestBase
 	{
-		const float waitTime = 2.0f; //wait time in seconds
+		const float waitTime = 1.0f; //wait time in seconds
 
 		IEnumerator ExecuteRoutineYieldingArbitraryEnumerator(IEnumerator enumerator)
 		{
@@ -75,18 +75,22 @@ namespace ExtenityTests.ParallelToolbox.Editor
 					AssertExpectNoLogs();
 					yield return null; //wait until target time is reached
 				}
-				// This is not cool but just allow a couple of frames for the sake of timing differences.
-				// Wait until a log appears in 5 frames. Without this wait, the test randomly fails.
-				for (int i = 0; i < 5 && Logs.Count == 0; i++)
+				// This is not cool but just allow a couple of seconds for the sake of timing differences.
+				// Wait until a log appears in 2 seconds. Without this wait, the test randomly fails.
+				for (int i = 1; i <= 10; i++)
 				{
-					Log.Info("# extra waiting");
-					yield return null;
+					if (!Logs.Contains(((LogType.Log), "PostExecution")))
+					{
+						Log.Info("# extra waiting " + i);
+						yield return new WaitForSecondsRealtime(0.2f);
+					}
 				}
 
 				AssertExpectLog((LogType.Log, "PostExecution"));
 			}
 			finally
 			{
+				Log.Info("# Closing the test window.");
 				currentWindow.Close();
 			}
 
