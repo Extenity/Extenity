@@ -191,50 +191,67 @@ namespace Extenity.ParallelToolbox.Editor
 		{
 			if (m_IsDone)
 				throw new Exception();
-#if EditorCoroutineDebugging
-			EditorApplication.update += MoveNextWrapper;
-#else
 			EditorApplication.update += MoveNext;
-#endif
 		}
 
 		private void DeregisterFromUpdate()
 		{
 			if (!m_IsDone)
 				throw new Exception();
-#if EditorCoroutineDebugging
-			EditorApplication.update -= MoveNextWrapper;
-#else
 			EditorApplication.update -= MoveNext;
-#endif
 		}
 
 		#endregion
 
+		#region MoveNext Calls
+
+		private static int MoveCalls = 0;
+		private static bool IsInMove;
+
 		private void MoveNext()
 		{
-			Debug.Assert(!m_IsDone);
-
-			if (m_Owner != null &&
-				(
-					!m_Owner.IsAlive ||
-					(m_Owner.Target is Object targetAsUnityObject && targetAsUnityObject == null)
-				)
-			)
+			if (m_IsDone)
 			{
-				LogVerbose("Owner E");
-				m_IsDone = true;
-				DeregisterFromUpdate();
-				return;
+				throw new Exception("Called MoveNext on a finalized coroutine.");
+			}
+			if (IsInMove)
+			{
+				throw new Exception("Recursively called MoveNext.");
 			}
 
-			bool notDone = ProcessIEnumeratorRecursive(m_Routine);
-			m_IsDone = !notDone;
-			LogStatus($"AFTER ({(m_IsDone ? "DONE" : "____")})", this);
+			MoveCalls++;
+			IsInMove = true;
 
-			if (m_IsDone)
-				DeregisterFromUpdate();
+			try
+			{
+				if (m_Owner != null &&
+				    (
+					    !m_Owner.IsAlive ||
+					    (m_Owner.Target is Object targetAsUnityObject && targetAsUnityObject == null)
+				    )
+				   )
+				{
+					LogVerbose("Finalizing coroutine because the owner was destroyed.");
+					m_IsDone = true;
+					DeregisterFromUpdate();
+					return;
+				}
+
+				bool notDone = ProcessIEnumeratorRecursive(m_Routine);
+				m_IsDone = !notDone;
+
+				if (m_IsDone)
+				{
+					DeregisterFromUpdate();
+				}
+			}
+			finally
+			{
+				IsInMove = false;
+			}
 		}
+
+		#endregion
 
 		static Stack<IEnumerator> kIEnumeratorProcessingStack = new Stack<IEnumerator>(32);
 		private bool ProcessIEnumeratorRecursive(IEnumerator enumerator)
@@ -321,6 +338,8 @@ namespace Extenity.ParallelToolbox.Editor
 				result = root.MoveNext();
 			}
 
+			LogStatus($"AFTER ({(result ? "Not finished yet" : "Finished")})", this);
+
 			return result;
 		}
 
@@ -394,38 +413,6 @@ namespace Extenity.ParallelToolbox.Editor
 		#region Debug
 
 #if EditorCoroutineDebugging
-
-		#region ID
-
-		private readonly int ID = LastGeneratedID++;
-		private static int LastGeneratedID = 1;
-
-		#endregion
-
-		#region MoveNext Calls
-
-		private static int MoveCalls = 0;
-		private static bool IsInMove;
-
-		internal void MoveNextWrapper()
-		{
-			if (IsInMove)
-			{
-				throw new Exception("Recursively called MoveNext.");
-			}
-			MoveCalls++;
-			IsInMove = true;
-			try
-			{
-				MoveNext();
-			}
-			finally
-			{
-				IsInMove = false;
-			}
-		}
-
-		#endregion
 
 		#region Reflection
 
