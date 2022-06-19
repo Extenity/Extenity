@@ -725,21 +725,23 @@ namespace ExtenityTests.DataToolbox
 		///
 		/// Though admittedly the lines where this method is called looks a bit silly.
 		/// </summary>
-		private static void TestValue_ToStringAsCharArray_FormattedValue<T>(string format, T value, Func<T, string, string> convertToExpectedString, Func<T, string, char[], int> convertToCharArray)
+		private static void TestValue_ToStringAsCharArray_FormattedValue<T>(string format,
+		                                                                    T value,
+		                                                                    Func<T, string, string> convertToExpectedString,
+		                                                                    Func<T, string, char[], int> convertToCharArray)
 		{
 			lock (BigBuffer)
 			{
-				var valueAsUnformattedString = value.ToString();
 				BigBuffer.Clear();
 				UnityTestTools.BeginMemoryCheck();
 				var length = convertToCharArray(value, format, BigBuffer);
 				if (UnityTestTools.EndMemoryCheck())
-					Assert.Fail($"Memory allocated while converting value '{valueAsUnformattedString}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
+					Assert.Fail($"Memory allocated while converting value '{value.ToString()}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				var resultString = BigBuffer.ConvertToString(0, length);
 				var expectedString = convertToExpectedString(value, format);
 				if (!expectedString.Equals(resultString))
 				{
-					Log.Error($"Erroneous value generated while converting value '{valueAsUnformattedString}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
+					Log.Error($"Erroneous value generated while converting value '{value.ToString()}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				}
 				Assert.AreEqual(expectedString, resultString);
 				Assert.AreEqual(expectedString.Length, length);
