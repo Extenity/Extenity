@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// @formatter:off
+
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -2251,20 +2253,20 @@ namespace Extenity.DataToolbox
 
 	public static class FastNumberFormatterTools
 	{
-		public static int ToStringAsCharArray(this uint value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this uint value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this int value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this int value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this ulong value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this ulong value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this long value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this long value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this float value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this float value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this double value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this double value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
-		public static int ToStringAsCharArray(this decimal value, string format, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
-		public static int ToStringAsCharArray(this decimal value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer); }
+		public static int ToStringAsCharArray(this uint    value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this uint    value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this int     value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this int     value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this ulong   value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this ulong   value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this long    value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this long    value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this float   value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this float   value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this double  value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this double  value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
+		public static int ToStringAsCharArray(this decimal value, string format, char[] buffer)                                 { return FastNumberFormatter.NumberToString(format, value, StringTools.CurrentNumberFormatInfo, buffer); }
+		public static int ToStringAsCharArray(this decimal value, string format, IFormatProvider formatProvider, char[] buffer) { return FastNumberFormatter.NumberToString(format, value, formatProvider, buffer);                      }
 	}
 
 }
