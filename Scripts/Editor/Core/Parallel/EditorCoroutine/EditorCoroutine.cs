@@ -394,26 +394,23 @@ namespace Extenity.ParallelToolbox.Editor
 		#region MoveNext Calls
 
 		private static int MoveCalls = 0;
-		private static InMoveTracker InMove;
-
-		private class InMoveTracker : IDisposable
-		{
-			public bool Active;
-			public InMoveTracker() { Active = true; }
-			public void Dispose() { Active = false; }
-		}
+		private static bool IsInMove;
 
 		internal void MoveNextWrapper()
 		{
-			if (InMove != null && InMove.Active)
+			if (IsInMove)
 			{
 				throw new Exception("Recursively called MoveNext.");
 			}
-			using (InMove = new InMoveTracker())
+			MoveCalls++;
+			IsInMove = true;
+			try
 			{
-				MoveCalls++;
-
 				MoveNext();
+			}
+			finally
+			{
+				IsInMove = false;
 			}
 		}
 
@@ -445,8 +442,6 @@ namespace Extenity.ParallelToolbox.Editor
 
 		#region Log
 
-		public static char InMoveMark => InMove?.Active == true ? '_' : 'P';
-
 		public static void LogVerbose(string message)
 		{
 			Log.Info(message);
@@ -456,9 +451,10 @@ namespace Extenity.ParallelToolbox.Editor
 		{
 			var id = editorCoroutine?.ID.ToString() ?? "#";
 			var depth = editorCoroutine?.TryGetCurrentDepth().ToString() ?? "#";
-			var doneMark = editorCoroutine?.m_IsDone == true ? 'D' : '_';
 			var ownership = editorCoroutine?.m_ParentCoroutine != null ? "Child" : "Root";
-			Log.Info($"#\t\t ID {id}   Depth {depth}   Move {MoveCalls}   {ownership}   {InMoveMark}{doneMark} \t\t {operation} \t\t {editorCoroutine?.m_Processor.data.type}");
+			var inMoveMark = IsInMove ? "InMove" : "Paused";
+			var doneMark = editorCoroutine?.m_IsDone == true ? "Done" : "NotDoneYet";
+			Log.Info($"#\t\t ID {id}   Depth {depth}   Move {MoveCalls}   {ownership}   {inMoveMark}/{doneMark} \t\t {operation} \t\t {editorCoroutine?.m_Processor.data.type}");
 		}
 
 		public static void DumpAllEditorCoroutines()
