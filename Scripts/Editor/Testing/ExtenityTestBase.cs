@@ -56,6 +56,7 @@ namespace Extenity.Testing
 			OnDeinitialize();
 
 			DeinitializeLogCatching();
+			EnsureAllCheckpointsReached();
 #if UNITY_EDITOR
 			EditorCoroutine.EnsureNoRunningEditorCoroutines();
 #endif
@@ -163,6 +164,72 @@ namespace Extenity.Testing
 		protected void MarkThatThisTestDoesNotCareAboutCleanLogs()
 		{
 			DoesNotCareAboutCleanLogs = true;
+		}
+
+		#endregion
+
+		#region Checkpoints
+
+		private HashSet<string> ExpectedCheckpoints;
+		private HashSet<string> ReachedCheckpoints;
+
+		private void EnsureAllCheckpointsReached()
+		{
+			if (ExpectedCheckpoints.IsNotNullAndEmpty())
+			{
+				foreach (var reachedCheckpoint in ReachedCheckpoints)
+				{
+					ExpectedCheckpoints.Remove(reachedCheckpoint);
+				}
+
+				if (ExpectedCheckpoints.Count > 0)
+				{
+					Assert.Fail($"There were were '{ExpectedCheckpoints.Count}' unreached test checkpoints: " + string.Join(", ", ExpectedCheckpoints));
+				}
+			}
+
+			ClearCheckpoints();
+		}
+
+		private void ClearCheckpoints()
+		{
+			ExpectedCheckpoints = new HashSet<string>();
+			ReachedCheckpoints = new HashSet<string>();
+		}
+
+		protected void ExpectCheckpoints(string checkpoint1)
+		{
+			ClearCheckpoints();
+			ExpectedCheckpoints.Add(checkpoint1);
+		}
+
+		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2)
+		{
+			ClearCheckpoints();
+			ExpectedCheckpoints.Add(checkpoint1);
+			ExpectedCheckpoints.Add(checkpoint2);
+		}
+
+		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3)
+		{
+			ClearCheckpoints();
+			ExpectedCheckpoints.Add(checkpoint1);
+			ExpectedCheckpoints.Add(checkpoint2);
+			ExpectedCheckpoints.Add(checkpoint3);
+		}
+
+		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3, string checkpoint4)
+		{
+			ClearCheckpoints();
+			ExpectedCheckpoints.Add(checkpoint1);
+			ExpectedCheckpoints.Add(checkpoint2);
+			ExpectedCheckpoints.Add(checkpoint3);
+			ExpectedCheckpoints.Add(checkpoint4);
+		}
+
+		protected void InformCheckpoint(string checkpoint)
+		{
+			ReachedCheckpoints.Add(checkpoint);
 		}
 
 		#endregion
