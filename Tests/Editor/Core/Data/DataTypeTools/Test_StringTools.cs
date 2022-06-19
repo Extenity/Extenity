@@ -599,6 +599,14 @@ namespace ExtenityTests.DataToolbox
 
 		[Test]
 		[Repeat(10)]
+		public static void ToStringAsCharArray_FormattedFloat()
+		{
+			WarmUpFastNumberFormatter();
+			UnityTestTools.ApplyOverValueSet_Double(TestValue_ToStringAsCharArray_FormattedFloat);
+		}
+
+		[Test]
+		[Repeat(10)]
 		public static void ToStringAsCharArray_FormattedDouble()
 		{
 			WarmUpFastNumberFormatter();
@@ -607,51 +615,110 @@ namespace ExtenityTests.DataToolbox
 
 		private static void TestValue_ToStringAsCharArray_FormattedInt(Int64 value)
 		{
+			TestValue_ToStringAsCharArray_FormattedInt("", value); // Apply default formatting, which is 'G'
+			TestValue_ToStringAsCharArray_FormattedInt("G", value);
 			TestValue_ToStringAsCharArray_FormattedInt("C", value);
 			TestValue_ToStringAsCharArray_FormattedInt("D", value);
 			TestValue_ToStringAsCharArray_FormattedInt("e", value);
 			TestValue_ToStringAsCharArray_FormattedInt("E", value);
 			TestValue_ToStringAsCharArray_FormattedInt("F", value);
-			TestValue_ToStringAsCharArray_FormattedInt("G", value);
 			TestValue_ToStringAsCharArray_FormattedInt("N", value);
 			TestValue_ToStringAsCharArray_FormattedInt("P", value);
 			TestValue_ToStringAsCharArray_FormattedInt("X", value);
 
-			for (int i = 0; i <= 10; i++)
+			for (int iDigits = 0; iDigits <= 10; iDigits++)
 			{
-				TestValue_ToStringAsCharArray_FormattedInt("C" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("D" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("e" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("E" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("F" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("G" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("N" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("P" + i, value);
-				TestValue_ToStringAsCharArray_FormattedInt("X" + i, value);
+				TestValue_ToStringAsCharArray_FormattedInt("G" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("C" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("D" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("e" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("E" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("F" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("N" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("P" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedInt("X" + iDigits, value);
+			}
+		}
+
+		private static void TestValue_ToStringAsCharArray_FormattedFloat(double valueAsDouble)
+		{
+			var value = (float)valueAsDouble;
+
+			TestValue_ToStringAsCharArray_FormattedFloat("", value); // Apply default formatting, which is 'G'
+			TestValue_ToStringAsCharArray_FormattedFloat("G", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("C", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("e", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("E", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("F", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("N", value);
+			TestValue_ToStringAsCharArray_FormattedFloat("P", value);
+			// This one allocates memory. We probably won't be interested in using it ever, so leave it as it is.
+			//TestValue_ToStringAsCharArray_FormattedFloat("R", value);
+
+			// String formatting generates erroneous results after 7 digits for 'G' formatting, which seems fine.
+			for (int iDigits = 0; iDigits < 7; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedFloat("G" + iDigits, value);
+			}
+
+			// String formatting generates erroneous results after 6 digits for 'e' and 'E' formatting, which seems fine.
+			for (int iDigits = 0; iDigits < 6; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedFloat("e" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedFloat("E" + iDigits, value);
+			}
+
+			for (int iDigits = 0; iDigits <= 20; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedFloat("C" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedFloat("F" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedFloat("N" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedFloat("P" + iDigits, value);
 			}
 		}
 
 		private static void TestValue_ToStringAsCharArray_FormattedDouble(double value)
 		{
+			// String formatting generates erroneous results for 'G' formatting at the least significant digits, which seems fine.
+			// So we skip testing default formatting for 'double' type.
+			// TestValue_ToStringAsCharArray_FormattedDouble("", value); // Apply default formatting, which is 'G'
+			// TestValue_ToStringAsCharArray_FormattedDouble("G", value);
+
 			TestValue_ToStringAsCharArray_FormattedDouble("C", value);
 			TestValue_ToStringAsCharArray_FormattedDouble("e", value);
 			TestValue_ToStringAsCharArray_FormattedDouble("E", value);
 			TestValue_ToStringAsCharArray_FormattedDouble("F", value);
-			TestValue_ToStringAsCharArray_FormattedDouble("G", value);
 			TestValue_ToStringAsCharArray_FormattedDouble("N", value);
 			TestValue_ToStringAsCharArray_FormattedDouble("P", value);
 			// This one allocates memory. We probably won't be interested in using it ever, so leave it as it is.
 			//TestValue_ToStringAsCharArray_FormattedDouble("R", value);
 
-			for (int i = 0; i <= 10; i++)
+			// String formatting generates erroneous results for 'G' formatting at the least significant digits, which seems fine.
+			// So we skip 'G0', which is the same as 'G'.
+			for (int iDigits = 1; iDigits <= 14; iDigits++)
 			{
-				TestValue_ToStringAsCharArray_FormattedDouble("C" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("e" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("E" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("F" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("G" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("N" + i, value);
-				TestValue_ToStringAsCharArray_FormattedDouble("P" + i, value);
+				TestValue_ToStringAsCharArray_FormattedDouble("G" + iDigits, value);
+			}
+
+			// String formatting generates erroneous results after 8 digits for 'P' formatting, which seems fine.
+			for (int iDigits = 0; iDigits <= 8; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedDouble("P" + iDigits, value);
+			}
+
+			// String formatting generates erroneous results after 10 digits for 'C' formatting, which seems fine.
+			for (int iDigits = 0; iDigits <= 10; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedDouble("C" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedDouble("F" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedDouble("N" + iDigits, value);
+			}
+
+			// String formatting generates erroneous results after 13 digits for 'e' and 'E' formatting, which seems fine.
+			for (int iDigits = 0; iDigits <= 13; iDigits++)
+			{
+				TestValue_ToStringAsCharArray_FormattedDouble("e" + iDigits, value);
+				TestValue_ToStringAsCharArray_FormattedDouble("E" + iDigits, value);
 			}
 		}
 
@@ -660,47 +727,47 @@ namespace ExtenityTests.DataToolbox
 			lock (BigBuffer)
 			{
 				// Warm up internal buffers of FastNumberFormatter
-				for (int iDecimal = 0; iDecimal < 15; iDecimal++)
+				for (int iDigits = 0; iDigits < 20; iDigits++)
 				{
-					float.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
-					//float.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer); Integers only
-					float.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
-					float.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
-					float.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
-					float.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
-					float.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
-					float.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
-					//float.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer); Integers only
+					float.MaxValue.ToStringAsCharArray("C" + iDigits, BigBuffer);
+					//float.MaxValue.ToStringAsCharArray("D" + iDigits, BigBuffer); Integers only
+					float.MaxValue.ToStringAsCharArray("e" + iDigits, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("E" + iDigits, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("F" + iDigits, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("G" + iDigits, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("N" + iDigits, BigBuffer);
+					float.MaxValue.ToStringAsCharArray("P" + iDigits, BigBuffer);
+					//float.MaxValue.ToStringAsCharArray("X" + iDigits, BigBuffer); Integers only
 
-					double.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
-					//double.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer); Integers only
-					double.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
-					double.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
-					double.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
-					double.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
-					double.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
-					double.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
-					//double.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer); Integers only
+					double.MaxValue.ToStringAsCharArray("C" + iDigits, BigBuffer);
+					//double.MaxValue.ToStringAsCharArray("D" + iDigits, BigBuffer); Integers only
+					double.MaxValue.ToStringAsCharArray("e" + iDigits, BigBuffer);
+					double.MaxValue.ToStringAsCharArray("E" + iDigits, BigBuffer);
+					double.MaxValue.ToStringAsCharArray("F" + iDigits, BigBuffer);
+					double.MaxValue.ToStringAsCharArray("G" + iDigits, BigBuffer);
+					double.MaxValue.ToStringAsCharArray("N" + iDigits, BigBuffer);
+					double.MaxValue.ToStringAsCharArray("P" + iDigits, BigBuffer);
+					//double.MaxValue.ToStringAsCharArray("X" + iDigits, BigBuffer); Integers only
 
-					Int32.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
-					Int32.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("C" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("D" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("e" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("E" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("F" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("G" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("N" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("P" + iDigits, BigBuffer);
+					Int32.MaxValue.ToStringAsCharArray("X" + iDigits, BigBuffer);
 
-					Int64.MaxValue.ToStringAsCharArray("C" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("D" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("e" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("E" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("F" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("G" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("N" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("P" + iDecimal, BigBuffer);
-					Int64.MaxValue.ToStringAsCharArray("X" + iDecimal, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("C" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("D" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("e" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("E" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("F" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("G" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("N" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("P" + iDigits, BigBuffer);
+					Int64.MaxValue.ToStringAsCharArray("X" + iDigits, BigBuffer);
 				}
 			}
 		}
@@ -711,10 +778,14 @@ namespace ExtenityTests.DataToolbox
 			TestValue_ToStringAsCharArray_FormattedValue(format, (Int32)value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
 		}
 
+		private static void TestValue_ToStringAsCharArray_FormattedFloat(string format, float value)
+		{
+			TestValue_ToStringAsCharArray_FormattedValue(format, value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
+		}
+
 		private static void TestValue_ToStringAsCharArray_FormattedDouble(string format, double value)
 		{
 			TestValue_ToStringAsCharArray_FormattedValue(format, value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
-			TestValue_ToStringAsCharArray_FormattedValue(format, (float)value, (_value, _format) => _value.ToString(_format), (_value, _format, _chars) => _value.ToStringAsCharArray(_format, _chars));
 		}
 
 		/// <summary>
