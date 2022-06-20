@@ -25,7 +25,7 @@ namespace ExtenityTests.KernelToolbox
 			// Clear the previously created repository.
 			try
 			{
-				Directory.Delete(path, true);
+				DirectoryTools.DeleteWithContent(path);
 				Directory.CreateDirectory(path);
 			}
 			catch

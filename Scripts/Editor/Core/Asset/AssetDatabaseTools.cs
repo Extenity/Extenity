@@ -499,7 +499,7 @@ namespace Extenity.AssetToolbox.Editor
 
 			if (Directory.Exists(path))
 			{
-				Directory.Delete(path, true);
+				DirectoryTools.DeleteWithContent(path);
 				ManuallyDeleteMetaFileOfAsset(path);
 			}
 			else if (File.Exists(path))

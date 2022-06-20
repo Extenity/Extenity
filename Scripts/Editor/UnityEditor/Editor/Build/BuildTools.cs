@@ -117,7 +117,7 @@ namespace Extenity.BuildToolbox.Editor
 				    DirectoryTools.IsDirectoryEmptyOrOnlyContainsEmptySubdirectories(OutsideLocationBasePath))
 				{
 					Log.Info($"Removing empty directories at temporary location '{OutsideLocationBasePath}'.");
-					Directory.Delete(OutsideLocationBasePath, true);
+					DirectoryTools.DeleteWithContent(OutsideLocationBasePath);
 				}
 
 				AssetDatabaseTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OriginalPaths, OutsidePaths, false);
