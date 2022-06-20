@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Security;
+using System.Threading;
 using Extenity.DataToolbox;
 using Extenity.UnityEditorToolbox;
 
@@ -253,7 +254,20 @@ namespace Extenity.FileSystemToolbox
 				// fileInfo.Attributes = FileAttributes.Normal;
 			}
 
-			File.Delete(fileInfo.FullName);
+			try
+			{
+				File.Delete(fileInfo.FullName);
+			}
+			catch (IOException) 
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				File.Delete(fileInfo.FullName);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				File.Delete(fileInfo.FullName);
+			}
 			return true;
 		}
 

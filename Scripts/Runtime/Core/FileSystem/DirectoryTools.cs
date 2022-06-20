@@ -441,7 +441,20 @@ namespace Extenity.FileSystemToolbox
 					DeleteWithContent(subDirectory);
 				}
 
-				Directory.Delete(path, false);
+				try
+				{
+					Directory.Delete(path, false);
+				}
+				catch (IOException) 
+				{
+					Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+					Directory.Delete(path, false);
+				}
+				catch (UnauthorizedAccessException)
+				{
+					Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+					Directory.Delete(path, false);
+				}
 				return true;
 			}
 			return false;
