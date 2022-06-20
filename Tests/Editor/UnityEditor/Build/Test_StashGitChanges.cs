@@ -59,8 +59,8 @@ namespace ExtenityTests.Build
 
 		private void DeleteDummyRepoFolders()
 		{
-			DirectoryTools.Delete(DummySubmodulePath);
-			DirectoryTools.Delete(DummyRepoPath);
+			DirectoryTools.DeleteWithContent(DummySubmodulePath);
+			DirectoryTools.DeleteWithContent(DummyRepoPath);
 		}
 
 		private void CreateDummyFiles(string repoPath)

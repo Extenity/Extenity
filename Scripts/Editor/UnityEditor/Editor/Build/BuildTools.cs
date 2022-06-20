@@ -298,7 +298,7 @@ namespace Extenity.BuildToolbox.Editor
 
 					var directoryToBeDeleted = executableNameWithoutExtension + "_BackUpThisFolder_ButDontShipItWithYourGame";
 					var path = Path.Combine(outputDirectory, directoryToBeDeleted);
-					DirectoryTools.Delete(path);
+					DirectoryTools.DeleteWithContent(path);
 				}
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)

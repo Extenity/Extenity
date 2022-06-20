@@ -407,13 +407,41 @@ namespace Extenity.FileSystemToolbox
 
 		#region Delete Directory
 
-		public static bool Delete(string path)
+		public static bool DeleteIfEmpty(string path)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
 			if (Directory.Exists(path))
 			{
-				Directory.Delete(path, true);
+				Directory.Delete(path, false);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Source: https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
+		/// </summary>
+		public static bool DeleteWithContent(string path)
+		{
+			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
+
+			if (Directory.Exists(path))
+			{
+				var files = Directory.GetFiles(path);
+				var subDirectories = Directory.GetDirectories(path);
+
+				foreach (var file in files)
+				{
+					FileTools.DeleteFileEvenIfReadOnly(file);
+				}
+
+				foreach (var subDirectory in subDirectories)
+				{
+					DeleteWithContent(subDirectory);
+				}
+
+				Directory.Delete(path, false);
 				return true;
 			}
 			return false;
