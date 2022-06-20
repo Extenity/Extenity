@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using Extenity.ApplicationToolbox;
+using Extenity.FileSystemToolbox;
 using Extenity.KernelToolbox;
 using UnityEngine;
 
@@ -93,7 +94,7 @@ namespace ExtenityTests.KernelToolbox
 		protected void DeleteDataFile(string fileName)
 		{
 			var path = Path.Combine(Storage.StoragePath, fileName);
-			File.Delete(path);
+			FileTools.Delete(path);
 		}
 
 		#endregion

@@ -76,15 +76,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				var fileInfo = new FileInfo(path);
 				var age = DateTime.UtcNow.Subtract(fileInfo.LastWriteTimeUtc);
+				FileTools.Delete(path);
 				if (age.TotalMinutes < 1.0)
 				{
-					File.Delete(path);
 					return true;
 				}
 				else
 				{
 					//Log.Info($"Ignoring postpone mark file for command '{PrettyName}' because it was outdated by '{age.TotalMinutes:N0}' minutes.");
-					File.Delete(path);
 				}
 			}
 			return false;

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Extenity.FileSystemToolbox;
 using Extenity.ProfilingToolbox;
 using Extenity.UnityEditorToolbox;
 using UnityEditor;
@@ -150,7 +151,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			{
 				try
 				{
-					File.Delete(file);
+					FileTools.Delete(file);
 				}
 				catch
 				{

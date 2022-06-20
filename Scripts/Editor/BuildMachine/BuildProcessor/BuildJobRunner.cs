@@ -836,11 +836,9 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void DeleteRunningJobFile()
 		{
-			AssetDatabase.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
-
 			try
 			{
-				File.Delete(BuildMachineConstants.RunningJobSurvivalFilePath);
+				FileTools.Delete(BuildMachineConstants.RunningJobSurvivalFilePath);
 			}
 			catch (DirectoryNotFoundException)
 			{
