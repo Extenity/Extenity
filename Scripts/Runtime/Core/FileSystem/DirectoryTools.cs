@@ -407,6 +407,24 @@ namespace Extenity.FileSystemToolbox
 
 		#region Delete Directory
 
+		private static void _Delete(string path, bool recursive)
+		{
+			try
+			{
+				Directory.Delete(path, false);
+			}
+			catch (IOException) 
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				Directory.Delete(path, false);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				Directory.Delete(path, false);
+			}
+		}
+
 		public static bool DeleteIfEmpty(string path)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
@@ -441,20 +459,7 @@ namespace Extenity.FileSystemToolbox
 					DeleteWithContent(subDirectory);
 				}
 
-				try
-				{
-					Directory.Delete(path, false);
-				}
-				catch (IOException) 
-				{
-					Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-					Directory.Delete(path, false);
-				}
-				catch (UnauthorizedAccessException)
-				{
-					Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-					Directory.Delete(path, false);
-				}
+				_Delete(path, false);
 				return true;
 			}
 			return false;
