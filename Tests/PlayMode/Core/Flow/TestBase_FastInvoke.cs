@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Extenity;
 using Extenity.FlowToolbox;
+using Extenity.ParallelToolbox;
 using Extenity.Testing;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
@@ -118,12 +119,12 @@ namespace ExtenityTests.FlowToolbox
 			if (startAtRandomTime)
 			{
 				// This will make tests start at a random Time.time.
-				yield return new WaitForEndOfFrame(); // Ignored by Code Correct
+				yield return Yields.WaitForEndOfFrame;
 			}
 			else
 			{
 				// This will make tests start right in FixedUpdates where Time.time is consistent.
-				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
+				yield return Yields.WaitForFixedUpdate;
 			}
 
 			InitializeBase();
@@ -352,7 +353,7 @@ namespace ExtenityTests.FlowToolbox
 			while (getCallbackCallCount() == 0)
 			{
 				doInvokingChecks(true, 1);
-				yield return new WaitForFixedUpdate();
+				yield return Yields.WaitForFixedUpdate;
 				fixedUpdateCount++;
 				passedTime += Time.deltaTime;
 			}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Extenity.DataToolbox;
+using Extenity.ParallelToolbox;
 using TMPro;
 using UnityEngine;
 
@@ -221,7 +222,7 @@ namespace Extenity.UIToolbox
 			{
 				var characters = Mathf.CeilToInt((Time.time - startTime) / characterPeriod);
 				me.SetCharArray(text, 0, Mathf.Min(characters, text.Length));
-				yield return new WaitForEndOfFrame(); // TODO OPTIMIZE:
+				yield return Yields.WaitForEndOfFrame;
 				if (characters >= text.Length)
 					break;
 			}

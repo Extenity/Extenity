@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Extenity.FlowToolbox;
+using Extenity.ParallelToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine;
@@ -130,7 +131,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
 
 				// Wait for the next fixed update...
-				yield return new WaitForFixedUpdate();
+				yield return Yields.WaitForFixedUpdate;
 
 				// ... and the callback should be called by now. Because its delays is below or equal to fixedDeltaTime.
 				Assert.AreEqual(1, Subject.CallbackCallCount);
@@ -180,7 +181,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
 
 				// Wait for the first fixed update...
-				yield return new WaitForFixedUpdate();
+				yield return Yields.WaitForFixedUpdate;
 
 				// ... which won't cover the invoke.
 				Assert.AreEqual(0, Subject.CallbackCallCount);
@@ -189,7 +190,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
 
 				// Wait for the second fixed update...
-				yield return new WaitForFixedUpdate();
+				yield return Yields.WaitForFixedUpdate;
 
 				// ... and the callback should be called by now.
 				Assert.AreEqual(1, Subject.CallbackCallCount);
@@ -203,7 +204,6 @@ namespace ExtenityTests.FlowToolbox
 		public IEnumerator CallOrder_4_CalledBeforeAllFixedUpdates(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
-			var WaitForFixedUpdate = new WaitForFixedUpdate();
 			var delay = 0.0;
 			//FastInvokeHandler.VerboseLoggingInEachFixedUpdate = true;
 			//Subject.EnableLogging();
@@ -211,7 +211,7 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, delay);
 			Subject.ExpectedInvokeCallbackCallCountInFixedUpdate = 1; // Invoke callback should be called before FixedUpdate
 			Subject.ExpectedFixedUpdateCallCountInInvokeCallback = 0; // FixedUpdate should be called after Invoke callback
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 
 			// WaitForFixedUpdate yield us to the end of current fixed update loop. Invoke callback will be called
 			// at the start of the loop. Then the FixedUpdate will be called.
@@ -221,7 +221,7 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, delay); // Call once more
 			Subject.ExpectedInvokeCallbackCallCountInFixedUpdate = 2; // Invoke callback should be called before FixedUpdate
 			Subject.ExpectedFixedUpdateCallCountInInvokeCallback = 1; // FixedUpdate should be called after Invoke callback
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 
 			// We have completed a full cycle of fixed update loop. Both invoke callback and FixedUpdate will be
 			// called once more.
@@ -231,20 +231,20 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, delay); // Call once more
 			Subject.ExpectedInvokeCallbackCallCountInFixedUpdate = 3; // Invoke callback should be called before FixedUpdate
 			Subject.ExpectedFixedUpdateCallCountInInvokeCallback = 2; // FixedUpdate should be called after Invoke callback
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 
 			// And it goes on...
 			Assert.AreEqual(3, Subject.CallbackCallCount);
 			Assert.AreEqual(3, Subject.FixedUpdateCallCount);
 
 			//Subject.FastInvoke(Subject.Callback, delay); Do not call Invoke anymore
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 
 			// Invoke callback should stop since we are not calling the invoke anymore.
 			Assert.AreEqual(3, Subject.CallbackCallCount);
 			Assert.AreEqual(4, Subject.FixedUpdateCallCount);
 
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 
 			// And once more...
 			Assert.AreEqual(3, Subject.CallbackCallCount);
@@ -270,7 +270,7 @@ namespace ExtenityTests.FlowToolbox
 			// Invoke and wait for half of it, then cancel
 			Subject.FastInvoke(Subject.Callback, 1);
 			while (Subject.RemainingTimeUntilNextFastInvoke() > 0.5)
-				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
+				yield return Yields.WaitForFixedUpdate;
 			DoFastInvokingChecks(true);
 			Subject.CancelFastInvoke(Subject.Callback);
 			DoFastInvokingChecks(false);
@@ -294,7 +294,7 @@ namespace ExtenityTests.FlowToolbox
 			Subject.FastInvoke(Subject.Callback, 0.2);
 			DoFastInvokingChecks(true);
 			for (int i = 0; i < 0.5f / fixedDeltaTime; i++)
-				yield return new WaitForFixedUpdate(); // Ignored by Code Correct
+				yield return Yields.WaitForFixedUpdate;
 			DoFastInvokingChecks(true);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
 			Subject.CancelFastInvoke(Subject.Callback);
@@ -309,14 +309,13 @@ namespace ExtenityTests.FlowToolbox
 		public IEnumerator Halt_2_StopsWhenObjectDestroyed()
 		{
 			yield return InitializeTest(false);
-			var WaitForFixedUpdate = new WaitForFixedUpdate();
 			var fixedDeltaTime = Time.fixedDeltaTime;
 			var cachedSubject = Subject;
 
 			Subject.FastInvoke(Subject.Callback, 1.0);
 
 			// Wait half way. Then destroy.
-			do yield return WaitForFixedUpdate; while (Subject.RemainingTimeUntilNextFastInvoke() > 0.5);
+			do yield return Yields.WaitForFixedUpdate; while (Subject.RemainingTimeUntilNextFastInvoke() > 0.5);
 			var lastCallbackCallCount = Subject.CallbackCallCount;
 			GameObject.Destroy(Subject);
 
@@ -324,7 +323,7 @@ namespace ExtenityTests.FlowToolbox
 			var remainingTime = 1.0;
 			while ((remainingTime -= fixedDeltaTime) > 0.0)
 			{
-				yield return WaitForFixedUpdate;
+				yield return Yields.WaitForFixedUpdate;
 				Assert.AreEqual(lastCallbackCallCount, cachedSubject.CallbackCallCount);
 			}
 		}
@@ -358,7 +357,6 @@ namespace ExtenityTests.FlowToolbox
 		public IEnumerator Query_1_RemainingTime(bool startAtRandomTime)
 		{
 			yield return InitializeTest(startAtRandomTime);
-			var WaitForFixedUpdate = new WaitForFixedUpdate();
 			var fixedDeltaTime = Time.fixedDeltaTime;
 			var startTime = Time.time;
 
@@ -390,37 +388,37 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 
 			// Wait for just one fixed update and see if remaining time acts accordingly.
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(2.0 - fixedDeltaTime, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			yield return WaitForFixedUpdate;
+			yield return Yields.WaitForFixedUpdate;
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(2.0 - 2 * fixedDeltaTime, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
 
 
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.5);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 0.5);
 			Assert.AreEqual(1.5, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 0.9);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 0.9);
 			Assert.AreEqual(1.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 1.9);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 1.9);
 			DoFastInvokingChecks(true, 4); // Just before invoking the first one, that is set to 2 seconds
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.0);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 2.0);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 2.9);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 2.9);
 			DoFastInvokingChecks(true, 3);
 			Assert.AreEqual(0.1, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 3.0);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 3.0);
 			DoFastInvokingChecks(true, 2);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.0);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 4.0);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(1.0, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 4.4);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 4.4);
 			DoFastInvokingChecks(true, 1);
 			Assert.AreEqual(0.6, Subject.RemainingTimeUntilNextFastInvoke(), FloatingTolerance);
-			do yield return WaitForFixedUpdate; while (Time.time - startTime < 5.0);
+			do yield return Yields.WaitForFixedUpdate; while (Time.time - startTime < 5.0);
 			DoFastInvokingChecks(false, 0);
 			Assert.IsTrue(double.IsNaN(Subject.RemainingTimeUntilNextFastInvoke()));
 		}

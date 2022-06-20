@@ -4,6 +4,7 @@ using System.Linq;
 using Extenity.DataToolbox;
 using Extenity.FlowToolbox;
 using Extenity.MathToolbox;
+using Extenity.ParallelToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace ExtenityTests.FlowToolbox
 				// We need to skip to the first fixed update, since Time.time could be anything random.
 				if (startAtRandomTime)
 				{
-					yield return new WaitForFixedUpdate();
+					yield return Yields.WaitForFixedUpdate;
 				}
 
 				var previous = (double)Time.time;
@@ -41,7 +42,7 @@ namespace ExtenityTests.FlowToolbox
 
 				for (int i = 0; i < 20; i++)
 				{
-					yield return new WaitForFixedUpdate();
+					yield return Yields.WaitForFixedUpdate;
 					var now = (double)Time.time;
 					var fixedDeltaTime = (double)Time.fixedDeltaTime;
 					var tolerance = fixedDeltaTime * 0.001;
