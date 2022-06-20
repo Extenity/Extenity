@@ -504,7 +504,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 			else if (File.Exists(path))
 			{
-				FileTools.DeleteFileEvenIfReadOnly(path);
+				FileTools.Delete(path);
 				ManuallyDeleteMetaFileOfAsset(path);
 			}
 			else
@@ -520,7 +520,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var metaFile = path + ".meta";
 			if (File.Exists(metaFile))
-				FileTools.DeleteFileEvenIfReadOnly(metaFile);
+				FileTools.Delete(metaFile);
 		}
 
 		#endregion

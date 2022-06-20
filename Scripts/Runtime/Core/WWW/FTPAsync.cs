@@ -127,15 +127,12 @@ namespace Extenity.WWWToolbox
 					throw new System.NotImplementedException();
 #endif
 
-					FileTools.DeleteFileEvenIfReadOnly(localTempFileFullPath);
+					FileTools.Delete(localTempFileFullPath);
 				}
 				else
 				{
 					// Delete if file already exists.
-					if (File.Exists(localFileFullPath))
-					{
-						FileTools.DeleteFileEvenIfReadOnly(localFileFullPath);
-					}
+					FileTools.Delete(localFileFullPath, true);
 					// Rename downloaded file
 					File.Move(localTempFileFullPath, localFileFullPath);
 				}

@@ -453,7 +453,7 @@ namespace Extenity.FileSystemToolbox
 
 				foreach (var file in files)
 				{
-					FileTools.DeleteFileEvenIfReadOnly(file);
+					FileTools.Delete(file);
 				}
 
 				foreach (var subDirectory in subDirectories)
@@ -521,7 +521,7 @@ namespace Extenity.FileSystemToolbox
 			{
 				try
 				{
-					fileInfos[i].DeleteFileEvenIfReadOnly();
+					FileTools.Delete(fileInfos[i]);
 					deletedFiles.Add(fileInfos[i]);
 				}
 				catch
@@ -549,7 +549,7 @@ namespace Extenity.FileSystemToolbox
 			{
 				try
 				{
-					fileInfos[i].DeleteFileEvenIfReadOnly();
+					FileTools.Delete(fileInfos[i]);
 					deletedFiles.Add(fileInfos[i]);
 				}
 				catch
@@ -584,7 +584,7 @@ namespace Extenity.FileSystemToolbox
 				try
 				{
 					var path = dllFullPathWithoutExtension + ".mdb";
-					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+					if (FileTools.Delete(path, true))
 						deletedFiles.Add(new FileInfo(path));
 				}
 				catch
@@ -596,7 +596,7 @@ namespace Extenity.FileSystemToolbox
 				try
 				{
 					var path = dllFullPathWithoutExtension + ".pdb";
-					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+					if (FileTools.Delete(path, true))
 						deletedFiles.Add(new FileInfo(path));
 				}
 				catch
@@ -608,7 +608,7 @@ namespace Extenity.FileSystemToolbox
 				try
 				{
 					var path = dllFullPathWithoutExtension + ".xml";
-					if (FileTools.DeleteFileEvenIfReadOnly(path, true))
+					if (FileTools.Delete(path, true))
 						deletedFiles.Add(new FileInfo(path));
 				}
 				catch

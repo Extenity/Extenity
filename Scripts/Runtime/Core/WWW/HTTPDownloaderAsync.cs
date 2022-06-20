@@ -178,7 +178,7 @@ namespace Extenity.WWWToolbox
 					}
 
 					// Delete compressed (downloaded) file
-					FileTools.DeleteFileEvenIfReadOnly(localTempFileFullPath);
+					FileTools.Delete(localTempFileFullPath);
 				}
 				else
 				{
@@ -207,10 +207,7 @@ namespace Extenity.WWWToolbox
 
 					// Rename downloaded file from temp filename to original filename
 					// Delete if file already exists.
-					if (File.Exists(localFileFullPath))
-					{
-						FileTools.DeleteFileEvenIfReadOnly(localFileFullPath);
-					}
+					FileTools.Delete(localFileFullPath, true);
 					// Rename downloaded file
 					File.Move(localTempFileFullPath, localFileFullPath);
 				}

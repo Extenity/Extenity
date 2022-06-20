@@ -248,13 +248,13 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
-		public static bool DeleteFileEvenIfReadOnly(string path, bool checkIfExists = false)
+		public static bool Delete(string path, bool checkIfExists = false, bool autoRemoveReadOnlyAttribute = true)
 		{
-			return DeleteFileEvenIfReadOnly(new FileInfo(path), checkIfExists);
+			return Delete(new FileInfo(path), checkIfExists, autoRemoveReadOnlyAttribute);
 		}
 
 		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
-		public static bool DeleteFileEvenIfReadOnly(this FileInfo fileInfo, bool checkIfExists = false)
+		public static bool Delete(this FileInfo fileInfo, bool checkIfExists = false, bool autoRemoveReadOnlyAttribute = true)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
@@ -264,7 +264,7 @@ namespace Extenity.FileSystemToolbox
 			}
 
 			// Try to remove readonly attribute because File.Delete() fails if file is readonly.
-			if (fileInfo.IsReadOnly)
+			if (fileInfo.IsReadOnly && autoRemoveReadOnlyAttribute)
 			{
 				fileInfo.Attributes = fileInfo.Attributes & ~FileAttributes.ReadOnly;
 
