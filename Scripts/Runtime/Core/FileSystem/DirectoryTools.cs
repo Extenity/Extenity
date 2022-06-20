@@ -429,9 +429,11 @@ namespace Extenity.FileSystemToolbox
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
-			if (Directory.Exists(path))
+			if (Directory.Exists(path) &&
+				Directory.GetFiles(path).Length == 0 &&
+			    Directory.GetDirectories(path).Length == 0)
 			{
-				Directory.Delete(path, false);
+				_Delete(path, false);
 				return true;
 			}
 			return false;
@@ -488,10 +490,7 @@ namespace Extenity.FileSystemToolbox
 
 			try
 			{
-				if (Directory.GetFiles(directoryPath).Length == 0 && Directory.GetDirectories(directoryPath).Length == 0)
-				{
-					Directory.Delete(directoryPath, false);
-				}
+				DeleteIfEmpty(directoryPath);
 			}
 			catch
 			{
