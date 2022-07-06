@@ -93,8 +93,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (items.Length > 0)
 			{
-				Log.Info($"Cleared '{fileNameFilter}' files: " + items.Length);
-				items.LogList();
+				items.LogList($"Cleared '{items.Length}' files with filter '{fileNameFilter}':");
 
 				if (refreshAssetDatabase)
 				{
@@ -119,18 +118,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 				for (int i = 0; i < items.Count; i++)
 				{
 					AssetDatabaseTools.ManuallyDeleteMetaFileAndAsset(items[i]);
+					clearedItems.AddSorted(items[i]);
 					Progress.Report(progressId, (float)(i + 1) / items.Count); // This is not the correct way to display the progress, but it's better than nothing.
 					yield return null;
 				}
 
-				clearedItems.Combine(items);
 				tryAgain = items.Count > 0;
 			}
 
 			if (clearedItems.Count > 0)
 			{
-				Log.Info("Cleared empty directories: " + clearedItems.Count);
-				clearedItems.LogList();
+				clearedItems.LogList($"Cleared '{clearedItems.Count}' empty directories:");
 
 				if (refreshAssetDatabase)
 				{
