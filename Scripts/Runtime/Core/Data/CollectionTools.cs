@@ -270,7 +270,9 @@ namespace Extenity.DataToolbox
 		{
 			if (list == null)
 			{
-				list = new T1[otherList != null ? otherList.Length : 0];
+				list = otherList == null || otherList.Length == 0
+					? Array.Empty<T1>()
+					: new T1[otherList.Length];
 			}
 			else if (otherList == null)
 			{
@@ -292,10 +294,12 @@ namespace Extenity.DataToolbox
 
 			if (list == null)
 			{
-				list = new T[length];
+				list = length == 0
+					? Array.Empty<T>()
+					: new T[length];
 				return true;
 			}
-			else if (list.Length != length)
+			if (list.Length != length)
 			{
 				Array.Resize(ref list, length);
 				return true;
@@ -310,7 +314,9 @@ namespace Extenity.DataToolbox
 
 			if (list == null)
 			{
-				list = new T[length];
+				list = length == 0
+					? Array.Empty<T>()
+					: new T[length];
 				if (processItemToBeAdded != null)
 				{
 					// Array needs to be expanded. Call the callback for added items.
@@ -321,7 +327,7 @@ namespace Extenity.DataToolbox
 				}
 				return true;
 			}
-			else if (list.Length != length)
+			if (list.Length != length)
 			{
 				var currentLength = list.Length;
 				if (currentLength > length && processItemToBeRemoved != null)
@@ -353,10 +359,12 @@ namespace Extenity.DataToolbox
 
 			if (list == null)
 			{
-				list = new T[length];
+				list = length == 0
+					? Array.Empty<T>()
+					: new T[length];
 				return true;
 			}
-			else if (list.Length < length)
+			if (list.Length < length)
 			{
 				int expandedSize;
 				if (expandToDoubleSize)
