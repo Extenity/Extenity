@@ -88,7 +88,11 @@ namespace Extenity.DebugToolbox
 		public void TakeSnapshotOfAllLoadedScenes()
 		{
 			var sceneInfos = SceneManagerTools.GetScenes(SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene);
-			Scenes = sceneInfos.Select(sceneInfo => new SceneEntry(sceneInfo)).ToArray();
+			Scenes = new SceneEntry[sceneInfos.Count];
+			for (var i = 0; i < sceneInfos.Count; i++)
+			{
+				Scenes[i] = new SceneEntry(sceneInfos[i]);
+			}
 		}
 
 		public string BuildStringForGameObjectPaths()
