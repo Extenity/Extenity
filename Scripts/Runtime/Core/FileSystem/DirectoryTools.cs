@@ -562,62 +562,45 @@ namespace Extenity.FileSystemToolbox
 		}
 
 		/// <returns>Returns false if something goes wrong. Check 'failedFiles' list for detailed information.</returns>
-		public static bool ClearDLLArtifacts(string directoryPath, SearchOption searchOption, ref List<FileInfo> deletedFiles, ref List<FileInfo> failedFiles)
+		public static bool ClearDLLArtifacts(string directoryPath, SearchOption searchOption, List<FileInfo> deletedFiles, List<FileInfo> failedFiles)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
-			if (deletedFiles == null)
-				deletedFiles = New.List<FileInfo>();
-			if (failedFiles == null)
-				failedFiles = New.List<FileInfo>();
-			var error = false;
+			var initialErrors = failedFiles.Count;
 			var directoryInfo = new DirectoryInfo(directoryPath);
-			var fileInfos = directoryInfo.GetFiles("*.dll", searchOption).Where(fileInfo => fileInfo.Extension == ".dll").ToList();
-			for (int i = 0; i < fileInfos.Count; i++)
+
+			FindAndDeleteIncludingXMLCounterparts(".dll");
+			FindAndDeleteIncludingXMLCounterparts(".mdb");
+			FindAndDeleteIncludingXMLCounterparts(".pdb");
+
+			return initialErrors != failedFiles.Count;
+
+			void FindAndDeleteIncludingXMLCounterparts(string extension)
 			{
-				var dllFullPath = fileInfos[i].FullName;
-				var dllDirectoryPath = Path.GetDirectoryName(dllFullPath);
-				var dllFullPathWithoutExtension = Path.Combine(
-					dllDirectoryPath,
-					Path.GetFileNameWithoutExtension(dllFullPath));
+				var fileInfos = directoryInfo.GetFiles("*" + extension, searchOption)
+				                             .Where(fileInfo => fileInfo.Extension == extension)
+				                             .ToList();
+				for (int i = 0; i < fileInfos.Count; i++)
+				{
+					try
+					{
+						var fullPath = fileInfos[i].FullName;
+						var fullPathWithoutExtension = Path.Combine(
+							Path.GetDirectoryName(fullPath),
+							Path.GetFileNameWithoutExtension(fullPath));
 
-				try
-				{
-					var path = dllFullPathWithoutExtension + ".mdb";
-					if (FileTools.Delete(path, true))
-						deletedFiles.Add(new FileInfo(path));
-				}
-				catch
-				{
-					failedFiles.Add(fileInfos[i]);
-					error = true;
-				}
-
-				try
-				{
-					var path = dllFullPathWithoutExtension + ".pdb";
-					if (FileTools.Delete(path, true))
-						deletedFiles.Add(new FileInfo(path));
-				}
-				catch
-				{
-					failedFiles.Add(fileInfos[i]);
-					error = true;
-				}
-
-				try
-				{
-					var path = dllFullPathWithoutExtension + ".xml";
-					if (FileTools.Delete(path, true))
-						deletedFiles.Add(new FileInfo(path));
-				}
-				catch
-				{
-					failedFiles.Add(fileInfos[i]);
-					error = true;
+						var path = fullPathWithoutExtension + ".xml";
+						if (FileTools.Delete(path, true))
+						{
+							deletedFiles.Add(new FileInfo(path));
+						}
+					}
+					catch
+					{
+						failedFiles.Add(fileInfos[i]);
+					}
 				}
 			}
-			return !error;
 		}
 
 		#endregion

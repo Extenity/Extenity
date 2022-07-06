@@ -302,7 +302,7 @@ namespace Extenity.BuildToolbox.Editor
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)
 				{
-					DirectoryTools.ClearDLLArtifacts(outputDirectory, SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
+					DirectoryTools.ClearDLLArtifacts(outputDirectory, SearchOption.AllDirectories, deletedFiles, failedFiles);
 				}
 				// Clear crash handler executable
 				if (deleteCrashHandlerExecutable)
