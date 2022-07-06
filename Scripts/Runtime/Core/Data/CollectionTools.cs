@@ -126,7 +126,7 @@ namespace Extenity.DataToolbox
 			return count;
 		}
 
-		public static bool RemoveNullChecked<T>(this List<T> list, in T item)
+		public static bool RemoveNullChecked<T>(this ICollection<T> list, in T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
@@ -156,7 +156,7 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-		public static void CopyTo<T>(this List<T> list, List<T> target)
+		public static void CopyTo<T>(this IList<T> list, IList<T> target)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -164,7 +164,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void CopyToUnique<T>(this List<T> list, List<T> target)
+		public static void CopyToUnique<T>(this IList<T> list, IList<T> target)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -175,7 +175,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static void AddNullChecked<T>(this List<T> list, in T item)
+		public static void AddNullChecked<T>(this IList<T> list, in T item)
 		{
 			if (item != null)
 			{
@@ -183,7 +183,7 @@ namespace Extenity.DataToolbox
 			}
 		}
 
-		public static bool AddUnique<T>(this List<T> list, in T item)
+		public static bool AddUnique<T>(this IList<T> list, in T item)
 		{
 			if (!list.Contains(item))
 			{
@@ -193,7 +193,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool AddUniqueNullChecked<T>(this List<T> list, in T item)
+		public static bool AddUniqueNullChecked<T>(this IList<T> list, in T item)
 		{
 			if (item != null) // Ensure the object is still alive
 			{
@@ -206,7 +206,7 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
-		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this List<T> list, in T item)
+		public static bool AddUniqueNullCheckedAndRemoveNulls<T>(this IList<T> list, in T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
 			list.RemoveAllNullItems();
@@ -214,7 +214,7 @@ namespace Extenity.DataToolbox
 			return list.AddUniqueNullChecked(item);
 		}
 
-		public static void AddNullCheckedAndRemoveNulls<T>(this List<T> list, in T item)
+		public static void AddNullCheckedAndRemoveNulls<T>(this IList<T> list, in T item)
 		{
 			// Remove nulls before adding the object, so Contains check will not count the nulls.
 			list.RemoveAllNullItems();
@@ -255,7 +255,7 @@ namespace Extenity.DataToolbox
 			list.RemoveRange(list.Count - count, count);
 		}
 
-		public static T Dequeue<T>(this List<T> list)
+		public static T Dequeue<T>(this IList<T> list)
 		{
 			if (list == null || list.Count == 0)
 				return default(T);
@@ -538,7 +538,7 @@ namespace Extenity.DataToolbox
 		/// 
 		/// Source: https://stackoverflow.com/questions/450233/generic-list-moving-an-item-within-the-list
 		/// </summary>
-		public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
+		public static void Move<T>(this IList<T> list, int oldIndex, int newIndex)
 		{
 			if (list == null)
 				throw new ArgumentNullException();
