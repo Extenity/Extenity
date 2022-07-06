@@ -119,6 +119,7 @@ namespace Extenity.DataToolbox
 				if (list[i] == null)
 				{
 					list.RemoveAt(i);
+					i--;
 					count++;
 				}
 			}
