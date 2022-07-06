@@ -142,24 +142,6 @@ namespace Extenity.DataToolbox
 			return list.RemoveNullChecked(item);
 		}
 
-		// See if the list does not contain any items other than specified items.
-		public static bool DoesNotContainOtherThan<T>(this List<T> list, params T[] items)
-		{
-			if (list == null)
-				return true;
-			if (items == null)
-				throw new ArgumentNullException(nameof(items));
-
-			for (int i = 0; i < list.Count; i++)
-			{
-				if (!items.Contains(list[i]))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
 		public static List<T> Clone<T>(this List<T> source)
 		{
 			return source.GetRange(0, source.Count);
@@ -171,20 +153,6 @@ namespace Extenity.DataToolbox
 			Array.Copy(thisArray, result, thisArray.Length);
 			Array.Copy(appendedArray, 0, result, thisArray.Length, appendedArray.Length);
 			return result;
-		}
-
-		public static void Combine<T>(this ICollection<T> list, in IEnumerable<T> otherList)
-		{
-			if (otherList == null)
-				throw new ArgumentNullException(nameof(otherList));
-
-			foreach (T otherListItem in otherList)
-			{
-				if (!list.Contains(otherListItem))
-				{
-					list.Add(otherListItem);
-				}
-			}
 		}
 
 		public static void CopyTo<T>(this List<T> list, List<T> target)
@@ -295,18 +263,6 @@ namespace Extenity.DataToolbox
 			var item = list[index];
 			list.RemoveAt(index);
 			return item;
-		}
-
-		public static void AddCapacity<T>(ref List<T> list, int additionalCapacity)
-		{
-			if (list == null)
-			{
-				list = new List<T>(additionalCapacity);
-			}
-			else
-			{
-				list.Capacity += additionalCapacity;
-			}
 		}
 
 		public static void MakeSameSizeAs<T1, T2>(ref T1[] list, in T2[] otherList)
@@ -484,20 +440,6 @@ namespace Extenity.DataToolbox
 					return i;
 			}
 			return -1;
-		}
-
-		public static T[] Remove<T>(this T[] source, in T[] removedArray)
-		{
-			var array = source;
-			foreach (var removedItem in removedArray)
-			{
-				int index;
-				while ((index = array.IndexOf(removedItem)) >= 0)
-				{
-					array = array.RemoveAt(index);
-				}
-			}
-			return array;
 		}
 
 		public static T[] Remove<T>(this T[] source, in T value)
