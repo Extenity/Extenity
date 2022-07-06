@@ -12,7 +12,7 @@ namespace Extenity
 	{
 		#region Simple
 
-		public static void LogSimple<T>(this T obj, string prefix = "", LogCategory category = LogCategory.Verbose)
+		public static void LogSimple<T>(this T obj, string prefix = "", LogCategory category = LogCategory.Info)
 		{
 			if (obj == null)
 			{
@@ -29,7 +29,7 @@ namespace Extenity
 
 		#region List
 
-		public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
+		public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
 		{
 			var stringBuilder = !inSeparateLogCalls
 				? new StringBuilder()
@@ -87,7 +87,7 @@ namespace Extenity
 
 		#region Dictionary
 
-		public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Verbose)
+		public static void LogDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, string initialLine = null, bool inSeparateLogCalls = false, LogCategory category = LogCategory.Info)
 		{
 			var stringBuilder = !inSeparateLogCalls
 				? new StringBuilder()
@@ -145,7 +145,7 @@ namespace Extenity
 
 		#region Dump Class Data
 
-		public static void LogAllProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
+		public static void LogAllProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 		{
 			// Initialize
 			var stringBuilder = new StringBuilder();
@@ -162,7 +162,7 @@ namespace Extenity
 			Log.Any(text, category);
 		}
 
-		public static void LogAllFields<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
+		public static void LogAllFields<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 		{
 			// Initialize
 			var stringBuilder = new StringBuilder();
@@ -179,7 +179,7 @@ namespace Extenity
 			Log.Any(text, category);
 		}
 
-		public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Verbose)
+		public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogCategory category = LogCategory.Info)
 		{
 			// Initialize
 			var stringBuilder = new StringBuilder();
