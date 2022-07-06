@@ -451,59 +451,46 @@ namespace Extenity.DataToolbox
 			return -1;
 		}
 
-		public static T[] Remove<T>(this T[] source, in T value)
+		public static bool Remove<T>(this T[] source, in T value, out T[] result)
 		{
 			var index = source.IndexOf(value);
 			if (index < 0)
-				return source;
-			return source.RemoveAt(index);
+			{
+				result = source;
+				return false;
+			}
+			else
+			{
+				source.RemoveAt(index, out result);
+				return true;
+			}
 		}
 
-		public static T[] RemoveAt<T>(this T[] source, int index)
+		public static void RemoveAt<T>(this T[] source, int index, out T[] result)
 		{
 			if (index < 0 || index >= source.Length)
 			{
 				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
 			}
 
-			var result = new T[source.Length - 1];
+			result = new T[source.Length - 1];
 			if (index > 0)
 				Array.Copy(source, 0, result, 0, index);
 			if (index < source.Length - 1)
 				Array.Copy(source, index + 1, result, index, source.Length - index - 1);
-			return result;
 		}
 
-		public static T[] Insert<T>(this T[] source, int index)
+		public static void Insert<T>(this T[] source, int index, in T obj, out T[] result)
 		{
 			if (index < 0 || index > source.Length)
 				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
 
-			var result = new T[source.Length + 1];
-
-			if (source.Length == 0)
-				return result;
-
-			// Copy left part
-			if (index > 0)
-				Array.Copy(source, 0, result, 0, index);
-			// Copy right part
-			Array.Copy(source, index, result, index + 1, source.Length - index);
-
-			return result;
-		}
-
-		public static T[] Insert<T>(this T[] source, int index, in T obj)
-		{
-			if (index < 0 || index > source.Length)
-				throw new ArgumentOutOfRangeException(nameof(index), index, "Index is out of range.");
-
-			var result = new T[source.Length + 1];
+			result = new T[source.Length + 1];
 
 			if (source.Length == 0)
 			{
 				result[0] = obj;
-				return result;
+				return;
 			}
 
 			// Copy left part
@@ -513,7 +500,6 @@ namespace Extenity.DataToolbox
 			Array.Copy(source, index, result, index + 1, source.Length - index);
 
 			result[index] = obj;
-			return result;
 		}
 
 		public static T[] Swap<T>(this T[] source, int index1, int index2)
@@ -524,20 +510,20 @@ namespace Extenity.DataToolbox
 			return source;
 		}
 
-		public static T[] Add<T>(this T[] source, in T item)
+		public static void Add<T>(this T[] source, in T item, out T[] result)
 		{
 			var sourceLength = source != null ? source.Length : 0;
-			Array.Resize(ref source, sourceLength + 1);
-			source[sourceLength] = item;
-			return source;
+			result = source;
+			Array.Resize(ref result, sourceLength + 1);
+			result[sourceLength] = item;
 		}
 
-		public static T[] AddRange<T>(this T[] source, in T[] items)
+		public static void AddRange<T>(this T[] source, in T[] items, out T[] result)
 		{
 			var sourceLength = source != null ? source.Length : 0;
-			Array.Resize(ref source, sourceLength + items.Length);
-			Array.Copy(items, 0, source, sourceLength, items.Length);
-			return source;
+			result = source;
+			Array.Resize(ref result, sourceLength + items.Length);
+			Array.Copy(items, 0, result, sourceLength, items.Length);
 		}
 
 		/// <summary>

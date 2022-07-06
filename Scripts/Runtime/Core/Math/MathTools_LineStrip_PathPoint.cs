@@ -26,32 +26,28 @@ namespace Extenity.MathToolbox
 			//}
 		}
 
-		public static PathPoint[] InsertPositionAndCalculateLengths(this PathPoint[] points, int pointIndex, Vector3 position)
+		public static void InsertPositionAndCalculateLengths(this PathPoint[] points, int pointIndex, Vector3 position, out PathPoint[] result)
 		{
 			if (points == null)
 				throw new NullReferenceException("points");
 			if (pointIndex < 0 || pointIndex > points.Length)
 				throw new ArgumentOutOfRangeException(nameof(pointIndex), pointIndex, "Index is out of range.");
 
-			var newPoints = points.Insert(pointIndex, new PathPoint(position));
+			points.Insert(pointIndex, new PathPoint(position), out result);
 
 			// TODO: Optimize
-			newPoints.CalculateLengths();
-
-			return newPoints;
+			result.CalculateLengths();
 		}
 
-		public static PathPoint[] AddPositionAndCalculateLengths(this PathPoint[] points, Vector3 position)
+		public static void AddPositionAndCalculateLengths(this PathPoint[] points, Vector3 position, out PathPoint[] result)
 		{
 			if (points == null)
 				throw new NullReferenceException("points");
 
-			var newPoints = points.Add(new PathPoint(position));
+			points.Add(new PathPoint(position), out result);
 
 			// TODO: Optimize
-			newPoints.CalculateLengths();
-
-			return newPoints;
+			result.CalculateLengths();
 		}
 
 		public static float CalculateLengths(this PathPoint[] points)

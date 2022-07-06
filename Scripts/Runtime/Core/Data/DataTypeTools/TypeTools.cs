@@ -553,7 +553,7 @@ namespace Extenity.DataToolbox
             {
                 var baseFields = GetPublicAndPrivateInstanceFields(baseType);
                 fields = type.GetFields(bindingFlags);
-                fields = fields.AddRange(baseFields);
+                fields.AddRange(baseFields, out fields);
             }
 
 			// Add to cache
@@ -777,7 +777,7 @@ namespace Extenity.DataToolbox
 			{
 				var baseProperties = GetPublicAndPrivateInstanceProperties(baseType);
                 properties = type.GetProperties(bindingFlags);
-                properties = properties.AddRange(baseProperties);
+                properties.AddRange(baseProperties, out properties);
 			}
 
 			// Add to cache

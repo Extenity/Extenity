@@ -72,7 +72,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		public void AddScene(string sceneName)
 		{
-			FoundInScenes = FoundInScenes.Add(sceneName);
+			FoundInScenes.Add(sceneName, out FoundInScenes);
 		}
 
 		#endregion

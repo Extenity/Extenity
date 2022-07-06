@@ -70,7 +70,7 @@ namespace Extenity.UIToolbox.Editor
 				if (Me.Animations.All(entry => entry.Animation != childAnimation)) // Prevent adding same animation more than once
 				{
 					Undo.RecordObject(Me, "Add Child Animation");
-					Me.Animations = Me.Animations.Add(new UISimpleAnimationOrchestrator.Entry(childAnimation, false));
+					Me.Animations.Add(new UISimpleAnimationOrchestrator.Entry(childAnimation, false), out Me.Animations);
 				}
 			}
 		}

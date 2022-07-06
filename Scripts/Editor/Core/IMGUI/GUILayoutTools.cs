@@ -131,7 +131,7 @@ namespace Extenity.IMGUIToolbox.Editor
 					}
 					else
 					{
-						tags = tags.Insert(0);
+						tags.Insert(0, default, out tags);
 					}
 
 					changeEditingTo = 0;
@@ -292,7 +292,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 			if (delayedRemoveAt >= 0)
 			{
-				tags = tags.RemoveAt(delayedRemoveAt);
+				tags.RemoveAt(delayedRemoveAt, out tags);
 			}
 
 			GUILayout.EndHorizontal();

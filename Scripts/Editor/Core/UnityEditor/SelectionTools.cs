@@ -16,7 +16,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void AddToSelection(UnityEngine.Object obj)
 		{
-			Selection.objects = Selection.objects.Add(obj);
+			Selection.objects.Add(obj, out var result);
+			Selection.objects = result;
 		}
 
 		public static void RemoveFromSelection(UnityEngine.Object obj)
@@ -26,7 +27,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				if (objects[i] == obj)
 				{
-					Selection.objects = objects.RemoveAt(i);
+					objects.RemoveAt(i, out var result);
+					Selection.objects = result;
 				}
 			}
 		}
