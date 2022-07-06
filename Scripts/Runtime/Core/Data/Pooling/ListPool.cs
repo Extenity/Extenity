@@ -8,15 +8,15 @@ namespace Extenity.DataToolbox
 	/// <remarks>
 	/// Example usage for manually returning the List to the pool:
 	///
-	///    var theCollection = New.List<ItemType>(optionalCapacity);
-	///    // Do some stuff with theCollection
-	///    Release.List(ref theCollection);
+	///    var theList = New.List<ItemType>(optionalCapacity);
+	///    // Do some stuff with theList
+	///    Release.List(ref theList);
 	///
 	/// Example usage for automatically returning the List to the pool:
 	///
-	///    using (New.List<ItemType>(out var theCollection, optionalCapacity))
+	///    using (New.List<ItemType>(out var theList, optionalCapacity))
 	///    {
-	///        // Do some stuff with theCollection
+	///        // Do some stuff with theList
 	///    }
 	/// </remarks>
 	internal static class ListPool<T>
