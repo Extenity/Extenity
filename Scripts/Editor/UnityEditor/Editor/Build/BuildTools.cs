@@ -296,9 +296,8 @@ namespace Extenity.BuildToolbox.Editor
 				{
 					Thread.Sleep(2000); // Just wait for couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
 
-					var directoryToBeDeleted = executableNameWithoutExtension + "_BackUpThisFolder_ButDontShipItWithYourGame";
-					var path = Path.Combine(outputDirectory, directoryToBeDeleted);
-					DirectoryTools.DeleteWithContent(path);
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BackUpThisFolder_ButDontShipItWithYourGame"));
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BurstDebugInformation_DoNotShip"));
 				}
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)
