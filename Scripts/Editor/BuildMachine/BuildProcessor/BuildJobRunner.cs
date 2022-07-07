@@ -404,6 +404,18 @@ namespace Extenity.BuildMachine.Editor
 				}
 			}
 
+			// Change script compilation code optimization mode to Release.
+			{
+				if (CompilationPipeline.codeOptimization != CodeOptimization.Release)
+				{
+					BuilderLog.Info($"Changing code optimization mode from '{CompilationPipeline.codeOptimization}' to '{CodeOptimization.Release}'.");
+					CompilationPipeline.codeOptimization = CodeOptimization.Release;
+
+					CheckAfterChangingCodeOptimizationMode();
+					yield break;
+				}
+			}
+
 			// Run the Step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 			{
@@ -658,6 +670,21 @@ namespace Extenity.BuildMachine.Editor
 			{
 				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
 				throw new Exception("Changing platform was not triggered a recompilation.");
+			}
+		}
+
+		private static void CheckAfterChangingCodeOptimizationMode()
+		{
+			// Check if the changes triggered a compilation, which obviously is expected.
+			if (EditorApplication.isCompiling)
+			{
+				HaltStep("Code optimization mode change");
+				SaveRunningJobToFile();
+			}
+			else
+			{
+				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
+				throw new Exception("Changing code optimization mode was not triggered a recompilation.");
 			}
 		}
 
