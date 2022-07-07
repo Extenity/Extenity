@@ -390,6 +390,17 @@ namespace Extenity.BuildMachine.Editor
 			var currentBuilder = Job.Builders[Job.CurrentBuilder];
 			Debug.Assert(currentBuilder != null);
 
+			// Set Unity to manually refresh assets.
+			{
+				if (!EditorPreferencesTools.IsAutoRefreshEnabled)
+				{
+					EditorPreferencesTools.DisableAutoRefresh();
+
+					CheckAfterDisablingUnityEditorAutoRefresh();
+					yield break;
+				}
+			}
+
 			// Change Unity's active platform if required.
 			{
 				var buildTarget = currentBuilder.Info.BuildTarget;
@@ -656,6 +667,13 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			return haltExecution;
+		}
+
+		private static void CheckAfterDisablingUnityEditorAutoRefresh()
+		{
+			// Check if the changes triggered a compilation, which obviously is expected.
+			HaltStep("Disabled Unity auto refresh");
+			SaveRunningJobToFile();
 		}
 
 		private static void CheckAfterChangingActivePlatform()
