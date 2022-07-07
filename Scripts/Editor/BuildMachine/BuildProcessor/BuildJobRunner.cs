@@ -533,6 +533,13 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Exception Handling
 
+		private static void ThrowScriptCompilationDetectedBeforeStartingTheBuildRun()
+		{
+			throw new Exception(BuilderLog.Prefix + 
+			                    "Compilation is not allowed at the start of a build run " +
+			                    "or when continuing the build run.");
+		}
+
 		private static void ThrowScriptCompilationDetectedBeforeProcessingBuildStep()
 		{
 			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the build step.");
@@ -610,11 +617,11 @@ namespace Extenity.BuildMachine.Editor
 			var haltExecution = false;
 
 			// At this point, there should be no ongoing compilations. Build system
-			// would not be happy if there is a compilation while it starts the process.
-			// Otherwise execution gets really messy.
+			// would not be happy if there is a compilation while it processes the step.
+			// Otherwise execution gets really messy. See 11685123.
 			if (EditorApplication.isCompiling)
 			{
-				throw new Exception(BuilderLog.Prefix + "Compilation is not allowed at the start of a build run or when continuing the build run.");
+				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
 			}
 
 			// Save the unsaved assets before making any moves.
@@ -662,10 +669,9 @@ namespace Extenity.BuildMachine.Editor
 		{
 			var haltExecution = false;
 
-			// At this point, there should be no ongoing compilations.
-			// Build system does not allow any code that triggers
-			// an assembly reload in Build Step. Otherwise execution
-			// gets really messy.
+			// At this point, there should be no ongoing compilations. Build system
+			// would not be happy if there is a compilation while it processes the step.
+			// Otherwise execution gets really messy. See 11685123.
 			if (EditorApplication.isCompiling)
 			{
 				ThrowScriptCompilationDetectedBeforeProcessingBuildStep();
