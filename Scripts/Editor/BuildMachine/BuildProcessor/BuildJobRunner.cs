@@ -399,11 +399,8 @@ namespace Extenity.BuildMachine.Editor
 					BuilderLog.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
 					EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
 
-					var haltExecution = CheckAfterChangingActivePlatform();
-					if (haltExecution)
-						yield break;
-
-					// TODO: There we might need an assembly reload, or a Unity restart.
+					CheckAfterChangingActivePlatform();
+					yield break;
 				}
 			}
 
@@ -649,23 +646,19 @@ namespace Extenity.BuildMachine.Editor
 			return haltExecution;
 		}
 
-		private static bool CheckAfterChangingActivePlatform()
+		private static void CheckAfterChangingActivePlatform()
 		{
-			var haltExecution = false;
-
-			// Check if changing the platform triggered a compilation, which obviously
-			// is expected.
+			// Check if the changes triggered a compilation, which obviously is expected.
+			if (EditorApplication.isCompiling)
 			{
-				var isCompiling = EditorApplication.isCompiling;
-				if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
-				{
-					haltExecution = true;
-					HaltStep($"Platform change - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					SaveRunningJobToFile();
-				}
+				HaltStep("Platform change");
+				SaveRunningJobToFile();
 			}
-
-			return haltExecution;
+			else
+			{
+				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
+				throw new Exception("Changing platform was not triggered a recompilation.");
+			}
 		}
 
 		private static bool CheckBeforeStep()
