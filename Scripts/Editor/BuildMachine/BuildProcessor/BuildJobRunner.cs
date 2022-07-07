@@ -12,6 +12,7 @@ using Extenity.ParallelToolbox.Editor;
 using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
+using UnityEditor.Compilation;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildMachine.Editor
