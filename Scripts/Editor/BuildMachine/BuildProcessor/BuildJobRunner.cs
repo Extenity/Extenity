@@ -194,8 +194,14 @@ namespace Extenity.BuildMachine.Editor
 				// Run the Step
 				{
 					Job.ErrorReceivedInLastStep = "";
-					// TODO: See 11422351
-					//Application.logMessageReceivedThreaded += 
+
+					// We already catch exceptions and fail the build. We may also catch error logs.
+					// But then, there will be some errors that Unity would write out of nowhere and
+					// failing the build for these logs which we don't have any control over, 
+					// would be a bit harsh. So any code that wants to fail the build should throw
+					// an exception, instead of logging an error.
+					// Application.logMessageReceivedThreaded += 
+
 					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
 					{
