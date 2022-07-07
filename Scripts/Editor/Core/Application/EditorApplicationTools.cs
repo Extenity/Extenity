@@ -167,7 +167,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Compilation Check
 
-		public static void EnsureNotCompiling(bool breaking = true)
+		public static void EnsureNotCompiling(bool breaking, string message = "There is an ongoing compilation, which was not expected.")
 		{
 			if (EditorApplication.isCompiling)
 			{
@@ -195,7 +195,6 @@ namespace Extenity.ApplicationToolbox.Editor
 				// Just check once more. Maybe Unity has not yet realized the compilation was finished.
 				if (EditorApplication.isCompiling)
 				{
-					var message = "There is an ongoing compilation, which was not expected.";
 					if (breaking)
 					{
 						throw new Exception(message);
