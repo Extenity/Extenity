@@ -535,9 +535,7 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void ThrowScriptCompilationDetectedBeforeStartingTheBuildRun()
 		{
-			throw new Exception(BuilderLog.Prefix + 
-			                    "Compilation is not allowed at the start of a build run " +
-			                    "or when continuing the build run.");
+			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed at the start of a build run or when continuing the build run.");
 		}
 
 		private static void ThrowScriptCompilationDetectedBeforeProcessingBuildStep()
