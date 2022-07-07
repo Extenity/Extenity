@@ -543,6 +543,11 @@ namespace Extenity.BuildMachine.Editor
 			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the build step.");
 		}
 
+		private static void ThrowScriptCompilationDetectedAfterProcessingBuildStep()
+		{
+			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed after finishing the build step.");
+		}
+
 		private static bool CatchRunException(Exception exception)
 		{
 			BuilderLog.Error("Exception caught in Build Run. Exception: " + exception);
@@ -700,6 +705,14 @@ namespace Extenity.BuildMachine.Editor
 		private static bool CheckAfterStep()
 		{
 			var haltExecution = false;
+
+			// At this point, there should be no ongoing compilations. Build system
+			// would not be happy if there is a compilation while it processes the step.
+			// Otherwise execution gets really messy. See 11685123.
+			if (EditorApplication.isCompiling)
+			{
+				ThrowScriptCompilationDetectedAfterProcessingBuildStep();
+			}
 
 			// Save the unsaved assets before making any moves.
 			AssetDatabase.SaveAssets();
