@@ -533,6 +533,11 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Exception Handling
 
+		private static void ThrowScriptCompilationDetectedBeforeProcessingBuildStep()
+		{
+			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the build step.");
+		}
+
 		private static bool CatchRunException(Exception exception)
 		{
 			BuilderLog.Error("Exception caught in Build Run. Exception: " + exception);
@@ -663,7 +668,7 @@ namespace Extenity.BuildMachine.Editor
 			// gets really messy.
 			if (EditorApplication.isCompiling)
 			{
-				throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the step.");
+				ThrowScriptCompilationDetectedBeforeProcessingBuildStep();
 			}
 
 			// Save the unsaved assets before making any moves.
