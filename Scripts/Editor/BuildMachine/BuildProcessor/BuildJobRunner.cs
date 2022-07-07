@@ -564,6 +564,20 @@ namespace Extenity.BuildMachine.Editor
 			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the build step.");
 		}
 
+		private static void ThrowScriptCompilationDetectedWhileProcessingBuildStep()
+		{
+			// This message is expected to be shown to the coder that tries to write a Build Step but accidentally
+			// triggers recompilation. So the description is a bit more detailed than other exceptions, where other
+			// exceptions are more like internal errors in Build Machine.
+			throw new Exception(BuilderLog.Prefix + 
+			                    "Triggering a script compilation is not allowed while processing the build step. " +
+			                    "Make sure the codes in the step won't trigger a compilation like calling " +
+			                    "AssetDatabase.Refresh() or switching the active platform. " +
+			                    "Any changes that requires a compilation like script modifications, " +
+			                    "project settings modifications etc. will be automatically handled by " +
+			                    $"{nameof(BuildMachine)} when proceeding to next build step.");
+		}
+
 		private static void ThrowScriptCompilationDetectedAfterProcessingBuildStep()
 		{
 			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed after finishing the build step.");
@@ -736,14 +750,26 @@ namespace Extenity.BuildMachine.Editor
 					HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
 					SaveRunningJobToFile();
 				}
+				else
+				{
+					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+					CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+				}
 			}
 
 			return haltExecution;
 		}
 
+		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
+		{
+			ThrowScriptCompilationDetectedWhileProcessingBuildStep();
+		}
+
 		private static bool CheckAfterStep()
 		{
 			var haltExecution = false;
+
+			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
