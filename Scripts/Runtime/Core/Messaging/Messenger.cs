@@ -1,6 +1,6 @@
 #if UNITY // TODO-UniversalExtenity: Implement Messenger for Universal project.
 
-#if !UseLegacyMessenger
+#if !UseLegacyMessenger && !DisableExtenityMessenger
 
 using System;
 using UnityEngine;
