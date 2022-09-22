@@ -72,17 +72,17 @@ namespace Extenity
 
 		#region Callbacks
 
-		internal readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PreLateUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PreLateUpdateCallbacks = new ExtenityEvent();
 
-		internal readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent FixedUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent LateUpdateCallbacks = new ExtenityEvent();
 
-		internal readonly ExtenityEvent PostFixedUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
-		internal readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PostFixedUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
 
 		#endregion
 
