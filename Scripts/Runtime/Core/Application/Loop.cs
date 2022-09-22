@@ -47,6 +47,7 @@ namespace Extenity
 			if (Instance)
 			{
 				GameObject.DestroyImmediate(Instance.gameObject);
+				Instance = null;
 			}
 		}
 
