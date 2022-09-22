@@ -79,7 +79,7 @@ namespace Extenity.FlowToolbox
 
 		#region Singleton
 
-		internal static FastInvokeHandler Instance;
+		public static FastInvokeHandler Instance;
 
 		#endregion
 
