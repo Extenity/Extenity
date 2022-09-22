@@ -25,7 +25,7 @@ namespace Extenity.DataToolbox
 
 		static ListPool()
 		{
-			Log.Verbose($"Creating {nameof(ListPool<T>)}<{typeof(T).Name}>");
+			// Log.Verbose($"Creating {nameof(ListPool<T>)}<{typeof(T).Name}>"); This log was nice to have. But caused chaos when using pooled lists in constructors.
 			ListPoolTools.RegisterForAllPoolsRelease(ReleasePool);
 		}
 
