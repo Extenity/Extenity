@@ -395,6 +395,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				if (!EditorPreferencesTools.IsAutoRefreshEnabled)
 				{
+					BuilderLog.Info($"Disabling Auto Refresh option of Unity which can cause Unity to start asset refresh operation in the middle of build steps.");
 					EditorPreferencesTools.DisableAutoRefresh();
 
 					CheckAfterDisablingUnityEditorAutoRefresh();
@@ -702,7 +703,7 @@ namespace Extenity.BuildMachine.Editor
 			else
 			{
 				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-				throw new Exception("Changing platform was not triggered a recompilation.");
+				throw new Exception("Changing platform did not trigger a recompilation.");
 			}
 		}
 
@@ -717,7 +718,7 @@ namespace Extenity.BuildMachine.Editor
 			else
 			{
 				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-				throw new Exception("Changing code optimization mode was not triggered a recompilation.");
+				throw new Exception("Changing code optimization mode did not trigger a recompilation.");
 			}
 		}
 
