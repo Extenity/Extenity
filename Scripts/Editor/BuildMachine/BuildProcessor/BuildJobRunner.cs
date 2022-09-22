@@ -168,7 +168,7 @@ namespace Extenity.BuildMachine.Editor
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
 			{
-				var haltExecution = CheckBeforeStartingOrContinuing();
+				CheckBeforeStartingOrContinuing(Job, out bool haltExecution);
 				if (haltExecution)
 					yield break;
 			}
@@ -185,7 +185,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				// Check before running the Step
 				{
-					var haltExecution = CheckBeforeStep();
+					CheckBeforeStep(out bool haltExecution);
 					if (haltExecution)
 						yield break;
 					Job.StepState = BuildJobStepState.StepRunning;
@@ -241,7 +241,7 @@ namespace Extenity.BuildMachine.Editor
 
 				// Check after running the Step
 				{
-					var haltExecution = CheckAfterStep();
+					CheckAfterStep(out bool haltExecution);
 					if (haltExecution)
 						yield break;
 				}
@@ -390,52 +390,6 @@ namespace Extenity.BuildMachine.Editor
 			Debug.Assert(!string.IsNullOrEmpty(currentStep));
 			var currentBuilder = Job.Builders[Job.CurrentBuilder];
 			Debug.Assert(currentBuilder != null);
-
-			// Set Unity to manually refresh assets.
-			{
-				if (!EditorPreferencesTools.IsAutoRefreshEnabled)
-				{
-#if !DisableExtenityBuilderAutoRefreshFixer
-					BuilderLog.Info($"Disabling Auto Refresh option of Unity which can cause Unity to start asset refresh operation in the middle of build steps.");
-					EditorPreferencesTools.DisableAutoRefresh();
-
-					CheckAfterDisablingUnityEditorAutoRefresh();
-					yield break;
-#else
-					throw new Exception("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. Edit>Preferences>Asset Pipeline>Auto Refresh");
-#endif
-				}
-			}
-
-			// Change Unity's active platform if required.
-			{
-#if !DisableExtenityBuilderActivePlatformFixer
-				var buildTarget = currentBuilder.Info.BuildTarget;
-				var buildTargetGroup = currentBuilder.Info.BuildTargetGroup;
-				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
-				{
-					BuilderLog.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
-					EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
-
-					CheckAfterChangingActivePlatform();
-					yield break;
-				}
-#endif
-			}
-
-			// Change script compilation code optimization mode to Release.
-			{
-#if !DisableExtenityBuilderCodeOptimizationFixer
-				if (CompilationPipeline.codeOptimization != CodeOptimization.Release)
-				{
-					BuilderLog.Info($"Changing code optimization mode from '{CompilationPipeline.codeOptimization}' to '{CodeOptimization.Release}'.");
-					CompilationPipeline.codeOptimization = CodeOptimization.Release;
-
-					CheckAfterChangingCodeOptimizationMode();
-					yield break;
-				}
-#endif
-			}
 
 			// Run the Step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -659,10 +613,8 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Check Before/After Step
 
-		private static bool CheckBeforeStartingOrContinuing()
+		private static void CheckBeforeStartingOrContinuing(BuildJob Job, out bool haltExecution)
 		{
-			var haltExecution = false;
-
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
 			// Otherwise execution gets really messy. See 11685123.
@@ -670,6 +622,9 @@ namespace Extenity.BuildMachine.Editor
 			{
 				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
 			}
+
+			Debug.Assert(Job.Builders.IsInRange(Job.CurrentBuilder));
+			var currentBuilder = Job.Builders[Job.CurrentBuilder];
 
 			// Save the unsaved assets before making any moves.
 			AssetDatabase.SaveAssets();
@@ -687,53 +642,85 @@ namespace Extenity.BuildMachine.Editor
 					haltExecution = true;
 					HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
 					SaveRunningJobToFile();
+					return;
 				}
 			}
 
-			return haltExecution;
+			// Set Unity to manually refresh assets.
+			{
+				if (!EditorPreferencesTools.IsAutoRefreshEnabled)
+				{
+#if !DisableExtenityBuilderAutoRefreshFixer
+					haltExecution = true;
+					BuilderLog.Info($"Disabling Auto Refresh option of Unity which can cause Unity to start asset refresh operation in the middle of build steps.");
+					EditorPreferencesTools.DisableAutoRefresh();
+
+					HaltStep("Disabled Unity auto refresh");
+					SaveRunningJobToFile();
+					return;
+#else
+					BuilderLog.Error("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. Edit>Preferences>Asset Pipeline>Auto Refresh");
+#endif
+				}
+			}
+
+			// Change Unity's active platform if required.
+			{
+#if !DisableExtenityBuilderActivePlatformFixer
+				var buildTarget = currentBuilder.Info.BuildTarget;
+				var buildTargetGroup = currentBuilder.Info.BuildTargetGroup;
+				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
+				{
+					haltExecution = true;
+					BuilderLog.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
+					EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
+
+					// Check if the changes triggered a compilation, which obviously is expected.
+					if (EditorApplication.isCompiling)
+					{
+						HaltStep("Platform change");
+						SaveRunningJobToFile();
+						return;
+					}
+					else
+					{
+						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
+						throw new Exception("Changing platform did not trigger a recompilation.");
+					}
+				}
+#endif
+			}
+
+			// Change script compilation code optimization mode to Release.
+			{
+#if !DisableExtenityBuilderCodeOptimizationFixer
+				if (CompilationPipeline.codeOptimization != CodeOptimization.Release)
+				{
+					haltExecution = true;
+					BuilderLog.Info($"Changing code optimization mode from '{CompilationPipeline.codeOptimization}' to '{CodeOptimization.Release}'.");
+					CompilationPipeline.codeOptimization = CodeOptimization.Release;
+
+					// Check if the changes triggered a compilation, which obviously is expected.
+					if (EditorApplication.isCompiling)
+					{
+						HaltStep("Code optimization mode change");
+						SaveRunningJobToFile();
+						return;
+					}
+					else
+					{
+						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
+						throw new Exception("Changing code optimization mode did not trigger a recompilation.");
+					}
+				}
+#endif
+			}
+
+			haltExecution = false;
 		}
 
-		private static void CheckAfterDisablingUnityEditorAutoRefresh()
+		private static void CheckBeforeStep(out bool haltExecution)
 		{
-			// Check if the changes triggered a compilation, which obviously is expected.
-			HaltStep("Disabled Unity auto refresh");
-			SaveRunningJobToFile();
-		}
-
-		private static void CheckAfterChangingActivePlatform()
-		{
-			// Check if the changes triggered a compilation, which obviously is expected.
-			if (EditorApplication.isCompiling)
-			{
-				HaltStep("Platform change");
-				SaveRunningJobToFile();
-			}
-			else
-			{
-				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-				throw new Exception("Changing platform did not trigger a recompilation.");
-			}
-		}
-
-		private static void CheckAfterChangingCodeOptimizationMode()
-		{
-			// Check if the changes triggered a compilation, which obviously is expected.
-			if (EditorApplication.isCompiling)
-			{
-				HaltStep("Code optimization mode change");
-				SaveRunningJobToFile();
-			}
-			else
-			{
-				// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-				throw new Exception("Changing code optimization mode did not trigger a recompilation.");
-			}
-		}
-
-		private static bool CheckBeforeStep()
-		{
-			var haltExecution = false;
-
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
 			// Otherwise execution gets really messy. See 11685123.
@@ -758,6 +745,7 @@ namespace Extenity.BuildMachine.Editor
 					haltExecution = true;
 					HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
 					SaveRunningJobToFile();
+					return;
 				}
 				else
 				{
@@ -766,7 +754,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 			}
 
-			return haltExecution;
+			haltExecution = false;
 		}
 
 		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
@@ -774,10 +762,8 @@ namespace Extenity.BuildMachine.Editor
 			ThrowScriptCompilationDetectedWhileProcessingBuildStep();
 		}
 
-		private static bool CheckAfterStep()
+		private static void CheckAfterStep(out bool haltExecution)
 		{
-			var haltExecution = false;
-
 			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
 			// At this point, there should be no ongoing compilations. Build system
@@ -804,10 +790,11 @@ namespace Extenity.BuildMachine.Editor
 					haltExecution = true;
 					HaltStep($"After step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
 					SaveRunningJobToFile();
+					return;
 				}
 			}
 
-			return haltExecution;
+			haltExecution = false;
 		}
 
 		#endregion
