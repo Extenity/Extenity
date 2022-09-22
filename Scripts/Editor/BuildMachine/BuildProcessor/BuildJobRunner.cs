@@ -395,16 +395,21 @@ namespace Extenity.BuildMachine.Editor
 			{
 				if (!EditorPreferencesTools.IsAutoRefreshEnabled)
 				{
+#if !DisableExtenityBuilderAutoRefreshFixer
 					BuilderLog.Info($"Disabling Auto Refresh option of Unity which can cause Unity to start asset refresh operation in the middle of build steps.");
 					EditorPreferencesTools.DisableAutoRefresh();
 
 					CheckAfterDisablingUnityEditorAutoRefresh();
 					yield break;
+#else
+					throw new Exception("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. Edit>Preferences>Asset Pipeline>Auto Refresh");
+#endif
 				}
 			}
 
 			// Change Unity's active platform if required.
 			{
+#if !DisableExtenityBuilderActivePlatformFixer
 				var buildTarget = currentBuilder.Info.BuildTarget;
 				var buildTargetGroup = currentBuilder.Info.BuildTargetGroup;
 				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
@@ -415,10 +420,12 @@ namespace Extenity.BuildMachine.Editor
 					CheckAfterChangingActivePlatform();
 					yield break;
 				}
+#endif
 			}
 
 			// Change script compilation code optimization mode to Release.
 			{
+#if !DisableExtenityBuilderCodeOptimizationFixer
 				if (CompilationPipeline.codeOptimization != CodeOptimization.Release)
 				{
 					BuilderLog.Info($"Changing code optimization mode from '{CompilationPipeline.codeOptimization}' to '{CodeOptimization.Release}'.");
@@ -427,6 +434,7 @@ namespace Extenity.BuildMachine.Editor
 					CheckAfterChangingCodeOptimizationMode();
 					yield break;
 				}
+#endif
 			}
 
 			// Run the Step
