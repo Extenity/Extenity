@@ -44,7 +44,7 @@ namespace Extenity.DebugToolbox
 
 		#region Log
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Any(string message, LogCategory category)
 		{
 			switch (category)
@@ -61,7 +61,7 @@ namespace Extenity.DebugToolbox
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Any(string message, LogCategory category, ContextObject overriddenContext)
 		{
 			switch (category)
@@ -79,14 +79,14 @@ namespace Extenity.DebugToolbox
 		}
 
 		[Conditional("EnableVerboseLogging")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Verbose(string message)
 		{
 			Log.Verbose(ProcessedPrefix + message, DefaultContext);
 		}
 
 		[Conditional("EnableVerboseLogging")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Verbose(string message, ContextObject overriddenContext)
 		{
 			Log.Verbose(ProcessedPrefix + message, overriddenContext);
@@ -95,7 +95,7 @@ namespace Extenity.DebugToolbox
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Info(string message)
 		{
 			Log.Info(ProcessedPrefix + message, DefaultContext);
@@ -104,13 +104,13 @@ namespace Extenity.DebugToolbox
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Info(string message, ContextObject overriddenContext)
 		{
 			Log.Info(ProcessedPrefix + message, overriddenContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Severe(string message, SeverityCategory severity)
 		{
 			switch (severity)
@@ -125,7 +125,7 @@ namespace Extenity.DebugToolbox
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Severe(string message, SeverityCategory severity, ContextObject overriddenContext)
 		{
 			switch (severity)
@@ -140,25 +140,25 @@ namespace Extenity.DebugToolbox
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Warning(string message)
 		{
 			Log.Warning(ProcessedPrefix + message, DefaultContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Warning(string message, ContextObject overriddenContext)
 		{
 			Log.Warning(ProcessedPrefix + message, overriddenContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Error(string message)
 		{
 			Log.Error(ProcessedPrefix + message, DefaultContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Error(string message, ContextObject overriddenContext)
 		{
 			Log.Error(ProcessedPrefix + message, overriddenContext);
@@ -167,7 +167,7 @@ namespace Extenity.DebugToolbox
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void CriticalError(string message)
 		{
 			Log.CriticalError(ProcessedPrefix + message, DefaultContext);
@@ -176,7 +176,7 @@ namespace Extenity.DebugToolbox
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void CriticalError(string message, Exception innerException)
 		{
 			Log.CriticalError(ProcessedPrefix + message, DefaultContext, innerException);
@@ -185,7 +185,7 @@ namespace Extenity.DebugToolbox
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void CriticalError(string message, ContextObject overriddenContext)
 		{
 			Log.CriticalError(ProcessedPrefix + message, overriddenContext);
@@ -194,7 +194,7 @@ namespace Extenity.DebugToolbox
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void CriticalError(string message, ContextObject overriddenContext, Exception innerException)
 		{
 			Log.CriticalError(ProcessedPrefix + message, overriddenContext, innerException);
@@ -205,7 +205,7 @@ namespace Extenity.DebugToolbox
 		///
 		/// See also 'InternalException'.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void InternalError(int errorCode)
 		{
 			Log.InternalError(errorCode, DefaultContext);
@@ -216,43 +216,43 @@ namespace Extenity.DebugToolbox
 		///
 		/// See also 'InternalException'.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void InternalError(int errorCode, ContextObject overriddenContext)
 		{
 			Log.InternalError(errorCode, overriddenContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Exception(Exception exception)
 		{
 			Log.Exception(exception, ProcessedPrefix, DefaultContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void Exception(Exception exception, ContextObject overriddenContext)
 		{
 			Log.Exception(exception, ProcessedPrefix, overriddenContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void ExceptionAsError(Exception exception)
 		{
 			Log.ExceptionAsError(exception, ProcessedPrefix, DefaultContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void ExceptionAsError(Exception exception, ContextObject overriddenContext)
 		{
 			Log.ExceptionAsError(exception, ProcessedPrefix, overriddenContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void ExceptionAsErrorDetailed(Exception exception)
 		{
 			Log.ExceptionAsErrorDetailed(exception, ProcessedPrefix, DefaultContext);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public void ExceptionAsErrorDetailed(Exception exception, ContextObject overriddenContext)
 		{
 			Log.ExceptionAsErrorDetailed(exception, ProcessedPrefix, overriddenContext);

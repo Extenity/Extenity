@@ -181,7 +181,7 @@ namespace Extenity
 
 		#region Log
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Any(string message, LogCategory category)
 		{
 			switch (category)
@@ -198,7 +198,7 @@ namespace Extenity
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Any(string message, LogCategory category, ContextObject context)
 		{
 			switch (category)
@@ -216,7 +216,7 @@ namespace Extenity
 		}
 
 		[Conditional("EnableVerboseLogging")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Verbose(string message)
 		{
 #if UNITY
@@ -227,7 +227,7 @@ namespace Extenity
 		}
 
 		[Conditional("EnableVerboseLogging")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Verbose(string message, ContextObject context)
 		{
 #if UNITY
@@ -240,7 +240,7 @@ namespace Extenity
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Info(string message)
 		{
 #if UNITY
@@ -253,7 +253,7 @@ namespace Extenity
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Info(string message, ContextObject context)
 		{
 #if UNITY
@@ -263,7 +263,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Severe(string message, SeverityCategory severity)
 		{
 			switch (severity)
@@ -278,7 +278,7 @@ namespace Extenity
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Severe(string message, SeverityCategory severity, ContextObject context)
 		{
 			switch (severity)
@@ -293,7 +293,7 @@ namespace Extenity
 			}
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Warning(string message)
 		{
 #if UNITY
@@ -303,7 +303,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Warning(string message, ContextObject context)
 		{
 #if UNITY
@@ -313,7 +313,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Error(string message)
 		{
 #if UNITY
@@ -323,7 +323,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Error(string message, ContextObject context)
 		{
 #if UNITY
@@ -336,7 +336,7 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CriticalError(string message)
 		{
 #if UNITY
@@ -349,7 +349,7 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CriticalError(string message, Exception innerException)
 		{
 #if UNITY
@@ -362,7 +362,7 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CriticalError(string message, ContextObject context)
 		{
 #if UNITY
@@ -375,7 +375,7 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CriticalError(string message, ContextObject context, Exception innerException)
 		{
 #if UNITY
@@ -390,7 +390,7 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void InternalError(int errorCode)
 		{
 #if UNITY
@@ -405,7 +405,7 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void InternalError(int errorCode, ContextObject context)
 		{
 #if UNITY
@@ -415,7 +415,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Exception(Exception exception)
 		{
 #if UNITY
@@ -425,7 +425,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Exception(Exception exception, ContextObject context)
 		{
 #if UNITY
@@ -435,7 +435,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Exception(Exception exception, string processedPrefix)
 		{
 #if UNITY
@@ -445,7 +445,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void Exception(Exception exception, string processedPrefix, ContextObject context)
 		{
 #if UNITY
@@ -455,7 +455,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsError(Exception exception)
 		{
 #if UNITY
@@ -465,7 +465,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsError(Exception exception, ContextObject context)
 		{
 #if UNITY
@@ -475,7 +475,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsError(Exception exception, string processedPrefix)
 		{
 #if UNITY
@@ -485,7 +485,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsError(Exception exception, string processedPrefix, ContextObject context)
 		{
 #if UNITY
@@ -495,7 +495,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception)
 		{
 #if UNITY
@@ -505,7 +505,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception, ContextObject context)
 		{
 #if UNITY
@@ -515,7 +515,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception, string processedPrefix)
 		{
 #if UNITY
@@ -525,7 +525,7 @@ namespace Extenity
 #endif
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void ExceptionAsErrorDetailed(this Exception exception, string processedPrefix, ContextObject context)
 		{
 #if UNITY
@@ -544,7 +544,7 @@ namespace Extenity
 #else
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugVerbose(string message)
 		{
 #if UNITY
@@ -559,7 +559,7 @@ namespace Extenity
 #else
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugVerbose(string message, ContextObject context)
 		{
 #if UNITY
@@ -574,7 +574,7 @@ namespace Extenity
 #else
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugInfo(string message)
 		{
 #if UNITY
@@ -589,7 +589,7 @@ namespace Extenity
 #else
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
 #endif
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugInfo(string message, ContextObject context)
 		{
 #if UNITY
@@ -600,7 +600,7 @@ namespace Extenity
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugWarning(string message)
 		{
 #if UNITY
@@ -611,7 +611,7 @@ namespace Extenity
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugWarning(string message, ContextObject context)
 		{
 #if UNITY
@@ -622,7 +622,7 @@ namespace Extenity
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugError(string message)
 		{
 #if UNITY
@@ -633,7 +633,7 @@ namespace Extenity
 		}
 
 		[Conditional("UNITY_EDITOR"), Conditional("DEBUG")]
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void DebugError(string message, ContextObject context)
 		{
 #if UNITY
@@ -656,13 +656,13 @@ namespace Extenity
 
 		#region Log Tools - Methods
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CurrentMethodNotImplemented()
 		{
 			CriticalError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void CurrentMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 		{
 			Any(string.IsNullOrEmpty(additionalText)
@@ -671,7 +671,7 @@ namespace Extenity
 			    category);
 		}
 
-		// [DebuggerHidden]
+		[DebuggerHidden]
 		public static void PreviousMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 		{
 			Any(string.IsNullOrEmpty(additionalText)
