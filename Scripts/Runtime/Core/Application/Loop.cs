@@ -11,7 +11,7 @@ namespace Extenity
 	{
 		#region Singleton
 
-		internal static LoopHelper Instance;
+		public static LoopHelper Instance;
 
 		#endregion
 
