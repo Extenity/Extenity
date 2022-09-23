@@ -17,14 +17,14 @@ namespace Extenity.FlowToolbox
 		// 	InitializeSystem();
 		// }
 
-		public static void InitializeSystem()
+		internal static void InitializeSystem()
 		{
-			ShutdownSystem();
+			DeinitializeSystem();
 
 			Handler = new FastInvokeHandler();
 		}
 
-		public static void ShutdownSystem()
+		internal static void DeinitializeSystem()
 		{
 			if (Handler != null)
 			{

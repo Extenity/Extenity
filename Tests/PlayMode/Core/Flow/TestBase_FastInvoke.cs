@@ -136,7 +136,6 @@ namespace ExtenityTests.FlowToolbox
 				throw new Exception("Test was already initialized.");
 			IsInitialized = true;
 
-			Invoker.InitializeSystem();
 			UnityTestTools.Cleanup();
 			Time.timeScale = TimeScale;
 
@@ -152,7 +151,6 @@ namespace ExtenityTests.FlowToolbox
 			IsInitialized = false;
 
 			Loop.DeinitializeSystem();
-			Invoker.ShutdownSystem();
 			Time.timeScale = 1f;
 		}
 

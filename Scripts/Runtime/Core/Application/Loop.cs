@@ -44,6 +44,8 @@ namespace Extenity
 
 		public static void DeinitializeSystem()
 		{
+			Invoker.DeinitializeSystem();
+
 			if (Instance)
 			{
 				GameObject.DestroyImmediate(Instance.gameObject);
