@@ -34,7 +34,7 @@ namespace Extenity
 
 			Invoker.InitializeSystem();
 
-			var go = new GameObject("_Loop");
+			var go = new GameObject("[ExtenityInternals]");
 			GameObject.DontDestroyOnLoad(go);
 			Instance = go.AddComponent<LoopHelper>();
 			go.AddComponent<LoopPreExecutionOrderHelper>().LoopHelper = Instance;
