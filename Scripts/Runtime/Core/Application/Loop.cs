@@ -17,14 +17,12 @@ namespace Extenity
 
 		#region Initialization
 
-		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea.
-		// It works in Editor but observed not working in Windows and Android builds and probably other
-		// platforms too. Game objects are destroyed just before BeforeSceneLoad for some reason.
-		// So decided to initialize our subsystems at BeforeSceneLoad stage. See 119392241.
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-		private static void Instantiate()
+		static Loop()
 		{
-			Debug.Assert(Instance == null);
+#if UNITY_EDITOR
+			if (!Application.isPlaying)
+				return;
+#endif
 			InitializeSystem();
 		}
 
