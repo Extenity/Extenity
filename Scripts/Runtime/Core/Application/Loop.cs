@@ -144,6 +144,11 @@ namespace Extenity
 
 #endif
 
+		public static double GetTime(bool isUnscaledTime)
+		{
+			return isUnscaledTime ? UnscaledTime : Time;
+		}
+
 		#endregion
 	}
 

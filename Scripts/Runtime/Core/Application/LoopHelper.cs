@@ -34,7 +34,7 @@ namespace Extenity
 
 			// FastInvokes are called before any other callbacks. Note that Loop.FixedUpdate is executed before
 			// LoopPreExecutionOrderHelper.FixedUpdate as defined in Script Execution Order Project Settings.
-			FastInvokeHandler.Instance.CustomFixedUpdate();
+			FastInvokeHandler.Instance.CustomFixedUpdate(Loop.Time);
 
 			// Instance.FixedUpdateCallbacks.ClearIfRequired();
 		}
@@ -53,7 +53,7 @@ namespace Extenity
 
 			// FastInvokes are called before any other callbacks. Note that Loop.Update is executed before
 			// LoopPreExecutionOrderHelper.Update as defined in Script Execution Order Project Settings.
-			FastInvokeHandler.Instance.CustomUpdate();
+			FastInvokeHandler.Instance.CustomUpdate(Loop.UnscaledTime);
 
 			// Instance.UpdateCallbacks.ClearIfRequired();
 		}

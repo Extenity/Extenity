@@ -43,9 +43,7 @@ namespace Extenity.FlowToolbox
 
 			public void Renew(double invokeTime, double repeatRate)
 			{
-				var now = UnscaledTime
-					? (double)Time.unscaledTime
-					: (double)Time.time;
+				var now = Loop.GetTime(UnscaledTime);
 
 				if (invokeTime < 0)
 				{
@@ -64,7 +62,7 @@ namespace Extenity.FlowToolbox
 				RepeatRate = repeatRate;
 
 #if EnableOverkillLogging
-				Log.Info($"New {(unscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
+				Log.Info($"New {(UnscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
 #endif
 			}
 
@@ -94,7 +92,7 @@ namespace Extenity.FlowToolbox
 
 		#region Update
 
-		internal void CustomFixedUpdate()
+		internal void CustomFixedUpdate(double time)
 		{
 #if UNITY_EDITOR
 			if (VerboseLoggingInEachFixedUpdate)
@@ -102,8 +100,6 @@ namespace Extenity.FlowToolbox
 				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomFixedUpdate));
 			}
 #endif
-
-			var now = (double)Time.time;
 
 			if (QueueInProcess.Count > 0)
 			{
@@ -115,7 +111,7 @@ namespace Extenity.FlowToolbox
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
 			{
 				var entry = ScaledInvokeQueue[i];
-				if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
+				if (time >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
@@ -135,9 +131,9 @@ namespace Extenity.FlowToolbox
 			ScaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
 
 #if EnableOverkillLogging
-			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {now}:\n" +
-			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
-			         string.Join("\n", ScaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")));
+			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
+			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
+			         string.Join("\n", ScaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")));
 #endif
 
 			for (int i = 0; i < QueueInProcess.Count; i++)
@@ -182,7 +178,7 @@ namespace Extenity.FlowToolbox
 			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
-		internal void CustomUpdate()
+		internal void CustomUpdate(double unscaledTime)
 		{
 #if UNITY_EDITOR
 			if (VerboseLoggingInEachUpdate)
@@ -190,8 +186,6 @@ namespace Extenity.FlowToolbox
 				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomUpdate));
 			}
 #endif
-
-			var now = (double)Time.unscaledTime;
 
 			if (QueueInProcess.Count > 0)
 			{
@@ -203,7 +197,7 @@ namespace Extenity.FlowToolbox
 			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
 			{
 				var entry = UnscaledInvokeQueue[i];
-				if (now >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
+				if (unscaledTime >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
@@ -223,9 +217,9 @@ namespace Extenity.FlowToolbox
 			UnscaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
 
 #if EnableOverkillLogging
-			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {now}:\n" +
-			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
-			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(now - entry.NextTime) * 1000}")));
+			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {unscaledTime}:\n" +
+			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(unscaledTime - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
+			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(unscaledTime - entry.NextTime) * 1000}")));
 #endif
 
 			for (int i = 0; i < QueueInProcess.Count; i++)
@@ -844,8 +838,7 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
-			double now = (double)Time.time;
-			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, action, now);
+			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, action, Loop.Time);
 		}
 
 		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour, Action action)
@@ -860,8 +853,7 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
-			double now = (double)Time.unscaledTime;
-			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, action, now);
+			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, action, Loop.UnscaledTime);
 		}
 
 		internal double RemainingTimeUntilNextInvoke(Behaviour behaviour)
@@ -876,8 +868,7 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
-			double now = (double)Time.time;
-			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, now);
+			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, Loop.Time);
 		}
 
 		internal double RemainingTimeUntilNextUnscaledInvoke(Behaviour behaviour)
@@ -892,8 +883,7 @@ namespace Extenity.FlowToolbox
 				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
-			double now = (double)Time.unscaledTime;
-			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, now);
+			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, Loop.UnscaledTime);
 		}
 
 		private double RemainingTimeUntilNextInvoke(List<InvokeEntry> queue, InvokeQueue currentlyProcessingQueue, Behaviour behaviour, Action action, double now)
