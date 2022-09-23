@@ -13,7 +13,7 @@ using System.Linq;
 namespace Extenity.FlowToolbox
 {
 
-	public class FastInvokeHandler : MonoBehaviour
+	public class FastInvokeHandler
 	{
 		#region Configuration
 
@@ -75,21 +75,19 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
-		#region Singleton
+		#region Shutdown
 
-		public static FastInvokeHandler Instance;
-
-		#endregion
-
-		#region Initialization
-
-		private void Awake()
+		internal void Shutdown()
 		{
-			Instance = this;
+			ScaledInvokeQueue.Clear();
+			UnscaledInvokeQueue.Clear();
+			QueueInProcess.Clear();
+			CurrentlyProcessingEntryAction = null;
+			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
 		#endregion
-
+		
 		#region Update
 
 		internal void CustomFixedUpdate(double time)
@@ -573,7 +571,7 @@ namespace Extenity.FlowToolbox
 				// The implementation of overwriteExisting might not be completed yet.
 				// Make sure you write tests for it right now, before using it.
 				// Do not delete this warning before seeing that it is running flawless.
-				Log.Warning("FastInvoke overwrite feature is not tested yet.", this);
+				Log.Warning("FastInvoke overwrite feature is not tested yet.");
 			}
 
 			if (overwriteExisting && TryGetSingleEntryAndRemoveOthers(behaviour, action, unscaledTime, out var entry, out var index))
