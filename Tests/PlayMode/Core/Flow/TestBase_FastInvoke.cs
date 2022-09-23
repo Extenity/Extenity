@@ -114,7 +114,7 @@ namespace ExtenityTests.FlowToolbox
 				DeinitializeBase();
 			}
 
-			FastInvokeHandler.VerboseLoggingForNegativeTimes = false;
+			FastInvokeHandler.LogWarningForNegativeInvokeTimes = false;
 
 			if (startAtRandomTime)
 			{
