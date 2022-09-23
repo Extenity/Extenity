@@ -58,7 +58,7 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+			Assert.AreEqual(0, Invoker.TotalActiveFastInvokeCount());
 
 			// Calling invoke with various delays
 			var callCount = 0;
@@ -77,7 +77,7 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 			Assert.IsTrue(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(callCount, Invoker.TotalFastInvokeCount());
+			Assert.AreEqual(callCount, Invoker.TotalActiveFastInvokeCount());
 		}
 
 		[UnityTest, Category(TestCategories.Cheesy)]
@@ -128,7 +128,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(0, Subject.CallbackCallCount);
 				Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 				Assert.IsTrue(Invoker.IsFastInvokingAny());
-				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+				Assert.AreEqual(1, Invoker.TotalActiveFastInvokeCount());
 
 				// Wait for the next fixed update...
 				yield return Yields.WaitForFixedUpdate;
@@ -137,7 +137,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(1, Subject.CallbackCallCount);
 				Assert.AreEqual(1, Subject.FixedUpdateCallCount);
 				Assert.IsFalse(Invoker.IsFastInvokingAny());
-				Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+				Assert.AreEqual(0, Invoker.TotalActiveFastInvokeCount());
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(0, Subject.CallbackCallCount);
 				Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 				Assert.IsTrue(Invoker.IsFastInvokingAny());
-				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+				Assert.AreEqual(1, Invoker.TotalActiveFastInvokeCount());
 
 				// Wait for the first fixed update...
 				yield return Yields.WaitForFixedUpdate;
@@ -187,7 +187,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(0, Subject.CallbackCallCount);
 				Assert.AreEqual(1, Subject.FixedUpdateCallCount);
 				Assert.IsTrue(Invoker.IsFastInvokingAny());
-				Assert.AreEqual(1, Invoker.TotalFastInvokeCount());
+				Assert.AreEqual(1, Invoker.TotalActiveFastInvokeCount());
 
 				// Wait for the second fixed update...
 				yield return Yields.WaitForFixedUpdate;
@@ -196,7 +196,7 @@ namespace ExtenityTests.FlowToolbox
 				Assert.AreEqual(1, Subject.CallbackCallCount);
 				Assert.AreEqual(2, Subject.FixedUpdateCallCount);
 				Assert.IsFalse(Invoker.IsFastInvokingAny());
-				Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+				Assert.AreEqual(0, Invoker.TotalActiveFastInvokeCount());
 			}
 		}
 

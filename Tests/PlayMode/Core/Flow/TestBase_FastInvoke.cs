@@ -407,14 +407,14 @@ namespace ExtenityTests.FlowToolbox
 				}
 				else if (invokeCountShouldBe > 0)
 				{
-					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalFastInvokeCount());
+					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalActiveFastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount(Subject.Callback));
 				}
 				else if (invokeCountShouldBe == -1)
 				{
 					// Expecting any count.
-					Assert.Greater(Invoker.TotalFastInvokeCount(), 0);
+					Assert.Greater(Invoker.TotalActiveFastInvokeCount(), 0);
 					Assert.Greater(Subject.FastInvokeCount(), 0);
 					Assert.Greater(Subject.FastInvokeCount(Subject.Callback), 0);
 				}
@@ -448,14 +448,14 @@ namespace ExtenityTests.FlowToolbox
 				}
 				else if (invokeCountShouldBe > 0)
 				{
-					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalFastInvokeCount());
+					Assert.AreEqual(invokeCountShouldBe, Invoker.TotalActiveFastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount());
 					Assert.AreEqual(invokeCountShouldBe, Subject.FastInvokeCount(FastInvokeOutsiderCallback));
 				}
 				else if (invokeCountShouldBe == -1)
 				{
 					// Expecting any count.
-					Assert.Greater(Invoker.TotalFastInvokeCount(), 0);
+					Assert.Greater(Invoker.TotalActiveFastInvokeCount(), 0);
 					Assert.Greater(Subject.FastInvokeCount(), 0);
 					Assert.Greater(Subject.FastInvokeCount(FastInvokeOutsiderCallback), 0);
 				}

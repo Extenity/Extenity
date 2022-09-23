@@ -26,7 +26,7 @@ namespace ExtenityTests.FlowToolbox
 			Assert.AreEqual(0, Subject.CallbackCallCount);
 			Assert.AreEqual(0, Subject.FixedUpdateCallCount);
 			Assert.IsFalse(Invoker.IsFastInvokingAny());
-			Assert.AreEqual(0, Invoker.TotalFastInvokeCount());
+			Assert.AreEqual(0, Invoker.TotalActiveFastInvokeCount());
 
 			// Make sure fixed updates are called in expected delta times
 			{

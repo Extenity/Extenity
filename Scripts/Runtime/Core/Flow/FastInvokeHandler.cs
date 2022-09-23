@@ -743,7 +743,7 @@ namespace Extenity.FlowToolbox
 			return ScaledInvokeQueue.Count > 0 || UnscaledInvokeQueue.Count > 0 || IsQueueInProcessContainsAnyNonNull;
 		}
 
-		internal int TotalInvokeCount()
+		internal int TotalActiveInvokeCount()
 		{
 			return ScaledInvokeQueue.Count + UnscaledInvokeQueue.Count + QueueInProcessNonNullCount;
 		}

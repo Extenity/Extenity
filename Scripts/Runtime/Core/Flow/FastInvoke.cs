@@ -118,16 +118,16 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
-		#region Static Methods
+		#region Stats
 
 		public static bool IsFastInvokingAny()
 		{
 			return Handler.IsInvokingAny();
 		}
 
-		public static int TotalFastInvokeCount()
+		public static int TotalActiveFastInvokeCount()
 		{
-			return Handler.TotalInvokeCount();
+			return Handler.TotalActiveInvokeCount();
 		}
 
 		#endregion
