@@ -28,9 +28,9 @@ namespace Extenity
 		private void FixedUpdate()
 		{
 			FixedUpdateCount++;
-			Loop.Time = UnityEngine.Time.time;
-			Loop.DeltaTime = UnityEngine.Time.deltaTime;
-			Loop.UnscaledTime = UnityEngine.Time.unscaledTime;
+#if !DisableExtenityTimeCaching
+			Loop.SetCachedTimesFromUnityTimes();
+#endif
 
 			// FastInvokes are called before any other callbacks. Note that Loop.FixedUpdate is executed before
 			// LoopPreExecutionOrderHelper.FixedUpdate as defined in Script Execution Order Project Settings.
@@ -42,9 +42,9 @@ namespace Extenity
 		private void Update()
 		{
 			UpdateCount++;
-			Loop.Time = UnityEngine.Time.time;
-			Loop.DeltaTime = UnityEngine.Time.deltaTime;
-			Loop.UnscaledTime = UnityEngine.Time.unscaledTime;
+#if !DisableExtenityTimeCaching
+			Loop.SetCachedTimesFromUnityTimes();
+#endif
 
 			if (FPSAnalyzer != null)
 			{
@@ -61,9 +61,9 @@ namespace Extenity
 		private void LateUpdate()
 		{
 			LateUpdateCount++;
-			Loop.Time = UnityEngine.Time.time;
-			Loop.DeltaTime = UnityEngine.Time.deltaTime;
-			Loop.UnscaledTime = UnityEngine.Time.unscaledTime;
+#if !DisableExtenityTimeCaching
+			Loop.SetCachedTimesFromUnityTimes();
+#endif
 
 			// Instance.LateUpdateCallbacks.ClearIfRequired();
 		}

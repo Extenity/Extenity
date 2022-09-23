@@ -2,6 +2,7 @@
 
 using System;
 using Extenity.FlowToolbox;
+using Extenity.MathToolbox;
 using UnityEngine;
 
 namespace Extenity
@@ -29,8 +30,15 @@ namespace Extenity
 		public static void InitializeSystem()
 		{
 			DeinitializeSystem();
+#if UNITY_EDITOR
+			SetToDeinitializeSystemAfterComingOutOfPlayMode();
+#endif
 
 			Invoker.InitializeSystem();
+			
+			// Initialize cached times here at start.
+			// Otherwise cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
+			SetCachedTimesFromUnityTimes(); 
 
 			var go = new GameObject("[ExtenityInternals]");
 			GameObject.DontDestroyOnLoad(go);
@@ -49,7 +57,26 @@ namespace Extenity
 				GameObject.DestroyImmediate(Instance.gameObject);
 				Instance = null;
 			}
+			
+			ResetCachedTimes();
 		}
+
+#if UNITY_EDITOR
+		private static void SetToDeinitializeSystemAfterComingOutOfPlayMode()
+		{
+			UnityEditor.EditorApplication.playModeStateChanged -= DeinitializeOnPlayModeChanges;
+			UnityEditor.EditorApplication.playModeStateChanged += DeinitializeOnPlayModeChanges;
+			
+			void DeinitializeOnPlayModeChanges(UnityEditor.PlayModeStateChange playModeStateChange)
+			{
+				if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredEditMode)
+				{
+					UnityEditor.EditorApplication.playModeStateChanged -= DeinitializeOnPlayModeChanges;
+					DeinitializeSystem();
+				}
+			}
+		}
+#endif
 
 		#endregion
 
@@ -82,7 +109,14 @@ namespace Extenity
 
 		#region Timings
 
-#if !UNITY_EDITOR && !DEBUG
+#if DisableExtenityTimeCaching
+
+		public static float Time         { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.time;         }
+		public static float DeltaTime    { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.deltaTime;    }
+		public static float UnscaledTime { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.unscaledTime; }
+
+#elif !UNITY_EDITOR && !DEBUG
+
 		public static float Time;
 		public static float DeltaTime;
 		public static float UnscaledTime;
@@ -94,10 +128,14 @@ namespace Extenity
 		{
 			get
 			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying) // Use Unity times when working in editor.
+					return UnityEngine.Time.time;
+#endif
 				CheckExpectedTime(UnityEngine.Time.time, _Time, nameof(Time));
 				return _Time;
 			}
-			set => _Time = value;
+			private set => _Time = value;
 		}
 
 		private static float _DeltaTime;
@@ -105,10 +143,14 @@ namespace Extenity
 		{
 			get
 			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying) // Use Unity times when working in editor.
+					return UnityEngine.Time.deltaTime;
+#endif
 				CheckExpectedTime(UnityEngine.Time.deltaTime, _DeltaTime, nameof(DeltaTime));
 				return _DeltaTime;
 			}
-			set => _DeltaTime = value;
+			private set => _DeltaTime = value;
 		}
 
 		private static float _UnscaledTime;
@@ -116,10 +158,14 @@ namespace Extenity
 		{
 			get
 			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying) // Use Unity times when working in editor.
+					return UnityEngine.Time.unscaledTime;
+#endif
 				CheckExpectedTime(UnityEngine.Time.unscaledTime, _UnscaledTime, nameof(UnscaledTime));
 				return _UnscaledTime;
 			}
-			set => _UnscaledTime = value;
+			private set => _UnscaledTime = value;
 		}
 
 		/// <summary>
@@ -133,16 +179,36 @@ namespace Extenity
 		/// (time, deltaTime, etc.). Also look into the callstack to see which Update method
 		/// it is (FixedUpdate, LateUpdate, etc.).
 		/// </summary>
-		private static void CheckExpectedTime(float expectedTime, float actualTime, string parameterName)
+		private static void CheckExpectedTime(float originalTime, float cachedTime, string parameterName)
 		{
+			const float TimeEqualityCheckTolerance = 1.0f / 1000.0f / 1000.0f; // 1 microsecond
+
 			// ReSharper disable once CompareOfFloatsByEqualityOperator
-			if (expectedTime != actualTime)
+			if (!originalTime.IsAlmostEqual(cachedTime, TimeEqualityCheckTolerance))
 			{
-				Log.CriticalError($"{nameof(Loop)} system timing is off for parameter '{parameterName}'. Expected is '{expectedTime}' while actual is '{actualTime}'.");
+				Log.CriticalError($"{nameof(Loop)} System detected that the cached time became obsolete for '{parameterName}' parameter. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported time: {originalTime:F}\nLoop cached time: {cachedTime:F}\nDifference: {(originalTime - cachedTime):F}");
 			}
 		}
 
 #endif
+
+		internal static void SetCachedTimesFromUnityTimes()
+		{
+#if !DisableExtenityTimeCaching
+			Time = UnityEngine.Time.time;
+			DeltaTime = UnityEngine.Time.deltaTime;
+			UnscaledTime = UnityEngine.Time.unscaledTime;
+#endif
+		}
+
+		private static void ResetCachedTimes()
+		{
+#if !DisableExtenityTimeCaching
+			Time = float.NaN;
+			DeltaTime = float.NaN;
+			UnscaledTime = float.NaN;
+#endif
+		}
 
 		public static double GetTime(bool isUnscaledTime)
 		{
