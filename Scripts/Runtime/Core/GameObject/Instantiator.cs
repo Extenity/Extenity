@@ -38,14 +38,14 @@ namespace Extenity.GameObjectToolbox
 		[InfoBox("You can have more than one <i>Instantiator</i> in an application to be able to instantiate subsystems when required in different stages of the application.\n\n" +
 		         "If there are multiple instantiators trying to be created, these instantiators will be lined up by <i>Order</i> number. Instantiation will be postponed until every other instantiator that has lesser <i>Order</i> number completes their instantiation first.\n\n" +
 		         "Note that there can be no gaps. All instantiators should be ordered consecutively.")]
-		[DisableInPrefabInstances]
+		[DisableIn(PrefabKind.PrefabInstance)]
 		public InstantiatorOrder Order = InstantiatorOrder.Order1;
 
 		[BoxGroup("Configuration/Box"), PropertySpace(20f, 20f)]
 		[InfoBox("The optional parent object to be set for instantiated prefabs. The instantiated objects will be put at the top level hierarchy of active scene if no parent is provided.\n\n" +
 		         "But note that all <i>Subsystem Objects</i> (and maybe some <i>Volatile Objects</i> and <i>Instant Objects</i>) are directly marked with DontDestroyOnLoad, so they are instantly put to the DontDestroyOnLoad scene the moment they are created.")]
-		[DisableInPrefabAssets] // Note that this field should be set from scene, unlike other fields.
-		[SceneObjectsOnly]
+		[DisableIn(PrefabKind.PrefabInstance)]
+		[SceneObjectsOnly] // Note that this field should be set from scene, unlike other fields.
 		public Transform Parent = default;
 
 		[FormerlySerializedAs("everlastingPrefabs")]
@@ -56,7 +56,7 @@ namespace Extenity.GameObjectToolbox
 		         "The singletons of the application, designed in the form of prefabs, should be instantiated this way.\n\n" +
 		         "Instantiation order is ensured, so a prefab of <i>The Order 2 Instantiator</i> will always be instantiated after <i>The Order 1 Instantiator</i>.\n\n" +
 		         "Instantiated objects will be marked with DontDestroyOnLoad, since they expected to be singletons of the application and they will be created only once.")]
-		[DisableInPrefabInstances]
+		[DisableIn(PrefabKind.PrefabInstance)]
 		public GameObject[] SubsystemPrefabs;
 
 		[BoxGroup("Prefabs/Box"), PropertySpace(20f)]
@@ -65,7 +65,7 @@ namespace Extenity.GameObjectToolbox
 		         "An example would be defining an Ingame Instantiator with an ingame UI and a score calculator assigned in its <i>Volatile Prefabs</i>. Put the Ingame Instantiator only into game scenes. So the UI and score calculator would be instantiated every time a game scene is launched, and they will be destroyed while changing the scene.\n\n" +
 		         "The instantiation order of multiple instantiators is respected just like <i>Subsystem Prefabs</i>. <i>Volatile Prefabs</i> are always instantiated after <i>Subsystem Prefabs</i> of its own Instantiator.")]
 		[InfoBox("CAUTION! Not implemented yet! Will only instantiate once and will not instantiate in consecutive scenes.", InfoMessageType.Error)]
-		[DisableInPrefabInstances]
+		[DisableIn(PrefabKind.PrefabInstance)]
 		public GameObject[] VolatilePrefabs;
 
 		[FormerlySerializedAs("nonlastingPrefabs")]
@@ -76,7 +76,7 @@ namespace Extenity.GameObjectToolbox
 		         "Note that the instantiation order of multiple instantiators will NOT be respected. So a prefab of <i>The Order 2 Instantiator</i> may get instantiated before a prefab of <i>The Order 1 Instantiator</i>.\n\n" +
 		         "You may want to consider using <i>Volatile Prefabs</i> instead, since it is basically the same but also provides <i>Ordered</i> instantiation.\n\n" +
 		         "(Previously known as Nonlasting Prefabs)")]
-		[DisableInPrefabInstances]
+		[DisableIn(PrefabKind.PrefabInstance)]
 		public GameObject[] InstantPrefabs;
 
 		#region Initialization
