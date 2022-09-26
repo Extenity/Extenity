@@ -212,6 +212,26 @@ namespace Extenity
 #endif
 		}
 
+		public static double RefreshCacheAndGetTime(bool isUnscaledTime)
+		{
+#if !DisableExtenityTimeCaching
+			if (isUnscaledTime)
+			{
+				var value = UnityEngine.Time.unscaledTime;
+				UnscaledTime = value;
+				return value;
+			}
+			else
+			{
+				var value = UnityEngine.Time.time;
+				Time = value;
+				return value;
+			}
+#else
+			return GetTime(isUnscaledTime);
+#endif
+		}
+
 		public static double GetTime(bool isUnscaledTime)
 		{
 			return isUnscaledTime ? UnscaledTime : Time;

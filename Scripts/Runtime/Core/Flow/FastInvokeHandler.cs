@@ -43,7 +43,10 @@ namespace Extenity.FlowToolbox
 
 			public void Renew(double invokeTime, double repeatRate)
 			{
-				var now = Loop.GetTime(UnscaledTime);
+				// Renew is expected to be called from everywhere, including async methods and threads.
+				// So caching the timing API is hard. We'll fallback to Unity timing API here.
+				// That's why RefreshCacheAndGetTime is used here. 
+				var now = Loop.RefreshCacheAndGetTime(UnscaledTime);
 
 				if (invokeTime < 0)
 				{
