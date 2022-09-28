@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "ICSharpCode.SharpZipLib",
-        "Unity.Mathematics"
+        "Unity.Mathematics",
+        "Unity.Burst"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
