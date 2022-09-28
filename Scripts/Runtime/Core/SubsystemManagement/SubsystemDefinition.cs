@@ -1,4 +1,5 @@
-#if UNITY && !DisableExtenitySubsystems
+#if UNITY
+#if ExtenitySubsystems
 
 using System;
 using System.Collections.Generic;
@@ -446,4 +447,5 @@ namespace Extenity.SubsystemManagementToolbox
 
 }
 
+#endif
 #endif

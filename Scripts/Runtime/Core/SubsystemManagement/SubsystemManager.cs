@@ -1,4 +1,5 @@
-#if UNITY && !DisableExtenitySubsystems
+#if UNITY
+#if ExtenitySubsystems
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -130,4 +131,5 @@ namespace Extenity.SubsystemManagementToolbox
 
 }
 
+#endif
 #endif

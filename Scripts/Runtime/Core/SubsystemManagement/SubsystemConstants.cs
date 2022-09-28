@@ -1,4 +1,5 @@
-#if UNITY && !DisableExtenitySubsystems
+#if UNITY
+#if ExtenitySubsystems
 
 using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;
@@ -17,4 +18,5 @@ namespace Extenity.SubsystemManagementToolbox
 
 }
 
+#endif
 #endif

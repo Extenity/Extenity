@@ -1,4 +1,5 @@
-#if UNITY && !DisableExtenitySubsystems
+#if UNITY
+#if ExtenitySubsystems
 
 using System;
 using Extenity.DataToolbox;
@@ -330,4 +331,5 @@ namespace Extenity.SubsystemManagementToolbox
 
 }
 
+#endif
 #endif
