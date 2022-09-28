@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityKernel
+
+using System;
 
 namespace Extenity.KernelToolbox
 {
@@ -20,3 +22,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

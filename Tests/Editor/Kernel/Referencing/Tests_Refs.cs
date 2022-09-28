@@ -1,4 +1,6 @@
-﻿using Extenity.KernelToolbox;
+﻿#if !DisableExtenityKernel
+
+using Extenity.KernelToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
 
@@ -132,3 +134,5 @@ namespace ExtenityTests.KernelToolbox.Tests
 	}
 
 }
+
+#endif

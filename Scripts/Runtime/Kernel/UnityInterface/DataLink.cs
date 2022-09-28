@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityKernel
+
+using System;
 using System.Runtime.CompilerServices;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
@@ -180,3 +182,5 @@ namespace Extenity.KernelToolbox.UnityInterface
 	}
 
 }
+
+#endif

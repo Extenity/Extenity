@@ -1,3 +1,5 @@
+#if !DisableExtenityKernel
+
 using System;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -134,3 +136,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

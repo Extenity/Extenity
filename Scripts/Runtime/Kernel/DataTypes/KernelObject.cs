@@ -1,3 +1,5 @@
+#if !DisableExtenityKernel
+
 using System;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
@@ -129,3 +131,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

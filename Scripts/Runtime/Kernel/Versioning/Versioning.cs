@@ -1,3 +1,5 @@
+#if !DisableExtenityKernel
+
 // #define DisableVersioningStats
 
 using System;
@@ -153,3 +155,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

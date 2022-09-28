@@ -1,3 +1,5 @@
+#if !DisableExtenityKernel
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -278,3 +280,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

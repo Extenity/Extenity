@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityKernel
+
+using System;
 using Newtonsoft.Json;
 
 namespace Extenity.KernelToolbox
@@ -57,3 +59,5 @@ namespace Extenity.KernelToolbox
 	}
 
 }
+
+#endif

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿#if !DisableExtenityKernel
+
+using System.IO;
 using System.Text;
 using Extenity.ApplicationToolbox;
 using Extenity.FileSystemToolbox;
@@ -101,3 +103,5 @@ namespace ExtenityTests.KernelToolbox
 	}
 
 }
+
+#endif

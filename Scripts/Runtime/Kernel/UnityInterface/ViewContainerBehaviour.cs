@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !DisableExtenityKernel
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
 using Extenity.DataToolbox;
@@ -121,3 +123,5 @@ namespace Extenity.KernelToolbox.UnityInterface
 	}
 
 }
+
+#endif
