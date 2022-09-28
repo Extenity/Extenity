@@ -1,4 +1,4 @@
-#if !DisableExtenityScreenManagement
+#if ExtenityScreenManagement
 
 using Extenity.UnityEditorToolbox;
 using UnityEditor;

@@ -1,4 +1,4 @@
-﻿#if !DisableExtenityScreenManagement
+﻿#if ExtenityScreenManagement
 
 using System.Reflection;
 using Sirenix.OdinInspector;
