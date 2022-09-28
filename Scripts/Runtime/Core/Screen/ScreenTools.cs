@@ -53,6 +53,9 @@ namespace Extenity.ScreenToolbox
 			{ DeviceGeneration.iPhone13Pro   , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 			{ DeviceGeneration.iPhone13ProMax, new (RectTools.FromMinMax(0.035f, 0f, 0.965f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 			{ DeviceGeneration.iPhone13Mini  , new (RectTools.FromMinMax(0.042f, 0f, 0.958f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
+
+			// A hopefully acceptable safe area that will be used for new Apple models until Unity adds support for them.
+			{ DeviceGeneration.iPhoneUnknown , new (RectTools.FromMinMax(0.037f, 0f, 0.963f, 1f), RectTools.FromMinMax(0f, 0.000f, 1f, 1.000f)) },
 			// @formatter:on
 		};
 #endif
