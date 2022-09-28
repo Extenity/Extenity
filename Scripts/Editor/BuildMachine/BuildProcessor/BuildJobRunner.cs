@@ -534,6 +534,7 @@ namespace Extenity.BuildMachine.Editor
 			// exceptions are more like internal errors in Build Machine.
 			throw new Exception(BuilderLog.Prefix + 
 			                    "Triggering a script compilation is not allowed while processing the build step. " +
+			                    $"Current state is {RunningJob.ToStringCurrentPhaseBuilderAndStep()}. " +
 			                    "Make sure the codes in the step won't trigger a compilation like calling " +
 			                    "AssetDatabase.Refresh() or switching the active platform. " +
 			                    "Any changes that requires a compilation like script modifications, " +

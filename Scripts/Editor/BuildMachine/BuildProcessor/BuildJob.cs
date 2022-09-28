@@ -420,6 +420,11 @@ namespace Extenity.BuildMachine.Editor
 			return CurrentBuilder + "-" + Builders[CurrentBuilder].Info.Name;
 		}
 
+		public string ToStringCurrentPhaseBuilderAndStep()
+		{
+			return $"[Phase: {ToStringCurrentPhase()}, Builder: {ToStringCurrentBuilder()}, Step: {CurrentBuildStep}, StepState: {StepState}]";
+		}
+
 		#endregion
 	}
 
