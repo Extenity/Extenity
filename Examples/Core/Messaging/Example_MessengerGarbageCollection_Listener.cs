@@ -1,4 +1,4 @@
-#if !UseLegacyMessenger && !DisableExtenityMessenger
+#if ExtenityMessenger && !UseLegacyMessenger
 
 using UnityEngine;
 using Extenity.MessagingToolbox;

@@ -24,7 +24,7 @@ namespace Extenity.UIToolbox.ScreenManagement
 
 		protected void OnDisable()
 		{
-#if UseLegacyMessenger && !DisableExtenityMessenger
+#if ExtenityMessenger && UseLegacyMessenger
 			Messenger.DeregisterAllEvents(this);
 #else
 			#error Not implemented yet!

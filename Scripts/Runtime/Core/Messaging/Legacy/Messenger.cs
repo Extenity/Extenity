@@ -1,4 +1,4 @@
-﻿#if UseLegacyMessenger && !DisableExtenityMessenger
+﻿#if ExtenityMessenger && UseLegacyMessenger
 
 using System;
 using System.Collections.Generic;
