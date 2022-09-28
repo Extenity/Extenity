@@ -1,4 +1,4 @@
-#if BeyondAudioUsesUnityAudio
+#if ExtenityAudio
 
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;
