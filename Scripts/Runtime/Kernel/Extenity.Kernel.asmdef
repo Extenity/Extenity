@@ -13,7 +13,9 @@
         "Sirenix.OdinInspector.Attributes.dll"
     ],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "ExtenityKernel"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
