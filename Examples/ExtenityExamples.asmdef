@@ -6,8 +6,7 @@
         "Extenity.Core.Editor",
         "Extenity.UnityEditor.Editor",
         "Unity.Mathematics",
-        "Unity.TextMeshPro",
-        "Extenity.BeyondAudio"
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
