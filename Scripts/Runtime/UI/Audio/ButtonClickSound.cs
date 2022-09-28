@@ -1,14 +1,14 @@
 #if ExtenityAudio
 
 using System;
+using Extenity.Audio;
 using Extenity.DataToolbox;
-using Extenity.UIToolbox;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Extenity.Audio.UI
+namespace Extenity.UIToolbox.Audio
 {
 
 	public enum ButtonClickSoundAction
