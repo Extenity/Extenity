@@ -1,5 +1,5 @@
 #if UNITY
-#if !DisableExtenityInstantiator
+#if ExtenityInstantiator
 
 //#define LogInstantiatorInEditor
 //#define LogInstantiatorInBuilds

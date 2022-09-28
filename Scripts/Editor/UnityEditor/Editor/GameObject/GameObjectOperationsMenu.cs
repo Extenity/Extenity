@@ -22,7 +22,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		{
 			var excludedTypes = new Type[]
 			{
-#if !DisableExtenityInstantiator
+#if ExtenityInstantiator
 				typeof(Instantiator),
 #endif
 			};
@@ -34,7 +34,7 @@ namespace Extenity.GameObjectToolbox.Editor
 		{
 			var excludedTypes = new Type[]
 			{
-#if !DisableExtenityInstantiator
+#if ExtenityInstantiator
 				typeof(Instantiator),
 #endif
 			};
