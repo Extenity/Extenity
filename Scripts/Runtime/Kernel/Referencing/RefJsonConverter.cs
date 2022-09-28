@@ -1,4 +1,4 @@
-﻿#if !DisableExtenityKernel
+﻿#if ExtenityKernel
 
 using System;
 using Newtonsoft.Json;
