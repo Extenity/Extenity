@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
@@ -19,13 +20,25 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = ExtenityMenu.GameObjectOperationsPriority + 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InLoadedScenes()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(new[] { typeof(Instantiator) }, SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene, true, true);
+			var excludedTypes = new Type[]
+			{
+#if !DisableExtenityInstantiator
+				typeof(Instantiator),
+#endif
+			};
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(excludedTypes, SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene, true, true);
 		}
 
 		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Active Scene", priority = ExtenityMenu.GameObjectOperationsPriority + 1)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InActiveScene()
 		{
-			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(new[] { typeof(Instantiator) }, SceneListFilter.LoadedActiveScene, true, true);
+			var excludedTypes = new Type[]
+			{
+#if !DisableExtenityInstantiator
+				typeof(Instantiator),
+#endif
+			};
+			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(excludedTypes, SceneListFilter.LoadedActiveScene, true, true);
 		}
 
 		#endregion
