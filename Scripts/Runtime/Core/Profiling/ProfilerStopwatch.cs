@@ -47,8 +47,11 @@ namespace Extenity.ProfilingToolbox
 				return;
 			}
 
-			StartTime = CurrentTime;
 			EndTime = -1;
+			
+			// Note that CurrentTime is called at the very end of Start,
+			// without doing any other work to allow precise measurements between Start and End.
+			StartTime = CurrentTime;
 		}
 
 		/// <summary>
@@ -56,7 +59,9 @@ namespace Extenity.ProfilingToolbox
 		/// </summary>
 		public double End()
 		{
-			EndTime = CurrentTime;
+			// Note that CurrentTime is called as soon as possible in the first line of End,
+			// without doing any other work to allow precise measurements between Start and End.
+			var endTime = CurrentTime; 
 
 			if (!IsStarted)
 			{
@@ -66,6 +71,8 @@ namespace Extenity.ProfilingToolbox
 				return 0;
 			}
 
+			// Note that EndTime is also used in IsStarted. So we have to set its value after the check above.
+			EndTime = endTime;
 			var elapsed = Elapsed;
 
 			TotalCalls++;
