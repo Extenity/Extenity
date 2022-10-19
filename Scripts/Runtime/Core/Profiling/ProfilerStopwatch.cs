@@ -18,9 +18,9 @@ namespace Extenity.ProfilingToolbox
 	public class ProfilerStopwatch
 	{
 		public double StartTime { get; private set; }
-		public bool IsStarted { get; private set; }
-
 		public double EndTime { get; private set; }
+
+		public bool IsStarted => EndTime == -1;
 
 		public double Elapsed
 		{
@@ -46,10 +46,9 @@ namespace Extenity.ProfilingToolbox
 				Log.Error("Tried to start profiler stopwatch but it was already started.");
 				return;
 			}
-			IsStarted = true;
 
 			StartTime = CurrentTime;
-			EndTime = 0;
+			EndTime = -1;
 		}
 
 		/// <summary>
@@ -71,7 +70,6 @@ namespace Extenity.ProfilingToolbox
 
 			TotalCalls++;
 			CumulativeTime += elapsed;
-			IsStarted = false;
 			return elapsed;
 		}
 
