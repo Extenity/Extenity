@@ -15,7 +15,7 @@ using ContextObject = System.Object;
 namespace Extenity.ProfilingToolbox
 {
 
-	public class ProfilerStopwatch
+	public struct ProfilerStopwatch
 	{
 		public double StartTime { get; private set; }
 		public double EndTime { get; private set; }

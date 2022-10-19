@@ -14,15 +14,16 @@ using ContextObject = System.Object;
 namespace Extenity.ProfilingToolbox
 {
 
-	public class QuickProfilerStopwatch : IDisposable
+	public struct QuickProfilerStopwatch : IDisposable
 	{
-		private ProfilerStopwatch Stopwatch = new ProfilerStopwatch();
+		private ProfilerStopwatch Stopwatch;
 		private readonly ContextObject Context;
 		private readonly string ProfilerMessageFormat;
 		private readonly float ThresholdDurationToConsiderLogging;
 
 		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f)
 		{
+			Stopwatch = new ProfilerStopwatch();
 			Context = context;
 			ProfilerMessageFormat = profilerMessageFormat;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
@@ -31,6 +32,8 @@ namespace Extenity.ProfilingToolbox
 
 		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f)
 		{
+			Stopwatch = new ProfilerStopwatch();
+			Context = default;
 			ProfilerMessageFormat = profilerMessageFormat;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
@@ -43,7 +46,6 @@ namespace Extenity.ProfilingToolbox
 			{
 				Stopwatch.LogInfo(Context, ProfilerMessageFormat);
 			}
-			Stopwatch = null;
 		}
 	}
 
