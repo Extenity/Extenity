@@ -129,7 +129,7 @@ namespace Extenity.ProfilingToolbox
 
 		#region Cumulative Time
 
-		public int TotalCalls;
+		public int TotalCalls { get; private set; }
 		public double CumulativeTime { get; private set; }
 
 		public void ResetCumulativeTime()
