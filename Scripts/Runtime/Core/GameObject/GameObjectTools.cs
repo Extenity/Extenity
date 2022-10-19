@@ -2119,8 +2119,9 @@ namespace Extenity.GameObjectToolbox
 		/// </summary>
 		public static bool SetNameIfRequired(this GameObject me, string newName)
 		{
-			if (!me)
-				throw new NullReferenceException(nameof(me));
+			// Unity will check for null references as soon as we call 'me.name' below. So skip this extra check here.
+			// if (!me)
+			// 	throw new NullReferenceException(nameof(me));
 
 			if (me.name != newName)
 			{
