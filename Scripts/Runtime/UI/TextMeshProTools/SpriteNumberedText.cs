@@ -1,4 +1,4 @@
-using Extenity.UnityEditorToolbox;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ namespace Extenity.UIToolbox
 		public TextMeshProUGUI Text;
 		public string SpriteNamePrefix;
 		public string SpritePack;
-		[ReadOnlyInInspector]
+		[ReadOnly]
 		public string SpriteFormat;
 
 		private void RefreshSpriteFormat()
@@ -33,6 +33,8 @@ namespace Extenity.UIToolbox
 			}
 		}
 
+		[Title("Test")]
+		[Button(34, ButtonStyle.FoldoutButton, DisplayParameters = true, Expanded = true)]
 		public void SetNumberedText(int number)
 		{
 			Text.SetText(BuildSpriteNumberedText(number));
