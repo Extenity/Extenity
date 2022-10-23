@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 using Extenity.DebugToolbox;
@@ -487,9 +486,20 @@ namespace Extenity.Audio
 
 		private void RefreshEventNamesList()
 		{
-			EventNames = Events.Where(item => item != null)
-			                   .Select(item => item.Name)
-			                   .ToArray();
+			if (Events == null || Events.Count == 0)
+			{
+				EventNames = Array.Empty<string>();
+			}
+			var result = New.List<string>();
+			foreach (var audioEvent in Events)
+			{
+				if (audioEvent != null)
+				{
+					result.Add(audioEvent.Name);
+				}
+			}
+			EventNames = result.ToArray();
+			Release.List(ref result);
 		}
 
 		public AudioEvent GetEvent(string eventName, bool errorIfNotFound)
