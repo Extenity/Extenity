@@ -21,7 +21,6 @@ namespace Extenity.UnityEditorToolbox
 
 		private void OnDrawGizmos()
 		{
-			Log.Info("gizmo");
 			//if (TEX == null)
 			//{
 			//	TEX = TextureToolbox.TextureTools.CreateSimpleTexture(16, 16, Color.green);
