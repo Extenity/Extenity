@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Extenity.DataToolbox;
-using Extenity.UnityEditorToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -152,7 +152,7 @@ namespace Extenity.UIToolbox
 
 		#region Expected Objects
 
-		[ConditionalHideInInspector("Mode", RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject, false, HideOrDisable.Hide)]
+		[ShowIf(nameof(Mode), RadioGroupActivatorMode.ActivateIfSelectedAnExpectedObject)]
 		public Object[] ExpectedObjects;
 
 		#endregion

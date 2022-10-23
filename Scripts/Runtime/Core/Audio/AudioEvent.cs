@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.MathToolbox;
-using Extenity.UnityEditorToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -23,15 +23,13 @@ namespace Extenity.Audio
 		public AudioMixerGroup Output;
 		public AudioEventType Type = AudioEventType.Regular;
 
-		// Type.Regular
-		[ConditionalHideInInspector(nameof(Type), AudioEventType.Regular)]
+		[ShowIf(nameof(Type), AudioEventType.Regular)]
 		public List<AudioClip> Clips; // TODO: Change type to AudioClip[]
 
-		// Type.WeightedGroups
-		[ConditionalHideInInspector(nameof(Type), AudioEventType.WeightedGroups)]
+		[ShowIf(nameof(Type), AudioEventType.WeightedGroups)]
 		public WeightedAudioClipGroup[] WeightedGroups;
 
-		[ConditionalHideInInspector(nameof(InternalClipCountGreaterThanZero))]
+		[ShowIf(nameof(HasAnyClips))]
 		public bool EnsureNonrecurringRandomness = true;
 		private AudioClip LastSelectedAudioClip;
 
@@ -41,10 +39,7 @@ namespace Extenity.Audio
 		[NonSerialized]
 		internal int ClipCount;
 
-		private bool InternalClipCountGreaterThanZero()
-		{
-			return ClipCount > 1;
-		}
+		private bool HasAnyClips => ClipCount > 1;
 
 		public bool HasAnyUnassignedClip
 		{

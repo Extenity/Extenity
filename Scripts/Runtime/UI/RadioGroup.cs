@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Extenity.UnityEditorToolbox;
+using Sirenix.OdinInspector;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -121,7 +121,7 @@ namespace Extenity.UIToolbox
 
 		[Header("Default Selection")]
 		public DefaultSelection DefaultSelectionBehaviour = DefaultSelection.SelectSpecifiedButton;
-		[ConditionalHideInInspector("DefaultSelectionBehaviour", DefaultSelection.SelectSpecifiedButton, HideOrDisable.Hide)]
+		[ShowIf(nameof(DefaultSelectionBehaviour), DefaultSelection.SelectSpecifiedButton)]
 		public Toggle DefaultSelectedButton = null;
 
 		private void InitializeDefaultSelection()

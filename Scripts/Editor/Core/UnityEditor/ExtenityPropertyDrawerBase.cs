@@ -97,6 +97,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Loop through all child properties
 			while (prop.NextVisible(childrenAreExpanded) && !SerializedProperty.EqualContents(prop, endProperty))
 			{
+				/*
 				// ----- Modification Start -----
 
 				var display = true;
@@ -125,6 +126,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					continue;
 
 				// ----- Modification End -----
+				*/
 
 				EditorGUI.indentLevel = prop.depth + relIndent;
 				position.height = EditorGUI.GetPropertyHeight(prop, null, false);
