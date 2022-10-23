@@ -34,13 +34,13 @@ namespace ExtenityExamples.DataToolbox
 			ConvertAndWrite("X8", (int)counter, Text_X);
 			ConvertAndWrite("P2", counter, Text_P);
 			ConvertAndWrite("N2", counter, Text_N);
-			//ConvertAndWrite("R", counter, Text_R);
+			ConvertAndWrite("R", counter, Text_R);
 			ConvertAndWrite(null, counter, Text_Null);
 		}
 
 		private void ConvertAndWrite(string format, float value, TextMeshProUGUI ui)
 		{
-			Profiler.BeginSample(format);
+			Profiler.BeginSample(format != null ? format : "null");
 
 			//var length = FastNumberFormatter.NumberToString(format, value, NumberFormatInfo.CurrentInfo, chars);
 			var length = value.ToStringAsCharArray(format, chars);
