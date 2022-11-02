@@ -18,11 +18,11 @@ using ContextObject = System.Object;
 namespace Extenity.ConsistencyToolbox
 {
 
-	public struct InconsistencyEntry
+	public readonly struct InconsistencyEntry
 	{
-		public string Message;
-		public ContextObject Target;
-		public bool IsError;
+		public readonly string Message;
+		public readonly ContextObject Target;
+		public readonly bool IsError;
 
 		internal InconsistencyEntry(string message, ContextObject target, bool isError)
 		{
@@ -46,7 +46,8 @@ namespace Extenity.ConsistencyToolbox
 	{
 		#region Data
 
-		public List<InconsistencyEntry> Inconsistencies;
+		private List<InconsistencyEntry> _Inconsistencies;
+		public IReadOnlyList<InconsistencyEntry> Inconsistencies;
 		public ContextObject StartingContextObject;
 		public ContextObject CurrentCallerContextObject;
 
@@ -107,7 +108,7 @@ namespace Extenity.ConsistencyToolbox
 
 			if (Inconsistencies != null)
 			{
-				Release.List(ref Inconsistencies);
+				Release.List(ref _Inconsistencies);
 			}
 		}
 
@@ -118,25 +119,25 @@ namespace Extenity.ConsistencyToolbox
 		public void AddError(string message, ContextObject context)
 		{
 			InitializeEntriesIfRequired();
-			Inconsistencies.Add(new InconsistencyEntry(message, context, isError: true));
+			_Inconsistencies.Add(new InconsistencyEntry(message, context, isError: true));
 		}
 
 		public void AddError(string message)
 		{
 			InitializeEntriesIfRequired();
-			Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
+			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
 		}
 
 		public void AddWarning(string message, ContextObject context)
 		{
 			InitializeEntriesIfRequired();
-			Inconsistencies.Add(new InconsistencyEntry(message, context, isError: false));
+			_Inconsistencies.Add(new InconsistencyEntry(message, context, isError: false));
 		}
 
 		public void AddWarning(string message)
 		{
 			InitializeEntriesIfRequired();
-			Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: false));
+			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: false));
 		}
 
 		#endregion
