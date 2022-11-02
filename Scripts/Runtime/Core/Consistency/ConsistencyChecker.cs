@@ -157,8 +157,8 @@ namespace Extenity.ConsistencyToolbox
 			if (target == null)
 				throw new ArgumentNullException(nameof(target), "Tried to do consistency check on a null object.");
 
-			checker.StartingContextObject = checker.CurrentCallerContextObject = target as ContextObject;
-			target.CheckConsistency(checker);
+			checker.StartingContextObject = target as ContextObject;
+			checker.ProceedTo(target);
 
 			return checker;
 		}
@@ -199,8 +199,18 @@ namespace Extenity.ConsistencyToolbox
 			{
 				CurrentCallerContextObject = nextTargetAsUnityObject;
 			}
-			nextTarget.CheckConsistency(this);
-			CurrentCallerContextObject = previousContextObject;
+			try
+			{
+				nextTarget.CheckConsistency(this);
+			}
+			catch (Exception exception)
+			{
+				AddError($"Threw an exception when processing consistency checks. Exception: {exception}");
+			}
+			finally
+			{
+				CurrentCallerContextObject = previousContextObject;
+			}
 		}
 
 		#endregion
