@@ -122,10 +122,10 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Add Consistency Entry
 
-		public void AddError(string message, ContextObject context)
+		public void AddError(string message, ContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, context, isError: true));
+			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: true));
 		}
 
 		public void AddError(string message)
@@ -134,10 +134,10 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
 		}
 
-		public void AddWarning(string message, ContextObject context)
+		public void AddWarning(string message, ContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, context, isError: false));
+			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: false));
 		}
 
 		public void AddWarning(string message)
