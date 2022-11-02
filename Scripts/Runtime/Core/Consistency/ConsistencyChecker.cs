@@ -97,6 +97,7 @@ namespace Extenity.ConsistencyToolbox
 		public ConsistencyChecker(ContextObject mainContextObject)
 		{
 			MainContextObject = mainContextObject;
+			LogTitleWriterCallback = GenerateCommonTitleMessageForMainContextObject;
 		}
 
 		private void InitializeEntriesIfRequired()
@@ -180,7 +181,7 @@ namespace Extenity.ConsistencyToolbox
 				checker.LogAll();
 				if (!throwOnlyOnErrors || checker.HasAnyErrors)
 				{
-					var title = GenerateCommonTitleMessageForObject(checker);
+					var title = checker.LogTitleWriterCallback(checker);
 					throw new Exception(title + " See previous logs for details.");
 				}
 			}
@@ -227,7 +228,7 @@ namespace Extenity.ConsistencyToolbox
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
-				var title = GenerateCommonTitleMessageForObject(this);
+				var title = LogTitleWriterCallback(this);
 				stringBuilder.Append(title);
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
@@ -245,7 +246,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				var title = GenerateCommonTitleMessageForObject(this);
+				var title = LogTitleWriterCallback(this);
 				if (HasAnyErrors)
 				{
 					Log.Error(title);
@@ -273,7 +274,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(this));
+				stringBuilder.AppendLine(LogTitleWriterCallback(this));
 
 				foreach (var inconsistency in _Inconsistencies)
 				{
@@ -283,7 +284,15 @@ namespace Extenity.ConsistencyToolbox
 			}
 		}
 
-		private static string GenerateCommonTitleMessageForObject(ConsistencyChecker checker)
+		#endregion
+
+		#region Log Title / Custom log title writer callback
+
+		public delegate string TitleWriterMethod(ConsistencyChecker checker);
+
+		public TitleWriterMethod LogTitleWriterCallback;
+
+		private static string GenerateCommonTitleMessageForMainContextObject(ConsistencyChecker checker)
 		{
 #if UNITY
 			// Try to get Unity Object info.
