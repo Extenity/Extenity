@@ -138,7 +138,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			method.Invoke(null, null);
 		}
 
-		[MenuItem(ExtenityMenu.AssetsBaseContext + "Open C# Project (Force Rebuild)", priority = 1000)] // Priority is just below Unity's 'Open C# Project'
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Open C# Project (Force Rebuild)", priority = 999)] // Priority is just above Unity's 'Open C# Project'
 		public static void OpenCSProjectForceRebuild()
 		{
 			// Delete SLN and CSPROJ files. That will force Unity to rebuild them from ground up.
