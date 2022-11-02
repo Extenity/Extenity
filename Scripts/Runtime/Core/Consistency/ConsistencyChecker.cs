@@ -94,6 +94,14 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Initialization / Deinitialization
 
+		public ConsistencyChecker(IConsistencyChecker target)
+		{
+			if (target == null)
+				throw new ArgumentNullException(nameof(target), "Tried to do consistency check on a null object.");
+
+			StartingContextObject = target as ContextObject;
+		}
+
 		private void InitializeEntriesIfRequired()
 		{
 			if (Inconsistencies == null)
@@ -152,14 +160,8 @@ namespace Extenity.ConsistencyToolbox
 
 		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target)
 		{
-			var checker = new ConsistencyChecker();
-
-			if (target == null)
-				throw new ArgumentNullException(nameof(target), "Tried to do consistency check on a null object.");
-
-			checker.StartingContextObject = target as ContextObject;
+			var checker = new ConsistencyChecker(target);
 			checker.ProceedTo(target);
-
 			return checker;
 		}
 
