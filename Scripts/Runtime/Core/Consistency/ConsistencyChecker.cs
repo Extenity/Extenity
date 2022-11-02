@@ -22,16 +22,15 @@ using Extenity.ApplicationToolbox;
 using UnityEngine.Pool;
 #endif
 
-// This is the way that Log system supports various Context types in different environments like
-// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
-// in this code file to prevent any possible confusions. Use 'using' selectively, like
-// 'using Exception = System.Exception;'
+// Unlike any other ContextObject definitions, ConsistencyChecker always uses System.Object type in all platforms.
+// But lets keep using ContextObject naming conventions like other systems that may use varying Log context types.
 // See 11746845.
 #if UNITY
 using ContextObject = UnityEngine.Object;
 #else
 using ContextObject = System.Object;
 #endif
+using ConsistencyContextObject = System.Object;
 
 namespace Extenity.ConsistencyToolbox
 {
@@ -39,10 +38,10 @@ namespace Extenity.ConsistencyToolbox
 	public readonly struct InconsistencyEntry
 	{
 		public readonly string Message;
-		public readonly ContextObject Target;
+		public readonly ConsistencyContextObject Target;
 		public readonly bool IsError;
 
-		internal InconsistencyEntry(string message, ContextObject target, bool isError)
+		internal InconsistencyEntry(string message, ConsistencyContextObject target, bool isError)
 		{
 			Target = target;
 			Message = message;
@@ -72,8 +71,8 @@ namespace Extenity.ConsistencyToolbox
 
 		private List<InconsistencyEntry> _Inconsistencies;
 		public IReadOnlyList<InconsistencyEntry> Inconsistencies => _Inconsistencies;
-		public ContextObject MainContextObject;
-		public ContextObject CurrentCallerContextObject;
+		public ConsistencyContextObject MainContextObject;
+		public ConsistencyContextObject CurrentCallerContextObject;
 
 		public int InconsistencyCount => _Inconsistencies != null ? _Inconsistencies.Count : 0;
 		public bool HasAnyInconsistencies => _Inconsistencies != null && _Inconsistencies.Count > 0;
@@ -118,7 +117,7 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Initialization / Deinitialization
 
-		public ConsistencyChecker(ContextObject mainContextObject, float thresholdDurationToConsiderLogging)
+		public ConsistencyChecker(ConsistencyContextObject mainContextObject, float thresholdDurationToConsiderLogging)
 		{
 			MainContextObject = mainContextObject;
 			LogTitleWriterCallback = GenerateCommonTitleMessageForMainContextObject;
@@ -150,7 +149,7 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Add Consistency Entry
 
-		public void AddError(string message, ContextObject overrideContext)
+		public void AddError(string message, ConsistencyContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: true));
@@ -162,7 +161,7 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
 		}
 
-		public void AddWarning(string message, ContextObject overrideContext)
+		public void AddWarning(string message, ConsistencyContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: false));
@@ -180,7 +179,7 @@ namespace Extenity.ConsistencyToolbox
 
 		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
-			var checker = new ConsistencyChecker(target as ContextObject, thresholdDurationToConsiderLogging);
+			var checker = new ConsistencyChecker(target as ConsistencyContextObject, thresholdDurationToConsiderLogging);
 			checker.ProceedTo(target);
 			return checker;
 		}
@@ -251,11 +250,11 @@ namespace Extenity.ConsistencyToolbox
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
 				{
-					Log.Error(stringBuilder.ToString(), MainContextObject);
+					Log.Error(stringBuilder.ToString(), MainContextObject as ContextObject);
 				}
 				else
 				{
-					Log.Warning(stringBuilder.ToString(), MainContextObject);
+					Log.Warning(stringBuilder.ToString(), MainContextObject as ContextObject);
 				}
 			}
 		}
@@ -268,22 +267,22 @@ namespace Extenity.ConsistencyToolbox
 				var title = LogTitleWriterCallback(this);
 				if (HasAnyErrors)
 				{
-					Log.Error(title, MainContextObject);
+					Log.Error(title, MainContextObject as ContextObject);
 				}
 				else
 				{
-					Log.Warning(title, MainContextObject);
+					Log.Warning(title, MainContextObject as ContextObject);
 				}
 
 				foreach (var inconsistency in _Inconsistencies)
 				{
 					if (inconsistency.IsError)
 					{
-						Log.Error(inconsistency.Message, inconsistency.Target);
+						Log.Error(inconsistency.Message, inconsistency.Target as ContextObject);
 					}
 					else
 					{
-						Log.Warning(inconsistency.Message, inconsistency.Target);
+						Log.Warning(inconsistency.Message, inconsistency.Target as ContextObject);
 					}
 				}
 			}
@@ -330,7 +329,7 @@ namespace Extenity.ConsistencyToolbox
 			return $"'{checker.GetContextObjectLogName(context)}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 		}
 
-		public string GetContextObjectLogName(ContextObject context)
+		public string GetContextObjectLogName(ConsistencyContextObject context)
 		{
 #if UNITY
 			// Try to get Unity Object info.
@@ -418,7 +417,7 @@ namespace Extenity.ConsistencyToolbox
 				}
 #endif
 
-				Log.Warning(stringBuilder.ToString(), MainContextObject);
+				Log.Warning(stringBuilder.ToString(), MainContextObject as ContextObject);
 			}
 #endif
 		}
