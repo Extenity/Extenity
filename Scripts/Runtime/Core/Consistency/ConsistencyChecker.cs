@@ -33,7 +33,7 @@ namespace Extenity.ConsistencyToolbox
 
 		public override string ToString()
 		{
-			return (IsError ? "Error: " : "Warning: ") + Message;
+			return (IsError ? "Error: " : "Warning: ") + Message + " (" + Target.FullObjectName() + ")";
 		}
 	}
 
@@ -166,25 +166,14 @@ namespace Extenity.ConsistencyToolbox
 		public static ConsistencyChecker CheckConsistencyAndLog(IConsistencyChecker target)
 		{
 			var checker = CheckConsistency(target);
-			if (checker.HasAnyInconsistencies)
-			{
-				checker.LogAll();
-			}
+			checker.LogAll();
 			return checker;
 		}
 
 		public static ConsistencyChecker CheckConsistencyAndThrow(IConsistencyChecker target, bool throwOnlyOnErrors = false)
 		{
 			var checker = CheckConsistency(target);
-			if (checker.HasAnyInconsistencies)
-			{
-				checker.LogAll();
-				if (!throwOnlyOnErrors || checker.HasAnyErrors)
-				{
-					var title = checker.LogTitleWriterCallback(checker);
-					throw new Exception(title + " See previous logs for details.");
-				}
-			}
+			checker.LogAllAndThrow(throwOnlyOnErrors);
 			return checker;
 		}
 
@@ -228,8 +217,6 @@ namespace Extenity.ConsistencyToolbox
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
-				var title = LogTitleWriterCallback(this);
-				stringBuilder.Append(title);
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
 				{
@@ -270,6 +257,19 @@ namespace Extenity.ConsistencyToolbox
 			}
 		}
 
+		public void LogAllAndThrow(bool throwOnlyOnErrors = false)
+		{
+			if (HasAnyInconsistencies)
+			{
+				LogAll();
+				if (!throwOnlyOnErrors || HasAnyErrors)
+				{
+					var title = LogTitleWriterCallback(this);
+					throw new Exception(title + " See previous logs for details.");
+				}
+			}
+		}
+
 		public void WriteFullLogTo(StringBuilder stringBuilder)
 		{
 			if (HasAnyInconsistencies)
@@ -278,8 +278,7 @@ namespace Extenity.ConsistencyToolbox
 
 				foreach (var inconsistency in _Inconsistencies)
 				{
-					stringBuilder.Append(inconsistency.IsError ? "Error: " : "Warning: ");
-					stringBuilder.AppendLine(inconsistency.Message);
+					stringBuilder.AppendLine(inconsistency.ToString());
 				}
 			}
 		}
