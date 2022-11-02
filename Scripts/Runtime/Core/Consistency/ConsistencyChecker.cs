@@ -1,9 +1,26 @@
+﻿// #define DisableConsistencyCheckerProfiling
+// #define DisableConsistencyCheckerDetailedProfiling
+
+#if !DisableConsistencyCheckerProfiling
+#define _ProfilingEnabled
+#if !DisableConsistencyCheckerDetailedProfiling
+#define _DetailedProfilingEnabled
+#endif
+#endif
+
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
 using IDisposable = System.IDisposable;
 using Type = System.Type;
+
+#if _ProfilingEnabled
+using System.Linq;
+using Extenity.ApplicationToolbox;
+using UnityEngine.Pool;
+#endif
 
 // This is the way that Log system supports various Context types in different environments like
 // both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
@@ -41,6 +58,12 @@ namespace Extenity.ConsistencyToolbox
 	public interface IConsistencyChecker
 	{
 		void CheckConsistency(ConsistencyChecker checker);
+	}
+
+	public enum ThrowRule
+	{
+		OnlyOnErrors = 1,
+		OnErrorsAndWarnings = 2,
 	}
 
 	public class ConsistencyChecker : IDisposable
@@ -95,10 +118,11 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Initialization / Deinitialization
 
-		public ConsistencyChecker(ContextObject mainContextObject)
+		public ConsistencyChecker(ContextObject mainContextObject, float thresholdDurationToConsiderLogging)
 		{
 			MainContextObject = mainContextObject;
 			LogTitleWriterCallback = GenerateCommonTitleMessageForMainContextObject;
+			InitializeProfiling(thresholdDurationToConsiderLogging);
 		}
 
 		private void InitializeEntriesIfRequired()
@@ -109,7 +133,7 @@ namespace Extenity.ConsistencyToolbox
 			}
 		}
 
-		private void Reset()
+		public void Dispose()
 		{
 			MainContextObject = default;
 			CurrentCallerContextObject = default;
@@ -118,11 +142,8 @@ namespace Extenity.ConsistencyToolbox
 			{
 				Release.List(ref _Inconsistencies);
 			}
-		}
 
-		public void Dispose()
-		{
-			Reset();
+			DeinitializeProfiling();
 		}
 
 		#endregion
@@ -157,24 +178,24 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Check Consistency
 
-		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target)
+		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
-			var checker = new ConsistencyChecker(target as ContextObject);
+			var checker = new ConsistencyChecker(target as ContextObject, thresholdDurationToConsiderLogging);
 			checker.ProceedTo(target);
 			return checker;
 		}
 
-		public static ConsistencyChecker CheckConsistencyAndLog(IConsistencyChecker target)
+		public static ConsistencyChecker CheckConsistencyAndLog(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
-			var checker = CheckConsistency(target);
+			var checker = CheckConsistency(target, thresholdDurationToConsiderLogging);
 			checker.LogAll();
 			return checker;
 		}
 
-		public static ConsistencyChecker CheckConsistencyAndThrow(IConsistencyChecker target, bool throwOnlyOnErrors = false)
+		public static ConsistencyChecker CheckConsistencyAndThrow(IConsistencyChecker target, float thresholdDurationToConsiderLogging, ThrowRule throwRule)
 		{
-			var checker = CheckConsistency(target);
-			checker.LogAllAndThrow(throwOnlyOnErrors);
+			var checker = CheckConsistency(target, thresholdDurationToConsiderLogging);
+			checker.LogAllAndThrow(throwRule);
 			return checker;
 		}
 
@@ -195,6 +216,10 @@ namespace Extenity.ConsistencyToolbox
 			{
 				CurrentCallerContextObject = nextTargetAsUnityObject;
 			}
+
+#if _DetailedProfilingEnabled
+			var startTime = PrecisionTiming.PreciseTime;
+#endif
 			try
 			{
 				nextTarget.CheckConsistency(this);
@@ -205,6 +230,10 @@ namespace Extenity.ConsistencyToolbox
 			}
 			finally
 			{
+#if _DetailedProfilingEnabled
+				var duration = PrecisionTiming.PreciseTime - startTime;
+				RegisterProfiling(nextTarget.GetType(), duration);
+#endif
 				CurrentCallerContextObject = previousContextObject;
 			}
 		}
@@ -215,55 +244,58 @@ namespace Extenity.ConsistencyToolbox
 
 		public void LogAllInOnce()
 		{
+			LogProfilingInfoIfExceedsThreshold();
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
 				{
-					Log.Error(stringBuilder.ToString());
+					Log.Error(stringBuilder.ToString(), MainContextObject);
 				}
 				else
 				{
-					Log.Warning(stringBuilder.ToString());
+					Log.Warning(stringBuilder.ToString(), MainContextObject);
 				}
 			}
 		}
 
 		public void LogAll()
 		{
+			LogProfilingInfoIfExceedsThreshold();
 			if (HasAnyInconsistencies)
 			{
 				var title = LogTitleWriterCallback(this);
 				if (HasAnyErrors)
 				{
-					Log.Error(title);
+					Log.Error(title, MainContextObject);
 				}
 				else
 				{
-					Log.Warning(title);
+					Log.Warning(title, MainContextObject);
 				}
 
 				foreach (var inconsistency in _Inconsistencies)
 				{
 					if (inconsistency.IsError)
 					{
-						Log.Error(inconsistency.Message);
+						Log.Error(inconsistency.Message, inconsistency.Target);
 					}
 					else
 					{
-						Log.Warning(inconsistency.Message);
+						Log.Warning(inconsistency.Message, inconsistency.Target);
 					}
 				}
 			}
 		}
 
-		public void LogAllAndThrow(bool throwOnlyOnErrors = false)
+		public void LogAllAndThrow(ThrowRule throwRule)
 		{
+			LogProfilingInfoIfExceedsThreshold();
 			if (HasAnyInconsistencies)
 			{
 				LogAll();
-				if (!throwOnlyOnErrors || HasAnyErrors)
+				if (throwRule != ThrowRule.OnlyOnErrors || HasAnyErrors)
 				{
 					var title = LogTitleWriterCallback(this);
 					throw new Exception(title + " See previous logs for details.");
@@ -294,23 +326,101 @@ namespace Extenity.ConsistencyToolbox
 
 		private static string GenerateCommonTitleMessageForMainContextObject(ConsistencyChecker checker)
 		{
+			var context = checker.MainContextObject;
+			return $"'{checker.GetContextObjectLogName(context)}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+		}
+
+		public string GetContextObjectLogName(ContextObject context)
+		{
 #if UNITY
 			// Try to get Unity Object info.
-			var meAsUnityObject = checker.MainContextObject as UnityEngine.Object;
+			var meAsUnityObject = context as UnityEngine.Object;
 			if (meAsUnityObject != null)
 			{
-				return $"'{meAsUnityObject.FullObjectName()}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				return meAsUnityObject.FullObjectName();
 			}
 #endif
-			if (checker.MainContextObject != null)
+			if (context != null)
 			{
-				var meType = checker.MainContextObject.GetType();
-				return $"'{meType.FullName}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				var meType = context.GetType();
+				return meType.FullName;
+			}
+			return "[Null]";
+		}
+
+		#endregion
+
+		#region Profiling
+
+#if _ProfilingEnabled
+		private float ThresholdDurationToConsiderLogging;
+		private double MainStartTime;
+		private double MainDuration => PrecisionTiming.PreciseTime - MainStartTime;
+#endif
+#if _DetailedProfilingEnabled
+		private Dictionary<Type, double> ProfilingTimes;
+#endif
+
+		[Conditional("_ProfilingEnabled")]
+		private void InitializeProfiling(float thresholdDurationToConsiderLogging)
+		{
+#if _ProfilingEnabled
+			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
+			MainStartTime = PrecisionTiming.PreciseTime;
+#endif
+#if _DetailedProfilingEnabled
+			ProfilingTimes = DictionaryPool<Type, double>.Get();
+#endif
+		}
+
+		[Conditional("_DetailedProfilingEnabled")]
+		private void DeinitializeProfiling()
+		{
+#if _DetailedProfilingEnabled
+			DictionaryPool<Type, double>.Release(ProfilingTimes);
+			ProfilingTimes = null;
+#endif
+		}
+
+		[Conditional("_DetailedProfilingEnabled")]
+		private void RegisterProfiling(Type type, double duration)
+		{
+#if _DetailedProfilingEnabled
+			if (ProfilingTimes.TryGetValue(type, out var alreadyRegisteredTotalTime))
+			{
+				ProfilingTimes[type] = alreadyRegisteredTotalTime + duration;
 			}
 			else
 			{
-				return $"Detected {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				ProfilingTimes.Add(type, duration);
 			}
+#endif
+		}
+
+		[Conditional("_ProfilingEnabled")]
+		private void LogProfilingInfoIfExceedsThreshold()
+		{
+#if _ProfilingEnabled
+			var mainDuration = MainDuration;
+			if (mainDuration > ThresholdDurationToConsiderLogging)
+			{
+				var stringBuilder = new StringBuilder();
+				stringBuilder.Append($"{GetContextObjectLogName(MainContextObject)} consistency checks took '{mainDuration.ToStringMinutesSecondsMillisecondsFromSeconds()}' which is more than expected.");
+
+#if _DetailedProfilingEnabled
+				stringBuilder.AppendLine(" Details:");
+				
+				var results = ProfilingTimes.OrderByDescending(item => item.Value).Select(item => (Duration: item.Value, Type: item.Key)).ToList();
+
+				foreach (var result in results)
+				{
+					stringBuilder.AppendLine($"   {result.Duration:F3} ms total for {result.Type.Name}");
+				}
+#endif
+
+				Log.Warning(stringBuilder.ToString(), MainContextObject);
+			}
+#endif
 		}
 
 		#endregion

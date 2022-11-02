@@ -28,7 +28,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			Log.Warning("Unity Hub Template Builder was abandoned. It should be almost fully functional in its current state, with the exception of generating 'dependencies' field in 'packages.json'. It's abandoned for multiple reasons. Unity expects the packed file to be a TGZ (Tar GZip) which only supports maximum of 100 file name lengths. Also Unity adds default Package Manager content even though the 'dependencies' field in 'package.json' says otherwise. The template package file should be copied every time switching to a new Unity version and there is no mechanism to get the latest version of templates, which makes matters worse. Hopefully Unity will address these issues in future.");
 
 			// Consistency checks
-			ConsistencyChecker.CheckConsistencyAndThrow(config);
+			ConsistencyChecker.CheckConsistencyAndThrow(config, 1f, ThrowRule.OnErrorsAndWarnings);
 
 			// Save all assets first
 			AssetDatabase.SaveAssets();
@@ -98,7 +98,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		private static void DoBuildProjectTemplateAsZip(TemplateBuilderConfiguration config, bool dryRun, Action onCompleted)
 		{
 			// Consistency checks
-			ConsistencyChecker.CheckConsistencyAndThrow(config);
+			ConsistencyChecker.CheckConsistencyAndThrow(config, 1f, ThrowRule.OnErrorsAndWarnings);
 
 			// Save all assets first
 			AssetDatabase.SaveAssets();

@@ -224,7 +224,7 @@ namespace Extenity.UnityEditorToolbox
 				{
 					if (!UnityEditor.EditorApplication.isPlaying)
 					{
-						ConsistencyChecker.CheckConsistencyAndLog(this);
+						ConsistencyChecker.CheckConsistencyAndLog(this, 1f);
 					}
 				}
 			};

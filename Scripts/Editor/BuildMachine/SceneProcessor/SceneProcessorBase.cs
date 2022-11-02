@@ -100,7 +100,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					throw new Exception(BuilderLog.Prefix + $"Configuration '{configurationName}' does not exist.");
 				}
-				ConsistencyChecker.CheckConsistencyAndThrow(configuration);
+				ConsistencyChecker.CheckConsistencyAndThrow(configuration, 1f, ThrowRule.OnErrorsAndWarnings);
 
 				BuilderLog.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
 				Log.IncreaseIndent();
@@ -236,7 +236,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public static List<MethodInfo> CollectProcessorMethods(SceneProcessorConfiguration configuration)
 		{
-			ConsistencyChecker.CheckConsistencyAndThrow(configuration);
+			ConsistencyChecker.CheckConsistencyAndThrow(configuration, 1f, ThrowRule.OnErrorsAndWarnings);
 			var includedCategories = configuration.IncludedCategories;
 			var excludedCategories = configuration.ExcludedCategories;
 
