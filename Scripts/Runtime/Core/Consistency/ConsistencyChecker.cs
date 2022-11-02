@@ -19,7 +19,9 @@ using Type = System.Type;
 #if _ProfilingEnabled
 using System.Linq;
 using Extenity.ApplicationToolbox;
+#if UNITY
 using UnityEngine.Pool;
+#endif
 #endif
 
 // Unlike any other ContextObject definitions, ConsistencyChecker always uses System.Object type in all platforms.
@@ -202,7 +204,7 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Proceed To
 
-		public void ProceedTo(IConsistencyChecker nextTarget)
+		public void ProceedTo(IConsistencyChecker nextTarget, bool setNextTargetAsContextObject = true)
 		{
 			if (nextTarget == null)
 			{
@@ -211,9 +213,21 @@ namespace Extenity.ConsistencyToolbox
 			}
 
 			var previousContextObject = CurrentCallerContextObject;
-			if (nextTarget is UnityEngine.Object nextTargetAsUnityObject)
+			if (setNextTargetAsContextObject)
 			{
-				CurrentCallerContextObject = nextTargetAsUnityObject;
+#if UNITY
+				// Only accept UnityEngine.Object types as context objects when working in Unity.
+				// That makes it easier to write consistency checks that start from a MonoBehaviour
+				// and then proceed to its non-MonoBehaviour serialized fields. That way, any consistency
+				// logs of these class objects would be logged using their MonoBehaviour as log context
+				// and would highlight the GameObject when clicked on their logs in console.
+				if (nextTarget is UnityEngine.Object nextTargetAsUnityObject)
+				{
+					CurrentCallerContextObject = nextTargetAsUnityObject;
+				}
+#else
+				CurrentCallerContextObject = nextTarget;
+#endif
 			}
 
 #if _DetailedProfilingEnabled
@@ -368,7 +382,11 @@ namespace Extenity.ConsistencyToolbox
 			MainStartTime = PrecisionTiming.PreciseTime;
 #endif
 #if _DetailedProfilingEnabled
+#if UNITY
 			ProfilingTimes = DictionaryPool<Type, double>.Get();
+#else
+			ProfilingTimes = new Dictionary<Type, double>();
+#endif
 #endif
 		}
 
@@ -376,8 +394,13 @@ namespace Extenity.ConsistencyToolbox
 		private void DeinitializeProfiling()
 		{
 #if _DetailedProfilingEnabled
+#if UNITY
 			DictionaryPool<Type, double>.Release(ProfilingTimes);
 			ProfilingTimes = null;
+#else
+			ProfilingTimes.Clear();
+			ProfilingTimes = null;
+#endif
 #endif
 		}
 
