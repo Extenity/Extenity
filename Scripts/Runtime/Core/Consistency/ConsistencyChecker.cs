@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
-using ArgumentNullException = System.ArgumentNullException;
 
 // This is the way that Log system supports various Context types in different environments like
 // both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
@@ -48,19 +47,20 @@ namespace Extenity.ConsistencyToolbox
 		#region Data
 
 		private List<InconsistencyEntry> _Inconsistencies;
-		public IReadOnlyList<InconsistencyEntry> Inconsistencies;
-		public ContextObject StartingContextObject;
+		public IReadOnlyList<InconsistencyEntry> Inconsistencies => _Inconsistencies;
+		public ContextObject MainContextObject;
 		public ContextObject CurrentCallerContextObject;
 
-		public bool HasAnyInconsistencies => Inconsistencies != null && Inconsistencies.Count > 0;
+		public int InconsistencyCount => _Inconsistencies != null ? _Inconsistencies.Count : 0;
+		public bool HasAnyInconsistencies => _Inconsistencies != null && _Inconsistencies.Count > 0;
 
 		public bool HasAnyErrors
 		{
 			get
 			{
-				if (Inconsistencies != null)
+				if (_Inconsistencies != null)
 				{
-					foreach (var inconsistency in Inconsistencies)
+					foreach (var inconsistency in _Inconsistencies)
 					{
 						if (inconsistency.IsError)
 						{
@@ -76,9 +76,9 @@ namespace Extenity.ConsistencyToolbox
 		{
 			get
 			{
-				if (Inconsistencies != null)
+				if (_Inconsistencies != null)
 				{
-					foreach (var inconsistency in Inconsistencies)
+					foreach (var inconsistency in _Inconsistencies)
 					{
 						if (!inconsistency.IsError)
 						{
@@ -94,28 +94,25 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Initialization / Deinitialization
 
-		public ConsistencyChecker(IConsistencyChecker target)
+		public ConsistencyChecker(ContextObject mainContextObject)
 		{
-			if (target == null)
-				throw new ArgumentNullException(nameof(target), "Tried to do consistency check on a null object.");
-
-			StartingContextObject = target as ContextObject;
+			MainContextObject = mainContextObject;
 		}
 
 		private void InitializeEntriesIfRequired()
 		{
-			if (Inconsistencies == null)
+			if (_Inconsistencies == null)
 			{
-				Inconsistencies = New.List<InconsistencyEntry>();
+				_Inconsistencies = New.List<InconsistencyEntry>();
 			}
 		}
 
 		private void Reset()
 		{
-			StartingContextObject = default;
+			MainContextObject = default;
 			CurrentCallerContextObject = default;
 
-			if (Inconsistencies != null)
+			if (_Inconsistencies != null)
 			{
 				Release.List(ref _Inconsistencies);
 			}
@@ -160,7 +157,7 @@ namespace Extenity.ConsistencyToolbox
 
 		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target)
 		{
-			var checker = new ConsistencyChecker(target);
+			var checker = new ConsistencyChecker(target as ContextObject);
 			checker.ProceedTo(target);
 			return checker;
 		}
@@ -183,7 +180,7 @@ namespace Extenity.ConsistencyToolbox
 				checker.LogAll();
 				if (!throwOnlyOnErrors || checker.HasAnyErrors)
 				{
-					var title = GenerateCommonTitleMessageForObject(checker.StartingContextObject, checker.Inconsistencies.Count);
+					var title = GenerateCommonTitleMessageForObject(checker);
 					throw new Exception(title + " See previous logs for details.");
 				}
 			}
@@ -196,6 +193,12 @@ namespace Extenity.ConsistencyToolbox
 
 		public void ProceedTo(IConsistencyChecker nextTarget)
 		{
+			if (nextTarget == null)
+			{
+				AddError("Tried to do consistency check on a null object.");
+				return;
+			}
+
 			var previousContextObject = CurrentCallerContextObject;
 			if (nextTarget is UnityEngine.Object nextTargetAsUnityObject)
 			{
@@ -224,7 +227,7 @@ namespace Extenity.ConsistencyToolbox
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
-				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count);
+				var title = GenerateCommonTitleMessageForObject(this);
 				stringBuilder.Append(title);
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
@@ -242,7 +245,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count);
+				var title = GenerateCommonTitleMessageForObject(this);
 				if (HasAnyErrors)
 				{
 					Log.Error(title);
@@ -252,7 +255,7 @@ namespace Extenity.ConsistencyToolbox
 					Log.Warning(title);
 				}
 
-				foreach (var inconsistency in Inconsistencies)
+				foreach (var inconsistency in _Inconsistencies)
 				{
 					if (inconsistency.IsError)
 					{
@@ -270,9 +273,9 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count));
+				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(this));
 
-				foreach (var inconsistency in Inconsistencies)
+				foreach (var inconsistency in _Inconsistencies)
 				{
 					stringBuilder.Append(inconsistency.IsError ? "Error: " : "Warning: ");
 					stringBuilder.AppendLine(inconsistency.Message);
@@ -280,24 +283,24 @@ namespace Extenity.ConsistencyToolbox
 			}
 		}
 
-		private static string GenerateCommonTitleMessageForObject(ContextObject me, int inconsistencyCount)
+		private static string GenerateCommonTitleMessageForObject(ConsistencyChecker checker)
 		{
 #if UNITY
 			// Try to get Unity Object info.
-			var meAsUnityObject = me as UnityEngine.Object;
+			var meAsUnityObject = checker.MainContextObject as UnityEngine.Object;
 			if (meAsUnityObject != null)
 			{
-				return $"'{meAsUnityObject.FullObjectName()}' has {inconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				return $"'{meAsUnityObject.FullObjectName()}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 			}
 #endif
-			if (me != null)
+			if (checker.MainContextObject != null)
 			{
-				var meType = me.GetType();
-				return $"'{meType.FullName}' has {inconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				var meType = checker.MainContextObject.GetType();
+				return $"'{meType.FullName}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 			}
 			else
 			{
-				return "Tried to do consistency check on a null object.";
+				return $"Detected {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 			}
 		}
 
