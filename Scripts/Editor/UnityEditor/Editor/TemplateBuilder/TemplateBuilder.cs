@@ -6,7 +6,6 @@ using System.Linq;
 using Extenity.ApplicationToolbox;
 using Extenity.CompressionToolbox;
 using Extenity.ConsistencyToolbox;
-using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.UnityProjectTemplateToolbox.TarCs;
 using UnityEditor;
@@ -29,7 +28,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			Log.Warning("Unity Hub Template Builder was abandoned. It should be almost fully functional in its current state, with the exception of generating 'dependencies' field in 'packages.json'. It's abandoned for multiple reasons. Unity expects the packed file to be a TGZ (Tar GZip) which only supports maximum of 100 file name lengths. Also Unity adds default Package Manager content even though the 'dependencies' field in 'package.json' says otherwise. The template package file should be copied every time switching to a new Unity version and there is no mechanism to get the latest version of templates, which makes matters worse. Hopefully Unity will address these issues in future.");
 
 			// Consistency checks
-			config.CheckConsistencyAndThrow($"{nameof(TemplateBuilderConfiguration).SeparateCamelCasedAdjointWords()} contains errors:");
+			ConsistencyChecker.CheckConsistencyAndThrow(config);
 
 			// Save all assets first
 			AssetDatabase.SaveAssets();
@@ -99,7 +98,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		private static void DoBuildProjectTemplateAsZip(TemplateBuilderConfiguration config, bool dryRun, Action onCompleted)
 		{
 			// Consistency checks
-			config.CheckConsistencyAndThrow($"{nameof(TemplateBuilderConfiguration).SeparateCamelCasedAdjointWords()} contains errors:");
+			ConsistencyChecker.CheckConsistencyAndThrow(config);
 
 			// Save all assets first
 			AssetDatabase.SaveAssets();

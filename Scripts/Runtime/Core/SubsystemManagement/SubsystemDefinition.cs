@@ -2,7 +2,6 @@
 #if ExtenitySubsystems
 
 using System;
-using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
@@ -285,7 +284,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors) { }
+		public void CheckConsistency(ConsistencyChecker checker) { }
 
 		#endregion
 
@@ -427,7 +426,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors) { }
+		public void CheckConsistency(ConsistencyChecker checker) { }
 
 		#endregion
 

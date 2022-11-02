@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Extenity.ApplicationToolbox;
 using Extenity.ConsistencyToolbox;
 
@@ -34,17 +33,17 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		//
 		// public ... dependencies;
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ConsistencyChecker checker)
 		{
 			if (string.IsNullOrWhiteSpace(name))
 			{
-				errors.Add(new ConsistencyError(this, $"Name was not specified."));
+				checker.AddError("Name was not specified.");
 			}
 			foreach (var c in name)
 			{
 				if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && (c != '.'))
 				{
-					errors.Add(new ConsistencyError(this, $"Name contains invalid character: '{c}'"));
+					checker.AddError($"Name contains invalid character: '{c}'");
 				}
 			}
 
@@ -54,7 +53,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			}
 			catch
 			{
-				errors.Add(new ConsistencyError(this, $"Failed to parse version '{version}'"));
+				checker.AddError($"Failed to parse version '{version}'");
 			}
 		}
 	}

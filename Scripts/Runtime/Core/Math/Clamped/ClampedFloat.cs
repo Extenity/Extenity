@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
 
 namespace Extenity.MathToolbox
@@ -195,11 +194,11 @@ namespace Extenity.MathToolbox
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ConsistencyChecker checker)
 		{
 			if (IsMinMaxValid)
 			{
-				errors.Add(new ConsistencyError(this, "Clamped value maximum limit is not greater than minimum limit."));
+				checker.AddError("Clamped value maximum limit is not greater than minimum limit.");
 			}
 		}
 

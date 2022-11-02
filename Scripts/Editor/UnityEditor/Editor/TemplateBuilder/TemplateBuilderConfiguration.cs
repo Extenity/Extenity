@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
 using Extenity.DataToolbox;
 using Sirenix.OdinInspector;
@@ -44,9 +43,9 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		// 	TemplateBuilder.BuildProjectTemplateAsZip(this);
 		// }
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ConsistencyChecker checker)
 		{
-			Metadata.CheckConsistency(ref errors);
+			checker.ProceedTo(Metadata);
 		}
 	}
 

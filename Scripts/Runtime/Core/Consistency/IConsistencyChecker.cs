@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
 using ArgumentNullException = System.ArgumentNullException;
@@ -17,113 +18,266 @@ using ContextObject = System.Object;
 namespace Extenity.ConsistencyToolbox
 {
 
-	public struct ConsistencyError
+	public struct ConsistencyEntry
 	{
 		public string Message;
-		public object Target;
-		public bool IsCritical;
+		public ContextObject Target;
+		public bool IsError;
 
-		public ConsistencyError(object target, string message, bool isCritical = true)
+		internal ConsistencyEntry(string message, ContextObject target, bool isError)
 		{
 			Target = target;
 			Message = message;
-			IsCritical = isCritical;
+			IsError = isError;
 		}
 
 		public override string ToString()
 		{
-			return (IsCritical ? "Error: " : "Warning: ") + Message;
+			return (IsError ? "Error: " : "Warning: ") + Message;
 		}
 	}
 
 	public interface IConsistencyChecker
 	{
-		void CheckConsistency(ref List<ConsistencyError> errors);
+		void CheckConsistency(ConsistencyChecker checker);
 	}
 
-	public static class ConsistencyCheckerExtensions
+	public class ConsistencyChecker
 	{
-		public static List<ConsistencyError> CheckConsistency(this IConsistencyChecker me)
-		{
-			if (me == null)
-				throw new ArgumentNullException(nameof(me), "Tried to do consistency check on a null object.");
+		#region Data
 
-			var errors = new List<ConsistencyError>();
-			me.CheckConsistency(ref errors);
-			return errors;
-		}
+		public List<ConsistencyEntry> Consistencies;
+		public ContextObject StartingContextObject;
+		public ContextObject CurrentCallerContextObject;
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, ContextObject context = null)
-		{
-			return CheckConsistencyAndLog(me, SeverityCategory.Error, context);
-		}
+		public bool HasAnyInconsistencies => Consistencies != null && Consistencies.Count > 0;
 
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, SeverityCategory severityCategory, ContextObject context = null)
+		public bool HasAnyErrors
 		{
-            var titleMessage = GenerateCommonTitleMessageForObject(me);
-			return CheckConsistencyAndLog(me, titleMessage, severityCategory, context);
-		}
-
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, ContextObject context = null)
-		{
-			return CheckConsistencyAndLog(me, titleMessage, SeverityCategory.Error, context);
-		}
-
-		public static List<ConsistencyError> CheckConsistencyAndLog(this IConsistencyChecker me, string titleMessage, SeverityCategory severityCategory, ContextObject context = null)
-		{
-			var errors = me.CheckConsistency();
-			if (errors.Count > 0)
+			get
 			{
-				string message = "";
-				if (!string.IsNullOrEmpty(titleMessage))
-					message = titleMessage + "\n";
-				message += errors.Serialize('\n');
-
-				Log.Severe(message, severityCategory, context);
-			}
-			return errors;
-		}
-
-		public static void CheckConsistencyAndThrow(this IConsistencyChecker me)
-        {
-            var titleMessage = GenerateCommonTitleMessageForObject(me);
-			CheckConsistencyAndThrow(me, titleMessage);
-		}
-
-		public static void CheckConsistencyAndThrow(this IConsistencyChecker me, string titleMessage)
-		{
-			var errors = me.CheckConsistency();
-			if (errors.Count > 0)
-			{
-				string message = "";
-				if (!string.IsNullOrEmpty(titleMessage))
-					message = titleMessage + "\n";
-				message += errors.Serialize('\n');
-
-				throw new Exception(message);
+				if (Consistencies != null)
+				{
+					foreach (var consistency in Consistencies)
+					{
+						if (consistency.IsError)
+						{
+							return true;
+						}
+					}
+				}
+				return false;
 			}
 		}
 
-        private static string GenerateCommonTitleMessageForObject(IConsistencyChecker me)
-        {
+		public bool HasAnyWarning
+		{
+			get
+			{
+				if (Consistencies != null)
+				{
+					foreach (var consistency in Consistencies)
+					{
+						if (!consistency.IsError)
+						{
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+
+		#endregion
+
+		#region Initialization / Deinitialization
+
+		private void InitializeEntriesIfRequired()
+		{
+			if (Consistencies == null)
+			{
+				Consistencies = New.List<ConsistencyEntry>();
+			}
+		}
+
+		private void Reset()
+		{
+			StartingContextObject = default;
+			CurrentCallerContextObject = default;
+
+			if (Consistencies != null)
+			{
+				Release.List(ref Consistencies);
+			}
+		}
+
+		#endregion
+
+		#region Add Consistency Entry
+
+		public void AddError(string message, ContextObject context)
+		{
+			InitializeEntriesIfRequired();
+			Consistencies.Add(new ConsistencyEntry(message, context, isError: true));
+		}
+
+		public void AddError(string message)
+		{
+			InitializeEntriesIfRequired();
+			Consistencies.Add(new ConsistencyEntry(message, CurrentCallerContextObject, isError: true));
+		}
+
+		public void AddWarning(string message, ContextObject context)
+		{
+			InitializeEntriesIfRequired();
+			Consistencies.Add(new ConsistencyEntry(message, context, isError: false));
+		}
+
+		public void AddWarning(string message)
+		{
+			InitializeEntriesIfRequired();
+			Consistencies.Add(new ConsistencyEntry(message, CurrentCallerContextObject, isError: false));
+		}
+
+		#endregion
+
+		#region Check Consistency
+
+		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target)
+		{
+			var checker = new ConsistencyChecker();
+
+			if (target == null)
+				throw new ArgumentNullException(nameof(target), "Tried to do consistency check on a null object.");
+
+			checker.StartingContextObject = checker.CurrentCallerContextObject = target as ContextObject;
+			target.CheckConsistency(checker);
+
+			return checker;
+		}
+
+		public static ConsistencyChecker CheckConsistencyAndLog(IConsistencyChecker target)
+		{
+			var checker = CheckConsistency(target);
+			if (checker.HasAnyInconsistencies)
+			{
+				checker.LogAll();
+			}
+			return checker;
+		}
+
+		public static ConsistencyChecker CheckConsistencyAndThrow(IConsistencyChecker target, bool throwOnlyOnErrors = false)
+		{
+			var checker = CheckConsistency(target);
+			if (checker.HasAnyInconsistencies)
+			{
+				checker.LogAll();
+				if (!throwOnlyOnErrors || checker.HasAnyErrors)
+				{
+					var title = GenerateCommonTitleMessageForObject(checker.StartingContextObject, checker.Consistencies.Count);
+					throw new Exception(title + " See previous logs for details.");
+				}
+			}
+			return checker;
+		}
+
+		#endregion
+
+		#region Proceed To
+
+		public void ProceedTo(IConsistencyChecker nextTarget, ContextObject newContextObject = default)
+		{
+			CurrentCallerContextObject = newContextObject;
+			nextTarget.CheckConsistency(this);
+		}
+
+		#endregion
+
+		#region Log
+
+		public void LogAllInOnce()
+		{
+			if (HasAnyInconsistencies)
+			{
+				var stringBuilder = new StringBuilder();
+				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count);
+				stringBuilder.Append(title);
+				WriteFullLogTo(stringBuilder);
+				if (HasAnyErrors)
+				{
+					Log.Error(stringBuilder.ToString());
+				}
+				else
+				{
+					Log.Warning(stringBuilder.ToString());
+				}
+			}
+		}
+
+		public void LogAll()
+		{
+			if (HasAnyInconsistencies)
+			{
+				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count);
+				if (HasAnyErrors)
+				{
+					Log.Error(title);
+				}
+				else
+				{
+					Log.Warning(title);
+				}
+
+				foreach (var consistency in Consistencies)
+				{
+					if (consistency.IsError)
+					{
+						Log.Error(consistency.Message);
+					}
+					else
+					{
+						Log.Warning(consistency.Message);
+					}
+				}
+			}
+		}
+
+		public void WriteFullLogTo(StringBuilder stringBuilder)
+		{
+			if (HasAnyInconsistencies)
+			{
+				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count));
+
+				foreach (var consistency in Consistencies)
+				{
+					stringBuilder.Append(consistency.IsError ? "Error: " : "Warning: ");
+					stringBuilder.AppendLine(consistency.Message);
+				}
+			}
+		}
+
+		private static string GenerateCommonTitleMessageForObject(ContextObject me, int inconsistencyCount)
+		{
 #if UNITY
-            // Try to get Unity Object info.
+			// Try to get Unity Object info.
 			var meAsUnityObject = me as UnityEngine.Object;
-            if (meAsUnityObject != null)
-            {
-                return $"'{meAsUnityObject.FullObjectName()}' has some inconsistencies.";
-            }
+			if (meAsUnityObject != null)
+			{
+				return $"'{meAsUnityObject.FullObjectName()}' has {inconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+			}
 #endif
-	        if (me != null)
-	        {
-		        var meType = me.GetType();
-		        return $"'{meType.FullName}' has some inconsistencies.";
-	        }
-	        else
-	        {
-		        return "Tried to do consistency check on a null object.";
-	        }
+			if (me != null)
+			{
+				var meType = me.GetType();
+				return $"'{meType.FullName}' has {inconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+			}
+			else
+			{
+				return "Tried to do consistency check on a null object.";
+			}
 		}
+
+		#endregion
 	}
 
 }

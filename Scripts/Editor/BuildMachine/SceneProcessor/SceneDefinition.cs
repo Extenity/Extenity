@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Extenity.ConsistencyToolbox;
 
 namespace Extenity.BuildMachine.Editor
@@ -23,11 +22,11 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Consistency
 
-		public void CheckConsistency(ref List<ConsistencyError> errors)
+		public void CheckConsistency(ConsistencyChecker checker)
 		{
 			if (string.IsNullOrEmpty(MainScenePath))
 			{
-				errors.Add(new ConsistencyError(this, "Main scene path was not specified.", true));
+				checker.AddError("Main scene path was not specified.");
 			}
 		}
 
