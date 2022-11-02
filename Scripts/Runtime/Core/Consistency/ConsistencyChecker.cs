@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
@@ -42,7 +43,7 @@ namespace Extenity.ConsistencyToolbox
 		void CheckConsistency(ConsistencyChecker checker);
 	}
 
-	public class ConsistencyChecker
+	public class ConsistencyChecker : IDisposable
 	{
 		#region Data
 
@@ -110,6 +111,11 @@ namespace Extenity.ConsistencyToolbox
 			{
 				Release.List(ref _Inconsistencies);
 			}
+		}
+
+		public void Dispose()
+		{
+			Reset();
 		}
 
 		#endregion
