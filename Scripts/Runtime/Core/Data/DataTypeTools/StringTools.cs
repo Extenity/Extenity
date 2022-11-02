@@ -548,13 +548,13 @@ namespace Extenity.DataToolbox
 			return true;
 		}
 
-		public interface IReplaceTagProcessor
+		public interface ITagProcessor
 		{
 			void AppendText(ReadOnlySpan<char> partOfText);
 			void AppendTag(ReadOnlySpan<char> tag);
 		}
 
-		public enum ReplaceTagResult
+		public enum TagProcessResult
 		{
 			Succeeded = 1,
 			NoTagsFound = 2,
@@ -562,23 +562,29 @@ namespace Extenity.DataToolbox
 			MismatchingTagBraces = 4,
 		}
 
-		public static ReplaceTagResult ReplaceTags(this string text, char tagStartCharacter, char tagEndCharacter, IReplaceTagProcessor processor)
+		[Obsolete("Use ProcessTags instead.")]
+		public static TagProcessResult ReplaceTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
+		{
+			return ProcessTags(text, tagStartCharacter, tagEndCharacter, processor);
+		}
+
+		public static TagProcessResult ProcessTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
 		{
 			if (string.IsNullOrEmpty(text))
 			{
-				return ReplaceTagResult.EmptyInputText;
+				return TagProcessResult.EmptyInputText;
 			}
 
 			// Check for mismatching start and end tags.
 			if (!text.CountTags(tagStartCharacter, tagEndCharacter, out int tagCount))
 			{
-				return ReplaceTagResult.MismatchingTagBraces;
+				return TagProcessResult.MismatchingTagBraces;
 			}
 
 			if (tagCount == 0)
 			{
 				processor.AppendText(text.AsSpan());
-				return ReplaceTagResult.NoTagsFound;
+				return TagProcessResult.NoTagsFound;
 			}
 
 			int indexAfterTheEndTag = 0;
@@ -599,7 +605,7 @@ namespace Extenity.DataToolbox
 
 			// Append the text to the right of the tag
 			processor.AppendText(text.AsSpan(indexAfterTheEndTag, text.Length - indexAfterTheEndTag));
-			return ReplaceTagResult.Succeeded;
+			return TagProcessResult.Succeeded;
 		}
 
 		#endregion
