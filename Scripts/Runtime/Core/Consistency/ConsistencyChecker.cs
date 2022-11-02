@@ -192,10 +192,15 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Proceed To
 
-		public void ProceedTo(IConsistencyChecker nextTarget, ContextObject newContextObject = default)
+		public void ProceedTo(IConsistencyChecker nextTarget)
 		{
-			CurrentCallerContextObject = newContextObject;
+			var previousContextObject = CurrentCallerContextObject;
+			if (nextTarget is UnityEngine.Object nextTargetAsUnityObject)
+			{
+				CurrentCallerContextObject = nextTargetAsUnityObject;
+			}
 			nextTarget.CheckConsistency(this);
+			CurrentCallerContextObject = previousContextObject;
 		}
 
 		#endregion
