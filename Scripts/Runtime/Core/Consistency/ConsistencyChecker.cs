@@ -1,8 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
+using IDisposable = System.IDisposable;
+using Type = System.Type;
 
 // This is the way that Log system supports various Context types in different environments like
 // both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
