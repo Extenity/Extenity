@@ -1956,8 +1956,8 @@ namespace Extenity.DataToolbox
 		#region Singular/Plural
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static string ToStringWithPluralWord(this int value, string singularWord, string pluralOrZeroWord) { return ToStringWithPluralWord((long)value, singularWord, pluralOrZeroWord); }
-		public static string ToStringWithPluralWord(this long value, string singularWord, string pluralOrZeroWord)
+		public static string ToStringWithEnglishPluralWord(this int value, string singularWord, string pluralOrZeroWord) { return ToStringWithEnglishPluralWord((long)value, singularWord, pluralOrZeroWord); }
+		public static string ToStringWithEnglishPluralWord(this long value, string singularWord, string pluralOrZeroWord)
 		{
 			return value.ToString() + " " + (value == 1 ? singularWord : pluralOrZeroWord);
 		}
