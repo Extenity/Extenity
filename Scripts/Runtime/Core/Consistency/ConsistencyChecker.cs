@@ -18,13 +18,13 @@ using ContextObject = System.Object;
 namespace Extenity.ConsistencyToolbox
 {
 
-	public struct ConsistencyEntry
+	public struct InconsistencyEntry
 	{
 		public string Message;
 		public ContextObject Target;
 		public bool IsError;
 
-		internal ConsistencyEntry(string message, ContextObject target, bool isError)
+		internal InconsistencyEntry(string message, ContextObject target, bool isError)
 		{
 			Target = target;
 			Message = message;
@@ -46,21 +46,21 @@ namespace Extenity.ConsistencyToolbox
 	{
 		#region Data
 
-		public List<ConsistencyEntry> Consistencies;
+		public List<InconsistencyEntry> Inconsistencies;
 		public ContextObject StartingContextObject;
 		public ContextObject CurrentCallerContextObject;
 
-		public bool HasAnyInconsistencies => Consistencies != null && Consistencies.Count > 0;
+		public bool HasAnyInconsistencies => Inconsistencies != null && Inconsistencies.Count > 0;
 
 		public bool HasAnyErrors
 		{
 			get
 			{
-				if (Consistencies != null)
+				if (Inconsistencies != null)
 				{
-					foreach (var consistency in Consistencies)
+					foreach (var inconsistency in Inconsistencies)
 					{
-						if (consistency.IsError)
+						if (inconsistency.IsError)
 						{
 							return true;
 						}
@@ -74,11 +74,11 @@ namespace Extenity.ConsistencyToolbox
 		{
 			get
 			{
-				if (Consistencies != null)
+				if (Inconsistencies != null)
 				{
-					foreach (var consistency in Consistencies)
+					foreach (var inconsistency in Inconsistencies)
 					{
-						if (!consistency.IsError)
+						if (!inconsistency.IsError)
 						{
 							return true;
 						}
@@ -94,9 +94,9 @@ namespace Extenity.ConsistencyToolbox
 
 		private void InitializeEntriesIfRequired()
 		{
-			if (Consistencies == null)
+			if (Inconsistencies == null)
 			{
-				Consistencies = New.List<ConsistencyEntry>();
+				Inconsistencies = New.List<InconsistencyEntry>();
 			}
 		}
 
@@ -105,9 +105,9 @@ namespace Extenity.ConsistencyToolbox
 			StartingContextObject = default;
 			CurrentCallerContextObject = default;
 
-			if (Consistencies != null)
+			if (Inconsistencies != null)
 			{
-				Release.List(ref Consistencies);
+				Release.List(ref Inconsistencies);
 			}
 		}
 
@@ -118,25 +118,25 @@ namespace Extenity.ConsistencyToolbox
 		public void AddError(string message, ContextObject context)
 		{
 			InitializeEntriesIfRequired();
-			Consistencies.Add(new ConsistencyEntry(message, context, isError: true));
+			Inconsistencies.Add(new InconsistencyEntry(message, context, isError: true));
 		}
 
 		public void AddError(string message)
 		{
 			InitializeEntriesIfRequired();
-			Consistencies.Add(new ConsistencyEntry(message, CurrentCallerContextObject, isError: true));
+			Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
 		}
 
 		public void AddWarning(string message, ContextObject context)
 		{
 			InitializeEntriesIfRequired();
-			Consistencies.Add(new ConsistencyEntry(message, context, isError: false));
+			Inconsistencies.Add(new InconsistencyEntry(message, context, isError: false));
 		}
 
 		public void AddWarning(string message)
 		{
 			InitializeEntriesIfRequired();
-			Consistencies.Add(new ConsistencyEntry(message, CurrentCallerContextObject, isError: false));
+			Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: false));
 		}
 
 		#endregion
@@ -174,7 +174,7 @@ namespace Extenity.ConsistencyToolbox
 				checker.LogAll();
 				if (!throwOnlyOnErrors || checker.HasAnyErrors)
 				{
-					var title = GenerateCommonTitleMessageForObject(checker.StartingContextObject, checker.Consistencies.Count);
+					var title = GenerateCommonTitleMessageForObject(checker.StartingContextObject, checker.Inconsistencies.Count);
 					throw new Exception(title + " See previous logs for details.");
 				}
 			}
@@ -200,7 +200,7 @@ namespace Extenity.ConsistencyToolbox
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
-				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count);
+				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count);
 				stringBuilder.Append(title);
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
@@ -218,7 +218,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count);
+				var title = GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count);
 				if (HasAnyErrors)
 				{
 					Log.Error(title);
@@ -228,15 +228,15 @@ namespace Extenity.ConsistencyToolbox
 					Log.Warning(title);
 				}
 
-				foreach (var consistency in Consistencies)
+				foreach (var inconsistency in Inconsistencies)
 				{
-					if (consistency.IsError)
+					if (inconsistency.IsError)
 					{
-						Log.Error(consistency.Message);
+						Log.Error(inconsistency.Message);
 					}
 					else
 					{
-						Log.Warning(consistency.Message);
+						Log.Warning(inconsistency.Message);
 					}
 				}
 			}
@@ -246,12 +246,12 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(StartingContextObject, Consistencies.Count));
+				stringBuilder.AppendLine(GenerateCommonTitleMessageForObject(StartingContextObject, Inconsistencies.Count));
 
-				foreach (var consistency in Consistencies)
+				foreach (var inconsistency in Inconsistencies)
 				{
-					stringBuilder.Append(consistency.IsError ? "Error: " : "Warning: ");
-					stringBuilder.AppendLine(consistency.Message);
+					stringBuilder.Append(inconsistency.IsError ? "Error: " : "Warning: ");
+					stringBuilder.AppendLine(inconsistency.Message);
 				}
 			}
 		}
