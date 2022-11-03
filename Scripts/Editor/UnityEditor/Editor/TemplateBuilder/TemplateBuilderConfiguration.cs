@@ -45,7 +45,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 
 		public void CheckConsistency(ConsistencyChecker checker)
 		{
-			checker.ProceedTo(Metadata);
+			checker.ProceedTo(nameof(Metadata), Metadata);
 		}
 	}
 

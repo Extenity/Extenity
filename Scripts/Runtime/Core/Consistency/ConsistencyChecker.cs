@@ -75,6 +75,7 @@ namespace Extenity.ConsistencyToolbox
 		public IReadOnlyList<InconsistencyEntry> Inconsistencies => _Inconsistencies;
 		public ConsistencyContextObject MainContextObject;
 		public ConsistencyContextObject CurrentCallerContextObject;
+		public string CurrentPath;
 
 		public int InconsistencyCount => _Inconsistencies != null ? _Inconsistencies.Count : 0;
 		public bool HasAnyInconsistencies => _Inconsistencies != null && _Inconsistencies.Count > 0;
@@ -154,25 +155,25 @@ namespace Extenity.ConsistencyToolbox
 		public void AddError(string message, ConsistencyContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: true));
+			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: true));
 		}
 
 		public void AddError(string message)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: true));
+			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: true));
 		}
 
 		public void AddWarning(string message, ConsistencyContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, overrideContext, isError: false));
+			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: false));
 		}
 
 		public void AddWarning(string message)
 		{
 			InitializeEntriesIfRequired();
-			_Inconsistencies.Add(new InconsistencyEntry(message, CurrentCallerContextObject, isError: false));
+			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: false));
 		}
 
 		#endregion
@@ -181,8 +182,8 @@ namespace Extenity.ConsistencyToolbox
 
 		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
-			var checker = new ConsistencyChecker(target as ConsistencyContextObject, thresholdDurationToConsiderLogging);
-			checker.ProceedTo(target);
+			var checker = new ConsistencyChecker(target, thresholdDurationToConsiderLogging);
+			checker.ProceedTo(checker.GetContextObjectLogName(target), target);
 			return checker;
 		}
 
@@ -204,7 +205,12 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Proceed To
 
-		public void ProceedTo(IConsistencyChecker nextTarget, bool setNextTargetAsContextObject = true)
+		public void ProceedToArrayItem(string arrayFieldName, int arrayIndex, IConsistencyChecker nextTarget, bool setNextTargetAsContextObject = true)
+		{
+			ProceedTo(arrayFieldName + "[" + arrayIndex + "]", nextTarget, setNextTargetAsContextObject);
+		}
+
+		public void ProceedTo(string fieldName, IConsistencyChecker nextTarget, bool setNextTargetAsContextObject = true)
 		{
 			if (nextTarget == null)
 			{
@@ -212,7 +218,12 @@ namespace Extenity.ConsistencyToolbox
 				return;
 			}
 
+			var previousPath = CurrentPath;
 			var previousContextObject = CurrentCallerContextObject;
+
+			CurrentPath += string.IsNullOrEmpty(CurrentPath)
+				? fieldName
+				: "." + fieldName;
 			if (setNextTargetAsContextObject)
 			{
 #if UNITY
@@ -247,6 +258,7 @@ namespace Extenity.ConsistencyToolbox
 				var duration = PrecisionTiming.PreciseTime - startTime;
 				RegisterProfiling(nextTarget.GetType(), duration);
 #endif
+				CurrentPath = previousPath;
 				CurrentCallerContextObject = previousContextObject;
 			}
 		}
@@ -343,6 +355,10 @@ namespace Extenity.ConsistencyToolbox
 			return $"'{checker.GetContextObjectLogName(context)}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 		}
 
+		#endregion
+
+		#region Log Tools
+
 		public string GetContextObjectLogName(ConsistencyContextObject context)
 		{
 #if UNITY
@@ -359,6 +375,11 @@ namespace Extenity.ConsistencyToolbox
 				return meType.FullName;
 			}
 			return "[Null]";
+		}
+
+		private string AppendPathToMessage(string message)
+		{
+			return message + '\n' + CurrentPath;
 		}
 
 		#endregion
@@ -431,7 +452,7 @@ namespace Extenity.ConsistencyToolbox
 
 #if _DetailedProfilingEnabled
 				stringBuilder.AppendLine(" Details:");
-				
+
 				var results = ProfilingTimes.OrderByDescending(item => item.Value).Select(item => (Duration: item.Value, Type: item.Key)).ToList();
 
 				foreach (var result in results)

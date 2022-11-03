@@ -238,9 +238,9 @@ namespace Extenity.UnityEditorToolbox
 				if (InstructionDefinitions.Duplicates(Instruction.DuplicateNameChecker.Instance).Any())
 					checker.AddError($"There are duplicate {nameof(Instruction)} names.");
 
-				foreach (var instruction in InstructionDefinitions)
+				for (var i = 0; i < InstructionDefinitions.Length; i++)
 				{
-					checker.ProceedTo(instruction);
+					checker.ProceedToArrayItem(nameof(InstructionDefinitions), i, InstructionDefinitions[i]);
 				}
 			}
 			if (Jobs != null)
@@ -248,12 +248,14 @@ namespace Extenity.UnityEditorToolbox
 				if (Jobs.Duplicates(Job.DuplicateNameChecker.Instance).Any())
 					checker.AddError($"There are duplicate {nameof(Job)} names.");
 
-				foreach (var job in Jobs)
+				for (var i = 0; i < Jobs.Length; i++)
 				{
-					checker.ProceedTo(job);
+					var job = Jobs[i];
+
+					checker.ProceedToArrayItem(nameof(Jobs), i, job);
 
 					if (!string.IsNullOrEmpty(job.AppliedInstructionName) &&
-						GetInstruction(job.AppliedInstructionName) == null)
+					    GetInstruction(job.AppliedInstructionName) == null)
 					{
 						checker.AddError($"Job '{job.Name}' points to an unknown {nameof(Instruction)} named '{job.AppliedInstructionName}'.");
 					}
