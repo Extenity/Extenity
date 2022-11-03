@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Extenity.DataToolbox;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using Exception = System.Exception;
 using IDisposable = System.IDisposable;
 using Type = System.Type;
@@ -63,8 +64,9 @@ namespace Extenity.ConsistencyToolbox
 
 	public enum ThrowRule
 	{
-		OnlyOnErrors = 1,
-		OnErrorsAndWarnings = 2,
+		NoThrow = 1,
+		OnlyOnErrors = 2,
+		OnErrorsAndWarnings = 3,
 	}
 
 	public class ConsistencyChecker : IDisposable
@@ -124,6 +126,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			MainContextObject = mainContextObject;
 			LogTitleWriterCallback = GenerateCommonTitleMessageForMainContextObject;
+			IsInstantLoggingEnabled = true;
 			InitializeProfiling(thresholdDurationToConsiderLogging);
 		}
 
@@ -156,24 +159,40 @@ namespace Extenity.ConsistencyToolbox
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: true));
+			if (IsInstantLoggingEnabled)
+			{
+				Log.Error(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+			}
 		}
 
 		public void AddError(string message)
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: true));
+			if (IsInstantLoggingEnabled)
+			{
+				Log.Error(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+			}
 		}
 
 		public void AddWarning(string message, ConsistencyContextObject overrideContext)
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: false));
+			if (IsInstantLoggingEnabled)
+			{
+				Log.Warning(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+			}
 		}
 
 		public void AddWarning(string message)
 		{
 			InitializeEntriesIfRequired();
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: false));
+			if (IsInstantLoggingEnabled)
+			{
+				Log.Warning(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+			}
 		}
 
 		#endregion
@@ -183,22 +202,41 @@ namespace Extenity.ConsistencyToolbox
 		public static ConsistencyChecker CheckConsistency(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
 			var checker = new ConsistencyChecker(target, thresholdDurationToConsiderLogging);
+			checker.IsInstantLoggingEnabled = false;
 			checker.ProceedTo(checker.GetContextObjectLogName(target), target);
+			checker.Finalize(false, true, ThrowRule.NoThrow);
 			return checker;
 		}
 
 		public static ConsistencyChecker CheckConsistencyAndLog(IConsistencyChecker target, float thresholdDurationToConsiderLogging)
 		{
-			var checker = CheckConsistency(target, thresholdDurationToConsiderLogging);
-			checker.LogAll();
+			var checker = new ConsistencyChecker(target, thresholdDurationToConsiderLogging);
+			// checker.IsInstantLoggingEnabled = true; Already set in constructor.
+			checker.ProceedTo(checker.GetContextObjectLogName(target), target);
+			checker.Finalize(true, true, ThrowRule.NoThrow);
 			return checker;
 		}
 
 		public static ConsistencyChecker CheckConsistencyAndThrow(IConsistencyChecker target, float thresholdDurationToConsiderLogging, ThrowRule throwRule)
 		{
-			var checker = CheckConsistency(target, thresholdDurationToConsiderLogging);
-			checker.LogAllAndThrow(throwRule);
+			var checker = new ConsistencyChecker(target, thresholdDurationToConsiderLogging);
+			// checker.IsInstantLoggingEnabled = true; Already set in constructor.
+			checker.ProceedTo(checker.GetContextObjectLogName(target), target);
+			checker.Finalize(true, true, throwRule);
 			return checker;
+		}
+
+		public void Finalize(bool logTitle, bool logProfilingInfoIfExceedsThreshold, ThrowRule throwRule)
+		{
+			if (logTitle)
+			{
+				LogTitle();
+			}
+			if (logProfilingInfoIfExceedsThreshold)
+			{
+				LogProfilingInfoIfExceedsThreshold();
+			}
+			Throw(throwRule);
 		}
 
 		#endregion
@@ -267,9 +305,10 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Log
 
+		public bool IsInstantLoggingEnabled;
+
 		public void LogAllInOnce()
 		{
-			LogProfilingInfoIfExceedsThreshold();
 			if (HasAnyInconsistencies)
 			{
 				var stringBuilder = new StringBuilder();
@@ -287,7 +326,15 @@ namespace Extenity.ConsistencyToolbox
 
 		public void LogAll()
 		{
-			LogProfilingInfoIfExceedsThreshold();
+			if (HasAnyInconsistencies)
+			{
+				LogInconsistencies();
+				LogTitle();
+			}
+		}
+
+		public void LogTitle()
+		{
 			if (HasAnyInconsistencies)
 			{
 				var title = LogTitleWriterCallback(this);
@@ -299,7 +346,13 @@ namespace Extenity.ConsistencyToolbox
 				{
 					Log.Warning(title, MainContextObject as ContextObject);
 				}
+			}
+		}
 
+		public void LogInconsistencies()
+		{
+			if (HasAnyInconsistencies)
+			{
 				foreach (var inconsistency in _Inconsistencies)
 				{
 					if (inconsistency.IsError)
@@ -316,15 +369,38 @@ namespace Extenity.ConsistencyToolbox
 
 		public void LogAllAndThrow(ThrowRule throwRule)
 		{
-			LogProfilingInfoIfExceedsThreshold();
 			if (HasAnyInconsistencies)
 			{
 				LogAll();
-				if (throwRule != ThrowRule.OnlyOnErrors || HasAnyErrors)
+				Throw(throwRule);
+			}
+		}
+
+		public void Throw(ThrowRule throwRule)
+		{
+			if (HasAnyInconsistencies)
+			{
+				switch (throwRule)
 				{
-					var title = LogTitleWriterCallback(this);
-					throw new Exception(title + " See previous logs for details.");
+					case ThrowRule.NoThrow:
+						return;
+
+					case ThrowRule.OnlyOnErrors:
+						if (!HasAnyErrors)
+						{
+							return;
+						}
+						break; // Proceed to throw;
+
+					case ThrowRule.OnErrorsAndWarnings:
+						break; // Proceed to throw;
+
+					default:
+						throw new ArgumentOutOfRangeException(nameof(throwRule), throwRule, null);
 				}
+
+				var title = LogTitleWriterCallback(this);
+				throw new Exception(title + " See previous logs for details.");
 			}
 		}
 
@@ -332,12 +408,12 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				stringBuilder.AppendLine(LogTitleWriterCallback(this));
-
 				foreach (var inconsistency in _Inconsistencies)
 				{
 					stringBuilder.AppendLine(inconsistency.ToString());
 				}
+
+				stringBuilder.AppendLine(LogTitleWriterCallback(this));
 			}
 		}
 
