@@ -192,7 +192,7 @@ namespace Extenity.ReflectionToolbox
 
 		public static void GetMethodAsAction<TInstance>(this Type type, string methodName, out InstanceAction<TInstance> result)
 		{
-			var method = InternalGetMethodInfo(type, methodName, Type.EmptyTypes);
+			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = instance =>
 			{
 				method.Invoke(instance, Array.Empty<object>());
@@ -367,7 +367,7 @@ namespace Extenity.ReflectionToolbox
 
 		public static void GetMethodAsFunc<TInstance, TResult>(this Type type, string methodName, out InstanceFunc<TInstance, TResult> result)
 		{
-			var method = InternalGetMethodInfo(type, methodName, Type.EmptyTypes);
+			var method = InternalGetMethodInfo(type, methodName, new Type[0]);
 			result = (instance) =>
 			{
 				var ret = method.Invoke(instance, Array.Empty<object>());
