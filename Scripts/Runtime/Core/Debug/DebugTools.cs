@@ -1,5 +1,6 @@
 #if UNITY
 
+using System.Diagnostics;
 using System.Reflection;
 using Extenity.ReflectionToolbox;
 
@@ -10,6 +11,7 @@ namespace Extenity.DebugToolbox
 	{
 		#region Sticky Logs
 
+		[DebuggerHidden]
 		public static void LogSticky(int identifier,
 		                             UnityEngine.LogType logType,
 		                             UnityEngine.LogOption logOptions,
@@ -20,6 +22,7 @@ namespace Extenity.DebugToolbox
 			_LogSticky(identifier, logType, logOptions, message, context);
 		}
 
+		[DebuggerHidden]
 		public static void RemoveLogEntriesByIdentifier(int identifier)
 		{
 			InitializeStickyLogsIfRequired();
