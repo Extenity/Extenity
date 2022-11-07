@@ -1064,7 +1064,6 @@ namespace Extenity.ReflectionToolbox
 		private static Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6                  > MethodGenerationHelper_Static_Parameters6        <       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6                  >(MethodInfo method) { return (Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6                  >)Delegate.CreateDelegate(typeof(Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6                  >), method); }
 		private static Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7         > MethodGenerationHelper_Static_Parameters7        <       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7         >(MethodInfo method) { return (Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7         >)Delegate.CreateDelegate(typeof(Action<       TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7         >), method); }
 		// @formatter:on
-		}
 
 		#endregion
 
