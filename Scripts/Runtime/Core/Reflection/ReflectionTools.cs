@@ -128,33 +128,31 @@ namespace Extenity.ReflectionToolbox
 
 		#region GetField
 
-		private static FieldInfo InternalGetFieldInfo(Type type, string fieldName)
+		public static void GetFieldAsFunc<TInstance, TResult>(this Type type, string fieldName, out InstanceFunc<TInstance, TResult> result)
 		{
-			var field = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-			if (field == null)
+			var cachedFieldInfo = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			if (cachedFieldInfo == null)
 			{
 				throw new Exception($"Type '{type}' does not have the field '{fieldName}'.");
 			}
-			return field;
-		}
-
-		public static void GetFieldAsFunc<TInstance, TResult>(this Type type, string fieldName, out InstanceFunc<TInstance, TResult> result)
-		{
-			var field = InternalGetFieldInfo(type, fieldName);
 			result = (instance) =>
 			{
-				var ret = field.GetValue(instance);
-				return (TResult)ret;
+				var returnValue = cachedFieldInfo.GetValue(instance);
+				return (TResult)returnValue;
 			};
 		}
 
 		public static void GetStaticFieldAsFunc<TResult>(this Type type, string fieldName, out Func<TResult> result)
 		{
-			var field = InternalGetFieldInfo(type, fieldName);
+			var cachedFieldInfo = type.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+			if (cachedFieldInfo == null)
+			{
+				throw new Exception($"Type '{type}' does not have the field '{fieldName}'.");
+			}
 			result = () =>
 			{
-				var ret = field.GetValue(null);
-				return (TResult)ret;
+				var returnValue = cachedFieldInfo.GetValue(null);
+				return (TResult)returnValue;
 			};
 		}
 
