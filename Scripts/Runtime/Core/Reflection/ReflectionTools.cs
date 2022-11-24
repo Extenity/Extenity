@@ -162,26 +162,26 @@ namespace Extenity.ReflectionToolbox
 
 		#region GetMethod
 
-		private static MethodInfo InternalGetMethodInfo(Type type, string methodName, Type[] types)
+		private static MethodInfo InternalGetMethodInfo(Type type, string methodName, Type[] methodArgumentTypes)
 		{
 			var method = type.GetMethod(methodName,
 			                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-			                            null, CallingConventions.Any, types, null);
+			                            null, CallingConventions.Any, methodArgumentTypes, null);
 			if (method == null)
 			{
-				throw new Exception($"Type '{type}' does not have the method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
+				throw new Exception($"Type '{type}' does not have the method '{methodName}' with arguments '{string.Join(", ", methodArgumentTypes.Select(item => item.Name).ToArray())}'.");
 			}
 			return method;
 		}
 
-		private static MethodInfo InternalGetStaticMethodInfo(Type type, string methodName, Type[] types)
+		private static MethodInfo InternalGetStaticMethodInfo(Type type, string methodName, Type[] methodArgumentTypes)
 		{
 			var method = type.GetMethod(methodName,
 			                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
-			                            null, CallingConventions.Any, types, null);
+			                            null, CallingConventions.Any, methodArgumentTypes, null);
 			if (method == null)
 			{
-				throw new Exception($"Type '{type}' does not have the static method '{methodName}' with arguments '{string.Join(", ", types.Select(item => item.Name).ToArray())}'.");
+				throw new Exception($"Type '{type}' does not have the static method '{methodName}' with arguments '{string.Join(", ", methodArgumentTypes.Select(item => item.Name).ToArray())}'.");
 			}
 			return method;
 		}
