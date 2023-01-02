@@ -125,7 +125,6 @@ namespace Extenity.ConsistencyToolbox
 		public ConsistencyChecker(ConsistencyContextObject mainContextObject, float thresholdDurationToConsiderLogging)
 		{
 			MainContextObject = mainContextObject;
-			LogTitleWriterCallback = GenerateCommonTitleMessageForMainContextObject;
 			IsInstantLoggingEnabled = true;
 			InitializeProfiling(thresholdDurationToConsiderLogging);
 		}
@@ -337,7 +336,7 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				var title = LogTitleWriterCallback(this);
+				var title = BuildTitleMessage(this);
 				if (HasAnyErrors)
 				{
 					Log.Error(title, MainContextObject as ContextObject);
@@ -399,7 +398,7 @@ namespace Extenity.ConsistencyToolbox
 						throw new ArgumentOutOfRangeException(nameof(throwRule), throwRule, null);
 				}
 
-				var title = LogTitleWriterCallback(this);
+				var title = BuildTitleMessage(this);
 				throw new Exception(title + " See previous logs for details.");
 			}
 		}
@@ -413,22 +412,22 @@ namespace Extenity.ConsistencyToolbox
 					stringBuilder.AppendLine(inconsistency.ToString());
 				}
 
-				stringBuilder.AppendLine(LogTitleWriterCallback(this));
+				stringBuilder.AppendLine(BuildTitleMessage(this));
 			}
 		}
 
 		#endregion
 
-		#region Log Title / Custom log title writer callback
+		#region Log Title
 
-		public delegate string TitleWriterMethod(ConsistencyChecker checker);
-
-		public TitleWriterMethod LogTitleWriterCallback;
-
-		private static string GenerateCommonTitleMessageForMainContextObject(ConsistencyChecker checker)
+		public string OverriddenTitleName;
+		
+		private string BuildTitleMessage(ConsistencyChecker checker)
 		{
-			var context = checker.MainContextObject;
-			return $"'{checker.GetContextObjectLogName(context)}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+			var name = !string.IsNullOrEmpty(OverriddenTitleName)
+				? OverriddenTitleName
+				: checker.GetContextObjectLogName(checker.MainContextObject);
+			return $"'{name}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 		}
 
 		#endregion
