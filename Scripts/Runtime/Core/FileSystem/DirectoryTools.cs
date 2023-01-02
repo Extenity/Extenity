@@ -407,7 +407,7 @@ namespace Extenity.FileSystemToolbox
 
 		#region Delete Directory
 
-		private static void _Delete(string path, bool recursive)
+		private static void _DeleteNonRecursive(string path)
 		{
 			try
 			{
@@ -433,7 +433,7 @@ namespace Extenity.FileSystemToolbox
 				Directory.GetFiles(path).Length == 0 &&
 			    Directory.GetDirectories(path).Length == 0)
 			{
-				_Delete(path, false);
+				_DeleteNonRecursive(path);
 				return true;
 			}
 			return false;
@@ -461,7 +461,7 @@ namespace Extenity.FileSystemToolbox
 					DeleteWithContent(subDirectory);
 				}
 
-				_Delete(path, false);
+				_DeleteNonRecursive(path);
 				return true;
 			}
 			return false;
