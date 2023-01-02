@@ -122,6 +122,12 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Initialization / Deinitialization
 
+		public ConsistencyChecker(string overriddenTitleName, ConsistencyContextObject mainContextObject, float thresholdDurationToConsiderLogging)
+			: this(mainContextObject, thresholdDurationToConsiderLogging)
+		{
+			OverriddenTitleName = overriddenTitleName;
+		}
+
 		public ConsistencyChecker(ConsistencyContextObject mainContextObject, float thresholdDurationToConsiderLogging)
 		{
 			MainContextObject = mainContextObject;
@@ -336,14 +342,13 @@ namespace Extenity.ConsistencyToolbox
 		{
 			if (HasAnyInconsistencies)
 			{
-				var title = BuildTitleMessage(this);
 				if (HasAnyErrors)
 				{
-					Log.Error(title, MainContextObject as ContextObject);
+					Log.Error(BuildTitleMessage(), MainContextObject as ContextObject);
 				}
 				else
 				{
-					Log.Warning(title, MainContextObject as ContextObject);
+					Log.Warning(BuildTitleMessage(), MainContextObject as ContextObject);
 				}
 			}
 		}
@@ -398,8 +403,7 @@ namespace Extenity.ConsistencyToolbox
 						throw new ArgumentOutOfRangeException(nameof(throwRule), throwRule, null);
 				}
 
-				var title = BuildTitleMessage(this);
-				throw new Exception(title + " See previous logs for details.");
+				throw new Exception(BuildTitleMessage() + " See previous logs for details.");
 			}
 		}
 
@@ -412,7 +416,7 @@ namespace Extenity.ConsistencyToolbox
 					stringBuilder.AppendLine(inconsistency.ToString());
 				}
 
-				stringBuilder.AppendLine(BuildTitleMessage(this));
+				stringBuilder.AppendLine(BuildTitleMessage());
 			}
 		}
 
@@ -421,13 +425,17 @@ namespace Extenity.ConsistencyToolbox
 		#region Log Title
 
 		public string OverriddenTitleName;
-		
-		private string BuildTitleMessage(ConsistencyChecker checker)
+
+		private string TitleName
 		{
-			var name = !string.IsNullOrEmpty(OverriddenTitleName)
+			get => !string.IsNullOrEmpty(OverriddenTitleName)
 				? OverriddenTitleName
-				: checker.GetContextObjectLogName(checker.MainContextObject);
-			return $"'{name}' has {checker.InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
+				: GetContextObjectLogName(MainContextObject);
+		}
+
+		private string BuildTitleMessage()
+		{
+			return $"'{TitleName}' has {InconsistencyCount.ToStringWithEnglishPluralWord("inconsistency", "inconsistencies")}.";
 		}
 
 		#endregion
@@ -523,7 +531,7 @@ namespace Extenity.ConsistencyToolbox
 			if (mainDuration > ThresholdDurationToConsiderLogging)
 			{
 				var stringBuilder = new StringBuilder();
-				stringBuilder.Append($"{GetContextObjectLogName(MainContextObject)} consistency checks took '{mainDuration.ToStringMinutesSecondsMillisecondsFromSeconds()}' which is more than expected.");
+				stringBuilder.Append($"'{TitleName}' consistency checks took '{mainDuration.ToStringMinutesSecondsMillisecondsFromSeconds()}' which is more than expected.");
 
 #if _DetailedProfilingEnabled
 				stringBuilder.AppendLine(" Details:");
