@@ -88,11 +88,11 @@ namespace Extenity.IMGUIToolbox.Editor
 		{
 			get
 			{
-				if (!_DefaultBackgroundTexture)
+				if (!_DarkerDefaultBackgroundTexture)
 				{
-					_DefaultBackgroundTexture = TextureTools.CreateSimpleTexture(DefaultBackgroundColor.AdjustBrightness(0.8f));
+					_DarkerDefaultBackgroundTexture = TextureTools.CreateSimpleTexture(DefaultBackgroundColor.AdjustBrightness(0.8f));
 				}
-				return _DefaultBackgroundTexture;
+				return _DarkerDefaultBackgroundTexture;
 			}
 		}
 
