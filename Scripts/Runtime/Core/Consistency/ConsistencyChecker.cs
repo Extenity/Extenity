@@ -531,7 +531,7 @@ namespace Extenity.ConsistencyToolbox
 			if (mainDuration > ThresholdDurationToConsiderLogging)
 			{
 				var stringBuilder = new StringBuilder();
-				stringBuilder.Append($"'{TitleName}' consistency checks took '{mainDuration.ToStringMinutesSecondsMillisecondsFromSeconds()}' which is more than expected.");
+				stringBuilder.Append($"'{TitleName}' process took '{mainDuration.ToStringMinutesSecondsMillisecondsFromSeconds()}' which is more than expected.");
 
 #if _DetailedProfilingEnabled
 				stringBuilder.AppendLine(" Details:");
