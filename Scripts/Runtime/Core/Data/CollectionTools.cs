@@ -1248,14 +1248,14 @@ namespace Extenity.DataToolbox
 
 		#region Dictionary
 
-		public static bool HasSameKeys<TKey, TValue>(this Dictionary<TKey, TValue> thisObj, in Dictionary<TKey, TValue> otherObj)
+		public static bool HasSameKeys<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, in Dictionary<TKey, TValue> otherDictionary)
 		{
-			if (thisObj.Count != otherObj.Count)
+			if (dictionary.Count != otherDictionary.Count)
 				return false;
 
-			foreach (TKey key in thisObj.Keys)
+			foreach (TKey key in dictionary.Keys)
 			{
-				if (!otherObj.ContainsKey(key))
+				if (!otherDictionary.ContainsKey(key))
 					return false;
 			}
 
@@ -1277,12 +1277,12 @@ namespace Extenity.DataToolbox
 		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key)
 			where TValue : new()
 		{
-			if (!dictionary.TryGetValue(key, out var ret))
+			if (!dictionary.TryGetValue(key, out var value))
 			{
-				ret = new TValue();
-				dictionary[key] = ret;
+				value = new TValue();
+				dictionary[key] = value;
 			}
-			return ret;
+			return value;
 		}
 
 		public static void AppendOrCreate<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
