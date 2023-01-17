@@ -1271,6 +1271,16 @@ namespace Extenity.DataToolbox
 			list.Add(value);
 		}
 
+		public static void AddUniqueToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
+		{
+			if (!dictionary.TryGetValue(key, out var list) || list == null)
+			{
+				list = new List<TValue>();
+				dictionary.Add(key, list);
+			}
+			list.AddUnique(value);
+		}
+
 		public static int AddOrIncrease<TKey>(this IDictionary<TKey, int> dictionary, in TKey key, int increment = 1, int initialValue = 1)
 		{
 			if (dictionary.TryGetValue(key, out var value))
@@ -1284,6 +1294,22 @@ namespace Extenity.DataToolbox
 				dictionary.Add(key, value);
 			}
 			return value;
+		}
+
+		public static bool RemoveFromList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value, bool alsoRemoveTheListIfEmpty = true)
+		{
+			if (!dictionary.TryGetValue(key, out var list) || list == null)
+				return false;
+
+			if (list.Remove(value))
+			{
+				if (alsoRemoveTheListIfEmpty && list.Count == 0)
+				{
+					dictionary.Remove(key);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		#endregion
