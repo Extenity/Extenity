@@ -1261,21 +1261,25 @@ namespace Extenity.DataToolbox
 			return value;
 		}
 
-		public static void AddToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
+		public static void AddToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value, bool useListPooling = true)
 		{
 			if (!dictionary.TryGetValue(key, out var list) || list == null)
 			{
-				list = new List<TValue>();
+				list = useListPooling
+					? New.List<TValue>()
+					: new List<TValue>();
 				dictionary.Add(key, list);
 			}
 			list.Add(value);
 		}
 
-		public static void AddUniqueToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
+		public static void AddUniqueToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value, bool useListPooling = true)
 		{
 			if (!dictionary.TryGetValue(key, out var list) || list == null)
 			{
-				list = new List<TValue>();
+				list = useListPooling
+					? New.List<TValue>()
+					: new List<TValue>();
 				dictionary.Add(key, list);
 			}
 			list.AddUnique(value);
@@ -1296,16 +1300,21 @@ namespace Extenity.DataToolbox
 			return value;
 		}
 
-		public static bool RemoveFromList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value, bool alsoRemoveTheListIfEmpty = true)
+		public static bool RemoveFromList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value, bool alsoRemoveTheListIfEmpty = true, bool useListPooling = true)
 		{
 			if (!dictionary.TryGetValue(key, out var list) || list == null)
 				return false;
 
 			if (list.Remove(value))
 			{
-				if (alsoRemoveTheListIfEmpty && list.Count == 0)
+				if (alsoRemoveTheListIfEmpty &&
+				    list.Count == 0)
 				{
 					dictionary.Remove(key);
+					if (useListPooling)
+					{
+						Release.ListUnsafe(list);
+					}
 				}
 				return true;
 			}
