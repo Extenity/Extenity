@@ -82,6 +82,44 @@ namespace Extenity.ConsistencyToolbox
 		public int InconsistencyCount => _Inconsistencies != null ? _Inconsistencies.Count : 0;
 		public bool HasAnyInconsistencies => _Inconsistencies != null && _Inconsistencies.Count > 0;
 
+		public int ErrorCount
+		{
+			get
+			{
+				var total = 0;
+				if (_Inconsistencies != null)
+				{
+					foreach (var inconsistency in _Inconsistencies)
+					{
+						if (inconsistency.IsError)
+						{
+							total++;
+						}
+					}
+				}
+				return total;
+			}
+		}
+
+		public int WarningCount
+		{
+			get
+			{
+				var total = 0;
+				if (_Inconsistencies != null)
+				{
+					foreach (var inconsistency in _Inconsistencies)
+					{
+						if (!inconsistency.IsError)
+						{
+							total++;
+						}
+					}
+				}
+				return total;
+			}
+		}
+
 		public bool HasAnyErrors
 		{
 			get
