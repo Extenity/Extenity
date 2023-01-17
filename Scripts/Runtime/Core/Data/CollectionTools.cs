@@ -598,6 +598,8 @@ namespace Extenity.DataToolbox
 			Array.Clear(array, 0, array.Length);
 		}
 
+		#endregion
+
 		#region Duplicates
 
 		public static IEnumerable<int> DuplicatesIndexed<T>(this IEnumerable<T> source)
@@ -1064,8 +1066,6 @@ namespace Extenity.DataToolbox
 
 			return true;
 		}
-
-		#endregion
 
 		#endregion
 
