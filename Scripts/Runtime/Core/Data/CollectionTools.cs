@@ -1261,7 +1261,7 @@ namespace Extenity.DataToolbox
 			return value;
 		}
 
-		public static void AppendOrCreate<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
+		public static void AddToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, in TKey key, TValue value)
 		{
 			if (!dictionary.TryGetValue(key, out var list) || list == null)
 			{

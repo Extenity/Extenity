@@ -325,7 +325,7 @@ namespace Extenity.MeshToolbox
 							case SubmeshSplitOverwriteRule.AlwaysRename:
 								{
 									var newOutputAssetPath = outputAssetPath.GenerateUniqueFilePath();
-									result.RenamedAssets.AppendOrCreate(outputAssetPath, newOutputAssetPath);
+									result.RenamedAssets.AddToList(outputAssetPath, newOutputAssetPath);
 									outputAssetPath = newOutputAssetPath;
 								}
 								break;
