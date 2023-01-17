@@ -1248,31 +1248,6 @@ namespace Extenity.DataToolbox
 
 		#region Dictionary
 
-		public static Dictionary<string, string> CreateDictionaryFromStringList(this ICollection<string> list, char keyValueSeparator = '=')
-		{
-			if (list == null)
-				throw new ArgumentNullException(nameof(list));
-
-			var dictionary = new Dictionary<string, string>(list.Count);
-
-			foreach (var item in list)
-			{
-				var separatorIndex = item.IndexOf(keyValueSeparator);
-				if (separatorIndex < 0)
-					throw new Exception("No separator in list item");
-
-				var key = item.Substring(0, separatorIndex);
-
-				if (string.IsNullOrEmpty(key))
-					throw new Exception("Key is empty");
-
-				var value = item.Substring(separatorIndex + 1, item.Length - separatorIndex - 1);
-				dictionary.Add(key, value);
-			}
-
-			return dictionary;
-		}
-
 		public static bool HasSameKeys<TKey, TValue>(this Dictionary<TKey, TValue> thisObj, in Dictionary<TKey, TValue> otherObj)
 		{
 			if (thisObj.Count != otherObj.Count)
@@ -1286,34 +1261,6 @@ namespace Extenity.DataToolbox
 
 			return true;
 			//return dictionary1.OrderBy(kvp => kvp.Key).SequenceEqual(dictionary2.OrderBy(kvp => kvp.Key));
-		}
-
-		public static bool HasSameKeys<TKey, TValue>(this List<TKey> thisObj, in Dictionary<TKey, TValue> dictionary)
-		{
-			if (thisObj.Count != dictionary.Count)
-				return false;
-
-			foreach (TKey key in dictionary.Keys)
-			{
-				if (!thisObj.Contains(key))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool HasSameValues<TKey, TValue>(this List<TValue> thisObj, in Dictionary<TKey, TValue> dictionary)
-		{
-			if (thisObj.Count != dictionary.Count)
-				return false;
-
-			foreach (TValue value in dictionary.Values)
-			{
-				if (!thisObj.Contains(value))
-					return false;
-			}
-
-			return true;
 		}
 
 		/// <summary>
@@ -1334,66 +1281,6 @@ namespace Extenity.DataToolbox
 			{
 				ret = new TValue();
 				dictionary[key] = ret;
-			}
-			return ret;
-		}
-
-		/// <summary>
-		/// Returns the value associated with the specified key if there already
-		/// is one, or calls the specified delegate to create a new value which is
-		/// stored and returned.
-		/// </summary>
-		/// <typeparam name="TKey">Type of key</typeparam>
-		/// <typeparam name="TValue">Type of value</typeparam>
-		/// <param name="dictionary">Dictionary to access</param>
-		/// <param name="key">Key to lookup</param>
-		/// <param name="valueProvider">Delegate to provide new value if required</param>
-		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, Func<TValue> valueProvider)
-		{
-			if (!dictionary.TryGetValue(key, out var ret))
-			{
-				ret = valueProvider();
-				dictionary[key] = ret;
-			}
-			return ret;
-		}
-
-		/// <summary>
-		/// Returns the value associated with the specified key if there
-		/// already is one, or inserts the default value and returns it.
-		/// </summary>
-		/// <typeparam name="TKey">Type of key</typeparam>
-		/// <typeparam name="TValue">Type of value</typeparam>
-		/// <param name="dictionary">Dictionary to access</param>
-		/// <param name="key">Key to lookup</param>
-		/// <param name="defaultValue">Value to use when key is missing</param>
-		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, TValue defaultValue)
-		{
-			if (!dictionary.TryGetValue(key, out var ret))
-			{
-				ret = defaultValue;
-				dictionary[key] = ret;
-			}
-			return ret;
-		}
-
-		/// <summary>
-		/// Returns the value associated with the specified key if there
-		/// already is one, or returns the default value without inserting it.
-		/// </summary>
-		/// <typeparam name="TKey">Type of key</typeparam>
-		/// <typeparam name="TValue">Type of value</typeparam>
-		/// <param name="dictionary">Dictionary to access</param>
-		/// <param name="key">Key to lookup</param>
-		/// <param name="defaultValue">Value to use when key is missing</param>
-		/// <returns>Existing value in the dictionary, or new one inserted</returns>
-		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key, TValue defaultValue)
-		{
-			if (!dictionary.TryGetValue(key, out var ret))
-			{
-				return defaultValue;
 			}
 			return ret;
 		}
