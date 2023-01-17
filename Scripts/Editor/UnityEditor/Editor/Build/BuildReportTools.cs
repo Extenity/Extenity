@@ -21,7 +21,12 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void OnPostBuildPlayerScriptDLLs(BuildReport report)
 		{
-			var dllsWithoutDebugFiles = report.files.Select(item => item.path)
+#if UNITY_2022_1_OR_NEWER
+			var files = report.GetFiles();
+#else
+			var files = report.files;
+#endif
+			var dllsWithoutDebugFiles = files.Select(item => item.path)
 				.Where(path =>
 				   !path.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase) &&
 				   !path.EndsWith(".mdb", StringComparison.OrdinalIgnoreCase))
@@ -145,10 +150,16 @@ namespace Extenity.BuildToolbox.Editor
 			// Files
 			try
 			{
-				Title($"Files ({report.files.Length}):");
-				for (var i = 0; i < report.files.Length; i++)
+#if UNITY_2022_1_OR_NEWER
+				var files = report.GetFiles();
+#else
+				var files = report.files;
+#endif
+
+				Title($"Files ({files.Length}):");
+				for (var i = 0; i < files.Length; i++)
 				{
-					var file = report.files[i];
+					var file = files[i];
 					Title($"File {i}: {file.path}");
 					{
 						Line("Role: " + file.role);
