@@ -52,7 +52,10 @@ namespace Extenity.CodingToolbox.Editor
 
 							// Skip mysterious types that come out of nowhere.
 							if (name.Equals("EmbeddedAttribute", StringComparison.Ordinal) ||
-							    name.Equals("IsReadOnlyAttribute", StringComparison.Ordinal))
+							    name.Equals("IsReadOnlyAttribute", StringComparison.Ordinal) ||
+							    name.Equals("UnitySourceGeneratedAssemblyMonoScriptTypes", StringComparison.Ordinal) || 
+							    name.Equals("MonoScriptInfo", StringComparison.Ordinal) ||
+							    name.Equals("FileMonoScripts", StringComparison.Ordinal))
 							{
 								continue;
 							}
