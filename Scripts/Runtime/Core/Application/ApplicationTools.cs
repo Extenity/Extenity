@@ -137,7 +137,7 @@ namespace Extenity.ApplicationToolbox
 					// We need consistency, rather than better hash algorithms.
 					// That's why GetHashCodeGuaranteed is used because it will
 					// stay here, guaranteed to be never modified forever.
-					var path = Application.dataPath;
+					var path = ApplicationPath;
 					var hash = path.GetHashCodeGuaranteed();
 					_PathHash = hash.ToHexString(false);
 				}
