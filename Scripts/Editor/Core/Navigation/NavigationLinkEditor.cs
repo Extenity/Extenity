@@ -35,13 +35,21 @@ namespace Extenity.NavigationToolbox.Editor
 			SnapLayerMaskProperty = serializedObject.FindProperty("SnapLayerMask");
 
 			NavigationEditorGUITools.ResetGizmoSelectionOfCustomNavigationLink();
+#if UNITY_2022
+			throw new System.NotImplementedException();
+#else
 			NavMeshVisualizationSettings.showNavigation++;
+#endif
 		}
 
 		private void OnDisable()
 		{
 			NavigationEditorGUITools.ResetGizmoSelectionOfCustomNavigationLink();
+#if UNITY_2022
+			throw new System.NotImplementedException();
+#else
 			NavMeshVisualizationSettings.showNavigation--;
+#endif
 		}
 
 		public override void OnInspectorGUI()
@@ -83,6 +91,9 @@ namespace Extenity.NavigationToolbox.Editor
 		[DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Pickable)]
 		private static void RenderBoxGizmoNotSelected(NavigationLink navLink, GizmoType gizmoType)
 		{
+#if UNITY_2022
+			throw new System.NotImplementedException();
+#else
 			if (NavMeshVisualizationSettings.showNavigation > 0)
 			{
 				var color = navLink.enabled ? NavMeshLinkHandleColor : NavMeshLinkDisabledHandleColor;
@@ -90,6 +101,7 @@ namespace Extenity.NavigationToolbox.Editor
 				//NavigationGUITools.DrawCustomNavigationLinkGizmos(navLink.transform, color, () => navLink.StartPoint, () => navLink.EndPoint);
 				NavigationEditorGUITools.DrawCustomNavigationLinkGizmos(null, color, () => navLink.StartPoint, () => navLink.EndPoint);
 			}
+#endif
 		}
 
 		public void OnSceneGUI()
