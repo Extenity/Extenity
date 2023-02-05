@@ -1,5 +1,3 @@
-#if UNITY
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -13,7 +11,9 @@ namespace Extenity.ApplicationToolbox
 	{
 		#region Deinitialization
 
+#if UNITY
 		public static bool IsShuttingDown = false;
+#endif
 
 		#endregion
 
@@ -23,6 +23,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
+#if UNITY
 				switch (UnityEngine.Application.platform)
 				{
 					case UnityEngine.RuntimePlatform.WindowsEditor:
@@ -39,6 +40,9 @@ namespace Extenity.ApplicationToolbox
 					default:
 						throw new NotImplementedException();
 				}
+#else
+				return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
+#endif
 			}
 		}
 
@@ -46,6 +50,8 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
+#if UNITY
+
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 				using (var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
@@ -57,6 +63,10 @@ namespace Extenity.ApplicationToolbox
 #else
 				return UnityEngine.Application.persistentDataPath;
 #endif
+
+#else
+				throw new NotImplementedException();
+#endif
 			}
 		}
 
@@ -64,6 +74,8 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
+#if UNITY
+
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 				using (var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
@@ -74,6 +86,10 @@ namespace Extenity.ApplicationToolbox
 				}
 #else
 				return UnityEngine.Application.temporaryCachePath;
+#endif
+
+#else
+				throw new NotImplementedException();
 #endif
 			}
 		}
@@ -178,6 +194,7 @@ namespace Extenity.ApplicationToolbox
 
 		#region Headless and Batch Mode
 
+#if UNITY
 		public static bool IsHeadless()
 		{
 			return UnityEngine.SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null;
@@ -193,6 +210,7 @@ namespace Extenity.ApplicationToolbox
 				return UnityEngine.Application.isBatchMode;
 			}
 		}
+#endif
 
 		#endregion
 
@@ -209,6 +227,8 @@ namespace Extenity.ApplicationToolbox
 		/// </summary>
 		public static void LaunchMarketPage()
 		{
+#if UNITY
+
 #if UNITY_EDITOR
 			Log.Info("Ambiguous to launch the market page in Editor.");
 			//LaunchMarketPage_GooglePlay();
@@ -217,6 +237,10 @@ namespace Extenity.ApplicationToolbox
 			LaunchMarketPage_GooglePlay();
 #elif UNITY_IOS
 			LaunchMarketPage_AppStore();
+#else
+			throw new NotImplementedException();
+#endif
+
 #else
 			throw new NotImplementedException();
 #endif
@@ -252,6 +276,8 @@ namespace Extenity.ApplicationToolbox
 
 		public static void Quit()
 		{
+#if UNITY
+
 #if UNITY_EDITOR
 			if (UnityEditor.EditorApplication.isPlaying)
 			{
@@ -260,10 +286,16 @@ namespace Extenity.ApplicationToolbox
 #else
 			UnityEngine.Application.Quit();
 #endif
+
+#else
+			throw new NotImplementedException();
+#endif
 		}
 
 		public static void Restart()
 		{
+#if UNITY
+
 #if UNITY_EDITOR
 
 			if (UnityEditor.EditorApplication.isPlaying)
@@ -290,11 +322,13 @@ namespace Extenity.ApplicationToolbox
 #else
 			throw new NotImplementedException();
 #endif
+
+#else
+			throw new NotImplementedException();
+#endif
 		}
 
 		#endregion
 	}
 
 }
-
-#endif

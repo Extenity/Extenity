@@ -82,11 +82,7 @@ namespace Extenity.DataToolbox
 			{
 				if (string.IsNullOrEmpty(_PathHash))
 				{
-#if UNITY
 					_PathHash = "-" + ApplicationTools.PathHash;
-#else
-					throw new System.NotImplementedException();
-#endif
 				}
 				return _PathHash;
 			}
