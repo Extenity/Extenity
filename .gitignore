@@ -1,8 +1,8 @@
 ﻿.vs
 .idea
-Scripts/Runtime/Core/obj
-Scripts/Runtime/Core/bin
-Scripts/Runtime/Core/bin.meta
-Scripts/Runtime/Core/obj.meta
-.UniversalDependencies/Unity.Mathematics/obj
-.UniversalDependencies/Unity.Mathematics/bin
+Scripts/Runtime/Core/.obj
+Scripts/Runtime/Core/.obj.meta
+Scripts/Runtime/Core/.bin
+Scripts/Runtime/Core/.bin.meta
+.UniversalDependencies/Unity.Mathematics/.obj
+.UniversalDependencies/Unity.Mathematics/.bin
