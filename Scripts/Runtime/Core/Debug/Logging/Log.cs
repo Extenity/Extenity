@@ -59,7 +59,7 @@ namespace Extenity
 
 		#region Indentation Using 'Using'
 
-		public class IndentationHandler : IDisposable
+		public struct IndentationHandler : IDisposable
 		{
 			private ContextObject Context;
 			private string EndText;
@@ -84,12 +84,12 @@ namespace Extenity
 			}
 		}
 
-		public static IDisposable Indent()
+		public static IndentationHandler Indent()
 		{
 			return new IndentationHandler();
 		}
 
-		public static IDisposable Indent(string startText, string endText = null)
+		public static IndentationHandler Indent(string startText, string endText = null)
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
@@ -98,7 +98,7 @@ namespace Extenity
 			return new IndentationHandler(null, endText);
 		}
 
-		public static IDisposable Indent(ContextObject context, string startText, string endText = null)
+		public static IndentationHandler Indent(ContextObject context, string startText, string endText = null)
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
