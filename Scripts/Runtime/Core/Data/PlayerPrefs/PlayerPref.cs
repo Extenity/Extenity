@@ -55,7 +55,9 @@ namespace Extenity.DataToolbox
 
 		#region Value
 
+#if UNITY
 		private bool _IsInitialized;
+#endif
 		protected T _Value;
 		public T Value
 		{
@@ -153,7 +155,9 @@ namespace Extenity.DataToolbox
 		public class ValueChangedEvent : ExtenityEvent<T> { }
 		public readonly ValueChangedEvent OnValueChanged = new ValueChangedEvent();
 
+#pragma warning disable CS0414
 		private bool _DontEmitNextValueChangedEvent;
+#pragma warning restore CS0414
 
 		public void AddOnValueChangedListenerAndInvoke(Action<T> listener)
 		{

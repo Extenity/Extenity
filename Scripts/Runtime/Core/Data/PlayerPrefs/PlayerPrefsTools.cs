@@ -118,7 +118,9 @@ namespace Extenity.DataToolbox
 
 		#region Deferred Save
 
+#pragma warning disable CS0414
 		private static float DeferredSaveTriggerTime = -1f;
+#pragma warning restore CS0414
 
 		/// <summary>
 		/// Triggers a delayed save operation. If triggered again consecutively, the delay will be set to the closest time.
