@@ -176,11 +176,22 @@ namespace Extenity.ApplicationToolbox
 
 		#endregion
 
-		#region Headless
+		#region Headless and Batch Mode
 
 		public static bool IsHeadless()
 		{
 			return SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
+		}
+
+		public static bool IsBatchMode
+		{
+			get
+			{
+				// There are also these alternatives in case its needed.
+				// UnityEditorInternal.InternalEditorUtility.inBatchMode
+				// UnityEditorInternal.InternalEditorUtility.isHumanControllingUs
+				return Application.isBatchMode;
+			}
 		}
 
 		#endregion
@@ -279,21 +290,6 @@ namespace Extenity.ApplicationToolbox
 #else
 			throw new NotImplementedException();
 #endif
-		}
-
-		#endregion
-
-		#region Batch Mode
-
-		public static bool IsBatchMode
-		{
-			get
-			{
-				// There are also these alternatives in case its needed.
-				// UnityEditorInternal.InternalEditorUtility.inBatchMode
-				// UnityEditorInternal.InternalEditorUtility.isHumanControllingUs
-				return Application.isBatchMode;
-			}
 		}
 
 		#endregion
