@@ -64,7 +64,7 @@ namespace Extenity
 			private ContextObject Context;
 			private string EndText;
 
-			internal IndentationHandler(ContextObject context = null, string endText = null)
+			internal IndentationHandler(string endText = null, ContextObject context = default)
 			{
 				Context = context;
 				EndText = endText;
@@ -76,10 +76,7 @@ namespace Extenity
 				DecreaseIndent();
 				if (!string.IsNullOrEmpty(EndText))
 				{
-					if (Context == null)
-						Info(EndText);
-					else
-						Info(EndText, Context);
+					Info(EndText, Context);
 				}
 			}
 		}
@@ -89,22 +86,13 @@ namespace Extenity
 			return new IndentationHandler();
 		}
 
-		public static IndentationHandler Indent(string startText, string endText = null)
-		{
-			if (!string.IsNullOrEmpty(startText))
-			{
-				Info(startText);
-			}
-			return new IndentationHandler(null, endText);
-		}
-
-		public static IndentationHandler Indent(ContextObject context, string startText, string endText = null)
+		public static IndentationHandler Indent(string startText, string endText = null, ContextObject context = default)
 		{
 			if (!string.IsNullOrEmpty(startText))
 			{
 				Info(startText, context);
 			}
-			return new IndentationHandler(context, endText);
+			return new IndentationHandler(endText, context);
 		}
 
 		#endregion
@@ -684,9 +672,9 @@ namespace Extenity
 
 		#region Log Tools - Stack Trace
 
-		public static void StackTrace(string headerMessage, ContextObject context = null)
+		public static void StackTrace(string headerMessage, ContextObject context = default)
 		{
-			using (Indent(context, headerMessage))
+			using (Indent(headerMessage, null, context))
 			{
 				var frames = new StackTrace(1).GetFrames();
 

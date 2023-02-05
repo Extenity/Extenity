@@ -28,7 +28,7 @@ namespace Extenity.DebugToolbox
 
 		#region Initialization
 
-		public LogRep(string prefix, ContextObject context = null)
+		public LogRep(string prefix, ContextObject context = default)
 		{
 			RawPrefix = prefix;
 			ProcessedPrefix = $"<b>[{prefix}]</b> ";
