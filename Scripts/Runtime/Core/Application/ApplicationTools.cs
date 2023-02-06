@@ -4,6 +4,11 @@ using System.Runtime.InteropServices;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 
+#if UNITY_ANDROID && !UNITY_EDITOR
+using AndroidJavaClass = UnityEngine.AndroidJavaClass;
+using AndroidJavaObject = UnityEngine.AndroidJavaObject;
+#endif
+
 namespace Extenity.ApplicationToolbox
 {
 
