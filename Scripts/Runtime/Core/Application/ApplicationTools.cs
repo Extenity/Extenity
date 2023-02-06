@@ -317,7 +317,7 @@ namespace Extenity.ApplicationToolbox
 			// The best way to restart the application is not restarting but destroying all
 			// objects and reloading the splash menu item. Though static objects and singletons
 			// should be handled carefully.
-			Application.Quit();
+			UnityEngine.Application.Quit();
 
 #else
 			throw new NotImplementedException();
