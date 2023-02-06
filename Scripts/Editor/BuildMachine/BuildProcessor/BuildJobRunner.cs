@@ -712,6 +712,8 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void CheckBeforeStep(out bool haltExecution)
 		{
+			SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep = false;
+
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
 			// Otherwise execution gets really messy. See 11685123.
@@ -748,13 +750,20 @@ namespace Extenity.BuildMachine.Editor
 			haltExecution = false;
 		}
 
+		public static bool SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep { get; set; }
+
 		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
 		{
+			if (SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep)
+			{
+				return;
+			}
 			ThrowScriptCompilationDetectedWhileProcessingBuildStep();
 		}
 
 		private static void CheckAfterStep(out bool haltExecution)
 		{
+			SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep = false;
 			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
 			// At this point, there should be no ongoing compilations. Build system
