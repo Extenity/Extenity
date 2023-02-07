@@ -287,7 +287,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				count++;
 				if (log)
-					deletedObjectsText.AppendLine(component.gameObject.FullName());
+					deletedObjectsText.AppendLine(component.FullGameObjectName());
 				if (undoable)
 					Undo.DestroyObjectImmediate(component.gameObject);
 				else
@@ -326,7 +326,7 @@ namespace Extenity.GameObjectToolbox.Editor
 
 				count++;
 				if (log)
-					deletedObjectsText.AppendLine(component.gameObject.FullName());
+					deletedObjectsText.AppendLine(component.FullGameObjectName());
 				if (undoable)
 					Undo.DestroyObjectImmediate(component.gameObject);
 				else
@@ -458,7 +458,7 @@ namespace Extenity.GameObjectToolbox.Editor
 					meshFilterCount++;
 
 				if (log)
-					deletedObjectsText.AppendLine(meshRenderer.gameObject.FullName());
+					deletedObjectsText.AppendLine(meshRenderer.FullGameObjectName());
 				if (undoable)
 				{
 					Undo.DestroyObjectImmediate(meshRenderer);

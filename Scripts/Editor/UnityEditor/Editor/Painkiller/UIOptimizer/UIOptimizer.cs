@@ -130,7 +130,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			foreach (var selectedObject in selectedObjects)
 			{
-				FilteredSelection.Add(new SelectionEntry(selectedObject.gameObject.FullName(), selectedObject));
+				FilteredSelection.Add(new SelectionEntry(selectedObject.FullGameObjectName(), selectedObject));
 			}
 
 			Repaint();

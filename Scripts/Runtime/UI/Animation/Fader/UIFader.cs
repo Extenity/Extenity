@@ -197,7 +197,7 @@ namespace Extenity.UIToolbox
 
 			if (DEBUG_ShowFadeMessages)
 			{
-				Log.Info($"Fading in '{CanvasGroup.gameObject.FullName()}'");
+				Log.Info($"Fading in '{CanvasGroup.FullGameObjectName()}'");
 			}
 
 			State = FadeState.FadedIn;
@@ -243,7 +243,7 @@ namespace Extenity.UIToolbox
 					{
 						if (DEBUG_ShowFadeMessages)
 						{
-							Log.Info($"Fade in completed for '{CanvasGroup.gameObject.FullName()}'");
+							Log.Info($"Fade in completed for '{CanvasGroup.FullGameObjectName()}'");
 						}
 						CanvasGroupTweener = null;
 						if (BlocksRaycasts)
@@ -271,7 +271,7 @@ namespace Extenity.UIToolbox
 
 			if (DEBUG_ShowFadeMessages)
 			{
-				Log.Info($"Fading out '{CanvasGroup.gameObject.FullName()}'");
+				Log.Info($"Fading out '{CanvasGroup.FullGameObjectName()}'");
 			}
 
 			State = FadeState.FadedOut;
@@ -310,7 +310,7 @@ namespace Extenity.UIToolbox
 					{
 						if (DEBUG_ShowFadeMessages)
 						{
-							Log.Info($"Fade out completed for '{CanvasGroup.gameObject.FullName()}'");
+							Log.Info($"Fade out completed for '{CanvasGroup.FullGameObjectName()}'");
 						}
 						CanvasGroupTweener = null;
 						if (Canvas != null)

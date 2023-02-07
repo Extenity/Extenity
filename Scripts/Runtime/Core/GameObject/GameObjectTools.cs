@@ -880,7 +880,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static T FindComponentByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
 		{
-			return components?.FirstOrDefault(component => component.gameObject.FullName() == expectedPath);
+			return components?.FirstOrDefault(component => component.FullGameObjectName() == expectedPath);
 		}
 
 		public static T FindComponentByComponentPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
@@ -890,7 +890,7 @@ namespace Extenity.GameObjectToolbox
 
 		public static List<T> FindComponentsByGameObjectPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component
 		{
-			return components?.Where(component => component.gameObject.FullName() == expectedPath).ToList();
+			return components?.Where(component => component.FullGameObjectName() == expectedPath).ToList();
 		}
 
 		public static List<T> FindComponentsByComponentPath<T>(this IEnumerable<T> components, string expectedPath) where T : Component

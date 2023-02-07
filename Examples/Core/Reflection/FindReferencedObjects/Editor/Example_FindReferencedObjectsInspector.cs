@@ -51,7 +51,7 @@ namespace ExtenityExamples.Reflection
 				var result = new HashSet<Object>();
 				Me.gameObject.CollectDependenciesReferencedInUnityObject(result);
 
-				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'dependencies' in '{1}' that is 'Me.gameObject':", result.Count, Me.gameObject.FullName());
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'dependencies' in '{1}' that is 'Me.gameObject':", result.Count, Me.FullGameObjectName());
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);
@@ -79,7 +79,7 @@ namespace ExtenityExamples.Reflection
 				var result = new HashSet<GameObject>();
 				Me.gameObject.FindAllReferencedGameObjectsInUnityObject(result, null);
 
-				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me.gameObject':", result.Count, Me.gameObject.FullName());
+				Debug.LogFormat(Me, "================================= Found '{0}' referenced 'gameobjects' in '{1}' that is 'Me.gameObject':", result.Count, Me.FullGameObjectName());
 				foreach (var item in result)
 				{
 					Debug.LogFormat(item, "   Name: '{0}' \tType: '{1}' \tObject: '{2}'", item.name, item.GetType(), item);

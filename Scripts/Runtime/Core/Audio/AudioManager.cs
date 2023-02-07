@@ -351,7 +351,7 @@ namespace Extenity.Audio
 				if (reusedAudioSource)
 				{
 					if (EnableVerboseLogging)
-						Log.Info($"Reusing audio source '{reusedAudioSource.gameObject.FullName()}'.");
+						Log.Info($"Reusing audio source '{reusedAudioSource.FullGameObjectName()}'.");
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -776,7 +776,7 @@ namespace Extenity.Audio
 			if (audioSource)
 			{
 				if (EnableLogging)
-					Log.Info($"Stopping audio source '{audioSource.gameObject.FullName()}' with clip '{audioSource.clip}'.");
+					Log.Info($"Stopping audio source '{audioSource.FullGameObjectName()}' with clip '{audioSource.clip}'.");
 
 				ReleaseAudioSource(ref audioSource);
 			}

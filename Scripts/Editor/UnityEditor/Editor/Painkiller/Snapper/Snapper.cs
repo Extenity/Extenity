@@ -464,7 +464,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 			else
 			{
-				Log.Info($"Snapping objects ({transforms.Length}): \n" + transforms.Select(item => item.gameObject.FullName()).ToList().Serialize('\n'));
+				Log.Info($"Snapping objects ({transforms.Length}): \n" + transforms.Select(item => item.FullGameObjectName()).ToList().Serialize('\n'));
 
 				Undo.RecordObjects(transforms, $"Snap {transforms.Length.ToStringWithEnglishPluralPostfix("object")}");
 

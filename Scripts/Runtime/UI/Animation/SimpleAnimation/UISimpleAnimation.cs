@@ -210,7 +210,7 @@ namespace Extenity.UIToolbox
 
 			if (DEBUG_ShowAnimationMessages)
 			{
-				Log.Info($"Animating '{AnimatedTransform.gameObject.FullName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.", gameObject);
+				Log.Info($"Animating '{AnimatedTransform.FullGameObjectName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.", gameObject);
 			}
 
 			if (delay < 0f)

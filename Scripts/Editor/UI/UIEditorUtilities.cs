@@ -56,7 +56,7 @@ namespace Extenity.UIToolbox.Editor
 					{
 						if (EditorUtility.DisplayDialog(
 							"Reset Scale",
-							$"Resetting the scale of object. Proceed?\n\n{rectTransform.gameObject.FullName()}\n{rectTransform.localScale.ToSerializableString()}",
+							$"Resetting the scale of object. Proceed?\n\n{rectTransform.FullGameObjectName()}\n{rectTransform.localScale.ToSerializableString()}",
 							"Yes", "Skip"))
 						{
 							Undo.RecordObject(rectTransform, "Reset scale to one");

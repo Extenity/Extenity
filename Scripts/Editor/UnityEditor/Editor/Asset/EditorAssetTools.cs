@@ -592,7 +592,7 @@ namespace Extenity.AssetToolbox.Editor
 
 				if (selected != null)
 				{
-					Log.Info($"Filling field '{field.Name}' of type '{field.FieldType}' with '{selected.gameObject.FullName()}'.");
+					Log.Info($"Filling field '{field.Name}' of type '{field.FieldType}' with '{selected.FullGameObjectName()}'.");
 					Undo.RecordObject(component, "Fill Empty References");
 					field.SetValue(component, candidates[0]);
 					EditorUtility.SetDirty(component);
@@ -629,7 +629,7 @@ namespace Extenity.AssetToolbox.Editor
 		private static void CopyGameObjectPath(MenuCommand menuCommand)
 		{
 			var component = menuCommand.context as Component;
-			Clipboard.SetClipboardText(component.gameObject.FullName(), true);
+			Clipboard.SetClipboardText(component.FullGameObjectName(), true);
 		}
 
 		#endregion

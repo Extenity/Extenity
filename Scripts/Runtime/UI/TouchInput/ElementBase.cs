@@ -105,7 +105,7 @@ namespace Extenity.UIToolbox.TouchInput
 			}
 
 			// Log.Info(ActiveSchemeElement != null
-			// 	         ? $"Changing scheme of element '{gameObject.FullName()}' to '{ActiveSchemeElement.gameObject.FullName()}'"
+			// 	         ? $"Changing scheme of element '{gameObject.FullName()}' to '{ActiveSchemeElement.FullGameObjectName()}'"
 			// 	         : $"Resetting scheme of element '{gameObject.FullName()}'.");
 			ApplySchemeElement(ActiveSchemeElement);
 		}
