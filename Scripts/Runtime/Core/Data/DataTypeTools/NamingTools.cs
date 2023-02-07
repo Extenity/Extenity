@@ -82,18 +82,28 @@ namespace Extenity.DataToolbox
 		{
 			if (!me || maxHierarchyLevels <= 0)
 				return NullGameObjectName;
-			var name = me.name;
+
+			var stringBuilder = StringTools.SharedStringBuilder.Value;
+			StringTools.ClearSharedStringBuilder(stringBuilder);
+
+			stringBuilder.Append(me.name);
 			var parent = me.transform.parent;
 			maxHierarchyLevels--;
 			while (maxHierarchyLevels > 0 && parent)
 			{
-				name = parent.name + separator + name;
+				stringBuilder.Insert(0, separator);
+				stringBuilder.Insert(0, parent.name);
 				parent = parent.parent;
 				maxHierarchyLevels--;
 			}
-			return parent
-				? "..." + separator + name
-				: name;
+
+			if (parent)
+			{
+				stringBuilder.Insert(0, separator);
+				stringBuilder.Insert(0, "...");
+			}
+
+			return stringBuilder.ToString();
 		}
 
 		public static string FullName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
