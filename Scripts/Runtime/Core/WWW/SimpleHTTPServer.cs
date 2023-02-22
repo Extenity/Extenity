@@ -22,6 +22,7 @@ namespace Extenity.WWWToolbox
 
 		public string RootDirectory { get; private set; }
 		public bool IsServingDirectory { get; private set; }
+		public string Host { get; private set; }
 		public int Port { get; private set; }
 
 		public string[] IndexFiles = new string[]
@@ -114,9 +115,10 @@ namespace Extenity.WWWToolbox
 		/// <summary>
 		/// Configures and runs the server.
 		/// </summary>
-		/// <param name="rootDirectory">Directory path to serve. Empty string means no directory will be served. Use "." to serve current working directory.</param>
+		/// <param name="host">Host of the server. "localhost" means only local connections are allowed. See <see cref="https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistener"/> for more.</param>
 		/// <param name="port">Port of the server. 0 means a random port will be selected, which is accessible via <c>Port</c>.</param>
-		public SimpleHTTPServer(int port = 0, string rootDirectory = "")
+		/// <param name="rootDirectory">Directory path to serve. Empty string means no directory will be served. Use "." to serve current working directory.</param>
+		public SimpleHTTPServer(string host = "localhost", int port = 0, string rootDirectory = "")
 		{
 			RootDirectory = rootDirectory?.Trim();
 			IsServingDirectory = !string.IsNullOrEmpty(RootDirectory);
@@ -124,6 +126,7 @@ namespace Extenity.WWWToolbox
 			{
 				port = FindEmptyPort();
 			}
+			Host = host;
 			Port = port;
 			InitializeListening();
 		}
@@ -169,7 +172,7 @@ namespace Extenity.WWWToolbox
 		{
 			Log.Verbose($"Listening at {Port}");
 			Listener = new HttpListener();
-			Listener.Prefixes.Add("http://*:" + Port.ToString() + "/");
+			Listener.Prefixes.Add($"http://{Host}:{Port}/");
 			Listener.Start();
 			while (true)
 			{
