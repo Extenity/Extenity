@@ -535,6 +535,12 @@ namespace Extenity.BuildMachine.Editor
 			throw new Exception(BuilderLog.Prefix + "Compilation is not allowed before starting the build step.");
 		}
 
+		/*
+		This is not used anymore but kept for documentation purposes. The EditorApplication.LockReloadAssemblies()
+		method was not working properly in previous versions of Unity. So the workaround was to throw an exception when
+		a script compilation is detected. Lock mechanism is now working properly so this workaround is not needed anymore.
+		See 11685123.
+ 
 		private static void ThrowScriptCompilationDetectedWhileProcessingBuildStep()
 		{
 			// This message is expected to be shown to the coder that tries to write a Build Step but accidentally
@@ -549,6 +555,7 @@ namespace Extenity.BuildMachine.Editor
 			                    "project settings modifications etc. will be automatically handled by " +
 			                    $"{nameof(BuildMachine)} when proceeding to next build step.");
 		}
+		*/
 
 		private static void ThrowScriptCompilationDetectedAfterProcessingBuildStep()
 		{
@@ -720,8 +727,6 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void CheckBeforeStep(out bool haltExecution)
 		{
-			SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep = false;
-
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
 			// Otherwise execution gets really messy. See 11685123.
@@ -758,20 +763,22 @@ namespace Extenity.BuildMachine.Editor
 			haltExecution = false;
 		}
 
-		public static bool SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep { get; set; }
-
 		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
 		{
-			if (SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep)
-			{
-				return;
-			}
-			ThrowScriptCompilationDetectedWhileProcessingBuildStep();
+			BuilderLog.Info("Detected a script compilation during a build step, which is okay. But an additional " +
+			                "assembly reload is scheduled to make sure the build system will continue to run.");
+			RunningJob.ScheduleAssemblyReload();
+
+			/* This comment block was the old code, before starting to use EditorApplication.LockReloadAssemblies.
+			// This is a callback for a compilation event that is triggered while we are processing a build step.
+			// This is not allowed. We need to stop the build system and let the user know what is going on.
+			// See 11685123.
+			ThrowScriptCompilationDetectedInTheMiddleOfProcessingBuildStep();
+			*/
 		}
 
 		private static void CheckAfterStep(out bool haltExecution)
 		{
-			SkipCheckingForScriptCompilationStartedInTheMiddleOfProcessingThisBuildStep = false;
 			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
 			// At this point, there should be no ongoing compilations. Build system
