@@ -203,7 +203,9 @@ namespace Extenity.BuildMachine.Editor
 					// an exception, instead of logging an error.
 					// Application.logMessageReceivedThreaded += 
 
+					EditorApplication.LockReloadAssemblies();
 					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
+					EditorApplication.UnlockReloadAssemblies();
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
 					{
 						Job.ErrorReceivedInLastStep = "";
