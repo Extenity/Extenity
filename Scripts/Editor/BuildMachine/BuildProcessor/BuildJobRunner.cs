@@ -56,13 +56,16 @@ namespace Extenity.BuildMachine.Editor
 
 		internal static void Start(BuildJob job)
 		{
-			var jobPlanName = job.NameSafe();
 			if (IsRunning)
 			{
-				throw new Exception(BuilderLog.Prefix + $"Tried to start build job '{jobPlanName}' while there is already a running one.");
+				throw new Exception(BuilderLog.Prefix + $"Tried to start build job '{job.NameSafe()}' while there is already a running one.");
 			}
 
-			BuilderLog.Info($"Build '{jobPlanName}' started.");
+			BuilderLog.Info($"Starting the build '{job.NameSafe()}'...\n" +
+			                $"Builder '{job.ToStringCurrentBuilder()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
+			                $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
+			                $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
+			                $"Job ID: {job.ID}");
 
 			ChecksBeforeStartOrContinue("start");
 
@@ -98,10 +101,11 @@ namespace Extenity.BuildMachine.Editor
 				throw new Exception(BuilderLog.Prefix + $"Tried to continue build job '{jobPlanName}' while there is already a running one.");
 			}
 
-			BuilderLog.Info($"Continuing the build '{job.Name}'...\n" +
+			BuilderLog.Info($"Continuing the build '{job.NameSafe()}'...\n" +
 			                $"Builder '{job.ToStringCurrentBuilder()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
 			                $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
-			                $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})");
+			                $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
+			                $"Job ID: {job.ID}");
 
 			ChecksBeforeStartOrContinue("continue");
 
@@ -204,7 +208,9 @@ namespace Extenity.BuildMachine.Editor
 					// Application.logMessageReceivedThreaded += 
 
 					EditorApplication.LockReloadAssemblies();
+					BuilderLog.Info("Build step coroutine started");
 					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
+					BuilderLog.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
 					{
