@@ -212,6 +212,7 @@ namespace Extenity.BuildMachine.Editor
 					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
 					BuilderLog.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
+
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
 					{
 						Job.ErrorReceivedInLastStep = "";
@@ -884,8 +885,6 @@ namespace Extenity.BuildMachine.Editor
 			BuilderLog.Info("Saving running job for assembly reload survival.");
 
 			var job = RunningJob;
-			if (job == null)
-				throw new ArgumentNullException(nameof(job));
 
 			//if (IsRunningJobFileExists())
 			//{
