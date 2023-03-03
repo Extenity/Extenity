@@ -13,6 +13,7 @@ using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildMachine.Editor
@@ -206,12 +207,21 @@ namespace Extenity.BuildMachine.Editor
 					// would be a bit harsh. So any code that wants to fail the build should throw
 					// an exception, instead of logging an error.
 					// Application.logMessageReceivedThreaded += 
+					//
+					// or...
+					//
+					// On second thought, it might be a good idea to fail the build for all errors.
+					// See if Unity would throw these cryptic errors again and try to come up with a
+					// solution for them. Filtering some error logs as required might work.
+					RegisterForErrorLogCatching();
 
 					EditorApplication.LockReloadAssemblies();
 					BuilderLog.Info("Build step coroutine started");
 					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
 					BuilderLog.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
+
+					DeregisterFromErrorLogCatching();
 
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
 					{
@@ -873,6 +883,68 @@ namespace Extenity.BuildMachine.Editor
 			if (job != null)
 			{
 				Continue(job);
+			}
+		}
+
+		#endregion
+
+		#region Catch error logs during running steps
+
+		private static void RegisterForErrorLogCatching()
+		{
+			Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceived += OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded += OnLogMessageReceived;
+		}
+
+		private static void DeregisterFromErrorLogCatching()
+		{
+			Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+		}
+
+		private static void OnLogMessageReceived(string condition, string stacktrace, LogType logType)
+		{
+			switch (logType)
+			{
+				case LogType.Exception:
+				case LogType.Error:
+				case LogType.Assert:
+					// Just catch the first error log. We don't want to catch multiple errors because they might be
+					// caused by the first error and we don't want the user to miss the root cause.
+					DeregisterFromErrorLogCatching();
+
+					BuilderLog.Error($"Received an '{logType}' when running step. The error was: \n" +
+					                 $"[CaughtErrorLogMessageStart]\n" +
+					                 $"{condition}\n" +
+					                 $"[CaughtErrorLogMessageEnd]\n" +
+					                 $"[CaughtErrorLogStackTraceStart]\n" +
+					                 $"{stacktrace}\n" +
+					                 $"[CaughtErrorLogStackTraceEnd]\n");
+
+					if (RunningJob != null)
+					{
+						RunningJob.ErrorReceivedInLastStep = condition;
+						RunningJob.Finalizing = true;
+						RunningJob.SetResult(BuildJobResult.Failed);
+						SaveRunningJobToFile();
+					}
+					else
+					{
+						// RunningJob was supposed to be there. Something went terribly wrong. Investigate.
+						Log.InternalError(11636114);
+
+						// Quit Unity to prevent hanging the build process.
+						var errorReturnValue = -1;
+						EditorApplication.Exit(errorReturnValue);
+					}
+					break;
+				case LogType.Warning:
+				case LogType.Log:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
 			}
 		}
 
