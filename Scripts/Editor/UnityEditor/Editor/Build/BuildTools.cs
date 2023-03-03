@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -185,11 +186,19 @@ namespace Extenity.BuildToolbox.Editor
 	{
 		public string ExecutablePath { get; }
 		public string WorkingDirectory { get; }
+		public string Username { get; }
+		public string Password { get; }
 
 		public GitCommandRunner(string workingDirectory = null)
 		{
 			ExecutablePath = "git";
 			WorkingDirectory = workingDirectory ?? "";
+		}
+
+		public GitCommandRunner(string username, string password,string workingDirectory = null) : this(workingDirectory)
+		{
+			Username = username;
+			Password = password;
 		}
 
 		public void Run(string arguments, out int exitCode, bool logOutput = true, bool logError = true)
@@ -201,7 +210,14 @@ namespace Extenity.BuildToolbox.Editor
 				RedirectStandardError = true,
 				UseShellExecute = false,
 				WorkingDirectory = WorkingDirectory,
+				UserName = Username,
+				Password = new SecureString()
 			};
+
+			foreach (var c in Password)
+			{
+				info.Password.AppendChar(c);
+			}
 
 			var process = new Process
 			{
