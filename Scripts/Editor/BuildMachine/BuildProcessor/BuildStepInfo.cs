@@ -9,11 +9,14 @@ namespace Extenity.BuildMachine.Editor
 	{
 		Warmup,
 		PreBuild,
+		LocalizationProcess,
 		AssetProcess,
 		SceneProcess,
 		UnityBuild,
 		PostBuild,
-		Deploy,
+		LocalizationDeploy,
+		AssetDeploy,
+		ApplicationDeploy,
 		Finalization,
 	}
 
