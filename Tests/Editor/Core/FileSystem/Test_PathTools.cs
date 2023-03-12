@@ -19,36 +19,82 @@ namespace ExtenityTests.FileSystemToolbox
 			// With extension
 			CheckPathWithPrefix(@"C:\Directory Name\Subdir Name\File Name.fileextension",
 			                    @"Prefix-",
-			                    @"C:\Directory Name\Subdir Name\{0}File Name.fileextension");
+			                    @"C:\Directory Name\Subdir Name\{0}File Name.fileextension",
+			                    CheckInWindows);
 
 			CheckPathWithPrefix(@"\Directory Name\Subdir Name\File Name.fileextension",
 			                    @"Prefix-",
-			                    @"\Directory Name\Subdir Name\{0}File Name.fileextension");
+			                    @"\Directory Name\Subdir Name\{0}File Name.fileextension",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"/Directory Name/Subdir Name/File Name.fileextension",
+			                    @"Prefix-",
+			                    @"/Directory Name/Subdir Name/{0}File Name.fileextension",
+			                    CheckInWindowsAndUnix);
+			CheckPathWithPrefix(@"Directory Name\Subdir Name\File Name.fileextension",
+			                    @"Prefix-",
+			                    @"Directory Name\Subdir Name\{0}File Name.fileextension",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"Directory Name/Subdir Name/File Name.fileextension",
+			                    @"Prefix-",
+			                    @"Directory Name/Subdir Name/{0}File Name.fileextension",
+			                    CheckInWindowsAndUnix);
 
+			CheckPathWithPrefix(@"C:\File Name.fileextension",
+			                    @"Prefix-",
+			                    @"C:\{0}File Name.fileextension",
+			                    CheckInWindows);
 			CheckPathWithPrefix(@"\File Name.fileextension",
 			                    @"Prefix-",
-			                    @"\{0}File Name.fileextension");
-
+			                    @"\{0}File Name.fileextension",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"/File Name.fileextension",
+			                    @"Prefix-",
+			                    @"/{0}File Name.fileextension",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithPrefix(@"File Name.fileextension",
 			                    @"Prefix-",
-			                    @"{0}File Name.fileextension");
+			                    @"{0}File Name.fileextension",
+			                    CheckInWindowsAndUnix);
 
 			// Without extension
 			CheckPathWithPrefix(@"C:\Directory Name\Subdir Name\File Name",
 			                    @"Prefix-",
-			                    @"C:\Directory Name\Subdir Name\{0}File Name");
+			                    @"C:\Directory Name\Subdir Name\{0}File Name",
+			                    CheckInWindows);
 
 			CheckPathWithPrefix(@"\Directory Name\Subdir Name\File Name",
 			                    @"Prefix-",
-			                    @"\Directory Name\Subdir Name\{0}File Name");
+			                    @"\Directory Name\Subdir Name\{0}File Name",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"/Directory Name/Subdir Name/File Name",
+			                    @"Prefix-",
+			                    @"/Directory Name/Subdir Name/{0}File Name",
+			                    CheckInWindowsAndUnix);
+			CheckPathWithPrefix(@"Directory Name\Subdir Name\File Name",
+			                    @"Prefix-",
+			                    @"Directory Name\Subdir Name\{0}File Name",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"Directory Name/Subdir Name/File Name",
+			                    @"Prefix-",
+			                    @"Directory Name/Subdir Name/{0}File Name",
+			                    CheckInWindowsAndUnix);
 
+			CheckPathWithPrefix(@"C:\File Name",
+			                    @"Prefix-",
+			                    @"C:\{0}File Name",
+			                    CheckInWindows);
 			CheckPathWithPrefix(@"\File Name",
 			                    @"Prefix-",
-			                    @"\{0}File Name");
-
+			                    @"\{0}File Name",
+			                    CheckInWindows);
+			CheckPathWithPrefix(@"/File Name",
+			                    @"Prefix-",
+			                    @"/{0}File Name",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithPrefix(@"File Name",
 			                    @"Prefix-",
-			                    @"{0}File Name");
+			                    @"{0}File Name",
+			                    CheckInWindowsAndUnix);
 		}
 
 		[Test]
@@ -57,68 +103,98 @@ namespace ExtenityTests.FileSystemToolbox
 			// With extension
 			CheckPathWithSuffix(@"C:\Directory Name\Subdir Name\File Name.fileextension",
 			                    @"-Suffix",
-			                    @"C:\Directory Name\Subdir Name\File Name{0}.fileextension");
+			                    @"C:\Directory Name\Subdir Name\File Name{0}.fileextension",
+			                    CheckInWindows);
 
 			CheckPathWithSuffix(@"\Directory Name\Subdir Name\File Name.fileextension",
 			                    @"-Suffix",
-			                    @"\Directory Name\Subdir Name\File Name{0}.fileextension");
-
+			                    @"\Directory Name\Subdir Name\File Name{0}.fileextension",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"/Directory Name/Subdir Name/File Name.fileextension",
+			                    @"-Suffix",
+			                    @"/Directory Name/Subdir Name/File Name{0}.fileextension",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithSuffix(@"Directory Name\Subdir Name\File Name.fileextension",
 			                    @"-Suffix",
-			                    @"Directory Name\Subdir Name\File Name{0}.fileextension");
+			                    @"Directory Name\Subdir Name\File Name{0}.fileextension",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"Directory Name/Subdir Name/File Name.fileextension",
+			                    @"-Suffix",
+			                    @"Directory Name/Subdir Name/File Name{0}.fileextension",
+			                    CheckInWindowsAndUnix);
 
 			CheckPathWithSuffix(@"C:\File Name.fileextension",
 			                    @"-Suffix",
-			                    @"C:\File Name{0}.fileextension");
-
+			                    @"C:\File Name{0}.fileextension",
+			                    CheckInWindows);
 			CheckPathWithSuffix(@"\File Name.fileextension",
 			                    @"-Suffix",
-			                    @"\File Name{0}.fileextension");
-
+			                    @"\File Name{0}.fileextension",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"\File Name.fileextension",
+			                    @"-Suffix",
+			                    @"\File Name{0}.fileextension",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithSuffix(@"File Name.fileextension",
 			                    @"-Suffix",
-			                    @"File Name{0}.fileextension");
+			                    @"File Name{0}.fileextension",
+			                    CheckInWindowsAndUnix);
 
 			// Without extension
 			CheckPathWithSuffix(@"C:\Directory Name\Subdir Name\File Name",
 			                    @"-Suffix",
-			                    @"C:\Directory Name\Subdir Name\File Name{0}");
+			                    @"C:\Directory Name\Subdir Name\File Name{0}",
+			                    CheckInWindows);
 
 			CheckPathWithSuffix(@"\Directory Name\Subdir Name\File Name",
 			                    @"-Suffix",
-			                    @"\Directory Name\Subdir Name\File Name{0}");
-
+			                    @"\Directory Name\Subdir Name\File Name{0}",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"/Directory Name/Subdir Name/File Name",
+			                    @"-Suffix",
+			                    @"/Directory Name/Subdir Name/File Name{0}",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithSuffix(@"Directory Name\Subdir Name\File Name",
 			                    @"-Suffix",
-			                    @"Directory Name\Subdir Name\File Name{0}");
+			                    @"Directory Name\Subdir Name\File Name{0}",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"Directory Name/Subdir Name/File Name",
+			                    @"-Suffix",
+			                    @"Directory Name/Subdir Name/File Name{0}",
+			                    CheckInWindowsAndUnix);
 
 			CheckPathWithSuffix(@"C:\File Name",
 			                    @"-Suffix",
-			                    @"C:\File Name{0}");
-
+			                    @"C:\File Name{0}",
+			                    CheckInWindows);
 			CheckPathWithSuffix(@"\File Name",
 			                    @"-Suffix",
-			                    @"\File Name{0}");
-
+			                    @"\File Name{0}",
+			                    CheckInWindows);
+			CheckPathWithSuffix(@"/File Name",
+			                    @"-Suffix",
+			                    @"/File Name{0}",
+			                    CheckInWindowsAndUnix);
 			CheckPathWithSuffix(@"File Name",
 			                    @"-Suffix",
-			                    @"File Name{0}");
+			                    @"File Name{0}",
+			                    CheckInWindowsAndUnix);
 		}
 
-		private static void CheckPathWithPrefix(string path, string addition, string expectedPath)
+		private static void CheckPathWithPrefix(string path, string addition, string expectedPath, int platforms)
 		{
+			if (IsNotInPlatform(platforms))
+				return;
 			DoCheckPathWithPrefix(path,                                  addition,           expectedPath);
 			DoCheckPathWithPrefix(path.TrimAll(),                        addition.TrimAll(), expectedPath.TrimAll());
-			DoCheckPathWithPrefix(path.FixDirectorySeparatorChars('\\'), addition,           expectedPath.FixDirectorySeparatorChars('\\'));
-			DoCheckPathWithPrefix(path.FixDirectorySeparatorChars('/'),  addition,           expectedPath.FixDirectorySeparatorChars('/'));
 		}
 
-		private static void CheckPathWithSuffix(string path, string addition, string expectedPath)
+		private static void CheckPathWithSuffix(string path, string addition, string expectedPath, int platforms)
 		{
+			if (IsNotInPlatform(platforms))
+				return;
 			DoCheckPathWithSuffix(path,                                  addition,           expectedPath);
 			DoCheckPathWithSuffix(path.TrimAll(),                        addition.TrimAll(), expectedPath.TrimAll());
-			DoCheckPathWithSuffix(path.FixDirectorySeparatorChars('\\'), addition,           expectedPath.FixDirectorySeparatorChars('\\'));
-			DoCheckPathWithSuffix(path.FixDirectorySeparatorChars('/'),  addition,           expectedPath.FixDirectorySeparatorChars('/'));
 		}
 
 		private static void DoCheckPathWithPrefix(string path, string addition, string expectedPath)
@@ -580,6 +656,28 @@ namespace ExtenityTests.FileSystemToolbox
 		private static void DoAddFileExtension(string path, string extension, bool ignoreIfAlreadyThere, string expected)
 		{
 			Assert.AreEqual(expected, path.AddFileExtension(extension, ignoreIfAlreadyThere));
+		}
+
+		#endregion
+
+		#region Platforms
+
+		private static readonly int CheckInWindows        = 1 << 1;
+		private static readonly int CheckInUnix           = 1 << 2;
+		private static readonly int CheckInWindowsAndUnix = CheckInWindows | CheckInUnix;
+
+		private static bool IsNotInPlatform(int platforms)
+		{
+			switch (Environment.OSVersion.Platform)
+			{
+				case PlatformID.MacOSX:
+				case PlatformID.Unix:
+					return (platforms & CheckInUnix) == 0;
+				case PlatformID.Win32NT:
+					return (platforms & CheckInWindows) == 0;
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		#endregion
