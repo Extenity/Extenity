@@ -185,16 +185,16 @@ namespace ExtenityTests.FileSystemToolbox
 		{
 			if (IsNotInPlatform(platforms))
 				return;
-			DoCheckPathWithPrefix(path,                                  addition,           expectedPath);
-			DoCheckPathWithPrefix(path.TrimAll(),                        addition.TrimAll(), expectedPath.TrimAll());
+			DoCheckPathWithPrefix(path,           addition,           expectedPath);
+			DoCheckPathWithPrefix(path.TrimAll(), addition.TrimAll(), expectedPath.TrimAll());
 		}
 
 		private static void CheckPathWithSuffix(string path, string addition, string expectedPath, int platforms)
 		{
 			if (IsNotInPlatform(platforms))
 				return;
-			DoCheckPathWithSuffix(path,                                  addition,           expectedPath);
-			DoCheckPathWithSuffix(path.TrimAll(),                        addition.TrimAll(), expectedPath.TrimAll());
+			DoCheckPathWithSuffix(path,           addition,           expectedPath);
+			DoCheckPathWithSuffix(path.TrimAll(), addition.TrimAll(), expectedPath.TrimAll());
 		}
 
 		private static void DoCheckPathWithPrefix(string path, string addition, string expectedPath)
@@ -556,72 +556,171 @@ namespace ExtenityTests.FileSystemToolbox
 		[Test]
 		public static void SplitPath()
 		{
-			CheckSplitPathThrows<ArgumentNullException>("");
+			CheckSplitPathThrows<ArgumentNullException>("",
+			                                            CheckInWindowsAndUnix);
 
 			// With extension
 			CheckSplitPath(@"C:\Directory Name\Subdir Name\File Name.fileextension",
 			               @"C:\",
 			               @"Directory Name\Subdir Name\",
-			               @"File Name.fileextension");
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\Subdir Name\File Name.fileextension",
+			               @"\",
+			               @"Directory Name\Subdir Name\",
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/Subdir Name/File Name.fileextension",
+			               @"/",
+			               @"Directory Name/Subdir Name/",
+			               @"File Name.fileextension",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\Directory Name\File Name.fileextension",
 			               @"C:\",
 			               @"Directory Name\",
-			               @"File Name.fileextension");
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\File Name.fileextension",
+			               @"\",
+			               @"Directory Name\",
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/File Name.fileextension",
+			               @"/",
+			               @"Directory Name/",
+			               @"File Name.fileextension",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\File Name.fileextension",
 			               @"C:\",
 			               @"",
-			               @"File Name.fileextension");
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"\File Name.fileextension",
+			               @"\",
+			               @"",
+			               @"File Name.fileextension",
+			               CheckInWindows);
+			CheckSplitPath(@"/File Name.fileextension",
+			               @"/",
+			               @"",
+			               @"File Name.fileextension",
+			               CheckInWindowsAndUnix);
 
 			// Without extension
 			CheckSplitPath(@"C:\Directory Name\Subdir Name\File Name",
 			               @"C:\",
 			               @"Directory Name\Subdir Name\",
-			               @"File Name");
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\Subdir Name\File Name",
+			               @"\",
+			               @"Directory Name\Subdir Name\",
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/Subdir Name/File Name",
+			               @"/",
+			               @"Directory Name/Subdir Name/",
+			               @"File Name",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\Directory Name\File Name",
 			               @"C:\",
 			               @"Directory Name\",
-			               @"File Name");
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\File Name",
+			               @"\",
+			               @"Directory Name\",
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/File Name",
+			               @"/",
+			               @"Directory Name/",
+			               @"File Name",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\File Name",
 			               @"C:\",
 			               @"",
-			               @"File Name");
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"\File Name",
+			               @"\",
+			               @"",
+			               @"File Name",
+			               CheckInWindows);
+			CheckSplitPath(@"/File Name",
+			               @"/",
+			               @"",
+			               @"File Name",
+			               CheckInWindowsAndUnix);
 
 			// Without filename
-
 			CheckSplitPath(@"C:\Directory Name\Subdir Name\",
 			               @"C:\",
 			               @"Directory Name\Subdir Name\",
-			               @"");
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\Subdir Name\",
+			               @"\",
+			               @"Directory Name\Subdir Name\",
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/Subdir Name/",
+			               @"/",
+			               @"Directory Name/Subdir Name/",
+			               @"",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\Directory Name\",
 			               @"C:\",
 			               @"Directory Name\",
-			               @"");
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"\Directory Name\",
+			               @"\",
+			               @"Directory Name\",
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"/Directory Name/",
+			               @"/",
+			               @"Directory Name/",
+			               @"",
+			               CheckInWindowsAndUnix);
 
 			CheckSplitPath(@"C:\",
 			               @"C:\",
 			               @"",
-			               @"");
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"\",
+			               @"\",
+			               @"",
+			               @"",
+			               CheckInWindows);
+			CheckSplitPath(@"/",
+			               @"/",
+			               @"",
+			               @"",
+			               CheckInWindowsAndUnix);
 		}
 
-		private static void CheckSplitPath(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName)
+		private static void CheckSplitPath(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName, int platforms)
 		{
-			DoCheckSplitPath(path,                                  expectedRoot,                                  expectedDirectoryWithoutRoot,                                  expectedFileName);
-			DoCheckSplitPath(path.TrimAll(),                        expectedRoot.TrimAll(),                        expectedDirectoryWithoutRoot.TrimAll(),                        expectedFileName.TrimAll());
-			DoCheckSplitPath(path.FixDirectorySeparatorChars('\\'), expectedRoot.FixDirectorySeparatorChars('\\'), expectedDirectoryWithoutRoot.FixDirectorySeparatorChars('\\'), expectedFileName.FixDirectorySeparatorChars('\\'));
-			DoCheckSplitPath(path.FixDirectorySeparatorChars('/'),  expectedRoot.FixDirectorySeparatorChars('/'),  expectedDirectoryWithoutRoot.FixDirectorySeparatorChars('/'),  expectedFileName.FixDirectorySeparatorChars('/'));
+			if (IsNotInPlatform(platforms))
+				return;
+			DoCheckSplitPath(path,           expectedRoot,           expectedDirectoryWithoutRoot,           expectedFileName);
+			DoCheckSplitPath(path.TrimAll(), expectedRoot.TrimAll(), expectedDirectoryWithoutRoot.TrimAll(), expectedFileName.TrimAll());
 		}
 
-		private static void CheckSplitPathThrows<T>(string path) where T : Exception
+		private static void CheckSplitPathThrows<T>(string path, int platforms) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckSplitPath(path,                                  null, null, null));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.TrimAll(),                        null, null, null));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('\\'), null, null, null));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('/'),  null, null, null));
+			if (IsNotInPlatform(platforms))
+				return;
+			Assert.Throws<T>(() => DoCheckSplitPath(path,           null, null, null));
+			Assert.Throws<T>(() => DoCheckSplitPath(path.TrimAll(), null, null, null));
 		}
 
 		private static void DoCheckSplitPath(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName)
