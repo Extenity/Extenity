@@ -1,4 +1,4 @@
-//#define PathToolsSupportDoubleBackslashPaths
+// #define PathToolsSupportDoubleBackslashPaths // Please be advised that Double Backslash or Double Slash paths are edge cases without solid rules. Extenity does not fully support them. So enable this define with caution.
 
 using System;
 using Extenity.DataToolbox;
