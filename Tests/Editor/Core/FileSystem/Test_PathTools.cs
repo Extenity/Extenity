@@ -741,66 +741,101 @@ namespace ExtenityTests.FileSystemToolbox
 			CheckAddFileExtension(@"C:\Directory Name\Subdir Name\File Name",
 			                      ".fileextension",
 			                      true,
-			                      @"C:\Directory Name\Subdir Name\File Name.fileextension");
+			                      @"C:\Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 			CheckAddFileExtension(@"C:\Directory Name\Subdir Name\File Name",
 			                      ".fileextension",
 			                      false,
-			                      @"C:\Directory Name\Subdir Name\File Name.fileextension");
+			                      @"C:\Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 
 			CheckAddFileExtension(@"C:\Directory Name\Subdir Name\File Name.fileextension",
 			                      ".fileextension",
 			                      true,
-			                      @"C:\Directory Name\Subdir Name\File Name.fileextension");
+			                      @"C:\Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 			CheckAddFileExtension(@"C:\Directory Name\Subdir Name\File Name.fileextension",
 			                      ".fileextension",
 			                      false,
-			                      @"C:\Directory Name\Subdir Name\File Name.fileextension.fileextension");
+			                      @"C:\Directory Name\Subdir Name\File Name.fileextension.fileextension",
+			                      CheckInWindows);
 
-			// Rootless
+			// Rootless, Backslash
 			CheckAddFileExtension(@"Directory Name\Subdir Name\File Name",
 			                      ".fileextension",
 			                      true,
-			                      @"Directory Name\Subdir Name\File Name.fileextension");
+			                      @"Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 			CheckAddFileExtension(@"Directory Name\Subdir Name\File Name",
 			                      ".fileextension",
 			                      false,
-			                      @"Directory Name\Subdir Name\File Name.fileextension");
+			                      @"Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 
 			CheckAddFileExtension(@"Directory Name\Subdir Name\File Name.fileextension",
 			                      ".fileextension",
 			                      true,
-			                      @"Directory Name\Subdir Name\File Name.fileextension");
+			                      @"Directory Name\Subdir Name\File Name.fileextension",
+			                      CheckInWindows);
 			CheckAddFileExtension(@"Directory Name\Subdir Name\File Name.fileextension",
 			                      ".fileextension",
 			                      false,
-			                      @"Directory Name\Subdir Name\File Name.fileextension.fileextension");
+			                      @"Directory Name\Subdir Name\File Name.fileextension.fileextension",
+			                      CheckInWindows);
 
+			// Rootless, Slash
+			CheckAddFileExtension(@"Directory Name/Subdir Name/File Name",
+			                      ".fileextension",
+			                      true,
+			                      @"Directory Name/Subdir Name/File Name.fileextension",
+			                      CheckInWindowsAndUnix);
+			CheckAddFileExtension(@"Directory Name/Subdir Name/File Name",
+			                      ".fileextension",
+			                      false,
+			                      @"Directory Name/Subdir Name/File Name.fileextension",
+			                      CheckInWindowsAndUnix);
+
+			CheckAddFileExtension(@"Directory Name/Subdir Name/File Name.fileextension",
+			                      ".fileextension",
+			                      true,
+			                      @"Directory Name/Subdir Name/File Name.fileextension",
+			                      CheckInWindowsAndUnix);
+			CheckAddFileExtension(@"Directory Name/Subdir Name/File Name.fileextension",
+			                      ".fileextension",
+			                      false,
+			                      @"Directory Name/Subdir Name/File Name.fileextension.fileextension",
+			                      CheckInWindowsAndUnix);
+			
 			// Only filename
 			CheckAddFileExtension(@"File Name",
 			                      ".fileextension",
 			                      true,
-			                      @"File Name.fileextension");
+			                      @"File Name.fileextension",
+			                      CheckInWindowsAndUnix);
 			CheckAddFileExtension(@"File Name",
 			                      ".fileextension",
 			                      false,
-			                      @"File Name.fileextension");
+			                      @"File Name.fileextension",
+			                      CheckInWindowsAndUnix);
 
 			CheckAddFileExtension(@"File Name.fileextension",
 			                      ".fileextension",
 			                      true,
-			                      @"File Name.fileextension");
+			                      @"File Name.fileextension",
+			                      CheckInWindowsAndUnix);
 			CheckAddFileExtension(@"File Name.fileextension",
 			                      ".fileextension",
 			                      false,
-			                      @"File Name.fileextension.fileextension");
+			                      @"File Name.fileextension.fileextension",
+			                      CheckInWindowsAndUnix);
 		}
 
-		private static void CheckAddFileExtension(string path, string extension, bool ignoreIfAlreadyThere, string expected)
+		private static void CheckAddFileExtension(string path, string extension, bool ignoreIfAlreadyThere, string expected, int platforms)
 		{
-			DoAddFileExtension(path,                                  extension, ignoreIfAlreadyThere, expected);
-			DoAddFileExtension(path.TrimAll(),                        extension, ignoreIfAlreadyThere, expected.TrimAll());
-			DoAddFileExtension(path.FixDirectorySeparatorChars('\\'), extension, ignoreIfAlreadyThere, expected.FixDirectorySeparatorChars('\\'));
-			DoAddFileExtension(path.FixDirectorySeparatorChars('/'),  extension, ignoreIfAlreadyThere, expected.FixDirectorySeparatorChars('/'));
+			if (IsNotInPlatform(platforms))
+				return;
+			DoAddFileExtension(path,           extension, ignoreIfAlreadyThere, expected);
+			DoAddFileExtension(path.TrimAll(), extension, ignoreIfAlreadyThere, expected.TrimAll());
 		}
 
 		private static void DoAddFileExtension(string path, string extension, bool ignoreIfAlreadyThere, string expected)
