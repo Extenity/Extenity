@@ -218,161 +218,299 @@ namespace ExtenityTests.FileSystemToolbox
 		[Test]
 		public static void RemoveFirstDirectoryFromPath()
 		{
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\");
-			CheckRemoveFirstDirectoryThrows<ArgumentNullException>("");
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\",
+			                                                           CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<ArgumentNullException>("",
+			                                                       CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\");
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\",
+			                                                           CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"//",
+			                                                           CheckInWindowsAndUnix);
 #endif
 
 			// Without filename
 			CheckRemoveFirstDirectory(@"C:\Directory Name\Subdir Name\",
-			                          @"C:\Subdir Name\");
+			                          @"C:\Subdir Name\",
+			                          CheckInWindows);
 			CheckRemoveFirstDirectory(@"C:\Directory Name\",
-			                          @"C:\");
+			                          @"C:\",
+			                          CheckInWindows);
 			CheckRemoveFirstDirectory(@"Directory Name\Subdir Name\",
-			                          @"Subdir Name\");
+			                          @"Subdir Name\",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/Subdir Name/",
+			                          @"Subdir Name/",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"Directory Name\",
-			                          @"");
+			                          @"",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/",
+			                          @"",
+			                          CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(@"\\Directory Name\Subdir Name\",
-			                          @"\\Subdir Name\");
+			                          @"\\Subdir Name\",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/Subdir Name/",
+			                          @"//Subdir Name/",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"\\Directory Name\",
-			                          @"\\");
+			                          @"\\",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/",
+			                          @"//",
+			                          CheckInWindowsAndUnix);
 #endif
 
 			// With extension
 			CheckRemoveFirstDirectory(@"C:\Directory Name\Subdir Name\File Name.fileextension",
-			                          @"C:\Subdir Name\File Name.fileextension");
+			                          @"C:\Subdir Name\File Name.fileextension",
+			                          CheckInWindows);
 			CheckRemoveFirstDirectory(@"C:\Directory Name\File Name.fileextension",
-			                          @"C:\File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension");
+			                          @"C:\File Name.fileextension",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension",
+			                                                           CheckInWindows);
 			CheckRemoveFirstDirectory(@"Directory Name\Subdir Name\File Name.fileextension",
-			                          @"Subdir Name\File Name.fileextension");
+			                          @"Subdir Name\File Name.fileextension",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/Subdir Name/File Name.fileextension",
+			                          @"Subdir Name/File Name.fileextension",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"Directory Name\File Name.fileextension",
-			                          @"File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name.fileextension");
+			                          @"File Name.fileextension",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/File Name.fileextension",
+			                          @"File Name.fileextension",
+			                          CheckInWindowsAndUnix);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name.fileextension",
+			                                                           CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(@"\\Directory Name\Subdir Name\File Name.fileextension",
-			                          @"\\Subdir Name\File Name.fileextension");
+			                          @"\\Subdir Name\File Name.fileextension",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/Subdir Name/File Name.fileextension",
+			                          @"//Subdir Name/File Name.fileextension",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"\\Directory Name\File Name.fileextension",
-			                          @"\\File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension");
+			                          @"\\File Name.fileextension",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/File Name.fileextension",
+			                          @"//File Name.fileextension",
+			                          CheckInWindowsAndUnix);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension",
+			                                                           CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"//File Name.fileextension",
+			                                                           CheckInWindowsAndUnix);
 #endif
 
 			// Without extension
 			CheckRemoveFirstDirectory(@"C:\Directory Name\Subdir Name\File Name",
-			                          @"C:\Subdir Name\File Name");
+			                          @"C:\Subdir Name\File Name",
+			                          CheckInWindows);
 			CheckRemoveFirstDirectory(@"C:\Directory Name\File Name",
-			                          @"C:\File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name");
+			                          @"C:\File Name",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name",
+			                                                           CheckInWindows);
 			CheckRemoveFirstDirectory(@"Directory Name\Subdir Name\File Name",
-			                          @"Subdir Name\File Name");
+			                          @"Subdir Name\File Name",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/Subdir Name/File Name",
+			                          @"Subdir Name/File Name",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"Directory Name\File Name",
-			                          @"File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name");
+			                          @"File Name",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"Directory Name/File Name",
+			                          @"File Name",
+			                          CheckInWindowsAndUnix);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name",
+			                                                           CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(@"\\Directory Name\Subdir Name\File Name",
-			                          @"\\Subdir Name\File Name");
+			                          @"\\Subdir Name\File Name",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/Subdir Name/File Name",
+			                          @"//Subdir Name/File Name",
+			                          CheckInWindowsAndUnix);
 			CheckRemoveFirstDirectory(@"\\Directory Name\File Name",
-			                          @"\\File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name");
+			                          @"\\File Name",
+			                          CheckInWindows);
+			CheckRemoveFirstDirectory(@"//Directory Name/File Name",
+			                          @"//File Name",
+			                          CheckInWindowsAndUnix);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name",
+			                                                           CheckInWindows);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"//File Name",
+			                                                           CheckInWindowsAndUnix);
 #endif
 		}
 
 		[Test]
 		public static void RemoveLastDirectoryFromPath()
 		{
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\");
-			CheckRemoveLastDirectoryThrows<ArgumentNullException>("");
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\",
+			                                                          CheckInWindows);
+			CheckRemoveLastDirectoryThrows<ArgumentNullException>("",
+			                                                      CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\");
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\",
+			                                                          CheckInWindows);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"//",
+			                                                          CheckInWindowsAndUnix);
 #endif
 
 			// Without filename
 			CheckRemoveLastDirectory(@"C:\Directory Name\Subdir Name\",
-			                         @"C:\Directory Name\");
+			                         @"C:\Directory Name\",
+			                         CheckInWindows);
 			CheckRemoveLastDirectory(@"C:\Directory Name\",
-			                         @"C:\");
+			                         @"C:\",
+			                         CheckInWindows);
 			CheckRemoveLastDirectory(@"Directory Name\Subdir Name\",
-			                         @"Directory Name\");
+			                         @"Directory Name\",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/Subdir Name/",
+			                         @"Directory Name/",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"Directory Name\",
-			                         @"");
+			                         @"",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/",
+			                         @"",
+			                         CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(@"\\Directory Name\Subdir Name\",
-			                         @"\\Directory Name\");
+			                         @"\\Directory Name\",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/Subdir Name/",
+			                         @"//Directory Name/",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"\\Directory Name\",
-			                         @"\\");
+			                         @"\\",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/",
+			                         @"//",
+			                         CheckInWindowsAndUnix);
 #endif
 
 			// With extension
 			CheckRemoveLastDirectory(@"C:\Directory Name\Subdir Name\File Name.fileextension",
-			                         @"C:\Directory Name\File Name.fileextension");
+			                         @"C:\Directory Name\File Name.fileextension",
+			                         CheckInWindows);
 			CheckRemoveLastDirectory(@"C:\Directory Name\File Name.fileextension",
-			                         @"C:\File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension");
+			                         @"C:\File Name.fileextension",
+			                         CheckInWindows);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension",
+			                                                          CheckInWindows);
 			CheckRemoveLastDirectory(@"Directory Name\Subdir Name\File Name.fileextension",
-			                         @"Directory Name\File Name.fileextension");
+			                         @"Directory Name\File Name.fileextension",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/Subdir Name/File Name.fileextension",
+			                         @"Directory Name/File Name.fileextension",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"Directory Name\File Name.fileextension",
-			                         @"File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name.fileextension");
+			                         @"File Name.fileextension",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/File Name.fileextension",
+			                         @"File Name.fileextension",
+			                         CheckInWindowsAndUnix);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name.fileextension",
+			                                                          CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(@"\\Directory Name\Subdir Name\File Name.fileextension",
-			                         @"\\Directory Name\File Name.fileextension");
+			                         @"\\Directory Name\File Name.fileextension",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/Subdir Name/File Name.fileextension",
+			                         @"//Directory Name/File Name.fileextension",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"\\Directory Name\File Name.fileextension",
-			                         @"\\File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension");
+			                         @"\\File Name.fileextension",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/File Name.fileextension",
+			                         @"//File Name.fileextension",
+			                         CheckInWindowsAndUnix);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension",
+			                                                          CheckInWindows);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"//File Name.fileextension",
+			                                                          CheckInWindowsAndUnix);
 #endif
 
 			// Without extension
 			CheckRemoveLastDirectory(@"C:\Directory Name\Subdir Name\File Name",
-			                         @"C:\Directory Name\File Name");
+			                         @"C:\Directory Name\File Name",
+			                         CheckInWindows);
 			CheckRemoveLastDirectory(@"C:\Directory Name\File Name",
-			                         @"C:\File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name");
+			                         @"C:\File Name",
+			                         CheckInWindows);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name",
+			                                                          CheckInWindows);
 			CheckRemoveLastDirectory(@"Directory Name\Subdir Name\File Name",
-			                         @"Directory Name\File Name");
+			                         @"Directory Name\File Name",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/Subdir Name/File Name",
+			                         @"Directory Name/File Name",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"Directory Name\File Name",
-			                         @"File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name");
+			                         @"File Name",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"Directory Name/File Name",
+			                         @"File Name",
+			                         CheckInWindowsAndUnix);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name",
+			                                                          CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(@"\\Directory Name\Subdir Name\File Name",
-			                         @"\\Directory Name\File Name");
+			                         @"\\Directory Name\File Name",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/Subdir Name/File Name",
+			                         @"//Directory Name/File Name",
+			                         CheckInWindowsAndUnix);
 			CheckRemoveLastDirectory(@"\\Directory Name\File Name",
-			                         @"\\File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name");
+			                         @"\\File Name",
+			                         CheckInWindows);
+			CheckRemoveLastDirectory(@"//Directory Name/File Name",
+			                         @"//File Name",
+			                         CheckInWindowsAndUnix);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name",
+			                                                          CheckInWindows);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"//File Name",
+			                                                          CheckInWindowsAndUnix);
 #endif
 		}
 
-		private static void CheckRemoveFirstDirectory(string path, string expectedPath)
+		private static void CheckRemoveFirstDirectory(string path, string expectedPath, int platforms)
 		{
-			DoCheckRemoveFirstDirectory(path,                                  expectedPath);
-			DoCheckRemoveFirstDirectory(path.TrimAll(),                        expectedPath.TrimAll());
-			DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('\\'), expectedPath.FixDirectorySeparatorChars('\\'));
-			DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/'));
+			if (IsNotInPlatform(platforms))
+				return;
+			DoCheckRemoveFirstDirectory(path,           expectedPath);
+			DoCheckRemoveFirstDirectory(path.TrimAll(), expectedPath.TrimAll());
 		}
 
-		private static void CheckRemoveFirstDirectoryThrows<T>(string path) where T : Exception
+		private static void CheckRemoveFirstDirectoryThrows<T>(string path, int platforms) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path,                                  null));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.TrimAll(),                        null));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('\\'), null));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('/'),  null));
+			if (IsNotInPlatform(platforms))
+				return;
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path,           null));
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.TrimAll(), null));
 		}
 
-		private static void CheckRemoveLastDirectory(string path, string expectedPath)
+		private static void CheckRemoveLastDirectory(string path, string expectedPath, int platforms)
 		{
-			DoCheckRemoveLastDirectory(path,                                  expectedPath);
-			DoCheckRemoveLastDirectory(path.TrimAll(),                        expectedPath.TrimAll());
-			DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('\\'), expectedPath.FixDirectorySeparatorChars('\\'));
-			DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/'));
+			if (IsNotInPlatform(platforms))
+				return;
+			DoCheckRemoveLastDirectory(path,           expectedPath);
+			DoCheckRemoveLastDirectory(path.TrimAll(), expectedPath.TrimAll());
 		}
 
-		private static void CheckRemoveLastDirectoryThrows<T>(string path) where T : Exception
+		private static void CheckRemoveLastDirectoryThrows<T>(string path, int platforms) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path,                                  null));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.TrimAll(),                        null));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('\\'), null));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('/'),  null));
+			if (IsNotInPlatform(platforms))
+				return;
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path,           null));
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.TrimAll(), null));
 		}
 
 		private static void DoCheckRemoveFirstDirectory(string path, string expectedPath)
@@ -805,7 +943,7 @@ namespace ExtenityTests.FileSystemToolbox
 			                      false,
 			                      @"Directory Name/Subdir Name/File Name.fileextension.fileextension",
 			                      CheckInWindowsAndUnix);
-			
+
 			// Only filename
 			CheckAddFileExtension(@"File Name",
 			                      ".fileextension",
