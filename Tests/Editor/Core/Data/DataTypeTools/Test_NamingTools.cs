@@ -4,7 +4,8 @@ using Extenity.Testing;
 using Extenity.TextureToolbox;
 using NUnit.Framework;
 using UnityEngine;
-using Object = UnityEngine.Object;
+
+// ReSharper disable ExpressionIsAlwaysNull
 
 namespace ExtenityTests.DataToolbox
 {
@@ -12,7 +13,7 @@ namespace ExtenityTests.DataToolbox
 	public class Test_NamingTools : ExtenityTestBase
 	{
 		[Test]
-		public void FullObjectName_UnfortunatelyFailsToDistinguishNullDelegates()
+		public void FullObjectName_UnfortunatelyFailsToDistinguishTypesOfNullDelegates()
 		{
 			Action nullDelegateAsAction = (Action)null;
 			Delegate nullDelegateAsDelegate = (Delegate)null;
@@ -27,6 +28,34 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(NamingTools.NullDelegateName, nullDelegateAsDelegate.FullNameOfTargetAndMethod());
 		}
 
+		[Test]
+		public void FullObjectName_UnfortunatelyFailsToDistinguishTypesOfNullSystemObjects()
+		{
+			Assert.AreEqual(NamingTools.NullName, ((System.Object)null).FullObjectName()); // There were never a class instance. So we don't know the type of the object.
+		}
+
+#if UNITY
+		[Test]
+		public void FullObjectName_UnfortunatelyFailsToDistinguishTypesOfNullUnityObjects()
+		{
+			var go = new GameObject();
+			var component = go.AddComponent<Light>();
+			var texture = TextureTools.CreateSimpleTexture(Color.black);
+			GameObject.DestroyImmediate(go);
+			GameObject.DestroyImmediate(texture);
+
+			Assert.AreEqual(NamingTools.NullGameObjectName, go.FullObjectName()); // The GameObject as in the eyes of Unity is destroyed. But there is still a GameObject class instance as a C# object. So we know the type of the object.
+			Assert.AreEqual(NamingTools.NullName, ((GameObject)null).FullObjectName()); // There were never a GameObject class instance. So we don't know the type of the object.
+
+			Assert.AreEqual(NamingTools.NullComponentName, component.FullObjectName()); // The same applies for Component. See GameObject comments above.
+			Assert.AreEqual(NamingTools.NullName, ((Component)null).FullObjectName());
+
+			Assert.AreEqual(NamingTools.NullObjectName, texture.FullObjectName()); // The same applies for UnityEngine.Object. See GameObject comments above.
+			Assert.AreEqual(NamingTools.NullName, ((UnityEngine.Object)null).FullObjectName());
+		}
+#endif
+
+#if UNITY
 		[Test]
 		public void FullObjectName_ReturnsDefaultNamesAfterObjectsAreDestroyed()
 		{
@@ -48,9 +77,9 @@ namespace ExtenityTests.DataToolbox
 
 			// Just to be sure about delegate target, which is a Unity object, is reported as null.
 			Assert.False(delegateAsAction.Target as Component);
-			Assert.False(delegateAsAction.Target as Object);
+			Assert.False(delegateAsAction.Target as UnityEngine.Object);
 			Assert.False(delegateAsDelegate.Target as Component);
-			Assert.False(delegateAsDelegate.Target as Object);
+			Assert.False(delegateAsDelegate.Target as UnityEngine.Object);
 
 			Assert.AreEqual(NamingTools.NullGameObjectName, go.FullObjectName());
 			Assert.AreEqual(NamingTools.NullComponentName, component.FullObjectName());
@@ -58,6 +87,7 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod(delegateAsDelegate.Method.Name), delegateAsAction.FullObjectName());
 			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod(delegateAsDelegate.Method.Name), delegateAsDelegate.FullObjectName());
 		}
+#endif
 	}
 
 }
