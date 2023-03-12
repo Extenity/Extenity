@@ -1,4 +1,5 @@
 //#define PathToolsSupportDoubleBackslashPaths
+
 using System;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
