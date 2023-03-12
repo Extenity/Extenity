@@ -218,13 +218,10 @@ namespace ExtenityTests.FileSystemToolbox
 		[Test]
 		public static void RemoveFirstDirectoryFromPath()
 		{
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\",
-			                                                           null);
-			CheckRemoveFirstDirectoryThrows<ArgumentNullException>("",
-			                                                       null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\");
+			CheckRemoveFirstDirectoryThrows<ArgumentNullException>("");
 #if PathToolsSupportDoubleBackslashPaths
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\");
 #endif
 
 			// Without filename
@@ -248,21 +245,18 @@ namespace ExtenityTests.FileSystemToolbox
 			                          @"C:\Subdir Name\File Name.fileextension");
 			CheckRemoveFirstDirectory(@"C:\Directory Name\File Name.fileextension",
 			                          @"C:\File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension");
 			CheckRemoveFirstDirectory(@"Directory Name\Subdir Name\File Name.fileextension",
 			                          @"Subdir Name\File Name.fileextension");
 			CheckRemoveFirstDirectory(@"Directory Name\File Name.fileextension",
 			                          @"File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name.fileextension",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name.fileextension");
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(@"\\Directory Name\Subdir Name\File Name.fileextension",
 			                          @"\\Subdir Name\File Name.fileextension");
 			CheckRemoveFirstDirectory(@"\\Directory Name\File Name.fileextension",
 			                          @"\\File Name.fileextension");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension");
 #endif
 
 			// Without extension
@@ -270,34 +264,28 @@ namespace ExtenityTests.FileSystemToolbox
 			                          @"C:\Subdir Name\File Name");
 			CheckRemoveFirstDirectory(@"C:\Directory Name\File Name",
 			                          @"C:\File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"C:\File Name");
 			CheckRemoveFirstDirectory(@"Directory Name\Subdir Name\File Name",
 			                          @"Subdir Name\File Name");
 			CheckRemoveFirstDirectory(@"Directory Name\File Name",
 			                          @"File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"File Name");
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveFirstDirectory(@"\\Directory Name\Subdir Name\File Name",
 			                          @"\\Subdir Name\File Name");
 			CheckRemoveFirstDirectory(@"\\Directory Name\File Name",
 			                          @"\\File Name");
-			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name",
-			                                                           null);
+			CheckRemoveFirstDirectoryThrows<InvalidOperationException>(@"\\File Name");
 #endif
 		}
 
 		[Test]
 		public static void RemoveLastDirectoryFromPath()
 		{
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\",
-			                                                          null);
-			CheckRemoveLastDirectoryThrows<ArgumentNullException>("",
-			                                                      null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\");
+			CheckRemoveLastDirectoryThrows<ArgumentNullException>("");
 #if PathToolsSupportDoubleBackslashPaths
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\");
 #endif
 
 			// Without filename
@@ -321,21 +309,18 @@ namespace ExtenityTests.FileSystemToolbox
 			                         @"C:\Directory Name\File Name.fileextension");
 			CheckRemoveLastDirectory(@"C:\Directory Name\File Name.fileextension",
 			                         @"C:\File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name.fileextension");
 			CheckRemoveLastDirectory(@"Directory Name\Subdir Name\File Name.fileextension",
 			                         @"Directory Name\File Name.fileextension");
 			CheckRemoveLastDirectory(@"Directory Name\File Name.fileextension",
 			                         @"File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name.fileextension",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name.fileextension");
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(@"\\Directory Name\Subdir Name\File Name.fileextension",
 			                         @"\\Directory Name\File Name.fileextension");
 			CheckRemoveLastDirectory(@"\\Directory Name\File Name.fileextension",
 			                         @"\\File Name.fileextension");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name.fileextension");
 #endif
 
 			// Without extension
@@ -343,21 +328,18 @@ namespace ExtenityTests.FileSystemToolbox
 			                         @"C:\Directory Name\File Name");
 			CheckRemoveLastDirectory(@"C:\Directory Name\File Name",
 			                         @"C:\File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"C:\File Name");
 			CheckRemoveLastDirectory(@"Directory Name\Subdir Name\File Name",
 			                         @"Directory Name\File Name");
 			CheckRemoveLastDirectory(@"Directory Name\File Name",
 			                         @"File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"File Name");
 #if PathToolsSupportDoubleBackslashPaths
 			CheckRemoveLastDirectory(@"\\Directory Name\Subdir Name\File Name",
 			                         @"\\Directory Name\File Name");
 			CheckRemoveLastDirectory(@"\\Directory Name\File Name",
 			                         @"\\File Name");
-			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name",
-			                                                          null);
+			CheckRemoveLastDirectoryThrows<InvalidOperationException>(@"\\File Name");
 #endif
 		}
 
@@ -369,12 +351,12 @@ namespace ExtenityTests.FileSystemToolbox
 			DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/'));
 		}
 
-		private static void CheckRemoveFirstDirectoryThrows<T>(string path, string expectedPath) where T : Exception
+		private static void CheckRemoveFirstDirectoryThrows<T>(string path) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path,                                  expectedPath));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.TrimAll(),                        expectedPath.TrimAll()));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('\\'), expectedPath.FixDirectorySeparatorChars('\\')));
-			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/')));
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path,                                  null));
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.TrimAll(),                        null));
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('\\'), null));
+			Assert.Throws<T>(() => DoCheckRemoveFirstDirectory(path.FixDirectorySeparatorChars('/'),  null));
 		}
 
 		private static void CheckRemoveLastDirectory(string path, string expectedPath)
@@ -385,12 +367,12 @@ namespace ExtenityTests.FileSystemToolbox
 			DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/'));
 		}
 
-		private static void CheckRemoveLastDirectoryThrows<T>(string path, string expectedPath) where T : Exception
+		private static void CheckRemoveLastDirectoryThrows<T>(string path) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path,                                  expectedPath));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.TrimAll(),                        expectedPath.TrimAll()));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('\\'), expectedPath.FixDirectorySeparatorChars('\\')));
-			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('/'),  expectedPath.FixDirectorySeparatorChars('/')));
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path,                                  null));
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.TrimAll(),                        null));
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('\\'), null));
+			Assert.Throws<T>(() => DoCheckRemoveLastDirectory(path.FixDirectorySeparatorChars('/'),  null));
 		}
 
 		private static void DoCheckRemoveFirstDirectory(string path, string expectedPath)
