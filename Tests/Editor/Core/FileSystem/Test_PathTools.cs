@@ -556,11 +556,7 @@ namespace ExtenityTests.FileSystemToolbox
 		[Test]
 		public static void SplitPath()
 		{
-			CheckSplitPathThrows<ArgumentNullException>(
-			                                            "",
-			                                            null,
-			                                            null,
-			                                            null);
+			CheckSplitPathThrows<ArgumentNullException>("");
 
 			// With extension
 			CheckSplitPath(@"C:\Directory Name\Subdir Name\File Name.fileextension",
@@ -620,12 +616,12 @@ namespace ExtenityTests.FileSystemToolbox
 			DoCheckSplitPath(path.FixDirectorySeparatorChars('/'),  expectedRoot.FixDirectorySeparatorChars('/'),  expectedDirectoryWithoutRoot.FixDirectorySeparatorChars('/'),  expectedFileName.FixDirectorySeparatorChars('/'));
 		}
 
-		private static void CheckSplitPathThrows<T>(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName) where T : Exception
+		private static void CheckSplitPathThrows<T>(string path) where T : Exception
 		{
-			Assert.Throws<T>(() => DoCheckSplitPath(path,                                  expectedRoot,                                  expectedDirectoryWithoutRoot,                                  expectedFileName));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.TrimAll(),                        expectedRoot.TrimAll(),                        expectedDirectoryWithoutRoot.TrimAll(),                        expectedFileName.TrimAll()));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('\\'), expectedRoot.FixDirectorySeparatorChars('\\'), expectedDirectoryWithoutRoot.FixDirectorySeparatorChars('\\'), expectedFileName.FixDirectorySeparatorChars('\\')));
-			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('/'),  expectedRoot.FixDirectorySeparatorChars('/'),  expectedDirectoryWithoutRoot.FixDirectorySeparatorChars('/'),  expectedFileName.FixDirectorySeparatorChars('/')));
+			Assert.Throws<T>(() => DoCheckSplitPath(path,                                  null, null, null));
+			Assert.Throws<T>(() => DoCheckSplitPath(path.TrimAll(),                        null, null, null));
+			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('\\'), null, null, null));
+			Assert.Throws<T>(() => DoCheckSplitPath(path.FixDirectorySeparatorChars('/'),  null, null, null));
 		}
 
 		private static void DoCheckSplitPath(string path, string expectedRoot, string expectedDirectoryWithoutRoot, string expectedFileName)
