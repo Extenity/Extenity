@@ -392,83 +392,156 @@ namespace ExtenityTests.FileSystemToolbox
 		[Test]
 		public static void GetParentDirectoryName()
 		{
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\");
-			CheckGetParentDirectoryNameThrows<ArgumentNullException>(@"");
-			CheckGetParentDirectoryNameThrows<ArgumentNullException>(null);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\",
+			                                                             CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\",
+			                                                             CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"/",
+			                                                             CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<ArgumentNullException>(@"",
+			                                                         CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<ArgumentNullException>(null,
+			                                                         CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\");
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\",
+			                                                             CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"//",
+			                                                             CheckInWindowsAndUnix);
 #endif
 
 			// Without filename
 			CheckGetParentDirectoryName(@"C:\Directory Name\Subdir Name\",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
 			CheckGetParentDirectoryName(@"C:\Directory Name\",
-			                            @"Directory Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
 			CheckGetParentDirectoryName(@"Directory Name\Subdir Name\",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/Subdir Name/",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"Directory Name\",
-			                            @"Directory Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/",
+			                            @"Directory Name",
+			                            CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(@"\\Directory Name\Subdir Name\",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/Subdir Name/",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"\\Directory Name\",
-			                            @"Directory Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/",
+			                            @"Directory Name",
+			                            CheckInWindows);
 #endif
 
 			// With extension
 			CheckGetParentDirectoryName(@"C:\Directory Name\Subdir Name\File Name.fileextension",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
 			CheckGetParentDirectoryName(@"C:\Directory Name\File Name.fileextension",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\File Name.fileextension");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\File Name.fileextension",
+			                                                             CheckInWindows);
 			CheckGetParentDirectoryName(@"Directory Name\Subdir Name\File Name.fileextension",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/Subdir Name/File Name.fileextension",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"Directory Name\File Name.fileextension",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"File Name.fileextension");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/File Name.fileextension",
+			                            @"Directory Name",
+			                            CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"File Name.fileextension",
+			                                                             CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(@"\\Directory Name\Subdir Name\File Name.fileextension",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/Subdir Name/File Name.fileextension",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"\\Directory Name\File Name.fileextension",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\File Name.fileextension");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/File Name.fileextension",
+			                            @"Directory Name",
+			                            CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\File Name.fileextension",
+			                                                             CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"//File Name.fileextension",
+			                                                             CheckInWindowsAndUnix);
 #endif
 
 			// Without extension
 			CheckGetParentDirectoryName(@"C:\Directory Name\Subdir Name\File Name",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
 			CheckGetParentDirectoryName(@"C:\Directory Name\File Name",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\File Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"C:\File Name",
+			                                                             CheckInWindows);
 			CheckGetParentDirectoryName(@"Directory Name\Subdir Name\File Name",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/Subdir Name/File Name",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"Directory Name\File Name",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"File Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"Directory Name/File Name",
+			                            @"Directory Name",
+			                            CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"File Name",
+			                                                             CheckInWindowsAndUnix);
 #if PathToolsSupportDoubleBackslashPaths
 			CheckGetParentDirectoryName(@"\\Directory Name\Subdir Name\File Name",
-			                            @"Subdir Name");
+			                            @"Subdir Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/Subdir Name/File Name",
+			                            @"Subdir Name",
+			                            CheckInWindowsAndUnix);
 			CheckGetParentDirectoryName(@"\\Directory Name\File Name",
-			                            @"Directory Name");
-			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\File Name");
+			                            @"Directory Name",
+			                            CheckInWindows);
+			CheckGetParentDirectoryName(@"//Directory Name/File Name",
+			                            @"Directory Name",
+			                            CheckInWindowsAndUnix);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"\\File Name",
+			                                                             CheckInWindows);
+			CheckGetParentDirectoryNameThrows<InvalidOperationException>(@"//File Name",
+			                                                             CheckInWindowsAndUnix);
 #endif
 		}
 
-		private static void CheckGetParentDirectoryName(string path, string expected)
+		private static void CheckGetParentDirectoryName(string path, string expected, int platforms)
 		{
+			if (IsNotInPlatform(platforms))
+				return;
 			DoCheckGetParentDirectoryName(path, expected);
 			//DoCheckGetParentDirectoryName(path.TrimAll(), expectedPath.TrimAll()); // TODO: Not sure about this. Decide if it should be included.
-			DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('\\'), expected.FixDirectorySeparatorChars('\\'));
-			DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('/'),  expected.FixDirectorySeparatorChars('/'));
 		}
 
-		private static void CheckGetParentDirectoryNameThrows<T>(string path) where T : Exception
+		private static void CheckGetParentDirectoryNameThrows<T>(string path, int platforms) where T : Exception
 		{
+			if (IsNotInPlatform(platforms))
+				return;
 			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path, null));
 			//Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.TrimAll(), null)); // TODO: Not sure about this. Decide if it should be included.
-			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('\\'), null));
-			Assert.Throws<T>(() => DoCheckGetParentDirectoryName(path.FixDirectorySeparatorChars('/'),  null));
 		}
 
 		private static void DoCheckGetParentDirectoryName(string path, string expected)
