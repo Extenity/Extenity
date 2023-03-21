@@ -93,6 +93,9 @@ namespace Extenity.FlowToolbox
 		
 		#region Update
 
+		// CustomUpdate and CustomFixedUpdate methods are almost the same.
+		// Do not forget to update both of them if you need to change something.
+		// See 11531451
 		internal void CustomFixedUpdate(double time)
 		{
 #if UNITY_EDITOR
@@ -179,6 +182,9 @@ namespace Extenity.FlowToolbox
 			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
+		// CustomUpdate and CustomFixedUpdate methods are almost the same.
+		// Do not forget to update both of them if you need to change something.
+		// See 11531451
 		internal void CustomUpdate(double time)
 		{
 #if UNITY_EDITOR
