@@ -65,7 +65,7 @@ namespace Extenity.FlowToolbox
 				RepeatRate = repeatRate;
 
 #if EnableOverkillLogging
-				Log.Info($"New {(UnscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
+				Log.Verbose($"New {(UnscaledTime ? "Unscaled-Time" : "Scaled-Time")} Invoke.  Now: {now * 1000}  Delay: {invokeTime * 1000}{(repeatRate > 0f ? $"  Repeat: {repeatRate * 1000}" : "")}");
 #endif
 			}
 
@@ -128,7 +128,7 @@ namespace Extenity.FlowToolbox
 			ScaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
 
 #if EnableOverkillLogging
-			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
+			Log.Verbose($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
 			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
 			         string.Join("\n", ScaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")));
 #endif
@@ -210,7 +210,7 @@ namespace Extenity.FlowToolbox
 			UnscaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
 
 #if EnableOverkillLogging
-			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
+			Log.Verbose($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
 			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
 			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")));
 #endif
@@ -934,7 +934,7 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
-		#region Verbose Logging
+		#region Log
 
 		public static bool LogWarningForNegativeInvokeTimes = true;
 
