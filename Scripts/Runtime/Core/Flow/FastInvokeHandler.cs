@@ -244,11 +244,16 @@ namespace Extenity.FlowToolbox
 				{
 					try
 					{
+						CurrentlyProcessingEntryAction = entry.Action;
 						entry.Action();
 					}
 					catch (Exception exception)
 					{
 						Log.Exception(exception);
+					}
+					finally
+					{
+						CurrentlyProcessingEntryAction = null;
 					}
 				}
 
