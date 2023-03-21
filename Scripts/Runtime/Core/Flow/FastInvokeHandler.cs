@@ -179,7 +179,7 @@ namespace Extenity.FlowToolbox
 			CurrentlyProcessingQueue = InvokeQueue.Unspecified;
 		}
 
-		internal void CustomUpdate(double unscaledTime)
+		internal void CustomUpdate(double time)
 		{
 #if UNITY_EDITOR
 			if (VerboseLoggingInEachUpdate)
@@ -198,7 +198,7 @@ namespace Extenity.FlowToolbox
 			for (int i = 0; i < UnscaledInvokeQueue.Count; i++)
 			{
 				var entry = UnscaledInvokeQueue[i];
-				if (unscaledTime >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
+				if (time >= entry.NextTime - Tolerance) // Tolerance fixes the floating point calculation errors.
 				{
 					QueueInProcess.Add(entry);
 				}
@@ -218,9 +218,9 @@ namespace Extenity.FlowToolbox
 			UnscaledInvokeQueue.RemoveRange(0, QueueInProcess.Count);
 
 #if EnableOverkillLogging
-			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {unscaledTime}:\n" +
-			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(unscaledTime - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
-			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(unscaledTime - entry.NextTime) * 1000}")));
+			Log.Info($"Processing {CurrentlyProcessingQueue}-Time queue ({QueueInProcess.Count}). Now: {time}:\n" +
+			         string.Join("\n", QueueInProcess.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")) + "\n\nLeft in queue:\n" +
+			         string.Join("\n", UnscaledInvokeQueue.Select(entry => $"NextTime: {entry.NextTime * 1000} \t Diff: {(time - entry.NextTime) * 1000}")));
 #endif
 
 			for (int i = 0; i < QueueInProcess.Count; i++)
