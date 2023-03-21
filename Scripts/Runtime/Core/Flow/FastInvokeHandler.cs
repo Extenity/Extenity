@@ -98,13 +98,6 @@ namespace Extenity.FlowToolbox
 		// See 11531451
 		internal void CustomFixedUpdate(double time)
 		{
-#if UNITY_EDITOR
-			if (VerboseLoggingInEachFixedUpdate)
-			{
-				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomFixedUpdate));
-			}
-#endif
-
 			if (QueueInProcess.Count > 0)
 			{
 				Log.InternalError(7591128); // Definitely expected to be empty.
@@ -187,13 +180,6 @@ namespace Extenity.FlowToolbox
 		// See 11531451
 		internal void CustomUpdate(double time)
 		{
-#if UNITY_EDITOR
-			if (VerboseLoggingInEachUpdate)
-			{
-				Log.DebugInfo(nameof(FastInvokeHandler) + "." + nameof(CustomUpdate));
-			}
-#endif
-
 			if (QueueInProcess.Count > 0)
 			{
 				Log.InternalError(7591128); // Definitely expected to be empty.
@@ -951,10 +937,6 @@ namespace Extenity.FlowToolbox
 		#region Verbose Logging
 
 		public static bool LogWarningForNegativeInvokeTimes = true;
-#if UNITY_EDITOR
-		public static bool VerboseLoggingInEachUpdate;
-		public static bool VerboseLoggingInEachFixedUpdate;
-#endif
 
 		#endregion
 	}
