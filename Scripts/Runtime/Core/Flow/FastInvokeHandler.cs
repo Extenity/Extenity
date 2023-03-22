@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
+using Unity.Profiling;
 using UnityEngine;
 #if EnableOverkillLogging
 using System.Linq;
@@ -149,7 +150,12 @@ namespace Extenity.FlowToolbox
 					try
 					{
 						CurrentlyProcessingEntryAction = entry.Action;
-						entry.Action();
+#if ENABLE_PROFILER
+						using (new ProfilerMarker(entry.Behaviour.name).Auto())
+#endif
+						{
+							entry.Action();
+						}
 					}
 					catch (Exception exception)
 					{
@@ -231,7 +237,12 @@ namespace Extenity.FlowToolbox
 					try
 					{
 						CurrentlyProcessingEntryAction = entry.Action;
-						entry.Action();
+#if ENABLE_PROFILER
+						using (new ProfilerMarker(entry.Behaviour.name).Auto())
+#endif
+						{
+							entry.Action();
+						}
 					}
 					catch (Exception exception)
 					{
