@@ -51,36 +51,36 @@ namespace Extenity
 		#region Log
 
 		[DebuggerHidden]
-		public void Any(string message, LogCategory category)
+		public void Any(string message, LogSeverity severity)
 		{
-			switch (category)
+			switch (severity)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message);  break;
-				case LogCategory.Info:     Info(message);     break;
-				case LogCategory.Warning:  Warning(message);  break;
-				case LogCategory.Error:    Error(message);    break;
-				case LogCategory.Fatal:    Fatal(message);    break;
+				case LogSeverity.Verbose:  Verbose(message);  break;
+				case LogSeverity.Info:     Info(message);     break;
+				case LogSeverity.Warning:  Warning(message);  break;
+				case LogSeverity.Error:    Error(message);    break;
+				case LogSeverity.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
-					throw new ArgumentOutOfRangeException(nameof(category), category, null);
+					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 			}
 		}
 
 		[DebuggerHidden]
-		public void Any(string message, LogCategory category, ContextObject overriddenContext)
+		public void Any(string message, LogSeverity severity, ContextObject overriddenContext)
 		{
-			switch (category)
+			switch (severity)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message, overriddenContext);  break;
-				case LogCategory.Info:     Info(message, overriddenContext);     break;
-				case LogCategory.Warning:  Warning(message, overriddenContext);  break;
-				case LogCategory.Error:    Error(message, overriddenContext);    break;
-				case LogCategory.Fatal:    Fatal(message, overriddenContext);    break;
+				case LogSeverity.Verbose:  Verbose(message, overriddenContext);  break;
+				case LogSeverity.Info:     Info(message, overriddenContext);     break;
+				case LogSeverity.Warning:  Warning(message, overriddenContext);  break;
+				case LogSeverity.Error:    Error(message, overriddenContext);    break;
+				case LogSeverity.Fatal:    Fatal(message, overriddenContext);    break;
 				// @formatter:on
 				default:
-					throw new ArgumentOutOfRangeException(nameof(category), category, null);
+					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 			}
 		}
 

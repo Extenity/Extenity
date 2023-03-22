@@ -243,36 +243,36 @@ namespace Extenity
 		#region Log
 
 		[DebuggerHidden]
-		public static void Any(string message, LogCategory category)
+		public static void Any(string message, LogSeverity severity)
 		{
-			switch (category)
+			switch (severity)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message);  break;
-				case LogCategory.Info:     Info(message);     break;
-				case LogCategory.Warning:  Warning(message);  break;
-				case LogCategory.Error:    Error(message);    break;
-				case LogCategory.Fatal:    Fatal(message);    break;
+				case LogSeverity.Verbose:  Verbose(message);  break;
+				case LogSeverity.Info:     Info(message);     break;
+				case LogSeverity.Warning:  Warning(message);  break;
+				case LogSeverity.Error:    Error(message);    break;
+				case LogSeverity.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
-					throw new ArgumentOutOfRangeException(nameof(category), category, null);
+					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 			}
 		}
 
 		[DebuggerHidden]
-		public static void Any(string message, LogCategory category, ContextObject context)
+		public static void Any(string message, LogSeverity severity, ContextObject context)
 		{
-			switch (category)
+			switch (severity)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message, context);  break;
-				case LogCategory.Info:     Info(message, context);     break;
-				case LogCategory.Warning:  Warning(message, context);  break;
-				case LogCategory.Error:    Error(message, context);    break;
-				case LogCategory.Fatal:    Fatal(message, context);    break;
+				case LogSeverity.Verbose:  Verbose(message, context);  break;
+				case LogSeverity.Info:     Info(message, context);     break;
+				case LogSeverity.Warning:  Warning(message, context);  break;
+				case LogSeverity.Error:    Error(message, context);    break;
+				case LogSeverity.Fatal:    Fatal(message, context);    break;
 				// @formatter:on
 				default:
-					throw new ArgumentOutOfRangeException(nameof(category), category, null);
+					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
 			}
 		}
 

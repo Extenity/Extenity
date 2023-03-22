@@ -19,25 +19,25 @@ namespace Extenity.ProfilingToolbox
 		private ProfilerStopwatch Stopwatch;
 		private readonly ContextObject Context;
 		private readonly string ProfilerMessageFormat;
-		private readonly LogCategory LogCategory;
+		private readonly LogSeverity LogSeverity;
 		private readonly float ThresholdDurationToConsiderLogging;
 
-		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogCategory logCategory = LogCategory.Info)
+		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Info)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Context = context;
 			ProfilerMessageFormat = profilerMessageFormat;
-			LogCategory = logCategory;
+			LogSeverity = logSeverity;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
 		}
 
-		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogCategory logCategory = LogCategory.Info)
+		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Info)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Context = default;
 			ProfilerMessageFormat = profilerMessageFormat;
-			LogCategory = logCategory;
+			LogSeverity = logSeverity;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
 		}
@@ -47,7 +47,7 @@ namespace Extenity.ProfilingToolbox
 			Stopwatch.End();
 			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 			{
-				Stopwatch.Log(Context, ProfilerMessageFormat, LogCategory);
+				Stopwatch.Log(Context, ProfilerMessageFormat, LogSeverity);
 			}
 		}
 	}

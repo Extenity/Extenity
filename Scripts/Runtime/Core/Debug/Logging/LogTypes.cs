@@ -1,7 +1,7 @@
 namespace Extenity
 {
 
-	public enum LogCategory
+	public enum LogSeverity
 	{
 		Verbose,
 		Info,
