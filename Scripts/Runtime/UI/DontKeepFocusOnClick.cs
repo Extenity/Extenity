@@ -83,6 +83,12 @@ namespace Extenity.UIToolbox
 				EventSystem.current.SetSelectedGameObject(null);
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(DontKeepFocusOnClick));
+
+		#endregion
 	}
 
 }

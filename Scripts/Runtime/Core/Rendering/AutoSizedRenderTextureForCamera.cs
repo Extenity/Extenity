@@ -81,14 +81,12 @@ namespace Extenity.RenderingToolbox
 				}
 				else
 				{
-					if (EnableLogging)
-						Log.Info($"Changing render texture. Old: {CurrentTextureWidth}x{CurrentTextureHeight} {CurrentTextureDepth} {CurrentTextureFormat} {CurrentTextureReadWrite} New: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
+					Log.Verbose($"Changing render texture. Old: {CurrentTextureWidth}x{CurrentTextureHeight} {CurrentTextureDepth} {CurrentTextureFormat} {CurrentTextureReadWrite} New: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 				}
 			}
 			else
 			{
-				if (EnableLogging)
-					Log.Info($"Creating new render texture: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
+				Log.Verbose($"Creating new render texture: {sizeX}x{sizeY} {Depth} {Format} {ReadWrite}");
 			}
 
 			CurrentTextureWidth = sizeX;
@@ -118,7 +116,6 @@ namespace Extenity.RenderingToolbox
 
 		#region Log
 
-		public bool EnableLogging = true;
 		private static readonly Logger Log = new(nameof(AutoSizedRenderTextureForCamera));
 
 		#endregion

@@ -643,7 +643,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		private static Logger Log = new(nameof(Panel));
+		private static readonly Logger Log = new(nameof(Panel));
 
 		#endregion
 

@@ -89,7 +89,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		private static Logger Log = new("BlackoutUI");
+		private Logger Log = new("BlackoutUI");
 
 		#endregion
 	}

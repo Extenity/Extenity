@@ -30,8 +30,6 @@ namespace Extenity.Audio
 
 		protected override void AwakeDerived()
 		{
-			gameObject.SetAsLogContext(ref Log);
-
 			CalculateEventInternals();
 			// InitializeIncidentTracker();
 			InitializeAudioSourceTemplate();
@@ -1021,7 +1019,7 @@ namespace Extenity.Audio
 
 		#region Log
 
-		private static Logger Log = new(nameof(AudioManager));
+		private static readonly Logger Log = new(nameof(AudioManager));
 
 		#endregion
 
