@@ -127,6 +127,12 @@ namespace Extenity.SubsystemManagementToolbox
 		// {
 		// 	Log.Info($"OnActiveSceneChanged previous: {previous.name} current: {current.name}");
 		// }
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(SubsystemManager));
+
+		#endregion
 	}
 
 }

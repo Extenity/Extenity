@@ -348,6 +348,8 @@ namespace Extenity.ConsistencyToolbox
 
 		#region Log
 
+		private static readonly Logger Log = new(nameof(ConsistencyChecker));
+
 		public bool IsInstantLoggingEnabled;
 
 		public void LogAllInOnce()

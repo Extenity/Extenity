@@ -176,6 +176,12 @@ namespace Extenity.MessagingToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Messenger));
+
+		#endregion
 	}
 
 }
