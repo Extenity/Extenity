@@ -522,7 +522,12 @@ namespace Extenity
 
 		public static string BuildInternalErrorMessage(int errorCode)
 		{
-			return $"Internal error {errorCode}!";
+			return $"Internal error {errorCode}.";
+		}
+
+		public static string BuildInternalErrorMessage(int errorCode, string category)
+		{
+			return $"Internal error {errorCode} in {category}.";
 		}
 
 		#endregion
