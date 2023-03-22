@@ -1028,6 +1028,12 @@ namespace Extenity.BuildMachine.Editor
 		private static DateTime Now => DateTime.Now;
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(BuildJobRunner));
+
+		#endregion
 	}
 
 }
