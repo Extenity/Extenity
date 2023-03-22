@@ -28,9 +28,9 @@ namespace Extenity.UIToolbox
 		public void Blackout(bool immediate = false)
 		{
 			//var justSwitchedOn = RequestCounter.Increase();
-			//LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
+			//Log.Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
 
-			LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested");
+			Log.Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' activation requested");
 
 			//if (justSwitchedOn) // Do not apply fading on consecutive calls.
 			{
@@ -48,9 +48,9 @@ namespace Extenity.UIToolbox
 		public void Clear(bool immediate = false)
 		{
 			//var justSwitchedOff = RequestCounter.Decrease();
-			//LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
+			//Log.Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested ({RequestCounter.Counter.ToStringWithEnglishPluralPostfix("active request")})");
 
-			LogInfo($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested");
+			Log.Info($"Blackout '{(immediate ? "immediate" : "non-immediate")}' clear requested");
 
 			//if (justSwitchedOff) // Do not apply fading on consecutive calls.
 			{
@@ -89,13 +89,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		private static Logger Log = new Logger("BlackoutUI");
-
-		[Conditional("EnableBlackoutUILog")]
-		private void LogInfo(string message)
-		{
-			Log.Info(message);
-		}
+		private static Logger Log = new("BlackoutUI");
 
 		#endregion
 	}
