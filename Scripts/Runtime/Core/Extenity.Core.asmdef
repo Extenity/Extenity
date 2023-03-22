@@ -4,7 +4,8 @@
     "references": [
         "ICSharpCode.SharpZipLib",
         "Unity.Mathematics",
-        "Unity.Burst"
+        "Unity.Burst",
+        "ZString"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
