@@ -13,7 +13,7 @@ namespace Extenity.UIToolbox
 			var selectable = GetComponent<Selectable>();
 			if (selectable == null)
 			{
-				Log.DebugError($"{nameof(DontKeepFocusOnClick)} needs a {nameof(Selectable)} component to work");
+				Log.Error($"{nameof(DontKeepFocusOnClick)} needs a {nameof(Selectable)} component to work");
 				return;
 			}
 
@@ -35,7 +35,7 @@ namespace Extenity.UIToolbox
 			// -------------------------------------------------------------------------
 			// -------------------------------------------------------------------------
 
-			Log.DebugError($"{nameof(DontKeepFocusOnClick)} is not implemented for type {selectable.GetType().Name}");
+			Log.Fatal($"{nameof(DontKeepFocusOnClick)} is not implemented for type {selectable.GetType().Name}");
 		}
 
 		protected void OnDestroy()
