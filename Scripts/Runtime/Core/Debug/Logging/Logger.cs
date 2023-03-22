@@ -78,14 +78,18 @@ namespace Extenity
 			}
 		}
 
-		[Conditional("EnableVerboseLogging")]
+#if DisableVerboseLogging
+		[Conditional("DummyConditionThatNeverExists")]
+#endif
 		[DebuggerHidden]
 		public void Verbose(string message)
 		{
 			Log.Verbose(ProcessedPrefix + message, DefaultContext);
 		}
 
-		[Conditional("EnableVerboseLogging")]
+#if DisableVerboseLogging
+		[Conditional("DummyConditionThatNeverExists")]
+#endif
 		[DebuggerHidden]
 		public void Verbose(string message, ContextObject overriddenContext)
 		{

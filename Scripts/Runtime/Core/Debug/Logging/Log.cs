@@ -293,7 +293,9 @@ namespace Extenity
 			}
 		}
 
-		[Conditional("EnableVerboseLogging")]
+#if DisableVerboseLogging
+		[Conditional("DummyConditionThatNeverExists")]
+#endif
 		[DebuggerHidden]
 		public static void Verbose(string message)
 		{
@@ -304,7 +306,9 @@ namespace Extenity
 #endif
 		}
 
-		[Conditional("EnableVerboseLogging")]
+#if DisableVerboseLogging
+		[Conditional("DummyConditionThatNeverExists")]
+#endif
 		[DebuggerHidden]
 		public static void Verbose(string message, ContextObject context)
 		{
