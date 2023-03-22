@@ -484,7 +484,6 @@ namespace Extenity.BuildMachine.Editor
 			DestroyAllComponentsInScenes<SnapToGroundInEditor>(ActiveCheck.IncludingInactive, SceneListFilter.LoadedScenes);
 			DestroyAllComponentsInScenes<SnapToObjectInEditor>(ActiveCheck.IncludingInactive, SceneListFilter.LoadedScenes);
 			DestroyAllComponentsInScenes<DontShowEditorHandler>(ActiveCheck.IncludingInactive, SceneListFilter.LoadedScenes);
-			DestroyAllComponentsInScenes<Devnote>(ActiveCheck.IncludingInactive, SceneListFilter.LoadedScenes);
 		}
 
 		// -------------------------------------------------------------------------
