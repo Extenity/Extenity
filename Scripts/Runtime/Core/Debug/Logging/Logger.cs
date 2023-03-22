@@ -115,36 +115,6 @@ namespace Extenity
 		}
 
 		[DebuggerHidden]
-		public void Severe(string message, SeverityCategory severity)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message);  break;
-				case SeverityCategory.Error:    Error(message);    break;
-				case SeverityCategory.Fatal:    Fatal(message);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
-		[DebuggerHidden]
-		public void Severe(string message, SeverityCategory severity, ContextObject overriddenContext)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message, overriddenContext);  break;
-				case SeverityCategory.Error:    Error(message, overriddenContext);    break;
-				case SeverityCategory.Fatal:    Fatal(message, overriddenContext);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
-		[DebuggerHidden]
 		public void Warning(string message)
 		{
 			Log.Warning(ProcessedPrefix + message, Context);

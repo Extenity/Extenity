@@ -347,36 +347,6 @@ namespace Extenity
 		}
 
 		[DebuggerHidden]
-		public static void Severe(string message, SeverityCategory severity)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message);  break;
-				case SeverityCategory.Error:    Error(message);    break;
-				case SeverityCategory.Fatal:    Fatal(message);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
-		[DebuggerHidden]
-		public static void Severe(string message, SeverityCategory severity, ContextObject context)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message, context);  break;
-				case SeverityCategory.Error:    Error(message, context);    break;
-				case SeverityCategory.Fatal:    Fatal(message, context);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
-		[DebuggerHidden]
 		public static void Warning(string message)
 		{
 #if UNITY
