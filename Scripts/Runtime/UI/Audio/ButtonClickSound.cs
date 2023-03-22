@@ -52,8 +52,7 @@ namespace Extenity.UIToolbox.Audio
 
 			if (Button)
 			{
-				if (IsLoggingEnabled)
-					Log.Info($"Registering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
+				Log.Info($"Registering '{nameof(Button)}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -70,8 +69,7 @@ namespace Extenity.UIToolbox.Audio
 			}
 			else if (Toggle)
 			{
-				if (IsLoggingEnabled)
-					Log.Info($"Registering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
+				Log.Info($"Registering '{nameof(Toggle)}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -92,8 +90,7 @@ namespace Extenity.UIToolbox.Audio
 		{
 			if (Button)
 			{
-				if (IsLoggingEnabled)
-					Log.Info($"Deregistering '{typeof(Button).Name}' click sound for '{gameObject.name}'.", this);
+				Log.Info($"Deregistering '{nameof(Button)}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -108,8 +105,7 @@ namespace Extenity.UIToolbox.Audio
 			}
 			else if (Toggle)
 			{
-				if (IsLoggingEnabled)
-					Log.Info($"Deregistering '{typeof(Toggle).Name}' click sound for '{gameObject.name}'.", this);
+				Log.Info($"Deregistering '{nameof(Toggle)}' click sound for '{gameObject.name}'.", this);
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -141,8 +137,7 @@ namespace Extenity.UIToolbox.Audio
 
 		public void Play()
 		{
-			if (IsLoggingEnabled)
-				Log.Info($"Playing click sound of '{gameObject.name}'.", this);
+			Log.Info($"Playing click sound of '{gameObject.name}'.", this);
 			AudioManager.Play(SoundEvent);
 		}
 
@@ -163,38 +158,7 @@ namespace Extenity.UIToolbox.Audio
 
 		#region Log
 
-		private const string LoggingPrefKey = "EnableButtonClickSoundLogging";
-
-		private static bool _IsLoggingInitialized;
-
-		private static bool _IsLoggingEnabled;
-		public static bool IsLoggingEnabled
-		{
-			get
-			{
-				if (!_IsLoggingInitialized)
-				{
-					_IsLoggingEnabled = PlayerPrefsTools.GetBool(LoggingPrefKey, false);
-					_IsLoggingInitialized = true;
-				}
-				return _IsLoggingEnabled;
-			}
-			set
-			{
-				_IsLoggingEnabled = value;
-				_IsLoggingInitialized = true;
-				if (value)
-				{
-					PlayerPrefsTools.SetBool(LoggingPrefKey, value);
-				}
-				else
-				{
-					// This is a debugging tool. No need to keep the registry key around.
-					PlayerPrefs.DeleteKey(LoggingPrefKey);
-				}
-				PlayerPrefs.Save();
-			}
-		}
+		private static readonly Logger Log = new(nameof(ButtonClickSound));
 
 		#endregion
 	}
