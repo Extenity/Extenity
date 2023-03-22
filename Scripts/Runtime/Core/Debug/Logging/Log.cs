@@ -21,6 +21,96 @@ using ContextObject = System.Object;
 
 namespace Extenity
 {
+	// TODO-Log: Make sure new log system provides these features:
+	// Figure out how to know which lines a log entry has in log output file
+	//  * Maybe use a special character at the beginning of each line?
+	//    * Ensure no other lines would start with that character.
+	//    * Maybe use RS (Record Separator) control character in ASCII?
+	//      * Are text editors able to handle that?
+	//      * Is Jenkins able to handle that?
+	// Outputting to Jenkins console, without registering logs to Unity.
+	//  * Instant flush of logs to Jenkins console.
+	// Custom formatting for Stacktrace
+	// Custom formatting for Exception that includes way more info.
+	// Auto adding '' around parameters in log messages.
+	// Add last 100 log entries (including Verbose) to Warnings and Errors.
+	// Better stacktrace:
+	//  * Exclude DebuggerHidden attributed methods from stacktrace.
+	//  * Find a way to clearly differentiate stacktrace in log output streams
+	// Log line format: [Time] [Category] [Severity] [Indentation] [Message]
+	// Indentation support
+	// Ensures all logs have Category by forcing logs to be made via Log.With or Logger.
+	// Full path of context object (if UnityEngine.Object) will also be logged
+	// Catch Unity's logs and log them to output streams
+	// Multi-threaded logging
+	//  * Log methods are locked to prevent any possible multi-threading issues
+	// Custom actions for log entries
+	//  * Go to context object
+	//    * Which also supports logging full UnityEngine.Object path
+	//    * If the object no longer exists, "Go to context object" tries to find the object in the scene via its path.
+	//  * Simulate click on Unity's menu items
+	//  * Open Game window
+	//  * Open Scene window
+	//  * Open Profiler window
+	// In-game and Editor log window
+	//  * Find a way to show log window in-game. Maybe use UIToolkit?
+	//  * Think about how to implement something like Quantum Console
+	//  * Clear button flushes all current logs and creates a new log file
+	//  * Filtering
+	//  * Metal Search
+	//  * Double-click to go to source code
+	//  * Hyperlinks on stacktrace lines to go to source code
+	//  * Monospace font
+	//  * New log entries appear 3 frames per second to increase readability of logs and editor performance
+	//  * Background will turn red for errors and yellow for warnings
+	//  * Opens stacktrace and log details as right pane of window, almost as a full screen window
+	//    * Details window has a big Close button
+	//    * Clicking on the log line again will deselect and close details window
+	//    * Background will turn red for errors and yellow for warnings
+	//  * Ability to copy log line and details to clipboard
+	// Log files
+	//  * Log files are stored in user folder
+	//  * Log files are flushed to disk every 0.2 seconds
+	//  * Log files are flushed immediately when quitting the application
+	//  * Log flushing will be turned to immediate when quitting the application
+	//  * Log file output name format can be modified
+	//    * Default format: "Log_YYYY-MM-DD_HH-mm-ss.log"
+	//  * Ability to send last 300 lines of active log file to a remote server when an error occurs
+	// Viewing log files
+	//  * Ability to select log files from a list
+	//    * Local log files
+	//    * Remote log files
+	// Catching unhandled exceptions
+	//  * Unhandled exceptions will be logged to Unity console
+	//  * Unhandled exceptions will be logged to Jenkins console
+	//  * Unhandled exceptions will be logged to log files
+	//  * Unhandled exceptions will be logged to log window
+	//  * Unhandled exceptions will be flushed to all output targets immediately
+
+	// TODO-Log: High-throughput logging
+	//  * Find a way to support concatenation of strings in log methods
+	//    * Think about these:
+	//        Log.Text("Navigation area ").String(areaName).Text(" does not exist.").Fatal();
+	//        Log.Write("Navigation area ").String(areaName).Write(" does not exist.").Fatal();
+	//        Log.Fatal("Navigation area ", areaName, " does not exist.");
+	//        Log.Fatal("Navigation area {0} does not exist.", areaName);
+	//        Log.Fatal($"Navigation area '{areaName}' does not exist.");
+	//        Possible other options:
+	//          Color, WriteLine
+	//          
+	//  * Find a way to write directly to Log System's Utf16ValueStringBuilder from caller's code
+	//    * Maybe a property in Logger, that can be used like Log.Stream (Make sure it's multi-thread safe)
+	//  * Think about if specifying context should be made via InfoWithContext or Log.With 
+	//  * Find a way to list the log method usages where callers of log methods use their own formatting, instead of leaving it to log method.
+
+	// TODO-Log: Make sure to do these after the new log system is ready to be used:
+	//  * Change all logs that does formatting to use new log system.
+	//  * Remove all Debug.Log_ calls from the codebase.
+	//  * Figure out how to prevent Debug.Log_ calls from being made in the codebase.
+	//  * Think about how the log system should clear old log files
+	//  * Think about how the log system should handle log files when multiple instances of the application are running
+	//  * Do performance and memory tests
+	//  * Ensure Category names does not contain any spaces or special characters. Ensure max length is 30 characters.
 
 	// TODO: Investigate: Find a way to pipe Unity logs through this class. So that Prefix system works even on Debug.Log_ calls that pass Context object.
 	// TODO: Investigate: Find a way to hide wrapper methods like Info, Warning, etc. from Unity's console stacktrace and make it go to caller's line on double clicking over the log entry.
@@ -642,6 +732,7 @@ namespace Extenity
 
 		#endregion
 
+		// TODO-Log: Move these into Logger
 		#region Log Tools - Methods
 
 		[DebuggerHidden]

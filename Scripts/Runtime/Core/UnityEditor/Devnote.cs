@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Extenity.UnityEditorToolbox
 {
 
+	// TODO: Delete Devnote tool.
 	public class Devnote : MonoBehaviour
 	{
 		public string Note;

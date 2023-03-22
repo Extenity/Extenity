@@ -8,6 +8,7 @@ using Extenity.DataToolbox;
 namespace Extenity
 {
 
+	// TODO-Log: Convert these ToStream that returns Utf16ValueStringBuilder.
 	public static class LogExtensions
 	{
 		#region Simple

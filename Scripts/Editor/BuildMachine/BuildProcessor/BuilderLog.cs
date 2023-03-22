@@ -1,6 +1,7 @@
 namespace Extenity.BuildMachine.Editor
 {
 
+	// TODO-Log: This is a temporary solution. It should be replaced with Logger.
 	public static class BuilderLog
 	{
 		public static readonly string Prefix = "[Builder] ";

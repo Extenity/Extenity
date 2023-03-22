@@ -1423,6 +1423,7 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Time
 
+		// TODO-Log: Implement a way to stream text into Log system
 		public static string ToStringMinutesSecondsMillisecondsFromSeconds(this double totalSeconds)
 		{
 			//TimeSpan t = TimeSpan.FromSeconds(seconds);
