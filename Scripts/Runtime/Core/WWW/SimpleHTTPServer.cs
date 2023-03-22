@@ -413,7 +413,7 @@ namespace Extenity.WWWToolbox
 
 		#region Log
 
-        private LogRep Log = new LogRep("HTTPServer");
+        private Logger Log = new Logger("HTTPServer");
 
 		#endregion
 	}

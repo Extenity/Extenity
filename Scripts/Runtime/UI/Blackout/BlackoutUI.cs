@@ -89,7 +89,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		private static LogRep Log = new LogRep("BlackoutUI");
+		private static Logger Log = new Logger("BlackoutUI");
 
 		[Conditional("EnableBlackoutUILog")]
 		private void LogInfo(string message)

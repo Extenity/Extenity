@@ -16,7 +16,7 @@ using ContextObject = System.Object;
 namespace Extenity.DebugToolbox
 {
 
-	public readonly struct LogRep
+	public readonly struct Logger
 	{
 		#region Setup
 
@@ -28,16 +28,16 @@ namespace Extenity.DebugToolbox
 
 		#region Initialization
 
-		public LogRep(string prefix, ContextObject context = default)
+		public Logger(string prefix, ContextObject context = default)
 		{
 			RawPrefix = prefix;
 			ProcessedPrefix = $"<b>[{prefix}]</b> ";
 			DefaultContext = context;
 		}
 
-		public static void SetContext(ref LogRep logRep, ContextObject context)
+		public static void SetContext(ref Logger logger, ContextObject context)
 		{
-			logRep = new LogRep(logRep.RawPrefix, context);
+			logger = new Logger(logger.RawPrefix, context);
 		}
 
 		#endregion
@@ -262,11 +262,11 @@ namespace Extenity.DebugToolbox
 	}
 
 #if UNITY
-	public static class LogRepTools
+	public static class LoggerTools
 	{
-		public static void SetAsLogContext(this UnityEngine.GameObject go, ref LogRep logRep)
+		public static void SetAsLogContext(this UnityEngine.GameObject go, ref Logger logger)
 		{
-			LogRep.SetContext(ref logRep, go);
+			Logger.SetContext(ref logger, go);
 		}
 	}
 #endif

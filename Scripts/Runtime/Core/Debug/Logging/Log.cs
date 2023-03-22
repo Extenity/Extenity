@@ -1,4 +1,4 @@
-//#define DisableInfoLogging | Note that this should be defined project wide since LogRep also depends on it.
+//#define DisableInfoLogging | Note that this should be defined project wide since Logger also depends on it.
 
 using System.Diagnostics;
 using System.Reflection;
@@ -197,7 +197,7 @@ namespace Extenity
 				return CurrentIndentationString + message.NormalizeLineEndingsCRLF();
 		}
 
-		// Prefix operations are done in LogRep. Keep these codes here commented out for future needs.
+		// Prefix operations are done in Logger. Keep these codes here commented out for future needs.
 		// public static string CreateMessageWithPrefix(string message, string processedPrefix)
 		// {
 		// 	if (message == null)

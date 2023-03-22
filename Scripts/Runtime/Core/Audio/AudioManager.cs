@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Events;
 using static Unity.Mathematics.math;
+using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.Audio
 {
@@ -1042,7 +1043,7 @@ namespace Extenity.Audio
 
 		#region Log
 
-		private static LogRep Log = new LogRep("Audio");
+		private static Logger Log = new Logger("Audio");
 
 		#endregion
 
