@@ -505,6 +505,7 @@ namespace Extenity
 		#endregion
 
 		// TODO-Log: Move these into Logger
+		/*
 		#region Log Tools - Methods
 
 		[DebuggerHidden]
@@ -552,6 +553,7 @@ namespace Extenity
 		}
 
 		#endregion
+		*/
 	}
 
 }
