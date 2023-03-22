@@ -167,8 +167,7 @@ namespace Extenity.UIToolbox
 			    VisibilityStatus == PanelVisibility.BecomingVisible)
 				return; // Ignore consecutive requests of the same type.
 
-			if (EnableVerboseLogging)
-				LogVerbose("Panel becoming visible: " + gameObject.name);
+			Log.Verbose("Panel becoming visible: " + gameObject.name);
 
 			CancelProcessInvokes();
 			ChangeVisibilityStatus(PanelVisibility.BecomingVisible); // Be extremely cautious about where to call these status changes. See 1175684391.
@@ -196,8 +195,7 @@ namespace Extenity.UIToolbox
 			    VisibilityStatus == PanelVisibility.BecomingInvisible)
 				return; // Ignore consecutive requests of the same type.
 
-			if (EnableVerboseLogging)
-				LogVerbose("Panel becoming invisible: " + gameObject.name);
+			Log.Verbose("Panel becoming invisible: " + gameObject.name);
 
 			// Trigger the children BEFORE triggering this Panel to become INVISIBLE.
 			for (var i = 0; i < Children.Count; i++)
@@ -519,8 +517,7 @@ namespace Extenity.UIToolbox
 			if (!component)
 				return;
 
-			if (EnableVerboseLogging)
-				LogVerbose($"Registering {nameof(Panel)}: " + component.gameObject.name);
+			Log.Verbose($"Registering {nameof(Panel)}: " + component.gameObject.name);
 
 			// Removing nulls here will ensure proper memory management that prevents the list to get filled with destroyed object links.
 			Children.AddUniqueNullCheckedAndRemoveNulls(component);
@@ -534,8 +531,7 @@ namespace Extenity.UIToolbox
 			if (!component)
 				return;
 
-			if (EnableVerboseLogging)
-				LogVerbose($"Deregistering {nameof(Panel)}: " + component.gameObject.name);
+			Log.Verbose($"Deregistering {nameof(Panel)}: " + component.gameObject.name);
 
 			Children.Remove(component);
 		}
@@ -647,13 +643,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		[Title("Log")]
-		public bool EnableVerboseLogging = false;
-
-		private void LogVerbose(string message)
-		{
-			Log.Verbose(message, this);
-		}
+		private static Logger Log = new(nameof(Panel));
 
 		#endregion
 

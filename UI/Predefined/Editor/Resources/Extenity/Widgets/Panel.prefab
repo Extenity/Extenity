@@ -76,4 +76,3 @@ MonoBehaviour:
   AutoEnabledCanvas: {fileID: 0}
   AutoEnabledCanvasGroup: {fileID: 0}
   DoNotLinkToParent: 0
-  EnableVerboseLogging: 0
