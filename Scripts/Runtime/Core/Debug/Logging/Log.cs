@@ -1,4 +1,6 @@
-//#define DisableVerboseLogging | Note that this should be defined project wide since Logger also depends on it.//#define DisableInfoLogging | Note that this should be defined project wide since Logger also depends on it.
+//#define DisableVerboseLogging | Note that this should be defined project wide since Logger also depends on it.
+//#define DisableInfoLogging | Note that this should be defined project wide since Logger also depends on it.
+
 using System.Diagnostics;
 using System.Reflection;
 using Extenity.DataToolbox;
