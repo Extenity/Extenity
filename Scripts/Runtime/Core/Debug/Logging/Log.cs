@@ -228,7 +228,7 @@ namespace Extenity
 		private static string InternalCreateDetailedExceptionMessage(Exception exception)
 		{
 			var message = exception.ToString();
-			message += "\r\nInnerException: " + exception.InnerException;
+			message += "\r\nInnerException: " + exception.InnerException; // TODO-Log: This should be recursive
 			message += "\r\nMessage: " + exception.Message;
 			message += "\r\nSource: " + exception.Source;
 			message += "\r\nStackTrace: " + exception.StackTrace;
