@@ -58,7 +58,7 @@ namespace Extenity.UIToolbox
 		{
 			if (!fader)
 			{
-				Log.InternalError(7857119, this); // Tried to register a null fader.
+				Log.InternalErrorWithContext(this, 7857119); // Tried to register a null fader.
 				return;
 			}
 			fader.OnFadeIn.AddListener(InternalOnFadeIn);

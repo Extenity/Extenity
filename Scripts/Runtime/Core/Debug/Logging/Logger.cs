@@ -224,7 +224,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalError(int errorCode)
 		{
-			Log.InternalError(errorCode, DefaultContext);
+			Log._InternalError(ProcessedPrefix, DefaultContext, errorCode);
 		}
 
 		/// <summary>
@@ -233,9 +233,31 @@ namespace Extenity
 		/// See also 'InternalException'.
 		/// </summary>
 		[DebuggerHidden]
-		public void InternalError(int errorCode, ContextObject overriddenContext)
+		public void InternalError(int errorCode, Exception innerException)
 		{
-			Log.InternalError(errorCode, overriddenContext);
+			Log._InternalError(ProcessedPrefix, DefaultContext, errorCode, innerException);
+		}
+
+		/// <summary>
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		///
+		/// See also 'InternalException'.
+		/// </summary>
+		[DebuggerHidden]
+		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode)
+		{
+			Log._InternalError(ProcessedPrefix, overriddenContext, errorCode);
+		}
+
+		/// <summary>
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		///
+		/// See also 'InternalException'.
+		/// </summary>
+		[DebuggerHidden]
+		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode, Exception innerException)
+		{
+			Log._InternalError(ProcessedPrefix, overriddenContext, errorCode, innerException);
 		}
 
 		#endregion

@@ -492,12 +492,12 @@ namespace Extenity
 		/// See also 'InternalException'.
 		/// </summary>
 		[DebuggerHidden]
-		public static void InternalError(int errorCode)
+		internal static void _InternalError(string category, ContextObject context, int errorCode)
 		{
 #if UNITY
-			UnityEngine.Debug.LogException(new InternalException(errorCode)); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(new InternalException(errorCode, category), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(new InternalException(errorCode).ToString());
+			System.Console.WriteLine(new InternalException(errorCode, category).ToString());
 #endif
 		}
 
@@ -507,12 +507,12 @@ namespace Extenity
 		/// See also 'InternalException'.
 		/// </summary>
 		[DebuggerHidden]
-		public static void InternalError(int errorCode, ContextObject context)
+		internal static void _InternalError(string category, ContextObject context, int errorCode, Exception innerException)
 		{
 #if UNITY
-			UnityEngine.Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(new InternalException(errorCode, category, innerException), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(new InternalException(errorCode).ToString());
+			System.Console.WriteLine(new InternalException(errorCode, category, innerException).ToString());
 #endif
 		}
 
