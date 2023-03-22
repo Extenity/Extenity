@@ -13,7 +13,7 @@ using ContextObject = UnityEngine.Object;
 using ContextObject = System.Object;
 #endif
 
-namespace Extenity.DebugToolbox
+namespace Extenity
 {
 
 	public readonly struct Logger

@@ -5,13 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
-using Extenity.DebugToolbox;
 using Extenity.DesignPatternsToolbox;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Events;
 using static Unity.Mathematics.math;
-using Logger = Extenity.DebugToolbox.Logger;
 
 namespace Extenity.Audio
 {
