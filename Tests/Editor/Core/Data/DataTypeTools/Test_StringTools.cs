@@ -812,7 +812,7 @@ namespace ExtenityTests.DataToolbox
 				var expectedString = convertToExpectedString(value, format);
 				if (!expectedString.Equals(resultString))
 				{
-					Log.Error($"Erroneous value generated while converting value '{value.ToString()}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
+					Assert.Fail($"Erroneous value generated while converting value '{value.ToString()}' with format '{format}' to string resulting '{BigBuffer.ConvertToString(0, length)}'.");
 				}
 				Assert.AreEqual(expectedString, resultString);
 				Assert.AreEqual(expectedString.Length, length);
