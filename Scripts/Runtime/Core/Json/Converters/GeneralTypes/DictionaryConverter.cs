@@ -54,7 +54,7 @@ namespace Extenity.JsonToolbox.Converters
 				var _value = _pair["Value"].ToObject(_args[1], serializer);
 
 				if (!_result.Contains(_key)) _result.Add(_key, _value);
-				else Log.Warning($"Ignore pair with repeat key: {_pair.ToString(Formatting.None)}");
+				else throw new Exception($"Dictionary has a repeating key: {_pair.ToString(Formatting.None)}");
 			}
 
 			return _result;
