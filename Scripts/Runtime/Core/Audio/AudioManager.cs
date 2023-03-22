@@ -349,8 +349,7 @@ namespace Extenity.Audio
 				// Otherwise, continue to look in FreeAudioSources.
 				if (reusedAudioSource)
 				{
-					if (EnableVerboseLogging)
-						Log.Info($"Reusing audio source '{reusedAudioSource.FullGameObjectName()}'.");
+					Log.Verbose($"Reusing audio source '{reusedAudioSource.FullGameObjectName()}'.");
 					ActiveAudioSources.Add(reusedAudioSource);
 					return reusedAudioSource;
 				}
@@ -363,15 +362,13 @@ namespace Extenity.Audio
 			DontDestroyOnLoad(go);
 			ActiveAudioSources.Add(audioSource);
 			// AudioSourceBag.Add(go.GetInstanceID(), audioSource);
-			if (EnableVerboseLogging)
-				Log.Info($"Created audio source '{go.FullName()}'.");
+			Log.Verbose($"Created audio source '{go.FullName()}'.");
 			return audioSource;
 		}
 
 		public AudioSource AllocateAudioSourceWithClip(string eventName, float selectorPin, bool errorIfNotFound)
 		{
-			if (EnableLogging)
-				Log.Info($"Allocating audio source for event '{eventName}' with pin '{selectorPin}'.");
+			Log.Verbose($"Allocating audio source for event '{eventName}' with pin '{selectorPin}'.");
 
 			var audioEvent = GetEvent(eventName, errorIfNotFound);
 			if (audioEvent == null)
@@ -406,8 +403,7 @@ namespace Extenity.Audio
 				Log.Info($"Tried to release audio source '{(audioSource ? audioSource.gameObject.name : "N/A")}' while it's not active.");
 				return;
 			}
-			if (EnableVerboseLogging)
-				Log.Info($"Releasing audio source with clip '{(audioSource && audioSource.clip ? audioSource.clip.name : "N/A")}'.");
+			Log.Verbose($"Releasing audio source with clip '{(audioSource && audioSource.clip ? audioSource.clip.name : "N/A")}'.");
 
 			if (!audioSource)
 			{
@@ -439,8 +435,7 @@ namespace Extenity.Audio
 
 		private void ClearLostReferencesInAllInternalContainers()
 		{
-			if (EnableVerboseLogging)
-				Log.Info("Clearing lost references.");
+			Log.Verbose("Clearing lost references.");
 
 			ClearLostReferencesInActiveAudioSourcesList();
 			ClearLostReferencesInFreeAudioSourcesList();
@@ -681,8 +676,7 @@ namespace Extenity.Audio
 
 		private AudioSource _Play(string eventName, float selectorPin, bool loop, float volume, float pitch)
 		{
-			if (EnableLogging)
-				Log.Info($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
+			Log.Verbose($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
 			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
@@ -715,8 +709,7 @@ namespace Extenity.Audio
 
 		private AudioSource _PlayAtPosition(string eventName, float selectorPin, Vector3 position, bool loop, float volume, float pitch, float spatialBlend)
 		{
-			if (EnableLogging)
-				Log.Info($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
+			Log.Verbose($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) at position '{position}'.");
 			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
@@ -749,8 +742,7 @@ namespace Extenity.Audio
 
 		private AudioSource _PlayAttached(string eventName, float selectorPin, Transform parent, Vector3 localPosition, bool loop, float volume, float pitch, float spatialBlend)
 		{
-			if (EnableLogging)
-				Log.Info($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) attached to '{parent.FullName()}' at local position '{localPosition}'.");
+			Log.Verbose($"Playing {(loop ? "looped" : "one-shot")} '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}) attached to '{parent.FullName()}' at local position '{localPosition}'.");
 			var audioSource = AllocateAudioSourceWithClip(eventName, selectorPin, true);
 			if (!audioSource)
 				return null;
@@ -774,8 +766,7 @@ namespace Extenity.Audio
 		{
 			if (audioSource)
 			{
-				if (EnableLogging)
-					Log.Info($"Stopping audio source '{audioSource.FullGameObjectName()}' with clip '{audioSource.clip}'.");
+				Log.Verbose($"Stopping audio source '{audioSource.FullGameObjectName()}' with clip '{audioSource.clip}'.");
 
 				ReleaseAudioSource(ref audioSource);
 			}
@@ -814,8 +805,7 @@ namespace Extenity.Audio
 
 		private AudioSource _PlayMusic(string eventName, float selectorPin, bool loop, float crossfadeDuration, float fadeStartVolume, float volume, float pitch)
 		{
-			if (EnableLogging)
-				Log.Info($"Playing {(loop ? "looped" : "one-shot")} music '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
+			Log.Info($"Playing {(loop ? "looped" : "one-shot")} music '{eventName}'@{selectorPin:N2} (V:{volume:N2} P:{pitch:N2}).");
 
 			var doFade = crossfadeDuration > 0f;
 
@@ -856,8 +846,7 @@ namespace Extenity.Audio
 
 		private void _StopMusic()
 		{
-			if (EnableLogging)
-				Log.Info("Stopping music.");
+			Log.Info("Stopping music.");
 			if (!MusicAudioSource)
 				return;
 			ReleaseAudioSource(ref MusicAudioSource);
@@ -1030,18 +1019,9 @@ namespace Extenity.Audio
 
 		#endregion
 
-		#region Debug
-
-		[Header("Debug")]
-		public bool EnableLogging = false;
-		public bool EnableVerboseLogging = false;
-		public bool EnableWarningLogging = true;
-
-		#endregion
-
 		#region Log
 
-		private static Logger Log = new Logger("Audio");
+		private static Logger Log = new(nameof(AudioManager));
 
 		#endregion
 
