@@ -25,7 +25,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception);
+				Log.Error(exception);
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Error(exception);
 				}
 			}
 		}

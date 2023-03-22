@@ -304,7 +304,7 @@ namespace Extenity.Testing
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Error(exception);
 				}
 				var endTime = Time.realtimeSinceStartup;
 

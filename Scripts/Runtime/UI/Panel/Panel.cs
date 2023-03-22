@@ -636,7 +636,7 @@ namespace Extenity.UIToolbox
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Error(exception, this);
 				}
 			}
 

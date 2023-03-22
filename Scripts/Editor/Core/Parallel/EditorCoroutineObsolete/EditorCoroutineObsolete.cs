@@ -39,9 +39,9 @@ namespace Extenity.ParallelToolbox.Editor
 					if (autoRefreshUI)
 						EditorGUITools.SafeRepaintAllViews();
 				}
-				catch (Exception ex)
+				catch (Exception exception)
 				{
-					Log.Exception(ex);
+					Log.Error(exception);
 					EditorApplication.update -= onUpdate;
 					if (onFinished != null)
 						onFinished();
@@ -97,9 +97,9 @@ namespace Extenity.ParallelToolbox.Editor
 							isProcessing = false;
 						}
 					}
-					catch (Exception ex)
+					catch (Exception exception)
 					{
-						Log.Exception(ex);
+						Log.Error(exception);
 						if (timer != null)
 						{
 							timer.Dispose();
@@ -151,9 +151,9 @@ namespace Extenity.ParallelToolbox.Editor
 							EditorGUITools.SafeRepaintAllViews();
 					}
 				}
-				catch (Exception ex)
+				catch (Exception exception)
 				{
-					Log.Exception(ex);
+					Log.Error(exception);
 					if (timer != null)
 					{
 						timer.Enabled = false;

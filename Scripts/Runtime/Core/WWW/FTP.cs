@@ -66,14 +66,14 @@ namespace Extenity.WWWToolbox
 						bytesRead = ftpStream.Read(byteBuffer, 0, bufferSize);
 					}
 				}
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				localFileStream.Close();
 				ftpStream.Close();
 				ftpResponse.Close();
 				ftpRequest = null;
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			return;
 		}
 
@@ -110,13 +110,13 @@ namespace Extenity.WWWToolbox
 						bytesRead = ftpStream.Read(byteBuffer, 0, bufferSize);
 					}
 				}
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				ftpStream.Close();
 				ftpResponse.Close();
 				ftpRequest = null;
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			return;
 		}
 
@@ -155,7 +155,7 @@ namespace Extenity.WWWToolbox
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Error(exception);
 					return false;
 				}
 				finally
@@ -168,7 +168,7 @@ namespace Extenity.WWWToolbox
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception);
+				Log.Error(exception);
 				return false;
 			}
 			return true;
@@ -197,7 +197,7 @@ namespace Extenity.WWWToolbox
 				ftpResponse.Close();
 				ftpRequest = null;
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			return;
 		}
 
@@ -233,7 +233,7 @@ namespace Extenity.WWWToolbox
 			{
 				if (!ignoreErrors)
 				{
-					Log.Exception(exception);
+					Log.Error(exception);
 				}
 				return false;
 			}
@@ -268,7 +268,7 @@ namespace Extenity.WWWToolbox
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception);
+				Log.Error(exception);
 				return false;
 			}
 			return true;
@@ -301,7 +301,7 @@ namespace Extenity.WWWToolbox
 				string fileInfo = null;
 				/* Read the Full Response Stream */
 				try { fileInfo = ftpReader.ReadToEnd(); }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				ftpReader.Close();
 				ftpStream.Close();
@@ -310,7 +310,7 @@ namespace Extenity.WWWToolbox
 				/* Return File Created Date Time */
 				return fileInfo;
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			/* Return an Empty string Array if an Exception Occurs */
 			return "";
 		}
@@ -342,7 +342,7 @@ namespace Extenity.WWWToolbox
 				string fileInfo = null;
 				/* Read the Full Response Stream */
 				try { while (ftpReader.Peek() != -1) { fileInfo = ftpReader.ReadToEnd(); } }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				ftpReader.Close();
 				ftpStream.Close();
@@ -351,7 +351,7 @@ namespace Extenity.WWWToolbox
 				/* Return File Size */
 				return fileInfo;
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			/* Return an Empty string Array if an Exception Occurs */
 			return "";
 		}
@@ -383,7 +383,7 @@ namespace Extenity.WWWToolbox
 				string directoryRaw = null;
 				/* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
 				try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				ftpReader.Close();
 				ftpStream.Close();
@@ -391,9 +391,9 @@ namespace Extenity.WWWToolbox
 				ftpRequest = null;
 				/* Return the Directory Listing as a string Array by Parsing 'directoryRaw' with the Delimiter you Append (I use | in This Example) */
 				try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			/* Return an Empty string Array if an Exception Occurs */
 			return new string[] { "" };
 		}
@@ -425,7 +425,7 @@ namespace Extenity.WWWToolbox
 				string directoryRaw = null;
 				/* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
 				try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 				/* Resource Cleanup */
 				ftpReader.Close();
 				ftpStream.Close();
@@ -433,9 +433,9 @@ namespace Extenity.WWWToolbox
 				ftpRequest = null;
 				/* Return the Directory Listing as a string Array by Parsing 'directoryRaw' with the Delimiter you Append (I use | in This Example) */
 				try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
-				catch (Exception exception) { Log.Exception(exception); }
+				catch (Exception exception) { Log.Error(exception); }
 			}
-			catch (Exception exception) { Log.Exception(exception); }
+			catch (Exception exception) { Log.Error(exception); }
 			/* Return an Empty string Array if an Exception Occurs */
 			return new string[] { "" };
 		}

@@ -336,7 +336,7 @@ namespace Extenity.MessagingToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception);
+						Log.Error(exception);
 					}
 					finally
 					{
@@ -406,7 +406,7 @@ namespace Extenity.MessagingToolbox
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Error(exception);
 				}
 				finally
 				{
@@ -649,7 +649,7 @@ namespace Extenity.MessagingToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception, listener.LogObject(isSwitchedOn));
+						Log.Error(exception, listener.LogObject(isSwitchedOn));
 					}
 				}
 

@@ -85,7 +85,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception);
+						Log.Error(exception);
 						Log.Error($"Failed to instantiate the view of the object '{item.ToTypeAndIDStringSafe()}'. See previous error for more details.");
 					}
 				},
@@ -102,7 +102,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 					}
 					catch (Exception exception)
 					{
-						Log.Exception(exception);
+						Log.Error(exception);
 						Log.Error($"Failed to destroy the view of the object '{(itemView != null ? itemView.Object.ToTypeAndIDStringSafe() : "[NA]")}'. See previous error for more details.");
 					}
 				}
@@ -115,7 +115,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception);
+				Log.Error(exception);
 			}
 		}
 

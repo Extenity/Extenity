@@ -71,7 +71,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception, GameObject);
+				Log.Error(exception, GameObject);
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception, GameObject);
+				Log.Error(exception, GameObject);
 			}
 		}
 

@@ -10,7 +10,6 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Threading;
-using Extenity.DebugToolbox;
 using Newtonsoft.Json;
 
 namespace Extenity.WWWToolbox
@@ -187,7 +186,7 @@ namespace Extenity.WWWToolbox
 				}
 				catch (Exception exception)
 				{
-					Log.Exception(exception);
+					Log.Fatal(exception);
 				}
 			}
 		}
@@ -307,7 +306,7 @@ namespace Extenity.WWWToolbox
 			}
 			catch (Exception exception)
 			{
-				Log.Exception(exception);
+				Log.Fatal(exception);
 				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 			}
 			finally

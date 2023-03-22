@@ -402,12 +402,32 @@ namespace Extenity
 		}
 
 		[DebuggerHidden]
+		public static void Error(Exception exception)
+		{
+#if UNITY
+			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
+#endif
+		}
+
+		[DebuggerHidden]
 		public static void Error(string message, ContextObject context)
 		{
 #if UNITY
 			UnityEngine.Debug.LogError(CreateMessage(message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessage(message));
+#endif
+		}
+
+		[DebuggerHidden]
+		public static void Error(Exception exception, ContextObject context)
+		{
+#if UNITY
+			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception), context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
 #endif
 		}
 
@@ -428,12 +448,38 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
+		public static void Fatal(Exception exception)
+		{
+#if UNITY
+			UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(exception.ToString());
+#endif
+		}
+
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		[DebuggerHidden]
 		public static void Fatal(string message, ContextObject context)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(new Exception(message).ToString());
+#endif
+		}
+
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		[DebuggerHidden]
+		public static void Fatal(Exception exception, ContextObject context)
+		{
+#if UNITY
+			UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
+#else
+			System.Console.WriteLine(exception.ToString());
 #endif
 		}
 
@@ -464,46 +510,6 @@ namespace Extenity
 			UnityEngine.Debug.LogException(new InternalException(errorCode), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(new InternalException(errorCode).ToString());
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Exception(Exception exception)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Exception(Exception exception, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Exception(Exception exception, string processedPrefix)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception, processedPrefix));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Exception(Exception exception, string processedPrefix, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception, processedPrefix));
 #endif
 		}
 

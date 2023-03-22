@@ -16,9 +16,9 @@ namespace Extenity.SystemToolbox
 					action();
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -33,9 +33,9 @@ namespace Extenity.SystemToolbox
 					action(arg1);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -50,9 +50,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -67,9 +67,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -84,9 +84,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -101,9 +101,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4, arg5);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -118,9 +118,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4, arg5, arg6);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -135,9 +135,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -152,9 +152,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -169,9 +169,9 @@ namespace Extenity.SystemToolbox
 					action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			return false;
@@ -190,9 +190,9 @@ namespace Extenity.SystemToolbox
 					result = action();
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -208,9 +208,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -226,9 +226,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -244,9 +244,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -262,9 +262,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -280,9 +280,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4, arg5);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -298,9 +298,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4, arg5, arg6);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -316,9 +316,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -334,9 +334,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);
@@ -352,9 +352,9 @@ namespace Extenity.SystemToolbox
 					result = action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 					return true;
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Exception(e);
+					LogInvoke.Error(exception);
 				}
 			}
 			result = default(TResult);

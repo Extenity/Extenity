@@ -159,9 +159,21 @@ namespace Extenity
 		}
 
 		[DebuggerHidden]
+		public void Error(Exception exception)
+		{
+			Log.Error(exception, DefaultContext);
+		}
+
+		[DebuggerHidden]
 		public void Error(string message, ContextObject overriddenContext)
 		{
 			Log.Error(ProcessedPrefix + message, overriddenContext);
+		}
+
+		[DebuggerHidden]
+		public void Error(Exception exception, ContextObject overriddenContext)
+		{
+			Log.Error(exception, overriddenContext);
 		}
 
 		/// <summary>
@@ -177,9 +189,27 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
+		public void Fatal(Exception exception)
+		{
+			Log.Fatal(exception, DefaultContext);
+		}
+
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		[DebuggerHidden]
 		public void Fatal(string message, ContextObject overriddenContext)
 		{
 			Log.Fatal(ProcessedPrefix + message, overriddenContext);
+		}
+
+		/// <summary>
+		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
+		/// </summary>
+		[DebuggerHidden]
+		public void Fatal(Exception exception, ContextObject overriddenContext)
+		{
+			Log.Fatal(exception, overriddenContext);
 		}
 
 		/// <summary>
@@ -202,18 +232,6 @@ namespace Extenity
 		public void InternalError(int errorCode, ContextObject overriddenContext)
 		{
 			Log.InternalError(errorCode, overriddenContext);
-		}
-
-		[DebuggerHidden]
-		public void Exception(Exception exception)
-		{
-			Log.Exception(exception, ProcessedPrefix, DefaultContext);
-		}
-
-		[DebuggerHidden]
-		public void Exception(Exception exception, ContextObject overriddenContext)
-		{
-			Log.Exception(exception, ProcessedPrefix, overriddenContext);
 		}
 
 		#endregion
