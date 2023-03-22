@@ -22,7 +22,7 @@ namespace Extenity
 
 		public readonly string RawPrefix;
 		public readonly string ProcessedPrefix;
-		public readonly ContextObject DefaultContext;
+		public readonly ContextObject Context;
 
 		#endregion
 
@@ -32,7 +32,7 @@ namespace Extenity
 		{
 			RawPrefix = prefix;
 			ProcessedPrefix = $"<b>[{prefix}]</b> ";
-			DefaultContext = context;
+			Context = context;
 		}
 
 		public static void SetContext(ref Logger logger, ContextObject context)
@@ -84,7 +84,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Verbose(string message)
 		{
-			Log.Verbose(ProcessedPrefix + message, DefaultContext);
+			Log.Verbose(ProcessedPrefix + message, Context);
 		}
 
 #if DisableVerboseLogging
@@ -102,7 +102,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Info(string message)
 		{
-			Log.Info(ProcessedPrefix + message, DefaultContext);
+			Log.Info(ProcessedPrefix + message, Context);
 		}
 
 #if DisableInfoLogging
@@ -147,7 +147,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Warning(string message)
 		{
-			Log.Warning(ProcessedPrefix + message, DefaultContext);
+			Log.Warning(ProcessedPrefix + message, Context);
 		}
 
 		[DebuggerHidden]
@@ -159,13 +159,13 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Error(string message)
 		{
-			Log.Error(ProcessedPrefix + message, DefaultContext);
+			Log.Error(ProcessedPrefix + message, Context);
 		}
 
 		[DebuggerHidden]
 		public void Error(Exception exception)
 		{
-			Log.Error(exception, DefaultContext);
+			Log.Error(exception, Context);
 		}
 
 		[DebuggerHidden]
@@ -186,7 +186,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Fatal(string message)
 		{
-			Log.Fatal(ProcessedPrefix + message, DefaultContext);
+			Log.Fatal(ProcessedPrefix + message, Context);
 		}
 
 		/// <summary>
@@ -195,7 +195,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Fatal(Exception exception)
 		{
-			Log.Fatal(exception, DefaultContext);
+			Log.Fatal(exception, Context);
 		}
 
 		/// <summary>
@@ -224,7 +224,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalError(int errorCode)
 		{
-			Log._InternalError(ProcessedPrefix, DefaultContext, errorCode);
+			Log._InternalError(ProcessedPrefix, Context, errorCode);
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalError(int errorCode, Exception innerException)
 		{
-			Log._InternalError(ProcessedPrefix, DefaultContext, errorCode, innerException);
+			Log._InternalError(ProcessedPrefix, Context, errorCode, innerException);
 		}
 
 		/// <summary>
