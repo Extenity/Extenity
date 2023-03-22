@@ -22,7 +22,7 @@ namespace Extenity.ProfilingToolbox
 		private readonly LogSeverity LogSeverity;
 		private readonly float ThresholdDurationToConsiderLogging;
 
-		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Info)
+		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Context = context;
@@ -32,7 +32,7 @@ namespace Extenity.ProfilingToolbox
 			Stopwatch.Start();
 		}
 
-		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Info)
+		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Context = default;
