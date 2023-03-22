@@ -3,7 +3,6 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -871,11 +870,11 @@ namespace Extenity.AssetToolbox.Editor
 			itemPath = itemPath.Replace(@"/", @"\"); // Explorer doesn't like slashes
 			if (Directory.Exists(itemPath))
 			{
-				Process.Start("explorer.exe", "\"" + itemPath + "\"");
+				System.Diagnostics.Process.Start("explorer.exe", "\"" + itemPath + "\"");
 			}
 			else if (File.Exists(itemPath))
 			{
-				Process.Start("explorer.exe", "/select,\"" + itemPath + "\"");
+				System.Diagnostics.Process.Start("explorer.exe", "/select,\"" + itemPath + "\"");
 			}
 #else
 			throw new NotImplementedException();
