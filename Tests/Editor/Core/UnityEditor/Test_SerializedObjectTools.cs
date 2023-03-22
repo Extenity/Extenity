@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Extenity;
 using Extenity.Testing;
 using Extenity.UnityEditorToolbox;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using Logger = Extenity.Logger;
 using Object = UnityEngine.Object;
 
 namespace ExtenityTests.UnityEditorToolbox
@@ -966,6 +966,12 @@ namespace ExtenityTests.UnityEditorToolbox
 			} while (iterator.Next(true));
 			Log.Info(stringBuilder.ToString());
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_SerializedObjectTools));
 
 		#endregion
 	}

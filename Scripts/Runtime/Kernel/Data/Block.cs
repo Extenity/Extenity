@@ -233,6 +233,12 @@ namespace Extenity.KernelToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new("Kernel");
+
+		#endregion
 	}
 
 }

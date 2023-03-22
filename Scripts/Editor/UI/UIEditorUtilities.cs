@@ -156,6 +156,12 @@ namespace Extenity.UIToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(UIEditorUtilities));
+
+		#endregion
 	}
 
 }

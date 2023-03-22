@@ -439,6 +439,12 @@ namespace Extenity.WWWToolbox
 			/* Return an Empty string Array if an Exception Occurs */
 			return new string[] { "" };
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(FTP));
+
+		#endregion
 	}
 
 }

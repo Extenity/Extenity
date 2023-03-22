@@ -167,6 +167,12 @@ namespace Extenity.Audio
 
 			OnVolumeChanged.Invoke(resultingVolume);
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(VolumeControl));
+
+		#endregion
 	}
 
 }

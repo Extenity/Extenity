@@ -238,6 +238,12 @@ namespace Extenity
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Loop));
+
+		#endregion
 	}
 
 }

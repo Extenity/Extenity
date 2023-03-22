@@ -191,6 +191,12 @@ namespace Extenity.JsonToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(JsonTools));
+
+		#endregion
 	}
 
 }

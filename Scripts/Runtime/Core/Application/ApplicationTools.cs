@@ -334,6 +334,12 @@ namespace Extenity.ApplicationToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ApplicationTools));
+
+		#endregion
 	}
 
 }

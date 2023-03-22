@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Extenity.FlowToolbox
 {
@@ -130,6 +131,9 @@ namespace Extenity.FlowToolbox
 		#region Logging
 
 		public bool IsLoggingEnabled = true;
+
+		[NonSerialized]
+		public Logger Log = new(nameof(Pauser));
 
 		#endregion
 	}

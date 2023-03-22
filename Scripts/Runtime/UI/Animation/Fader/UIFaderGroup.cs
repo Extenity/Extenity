@@ -177,6 +177,12 @@ namespace Extenity.UIToolbox
 #endif
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(UIFaderGroup));
+
+		#endregion
 	}
 
 }

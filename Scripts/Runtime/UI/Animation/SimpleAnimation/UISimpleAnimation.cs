@@ -272,10 +272,11 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Debug
+		#region Log
 
 		[Header("Debug")]
 		public bool DEBUG_ShowAnimationMessages = false;
+		private static readonly Logger Log = new(nameof(UISimpleAnimation));
 
 		#endregion
 	}

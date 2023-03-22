@@ -73,6 +73,12 @@ namespace Extenity.ApplicationToolbox
 
 			//OnVersionChecked.Invoke();
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(VersionChecker));
+
+		#endregion
 	}
 
 }

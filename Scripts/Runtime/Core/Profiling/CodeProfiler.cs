@@ -154,6 +154,12 @@ namespace Extenity.ProfilingToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(CodeProfiler));
+
+		#endregion
 	}
 
 }

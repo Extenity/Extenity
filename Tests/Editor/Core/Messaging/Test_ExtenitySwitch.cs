@@ -1,8 +1,8 @@
 using System;
-using Extenity;
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using Logger = Extenity.Logger;
 using Object = UnityEngine.Object;
 
 namespace ExtenityTests.MessagingToolbox
@@ -2352,6 +2352,12 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			Assert.AreEqual(expectedCount, TestSwitch.ListenersAliveCount, "Unexpected registered callback count.");
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_ExtenitySwitch));
 
 		#endregion
 	}

@@ -119,6 +119,7 @@ namespace Extenity.RenderingToolbox
 		#region Log
 
 		public bool EnableLogging = true;
+		private static readonly Logger Log = new(nameof(AutoSizedRenderTextureForCamera));
 
 		#endregion
 	}

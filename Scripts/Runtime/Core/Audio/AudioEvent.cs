@@ -237,6 +237,12 @@ namespace Extenity.Audio
 					throw new ArgumentOutOfRangeException();
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(AudioEvent));
+
+		#endregion
 	}
 
 }

@@ -1,9 +1,9 @@
 ﻿using System.IO;
-using Extenity;
 using Extenity.BuildToolbox.Editor;
 using Extenity.FileSystemToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityTests.Build
 {
@@ -115,6 +115,12 @@ namespace ExtenityTests.Build
 			BuildTools.StashAllLocalGitChanges(DummyRepoPath, true);
 			BuildTools.ApplyLastGitStash(DummyRepoPath, true);
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_StashGitChanges));
+
+		#endregion
 	}
 
 }

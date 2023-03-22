@@ -159,6 +159,12 @@ namespace Extenity.NavigationToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(NavigationTools));
+
+		#endregion
 	}
 
 }

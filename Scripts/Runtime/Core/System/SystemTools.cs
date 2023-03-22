@@ -388,6 +388,12 @@ namespace Extenity.SystemToolbox
 #endif
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger LogInvoke = new("Invoke");
+
+		#endregion
 	}
 
 }

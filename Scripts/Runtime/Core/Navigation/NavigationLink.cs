@@ -96,6 +96,12 @@ namespace Extenity.NavigationToolbox
 			UpdateLink();
 		}
 #endif
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(NavigationLink));
+
+		#endregion
 	}
 
 }

@@ -155,6 +155,12 @@ namespace Extenity.RenderingToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(AutoSizedRenderTexture));
+
+		#endregion
 	}
 
 }

@@ -469,6 +469,12 @@ namespace Extenity.MathToolbox
 #endif
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(OrientedLine));
+
+		#endregion
 	}
 
 }

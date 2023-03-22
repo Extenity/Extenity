@@ -300,6 +300,12 @@ namespace Extenity.SubsystemManagementToolbox
 #endif
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ApplicationSubsystemDefinition));
+
+		#endregion
 	}
 
 	[Serializable]
@@ -440,6 +446,12 @@ namespace Extenity.SubsystemManagementToolbox
 		}
 
 #endif
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(SubsystemDefinition));
 
 		#endregion
 	}

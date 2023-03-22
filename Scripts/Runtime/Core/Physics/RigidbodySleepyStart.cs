@@ -71,6 +71,12 @@ namespace Extenity.PhysicsToolbox
 		public Rigidbody[] Rigidbodies;
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(RigidbodySleepyStart));
+
+		#endregion
 	}
 
 }

@@ -7,6 +7,7 @@ using Extenity.Testing;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using Logger = Extenity.Logger;
 using Random = UnityEngine.Random;
 
 namespace ExtenityTests.FlowToolbox
@@ -59,7 +60,9 @@ namespace ExtenityTests.FlowToolbox
 
 		#endregion
 
-		#region Logging
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_FastInvokeSubject));
 
 		[NonSerialized]
 		public bool IsLoggingFixedUpdate;

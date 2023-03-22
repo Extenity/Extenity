@@ -366,6 +366,12 @@ namespace Extenity.KernelToolbox.UnityInterface
 		}
 
 		#endregion
+
+		#region Log
+
+		protected static readonly Logger Log = new("Kernel");
+
+		#endregion
 	}
 
 }

@@ -163,6 +163,12 @@ namespace Extenity.DebugToolbox
 			DirectoryTools.CreateFromFilePath(path);
 			File.WriteAllText(path, message);
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(SceneSnapshot));
+
+		#endregion
 	}
 
 }

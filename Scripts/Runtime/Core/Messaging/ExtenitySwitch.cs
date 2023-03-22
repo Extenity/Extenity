@@ -666,6 +666,8 @@ namespace Extenity.MessagingToolbox
 
 		#region Log
 
+		private static readonly Logger Log = new("ExtenitySwitch");
+
 		public string GetSwitchListenerDebugInfo(string linePrefix)
 		{
 			var stringBuilder = StringTools.SharedStringBuilder.Value;

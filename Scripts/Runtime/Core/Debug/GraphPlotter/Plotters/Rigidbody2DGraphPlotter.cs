@@ -194,6 +194,12 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Rigidbody2DGraphPlotter));
+
+		#endregion
 	}
 
 }

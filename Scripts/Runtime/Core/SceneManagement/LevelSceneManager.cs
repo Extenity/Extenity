@@ -124,6 +124,12 @@ namespace Extenity.SceneManagementToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(LevelSceneManager));
+
+		#endregion
 	}
 
 }

@@ -68,6 +68,12 @@ namespace Extenity.UIToolbox
 			if (ResolutionText)
 				ResolutionText.text = $"{Screen.width}x{Screen.height}";
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ResolutionTester));
+
+		#endregion
 	}
 
 }

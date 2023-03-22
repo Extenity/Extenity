@@ -203,6 +203,12 @@ namespace Extenity.DataToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(FastHashSetPool<T>));
+
+		#endregion
 	}
 
 	public static class FastHashSetPoolTools

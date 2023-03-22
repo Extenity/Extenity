@@ -119,6 +119,12 @@ namespace Extenity.DebugToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(DebugTimeController));
+
+		#endregion
 	}
 
 }

@@ -3,10 +3,10 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
-using Extenity;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.Testing;
 using UnityEngine.TestTools;
+using Logger = Extenity.Logger;
 
 namespace ExtenityTests.ParallelToolbox.Editor
 {
@@ -686,6 +686,12 @@ namespace ExtenityTests.ParallelToolbox.Editor
 			Log.Info("Caught the exception (Depth 5): " + exception.Message);
 			return true;
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_EditorCoroutine));
 
 		#endregion
 	}

@@ -2210,6 +2210,12 @@ namespace Extenity.GameObjectToolbox
 #endif
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(GameObjectTools));
+
+		#endregion
 	}
 
 }

@@ -341,10 +341,11 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Debug
+		#region Log
 
 		[Header("Debug")]
 		public bool DEBUG_ShowFadeMessages = false;
+		private Logger Log = new(nameof(UIFader));
 
 		#endregion
 	}

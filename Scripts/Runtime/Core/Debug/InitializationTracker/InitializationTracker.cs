@@ -464,7 +464,7 @@ namespace Extenity.DebugToolbox
 
 		#region Log
 
-		private Logger Log = new Logger("InitTrack");
+		private Logger Log = new("InitTrack");
 
 		[Conditional("InitializationTrackerLogging")]
 		private void LogInfo(string message)

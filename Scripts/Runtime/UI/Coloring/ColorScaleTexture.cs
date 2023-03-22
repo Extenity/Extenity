@@ -119,6 +119,12 @@ namespace Extenity.UIToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ColorScaleTexture));
+
+		#endregion
 	}
 
 }

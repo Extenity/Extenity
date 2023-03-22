@@ -949,6 +949,8 @@ namespace Extenity.FlowToolbox
 
 		public static bool LogWarningForNegativeInvokeTimes = true;
 
+		private static readonly Logger Log = new("FastInvoke");
+
 		#endregion
 	}
 
