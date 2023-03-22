@@ -10,11 +10,4 @@ namespace Extenity
 		Fatal,
 	}
 
-	public enum SeverityCategory
-	{
-		Warning,
-		Error,
-		Fatal,
-	}
-
 }
