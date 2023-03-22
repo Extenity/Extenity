@@ -47,6 +47,8 @@ namespace Extenity.UIToolbox
 
 		protected void Start()
 		{
+			Logger.SetContext(ref Log, this);
+
 			if (GetFadeInConfigurationFromInitialValue)
 			{
 				if (CanvasGroup != null)
@@ -191,14 +193,11 @@ namespace Extenity.UIToolbox
 			{
 				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
 				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
-				Log.Fatal($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.", this);
+				Log.Fatal($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.");
 				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
 			}
 
-			if (DEBUG_ShowFadeMessages)
-			{
-				Log.Info($"Fading in '{CanvasGroup.FullGameObjectName()}'");
-			}
+			Log.Verbose($"Fading in '{CanvasGroup.FullGameObjectName()}'");
 
 			State = FadeState.FadedIn;
 
@@ -241,10 +240,7 @@ namespace Extenity.UIToolbox
 						Canvas.enabled = true;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeInAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
-						if (DEBUG_ShowFadeMessages)
-						{
-							Log.Info($"Fade in completed for '{CanvasGroup.FullGameObjectName()}'");
-						}
+						Log.Verbose($"Fade in completed for '{CanvasGroup.FullGameObjectName()}'");
 						CanvasGroupTweener = null;
 						if (BlocksRaycasts)
 							CanvasGroup.blocksRaycasts = true;
@@ -265,14 +261,11 @@ namespace Extenity.UIToolbox
 			{
 				// Loosing CanvasGroup reference means we have probably lost the UIFader too.
 				// Meaning 'this' reference would be null too. Check the callstack to see what's going wrong.
-				Log.Fatal($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.", this);
+				Log.Fatal($"Trying to fade a null CanvasGroup for fader '{this.GameObjectNameSafe()}'.");
 				return duration + delay; // Even though we are not in a desired situation, just pretend everything is working fine.
 			}
 
-			if (DEBUG_ShowFadeMessages)
-			{
-				Log.Info($"Fading out '{CanvasGroup.FullGameObjectName()}'");
-			}
+			Log.Verbose($"Fading out '{CanvasGroup.FullGameObjectName()}'");
 
 			State = FadeState.FadedOut;
 
@@ -308,10 +301,7 @@ namespace Extenity.UIToolbox
 					CanvasGroup.interactable = false;
 					CanvasGroupTweener = CanvasGroup.DOFade(FadeOutAlpha, duration).SetUpdate(true).SetDelay(delay).OnComplete(() =>
 					{
-						if (DEBUG_ShowFadeMessages)
-						{
-							Log.Info($"Fade out completed for '{CanvasGroup.FullGameObjectName()}'");
-						}
+						Log.Verbose($"Fade out completed for '{CanvasGroup.FullGameObjectName()}'");
 						CanvasGroupTweener = null;
 						if (Canvas != null)
 							Canvas.enabled = false;
@@ -343,8 +333,6 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		[Header("Debug")]
-		public bool DEBUG_ShowFadeMessages = false;
 		private Logger Log = new(nameof(UIFader));
 
 		#endregion

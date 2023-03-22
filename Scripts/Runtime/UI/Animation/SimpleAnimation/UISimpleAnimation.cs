@@ -13,6 +13,8 @@ namespace Extenity.UIToolbox
 
 		protected void Start()
 		{
+			Logger.SetContext(ref Log, this);
+
 			switch (InitialState)
 			{
 				case InitialAnimationState.Untouched:
@@ -137,10 +139,7 @@ namespace Extenity.UIToolbox
 		{
 			if (!AnchorA)
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 			return AnimateTo(AnchorA.anchoredPosition, EasingToA, 0f, 0f, AnimationState.PlaceToA);
@@ -150,10 +149,7 @@ namespace Extenity.UIToolbox
 		{
 			if (!AnchorA)
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no '{nameof(AnchorA)}' specified in animation of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 			return AnimateTo(AnchorA.anchoredPosition, EasingToA, DelayToA, DurationToA, AnimationState.PlaceToA);
@@ -173,10 +169,7 @@ namespace Extenity.UIToolbox
 		{
 			if (!AnchorB)
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 			return AnimateTo(AnchorB.anchoredPosition, EasingToB, 0f, 0f, AnimationState.PlaceToB);
@@ -186,10 +179,7 @@ namespace Extenity.UIToolbox
 		{
 			if (!AnchorB)
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no '{nameof(AnchorB)}' specified in animation of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 			return AnimateTo(AnchorB.anchoredPosition, EasingToB, DelayToB, DurationToB, AnimationState.PlaceToB);
@@ -201,17 +191,11 @@ namespace Extenity.UIToolbox
 		{
 			if (!AnimatedTransform) // Ignore if not set.
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no '{nameof(AnimatedTransform)}' specified in animation of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no '{nameof(AnimatedTransform)}' specified in animation of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 
-			if (DEBUG_ShowAnimationMessages)
-			{
-				Log.Info($"Animating '{AnimatedTransform.FullGameObjectName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.", gameObject);
-			}
+			Log.Verbose($"Animating '{AnimatedTransform.FullGameObjectName()}' to '{position}' with '{easing}' in '{duration}' seconds and delayed '{delay}' seconds.");
 
 			if (delay < 0f)
 				delay = 0f;
@@ -274,9 +258,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		[Header("Debug")]
-		public bool DEBUG_ShowAnimationMessages = false;
-		private static readonly Logger Log = new(nameof(UISimpleAnimation));
+		private Logger Log = new(nameof(UISimpleAnimation));
 
 		#endregion
 	}

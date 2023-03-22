@@ -20,6 +20,8 @@ namespace Extenity.UIToolbox
 
 		protected void Start()
 		{
+			Logger.SetContext(ref Log, this);
+
 			RegisterFaders();
 		}
 
@@ -180,7 +182,7 @@ namespace Extenity.UIToolbox
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(UIFaderGroup));
+		private Logger Log = new(nameof(UIFaderGroup));
 
 		#endregion
 	}

@@ -18,6 +18,8 @@ namespace Extenity.UIToolbox
 
 		protected void Start()
 		{
+			Logger.SetContext(ref Log, this);
+
 			switch (InitialState)
 			{
 				case InitialAnimationState.Untouched:
@@ -90,17 +92,11 @@ namespace Extenity.UIToolbox
 		{
 			if (Animations.IsNullOrEmpty())
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 
-			if (DEBUG_ShowAnimationMessages)
-			{
-				Log.Info("Animating 'To A'.", gameObject);
-			}
+			Log.Verbose("Animating 'To A'.");
 
 			var maxLength = 0f;
 			for (var i = 0; i < Animations.Length; i++)
@@ -128,17 +124,11 @@ namespace Extenity.UIToolbox
 		{
 			if (Animations.IsNullOrEmpty())
 			{
-				if (DEBUG_ShowAnimationMessages)
-				{
-					Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{gameObject.FullName()}'.", gameObject);
-				}
+				Log.Warning($"Ignored animation request because no animation specified in animation orchestrator of '{this.FullGameObjectName()}'.");
 				return 0f;
 			}
 
-			if (DEBUG_ShowAnimationMessages)
-			{
-				Log.Info("Animating 'To B'.", gameObject);
-			}
+			Log.Verbose("Animating 'To B'.");
 
 			var maxLength = 0f;
 			for (var i = 0; i < Animations.Length; i++)
@@ -162,10 +152,9 @@ namespace Extenity.UIToolbox
 
 		#endregion
 
-		#region Debug
+		#region Log
 
-		[Header("Debug")]
-		public bool DEBUG_ShowAnimationMessages = false;
+		private Logger Log = new(nameof(UISimpleAnimationOrchestrator));
 
 		#endregion
 	}
