@@ -234,30 +234,6 @@ namespace Extenity
 			Log.Exception(exception, ProcessedPrefix, overriddenContext);
 		}
 
-		[DebuggerHidden]
-		public void ExceptionAsError(Exception exception)
-		{
-			Log.ExceptionAsError(exception, ProcessedPrefix, DefaultContext);
-		}
-
-		[DebuggerHidden]
-		public void ExceptionAsError(Exception exception, ContextObject overriddenContext)
-		{
-			Log.ExceptionAsError(exception, ProcessedPrefix, overriddenContext);
-		}
-
-		[DebuggerHidden]
-		public void ExceptionAsErrorDetailed(Exception exception)
-		{
-			Log.ExceptionAsErrorDetailed(exception, ProcessedPrefix, DefaultContext);
-		}
-
-		[DebuggerHidden]
-		public void ExceptionAsErrorDetailed(Exception exception, ContextObject overriddenContext)
-		{
-			Log.ExceptionAsErrorDetailed(exception, ProcessedPrefix, overriddenContext);
-		}
-
 		#endregion
 	}
 
