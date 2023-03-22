@@ -78,7 +78,7 @@ namespace Extenity.BuildMachine.Editor
 				throw new Exception(BuilderLog.Prefix + "Scene processor was already running.");
 			IsProcessorRunning = true;
 
-			var indented = false;
+			// var indented = false;
 
 			try
 			{
@@ -103,8 +103,8 @@ namespace Extenity.BuildMachine.Editor
 				ConsistencyChecker.CheckConsistencyAndThrow(configuration, 1f, ThrowRule.OnErrorsAndWarnings);
 
 				BuilderLog.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
-				Log.IncreaseIndent();
-				indented = true;
+				// Log.IncreaseIndent();
+				// indented = true;
 
 				CurrentStep = 0;
 				CurrentStepTitle = null;
@@ -167,10 +167,10 @@ namespace Extenity.BuildMachine.Editor
 				CurrentStep = 0;
 				CurrentStepTitle = null;
 
-				if (indented)
-				{
-					Log.DecreaseIndent();
-				}
+				// if (indented)
+				// {
+				// 	Log.DecreaseIndent();
+				// }
 			}
 		}
 
