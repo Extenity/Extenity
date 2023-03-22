@@ -49,12 +49,12 @@ namespace Extenity.KernelToolbox
 			if (!LastGivenIDOverflowWarning)
 			{
 				// That means we might need to turn IDs into UInt64.
-				Log.CriticalError("ID generator will overflow soon.");
+				Log.Fatal("ID generator will overflow soon.");
 				LastGivenIDOverflowWarning = true;
 			}
 			if (LastGivenID > IDEndsAt)
 			{
-				Log.CriticalError("ID generator overflow.");
+				Log.Fatal("ID generator overflow.");
 				LastGivenID = IDStartsFrom;
 				LastGivenIDOverflowWarning = false;
 			}

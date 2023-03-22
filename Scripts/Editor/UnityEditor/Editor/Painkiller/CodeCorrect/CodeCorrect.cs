@@ -24,7 +24,7 @@ namespace Extenity.PainkillerToolbox.Editor
 	// TODO: Detect where Log._ methods with no context are called.
 	// TODO: Detect OnValidate, OnDrawGizmos, OnDrawGizmosSelected methods that are not covered inside UNITY_EDITOR blocks.
 	// TODO: Detect "EditorApplication.delayCall =" which should be "EditorApplication.delayCall +=".
-	// TODO: Detect Destroy and DestroyImmediate calls that trying to destroy a Transform component. This is a critical bug and can't be ignored.
+	// TODO: Detect Destroy and DestroyImmediate calls that trying to destroy a Transform component. This is a Fatal bug and can't be ignored.
 	// TODO: Detect "yield return new" usages that can be cached.
 	// TODO: Detect closures. See https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html
 	// TODO: Detect boxing. See https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html

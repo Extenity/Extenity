@@ -706,7 +706,7 @@ namespace Extenity.UIToolbox
 				var isOnDisableImplemented = type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance) != null;
 				if (isOnEnableImplemented || isOnDisableImplemented)
 				{
-					Log.CriticalError($"'OnEnable' and 'OnDisable' is not allowed in script '{type}'. Use {nameof(Panel)} visibility callbacks instead, by deriving from '{nameof(PanelMonoBehaviour)}'.", gameObject);
+					Log.Fatal($"'OnEnable' and 'OnDisable' is not allowed in script '{type}'. Use {nameof(Panel)} visibility callbacks instead, by deriving from '{nameof(PanelMonoBehaviour)}'.", gameObject);
 				}
 			}
 			Release.ListUnsafe(list);

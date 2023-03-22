@@ -409,7 +409,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.CriticalError("Invoked event while an invocation is ongoing.");
+				Log.Fatal("Invoked event while an invocation is ongoing.");
 				return;
 			}
 			IsInvoking = true;
@@ -459,7 +459,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.CriticalError("Invoked event while an invocation is ongoing.");
+				Log.Fatal("Invoked event while an invocation is ongoing.");
 				return;
 			}
 			IsInvoking = true;

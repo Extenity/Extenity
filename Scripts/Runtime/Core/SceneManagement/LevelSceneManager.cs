@@ -109,7 +109,7 @@ namespace Extenity.SceneManagementToolbox
 				{
 					if (!duplicateNameChecker.Add(sceneName))
 					{
-						Log.CriticalError($"Duplicate scene names are not allowed. Rename the scene '{sceneName}'.");
+						Log.Fatal($"Duplicate scene names are not allowed. Rename the scene '{sceneName}'.");
 					}
 
 					if (sceneName.StartsWith(levelSceneNamePrefix, StringComparison.Ordinal))

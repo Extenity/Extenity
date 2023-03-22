@@ -188,7 +188,7 @@ namespace Extenity
 			// ReSharper disable once CompareOfFloatsByEqualityOperator
 			if (!originalTime.IsAlmostEqual(cachedTime, TimeEqualityCheckTolerance))
 			{
-				Log.CriticalError($"{nameof(Loop)} System detected that the cached time became obsolete for '{parameterName}' parameter. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported time: {originalTime:F}\nLoop cached time: {cachedTime:F}\nDifference: {(originalTime - cachedTime):F}");
+				Log.Fatal($"{nameof(Loop)} System detected that the cached time became obsolete for '{parameterName}' parameter. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported time: {originalTime:F}\nLoop cached time: {cachedTime:F}\nDifference: {(originalTime - cachedTime):F}");
 			}
 		}
 

@@ -89,7 +89,7 @@ namespace Extenity.DebugToolbox
 	/// The Tracker then tells you if the application successfully instantiated expected objects and made necessary calls
 	/// to methods, and tells if these are happened in the expected order.
 	///
-	/// Only the first encountered failure will be logged to prevent bloat. It will be logged with CriticalError which
+	/// Only the first encountered failure will be logged to prevent bloat. It will be logged with Fatal which
 	/// logs as an exception but won't break the execution. It will also be sent to Unity Cloud Diagnostics.
 	/// 
 	/// Inspecting the Tracker Editor tool is also a great way to explore what went wrong in an initialization process.
@@ -279,7 +279,7 @@ namespace Extenity.DebugToolbox
 			if (IsFailed)
 				return; // Ignore consecutive failures.
 			IsFailed = true;
-			Log.CriticalError(message, context);
+			Log.Fatal(message, context);
 		}
 
 		#endregion

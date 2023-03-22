@@ -112,7 +112,7 @@ namespace Extenity.KernelToolbox
 					}
 					else
 					{
-						Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+						Log.Fatal($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
 						return null;
 					}
 				}
@@ -144,7 +144,7 @@ namespace Extenity.KernelToolbox
 					}
 					else
 					{
-						Log.CriticalError($"Queried object type '{instanceType.Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
+						Log.Fatal($"Queried object type '{instanceType.Name}' does not match the object '{instance.GetType().Name}' with ID '{instanceID}'.");
 						return null;
 					}
 				}
@@ -159,13 +159,13 @@ namespace Extenity.KernelToolbox
 			{
 				if (kernelObjectsByIDs == null || kernelObjectsByIDs.Count == 0)
 				{
-					Log.CriticalError($"There is no object with type '{typeof(TKernelObject).Name}'.");
+					Log.Fatal($"There is no object with type '{typeof(TKernelObject).Name}'.");
 					return null;
 				}
 
 				if (kernelObjectsByIDs.Count > 1)
 				{
-					Log.CriticalError($"There are more than one objects with type '{typeof(TKernelObject).Name}'.");
+					Log.Fatal($"There are more than one objects with type '{typeof(TKernelObject).Name}'.");
 					return null;
 				}
 
@@ -181,12 +181,12 @@ namespace Extenity.KernelToolbox
 					if (cast.IsAlive)
 						return cast;
 
-					Log.CriticalError($"The object '{cast.ToTypeAndIDString()}' was destroyed.");
+					Log.Fatal($"The object '{cast.ToTypeAndIDString()}' was destroyed.");
 					return null;
 				}
 				else
 				{
-					Log.CriticalError($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instance.ID}'.");
+					Log.Fatal($"Queried object type '{typeof(TKernelObject).Name}' does not match the object '{instance.GetType().Name}' with ID '{instance.ID}'.");
 					return null;
 				}
 			}
@@ -207,7 +207,7 @@ namespace Extenity.KernelToolbox
 		//
 		// 		if (!skipQuietlyIfDestroyed)
 		// 		{
-		// 			Log.CriticalError($"Queried a destroyed object '{instance.ToTypeAndIDString()}'.");
+		// 			Log.Fatal($"Queried a destroyed object '{instance.ToTypeAndIDString()}'.");
 		// 		}
 		// 		return null;
 		// 	}

@@ -129,7 +129,7 @@ namespace Extenity.NavigationToolbox
 			var index = NavMesh.GetAreaFromName(areaName);
 			if (index < 0)
 			{
-				Log.CriticalError($"Navigation area '{areaName}' does not exist.");
+				Log.Fatal($"Navigation area '{areaName}' does not exist.");
 				return 0;
 			}
 			return 1 << index;
@@ -154,7 +154,7 @@ namespace Extenity.NavigationToolbox
 					return agentTypeID;
 				}
 			}
-			Log.CriticalError($"Agent type '{agentTypeName}' does not exist.");
+			Log.Fatal($"Agent type '{agentTypeName}' does not exist.");
 			return -1;
 		}
 

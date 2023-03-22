@@ -53,7 +53,7 @@ namespace Extenity.DesignPatternsToolbox
 #if DEBUG
 			if (!typeof(T).FullName.Equals(GetType().FullName, StringComparison.Ordinal))
 			{
-				Log.CriticalError($"Singleton '{typeof(T).Name}' is derived from a different generic class '{GetType().Name}'.");
+				Log.Fatal($"Singleton '{typeof(T).Name}' is derived from a different generic class '{GetType().Name}'.");
 			}
 #endif
 

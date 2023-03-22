@@ -658,17 +658,17 @@ namespace Extenity.MessagingToolbox
 
 		private void LogError_AddingNonUnityObjectAsMessageListener()
 		{
-			Log.CriticalError("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.", gameObject);
+			Log.Fatal("Messaging system only allows adding methods of a Unity object (MonoBehaviour, GameObject, Component, etc.) as listener delegates.", gameObject);
 		}
 
 		private void LogError_BadMessageEmitParameters()
 		{
-			Log.CriticalError("Mismatching parameter type(s) between message listener and emit request.", gameObject);
+			Log.Fatal("Mismatching parameter type(s) between message listener and emit request.", gameObject);
 		}
 
 		private void LogError_BadMessageListenerParameters()
 		{
-			Log.CriticalError("Mismatching parameter type(s) between recently adding message listener and already added message listeners.", gameObject);
+			Log.Fatal("Mismatching parameter type(s) between recently adding message listener and already added message listeners.", gameObject);
 		}
 
 		#endregion

@@ -71,13 +71,13 @@ namespace Extenity.DataToolbox
 		private static void _LogErrorForUnexpectedlyUsedCollection()
 		{
 			// This is unexpected and might mean the collection is referenced elsewhere and currently in use.
-			// Continuing to use a released collection means serious problems, so a critical error will be logged
+			// Continuing to use a released collection means serious problems, so a Fatal error will be logged
 			// to warn the developer. The developer then have to look through pooled collection releases and find
 			// the spots where a copy of collection reference is kept after its release.
 			//
 			// The pool will just skip the collection and create a fresh one. We may try to get a new one from
 			// the pool but the overhead is not worthwhile.
-			Log.CriticalError($"Detected a collection of type '{nameof(FastHashSet<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
+			Log.Fatal($"Detected a collection of type '{nameof(FastHashSet<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 		}
 
 		private static void _AdjustCapacity(FastHashSet<T> collection, int capacity)

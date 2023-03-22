@@ -542,7 +542,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.CriticalError($"Invoked switch {(isSwitchedOn ? "on" : "off")} while an invocation is ongoing.");
+				Log.Fatal($"Invoked switch {(isSwitchedOn ? "on" : "off")} while an invocation is ongoing.");
 				return;
 			}
 			if (IsSwitchedOn == isSwitchedOn) // Note! Make sure we check for that after "already invoking" check above and before starting to do anything, even before marking the IsInvoking field.
@@ -603,7 +603,7 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.CriticalError($"Invoked switch {(isSwitchedOn ? "on" : "off")} while an invocation is ongoing.");
+				Log.Fatal($"Invoked switch {(isSwitchedOn ? "on" : "off")} while an invocation is ongoing.");
 				return;
 			}
 			if (IsSwitchedOn == isSwitchedOn) // Note! Make sure we check for that after "already invoking" check above and before starting to do anything, even before marking the IsInvoking field.

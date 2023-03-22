@@ -7,14 +7,14 @@ namespace Extenity
 		Info,
 		Warning,
 		Error,
-		Critical,
+		Fatal,
 	}
 
 	public enum SeverityCategory
 	{
 		Warning,
 		Error,
-		Critical,
+		Fatal,
 	}
 
 }

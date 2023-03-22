@@ -81,7 +81,7 @@ namespace Extenity.FlowToolbox
 		{
 			if (handler == null)
 			{
-				Log.CriticalError($"Tried to resume Pauser '{ID}' but pause handler is null.");
+				Log.Fatal($"Tried to resume Pauser '{ID}' but pause handler is null.");
 				return false;
 			}
 

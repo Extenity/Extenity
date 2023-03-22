@@ -201,7 +201,7 @@ namespace Extenity.ApplicationToolbox.Editor
 					}
 					else
 					{
-						Log.CriticalError(message);
+						Log.Fatal(message);
 					}
 				}
 			}

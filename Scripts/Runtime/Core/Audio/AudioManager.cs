@@ -52,7 +52,7 @@ namespace Extenity.Audio
 			{
 				if (!ApplicationTools.IsShuttingDown)
 				{
-					Log.CriticalError("AudioManager is not available.");
+					Log.Fatal("AudioManager is not available.");
 				}
 				return false;
 			}
@@ -279,7 +279,7 @@ namespace Extenity.Audio
 				if (volumeControl.MixerParameterName == mixerParameterName)
 					return volumeControl;
 			}
-			Log.CriticalError($"Volume control '{mixerParameterName}' does not exist.");
+			Log.Fatal($"Volume control '{mixerParameterName}' does not exist.");
 			return null;
 		}
 
@@ -960,7 +960,7 @@ namespace Extenity.Audio
 		public int[] IncidentTrackerOccurrenceToleranceInLastSecond;
 		public bool EnableIncidentLogging = true;
 		public LogCategory IncidentLogTypeInEditor = LogCategory.Error;
-		public LogCategory IncidentLogTypeInBuild = LogCategory.Critical;
+		public LogCategory IncidentLogTypeInBuild = LogCategory.Fatal;
 
 		private LogCategory IncidentLogType
 		{

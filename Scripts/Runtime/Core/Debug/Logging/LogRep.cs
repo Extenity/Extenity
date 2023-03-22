@@ -50,11 +50,11 @@ namespace Extenity.DebugToolbox
 			switch (category)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message);       break;
-				case LogCategory.Info:     Info(message);          break;
-				case LogCategory.Warning:  Warning(message);       break;
-				case LogCategory.Error:    Error(message);         break;
-				case LogCategory.Critical: CriticalError(message); break;
+				case LogCategory.Verbose:  Verbose(message);  break;
+				case LogCategory.Info:     Info(message);     break;
+				case LogCategory.Warning:  Warning(message);  break;
+				case LogCategory.Error:    Error(message);    break;
+				case LogCategory.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(category), category, null);
@@ -67,11 +67,11 @@ namespace Extenity.DebugToolbox
 			switch (category)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message, overriddenContext);       break;
-				case LogCategory.Info:     Info(message, overriddenContext);          break;
-				case LogCategory.Warning:  Warning(message, overriddenContext);       break;
-				case LogCategory.Error:    Error(message, overriddenContext);         break;
-				case LogCategory.Critical: CriticalError(message, overriddenContext); break;
+				case LogCategory.Verbose:  Verbose(message, overriddenContext);  break;
+				case LogCategory.Info:     Info(message, overriddenContext);     break;
+				case LogCategory.Warning:  Warning(message, overriddenContext);  break;
+				case LogCategory.Error:    Error(message, overriddenContext);    break;
+				case LogCategory.Fatal:    Fatal(message, overriddenContext);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(category), category, null);
@@ -116,9 +116,9 @@ namespace Extenity.DebugToolbox
 			switch (severity)
 			{
 				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message);       break;
-				case SeverityCategory.Error:    Error(message);         break;
-				case SeverityCategory.Critical: CriticalError(message); break;
+				case SeverityCategory.Warning:  Warning(message);  break;
+				case SeverityCategory.Error:    Error(message);    break;
+				case SeverityCategory.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -131,9 +131,9 @@ namespace Extenity.DebugToolbox
 			switch (severity)
 			{
 				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message, overriddenContext);       break;
-				case SeverityCategory.Error:    Error(message, overriddenContext);         break;
-				case SeverityCategory.Critical: CriticalError(message, overriddenContext); break;
+				case SeverityCategory.Warning:  Warning(message, overriddenContext);  break;
+				case SeverityCategory.Error:    Error(message, overriddenContext);    break;
+				case SeverityCategory.Fatal:    Fatal(message, overriddenContext);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -168,40 +168,40 @@ namespace Extenity.DebugToolbox
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void CriticalError(string message)
+		public void Fatal(string message)
 		{
-			Log.CriticalError(ProcessedPrefix + message, DefaultContext);
+			Log.Fatal(ProcessedPrefix + message, DefaultContext);
 		}
 
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void CriticalError(string message, Exception innerException)
+		public void Fatal(string message, Exception innerException)
 		{
-			Log.CriticalError(ProcessedPrefix + message, DefaultContext, innerException);
+			Log.Fatal(ProcessedPrefix + message, DefaultContext, innerException);
 		}
 
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void CriticalError(string message, ContextObject overriddenContext)
+		public void Fatal(string message, ContextObject overriddenContext)
 		{
-			Log.CriticalError(ProcessedPrefix + message, overriddenContext);
+			Log.Fatal(ProcessedPrefix + message, overriddenContext);
 		}
 
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void CriticalError(string message, ContextObject overriddenContext, Exception innerException)
+		public void Fatal(string message, ContextObject overriddenContext, Exception innerException)
 		{
-			Log.CriticalError(ProcessedPrefix + message, overriddenContext, innerException);
+			Log.Fatal(ProcessedPrefix + message, overriddenContext, innerException);
 		}
 
 		/// <summary>
-		/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
 		///
 		/// See also 'InternalException'.
 		/// </summary>
@@ -212,7 +212,7 @@ namespace Extenity.DebugToolbox
 		}
 
 		/// <summary>
-		/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
 		///
 		/// See also 'InternalException'.
 		/// </summary>

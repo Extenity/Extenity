@@ -80,7 +80,7 @@ namespace Extenity.UIToolbox
 		{
 			if (NeedToBeLinkedToPanel)
 			{
-				Log.CriticalError($"Visibility callbacks won't be called for '{this}' until a '{nameof(LinkedPanel)}' is specified in the inspector.", gameObject);
+				Log.Fatal($"Visibility callbacks won't be called for '{this}' until a '{nameof(LinkedPanel)}' is specified in the inspector.", gameObject);
 			}
 		}
 

@@ -620,7 +620,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
+				Log.Fatal("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
 			RemoveInQueue(ScaledInvokeQueue, behaviour, action);
@@ -637,7 +637,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
+				Log.Fatal("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
 			RemoveInQueue(ScaledInvokeQueue, behaviour);
@@ -654,12 +654,12 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to cancel fast invoke of a null behaviour.");
+				Log.Fatal("Tried to cancel fast invoke of a null behaviour.");
 				return;
 			}
 			if (CurrentlyProcessingEntryAction == null)
 			{
-				Log.CriticalError("Tried to cancel current fast invoke while there is none.");
+				Log.Fatal("Tried to cancel current fast invoke while there is none.");
 				return;
 			}
 			RemoveInQueue(ScaledInvokeQueue, behaviour, CurrentlyProcessingEntryAction);
@@ -680,7 +680,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -719,7 +719,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return false;
 			}
 			for (int i = 0; i < ScaledInvokeQueue.Count; i++)
@@ -766,7 +766,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return 0;
 			}
 			var count = 0;
@@ -804,7 +804,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return 0;
 			}
 			var count = 0;
@@ -844,7 +844,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, action, Loop.Time);
@@ -859,7 +859,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, action, Loop.UnscaledTime);
@@ -874,7 +874,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			return RemainingTimeUntilNextInvoke(ScaledInvokeQueue, InvokeQueue.Scaled, behaviour, Loop.Time);
@@ -889,7 +889,7 @@ namespace Extenity.FlowToolbox
 				//
 				// Not sure about this decision of NOT throwing here, but we will stick with this until some
 				// more solid reason comes up. See 117459234.
-				Log.CriticalError("Tried to query fast invoke of a null behaviour.");
+				Log.Fatal("Tried to query fast invoke of a null behaviour.");
 				return double.NaN;
 			}
 			return RemainingTimeUntilNextInvoke(UnscaledInvokeQueue, InvokeQueue.Unscaled, behaviour, Loop.UnscaledTime);

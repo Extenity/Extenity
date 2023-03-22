@@ -20,9 +20,9 @@ namespace Extenity.BuildMachine.Editor
 			Log.Error(Prefix + message);
 		}
 
-		public static void CriticalError(string message)
+		public static void Fatal(string message)
 		{
-			Log.CriticalError(Prefix + message);
+			Log.Fatal(Prefix + message);
 		}
 	}
 

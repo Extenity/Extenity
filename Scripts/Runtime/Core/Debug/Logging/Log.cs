@@ -175,11 +175,11 @@ namespace Extenity
 			switch (category)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message);       break;
-				case LogCategory.Info:     Info(message);          break;
-				case LogCategory.Warning:  Warning(message);       break;
-				case LogCategory.Error:    Error(message);         break;
-				case LogCategory.Critical: CriticalError(message); break;
+				case LogCategory.Verbose:  Verbose(message);  break;
+				case LogCategory.Info:     Info(message);     break;
+				case LogCategory.Warning:  Warning(message);  break;
+				case LogCategory.Error:    Error(message);    break;
+				case LogCategory.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(category), category, null);
@@ -192,11 +192,11 @@ namespace Extenity
 			switch (category)
 			{
 				// @formatter:off
-				case LogCategory.Verbose:  Verbose(message, context);       break;
-				case LogCategory.Info:     Info(message, context);          break;
-				case LogCategory.Warning:  Warning(message, context);       break;
-				case LogCategory.Error:    Error(message, context);         break;
-				case LogCategory.Critical: CriticalError(message, context); break;
+				case LogCategory.Verbose:  Verbose(message, context);  break;
+				case LogCategory.Info:     Info(message, context);     break;
+				case LogCategory.Warning:  Warning(message, context);  break;
+				case LogCategory.Error:    Error(message, context);    break;
+				case LogCategory.Fatal:    Fatal(message, context);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(category), category, null);
@@ -257,9 +257,9 @@ namespace Extenity
 			switch (severity)
 			{
 				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message);       break;
-				case SeverityCategory.Error:    Error(message);         break;
-				case SeverityCategory.Critical: CriticalError(message); break;
+				case SeverityCategory.Warning:  Warning(message);  break;
+				case SeverityCategory.Error:    Error(message);    break;
+				case SeverityCategory.Fatal:    Fatal(message);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -272,9 +272,9 @@ namespace Extenity
 			switch (severity)
 			{
 				// @formatter:off
-				case SeverityCategory.Warning:  Warning(message, context);       break;
-				case SeverityCategory.Error:    Error(message, context);         break;
-				case SeverityCategory.Critical: CriticalError(message, context); break;
+				case SeverityCategory.Warning:  Warning(message, context);  break;
+				case SeverityCategory.Error:    Error(message, context);    break;
+				case SeverityCategory.Fatal:    Fatal(message, context);    break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -325,7 +325,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void CriticalError(string message)
+		public static void Fatal(string message)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message)); // Ignored by Code Correct
@@ -338,7 +338,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void CriticalError(string message, Exception innerException)
+		public static void Fatal(string message, Exception innerException)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
@@ -351,7 +351,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void CriticalError(string message, ContextObject context)
+		public static void Fatal(string message, ContextObject context)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message), context); // Ignored by Code Correct
@@ -364,7 +364,7 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void CriticalError(string message, ContextObject context, Exception innerException)
+		public static void Fatal(string message, ContextObject context, Exception innerException)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
@@ -374,7 +374,7 @@ namespace Extenity
 		}
 
 		/// <summary>
-		/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
 		///
 		/// See also 'InternalException'.
 		/// </summary>
@@ -389,7 +389,7 @@ namespace Extenity
 		}
 
 		/// <summary>
-		/// Internal errors are logged just like critical errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
+		/// Internal errors are logged just like Fatal errors. They will appear in Unity Cloud Diagnostics without breaking the code flow by throwing an exception.
 		///
 		/// See also 'InternalException'.
 		/// </summary>
@@ -647,7 +647,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public static void CurrentMethodNotImplemented()
 		{
-			CriticalError("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
+			Fatal("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 		}
 
 		[DebuggerHidden]
