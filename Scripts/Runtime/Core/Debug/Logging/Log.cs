@@ -428,38 +428,12 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void Fatal(string message, Exception innerException)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(new Exception(message, innerException)); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(new Exception(message, innerException).ToString());
-#endif
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
 		public static void Fatal(string message, ContextObject context)
 		{
 #if UNITY
 			UnityEngine.Debug.LogException(new Exception(message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(new Exception(message).ToString());
-#endif
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
-		public static void Fatal(string message, ContextObject context, Exception innerException)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(new Exception(message, innerException), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(new Exception(message, innerException).ToString());
 #endif
 		}
 

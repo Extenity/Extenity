@@ -177,27 +177,9 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void Fatal(string message, Exception innerException)
-		{
-			Log.Fatal(ProcessedPrefix + message, DefaultContext, innerException);
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
 		public void Fatal(string message, ContextObject overriddenContext)
 		{
 			Log.Fatal(ProcessedPrefix + message, overriddenContext);
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
-		public void Fatal(string message, ContextObject overriddenContext, Exception innerException)
-		{
-			Log.Fatal(ProcessedPrefix + message, overriddenContext, innerException);
 		}
 
 		/// <summary>
