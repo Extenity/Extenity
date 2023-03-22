@@ -178,7 +178,8 @@ namespace Extenity.SubsystemManagementToolbox
 
 		public void InitializeForApplication()
 		{
-			using (Log.Indent("Initializing application subsystems."))
+			Log.Verbose("Initializing application subsystems.");
+			using (Log.IndentedScope)
 			{
 				foreach (var subsystem in ApplicationSubsystemGroup.Subsystems)
 				{
@@ -193,12 +194,14 @@ namespace Extenity.SubsystemManagementToolbox
 			{
 				if (definition.SubsystemGroupsToBeLoaded.IsNotNullAndEmpty())
 				{
-					using (Log.Indent($"Initializing subsystems for scene '{sceneName}'."))
+					Log.Verbose($"Initializing subsystems for scene '{sceneName}'.");
+					using (Log.IndentedScope)
 					{
 						foreach (var subsystemGroupName in definition.SubsystemGroupsToBeLoaded)
 						{
 							var subsystemGroup = GetSceneSubsystemGroup(subsystemGroupName);
-							using (Log.Indent($"Initializing subsystem group '{subsystemGroupName}'."))
+							Log.Verbose($"Initializing subsystem group '{subsystemGroupName}'.");
+							using (Log.IndentedScope)
 							{
 								foreach (var subsystem in subsystemGroup.Subsystems)
 								{
@@ -325,6 +328,12 @@ namespace Extenity.SubsystemManagementToolbox
 		}
 
 #endif
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(SubsystemSettings));
 
 		#endregion
 	}

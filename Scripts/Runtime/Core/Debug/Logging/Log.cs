@@ -120,14 +120,15 @@ namespace Extenity
 	{
 		#region Indentation
 
-		public static string IndentationOneLevelString = "    ";
+		private static string IndentationOneLevelString = "    ";
 
+		// TODO: This should be TheadStatic to support multi-threaded logging.
 		private static int _Indentation;
 
-		public static int Indentation
+		private static int Indentation
 		{
 			get { return _Indentation < 0 ? 0 : _Indentation; }
-			private set
+			set
 			{
 				_Indentation = value;
 				CurrentIndentationString = IndentationOneLevelString.Repeat(Indentation);
@@ -136,12 +137,12 @@ namespace Extenity
 
 		private static string CurrentIndentationString;
 
-		public static void IncreaseIndent()
+		internal static void _IncreaseIndent()
 		{
 			Indentation++;
 		}
 
-		public static void DecreaseIndent()
+		internal static void _DecreaseIndent()
 		{
 			Indentation--;
 		}
@@ -152,38 +153,19 @@ namespace Extenity
 
 		public struct IndentationHandler : IDisposable
 		{
-			private ContextObject Context;
-			private string EndText;
-
-			internal IndentationHandler(string endText = null, ContextObject context = default)
-			{
-				Context = context;
-				EndText = endText;
-				IncreaseIndent();
-			}
-
 			public void Dispose()
 			{
-				DecreaseIndent();
-				if (!string.IsNullOrEmpty(EndText))
-				{
-					Info(EndText, Context);
-				}
+				_DecreaseIndent();
 			}
 		}
 
-		public static IndentationHandler Indent()
+		internal static IndentationHandler _IndentedScope
 		{
-			return new IndentationHandler();
-		}
-
-		public static IndentationHandler Indent(string startText, string endText = null, ContextObject context = default)
-		{
-			if (!string.IsNullOrEmpty(startText))
+			get
 			{
-				Info(startText, context);
+				_IncreaseIndent();
+				return new IndentationHandler();
 			}
-			return new IndentationHandler(endText, context);
 		}
 
 		#endregion

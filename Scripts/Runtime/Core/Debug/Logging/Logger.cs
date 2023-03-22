@@ -42,6 +42,12 @@ namespace Extenity
 
 		#endregion
 
+		#region Indent
+
+		public Log.IndentationHandler IndentedScope => Log._IndentedScope;
+
+		#endregion
+
 		#region Log
 
 		[DebuggerHidden]

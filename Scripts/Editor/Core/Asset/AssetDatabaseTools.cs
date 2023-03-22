@@ -795,7 +795,8 @@ namespace Extenity.AssetToolbox.Editor
 			sortedResults.Sort((item1, item2) => string.Compare(item1.AssetPath, item2.AssetPath, StringComparison.Ordinal));
 
 			// List referenced assets
-			using (Log.Indent($"Listing all assets of type(s) '{string.Join(", ", types.Select(type => type.Name))}' in '{gameObjects.Count}' object(s){(includeChildren ? " and their children" : "")}..."))
+			Log.Info($"Listing all assets of type(s) '{string.Join(", ", types.Select(type => type.Name))}' in '{gameObjects.Count}' object(s){(includeChildren ? " and their children" : "")}...");
+			using (Log.IndentedScope)
 			{
 				foreach (var result in sortedResults)
 				{
@@ -804,14 +805,18 @@ namespace Extenity.AssetToolbox.Editor
 			}
 
 			// List referenced assets and components where they are referenced
-			using (Log.Indent("Detailed listing of components where the assets are referenced..."))
+			Log.Info("Detailed listing of components where the assets are referenced...");
+			using (Log.IndentedScope)
 			{
 				foreach (var result in sortedResults)
 				{
 					Log.Info($"{result.AssetPath}", result.ReferencedObject);
-					foreach (var referencedByComponent in result.ReferencedInComponents)
+					using (Log.IndentedScope)
 					{
-						Log.Info($"{Log.IndentationOneLevelString}Referenced in: '{referencedByComponent.FullName()}'", referencedByComponent);
+						foreach (var referencedByComponent in result.ReferencedInComponents)
+						{
+							Log.Info($"Referenced in: '{referencedByComponent.FullName()}'", referencedByComponent);
+						}
 					}
 				}
 			}
@@ -915,6 +920,12 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Log
+
+		private static Logger Log = new(nameof(AssetDatabaseTools));
+
+		#endregion
+		
 		public static List<string> GetSelectedAssetPaths(bool includeFilesInSubdirectoriesOfSelectedDirectories)
 		{
 			var selectionObjects = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);

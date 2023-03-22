@@ -10,6 +10,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using Logger = Extenity.Logger;
 #if UNITY_EDITOR
 using Extenity.AssetToolbox.Editor;
 #endif
@@ -491,7 +492,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 			if (!resultingComponentPaths.SequenceEqual(expectedComponentPaths))
 			{
-				using (Log.Indent("Something went wrong and here are the details. See below for the error."))
+				Log.Error("Something went wrong and here are the details. See below for the error.");
+				using (Log.IndentedScope)
 				{
 					LogExpectedPaths(expectedComponentPaths);
 					LogResult(foundComponents);
@@ -561,7 +563,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		private void LogResult<T>(ICollection<T> objects) where T : Component
 		{
-			using (Log.Indent($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':"))
+			Log.Info($"Listing '{objects.Count}' objects of type '{typeof(T).Name}':");
+			using (Log.IndentedScope)
 			{
 				foreach (var obj in objects)
 				{
@@ -572,7 +575,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		private void LogExpectedPaths(ICollection<string> paths)
 		{
-			using (Log.Indent($"Listing '{paths.Count}' expected paths':"))
+			Log.Info($"Listing '{paths.Count}' expected paths':");
+			using (Log.IndentedScope)
 			{
 				foreach (var path in paths)
 				{
@@ -580,6 +584,12 @@ namespace ExtenityTests.GameObjectToolbox
 				}
 			}
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Test_GameObjectTools));
 
 		#endregion
 	}

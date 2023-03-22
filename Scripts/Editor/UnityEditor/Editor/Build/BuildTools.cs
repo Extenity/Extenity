@@ -110,7 +110,8 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void MoveToTemp()
 		{
-			using (Log.Indent($"Moving assets to temporary outside location '{OutsideLocationBasePath}'..."))
+			Log.Info($"Moving assets to temporary outside location '{OutsideLocationBasePath}'...");
+			using (Log.IndentedScope)
 			{
 				// Delete Outside Location if it exists and contains only empty directories.
 				if (Directory.Exists(OutsideLocationBasePath) &&
@@ -126,11 +127,18 @@ namespace Extenity.BuildToolbox.Editor
 
 		public void MoveToOriginal()
 		{
-			using (Log.Indent($"Moving assets back to original location from '{OutsideLocationBasePath}'..."))
+			Log.Info($"Moving assets back to original location from '{OutsideLocationBasePath}'...");
+			using (Log.IndentedScope)
 			{
 				AssetDatabaseTools.ManuallyMoveFilesAndDirectoriesWithMetaAndEnsureCompleted(OutsidePaths, OriginalPaths, false);
 			}
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(MoveAssetsOutsideOperation));
 
 		#endregion
 	}
