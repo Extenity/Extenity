@@ -51,7 +51,7 @@ namespace Extenity.UIToolbox
 
 			if (!CanvasGroup)
 			{
-				Log.Fatal("Failed to find which CanvasGroup the callback is called for.", this);
+				Log.FatalWithContext(this, "Failed to find which CanvasGroup the callback is called for.");
 				return;
 			}
 

@@ -632,7 +632,7 @@ namespace Extenity.UIToolbox
 				}
 				catch (Exception exception)
 				{
-					Log.Error(exception, this);
+					Log.ErrorWithContext(this, exception);
 				}
 			}
 
@@ -696,7 +696,7 @@ namespace Extenity.UIToolbox
 				var isOnDisableImplemented = type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance) != null;
 				if (isOnEnableImplemented || isOnDisableImplemented)
 				{
-					Log.Fatal($"'OnEnable' and 'OnDisable' is not allowed in script '{type}'. Use {nameof(Panel)} visibility callbacks instead, by deriving from '{nameof(PanelMonoBehaviour)}'.", gameObject);
+					Log.FatalWithContext(this, $"'OnEnable' and 'OnDisable' is not allowed in script '{type}'. Use {nameof(Panel)} visibility callbacks instead, by deriving from '{nameof(PanelMonoBehaviour)}'.");
 				}
 			}
 			Release.ListUnsafe(list);

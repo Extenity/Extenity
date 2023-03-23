@@ -70,12 +70,13 @@ namespace Extenity.KernelToolbox.UnityInterface
 				ItemViewComparer.Default,
 				item =>
 				{
+					TItemView itemView = default;
 					try // Prevent any possible exceptions to break list equalization. Also allows logging the erroneous item's ID in catch block.
 					{
 						Debug.Assert(item != null);
 						Debug.Assert(item.IsAlive);
 
-						var itemView = InstantiateItem(item);
+						itemView = InstantiateItem(item);
 
 						// Connect the view object to kernel object.
 						itemView.DataLink.ID = new Ref<TItem, TKernel>(item.ID);
@@ -85,8 +86,9 @@ namespace Extenity.KernelToolbox.UnityInterface
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception);
-						Log.Error($"Failed to instantiate the view of the object '{item.ToTypeAndIDStringSafe()}'. See previous error for more details.");
+						// TODO-Log: Find a way to do this
+						// Log.ErrorWithTwoContexts(itemView, this, new Exception($"Failed to instantiate the view of the object '{item.ToTypeAndIDStringSafe()}'.", exception));
+						Log.ErrorWithContext(itemView, new Exception($"Failed to instantiate the view of the object '{item.ToTypeAndIDStringSafe()}'.", exception));
 					}
 				},
 				(itemView, iItemView) =>
@@ -102,8 +104,9 @@ namespace Extenity.KernelToolbox.UnityInterface
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception);
-						Log.Error($"Failed to destroy the view of the object '{(itemView != null ? itemView.Object.ToTypeAndIDStringSafe() : "[NA]")}'. See previous error for more details.");
+						// TODO-Log: Find a way to do this
+						// Log.ErrorWithTwoContexts(itemView, this, new Exception($"Failed to destroy the view of the object '{(itemView != null ? itemView.Object.ToTypeAndIDStringSafe() : "[NA]")}'.", exception));
+						Log.ErrorWithContext(itemView, new Exception($"Failed to destroy the view of the object '{(itemView != null ? itemView.Object.ToTypeAndIDStringSafe() : "[NA]")}'.", exception));
 					}
 				}
 			);
@@ -115,7 +118,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Error(exception);
+				Log.ErrorWithContext(this, exception);
 			}
 		}
 

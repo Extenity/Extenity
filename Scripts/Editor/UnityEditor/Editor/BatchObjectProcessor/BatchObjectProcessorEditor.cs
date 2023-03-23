@@ -22,12 +22,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				var job = processor.Jobs[iJob];
 				if (!job.ShouldBeIncludedInProcess(processTags))
 				{
-					Log.Info($"Skipping job '{job.Name}' because process does not have " +
-							 (job.RequiredTags.Length > 1
-								 ? $"any of the tags '{string.Join(", ", job.RequiredTags)}'."
-								 : $"the tag '{job.RequiredTags[0]}'."
-							 )
-							 , processor);
+					Log.InfoWithContext(processor,
+					                    $"Skipping job '{job.Name}' because process does not have " +
+					                    (job.RequiredTags.Length > 1
+						                    ? $"any of the tags '{string.Join(", ", job.RequiredTags)}'."
+						                    : $"the tag '{job.RequiredTags[0]}'."
+					                    ));
 					continue;
 				}
 
@@ -49,7 +49,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var reference = job.Objects[objectIndex];
 			if (!reference.Object)
 			{
-				Log.Error($"Batch object processor encountered to a null reference in job '{job.Name}' object list at index '{objectIndex}'.", processor);
+				Log.ErrorWithContext(processor, $"Batch object processor encountered to a null reference in job '{job.Name}' object list at index '{objectIndex}'.");
 				return 0;
 			}
 
@@ -67,8 +67,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 				}, true);
 			}
 
-			Log.Info($"Job '{job.Name}' applied on object {(reference.IncludeChildren ? "(and its children)" : "")} '{reference.FullPathOfObject}' which applied '{appliedModificationCount}' modification(s) over '{count}' object(s)." +
-					 (appliedModifications.Count == 0 ? "" : " Details:" + Environment.NewLine + string.Join(Environment.NewLine, appliedModifications)), processor);
+			Log.InfoWithContext(processor,
+			                    $"Job '{job.Name}' applied on object "                                                       +
+			                    $"{(reference.IncludeChildren ? "(and its children)" : "")} '{reference.FullPathOfObject}' " +
+			                    $"which applied '{appliedModificationCount}' modification(s) over '{count}' object(s)."      +
+			                    (appliedModifications.Count == 0 ? "" : " Details:" + Environment.NewLine + string.Join(Environment.NewLine, appliedModifications)));
 
 			return count;
 		}

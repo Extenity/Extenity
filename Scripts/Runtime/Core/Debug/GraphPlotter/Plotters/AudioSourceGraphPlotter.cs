@@ -114,7 +114,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (!AudioSource)
 			{
-				Log.Warning(nameof(AudioSourceGraphPlotter) + " requires " + nameof(AudioSource) + " component.", this);
+				Log.WarningWithContext(this, nameof(AudioSourceGraphPlotter) + " requires " + nameof(AudioSource) + " component.");
 				return;
 			}
 

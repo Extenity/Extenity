@@ -204,7 +204,7 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: true));
 			if (IsInstantLoggingEnabled)
 			{
-				Log.Error(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+				Log.ErrorWithContext(_Inconsistencies[^1].Target as ContextObject, _Inconsistencies[^1].Message);
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: true));
 			if (IsInstantLoggingEnabled)
 			{
-				Log.Error(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+				Log.ErrorWithContext(_Inconsistencies[^1].Target as ContextObject, _Inconsistencies[^1].Message);
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), overrideContext, isError: false));
 			if (IsInstantLoggingEnabled)
 			{
-				Log.Warning(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+				Log.WarningWithContext(_Inconsistencies[^1].Target as ContextObject, _Inconsistencies[^1].Message);
 			}
 		}
 
@@ -234,7 +234,7 @@ namespace Extenity.ConsistencyToolbox
 			_Inconsistencies.Add(new InconsistencyEntry(AppendPathToMessage(message), CurrentCallerContextObject, isError: false));
 			if (IsInstantLoggingEnabled)
 			{
-				Log.Warning(_Inconsistencies[^1].Message, _Inconsistencies[^1].Target as ContextObject);
+				Log.WarningWithContext(_Inconsistencies[^1].Target as ContextObject, _Inconsistencies[^1].Message);
 			}
 		}
 
@@ -360,11 +360,11 @@ namespace Extenity.ConsistencyToolbox
 				WriteFullLogTo(stringBuilder);
 				if (HasAnyErrors)
 				{
-					Log.Error(stringBuilder.ToString(), MainContextObject as ContextObject);
+					Log.ErrorWithContext(MainContextObject as ContextObject, stringBuilder.ToString());
 				}
 				else
 				{
-					Log.Warning(stringBuilder.ToString(), MainContextObject as ContextObject);
+					Log.WarningWithContext(MainContextObject as ContextObject, stringBuilder.ToString());
 				}
 			}
 		}
@@ -384,11 +384,11 @@ namespace Extenity.ConsistencyToolbox
 			{
 				if (HasAnyErrors)
 				{
-					Log.Error(BuildTitleMessage(), MainContextObject as ContextObject);
+					Log.ErrorWithContext(MainContextObject as ContextObject, BuildTitleMessage());
 				}
 				else
 				{
-					Log.Warning(BuildTitleMessage(), MainContextObject as ContextObject);
+					Log.WarningWithContext(MainContextObject as ContextObject, BuildTitleMessage());
 				}
 			}
 		}
@@ -401,11 +401,11 @@ namespace Extenity.ConsistencyToolbox
 				{
 					if (inconsistency.IsError)
 					{
-						Log.Error(inconsistency.Message, inconsistency.Target as ContextObject);
+						Log.ErrorWithContext(inconsistency.Target as ContextObject, inconsistency.Message);
 					}
 					else
 					{
-						Log.Warning(inconsistency.Message, inconsistency.Target as ContextObject);
+						Log.WarningWithContext(inconsistency.Target as ContextObject, inconsistency.Message);
 					}
 				}
 			}
@@ -584,7 +584,7 @@ namespace Extenity.ConsistencyToolbox
 				}
 #endif
 
-				Log.Warning(stringBuilder.ToString(), MainContextObject as ContextObject);
+				Log.WarningWithContext(MainContextObject as ContextObject, stringBuilder.ToString());
 			}
 #endif
 		}

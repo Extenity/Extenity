@@ -512,7 +512,7 @@ namespace Extenity.DataToolbox
 		[Conditional("LogCachedTypeGetters")]
 		private static void LogCTG(string format, params object[] args)
 		{
-			Log.Info(string.Format(format, args));
+			Log.With("CachedTypeGetter").Info(string.Format(format, args));
 		}
 
 		#endregion

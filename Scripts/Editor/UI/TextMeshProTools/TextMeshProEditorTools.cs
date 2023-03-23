@@ -20,7 +20,7 @@ namespace Extenity.UIToolbox.Editor
 				{
 					if (TMP_Settings.warningsDisabled)
 					{
-						Log.Warning("Please note that TextMesh Pro warnings are disabled. You should enable the warnings and fix them as soon as possible.");
+						Log.With("TextMeshPro", TMP_Settings.instance).Warning("Please note that TextMesh Pro warnings are disabled. You should enable the warnings and fix them as soon as possible.");
 					}
 				}
 				catch { }

@@ -1,15 +1,5 @@
 #if UNITY
 
-//#define LogSingletonInEditor
-//#define LogSingletonInBuilds
-#define LogSingletonInDebugBuilds
-
-#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds) || (!UNITY_EDITOR && DEBUG && LogSingletonInDebugBuilds)
-#define LoggingEnabled
-#else
-#undef LoggingEnabled
-#endif
-
 using System;
 using System.Diagnostics;
 using UnityEngine;
@@ -40,9 +30,7 @@ namespace Extenity.DesignPatternsToolbox
 		protected T InitializeSingleton(bool dontDestroyOnLoad = false)
 		{
 			ClassName = typeof(T).Name;
-#if LoggingEnabled
-			Log.Info("Instantiating singleton: " + ClassName, this);
-#endif
+			Log.With("Singleton").VerboseWithContext(this, "Instantiating singleton: " + ClassName);
 			_Instance = this as T;
 
 			if (dontDestroyOnLoad)
@@ -53,7 +41,7 @@ namespace Extenity.DesignPatternsToolbox
 #if DEBUG
 			if (!typeof(T).FullName.Equals(GetType().FullName, StringComparison.Ordinal))
 			{
-				Log.Fatal($"Singleton '{typeof(T).Name}' is derived from a different generic class '{GetType().Name}'.");
+				Log.With("Singleton").Fatal($"Singleton '{typeof(T).Name}' is derived from a different generic class '{GetType().Name}'.");
 			}
 #endif
 
@@ -79,9 +67,7 @@ namespace Extenity.DesignPatternsToolbox
 			if (_Instance == null)  // To prevent errors in ExecuteInEditMode
 				return;
 
-#if LoggingEnabled
-			Log.Info("Destroying singleton: " + ClassName);
-#endif
+			Log.With("Singleton").Verbose("Destroying singleton: " + ClassName);
 			_Instance = default(T);
 			SingletonTracker.SingletonDestroyed(ClassName);
 
@@ -134,7 +120,7 @@ namespace Extenity.DesignPatternsToolbox
 			{
 				if (Application.isPlaying)
 				{
-					Log.Error($"Tried to get editor instance of singleton '{typeof(T).Name}' in play time.");
+					Log.With("Singleton").Error($"Tried to get editor instance of singleton '{typeof(T).Name}' in play time.");
 					return null;
 				}
 				if (!_EditorInstance)
@@ -142,7 +128,7 @@ namespace Extenity.DesignPatternsToolbox
 					_EditorInstance = FindObjectOfType<T>();
 					if (!_EditorInstance)
 					{
-						Log.Error($"Could not find an instance of singleton '{typeof(T).Name}' in scene.");
+						Log.With("Singleton").Error($"Could not find an instance of singleton '{typeof(T).Name}' in scene.");
 					}
 				}
 				return _EditorInstance;

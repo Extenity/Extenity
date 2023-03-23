@@ -2,9 +2,9 @@
 //#define DisableInfoLogging | Note that this should be defined project wide since Logger also depends on it.
 
 using System.Diagnostics;
+using Cysharp.Text;
 using Extenity.DataToolbox;
 using Exception = System.Exception;
-using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using IDisposable = System.IDisposable;
 
 // This is the way that Log system supports various Context types in different environments like
@@ -116,6 +116,20 @@ namespace Extenity
 
 	public static class Log
 	{
+		#region Logger
+
+		public static Logger With(string category)
+		{
+			return new Logger(category);
+		}
+
+		public static Logger With(string category, ContextObject context)
+		{
+			return new Logger(category, context);
+		}
+
+		#endregion
+
 		#region Indentation
 
 		private static string IndentationOneLevelString = "    ";
@@ -170,63 +184,34 @@ namespace Extenity
 
 		#region Create Message
 
-		public static string CreateMessage(string message)
+		private static string CreateMessageWithCategoryAndIndentation(string category, string message)
 		{
 			if (message == null)
-				return CurrentIndentationString + "[NullStr]";
+				return ZString.Concat("[", category, "] ", CurrentIndentationString, "[NullString]");
 			else
-				return CurrentIndentationString + message.NormalizeLineEndingsCRLF();
+				return ZString.Concat("[", category, "] ", CurrentIndentationString, message.NormalizeLineEndingsCRLF());
 		}
 
-		// Prefix operations are done in Logger. Keep these codes here commented out for future needs.
-		// public static string CreateMessageWithPrefix(string message, string processedPrefix)
-		// {
-		// 	if (message == null)
-		// 		return CurrentIndentationString + processedPrefix + "[NullStr]";
-		// 	else
-		// 		return CurrentIndentationString + processedPrefix + message.NormalizeLineEndingsCRLF();
-		// }
 
-		public static string CreateShallowExceptionMessage(Exception exception)
+		private static string CreateMessageWithCategory(string category, string message)
+		{
+			if (message == null)
+				return ZString.Concat("[", category, "] ", "[NullString]");
+			else
+				return ZString.Concat("[", category, "] ", message.NormalizeLineEndingsCRLF());
+		}
+
+		private static string CreateDetailedExceptionMessage(string category, Exception exception)
 		{
 			if (exception == null)
-				return CurrentIndentationString + "[NullExc]";
+				return ZString.Concat("[", category, "] ", "[NullException]");
 			else
-				return CurrentIndentationString + InternalCreateShallowExceptionMessage(exception).NormalizeLineEndingsCRLF();
-		}
-
-		public static string CreateShallowExceptionMessage(Exception exception, string processedPrefix)
-		{
-			if (exception == null)
-				return CurrentIndentationString + processedPrefix + "[NullExc]";
-			else
-				return CurrentIndentationString + processedPrefix + InternalCreateShallowExceptionMessage(exception).NormalizeLineEndingsCRLF();
-		}
-
-		public static string CreateDetailedExceptionMessage(Exception exception)
-		{
-			if (exception == null)
-				return CurrentIndentationString + "[NullExc]";
-			else
-				return CurrentIndentationString + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
-		}
-
-		public static string CreateDetailedExceptionMessage(Exception exception, string processedPrefix)
-		{
-			if (exception == null)
-				return CurrentIndentationString + processedPrefix + "[NullExc]";
-			else
-				return CurrentIndentationString + processedPrefix + InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
-		}
-
-		private static string InternalCreateShallowExceptionMessage(Exception exception)
-		{
-			var message = exception.Message;
-			return message;
+				return ZString.Concat("[", category, "] ", InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF());
 		}
 
 		private static string InternalCreateDetailedExceptionMessage(Exception exception)
 		{
+			// TODO-Log: Use ZString
 			var message = exception.ToString();
 			message += "\r\nInnerException: " + exception.InnerException; // TODO-Log: This should be recursive
 			message += "\r\nMessage: " + exception.Message;
@@ -240,63 +225,16 @@ namespace Extenity
 
 		#region Log
 
-		[DebuggerHidden]
-		public static void Any(string message, LogSeverity severity)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case LogSeverity.Verbose:  Verbose(message);  break;
-				case LogSeverity.Info:     Info(message);     break;
-				case LogSeverity.Warning:  Warning(message);  break;
-				case LogSeverity.Error:    Error(message);    break;
-				case LogSeverity.Fatal:    Fatal(message);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
-		[DebuggerHidden]
-		public static void Any(string message, LogSeverity severity, ContextObject context)
-		{
-			switch (severity)
-			{
-				// @formatter:off
-				case LogSeverity.Verbose:  Verbose(message, context);  break;
-				case LogSeverity.Info:     Info(message, context);     break;
-				case LogSeverity.Warning:  Warning(message, context);  break;
-				case LogSeverity.Error:    Error(message, context);    break;
-				case LogSeverity.Fatal:    Fatal(message, context);    break;
-				// @formatter:on
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
-		}
-
 #if DisableVerboseLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		[DebuggerHidden]
-		public static void Verbose(string message)
+		internal static void _Verbose(string category, ContextObject context, string message)
 		{
 #if UNITY
-			UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+			UnityEngine.Debug.Log(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessage(message));
-#endif
-		}
-
-#if DisableVerboseLogging
-		[Conditional("DummyConditionThatNeverExists")]
-#endif
-		[DebuggerHidden]
-		public static void Verbose(string message, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.Log(CreateMessage(message), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateMessage(message));
+			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
 #endif
 		}
 
@@ -304,85 +242,42 @@ namespace Extenity
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		[DebuggerHidden]
-		public static void Info(string message)
+		internal static void _Info(string category, ContextObject context, string message)
 		{
 #if UNITY
-			UnityEngine.Debug.Log(CreateMessage(message)); // Ignored by Code Correct
+			UnityEngine.Debug.Log(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessage(message));
-#endif
-		}
-
-#if DisableInfoLogging
-		[Conditional("DummyConditionThatNeverExists")]
-#endif
-		[DebuggerHidden]
-		public static void Info(string message, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.Log(CreateMessage(message), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateMessage(message));
+			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(message));
 #endif
 		}
 
 		[DebuggerHidden]
-		public static void Warning(string message)
+		internal static void _Warning(string category, ContextObject context, string message)
 		{
 #if UNITY
-			UnityEngine.Debug.LogWarning(CreateMessage(message)); // Ignored by Code Correct
+			UnityEngine.Debug.LogWarning(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessage(message));
+			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
 #endif
 		}
 
 		[DebuggerHidden]
-		public static void Warning(string message, ContextObject context)
+		internal static void _Error(string category, ContextObject context, string message)
 		{
 #if UNITY
-			UnityEngine.Debug.LogWarning(CreateMessage(message), context); // Ignored by Code Correct
+			UnityEngine.Debug.LogError(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessage(message));
+			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
 #endif
 		}
 
 		[DebuggerHidden]
-		public static void Error(string message)
+		internal static void _Error(string category, ContextObject context, Exception exception)
 		{
 #if UNITY
-			UnityEngine.Debug.LogError(CreateMessage(message)); // Ignored by Code Correct
+			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(category, exception), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessage(message));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Error(Exception exception)
-		{
-#if UNITY
-			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception)); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Error(string message, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogError(CreateMessage(message), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateMessage(message));
-#endif
-		}
-
-		[DebuggerHidden]
-		public static void Error(Exception exception, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(exception), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(CreateDetailedExceptionMessage(exception));
+			System.Console.WriteLine(CreateDetailedExceptionMessage(category, exception));
 #endif
 		}
 
@@ -390,12 +285,12 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void Fatal(string message)
+		internal static void _Fatal(string category, ContextObject context, string message)
 		{
 #if UNITY
-			UnityEngine.Debug.LogException(new Exception(message)); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(new Exception(CreateMessageWithCategory(category, message)), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(new Exception(message).ToString());
+			System.Console.WriteLine(CreateMessageWithCategory(category, message));
 #endif
 		}
 
@@ -403,38 +298,12 @@ namespace Extenity
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public static void Fatal(Exception exception)
+		internal static void _Fatal(string category, ContextObject context, Exception exception)
 		{
 #if UNITY
-			UnityEngine.Debug.LogException(exception); // Ignored by Code Correct
+			UnityEngine.Debug.LogException(new Exception(CreateDetailedExceptionMessage(category, exception), exception), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(exception.ToString());
-#endif
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
-		public static void Fatal(string message, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(new Exception(message), context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(new Exception(message).ToString());
-#endif
-		}
-
-		/// <summary>
-		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
-		/// </summary>
-		[DebuggerHidden]
-		public static void Fatal(Exception exception, ContextObject context)
-		{
-#if UNITY
-			UnityEngine.Debug.LogException(exception, context); // Ignored by Code Correct
-#else
-			System.Console.WriteLine(exception.ToString());
+			System.Console.WriteLine(CreateDetailedExceptionMessage(category, exception));
 #endif
 		}
 

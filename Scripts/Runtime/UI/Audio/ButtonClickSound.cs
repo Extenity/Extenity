@@ -52,7 +52,7 @@ namespace Extenity.UIToolbox.Audio
 
 			if (Button)
 			{
-				Log.Info($"Registering '{nameof(Button)}' click sound for '{gameObject.name}'.", this);
+				Log.VerboseWithContext(Button, $"Registering '{nameof(Button)}' click sound for '{this.FullGameObjectName()}'.");
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -69,7 +69,7 @@ namespace Extenity.UIToolbox.Audio
 			}
 			else if (Toggle)
 			{
-				Log.Info($"Registering '{nameof(Toggle)}' click sound for '{gameObject.name}'.", this);
+				Log.VerboseWithContext(Toggle, $"Registering '{nameof(Toggle)}' click sound for '{this.FullGameObjectName()}'.");
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -90,7 +90,7 @@ namespace Extenity.UIToolbox.Audio
 		{
 			if (Button)
 			{
-				Log.Info($"Deregistering '{nameof(Button)}' click sound for '{gameObject.name}'.", this);
+				Log.VerboseWithContext(Button, $"Deregistering '{nameof(Button)}' click sound for '{this.FullGameObjectName()}'.");
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -105,7 +105,7 @@ namespace Extenity.UIToolbox.Audio
 			}
 			else if (Toggle)
 			{
-				Log.Info($"Deregistering '{nameof(Toggle)}' click sound for '{gameObject.name}'.", this);
+				Log.VerboseWithContext(Toggle, $"Deregistering '{nameof(Toggle)}' click sound for '{this.FullGameObjectName()}'.");
 				switch (Action)
 				{
 					case ButtonClickSoundAction.Up:
@@ -137,7 +137,7 @@ namespace Extenity.UIToolbox.Audio
 
 		public void Play()
 		{
-			Log.Info($"Playing click sound of '{gameObject.name}'.", this);
+			Log.VerboseWithContext(this, $"Playing click sound of '{this.FullGameObjectName()}'.");
 			AudioManager.Play(SoundEvent);
 		}
 

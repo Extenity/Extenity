@@ -279,7 +279,7 @@ namespace Extenity.DebugToolbox
 			if (IsFailed)
 				return; // Ignore consecutive failures.
 			IsFailed = true;
-			Log.Fatal(message, context);
+			Log.FatalWithContext(context, message);
 		}
 
 		#endregion

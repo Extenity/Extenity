@@ -76,7 +76,7 @@ namespace Extenity.DataToolbox
 			//
 			// The pool will just skip the collection and create a fresh one. We may try to get a new one from
 			// the pool but the overhead is not worthwhile.
-			Log.Fatal($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
+			Log.With(nameof(ListPool<T>)).Fatal($"Detected a collection of type '{nameof(List<T>)}<{typeof(T).Name}>' which was used even after it was released to pool.");
 		}
 
 		private static void _AdjustCapacity(List<T> collection, int capacity)

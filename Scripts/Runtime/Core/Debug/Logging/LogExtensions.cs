@@ -24,7 +24,7 @@ namespace Extenity
 			{
 				if (inSeparateLogCalls)
 				{
-					Log.Any(initialLine, severity);
+					Log.Any(severity, initialLine);
 				}
 				else
 				{
@@ -37,7 +37,7 @@ namespace Extenity
 			{
 				if (inSeparateLogCalls)
 				{
-					Log.Any("[NullList]", severity);
+					Log.Any(severity, "[NullList]");
 				}
 				else
 				{
@@ -52,7 +52,7 @@ namespace Extenity
 					var line = (item == null ? "[Null]" : item.ToString());
 					if (inSeparateLogCalls)
 					{
-						Log.Any(line, severity);
+						Log.Any(severity, line);
 					}
 					else
 					{
@@ -63,7 +63,7 @@ namespace Extenity
 
 			if (!inSeparateLogCalls)
 			{
-				Log.Any(stringBuilder.ToString(), severity);
+				Log.Any(severity, stringBuilder.ToString());
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace Extenity
 			{
 				if (inSeparateLogCalls)
 				{
-					Log.Any(initialLine, severity);
+					Log.Any(severity, initialLine);
 				}
 				else
 				{
@@ -95,7 +95,7 @@ namespace Extenity
 			{
 				if (inSeparateLogCalls)
 				{
-					Log.Any("[NullDict]", severity);
+					Log.Any(severity, "[NullDict]");
 				}
 				else
 				{
@@ -110,7 +110,7 @@ namespace Extenity
 					var line = (item.Key == null ? "[Null]" : item.Key.ToString()) + ": '" + (item.Value == null ? "[Null]" : item.Value.ToString()) + "'";
 					if (inSeparateLogCalls)
 					{
-						Log.Any(line, severity);
+						Log.Any(severity, line);
 					}
 					else
 					{
@@ -121,7 +121,7 @@ namespace Extenity
 
 			if (!inSeparateLogCalls)
 			{
-				Log.Any(stringBuilder.ToString(), severity);
+				Log.Any(severity, stringBuilder.ToString());
 			}
 		}
 
@@ -143,7 +143,7 @@ namespace Extenity
 
 			// Finalize
 			var text = stringBuilder.ToString();
-			Log.Any(text, severity);
+			Log.Any(severity, text);
 		}
 
 		public static void LogAllFields<T>(this T obj, string initialLine = null, LogSeverity severity = LogSeverity.Info)
@@ -160,7 +160,7 @@ namespace Extenity
 
 			// Finalize
 			var text = stringBuilder.ToString();
-			Log.Any(text, severity);
+			Log.Any(severity, text);
 		}
 
 		public static void LogAllFieldsAndProperties<T>(this T obj, string initialLine = null, LogSeverity severity = LogSeverity.Info)
@@ -180,7 +180,7 @@ namespace Extenity
 
 			// Finalize
 			var text = stringBuilder.ToString();
-			Log.Any(text, severity);
+			Log.Any(severity, text);
 		}
 
 		private static void InternalLogAllProperties(this object obj, StringBuilder stringBuilder, string indentation = "")
@@ -258,6 +258,12 @@ namespace Extenity
 				i++;
 			}
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(LogExtensions));
 
 		#endregion
 	}

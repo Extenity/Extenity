@@ -1,13 +1,3 @@
-//#define LogSingletonInEditor
-//#define LogSingletonInBuilds
-#define LogSingletonInDebugBuilds
-
-#if (UNITY_EDITOR && LogSingletonInEditor) || (!UNITY_EDITOR && LogSingletonInBuilds) || (!UNITY_EDITOR && DEBUG && LogSingletonInDebugBuilds)
-#define LoggingEnabled
-#else
-#undef LoggingEnabled
-#endif
-
 using System.Diagnostics;
 
 namespace Extenity.DesignPatternsToolbox
@@ -28,9 +18,7 @@ namespace Extenity.DesignPatternsToolbox
 		protected void InitializeSingleton()
 		{
 			ClassName = typeof(T).Name;
-#if LoggingEnabled
-			Log.Info("Instantiating singleton: " + ClassName);
-#endif
+			Log.With("Singleton").Verbose("Instantiating singleton: " + ClassName);
 			_Instance = this as T;
 
 			SingletonTracker.SingletonInstantiated(ClassName);
@@ -38,9 +26,7 @@ namespace Extenity.DesignPatternsToolbox
 
 		public void DestroySingleton()
 		{
-#if LoggingEnabled
-			Log.Info("Destroying singleton: " + ClassName);
-#endif
+			Log.With("Singleton").Verbose("Destroying singleton: " + ClassName);
 
 			OnDestroySingleton();
 

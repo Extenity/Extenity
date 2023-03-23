@@ -127,7 +127,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			{
 				if (!asset)
 				{
-					Log.Warning($"Failed to load an asset.", asset);
+					Log.WarningWithContext(asset, "Failed to load an asset.");
 					continue;
 				}
 
@@ -153,7 +153,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				else
 				{
 					// Asset was already added. This is not expected.
-					Log.Warning($"Asset '{asset}' was already added.", asset);
+					Log.WarningWithContext(asset, $"Asset '{asset}' was already added.");
 				}
 			}
 

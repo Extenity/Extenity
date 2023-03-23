@@ -44,13 +44,13 @@ namespace Extenity.DesignPatternsToolbox
 			{
 				if (_SingletonCalls[className] < 0)
 				{
-					Log.Error($"Singleton '{className}' tracker was below zero");
+					Log.With("Singleton").Error($"Singleton '{className}' tracker was below zero");
 					_SingletonCalls[className] = 0;
 				}
 				_SingletonCalls[className]++;
 				if (_SingletonCalls[className] > 1)
 				{
-					Log.Error($"Singleton '{className}' instantiated {_SingletonCalls[className]} times");
+					Log.With("Singleton").Error($"Singleton '{className}' instantiated {_SingletonCalls[className]} times");
 				}
 			}
 			else
@@ -86,7 +86,7 @@ namespace Extenity.DesignPatternsToolbox
 			}
 			else
 			{
-				Log.Error("Unregistered singleton: " + className);
+				Log.With("Singleton").Error("Unregistered singleton: " + className);
 			}
 		}
 

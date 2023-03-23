@@ -20,24 +20,22 @@ namespace Extenity
 	{
 		#region Setup
 
-		public readonly string RawPrefix;
-		public readonly string ProcessedPrefix;
+		public readonly string Category;
 		public readonly ContextObject Context;
 
 		#endregion
 
 		#region Initialization
 
-		public Logger(string prefix, ContextObject context = default)
+		public Logger(string category, ContextObject context = default)
 		{
-			RawPrefix = prefix;
-			ProcessedPrefix = $"<b>[{prefix}]</b> ";
+			Category = category;
 			Context = context;
 		}
 
 		public static void SetContext(ref Logger logger, ContextObject context)
 		{
-			logger = new Logger(logger.RawPrefix, context);
+			logger = new Logger(logger.Category, context);
 		}
 
 		#endregion
@@ -51,16 +49,16 @@ namespace Extenity
 		#region Log
 
 		[DebuggerHidden]
-		public void Any(string message, LogSeverity severity)
+		public void Any(LogSeverity severity, string message)
 		{
 			switch (severity)
 			{
 				// @formatter:off
-				case LogSeverity.Verbose:  Verbose(message);  break;
-				case LogSeverity.Info:     Info(message);     break;
-				case LogSeverity.Warning:  Warning(message);  break;
-				case LogSeverity.Error:    Error(message);    break;
-				case LogSeverity.Fatal:    Fatal(message);    break;
+				case LogSeverity.Verbose:  Log._Verbose(Category, Context, message);  break;
+				case LogSeverity.Info   :  Log._Info   (Category, Context, message);  break;
+				case LogSeverity.Warning:  Log._Warning(Category, Context, message);  break;
+				case LogSeverity.Error  :  Log._Error  (Category, Context, message);  break;
+				case LogSeverity.Fatal  :  Log._Fatal  (Category, Context, message);  break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -68,16 +66,16 @@ namespace Extenity
 		}
 
 		[DebuggerHidden]
-		public void Any(string message, LogSeverity severity, ContextObject overriddenContext)
+		public void AnyWithContext(ContextObject overriddenContext, LogSeverity severity, string message)
 		{
 			switch (severity)
 			{
 				// @formatter:off
-				case LogSeverity.Verbose:  Verbose(message, overriddenContext);  break;
-				case LogSeverity.Info:     Info(message, overriddenContext);     break;
-				case LogSeverity.Warning:  Warning(message, overriddenContext);  break;
-				case LogSeverity.Error:    Error(message, overriddenContext);    break;
-				case LogSeverity.Fatal:    Fatal(message, overriddenContext);    break;
+				case LogSeverity.Verbose:  Log._Verbose(Category, overriddenContext, message);  break;
+				case LogSeverity.Info   :  Log._Info   (Category, overriddenContext, message);  break;
+				case LogSeverity.Warning:  Log._Warning(Category, overriddenContext, message);  break;
+				case LogSeverity.Error  :  Log._Error  (Category, overriddenContext, message);  break;
+				case LogSeverity.Fatal  :  Log._Fatal  (Category, overriddenContext, message);  break;
 				// @formatter:on
 				default:
 					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
@@ -90,16 +88,16 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Verbose(string message)
 		{
-			Log.Verbose(ProcessedPrefix + message, Context);
+			Log._Verbose(Category, Context, message);
 		}
 
 #if DisableVerboseLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		[DebuggerHidden]
-		public void Verbose(string message, ContextObject overriddenContext)
+		public void VerboseWithContext(ContextObject overriddenContext, string message)
 		{
-			Log.Verbose(ProcessedPrefix + message, overriddenContext);
+			Log._Verbose(Category, overriddenContext, message);
 		}
 
 #if DisableInfoLogging
@@ -108,52 +106,52 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Info(string message)
 		{
-			Log.Info(ProcessedPrefix + message, Context);
+			Log._Info(Category, Context, message);
 		}
 
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
 		[DebuggerHidden]
-		public void Info(string message, ContextObject overriddenContext)
+		public void InfoWithContext(ContextObject overriddenContext, string message)
 		{
-			Log.Info(ProcessedPrefix + message, overriddenContext);
+			Log._Info(Category, overriddenContext, message);
 		}
 
 		[DebuggerHidden]
 		public void Warning(string message)
 		{
-			Log.Warning(ProcessedPrefix + message, Context);
+			Log._Warning(Category, Context, message);
 		}
 
 		[DebuggerHidden]
-		public void Warning(string message, ContextObject overriddenContext)
+		public void WarningWithContext(ContextObject overriddenContext, string message)
 		{
-			Log.Warning(ProcessedPrefix + message, overriddenContext);
+			Log._Warning(Category, overriddenContext, message);
 		}
 
 		[DebuggerHidden]
 		public void Error(string message)
 		{
-			Log.Error(ProcessedPrefix + message, Context);
+			Log._Error(Category, Context, message);
 		}
 
 		[DebuggerHidden]
 		public void Error(Exception exception)
 		{
-			Log.Error(exception, Context);
+			Log._Error(Category, Context, exception);
 		}
 
 		[DebuggerHidden]
-		public void Error(string message, ContextObject overriddenContext)
+		public void ErrorWithContext(ContextObject overriddenContext, string message)
 		{
-			Log.Error(ProcessedPrefix + message, overriddenContext);
+			Log._Error(Category, overriddenContext, message);
 		}
 
 		[DebuggerHidden]
-		public void Error(Exception exception, ContextObject overriddenContext)
+		public void ErrorWithContext(ContextObject overriddenContext, Exception exception)
 		{
-			Log.Error(exception, overriddenContext);
+			Log._Error(Category, overriddenContext, exception);
 		}
 
 		/// <summary>
@@ -162,7 +160,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Fatal(string message)
 		{
-			Log.Fatal(ProcessedPrefix + message, Context);
+			Log._Fatal(Category, Context, message);
 		}
 
 		/// <summary>
@@ -171,25 +169,25 @@ namespace Extenity
 		[DebuggerHidden]
 		public void Fatal(Exception exception)
 		{
-			Log.Fatal(exception, Context);
+			Log._Fatal(Category, Context, exception);
 		}
 
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void Fatal(string message, ContextObject overriddenContext)
+		public void FatalWithContext(ContextObject overriddenContext, string message)
 		{
-			Log.Fatal(ProcessedPrefix + message, overriddenContext);
+			Log._Fatal(Category, overriddenContext, message);
 		}
 
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
 		[DebuggerHidden]
-		public void Fatal(Exception exception, ContextObject overriddenContext)
+		public void FatalWithContext(ContextObject overriddenContext, Exception exception)
 		{
-			Log.Fatal(exception, overriddenContext);
+			Log._Fatal(Category, overriddenContext, exception);
 		}
 
 		/// <summary>
@@ -200,7 +198,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalError(int errorCode)
 		{
-			Log._InternalError(ProcessedPrefix, Context, errorCode);
+			Log._InternalError(Category, Context, errorCode);
 		}
 
 		/// <summary>
@@ -211,7 +209,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalError(int errorCode, Exception innerException)
 		{
-			Log._InternalError(ProcessedPrefix, Context, errorCode, innerException);
+			Log._InternalError(Category, Context, errorCode, innerException);
 		}
 
 		/// <summary>
@@ -222,7 +220,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode)
 		{
-			Log._InternalError(ProcessedPrefix, overriddenContext, errorCode);
+			Log._InternalError(Category, overriddenContext, errorCode);
 		}
 
 		/// <summary>
@@ -233,7 +231,7 @@ namespace Extenity
 		[DebuggerHidden]
 		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode, Exception innerException)
 		{
-			Log._InternalError(ProcessedPrefix, overriddenContext, errorCode, innerException);
+			Log._InternalError(Category, overriddenContext, errorCode, innerException);
 		}
 
 		#endregion

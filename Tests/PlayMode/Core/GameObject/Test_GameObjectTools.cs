@@ -568,7 +568,7 @@ namespace ExtenityTests.GameObjectToolbox
 			{
 				foreach (var obj in objects)
 				{
-					Log.Info(obj.FullName(), obj.gameObject);
+					Log.InfoWithContext(obj.gameObject, obj.FullName());
 				}
 			}
 		}

@@ -116,7 +116,7 @@ namespace Extenity.DebugToolbox
 					var assertInformation = $"Assertion failed! {assertString}\nFilename: {frame.GetFileName()}\nMethod: {frame.GetMethod()}\nLine: {frame.GetFileLineNumber()}";
 
 					// Logging would be included in both Debug and UNITY_EDITOR builds
-					Log.Error(assertInformation);
+					Log.With(nameof(DebugAssert)).Error(assertInformation);
 
 #if UNITY_EDITOR
 					// Pause application

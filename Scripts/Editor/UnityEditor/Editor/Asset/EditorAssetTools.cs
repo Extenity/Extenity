@@ -66,7 +66,7 @@ namespace Extenity.AssetToolbox.Editor
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
-			Log.Info($"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
+			Log.InfoWithContext(texture, $"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
 		}
 
 		private static void _GenerateEmbeddedCodeForImageFile(TextureFormat format)
@@ -82,7 +82,7 @@ namespace Extenity.AssetToolbox.Editor
 			var stringBuilder = new StringBuilder();
 			var fieldName = TextureTools.GenerateEmbeddedCodeForTexture(data, textureName, format, mipmapEnabled, linear, "		", ref stringBuilder);
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
-			Log.Info($"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
+			Log.InfoWithContext(texture, $"Generated texture data as field '{fieldName}' and copied to clipboard. Path: {path}");
 		}
 
 		#endregion
@@ -651,7 +651,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var component = menuCommand.context as Component;
 			var json = EditorJsonUtility.ToJson(component, true);
-			Log.Info(json, component);
+			Log.InfoWithContext(component, json);
 		}
 
 		#endregion

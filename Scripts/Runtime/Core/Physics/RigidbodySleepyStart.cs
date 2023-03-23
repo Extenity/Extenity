@@ -1,5 +1,6 @@
 #if UNITY
 
+using Extenity.DataToolbox;
 using Extenity.GameObjectToolbox;
 using UnityEngine;
 
@@ -39,7 +40,7 @@ namespace Extenity.PhysicsToolbox
 					{
 						if (logFilteredOutRigidbodies)
 						{
-							Log.Info("Filtered: " + rigidbodies[i].gameObject, rigidbodies[i].gameObject);
+							Log.VerboseWithContext(rigidbodies[i], "Filtered: " + rigidbodies[i].FullGameObjectName());
 						}
 						rigidbodies.RemoveAt(i);
 						i--;

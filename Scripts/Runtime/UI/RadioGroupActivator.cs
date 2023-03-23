@@ -71,7 +71,7 @@ namespace Extenity.UIToolbox
 					{
 						if (ExpectedObjects.IsNullOrEmpty())
 						{
-							Log.Error($"No expected object specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}',");
+							Log.ErrorWithContext(this, $"No expected object specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}',");
 							break;
 						}
 
@@ -107,7 +107,7 @@ namespace Extenity.UIToolbox
 		{
 			if (Target == null)
 			{
-				Log.Error("Target was not set for radio group activator.");
+				Log.ErrorWithContext(this, "Target was not set for radio group activator.");
 				return;
 			}
 
@@ -137,7 +137,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Log.Error("Unrecognized target set for radio group activator.");
+				Log.ErrorWithContext(this, "Unrecognized target set for radio group activator.");
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace Extenity.UIToolbox
 			}
 			else
 			{
-				Log.Error($"{nameof(RadioGroup)} was not specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}'.", this);
+				Log.ErrorWithContext(this, $"{nameof(RadioGroup)} was not specified for {nameof(RadioGroupActivator)} in object '{gameObject.FullName()}'.");
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace Extenity.UIToolbox
 			{
 				if (ExpectedObjects.IsNotNullAndEmpty())
 				{
-					Log.Info($"Clearing '{nameof(ExpectedObjects)}' as it is not needed and would leave unused references.");
+					Log.InfoWithContext(this, $"Clearing '{nameof(ExpectedObjects)}' as it is not needed and would leave unused references.");
 					ExpectedObjects = Array.Empty<Object>();
 				}
 			}

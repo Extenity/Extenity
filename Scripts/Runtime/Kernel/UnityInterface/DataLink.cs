@@ -40,7 +40,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			{
 				if (ID.IsNotSet)
 				{
-					Log.Error($"Data link ID was not set for '{Component.FullName()}'.", GameObject);
+					Log.ErrorWithContext(Component, $"Data link ID was not set for '{Component.FullName()}'.");
 				}
 			}
 		}
@@ -71,7 +71,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Error(exception, GameObject);
+				Log.ErrorWithContext(Component, exception);
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 			}
 			catch (Exception exception)
 			{
-				Log.Error(exception, GameObject);
+				Log.ErrorWithContext(Component, exception);
 			}
 		}
 

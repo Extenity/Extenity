@@ -92,15 +92,15 @@ namespace Extenity.UIToolbox.Editor
 			// Log
 			if (isCreated)
 			{
-				Log.Info($"{typeof(TNewComponent).Name} component created in object '{clickable.gameObject.name}'.", clickable.gameObject);
+				Log.InfoWithContext(clickable, $"{typeof(TNewComponent).Name} component created in object '{clickable.GameObjectNameSafe()}'.");
 			}
 			else if (movedBy != 0)
 			{
-				Log.Info($"{typeof(TNewComponent).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.gameObject.name}'.", clickable.gameObject);
+				Log.InfoWithContext(clickable, $"{typeof(TNewComponent).Name} component moved above {typeof(TTarget).Name} component in object '{clickable.GameObjectNameSafe()}'.");
 			}
 			else
 			{
-				Log.Info($"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(TNewComponent).Name}.", clickable.gameObject);
+				Log.InfoWithContext(clickable, $"{typeof(TTarget).Name} '{clickable.gameObject.name}' already has a {typeof(TNewComponent).Name}.");
 			}
 
 			return component;

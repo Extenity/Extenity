@@ -50,7 +50,7 @@ namespace Extenity.DataToolbox
 			if (stringBuilder.Capacity > SharedStringBuilderCapacityTolerance)
 			{
 				// If this happens regularly, consider increasing the tolerance.
-				Log.Warning($"Shared StringBuilder size '{stringBuilder.Capacity}' exceeded the tolerance '{SharedStringBuilderCapacityTolerance}'.");
+				Log.With(nameof(SharedStringBuilder)).Warning($"Shared StringBuilder size '{stringBuilder.Capacity}' exceeded the tolerance '{SharedStringBuilderCapacityTolerance}'.");
 				stringBuilder.Capacity = SharedStringBuilderInitialCapacity;
 			}
 		}

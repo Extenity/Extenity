@@ -159,7 +159,7 @@ namespace Extenity.FlowToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception, entry.Behaviour);
+						Log.ErrorWithContext(entry.Behaviour, exception);
 					}
 					finally
 					{
@@ -246,7 +246,7 @@ namespace Extenity.FlowToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception, entry.Behaviour);
+						Log.ErrorWithContext(entry.Behaviour, exception);
 					}
 					finally
 					{

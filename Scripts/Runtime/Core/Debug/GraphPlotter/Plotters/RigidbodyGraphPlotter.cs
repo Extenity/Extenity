@@ -138,7 +138,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (!Rigidbody)
 			{
-				Log.Warning(nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.", this);
+				Log.WarningWithContext(this, nameof(RigidbodyGraphPlotter) + " requires " + nameof(Rigidbody) + " component.");
 				return;
 			}
 

@@ -556,12 +556,12 @@ namespace Extenity.AssetToolbox.Editor
 
 			if (line >= 0)
 			{
-				Log.Info($"Opening script '{scriptPath}' at line '{line}'.", asset);
+				Log.InfoWithContext(asset, $"Opening script '{scriptPath}' at line '{line}'.");
 				AssetDatabase.OpenAsset(asset, line);
 			}
 			else
 			{
-				Log.Info($"Opening script '{scriptPath}'.", asset);
+				Log.InfoWithContext(asset, $"Opening script '{scriptPath}'.");
 				AssetDatabase.OpenAsset(asset);
 			}
 		}
@@ -800,7 +800,7 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				foreach (var result in sortedResults)
 				{
-					Log.Info($"{result.AssetPath}", result.ReferencedObject);
+					Log.InfoWithContext(result.ReferencedObject, $"{result.AssetPath}");
 				}
 			}
 
@@ -810,12 +810,12 @@ namespace Extenity.AssetToolbox.Editor
 			{
 				foreach (var result in sortedResults)
 				{
-					Log.Info($"{result.AssetPath}", result.ReferencedObject);
+					Log.InfoWithContext(result.ReferencedObject, $"{result.AssetPath}");
 					using (Log.IndentedScope)
 					{
 						foreach (var referencedByComponent in result.ReferencedInComponents)
 						{
-							Log.Info($"Referenced in: '{referencedByComponent.FullName()}'", referencedByComponent);
+							Log.InfoWithContext(referencedByComponent, $"Referenced in: '{referencedByComponent.FullName()}'");
 						}
 					}
 				}

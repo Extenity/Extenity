@@ -42,7 +42,7 @@ namespace Extenity.UnityEditorToolbox
 		{
 			if (Application.isPlaying)
 			{
-				Log.Warning($"Destroying {nameof(SnapToObjectInEditor)} in object '{gameObject.FullName()}' which should already be removed by now.");
+				Log.With(nameof(SnapToObjectInEditor)).Warning($"Destroying {nameof(SnapToObjectInEditor)} in object '{gameObject.FullName()}' which should already be removed by now.");
 				Destroy(this);
 			}
 			else

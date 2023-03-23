@@ -46,20 +46,18 @@ namespace Extenity.UIToolbox.ScreenManagement
 			if (!screen.Instance)
 			{
 				screen.CreateRequestCount++;
-				if (EnableCreationLogging)
-					LogCreation($"Creating '{screen.Name}' screen.", screen.Prefab);
+				LogCreation.VerboseWithContext(screen.Prefab, $"Creating '{screen.Name}' screen.");
 				var go = Instantiate(screen.Prefab.gameObject);
 				screen.Instance = go.GetComponent<Panel>();
 				if (!screen.Instance)
 				{
-					LogError("Screen prefab should have a Panel component in its parent so that the system can take the control of its visibility.");
+					Log.ErrorWithContext(screen.Prefab, "Screen prefab should have a Panel component in its parent so that the system can take the control of its visibility.");
 				}
 				go.SetActive(true);
 			}
 
 			// Show screen
-			if (EnableVisibilityLogging)
-				LogVisibility($"Showing '{screen.Name}' screen.", screen.Instance);
+			LogVisibility.VerboseWithContext(screen.Instance, $"Showing '{screen.Name}' screen.");
 			screen.Instance.BecomeVisible();
 		}
 
@@ -72,13 +70,11 @@ namespace Extenity.UIToolbox.ScreenManagement
 
 			if (!screen.Instance) // Ignore the request. No instance means there is no visible thing to hide.
 			{
-				if (EnableVisibilityLogging)
-					LogVisibility($"Hiding '{screen.Name}' screen but there was no instance.", screen.Instance);
+				LogVisibility.VerboseWithContext(screen.Prefab, $"Hiding '{screen.Name}' screen but there was no instance.");
 				return;
 			}
 
-			if (EnableVisibilityLogging)
-				LogVisibility($"Hiding '{screen.Name}' screen.", screen.Instance);
+			LogVisibility.VerboseWithContext(screen.Instance, $"Hiding '{screen.Name}' screen.");
 			screen.Instance.BecomeInvisible();
 		}
 
@@ -93,7 +89,7 @@ namespace Extenity.UIToolbox.ScreenManagement
 			if (publicMethods.Length > 0)
 			{
 				var typeName = type.Name;
-				LogWarning($"{typeName} should not have any public methods. The whole point of managing the whole UI from a single manager is reducing the 'code coupling'. Making {typeName} reachable from outside world breaks that rule. Instead, catch events in {typeName} and update screen visibilities as a response to events happening in the application. That way, all screen visibility commands can be gathered in one place and won't spread throughout the code base. Detected public methods are: " + string.Join(", ", publicMethods.Select(item => item.Name)));
+				Log.WarningWithContext(this, $"{typeName} should not have any public methods. The whole point of managing the whole UI from a single manager is reducing the 'code coupling'. Making {typeName} reachable from outside world breaks that rule. Instead, catch events in {typeName} and update screen visibilities as a response to events happening in the application. That way, all screen visibility commands can be gathered in one place and won't spread throughout the code base. Detected public methods are: " + string.Join(", ", publicMethods.Select(item => item.Name)));
 			}
 		}
 
@@ -101,32 +97,9 @@ namespace Extenity.UIToolbox.ScreenManagement
 
 		#region Log
 
-		[TitleGroup("Log", Order = 1000)]
-		public bool EnableCreationLogging = true;
-		[TitleGroup("Log")]
-		public bool EnableVisibilityLogging = true;
-
-		private const string LogPrefix = "<b>[Screens]</b> ";
-
-		protected void LogCreation(string message, UnityEngine.Object screenPrefab)
-		{
-			Log.Info(LogPrefix + message, screenPrefab);
-		}
-
-		protected void LogVisibility(string message, UnityEngine.Object screenInstance)
-		{
-			Log.Info(LogPrefix + message, screenInstance);
-		}
-
-		protected void LogWarning(string message)
-		{
-			Log.Warning(LogPrefix + message, this);
-		}
-
-		protected void LogError(string message)
-		{
-			Log.Error(LogPrefix + message, this);
-		}
+		private static readonly Logger LogCreation = new("Screens");
+		private static readonly Logger LogVisibility = new("Screens");
+		private static readonly Logger Log = new("Screens");
 
 		#endregion
 	}

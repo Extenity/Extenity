@@ -77,7 +77,7 @@ namespace Extenity.UIToolbox
 				if (Fader.FadeInDelay != 0f || Fader.FadeOutDelay != 0f)
 				{
 					UnityEditor.Undo.RecordObject(Fader, "Blackout fader delay correction");
-					Log.Warning("Blackout UI is expected to be launched immediately. So fader delays are not allowed. Fixing...", this);
+					Log.WarningWithContext(this, "Blackout UI is expected to be launched immediately. So fader delays are not allowed. Fixing...");
 					Fader.FadeInDelay = 0f;
 					Fader.FadeOutDelay = 0f;
 				}

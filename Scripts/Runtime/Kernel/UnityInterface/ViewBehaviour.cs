@@ -279,7 +279,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (!original)
 			{
-				Log.Warning($"Tried to instantiate a non-existing object as model for '{gameObject.FullName()}'.", this);
+				Log.WarningWithContext(this, $"Tried to instantiate a non-existing object as model for '{gameObject.FullName()}'.");
 				return null;
 			}
 
@@ -297,7 +297,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 			if (!Model)
 			{
-				Log.Warning($"Tried to set a non-existing object as model for '{gameObject.FullName()}'.", this);
+				Log.WarningWithContext(this, $"Tried to set a non-existing object as model for '{gameObject.FullName()}'.");
 				return;
 			}
 			Model = model;
@@ -331,7 +331,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 		{
 			if (!Model)
 			{
-				Log.Warning($"Tried to detach a non-existing model of '{gameObject.FullName()}'.", this);
+				Log.WarningWithContext(this, $"Tried to detach a non-existing model of '{gameObject.FullName()}'.");
 				return;
 			}
 			const bool worldPositionStays = false; // Preserve the local position in new parent.

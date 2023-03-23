@@ -48,7 +48,7 @@ namespace Extenity.ProfilingToolbox
 			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 			{
 				var message = Stopwatch.GetLogMessage(ProfilerMessageFormat);
-				Logger.Any(message, LogSeverity);
+				Logger.Any(LogSeverity, message);
 			}
 		}
 	}

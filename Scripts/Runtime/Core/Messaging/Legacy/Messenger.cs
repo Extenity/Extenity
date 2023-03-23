@@ -39,7 +39,7 @@ namespace Extenity.MessagingToolbox
 			}
 
 			if (IsRegistrationLoggingEnabled)
-				LogRegistration($"Registering callback '<b>{callback.Method.Name}</b> in {callback.Target}' for event '<b>{eventName}</b>'", callback.Target as Object);
+				LogRegistration.VerboseWithContext(callback.Target as Object, $"Registering callback '<b>{callback.Method.Name}</b> in {callback.Target}' for event '<b>{eventName}</b>'");
 
 			if (!EventsByEventNames.TryGetValue(eventName, out var events))
 			{
@@ -59,7 +59,7 @@ namespace Extenity.MessagingToolbox
 			}
 
 			if (IsRegistrationLoggingEnabled)
-				LogRegistration($"Deregistering callback '<b>{callback.Method.Name}</b> in {callback.Target}' from event '<b>{eventName}</b>'", callback.Target as Object);
+				LogRegistration.VerboseWithContext(callback.Target as Object, $"Deregistering callback '<b>{callback.Method.Name}</b> in {callback.Target}' from event '<b>{eventName}</b>'");
 
 			if (EventsByEventNames.TryGetValue(eventName, out var events))
 			{
@@ -76,7 +76,7 @@ namespace Extenity.MessagingToolbox
 			}
 
 			if (IsRegistrationLoggingEnabled)
-				LogRegistration($"Deregistering all callbacks of '{callbackTarget}'", callbackTarget as Object);
+				LogRegistration.VerboseWithContext(callbackTarget as Object, $"Deregistering all callbacks of '{callbackTarget}'");
 
 			foreach (var item in EventsByEventNames)
 			{
@@ -147,7 +147,7 @@ namespace Extenity.MessagingToolbox
 		public static void EmitEvent(string eventName)
 		{
 			if (IsEmitLoggingEnabled && !EmitLogFilter.Contains(eventName))
-				LogEmit($"Emitting '<b>{eventName}</b>'");
+				LogEmit.Verbose($"Emitting '<b>{eventName}</b>'");
 
 			if (EventsByEventNames.TryGetValue(eventName, out var events))
 			{
@@ -162,18 +162,9 @@ namespace Extenity.MessagingToolbox
 		public static bool IsEmitLoggingEnabled = false;
 		public static bool IsRegistrationLoggingEnabled = false;
 		public static HashSet<string> EmitLogFilter = new HashSet<string>();
-
-		private const string LogPrefix = "<b>[Messenger]</b> ";
-
-		private static void LogRegistration(string message, Object context)
-		{
-			Log.Info(LogPrefix + message, context);
-		}
-
-		private static void LogEmit(string message)
-		{
-			Log.Info(LogPrefix + message);
-		}
+		
+		private static readonly Logger LogRegistration = new(nameof(Messenger));
+		private static readonly Logger LogEmit = new(nameof(Messenger));
 
 		#endregion
 

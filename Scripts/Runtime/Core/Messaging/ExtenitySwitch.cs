@@ -649,7 +649,7 @@ namespace Extenity.MessagingToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception, listener.LogObject(isSwitchedOn));
+						Log.ErrorWithContext(listener.LogObject(isSwitchedOn), exception);
 					}
 				}
 

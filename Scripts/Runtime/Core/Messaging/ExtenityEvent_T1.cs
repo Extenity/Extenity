@@ -495,7 +495,7 @@ namespace Extenity.MessagingToolbox
 					}
 					catch (Exception exception)
 					{
-						Log.Error(exception, listener.LogObject);
+						Log.ErrorWithContext(listener.LogObject, exception);
 					}
 				}
 
