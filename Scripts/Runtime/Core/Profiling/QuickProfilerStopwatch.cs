@@ -32,6 +32,15 @@ namespace Extenity.ProfilingToolbox
 			Stopwatch.Start();
 		}
 
+		public QuickProfilerStopwatch(string profilerTitle, float thresholdDurationToConsiderLogging = 0f)
+		{
+			Stopwatch = new ProfilerStopwatch();
+			Logger = new Logger("Profiling");
+			ProfilerTitle = profilerTitle;
+			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
+			Stopwatch.Start();
+		}
+
 		public void Dispose()
 		{
 			Stopwatch.End();
