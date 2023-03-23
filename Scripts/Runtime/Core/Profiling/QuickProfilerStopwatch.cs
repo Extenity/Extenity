@@ -19,15 +19,13 @@ namespace Extenity.ProfilingToolbox
 		private ProfilerStopwatch Stopwatch;
 		private readonly Logger Logger;
 		private readonly string ProfilerMessageFormat;
-		private readonly LogSeverity LogSeverity;
 		private readonly float ThresholdDurationToConsiderLogging;
 
-		public QuickProfilerStopwatch(Logger logger, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
+		public QuickProfilerStopwatch(Logger logger, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Logger = logger;
 			ProfilerMessageFormat = profilerMessageFormat;
-			LogSeverity = logSeverity;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
 		}
@@ -35,10 +33,23 @@ namespace Extenity.ProfilingToolbox
 		public void Dispose()
 		{
 			Stopwatch.End();
+
+			var message = Stopwatch.GetLogMessage(ProfilerMessageFormat);
+
 			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 			{
-				var message = Stopwatch.GetLogMessage(ProfilerMessageFormat);
-				Logger.Any(LogSeverity, message);
+				if (ThresholdDurationToConsiderLogging > 0f)
+				{
+					Logger.Warning(message);
+				}
+				else
+				{
+					Logger.Info(message);
+				}
+			}
+			else
+			{
+				Logger.Verbose(message);
 			}
 		}
 	}
