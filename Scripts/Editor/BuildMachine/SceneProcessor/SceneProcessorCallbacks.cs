@@ -20,11 +20,17 @@ namespace Extenity.BuildMachine.Editor
 				return;
 			}
 
-			BuilderLog.Info($"Scene processor checking in at scene process callback for scene '{scene.name}'.");
+			Log.Info($"Scene processor checking in at scene process callback for scene '{scene.name}'.");
 
 			// See 713951791.
 			//DoProcessScene(scene, ...);
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Builder");
+
+		#endregion
 	}
 
 }

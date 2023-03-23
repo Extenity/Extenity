@@ -11,6 +11,11 @@ namespace Extenity.BuildMachine.Editor
 			: base(Prefix + message)
 		{
 		}
+
+		public BuildFailedException(string message, Exception innerException)
+			: base(Prefix + message, innerException)
+		{
+		}
 	}
 
 }

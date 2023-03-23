@@ -150,7 +150,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public void ScheduleUnityEditorRestart()
 		{
-			BuilderLog.Info("Scheduling Unity Editor restart.");
+			Log.Info("Scheduling Unity Editor restart.");
 			IsUnityEditorRestartScheduled = true;
 			throw new NotImplementedException();
 		}
@@ -164,7 +164,7 @@ namespace Extenity.BuildMachine.Editor
 
 		public void ScheduleAssemblyReload()
 		{
-			BuilderLog.Info("Scheduling assembly reload.");
+			Log.Info("Scheduling assembly reload.");
 			IsAssemblyReloadScheduled = true;
 		}
 
@@ -224,7 +224,7 @@ namespace Extenity.BuildMachine.Editor
 
 		internal void SetResult(BuildJobResult result)
 		{
-			BuilderLog.Info($"Setting result to '{result}'");
+			Log.Info($"Setting result to '{result}'");
 			if (result == BuildJobResult.Succeeded)
 			{
 				if (Result == BuildJobResult.Failed)
@@ -321,8 +321,8 @@ namespace Extenity.BuildMachine.Editor
 			var json2 = InternalSerializeToJson(deserialized);
 			if (json != json2)
 			{
-				BuilderLog.Error("Json-1:\n" + json);
-				BuilderLog.Error("Json-2:\n" + json2);
+				Log.Error("Json-1:\n" + json);
+				Log.Error("Json-2:\n" + json2);
 				throw new BuildFailedException("Serialization consistency check failed.");
 			}
 
@@ -363,8 +363,8 @@ namespace Extenity.BuildMachine.Editor
 			var json2 = InternalSerializeToJson(job);
 			if (json != json2)
 			{
-				BuilderLog.Error("Json-1:\n" + json);
-				BuilderLog.Error("Json-2:\n" + json2);
+				Log.Error("Json-1:\n" + json);
+				Log.Error("Json-2:\n" + json2);
 				throw new BuildFailedException("Serialization consistency check failed.");
 			}
 
@@ -424,6 +424,12 @@ namespace Extenity.BuildMachine.Editor
 		{
 			return $"[Phase: {ToStringCurrentPhase()}, Builder: {ToStringCurrentBuilder()}, Step: {CurrentBuildStep}, StepState: {StepState}]";
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new("Builder");
 
 		#endregion
 	}

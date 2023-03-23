@@ -68,7 +68,7 @@ namespace Extenity.BuildMachine.Editor
 		private static bool OnException(Exception exception)
 		{
 			// TODO: Reset the state of processor and make it ready for another run.
-			BuilderLog.Error("Exception catching in scene processor is not implemented yet. Exception: " + exception);
+			Log.Error(new BuildFailedException("Exception catching in scene processor is not implemented yet.", exception));
 			return false;
 		}
 
@@ -91,7 +91,7 @@ namespace Extenity.BuildMachine.Editor
 				);
 				if (definition == null)
 				{
-					BuilderLog.Info($"Skipping scene processing for scene '{scene.name}'.");
+					Log.Info($"Skipping scene processing for scene '{scene.name}'.");
 					yield break;
 				}
 
@@ -102,7 +102,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 				ConsistencyChecker.CheckConsistencyAndThrow(configuration, 1f, ThrowRule.OnErrorsAndWarnings);
 
-				BuilderLog.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
+				Log.Info($"Processing configuration '{configurationName}' on scene at path: {scenePath}");
 				// Log.IncreaseIndent();
 				// indented = true;
 
@@ -117,7 +117,7 @@ namespace Extenity.BuildMachine.Editor
 					MergeScenesIntoProcessedScene(definition);
 				}
 
-				BuilderLog.Info("Scene is ready to be processed. Starting the process.");
+				Log.Info("Scene is ready to be processed. Starting the process.");
 
 				// Call initialization process
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(OnBeforeSceneProcess(definition, configuration, runAsync));
@@ -151,7 +151,7 @@ namespace Extenity.BuildMachine.Editor
 				yield return null;
 				AggressivelySaveOpenScenes();
 
-				BuilderLog.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
+				Log.Info($"{ProcessStopwatch.Elapsed.ToStringHoursMinutesSecondsMilliseconds()} | Scene processor finished.");
 
 				ClearProgressBar();
 			}
@@ -300,7 +300,7 @@ namespace Extenity.BuildMachine.Editor
 					if (previousMethodOrder == currentMethodOrder)
 					{
 						detected = true;
-						BuilderLog.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
+						Log.Error($"Methods '{previousMethod.Name}' and '{currentMethod.Name}' have the same order of '{currentMethodOrder}'.");
 					}
 
 					previousMethod = currentMethod;
@@ -326,14 +326,14 @@ namespace Extenity.BuildMachine.Editor
 			CurrentStep++;
 			CurrentStepStartTime = now;
 
-			BuilderLog.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
+			Log.Info($"{now.ToStringHoursMinutesSecondsMilliseconds()} | Scene Processor Step {CurrentStep} - {CurrentStepTitle}");
 			DisplayProgressBar("Scene Processor Step " + CurrentStep, CurrentStepTitle);
 		}
 
 		private static void EndStep()
 		{
 			var duration = ProcessStopwatch.Elapsed - CurrentStepStartTime;
-			BuilderLog.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
+			Log.Info($"Step '{CurrentStepTitle}' took {duration.ToStringHoursMinutesSecondsMilliseconds()}.");
 			CurrentStepTitle = null;
 			CurrentStepStartTime = new TimeSpan();
 		}
@@ -492,6 +492,12 @@ namespace Extenity.BuildMachine.Editor
 		{
 			ImageMagickCommander.BlurReflectionProbesInScenes(activeCheck, sceneListFilter);
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new("Builder");
 
 		#endregion
 	}
