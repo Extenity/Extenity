@@ -11,23 +11,6 @@ namespace Extenity
 	// TODO-Log: Convert these ToStream that returns Utf16ValueStringBuilder.
 	public static class LogExtensions
 	{
-		#region Simple
-
-		public static void LogSimple<T>(this T obj, string prefix = "", LogSeverity severity = LogSeverity.Info)
-		{
-			if (obj == null)
-			{
-				Log.Any("[Null]", severity);
-				return;
-			}
-
-			if (!string.IsNullOrEmpty(prefix))
-				prefix += ": ";
-			Log.Any(prefix + obj.ToString(), severity);
-		}
-
-		#endregion
-
 		#region List
 
 		public static void LogList<T>(this IEnumerable<T> list, string initialLine = null, bool inSeparateLogCalls = false, LogSeverity severity = LogSeverity.Info)
