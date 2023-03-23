@@ -1,3 +1,5 @@
+using Cysharp.Text;
+using Extenity.DataToolbox;
 using IDisposable = System.IDisposable;
 
 // This is the way that Log system supports various Context types in different environments like
@@ -18,14 +20,14 @@ namespace Extenity.ProfilingToolbox
 	{
 		private ProfilerStopwatch Stopwatch;
 		private readonly Logger Logger;
-		private readonly string ProfilerMessageFormat;
+		private readonly string ProfilerTitle;
 		private readonly float ThresholdDurationToConsiderLogging;
 
-		public QuickProfilerStopwatch(Logger logger, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f)
+		public QuickProfilerStopwatch(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging = 0f)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Logger = logger;
-			ProfilerMessageFormat = profilerMessageFormat;
+			ProfilerTitle = profilerTitle;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
 		}
@@ -34,22 +36,20 @@ namespace Extenity.ProfilingToolbox
 		{
 			Stopwatch.End();
 
-			var message = Stopwatch.GetLogMessage(ProfilerMessageFormat);
-
 			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 			{
 				if (ThresholdDurationToConsiderLogging > 0f)
 				{
-					Logger.Warning(message);
+					Logger.Warning(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
 				}
 				else
 				{
-					Logger.Info(message);
+					Logger.Info(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
 				}
 			}
 			else
 			{
-				Logger.Verbose(message);
+				Logger.Verbose(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
 			}
 		}
 	}

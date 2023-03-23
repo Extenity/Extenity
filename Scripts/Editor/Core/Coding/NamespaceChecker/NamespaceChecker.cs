@@ -12,7 +12,7 @@ namespace Extenity.CodingToolbox.Editor
 		[DidReloadScripts]
 		public static void EnsureAllNamespacesInAllAssemblies()
 		{
-			using (new QuickProfilerStopwatch(Log, nameof(NamespaceChecker) + " calculations took {0}", 1f))
+			using (new QuickProfilerStopwatch(Log, nameof(NamespaceChecker), 1f))
 			{
 				var assemblies = Sirenix.Utilities.AssemblyUtilities.GetAllAssemblies();
 				foreach (var assembly in assemblies)
