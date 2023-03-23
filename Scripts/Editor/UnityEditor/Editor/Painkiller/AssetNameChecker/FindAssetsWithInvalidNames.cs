@@ -79,6 +79,12 @@ namespace Extenity.PainkillerToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(FindAssetsWithInvalidNames));
+
+		#endregion
 	}
 
 }

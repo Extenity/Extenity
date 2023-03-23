@@ -94,6 +94,12 @@ namespace Extenity.UnityEditorToolbox.ImageMagick
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ImageMagickCommander));
+
+		#endregion
 	}
 
 }

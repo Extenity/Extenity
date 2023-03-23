@@ -1,10 +1,10 @@
 #if ExtenityAudio
 
 using System.Collections.Generic;
-using Extenity;
 using Extenity.Audio;
 using UnityEngine;
 using UnityEngine.UI;
+using Logger = Extenity.Logger;
 
 namespace ExtenityExamples.Audio
 {
@@ -57,6 +57,12 @@ namespace ExtenityExamples.Audio
 			else if (count > 1)
 				Log.Info("Internal error! More than one UI item found.");
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Example");
+
+		#endregion
 	}
 
 }

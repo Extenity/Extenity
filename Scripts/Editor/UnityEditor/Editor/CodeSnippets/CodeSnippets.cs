@@ -497,9 +497,9 @@ namespace __NAMESPACE__
 						}
 						File.WriteAllText(combinedPath, processedFileContent);
 					}
-					catch (Exception e)
+					catch (Exception exception)
 					{
-						Log.Error("Could not create snippet file for '" + snippetName + "' snippet. Exception: " + e);
+						Log.Error(new Exception("Could not create snippet file for '" + snippetName + "' snippet.", exception));
 					}
 				}
 			}
@@ -624,6 +624,12 @@ namespace __NAMESPACE__
 			CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
 		}
 
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(CreateSnippet));
 
 		#endregion
 	}

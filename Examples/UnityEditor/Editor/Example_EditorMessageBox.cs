@@ -1,8 +1,8 @@
-using Extenity;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityExamples.UnityEditorToolbox.Editor
 {
@@ -86,6 +86,12 @@ namespace ExtenityExamples.UnityEditorToolbox.Editor
 				}
 			);
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Example");
+
+		#endregion
 	}
 
 }

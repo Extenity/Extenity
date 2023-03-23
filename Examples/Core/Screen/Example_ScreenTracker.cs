@@ -1,8 +1,8 @@
-using Extenity;
 using Extenity.ScreenToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityExamples.ScreenToolbox
 {
@@ -28,6 +28,12 @@ namespace ExtenityExamples.ScreenToolbox
 			Log.Info(screenInfo.ToString());
 			EditorWindowTools.RepaintAllViews(); // Refresh the inspector
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Example");
+
+		#endregion
 	}
 
 }

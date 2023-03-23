@@ -66,8 +66,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public void OnDestroy()
 		{
-			Log.Info("########### WebView OnDestroy           UnityWebView != null : " + (UnityWebView != null));
-
 			if (UnityWebView != null)
 			{
 				SetHostView(null);

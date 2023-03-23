@@ -1,5 +1,5 @@
-﻿using Extenity;
-using UnityEngine;
+﻿using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 {
@@ -21,6 +21,12 @@ namespace ExtenityExamples.UnityEditorToolbox.GraphPlotting
 				Log.Info(log);
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Example");
+
+		#endregion
 	}
 
 }

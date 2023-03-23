@@ -1,6 +1,6 @@
-using Extenity;
 using Extenity.FlowToolbox;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityExamples.FlowToolbox
 {
@@ -34,6 +34,12 @@ namespace ExtenityExamples.FlowToolbox
 		{
 			Log.Info("------------------------------------- 'UnscaledTimeMethod' called.");
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Example");
+
+		#endregion
 	}
 
 }

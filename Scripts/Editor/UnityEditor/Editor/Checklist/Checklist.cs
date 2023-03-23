@@ -118,6 +118,12 @@ namespace Extenity.UnityEditorToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(Checklist));
+
+		#endregion
 	}
 
 }

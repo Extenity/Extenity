@@ -307,6 +307,12 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(TemplateBuilder));
+
+		#endregion
 	}
 
 }
