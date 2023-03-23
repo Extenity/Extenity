@@ -229,7 +229,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				if (Result == BuildJobResult.Failed)
 				{
-					throw new BuildFailedException($"Tried to set '{BuildJobResult.Succeeded}' result over '{BuildJobResult.Failed}' job.");
+					throw new BuildMachineException($"Tried to set '{BuildJobResult.Succeeded}' result over '{BuildJobResult.Failed}' job.");
 				}
 			}
 			Result = result;
@@ -323,7 +323,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				Log.Error("Json-1:\n" + json);
 				Log.Error("Json-2:\n" + json2);
-				throw new BuildFailedException("Serialization consistency check failed.");
+				throw new BuildMachineException("Serialization consistency check failed.");
 			}
 
 			return json;
@@ -365,7 +365,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				Log.Error("Json-1:\n" + json);
 				Log.Error("Json-2:\n" + json2);
-				throw new BuildFailedException("Serialization consistency check failed.");
+				throw new BuildMachineException("Serialization consistency check failed.");
 			}
 
 			return job;

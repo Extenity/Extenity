@@ -29,7 +29,7 @@ namespace Extenity.BuildMachine.Editor
 			get
 			{
 				if (_RunningJob == null)
-					throw new BuildFailedException($"Tried to get {nameof(RunningJob)} while it was not set.");
+					throw new BuildMachineException($"Tried to get {nameof(RunningJob)} while it was not set.");
 				return _RunningJob;
 			}
 		}
@@ -39,7 +39,7 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (_RunningJob != null)
 			{
-				throw new BuildFailedException($"Tried to set {nameof(RunningJob)} while there was already an existing one.");
+				throw new BuildMachineException($"Tried to set {nameof(RunningJob)} while there was already an existing one.");
 			}
 			Log.Info($"Setting the {nameof(RunningJob)}");
 			_RunningJob = job;
@@ -59,7 +59,7 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (IsRunning)
 			{
-				throw new BuildFailedException($"Tried to start build job '{job.NameSafe()}' while there is already a running one.");
+				throw new BuildMachineException($"Tried to start build job '{job.NameSafe()}' while there is already a running one.");
 			}
 
 			Log.Info($"Starting the build '{job.NameSafe()}'...\n" +
@@ -99,7 +99,7 @@ namespace Extenity.BuildMachine.Editor
 			var jobPlanName = job.NameSafe();
 			if (IsRunning)
 			{
-				throw new BuildFailedException($"Tried to continue build job '{jobPlanName}' while there is already a running one.");
+				throw new BuildMachineException($"Tried to continue build job '{jobPlanName}' while there is already a running one.");
 			}
 
 			Log.Info($"Continuing the build '{job.NameSafe()}'...\n" +
@@ -117,7 +117,7 @@ namespace Extenity.BuildMachine.Editor
 				if (job.StepState != BuildJobStepState.StepHalt)
 				{
 					UnsetRunningJob();
-					throw new BuildFailedException($"Build job '{jobPlanName}' was disrupted in the middle for some reason. " +
+					throw new BuildMachineException($"Build job '{jobPlanName}' was disrupted in the middle for some reason. " +
 					                               $"It could happen if Editor crashes during build, if not happened " +
 					                               $"for an unexpected reason." +
 					                               $"(Overall: '{job.OverallState}' Step: '{job.StepState}' Result: '{job.Result}')");
@@ -134,7 +134,7 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (BuildTools.IsCompiling)
 			{
-				throw new BuildFailedException($"Tried to '{description}' a build job in the middle of an ongoing compilation.");
+				throw new BuildMachineException($"Tried to '{description}' a build job in the middle of an ongoing compilation.");
 			}
 
 			// Disable auto-refresh
@@ -433,7 +433,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
 					!Builders.IsInRange(Job.CurrentBuilder))
-					throw new BuildFailedException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
+					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
 				var phase = BuildPhases[Job.CurrentPhase];
 				var builder = Builders[Job.CurrentBuilder];
@@ -452,7 +452,7 @@ namespace Extenity.BuildMachine.Editor
 					// TODO: Check if the step exists. What to do if it does not exist?
 					// TODO: Script reload is a quick fix that prevents going into infinite loop. Delete it when implementing the behaviour.
 					EditorUtilityTools.RequestScriptReload();
-					throw new BuildFailedException("The behaviour of not finding the first step is not implemented yet!");
+					throw new BuildMachineException("The behaviour of not finding the first step is not implemented yet!");
 				}
 
 				Debug.Assert(Job._CurrentStepInfoCached.Method == null);
@@ -465,7 +465,7 @@ namespace Extenity.BuildMachine.Editor
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
 				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
 					!Builders.IsInRange(Job.CurrentBuilder))
-					throw new BuildFailedException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
+					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
 
 				var phase = BuildPhases[Job.CurrentPhase];
 				var builder = Builders[Job.CurrentBuilder];
@@ -482,7 +482,7 @@ namespace Extenity.BuildMachine.Editor
 				if (allStepsOfCurrentPhase.IsNullOrEmpty())
 				{
 					// TODO: Check if any step exists. What to do if none exist?
-					throw new BuildFailedException("The behaviour of not finding any steps is not implemented yet!");
+					throw new BuildMachineException("The behaviour of not finding any steps is not implemented yet!");
 				}
 
 				var foundIndex = -1;
@@ -498,7 +498,7 @@ namespace Extenity.BuildMachine.Editor
 				// Check if the specified Step found.
 				if (foundIndex < 0)
 				{
-					throw new BuildFailedException($"Failed to find previous step '{previousStep}'.");
+					throw new BuildMachineException($"Failed to find previous step '{previousStep}'.");
 				}
 
 				// Check if this is the last Step.
@@ -541,12 +541,12 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void ThrowScriptCompilationDetectedBeforeStartingTheBuildRun()
 		{
-			throw new BuildFailedException("Compilation is not allowed at the start of a build run or when continuing the build run.");
+			throw new BuildMachineException("Compilation is not allowed at the start of a build run or when continuing the build run.");
 		}
 
 		private static void ThrowScriptCompilationDetectedBeforeProcessingBuildStep()
 		{
-			throw new BuildFailedException("Compilation is not allowed before starting the build step.");
+			throw new BuildMachineException("Compilation is not allowed before starting the build step.");
 		}
 
 		/*
@@ -572,12 +572,12 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void ThrowScriptCompilationDetectedAfterProcessingBuildStep()
 		{
-			throw new BuildFailedException("Compilation is not allowed after finishing the build step.");
+			throw new BuildMachineException("Compilation is not allowed after finishing the build step.");
 		}
 
 		private static bool CatchRunException(Exception exception)
 		{
-			Log.Error(new BuildFailedException("Exception caught in Build Run.", exception));
+			Log.Error(new BuildMachineException("Exception caught in Build Run.", exception));
 
 			if (RunningJob != null)
 			{
@@ -596,7 +596,7 @@ namespace Extenity.BuildMachine.Editor
 
 		private static bool CatchRunStepException(Exception exception)
 		{
-			Log.Error(new BuildFailedException("Exception caught in Build Step.", exception));
+			Log.Error(new BuildMachineException("Exception caught in Build Step.", exception));
 
 			if (RunningJob != null)
 			{
@@ -679,7 +679,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				if (EditorPreferencesTools.IsAutoRefreshEnabled)
 				{
-					throw new BuildFailedException("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. See 'Edit>Preferences>Asset Pipeline>Auto Refresh'.");
+					throw new BuildMachineException("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. See 'Edit>Preferences>Asset Pipeline>Auto Refresh'.");
 				}
 			}
 
@@ -704,7 +704,7 @@ namespace Extenity.BuildMachine.Editor
 					else
 					{
 						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-						throw new BuildFailedException("Changing platform did not trigger a recompilation.");
+						throw new BuildMachineException("Changing platform did not trigger a recompilation.");
 					}
 				}
 #endif
@@ -729,7 +729,7 @@ namespace Extenity.BuildMachine.Editor
 					else
 					{
 						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-						throw new BuildFailedException("Changing code optimization mode did not trigger a recompilation.");
+						throw new BuildMachineException("Changing code optimization mode did not trigger a recompilation.");
 					}
 				}
 #endif
@@ -843,7 +843,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 			catch (Exception exception)
 			{
-				Log.Error(new BuildFailedException("Failed to execute build run finalization on job.", exception));
+				Log.Error(new BuildMachineException("Failed to execute build run finalization on job.", exception));
 			}
 
 			if (RunningJob.Result == BuildJobResult.Succeeded)
@@ -992,14 +992,14 @@ namespace Extenity.BuildMachine.Editor
 				DeleteRunningJobFile();
 				if (string.IsNullOrWhiteSpace(content))
 				{
-					throw new BuildFailedException("Running job assembly reload survival file was empty.");
+					throw new BuildMachineException("Running job assembly reload survival file was empty.");
 				}
 
 				var job = BuildJob.DeserializeFromJson(content);
 				if (job == null)
 				{
 					Log.Error("Deserialization failed. Running job content was:\n" + content);
-					throw new BuildFailedException("Failed to deserialize running job.");
+					throw new BuildMachineException("Failed to deserialize running job.");
 				}
 				return job;
 			}

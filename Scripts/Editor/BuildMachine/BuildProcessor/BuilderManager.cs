@@ -203,7 +203,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 				if (detected)
 				{
-					throw new BuildFailedException("Failed to sort Build Step method list because there were methods with the same order value.");
+					throw new BuildMachineException("Failed to sort Build Step method list because there were methods with the same order value.");
 				}
 			}
 

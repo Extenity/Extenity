@@ -55,7 +55,7 @@ namespace Extenity.BuildMachine.Editor
 			EnsureNotCompiling("Tried to start scene processing while compiling.");
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
-				throw new BuildFailedException("Tried to start scene processing while in play mode.");
+				throw new BuildMachineException("Tried to start scene processing while in play mode.");
 			}
 			if (askUserForUnsavedChanges)
 			{
@@ -68,14 +68,14 @@ namespace Extenity.BuildMachine.Editor
 		private static bool OnException(Exception exception)
 		{
 			// TODO: Reset the state of processor and make it ready for another run.
-			Log.Error(new BuildFailedException("Exception catching in scene processor is not implemented yet.", exception));
+			Log.Error(new BuildMachineException("Exception catching in scene processor is not implemented yet.", exception));
 			return false;
 		}
 
 		private IEnumerator DoProcessScene(Scene scene, string configurationName, bool runAsync)
 		{
 			if (IsProcessorRunning)
-				throw new BuildFailedException("Scene processor was already running.");
+				throw new BuildMachineException("Scene processor was already running.");
 			IsProcessorRunning = true;
 
 			// var indented = false;
@@ -98,7 +98,7 @@ namespace Extenity.BuildMachine.Editor
 				// Get process configuration
 				if (!Configurations.TryGetValue(configurationName, out var configuration))
 				{
-					throw new BuildFailedException($"Configuration '{configurationName}' does not exist.");
+					throw new BuildMachineException($"Configuration '{configurationName}' does not exist.");
 				}
 				ConsistencyChecker.CheckConsistencyAndThrow(configuration, 1f, ThrowRule.OnErrorsAndWarnings);
 
@@ -190,7 +190,7 @@ namespace Extenity.BuildMachine.Editor
 				var result = EditorSceneManager.SaveScene(activeScene, definition.ProcessedScenePath, false);
 				if (!result)
 				{
-					throw new BuildFailedException("Could not copy main scene to processed scene path.");
+					throw new BuildMachineException("Could not copy main scene to processed scene path.");
 				}
 			}
 
@@ -206,7 +206,7 @@ namespace Extenity.BuildMachine.Editor
 				var processingScene = EditorSceneManager.GetSceneByPath(definition.ProcessedScenePath);
 				if (!processingScene.IsValid())
 				{
-					throw new BuildFailedException($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
+					throw new BuildMachineException($"Processing scene could not be found at path '{definition.ProcessedScenePath}'.");
 				}
 
 				// Merge other scenes into processing scene.
@@ -216,7 +216,7 @@ namespace Extenity.BuildMachine.Editor
 					{
 						if (!EditorSceneManagerTools.IsSceneExistsAtPath(mergedScenePath))
 						{
-							throw new BuildFailedException($"Merged scene could not be found at path '{mergedScenePath}'.");
+							throw new BuildMachineException($"Merged scene could not be found at path '{mergedScenePath}'.");
 						}
 
 						// Load merging scene additively. It will automatically unload when merging is done, which will leave processed scene as the only loaded scene.
@@ -308,7 +308,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 				if (detected)
 				{
-					throw new BuildFailedException("Failed to sort processor method list because there were methods with the same order value.");
+					throw new BuildMachineException("Failed to sort processor method list because there were methods with the same order value.");
 				}
 			}
 
@@ -413,7 +413,7 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (EditorApplication.isCompiling)
 			{
-				throw new BuildFailedException(message);
+				throw new BuildMachineException(message);
 			}
 		}
 
