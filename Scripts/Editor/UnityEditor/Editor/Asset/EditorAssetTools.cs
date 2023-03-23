@@ -209,7 +209,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 			catch (Exception exception)
 			{
-				Log.Warning($"Exception was thrown while processing for texture format '{format}'. Exception: {exception.Message}");
+				Log.Error(new Exception($"Exception was thrown while processing for texture format '{format}'.", exception));
 			}
 		}
 

@@ -105,7 +105,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void PushSelection(bool keepSelection = false)
 		{
-			//Log.Info("Pushing current selection");
+			Log.Verbose("Pushing current selection");
 			if (SelectionStack == null)
 				SelectionStack = new List<int[]>(4);
 			else if (SelectionStack.Count == 100)
@@ -120,7 +120,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static void PopSelection()
 		{
-			//Log.Info("Popping selection");
+			Log.Verbose("Popping selection");
 			if (SelectionStack.IsNullOrEmpty())
 				throw new Exception("Tried to pop selection while there were none in stack.");
 
@@ -265,6 +265,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 			sceneView.Focus();
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(SelectionTools));
 
 		#endregion
 	}

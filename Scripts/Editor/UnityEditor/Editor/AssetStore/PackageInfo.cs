@@ -48,7 +48,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			var json = JsonConvert.SerializeObject(unityInternalFetchedInfo, Formatting.Indented);
 			if (logJson)
 			{
-				Log.Info("Fetched Info: " + json);
+				PackageManagerTools.Log.Info("Fetched Info: " + json);
 			}
 			return JsonConvert.DeserializeObject<FetchedInfo>(json);
 		}
