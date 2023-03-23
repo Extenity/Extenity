@@ -548,6 +548,12 @@ namespace Extenity.GameObjectToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(EditorGameObjectTools));
+
+		#endregion
 	}
 
 }

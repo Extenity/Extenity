@@ -36,6 +36,12 @@ namespace Extenity.BuildToolbox.Editor
 			Log.Info($"Included DLLs ({dllsWithoutDebugFiles.Count}):\n" + string.Join("\n", dllsWithoutDebugFiles));
 			report.DetailedLog(nameof(DLLBuildReport));
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(DLLBuildReport));
+
+		#endregion
 	}
 
 	#endregion
@@ -261,6 +267,12 @@ namespace Extenity.BuildToolbox.Editor
 			// ReSharper restore HeapView.ClosureAllocation
 			// ReSharper restore HeapView.BoxingAllocation
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(BuildReportTools));
 
 		#endregion
 	}
