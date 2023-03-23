@@ -1,6 +1,6 @@
 ﻿using System;
-using Extenity;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityTests.DataToolbox
 {
@@ -13,6 +13,12 @@ namespace ExtenityTests.DataToolbox
 		{
 			Log.Info("Called SomeMethod.");
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Test");
+
+		#endregion
 	}
 
 }

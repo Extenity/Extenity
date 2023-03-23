@@ -260,6 +260,12 @@ namespace Extenity.ProjectToolbox
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(PlayerSettingsTools));
+
+		#endregion
 	}
 
 }

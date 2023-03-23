@@ -226,6 +226,12 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 			return true;
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("TreeView");
+
+		#endregion
 	}
 
 }

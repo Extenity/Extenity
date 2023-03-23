@@ -1,6 +1,6 @@
 using System;
-using Extenity;
 using UnityEngine;
+using Logger = Extenity.Logger;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -33,6 +33,12 @@ namespace ExtenityTests.MessagingToolbox
 		// @formatter:on
 
 		public Action DestroyTestSwitchSubject;
+
+		#region Log
+
+		private static readonly Logger Log = new("Test");
+
+		#endregion
 	}
 
 }

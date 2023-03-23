@@ -104,6 +104,12 @@ namespace Extenity.CodingToolbox.Editor
 				}
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(NamespaceChecker));
+
+		#endregion
 	}
 
 }

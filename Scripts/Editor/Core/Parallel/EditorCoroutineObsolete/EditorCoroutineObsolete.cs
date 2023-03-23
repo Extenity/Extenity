@@ -169,6 +169,12 @@ namespace Extenity.ParallelToolbox.Editor
 
 			timer.Enabled = true;
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(EditorCoroutineObsolete));
+
+		#endregion
 	}
 
 }
