@@ -230,7 +230,7 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				if (logOutput)
 				{
-					Log.Info("[git] " + output);
+					Log.Info(output);
 				}
 			}
 
@@ -241,11 +241,17 @@ namespace Extenity.BuildToolbox.Editor
 				{
 					if (logError)
 					{
-						Log.Error("[git] " + error);
+						Log.Error(error);
 					}
 				}
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new("Git");
+
+		#endregion
 	}
 
 	#endregion
@@ -554,7 +560,7 @@ namespace Extenity.BuildToolbox.Editor
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Failed to launch file comparer. Reason: " + exception);
+				Log.Error(new Exception("Failed to launch file comparer.", exception));
 			}
 		}
 
@@ -900,6 +906,12 @@ namespace Extenity.BuildToolbox.Editor
 
 		public static bool IsBatchMode => Application.isBatchMode;
 		public static bool IsCompiling => EditorApplication.isCompiling;
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(BuildTools));
 
 		#endregion
 	}

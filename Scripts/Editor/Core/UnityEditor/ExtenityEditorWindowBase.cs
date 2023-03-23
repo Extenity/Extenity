@@ -610,6 +610,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(ExtenityEditorWindowBase));
+
+		#endregion
 	}
 
 }

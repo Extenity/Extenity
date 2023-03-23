@@ -45,6 +45,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				maxProperty.floatValue = max;
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(MinMaxRangeAttributeDrawer));
+
+		#endregion
 	}
 
 }

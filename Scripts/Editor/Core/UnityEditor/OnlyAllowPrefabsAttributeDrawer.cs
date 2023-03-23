@@ -44,6 +44,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				Log.Error("OnlyAllowPrefabs attribute is only meaningful for fields of type Object.");
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(OnlyAllowPrefabsAttributeDrawer));
+
+		#endregion
 	}
 
 }

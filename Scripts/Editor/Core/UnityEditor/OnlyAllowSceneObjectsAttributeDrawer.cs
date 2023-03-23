@@ -43,6 +43,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				Log.Error("OnlyAllowSceneObjects attribute is only meaningful for fields of type Object.");
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(OnlyAllowSceneObjectsAttributeDrawer));
+
+		#endregion
 	}
 
 }
