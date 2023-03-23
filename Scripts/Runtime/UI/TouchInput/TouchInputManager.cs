@@ -96,6 +96,12 @@ namespace Extenity.UIToolbox.TouchInput
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(TouchInputManager));
+
+		#endregion
 	}
 
 }

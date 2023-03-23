@@ -44,6 +44,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				Log.Warning(stringBuilder.ToString());
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(AsmdefContainmentChecker));
+
+		#endregion
 	}
 
 }

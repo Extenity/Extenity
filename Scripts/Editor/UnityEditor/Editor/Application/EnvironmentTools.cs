@@ -459,6 +459,12 @@ namespace Extenity.ApplicationToolbox.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new("SystemEnvironment");
+
+		#endregion
 	}
 
 }

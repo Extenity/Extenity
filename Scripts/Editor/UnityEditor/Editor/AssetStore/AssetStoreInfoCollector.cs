@@ -136,6 +136,12 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 		}
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(AssetStoreInfoCollector));
+
+		#endregion
 	}
 
 }

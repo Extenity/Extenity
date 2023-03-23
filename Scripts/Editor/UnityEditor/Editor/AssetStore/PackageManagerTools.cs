@@ -155,6 +155,12 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 				Log.Info($"{packageInfo.name}");
 			}
 		}
+
+		#region Log
+
+		internal static readonly Logger Log = new(nameof(PackageManagerTools));
+
+		#endregion
 	}
 
 }

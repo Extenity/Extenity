@@ -54,6 +54,12 @@ namespace Extenity.AssetToolbox.Editor
 		public static Type FindCustomEditorType(UnityEngine.Object o, bool multiEdit) { return _FindCustomEditorType(o, multiEdit); }
 
 		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(AssetPreviewHelper));
+
+		#endregion
 	}
 
 }
