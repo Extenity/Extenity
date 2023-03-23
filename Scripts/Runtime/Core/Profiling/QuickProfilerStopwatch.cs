@@ -17,15 +17,15 @@ namespace Extenity.ProfilingToolbox
 	public struct QuickProfilerStopwatch : IDisposable
 	{
 		private ProfilerStopwatch Stopwatch;
-		private readonly ContextObject Context;
+		private readonly Logger Logger;
 		private readonly string ProfilerMessageFormat;
 		private readonly LogSeverity LogSeverity;
 		private readonly float ThresholdDurationToConsiderLogging;
 
-		public QuickProfilerStopwatch(ContextObject context, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
+		public QuickProfilerStopwatch(Logger logger, string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
 		{
 			Stopwatch = new ProfilerStopwatch();
-			Context = context;
+			Logger = logger;
 			ProfilerMessageFormat = profilerMessageFormat;
 			LogSeverity = logSeverity;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
@@ -35,7 +35,7 @@ namespace Extenity.ProfilingToolbox
 		public QuickProfilerStopwatch(string profilerMessageFormat, float thresholdDurationToConsiderLogging = 0f, LogSeverity logSeverity = LogSeverity.Warning)
 		{
 			Stopwatch = new ProfilerStopwatch();
-			Context = default;
+			Logger = default;
 			ProfilerMessageFormat = profilerMessageFormat;
 			LogSeverity = logSeverity;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
@@ -47,7 +47,8 @@ namespace Extenity.ProfilingToolbox
 			Stopwatch.End();
 			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 			{
-				Stopwatch.Log(Context, ProfilerMessageFormat, LogSeverity);
+				var message = Stopwatch.GetLogMessage(ProfilerMessageFormat);
+				Logger.Any(message, LogSeverity);
 			}
 		}
 	}
