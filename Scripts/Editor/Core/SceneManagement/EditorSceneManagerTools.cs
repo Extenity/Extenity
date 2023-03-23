@@ -34,15 +34,6 @@ namespace Extenity.SceneManagementToolbox.Editor
 			}
 		}
 
-		public static void ThrowIfAnyLoadedSceneIsDirty(string failMessage)
-		{
-			var isAnySceneDirty = IsAnyLoadedSceneDirty();
-			if (isAnySceneDirty)
-			{
-				throw new Exception(failMessage);
-			}
-		}
-
 		public static List<SceneSetup> GetLoadedSceneSetups(bool includeActiveScene)
 		{
 			var list = new List<SceneSetup>();

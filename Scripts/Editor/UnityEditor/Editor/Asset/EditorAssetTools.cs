@@ -485,7 +485,10 @@ namespace Extenity.AssetToolbox.Editor
 			// An already loaded asset may confuse the loading process.
 			EditorSceneManagerTools.UnloadAllScenes(true);
 
-			EditorSceneManagerTools.ThrowIfAnyLoadedSceneIsDirty(Log.BuildInternalErrorMessage(105851));
+			if (EditorSceneManagerTools.IsAnyLoadedSceneDirty())
+			{
+				throw new InternalException(105851);
+			}
 
 			// Load the scene.
 			var openedScene = EditorSceneManager.OpenScene(sceneAssetPath, OpenSceneMode.Single);
@@ -650,6 +653,12 @@ namespace Extenity.AssetToolbox.Editor
 			var json = EditorJsonUtility.ToJson(component, true);
 			Log.Info(json, component);
 		}
+
+		#endregion
+
+		#region Log
+
+		private static readonly Logger Log = new(nameof(EditorAssetTools));
 
 		#endregion
 	}
