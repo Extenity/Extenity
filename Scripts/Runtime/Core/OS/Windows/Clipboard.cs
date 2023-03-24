@@ -103,7 +103,7 @@ namespace Extenity.OperatingSystemToolbox
 
 			if (log)
 			{
-				Log.Info("Copied to clipboard: " + text);
+				Log.With("Clipboard").Info("Copied to clipboard: " + text);
 			}
 		}
 
