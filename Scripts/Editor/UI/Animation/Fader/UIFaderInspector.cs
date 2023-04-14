@@ -171,8 +171,6 @@ namespace Extenity.UIToolbox.Editor
 			EditorGUILayout.PropertyField(GetProperty("FadeInDelay"));
 			EditorGUILayout.PropertyField(GetProperty("FadeOutDelay"));
 
-			EditorGUILayout.PropertyField(GetProperty("DEBUG_ShowFadeMessages"));
-
 			GUILayout.Space(30f);
 
 			var fadeButtonsDisabled = !EditorApplication.isPlaying;
