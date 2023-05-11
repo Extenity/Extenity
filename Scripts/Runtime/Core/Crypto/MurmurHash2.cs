@@ -17,7 +17,7 @@ namespace Extenity.CryptoToolbox
 #endif
 	public static class MurmurHash2
 	{
-		public static unsafe UInt32 Calculate(Byte[] bytes)
+		public static unsafe UInt32 CalculateFromBytes(Byte[] bytes)
 		{
 			if (bytes == null || bytes.Length == 0)
 			{
@@ -31,7 +31,7 @@ namespace Extenity.CryptoToolbox
 			}
 		}
 
-		public static unsafe UInt32 Calculate(string text)
+		public static unsafe UInt32 CalculateFromString(string text)
 		{
 			// ReSharper disable once ReplaceWithStringIsNullOrEmpty
 			if (text == null || text.Length == 0) // This is faster than string.IsNullOrEmpty
@@ -153,8 +153,8 @@ namespace Extenity.CryptoToolbox
 			await Task.Yield();
 			_ = text.GetHashCode();
 			_ = text.GetHashCode();
-			_ = MurmurHash2.Calculate(text);
-			_ = MurmurHash2.Calculate(text);
+			_ = MurmurHash2.CalculateFromString(text);
+			_ = MurmurHash2.CalculateFromString(text);
 			await Task.Yield();
 
 			var calculateCount = 1_000_000;
