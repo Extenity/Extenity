@@ -55,6 +55,7 @@ namespace Extenity.BuildToolbox.Editor
 		/// </summary>
 		public static void CreateBuildReport(BuildPlayerOptions buildPlayerOptions)
 		{
+			const string typeName = "BuildReportTool.ReportGenerator, BuildReportTool.Editor";
 			try
 			{
 				// We don't want a hard link to the asset. So Reflection saves the day.
@@ -62,14 +63,21 @@ namespace Extenity.BuildToolbox.Editor
 				// BuildReportTool.ReportGenerator.CreateReport(buildPlayerOptions, customEditorLogPath);
 				string customEditorLogPath = null;
 				ReflectionTools.CallMethodOfTypeByName(
-					"BuildReportTool.ReportGenerator, BuildReportTool.Editor",
+					typeName,
 					"CreateReport",
 					BindingFlags.Static | BindingFlags.Public, null,
 					new object[] { buildPlayerOptions, customEditorLogPath });
 			}
 			catch (Exception exception)
 			{
-				Log.Warning("Failed to generate build report. Ignoring the error, but you probably won't see the report output. Exception: " + exception);
+				if (exception.Message.Contains("Type '" + typeName + "' not found"))
+				{
+					Log.Info("Could not find Build Report Tool asset store package in project. Please import it if you like to see detailed build report.");
+				}
+				else
+				{
+					Log.Error("Failed to generate build report via Build Report Tool asset store package. Exception: " + exception);
+				}
 			}
 		}
 
