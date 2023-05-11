@@ -114,8 +114,8 @@ namespace Extenity.BuildToolbox.Editor
 					Line("Platform Group: " + report.summary.platformGroup);
 					Line("Options: " + report.summary.options);
 					Line("Output Path: " + report.summary.outputPath);
-					Line("Started At: " + report.summary.buildStartedAt);
-					Line("Ended At: " + report.summary.buildEndedAt);
+					Line("Build Started At: " + report.summary.buildStartedAt);
+					Line("Build Ended At: " + report.summary.buildEndedAt);
 					Line("GUID: " + report.summary.guid);
 					//Line("CRC: " + report.summary.crc);
 					//Line("Build Type: " + report.summary.buildType);
@@ -181,6 +181,7 @@ namespace Extenity.BuildToolbox.Editor
 					{
 						Line("Role: " + file.role);
 						Line("Size: " + file.size);
+						Line("ID: " + file.id);
 					}
 					DecreaseIndent();
 				}
