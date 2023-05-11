@@ -102,6 +102,9 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				Title("Summary");
 				{
+					var isDevelopmentBuild = report.summary.options.HasFlag(BuildOptions.Development);
+
+					Line("Development Build: " + isDevelopmentBuild);
 					Line("Result: " + report.summary.result);
 					Line("Total Errors: " + report.summary.totalErrors);
 					Line("Total Warnings: " + report.summary.totalWarnings);
