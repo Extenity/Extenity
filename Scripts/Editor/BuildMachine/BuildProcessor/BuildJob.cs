@@ -235,47 +235,11 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Version Increment
-
-		// public BuildTools.TemporarilyIncrementVersion TemporarilyIncrementVersion;
-
-		#endregion
-
 		#region Start
 
 		public void Start()
 		{
 			BuildJobRunner.Start(this);
-		}
-
-		#endregion
-
-		#region Build Run Initialization
-
-		internal void BuildRunInitialization()
-		{
-			// Commented out for future needs.
-			//TemporarilyIncrementVersion = BuildTools.TemporarilyIncrementVersion.Create(Plan.AddMajorVersion, Plan.AddMinorVersion, Plan.AddBuildVersion);
-		}
-
-		#endregion
-
-		#region Build Run Finalization
-
-		internal void BuildRunFinalization()
-		{
-			switch (Result)
-			{
-				case BuildJobResult.Succeeded:
-					break;
-				case BuildJobResult.Failed:
-					{
-						// TemporarilyIncrementVersion.Revert();
-					}
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(Result), Result, "");
-			}
 		}
 
 		#endregion

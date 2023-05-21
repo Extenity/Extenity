@@ -84,7 +84,6 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			job.StartTime = Now;
-			job.BuildRunInitialization();
 			job.CurrentPhase = 0;
 			job.OverallState = BuildJobOverallState.JobRunning;
 
@@ -812,16 +811,6 @@ namespace Extenity.BuildMachine.Editor
 			EditorApplicationTools.EnsureNotCompiling(false);
 
 			RunningJob.OverallState = BuildJobOverallState.JobFinished;
-
-			// Execute finalization on RunningJob
-			try
-			{
-				RunningJob.BuildRunFinalization();
-			}
-			catch (Exception exception)
-			{
-				Log.Error(new BuildMachineException("Failed to execute build run finalization on job.", exception));
-			}
 
 			if (RunningJob.Result == BuildJobResult.Succeeded)
 			{
