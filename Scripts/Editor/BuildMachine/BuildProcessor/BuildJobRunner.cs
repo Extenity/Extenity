@@ -73,7 +73,6 @@ namespace Extenity.BuildMachine.Editor
 			// Check state consistency
 			{
 				Debug.Assert(job.OverallState == BuildJobOverallState.JobInitialized);
-				//Debug.Assert(job.PhaseState == BuildJobPhaseState.Unknown);
 				Debug.Assert(job.StepState == BuildJobStepState.Unknown);
 				Debug.Assert(job.Result == BuildJobResult.Incomplete);
 				Debug.Assert(job.CurrentPhase == -1);
@@ -120,7 +119,6 @@ namespace Extenity.BuildMachine.Editor
 					                               $"(Overall: '{job.OverallState}' Step: '{job.StepState}' Result: '{job.Result}')");
 				}
 				Debug.Assert(job.OverallState == BuildJobOverallState.JobRunning, $"Unexpected overall state '{job.OverallState}'.");
-				//Debug.Assert(job.PhaseState == BuildJobPhaseState.PhaseRunning, $"Unexpected phase state '{job.PhaseState}'.");
 			}
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.

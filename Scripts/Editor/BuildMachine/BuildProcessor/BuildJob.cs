@@ -18,14 +18,6 @@ namespace Extenity.BuildMachine.Editor
 		JobFinished,
 	}
 
-	//public enum BuildJobPhaseState
-	//{
-	//	Unknown,
-	//	PhaseRunning,
-	//	PhaseFinalizing,
-	//	PhaseFinished,
-	//}
-
 	public enum BuildJobStepState
 	{
 		Unknown,
@@ -180,7 +172,6 @@ namespace Extenity.BuildMachine.Editor
 		#region State
 
 		public BuildJobOverallState OverallState = BuildJobOverallState.Unknown;
-		//public BuildJobPhaseState PhaseState = BuildJobPhaseState.Unknown;
 		public BuildJobStepState StepState = BuildJobStepState.Unknown;
 
 		/// <summary>
