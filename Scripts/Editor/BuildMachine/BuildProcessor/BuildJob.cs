@@ -85,8 +85,6 @@ namespace Extenity.BuildMachine.Editor
 			Plan = plan;
 			Builder = builder;
 
-			UnityEditorPath = EditorApplication.applicationPath;
-
 			OverallState = BuildJobOverallState.JobInitialized;
 		}
 
@@ -121,23 +119,6 @@ namespace Extenity.BuildMachine.Editor
 					return "[NA-Plan]";
 				return Plan.Name;
 			}
-		}
-
-		#endregion
-
-		#region Schedule Unity Editor Restart
-
-		[JsonProperty]
-		public readonly string UnityEditorPath;
-
-		[JsonProperty]
-		public bool IsUnityEditorRestartScheduled;
-
-		public void ScheduleUnityEditorRestart()
-		{
-			Log.Info("Scheduling Unity Editor restart.");
-			IsUnityEditorRestartScheduled = true;
-			throw new NotImplementedException();
 		}
 
 		#endregion
