@@ -13,23 +13,23 @@ namespace ExtenityTests.CryptoToolbox
 		[Test, Repeat(RepeatCount)]
 		public void Simple()
 		{
-			CheckNotZero(MurmurHash2.Calculate("Test text"));
+			CheckNotZero(MurmurHash2.CalculateFromString("Test text"));
 		}
 
 		[Test, Repeat(RepeatCount)]
 		public void EmptyOrNullStringGeneratesZeroHash()
 		{
-			CheckZero(MurmurHash2.Calculate(""));
-			CheckZero(MurmurHash2.Calculate(string.Empty));
-			CheckZero(MurmurHash2.Calculate((string)null));
+			CheckZero(MurmurHash2.CalculateFromString(""));
+			CheckZero(MurmurHash2.CalculateFromString(string.Empty));
+			CheckZero(MurmurHash2.CalculateFromString((string)null));
 		}
 
 		[Test, Repeat(RepeatCount)]
 		public void EmptyOrNullBytesGeneratesZeroHash()
 		{
-			CheckZero(MurmurHash2.Calculate(new byte[0]));
-			CheckZero(MurmurHash2.Calculate(Array.Empty<byte>()));
-			CheckZero(MurmurHash2.Calculate((byte[])null));
+			CheckZero(MurmurHash2.CalculateFromBytes(new byte[0]));
+			CheckZero(MurmurHash2.CalculateFromBytes(Array.Empty<byte>()));
+			CheckZero(MurmurHash2.CalculateFromBytes((byte[])null));
 		}
 
 		[Test, Repeat(RepeatCount)]
@@ -83,9 +83,9 @@ namespace ExtenityTests.CryptoToolbox
 			var UTF8Bytes1 = Encoding.UTF8.GetBytes(text1);
 			var UTF8Bytes2 = Encoding.UTF8.GetBytes(text2);
 			Assert.AreEqual(UTF8Bytes1, UTF8Bytes2);
-			CheckEqualHashes(MurmurHash2.Calculate(text1), MurmurHash2.Calculate(text2));
-			CheckEqualHashes(MurmurHash2.Calculate(ASCIIBytes1), MurmurHash2.Calculate(ASCIIBytes2));
-			CheckEqualHashes(MurmurHash2.Calculate(UTF8Bytes1), MurmurHash2.Calculate(UTF8Bytes2));
+			CheckEqualHashes(MurmurHash2.CalculateFromString(text1), MurmurHash2.CalculateFromString(text2));
+			CheckEqualHashes(MurmurHash2.CalculateFromBytes(ASCIIBytes1), MurmurHash2.CalculateFromBytes(ASCIIBytes2));
+			CheckEqualHashes(MurmurHash2.CalculateFromBytes(UTF8Bytes1), MurmurHash2.CalculateFromBytes(UTF8Bytes2));
 		}
 
 		private void CheckEqualHashes(uint hash1, uint hash2)
