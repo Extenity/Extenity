@@ -63,7 +63,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			Log.Info($"Starting the build '{job.NameSafe()}'...\n" +
-			         $"Builder '{job.ToStringCurrentBuilder()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
+			         $"Builder '{job.ToStringBuilderName()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
 			        $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			        $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
 			        $"Job ID: {job.ID}");
@@ -77,7 +77,6 @@ namespace Extenity.BuildMachine.Editor
 				Debug.Assert(job.StepState == BuildJobStepState.Unknown);
 				Debug.Assert(job.Result == BuildJobResult.Incomplete);
 				Debug.Assert(job.CurrentPhase == -1);
-				Debug.Assert(job.CurrentBuilder == -1);
 				Debug.Assert(!job.IsPreviousBuildStepAssigned);
 				Debug.Assert(!job.IsCurrentBuildStepAssigned);
 				Debug.Assert(!job.IsPreviousFinalizationStepAssigned);
@@ -87,7 +86,6 @@ namespace Extenity.BuildMachine.Editor
 			job.StartTime = Now;
 			job.BuildRunInitialization();
 			job.CurrentPhase = 0;
-			job.CurrentBuilder = 0;
 			job.OverallState = BuildJobOverallState.JobRunning;
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
@@ -103,7 +101,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			Log.Info($"Continuing the build '{job.NameSafe()}'...\n" +
-			         $"Builder '{job.ToStringCurrentBuilder()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
+			         $"Builder '{job.ToStringBuilderName()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
 			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
 			         $"Job ID: {job.ID}");
@@ -277,7 +275,7 @@ namespace Extenity.BuildMachine.Editor
 			// Quick access references. These will not ever change during the build run.
 			// Do not add variables like 'currentPhase' here.
 			var Job = RunningJob;
-			var Builders = RunningJob.Builders;
+			var Builder = RunningJob.Builder;
 			var BuildPhases = RunningJob.Plan.BuildPhases;
 
 			EditorApplicationTools.EnsureNotCompiling(false);
@@ -334,8 +332,8 @@ namespace Extenity.BuildMachine.Editor
 						}
 						else
 						{
-							// Finished all Finalization Steps of current Builder. See if there is a next Builder.
-							// But also check if the Build Run was failed. If so, and with all Finalization Steps
+							// Finished all Finalization Steps of Builder.
+							// Check if the Build Run was failed. If so, and with all Finalization Steps
 							// are executed, it is time to end the Build Run.
 							Job.CurrentFinalizationStep = "";
 							Job.PreviousFinalizationStep = "";
@@ -348,37 +346,24 @@ namespace Extenity.BuildMachine.Editor
 							}
 							else
 							{
-								if (!Job.IsLastBuilder)
+								// See if there is a next Phase.
+								if (!Job.IsLastPhase)
 								{
-									// Proceed to next Builder. The RunStep will be run again and it will start
-									// from the next Builder's first Build Step.
-									Job.CurrentBuilder++;
+									// Proceed to next Phase. The RunStep will be run again and it will start
+									// from the first Build Step of next Phase's first Builder.
+									Job.CurrentPhase++;
 									SaveRunningJobToFile();
 									completed = true;
 								}
 								else
 								{
-									// All Builders are completed for current Phase. See if there is a next Phase.
-									if (!Job.IsLastPhase)
-									{
-										// Proceed to next Phase. The RunStep will be run again and it will start
-										// from the first Build Step of next Phase's first Builder.
-										Job.CurrentBuilder = 0;
-										Job.CurrentPhase++;
-										SaveRunningJobToFile();
-										completed = true;
-									}
-									else
-									{
-										// All Phases are completed. That means Build Run is completed.
-										Job.CurrentBuilder = -2;
-										Job.CurrentPhase = -2;
-										Job.CurrentFinalizationStep = "";
-										Job.PreviousFinalizationStep = "";
-										Job.SetResult(BuildJobResult.Succeeded);
-										DoBuildRunFinalization();
-										completed = true;
-									}
+									// All Phases are completed. That means Build Run is completed.
+									Job.CurrentPhase = -2;
+									Job.CurrentFinalizationStep = "";
+									Job.PreviousFinalizationStep = "";
+									Job.SetResult(BuildJobResult.Succeeded);
+									DoBuildRunFinalization();
+									completed = true;
 								}
 							}
 						}
@@ -406,12 +391,9 @@ namespace Extenity.BuildMachine.Editor
 				SaveRunningJobToFile();
 			}
 
-			Debug.Assert(Job.Builders.IsInRange(Job.CurrentBuilder));
 			Debug.Assert(Job._CurrentStepInfoCached.Method != null);
 			var currentStep = Job._CurrentStepInfoCached.Name;
 			Debug.Assert(!string.IsNullOrEmpty(currentStep));
-			var currentBuilder = Job.Builders[Job.CurrentBuilder];
-			Debug.Assert(currentBuilder != null);
 
 			// Run the Step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -420,7 +402,7 @@ namespace Extenity.BuildMachine.Editor
 
 				var currentStepInfo = Job._CurrentStepInfoCached;
 				Job._CurrentStepInfoCached = BuildStepInfo.Empty;
-				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(currentBuilder, new object[] { Job, currentStepInfo }); // See 113654126.
+				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(Builder, new object[] { Job, currentStepInfo }); // See 113654126.
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 
 				EndStep(currentStep);
@@ -431,12 +413,11 @@ namespace Extenity.BuildMachine.Editor
 
 			string GetFirstStep(bool finalization)
 			{
-				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
-					!Builders.IsInRange(Job.CurrentBuilder))
-					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
+				if (!BuildPhases.IsInRange(Job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length}");
 
 				var phase = BuildPhases[Job.CurrentPhase];
-				var builder = Builders[Job.CurrentBuilder];
+				var builder = Builder;
 				BuildStepInfo firstStepOfCurrentPhase;
 				if (finalization)
 				{
@@ -463,12 +444,11 @@ namespace Extenity.BuildMachine.Editor
 			string GetNextStep(string previousStep, bool finalization)
 			{
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
-				if (!BuildPhases.IsInRange(Job.CurrentPhase) ||
-					!Builders.IsInRange(Job.CurrentBuilder))
-					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length} Builder {Job.CurrentBuilder}/{Builders.Length}");
+				if (!BuildPhases.IsInRange(Job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length}");
 
 				var phase = BuildPhases[Job.CurrentPhase];
-				var builder = Builders[Job.CurrentBuilder];
+				var builder = Builder;
 				List<BuildStepInfo> allStepsOfCurrentPhase;
 				if (finalization)
 				{
@@ -652,9 +632,6 @@ namespace Extenity.BuildMachine.Editor
 				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
 			}
 
-			Debug.Assert(Job.Builders.IsInRange(Job.CurrentBuilder));
-			var currentBuilder = Job.Builders[Job.CurrentBuilder];
-
 			// Save the unsaved assets before making any moves.
 			AssetDatabase.SaveAssets();
 
@@ -686,8 +663,8 @@ namespace Extenity.BuildMachine.Editor
 			// Change Unity's active platform if required.
 			{
 #if !DisableExtenityBuilderActivePlatformFixer
-				var buildTarget = currentBuilder.Info.BuildTarget;
-				var buildTargetGroup = currentBuilder.Info.BuildTargetGroup;
+				var buildTarget = Job.Builder.Info.BuildTarget;
+				var buildTargetGroup = Job.Builder.Info.BuildTargetGroup;
 				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 				{
 					haltExecution = true;

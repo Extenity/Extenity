@@ -10,9 +10,9 @@ namespace Extenity.BuildMachine.Editor
 	{
 		#region Initialization
 
-		public static BuildPlan Create(string name, BuildPhaseInfo[] buildPhases, params BuilderOptions[] builderOptionsList)
+		public static BuildPlan Create(string name, BuildPhaseInfo[] buildPhases, BuilderOptions builderOptions)
 		{
-			return new BuildPlan(name, buildPhases, builderOptionsList);
+			return new BuildPlan(name, buildPhases, builderOptions);
 		}
 
 		private BuildPlan()
@@ -20,16 +20,16 @@ namespace Extenity.BuildMachine.Editor
 			// Nothing to do here. This empty constructor allows json deserialization.
 		}
 
-		private BuildPlan(string name, BuildPhaseInfo[] buildPhases, BuilderOptions[] builderOptionsList)
+		private BuildPlan(string name, BuildPhaseInfo[] buildPhases, BuilderOptions builderOptions)
 		{
 			if (buildPhases.IsNullOrEmpty())
 				throw new ArgumentNullException(nameof(buildPhases));
-			if (builderOptionsList.IsNullOrEmpty())
-				throw new ArgumentNullException(nameof(builderOptionsList));
+			if (builderOptions == null)
+				throw new ArgumentNullException(nameof(builderOptions));
 
 			Name = name;
 			BuildPhases = buildPhases;
-			BuilderOptionsList = builderOptionsList;
+			BuilderOptions = builderOptions;
 		}
 
 		#endregion
@@ -51,7 +51,7 @@ namespace Extenity.BuildMachine.Editor
 		#region Builder Options
 
 		[JsonProperty]
-		public readonly BuilderOptions[] BuilderOptionsList;
+		public readonly BuilderOptions BuilderOptions;
 
 		#endregion
 	}

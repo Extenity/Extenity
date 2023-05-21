@@ -86,36 +86,29 @@ namespace Extenity.BuildMachine.Editor
 			if (plan == null)
 				throw new ArgumentNullException(nameof(plan));
 
-			var builders = CreateBuilderInstancesMimickingBuilderOptions(plan.BuilderOptionsList);
+			var builder = CreateBuilderInstanceMimickingBuilderOptions(plan.BuilderOptions);
 
 			ID = Guid.NewGuid().ToString();
 			CreatedDate = DateTime.Now;
 			Plan = plan;
-			Builders = builders;
+			Builder = builder;
 
 			UnityEditorPath = EditorApplication.applicationPath;
 
 			OverallState = BuildJobOverallState.JobInitialized;
 		}
 
-		private static Builder[] CreateBuilderInstancesMimickingBuilderOptions(BuilderOptions[] builderOptionsList)
+		private static Builder CreateBuilderInstanceMimickingBuilderOptions(BuilderOptions builderOptions)
 		{
-			var builders = new Builder[builderOptionsList.Length];
-			for (var i = 0; i < builderOptionsList.Length; i++)
-			{
-				var builderOptions = builderOptionsList[i];
+			// Find the related Builder via its BuilderOptions
+			var builderOptionsType = builderOptions.GetType();
+			var builderInfo = BuilderManager.BuilderInfos.Single(entry => entry.OptionsType == builderOptionsType);
 
-				// Find the related Builder via its BuilderOptions
-				var builderOptionsType = builderOptions.GetType();
-				var builderInfo = BuilderManager.BuilderInfos.Single(entry => entry.OptionsType == builderOptionsType);
+			// Create Builder instance and assign its Options
+			var builder = (Builder)Activator.CreateInstance(builderInfo.Type);
+			builder.GetType().GetField(nameof(Builder<BuilderOptions>.Options)).SetValue(builder, builderOptions); // Unfortunately Options field is defined in the Builder<> generic class and not the Builder class.
 
-				// Create Builder instance and assign its Options
-				var builder = (Builder)Activator.CreateInstance(builderInfo.Type);
-				builder.GetType().GetField(nameof(Builder<BuilderOptions>.Options)).SetValue(builder, builderOptions); // Unfortunately Options field is defined in the Builder<> generic class and not the Builder class.
-
-				builders[i] = builder;
-			}
-			return builders;
+			return builder;
 		}
 
 		#endregion
@@ -180,7 +173,7 @@ namespace Extenity.BuildMachine.Editor
 		#region Builders
 
 		[JsonProperty]
-		public readonly Builder[] Builders;
+		public readonly Builder Builder;
 
 		#endregion
 
@@ -202,7 +195,6 @@ namespace Extenity.BuildMachine.Editor
 		public BuildJobResult Result = BuildJobResult.Incomplete;
 
 		public int CurrentPhase = -1;
-		public int CurrentBuilder = -1;
 		public string PreviousBuildStep = "";
 		public string CurrentBuildStep = "";
 		public string PreviousFinalizationStep = "";
@@ -213,9 +205,7 @@ namespace Extenity.BuildMachine.Editor
 		[JsonIgnore]
 		public BuildStepInfo _CurrentStepInfoCached = BuildStepInfo.Empty;
 
-		public bool IsLastBuilder => CurrentBuilder >= Builders.Length - 1;
 		public bool IsLastPhase => CurrentPhase >= Plan.BuildPhases.Length - 1;
-		public bool IsCurrentBuilderAssigned => Builders.IsInRange(CurrentBuilder);
 
 		public bool IsPreviousBuildStepAssigned => !string.IsNullOrEmpty(PreviousBuildStep);
 		public bool IsCurrentBuildStepAssigned => !string.IsNullOrEmpty(CurrentBuildStep);
@@ -403,26 +393,14 @@ namespace Extenity.BuildMachine.Editor
 			return CurrentPhase + "-" + Plan.BuildPhases[CurrentPhase].Name;
 		}
 
-		public string ToStringCurrentBuilder()
+		public string ToStringBuilderName()
 		{
-			if (Builders.IsNullOrEmpty())
-			{
-				return CurrentBuilder + "-[NullBuilders]";
-			}
-			if (!Builders.IsInRange(CurrentBuilder))
-			{
-				return CurrentBuilder + "-[OutOfRange]";
-			}
-			if (Builders[CurrentBuilder] == null)
-			{
-				return CurrentBuilder + "-[NullBuilder]";
-			}
-			return CurrentBuilder + "-" + Builders[CurrentBuilder].Info.Name;
+			return Builder.Info.Name;
 		}
 
 		public string ToStringCurrentPhaseBuilderAndStep()
 		{
-			return $"[Phase: {ToStringCurrentPhase()}, Builder: {ToStringCurrentBuilder()}, Step: {CurrentBuildStep}, StepState: {StepState}]";
+			return $"[Phase: {ToStringCurrentPhase()}, Builder: {ToStringBuilderName()}, Step: {CurrentBuildStep}, StepState: {StepState}]";
 		}
 
 		#endregion
