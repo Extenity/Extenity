@@ -21,6 +21,11 @@ namespace Extenity.ScreenToolbox
 			RegisterIntoApplicationLoop();
 		}
 
+		public static void Deinitialize()
+		{
+			Loop.DeregisterPreUpdate(CustomUpdate);
+		}
+
 		private static void GetInitialState()
 		{
 			Info.CollectInfoFromUnity();
