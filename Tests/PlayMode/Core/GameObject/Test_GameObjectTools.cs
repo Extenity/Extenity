@@ -28,10 +28,10 @@ namespace ExtenityTests.GameObjectToolbox
 		{
 #if UNITY_EDITOR
 			AssetDatabaseTools.InstantiatePrefabWithTheSameNameOfThisScript();
+			base.OnInitialize();
 #else
 			throw new System.NotImplementedException("Find a way to load test assets for device compilations.");
 #endif
-			base.OnInitialize();
 		}
 
 		#endregion
