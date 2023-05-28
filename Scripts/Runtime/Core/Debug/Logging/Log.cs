@@ -247,7 +247,7 @@ namespace Extenity
 #if UNITY
 			UnityEngine.Debug.Log(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
-			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(message));
+			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
 #endif
 		}
 
