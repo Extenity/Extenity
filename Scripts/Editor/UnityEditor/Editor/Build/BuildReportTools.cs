@@ -53,32 +53,45 @@ namespace Extenity.BuildToolbox.Editor
 		/// <summary>
 		/// Tell 'Build Report Tool' from Asset Store to create the build report.
 		/// </summary>
-		public static void CreateBuildReport(BuildPlayerOptions buildPlayerOptions)
+		public static void CreateBuildReport(BuildPlayerOptions buildPlayerOptions, string customEditorLogPath = null, string customSavePath = null)
 		{
-			const string typeName = "BuildReportTool.ReportGenerator, BuildReportTool.Editor";
+			const string typeName   = "BuildReportTool.ReportGenerator, BuildReportTool.Editor";
+			const string methodName = "CreateReport";
+
 			try
 			{
 				// We don't want a hard link to the asset. So Reflection saves the day.
 				// Here is an example usage so that it will be easier to find when searching the code base.
 				// BuildReportTool.ReportGenerator.CreateReport(buildPlayerOptions, customEditorLogPath, customSavePath);
-				string customEditorLogPath = null;
-				string customSavePath = null;
-				ReflectionTools.CallMethodOfTypeByName(
-					typeName,
-					"CreateReport",
-					BindingFlags.Static | BindingFlags.Public, null,
-					new object[] { buildPlayerOptions, customEditorLogPath, customSavePath });
+
+				var type = Type.GetType(typeName);
+				if (type == null)
+				{
+					Log.Info("Could not find Build Report Tool asset store package in project. Please import it if you like to see detailed build report.");
+					return;
+				}
+
+				// Get the method overload that takes "BuildPlayerOptions, string, string" parameters
+				var method = type.GetMethod(methodName,
+				                            BindingFlags.Public | BindingFlags.Static,
+				                            null,
+				                            new[]
+				                            {
+					                            typeof(BuildPlayerOptions), typeof(string), typeof(string)
+				                            },
+				                            null);
+				if (method == null)
+					throw new Exception($"Method '{methodName}' of type '{type}' not found.");
+
+				// Call the method
+				method.Invoke(null, new object[]
+				                    {
+					                    buildPlayerOptions, customEditorLogPath, customSavePath
+				                    });
 			}
 			catch (Exception exception)
 			{
-				if (exception.Message.Contains("Type '" + typeName + "' not found"))
-				{
-					Log.Info("Could not find Build Report Tool asset store package in project. Please import it if you like to see detailed build report.");
-				}
-				else
-				{
-					Log.Error("Failed to generate build report via Build Report Tool asset store package. Exception: " + exception);
-				}
+				throw new Exception("Failed to generate build report via Build Report Tool asset store package.", exception);
 			}
 		}
 
