@@ -60,13 +60,14 @@ namespace Extenity.BuildToolbox.Editor
 			{
 				// We don't want a hard link to the asset. So Reflection saves the day.
 				// Here is an example usage so that it will be easier to find when searching the code base.
-				// BuildReportTool.ReportGenerator.CreateReport(buildPlayerOptions, customEditorLogPath);
+				// BuildReportTool.ReportGenerator.CreateReport(buildPlayerOptions, customEditorLogPath, customSavePath);
 				string customEditorLogPath = null;
+				string customSavePath = null;
 				ReflectionTools.CallMethodOfTypeByName(
 					typeName,
 					"CreateReport",
 					BindingFlags.Static | BindingFlags.Public, null,
-					new object[] { buildPlayerOptions, customEditorLogPath });
+					new object[] { buildPlayerOptions, customEditorLogPath, customSavePath });
 			}
 			catch (Exception exception)
 			{
