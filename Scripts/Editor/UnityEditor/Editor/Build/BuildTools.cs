@@ -657,7 +657,8 @@ namespace Extenity.BuildToolbox.Editor
 		                                    BuildTarget buildTarget,
 		                                    BuildOptions buildOptions,
 		                                    string assetBundleManifestPath,
-		                                    bool runAfterBuild)
+		                                    bool runAfterBuild,
+		                                    bool createBuildReport)
 		{
 			Log.Info($"Telling Unity to start the build. More info:\n" +
 			         $"\tScenes: {string.Join("\n\t\t", scenes)}\n" +
@@ -689,7 +690,10 @@ namespace Extenity.BuildToolbox.Editor
 				Log.Info("Unity reported successful build.");
 			}
 
-			BuildReportTools.CreateBuildReport(buildPlayerOptions);
+			if (createBuildReport)
+			{
+				BuildReportTools.CreateBuildReport(buildPlayerOptions);
+			}
 		}
 
 		#endregion
