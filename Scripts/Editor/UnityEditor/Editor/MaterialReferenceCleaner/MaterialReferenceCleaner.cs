@@ -144,18 +144,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 			GetSelectedMaterial();
 		}
 
-		public class MaterialPostprocessor : AssetPostprocessor
-		{
-			private void OnPostprocessMaterial(Material material)
-			{
-				if (SelectedMaterial && SelectedMaterial == material)
-				{
-					Log.Info("Quickly displaying the reimported material: " + material);
-					GetSelectedMaterial();
-				}
-			}
-		}
-
 		#endregion
 
 		#region Remove All Unused References And Parameters
