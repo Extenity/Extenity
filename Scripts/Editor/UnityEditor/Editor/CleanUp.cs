@@ -18,7 +18,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private const string Menu = ExtenityMenu.CleanUp;
 
-		private static readonly string[] IgnoredDirectories =
+		public static string[] IgnoredDirectories =
 		{
 			".hg",
 			".git",
