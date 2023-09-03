@@ -264,7 +264,7 @@ namespace Extenity.FileSystemToolbox
 			}
 
 			// Try to remove readonly attribute because File.Delete() fails if file is readonly.
-			if (fileInfo.IsReadOnly && autoRemoveReadOnlyAttribute)
+			if (autoRemoveReadOnlyAttribute && fileInfo.IsReadOnly)
 			{
 				fileInfo.Attributes = fileInfo.Attributes & ~FileAttributes.ReadOnly;
 
