@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.DataToolbox.Editor;
 using Extenity.FileSystemToolbox;
-using Extenity.ParallelToolbox.Editor;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -35,11 +34,11 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private static BoolEditorPref EnableRunAtEditorLaunch => new BoolEditorPref("RunAtEditorLaunch", PathHashPostfix.Yes, true);
 
 		[InitializeOnEditorLaunchMethod]
-		private static void RunAtEditorLaunch()
+		private static async void RunAtEditorLaunch()
 		{
 			if (EnableRunAtEditorLaunch.Value)
 			{
-				EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
+				await DoClearAll();
 			}
 		}
 
@@ -77,10 +76,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Clear Files and Directories
 
-		private static IEnumerator DoClearFiles(string fileNameFilter, bool refreshAssetDatabase)
+		private static async Task DoClearFiles(string fileNameFilter, bool refreshAssetDatabase)
 		{
 			int progressId = Progress.Start("Clear thumbs.db files");
-			yield return null;
+			await Task.Yield();
 
 			var path = Application.dataPath;
 			var items = Directory.GetFiles(path, fileNameFilter, SearchOption.AllDirectories);
@@ -88,7 +87,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				AssetDatabaseTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 				Progress.Report(progressId, (float)(i + 1) / items.Length);
-				yield return null;
+				await Task.Yield();
 			}
 
 			if (items.Length > 0)
@@ -102,12 +101,13 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			Progress.Remove(progressId);
+			await Task.Yield();
 		}
 
-		private static IEnumerator DoClearEmptyDirectories(bool refreshAssetDatabase)
+		private static async Task DoClearEmptyDirectories(bool refreshAssetDatabase)
 		{
 			int progressId = Progress.Start("Clear empty directories");
-			yield return null;
+			await Task.Yield();
 
 			var tryAgain = true;
 			var clearedItems = new List<string>();
@@ -120,7 +120,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					AssetDatabaseTools.ManuallyDeleteMetaFileAndAsset(items[i]);
 					clearedItems.AddSorted(items[i]);
 					Progress.Report(progressId, (float)(i + 1) / items.Count); // This is not the correct way to display the progress, but it's better than nothing.
-					yield return null;
+					await Task.Yield();
 				}
 
 				tryAgain = items.Count > 0;
@@ -137,13 +137,14 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 
 			Progress.Remove(progressId);
+			await Task.Yield();
 		}
 
-		private static IEnumerator DoClearAll()
+		private static async Task DoClearAll()
 		{
-			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, false));
-			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, false));
-			yield return EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
+			await DoClearFiles(OrigFileFilter, false);
+			await DoClearFiles(ThumbsDBFileFilter, false);
+			await DoClearEmptyDirectories(true);
 		}
 
 		#endregion
@@ -151,30 +152,30 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Menu
 
 		[MenuItem(Menu + "Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
-		public static void ClearAll()
+		public static async void ClearAll()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearAll());
+			await DoClearAll();
 			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
-		public static void ClearOrigFiles()
+		public static async void ClearOrigFiles()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(OrigFileFilter, true));
+			await DoClearFiles(OrigFileFilter, true);
 			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
-		public static void ClearThumbsDbFiles()
+		public static async void ClearThumbsDbFiles()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearFiles(ThumbsDBFileFilter, true));
+			await DoClearFiles(ThumbsDBFileFilter, true);
 			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "Clear empty directories", priority = ExtenityMenu.CleanUpPriority + 23)]
-		public static void ClearEmptyDirectories()
+		public static async void ClearEmptyDirectories()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoClearEmptyDirectories(true));
+			await DoClearEmptyDirectories(true);
 			Log.Info("Cleanup finished.");
 		}
 
