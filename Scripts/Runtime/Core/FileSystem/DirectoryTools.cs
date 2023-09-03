@@ -66,10 +66,17 @@ namespace Extenity.FileSystemToolbox
 			try
 			{
 				var items = Directory.EnumerateFileSystemEntries(path);
-				using (var enumerator = items.GetEnumerator())
+				foreach (var item in items)
 				{
-					return !enumerator.MoveNext();
+					// The .DS_Store files are not important.
+					// So assume the directory is empty if it only contains these files.
+					if (item.EndsWith(".DS_Store"))
+					{
+						continue;
+					}
+					return false;
 				}
+				return true;
 			}
 			catch (DirectoryNotFoundException)
 			{
