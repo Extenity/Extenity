@@ -229,24 +229,6 @@ namespace Extenity.FileSystemToolbox
 
 		#region File Delete
 
-		private static void _Delete(string path)
-		{
-			try
-			{
-				File.Delete(path);
-			}
-			catch (IOException) 
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				File.Delete(path);
-			}
-			catch (UnauthorizedAccessException)
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				File.Delete(path);
-			}
-		}
-
 		/// <returns>Returns true if File.Delete operation succeeds. If file is checked for existence and turns out file is not there, returns false. May throw exceptions for all other cases.</returns>
 		public static bool Delete(string path, bool checkIfExists = false, bool autoRemoveReadOnlyAttribute = true)
 		{
@@ -272,7 +254,20 @@ namespace Extenity.FileSystemToolbox
 				// fileInfo.Attributes = FileAttributes.Normal;
 			}
 
-			_Delete(fileInfo.FullName);
+			try
+			{
+				File.Delete(fileInfo.FullName);
+			}
+			catch (IOException) 
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				File.Delete(fileInfo.FullName);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
+				File.Delete(fileInfo.FullName);
+			}
 			return true;
 		}
 
