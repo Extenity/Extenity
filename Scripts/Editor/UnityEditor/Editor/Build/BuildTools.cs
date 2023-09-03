@@ -652,14 +652,19 @@ namespace Extenity.BuildToolbox.Editor
 		                                    BuildOptions buildOptions,
 		                                    string assetBundleManifestPath,
 		                                    bool runAfterBuild,
-		                                    bool createBuildReport)
+		                                    bool createBuildReport,
+		                                    string customEditorLogPathForGeneratingBuildReport = null,
+		                                    string customSavePathForBuildReport = null)
 		{
 			Log.Info($"Telling Unity to start the build. More info:\n" +
 			         $"\tScenes: {string.Join("\n\t\t", scenes)}\n" +
 			         $"\tOutput path: {outputPath}\n" +
 			         $"\tTarget group: {buildTargetGroup}, Target: {buildTarget}\n" +
 			         $"\tBuild options: {buildOptions}\n" +
-			         $"\tRun after build: {runAfterBuild}");
+			         $"\tRun after build: {runAfterBuild}" +
+			         $"\tCreate build report: {createBuildReport}" +
+			         $"\tCustom editor log path for generating build report: {customEditorLogPathForGeneratingBuildReport}" +
+			         $"\tCustom save path for build report: {customSavePathForBuildReport}");
 
 			var buildPlayerOptions = new BuildPlayerOptions
 			{
@@ -686,7 +691,9 @@ namespace Extenity.BuildToolbox.Editor
 
 			if (createBuildReport)
 			{
-				BuildReportTools.CreateBuildReport(buildPlayerOptions);
+				BuildReportTools.CreateBuildReport(buildPlayerOptions,
+				                                   customEditorLogPathForGeneratingBuildReport,
+				                                   customSavePathForBuildReport);
 			}
 		}
 
