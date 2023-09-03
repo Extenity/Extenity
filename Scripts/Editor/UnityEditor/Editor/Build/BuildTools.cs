@@ -651,7 +651,13 @@ namespace Extenity.BuildToolbox.Editor
 			TellUnityToBuild(scenes, outputPath, buildTargetGroup, buildTarget, buildOptions, assetBundleManifestPath, runAfterBuild);
 		}
 
-		public static void TellUnityToBuild(string[] scenes, string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, string assetBundleManifestPath, bool runAfterBuild)
+		public static void TellUnityToBuild(string[] scenes,
+		                                    string outputPath,
+		                                    BuildTargetGroup buildTargetGroup,
+		                                    BuildTarget buildTarget,
+		                                    BuildOptions buildOptions,
+		                                    string assetBundleManifestPath,
+		                                    bool runAfterBuild)
 		{
 			Log.Info($"Telling Unity to start the build. More info:\n" +
 			         $"\tScenes: {string.Join("\n\t\t", scenes)}\n" +
