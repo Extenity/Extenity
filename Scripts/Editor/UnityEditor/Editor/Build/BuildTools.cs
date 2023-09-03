@@ -645,12 +645,6 @@ namespace Extenity.BuildToolbox.Editor
 			                          .ToArray();
 		}
 
-		public static void TellUnityToBuild(string outputPath, BuildTargetGroup buildTargetGroup, BuildTarget buildTarget, BuildOptions buildOptions, string assetBundleManifestPath, bool runAfterBuild)
-		{
-			var scenes = GetUnityBuildSettingsScenes();
-			TellUnityToBuild(scenes, outputPath, buildTargetGroup, buildTarget, buildOptions, assetBundleManifestPath, runAfterBuild);
-		}
-
 		public static void TellUnityToBuild(string[] scenes,
 		                                    string outputPath,
 		                                    BuildTargetGroup buildTargetGroup,
