@@ -27,13 +27,13 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Builder Infos
 
-		public static readonly BuilderInfo[] BuilderInfos;
+		public static BuilderInfo[] BuilderInfos;
 
 		#endregion
 
 		#region Gather Builder and Build Step Info
 
-		private static List<Type> CollectBuilderTypes()
+		public static List<Type> CollectBuilderTypes()
 		{
 			var result = new List<Type>();
 			var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -96,7 +96,7 @@ namespace Extenity.BuildMachine.Editor
 			return result;
 		}
 
-		private static BuilderInfo[] GatherBuilderInfos()
+		public static BuilderInfo[] GatherBuilderInfos()
 		{
 			var types = CollectBuilderTypes();
 
@@ -147,7 +147,7 @@ namespace Extenity.BuildMachine.Editor
 			return builderInfos;
 		}
 
-		private static BuildStepInfo[] GatherBuildStepMethods(Type type)
+		public static BuildStepInfo[] GatherBuildStepMethods(Type type)
 		{
 			var methods = type
 			              .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
