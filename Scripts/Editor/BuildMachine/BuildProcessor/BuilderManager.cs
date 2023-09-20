@@ -11,7 +11,9 @@ using UnityEditor;
 namespace Extenity.BuildMachine.Editor
 {
 
+#if !ExtenityManualBuildMachineInitialization
 	[InitializeOnLoad]
+#endif
 	public static class BuilderManager
 	{
 		#region Initialization
