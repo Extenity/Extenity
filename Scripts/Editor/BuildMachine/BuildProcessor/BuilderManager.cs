@@ -11,14 +11,14 @@ using UnityEditor;
 namespace Extenity.BuildMachine.Editor
 {
 
-#if !ExtenityManualBuildMachineInitialization
-	[InitializeOnLoad]
-#endif
 	public static class BuilderManager
 	{
 		#region Initialization
 
-		static BuilderManager()
+#if !ExtenityManualBuildMachineInitialization
+		[InitializeOnLoadMethod]
+#endif
+		public static void InitializeBuilderManager()
 		{
 			//BuilderLog.Info("Initializing BuildMachine");
 			BuilderInfos = GatherBuilderInfos();
