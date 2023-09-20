@@ -16,7 +16,6 @@ namespace Extenity.SceneManagementToolbox
 	{
 		#region Configuration
 
-		[ListDrawerSettings(Expanded = true)]
 		public string LevelSceneNamePrefix = "Level-";
 
 		#endregion
@@ -77,6 +76,7 @@ namespace Extenity.SceneManagementToolbox
 		#region Level Scene List
 
 		[NonSerialized, ShowInInspector, ReadOnly]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		public string[] LevelScenes;
 
 		private void InitializeLevelSceneList()

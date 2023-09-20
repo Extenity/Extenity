@@ -52,7 +52,7 @@ namespace Extenity.GameObjectToolbox
 		[FormerlySerializedAs("everlastingPrefabs")]
 		[TitleGroup("Prefabs", alignment: TitleAlignments.Centered)]
 		[BoxGroup("Prefabs/Box", false), PropertySpace(20f)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[InfoBox("The prefabs in this list will be instantiated only once throughout the life time of the application, no matter how many times the instantiator is created in different scenes.\n\n" +
 		         "The singletons of the application, designed in the form of prefabs, should be instantiated this way.\n\n" +
 		         "Instantiation order is ensured, so a prefab of <i>The Order 2 Instantiator</i> will always be instantiated after <i>The Order 1 Instantiator</i>.\n\n" +
@@ -61,7 +61,7 @@ namespace Extenity.GameObjectToolbox
 		public GameObject[] SubsystemPrefabs;
 
 		[BoxGroup("Prefabs/Box"), PropertySpace(20f)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[InfoBox("The prefabs in this list will be instantiated whenever the instantiator is created. Consider instantiating the objects this way if they have a lifetime of only one scene.\n\n" +
 		         "An example would be defining an Ingame Instantiator with an ingame UI and a score calculator assigned in its <i>Volatile Prefabs</i>. Put the Ingame Instantiator only into game scenes. So the UI and score calculator would be instantiated every time a game scene is launched, and they will be destroyed while changing the scene.\n\n" +
 		         "The instantiation order of multiple instantiators is respected just like <i>Subsystem Prefabs</i>. <i>Volatile Prefabs</i> are always instantiated after <i>Subsystem Prefabs</i> of its own Instantiator.")]
@@ -71,7 +71,7 @@ namespace Extenity.GameObjectToolbox
 
 		[FormerlySerializedAs("nonlastingPrefabs")]
 		[BoxGroup("Prefabs/Box"), PropertySpace(20f, 20f)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[InfoBox("The prefabs in this list will be instantiated immediately when the Awake of this instantiator gets called.\n\n" +
 		         "<i>Instant Prefabs</i> instantiated before <i>Subsystem Prefabs</i> and <i>Volatile Prefabs</i> of this instantiator, but may or may not be instantiated after other previously <i>Ordered</i> instantiators and their prefabs. So the instantiation order for <i>Instant Prefabs</i> is a chaos. Any system that is instantiated via <i>Instant Prefabs</i> should not depend on/try to access other systems.\n\n" +
 		         "Note that the instantiation order of multiple instantiators will NOT be respected. So a prefab of <i>The Order 2 Instantiator</i> may get instantiated before a prefab of <i>The Order 1 Instantiator</i>.\n\n" +

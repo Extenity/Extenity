@@ -196,7 +196,8 @@ namespace Extenity.UnityEditorToolbox
 		[HideLabel, PropertySpace(SpaceBefore = 4)]
 		public string GroupTitle;
 
-		[ListDrawerSettings(Expanded = true), PropertySpace(SpaceAfter = 20)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
+		[PropertySpace(SpaceAfter = 20)]
 		public List<ChecklistItem> Items;
 
 		#region Initialization
@@ -264,7 +265,8 @@ namespace Extenity.UnityEditorToolbox
 		[HideLabel, PropertySpace(SpaceBefore = 4)]
 		public string CategoryTitle;
 
-		[ListDrawerSettings(Expanded = true), PropertySpace(SpaceAfter = 20)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
+		[PropertySpace(SpaceAfter = 20)]
 		public List<ChecklistGroup> Groups;
 
 		#region Initialization

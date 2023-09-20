@@ -43,7 +43,7 @@ namespace Extenity.UIToolbox
 
 		[FoldoutGroup("Status - Pages", Order = 100)]
 		[ShowInInspector, ReadOnly]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(ShowFoldout = false, ShowPaging = false, DefaultExpandedState = true)]
 		[NonSerialized]
 		public TabPage[] Pages;
 

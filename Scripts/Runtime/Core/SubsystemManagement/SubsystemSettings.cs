@@ -85,14 +85,15 @@ namespace Extenity.SubsystemManagementToolbox
 		[InfoBox("Application Subsystems are created before ALL game objects at the time of Unity's " +
 		         "<i>RuntimeInitializeLoadType.BeforeSceneLoad</i> call. They will automatically be marked with " +
 		         "DontDestroyOnLoad.")]
-		[ListDrawerSettings(Expanded = true), HideLabel]
+		[ListDrawerSettings(DefaultExpandedState = true)]
+		[HideLabel]
 		[FormerlySerializedAs("ApplicationSubsystems")]
 		public ApplicationSubsystemGroup ApplicationSubsystemGroup = new ApplicationSubsystemGroup();
 
 		[TabGroup("Main/Tabs", "Scene Subsystems", Order = 3)]
 		[InfoBox("The groups defined here will be initialized for scenes as defined in <b>Scene Setup</b> page.")]
 		[VerticalGroup("Main/Tabs/Scene Subsystems/Vertical")]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[FormerlySerializedAs("SceneSubsystems")]
 		public SceneSubsystemGroup[] SceneSubsystemGroups = new SceneSubsystemGroup[]
 		{
@@ -145,7 +146,7 @@ namespace Extenity.SubsystemManagementToolbox
 		#region Scenes
 
 		[TabGroup("Main/Tabs", "Scene Setup", Order = 4)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[InfoBox("Whenever the application loads a scene, the system will determine which subsystems needs to be " +
 		         "loaded for that scene. The system does that by looking up the name of the scene for each filter in " +
 		         "this list one by one. The first filter that matches the scene name will be selected and its " +

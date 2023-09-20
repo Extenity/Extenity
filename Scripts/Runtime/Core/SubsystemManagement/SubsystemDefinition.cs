@@ -72,7 +72,7 @@ namespace Extenity.SubsystemManagementToolbox
 
 		[PropertyOrder(4)]
 		[PropertySpace(SpaceAfter = 10)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		public string[] SubsystemGroupsToBeLoaded;
 	}
 
@@ -80,7 +80,7 @@ namespace Extenity.SubsystemManagementToolbox
 	public struct ApplicationSubsystemGroup
 	{
 		[PropertySpace(SpaceBefore = 10, SpaceAfter = 6)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		[Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
 		[LabelText("Application Subsystems")]
 		public ApplicationSubsystemDefinition[] Subsystems;

@@ -58,7 +58,7 @@ namespace Extenity.UIToolbox.TouchInput
 		public TSchemeElement ActiveSchemeElement { get; private set; }
 
 		[BoxGroup("Links"), PropertyOrder(20)]
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(ShowFoldout = false, DefaultExpandedState = true)]
 		public TSchemeElement[] SchemeElements;
 
 		private void InitializeSchemeElements()

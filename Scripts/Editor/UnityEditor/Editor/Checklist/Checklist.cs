@@ -24,7 +24,7 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Data
 
-		[ListDrawerSettings(Expanded = true)]
+		[ListDrawerSettings(DefaultExpandedState = true)]
 		public List<ChecklistCategory> Categories;
 
 		#endregion
