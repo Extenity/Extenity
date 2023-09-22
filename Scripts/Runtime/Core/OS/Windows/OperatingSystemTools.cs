@@ -3,7 +3,7 @@
 #if UNITY_STANDALONE_WIN
 using System;
 #endif
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 using System.Runtime.InteropServices;
 #endif
 
@@ -287,6 +287,35 @@ namespace Extenity.ApplicationToolbox
 		public static bool IsAsyncKeyStateDown(VirtualKeyCode key)
 		{
 			return (GetAsyncKeyState((int)key) & 0x8000) != 0;
+		}
+
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+
+		// External method to get modifier key states.
+		[DllImport("/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices")]
+		private static extern long CGEventSourceFlagsState(int stateID);
+
+		// External method to get mouse button states.
+		// Button:
+		// 0: Left
+		// 1: Right
+		// 2: Middle
+		[DllImport("/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices")]
+		private static extern long CGEventSourceButtonState(int stateID, int button);
+
+		public static bool IsAsyncKeyStateDown(VirtualKeyCode key)
+		{
+			switch (key)
+			{
+				case VirtualKeyCode.LButton:
+					return CGEventSourceButtonState(0, 0) == 1;
+				case VirtualKeyCode.RButton:
+					return CGEventSourceButtonState(0, 1) == 1;
+				case VirtualKeyCode.MButton:
+					return CGEventSourceButtonState(0, 2) == 1;
+				default:
+					throw new System.NotImplementedException();
+			}
 		}
 
 #else
