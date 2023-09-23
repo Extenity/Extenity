@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Extenity.DataToolbox.Editor
 {
 
-	public enum EditorPrefLoggingOptions
+	public enum EditorPrefLogOptions
 	{
 		NoLogging = 0,
 
@@ -21,7 +21,7 @@ namespace Extenity.DataToolbox.Editor
 	{
 		#region Initialization
 
-		public EditorPref([NotNull] string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<EditorPref<T>, T> defaultValueOverride, EditorPrefLoggingOptions logOptions)
+		public EditorPref([NotNull] string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<EditorPref<T>, T> defaultValueOverride, EditorPrefLogOptions logOptions)
 		{
 			PrefsKey = prefsKey;
 			_AppendPathHashToKey = appendPathHashToKey;
@@ -79,7 +79,7 @@ namespace Extenity.DataToolbox.Editor
 						{
 							// Default value was already assigned to _Value at construction time. Nothing to do here.
 						}
-						if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnRead))
+						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
 							Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The preference was not saved before, so the value is initialized with default '{_Value}'.");
 						return _Value;
 					}
@@ -88,7 +88,7 @@ namespace Extenity.DataToolbox.Editor
 						_Value = InternalGetValue();
 					}
 				}
-				if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnRead))
+				if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
 					Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The value is '{_Value}'.");
 				return _Value;
 			}
@@ -99,20 +99,20 @@ namespace Extenity.DataToolbox.Editor
 					var oldValue = Value; // This must be called before setting _IsInitialized to true;
 					if (IsSame(oldValue, value))
 					{
-						if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnWriteWhenNotChanged))
+						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenNotChanged))
 							Log.Info($"Writing EditorPref '{ProcessedPrefsKey}'. The value is not changed from '{oldValue}'.");
 
 						return; // Nothing to do here. The value is not changed.
 					}
 					else
 					{
-						if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnWriteWhenChanged))
+						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenChanged))
 							Log.Info($"Writing EditorPref '{ProcessedPrefsKey}'. The value is changed from '{oldValue}' to '{value}'.");
 					}
 				}
 				else
 				{
-					if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnWriteWhenChanged))
+					if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenChanged))
 						Log.Info($"Writing EditorPref '{ProcessedPrefsKey}'. The value is initialized as '{value}'.");
 
 					_IsInitialized = true;
@@ -123,7 +123,7 @@ namespace Extenity.DataToolbox.Editor
 
 				if (_DontEmitNextValueChangedEvent)
 				{
-					if (_LogOptions.HasFlag(EditorPrefLoggingOptions.LogOnWriteWhenChanged))
+					if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenChanged))
 						Log.Info($"Value change event of '{ProcessedPrefsKey}' is suppressed.");
 
 					_DontEmitNextValueChangedEvent = false;
@@ -189,7 +189,7 @@ namespace Extenity.DataToolbox.Editor
 
 		#region Log
 
-		private EditorPrefLoggingOptions _LogOptions;
+		private EditorPrefLogOptions _LogOptions;
 
 		#endregion
 

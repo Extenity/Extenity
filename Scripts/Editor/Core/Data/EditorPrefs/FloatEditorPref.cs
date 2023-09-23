@@ -7,12 +7,12 @@ namespace Extenity.DataToolbox.Editor
 
 	public class FloatEditorPref : EditorPref<float>
 	{
-		public FloatEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, float defaultValue, EditorPrefLoggingOptions logOptions)
+		public FloatEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, float defaultValue, EditorPrefLogOptions logOptions)
 			: base(prefsKey, appendPathHashToKey, defaultValue, null, logOptions)
 		{
 		}
 
-		public FloatEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<float>, float> defaultValueOverride, EditorPrefLoggingOptions logOptions)
+		public FloatEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<float>, float> defaultValueOverride, EditorPrefLogOptions logOptions)
 			: base(prefsKey, appendPathHashToKey, default(float), defaultValueOverride, logOptions)
 		{
 		}
