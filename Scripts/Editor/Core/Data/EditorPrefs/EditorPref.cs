@@ -21,6 +21,7 @@ namespace Extenity.DataToolbox.Editor
 	{
 		DefaultValue,
 		OverrideFunction,
+		EnsureKeyExists,
 	}
 
 	public class DefaultValueMethod<T>
@@ -49,6 +50,11 @@ namespace Extenity.DataToolbox.Editor
 		public static DefaultValueMethod<T> Function(Func<T> functionToGetDefaultValue)
 		{
 			return new DefaultValueMethod<T>(DefaultValueMethodType.OverrideFunction, default, _ => functionToGetDefaultValue());
+		}
+
+		public static DefaultValueMethod<T> FailIfKeyDoesNotExist()
+		{
+			return new DefaultValueMethod<T>(DefaultValueMethodType.EnsureKeyExists, default, null);
 		}
 	}
 
@@ -118,6 +124,8 @@ namespace Extenity.DataToolbox.Editor
 							case DefaultValueMethodType.OverrideFunction:
 								_Value = DefaultValueMethod.FunctionToGetDefaultValue(this);
 								break;
+							case DefaultValueMethodType.EnsureKeyExists:
+								throw new Exception($"Reading EditorPref '{ProcessedPrefsKey}' failed. Key does not exist.");
 							default:
 								throw new ArgumentOutOfRangeException();
 						}
