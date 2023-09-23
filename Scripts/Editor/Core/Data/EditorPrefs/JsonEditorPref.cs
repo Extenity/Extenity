@@ -12,12 +12,18 @@ namespace Extenity.DataToolbox.Editor
 		public JsonEditorPref(string                          prefsKey,
 		                      PathHashPostfix                 appendPathHashToKey,
 		                      DefaultValueMethod<TSerialized> defaultValueMethod,
-		                      EditorPrefLogOptions            logOptions)
+		                      EditorPrefLogOptions            logOptions,
+		                      Func<TSerialized, string>       serializationFunction,
+		                      Func<string, TSerialized>       deserializationFunction)
 			: base(prefsKey,
 			       appendPathHashToKey,
 			       defaultValueMethod,
 			       logOptions)
 		{
+			if (serializationFunction != null)
+				SerializationFunction = serializationFunction;
+			if (deserializationFunction != null)
+				DeserializationFunction = deserializationFunction;
 		}
 
 		protected override TSerialized InternalGetValue()
