@@ -6,7 +6,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 	/// <summary>
 	/// Tools for programmatically setting configurations in Unity Editor's Preferences window.
 	/// </summary>
-	public static class EditorPreferencesTools
+	public static class EditorPreferences
 	{
 		#region Enable/Disable Auto Refresh
 

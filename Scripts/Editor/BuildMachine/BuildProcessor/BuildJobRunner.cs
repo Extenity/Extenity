@@ -134,7 +134,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// Disable auto-refresh
 			{
-				EditorPreferencesTools.DisableAutoRefresh();
+				EditorPreferences.DisableAutoRefresh();
 			}
 
 			// Make console full-screen
@@ -651,7 +651,7 @@ namespace Extenity.BuildMachine.Editor
 
 			// Set Unity to manually refresh assets.
 			{
-				if (EditorPreferencesTools.IsAutoRefreshEnabled)
+				if (EditorPreferences.IsAutoRefreshEnabled)
 				{
 					throw new BuildMachineException("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. See 'Edit>Preferences>Asset Pipeline>Auto Refresh'.");
 				}
