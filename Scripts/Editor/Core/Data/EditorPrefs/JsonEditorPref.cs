@@ -1,12 +1,14 @@
 using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace Extenity.DataToolbox.Editor
 {
 
 	public class JsonEditorPref<TSerialized> : EditorPref<TSerialized>
 	{
+		public Func<TSerialized, string> SerializationFunction = value => UnityEngine.JsonUtility.ToJson(value, false);
+		public Func<string, TSerialized> DeserializationFunction = value => (TSerialized)UnityEngine.JsonUtility.FromJson(value, typeof(TSerialized));
+
 		public JsonEditorPref(string               prefsKey,
 		                      PathHashPostfix      appendPathHashToKey,
 		                      TSerialized          defaultValue,
@@ -33,16 +35,16 @@ namespace Extenity.DataToolbox.Editor
 
 		protected override TSerialized InternalGetValue()
 		{
-			var defaultValueText = JsonUtility.ToJson(_Value);
+			var defaultValueText = SerializationFunction(_Value);
 
 			var text = EditorPrefs.GetString(ProcessedPrefsKey, defaultValueText);
-			var json = JsonUtility.FromJson<TSerialized>(text);
+			var json = DeserializationFunction(text);
 			return json;
 		}
 
 		protected override void InternalSetValue(TSerialized value)
 		{
-			var json = JsonUtility.ToJson(value);
+			var json = SerializationFunction(value);
 			EditorPrefs.SetString(ProcessedPrefsKey, json);
 		}
 
@@ -53,8 +55,8 @@ namespace Extenity.DataToolbox.Editor
 			// Otherwise, the user would have to implement something like IEquatable
 			// for every TSerialized class. IsSame is only used when setting the pref.
 			// So the overhead is negligible.
-			var oldJson = JsonUtility.ToJson(oldValue);
-			var newJson = JsonUtility.ToJson(newValue);
+			var oldJson = SerializationFunction(oldValue);
+			var newJson = SerializationFunction(newValue);
 			return oldJson.EqualsOrBothEmpty(newJson, StringComparison.Ordinal);
 		}
 	}
