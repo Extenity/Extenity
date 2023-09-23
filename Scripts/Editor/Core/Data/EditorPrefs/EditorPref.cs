@@ -45,6 +45,11 @@ namespace Extenity.DataToolbox.Editor
 		{
 			return new DefaultValueMethod<T>(DefaultValueMethodType.OverrideFunction, default, functionToGetDefaultValue);
 		}
+
+		public static DefaultValueMethod<T> Function(Func<T> functionToGetDefaultValue)
+		{
+			return new DefaultValueMethod<T>(DefaultValueMethodType.OverrideFunction, default, _ => functionToGetDefaultValue());
+		}
 	}
 
 	public abstract class EditorPref<T>
