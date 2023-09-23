@@ -23,11 +23,11 @@ namespace Extenity.DataToolbox.Editor
 
 		public EditorPref([NotNull] string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<EditorPref<T>, T> defaultValueOverride, EditorPrefLogOptions logOptions)
 		{
-			PrefsKey = prefsKey;
-			_AppendPathHashToKey = appendPathHashToKey;
-			_Value = defaultValue;
+			PrefsKey              = prefsKey;
+			_AppendPathHashToKey  = appendPathHashToKey;
+			_Value                = defaultValue;
 			_DefaultValueOverride = defaultValueOverride;
-			_LogOptions = logOptions;
+			_LogOptions           = logOptions;
 		}
 
 		#endregion
@@ -38,6 +38,7 @@ namespace Extenity.DataToolbox.Editor
 		private readonly PathHashPostfix _AppendPathHashToKey;
 
 		private string _ProcessedPrefsKey;
+
 		public string ProcessedPrefsKey
 		{
 			get
@@ -46,6 +47,7 @@ namespace Extenity.DataToolbox.Editor
 				{
 					_ProcessedPrefsKey = PlayerPrefsTools.GenerateKey(PrefsKey, _AppendPathHashToKey);
 				}
+
 				return _ProcessedPrefsKey;
 			}
 		}
@@ -62,6 +64,7 @@ namespace Extenity.DataToolbox.Editor
 
 		private bool _IsInitialized;
 		protected T _Value;
+
 		public T Value
 		{
 			get
@@ -79,6 +82,7 @@ namespace Extenity.DataToolbox.Editor
 						{
 							// Default value was already assigned to _Value at construction time. Nothing to do here.
 						}
+
 						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
 							Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The preference was not saved before, so the value is initialized with default '{_Value}'.");
 						return _Value;
@@ -88,6 +92,7 @@ namespace Extenity.DataToolbox.Editor
 						_Value = InternalGetValue();
 					}
 				}
+
 				if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
 					Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The value is '{_Value}'.");
 				return _Value;
@@ -165,6 +170,7 @@ namespace Extenity.DataToolbox.Editor
 			{
 				Log.Info($"Invoking value change event of '{ProcessedPrefsKey}' with value '{Value}'");
 			}
+
 			OnValueChanged.InvokeSafe(Value);
 		}
 
@@ -174,6 +180,7 @@ namespace Extenity.DataToolbox.Editor
 			{
 				Log.Info($"Suppressing next value change event of '{ProcessedPrefsKey}'");
 			}
+
 			_DontEmitNextValueChangedEvent = true;
 		}
 
