@@ -6,13 +6,13 @@ namespace Extenity.DataToolbox.Editor
 
 	public class BoolEditorPref : EditorPref<bool>
 	{
-		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, bool defaultValue)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null)
+		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, bool defaultValue, EditorPrefLoggingOptions logOptions)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null, logOptions)
 		{
 		}
 
-		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<bool>, bool> defaultValueOverride)
-			: base(prefsKey, appendPathHashToKey, default(bool), defaultValueOverride)
+		public BoolEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<bool>, bool> defaultValueOverride, EditorPrefLoggingOptions logOptions)
+			: base(prefsKey, appendPathHashToKey, default(bool), defaultValueOverride, logOptions)
 		{
 		}
 

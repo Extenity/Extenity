@@ -7,13 +7,13 @@ namespace Extenity.DataToolbox.Editor
 
 	public class JsonEditorPref<TSerialized> : EditorPref<TSerialized>
 	{
-		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, TSerialized defaultValue)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null)
+		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, TSerialized defaultValue, EditorPrefLoggingOptions logOptions)
+			: base(prefsKey, appendPathHashToKey, defaultValue, null, logOptions)
 		{
 		}
 
-		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<TSerialized>, TSerialized> defaultValueOverride)
-			: base(prefsKey, appendPathHashToKey, default, defaultValueOverride)
+		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<TSerialized>, TSerialized> defaultValueOverride, EditorPrefLoggingOptions logOptions)
+			: base(prefsKey, appendPathHashToKey, default, defaultValueOverride, logOptions)
 		{
 		}
 

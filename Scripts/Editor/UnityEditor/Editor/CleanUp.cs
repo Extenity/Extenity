@@ -31,7 +31,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Cleanup at Editor launch
 
-		private static BoolEditorPref EnableRunAtEditorLaunch => new BoolEditorPref("Extenity.RunCleanupAtEditorLaunch", PathHashPostfix.Yes, true);
+		private static BoolEditorPref EnableRunAtEditorLaunch => new BoolEditorPref("Extenity.RunCleanupAtEditorLaunch", PathHashPostfix.Yes, true, EditorPrefLoggingOptions.NoLogging);
 
 		[InitializeOnEditorLaunchMethod]
 		private static async void RunAtEditorLaunch()
