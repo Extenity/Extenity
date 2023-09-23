@@ -31,7 +31,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Initialize by checking for first assembly reload
 
-		public static readonly IntEditorPref LastLaunchedEditorPID = new IntEditorPref("Extenity.LastLaunchedEditorPID", PathHashPostfix.Yes, -1, EditorPrefLogOptions.NoLogging);
+		public static readonly IntEditorPref LastLaunchedEditorPID = new("Extenity.LastLaunchedEditorPID",
+		                                                                 PathHashPostfix.Yes,
+		                                                                 -1,
+		                                                                 EditorPrefLogOptions.NoLogging);
 
 		private static bool _IsInitialized;
 
