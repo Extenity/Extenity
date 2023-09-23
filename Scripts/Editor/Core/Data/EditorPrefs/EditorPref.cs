@@ -245,10 +245,6 @@ namespace Extenity.DataToolbox.Editor
 
 		private EditorPrefLogOptions _LogOptions;
 
-		#endregion
-
-		#region Log
-
 		private static readonly Logger Log = new("EditorPrefs");
 
 		#endregion
