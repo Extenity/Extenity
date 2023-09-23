@@ -7,19 +7,34 @@ namespace Extenity.DataToolbox.Editor
 
 	public class JsonEditorPref<TSerialized> : EditorPref<TSerialized>
 	{
-		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, TSerialized defaultValue, EditorPrefLogOptions logOptions)
-			: base(prefsKey, appendPathHashToKey, defaultValue, null, logOptions)
+		public JsonEditorPref(string               prefsKey,
+		                      PathHashPostfix      appendPathHashToKey,
+		                      TSerialized          defaultValue,
+		                      EditorPrefLogOptions logOptions)
+			: base(prefsKey,
+			       appendPathHashToKey,
+			       defaultValue,
+			       null,
+			       logOptions)
 		{
 		}
 
-		public JsonEditorPref(string prefsKey, PathHashPostfix appendPathHashToKey, Func<EditorPref<TSerialized>, TSerialized> defaultValueOverride, EditorPrefLogOptions logOptions)
-			: base(prefsKey, appendPathHashToKey, default, defaultValueOverride, logOptions)
+		public JsonEditorPref(string                                     prefsKey,
+		                      PathHashPostfix                            appendPathHashToKey,
+		                      Func<EditorPref<TSerialized>, TSerialized> defaultValueOverride,
+		                      EditorPrefLogOptions                       logOptions)
+			: base(prefsKey,
+			       appendPathHashToKey,
+			       default,
+			       defaultValueOverride,
+			       logOptions)
 		{
 		}
 
 		protected override TSerialized InternalGetValue()
 		{
 			var defaultValueText = JsonUtility.ToJson(_Value);
+
 			var text = EditorPrefs.GetString(ProcessedPrefsKey, defaultValueText);
 			var json = JsonUtility.FromJson<TSerialized>(text);
 			return json;
