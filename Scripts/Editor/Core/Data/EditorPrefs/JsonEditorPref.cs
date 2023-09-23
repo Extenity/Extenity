@@ -9,26 +9,13 @@ namespace Extenity.DataToolbox.Editor
 		public Func<TSerialized, string> SerializationFunction = value => UnityEngine.JsonUtility.ToJson(value, false);
 		public Func<string, TSerialized> DeserializationFunction = value => (TSerialized)UnityEngine.JsonUtility.FromJson(value, typeof(TSerialized));
 
-		public JsonEditorPref(string               prefsKey,
-		                      PathHashPostfix      appendPathHashToKey,
-		                      TSerialized          defaultValue,
-		                      EditorPrefLogOptions logOptions)
+		public JsonEditorPref(string                          prefsKey,
+		                      PathHashPostfix                 appendPathHashToKey,
+		                      DefaultValueMethod<TSerialized> defaultValueMethod,
+		                      EditorPrefLogOptions            logOptions)
 			: base(prefsKey,
 			       appendPathHashToKey,
-			       defaultValue,
-			       null,
-			       logOptions)
-		{
-		}
-
-		public JsonEditorPref(string                                     prefsKey,
-		                      PathHashPostfix                            appendPathHashToKey,
-		                      Func<EditorPref<TSerialized>, TSerialized> defaultValueOverride,
-		                      EditorPrefLogOptions                       logOptions)
-			: base(prefsKey,
-			       appendPathHashToKey,
-			       default,
-			       defaultValueOverride,
+			       defaultValueMethod,
 			       logOptions)
 		{
 		}

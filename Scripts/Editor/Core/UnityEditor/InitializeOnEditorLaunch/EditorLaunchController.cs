@@ -33,7 +33,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		public static readonly IntEditorPref LastLaunchedEditorPID = new("Extenity.LastLaunchedEditorPID",
 		                                                                 PathHashPostfix.Yes,
-		                                                                 -1,
+		                                                                 DefaultValueMethod<int>.Value(-1),
 		                                                                 EditorPrefLogOptions.NoLogging);
 
 		private static bool _IsInitialized;

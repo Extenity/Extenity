@@ -1,4 +1,3 @@
-using System;
 using Extenity.MathToolbox;
 using UnityEditor;
 
@@ -7,26 +6,13 @@ namespace Extenity.DataToolbox.Editor
 
 	public class FloatEditorPref : EditorPref<float>
 	{
-		public FloatEditorPref(string               prefsKey,
-		                       PathHashPostfix      appendPathHashToKey,
-		                       float                defaultValue,
-		                       EditorPrefLogOptions logOptions)
+		public FloatEditorPref(string                    prefsKey,
+		                       PathHashPostfix           appendPathHashToKey,
+		                       DefaultValueMethod<float> defaultValueMethod,
+		                       EditorPrefLogOptions      logOptions)
 			: base(prefsKey,
 			       appendPathHashToKey,
-			       defaultValue,
-			       null,
-			       logOptions)
-		{
-		}
-
-		public FloatEditorPref(string                         prefsKey,
-		                       PathHashPostfix                appendPathHashToKey,
-		                       Func<EditorPref<float>, float> defaultValueOverride,
-		                       EditorPrefLogOptions           logOptions)
-			: base(prefsKey,
-			       appendPathHashToKey,
-			       default(float),
-			       defaultValueOverride,
+			       defaultValueMethod,
 			       logOptions)
 		{
 		}

@@ -33,7 +33,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static BoolEditorPref EnableRunAtEditorLaunch => new("Extenity.RunCleanupAtEditorLaunch",
 		                                                             PathHashPostfix.Yes,
-		                                                             true,
+		                                                             DefaultValueMethod<bool>.Value(true), 
 		                                                             EditorPrefLogOptions.NoLogging);
 
 		[InitializeOnEditorLaunchMethod]

@@ -17,17 +17,47 @@ namespace Extenity.DataToolbox.Editor
 		FullLogging = LogOnRead | LogOnWriteWhenChanged | LogOnWriteWhenNotChanged,
 	}
 
+	internal enum DefaultValueMethodType
+	{
+		DefaultValue,
+		OverrideFunction,
+	}
+
+	public class DefaultValueMethod<T>
+	{
+		internal readonly DefaultValueMethodType Type;
+		internal readonly T DefaultValue;
+		internal readonly Func<EditorPref<T>, T> FunctionToGetDefaultValue;
+
+		private DefaultValueMethod(DefaultValueMethodType type, T defaultValue, Func<EditorPref<T>, T> functionToGetDefaultValue)
+		{
+			Type                      = type;
+			DefaultValue              = defaultValue;
+			FunctionToGetDefaultValue = functionToGetDefaultValue;
+		}
+
+		public static DefaultValueMethod<T> Value(T defaultValue)
+		{
+			return new DefaultValueMethod<T>(DefaultValueMethodType.DefaultValue, defaultValue, null);
+		}
+
+		public static DefaultValueMethod<T> Function(Func<EditorPref<T>, T> functionToGetDefaultValue)
+		{
+			return new DefaultValueMethod<T>(DefaultValueMethodType.OverrideFunction, default, functionToGetDefaultValue);
+		}
+	}
+
 	public abstract class EditorPref<T>
 	{
 		#region Initialization
 
-		public EditorPref([NotNull] string prefsKey, PathHashPostfix appendPathHashToKey, T defaultValue, Func<EditorPref<T>, T> defaultValueOverride, EditorPrefLogOptions logOptions)
+		public EditorPref([NotNull] string prefsKey, PathHashPostfix appendPathHashToKey, DefaultValueMethod<T> defaultValueMethod, EditorPrefLogOptions logOptions)
 		{
-			PrefsKey              = prefsKey;
-			_AppendPathHashToKey  = appendPathHashToKey;
-			_Value                = defaultValue;
-			_DefaultValueOverride = defaultValueOverride;
-			_LogOptions           = logOptions;
+			PrefsKey             = prefsKey;
+			_AppendPathHashToKey = appendPathHashToKey;
+			_Value               = default;
+			DefaultValueMethod  = defaultValueMethod;
+			_LogOptions          = logOptions;
 		}
 
 		#endregion
@@ -56,7 +86,7 @@ namespace Extenity.DataToolbox.Editor
 
 		#region Default Value
 
-		private readonly Func<EditorPref<T>, T> _DefaultValueOverride;
+		private readonly DefaultValueMethod<T> DefaultValueMethod;
 
 		#endregion
 
@@ -74,13 +104,17 @@ namespace Extenity.DataToolbox.Editor
 					_IsInitialized = true;
 					if (!EditorPrefs.HasKey(ProcessedPrefsKey))
 					{
-						if (_DefaultValueOverride != null)
+						// Get default value
+						switch (DefaultValueMethod.Type)
 						{
-							_Value = _DefaultValueOverride(this);
-						}
-						else
-						{
-							// Default value was already assigned to _Value at construction time. Nothing to do here.
+							case DefaultValueMethodType.DefaultValue:
+								_Value = DefaultValueMethod.DefaultValue;
+								break;
+							case DefaultValueMethodType.OverrideFunction:
+								_Value = DefaultValueMethod.FunctionToGetDefaultValue(this);
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
 						}
 
 						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))

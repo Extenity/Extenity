@@ -6,26 +6,13 @@ namespace Extenity.DataToolbox.Editor
 
 	public class StringEditorPref : EditorPref<string>
 	{
-		public StringEditorPref(string               prefsKey,
-		                        PathHashPostfix      appendPathHashToKey,
-		                        string               defaultValue,
-		                        EditorPrefLogOptions logOptions)
+		public StringEditorPref(string                     prefsKey,
+		                        PathHashPostfix            appendPathHashToKey,
+		                        DefaultValueMethod<string> defaultValueMethod,
+		                        EditorPrefLogOptions       logOptions)
 			: base(prefsKey,
 			       appendPathHashToKey,
-			       defaultValue,
-			       null,
-			       logOptions)
-		{
-		}
-
-		public StringEditorPref(string                           prefsKey,
-		                        PathHashPostfix                  appendPathHashToKey,
-		                        Func<EditorPref<string>, string> defaultValueOverride,
-		                        EditorPrefLogOptions             logOptions)
-			: base(prefsKey,
-			       appendPathHashToKey,
-			       default(string),
-			       defaultValueOverride,
+			       defaultValueMethod,
 			       logOptions)
 		{
 		}

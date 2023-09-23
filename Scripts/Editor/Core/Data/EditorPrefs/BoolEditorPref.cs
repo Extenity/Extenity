@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 
 namespace Extenity.DataToolbox.Editor
@@ -6,26 +5,13 @@ namespace Extenity.DataToolbox.Editor
 
 	public class BoolEditorPref : EditorPref<bool>
 	{
-		public BoolEditorPref(string               prefsKey,
-		                      PathHashPostfix      appendPathHashToKey,
-		                      bool                 defaultValue,
-		                      EditorPrefLogOptions logOptions)
+		public BoolEditorPref(string                   prefsKey,
+		                      PathHashPostfix          appendPathHashToKey,
+		                      DefaultValueMethod<bool> defaultValueMethod,
+		                      EditorPrefLogOptions     logOptions)
 			: base(prefsKey,
 			       appendPathHashToKey,
-			       defaultValue,
-			       null,
-			       logOptions)
-		{
-		}
-
-		public BoolEditorPref(string                       prefsKey,
-		                      PathHashPostfix              appendPathHashToKey,
-		                      Func<EditorPref<bool>, bool> defaultValueOverride,
-		                      EditorPrefLogOptions         logOptions)
-			: base(prefsKey,
-			       appendPathHashToKey,
-			       default(bool),
-			       defaultValueOverride,
+			       defaultValueMethod,
 			       logOptions)
 		{
 		}
