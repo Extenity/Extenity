@@ -238,12 +238,11 @@ namespace Extenity.BuildMachine.Editor
 				CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 				CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
-				Job.StepState = BuildJobStepState.StepRunning;
-				SaveRunningJobToFile();
-
 				// Run the Step
 				{
 					Job.ErrorReceivedInLastStep = "";
+					Job.StepState = BuildJobStepState.StepRunning;
+					SaveRunningJobToFile();
 
 					// We already catch exceptions and fail the build. We may also catch error logs.
 					// But then, there will be some errors that Unity would write out of nowhere and
