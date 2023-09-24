@@ -166,7 +166,7 @@ namespace Extenity.BuildMachine.Editor
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
 			{
-				CheckBeforeStartingOrContinuing(Job, out bool haltExecution);
+				CheckBeforeRun(Job, out bool haltExecution);
 				if (haltExecution)
 					yield break;
 			}
@@ -614,7 +614,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Check Before/After Step
 
-		private static void CheckBeforeStartingOrContinuing(BuildJob Job, out bool haltExecution)
+		private static void CheckBeforeRun(BuildJob Job, out bool haltExecution)
 		{
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
