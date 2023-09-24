@@ -172,11 +172,9 @@ namespace Extenity.BuildMachine.Editor
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
 			{
-				// Save the unsaved assets before making any moves.
+				// Save the unsaved assets before making any moves. Make sure everything is imported.
+				// This may trigger an assembly reload if there are script modifications. See 11658912.
 				AssetDatabase.SaveAssets();
-
-				// Make sure everything is imported. This may trigger an assembly reload
-				// if there are script modifications.
 				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
 
 				// Check if AssetDatabase.Refresh triggered a compilation
@@ -200,6 +198,7 @@ namespace Extenity.BuildMachine.Editor
 			EditorSceneManagerTools.UnloadAllScenes(true);
 			yield return null;
 
+			// Run build steps
 			while (IsRunning)
 			{
 				// Ensure there is no compilation going on before running the build step.
@@ -215,11 +214,9 @@ namespace Extenity.BuildMachine.Editor
 
 				// AssetDatabase Save and Refresh before the Step
 				{
-					// Save the unsaved assets before making any moves.
+					// Save the unsaved assets before making any moves. Make sure everything is imported.
+					// This may trigger an assembly reload if there are script modifications. See 11658912.
 					AssetDatabase.SaveAssets();
-
-					// Make sure everything is imported. This may trigger an assembly reload
-					// if there are script modifications.
 					AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
 
 					// Check if AssetDatabase.Refresh triggered a compilation
@@ -316,11 +313,9 @@ namespace Extenity.BuildMachine.Editor
 
 				// AssetDatabase Save and Refresh after the Step
 				{
-					// Save the unsaved assets before making any moves.
+					// Save the unsaved assets before making any moves. Make sure everything is imported.
+					// This may trigger an assembly reload if there are script modifications. See 11658912.
 					AssetDatabase.SaveAssets();
-
-					// Make sure everything is imported. This may trigger an assembly reload
-					// if there are script modifications.
 					AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
 
 					// Check if AssetDatabase.Refresh triggered a compilation
