@@ -137,9 +137,9 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Run
 
-		private static IEnumerator Run(BuildJob Job)
+		private static IEnumerator Run(BuildJob job)
 		{
-			Job.LastHaltTime = default;
+			job.LastHaltTime = default;
 
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
@@ -149,7 +149,7 @@ namespace Extenity.BuildMachine.Editor
 				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
 			}
 
-			CheckBeforeRun(Job);
+			CheckBeforeRun(job);
 
 			// Make console full-screen
 			BuildMachineLayout.LoadConsoleOnlyLayout();
@@ -166,10 +166,10 @@ namespace Extenity.BuildMachine.Editor
 				// OR the user requested an assembly reload.
 				{
 					var isCompiling = EditorApplication.isCompiling;
-					if (isCompiling || Job.IsAssemblyReloadScheduled)
+					if (isCompiling || job.IsAssemblyReloadScheduled)
 					{
-						HaltStep(Job, $"Start/continue - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
-						SaveRunningJobToFile(Job);
+						HaltStep(job, $"Start/continue - Compiling: {isCompiling} Scheduled: {job.IsAssemblyReloadScheduled}");
+						SaveRunningJobToFile(job);
 						yield break; // Halt execution
 					}
 				}
@@ -208,10 +208,10 @@ namespace Extenity.BuildMachine.Editor
 					// OR the user requested an assembly reload.
 					{
 						var isCompiling = EditorApplication.isCompiling;
-						if (isCompiling || Job.IsAssemblyReloadScheduled)
+						if (isCompiling || job.IsAssemblyReloadScheduled)
 						{
-							HaltStep(Job, $"Before step - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
-							SaveRunningJobToFile(Job);
+							HaltStep(job, $"Before step - Compiling: {isCompiling} Scheduled: {job.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile(job);
 							yield break;
 						}
 					}
@@ -219,9 +219,9 @@ namespace Extenity.BuildMachine.Editor
 
 				// Run the Step
 				{
-					Job.ErrorReceivedInLastStep = "";
-					Job.StepState = BuildJobStepState.StepRunning;
-					SaveRunningJobToFile(Job);
+					job.ErrorReceivedInLastStep = "";
+					job.StepState = BuildJobStepState.StepRunning;
+					SaveRunningJobToFile(job);
 
 					// We already catch exceptions and fail the build. We may also catch error logs.
 					// But then, there will be some errors that Unity would write out of nowhere and
@@ -242,7 +242,7 @@ namespace Extenity.BuildMachine.Editor
 
 					EditorApplication.LockReloadAssemblies();
 					Log.Info("Build step coroutine started");
-					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(Job), CatchRunStepException);
+					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(job), CatchRunStepException);
 					Log.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 
@@ -250,16 +250,16 @@ namespace Extenity.BuildMachine.Editor
 
 					DeregisterFromErrorLogCatching();
 
-					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
+					if (!string.IsNullOrEmpty(job.ErrorReceivedInLastStep))
 					{
-						Job.ErrorReceivedInLastStep = "";
-						Job.Finalizing = true;
-						Job.SetResult(BuildJobResult.Failed);
-						SaveRunningJobToFile(Job);
+						job.ErrorReceivedInLastStep = "";
+						job.Finalizing = true;
+						job.SetResult(BuildJobResult.Failed);
+						SaveRunningJobToFile(job);
 					}
 
 					// Don't do anything if the Build Run finishes.
-					if (Job.OverallState == BuildJobOverallState.JobFinished)
+					if (job.OverallState == BuildJobOverallState.JobFinished)
 					{
 						yield break;
 					}
@@ -271,18 +271,18 @@ namespace Extenity.BuildMachine.Editor
 					// Then immediately save the assembly Survival File so that we will know
 					// the process was not cut in the middle of Step execution the next time
 					// the survival file is loaded. See 11917631.
-					Job.StepState = BuildJobStepState.StepFinished;
-					if (Job.IsCurrentBuildStepAssigned)
+					job.StepState = BuildJobStepState.StepFinished;
+					if (job.IsCurrentBuildStepAssigned)
 					{
-						Job.PreviousBuildStep = Job.CurrentBuildStep;
-						Job.CurrentBuildStep = "";
+						job.PreviousBuildStep = job.CurrentBuildStep;
+						job.CurrentBuildStep = "";
 					}
-					if (Job.IsCurrentFinalizationStepAssigned)
+					if (job.IsCurrentFinalizationStepAssigned)
 					{
-						Job.PreviousFinalizationStep = Job.CurrentFinalizationStep;
-						Job.CurrentFinalizationStep = "";
+						job.PreviousFinalizationStep = job.CurrentFinalizationStep;
+						job.CurrentFinalizationStep = "";
 					}
-					SaveRunningJobToFile(Job);
+					SaveRunningJobToFile(job);
 				}
 
 				// Ensure there is no compilation going on after running the build step.
@@ -307,10 +307,10 @@ namespace Extenity.BuildMachine.Editor
 					// OR the user requested an assembly reload.
 					{
 						var isCompiling = EditorApplication.isCompiling;
-						if (isCompiling || Job.IsAssemblyReloadScheduled)
+						if (isCompiling || job.IsAssemblyReloadScheduled)
 						{
-							HaltStep(Job, $"After step - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
-							SaveRunningJobToFile(Job);
+							HaltStep(job, $"After step - Compiling: {isCompiling} Scheduled: {job.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile(job);
 							yield break;
 						}
 					}
@@ -320,12 +320,12 @@ namespace Extenity.BuildMachine.Editor
 			}
 		}
 
-		private static IEnumerator RunStep(BuildJob Job)
+		private static IEnumerator RunStep(BuildJob job)
 		{
 			// Quick access references. These will not ever change during the build run.
 			// Do not add variables like 'currentPhase' here.
-			var Builder = Job.Builder;
-			var BuildPhases = Job.Plan.BuildPhases;
+			var Builder = job.Builder;
+			var BuildPhases = job.Plan.BuildPhases;
 
 			EditorApplicationTools.EnsureNotCompiling(false);
 
@@ -333,85 +333,85 @@ namespace Extenity.BuildMachine.Editor
 			var completed = false;
 			try
 			{
-				if (!Job.Finalizing)
+				if (!job.Finalizing)
 				{
-					if (!Job.IsPreviousBuildStepAssigned)
+					if (!job.IsPreviousBuildStepAssigned)
 					{
 						// Current Builder is just getting started. Proceed to first Build Step.
-						Job.CurrentBuildStep = GetFirstStep(false);
+						job.CurrentBuildStep = GetFirstStep(false);
 					}
 					else
 					{
 						// Continuing from a Build Step of an ongoing Build Run. See if there is a next Build Step.
-						var nextStep = GetNextStep(Job.PreviousBuildStep, false);
+						var nextStep = GetNextStep(job.PreviousBuildStep, false);
 						if (!string.IsNullOrEmpty(nextStep))
 						{
 							// Proceed to next Build Step.
-							Job.CurrentBuildStep = nextStep;
+							job.CurrentBuildStep = nextStep;
 						}
 						else
 						{
 							// Finished all Build Steps. Proceed to Finalization.
-							Job.CurrentBuildStep = "";
-							Job.PreviousBuildStep = "";
-							Job.Finalizing = true;
+							job.CurrentBuildStep = "";
+							job.PreviousBuildStep = "";
+							job.Finalizing = true;
 						}
 					}
 				}
 
 				// Note that 'Finalizing' may have changed above if the execution reaches the last Build Step.
-				if (Job.Finalizing)
+				if (job.Finalizing)
 				{
-					Job.CurrentBuildStep = ""; // Make sure Build Steps are reset.
-					Job.PreviousBuildStep = "";
+					job.CurrentBuildStep = ""; // Make sure Build Steps are reset.
+					job.PreviousBuildStep = "";
 
-					if (!Job.IsPreviousFinalizationStepAssigned)
+					if (!job.IsPreviousFinalizationStepAssigned)
 					{
 						// Current Builder is just getting started. Proceed to first Finalization Step.
-						Job.CurrentFinalizationStep = GetFirstStep(true);
+						job.CurrentFinalizationStep = GetFirstStep(true);
 					}
 					else
 					{
 						// Continuing from a Finalization Step of an ongoing run. See if there is a next Finalization Step.
-						var nextStep = GetNextStep(Job.PreviousFinalizationStep, true);
+						var nextStep = GetNextStep(job.PreviousFinalizationStep, true);
 						if (!string.IsNullOrEmpty(nextStep))
 						{
 							// Proceed to next Finalization Step.
-							Job.CurrentFinalizationStep = nextStep;
+							job.CurrentFinalizationStep = nextStep;
 						}
 						else
 						{
 							// Finished all Finalization Steps of Builder.
 							// Check if the Build Run was failed. If so, and with all Finalization Steps
 							// are executed, it is time to end the Build Run.
-							Job.CurrentFinalizationStep = "";
-							Job.PreviousFinalizationStep = "";
-							Job.Finalizing = false;
-							Debug.Assert(Job.Result != BuildJobResult.Succeeded);
-							if (Job.Result == BuildJobResult.Failed)
+							job.CurrentFinalizationStep = "";
+							job.PreviousFinalizationStep = "";
+							job.Finalizing = false;
+							Debug.Assert(job.Result != BuildJobResult.Succeeded);
+							if (job.Result == BuildJobResult.Failed)
 							{
-								DoBuildRunFinalization(Job);
+								DoBuildRunFinalization(job);
 								completed = true;
 							}
 							else
 							{
 								// See if there is a next Phase.
-								if (!Job.IsLastPhase)
+								if (!job.IsLastPhase)
 								{
 									// Proceed to next Phase. The RunStep will be run again and it will start
 									// from the first Build Step of next Phase's first Builder.
-									Job.CurrentPhase++;
-									SaveRunningJobToFile(Job);
+									job.CurrentPhase++;
+									SaveRunningJobToFile(job);
 									completed = true;
 								}
 								else
 								{
 									// All Phases are completed. That means Build Run is completed.
-									Job.CurrentPhase = -2;
-									Job.CurrentFinalizationStep = "";
-									Job.PreviousFinalizationStep = "";
-									Job.SetResult(BuildJobResult.Succeeded);
-									DoBuildRunFinalization(Job);
+									job.CurrentPhase = -2;
+									job.CurrentFinalizationStep = "";
+									job.PreviousFinalizationStep = "";
+									job.SetResult(BuildJobResult.Succeeded);
+									DoBuildRunFinalization(job);
 									completed = true;
 								}
 							}
@@ -437,11 +437,11 @@ namespace Extenity.BuildMachine.Editor
 				// the Survival File is reloaded, we would have the opportunity to check if there is
 				// a CurrentStep specified in it, which is unexpected and means something went wrong
 				// in the middle of Step execution. See 11917631.
-				SaveRunningJobToFile(Job);
+				SaveRunningJobToFile(job);
 			}
 
-			Debug.Assert(Job._CurrentStepInfoCached.Method != null);
-			var currentStep = Job._CurrentStepInfoCached.Name;
+			Debug.Assert(job._CurrentStepInfoCached.Method != null);
+			var currentStep = job._CurrentStepInfoCached.Name;
 			Debug.Assert(!string.IsNullOrEmpty(currentStep));
 
 			// Run the Step
@@ -449,21 +449,21 @@ namespace Extenity.BuildMachine.Editor
 			{
 				{
 					var now = Now;
-					var totalElapsed = now - Job.StartTime;
-					Job.LastStepStartTime = now;
+					var totalElapsed = now - job.StartTime;
+					job.LastStepStartTime = now;
 					Log.Info($"{totalElapsed.ToStringHoursMinutesSecondsMilliseconds()} | Started build step '{currentStep}'");
 				}
 
-				var currentStepInfo = Job._CurrentStepInfoCached;
-				Job._CurrentStepInfoCached = BuildStepInfo.Empty;
-				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(Builder, new object[] { Job, currentStepInfo }); // See 113654126.
+				var currentStepInfo = job._CurrentStepInfoCached;
+				job._CurrentStepInfoCached = BuildStepInfo.Empty;
+				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(Builder, new object[] { job, currentStepInfo }); // See 113654126.
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 
 				{
 					var now = Now;
-					var stepDuration = now - Job.LastStepStartTime;
+					var stepDuration = now - job.LastStepStartTime;
 					Log.Info($"Build step '{currentStep}' took {stepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-					Job.LastStepStartTime = default;
+					job.LastStepStartTime = default;
 				}
 			}
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -472,10 +472,10 @@ namespace Extenity.BuildMachine.Editor
 
 			string GetFirstStep(bool finalization)
 			{
-				if (!BuildPhases.IsInRange(Job.CurrentPhase))
-					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length}");
+				if (!BuildPhases.IsInRange(job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{BuildPhases.Length}");
 
-				var phase = BuildPhases[Job.CurrentPhase];
+				var phase = BuildPhases[job.CurrentPhase];
 				var builder = Builder;
 				BuildStepInfo firstStepOfCurrentPhase;
 				if (finalization)
@@ -495,18 +495,18 @@ namespace Extenity.BuildMachine.Editor
 					throw new BuildMachineException("The behaviour of not finding the first step is not implemented yet!");
 				}
 
-				Debug.Assert(Job._CurrentStepInfoCached.Method == null);
-				Job._CurrentStepInfoCached = firstStepOfCurrentPhase;
+				Debug.Assert(job._CurrentStepInfoCached.Method == null);
+				job._CurrentStepInfoCached = firstStepOfCurrentPhase;
 				return firstStepOfCurrentPhase.Name;
 			}
 
 			string GetNextStep(string previousStep, bool finalization)
 			{
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
-				if (!BuildPhases.IsInRange(Job.CurrentPhase))
-					throw new BuildMachineException($"Index out of range. Phase {Job.CurrentPhase}/{BuildPhases.Length}");
+				if (!BuildPhases.IsInRange(job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{BuildPhases.Length}");
 
-				var phase = BuildPhases[Job.CurrentPhase];
+				var phase = BuildPhases[job.CurrentPhase];
 				var builder = Builder;
 				List<BuildStepInfo> allStepsOfCurrentPhase;
 				if (finalization)
@@ -548,8 +548,8 @@ namespace Extenity.BuildMachine.Editor
 				}
 
 				// Get the next Step.
-				Debug.Assert(Job._CurrentStepInfoCached.Method == null);
-				Job._CurrentStepInfoCached = allStepsOfCurrentPhase[foundIndex + 1];
+				Debug.Assert(job._CurrentStepInfoCached.Method == null);
+				job._CurrentStepInfoCached = allStepsOfCurrentPhase[foundIndex + 1];
 				return allStepsOfCurrentPhase[foundIndex + 1].Name;
 			}
 
@@ -657,7 +657,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Check Before/After Step
 
-		private static void CheckBeforeRun(BuildJob Job)
+		private static void CheckBeforeRun(BuildJob job)
 		{
 			//-------- Note to the developers ---------------------------------- 
 			// We don't want to alter the machine's preferences automatically.
@@ -706,7 +706,7 @@ namespace Extenity.BuildMachine.Editor
 			// Check if Unity's active platform is the same as the one we are building for.
 			{
 #if !DisableExtenityBuilderActivePlatformCheck
-				var buildTarget = Job.Builder.Info.BuildTarget;
+				var buildTarget = job.Builder.Info.BuildTarget;
 				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 				{
 					throw new BuildMachineException("Detected that Unity's active platform is not the same as the one " +
