@@ -167,12 +167,29 @@ namespace Extenity.BuildMachine.Editor
 
 			RunningJob.LastHaltTime = default;
 
+			CheckBeforeRun(Job);
+
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
 			{
-				CheckBeforeRun(Job, out bool haltExecution);
-				if (haltExecution)
-					yield break;
+				// Save the unsaved assets before making any moves.
+				AssetDatabase.SaveAssets();
+
+				// Make sure everything is imported. This may trigger an assembly reload
+				// if there are script modifications.
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+				// Check if AssetDatabase.Refresh triggered a compilation
+				// OR the user requested an assembly reload.
+				{
+					var isCompiling = EditorApplication.isCompiling;
+					if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+					{
+						HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
+						SaveRunningJobToFile();
+						yield break; // Halt execution
+					}
+				}
 			}
 
 			// Deselect any asset or object.
@@ -618,7 +635,7 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Check Before/After Step
 
-		private static void CheckBeforeRun(BuildJob Job, out bool haltExecution)
+		private static void CheckBeforeRun(BuildJob Job)
 		{
 			//-------- Note to the developers ---------------------------------- 
 			// We don't want to alter the machine's preferences automatically.
@@ -646,26 +663,6 @@ namespace Extenity.BuildMachine.Editor
 					                                "the build.");
 				}
 #endif
-			}
-
-			// Save the unsaved assets before making any moves.
-			AssetDatabase.SaveAssets();
-
-			// Make sure everything is imported. This may trigger an assembly reload
-			// if there are script modifications.
-			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-			// Check if AssetDatabase.Refresh triggered a compilation
-			// OR the user requested an assembly reload.
-			{
-				var isCompiling = EditorApplication.isCompiling;
-				if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
-				{
-					haltExecution = true;
-					HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					SaveRunningJobToFile();
-					return;
-				}
 			}
 
 			// Check if Unity's Auto Refresh option is disabled.
@@ -716,8 +713,6 @@ namespace Extenity.BuildMachine.Editor
 				}
 #endif
 			}
-
-			haltExecution = false;
 		}
 
 		private static void CheckBeforeStep(out bool haltExecution)
