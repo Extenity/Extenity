@@ -705,27 +705,14 @@ namespace Extenity.BuildMachine.Editor
 #endif
 			}
 
-			// Change script compilation code optimization mode to Release.
+			// Check if script compilation code optimization mode is Release.
 			{
-#if !DisableExtenityBuilderCodeOptimizationFixer
+#if !DisableExtenityBuilderCodeOptimizationCheck
 				if (CompilationPipeline.codeOptimization != CodeOptimization.Release)
 				{
-					haltExecution = true;
-					Log.Info($"Changing code optimization mode from '{CompilationPipeline.codeOptimization}' to '{CodeOptimization.Release}'.");
-					CompilationPipeline.codeOptimization = CodeOptimization.Release;
-
-					// Check if the changes triggered a compilation, which obviously is expected.
-					if (EditorApplication.isCompiling)
-					{
-						HaltStep("Code optimization mode change");
-						SaveRunningJobToFile();
-						return;
-					}
-					else
-					{
-						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-						throw new BuildMachineException("Changing code optimization mode did not trigger a recompilation.");
-					}
+					throw new BuildMachineException("Detected that script compilation code optimization mode is not " +
+					                                "'Release'. Please go into 'Edit>Preferences>General>" +
+					                                "Code Optimization On Startup' and change it to 'Release'.");
 				}
 #endif
 			}
