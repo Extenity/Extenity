@@ -13,6 +13,7 @@ using Extenity.SceneManagementToolbox.Editor;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEditor.Experimental;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -631,6 +632,20 @@ namespace Extenity.BuildMachine.Editor
 			if (EditorApplication.isCompiling)
 			{
 				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
+			}
+
+			// Check for AssetDatabase ActiveOnDemandMode
+			{
+#if !DisableExtenityBuilderActiveOnDemandModeCheck
+				if (AssetDatabaseExperimental.ActiveOnDemandMode != AssetDatabaseExperimental.OnDemandMode.Off)
+				{
+					throw new BuildMachineException("AssetDatabase ActiveOnDemandMode was set to " +
+					                                $"'{AssetDatabaseExperimental.ActiveOnDemandMode}' which makes " +
+					                                "the build process undeterministic. Please set it to " +
+					                                $"'{AssetDatabaseExperimental.OnDemandMode.Off}' before starting " +
+					                                "the build.");
+				}
+#endif
 			}
 
 			// Save the unsaved assets before making any moves.
