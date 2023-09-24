@@ -60,7 +60,11 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (IsRunning)
 			{
-				throw new BuildMachineException($"Tried to start build job '{job.NameSafe()}' while there is already a running one.");
+				throw new BuildMachineException($"Tried to 'Start' build job '{job.NameSafe()}' while there is already a running one.");
+			}
+			if (BuildTools.IsCompiling)
+			{
+				throw new BuildMachineException($"Tried to 'Start' build job '{job.NameSafe()}' in the middle of an ongoing compilation.");
 			}
 
 			Log.Info($"Starting the build '{job.NameSafe()}'...\n" +
@@ -71,8 +75,6 @@ namespace Extenity.BuildMachine.Editor
 			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
 			         $"Job ID: {job.ID}");
-
-			ChecksBeforeStartOrContinue("start");
 
 			// Check state consistency
 			{
@@ -98,7 +100,11 @@ namespace Extenity.BuildMachine.Editor
 		{
 			if (IsRunning)
 			{
-				throw new BuildMachineException($"Tried to continue build job '{job.NameSafe()}' while there is already a running one.");
+				throw new BuildMachineException($"Tried to 'Continue' build job '{job.NameSafe()}' while there is already a running one.");
+			}
+			if (BuildTools.IsCompiling)
+			{
+				throw new BuildMachineException($"Tried to 'Continue' build job '{job.NameSafe()}' in the middle of an ongoing compilation.");
 			}
 
 			Log.Info($"Continuing the build '{job.NameSafe()}'...\n" +
@@ -107,8 +113,6 @@ namespace Extenity.BuildMachine.Editor
 			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
 			         $"Job ID: {job.ID}");
-
-			ChecksBeforeStartOrContinue("continue");
 
 			// Check state consistency
 			{
@@ -127,32 +131,6 @@ namespace Extenity.BuildMachine.Editor
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), CatchRunException);
-		}
-
-		private static void ChecksBeforeStartOrContinue(string description)
-		{
-			if (BuildTools.IsCompiling)
-			{
-				throw new BuildMachineException($"Tried to '{description}' a build job in the middle of an ongoing compilation.");
-			}
-
-			// Make console full-screen
-			if (!BuildTools.IsBatchMode)
-			{
-				EditorApplication.delayCall += () =>
-				{
-					try
-					{
-						BuildMachineLayout.LoadConsoleOnlyLayout();
-						//EditorApplication.ExecuteMenuItem("Window/Console Pro 3"); // Open console if closed.
-						//EditorWindowTools.GetEditorWindowByTitle(" Console Pro").MakeFullScreen(true);
-					}
-					catch
-					{
-						// Ignored
-					}
-				};
-			}
 		}
 
 		#endregion
@@ -176,6 +154,9 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			CheckBeforeRun(Job);
+
+			// Make console full-screen
+			BuildMachineLayout.LoadConsoleOnlyLayout();
 
 			// The assets should be saved and refreshed at the very beginning of compilation
 			// or continuing the compilation after assembly reload.
