@@ -674,20 +674,20 @@ namespace Extenity.BuildMachine.Editor
 				{
 					if (autoRefresh != AssetPipelineAutoRefreshMode.Disabled)
 					{
-						throw new BuildMachineException("Detected that Unity's Auto Refresh option is not disabled. "     +
-						                                "Please go into 'Edit>Preferences>Asset Pipeline>Auto Refresh' "  +
+						throw new BuildMachineException("Detected that Unity's Auto Refresh option is not disabled. " +
+						                                "Please go into 'Edit>Preferences>Asset Pipeline>Auto Refresh' " +
 						                                "and set its value to 'Disabled' to prevent Unity from starting " +
 						                                "asset refresh operation in the middle of build steps.");
 					}
 				}
 				else
 				{
-					throw new BuildMachineException("Failed to detect Unity's Auto Refresh option because it wasn't "     +
-					                                "manually configured by hand yet. Please go into "                    +
+					throw new BuildMachineException("Failed to detect Unity's Auto Refresh option because it wasn't " +
+					                                "manually configured by hand yet. Please go into " +
 					                                "'Edit>Preferences>Asset Pipeline>Auto Refresh' and just change its " +
-					                                "value to something else. That will force Unity to save its value "   +
-					                                "which then Build Machine can read it. Then set its value to "        +
-					                                "'Disabled' to prevent Unity from starting asset refresh operation "  +
+					                                "value to something else. That will force Unity to save its value " +
+					                                "which then Build Machine can read it. Then set its value to " +
+					                                "'Disabled' to prevent Unity from starting asset refresh operation " +
 					                                "in the middle of build steps.");
 				}
 			}
