@@ -213,22 +213,25 @@ namespace Extenity.BuildMachine.Editor
 					}
 				}
 
-				// Save the unsaved assets before making any moves.
-				AssetDatabase.SaveAssets();
-
-				// Make sure everything is imported. This may trigger an assembly reload
-				// if there are script modifications.
-				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-				// Check if AssetDatabase.Refresh triggered a compilation
-				// OR the user requested an assembly reload.
+				// AssetDatabase Save and Refresh before the Step
 				{
-					var isCompiling = EditorApplication.isCompiling;
-					if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+					// Save the unsaved assets before making any moves.
+					AssetDatabase.SaveAssets();
+
+					// Make sure everything is imported. This may trigger an assembly reload
+					// if there are script modifications.
+					AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+					// Check if AssetDatabase.Refresh triggered a compilation
+					// OR the user requested an assembly reload.
 					{
-						HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-						SaveRunningJobToFile();
-						yield break;
+						var isCompiling = EditorApplication.isCompiling;
+						if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+						{
+							HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile();
+							yield break;
+						}
 					}
 				}
 
