@@ -106,6 +106,20 @@ namespace Extenity.DataToolbox.Editor
 		private bool _IsInitialized;
 		protected T _Value;
 
+		public bool GetValueIfSavedBefore(out T value)
+		{
+			if (EditorPrefs.HasKey(ProcessedPrefsKey))
+			{
+				value = Value;
+				return true;
+			}
+			else
+			{
+				value = default;
+				return false;
+			}
+		}
+
 		public T Value
 		{
 			get
