@@ -202,14 +202,32 @@ namespace Extenity.BuildMachine.Editor
 
 			while (IsRunning)
 			{
-				// Check before running the Step
+				CheckBeforeStep();
+
+				// Save the unsaved assets before making any moves.
+				AssetDatabase.SaveAssets();
+
+				// Make sure everything is imported. This may trigger an assembly reload
+				// if there are script modifications.
+				AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+				// Check if AssetDatabase.Refresh triggered a compilation
+				// OR the user requested an assembly reload.
 				{
-					CheckBeforeStep(out bool haltExecution);
-					if (haltExecution)
+					var isCompiling = EditorApplication.isCompiling;
+					if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+					{
+						HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
+						SaveRunningJobToFile();
 						yield break;
-					Job.StepState = BuildJobStepState.StepRunning;
-					SaveRunningJobToFile();
+					}
 				}
+
+				CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+				CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+
+				Job.StepState = BuildJobStepState.StepRunning;
+				SaveRunningJobToFile();
 
 				// Run the Step
 				{
@@ -715,7 +733,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 		}
 
-		private static void CheckBeforeStep(out bool haltExecution)
+		private static void CheckBeforeStep()
 		{
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
@@ -724,33 +742,6 @@ namespace Extenity.BuildMachine.Editor
 			{
 				ThrowScriptCompilationDetectedBeforeProcessingBuildStep();
 			}
-
-			// Save the unsaved assets before making any moves.
-			AssetDatabase.SaveAssets();
-
-			// Make sure everything is imported. This may trigger an assembly reload
-			// if there are script modifications.
-			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-			// Check if AssetDatabase.Refresh triggered a compilation
-			// OR the user requested an assembly reload.
-			{
-				var isCompiling = EditorApplication.isCompiling;
-				if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
-				{
-					haltExecution = true;
-					HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					SaveRunningJobToFile();
-					return;
-				}
-				else
-				{
-					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-					CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-				}
-			}
-
-			haltExecution = false;
 		}
 
 		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
