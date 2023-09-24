@@ -167,6 +167,14 @@ namespace Extenity.BuildMachine.Editor
 
 			RunningJob.LastHaltTime = default;
 
+			// At this point, there should be no ongoing compilations. Build system
+			// would not be happy if there is a compilation while it processes the step.
+			// Otherwise execution gets really messy. See 11685123.
+			if (EditorApplication.isCompiling)
+			{
+				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
+			}
+
 			CheckBeforeRun(Job);
 
 			// The assets should be saved and refreshed at the very beginning of compilation
@@ -694,14 +702,6 @@ namespace Extenity.BuildMachine.Editor
 			// Otherwise it would be a bit confusing for the user. So we just
 			// warn the user about the situation and let them decide what to do.
 			// -----------------------------------------------------------------
-
-			// At this point, there should be no ongoing compilations. Build system
-			// would not be happy if there is a compilation while it processes the step.
-			// Otherwise execution gets really messy. See 11685123.
-			if (EditorApplication.isCompiling)
-			{
-				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
-			}
 
 			// Check for AssetDatabase ActiveOnDemandMode
 			{
