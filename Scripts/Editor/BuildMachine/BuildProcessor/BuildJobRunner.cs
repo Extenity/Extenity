@@ -264,6 +264,8 @@ namespace Extenity.BuildMachine.Editor
 					Log.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 
+					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+
 					DeregisterFromErrorLogCatching();
 
 					if (!string.IsNullOrEmpty(Job.ErrorReceivedInLastStep))
@@ -760,8 +762,6 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void CheckAfterStep(out bool haltExecution)
 		{
-			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
 			// Otherwise execution gets really messy. See 11685123.
