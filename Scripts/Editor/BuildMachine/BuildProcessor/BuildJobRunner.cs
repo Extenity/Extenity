@@ -452,14 +452,24 @@ namespace Extenity.BuildMachine.Editor
 			// Run the Step
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 			{
-				StartStep(currentStep);
+				{
+					var now = Now;
+					var totalElapsed = now - RunningJob.StartTime;
+					RunningJob.LastStepStartTime = now;
+					Log.Info($"{totalElapsed.ToStringHoursMinutesSecondsMilliseconds()} | Started build step '{currentStep}'");
+				}
 
 				var currentStepInfo = Job._CurrentStepInfoCached;
 				Job._CurrentStepInfoCached = BuildStepInfo.Empty;
 				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(Builder, new object[] { Job, currentStepInfo }); // See 113654126.
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 
-				EndStep(currentStep);
+				{
+					var now = Now;
+					var stepDuration = now - RunningJob.LastStepStartTime;
+					Log.Info($"Build step '{currentStep}' took {stepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
+					RunningJob.LastStepStartTime = default;
+				}
 			}
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
 
@@ -646,30 +656,6 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			return true;
-		}
-
-		#endregion
-
-		#region Start/End Step
-
-		private static void StartStep(string stepName)
-		{
-			var now = Now;
-			var totalElapsed = now - RunningJob.StartTime;
-
-			RunningJob.LastStepStartTime = now;
-
-			Log.Info($"{totalElapsed.ToStringHoursMinutesSecondsMilliseconds()} | Started build step '{stepName}'");
-			//DisplayProgressBar("Build Step " + CurrentStep, CurrentStepTitle);
-		}
-
-		private static void EndStep(string stepName)
-		{
-			var now = Now;
-			var stepDuration = now - RunningJob.LastStepStartTime;
-
-			Log.Info($"Build step '{stepName}' took {stepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-			RunningJob.LastStepStartTime = default;
 		}
 
 		#endregion
