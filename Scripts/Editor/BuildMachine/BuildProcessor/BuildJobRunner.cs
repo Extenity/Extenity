@@ -92,10 +92,9 @@ namespace Extenity.BuildMachine.Editor
 
 		private static void Continue(BuildJob job)
 		{
-			var jobPlanName = job.NameSafe();
 			if (IsRunning)
 			{
-				throw new BuildMachineException($"Tried to continue build job '{jobPlanName}' while there is already a running one.");
+				throw new BuildMachineException($"Tried to continue build job '{job.NameSafe()}' while there is already a running one.");
 			}
 
 			Log.Info($"Continuing the build '{job.NameSafe()}'...\n" +
@@ -113,7 +112,7 @@ namespace Extenity.BuildMachine.Editor
 				if (job.StepState != BuildJobStepState.StepHalt)
 				{
 					UnsetRunningJob();
-					throw new BuildMachineException($"Build job '{jobPlanName}' was disrupted in the middle for some reason. " +
+					throw new BuildMachineException($"Build job '{job.NameSafe()}' was disrupted in the middle for some reason. " +
 					                               $"It could happen if Editor crashes during build, if not happened " +
 					                               $"for an unexpected reason." +
 					                               $"(Overall: '{job.OverallState}' Step: '{job.StepState}' Result: '{job.Result}')");
