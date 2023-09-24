@@ -132,11 +132,6 @@ namespace Extenity.BuildMachine.Editor
 				throw new BuildMachineException($"Tried to '{description}' a build job in the middle of an ongoing compilation.");
 			}
 
-			// Disable auto-refresh
-			{
-				EditorPreferences.AutoRefresh.Value = false;
-			}
-
 			// Make console full-screen
 			if (!BuildTools.IsBatchMode)
 			{
