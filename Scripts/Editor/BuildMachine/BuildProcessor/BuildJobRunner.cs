@@ -235,9 +235,6 @@ namespace Extenity.BuildMachine.Editor
 					}
 				}
 
-				CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-				CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-
 				// Run the Step
 				{
 					Job.ErrorReceivedInLastStep = "";
@@ -257,6 +254,9 @@ namespace Extenity.BuildMachine.Editor
 					// See if Unity would throw these cryptic errors again and try to come up with a
 					// solution for them. Filtering some error logs as required might work.
 					RegisterForErrorLogCatching();
+
+					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+					CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
 
 					EditorApplication.LockReloadAssemblies();
 					Log.Info("Build step coroutine started");
