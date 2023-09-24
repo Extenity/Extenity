@@ -202,7 +202,7 @@ namespace Extenity.BuildMachine.Editor
 
 			while (IsRunning)
 			{
-				// Checks before running the Step
+				// Ensure there is no compilation going on before running the build step.
 				{
 					// At this point, there should be no ongoing compilations. Build system
 					// would not be happy if there is a compilation while it processes the step.
@@ -303,11 +303,37 @@ namespace Extenity.BuildMachine.Editor
 					SaveRunningJobToFile();
 				}
 
-				// Check after running the Step
+				// Ensure there is no compilation going on after running the build step.
 				{
-					CheckAfterStep(out bool haltExecution);
-					if (haltExecution)
-						yield break;
+					// At this point, there should be no ongoing compilations. Build system
+					// would not be happy if there is a compilation while it processes the step.
+					// Otherwise execution gets really messy. See 11685123.
+					if (EditorApplication.isCompiling)
+					{
+						ThrowScriptCompilationDetectedAfterProcessingBuildStep();
+					}
+				}
+
+				// AssetDatabase Save and Refresh after the Step
+				{
+					// Save the unsaved assets before making any moves.
+					AssetDatabase.SaveAssets();
+
+					// Make sure everything is imported. This may trigger an assembly reload
+					// if there are script modifications.
+					AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+					// Check if AssetDatabase.Refresh triggered a compilation
+					// OR the user requested an assembly reload.
+					{
+						var isCompiling = EditorApplication.isCompiling;
+						if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+						{
+							HaltStep($"After step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile();
+							yield break;
+						}
+					}
 				}
 
 				yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -758,39 +784,6 @@ namespace Extenity.BuildMachine.Editor
 			// See 11685123.
 			ThrowScriptCompilationDetectedInTheMiddleOfProcessingBuildStep();
 			*/
-		}
-
-		private static void CheckAfterStep(out bool haltExecution)
-		{
-			// At this point, there should be no ongoing compilations. Build system
-			// would not be happy if there is a compilation while it processes the step.
-			// Otherwise execution gets really messy. See 11685123.
-			if (EditorApplication.isCompiling)
-			{
-				ThrowScriptCompilationDetectedAfterProcessingBuildStep();
-			}
-
-			// Save the unsaved assets before making any moves.
-			AssetDatabase.SaveAssets();
-
-			// Make sure everything is imported. This may trigger an assembly reload
-			// if there are script modifications.
-			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-			// Check if AssetDatabase.Refresh triggered a compilation
-			// OR the user requested an assembly reload.
-			{
-				var isCompiling = EditorApplication.isCompiling;
-				if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
-				{
-					haltExecution = true;
-					HaltStep($"After step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-					SaveRunningJobToFile();
-					return;
-				}
-			}
-
-			haltExecution = false;
 		}
 
 		#endregion
