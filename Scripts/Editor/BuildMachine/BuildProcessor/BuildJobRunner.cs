@@ -668,7 +668,7 @@ namespace Extenity.BuildMachine.Editor
 				}
 			}
 
-			// Set Unity to manually refresh assets.
+			// Check if Unity's Auto Refresh option is disabled.
 			{
 				if (EditorPreferences.AutoRefresh.GetValueIfSavedBefore(out var autoRefresh))
 				{
