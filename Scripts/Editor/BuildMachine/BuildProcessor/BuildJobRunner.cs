@@ -64,9 +64,9 @@ namespace Extenity.BuildMachine.Editor
 
 			Log.Info($"Starting the build '{job.NameSafe()}'...\n" +
 			         $"Builder '{job.ToStringBuilderName()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
-			        $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
-			        $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
-			        $"Job ID: {job.ID}");
+			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
+			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
+			         $"Job ID: {job.ID}");
 
 			ChecksBeforeStartOrContinue("start");
 
