@@ -28,9 +28,8 @@ namespace Extenity.DataToolbox.Editor
 
 		protected override TSerialized InternalGetValue()
 		{
-			var defaultValueText = SerializationFunction(_Value);
-
-			var text = EditorPrefs.GetString(ProcessedPrefsKey, defaultValueText);
+			// Default value has no effect here, because it was already handled before calling this function.
+			var text = EditorPrefs.GetString(ProcessedPrefsKey, default);
 			var json = DeserializationFunction(text);
 			return json;
 		}

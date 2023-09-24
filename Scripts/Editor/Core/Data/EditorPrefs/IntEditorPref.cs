@@ -18,7 +18,8 @@ namespace Extenity.DataToolbox.Editor
 
 		protected override int InternalGetValue()
 		{
-			return EditorPrefs.GetInt(ProcessedPrefsKey, _Value);
+			// Default value has no effect here, because it was already handled before calling this function.
+			return EditorPrefs.GetInt(ProcessedPrefsKey, default);
 		}
 
 		protected override void InternalSetValue(int value)
