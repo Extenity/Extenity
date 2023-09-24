@@ -93,7 +93,7 @@ namespace Extenity.BuildMachine.Editor
 			job.OverallState = BuildJobOverallState.JobRunning;
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), CatchRunException);
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), CatchRunException);
 		}
 
 		private static void Continue(BuildJob job)
@@ -130,20 +130,16 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run(), CatchRunException);
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), CatchRunException);
 		}
 
 		#endregion
 
 		#region Run
 
-		private static IEnumerator Run()
+		private static IEnumerator Run(BuildJob Job)
 		{
-			// Quick access references. These will not ever change during the build run.
-			// Do not add variables like 'currentPhase' here.
-			var Job = RunningJob;
-
-			RunningJob.LastHaltTime = default;
+			Job.LastHaltTime = default;
 
 			// At this point, there should be no ongoing compilations. Build system
 			// would not be happy if there is a compilation while it processes the step.
@@ -170,10 +166,10 @@ namespace Extenity.BuildMachine.Editor
 				// OR the user requested an assembly reload.
 				{
 					var isCompiling = EditorApplication.isCompiling;
-					if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+					if (isCompiling || Job.IsAssemblyReloadScheduled)
 					{
-						HaltStep($"Start/continue - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-						SaveRunningJobToFile();
+						HaltStep(Job, $"Start/continue - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
+						SaveRunningJobToFile(Job);
 						yield break; // Halt execution
 					}
 				}
@@ -212,10 +208,10 @@ namespace Extenity.BuildMachine.Editor
 					// OR the user requested an assembly reload.
 					{
 						var isCompiling = EditorApplication.isCompiling;
-						if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+						if (isCompiling || Job.IsAssemblyReloadScheduled)
 						{
-							HaltStep($"Before step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-							SaveRunningJobToFile();
+							HaltStep(Job, $"Before step - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile(Job);
 							yield break;
 						}
 					}
@@ -225,7 +221,7 @@ namespace Extenity.BuildMachine.Editor
 				{
 					Job.ErrorReceivedInLastStep = "";
 					Job.StepState = BuildJobStepState.StepRunning;
-					SaveRunningJobToFile();
+					SaveRunningJobToFile(Job);
 
 					// We already catch exceptions and fail the build. We may also catch error logs.
 					// But then, there will be some errors that Unity would write out of nowhere and
@@ -246,7 +242,7 @@ namespace Extenity.BuildMachine.Editor
 
 					EditorApplication.LockReloadAssemblies();
 					Log.Info("Build step coroutine started");
-					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(), CatchRunStepException);
+					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(Job), CatchRunStepException);
 					Log.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 
@@ -259,7 +255,7 @@ namespace Extenity.BuildMachine.Editor
 						Job.ErrorReceivedInLastStep = "";
 						Job.Finalizing = true;
 						Job.SetResult(BuildJobResult.Failed);
-						SaveRunningJobToFile();
+						SaveRunningJobToFile(Job);
 					}
 
 					// Don't do anything if the Build Run finishes.
@@ -286,7 +282,7 @@ namespace Extenity.BuildMachine.Editor
 						Job.PreviousFinalizationStep = Job.CurrentFinalizationStep;
 						Job.CurrentFinalizationStep = "";
 					}
-					SaveRunningJobToFile();
+					SaveRunningJobToFile(Job);
 				}
 
 				// Ensure there is no compilation going on after running the build step.
@@ -311,10 +307,10 @@ namespace Extenity.BuildMachine.Editor
 					// OR the user requested an assembly reload.
 					{
 						var isCompiling = EditorApplication.isCompiling;
-						if (isCompiling || RunningJob.IsAssemblyReloadScheduled)
+						if (isCompiling || Job.IsAssemblyReloadScheduled)
 						{
-							HaltStep($"After step - Compiling: {isCompiling} Scheduled: {RunningJob.IsAssemblyReloadScheduled}");
-							SaveRunningJobToFile();
+							HaltStep(Job, $"After step - Compiling: {isCompiling} Scheduled: {Job.IsAssemblyReloadScheduled}");
+							SaveRunningJobToFile(Job);
 							yield break;
 						}
 					}
@@ -324,13 +320,12 @@ namespace Extenity.BuildMachine.Editor
 			}
 		}
 
-		private static IEnumerator RunStep()
+		private static IEnumerator RunStep(BuildJob Job)
 		{
 			// Quick access references. These will not ever change during the build run.
 			// Do not add variables like 'currentPhase' here.
-			var Job = RunningJob;
-			var Builder = RunningJob.Builder;
-			var BuildPhases = RunningJob.Plan.BuildPhases;
+			var Builder = Job.Builder;
+			var BuildPhases = Job.Plan.BuildPhases;
 
 			EditorApplicationTools.EnsureNotCompiling(false);
 
@@ -395,7 +390,7 @@ namespace Extenity.BuildMachine.Editor
 							Debug.Assert(Job.Result != BuildJobResult.Succeeded);
 							if (Job.Result == BuildJobResult.Failed)
 							{
-								DoBuildRunFinalization();
+								DoBuildRunFinalization(Job);
 								completed = true;
 							}
 							else
@@ -406,7 +401,7 @@ namespace Extenity.BuildMachine.Editor
 									// Proceed to next Phase. The RunStep will be run again and it will start
 									// from the first Build Step of next Phase's first Builder.
 									Job.CurrentPhase++;
-									SaveRunningJobToFile();
+									SaveRunningJobToFile(Job);
 									completed = true;
 								}
 								else
@@ -416,7 +411,7 @@ namespace Extenity.BuildMachine.Editor
 									Job.CurrentFinalizationStep = "";
 									Job.PreviousFinalizationStep = "";
 									Job.SetResult(BuildJobResult.Succeeded);
-									DoBuildRunFinalization();
+									DoBuildRunFinalization(Job);
 									completed = true;
 								}
 							}
@@ -442,7 +437,7 @@ namespace Extenity.BuildMachine.Editor
 				// the Survival File is reloaded, we would have the opportunity to check if there is
 				// a CurrentStep specified in it, which is unexpected and means something went wrong
 				// in the middle of Step execution. See 11917631.
-				SaveRunningJobToFile();
+				SaveRunningJobToFile(Job);
 			}
 
 			Debug.Assert(Job._CurrentStepInfoCached.Method != null);
@@ -454,8 +449,8 @@ namespace Extenity.BuildMachine.Editor
 			{
 				{
 					var now = Now;
-					var totalElapsed = now - RunningJob.StartTime;
-					RunningJob.LastStepStartTime = now;
+					var totalElapsed = now - Job.StartTime;
+					Job.LastStepStartTime = now;
 					Log.Info($"{totalElapsed.ToStringHoursMinutesSecondsMilliseconds()} | Started build step '{currentStep}'");
 				}
 
@@ -466,9 +461,9 @@ namespace Extenity.BuildMachine.Editor
 
 				{
 					var now = Now;
-					var stepDuration = now - RunningJob.LastStepStartTime;
+					var stepDuration = now - Job.LastStepStartTime;
 					Log.Info($"Build step '{currentStep}' took {stepDuration.ToStringHoursMinutesSecondsMilliseconds()}.");
-					RunningJob.LastStepStartTime = default;
+					Job.LastStepStartTime = default;
 				}
 			}
 			yield return null; // As a precaution, won't hurt to wait for one frame for all things to settle down.
@@ -565,15 +560,15 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Halt
 
-		private static void HaltStep(string description)
+		private static void HaltStep(BuildJob job, string description)
 		{
-			RunningJob.StepState = BuildJobStepState.StepHalt;
-			RunningJob.LastHaltTime = Now;
+			job.StepState = BuildJobStepState.StepHalt;
+			job.LastHaltTime = Now;
 
-			if (RunningJob.IsAssemblyReloadScheduled)
+			if (job.IsAssemblyReloadScheduled)
 			{
 				EditorUtilityTools.RequestScriptReload();
-				RunningJob.IsAssemblyReloadScheduled = false;
+				job.IsAssemblyReloadScheduled = false;
 			}
 
 			Log.Info($"Halting the execution until next assembly reload ({description}).");
@@ -627,7 +622,7 @@ namespace Extenity.BuildMachine.Editor
 			{
 				RunningJob.Finalizing = true;
 				RunningJob.SetResult(BuildJobResult.Failed);
-				SaveRunningJobToFile();
+				SaveRunningJobToFile(RunningJob);
 			}
 			else
 			{
@@ -647,7 +642,7 @@ namespace Extenity.BuildMachine.Editor
 				RunningJob.ErrorReceivedInLastStep = exception.Message;
 				RunningJob.Finalizing = true;
 				RunningJob.SetResult(BuildJobResult.Failed);
-				SaveRunningJobToFile();
+				SaveRunningJobToFile(RunningJob);
 			}
 			else
 			{
@@ -752,24 +747,24 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Build Run Finalization
 
-		private static void DoBuildRunFinalization()
+		private static void DoBuildRunFinalization(BuildJob job)
 		{
-			Log.Info($"Finalizing the '{RunningJob.Result}' build job.");
+			Log.Info($"Finalizing the '{job.Result}' build job.");
 			EditorApplicationTools.EnsureNotCompiling(false);
 
-			RunningJob.OverallState = BuildJobOverallState.JobFinished;
+			job.OverallState = BuildJobOverallState.JobFinished;
 
-			if (RunningJob.Result == BuildJobResult.Succeeded)
+			if (job.Result == BuildJobResult.Succeeded)
 			{
-				Log.Info($"Build '{RunningJob.NameSafe()}' succeeded.");
+				Log.Info($"Build '{job.NameSafe()}' succeeded.");
 			}
 			else
 			{
-				Log.Error($"Build '{RunningJob.NameSafe()}' failed. See the log for details.");
+				Log.Error($"Build '{job.NameSafe()}' failed. See the log for details.");
 			}
 
-			BuildJobResult result = RunningJob.Result;
-			bool isSetToQuitInBatchMode = RunningJob.IsSetToQuitInBatchMode;
+			BuildJobResult result = job.Result;
+			bool isSetToQuitInBatchMode = job.IsSetToQuitInBatchMode;
 
 			UnsetRunningJob();
 			DeleteRunningJobFile();
@@ -843,7 +838,7 @@ namespace Extenity.BuildMachine.Editor
 						RunningJob.ErrorReceivedInLastStep = condition;
 						RunningJob.Finalizing = true;
 						RunningJob.SetResult(BuildJobResult.Failed);
-						SaveRunningJobToFile();
+						SaveRunningJobToFile(RunningJob);
 					}
 					else
 					{
@@ -867,11 +862,9 @@ namespace Extenity.BuildMachine.Editor
 
 		#region Assembly reload survival of running job
 
-		private static void SaveRunningJobToFile()
+		private static void SaveRunningJobToFile(BuildJob job)
 		{
 			Log.Info("Saving running job for assembly reload survival.");
-
-			var job = RunningJob;
 
 			//if (IsRunningJobFileExists())
 			//{
