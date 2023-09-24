@@ -646,9 +646,25 @@ namespace Extenity.BuildMachine.Editor
 
 			// Set Unity to manually refresh assets.
 			{
-				if (EditorPreferences.AutoRefresh.Value)
+				if (EditorPreferences.AutoRefresh.GetValueIfSavedBefore(out var autoRefresh))
 				{
-					throw new BuildMachineException("Detected that Unity's Auto Refresh option is enabled. Please disable it to prevent Unity from starting asset refresh operation in the middle of build steps. See 'Edit>Preferences>Asset Pipeline>Auto Refresh'.");
+					if (autoRefresh != AssetPipelineAutoRefreshMode.Disabled)
+					{
+						throw new BuildMachineException("Detected that Unity's Auto Refresh option is not disabled. "     +
+						                                "Please go into 'Edit>Preferences>Asset Pipeline>Auto Refresh' "  +
+						                                "and set its value to 'Disabled' to prevent Unity from starting " +
+						                                "asset refresh operation in the middle of build steps.");
+					}
+				}
+				else
+				{
+					throw new BuildMachineException("Failed to detect Unity's Auto Refresh option because it wasn't "     +
+					                                "manually configured by hand yet. Please go into "                    +
+					                                "'Edit>Preferences>Asset Pipeline>Auto Refresh' and just change its " +
+					                                "value to something else. That will force Unity to save its value "   +
+					                                "which then Build Machine can read it. Then set its value to "        +
+					                                "'Disabled' to prevent Unity from starting asset refresh operation "  +
+					                                "in the middle of build steps.");
 				}
 			}
 
