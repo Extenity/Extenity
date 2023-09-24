@@ -66,8 +66,7 @@ namespace Extenity.DataToolbox.Editor
 		{
 			PrefsKey             = prefsKey;
 			_AppendPathHashToKey = appendPathHashToKey;
-			_Value               = default;
-			DefaultValueMethod  = defaultValueMethod;
+			DefaultValueMethod   = defaultValueMethod;
 			_LogOptions          = logOptions;
 		}
 
@@ -101,10 +100,15 @@ namespace Extenity.DataToolbox.Editor
 
 		#endregion
 
-		#region Value
+		#region Value Caching
 
-		private bool _IsInitialized;
-		protected T _Value;
+		// There once was a caching mechanism in EditorPref. But it was making things complicated
+		// when the value is changed from outside of the EditorPref. So it's removed.
+		// protected T _CachedValue;
+
+		#endregion
+		
+		#region Value
 
 		public bool GetValueIfSavedBefore(out T value)
 		{
@@ -124,45 +128,46 @@ namespace Extenity.DataToolbox.Editor
 		{
 			get
 			{
-				if (!_IsInitialized)
+				if (!EditorPrefs.HasKey(ProcessedPrefsKey))
 				{
-					_IsInitialized = true;
-					if (!EditorPrefs.HasKey(ProcessedPrefsKey))
+					// Get default value
+					switch (DefaultValueMethod.Type)
 					{
-						// Get default value
-						switch (DefaultValueMethod.Type)
+						case DefaultValueMethodType.DefaultValue:
 						{
-							case DefaultValueMethodType.DefaultValue:
-								_Value = DefaultValueMethod.DefaultValue;
-								break;
-							case DefaultValueMethodType.OverrideFunction:
-								_Value = DefaultValueMethod.FunctionToGetDefaultValue(this);
-								break;
-							case DefaultValueMethodType.EnsureKeyExists:
-								throw new Exception($"Reading EditorPref '{ProcessedPrefsKey}' failed. Key does not exist.");
-							default:
-								throw new ArgumentOutOfRangeException();
+							var value = DefaultValueMethod.DefaultValue;
+							if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
+								Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The preference was not saved before, so the value is initialized with default '{value}'.");
+							return value;
 						}
-
-						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
-							Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The preference was not saved before, so the value is initialized with default '{_Value}'.");
-						return _Value;
-					}
-					else
-					{
-						_Value = InternalGetValue();
+						case DefaultValueMethodType.OverrideFunction:
+						{
+							var value = DefaultValueMethod.FunctionToGetDefaultValue(this);
+							if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
+								Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The preference was not saved before, so the value is initialized via default value function as '{value}'.");
+							return value;
+						}
+						case DefaultValueMethodType.EnsureKeyExists:
+						{
+							throw new Exception($"Reading EditorPref '{ProcessedPrefsKey}' failed. Key does not exist.");
+						}
+						default:
+							throw new ArgumentOutOfRangeException();
 					}
 				}
-
-				if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
-					Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The value is '{_Value}'.");
-				return _Value;
+				else
+				{
+					var value = InternalGetValue();
+					if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnRead))
+						Log.Info($"Reading EditorPref '{ProcessedPrefsKey}'. The value is '{value}'.");
+					return value;
+				}
 			}
 			set
 			{
-				if (_IsInitialized)
+				if (EditorPrefs.HasKey(ProcessedPrefsKey))
 				{
-					var oldValue = Value; // This must be called before setting _IsInitialized to true;
+					var oldValue = Value;
 					if (IsSame(oldValue, value))
 					{
 						if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenNotChanged))
@@ -180,11 +185,8 @@ namespace Extenity.DataToolbox.Editor
 				{
 					if (_LogOptions.HasFlag(EditorPrefLogOptions.LogOnWriteWhenChanged))
 						Log.Info($"Writing EditorPref '{ProcessedPrefsKey}'. The value is initialized as '{value}'.");
-
-					_IsInitialized = true;
 				}
 
-				_Value = value;
 				InternalSetValue(value);
 
 				if (_DontEmitNextValueChangedEvent)
