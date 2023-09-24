@@ -63,6 +63,9 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			Log.Info($"Starting the build '{job.NameSafe()}'...\n" +
+			         "Here is the current state of the job for debugging purposes.\n" +
+			         "Note that they might look suspicious because we are at the very beginning of build process " +
+			         "where these states are not initialized yet.\n" +
 			         $"Builder '{job.ToStringBuilderName()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
 			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
@@ -98,6 +101,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			Log.Info($"Continuing the build '{job.NameSafe()}'...\n" +
+			         "Here is the current state of the job for debugging purposes.\n" +
 			         $"Builder '{job.ToStringBuilderName()}' in Phase '{job.ToStringCurrentPhase()}'\n" +
 			         $"Build Step '{job.CurrentBuildStep}' (Previously: {job.PreviousBuildStep})\n" +
 			         $"Finalization Step '{job.CurrentFinalizationStep}' (Previously: {job.PreviousFinalizationStep})\n" +
