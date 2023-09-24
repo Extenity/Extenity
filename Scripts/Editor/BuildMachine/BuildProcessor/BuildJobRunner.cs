@@ -692,29 +692,15 @@ namespace Extenity.BuildMachine.Editor
 				}
 			}
 
-			// Change Unity's active platform if required.
+			// Check if Unity's active platform is the same as the one we are building for.
 			{
-#if !DisableExtenityBuilderActivePlatformFixer
+#if !DisableExtenityBuilderActivePlatformCheck
 				var buildTarget = Job.Builder.Info.BuildTarget;
-				var buildTargetGroup = Job.Builder.Info.BuildTargetGroup;
 				if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
 				{
-					haltExecution = true;
-					Log.Info($"Changing active build platform from '{EditorUserBuildSettings.activeBuildTarget}' to '{buildTarget}' of group '{buildTargetGroup}'.");
-					EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget);
-
-					// Check if the changes triggered a compilation, which obviously is expected.
-					if (EditorApplication.isCompiling)
-					{
-						HaltStep("Platform change");
-						SaveRunningJobToFile();
-						return;
-					}
-					else
-					{
-						// Think about calling AssetDatabase.Refresh(force) if you encounter this exception.
-						throw new BuildMachineException("Changing platform did not trigger a recompilation.");
-					}
+					throw new BuildMachineException("Detected that Unity's active platform is not the same as the one " +
+					                                "we are building for. Please go into 'File>Build Settings' and " +
+					                                $"change the active platform to '{buildTarget}'.");
 				}
 #endif
 			}
