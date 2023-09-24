@@ -202,7 +202,16 @@ namespace Extenity.BuildMachine.Editor
 
 			while (IsRunning)
 			{
-				CheckBeforeStep();
+				// Checks before running the Step
+				{
+					// At this point, there should be no ongoing compilations. Build system
+					// would not be happy if there is a compilation while it processes the step.
+					// Otherwise execution gets really messy. See 11685123.
+					if (EditorApplication.isCompiling)
+					{
+						ThrowScriptCompilationDetectedBeforeProcessingBuildStep();
+					}
+				}
 
 				// Save the unsaved assets before making any moves.
 				AssetDatabase.SaveAssets();
@@ -730,17 +739,6 @@ namespace Extenity.BuildMachine.Editor
 					                                "Code Optimization On Startup' and change it to 'Release'.");
 				}
 #endif
-			}
-		}
-
-		private static void CheckBeforeStep()
-		{
-			// At this point, there should be no ongoing compilations. Build system
-			// would not be happy if there is a compilation while it processes the step.
-			// Otherwise execution gets really messy. See 11685123.
-			if (EditorApplication.isCompiling)
-			{
-				ThrowScriptCompilationDetectedBeforeProcessingBuildStep();
 			}
 		}
 
