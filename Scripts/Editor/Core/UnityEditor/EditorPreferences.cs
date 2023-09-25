@@ -27,6 +27,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 			    PathHashPostfix.No,
 			    DefaultValueMethod<AssetPipelineAutoRefreshMode>.FailIfKeyDoesNotExist(),
 			    EditorPrefLogOptions.LogOnWriteWhenChanged);
+
+		/// <summary>
+		/// Enable-disable "Timestamp Editor log entries" option in Unity Editor's Preferences window.
+		/// </summary>
+		public static readonly BoolEditorPref TimestampEditorLogEntries =
+			new("EnableExtendedLogging",
+			    PathHashPostfix.No,
+			    DefaultValueMethod<bool>.FailIfKeyDoesNotExist(),
+			    EditorPrefLogOptions.LogOnWriteWhenChanged);
 	}
 
 }
