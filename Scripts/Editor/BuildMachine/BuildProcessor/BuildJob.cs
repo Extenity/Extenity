@@ -6,6 +6,7 @@ using Extenity.DataToolbox;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEngine;
 using Guid = System.Guid;
 
 namespace Extenity.BuildMachine.Editor
@@ -231,6 +232,56 @@ namespace Extenity.BuildMachine.Editor
 
 		[JsonIgnore]
 		public string ErrorReceivedInLastStep;
+
+		#endregion
+
+		#region Catch error logs during running steps
+
+		internal void RegisterForErrorLogCatching()
+		{
+			Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceived += OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded += OnLogMessageReceived;
+		}
+
+		internal void DeregisterFromErrorLogCatching()
+		{
+			Application.logMessageReceived -= OnLogMessageReceived;
+			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+		}
+
+		private void OnLogMessageReceived(string condition, string stacktrace, LogType logType)
+		{
+			switch (logType)
+			{
+				case LogType.Exception:
+				case LogType.Error:
+				case LogType.Assert:
+					// Just catch the first error log. We don't want to catch multiple errors because they might be
+					// caused by the first error and we don't want the user to miss the root cause.
+					DeregisterFromErrorLogCatching();
+
+					Log.Error($"Received an '{logType}' when running step. The error was: \n" +
+					          $"[CaughtErrorLogMessageStart]\n"                               +
+					          $"{condition}\n"                                                +
+					          $"[CaughtErrorLogMessageEnd]\n"                                 +
+					          $"[CaughtErrorLogStackTraceStart]\n"                            +
+					          $"{stacktrace}\n"                                               +
+					          $"[CaughtErrorLogStackTraceEnd]\n");
+
+					ErrorReceivedInLastStep = condition;
+					Finalizing = true;
+					SetResult(BuildJobResult.Failed);
+					BuildJobRunner.SaveRunningJobToFile(this);
+					break;
+				case LogType.Warning:
+				case LogType.Log:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
+			}
+		}
 
 		#endregion
 

@@ -14,7 +14,6 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEditor.Experimental;
-using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.BuildMachine.Editor
@@ -235,7 +234,7 @@ namespace Extenity.BuildMachine.Editor
 					// On second thought, it might be a good idea to fail the build for all errors.
 					// See if Unity would throw these cryptic errors again and try to come up with a
 					// solution for them. Filtering some error logs as required might work.
-					RegisterForErrorLogCatching();
+					job.RegisterForErrorLogCatching();
 
 					job.RegisterForCompilationCatching();
 
@@ -247,7 +246,7 @@ namespace Extenity.BuildMachine.Editor
 
 					job.DeregisterFromCompilationCatching();
 
-					DeregisterFromErrorLogCatching();
+					job.DeregisterFromErrorLogCatching();
 
 					if (!string.IsNullOrEmpty(job.ErrorReceivedInLastStep))
 					{
@@ -783,71 +782,9 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Catch error logs during running steps
-
-		private static void RegisterForErrorLogCatching()
-		{
-			Application.logMessageReceived -= OnLogMessageReceived;
-			Application.logMessageReceived += OnLogMessageReceived;
-			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
-			Application.logMessageReceivedThreaded += OnLogMessageReceived;
-		}
-
-		private static void DeregisterFromErrorLogCatching()
-		{
-			Application.logMessageReceived -= OnLogMessageReceived;
-			Application.logMessageReceivedThreaded -= OnLogMessageReceived;
-		}
-
-		private static void OnLogMessageReceived(string condition, string stacktrace, LogType logType)
-		{
-			switch (logType)
-			{
-				case LogType.Exception:
-				case LogType.Error:
-				case LogType.Assert:
-					// Just catch the first error log. We don't want to catch multiple errors because they might be
-					// caused by the first error and we don't want the user to miss the root cause.
-					DeregisterFromErrorLogCatching();
-
-					Log.Error($"Received an '{logType}' when running step. The error was: \n" +
-					          $"[CaughtErrorLogMessageStart]\n"                               +
-					          $"{condition}\n"                                                +
-					          $"[CaughtErrorLogMessageEnd]\n"                                 +
-					          $"[CaughtErrorLogStackTraceStart]\n"                            +
-					          $"{stacktrace}\n"                                               +
-					          $"[CaughtErrorLogStackTraceEnd]\n");
-
-					if (RunningJob != null)
-					{
-						RunningJob.ErrorReceivedInLastStep = condition;
-						RunningJob.Finalizing = true;
-						RunningJob.SetResult(BuildJobResult.Failed);
-						SaveRunningJobToFile(RunningJob);
-					}
-					else
-					{
-						// RunningJob was supposed to be there. Something went terribly wrong. Investigate.
-						Log.InternalError(11636114);
-
-						// Quit Unity to prevent hanging the build process.
-						var errorReturnValue = -1;
-						EditorApplication.Exit(errorReturnValue);
-					}
-					break;
-				case LogType.Warning:
-				case LogType.Log:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
-			}
-		}
-
-		#endregion
-
 		#region Assembly reload survival of running job
 
-		private static void SaveRunningJobToFile(BuildJob job)
+		internal static void SaveRunningJobToFile(BuildJob job)
 		{
 			Log.Info("Saving running job for assembly reload survival.");
 
