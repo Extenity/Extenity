@@ -110,7 +110,6 @@ namespace Extenity.BuildMachine.Editor
 				// The only expected state is StepHalt when continuing after assembly reload.
 				if (job.StepState != BuildJobStepState.StepHalt)
 				{
-					UnsetRunningJobState();
 					throw new BuildMachineException($"Build job '{job.NameSafe()}' was disrupted in the middle for some reason. " +
 					                               $"It could happen if Editor crashes during build, if not happened " +
 					                               $"for an unexpected reason." +
