@@ -92,7 +92,7 @@ namespace Extenity.BuildMachine.Editor
 			job.OverallState = BuildJobOverallState.JobRunning;
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), CatchRunException);
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), job.CatchRunException);
 		}
 
 		private static void Continue(BuildJob job)
@@ -129,7 +129,7 @@ namespace Extenity.BuildMachine.Editor
 			}
 
 			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
-			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), CatchRunException);
+			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), job.CatchRunException);
 		}
 
 		#endregion
@@ -240,7 +240,7 @@ namespace Extenity.BuildMachine.Editor
 
 					EditorApplication.LockReloadAssemblies();
 					Log.Info("Build step coroutine started");
-					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(job), CatchRunStepException);
+					yield return EditorCoroutineUtility.StartCoroutineOwnerless(RunStep(job), job.CatchRunStepException);
 					Log.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 
@@ -610,45 +610,6 @@ namespace Extenity.BuildMachine.Editor
 		private static void ThrowScriptCompilationDetectedAfterProcessingBuildStep()
 		{
 			throw new BuildMachineException("Compilation is not allowed after finishing the build step.");
-		}
-
-		private static bool CatchRunException(Exception exception)
-		{
-			Log.Error(new BuildMachineException("Exception caught in Build Run.", exception));
-
-			if (RunningJob != null)
-			{
-				RunningJob.Finalizing = true;
-				RunningJob.SetResult(BuildJobResult.Failed);
-				SaveRunningJobToFile(RunningJob);
-			}
-			else
-			{
-				// RunningJob was supposed to be there. Something went terribly wrong. Investigate.
-				Log.InternalError(11636112);
-			}
-
-			return true;
-		}
-
-		private static bool CatchRunStepException(Exception exception)
-		{
-			Log.Error(new BuildMachineException("Exception caught in Build Step.", exception));
-
-			if (RunningJob != null)
-			{
-				RunningJob.ErrorReceivedInLastStep = exception.Message;
-				RunningJob.Finalizing = true;
-				RunningJob.SetResult(BuildJobResult.Failed);
-				SaveRunningJobToFile(RunningJob);
-			}
-			else
-			{
-				// RunningJob was supposed to be there. Something went terribly wrong. Investigate.
-				Log.InternalError(11636113);
-			}
-
-			return true;
 		}
 
 		#endregion

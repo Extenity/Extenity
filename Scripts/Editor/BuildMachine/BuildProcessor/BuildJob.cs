@@ -283,9 +283,32 @@ namespace Extenity.BuildMachine.Editor
 			}
 		}
 
+		internal bool CatchRunException(Exception exception)
+		{
+			Log.Error(new BuildMachineException("Exception caught in Build Run.", exception));
+
+			Finalizing = true;
+			SetResult(BuildJobResult.Failed);
+			BuildJobRunner.SaveRunningJobToFile(this);
+
+			return true;
+		}
+
+		internal bool CatchRunStepException(Exception exception)
+		{
+			Log.Error(new BuildMachineException("Exception caught in Build Step.", exception));
+
+			ErrorReceivedInLastStep = exception.Message;
+			Finalizing              = true;
+			SetResult(BuildJobResult.Failed);
+			BuildJobRunner.SaveRunningJobToFile(this);
+
+			return true;
+		}
+
 		#endregion
 
-		#region Compilation Catching
+		#region Catch compilations during running steps
 
 		internal void RegisterForCompilationCatching()
 		{
