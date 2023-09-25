@@ -21,34 +21,25 @@ namespace Extenity.BuildMachine.Editor
 
 	public static class BuildJobRunner
 	{
-		#region Running Job
+		#region IsRunning State
 
-		private static BuildJob _RunningJob;
-		public static BuildJob RunningJob
-		{
-			get
-			{
-				if (_RunningJob == null)
-					throw new BuildMachineException($"Tried to get {nameof(RunningJob)} while it was not set.");
-				return _RunningJob;
-			}
-		}
-		public static bool IsRunning => _RunningJob != null;
+		public static bool IsRunning { get; private set; }
 
-		private static void SetRunningJob(BuildJob job)
+		private static void SetRunningJobState()
 		{
-			if (_RunningJob != null)
+			if (IsRunning)
 			{
-				throw new BuildMachineException($"Tried to set {nameof(RunningJob)} while there was already an existing one.");
+				throw new BuildMachineException($"Tried to Set {nameof(BuildJobRunner)}.{nameof(IsRunning)} state but it was already set.");
 			}
-			Log.Info($"Setting the {nameof(RunningJob)}");
-			_RunningJob = job;
+			Log.Info($"Setting the {nameof(BuildJobRunner)}.{nameof(IsRunning)} state");
+			IsRunning = true;
 		}
 
-		private static void UnsetRunningJob()
+		private static void UnsetRunningJobState()
 		{
-			Log.Info($"Unsetting the {nameof(RunningJob)}. Previously was '{(_RunningJob != null ? "set" : "not set")}'.");
-			_RunningJob = null;
+			var previousState = IsRunning;
+			Log.Info($"Unsetting the {nameof(BuildJobRunner)}.{nameof(IsRunning)} state. Previously was '{(previousState ? "set" : "not set")}'.");
+			IsRunning = false;
 		}
 
 		#endregion
@@ -91,7 +82,7 @@ namespace Extenity.BuildMachine.Editor
 			job.CurrentPhase = 0;
 			job.OverallState = BuildJobOverallState.JobRunning;
 
-			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
+			SetRunningJobState(); // Set it just before the Run call. Otherwise an exception in the codes above would cause the value of static field to be left behind.
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), job.CatchRunException);
 		}
 
@@ -119,7 +110,7 @@ namespace Extenity.BuildMachine.Editor
 				// The only expected state is StepHalt when continuing after assembly reload.
 				if (job.StepState != BuildJobStepState.StepHalt)
 				{
-					UnsetRunningJob();
+					UnsetRunningJobState();
 					throw new BuildMachineException($"Build job '{job.NameSafe()}' was disrupted in the middle for some reason. " +
 					                               $"It could happen if Editor crashes during build, if not happened " +
 					                               $"for an unexpected reason." +
@@ -128,7 +119,7 @@ namespace Extenity.BuildMachine.Editor
 				Debug.Assert(job.OverallState == BuildJobOverallState.JobRunning, $"Unexpected overall state '{job.OverallState}'.");
 			}
 
-			SetRunningJob(job); // Set it just before the Run call so any exceptions above won't leave the reference behind.
+			SetRunningJobState(); // Set it just before the Run call. Otherwise an exception in the codes above would cause the value of static field to be left behind.
 			EditorCoroutineUtility.StartCoroutineOwnerless(Run(job), job.CatchRunException);
 		}
 
@@ -711,7 +702,7 @@ namespace Extenity.BuildMachine.Editor
 			BuildJobResult result = job.Result;
 			bool isSetToQuitInBatchMode = job.IsSetToQuitInBatchMode;
 
-			UnsetRunningJob();
+			UnsetRunningJobState();
 			DeleteRunningJobFile();
 
 			// Close the editor in batch mode OR let the Editor live.
