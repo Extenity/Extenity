@@ -310,11 +310,6 @@ namespace Extenity.BuildMachine.Editor
 
 		private static IEnumerator RunStep(BuildJob job)
 		{
-			// Quick access references. These will not ever change during the build run.
-			// Do not add variables like 'currentPhase' here.
-			var Builder = job.Builder;
-			var BuildPhases = job.Plan.BuildPhases;
-
 			EditorApplicationTools.EnsureNotCompiling(false);
 
 			// Figure out which should be next Step to be executed. If there is none left, Finalize the Build Run.
@@ -444,7 +439,7 @@ namespace Extenity.BuildMachine.Editor
 
 				var currentStepInfo = job._CurrentStepInfoCached;
 				job._CurrentStepInfoCached = BuildStepInfo.Empty;
-				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(Builder, new object[] { job, currentStepInfo }); // See 113654126.
+				var enumerator = (IEnumerator)currentStepInfo.Method.Invoke(job.Builder, new object[] { job, currentStepInfo }); // See 113654126.
 				yield return EditorCoroutineUtility.StartCoroutineOwnerless(enumerator);
 
 				{
@@ -460,19 +455,18 @@ namespace Extenity.BuildMachine.Editor
 
 			string GetFirstStep(bool finalization)
 			{
-				if (!BuildPhases.IsInRange(job.CurrentPhase))
-					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{BuildPhases.Length}");
+				if (!job.Plan.BuildPhases.IsInRange(job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{job.Plan.BuildPhases.Length}");
 
-				var phase = BuildPhases[job.CurrentPhase];
-				var builder = Builder;
+				var phase = job.Plan.BuildPhases[job.CurrentPhase];
 				BuildStepInfo firstStepOfCurrentPhase;
 				if (finalization)
 				{
-					firstStepOfCurrentPhase = builder.Info.Steps.FirstOrDefault(entry => phase.IncludedFinalizationSteps.Contains(entry.Type));
+					firstStepOfCurrentPhase = job.Builder.Info.Steps.FirstOrDefault(entry => phase.IncludedFinalizationSteps.Contains(entry.Type));
 				}
 				else
 				{
-					firstStepOfCurrentPhase = builder.Info.Steps.FirstOrDefault(entry => phase.IncludedBuildSteps.Contains(entry.Type));
+					firstStepOfCurrentPhase = job.Builder.Info.Steps.FirstOrDefault(entry => phase.IncludedBuildSteps.Contains(entry.Type));
 				}
 
 				if (firstStepOfCurrentPhase.IsEmpty)
@@ -491,19 +485,18 @@ namespace Extenity.BuildMachine.Editor
 			string GetNextStep(string previousStep, bool finalization)
 			{
 				Debug.Assert(!string.IsNullOrEmpty(previousStep));
-				if (!BuildPhases.IsInRange(job.CurrentPhase))
-					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{BuildPhases.Length}");
+				if (!job.Plan.BuildPhases.IsInRange(job.CurrentPhase))
+					throw new BuildMachineException($"Index out of range. Phase {job.CurrentPhase}/{job.Plan.BuildPhases.Length}");
 
-				var phase = BuildPhases[job.CurrentPhase];
-				var builder = Builder;
+				var phase = job.Plan.BuildPhases[job.CurrentPhase];
 				List<BuildStepInfo> allStepsOfCurrentPhase;
 				if (finalization)
 				{
-					allStepsOfCurrentPhase = builder.Info.Steps.Where(entry => phase.IncludedFinalizationSteps.Contains(entry.Type)).ToList();
+					allStepsOfCurrentPhase = job.Builder.Info.Steps.Where(entry => phase.IncludedFinalizationSteps.Contains(entry.Type)).ToList();
 				}
 				else
 				{
-					allStepsOfCurrentPhase = builder.Info.Steps.Where(entry => phase.IncludedBuildSteps.Contains(entry.Type)).ToList();
+					allStepsOfCurrentPhase = job.Builder.Info.Steps.Where(entry => phase.IncludedBuildSteps.Contains(entry.Type)).ToList();
 				}
 
 				if (allStepsOfCurrentPhase.IsNullOrEmpty())
