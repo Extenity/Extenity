@@ -36,6 +36,19 @@ namespace Extenity.UnityEditorToolbox.Editor
 			    PathHashPostfix.No,
 			    DefaultValueMethod<bool>.FailIfKeyDoesNotExist(),
 			    EditorPrefLogOptions.LogOnWriteWhenChanged);
+
+		/// <summary>
+		/// Enable-disable "Stop Gradle daemons on exit" option in Unity Editor's Preferences window.
+		/// The documentation says:
+		///    Enable this option so that when you close the Editor, Unity stops Gradle.
+		///    If you are using Gradle to build multiple Android Projects at the same time,
+		///    disable this option as it might cause your other builds to fail.
+		/// </summary>
+		public static readonly BoolEditorPref StopGradleDaemonsOnExit =
+			new("AndroidGradleStopDaemonsOnExit",
+			    PathHashPostfix.No,
+			    DefaultValueMethod<bool>.FailIfKeyDoesNotExist(),
+			    EditorPrefLogOptions.LogOnWriteWhenChanged);
 	}
 
 }
