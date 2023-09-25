@@ -259,6 +259,19 @@ namespace Extenity.BuildMachine.Editor
 				case LogType.Error:
 				case LogType.Assert:
 				{
+					// Filter out the false-positive error logs that Unity Editor throws. We don't have any control
+					// over logging these and they are not build-breaking errors. So we just ignore them.
+					// See 11856196.
+					if (
+						// USB device detection errors thrown by Android ADB
+						(condition.Contains("InvalidOperationException") && stacktrace.Contains("UnityEditor.Hardware.Usb")) ||
+						(condition.Contains("ArgumentException") && stacktrace.Contains("UnityEditor.Android.TargetScanWorker")
+						)
+					)
+					{
+						return;
+					}					
+					
 					// Just catch the first error log. We don't want to catch multiple errors because they might be
 					// caused by the first error and we don't want the user to miss the root cause.
 					DeregisterFromErrorLogCatching();

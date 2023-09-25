@@ -223,7 +223,7 @@ namespace Extenity.BuildMachine.Editor
 					//
 					// On second thought, it might be a good idea to fail the build for all errors.
 					// See if Unity would throw these cryptic errors again and try to come up with a
-					// solution for them. Filtering some error logs as required might work.
+					// solution for them. Note that some errors are filtered in the callback. See 11856196.
 					job.RegisterForErrorLogCatching();
 
 					job.RegisterForCompilationCatching();
