@@ -148,7 +148,7 @@ namespace Extenity.BuildMachine.Editor
 				ThrowScriptCompilationDetectedBeforeStartingTheBuildRun();
 			}
 
-			CheckBeforeRun(job);
+			ChecksBeforeRun(job);
 
 			// Make console full-screen
 			BuildMachineLayout.LoadConsoleOnlyLayout();
@@ -653,9 +653,9 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
-		#region Check Before/After Step
+		#region Checks Before Run
 
-		private static void CheckBeforeRun(BuildJob job)
+		private static void ChecksBeforeRun(BuildJob job)
 		{
 			//-------- Note to the developers ---------------------------------- 
 			// We don't want to alter the machine's preferences automatically.
