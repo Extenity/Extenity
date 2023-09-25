@@ -5,6 +5,7 @@ using System.Text;
 using Extenity.DataToolbox;
 using Newtonsoft.Json;
 using UnityEditor;
+using UnityEditor.Compilation;
 using Guid = System.Guid;
 
 namespace Extenity.BuildMachine.Editor
@@ -233,6 +234,35 @@ namespace Extenity.BuildMachine.Editor
 
 		#endregion
 
+		#region Compilation Catching
+
+		internal void RegisterForCompilationCatching()
+		{
+			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+			CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+		}
+
+		internal void DeregisterFromCompilationCatching()
+		{
+			CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+		}
+
+		private void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
+		{
+			Log.Info("Detected a script compilation during a build step, which is okay. But an additional " +
+			         "assembly reload is scheduled to make sure the build system will continue to run.");
+			ScheduleAssemblyReload();
+
+			/* This comment block was the old code, before starting to use EditorApplication.LockReloadAssemblies.
+			// This is a callback for a compilation event that is triggered while we are processing a build step.
+			// This is not allowed. We need to stop the build system and let the user know what is going on.
+			// See 11685123.
+			ThrowScriptCompilationDetectedInTheMiddleOfProcessingBuildStep();
+			*/
+		}
+
+		#endregion
+		
 		#region Serialization
 
 		/// <summary>

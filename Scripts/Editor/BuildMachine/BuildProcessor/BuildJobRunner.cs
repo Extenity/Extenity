@@ -237,8 +237,7 @@ namespace Extenity.BuildMachine.Editor
 					// solution for them. Filtering some error logs as required might work.
 					RegisterForErrorLogCatching();
 
-					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
-					CompilationPipeline.compilationStarted += OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+					job.RegisterForCompilationCatching();
 
 					EditorApplication.LockReloadAssemblies();
 					Log.Info("Build step coroutine started");
@@ -246,7 +245,7 @@ namespace Extenity.BuildMachine.Editor
 					Log.Info("Build step coroutine finished");
 					EditorApplication.UnlockReloadAssemblies();
 
-					CompilationPipeline.compilationStarted -= OnCompilationStartedInTheMiddleOfProcessingBuildStep;
+					job.DeregisterFromCompilationCatching();
 
 					DeregisterFromErrorLogCatching();
 
@@ -727,20 +726,6 @@ namespace Extenity.BuildMachine.Editor
 				}
 #endif
 			}
-		}
-
-		private static void OnCompilationStartedInTheMiddleOfProcessingBuildStep(object _)
-		{
-			Log.Info("Detected a script compilation during a build step, which is okay. But an additional " +
-			         "assembly reload is scheduled to make sure the build system will continue to run.");
-			RunningJob.ScheduleAssemblyReload();
-
-			/* This comment block was the old code, before starting to use EditorApplication.LockReloadAssemblies.
-			// This is a callback for a compilation event that is triggered while we are processing a build step.
-			// This is not allowed. We need to stop the build system and let the user know what is going on.
-			// See 11685123.
-			ThrowScriptCompilationDetectedInTheMiddleOfProcessingBuildStep();
-			*/
 		}
 
 		#endregion
