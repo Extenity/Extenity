@@ -108,7 +108,7 @@ namespace Extenity
 			EditorGUI.indentLevel -= 2;
 			foreach (var listener in listeners)
 			{
-				GUILayout.Label($"{listener.Order} \t {listener.Callback.FullNameOfTargetAndMethod(3, " \t ")}");
+				GUILayout.Label($"{listener.Order} \t {listener.Callback.FullNameOfTargetAndMethod(3)}");
 			}
 		}
 

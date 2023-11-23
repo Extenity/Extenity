@@ -84,8 +84,8 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(NamingTools.NullGameObjectName, go.FullObjectName());
 			Assert.AreEqual(NamingTools.NullComponentName, component.FullObjectName());
 			Assert.AreEqual(NamingTools.NullObjectName, texture.FullObjectName());
-			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod(delegateAsDelegate.Method.Name), delegateAsAction.FullObjectName());
-			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod(delegateAsDelegate.Method.Name), delegateAsDelegate.FullObjectName());
+			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod_Start + delegateAsDelegate.Method.Name + NamingTools.NullDelegateNameWithMethod_End, delegateAsAction.FullObjectName());
+			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod_Start + delegateAsDelegate.Method.Name + NamingTools.NullDelegateNameWithMethod_End, delegateAsDelegate.FullObjectName());
 		}
 #endif
 	}

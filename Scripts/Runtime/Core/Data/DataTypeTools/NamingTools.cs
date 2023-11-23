@@ -17,7 +17,8 @@ namespace Extenity.DataToolbox
 		public const string NullObjectName = "[NA/OBJ]";
 #endif
 		public const string NullDelegateName = "[NA/DEL]";
-		public static string NullDelegateNameWithMethod(string methodName) => "[NA/DEL/" + methodName + "]";
+		public const string NullDelegateNameWithMethod_Start = "[NA/DEL/";
+		public const string NullDelegateNameWithMethod_End = "]";
 		public const string NullName = "[NA]";
 
 		#endregion
@@ -50,24 +51,26 @@ namespace Extenity.DataToolbox
 
 		#region Delegate Naming
 
+		private const string MethodAndTargetSeparator = " in ";
+
 		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			return FullObjectName(del?.Target, maxHierarchyLevels);
 		}
 
-		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels, string methodAndTargetSeparator = " in ")
+		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			if (del != null)
 			{
 #if UNITY
 				if (del.IsUnityObjectTargetedAndDestroyed())
 				{
-					return NullDelegateNameWithMethod(del.Method.Name);
+					return NullDelegateNameWithMethod_Start + del.Method.Name + NullDelegateNameWithMethod_End;
 				}
 				else
 #endif
 				{
-					return del.Method.Name + methodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
+					return del.Method.Name + MethodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
 				}
 			}
 			return NullDelegateName;
@@ -78,7 +81,10 @@ namespace Extenity.DataToolbox
 		#region Full Name
 
 #if UNITY
-		public static string FullName(this GameObject me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char separator = '/')
+		private const char GameObjectPathSeparator = '/';
+		private const char ComponentPathSeparator = '|';
+
+		public static string FullName(this GameObject me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			if (!me || maxHierarchyLevels <= 0)
 				return NullGameObjectName;
@@ -91,7 +97,7 @@ namespace Extenity.DataToolbox
 			maxHierarchyLevels--;
 			while (maxHierarchyLevels > 0 && parent)
 			{
-				stringBuilder.Insert(0, separator);
+				stringBuilder.Insert(0, GameObjectPathSeparator);
 				stringBuilder.Insert(0, parent.name);
 				parent = parent.parent;
 				maxHierarchyLevels--;
@@ -99,37 +105,37 @@ namespace Extenity.DataToolbox
 
 			if (parent)
 			{
-				stringBuilder.Insert(0, separator);
+				stringBuilder.Insert(0, GameObjectPathSeparator);
 				stringBuilder.Insert(0, "...");
 			}
 
 			return stringBuilder.ToString();
 		}
 
-		public static string FullName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		public static string FullName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			if (!me)
 				return NullComponentName;
-			return me.gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator) + componentNameSeparator + me.GetType().Name;
+			return me.gameObject.FullName(maxHierarchyLevels) + ComponentPathSeparator + me.GetType().Name;
 		}
 
-		public static string FullGameObjectName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char separator = '/')
+		public static string FullGameObjectName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			if (!me)
 				return NullGameObjectName; // Note that we are interested in gameobject name rather than component name. So we return NullGameObjectName instead of NullComponentName.
-			return me.gameObject.FullName(maxHierarchyLevels, separator);
+			return me.gameObject.FullName(maxHierarchyLevels);
 		}
 #endif
 
-		public static string FullObjectName(this object me, int maxHierarchyLevels = DefaultMaxHierarchyLevels, char gameObjectNameSeparator = '/', char componentNameSeparator = '|')
+		public static string FullObjectName(this object me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			switch (me)
 			{
 #if UNITY
 				case Component component:
-					return component.FullName(maxHierarchyLevels, gameObjectNameSeparator, componentNameSeparator);
+					return component.FullName(maxHierarchyLevels);
 				case GameObject gameObject:
-					return gameObject.FullName(maxHierarchyLevels, gameObjectNameSeparator);
+					return gameObject.FullName(maxHierarchyLevels);
 				case UnityEngine.Object unityObject:
 					return unityObject
 						? unityObject.ToString()
