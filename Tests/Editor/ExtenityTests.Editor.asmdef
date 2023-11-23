@@ -7,6 +7,7 @@
         "Extenity.Kernel",
         "Extenity.Testing",
         "ExtenityTests.Common",
+        "ZString",
         "Unity.Mathematics",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

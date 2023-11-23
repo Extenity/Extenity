@@ -1,7 +1,9 @@
 ﻿using Delegate = System.Delegate;
 #if UNITY
+using Cysharp.Text;
 using Component = UnityEngine.Component;
 using GameObject = UnityEngine.GameObject;
+using Transform = UnityEngine.Transform;
 #endif
 
 namespace Extenity.DataToolbox
@@ -55,25 +57,50 @@ namespace Extenity.DataToolbox
 
 		public static string FullNameOfTarget(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
-			return FullObjectName(del?.Target, maxHierarchyLevels);
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			del.FullNameOfTarget(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullNameOfTarget(this Delegate del, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
+			FullObjectName(del?.Target, ref stringBuilder, maxHierarchyLevels);
 		}
 
 		public static string FullNameOfTargetAndMethod(this Delegate del, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			del.FullNameOfTargetAndMethod(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullNameOfTargetAndMethod(this Delegate del, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
 			if (del != null)
 			{
 #if UNITY
 				if (del.IsUnityObjectTargetedAndDestroyed())
 				{
-					return NullDelegateNameWithMethod_Start + del.Method.Name + NullDelegateNameWithMethod_End;
+					stringBuilder.Append(NullDelegateNameWithMethod_Start);
+					stringBuilder.Append(del.Method.Name);
+					stringBuilder.Append(NullDelegateNameWithMethod_End);
 				}
 				else
 #endif
 				{
-					return del.Method.Name + MethodAndTargetSeparator + FullNameOfTarget(del, maxHierarchyLevels);
+					stringBuilder.Append(del.Method.Name);
+					stringBuilder.Append(MethodAndTargetSeparator);
+					FullNameOfTarget(del, ref stringBuilder, maxHierarchyLevels);
 				}
 			}
-			return NullDelegateName;
+			else
+			{
+				stringBuilder.Append(NullDelegateName);
+			}
 		}
 
 		#endregion
@@ -86,67 +113,147 @@ namespace Extenity.DataToolbox
 
 		public static string FullName(this GameObject me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			me.FullName(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullName(this GameObject me, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
 			if (!me || maxHierarchyLevels <= 0)
-				return NullGameObjectName;
+			{
+				stringBuilder.Append(NullGameObjectName);
+				return;
+			}
 
-			var stringBuilder = StringTools.SharedStringBuilder.Value;
-			StringTools.ClearSharedStringBuilder(stringBuilder);
+			var transform = me.transform;
+			_IterateFullNameParents(ref stringBuilder, transform, maxHierarchyLevels);
+		}
 
-			stringBuilder.Append(me.name);
-			var parent = me.transform.parent;
+		private static void _IterateFullNameParents(ref Utf16ValueStringBuilder stringBuilder, Transform transform, int maxHierarchyLevels)
+		{
 			maxHierarchyLevels--;
-			while (maxHierarchyLevels > 0 && parent)
+			if (maxHierarchyLevels >= 0)
 			{
-				stringBuilder.Insert(0, GameObjectPathSeparator);
-				stringBuilder.Insert(0, parent.name);
-				parent = parent.parent;
-				maxHierarchyLevels--;
+				var parent = transform.parent;
+				if (parent)
+				{
+					_IterateFullNameParents(ref stringBuilder, parent, maxHierarchyLevels);
+					stringBuilder.Append(GameObjectPathSeparator);
+					stringBuilder.Append(transform.name);
+				}
+				else
+				{
+					stringBuilder.Append(transform.name);
+				}
 			}
-
-			if (parent)
+			else
 			{
-				stringBuilder.Insert(0, GameObjectPathSeparator);
-				stringBuilder.Insert(0, "...");
+				stringBuilder.Append("...");
 			}
-
-			return stringBuilder.ToString();
 		}
 
 		public static string FullName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			me.FullName(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullName(this Component me, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
 			if (!me)
-				return NullComponentName;
-			return me.gameObject.FullName(maxHierarchyLevels) + ComponentPathSeparator + me.GetType().Name;
+			{
+				stringBuilder.Append(NullComponentName);
+				return;
+			}
+
+			me.gameObject.FullName(ref stringBuilder, maxHierarchyLevels);
+			stringBuilder.Append(ComponentPathSeparator);
+			stringBuilder.Append(me.GetType().Name);
 		}
 
 		public static string FullGameObjectName(this Component me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			me.FullGameObjectName(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullGameObjectName(this Component me, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
 			if (!me)
-				return NullGameObjectName; // Note that we are interested in gameobject name rather than component name. So we return NullGameObjectName instead of NullComponentName.
-			return me.gameObject.FullName(maxHierarchyLevels);
+			{
+				stringBuilder.Append(NullGameObjectName); // Note that we are interested in gameobject name rather than component name. So we return NullGameObjectName instead of NullComponentName.
+				return;
+			}
+
+			me.gameObject.FullName(ref stringBuilder, maxHierarchyLevels);
 		}
 #endif
 
 		public static string FullObjectName(this object me, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
 		{
+			var stringBuilder = ZString.CreateStringBuilder(true);
+			me.FullObjectName(ref stringBuilder, maxHierarchyLevels);
+			var result = stringBuilder.ToString();
+			stringBuilder.Dispose();
+			return result;
+		}
+
+		public static void FullObjectName(this object me, ref Utf16ValueStringBuilder stringBuilder, int maxHierarchyLevels = DefaultMaxHierarchyLevels)
+		{
 			switch (me)
 			{
 #if UNITY
 				case Component component:
-					return component.FullName(maxHierarchyLevels);
+				{
+					component.FullName(ref stringBuilder, maxHierarchyLevels);
+					return;
+				}
 				case GameObject gameObject:
-					return gameObject.FullName(maxHierarchyLevels);
+				{
+					gameObject.FullName(ref stringBuilder, maxHierarchyLevels);
+					return;
+				}
 				case UnityEngine.Object unityObject:
-					return unityObject
-						? unityObject.ToString()
-						: NullObjectName;
+				{
+					if (unityObject)
+					{
+						stringBuilder.Append(unityObject.ToString());
+					}
+					else
+					{
+						stringBuilder.Append(NullObjectName);
+					}
+
+					return;
+				}
 #endif
 				case Delegate asDelegate:
-					return asDelegate.FullNameOfTargetAndMethod();
+				{
+					asDelegate.FullNameOfTargetAndMethod(ref stringBuilder, maxHierarchyLevels);
+					return;
+				}
 				default:
-					return me != null
-						? me.ToString()
-						: NullName;
+				{
+					if (me != null)
+					{
+						stringBuilder.Append(me.ToString());
+					}
+					else
+					{
+						stringBuilder.Append(NullName);
+					}
+
+					return;
+				}
 			}
 		}
 

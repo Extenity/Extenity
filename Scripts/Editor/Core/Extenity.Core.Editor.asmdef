@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Extenity.Core",
+        "ZString",
         "Unity.Mathematics"
     ],
     "includePlatforms": [
