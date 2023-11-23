@@ -3,7 +3,9 @@ using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.TextureToolbox;
 using NUnit.Framework;
+#if UNITY
 using UnityEngine;
+#endif
 
 // ReSharper disable ExpressionIsAlwaysNull
 
