@@ -90,6 +90,55 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(NamingTools.NullDelegateNameWithMethod_Start + delegateAsDelegate.Method.Name + NamingTools.NullDelegateNameWithMethod_End, delegateAsDelegate.FullObjectName());
 		}
 #endif
+
+#if UNITY
+		[Test]
+		public void FullObjectName_SomeGameObjectPathExamples()
+		{
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName());
+			Assert.AreEqual("A/B", CreateGameObjectHierarchy("A", "B").FullObjectName());
+			Assert.AreEqual("A/B/C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName());
+			Assert.AreEqual("A/B/C/D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName());
+
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName(1));
+			Assert.AreEqual(".../B", CreateGameObjectHierarchy("A", "B").FullObjectName(1));
+			Assert.AreEqual(".../C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName(1));
+			Assert.AreEqual(".../D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName(1));
+
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName(2));
+			Assert.AreEqual("A/B", CreateGameObjectHierarchy("A", "B").FullObjectName(2));
+			Assert.AreEqual(".../B/C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName(2));
+			Assert.AreEqual(".../C/D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName(2));
+
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName(3));
+			Assert.AreEqual("A/B", CreateGameObjectHierarchy("A", "B").FullObjectName(3));
+			Assert.AreEqual("A/B/C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName(3));
+			Assert.AreEqual(".../B/C/D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName(3));
+
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName(4));
+			Assert.AreEqual("A/B", CreateGameObjectHierarchy("A", "B").FullObjectName(4));
+			Assert.AreEqual("A/B/C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName(4));
+			Assert.AreEqual("A/B/C/D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName(4));
+
+			Assert.AreEqual("A", CreateGameObjectHierarchy("A").FullObjectName(5));
+			Assert.AreEqual("A/B", CreateGameObjectHierarchy("A", "B").FullObjectName(5));
+			Assert.AreEqual("A/B/C", CreateGameObjectHierarchy("A", "B", "C").FullObjectName(5));
+			Assert.AreEqual("A/B/C/D", CreateGameObjectHierarchy("A", "B", "C", "D").FullObjectName(5));
+		}
+
+		private static GameObject CreateGameObjectHierarchy(params string[] gameObjects)
+		{
+			var parent = new GameObject(gameObjects[0]);
+			for (int i = 1; i < gameObjects.Length; i++)
+			{
+				var child = new GameObject(gameObjects[i]);
+				child.transform.SetParent(parent.transform);
+				parent = child;
+			}
+
+			return parent; // Return the last child. Don't mind the variable name 'parent' here, as it's actually the last child at this point.
+		}
+#endif
 	}
 
 }
