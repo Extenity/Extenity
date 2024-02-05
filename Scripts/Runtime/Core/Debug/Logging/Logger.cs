@@ -27,7 +27,7 @@ namespace Extenity
 
 		#region Initialization
 
-		public Logger(string category, ContextObject context = default)
+		public Logger(string category = null, ContextObject context = default)
 		{
 			Category = category;
 			Context = context;

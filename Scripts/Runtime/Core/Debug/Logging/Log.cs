@@ -186,27 +186,35 @@ namespace Extenity
 
 		private static string CreateMessageWithCategoryAndIndentation(string category, string message)
 		{
-			if (message == null)
-				return ZString.Concat("[", category, "] ", CurrentIndentationString, "[NullString]");
-			else
-				return ZString.Concat("[", category, "] ", CurrentIndentationString, message.NormalizeLineEndingsCRLF());
-		}
+			message = message == null
+				? "[NullString]"
+				: message.NormalizeLineEndingsCRLF();
 
+			return category == null
+				? message
+				: ZString.Concat("[", category, "] ", CurrentIndentationString, message);
+		}
 
 		private static string CreateMessageWithCategory(string category, string message)
 		{
-			if (message == null)
-				return ZString.Concat("[", category, "] ", "[NullString]");
-			else
-				return ZString.Concat("[", category, "] ", message.NormalizeLineEndingsCRLF());
+			message = message == null
+				? "[NullString]"
+				: message.NormalizeLineEndingsCRLF();
+
+			return category == null
+				? message
+				: ZString.Concat("[", category, "] ", message);
 		}
 
 		private static string CreateDetailedExceptionMessage(string category, Exception exception)
 		{
-			if (exception == null)
-				return ZString.Concat("[", category, "] ", "[NullException]");
-			else
-				return ZString.Concat("[", category, "] ", InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF());
+			var message = exception == null
+				? "[NullException]"
+				: InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
+
+			return category == null
+				? message
+				: ZString.Concat("[", category, "] ", message);
 		}
 
 		private static string InternalCreateDetailedExceptionMessage(Exception exception)
