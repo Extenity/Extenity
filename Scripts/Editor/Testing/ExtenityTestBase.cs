@@ -129,6 +129,20 @@ namespace Extenity.Testing
 		{
 			if (condition.StartsWith("#")) // Ignore lines that starts with comment '#' character
 				return;
+
+			// Ignore unimportant Unity logs
+			switch (type)
+			{
+				case LogType.Warning:
+				{
+					if (condition.StartsWith("Diagnostic switches are active and may impact performance or degrade your user experience", StringComparison.Ordinal))
+					{
+						return;
+					}
+					break;
+				}
+			}
+
 			Logs.Add((type, condition));
 		}
 
