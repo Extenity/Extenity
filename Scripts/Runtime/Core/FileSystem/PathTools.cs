@@ -131,6 +131,16 @@ namespace Extenity.FileSystemToolbox
 			if (string.IsNullOrEmpty(basePath)) throw new ArgumentNullException(nameof(basePath));
 			if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
 
+			// Get full path
+			if (basePath.IsRelativePath())
+			{
+				basePath = Path.GetFullPath(basePath);
+			}
+			if (filePath.IsRelativePath())
+			{
+				filePath = Path.GetFullPath(filePath);
+			}
+			
 			var fromUri = new Uri(basePath);
 			var toUri = new Uri(filePath);
 
