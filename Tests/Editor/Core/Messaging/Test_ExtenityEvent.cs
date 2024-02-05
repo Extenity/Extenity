@@ -1446,7 +1446,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(Test_ExtenityEvent));
+		private static readonly Logger Log = new();
 
 		#endregion
 	}

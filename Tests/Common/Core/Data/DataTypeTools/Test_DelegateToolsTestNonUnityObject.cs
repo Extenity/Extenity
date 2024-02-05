@@ -15,7 +15,7 @@ namespace ExtenityTests.DataToolbox
 
 		#region Log
 
-		private static readonly Logger Log = new("Test");
+		private static readonly Logger Log = new();
 
 		#endregion
 	}

@@ -118,7 +118,7 @@ namespace ExtenityTests.Build
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(Test_StashGitChanges));
+		private static readonly Logger Log = new();
 
 		#endregion
 	}

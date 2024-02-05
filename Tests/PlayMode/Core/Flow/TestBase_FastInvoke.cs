@@ -62,7 +62,7 @@ namespace ExtenityTests.FlowToolbox
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(Test_FastInvokeSubject));
+		private static readonly Logger Log = new();
 
 		[NonSerialized]
 		public bool IsLoggingFixedUpdate;

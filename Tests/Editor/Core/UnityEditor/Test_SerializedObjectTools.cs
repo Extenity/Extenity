@@ -971,7 +971,7 @@ namespace ExtenityTests.UnityEditorToolbox
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(Test_SerializedObjectTools));
+		private static readonly Logger Log = new();
 
 		#endregion
 	}

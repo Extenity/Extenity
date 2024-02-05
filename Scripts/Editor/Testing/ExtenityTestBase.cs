@@ -333,7 +333,7 @@ namespace Extenity.Testing
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(ExtenityTestBase));
+		private static readonly Logger Log = new();
 
 		#endregion
 	}

@@ -691,7 +691,7 @@ namespace ExtenityTests.ParallelToolbox.Editor
 
 		#region Log
 
-		private static readonly Logger Log = new(nameof(Test_EditorCoroutine));
+		private static readonly Logger Log = new();
 
 		#endregion
 	}
