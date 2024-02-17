@@ -491,6 +491,39 @@ namespace Extenity.MathToolbox
 			return ++current % module;
 		}
 
+		public static int DigitCount(this int value)
+		{
+			if (value < 0)
+				value = -value;
+			if (value < 10)
+				return 1;
+			if (value < 100)
+				return 2;
+			if (value < 1_000)
+				return 3;
+			if (value < 10_000)
+				return 4;
+			if (value < 100_000)
+				return 5;
+			if (value < 1_000_000)
+				return 6;
+			if (value < 10_000_000)
+				return 7;
+			if (value < 100_000_000)
+				return 8;
+			if (value < 1_000_000_000)
+				return 9;
+			return 10;
+		}
+
+		public static int DigitCountIncludingMinusCharacter(this int value)
+		{
+			if (value < 0)
+				return (-value).DigitCount() + 1;
+			else
+				return value.DigitCount();
+		}
+
 		#endregion
 
 		#region Transform
