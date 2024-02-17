@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Cysharp.Text;
+using Extenity.MathToolbox;
 #if UNITY
 using UnityEngine;
 using UnityEngine.Events;
@@ -464,6 +466,27 @@ namespace Extenity.DataToolbox
 			{
 				return name;
 			}
+			return type.Name;
+		}
+
+		public static string NameWithGenericArguments(this Type type)
+		{
+			if (type.IsGenericType)
+			{
+				var genericArguments = type.GetGenericArguments();
+				var stringBuilder = ZString.CreateStringBuilder();
+				stringBuilder.Append(type.Name, 0, type.Name.Length - (1 + genericArguments.Length.DigitCount())); // Remove the generic argument count from the end of the type name. Example: 'List`1' -> 'List' or 'Dictionary`2' -> 'Dictionary'
+				stringBuilder.Append('<');
+				stringBuilder.Append(genericArguments[0].NameWithGenericArguments());
+				for (var i = 1; i < genericArguments.Length; i++)
+				{
+					stringBuilder.Append(",");
+					stringBuilder.Append(genericArguments[i].NameWithGenericArguments());
+				}
+				stringBuilder.Append('>');
+				return stringBuilder.ToString();
+			}
+			
 			return type.Name;
 		}
 
