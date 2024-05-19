@@ -249,6 +249,58 @@ namespace ExtenityTests.DataToolbox
 
 		#endregion
 
+		#region String Operations - Process Tags
+
+		[Test]
+		public static void ProcessTags()
+		{
+			Test_ProcessTags("Lorem ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.NoTagsFound);
+			Test_ProcessTags("Lorem ipsum {dolor} sit amet.", new[] { "dolor" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("Lorem {ipsum} {dolor} sit amet.", new[] { "ipsum", "dolor" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("{Lorem} {ipsum} {dolor} {sit} {amet}.", new[] { "Lorem", "ipsum", "dolor", "sit", "amet" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("Lorem {ipsum  dolor} sit amet.", new[] { "ipsum dolor" }, StringTools.TagProcessResult.Succeeded);
+			
+			Test_ProcessTags("Lorem {ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("{Lorem} {ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("{Lorem} ipsum} dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("Lorem {ipsum {dolor} sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} {dolor} sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} {dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+
+			Test_ProcessTags("Lorem {{ipsum}} dolor sit amet.", new string[0], StringTools.TagProcessResult.NestedTagBraces);
+		}
+
+		private class TestTagProcessor : StringTools.ITagProcessor
+		{
+			public List<string> Tags = new List<string>();
+			
+			public void AppendText(ReadOnlySpan<char> partOfText)
+			{
+				// Ignored.
+			}
+
+			public void AppendTag(ReadOnlySpan<char> tag)
+			{
+				Tags.Add(tag.ToString());
+			}
+		}
+		
+		private static void Test_ProcessTags(string text, string[] expectedTags, StringTools.TagProcessResult expectedResult)
+		{
+			var processor = new TestTagProcessor();
+			var actualResult = text.ProcessTags('{', '}', processor);
+			Assert.AreEqual(expectedResult, actualResult, "ProcessTags Result");
+
+			Assert.AreEqual(expectedTags.Length, processor.Tags.Count, "Tag count");
+			for (int i = 0; i < expectedTags.Length; i++)
+			{
+				Assert.AreEqual(expectedTags[i], processor.Tags[i], "Tag index: " + i);
+			}
+		}
+
+		#endregion
+        
 		#region Number At The End
 
 		[Test]
