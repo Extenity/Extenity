@@ -562,12 +562,6 @@ namespace Extenity.DataToolbox
 			MismatchingTagBraces = 4,
 		}
 
-		[Obsolete("Use ProcessTags instead.")]
-		public static TagProcessResult ReplaceTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
-		{
-			return ProcessTags(text, tagStartCharacter, tagEndCharacter, processor);
-		}
-
 		public static TagProcessResult ProcessTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
 		{
 			if (string.IsNullOrEmpty(text))
