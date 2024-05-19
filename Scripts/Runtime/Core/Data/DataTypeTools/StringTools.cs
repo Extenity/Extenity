@@ -560,6 +560,7 @@ namespace Extenity.DataToolbox
 			NoTagsFound = 2,
 			EmptyInputText = 3,
 			MismatchingTagBraces = 4,
+			NestedTagBraces = 5,
 		}
 
 		public static TagProcessResult ProcessTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
