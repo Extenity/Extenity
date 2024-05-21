@@ -557,49 +557,77 @@ namespace Extenity.DataToolbox
 		public enum TagProcessResult
 		{
 			Succeeded = 1,
-			NoTagsFound = 2,
-			EmptyInputText = 3,
-			MismatchingTagBraces = 4,
-			NestedTagBraces = 5,
+			SucceededButFoundNoTags = 2,
+			SucceededButEmptyInputText = 3,
+			FailedDueToMismatchingTagBraces = 4,
+			FailedDueToNestedTagBraces = 5,
+			FailedDueToEmptyTagBraces = 6,
 		}
 
 		public static TagProcessResult ProcessTags(this string text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
 		{
-			if (string.IsNullOrEmpty(text))
+			return text.AsSpan().ProcessTags(tagStartCharacter, tagEndCharacter, processor);
+		}
+
+		public static TagProcessResult ProcessTags(this ReadOnlySpan<char> text, char tagStartCharacter, char tagEndCharacter, ITagProcessor processor)
+		{
+			if (text.Length == 0)
 			{
-				return TagProcessResult.EmptyInputText;
+				return TagProcessResult.SucceededButEmptyInputText;
 			}
 
-			// Check for mismatching start and end tags.
-			if (!text.CountTags(tagStartCharacter, tagEndCharacter, out int tagCount))
+			var lastTagStartIndex = -1;
+			var lastTagEndIndex = -1;
+
+			for (int i = 0; i < text.Length; i++)
 			{
-				return TagProcessResult.MismatchingTagBraces;
+				if (text[i] == tagStartCharacter)
+				{
+					if (lastTagStartIndex >= 0)
+					{
+						return TagProcessResult.FailedDueToNestedTagBraces;
+					}
+					lastTagStartIndex = i;
+					if (lastTagEndIndex < 0)
+					{
+						processor.AppendText(text.Slice(0, i));
+					}
+					else
+					{
+						processor.AppendText(text.Slice(lastTagEndIndex + 1, i - lastTagEndIndex - 1));
+					}
+				}
+				else if (text[i] == tagEndCharacter)
+				{
+					if (lastTagStartIndex < 0)
+					{
+						return TagProcessResult.FailedDueToMismatchingTagBraces;
+					}
+					if (i - lastTagStartIndex == 1)
+					{
+						return TagProcessResult.FailedDueToEmptyTagBraces;
+					}
+					lastTagEndIndex   = i;
+					processor.AppendTag(text.Slice(lastTagStartIndex + 1, i - lastTagStartIndex - 1));
+					lastTagStartIndex = -1;
+				}
 			}
 
-			if (tagCount == 0)
+			if (lastTagStartIndex >= 0)
 			{
-				processor.AppendText(text.AsSpan());
-				return TagProcessResult.NoTagsFound;
+				return TagProcessResult.FailedDueToMismatchingTagBraces;
 			}
 
-			int indexAfterTheEndTag = 0;
-			for (int iTag = 0; iTag < tagCount; iTag++)
+			if (lastTagEndIndex < 0)
 			{
-				int startTagIndex = text.IndexOf(tagStartCharacter, indexAfterTheEndTag);
-				int indexAfterTheStartTag = startTagIndex + 1;
-
-				// Append the text to the left of the tag
-				processor.AppendText(text.AsSpan(indexAfterTheEndTag, startTagIndex - indexAfterTheEndTag));
-
-				var endTagIndex = text.IndexOf(tagEndCharacter, indexAfterTheStartTag);
-				indexAfterTheEndTag = endTagIndex + 1;
-
-				// Append the tag
-				processor.AppendTag(text.AsSpan(indexAfterTheStartTag, endTagIndex - indexAfterTheStartTag));
+				processor.AppendText(text);
+				return TagProcessResult.SucceededButFoundNoTags;
+			}
+			else
+			{
+				processor.AppendText(text.Slice(lastTagEndIndex + 1));
 			}
 
-			// Append the text to the right of the tag
-			processor.AppendText(text.AsSpan(indexAfterTheEndTag, text.Length - indexAfterTheEndTag));
 			return TagProcessResult.Succeeded;
 		}
 

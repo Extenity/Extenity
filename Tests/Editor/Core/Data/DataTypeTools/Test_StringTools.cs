@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Extenity;
 using Extenity.DataToolbox;
 using Extenity.Testing;
@@ -254,35 +255,87 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public static void ProcessTags()
 		{
-			Test_ProcessTags("Lorem ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.NoTagsFound);
+			var empty = new string[0];
+
+			Test_ProcessTags(null, empty, StringTools.TagProcessResult.SucceededButEmptyInputText);
+			Test_ProcessTags("", empty, StringTools.TagProcessResult.SucceededButEmptyInputText);
+
+			Test_ProcessTags(" ", empty, StringTools.TagProcessResult.SucceededButFoundNoTags);
+			Test_ProcessTags("Lorem ipsum dolor sit amet.", empty, StringTools.TagProcessResult.SucceededButFoundNoTags);
+
 			Test_ProcessTags("Lorem ipsum {dolor} sit amet.", new[] { "dolor" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("{Lorem} ipsum dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("Lorem ipsum dolor sit {amet}", new[] { "amet" }, StringTools.TagProcessResult.Succeeded);
 			Test_ProcessTags("Lorem {ipsum} {dolor} sit amet.", new[] { "ipsum", "dolor" }, StringTools.TagProcessResult.Succeeded);
 			Test_ProcessTags("{Lorem} {ipsum} {dolor} {sit} {amet}.", new[] { "Lorem", "ipsum", "dolor", "sit", "amet" }, StringTools.TagProcessResult.Succeeded);
-			Test_ProcessTags("Lorem {ipsum  dolor} sit amet.", new[] { "ipsum dolor" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("Lorem {ipsum dolor} sit amet.", new[] { "ipsum dolor" }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("{Lorem ipsum dolor sit amet.}", new[] { "Lorem ipsum dolor sit amet." }, StringTools.TagProcessResult.Succeeded);
+			Test_ProcessTags("Lorem{ }ipsum dolor sit amet.", new[] { " " }, StringTools.TagProcessResult.Succeeded);
 			
-			Test_ProcessTags("Lorem {ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("Lorem ipsum} dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("{Lorem} {ipsum dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("{Lorem} ipsum} dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("Lorem {ipsum {dolor} sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("Lorem ipsum} {dolor} sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
-			Test_ProcessTags("Lorem ipsum} {dolor sit amet.", new string[0], StringTools.TagProcessResult.MismatchingTagBraces);
+			Test_ProcessTags("Lorem {}ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
+			Test_ProcessTags("{}Lorem ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
+			Test_ProcessTags("Lorem ipsum dolor sit amet.{}", empty, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
+			Test_ProcessTags("{Lorem} {}ipsum dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
+			Test_ProcessTags("{}Lorem {ipsum} dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
+			Test_ProcessTags("Lorem ipsum {dolor} sit amet.{}", new[] { "dolor" }, StringTools.TagProcessResult.FailedDueToEmptyTagBraces);
 
-			Test_ProcessTags("Lorem {{ipsum}} dolor sit amet.", new string[0], StringTools.TagProcessResult.NestedTagBraces);
+			Test_ProcessTags("Lorem {ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{Lorem ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum dolor sit amet.{", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("}Lorem ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum dolor sit amet.}", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+
+			Test_ProcessTags("{Lorem} {ipsum dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{{Lorem} {ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("{Lorem}} {ipsum dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{Lorem} {{ipsum dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+
+			Test_ProcessTags("{Lorem} ipsum} dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{{Lorem} ipsum} dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("{Lorem}} ipsum} dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{Lorem} ipsum}} dolor sit amet.", new[] { "Lorem" }, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+
+			Test_ProcessTags("Lorem {ipsum {dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem {{ipsum {dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem {ipsum {{dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem {ipsum {dolor}} sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+
+			Test_ProcessTags("Lorem ipsum} {dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum}} {dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} {{dolor} sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} {dolor}} sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+
+			Test_ProcessTags("Lorem ipsum} {dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum}} {dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("Lorem ipsum} {{dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+
+			Test_ProcessTags("Lorem {{ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem ipsum}} dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+			Test_ProcessTags("{{Lorem ipsum dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem ipsum dolor sit amet.}}", empty, StringTools.TagProcessResult.FailedDueToMismatchingTagBraces);
+
+			Test_ProcessTags("Lorem {{ipsum}} dolor sit amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem {{ipsum}} dolor {sit} amet.", empty, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
+			Test_ProcessTags("Lorem {ipsum} dolor {{sit}} amet.", new[] { "ipsum" }, StringTools.TagProcessResult.FailedDueToNestedTagBraces);
 		}
 
 		private class TestTagProcessor : StringTools.ITagProcessor
 		{
-			public List<string> Tags = new List<string>();
+			public List<string> Tags = new(5);
+			public StringBuilder RebuiltText = new(50);
 			
 			public void AppendText(ReadOnlySpan<char> partOfText)
 			{
-				// Ignored.
+				RebuiltText.Append(partOfText);
 			}
 
 			public void AppendTag(ReadOnlySpan<char> tag)
 			{
 				Tags.Add(tag.ToString());
+				RebuiltText.Append('{');
+				RebuiltText.Append(tag);
+				RebuiltText.Append('}');
 			}
 		}
 		
@@ -296,6 +349,24 @@ namespace ExtenityTests.DataToolbox
 			for (int i = 0; i < expectedTags.Length; i++)
 			{
 				Assert.AreEqual(expectedTags[i], processor.Tags[i], "Tag index: " + i);
+			}
+
+			switch (actualResult)
+			{
+				case StringTools.TagProcessResult.Succeeded:
+				case StringTools.TagProcessResult.SucceededButFoundNoTags:
+				case StringTools.TagProcessResult.SucceededButEmptyInputText:
+					Assert.AreEqual(text.ToEmptyIfNull(), processor.RebuiltText.ToString());
+					break;
+				case StringTools.TagProcessResult.FailedDueToMismatchingTagBraces:
+				case StringTools.TagProcessResult.FailedDueToNestedTagBraces:
+				case StringTools.TagProcessResult.FailedDueToEmptyTagBraces:
+					// Let's ensure that the process was stopped in the middle.
+					// So the rebuilt text should not be equal to the original text.
+					Assert.AreNotEqual(text.ToEmptyIfNull(), processor.RebuiltText.ToString());
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
