@@ -208,25 +208,65 @@ namespace Extenity
 
 		private static string CreateDetailedExceptionMessage(string category, Exception exception)
 		{
-			var message = exception == null
-				? "[NullException]"
-				: InternalCreateDetailedExceptionMessage(exception).NormalizeLineEndingsCRLF();
+			var stringBuilder = ZString.CreateStringBuilder();
 
-			return category == null
-				? message
-				: ZString.Concat("[", category, "] ", message);
+			if (category != null)
+			{
+				stringBuilder.Append('[');
+				stringBuilder.Append(category);
+				stringBuilder.Append("] ");
+			}
+
+			if (exception == null)
+			{
+				stringBuilder.Append("[NullException]");
+			}
+			else
+			{
+				InternalCreateDetailedExceptionMessage(ref stringBuilder, exception, 0);
+			}
+
+			return stringBuilder.ToString();
 		}
 
-		private static string InternalCreateDetailedExceptionMessage(Exception exception)
+		private static void InternalCreateDetailedExceptionMessage(ref Utf16ValueStringBuilder stringBuilder, Exception exception, int depth)
 		{
-			// TODO-Log: Use ZString
-			var message = exception.ToString();
-			message += "\r\nInnerException: " + exception.InnerException; // TODO-Log: This should be recursive
-			message += "\r\nMessage: " + exception.Message;
-			message += "\r\nSource: " + exception.Source;
-			message += "\r\nStackTrace: " + exception.StackTrace;
-			message += "\r\nTargetSite: " + exception.TargetSite;
-			return message;
+			stringBuilder.Append(exception.GetType().Name);
+			stringBuilder.Append(": ");
+			stringBuilder.Append(exception.Message);
+			stringBuilder.AppendLine();
+
+			stringBuilder.Append("Source: ");
+			stringBuilder.Append(exception.Source);
+			stringBuilder.AppendLine();
+
+			stringBuilder.Append("TargetSite: ");
+			stringBuilder.Append(exception.TargetSite);
+			stringBuilder.AppendLine();
+
+			stringBuilder.Append("StackTrace: ");
+			var stackTrace = exception.StackTrace;
+			if (!string.IsNullOrEmpty(stackTrace))
+			{
+				stringBuilder.AppendLine();
+				stringBuilder.Append(stackTrace);
+			}
+			stringBuilder.AppendLine(); // This line break also separates Unity's appended stacktrace lines with an empty line.
+
+			if (exception.InnerException != null)
+			{
+				stringBuilder.Append("--->");
+				stringBuilder.AppendLine();
+				stringBuilder.Append("InnerException: ");
+				if (depth > 20)
+				{
+					stringBuilder.Append("[Stopped due to too many inner exceptions]");
+				}
+				else
+				{
+					InternalCreateDetailedExceptionMessage(ref stringBuilder, exception.InnerException, depth + 1);
+				}
+			}
 		}
 
 		#endregion
