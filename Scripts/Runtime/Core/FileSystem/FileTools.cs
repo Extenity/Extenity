@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security;
 using System.Threading;
@@ -19,55 +20,91 @@ namespace Extenity.FileSystemToolbox
 		#region String Operations - File Size
 
 		/// <summary>
-		/// Returns the human-readable file size for an arbitrary, 64-bit file size 
-		/// The default format is "0.### XB", e.g. "4.2 KB" or "1.434 GB"
-		/// Source: http://www.somacon.com/p576.php
+		/// Formats long as a human-readable file size string, with
+		/// up to 1 digit after the decimal point and
+		/// up to 3 digits before the decimal point.
+		/// <code>
+		/// 0 B
+		/// 1 B
+		/// 35 B
+		/// 352 B
+		/// 1 KB (Kilobyte, 1000 bytes, not 1024 bytes, not KiB)
+		/// 1.5 KB
+		/// 352 KB
+		/// 352.5 KB
+		/// 5 MB (Megabyte)
+		/// 5 GB (Gigabyte)
+		/// 5 TB (Terabyte)
+		/// 5 PB (Petabyte)
+		/// 5 EB (Exabyte)
+		/// 9.2 EB (Maximum value of long)
+		/// -5 B (Negative values are also supported)
+		/// -555.5 KB
+		/// </code>
 		/// </summary>
+		/// <remarks>
+		/// <para>This formatting is not 1024 based. It's 1000 based. Meaning 1 KB is 1000 bytes, not 1024 bytes.</para>
+		/// <para>The output string length is in between 3 and 8 characters.</para>
+		/// Min length example: "3 B".
+		/// Max length example: "333.3 GB".
+		/// </remarks>
 		public static string ToFileSizeString(this long fileSize)
 		{
-			// Get absolute value
-			long absolute_i = (fileSize < 0 ? -fileSize : fileSize);
-			// Determine the suffix and readable value
-			string suffix;
-			double readable;
-			if (absolute_i >= 0x1000000000000000) // Exabyte
+			// ReSharper disable PossibleLossOfFraction
+
+			long absoluteFileSize = fileSize < 0
+				? -fileSize
+				: fileSize;
+
+			if (absoluteFileSize < 1_000)
 			{
-				suffix = "EB";
-				readable = (fileSize >> 50);
+				// Byte
+
+				// Special case for long.MinValue, which won't be converted to positive with "-fileSize" operation above.
+				if (absoluteFileSize == long.MinValue)
+				{
+					return "-" + long.MaxValue.ToFileSizeString();
+				}
+
+				return fileSize.ToString("0 B", CultureInfo.InvariantCulture);
 			}
-			else if (absolute_i >= 0x4000000000000) // Petabyte
+
+			if (absoluteFileSize < 1_000_000)
 			{
-				suffix = "PB";
-				readable = (fileSize >> 40);
+				// Kilobyte
+				return ((fileSize / 1_00L) / 10d).ToString("0.# KB", CultureInfo.InvariantCulture);
 			}
-			else if (absolute_i >= 0x10000000000) // Terabyte
+
+			if (absoluteFileSize < 1_000_000_000)
 			{
-				suffix = "TB";
-				readable = (fileSize >> 30);
+				// Megabyte
+				return ((fileSize / 1_000_00L) / 10d).ToString("0.# MB", CultureInfo.InvariantCulture);
 			}
-			else if (absolute_i >= 0x40000000) // Gigabyte
+
+			if (absoluteFileSize < 1_000_000_000_000)
 			{
-				suffix = "GB";
-				readable = (fileSize >> 20);
+				// Gigabyte
+				return ((fileSize / 1_000_000_00L) / 10d).ToString("0.# GB", CultureInfo.InvariantCulture);
 			}
-			else if (absolute_i >= 0x100000) // Megabyte
+
+			if (absoluteFileSize < 1_000_000_000_000_000)
 			{
-				suffix = "MB";
-				readable = (fileSize >> 10);
+				// Terabyte
+				return ((fileSize / 1_000_000_000_00L) / 10d).ToString("0.# TB", CultureInfo.InvariantCulture);
 			}
-			else if (absolute_i >= 0x400) // Kilobyte
+
+			if (absoluteFileSize < 1_000_000_000_000_000_000)
 			{
-				suffix = "KB";
-				readable = fileSize;
+				// Petabyte
+				return ((fileSize / 1_000_000_000_000_00L) / 10d).ToString("0.# PB", CultureInfo.InvariantCulture);
 			}
-			else
+			else // Max value of long is 9.2 EB. So we don't need to check for higher values.
 			{
-				return fileSize.ToString("0 B"); // Byte
+				// Exabyte
+				return ((fileSize / 1_000_000_000_000_000_00L) / 10d).ToString("0.# EB", CultureInfo.InvariantCulture);
 			}
-			// Divide by 1024 to get fractional value
-			readable = (readable / 1024);
-			// Return formatted number with suffix
-			return readable.ToString("0.# ") + suffix;
+
+			// ReSharper restore PossibleLossOfFraction
 		}
 
 		#endregion
