@@ -8,6 +8,7 @@ using Extenity.DataToolbox;
 using Action = System.Action;
 using Delegate = System.Delegate;
 using Exception = System.Exception;
+using NotImplementedException = System.NotImplementedException;
 using NotSupportedException = System.NotSupportedException;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
@@ -409,8 +410,8 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.Fatal("Invoked event while an invocation is ongoing.");
-				return;
+				// See 11861024.
+				throw new NotSupportedException("Invoked event while an invocation is ongoing.");
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
@@ -459,8 +460,8 @@ namespace Extenity.MessagingToolbox
 		{
 			if (IsInvoking)
 			{
-				Log.Fatal("Invoked event while an invocation is ongoing.");
-				return;
+				// See 11861024.
+				throw new NotSupportedException("Invoked event while an invocation is ongoing.");
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
@@ -492,6 +493,24 @@ namespace Extenity.MessagingToolbox
 						InvokingCallback = listener.Callback;
 						callback();
 						InvokingCallback = null;
+					}
+					// Let these exceptions pass through. It means there is an unexpected developer error,
+					// rather than an expected runtime error. The developer must be alerted about this.
+					// ExtenityEvent does not assume such exceptions are 'Safe' to ignore in InvokeSafe.
+					// See 11861024.
+					catch (NotImplementedException)
+					{
+						IsInvoking = false;
+						InvokeIndex = -1;
+						InvokingCallback = null;
+						throw;
+					}
+					catch (NotSupportedException)
+					{
+						IsInvoking = false;
+						InvokeIndex = -1;
+						InvokingCallback = null;
+						throw;
 					}
 					catch (Exception exception)
 					{

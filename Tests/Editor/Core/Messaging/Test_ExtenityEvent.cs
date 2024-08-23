@@ -187,26 +187,26 @@ namespace ExtenityTests.MessagingToolbox
 		[Test]
 		public void NestedEventsAreNotAllowed()
 		{
-			TestEvent.AddListener(Invoke);
-			Invoke();
-			AssertExpectLog((LogType.Exception, "Exception: Invoked event while an invocation is ongoing."));
+			// Do an InvokeSafe in callback
+			TestEvent.AddListener(TestEvent.InvokeSafe);
+			Assert.That(Invoke, Throws.Exception.TypeOf<NotSupportedException>()
+			                          .With.Message.EqualTo("Invoked event while an invocation is ongoing."));
+
+			TestEvent.RemoveListener(TestEvent.InvokeSafe);
+
+			// Do the same with InvokeUnsafe
+			TestEvent.AddListener(TestEvent.InvokeUnsafe);
+			Assert.That(Invoke, Throws.Exception.TypeOf<NotSupportedException>()
+			                          .With.Message.EqualTo("Invoked event while an invocation is ongoing."));
 		}
 
-		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
 		[Test]
-		public void NestedAddListenerIsNotAllowed_Safe()
+		public void NestedAddListenerIsNotAllowed()
 		{
-			TestEvent.AddListener(() => TestEvent.AddListener(Callback));
-			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Exception, "NotSupportedException: Adding listener while invoking is not supported."));
-		}
-
-		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
-		[Test]
-		public void NestedAddListenerIsNotAllowed_Unsafe()
-		{
-			TestEvent.AddListener(() => TestEvent.AddListener(Callback));
-			Assert.Throws<NotSupportedException>(() => TestEvent.InvokeUnsafe());
+			// Add a listener in callback
+			TestEvent.AddListener(() => TestEvent.AddListener(JustSomeIrrelevantCallback));
+			Assert.That(Invoke, Throws.Exception.TypeOf<NotSupportedException>()
+			                          .With.Message.EqualTo("Adding listener while invoking is not supported."));
 		}
 
 		#endregion
@@ -1388,6 +1388,8 @@ namespace ExtenityTests.MessagingToolbox
 		#region General
 
 		// @formatter:off
+		private void JustSomeIrrelevantCallback() { }
+
 		private void Callback()   { Log.Info("Called callback.");    }
 		private void CallbackA()  { Log.Info("Called callback A.");  }
 		private void CallbackB()  { Log.Info("Called callback B.");  }
