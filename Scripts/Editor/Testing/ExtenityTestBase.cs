@@ -159,7 +159,7 @@ namespace Extenity.Testing
 			foreach (var expectedExceptionLog in expectedLogs.Where(entry => entry.Type == LogType.Exception))
 			{
 				// Tell Unity we are expecting the exception. Unity checks the logs if an exception was logged in
-				// test. We are handling the exception log in ouR own way, so there is no need for Unity to jump into
+				// test. We are handling the exception log in our own way, so there is no need for Unity to jump into
 				// conclusions.
 				LogAssert.Expect(LogType.Exception, expectedExceptionLog.Message);
 			}
