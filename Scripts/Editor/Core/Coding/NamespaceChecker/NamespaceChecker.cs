@@ -25,6 +25,7 @@ namespace Extenity.CodingToolbox.Editor
 							Log.Error($"Assembly '{assembly}' should not have more than one '{nameof(EnsuredNamespaceAttribute)}'.");
 							continue;
 						}
+
 						var namespaceShouldStartWith = attributes[0].NamespaceShouldStartWith;
 
 						var ignoreAttributes = assembly.GetCustomAttributes<IgnoreEnsuredNamespaceAttribute>();
@@ -94,6 +95,7 @@ namespace Extenity.CodingToolbox.Editor
 										}
 									}
 								}
+
 								if (!shouldIgnore)
 								{
 									Log.Error($"Namespace of type '{name}' should start with '{checkedAgainst ?? "[NA]"}' instead of '{(typeNamespaceIsEmpty ? "[NA]" : typeNamespace)}'.");
