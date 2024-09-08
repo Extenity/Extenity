@@ -126,7 +126,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 	{
 		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new[]
 		{
-			DefineSymbolAdjustmentEntry.Define("UNITY"),
+			DefineSymbolAdjustmentEntry.Define("UNITY"), // Hopefully Unity will implement this define symbol in the future.
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.audio", "DisableUnityAudio"),
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics", "DisableUnityPhysics"),
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics2d", "DisableUnityPhysics2D"),
