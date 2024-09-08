@@ -1,3 +1,5 @@
+#if ExtenitySceneSwitcherOnPlay
+
 using Extenity.ApplicationToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
@@ -195,3 +197,5 @@ namespace Extenity.UnityEditorToolbox.Editor
 	}
 
 }
+
+#endif
