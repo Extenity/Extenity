@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Extenity.ProfilingToolbox;
 using UnityEditor.Callbacks;
 
@@ -10,7 +11,13 @@ namespace Extenity.CodingToolbox.Editor
 	public static class NamespaceChecker
 	{
 		[DidReloadScripts]
-		public static void EnsureAllNamespacesInAllAssemblies()
+		private static void RunEnsureAllNamespacesInAllAssemblies()
+		{
+			// Get a thread from the thread pool to avoid blocking the main thread.
+			ThreadPool.QueueUserWorkItem(EnsureAllNamespacesInAllAssemblies);
+		}
+
+		public static void EnsureAllNamespacesInAllAssemblies(object _)
 		{
 			using (new QuickProfilerStopwatch(Log, nameof(NamespaceChecker), 1f))
 			{
