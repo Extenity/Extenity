@@ -10,6 +10,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 	public static class AsmdefContainmentChecker
 	{
+		// This is a lightweight tool to check if there are any types that are not covered by Assembly Definitions.
+		// It should not cause any performance issues in Editor.
 		[InitializeOnLoadMethod]
 		public static void Check()
 		{
