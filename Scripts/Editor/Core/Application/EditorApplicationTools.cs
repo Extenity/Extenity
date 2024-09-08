@@ -131,6 +131,7 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Sync And Open C# Project
 
+		/* Disabled due to not being needed anymore. Seems like Unity fixed synchronization issues. But keeping it here for future reference.
 		public static void SyncAndOpenSolution()
 		{
 			var type = typeof(EditorApplication).Assembly.GetType("UnityEditor.CodeEditorProjectSync", true, true);
@@ -162,6 +163,7 @@ namespace Extenity.ApplicationToolbox.Editor
 			// Call Unity's regular 'Open C# Project' method.
 			SyncAndOpenSolution();
 		}
+		*/
 
 		#endregion
 
