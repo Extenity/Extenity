@@ -95,6 +95,57 @@ namespace ExtenityTests.DataToolbox
 			AssertList(list, -100, -100, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 100, 100);
 		}
 
+		[Test]
+		public void List_AddSortedUnique()
+		{
+			List<int> list = null;
+			Assert.Throws<NullReferenceException>(() => list.AddSorted(123));
+
+			list = new List<int>();
+
+			list.AddSortedUnique(3);
+			AssertList(list, 3);
+
+			list.AddSortedUnique(1);
+			AssertList(list, 1, 3);
+
+			list.AddSortedUnique(2);
+			AssertList(list, 1, 2, 3);
+
+			list.AddSortedUnique(4);
+			AssertList(list, 1, 2, 3, 4);
+
+			list.AddSortedUnique(-100);
+			AssertList(list, -100, 1, 2, 3, 4);
+
+			list.AddSortedUnique(100);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(2);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(2);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(1);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(1);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(2);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(3);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(-100);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSortedUnique(100);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+		}
+
 		#endregion
 
 		#region Utilities

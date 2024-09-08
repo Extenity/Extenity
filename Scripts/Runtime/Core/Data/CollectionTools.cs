@@ -230,6 +230,16 @@ namespace Extenity.DataToolbox
 			list.Insert(index, item);
 		}
 
+		public static void AddSortedUnique<T>(this List<T> list, in T item) where T : IComparable<T>
+		{
+			var index = list.BinarySearch(item);
+			if (index < 0)
+			{
+				index = ~index;
+				list.Insert(index, item);
+			}
+		}
+		
 		public static void RemoveAtStart<T>(this List<T> list, int count)
 		{
 			list.RemoveRange(0, count);
