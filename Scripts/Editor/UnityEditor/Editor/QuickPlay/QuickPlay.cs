@@ -1,5 +1,5 @@
 ﻿// QuickPlay shortcuts are not supported outside of Windows environment.
-#if UNITY_EDITOR_WIN
+#if ExtenityQuickPlay && UNITY_EDITOR_WIN
 
 using System;
 using System.Linq;
