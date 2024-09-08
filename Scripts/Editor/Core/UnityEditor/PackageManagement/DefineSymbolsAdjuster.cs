@@ -96,6 +96,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#endregion
 	}
 
+	/* Disabled to reduce stress on Editor operations.
 	public class DefineSymbolAdjusterAssetPostprocessor : AssetPostprocessor
 	{
 		private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
@@ -119,6 +120,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 	}
+	*/
 
 	#endregion
 
@@ -211,7 +213,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Adjust Define Symbols For Installed Modules
 
+		/* Disabled to reduce stress on Editor operations.
 		[InitializeOnLoadMethod]
+		*/
+		[MenuItem(ExtenityMenu.PackageManagerTools + "Adjust Define Symbols for installed modules", priority = ExtenityMenu.PackageManagerToolsPriorityEnd)]
 		public static void AdjustDefineSymbolsForInstalledModules()
 		{
 			using (new QuickProfilerStopwatch(Log, nameof(DefineSymbolsAdjuster), 1f))
