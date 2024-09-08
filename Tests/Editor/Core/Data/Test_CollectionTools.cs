@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using NUnit.Framework;
@@ -43,6 +44,57 @@ namespace ExtenityTests.DataToolbox
 			AssertArray(array, 21, 42, 84);
 		}
 
+		[Test]
+		public void List_AddSorted()
+		{
+			List<int> list = null;
+			Assert.Throws<NullReferenceException>(() => list.AddSorted(123));
+
+			list = new List<int>();
+
+			list.AddSorted(3);
+			AssertList(list, 3);
+
+			list.AddSorted(1);
+			AssertList(list, 1, 3);
+
+			list.AddSorted(2);
+			AssertList(list, 1, 2, 3);
+
+			list.AddSorted(4);
+			AssertList(list, 1, 2, 3, 4);
+
+			list.AddSorted(-100);
+			AssertList(list, -100, 1, 2, 3, 4);
+
+			list.AddSorted(100);
+			AssertList(list, -100, 1, 2, 3, 4, 100);
+
+			list.AddSorted(2);
+			AssertList(list, -100, 1, 2, 2, 3, 4, 100);
+
+			list.AddSorted(2);
+			AssertList(list, -100, 1, 2, 2, 2, 3, 4, 100);
+
+			list.AddSorted(1);
+			AssertList(list, -100, 1, 1, 2, 2, 2, 3, 4, 100);
+
+			list.AddSorted(1);
+			AssertList(list, -100, 1, 1, 1, 2, 2, 2, 3, 4, 100);
+
+			list.AddSorted(2);
+			AssertList(list, -100, 1, 1, 1, 2, 2, 2, 2, 3, 4, 100);
+
+			list.AddSorted(3);
+			AssertList(list, -100, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 100);
+
+			list.AddSorted(-100);
+			AssertList(list, -100, -100, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 100);
+
+			list.AddSorted(100);
+			AssertList(list, -100, -100, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 100, 100);
+		}
+
 		#endregion
 
 		#region Utilities
@@ -53,6 +105,15 @@ namespace ExtenityTests.DataToolbox
 			for (int i = 0; i < expected.Length; i++)
 			{
 				Assert.AreEqual(expected[i], array[i]);
+			}
+		}
+
+		private static void AssertList<T>(List<T> list, params int[] expected)
+		{
+			Assert.AreEqual(expected.Length, list.Count);
+			for (int i = 0; i < expected.Length; i++)
+			{
+				Assert.AreEqual(expected[i], list[i]);
 			}
 		}
 
