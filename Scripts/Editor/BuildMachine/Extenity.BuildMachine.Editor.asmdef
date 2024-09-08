@@ -16,7 +16,9 @@
         "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "ExtenityBuildMachine"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
