@@ -1,3 +1,5 @@
+#if ExtenityReferenceFinder
+
 using Extenity.ReflectionToolbox;
 using UnityEditor;
 using UnityEngine.UI;
@@ -23,3 +25,5 @@ namespace Extenity.UIToolbox.Editor
 	}
 
 }
+
+#endif

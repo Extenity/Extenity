@@ -1,3 +1,4 @@
+#if ExtenityReferenceFinder
 #if ExtenityAudio
 
 using Extenity.ReflectionToolbox;
@@ -21,4 +22,5 @@ namespace Extenity.Audio.Editor
 
 }
 
+#endif
 #endif

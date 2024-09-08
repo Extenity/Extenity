@@ -1288,6 +1288,9 @@ namespace Extenity.ReflectionToolbox
 
 		private static void InternalAddReferencedObjectOfType(object referencedObject, HashSet<GameObject> result, Type[] excludedTypes)
 		{
+#if !ExtenityReferenceFinder
+			throw new Exception("Please add ExtenityReferenceFinder define symbol to your project to use this feature.");
+#else
 			if (referencedObject == null)
 				return; // Nothing to do about this object.
 
@@ -1464,6 +1467,7 @@ namespace Extenity.ReflectionToolbox
 				}
 				Release.List(ref fields);
 			}
+#endif
 		}
 
 		private static void InternalAddReferencedGameObjectToResults(GameObject referencedGameObject, HashSet<GameObject> result, Type[] excludedTypes)
@@ -1501,7 +1505,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjects... Unknown Type Ignore List
 
-#if UNITY
+#if ExtenityReferenceFinder && UNITY
 
 		private static HashSet<Type> _KnownTypesOfGameObjectReferenceFinder;
 		/// <summary>

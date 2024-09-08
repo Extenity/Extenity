@@ -1,3 +1,5 @@
+#if ExtenityReferenceFinder
+
 using Extenity.ReflectionToolbox;
 using TMPro;
 using UnityEditor;
@@ -29,3 +31,5 @@ namespace Extenity.UIToolbox.Editor
 	}
 
 }
+
+#endif
