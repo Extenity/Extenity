@@ -36,7 +36,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				if (format == GraphicsFormat.None)
 					continue;
-				if (!SystemInfo.IsFormatSupported(format, FormatUsage.Render))
+				if (!SystemInfo.IsFormatSupported(format, GraphicsFormatUsage.Render))
 					continue;
 				names.Add(format.ToString());
 			}

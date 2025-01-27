@@ -145,12 +145,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 			// Change NavMesh Area
 			if (instruction.ChangeNavMeshArea)
 			{
+				throw new NotImplementedException("This feature should be reimplemented in Unity 6 or later.");
+				/*
 				var areaIndex = GameObjectUtility.GetNavMeshArea(go);
 				if (areaIndex != instruction.AreaIndex)
 				{
 					_MarkChange(1, $"NavMesh Area set to '{instruction.AreaIndex}' for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
 					GameObjectUtility.SetNavMeshArea(go, instruction.AreaIndex);
 				}
+				*/
 			}
 
 			// Unpack Prefab
