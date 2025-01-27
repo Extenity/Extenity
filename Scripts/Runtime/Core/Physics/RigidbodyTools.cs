@@ -10,7 +10,7 @@ namespace Extenity.PhysicsToolbox
 	{
 		public static void ResetVelocity(this Rigidbody rigidbody)
 		{
-			rigidbody.velocity = Vector3.zero;
+			rigidbody.linearVelocity = Vector3.zero;
 			rigidbody.angularVelocity = Vector3.zero;
 		}
 
@@ -21,13 +21,13 @@ namespace Extenity.PhysicsToolbox
 
 		public static float HorizontalSpeed(this Rigidbody rigidbody)
 		{
-			var velocity = rigidbody.velocity;
+			var velocity = rigidbody.linearVelocity;
 			return sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 		}
 
 		public static float ForwardSpeed(this Rigidbody rigidbody)
 		{
-			return Vector3.Dot(rigidbody.transform.forward, rigidbody.velocity);
+			return Vector3.Dot(rigidbody.transform.forward, rigidbody.linearVelocity);
 		}
 
 		public static float HorizontalForwardSpeed(this Rigidbody rigidbody)
@@ -35,7 +35,7 @@ namespace Extenity.PhysicsToolbox
 			var forward = rigidbody.transform.forward;
 			forward.y = 0f;
 			forward.Normalize();
-			return Vector3.Dot(forward, rigidbody.velocity);
+			return Vector3.Dot(forward, rigidbody.linearVelocity);
 		}
 	}
 

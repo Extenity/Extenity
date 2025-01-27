@@ -68,7 +68,7 @@ namespace Extenity.GameObjectToolbox
 							{
 								var component = obj.GetComponent<Rigidbody>();
 								if (component != null)
-									totalVelocity += component.velocity;
+									totalVelocity += component.linearVelocity;
 
 								if (calculateBounds)
 									bounds.Encapsulate(obj.position);
@@ -91,7 +91,7 @@ namespace Extenity.GameObjectToolbox
 								center += obj.position;
 								var component = obj.GetComponent<Rigidbody>();
 								if (component != null)
-									totalVelocity += component.velocity;
+									totalVelocity += component.linearVelocity;
 
 								if (calculateBounds)
 									bounds.Encapsulate(obj.position);
@@ -118,7 +118,7 @@ namespace Extenity.GameObjectToolbox
 								var component = obj.GetComponent<Rigidbody>();
 								if (component != null)
 								{
-									velocityAppliedCenter = obj.position + component.velocity * velocityFactor;
+									velocityAppliedCenter = obj.position + component.linearVelocity * velocityFactor;
 								}
 								else
 								{
@@ -150,7 +150,7 @@ namespace Extenity.GameObjectToolbox
 								var component = obj.GetComponent<Rigidbody>();
 								if (component != null)
 								{
-									var velocity = component.velocity;
+									var velocity = component.linearVelocity;
 									velocityAppliedCenter = obj.position + velocity * velocityFactor;
 									totalVelocity += velocity;
 								}

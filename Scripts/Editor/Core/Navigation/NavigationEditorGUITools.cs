@@ -20,10 +20,10 @@ namespace Extenity.NavigationToolbox.Editor
 		public static void AreaPopup(string labelName, SerializedProperty areaProperty)
 		{
 			var areaIndex = -1;
-			var areaNames = GameObjectUtility.GetNavMeshAreaNames();
+			var areaNames = NavMesh.GetAreaNames();
 			for (var i = 0; i < areaNames.Length; i++)
 			{
-				var areaValue = GameObjectUtility.GetNavMeshAreaFromName(areaNames[i]);
+				var areaValue = NavMesh.GetAreaFromName(areaNames[i]);
 				if (areaValue == areaProperty.intValue)
 					areaIndex = i;
 			}
@@ -39,7 +39,7 @@ namespace Extenity.NavigationToolbox.Editor
 			if (EditorGUI.EndChangeCheck())
 			{
 				if (areaIndex >= 0 && areaIndex < areaNames.Length - 2)
-					areaProperty.intValue = GameObjectUtility.GetNavMeshAreaFromName(areaNames[areaIndex]);
+					areaProperty.intValue = NavMesh.GetAreaFromName(areaNames[areaIndex]);
 				else if (areaIndex == areaNames.Length - 1)
 					NavMeshEditorHelpers.OpenAreaSettings();
 			}

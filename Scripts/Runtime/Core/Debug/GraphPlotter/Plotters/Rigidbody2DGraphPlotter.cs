@@ -174,7 +174,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 
 			if (PlotVelocity)
 			{
-				var velocity = Rigidbody2D.velocity;
+				var velocity = Rigidbody2D.linearVelocity;
 
 				VelocityRange = AngularVelocityGraph.Range;
 
