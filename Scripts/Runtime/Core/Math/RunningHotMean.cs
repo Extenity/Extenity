@@ -14,6 +14,7 @@ namespace Extenity.MathToolbox
 		public readonly CircularArray<double> Values;
 		public int ValueCount => Values.Count;
 		public int ValueCapacity => Values.Capacity;
+		public bool IsCapacityFilled => Values.IsCapacityFilled;
 
 		private bool IsInvalidated;
 
@@ -69,6 +70,8 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public readonly CircularArray<float> Values;
 		public int ValueCount => Values.Count;
+		public int ValueCapacity => Values.Capacity;
+		public bool IsCapacityFilled => Values.IsCapacityFilled;
 
 		private bool IsInvalidated;
 
@@ -123,6 +126,8 @@ namespace Extenity.MathToolbox
 		/// </summary>
 		public readonly CircularArray<Int32> Values;
 		public int ValueCount => Values.Count;
+		public int ValueCapacity => Values.Capacity;
+		public bool IsCapacityFilled => Values.IsCapacityFilled;
 
 		private bool IsInvalidated;
 
@@ -178,6 +183,7 @@ namespace Extenity.MathToolbox
 		public readonly CircularArray<float3> Values;
 		public int ValueCount => Values.Count;
 		public int ValueCapacity => Values.Capacity;
+		public bool IsCapacityFilled => Values.IsCapacityFilled;
 
 		private bool IsInvalidated;
 
