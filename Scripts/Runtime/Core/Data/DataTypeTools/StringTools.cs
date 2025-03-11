@@ -527,7 +527,7 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region String Operations - Count and Replace Tags
+		#region String Operations - Count Tags
 
 		/// <returns>True if succeeds, even there are no tags detected.
 		/// False if there is a missing tag character or there is a nested tag inside another tag.
@@ -547,6 +547,10 @@ namespace Extenity.DataToolbox
 			tagCount = tagStartCharacterCount;
 			return true;
 		}
+
+		#endregion
+
+		#region String Operations - Replace Tags
 
 		public interface ITagProcessor
 		{
