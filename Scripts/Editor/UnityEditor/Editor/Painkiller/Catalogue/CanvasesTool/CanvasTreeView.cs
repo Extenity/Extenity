@@ -136,7 +136,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void RowGUI(RowGUIArgs args)
 		{
-			var item = (TreeViewItem<CanvasElement>)args.item;
+			var item = (IMGUIToolbox.Editor.TreeViewItem<CanvasElement>)args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
@@ -144,7 +144,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 		}
 
-		private void CellGUI(Rect cellRect, TreeViewItem<CanvasElement> item, Columns column, ref RowGUIArgs args)
+		private void CellGUI(Rect cellRect, IMGUIToolbox.Editor.TreeViewItem<CanvasElement> item, Columns column, ref RowGUIArgs args)
 		{
 			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
 			CenterRectUsingSingleLineHeight(ref cellRect);
@@ -301,10 +301,10 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (sortedColumns.Length == 0)
 				return;
 
-			var children = parentItem.children.Cast<TreeViewItem<CanvasElement>>();
+			var children = parentItem.children.Cast<IMGUIToolbox.Editor.TreeViewItem<CanvasElement>>();
 
 			// First sorting column
-			IOrderedEnumerable<TreeViewItem<CanvasElement>> orderedQuery;
+			IOrderedEnumerable<IMGUIToolbox.Editor.TreeViewItem<CanvasElement>> orderedQuery;
 			int i = 0;
 			{
 				var columnIndex = sortedColumns[i++];

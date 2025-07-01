@@ -152,7 +152,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		protected override void RowGUI(RowGUIArgs args)
 		{
-			var item = (TreeViewItem<ResourceElement>)args.item;
+			var item = (IMGUIToolbox.Editor.TreeViewItem<ResourceElement>)args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
@@ -160,7 +160,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			}
 		}
 
-		private void CellGUI(Rect cellRect, TreeViewItem<ResourceElement> item, Columns column, ref RowGUIArgs args)
+		private void CellGUI(Rect cellRect, IMGUIToolbox.Editor.TreeViewItem<ResourceElement> item, Columns column, ref RowGUIArgs args)
 		{
 			// Center cell rect vertically (makes it easier to place controls, icons etc in the cells)
 			CenterRectUsingSingleLineHeight(ref cellRect);
@@ -320,7 +320,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (sortedColumns.Length == 0)
 				return;
 
-			var myTypes = rootItem.children.Cast<TreeViewItem<ResourceElement>>();
+			var myTypes      = rootItem.children.Cast<IMGUIToolbox.Editor.TreeViewItem<ResourceElement>>();
 			var orderedQuery = InitialOrder(myTypes, sortedColumns);
 			for (int i = 1; i < sortedColumns.Length; i++)
 			{
@@ -352,7 +352,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
 		}
 
-		private IOrderedEnumerable<TreeViewItem<ResourceElement>> InitialOrder(IEnumerable<TreeViewItem<ResourceElement>> myTypes, int[] history)
+		private IOrderedEnumerable<IMGUIToolbox.Editor.TreeViewItem<ResourceElement>> InitialOrder(IEnumerable<IMGUIToolbox.Editor.TreeViewItem<ResourceElement>> myTypes, int[] history)
 		{
 			var sortMethod = SortOptions[history[0]];
 			var ascending = multiColumnHeader.IsSortedAscending(history[0]);

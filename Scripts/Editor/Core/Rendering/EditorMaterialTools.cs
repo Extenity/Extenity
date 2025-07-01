@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Extenity.RenderingToolbox.Editor
@@ -13,12 +12,24 @@ namespace Extenity.RenderingToolbox.Editor
 		{
 			var result = new List<Texture>();
 			var shader = material.shader;
-			var propertyCount = ShaderUtil.GetPropertyCount(shader);
+#if UNITY_6000_2_OR_NEWER
+			var propertyCount = shader.GetPropertyCount();
+#else
+			var propertyCount = UnityEditor.ShaderUtil.GetPropertyCount(shader);
+#endif
 			for (int i = 0; i < propertyCount; i++)
 			{
-				if (ShaderUtil.GetPropertyType(shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
+#if UNITY_6000_2_OR_NEWER
+				if (shader.GetPropertyType(i) == UnityEngine.Rendering.ShaderPropertyType.Texture)
+#else
+				if (UnityEditor.ShaderUtil.GetPropertyType(shader, i) == UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv)
+#endif
 				{
-					var propertyName = ShaderUtil.GetPropertyName(shader, i);
+#if UNITY_6000_2_OR_NEWER
+					var propertyName = shader.GetPropertyName(i);
+#else
+					var propertyName = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
+#endif
 					var texture = material.GetTexture(propertyName);
 					if (texture)
 					{
