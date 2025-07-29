@@ -16,7 +16,7 @@ namespace Extenity.ApplicationToolbox
 	{
 		#region Deinitialization
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsShuttingDown = false;
 #endif
 
@@ -28,7 +28,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				switch (UnityEngine.Application.platform)
 				{
 					case UnityEngine.RuntimePlatform.WindowsEditor:
@@ -55,7 +55,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
@@ -79,7 +79,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
@@ -168,7 +168,7 @@ namespace Extenity.ApplicationToolbox
 
 		#region Company And Product Name
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static string AsciiCompanyName => UnityEngine.Application.companyName.ConvertToAscii();
 		public static string AsciiProductName => UnityEngine.Application.productName.ConvertToAscii();
 
@@ -199,7 +199,7 @@ namespace Extenity.ApplicationToolbox
 
 		#region Headless and Batch Mode
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsHeadless()
 		{
 			return UnityEngine.SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null;
@@ -232,7 +232,7 @@ namespace Extenity.ApplicationToolbox
 		/// </summary>
 		public static void LaunchMarketPage()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 #if UNITY_EDITOR
 			Log.Info("Ambiguous to launch the market page in Editor.");
@@ -281,7 +281,7 @@ namespace Extenity.ApplicationToolbox
 
 		public static void Quit()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 #if UNITY_EDITOR
 			if (UnityEditor.EditorApplication.isPlaying)
@@ -299,7 +299,7 @@ namespace Extenity.ApplicationToolbox
 
 		public static void Restart()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 #if UNITY_EDITOR
 

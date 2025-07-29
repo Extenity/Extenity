@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -10,13 +10,13 @@ namespace Extenity.MathToolbox
 
 	public static class BoundsTools
 	{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static readonly Bounds NaN = new Bounds(Vector3Tools.NaN, Vector3Tools.NaN);
 #endif
 
 		#region Fix and Reset Bounds
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static void Fix(this Bounds bounds)
 		{
 			var min = bounds.min;
@@ -167,7 +167,7 @@ namespace Extenity.MathToolbox
 
 		#region Bounds
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		// Source: http://answers.unity3d.com/questions/361275/cant-convert-bounds-from-world-coordinates-to-loca.html
 		public static Bounds TransformBounds(this Transform transform, Bounds localBounds)
 		{

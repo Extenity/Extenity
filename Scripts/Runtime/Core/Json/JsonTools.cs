@@ -21,7 +21,7 @@ namespace Extenity.JsonToolbox
 			Converters = new JsonConverter[]
 			{
 				// Unity related converters
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				new BoundsConverter(),
 				new ColorConverter(),
 				new Matrix4x4Converter(),

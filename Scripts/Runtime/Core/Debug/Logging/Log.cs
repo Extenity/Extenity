@@ -12,7 +12,7 @@ using IDisposable = System.IDisposable;
 // in this code file to prevent any possible confusions. Use 'using' selectively, like
 // 'using Exception = System.Exception;'
 // See 11746845.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using ContextObject = UnityEngine.Object;
 #else
 using ContextObject = System.Object;
@@ -279,7 +279,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Verbose(string category, ContextObject context, string message)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.Log(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
@@ -292,7 +292,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Info(string category, ContextObject context, string message)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.Log(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
@@ -302,7 +302,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Warning(string category, ContextObject context, string message)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogWarning(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
@@ -312,7 +312,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Error(string category, ContextObject context, string message)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogError(CreateMessageWithCategoryAndIndentation(category, message), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessageWithCategoryAndIndentation(category, message));
@@ -322,7 +322,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Error(string category, ContextObject context, Exception exception)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogError(CreateDetailedExceptionMessage(category, exception), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateDetailedExceptionMessage(category, exception));
@@ -335,7 +335,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Fatal(string category, ContextObject context, string message)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogException(new Exception(CreateMessageWithCategory(category, message)), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateMessageWithCategory(category, message));
@@ -348,7 +348,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _Fatal(string category, ContextObject context, Exception exception)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogException(new Exception(CreateDetailedExceptionMessage(category, exception), exception), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(CreateDetailedExceptionMessage(category, exception));
@@ -363,7 +363,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _InternalError(string category, ContextObject context, int errorCode)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogException(new InternalException(errorCode, category), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(new InternalException(errorCode, category).ToString());
@@ -378,7 +378,7 @@ namespace Extenity
 		[DebuggerHidden]
 		internal static void _InternalError(string category, ContextObject context, int errorCode, Exception innerException)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.Debug.LogException(new InternalException(errorCode, category, innerException), context); // Ignored by Code Correct
 #else
 			System.Console.WriteLine(new InternalException(errorCode, category, innerException).ToString());

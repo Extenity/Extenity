@@ -18,7 +18,7 @@ namespace Extenity.DataToolbox
 
 		protected override float InternalGetValue()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			return UnityEngine.PlayerPrefs.GetFloat(ProcessedPrefsKey, _Value);
 #else
 			throw new System.NotImplementedException();
@@ -27,7 +27,7 @@ namespace Extenity.DataToolbox
 
 		protected override void InternalSetValue(float value)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			UnityEngine.PlayerPrefs.SetFloat(ProcessedPrefsKey, value);
 #else
 			throw new System.NotImplementedException();

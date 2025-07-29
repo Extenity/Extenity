@@ -13,7 +13,7 @@ using Extenity.DataToolbox;
 using System.Reflection.Emit;
 #endif
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using Extenity.GameObjectToolbox;
 using Extenity.MathToolbox;
 using Extenity.SystemToolbox;
@@ -1141,7 +1141,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region Get Unity-Serialized Fields
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		
 		public static List<(FieldInfo FieldInfo, object Value)> GetUnitySerializedFieldsAndValues(this object obj, bool includeOnlyNonNullFields)
 		{
@@ -1233,7 +1233,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjects...
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static void FindAllReferencedGameObjectsInScene(this Scene scene, HashSet<GameObject> result, Type[] excludedTypes)
 		{
@@ -1505,7 +1505,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region FindAllReferencedGameObjects... Unknown Type Ignore List
 
-#if ExtenityReferenceFinder && UNITY
+#if UNITY_5_3_OR_NEWER && ExtenityReferenceFinder
 
 		private static HashSet<Type> _KnownTypesOfGameObjectReferenceFinder;
 		/// <summary>
@@ -1567,7 +1567,7 @@ namespace Extenity.ReflectionToolbox
 
 		#region Referenced Object Checks
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static bool IsFieldReferencesUnityObject(this Object unityObject, FieldInfo fieldOfUnityObject, Object expectedUnityObject)
 		{

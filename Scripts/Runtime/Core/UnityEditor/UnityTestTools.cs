@@ -1,6 +1,6 @@
 ﻿using System;
 using Extenity.MathToolbox;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using Extenity.SceneManagementToolbox;
 using UnityEngine;
 #endif
@@ -14,7 +14,7 @@ namespace Extenity.UnityTestToolbox
 
 		public static void Cleanup()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			SceneManagerTools.GetScenes(SceneListFilter.LoadedScenes).ForEach(scene =>
 			{
 				foreach (var rootObject in scene.GetRootGameObjects())
@@ -82,7 +82,7 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			for (Int32 value = -10000; value < 10000; value += RandomTools.Range(1, 500))
 			{
 				tester(value);
@@ -136,7 +136,7 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			for (Int64 value = -10000; value < 10000; value += RandomTools.Range(1, 500))
 			{
 				tester(value);
@@ -249,7 +249,7 @@ namespace Extenity.UnityTestToolbox
 			tester(0);
 			tester(1);
 			tester(-1);
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			for (double value = -10000d; value < 10000d; value += RandomTools.Range(0.1f, 500.0f))
 			{
 				tester(value);

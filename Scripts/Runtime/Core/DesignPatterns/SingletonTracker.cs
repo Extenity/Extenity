@@ -61,7 +61,7 @@ namespace Extenity.DesignPatternsToolbox
 
 		public static void SingletonDestroyed(string className)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			// Enter Playmode Options is a funny tool. It will leave static variables
 			// in all kinds of unpleasant states. So this was the easiest way. Just stop
 			// tracking singletons when quitting play mode.

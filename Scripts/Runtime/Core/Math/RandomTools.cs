@@ -14,13 +14,13 @@ namespace Extenity.MathToolbox
 	{
 		#region Random Number Generator
 
-#if !UNITY || UseSystemRandom
+#if !UNITY_5_3_OR_NEWER || UseSystemRandom
 		private static System.Random Generator;
 #endif
 
 		public static void SetSeed(int seed)
 		{
-#if !UNITY || UseSystemRandom
+#if !UNITY_5_3_OR_NEWER || UseSystemRandom
 			Generator = new System.Random(seed);
 #else
 			UnityEngine.Random.InitState(seed);
@@ -31,7 +31,7 @@ namespace Extenity.MathToolbox
 		{
 			get
 			{
-#if !UNITY || UseSystemRandom
+#if !UNITY_5_3_OR_NEWER || UseSystemRandom
 				return (float)Generator.NextDouble();
 				// return (float)(Generator.Next() / (double)Int32.MaxValue); // Not extensively tested.
 #else
@@ -42,7 +42,7 @@ namespace Extenity.MathToolbox
 
 		private static int _Range(int minInclusive, int maxExclusive)
 		{
-#if !UNITY || UseSystemRandom
+#if !UNITY_5_3_OR_NEWER || UseSystemRandom
 			return Generator.Next(minInclusive, maxExclusive);
 #else
 			return UnityEngine.Random.Range(minInclusive, maxExclusive);
@@ -51,7 +51,7 @@ namespace Extenity.MathToolbox
 
 		private static float _Range(float minInclusive, float maxInclusive)
 		{
-#if !UNITY || UseSystemRandom
+#if !UNITY_5_3_OR_NEWER || UseSystemRandom
 			return (float)((Generator.NextDouble() * ((double)maxInclusive - (double)minInclusive)) + (double)minInclusive);
 #else
 			return UnityEngine.Random.Range(minInclusive, maxInclusive);
@@ -108,7 +108,7 @@ namespace Extenity.MathToolbox
 
 				if (seed > -100 && seed < 100)
 				{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 					// Alright. Something fishy going on, but we won't stop trying.
 					seed = (int)(UnityEngine.Time.realtimeSinceStartup * 100000f);
 #endif
@@ -156,7 +156,7 @@ namespace Extenity.MathToolbox
 		public static int RangeIncludingMax(int minInclusive, int maxInclusive) { return _Range(minInclusive, maxInclusive + 1); }
 		public static float Range(float minInclusive, float maxInclusive) { return _Range(minInclusive, maxInclusive); }
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static UnityEngine.Color ColorRGB => new(Range(0f, 1f), Range(0f, 1f), Range(0f, 1f));
 #endif
 

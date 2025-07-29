@@ -2,7 +2,7 @@ using System;
 using Extenity.MathToolbox;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -62,7 +62,7 @@ namespace Extenity.DataToolbox
 		}
 	}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 	public static class OrientedPointTools
 	{
 		public static OrientedPoint TransformOrientedPoint(this Transform transform, OrientedPoint point)

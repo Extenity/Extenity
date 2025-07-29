@@ -1,5 +1,5 @@
 ﻿using Delegate = System.Delegate;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using Cysharp.Text;
 using Component = UnityEngine.Component;
 using GameObject = UnityEngine.GameObject;
@@ -13,7 +13,7 @@ namespace Extenity.DataToolbox
 	{
 		#region Default Names
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public const string NullGameObjectName = "[NA/GO]";
 		public const string NullComponentName = "[NA/COM]";
 		public const string NullObjectName = "[NA/OBJ]";
@@ -33,7 +33,7 @@ namespace Extenity.DataToolbox
 
 		#region GameObject Name Safe
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static string GameObjectNameSafe(this Component me)
 		{
 			if (me == null)
@@ -82,7 +82,7 @@ namespace Extenity.DataToolbox
 		{
 			if (del != null)
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				if (del.IsUnityObjectTargetedAndDestroyed())
 				{
 					stringBuilder.Append(NullDelegateNameWithMethod_Start);
@@ -107,7 +107,7 @@ namespace Extenity.DataToolbox
 
 		#region Full Name
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		private const char GameObjectPathSeparator = '/';
 		private const char ComponentPathSeparator = '|';
 
@@ -211,7 +211,7 @@ namespace Extenity.DataToolbox
 		{
 			switch (me)
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				case Component component:
 				{
 					component.FullName(ref stringBuilder, maxHierarchyLevels);

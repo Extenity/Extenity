@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using Cysharp.Text;
 using Extenity.MathToolbox;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 using UnityEngine.Events;
 #endif
@@ -103,7 +103,7 @@ namespace Extenity.DataToolbox
 			return result;
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsUnityBaseType(this Type type)
 		{
 			return
@@ -325,7 +325,7 @@ namespace Extenity.DataToolbox
 
 		#region Unity Serialized Fields
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static bool IsUnitySerialized(this FieldInfo fieldInfo)
 		{
@@ -411,7 +411,7 @@ namespace Extenity.DataToolbox
 
 		#region Component Helpers
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static List<FieldInfo> GetNotAssignedSerializedComponentFields(this Component component)
 		{
@@ -447,7 +447,7 @@ namespace Extenity.DataToolbox
 			{ typeof(Boolean), "Bool" },
 			{ typeof(Byte), "Byte" },
 			{ typeof(SByte), "SByte" },
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			{ typeof(UnityEngine.Vector2), "Vector2" },
 			{ typeof(UnityEngine.Vector3), "Vector3" },
 			{ typeof(UnityEngine.Vector4), "Vector4" },
@@ -566,7 +566,7 @@ namespace Extenity.DataToolbox
 			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			if (IsUnityBaseType(baseType))
 			{
                 fields = type.GetFields(bindingFlags);
@@ -790,7 +790,7 @@ namespace Extenity.DataToolbox
 			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			if (IsUnityBaseType(baseType))
 			{
                 properties = type.GetProperties(bindingFlags);
@@ -994,7 +994,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		private static Dictionary<Type, FieldInfo[]> SerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
 
@@ -1032,7 +1032,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1077,7 +1077,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1122,7 +1122,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> SerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
@@ -1186,7 +1186,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		private static Dictionary<Type, FieldInfo[]> NonSerializedFieldsIncludingBaseTypes = new Dictionary<Type, FieldInfo[]>();
 
@@ -1224,7 +1224,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1269,7 +1269,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		/// <summary>
 		/// Key of KeyValuePair: Class type
@@ -1314,7 +1314,7 @@ namespace Extenity.DataToolbox
 		// ---- Make sure you modify them all if anything changes here
 		// --------------------------------------------------------------------------------------------------------
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();
 		private static Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]> NonSerializedFieldsWithoutAttributeIncludingBaseTypes = new Dictionary<KeyValuePair<Type, Type>, KeyValuePair<FieldInfo, Attribute[]>[]>();

@@ -20,7 +20,7 @@ using Type = System.Type;
 #if _ProfilingEnabled
 using System.Linq;
 using Extenity.ApplicationToolbox;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine.Pool;
 #endif
 #endif
@@ -28,7 +28,7 @@ using UnityEngine.Pool;
 // Unlike any other ContextObject definitions, ConsistencyChecker always uses System.Object type in all platforms.
 // But lets keep using ContextObject naming conventions like other systems that may use varying Log context types.
 // See 11746845.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using ContextObject = UnityEngine.Object;
 #else
 using ContextObject = System.Object;
@@ -307,7 +307,7 @@ namespace Extenity.ConsistencyToolbox
 				: "." + fieldName;
 			if (setNextTargetAsContextObject)
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				// Only accept UnityEngine.Object types as context objects when working in Unity.
 				// That makes it easier to write consistency checks that start from a MonoBehaviour
 				// and then proceed to its non-MonoBehaviour serialized fields. That way, any consistency
@@ -484,7 +484,7 @@ namespace Extenity.ConsistencyToolbox
 
 		public string GetContextObjectLogName(ConsistencyContextObject context)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			// Try to get Unity Object info.
 			var meAsUnityObject = context as UnityEngine.Object;
 			if (meAsUnityObject != null)
@@ -526,7 +526,7 @@ namespace Extenity.ConsistencyToolbox
 			MainStartTime = PrecisionTiming.PreciseTime;
 #endif
 #if _DetailedProfilingEnabled
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			ProfilingTimes = DictionaryPool<Type, double>.Get();
 #else
 			ProfilingTimes = new Dictionary<Type, double>();
@@ -538,7 +538,7 @@ namespace Extenity.ConsistencyToolbox
 		private void DeinitializeProfiling()
 		{
 #if _DetailedProfilingEnabled
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			DictionaryPool<Type, double>.Release(ProfilingTimes);
 			ProfilingTimes = null;
 #else

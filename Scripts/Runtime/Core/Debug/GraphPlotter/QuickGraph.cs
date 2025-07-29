@@ -1,4 +1,4 @@
-﻿#if UNITY
+﻿#if UNITY_5_3_OR_NEWER
 
 using System.Collections.Generic;
 using Extenity.DataToolbox;

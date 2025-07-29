@@ -12,7 +12,7 @@ namespace Extenity.DataToolbox
 			return obj;
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static T Cast<T>(this UnityEngine.Object obj) where T : UnityEngine.Object
 		{
 			return (T)obj;

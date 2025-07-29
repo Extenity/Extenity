@@ -13,11 +13,11 @@ namespace Extenity.MathToolbox
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Bounds2
 	{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private float2 m_Center;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private float2 m_Extents;
@@ -135,7 +135,7 @@ namespace Extenity.MathToolbox
 				(min.y <= bounds.max.y) && (max.y >= bounds.min.y);
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		/// <summary>
         ///   <para>Does ray intersect this bounding box?</para>

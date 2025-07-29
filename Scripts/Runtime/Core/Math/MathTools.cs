@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -528,7 +528,7 @@ namespace Extenity.MathToolbox
 
 		#region Transform
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsPointBehind(this Transform transform, Vector3 point)
 		{
 			return Vector3.Dot(transform.forward, point - transform.position) < 0.0f;
@@ -574,7 +574,7 @@ namespace Extenity.MathToolbox
 
 		#region Quaternion
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsAlmostEqual(this Quaternion value1, Quaternion value2, float maxAngle)
 		{
 			return Quaternion.Angle(value1, value2) < maxAngle;
@@ -585,7 +585,7 @@ namespace Extenity.MathToolbox
 
 		#region Matrix4x4
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static Matrix4x4 UnscaledLocalToWorldMatrix(this Transform transform)
 		{
 			return Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
@@ -789,7 +789,7 @@ namespace Extenity.MathToolbox
 				IsSnapped(value.z, snapStep, snapOffset, precision);
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		// Old Math library support.
 		public static bool IsSnapped(this Vector2 value, float snapStep, float snapOffset, float precision = 0.001f) { return IsSnapped(float2(value), snapStep, snapOffset, precision); }
 		public static bool IsSnapped(this Vector3 value, float snapStep, float snapOffset, float precision = 0.001f) { return IsSnapped(float3(value), snapStep, snapOffset, precision); }
@@ -815,7 +815,7 @@ namespace Extenity.MathToolbox
 				Snap(value.z, snapStep, snapOffset));
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		// Old Math library support.
 		public static Vector2 Snap(this Vector2 value, float snapStep, float snapOffset) { return Snap(float2(value), snapStep, snapOffset); }
 		public static Vector3 Snap(this Vector3 value, float snapStep, float snapOffset) { return Snap(float3(value), snapStep, snapOffset); }

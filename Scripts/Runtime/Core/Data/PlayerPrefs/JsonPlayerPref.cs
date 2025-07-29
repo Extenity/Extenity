@@ -17,7 +17,7 @@ namespace Extenity.DataToolbox
 
 		protected override TSerialized InternalGetValue()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			var defaultValueText = UnityEngine.JsonUtility.ToJson(_Value);
 			var text = UnityEngine.PlayerPrefs.GetString(ProcessedPrefsKey, defaultValueText);
 			var json = UnityEngine.JsonUtility.FromJson<TSerialized>(text);
@@ -29,7 +29,7 @@ namespace Extenity.DataToolbox
 
 		protected override void InternalSetValue(TSerialized value)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			var json = UnityEngine.JsonUtility.ToJson(value);
             UnityEngine.PlayerPrefs.SetString(ProcessedPrefsKey, json);
 #else
@@ -44,7 +44,7 @@ namespace Extenity.DataToolbox
 			// Otherwise, the user would have to implement something like IEquatable
 			// for every TSerialized class. IsSame is only used when setting the pref.
 			// So the overhead is negligible.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			var oldJson = UnityEngine.JsonUtility.ToJson(oldValue);
 			var newJson = UnityEngine.JsonUtility.ToJson(newValue);
 			return oldJson.EqualsOrBothEmpty(newJson, StringComparison.Ordinal);

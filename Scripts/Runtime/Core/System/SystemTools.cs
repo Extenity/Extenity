@@ -365,7 +365,7 @@ namespace Extenity.SystemToolbox
 
 		#region Unity Object Null Check
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static bool IsNullRespectingUnityObject(this object obj)
 		{

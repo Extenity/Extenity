@@ -27,15 +27,15 @@ namespace Extenity.MathToolbox
 
 		#region Data
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private int value;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private int min;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private int max;

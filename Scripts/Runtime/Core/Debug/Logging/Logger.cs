@@ -7,7 +7,7 @@ using Exception = System.Exception;
 // in this code file to prevent any possible confusions. Use 'using' selectively, like
 // 'using Exception = System.Exception;'
 // See 11746845.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using ContextObject = UnityEngine.Object;
 #else
 using ContextObject = System.Object;
@@ -237,7 +237,7 @@ namespace Extenity
 		#endregion
 	}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 	public static class LoggerTools
 	{
 		public static void SetAsLogContext(this UnityEngine.GameObject go, ref Logger logger)

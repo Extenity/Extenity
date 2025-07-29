@@ -3,7 +3,7 @@ using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.TextureToolbox;
 using NUnit.Framework;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -36,7 +36,7 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual(NamingTools.NullName, ((System.Object)null).FullObjectName()); // There were never a class instance. So we don't know the type of the object.
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[Test]
 		public void FullObjectName_UnfortunatelyFailsToDistinguishTypesOfNullUnityObjects()
 		{
@@ -57,7 +57,7 @@ namespace ExtenityTests.DataToolbox
 		}
 #endif
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[Test]
 		public void FullObjectName_ReturnsDefaultNamesAfterObjectsAreDestroyed()
 		{
@@ -91,7 +91,7 @@ namespace ExtenityTests.DataToolbox
 		}
 #endif
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[Test]
 		public void FullObjectName_SomeGameObjectPathExamples()
 		{

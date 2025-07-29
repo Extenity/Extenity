@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Extenity.MathToolbox;
 using JetBrains.Annotations;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -1139,7 +1139,7 @@ namespace Extenity.DataToolbox
 
 		#region Conversions - Vector2/Vector3/Quaternion
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static string ToSerializableString(this Vector2 val)
 		{
@@ -1667,7 +1667,7 @@ namespace Extenity.DataToolbox
 			return array;
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static ICollection<Vector2> DeserializeVector2(this string text, char separator = ',')
 		{

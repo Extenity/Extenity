@@ -4,7 +4,7 @@ using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.FlowToolbox;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -18,7 +18,7 @@ namespace Extenity.DataToolbox
 		OnlyInEditor = 2,
 	}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 	public class DeferredSaveHelper : AutoSingletonUnity<DeferredSaveHelper>
 	{
@@ -57,7 +57,7 @@ namespace Extenity.DataToolbox
 	{
 		public static void SetBool(string key, bool value)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			PlayerPrefs.SetInt(key, value ? 1 : 0);
 #else
 			throw new System.NotImplementedException();
@@ -66,7 +66,7 @@ namespace Extenity.DataToolbox
 
 		public static bool GetBool(string key, bool defaultValue = default(bool))
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) != 0;
 #else
 			throw new System.NotImplementedException();
@@ -101,7 +101,7 @@ namespace Extenity.DataToolbox
 				case PathHashPostfix.Yes:
 					return key + PathHash;
 				case PathHashPostfix.OnlyInEditor:
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 					if (UnityEngine.Application.isEditor)
 						return key + PathHash;
 					else
@@ -128,7 +128,7 @@ namespace Extenity.DataToolbox
 		/// <param name="delay"></param>
 		public static void DeferredSave(float delay)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			var now = Time.unscaledTime;
 
 			if (DeferredSaveTriggerTime > 0f)
@@ -158,7 +158,7 @@ namespace Extenity.DataToolbox
 
 		private static void OnTimeToSave()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred saving triggered at '{Time.unscaledTime}'");
 #endif

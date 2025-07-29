@@ -54,7 +54,7 @@ namespace Extenity.DataToolbox
 		/// Note that the counter goes negative if Decrease called more than Increase.
 		/// </summary>
 		public int Counter => counter;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
 		private int counter;

@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using Extenity.MessagingToolbox;
 using JetBrains.Annotations;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -55,7 +55,7 @@ namespace Extenity.DataToolbox
 
 		#region Value
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		private bool _IsInitialized;
 #endif
 		protected T _Value;
@@ -63,7 +63,7 @@ namespace Extenity.DataToolbox
 		{
 			get
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				if (!_IsInitialized)
 				{
 					_IsInitialized = true;
@@ -94,7 +94,7 @@ namespace Extenity.DataToolbox
 			}
 			set
 			{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 				var transformedValue = TransformValue(value);
 				if (_IsInitialized)
 				{
@@ -196,7 +196,7 @@ namespace Extenity.DataToolbox
 
 		public void Save()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
             UnityEngine.PlayerPrefs.Save();
 #else
 			throw new System.NotImplementedException();

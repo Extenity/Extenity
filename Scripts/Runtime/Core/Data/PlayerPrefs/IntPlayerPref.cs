@@ -17,7 +17,7 @@ namespace Extenity.DataToolbox
 
 		protected override int InternalGetValue()
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 			return UnityEngine.PlayerPrefs.GetInt(ProcessedPrefsKey, _Value);
 #else
 			throw new System.NotImplementedException();
@@ -26,7 +26,7 @@ namespace Extenity.DataToolbox
 
 		protected override void InternalSetValue(int value)
 		{
-#if UNITY
+#if UNITY_5_3_OR_NEWER
             UnityEngine.PlayerPrefs.SetInt(ProcessedPrefsKey, value);
 #else
 			throw new System.NotImplementedException();

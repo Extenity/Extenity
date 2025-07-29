@@ -1,4 +1,4 @@
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 #define UnityFeatures
 #endif
 
@@ -17,7 +17,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 // in this code file to prevent any possible confusions. Use 'using' selectively, like
 // 'using Exception = System.Exception;'
 // See 11746845.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using ContextObject = UnityEngine.Object;
 #else
 using ContextObject = System.Object;

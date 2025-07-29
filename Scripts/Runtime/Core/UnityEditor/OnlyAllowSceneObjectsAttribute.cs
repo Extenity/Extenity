@@ -6,7 +6,7 @@ using AttributeTargets = System.AttributeTargets;
 // in this code file to prevent any possible confusions. Use 'using' selectively, like
 // 'using Exception = System.Exception;'
 // See 11746845.
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using BaseAttribute = UnityEngine.PropertyAttribute;
 #else
 using BaseAttribute = System.Attribute;

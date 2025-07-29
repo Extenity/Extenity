@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
 
@@ -18,7 +18,7 @@ namespace Extenity.MathToolbox
 			return point + planeNormal * distance;
 		}
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 		public static bool IsAllPointsOnPlane(this IList<float3> points, float3 planeNormal, float tolerance = 0.0001f)
 		{
 			var plane = new Plane(planeNormal, points[0]);

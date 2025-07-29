@@ -1,4 +1,4 @@
-#if UNITY // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
+#if UNITY_5_3_OR_NEWER // TODO-UniversalExtenity: Convert these to Mathematics after importing it into Universal project.
 
 using System;
 using Extenity.DataToolbox;

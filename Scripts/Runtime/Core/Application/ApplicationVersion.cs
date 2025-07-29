@@ -240,7 +240,7 @@ namespace Extenity.ApplicationToolbox
 
 		#region Get From Unity and Project Configuration
 
-#if UNITY
+#if UNITY_5_3_OR_NEWER
 
 		public static ApplicationVersion GetUnityApplicationVersion()
 		{
