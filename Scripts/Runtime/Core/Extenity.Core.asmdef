@@ -2,7 +2,6 @@
     "name": "Extenity.Core",
     "rootNamespace": "",
     "references": [
-        "ICSharpCode.SharpZipLib",
         "Unity.Mathematics",
         "Unity.Burst",
         "ZString"
@@ -13,7 +12,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "DOTween.dll",
-        "ICSharpCode.SharpZipLib.dll",
+        "Unity.SharpZipLib.dll",
         "Newtonsoft.Json.dll",
         "Sirenix.OdinInspector.Attributes.dll",
         "Sirenix.Utilities.Editor.dll"

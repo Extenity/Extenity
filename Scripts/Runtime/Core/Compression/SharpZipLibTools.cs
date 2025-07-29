@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
+using Unity.SharpZipLib.Core;
+using Unity.SharpZipLib.Zip;
 
 namespace Extenity.CompressionToolbox
 {

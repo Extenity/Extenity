@@ -10,5 +10,8 @@
     "tool",
     "library"
   ],
-  "category": "Utility"
+  "category": "Utility",
+  "dependencies": {
+    "com.unity.sharp-zip-lib": "1.4.0"
+  }
 }
