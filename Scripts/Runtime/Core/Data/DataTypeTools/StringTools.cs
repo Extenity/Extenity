@@ -99,6 +99,30 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Accessors
+
+		public static string ThrowIfNullOrEmpty(this string text)
+		{
+			if (string.IsNullOrEmpty(text))
+			{
+				throw new ArgumentException("String is null or empty.");
+			}
+
+			return text;
+		}
+
+		public static string ThrowIfNullOrWhitespace(this string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+			{
+				throw new ArgumentException("String is null or whitespace."); 
+			}
+
+			return text;
+		}
+
+		#endregion
+
 		#region String Operations
 
 		public static int CountCharacters(this string text, char character)
