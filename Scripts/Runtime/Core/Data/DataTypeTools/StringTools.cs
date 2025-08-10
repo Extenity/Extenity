@@ -1434,6 +1434,20 @@ namespace Extenity.DataToolbox
 			return text;
 		}
 
+		public static string ToNullIfEmpty(this string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+			return text;
+		}
+
+		public static string ToNullIfEmptyOrWhitespace(this string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return null;
+			return text;
+		}
+
 		#endregion
 
 		#region Conversions - Time
