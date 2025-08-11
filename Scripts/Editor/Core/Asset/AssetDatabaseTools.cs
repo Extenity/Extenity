@@ -585,7 +585,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var paths = GetAllScriptAssetPaths().OrderByDescending(item => item).ToList();
 
-			using (new QuickProfilerStopwatch(Log, "Reimporting scripts"))
+			using (QuickProfilerStopwatch.WithLog(Log, "Reimporting all scripts"))
 			{
 				Log.Info($"Reimporting {paths.Count} scripts.");
 				AssetDatabase.StartAssetEditing();
@@ -596,7 +596,7 @@ namespace Extenity.AssetToolbox.Editor
 				AssetDatabase.StopAssetEditing();
 			}
 
-			using (new QuickProfilerStopwatch(Log, "Refreshing AssetDatabase"))
+			using (QuickProfilerStopwatch.WithLog(Log, "Refreshing AssetDatabase"))
 			{
 				AssetDatabase.Refresh();
 			}

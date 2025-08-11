@@ -218,7 +218,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[MenuItem(ExtenityMenu.PackageManagerTools + "Adjust Define Symbols for installed modules", priority = ExtenityMenu.PackageManagerToolsPriorityEnd)]
 		public static void AdjustDefineSymbolsForInstalledModules()
 		{
-			using (new QuickProfilerStopwatch(Log, nameof(DefineSymbolsAdjuster), 1f))
+			using (QuickProfilerStopwatch.WithThreshold(Log, nameof(DefineSymbolsAdjuster), 1f))
 			{
 				var packageManifest = PackageManagerTools.GetPackageManifestContent();
 				var configuration = GetCombinedDefineSymbolAdjustmentConfiguration();

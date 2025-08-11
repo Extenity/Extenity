@@ -217,7 +217,7 @@ namespace Extenity.ApplicationToolbox.Editor
 		private static void TellIfAndroidSDKInstalledWithUnity()
 		{
 			bool isInstalled;
-			using (new QuickProfilerStopwatch(Log, "Android SDK installation detection"))
+			using (QuickProfilerStopwatch.WithLog(Log, "Android SDK installation detection"))
 			{
 				isInstalled = IsAndroidSDKInstalledWithUnity();
 			}

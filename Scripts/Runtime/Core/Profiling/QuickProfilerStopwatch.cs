@@ -22,22 +22,39 @@ namespace Extenity.ProfilingToolbox
 		private readonly Logger Logger;
 		private readonly string ProfilerTitle;
 		private readonly float ThresholdDurationToConsiderLogging;
+		private readonly LogSeverity LogSeverityAboveThreshold;
+		private readonly LogSeverity LogSeverityBelowThreshold;
+		private bool HasThresholdDuration => ThresholdDurationToConsiderLogging > 0f;
 
-		public QuickProfilerStopwatch(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging = 0f)
+		public static QuickProfilerStopwatch WithLog(string profilerTitle, LogSeverity logSeverity = LogSeverity.Info)
+		{
+			return new(new Logger("Profiling"), profilerTitle, 0, logSeverity, LogSeverity.None);
+		}
+
+		public static QuickProfilerStopwatch WithLog(Logger logger, string profilerTitle, LogSeverity logSeverity = LogSeverity.Info)
+		{
+			return new(logger, profilerTitle, 0, logSeverity, LogSeverity.None);
+		}
+
+		public static QuickProfilerStopwatch WithThreshold(string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None)
+		{
+			return new(new Logger("Profiling"), profilerTitle, thresholdDurationToConsiderLogging, logSeverityAboveThreshold, logSeverityBelowThreshold);
+		}
+
+		public static QuickProfilerStopwatch WithThreshold(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None)
+		{
+			return new(logger, profilerTitle, thresholdDurationToConsiderLogging, logSeverityAboveThreshold, logSeverityBelowThreshold);
+		}
+
+		private QuickProfilerStopwatch(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None)
 		{
 			Stopwatch = new ProfilerStopwatch();
 			Logger = logger;
 			ProfilerTitle = profilerTitle;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
-			Stopwatch.Start();
-		}
+			LogSeverityAboveThreshold = logSeverityAboveThreshold;
+			LogSeverityBelowThreshold = logSeverityBelowThreshold;
 
-		public QuickProfilerStopwatch(string profilerTitle, float thresholdDurationToConsiderLogging = 0f)
-		{
-			Stopwatch = new ProfilerStopwatch();
-			Logger = new Logger("Profiling");
-			ProfilerTitle = profilerTitle;
-			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
 			Stopwatch.Start();
 		}
 
@@ -45,20 +62,20 @@ namespace Extenity.ProfilingToolbox
 		{
 			Stopwatch.End();
 
-			if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
+			if (HasThresholdDuration)
 			{
-				if (ThresholdDurationToConsiderLogging > 0f)
+				if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 				{
-					Logger.Warning(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
+					Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
 				}
 				else
 				{
-					Logger.Info(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
+					Logger.Any(LogSeverityBelowThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
 				}
 			}
-			else
+			else // No threshold duration specified, so we log everything.
 			{
-				Logger.Verbose(ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
+				Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
 			}
 		}
 	}
