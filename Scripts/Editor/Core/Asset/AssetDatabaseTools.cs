@@ -607,6 +607,8 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
 		public static void ReimportAllShaders()
 		{
+			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all shaders");
+
 			var paths = GetAllShaderAssetPaths(true, true, true, true).OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();
 			foreach (var path in paths)
@@ -621,6 +623,8 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
 		public static void ReimportAllPrefabs()
 		{
+			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all prefabs");
+
 			var paths = GetAllPrefabAssetPaths().OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();
 			foreach (var path in paths)
