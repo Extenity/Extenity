@@ -54,6 +54,7 @@ namespace Extenity
 			switch (severity)
 			{
 				// @formatter:off
+				case LogSeverity.None   :                                             break; // Do nothing.
 				case LogSeverity.Verbose:  Log._Verbose(Category, Context, message);  break;
 				case LogSeverity.Info   :  Log._Info   (Category, Context, message);  break;
 				case LogSeverity.Warning:  Log._Warning(Category, Context, message);  break;
@@ -71,6 +72,7 @@ namespace Extenity
 			switch (severity)
 			{
 				// @formatter:off
+				case LogSeverity.None   :                                                       break; // Do nothing.
 				case LogSeverity.Verbose:  Log._Verbose(Category, overriddenContext, message);  break;
 				case LogSeverity.Info   :  Log._Info   (Category, overriddenContext, message);  break;
 				case LogSeverity.Warning:  Log._Warning(Category, overriddenContext, message);  break;
