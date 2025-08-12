@@ -124,7 +124,7 @@ namespace Extenity.TextureToolbox
 				}
 			}
 			texture.SetPixels32(pixels);
-			texture.Apply(false);
+			texture.Apply(false, true);
 			return texture;
 		}
 
@@ -154,7 +154,7 @@ namespace Extenity.TextureToolbox
 				}
 			}
 			texture.SetPixels32(pixels);
-			texture.Apply(false);
+			texture.Apply(false, true);
 			return texture;
 		}
 
