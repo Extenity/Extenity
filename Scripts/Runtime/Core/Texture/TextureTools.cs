@@ -1,8 +1,10 @@
 #if UNITY_5_3_OR_NEWER
 
+using System;
 using System.Text;
 using Extenity.DataToolbox;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 namespace Extenity.TextureToolbox
 {
@@ -16,21 +18,50 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D Tint(Texture2D texture, Color tintColor)
 		{
-			var newTexture = new Texture2D(texture.width, texture.height);
+			var graphicsFormat = texture.graphicsFormat;
 			int mipCount = texture.mipmapCount;
+
+			var newTexture = new Texture2D(texture.width, texture.height, graphicsFormat, TextureCreationFlags.DontInitializePixels);
 
 			for (int mip = 0; mip < mipCount; ++mip)
 			{
-				Color[] cols = texture.GetPixels(mip);
+				Color[] colors = texture.GetPixels(mip);
 
-				for (int i = 0; i < cols.Length; ++i)
+				switch (graphicsFormat)
 				{
-					cols[i].r *= tintColor.r;
-					cols[i].g *= tintColor.g;
-					cols[i].b *= tintColor.b;
+					case GraphicsFormat.R8G8B8_SRGB:
+					{
+						// ReSharper disable once CompareOfFloatsByEqualityOperator
+						if (tintColor.a != 1)
+						{
+							Log.With(nameof(TextureTools)).Warning($"Trying to Tint a '{graphicsFormat}' texture that does not have alpha channel with a color that has alpha channel '{tintColor}'.");
+						}
+						for (int i = 0; i < colors.Length; ++i)
+						{
+							colors[i].r *= tintColor.r;
+							colors[i].g *= tintColor.g;
+							colors[i].b *= tintColor.b;
+						}
+						break;
+					}
+					case GraphicsFormat.R8G8B8A8_SRGB:
+					{
+						for (int i = 0; i < colors.Length; ++i)
+						{
+							colors[i].r *= tintColor.r;
+							colors[i].g *= tintColor.g;
+							colors[i].b *= tintColor.b;
+							colors[i].a *= tintColor.a;
+						}
+						break;
+					}
+					default:
+					{
+						throw new NotImplementedException($"Texture Tint feature needs implementation for format {graphicsFormat}");
+					}
 				}
 
-				newTexture.SetPixels(cols, mip);
+				newTexture.SetPixels(colors, mip);
 			}
 
 			newTexture.Apply(false);
