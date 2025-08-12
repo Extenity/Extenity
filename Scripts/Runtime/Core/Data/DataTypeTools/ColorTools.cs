@@ -1,6 +1,7 @@
 ﻿#if UNITY_5_3_OR_NEWER
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Extenity.DataToolbox
@@ -134,6 +135,37 @@ namespace Extenity.DataToolbox
 		{
 			double aDiff = value1.a - value2.a;
 			return aDiff <= precision && aDiff >= -precision;
+		}
+
+		#endregion
+
+		#region Checks
+
+		public static bool HasAnyTransparentColor(this IEnumerable<Color> colors)
+		{
+			foreach (var color in colors)
+			{
+				// ReSharper disable once CompareOfFloatsByEqualityOperator
+				if (color.a != 1)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool HasAnyTransparentColor(this IEnumerable<Color32> colors)
+		{
+			foreach (var color in colors)
+			{
+				if (color.a != 1)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		#endregion
