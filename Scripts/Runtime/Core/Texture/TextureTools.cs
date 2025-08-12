@@ -180,7 +180,9 @@ namespace Extenity.TextureToolbox
 		}
 
 		#endregion
-		
+
+		#region Copy Texture As Readable
+
 		/// <summary>
 		/// Source: https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
 		/// </summary>
@@ -258,6 +260,8 @@ namespace Extenity.TextureToolbox
 			// "myTexture2D" now has the same pixels from "texture" and it's readable.
 			return myTexture2D;
 		}
+
+		#endregion
 
 		#region Generate Embedded Code For Texture
 
