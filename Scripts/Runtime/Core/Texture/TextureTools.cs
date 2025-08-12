@@ -77,7 +77,9 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D CreateSimpleTexture(int width, int height, Color32 color)
 		{
+			// Automatically decide if the texture should have alpha channel
 			var hasAlpha = color.a != 1;
+
 			return CreateSimpleTexture(width, height, color, hasAlpha, true);
 		}
 
@@ -97,10 +99,19 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D CreateVerticalGradientTexture(params Color32[] colorStops)
 		{
+			return CreateVerticalGradientTexture(true, colorStops);
+		}
+
+		public static Texture2D CreateVerticalGradientTexture(bool isSRGB, params Color32[] colorStops)
+		{
 			var width = 2;
 			var height = colorStops.Length;
-			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
-			texture.hideFlags = HideFlags.DontSave;
+
+			// Automatically decide if the texture should have alpha channel
+			var hasAlpha = colorStops.HasAnyTransparentColor();
+
+			var texture = InternalCreateTexture(width, height, hasAlpha, isSRGB);
+
 			texture.wrapMode = TextureWrapMode.Clamp;
 			var pixels = texture.GetPixels32();
 			var i = 0;
@@ -119,10 +130,19 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D CreateHorizontalGradientTexture(params Color32[] colorStops)
 		{
+			return CreateHorizontalGradientTexture(true, colorStops);
+		}
+
+		public static Texture2D CreateHorizontalGradientTexture(bool isSRGB, params Color32[] colorStops)
+		{
 			var height = 2;
 			var width = colorStops.Length;
-			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false, false);
-			texture.hideFlags = HideFlags.DontSave;
+
+			// Automatically decide if the texture should have alpha channel
+			var hasAlpha = colorStops.HasAnyTransparentColor();
+
+			var texture = InternalCreateTexture(width, height, hasAlpha, isSRGB);
+
 			texture.wrapMode = TextureWrapMode.Clamp;
 			var pixels = texture.GetPixels32();
 			var i = 0;
