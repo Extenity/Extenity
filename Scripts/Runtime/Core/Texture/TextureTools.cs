@@ -206,7 +206,8 @@ namespace Extenity.TextureToolbox
 			RenderTexture.active = tmp;
 
 			// Create a new readable Texture2D to copy the pixels to it
-			Texture2D myTexture2D = new Texture2D(texture.width, texture.width);
+			var graphicsFormat = texture.graphicsFormat;
+			var myTexture2D = InternalCreateTexture(texture.width, texture.width, graphicsFormat);
 
 			// Copy the pixels from the RenderTexture to the new Texture
 			myTexture2D.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
@@ -245,7 +246,8 @@ namespace Extenity.TextureToolbox
 			RenderTexture.active = tmp;
 
 			// Create a new readable Texture2D to copy the pixels to it
-			Texture2D myTexture2D = new Texture2D(newWidth, newHeight);
+			var graphicsFormat = texture.graphicsFormat;
+			var myTexture2D = InternalCreateTexture(texture.width, texture.width, graphicsFormat);
 
 			// Copy the pixels from the RenderTexture to the new Texture
 			myTexture2D.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0, 0);
