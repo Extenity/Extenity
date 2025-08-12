@@ -1,3 +1,5 @@
+#if PACKAGE_PHYSICS
+
 using Extenity.GameObjectToolbox;
 using Extenity.GameObjectToolbox.Editor;
 using UnityEditor.Build;
@@ -29,3 +31,5 @@ namespace Extenity.UnityEditorToolbox.Editor
 	}
 
 }
+
+#endif

@@ -601,10 +601,16 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			if (detected)
 			{
+
+#if PACKAGE_PHYSICS
+
 				if (IsGroundSnappingEnabled)
 				{
 					Me.transform.SnapToGround(GroundSnappingRaycastDistance, GroundSnappingRaycastSteps, GroundSnappingRaycastLayerMask, GroundSnappingOffset);
 				}
+
+#endif
+
 				OnMovementDetected();
 				MovementDetectionPreviousPosition = transform.position;
 				MovementDetectionPreviousRotation = transform.rotation;
@@ -615,6 +621,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#endregion
 
 		#region Ground Snapping
+
+#if PACKAGE_PHYSICS
 
 		public bool IsGroundSnappingEnabled { get; private set; }
 		public int GroundSnappingRaycastLayerMask = 0;
@@ -648,6 +656,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 			IsGroundSnappingEnabled = false;
 		}
+
+#endif
 
 		#endregion
 	}

@@ -1,6 +1,5 @@
 #if UNITY_5_3_OR_NEWER
-
-#if !DisableUnityPhysics
+#if PACKAGE_PHYSICS
 
 using UnityEngine;
 
@@ -213,5 +212,4 @@ namespace Extenity.DebugToolbox.GraphPlotting
 }
 
 #endif
-
 #endif

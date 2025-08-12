@@ -122,6 +122,8 @@ namespace Extenity.InputToolbox
 			return mouseRay.origin + mouseRay.direction * distance;
 		}
 
+#if PACKAGE_PHYSICS
+
 		public static GameObject PickObjectWithMouse()
 		{
 			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitObject, Mathf.Infinity))
@@ -130,6 +132,8 @@ namespace Extenity.InputToolbox
 			}
 			return null;
 		}
+
+#endif
 
 		public static bool GetKeyDown_TabOrESC { get { return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab); } }
 

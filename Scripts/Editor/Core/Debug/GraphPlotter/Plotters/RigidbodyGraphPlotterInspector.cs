@@ -1,4 +1,4 @@
-#if !DisableUnityPhysics
+#if PACKAGE_PHYSICS
 
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEngine;

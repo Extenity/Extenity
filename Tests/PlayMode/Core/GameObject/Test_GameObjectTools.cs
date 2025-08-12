@@ -356,6 +356,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		#endregion
 
+#if PACKAGE_PHYSICS
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_ActiveOnly_A1_BoxCollider()
 		{
@@ -366,6 +368,9 @@ namespace ExtenityTests.GameObjectToolbox
 		{
 			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.ActiveOnly), List_ActiveOnly_BoxCollider);
 		}
+
+#endif
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_ActiveOnly_B1_MeshRenderer()
 		{
@@ -394,6 +399,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		// ------------------------------------------------------
 
+#if PACKAGE_PHYSICS
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_IncludingInactive_A1_BoxCollider()
 		{
@@ -404,6 +411,9 @@ namespace ExtenityTests.GameObjectToolbox
 		{
 			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.IncludingInactive), List_ActiveOnly_BoxCollider.Combine(List_InactiveOnly_BoxCollider));
 		}
+
+#endif
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_IncludingInactive_B1_MeshRenderer()
 		{
@@ -432,6 +442,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		// ------------------------------------------------------
 
+#if PACKAGE_PHYSICS
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_InactiveOnly_A1_BoxCollider()
 		{
@@ -442,6 +454,9 @@ namespace ExtenityTests.GameObjectToolbox
 		{
 			yield return TestFindObjectsOfType(() => Scene.FindObjectsOfType<Collider>(ActiveCheck.InactiveOnly), List_InactiveOnly_BoxCollider);
 		}
+
+#endif
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator FindObjectsOfType_InactiveOnly_B1_MeshRenderer()
 		{
@@ -510,6 +525,8 @@ namespace ExtenityTests.GameObjectToolbox
 
 		#region IsComponentEnabled
 
+#if PACKAGE_PHYSICS
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator IsComponentEnabled_A1_BoxCollider()
 		{
@@ -520,6 +537,9 @@ namespace ExtenityTests.GameObjectToolbox
 		{
 			yield return TestIsComponentEnabled<Collider>();
 		}
+
+#endif
+
 		[UnityTest, Category(TestCategories.Cheesy)]
 		public IEnumerator IsComponentEnabled_B1_MeshRenderer()
 		{

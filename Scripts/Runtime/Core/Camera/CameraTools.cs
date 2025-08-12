@@ -18,6 +18,7 @@ namespace Extenity.CameraToolbox
 
 		#region IsVisibleFrom
 
+#if PACKAGE_PHYSICS
 		public static bool IsCollidersVisibleFrom(this Transform transform, Vector3 eyePosition)
 		{
 			var colliders = transform.GetComponents<Collider>();
@@ -113,6 +114,7 @@ namespace Extenity.CameraToolbox
 
 			return false;
 		}
+#endif
 
 		#endregion
 

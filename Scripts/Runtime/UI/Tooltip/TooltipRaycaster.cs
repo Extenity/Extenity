@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if PACKAGE_PHYSICS
+
+using System;
 using UnityEngine;
 
 namespace Extenity.UIToolbox
@@ -124,3 +126,4 @@ namespace Extenity.UIToolbox
 	}
 
 }
+#endif

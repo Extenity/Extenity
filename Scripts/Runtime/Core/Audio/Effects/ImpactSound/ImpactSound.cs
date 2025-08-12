@@ -1,4 +1,5 @@
 #if ExtenityAudio
+#if PACKAGE_PHYSICS
 
 using Extenity.MathToolbox;
 using UnityEngine;
@@ -43,4 +44,5 @@ namespace Extenity.Audio.Effects
 
 }
 
+#endif
 #endif

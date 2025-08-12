@@ -129,7 +129,6 @@ namespace Extenity.UnityEditorToolbox.Editor
 		public static DefineSymbolAdjustmentEntry[] DefineSymbolAdjustmentConfiguration_ExtenityDefaults => new[]
 		{
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.audio", "DisableUnityAudio"),
-			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics", "DisableUnityPhysics"),
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.physics2d", "DisableUnityPhysics2D"),
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.cloth", "DisableUnityCloth"),
 			DefineSymbolAdjustmentEntry.UndefineWithModuleExistence("com.unity.modules.terrain", "DisableUnityTerrain"),

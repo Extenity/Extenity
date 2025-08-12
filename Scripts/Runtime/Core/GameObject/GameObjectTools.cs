@@ -316,6 +316,8 @@ namespace Extenity.GameObjectToolbox
 
 		#region Create Primitive
 
+#if PACKAGE_PHYSICS
+
 		public static GameObject CreatePrimitive(PrimitiveType primitiveType, string gameObjectName, bool createCollider, Transform parent = null)
 		{
 			var go = GameObject.CreatePrimitive(primitiveType);
@@ -330,6 +332,8 @@ namespace Extenity.GameObjectToolbox
 			}
 			return go;
 		}
+
+#endif
 
 		#endregion
 
@@ -529,6 +533,8 @@ namespace Extenity.GameObjectToolbox
 			return isInitialized;
 		}
 
+#if PACKAGE_PHYSICS
+
 		public static bool CalculateColliderWorldBoundsRecursively(this GameObject go, out Bounds bounds)
 		{
 			bounds = new Bounds();
@@ -557,6 +563,8 @@ namespace Extenity.GameObjectToolbox
 			}
 			return isInitialized;
 		}
+
+#endif
 
 		#endregion
 
@@ -1904,6 +1912,8 @@ namespace Extenity.GameObjectToolbox
 
 		#region Ground Snapping
 
+#if PACKAGE_PHYSICS
+
 		public static bool SnapToGround(this Transform transform, float raycastDistance, int raycastSteps, int raycastLayerMask, float offset)
 		{
 			return transform.SnapToGround(raycastDistance, raycastSteps, raycastLayerMask, offset, SnapToGroundRotationOption.DontRotate, 0f, 0f);
@@ -2110,6 +2120,8 @@ namespace Extenity.GameObjectToolbox
 			return false;
 		}
 
+#endif
+
 		#endregion
 
 		#region GameObject Name
@@ -2159,11 +2171,13 @@ namespace Extenity.GameObjectToolbox
 				return (component as Behaviour).enabled;
 			if (component is Renderer)
 				return (component as Renderer).enabled;
+#if PACKAGE_PHYSICS
 			if (component is Collider)
 				return (component as Collider).enabled;
+#endif
 			if (component is LODGroup)
 				return (component as LODGroup).enabled;
-#if !DisableUnityCloth
+#if PACKAGE_PHYSICS && !DisableUnityCloth
 			if (component is Cloth)
 				return (component as Cloth).enabled;
 #endif

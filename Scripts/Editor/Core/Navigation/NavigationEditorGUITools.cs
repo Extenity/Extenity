@@ -345,10 +345,14 @@ namespace Extenity.NavigationToolbox.Editor
 				{
 					if (snapToGround)
 					{
+#if PACKAGE_PHYSICS
 						if (newPosition.SnapToGround(out var snappedPosition, 30f, 60, snapRaycastLayerMask, 0f))
 						{
 							newPosition = snappedPosition;
 						}
+#else
+						throw new NotSupportedException("Snap feature requires Physics package.");
+#endif
 					}
 
 					Undo.RecordObject(context, "Move navigation link point");

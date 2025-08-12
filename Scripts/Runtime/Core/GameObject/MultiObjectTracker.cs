@@ -1,4 +1,4 @@
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER && PACKAGE_PHYSICS
 
 using System;
 using System.Collections.Generic;
