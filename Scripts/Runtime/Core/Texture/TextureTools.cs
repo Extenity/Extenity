@@ -72,12 +72,23 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D CreateSimpleTexture(Color32 color)
 		{
-			return CreateSimpleTexture(4, 4, color);
+			return CreateSimpleTexture(2, 2, color);
 		}
 
 		public static Texture2D CreateSimpleTexture(int width, int height, Color32 color)
 		{
-			var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+			var hasAlpha = color.a != 1;
+			return CreateSimpleTexture(width, height, color, hasAlpha, true);
+		}
+
+		public static Texture2D CreateSimpleTexture(int width, int height, Color32 color, bool hasAlpha, bool isSRGB)
+		{
+			var textureFormat = hasAlpha
+				? TextureFormat.RGBA32
+				: TextureFormat.RGB24;
+			var graphicsFormat = GraphicsFormatUtility.GetGraphicsFormat(textureFormat, isSRGB);
+
+			var texture = new Texture2D(width, height, graphicsFormat, TextureCreationFlags.DontInitializePixels);
 			texture.hideFlags = HideFlags.DontSave;
 			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
 			var pixels = CollectionTools.NewFilledArray(width * height, color);
