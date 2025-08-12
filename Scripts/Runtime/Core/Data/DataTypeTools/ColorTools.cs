@@ -89,6 +89,8 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Equality
+
 		public static bool EqualsRGBA(this Color32 value1, Color32 value2)
 		{
 			return value1.r == value2.r &&
@@ -134,6 +136,10 @@ namespace Extenity.DataToolbox
 			return aDiff <= precision && aDiff >= -precision;
 		}
 
+		#endregion
+
+		#region Conversion
+
 		public static Int32 ToInt32(this Color value)
 		{
 			return
@@ -175,6 +181,8 @@ namespace Extenity.DataToolbox
 				((value & 0XFF000000) >> 24) / 255f
 				);
 		}
+
+		#endregion
 
 		#region Lerp
 
