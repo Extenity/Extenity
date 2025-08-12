@@ -83,13 +83,7 @@ namespace Extenity.TextureToolbox
 
 		public static Texture2D CreateSimpleTexture(int width, int height, Color32 color, bool hasAlpha, bool isSRGB)
 		{
-			var textureFormat = hasAlpha
-				? TextureFormat.RGBA32
-				: TextureFormat.RGB24;
-			var graphicsFormat = GraphicsFormatUtility.GetGraphicsFormat(textureFormat, isSRGB);
-
-			var texture = new Texture2D(width, height, graphicsFormat, TextureCreationFlags.DontInitializePixels);
-			texture.hideFlags = HideFlags.DontSave;
+			var texture = InternalCreateTexture(width, height, hasAlpha, isSRGB);
 			// texture.wrapMode = TextureWrapMode.Clamp; Not sure if it will do any good.
 			var pixels = CollectionTools.NewFilledArray(width * height, color);
 			texture.SetPixels32(pixels);
@@ -146,6 +140,27 @@ namespace Extenity.TextureToolbox
 
 		#endregion
 
+		#region Create Texture Internal
+
+		private static Texture2D InternalCreateTexture(int width, int height, bool hasAlpha, bool isSRGB)
+		{
+			var textureFormat = hasAlpha
+				? TextureFormat.RGBA32
+				: TextureFormat.RGB24;
+			var graphicsFormat = GraphicsFormatUtility.GetGraphicsFormat(textureFormat, isSRGB);
+
+			return InternalCreateTexture(width, height, graphicsFormat);
+		}
+
+		private static Texture2D InternalCreateTexture(int width, int height, GraphicsFormat graphicsFormat)
+		{
+			var texture = new Texture2D(width, height, graphicsFormat, TextureCreationFlags.DontInitializePixels);
+			texture.hideFlags = HideFlags.DontSave;
+			return texture;
+		}
+
+		#endregion
+		
 		/// <summary>
 		/// Source: https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
 		/// </summary>
