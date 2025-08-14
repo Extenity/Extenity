@@ -232,7 +232,7 @@ namespace Extenity.AssetToolbox.Editor
 
 				Log.Info(log.ToString());
 
-				ReserializeAssets(ref fullList);
+				ReserializeAssets(ref fullList, excludePackageAssets: false);
 			};
 		}
 
@@ -249,7 +249,7 @@ namespace Extenity.AssetToolbox.Editor
 
 				Log.Info(log.ToString());
 
-				ReserializeAssets(ref fullList);
+				ReserializeAssets(ref fullList, excludePackageAssets: true);
 			};
 		}
 
@@ -259,7 +259,7 @@ namespace Extenity.AssetToolbox.Editor
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
 				var list = AssetDatabase.GetAllAssetPaths().ToPooledList();
-				ReserializeAssets(ref list);
+				ReserializeAssets(ref list, excludePackageAssets: true);
 			};
 		}
 
@@ -268,7 +268,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+				ReserializeAssets(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, excludePackageAssets: true);
 			};
 		}
 
@@ -277,7 +277,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+				ReserializeAssets(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, excludePackageAssets: true);
 			};
 		}
 
@@ -286,7 +286,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false, false);
+				ReserializeAssets(false, false, true, true, true, true, true, true, true, true, true, true, true, false, false, false, excludePackageAssets: true);
 			};
 		}
 
@@ -295,7 +295,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false);
+				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, excludePackageAssets: true);
 			};
 		}
 
@@ -304,7 +304,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
 			{
-				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+				ReserializeAssets(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, excludePackageAssets: true);
 			};
 		}
 
@@ -324,7 +324,8 @@ namespace Extenity.AssetToolbox.Editor
 			bool ui,
 			bool physics,
 			bool audio,
-			bool script
+			bool script,
+			bool excludePackageAssets
 		)
 		{
 			var fullList = New.List<string>();
@@ -419,7 +420,7 @@ namespace Extenity.AssetToolbox.Editor
 			//	EditorUtility.SetDirty(asset);
 			//}
 
-			ReserializeAssets(ref fullList);
+			ReserializeAssets(ref fullList, excludePackageAssets);
 		}
 
 		private static void InternalAddToAssetList(ref List<string> list, List<string> fullList, string logTitle, StringBuilder log)
@@ -439,8 +440,21 @@ namespace Extenity.AssetToolbox.Editor
 			Release.List(ref list);
 		}
 
-		public static void ReserializeAssets(ref List<string> assetPaths)
+		public static void ReserializeAssets(ref List<string> assetPaths, bool excludePackageAssets)
 		{
+			if (excludePackageAssets)
+			{
+				for (var i = 0; i < assetPaths.Count; i++)
+				{
+					if (assetPaths[i].StartsWith("Packages/", StringComparison.OrdinalIgnoreCase) ||
+					    assetPaths[i].StartsWith("Packages\\", StringComparison.OrdinalIgnoreCase))
+					{
+						assetPaths.RemoveAt(i);
+						i--;
+					}
+				}
+			}
+
 #if UNITY_6000_2_OR_NEWER // Unity resolved the issue of not being able to reserialize scenes that are not loaded. Not sure at which version exactly, but it is safe to assume that it is fixed in 6.2 and later versions.
 
 			AssetDatabase.ForceReserializeAssets(assetPaths, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
