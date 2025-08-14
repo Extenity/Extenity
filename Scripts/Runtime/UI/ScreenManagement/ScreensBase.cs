@@ -3,8 +3,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Extenity.MessagingToolbox;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.UIToolbox.ScreenManagement
@@ -14,21 +12,13 @@ namespace Extenity.UIToolbox.ScreenManagement
 	{
 		#region Events
 
-		protected abstract void RegisterEvents();
-
 		protected void OnEnable()
 		{
 			CheckConsistency();
-			RegisterEvents();
 		}
 
 		protected void OnDisable()
 		{
-#if ExtenityMessenger && UseLegacyMessenger
-			Messenger.DeregisterAllEvents(this);
-#else
-			#error Not implemented yet!
-#endif
 		}
 
 		#endregion
