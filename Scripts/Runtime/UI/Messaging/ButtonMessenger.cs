@@ -1,4 +1,5 @@
 ﻿#if ExtenityScreenManagement
+#if ExtenityMessenger
 
 using System;
 using Extenity.MessagingToolbox;
@@ -124,4 +125,5 @@ namespace Extenity.UIToolbox
 
 }
 
+#endif
 #endif
