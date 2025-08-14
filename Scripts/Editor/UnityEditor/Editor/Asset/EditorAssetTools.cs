@@ -441,6 +441,14 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static void ReserializeAssets(ref List<string> assetPaths)
 		{
+#if UNITY_6000_2_OR_NEWER // Unity resolved the issue of not being able to reserialize scenes that are not loaded. Not sure at which version exactly, but it is safe to assume that it is fixed in 6.2 and later versions.
+
+			AssetDatabase.ForceReserializeAssets(assetPaths, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
+
+			Release.List(ref assetPaths);
+
+#else
+
 			// This is the old way of doing it. Which somewhat worked with some flaws.
 			//MarkAssetsAsDirty(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
@@ -463,6 +471,8 @@ namespace Extenity.AssetToolbox.Editor
 
 				Release.List(ref assetPaths, ref sceneAssetPaths, ref otherAssetPaths);
 			}
+
+#endif
 		}
 
 		private static void InternalReserializeScenes(IEnumerable<string> sceneAssetPaths)
