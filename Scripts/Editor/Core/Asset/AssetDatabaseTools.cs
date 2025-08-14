@@ -573,6 +573,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reload Scripts", priority = 40)] // Priority is just below the Reimport All option. Unfortunately seems like there is no way to put this option near Refresh or Reimport options, because priority 39 puts the item above them.  
 		public static void ReloadScripts()
 		{
+			Log.Info("Reloading assemblies");
 			EditorUtilityTools.RequestScriptReload();
 		}
 
