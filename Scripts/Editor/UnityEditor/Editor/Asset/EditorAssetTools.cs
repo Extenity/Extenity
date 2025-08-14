@@ -263,7 +263,17 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem(ReserializeMenu + "Reserialize All Scenes", priority = 1204)]
+		[MenuItem(ReserializeMenu + "Reserialize All Assets, Including Packages", priority = 1204)]
+		public static void ReserializeAllAssetsIncludingPackages()
+		{
+			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
+			{
+				var list = AssetDatabase.GetAllAssetPaths().ToPooledList();
+				ReserializeAssets(ref list, excludePackageAssets: false);
+			};
+		}
+
+		[MenuItem(ReserializeMenu + "Reserialize All Scenes", priority = 1205)]
 		public static void ReserializeAllScenes()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -272,7 +282,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem(ReserializeMenu + "Reserialize All Prefabs", priority = 1205)]
+		[MenuItem(ReserializeMenu + "Reserialize All Prefabs", priority = 1206)]
 		public static void ReserializeAllPrefabs()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -281,7 +291,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem(ReserializeMenu + "Reserialize All Graphics Assets", priority = 1206)]
+		[MenuItem(ReserializeMenu + "Reserialize All Graphics Assets", priority = 1207)]
 		public static void ReserializeAllGraphicsAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -290,7 +300,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem(ReserializeMenu + "Reserialize All Audio Assets", priority = 1207)]
+		[MenuItem(ReserializeMenu + "Reserialize All Audio Assets", priority = 1208)]
 		public static void ReserializeAllAudioAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
@@ -299,7 +309,7 @@ namespace Extenity.AssetToolbox.Editor
 			};
 		}
 
-		[MenuItem(ReserializeMenu + "Reserialize All Script Assets", priority = 1208)]
+		[MenuItem(ReserializeMenu + "Reserialize All Script Assets", priority = 1209)]
 		public static void ReserializeAllScriptAssets()
 		{
 			EditorApplication.delayCall += () => // Delaying the call to hopefully fix the dreaded random crash problem. See 719274423.
