@@ -34,9 +34,6 @@ namespace Extenity.Testing
 			StartTime = Time.realtimeSinceStartup;
 
 			InitializeTiming();
-#if UNITY_EDITOR
-			EditorCoroutine.EnsureNoRunningEditorCoroutines();
-#endif
 			InitializeLogCatching();
 
 			OnInitialize();
@@ -57,9 +54,6 @@ namespace Extenity.Testing
 
 			DeinitializeLogCatching();
 			EnsureAllCheckpointsReached();
-#if UNITY_EDITOR
-			EditorCoroutine.EnsureNoRunningEditorCoroutines();
-#endif
 			UnityTestTools.Cleanup();
 		}
 
