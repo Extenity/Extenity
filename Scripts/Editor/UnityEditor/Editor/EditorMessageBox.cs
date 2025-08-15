@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.ScreenToolbox;
 using UnityEngine;
@@ -31,33 +32,38 @@ namespace Extenity.UnityEditorToolbox.Editor
 		private string Message;
 		private string OkButton;
 		private string CancelButton;
-		private Action OnContinue;
-		private Action OnCancel;
 		private UserInputField[] UserInputFields;
 
 		private bool NeedsFocus;
 
-		private bool InternalIsCancelled = true;
 		private Vector2 ScrollPosition;
 
-		public static void Show(Vector2Int size, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
+		private enum FinalizationState
+		{
+			StillPrompting,
+			FinalizedWithOkButton,
+			FinalizedWithCancelButtonOrWindowClosed,
+		}
+		private FinalizationState Finalization;
+
+		public static async Task Show(Vector2Int size, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
 			var rect = ScreenTools.GetCenteredRect(size.x, size.y);
-			Show(rect, title, message, okButton, cancelButton, onContinue, onCancel);
+			await Show(rect, title, message, okButton, cancelButton, onContinue, onCancel);
 		}
 
-		public static void Show(Vector2Int size, string title, string message, UserInputField[] userInputFields, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
+		public static async Task Show(Vector2Int size, string title, string message, UserInputField[] userInputFields, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
 			var rect = ScreenTools.GetCenteredRect(size.x, size.y);
-			Show(rect, title, message, userInputFields, okButton, cancelButton, onContinue, onCancel);
+			await Show(rect, title, message, userInputFields, okButton, cancelButton, onContinue, onCancel);
 		}
 
-		public static void Show(Rect position, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
+		public static async Task Show(Rect position, string title, string message, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
-			Show(position, title, message, null, okButton, cancelButton, onContinue, onCancel);
+			await Show(position, title, message, null, okButton, cancelButton, onContinue, onCancel);
 		}
 
-		public static void Show(Rect position, string title, string message, UserInputField[] userInputFields, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
+		public static async Task Show(Rect position, string title, string message, UserInputField[] userInputFields, string okButton, string cancelButton, Action onContinue, Action onCancel = null)
 		{
 			var popup = ScriptableObject.CreateInstance<EditorMessageBox>();
 			popup.titleContent = new GUIContent(title);
@@ -65,19 +71,61 @@ namespace Extenity.UnityEditorToolbox.Editor
 			popup.Message = message;
 			popup.OkButton = okButton;
 			popup.CancelButton = cancelButton;
-			popup.OnContinue += onContinue;
-			popup.OnCancel += onCancel;
 			popup.UserInputFields = userInputFields;
 			popup.NeedsFocus = true;
 			popup.ShowAuxWindow();
+
+			while (true)
+			{
+				switch (popup.Finalization)
+				{
+					case FinalizationState.StillPrompting:
+						break; // Wait for user to enter input to message box.
+
+					case FinalizationState.FinalizedWithOkButton:
+					{
+						if (onContinue != null)
+						{
+							onContinue();
+						}
+
+						return;
+					}
+
+					case FinalizationState.FinalizedWithCancelButtonOrWindowClosed:
+					{
+						// If there is no cancel button, act as if the Okay button pressed.
+						if (string.IsNullOrEmpty(popup.CancelButton))
+						{
+							if (onContinue != null)
+							{
+								onContinue();
+							}
+						}
+						else
+						{
+							if (onCancel != null)
+							{
+								onCancel();
+							}
+						}
+
+						return;
+					}
+
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+
+				await Task.Delay(1);
+			}
 		}
 
 		void OnDestroy()
 		{
-			if (InternalIsCancelled)
+			if (Finalization == FinalizationState.StillPrompting)
 			{
-				if (OnCancel != null)
-					OnCancel();
+				Finalization = FinalizationState.FinalizedWithCancelButtonOrWindowClosed;
 			}
 		}
 
@@ -88,14 +136,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 			var escapePressed = Event.current.Equals(Event.KeyboardEvent("escape"));
 			if (escapePressed)
 			{
+				Finalization = FinalizationState.FinalizedWithCancelButtonOrWindowClosed;
 				Close();
-
-				// If there is no cancel button, act as if the Okay button pressed.
-				if (string.IsNullOrEmpty(CancelButton))
-				{
-					if (OnContinue != null)
-						OnContinue();
-				}
 				return;
 			}
 
@@ -154,17 +196,15 @@ namespace Extenity.UnityEditorToolbox.Editor
 					EditorGUI.BeginDisabledGroup(!okButtonAllowed);
 					if (GUILayout.Button(OkButton, GUILayout.Height(30f)) || (enterPressed && okButtonAllowed))
 					{
-						InternalIsCancelled = false;
+						Finalization = FinalizationState.FinalizedWithOkButton;
 						Close();
-
-						if (OnContinue != null)
-							OnContinue();
 					}
 					EditorGUI.EndDisabledGroup();
 					if (!string.IsNullOrEmpty(CancelButton))
 					{
 						if (GUILayout.Button(CancelButton, GUILayout.Height(30f)))
 						{
+							Finalization = FinalizationState.FinalizedWithCancelButtonOrWindowClosed;
 							Close();
 						}
 					}

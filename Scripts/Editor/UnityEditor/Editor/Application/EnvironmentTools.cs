@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.ParallelToolbox.Editor;
@@ -33,33 +34,33 @@ namespace Extenity.ApplicationToolbox.Editor
 		#region Menu - Delete Loose Environment Paths
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine", priority = ExtenityMenu.SystemPriority + 1)]
-		public static void DeleteLooseEnvironmentPaths_Machine()
+		public static async void DeleteLooseEnvironmentPaths_Machine()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Machine, true));
+			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Machine, true);
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/User", priority = ExtenityMenu.SystemPriority + 2)]
-		public static void DeleteLooseEnvironmentPaths_User()
+		public static async void DeleteLooseEnvironmentPaths_User()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.User, true));
+			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.User, true);
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Process", priority = ExtenityMenu.SystemPriority + 3)]
-		public static void DeleteLooseEnvironmentPaths_Process()
+		public static async void DeleteLooseEnvironmentPaths_Process()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Process, true));
+			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Process, true);
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User", priority = ExtenityMenu.SystemPriority + 4)]
-		public static void DeleteLooseEnvironmentPaths_MachineUser()
+		public static async void DeleteLooseEnvironmentPaths_MachineUser()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User }, true));
+			await DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User }, true);
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User, Process", priority = ExtenityMenu.SystemPriority + 5)]
-		public static void DeleteLooseEnvironmentPaths_MachineUserProcess()
+		public static async void DeleteLooseEnvironmentPaths_MachineUserProcess()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User, EnvironmentVariableTarget.Process }, true));
+			await DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User, EnvironmentVariableTarget.Process }, true);
 		}
 
 		#endregion
@@ -378,15 +379,15 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#region Delete Loose Paths
 
-		public static IEnumerator DeleteLooseEnvironmentPaths(EnvironmentVariableTarget[] targets, bool askUser)
+		public static async Task DeleteLooseEnvironmentPaths(EnvironmentVariableTarget[] targets, bool askUser)
 		{
 			foreach (var target in targets)
 			{
-				yield return EditorCoroutineUtility.StartCoroutineOwnerless(DeleteLooseEnvironmentPaths(target, askUser));
+				await DeleteLooseEnvironmentPaths(target, askUser);
 			}
 		}
 
-		public static IEnumerator DeleteLooseEnvironmentPaths(EnvironmentVariableTarget target, bool askUser)
+		public static async Task DeleteLooseEnvironmentPaths(EnvironmentVariableTarget target, bool askUser)
 		{
 			var split = GetEnvironmentPaths(target);
 			var removedEntries = new List<string>();
@@ -407,26 +408,17 @@ namespace Extenity.ApplicationToolbox.Editor
 				{
 					if (askUser)
 					{
-						var answered = false;
-
-						EditorMessageBox.Show(new Vector2Int(600, 100), "Delete Path?",
+						await EditorMessageBox.Show(
+							new Vector2Int(600, 100),
+							"Delete Path?",
 							"The path is not pointing to a directory or file. Do you want to delete it?\n\n" + path,
 							"Delete", "Skip",
 							() =>
 							{
 								removedEntries.Add(split[iCached]);
 								split.RemoveAt(iCached);
-								answered = true;
-							},
-							() =>
-							{
-								answered = true;
-							});
-
-						while (!answered)
-						{
-							yield return null;
-						}
+							}
+						);
 					}
 					else
 					{

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Extenity.ApplicationToolbox;
 using Extenity.AssetToolbox.Editor;
 using Extenity.CryptoToolbox;
@@ -760,7 +761,7 @@ namespace Extenity.BuildToolbox.Editor
 
 		#region Register Keys in EditorPrefs
 
-		public static string GetKeyFromEditorPrefsOrPrompt(string key)
+		public static async Task<string> GetKeyFromEditorPrefsOrPrompt(string key)
 		{
 			// Add project path postfix. Because we need to keep the key only for this project, where EditorPrefs data is shared between all projects on this PC.
 			key = PlayerPrefsTools.GenerateKey(key, PathHashPostfix.Yes);
@@ -770,13 +771,13 @@ namespace Extenity.BuildToolbox.Editor
 			if (string.IsNullOrWhiteSpace(value))
 			{
 				var inputField = new UserInputField(key, false);
-				EditorMessageBox.Show(new Vector2Int(300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
+				await EditorMessageBox.Show(new Vector2Int(300, 300), "Enter " + key, "", new[] { inputField }, "Ok", "Cancel",
 				                      () =>
 				                      {
 					                      EditorPrefs.SetString(key, inputField.Value.Trim());
 				                      }
 				);
-				throw new Exception($"Set the key and restart the process.");
+				return EditorPrefs.GetString(key, "");
 			}
 
 			return value;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Extenity.AssetToolbox.Editor;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
@@ -555,7 +556,7 @@ namespace __NAMESPACE__
 
 		#region Create Snippet
 
-		private static void CreateSnippet(SnippetGroup snippetGroup, Func<string, string> overrideDefaultNamespaceProcessor = null)
+		private static async Task CreateSnippet(SnippetGroup snippetGroup, Func<string, string> overrideDefaultNamespaceProcessor = null)
 		{
 			var path = EditorUtility.SaveFilePanel("Give a name to your script", AssetDatabaseTools.GetSelectedDirectoryPathOrAssetsRootPath(), "", snippetGroup.MainFileExtension);
 
@@ -570,7 +571,7 @@ namespace __NAMESPACE__
 					? overrideDefaultNamespaceProcessor(scriptName)
 					: EditorSettings.projectGenerationRootNamespace;
 				var inputField = new[] { new UserInputField("Namespace", string.IsNullOrEmpty(rootNamespace) ? "" : rootNamespace, false) };
-				EditorMessageBox.Show(new Vector2Int(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
+				await EditorMessageBox.Show(new Vector2Int(400, 200), "Enter Namespace", $"Enter the namespace of class '{scriptName}'.", inputField, "Create Snippet", "Cancel",
 					() =>
 					{
 						var scriptNamespace = inputField[0].Value;
@@ -607,21 +608,21 @@ namespace __NAMESPACE__
 		#region Menu Commands
 
 		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
-		private static void _CreateScript_MainScriptGroup()
+		private static async void _CreateScript_MainScriptGroup()
 		{
-			CreateSnippet(MainScriptGroup);
+			await CreateSnippet(MainScriptGroup);
 		}
 
 		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced Empty)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
-		private static void _CreateScript_EmptyScriptGroup()
+		private static async void _CreateScript_EmptyScriptGroup()
 		{
-			CreateSnippet(EmptyScriptGroup);
+			await CreateSnippet(EmptyScriptGroup);
 		}
 
 		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Tests Assembly Triple Folders Setup", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
-		private static void _CreateScript_TestAssembliesGroup()
+		private static async void _CreateScript_TestAssembliesGroup()
 		{
-			CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
+			await CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
 		}
 
 
