@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
+using System.Threading.Tasks;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.ReflectionToolbox;
 using UnityEditor;
@@ -52,13 +53,8 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 
 		public static void FetchAllAssetStorePackages()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoFetchAllAssetStorePackages(), null);
-		}
-
-		static IEnumerator DoFetchAllAssetStorePackages()
-		{
 			if (IsGettingAssetStoreList)
-				yield break;
+				return;
 			IsGettingAssetStoreList = true;
 
 			// Package Manager window needs to be opened so Unity may parse the details of fetched packages and populate its internal lists.
@@ -78,8 +74,6 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 
 			AssetStoreClientInternalType.GetMethodAsAction<object /*instance*/, int /*offset*/, int /*limit*/, string /*searchText*/, bool /*fetchDetails*/>("List", out var listMethod);
 			listMethod.Invoke(AssetStoreClientInternalInstance, 0, CountOfFetchedPackages, "", true);
-
-			yield return null;
 		}
 
 		private static void OnListOperationStart()
