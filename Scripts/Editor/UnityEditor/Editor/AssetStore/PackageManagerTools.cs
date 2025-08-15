@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using Extenity.DataToolbox;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.ReflectionToolbox;
@@ -84,61 +85,51 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			return result;
 		}
 
-		public static void SearchAllViaClient()
+		public static async void SearchAllViaClient()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoSearchAllViaClient(), null);
-
-			IEnumerator DoSearchAllViaClient()
+			var request = Client.SearchAll();
+			Log.Info("Searching all packages");
+			while (request.IsCompleted == false)
 			{
-				var request = Client.SearchAll();
-				Log.Info("Searching all packages");
-				while (request.IsCompleted == false)
-				{
-					yield return null;
-				}
-				Log.Info("Listing packages");
-				var packageInfos = request.Result;
+				await Task.Yield();
+			}
+			Log.Info("Listing packages");
+			var packageInfos = request.Result;
 
-				if (request.Error != null)
+			if (request.Error != null)
+			{
+				Debug.LogError(request.Error.message);
+			}
+			else
+			{
+				Log.Info($"Package infos ({packageInfos.Length}):");
+				foreach (var packageInfo in packageInfos)
 				{
-					Debug.LogError(request.Error.message);
-				}
-				else
-				{
-					Log.Info($"Package infos ({packageInfos.Length}):");
-					foreach (var packageInfo in packageInfos)
-					{
-						Log.Info($"{packageInfo.name}");
-					}
+					Log.Info($"{packageInfo.name}");
 				}
 			}
 		}
 
-		public static void ListPackagesViaClient()
+		public static async void ListPackagesViaClient()
 		{
-			EditorCoroutineUtility.StartCoroutineOwnerless(DoListPackagesViaClient(), null);
-
-			IEnumerator DoListPackagesViaClient()
+			var request = Client.List(false, true);
+			Log.Info("Requesting package list");
+			while (request.IsCompleted == false)
 			{
-				var request = Client.List(false, true);
-				Log.Info("Requesting package list");
-				while (request.IsCompleted == false)
-				{
-					yield return null;
-				}
-				Log.Info("Listing packages");
-				var collection = request.Result;
+				await Task.Yield();
+			}
+			Log.Info("Listing packages");
+			var collection = request.Result;
 
-				if (collection.error != null)
+			if (collection.error != null)
+			{
+				Debug.LogError(collection.error.message);
+			}
+			else
+			{
+				foreach (var entry in collection)
 				{
-					Debug.LogError(collection.error.message);
-				}
-				else
-				{
-					foreach (var entry in collection)
-					{
-						Log.Info($"{entry.displayName}");
-					}
+					Log.Info($"{entry.displayName}");
 				}
 			}
 		}
