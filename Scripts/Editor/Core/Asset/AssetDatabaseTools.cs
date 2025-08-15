@@ -550,11 +550,16 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Script Assets
 
-		public static void OpenScriptInIDE(string scriptPath, int line = -1)
+		public static void OpenScriptInIDE(string scriptPath, int line = -1, int column = -1)
 		{
 			var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(scriptPath); // Maybe use MonoScript instead of TextAsset
 
-			if (line >= 0)
+			if (line >= 0 && column >= 0)
+			{
+				Log.InfoWithContext(asset, "Opening script '{scriptPath}' at line '{line}:{column}'.");
+				AssetDatabase.OpenAsset(asset, line, column);
+			}
+			else if (line >= 0)
 			{
 				Log.InfoWithContext(asset, $"Opening script '{scriptPath}' at line '{line}'.");
 				AssetDatabase.OpenAsset(asset, line);
