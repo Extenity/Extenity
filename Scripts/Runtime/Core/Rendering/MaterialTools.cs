@@ -1,6 +1,7 @@
 ﻿#if UNITY_5_3_OR_NEWER
 
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Extenity.RenderingToolbox
 {
@@ -17,6 +18,20 @@ namespace Extenity.RenderingToolbox
 			material.EnableKeyword("_ALPHABLEND_ON");
 			material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
 			material.renderQueue = 3000;
+		}
+
+		public static void SetAllTexturesOfMaterial(this Material material, Texture texture)
+		{
+			var shader = material.shader;
+			var propertyCount = shader.GetPropertyCount();
+			for (int i = 0; i < propertyCount; i++)
+			{
+				if (shader.GetPropertyType(i) == ShaderPropertyType.Texture)
+				{
+					var propertyName = shader.GetPropertyName(i);
+					material.SetTexture(propertyName, texture);
+				}
+			}
 		}
 	}
 
