@@ -141,6 +141,36 @@ namespace Extenity.DataToolbox
 			collection = new List<T>(capacity);
 		}
 
+		internal static ListDisposer<T> Using(out List<T> collection, IEnumerable<T> otherCollection)
+		{
+			if (otherCollection == null)
+			{
+				// Note that "List<T>(IEnumerable<T> collection)" constructor throws exception on null collections.
+				// But this pooling system is more forgiving. So we will just be overriding with an empty array
+				// to prevent these exceptions. Null collection is embraced as if it's an empty collection.
+				otherCollection = Array.Empty<T>();
+			}
+			lock (Pool)
+			{
+				if (Pool.Count > 0)
+				{
+					collection = _GetNextItemInPool();
+
+					if (_RoughlyCheckIfCollectionWasUsedElsewhere(collection))
+					{
+						_LogErrorForUnexpectedlyUsedCollection();
+						collection = new List<T>(otherCollection);
+						return new ListDisposer<T>(collection);
+					}
+
+					collection.AddRange(otherCollection);
+					return new ListDisposer<T>(collection);
+				}
+			}
+			collection = new List<T>(otherCollection);
+			return new ListDisposer<T>(collection);
+		}
+
 		internal static void New(out List<T> collection, IEnumerable<T> otherCollection)
 		{
 			if (otherCollection == null)
@@ -292,6 +322,27 @@ namespace Extenity.DataToolbox
 		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
 		/// Make sure to return the collection to the pool via Release.List<T>().
 		/// </summary>
+		/// <param name="otherCollection">
+		/// Initialize the collection with given enumerable values. Note that the pooling system will give
+		/// the collection with largest capacity first. So expect getting much bigger capacity even though the specified
+		/// collection might be tiny in size.
+		/// </param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static List<T> List<T>(Span<T> otherCollection)
+		{
+			ListPool<T>.New(out var collection, otherCollection.Length);
+			// TODO: Find a way to use List constructor that accepts another collection to copy from, but with Span.
+			foreach (var item in otherCollection)
+			{
+				collection.Add(item);
+			}
+			return collection;
+		}
+
+		/// <summary>
+		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
+		/// Make sure to return the collection to the pool via Release.List<T>().
+		/// </summary>
 		/// <param name="capacity">
 		/// The pooling system will give the collection with largest capacity first. A new container will be created
 		/// with specified capacity if the pool is empty. If the pool has collections available but not one that matches
@@ -302,6 +353,21 @@ namespace Extenity.DataToolbox
 		public static ListDisposer<T> List<T>(out List<T> collection, int capacity = 0)
 		{
 			return ListPool<T>.Using(out collection, capacity);
+		}
+
+		/// <summary>
+		/// Gets the next available collection in pool or creates a new one if pool doesn't have any available.
+		/// Make sure to return the collection to the pool via Release.List<T>().
+		/// </summary>
+		/// <param name="otherCollection">
+		/// Initialize the collection with given enumerable values. Note that the pooling system will give
+		/// the collection with largest capacity first. So expect getting much bigger capacity even though the specified
+		/// collection might be tiny in size.
+		/// </param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ListDisposer<T> List<T>(out List<T> collection, IEnumerable<T> otherCollection)
+		{
+			return ListPool<T>.Using(out collection, otherCollection);
 		}
 
 		public static List<TSource> ToPooledList<TSource>(this IEnumerable<TSource> source)
