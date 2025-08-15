@@ -31,15 +31,10 @@ namespace Extenity.ApplicationToolbox
 #if UNITY_5_3_OR_NEWER // Unity
 				switch (UnityEngine.Application.platform)
 				{
+					case UnityEngine.RuntimePlatform.OSXEditor:
 					case UnityEngine.RuntimePlatform.WindowsEditor:
 						// This does not work in threaded environment. So we use working directory instead.
 						// return Application.dataPath.AddDirectorySeparatorToEnd().RemoveLastDirectoryFromPath().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-						return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-
-					case UnityEngine.RuntimePlatform.WindowsPlayer:
-						throw new NotImplementedException(); // TODO:
-
-					case UnityEngine.RuntimePlatform.OSXEditor:
 						return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 
 					default:
