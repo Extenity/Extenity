@@ -28,7 +28,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 				switch (UnityEngine.Application.platform)
 				{
 					case UnityEngine.RuntimePlatform.WindowsEditor:
@@ -45,7 +45,7 @@ namespace Extenity.ApplicationToolbox
 					default:
 						throw new NotImplementedException();
 				}
-#else
+#else // Not Unity
 				return Directory.GetCurrentDirectory().AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
 #endif
 			}
@@ -55,7 +55,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
@@ -69,7 +69,7 @@ namespace Extenity.ApplicationToolbox
 				return UnityEngine.Application.persistentDataPath;
 #endif
 
-#else
+#else // Not Unity
 				throw new NotImplementedException();
 #endif
 			}
@@ -79,7 +79,7 @@ namespace Extenity.ApplicationToolbox
 		{
 			get
 			{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 				using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
@@ -93,7 +93,7 @@ namespace Extenity.ApplicationToolbox
 				return UnityEngine.Application.temporaryCachePath;
 #endif
 
-#else
+#else // Not Unity
 				throw new NotImplementedException();
 #endif
 			}
@@ -232,7 +232,7 @@ namespace Extenity.ApplicationToolbox
 		/// </summary>
 		public static void LaunchMarketPage()
 		{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 
 #if UNITY_EDITOR
 			Log.Info("Ambiguous to launch the market page in Editor.");
@@ -246,7 +246,7 @@ namespace Extenity.ApplicationToolbox
 			throw new NotImplementedException();
 #endif
 
-#else
+#else // Not Unity
 			throw new NotImplementedException();
 #endif
 		}
@@ -281,7 +281,7 @@ namespace Extenity.ApplicationToolbox
 
 		public static void Quit()
 		{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 
 #if UNITY_EDITOR
 			if (UnityEditor.EditorApplication.isPlaying)
@@ -292,14 +292,14 @@ namespace Extenity.ApplicationToolbox
 			UnityEngine.Application.Quit();
 #endif
 
-#else
+#else // Not Unity
 			throw new NotImplementedException();
 #endif
 		}
 
 		public static void Restart()
 		{
-#if UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER // Unity
 
 #if UNITY_EDITOR
 
@@ -328,7 +328,7 @@ namespace Extenity.ApplicationToolbox
 			throw new NotImplementedException();
 #endif
 
-#else
+#else // Not Unity
 			throw new NotImplementedException();
 #endif
 		}
