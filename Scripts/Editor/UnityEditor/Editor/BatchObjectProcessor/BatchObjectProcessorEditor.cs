@@ -171,6 +171,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 							_MarkChange(1, $"Unpacking prefab completely for object '{go.FullName()}'", ref changed, ref appliedModificationCount, ref appliedModifications);
 							PrefabUtility.UnpackPrefabInstance(go, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
 							break;
+						case BatchObjectProcessor.PrefabUnpackingType.No:
+							throw new ArgumentOutOfRangeException();
 					}
 				}
 			}
