@@ -52,6 +52,80 @@ namespace Extenity.DataToolbox
 			}
 			return false;
 		}
+
+		#region Enum String Cache
+
+		// Cache for enum string representations to avoid repeated allocations
+		private static readonly Dictionary<Type, Dictionary<object, string>> EnumStringCache = new();
+
+		/// <summary>
+		/// Fast enum to string conversion with caching for better performance.
+		/// Use this instead of ToString() for frequently accessed enum values.
+		/// </summary>
+		public static string ToStringFast<T>(this T enumValue) where T : Enum
+		{
+			var enumType = typeof(T);
+
+			// Get or create cache for this enum type
+			if (!EnumStringCache.TryGetValue(enumType, out var typeCache))
+			{
+				typeCache = new Dictionary<object, string>();
+				EnumStringCache[enumType] = typeCache;
+
+				// Pre-populate cache with all enum values
+				foreach (var value in Enum.GetValues(enumType))
+				{
+					typeCache[value] = value.ToString();
+				}
+			}
+
+			// Return cached string
+			return typeCache[enumValue];
+		}
+
+		/// <summary>
+		/// Non-generic version of ToStringFast for when you only have the enum type at runtime.
+		/// </summary>
+		public static string ToStringFast(this Enum enumValue)
+		{
+			var enumType = enumValue.GetType();
+
+			// Get or create cache for this enum type
+			if (!EnumStringCache.TryGetValue(enumType, out var typeCache))
+			{
+				typeCache = new Dictionary<object, string>();
+				EnumStringCache[enumType] = typeCache;
+
+				// Pre-populate cache with all enum values
+				foreach (var value in Enum.GetValues(enumType))
+				{
+					typeCache[value] = value.ToString();
+				}
+			}
+
+			// Return cached string
+			return typeCache[enumValue];
+		}
+
+		/// <summary>
+		/// Clears the string cache for a specific enum type.
+		/// Useful if you need to free memory for a specific enum.
+		/// </summary>
+		public static void ClearStringCache<T>() where T : Enum
+		{
+			EnumStringCache.Remove(typeof(T));
+		}
+
+		/// <summary>
+		/// Clears all string caches.
+		/// Useful for freeing memory when enums are no longer needed.
+		/// </summary>
+		public static void ClearAllStringCaches()
+		{
+			EnumStringCache.Clear();
+		}
+
+		#endregion
 	}
 
 }
