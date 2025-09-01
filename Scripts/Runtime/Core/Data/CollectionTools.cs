@@ -916,6 +916,94 @@ namespace Extenity.DataToolbox
 		}
 
 		/// <summary>
+		/// Returns lists of items to be used for equalizing items in "this list" to "other list" by comparing each item. First it detects the items that exist in both lists. Then it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
+		/// </summary>
+		/// <typeparam name="T">Item type of lists</typeparam>
+		/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
+		/// <param name="otherList">"Other list" is used only for comparison to "this list" and not modified.</param>
+		/// <param name="comparer">Allows user to define a custom equality comparer.</param>
+		/// <param name="addedItems">List of items in "other list" that does not appear to be in "this list".</param>
+		/// <param name="removedItems">List of items in "this list" that does not appear to be in "other list".</param>
+		/// <param name="unchangedItems">List of items that appear to be in both lists.</param>
+		/// <returns>True if anything in "this list" changed. False otherwise.</returns>
+		public static bool EqualizeTo<T>(this IList<T> thisList, in IList<T> otherList,
+			IEqualityComparer<T> comparer,
+			IList<T> addedItems,
+			IList<T> removedItems,
+			IList<(T ThisItem, T OtherItem)> unchangedItems)
+		{
+			if (thisList == null)
+				throw new ArgumentNullException(nameof(thisList));
+			if (otherList == null)
+				throw new ArgumentNullException(nameof(otherList));
+			if (Equals(thisList, otherList))
+				throw new ArgumentException("thisList and otherList are pointing to the same list");
+			if (addedItems == null)
+				throw new ArgumentNullException(nameof(addedItems));
+			if (removedItems == null)
+				throw new ArgumentNullException(nameof(removedItems));
+			if (unchangedItems == null)
+				throw new ArgumentNullException(nameof(unchangedItems));
+			if (comparer == null)
+				throw new ArgumentNullException(nameof(comparer));
+
+			bool isAnythingChanged = false;
+
+			// Detect removed items in this list that are not in other list.
+			// Also, detect unchanged items if the item is found in both lists.
+			//
+			// Note that unchanged item data is the one in other list, so that the caller
+			// can use the details of other item data that is not part of equality
+			// comparison logic, and later update details of this list item if needed.
+			for (int iThisList = 0; iThisList < thisList.Count; iThisList++)
+			{
+				bool found = false;
+				var thisListItem = thisList[iThisList];
+
+				for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+				{
+					var otherListItem = otherList[iOtherList];
+					if (comparer.Equals(thisListItem, otherListItem))
+					{
+						found = true;
+						unchangedItems.Add((thisListItem, otherListItem));
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					removedItems.Add(thisListItem);
+					isAnythingChanged = true;
+				}
+			}
+
+			// Detect new items in other list that are not in this list.
+			for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+			{
+				bool found = false;
+				var otherListItem = otherList[iOtherList];
+
+				for (int iThisList = 0; iThisList < thisList.Count; iThisList++)
+				{
+					if (comparer.Equals(thisList[iThisList], otherListItem))
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					addedItems.Add(otherListItem);
+					isAnythingChanged = true;
+				}
+			}
+
+			return isAnythingChanged;
+		}
+
+		/// <summary>
 		/// Equalizes items in "this list" to "other list" by comparing each item. First it detects the items that exist in both lists if "onUnchanged" specified. Then it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
 		/// </summary>
 		/// <typeparam name="T1">Item type of "this list"</typeparam>
@@ -1013,6 +1101,89 @@ namespace Extenity.DataToolbox
 				{
 					onAdd(otherListItem);
 					//thisList.Add(otherListItem); // User should do the add in onAdd no matter what because we don't know how to do conversion between T1 and T2 and we expect the user to do the conversion in onAdd.
+					isAnythingChanged = true;
+				}
+			}
+
+			return isAnythingChanged;
+		}
+
+		/// <summary>
+		/// Returns lists of items to be used for equalizing items in "this list" to "other list" by comparing each item. First it detects the items that exist in both lists. Then it removes items what's in "this list" but not in "other list". Then adds items what's in "other list" but not in "this list".
+		/// </summary>
+		/// <typeparam name="T1">Item type of "this list"</typeparam>
+		/// <typeparam name="T2">Item type of "other list"</typeparam>
+		/// <param name="thisList">"This list" is the modified list that's going to be equalized to "other list" items.</param>
+		/// <param name="otherList">"Other list" is used only for comparison to "this list" and not modified.</param>
+		/// <param name="comparer">Allows user to define a custom equality comparer between T1 and T2. This is how two different type of lists find a common ground.</param>
+		/// <param name="addedItems">List of items in "other list" that does not appear to be in "this list".</param>
+		/// <param name="removedItems">List of items in "this list" that does not appear to be in "other list".</param>
+		/// <param name="unchangedItems">List of items that appear to be in both lists.</param>
+		/// <returns>True if anything in "this list" changed. False otherwise.</returns>
+		public static bool EqualizeTo<T1, T2>(this IList<T1> thisList, in IList<T2> otherList,
+			IEqualityComparer<T1, T2> comparer,
+			IList<T2> addedItems,
+			IList<T1> removedItems,
+			IList<(T1 ThisItem, T2 OtherItem)> unchangedItems)
+		{
+			if (thisList == null)
+				throw new ArgumentNullException(nameof(thisList));
+			if (otherList == null)
+				throw new ArgumentNullException(nameof(otherList));
+			if (Equals(thisList, otherList))
+				throw new ArgumentException("thisList and otherList are pointing to the same list");
+			if (comparer == null)
+				throw new ArgumentNullException(nameof(comparer));
+
+			bool isAnythingChanged = false;
+
+			// Detect removed items in this list that are not in other list.
+			// Also, detect unchanged items if the item is found in both lists.
+			//
+			// Note that unchanged item data is the one in other list, so that the caller
+			// can use the details of other item data that is not part of equality
+			// comparison logic, and later update details of this list item if needed.
+			for (int iThisList = 0; iThisList < thisList.Count; iThisList++)
+			{
+				bool found = false;
+				var thisListItem = thisList[iThisList];
+
+				for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+				{
+					var otherListItem = otherList[iOtherList];
+					if (comparer.Equals(thisListItem, otherListItem))
+					{
+						found = true;
+						unchangedItems.Add((thisListItem, otherListItem));
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					removedItems.Add(thisListItem);
+					isAnythingChanged = true;
+				}
+			}
+
+			// Detect new items in other list that are not in this list.
+			for (int iOtherList = 0; iOtherList < otherList.Count; iOtherList++)
+			{
+				bool found = false;
+				var otherListItem = otherList[iOtherList];
+
+				for (int iThisList = 0; iThisList < thisList.Count; iThisList++)
+				{
+					if (comparer.Equals(thisList[iThisList], otherListItem))
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					addedItems.Add(otherListItem);
 					isAnythingChanged = true;
 				}
 			}
