@@ -1400,6 +1400,14 @@ namespace Extenity.DataToolbox
 			return false;
 		}
 
+		public static void RemoveEnsured<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, in TKey key)
+		{
+			if (!dictionary.Remove(key))
+			{
+				throw new KeyNotFoundException($"Tried to remove key '{key}' but it was not found in the dictionary.");
+			}
+		}
+
 		#endregion
 
 		#region Search Pattern - Byte Array
