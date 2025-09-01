@@ -593,6 +593,23 @@ namespace Extenity.DataToolbox
 			Array.Clear(array, 0, array.Length);
 		}
 
+		public static bool Remove<T>(this IList<T> list, in T item, IEqualityComparer<T> equalityComparer)
+		{
+			if (list == null)
+				return false;
+			if (equalityComparer == null)
+				equalityComparer = EqualityComparer<T>.Default;
+			for (int i = 0; i < list.Count; i++)
+			{
+				if (equalityComparer.Equals(list[i], item))
+				{
+					list.RemoveAt(i);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		#endregion
 
 		#region Duplicates
