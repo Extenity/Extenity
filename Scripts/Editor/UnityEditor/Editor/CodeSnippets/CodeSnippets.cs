@@ -488,6 +488,7 @@ namespace __NAMESPACE__
 						var combinedPath = Path.Combine(baseDirectory, processedPath);
 						var combinedPathDirectory = Path.GetDirectoryName(combinedPath);
 						var processedFileContent = ProcessMacrosInText(snippetInfo.FileContent, macroDefinitions);
+						processedFileContent = ConvertTabsToSpaces(processedFileContent, 4);
 
 						if (!string.IsNullOrEmpty(combinedPathDirectory))
 						{
@@ -532,6 +533,15 @@ namespace __NAMESPACE__
 				text = text.Replace(macroDefinition.Key, macroDefinition.Value);
 			}
 			return text;
+		}
+
+		#endregion
+
+		#region Formatting
+
+		private static string ConvertTabsToSpaces(string content, int spacesInTab)
+		{
+			return content.Replace("\t", new string(' ', spacesInTab));
 		}
 
 		#endregion
