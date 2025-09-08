@@ -58,7 +58,7 @@ namespace Extenity.UnityEditorToolbox
 		public const string CreateAssetBaseContext = AssetsBaseContext + "Create/";
 		public const int UnityCreateCSScriptMenuPriority = 81;
 		public const string CreateAssetTestingContext = CreateAssetBaseContext + "Testing/";
-		public const int UnityCreateTestingScriptMenuPriority = 82;
+		public const int UnityCreateTestingScriptMenuPriority = 82; // Unity's "Test Assembly Folder" option is 83.
 		public const string AssetOperationsContext = AssetsBaseContext + "Extenity Asset Operations" + RefreshHelper + "/";
 
 		// Right-click Game Object context menu
