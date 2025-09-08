@@ -619,7 +619,7 @@ namespace __NAMESPACE__
 			await CreateSnippet(EmptyScriptGroup);
 		}
 
-		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Tests Assembly Triple Folders Setup", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
+		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Test Assembly Folder - Triple Assemblies", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
 		private static async void _CreateScript_TestAssembliesGroup()
 		{
 			await CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
