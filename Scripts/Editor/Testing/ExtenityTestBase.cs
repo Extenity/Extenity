@@ -109,19 +109,20 @@ namespace Extenity.Testing
 			Log.Info("Passed time: " + TimeSpan.FromSeconds(PassedTime).ToStringMinutesSecondsMilliseconds());
 		}
 
-		protected async Task<bool> WaitUntilWithTimeout(Func<bool> condition)
+		protected async Task<bool> WaitUntilWithTimeout(Func<bool> condition, float timeoutSeconds)
 		{
 			if (condition())
 				return true;
 
 			while (true)
 			{
+				CancellationToken.ThrowIfCancellationRequested();
+
 				if (condition())
 					return true;
 
-				CancellationToken.ThrowIfCancellationRequested();
-
-				CheckPassedTestTimeThreshold();
+				if (PassedTime > timeoutSeconds)
+					return false;
 
 				await Task.Yield();
 			}
