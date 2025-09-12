@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
@@ -34,6 +35,7 @@ namespace Extenity.Testing
 			// This should be the very first line of the test.
 			StartTime = Time.realtimeSinceStartup;
 
+			InitializeCancellationToken();
 			InitializeTiming();
 			InitializeLogCatching();
 
@@ -51,11 +53,31 @@ namespace Extenity.Testing
 		[TearDown]
 		public void Deinitialize()
 		{
+			DeinitializeCancellationToken();
+
 			OnDeinitialize();
 
 			DeinitializeLogCatching();
 			EnsureAllCheckpointsReached();
 			UnityTestTools.Cleanup();
+		}
+
+		#endregion
+
+		#region Cancellation Token
+
+		private CancellationTokenSource CancellationTokenSource;
+		protected CancellationToken CancellationToken;
+
+		private void InitializeCancellationToken()
+		{
+			CancellationTokenSource = new CancellationTokenSource();
+			CancellationToken = CancellationTokenSource.Token;
+		}
+
+		private void DeinitializeCancellationToken()
+		{
+			CancellationTokenSource.Cancel();
 		}
 
 		#endregion
