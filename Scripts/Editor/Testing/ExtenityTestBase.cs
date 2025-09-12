@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Extenity.DataToolbox;
 using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
@@ -84,6 +85,22 @@ namespace Extenity.Testing
 		protected void LogPassedTime()
 		{
 			Log.Info("Passed time: " + TimeSpan.FromSeconds(PassedTime).ToStringMinutesSecondsMilliseconds());
+		}
+
+		protected async Task<bool> WaitUntilWithTimeout(Func<bool> condition)
+		{
+			if (condition())
+				return true;
+
+			while (true)
+			{
+				if (condition())
+					return true;
+
+				CheckPassedTestTimeThreshold();
+
+				await Task.Yield();
+			}
 		}
 
 		#endregion
