@@ -78,7 +78,7 @@ namespace Extenity.Testing
 		protected void CheckPassedTestTimeThreshold()
 		{
 			if (PassedTime > PassedTimeThreshold)
-				throw new Exception("Test taking too long.");
+				throw new Exception("Test taking too long. Exceeded the threshold of " + PassedTimeThreshold + " second(s).");
 		}
 
 		protected void LogPassedTime()
