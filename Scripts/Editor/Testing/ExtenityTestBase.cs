@@ -119,6 +119,8 @@ namespace Extenity.Testing
 				if (condition())
 					return true;
 
+				CancellationToken.ThrowIfCancellationRequested();
+
 				CheckPassedTestTimeThreshold();
 
 				await Task.Yield();
