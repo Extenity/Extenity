@@ -875,19 +875,19 @@ namespace Extenity.DataToolbox
 
 		private static void _ToStringAsCharArray(Int32 value, char[] array, int endOffset, out int startIndex, out int length)
 		{
-			const int radix = 10;
+			const int Radix = 10;
 			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
-				array[--i] = HexadecimalCharacters[-(value % radix)];
-				value = -(value / radix);
+				array[--i] = HexadecimalCharacters[-(value % Radix)];
+				value = -(value / Radix);
 			}
 
 			while (value != 0)
 			{
-				array[--i] = HexadecimalCharacters[value % radix];
-				value /= radix;
+				array[--i] = HexadecimalCharacters[value % Radix];
+				value /= Radix;
 			}
 
 			if (isNegative)
@@ -901,21 +901,21 @@ namespace Extenity.DataToolbox
 
 		private static void _ToStringAsCharArray(Int32 value, char[] array, int endOffset, char thousandsSeparator, out int startIndex, out int length)
 		{
-			const int radix = 10;
+			const int Radix = 10;
 			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			var thousandsCounter = 3;
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
-				array[--i] = HexadecimalCharacters[-(value % radix)];
-				value = -(value / radix);
+				array[--i] = HexadecimalCharacters[-(value % Radix)];
+				value = -(value / Radix);
 				thousandsCounter--;
 			}
 
 			while (value != 0)
 			{
-				array[--i] = HexadecimalCharacters[value % radix];
-				value /= radix;
+				array[--i] = HexadecimalCharacters[value % Radix];
+				value /= Radix;
 				if (--thousandsCounter == 0 && value > 0)
 				{
 					array[--i] = thousandsSeparator;
@@ -1020,19 +1020,19 @@ namespace Extenity.DataToolbox
 
 		private static void _ToStringAsCharArray(Int64 value, char[] array, int endOffset, out int startIndex, out int length)
 		{
-			const int radix = 10;
+			const int Radix = 10;
 			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
-				array[--i] = HexadecimalCharacters[-(value % radix)];
-				value = -(value / radix);
+				array[--i] = HexadecimalCharacters[-(value % Radix)];
+				value = -(value / Radix);
 			}
 
 			while (value != 0)
 			{
-				array[--i] = HexadecimalCharacters[value % radix];
-				value /= radix;
+				array[--i] = HexadecimalCharacters[value % Radix];
+				value /= Radix;
 			}
 
 			if (isNegative)
@@ -1046,21 +1046,21 @@ namespace Extenity.DataToolbox
 
 		private static void _ToStringAsCharArray(Int64 value, char[] array, int endOffset, char thousandsSeparator, out int startIndex, out int length)
 		{
-			const int radix = 10;
+			const int Radix = 10;
 			var i = array.Length - endOffset;
 			var isNegative = (value < 0);
 			var thousandsCounter = 3;
 			if (value <= 0) // handles 0 and int.MinValue special cases
 			{
-				array[--i] = HexadecimalCharacters[-(value % radix)];
-				value = -(value / radix);
+				array[--i] = HexadecimalCharacters[-(value % Radix)];
+				value = -(value / Radix);
 				thousandsCounter--;
 			}
 
 			while (value != 0)
 			{
-				array[--i] = HexadecimalCharacters[value % radix];
-				value /= radix;
+				array[--i] = HexadecimalCharacters[value % Radix];
+				value /= Radix;
 				if (--thousandsCounter == 0 && value > 0)
 				{
 					array[--i] = thousandsSeparator;
