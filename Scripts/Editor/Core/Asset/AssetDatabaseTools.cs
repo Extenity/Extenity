@@ -741,9 +741,9 @@ namespace Extenity.AssetToolbox.Editor
 		///
 		/// Uses C# compiler magic to get the script path.
 		/// </summary>
-		public static string GetCurrentScriptPath(bool relativeToProjectFolder = true, [CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
+		public static string GetCurrentScriptPath(bool relativeToProjectFolder = true, [CallerFilePath] string dontTouch_LeaveThisAsDefault = "")
 		{
-			var scriptPath = DontTouch_LeaveThisAsDefault;
+			var scriptPath = dontTouch_LeaveThisAsDefault;
 			if (relativeToProjectFolder)
 			{
 				scriptPath = scriptPath.MakeProjectRelativeAssetDatabasePath();
@@ -762,9 +762,9 @@ namespace Extenity.AssetToolbox.Editor
 		///
 		/// Uses C# compiler magic to get the script path.
 		/// </summary>
-		public static void InstantiatePrefabWithTheSameNameOfThisScript([CallerFilePath] string DontTouch_LeaveThisAsDefault = "")
+		public static void InstantiatePrefabWithTheSameNameOfThisScript([CallerFilePath] string dontTouch_LeaveThisAsDefault = "")
 		{
-			var scriptPath = GetCurrentScriptPath(true, DontTouch_LeaveThisAsDefault);
+			var scriptPath = GetCurrentScriptPath(true, dontTouch_LeaveThisAsDefault);
 			var prefabPath = scriptPath.ChangeFileExtension(".prefab");
 			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 			if (!prefab)

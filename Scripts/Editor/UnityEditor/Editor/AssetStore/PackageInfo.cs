@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
+// ReSharper disable InconsistentNaming
+
 namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 {
 

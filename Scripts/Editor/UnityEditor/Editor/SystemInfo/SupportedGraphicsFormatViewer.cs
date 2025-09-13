@@ -12,8 +12,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 	/// </summary>
 	public class SupportedGraphicsFormatViewer : EditorWindow
 	{
-		string _text;
-		Vector2 scroll;
+		string Text;
+		Vector2 Scroll;
 
 		[MenuItem(ExtenityMenu.Analysis + "System Info/Graphics Formats", priority = ExtenityMenu.AnalysisPriority + 9)]
 		static void Init()
@@ -23,10 +23,10 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private void OnGUI()
 		{
-			if (_text == null)
-				_text = GenerateText();
+			if (Text == null)
+				Text = GenerateText();
 			var rect = new Rect(0, 0, position.width, position.height);
-			EditorGUI.TextArea(rect, _text, EditorStyles.wordWrappedLabel);
+			EditorGUI.TextArea(rect, Text, EditorStyles.wordWrappedLabel);
 		}
 
 		private string GenerateText()

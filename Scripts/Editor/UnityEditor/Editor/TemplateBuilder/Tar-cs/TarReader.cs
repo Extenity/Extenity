@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 
+// ReSharper disable InconsistentNaming
+
 namespace Extenity.UnityProjectTemplateToolbox.TarCs
 {
 
