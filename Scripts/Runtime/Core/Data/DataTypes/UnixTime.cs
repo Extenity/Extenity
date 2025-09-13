@@ -5,18 +5,18 @@ namespace Extenity.DataToolbox
 
 	public struct UnixTime
 	{
-		private double time;
+		public double Time;
 
-		private static readonly DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		public static readonly DateTime Origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
 		public UnixTime(double unixTimestamp)
 		{
-			time = unixTimestamp;
+			Time = unixTimestamp;
 		}
 
 		public UnixTime(DateTime dateTime)
 		{
-			time = ConvertToDouble(dateTime);
+			Time = ConvertToDouble(dateTime);
 		}
 
 		public static UnixTime Parse(string unixTimestampStr)
@@ -48,19 +48,19 @@ namespace Extenity.DataToolbox
 
 		public static DateTime ConvertFrom(double unixTimestamp)
 		{
-			DateTime dateTime = origin;
+			DateTime dateTime = Origin;
 			return dateTime.AddSeconds(unixTimestamp);
 		}
 
 		public static UnixTime ConvertTo(DateTime dateTime)
 		{
-			TimeSpan diff = dateTime - origin;
+			TimeSpan diff = dateTime - Origin;
 			return new UnixTime(diff.TotalSeconds);
 		}
 
 		public static double ConvertToDouble(DateTime dateTime)
 		{
-			TimeSpan diff = dateTime - origin;
+			TimeSpan diff = dateTime - Origin;
 			return diff.TotalSeconds;
 		}
 
@@ -105,32 +105,21 @@ namespace Extenity.DataToolbox
 			get { return (long)ConvertToDouble(DateTime.UtcNow); }
 		}
 
-		public static DateTime Origin
-		{
-			get { return origin; }
-		}
-
 		public DateTime DateTime
 		{
-			get { return ConvertFrom(time); }
-			set { time = ConvertToDouble(value); }
-		}
-
-		public double Time
-		{
-			get { return time; }
-			set { time = value; }
+			get { return ConvertFrom(Time); }
+			set { Time = ConvertToDouble(value); }
 		}
 
 		public long TimeInt
 		{
-			get { return (long)time; }
-			set { time = value; }
+			get { return (long)Time; }
+			set { Time = value; }
 		}
 
 		public bool IsOrigin
 		{
-			get { return time == 0f; }
+			get { return Time == 0f; }
 		}
 
 		public static long SecondsInADay

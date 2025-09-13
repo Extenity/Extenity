@@ -82,22 +82,22 @@ namespace Extenity.WWWToolbox.FileDownloader
 	/// </summary>
 	public class FileDownloader : IDisposable
 	{
-		private readonly ManualResetEvent readyToDownload = new ManualResetEvent(true);
-		private readonly System.Timers.Timer attemptTimer = new System.Timers.Timer();
-		private readonly object cancelSync = new object();
+		private readonly ManualResetEvent ReadyToDownload = new ManualResetEvent(true);
+		private readonly System.Timers.Timer AttemptTimer = new System.Timers.Timer();
+		private readonly object CancelSync = new object();
 
-		private bool isCancelled;
-		private bool disposed;
+		private bool IsCancelled;
+		private bool Disposed;
 
-		private int attemptNumber;
+		private int AttemptNumber;
 
-		private string localFileName;
-		private string destinationFileName;
-		private string destinationFolder;
+		private string LocalFileName;
+		private string DestinationFileName;
+		private string DestinationFolder;
 
-		private Uri fileSource;
-		private ThreadedStreamCopier streamCopier;
-		private DownloadWebClient downloadWebClient;
+		private Uri FileSource;
+		private ThreadedStreamCopier StreamCopier;
+		private DownloadWebClient DownloadWebClient;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FileDownloader"/> class.
@@ -109,9 +109,9 @@ namespace Extenity.WWWToolbox.FileDownloader
 			SafeWaitTimeout = TimeSpan.FromSeconds(15);
 			SourceStreamReadTimeout = TimeSpan.FromSeconds(5);
 
-			disposed = false;
+			Disposed = false;
 
-			attemptTimer.Elapsed += OnDownloadAttemptTimer;
+			AttemptTimer.Elapsed += OnDownloadAttemptTimer;
 		}
 
 		/// <summary>
@@ -164,30 +164,30 @@ namespace Extenity.WWWToolbox.FileDownloader
 		/// </summary>
 		public void CancelDownloadAsync()
 		{
-			lock (cancelSync)
+			lock (CancelSync)
 			{
-				if (isCancelled)
+				if (IsCancelled)
 				{
 					return;
 				}
-				isCancelled = true;
+				IsCancelled = true;
 			}
 
-			if (streamCopier != null)
+			if (StreamCopier != null)
 			{
-				streamCopier.Cancel();
+				StreamCopier.Cancel();
 			}
 
 			TriggerDownloadWebClientCancelAsync();
 
-			readyToDownload.Set();
+			ReadyToDownload.Set();
 		}
 
 		private void DeleteDownloadedFile()
 		{
 			try
 			{
-				FileTools.Delete(localFileName);
+				FileTools.Delete(LocalFileName);
 			}
 			catch
 			{
@@ -197,22 +197,22 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		public void DownloadFileAsync(Uri source, string destinationPath)
 		{
-			if (!readyToDownload.WaitOne(SafeWaitTimeout))
+			if (!ReadyToDownload.WaitOne(SafeWaitTimeout))
 			{
 				throw new Exception("Unable to start download because another request is still in progress.");
 			}
-			readyToDownload.Reset();
+			ReadyToDownload.Reset();
 
-			fileSource = source;
+			FileSource = source;
 			BytesReceived = 0;
-			destinationFileName = destinationPath;
-			destinationFolder = Path.GetDirectoryName(destinationPath);
-			isCancelled = false;
-			localFileName = string.Empty;
+			DestinationFileName = destinationPath;
+			DestinationFolder = Path.GetDirectoryName(destinationPath);
+			IsCancelled = false;
+			LocalFileName = string.Empty;
 
 			DownloadStartTime = DateTime.Now;
 
-			attemptNumber = 0;
+			AttemptNumber = 0;
 
 			StartDownload();
 		}
@@ -224,17 +224,17 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private void StartDownload()
 		{
-			if (IsCancelled())
+			if (IsCancelledLocked())
 			{
 				return;
 			}
 
-			localFileName = Path.Combine(destinationFolder, destinationFileName);
+			LocalFileName = Path.Combine(DestinationFolder, DestinationFileName);
 
 			TotalBytesToReceive = -1;
 			try
 			{
-				var webRequest = WebRequest.Create(fileSource);
+				var webRequest = WebRequest.Create(FileSource);
 				webRequest.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
 				webRequest.Method = WebRequestMethods.Http.Head;
 
@@ -267,7 +267,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private void ResumeDownload()
 		{
-			if (!FileTools.TryGetFileSize(localFileName, out var localFileSize))
+			if (!FileTools.TryGetFileSize(LocalFileName, out var localFileSize))
 			{
 				localFileSize = 0;
 				// Handle this case in future. Now in case of error we simply proceed with downloadedFileSize=0
@@ -280,13 +280,13 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 			if (localFileSize != TotalBytesToReceive)
 			{
-				Download(fileSource, localFileName);
+				Download(FileSource, LocalFileName);
 			}
 			else
 			{
 				OnDownloadProgressChanged(this, new DownloadFileProgressChangedArgs(100, TotalBytesToReceive, TotalBytesToReceive));
-				InvokeDownloadCompleted(FileDownloaderResult.Succeeded, localFileName, null, true);
-				readyToDownload.Set();
+				InvokeDownloadCompleted(FileDownloaderResult.Succeeded, LocalFileName, null, true);
+				ReadyToDownload.Set();
 				return;
 			}
 		}
@@ -302,21 +302,21 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private void TryCleanupExistingDownloadWebClient()
 		{
-			if (downloadWebClient == null)
+			if (DownloadWebClient == null)
 				return;
 
 			try
 			{
 				lock (this)
 				{
-					if (downloadWebClient != null)
+					if (DownloadWebClient != null)
 					{
-						downloadWebClient.DownloadFileCompleted -= OnDownloadCompleted;
-						downloadWebClient.DownloadProgressChanged -= OnDownloadProgressChanged;
-						downloadWebClient.OpenReadCompleted -= OnOpenReadCompleted;
-						downloadWebClient.CancelAsync();
-						downloadWebClient.Dispose();
-						downloadWebClient = null;
+						DownloadWebClient.DownloadFileCompleted -= OnDownloadCompleted;
+						DownloadWebClient.DownloadProgressChanged -= OnDownloadProgressChanged;
+						DownloadWebClient.OpenReadCompleted -= OnOpenReadCompleted;
+						DownloadWebClient.CancelAsync();
+						DownloadWebClient.Dispose();
+						DownloadWebClient = null;
 					}
 				}
 			}
@@ -328,11 +328,11 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private bool AttemptDownload()
 		{
-			if (++attemptNumber <= MaxAttempts)
+			if (++AttemptNumber <= MaxAttempts)
 			{
-				attemptTimer.Interval = DelayBetweenAttempts.TotalMilliseconds;
-				attemptTimer.AutoReset = false;
-				attemptTimer.Start();
+				AttemptTimer.Interval = DelayBetweenAttempts.TotalMilliseconds;
+				AttemptTimer.AutoReset = false;
+				AttemptTimer.Start();
 				return true;
 			}
 			return false;
@@ -348,14 +348,14 @@ namespace Extenity.WWWToolbox.FileDownloader
 				}
 
 				TryCleanupExistingDownloadWebClient();
-				downloadWebClient = CreateWebClient();
-				downloadWebClient.OpenReadAsync(source, seekPosition);
+				DownloadWebClient = CreateWebClient();
+				DownloadWebClient.OpenReadAsync(source, seekPosition);
 			}
 			catch (Exception e)
 			{
 				if (!AttemptDownload())
 				{
-					InvokeDownloadCompleted(FileDownloaderResult.Failed, localFileName, e);
+					InvokeDownloadCompleted(FileDownloaderResult.Failed, LocalFileName, e);
 				}
 			}
 		}
@@ -372,7 +372,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 			if (BytesReceived < args.BytesReceived)
 			{
 				////bytes growing? we have connection!
-				attemptNumber = 1;
+				AttemptNumber = 1;
 			}
 
 			BytesReceived = args.BytesReceived;
@@ -385,13 +385,13 @@ namespace Extenity.WWWToolbox.FileDownloader
 		private void InvokeDownloadCompleted(FileDownloaderResult result, string fileName, Exception error = null, bool fromCache = false)
 		{
 			var downloadTime = fromCache ? TimeSpan.Zero : DateTime.Now.Subtract(DownloadStartTime);
-			if (streamCopier != null)
+			if (StreamCopier != null)
 			{
-				BytesReceived = streamCopier.Position;
+				BytesReceived = StreamCopier.Position;
 			}
 
 			if (DownloadFileCompleted != null)
-				DownloadFileCompleted(this, new DownloadFileCompletedArgs(result, fileName, fileSource, downloadTime, TotalBytesToReceive, BytesReceived, error));
+				DownloadFileCompleted(this, new DownloadFileCompletedArgs(result, fileName, FileSource, downloadTime, TotalBytesToReceive, BytesReceived, error));
 		}
 
 		private void OnOpenReadCompleted(object sender, OpenReadCompletedEventArgs args)
@@ -400,9 +400,9 @@ namespace Extenity.WWWToolbox.FileDownloader
 			if (webClient == null)
 				return;
 
-			lock (cancelSync)
+			lock (CancelSync)
 			{
-				if (isCancelled || args.Cancelled)
+				if (IsCancelled || args.Cancelled)
 					return;
 
 				if (args.Error != null)
@@ -423,10 +423,10 @@ namespace Extenity.WWWToolbox.FileDownloader
 				{
 					args.Result.TrySetStreamReadTimeout((int)SourceStreamReadTimeout.TotalMilliseconds);
 
-					streamCopier = new ThreadedStreamCopier();
-					streamCopier.OnFinished += OnStreamCopierFinished;
-					streamCopier.OnProgressChanged += OnStreamCopierProgressChanged;
-					streamCopier.CopyAsync(args.Result, destinationStream, TotalBytesToReceive);
+					StreamCopier = new ThreadedStreamCopier();
+					StreamCopier.OnFinished += OnStreamCopierFinished;
+					StreamCopier.OnProgressChanged += OnStreamCopierProgressChanged;
+					StreamCopier.CopyAsync(args.Result, destinationStream, TotalBytesToReceive);
 				}
 			}
 		}
@@ -436,13 +436,13 @@ namespace Extenity.WWWToolbox.FileDownloader
 			FileStream destinationStream = null;
 			try
 			{
-				var destinationDirectory = Path.GetDirectoryName(localFileName);
+				var destinationDirectory = Path.GetDirectoryName(LocalFileName);
 				if (destinationDirectory != null && !Directory.Exists(destinationDirectory))
 				{
 					Directory.CreateDirectory(destinationDirectory);
 				}
 
-				destinationStream = new FileStream(localFileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+				destinationStream = new FileStream(LocalFileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 				if (append)
 				{
 					destinationStream.Seek(0, SeekOrigin.End);
@@ -459,14 +459,14 @@ namespace Extenity.WWWToolbox.FileDownloader
 					destinationStream.Dispose();
 					destinationStream = null;
 				}
-				OnDownloadCompleted(downloadWebClient, new AsyncCompletedEventArgs(ex, false, null));
+				OnDownloadCompleted(DownloadWebClient, new AsyncCompletedEventArgs(ex, false, null));
 			}
 			return destinationStream;
 		}
 
 		private void OnStreamCopierProgressChanged(long bytesReceived)
 		{
-			if (isCancelled)
+			if (IsCancelled)
 			{
 				return;
 			}
@@ -483,16 +483,16 @@ namespace Extenity.WWWToolbox.FileDownloader
 
 		private void OnStreamCopierFinished(StreamCopierResult result, Exception error)
 		{
-			streamCopier.OnProgressChanged -= OnStreamCopierProgressChanged;
-			streamCopier.OnFinished -= OnStreamCopierFinished;
+			StreamCopier.OnProgressChanged -= OnStreamCopierProgressChanged;
+			StreamCopier.OnFinished -= OnStreamCopierFinished;
 
 			try
 			{
-				OnDownloadCompleted(downloadWebClient, new AsyncCompletedEventArgs(error, result == StreamCopierResult.Cancelled, null));
+				OnDownloadCompleted(DownloadWebClient, new AsyncCompletedEventArgs(error, result == StreamCopierResult.Cancelled, null));
 			}
 			finally
 			{
-				streamCopier.Dispose();
+				StreamCopier.Dispose();
 			}
 		}
 
@@ -506,7 +506,7 @@ namespace Extenity.WWWToolbox.FileDownloader
 			var webClient = sender as DownloadWebClient;
 			if (webClient == null)
 			{
-				InvokeDownloadCompleted(FileDownloaderResult.Failed, localFileName);
+				InvokeDownloadCompleted(FileDownloaderResult.Failed, LocalFileName);
 				return;
 			}
 
@@ -514,8 +514,8 @@ namespace Extenity.WWWToolbox.FileDownloader
 			{
 				DeleteDownloadedFile();
 
-				InvokeDownloadCompleted(FileDownloaderResult.Cancelled, localFileName);
-				readyToDownload.Set();
+				InvokeDownloadCompleted(FileDownloaderResult.Cancelled, LocalFileName);
+				ReadyToDownload.Set();
 				return;
 			}
 			else if (args.Error != null)
@@ -523,27 +523,27 @@ namespace Extenity.WWWToolbox.FileDownloader
 				if (!AttemptDownload())
 				{
 					InvokeDownloadCompleted(FileDownloaderResult.Failed, null, args.Error);
-					readyToDownload.Set();
+					ReadyToDownload.Set();
 					return;
 				}
 			}
 			else
 			{
 				////we may have the destination file not immediately closed after downloading
-				WaitFileClosed(localFileName, TimeSpan.FromSeconds(3));
+				WaitFileClosed(LocalFileName, TimeSpan.FromSeconds(3));
 
-				InvokeDownloadCompleted(FileDownloaderResult.Succeeded, localFileName, null);
-				readyToDownload.Set();
+				InvokeDownloadCompleted(FileDownloaderResult.Succeeded, LocalFileName, null);
+				ReadyToDownload.Set();
 				return;
 			}
 		}
 
 		private void TriggerDownloadWebClientCancelAsync()
 		{
-			if (downloadWebClient != null)
+			if (DownloadWebClient != null)
 			{
-				downloadWebClient.CancelAsync();
-				downloadWebClient.OpenReadCompleted -= OnOpenReadCompleted;
+				DownloadWebClient.CancelAsync();
+				DownloadWebClient.OpenReadCompleted -= OnOpenReadCompleted;
 			}
 		}
 
@@ -568,11 +568,11 @@ namespace Extenity.WWWToolbox.FileDownloader
 			}
 		}
 
-		private bool IsCancelled()
+		private bool IsCancelledLocked()
 		{
-			lock (cancelSync)
+			lock (CancelSync)
 			{
-				if (isCancelled)
+				if (IsCancelled)
 					return true;
 			}
 			return false;
@@ -594,27 +594,27 @@ namespace Extenity.WWWToolbox.FileDownloader
 		/// <param name="disposing">True if called from Dispose</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!disposed)
+			if (!Disposed)
 			{
 				if (disposing)
 				{
-					if (readyToDownload.WaitOne(TimeSpan.FromMinutes(10)))
+					if (ReadyToDownload.WaitOne(TimeSpan.FromMinutes(10)))
 					{
-						if (streamCopier != null)
+						if (StreamCopier != null)
 						{
-							streamCopier.Dispose();
-							streamCopier = null;
+							StreamCopier.Dispose();
+							StreamCopier = null;
 						}
-						if (downloadWebClient != null)
+						if (DownloadWebClient != null)
 						{
-							downloadWebClient.Dispose();
-							downloadWebClient = null;
+							DownloadWebClient.Dispose();
+							DownloadWebClient = null;
 						}
-						readyToDownload.Close();
-						attemptTimer.Dispose();
+						ReadyToDownload.Close();
+						AttemptTimer.Dispose();
 					}
 				}
-				disposed = true;
+				Disposed = true;
 			}
 		}
 	}

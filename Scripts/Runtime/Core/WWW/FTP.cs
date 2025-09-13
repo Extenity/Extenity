@@ -3,6 +3,8 @@ using System.IO;
 using System.Net;
 using Extenity.FileSystemToolbox;
 
+// ReSharper disable InconsistentNaming
+
 namespace Extenity.WWWToolbox
 {
 
