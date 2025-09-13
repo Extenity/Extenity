@@ -11,8 +11,11 @@ namespace Extenity.IMGUIToolbox.Editor
 	{
 		#region EditorGUIUtility Exposed Internals - TempContent
 
+		// ReSharper disable once InconsistentNaming
 		private static GUIContent s_Text = new GUIContent();
+		// ReSharper disable once InconsistentNaming
 		private static GUIContent s_Image = new GUIContent();
+		// ReSharper disable once InconsistentNaming
 		private static GUIContent s_TextImage = new GUIContent();
 
 		public static GUIContent TempContent(string t)
@@ -38,6 +41,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 		#region EditorGUIUtility Exposed Internals - GetBasicTextureStyle
 
+		// ReSharper disable once InconsistentNaming
 		private static GUIStyle s_BasicTextureStyle;
 
 		public static GUIStyle GetBasicTextureStyle(Texture2D texture)

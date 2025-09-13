@@ -49,7 +49,9 @@ namespace Extenity.IMGUIToolbox.Editor
 		//internal static Matrix4x4 GetMatrix()
 		//internal static void SetMatrix(Matrix4x4 m)
 
+		// ReSharper disable once InconsistentNaming
 		private static Func<Rect> _topmostRect;
+		// ReSharper disable once InconsistentNaming
 		private static Func<Rect> _visibleRect;
 		private static Func<Vector2, Vector2> _UnclipVector2;
 		private static Func<Rect, Rect> _UnclipRect;
@@ -61,7 +63,9 @@ namespace Extenity.IMGUIToolbox.Editor
 		private static Func<Rect, Rect> _ClipToWindowRect;
 		private static Func<Vector2> _GetAbsoluteMousePosition;
 
+		// ReSharper disable once InconsistentNaming
 		public static Rect topmostRect { get { return _topmostRect(); } }
+		// ReSharper disable once InconsistentNaming
 		public static Rect visibleRect { get { return _visibleRect(); } }
 		public static Vector2 Unclip(Vector2 pos) { return _UnclipVector2(pos); }
 		public static Rect Unclip(Rect rect) { return _UnclipRect(rect); }
