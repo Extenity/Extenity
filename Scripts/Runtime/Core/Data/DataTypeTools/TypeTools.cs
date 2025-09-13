@@ -569,7 +569,7 @@ namespace Extenity.DataToolbox
 #if UNITY_5_3_OR_NEWER
 			if (IsUnityBaseType(baseType))
 			{
-                fields = type.GetFields(bindingFlags);
+                fields = type.GetFields(BindingFlags);
 			}
 			else
 #endif
@@ -793,7 +793,7 @@ namespace Extenity.DataToolbox
 #if UNITY_5_3_OR_NEWER
 			if (IsUnityBaseType(baseType))
 			{
-                properties = type.GetProperties(bindingFlags);
+                properties = type.GetProperties(BindingFlags);
 			}
 			else
 #endif
