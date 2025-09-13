@@ -48,8 +48,8 @@ namespace Extenity.CryptoToolbox
 
 		#region Calculations
 
-		private const UInt32 m = 0x5bd1e995;
-		private const Int32 r = 24;
+		private const UInt32 M = 0x5bd1e995;
+		private const Int32 R = 24;
 
 #if ENABLE_BURST_AOT
 		// OptimizeFor.Size worked a bit more faster in Editor environment. Needs more benchmarks on devices to be sure.
@@ -64,11 +64,11 @@ namespace Extenity.CryptoToolbox
 			while (iteratorOf4Bytes != 0)
 			{
 				UInt32 k = *pointer;
-				k *= m;
-				k ^= k >> r;
-				k *= m;
+				k *= M;
+				k ^= k >> R;
+				k *= M;
 
-				h *= m;
+				h *= M;
 				h ^= k;
 				iteratorOf4Bytes--;
 				pointer++;
@@ -77,13 +77,13 @@ namespace Extenity.CryptoToolbox
 			{
 				case 1:
 					h ^= *((UInt16*)pointer);
-					h *= m;
+					h *= M;
 					break;
 			}
 
 			// Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
 			h ^= h >> 13;
-			h *= m;
+			h *= M;
 			h ^= h >> 15;
 
 			result = h;
@@ -102,11 +102,11 @@ namespace Extenity.CryptoToolbox
 			while (iteratorOf4Bytes != 0)
 			{
 				UInt32 k = *pointer;
-				k *= m;
-				k ^= k >> r;
-				k *= m;
+				k *= M;
+				k ^= k >> R;
+				k *= M;
 
-				h *= m;
+				h *= M;
 				h ^= k;
 				iteratorOf4Bytes--;
 				pointer++;
@@ -116,23 +116,23 @@ namespace Extenity.CryptoToolbox
 				case 3:
 					h ^= *((UInt16*)pointer);
 					h ^= ((UInt32)(*(((Byte*)(pointer)) + 2))) << 16;
-					h *= m;
+					h *= M;
 					break;
 
 				case 2:
 					h ^= *((UInt16*)pointer);
-					h *= m;
+					h *= M;
 					break;
 
 				case 1:
 					h ^= *((Byte*)pointer);
-					h *= m;
+					h *= M;
 					break;
 			}
 
 			// Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
 			h ^= h >> 13;
-			h *= m;
+			h *= M;
 			h ^= h >> 15;
 
 			result = h;
