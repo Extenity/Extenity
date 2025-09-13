@@ -2,6 +2,8 @@ using System;
 using System.Runtime.CompilerServices;
 using Unity.IL2CPP.CompilerServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace Unity.Mathematics
 {
     /// <summary>

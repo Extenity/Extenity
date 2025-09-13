@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using static Unity.Mathematics.math;
 
+// ReSharper disable InconsistentNaming
+
 namespace Unity.Mathematics
 {
     public partial struct float2x2

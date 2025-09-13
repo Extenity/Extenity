@@ -4,6 +4,8 @@ using static Unity.Mathematics.math;
 using System.Diagnostics;
 using Unity.IL2CPP.CompilerServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace Unity.Mathematics
 {
     /// <summary>
