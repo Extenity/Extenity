@@ -1,9 +1,15 @@
-﻿using System;
+﻿#if UNITY_5_3_OR_NEWER
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#if UNITY_5_3_OR_NEWER
 using Unity.SharpZipLib.Core;
 using Unity.SharpZipLib.Zip;
+#else
+#error SharpZipLib can be implemented in non-Unity projects too. Implement it if required.
+#endif
 
 namespace Extenity.CompressionToolbox
 {
@@ -284,3 +290,5 @@ namespace Extenity.CompressionToolbox
 	}
 
 }
+
+#endif

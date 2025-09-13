@@ -1,6 +1,6 @@
-﻿using Delegate = System.Delegate;
+﻿using Cysharp.Text;
+using Delegate = System.Delegate;
 #if UNITY_5_3_OR_NEWER
-using Cysharp.Text;
 using Component = UnityEngine.Component;
 using GameObject = UnityEngine.GameObject;
 using Transform = UnityEngine.Transform;
