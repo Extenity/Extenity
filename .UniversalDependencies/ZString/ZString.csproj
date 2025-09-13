@@ -9,6 +9,10 @@
 		<Nullable>enable</Nullable>
 		<NoWarn>1701;1702;1591</NoWarn>
 
+		<!-- T4 Template Generation -->
+		<TransformOnBuild>true</TransformOnBuild>
+		<TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+
 		<!-- NuGet Packaging -->
 		<Description>Zero allocation StringBuilder for .NET Core and Unity.</Description>
 		<AssemblyOriginatorKeyFile>../../opensource.snk</AssemblyOriginatorKeyFile>
