@@ -147,8 +147,8 @@ namespace Extenity.ProfilingToolbox
 			label = id.ToString();
 			if (automaticallyRegisterIfNotFound)
 			{
-				const bool errorOnOverwrite = false; // We already know the label does not exist.
-				RegisterLabel(id, label, errorOnOverwrite);
+				const bool ErrorOnOverwrite = false; // We already know the label does not exist.
+				RegisterLabel(id, label, ErrorOnOverwrite);
 			}
 			return label;
 		}

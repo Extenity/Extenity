@@ -563,7 +563,7 @@ namespace Extenity.DataToolbox
 				return fields;
 			}
 
-			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+			const BindingFlags BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
 #if UNITY_5_3_OR_NEWER
@@ -575,7 +575,7 @@ namespace Extenity.DataToolbox
 #endif
             {
                 var baseFields = GetPublicAndPrivateInstanceFields(baseType);
-                fields = type.GetFields(bindingFlags);
+                fields = type.GetFields(BindingFlags);
                 fields.AddRange(baseFields, out fields);
             }
 
@@ -716,8 +716,8 @@ namespace Extenity.DataToolbox
 			for (int i = 0; i < fields.Length; i++)
 			{
 				var fieldInfo = fields[i];
-				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
-				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				const bool Inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), Inherit);
 				if (attributes.Length > 0)
 					list.Add(new KeyValuePair<FieldInfo, Attribute[]>(fieldInfo, (Attribute[])attributes));
 			}
@@ -749,8 +749,8 @@ namespace Extenity.DataToolbox
 			for (int i = 0; i < fields.Length; i++)
 			{
 				var fieldInfo = fields[i];
-				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
-				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				const bool Inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), Inherit);
 				if (attributes.Length == 0)
 					list.Add(new KeyValuePair<FieldInfo, Attribute[]>(fieldInfo, (Attribute[])attributes));
 			}
@@ -787,7 +787,7 @@ namespace Extenity.DataToolbox
 				return properties;
 			}
 
-			const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+			const BindingFlags BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var baseType = type.BaseType;
 #if UNITY_5_3_OR_NEWER
@@ -799,7 +799,7 @@ namespace Extenity.DataToolbox
 #endif
 			{
 				var baseProperties = GetPublicAndPrivateInstanceProperties(baseType);
-                properties = type.GetProperties(bindingFlags);
+                properties = type.GetProperties(BindingFlags);
                 properties.AddRange(baseProperties, out properties);
 			}
 
@@ -939,8 +939,8 @@ namespace Extenity.DataToolbox
 			for (int i = 0; i < properties.Length; i++)
 			{
 				var propertyInfo = properties[i];
-				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
-				var attributes = propertyInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				const bool Inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = propertyInfo.GetCustomAttributes(typeof(TAttribute), Inherit);
 				if (attributes.Length > 0)
 					list.Add(new KeyValuePair<PropertyInfo, Attribute[]>(propertyInfo, (Attribute[])attributes));
 			}
@@ -972,8 +972,8 @@ namespace Extenity.DataToolbox
 			for (int i = 0; i < properties.Length; i++)
 			{
 				var propertyInfo = properties[i];
-				const bool inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
-				var attributes = propertyInfo.GetCustomAttributes(typeof(TAttribute), inherit);
+				const bool Inherit = false; // Note: I don't have any clue what does it do and I think it would be the reason if something does not work right.
+				var attributes = propertyInfo.GetCustomAttributes(typeof(TAttribute), Inherit);
 				if (attributes.Length == 0)
 					list.Add(new KeyValuePair<PropertyInfo, Attribute[]>(propertyInfo, (Attribute[])attributes));
 			}

@@ -1615,12 +1615,12 @@ namespace Extenity.ReflectionToolbox
 
 		public static void ToStringDetails(this Type type, StringBuilder stringBuilder)
 		{
-			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Static |
+			const BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Static |
 			                                  BindingFlags.Public | BindingFlags.NonPublic |
 			                                  BindingFlags.DeclaredOnly;
-			var fields = type.GetFields(bindingFlags);
-			var properties = type.GetProperties(bindingFlags);
-			var methods = type.GetMethods(bindingFlags);
+			var fields = type.GetFields(BindingFlags);
+			var properties = type.GetProperties(BindingFlags);
+			var methods = type.GetMethods(BindingFlags);
 
 			for (var i = 0; i < fields.Length; i++)
 			{

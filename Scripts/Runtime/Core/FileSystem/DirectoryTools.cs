@@ -633,9 +633,9 @@ namespace Extenity.FileSystemToolbox
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
-			const int maxTries = 10;
-			const int waitBetweenTries = 1000; // ms
-			for (int iTry = 0; iTry < maxTries; iTry++)
+			const int MaxTries = 10;
+			const int WaitBetweenTries = 1000; // ms
+			for (int iTry = 0; iTry < MaxTries; iTry++)
 			{
 				try
 				{
@@ -646,7 +646,7 @@ namespace Extenity.FileSystemToolbox
 				catch
 				{
 				}
-				Thread.Sleep(waitBetweenTries);
+				Thread.Sleep(WaitBetweenTries);
 			}
 			throw new Exception("Failed to create temporary directory.");
 		}

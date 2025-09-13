@@ -134,15 +134,15 @@ namespace Extenity.MathToolbox
 			// Appreciate coding at fabulous level with this whole comment block being extraordinarily neat!
 			{
 				// Lehmer Algorithm. Grabbed from https://msdn.microsoft.com/en-us/magazine/mt767700.aspx
-				const int a = 16807;
-				const int m = 2147483647;
-				const int q = 127773;
-				const int r = 2836;
-				int hi = _Lubricant / q;
-				int lo = _Lubricant % q;
-				_Lubricant = (a * lo) - (r * hi);
+				const int A = 16807;
+				const int M = 2147483647;
+				const int Q = 127773;
+				const int R = 2836;
+				int hi = _Lubricant / Q;
+				int lo = _Lubricant % Q;
+				_Lubricant = (A * lo) - (R * hi);
 				if (_Lubricant <= 0)
-					_Lubricant = _Lubricant + m;
+					_Lubricant = _Lubricant + M;
 				// Apply lubricant to the seed.
 				seed ^= _Lubricant;
 			}

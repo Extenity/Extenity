@@ -59,14 +59,14 @@ namespace Extenity.DataToolbox
 
 		public static bool CompareStreamContents(this Stream stream1, Stream stream2)
 		{
-			const int bufferSize = 1024 * sizeof(Int64);
-			var buffer1 = new byte[bufferSize];
-			var buffer2 = new byte[bufferSize];
+			const int BufferSize = 1024 * sizeof(Int64);
+			var buffer1 = new byte[BufferSize];
+			var buffer2 = new byte[BufferSize];
 
 			while (true)
 			{
-				var count1 = stream1.Read(buffer1, 0, bufferSize);
-				var count2 = stream2.Read(buffer2, 0, bufferSize);
+				var count1 = stream1.Read(buffer1, 0, BufferSize);
+				var count2 = stream2.Read(buffer2, 0, BufferSize);
 
 				if (count1 != count2)
 					return false;
