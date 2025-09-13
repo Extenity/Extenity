@@ -1,7 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Text;
 using System.Buffers;
 using System.Runtime.CompilerServices;
+
+// ReSharper disable InconsistentNaming
 
 namespace Cysharp.Text
 {

@@ -11,6 +11,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
+// ReSharper disable InconsistentNaming
+
 namespace System
 {
     // The Format methods provided by the numeric classes convert

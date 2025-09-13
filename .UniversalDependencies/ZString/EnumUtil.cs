@@ -3,6 +3,8 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 
+// ReSharper disable InconsistentNaming
+
 namespace Cysharp.Text
 {
     internal static class EnumUtil<T>

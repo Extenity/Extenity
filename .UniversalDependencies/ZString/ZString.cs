@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
+// ReSharper disable InconsistentNaming
+
 namespace Cysharp.Text
 {
     public static partial class ZString

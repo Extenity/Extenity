@@ -10,6 +10,8 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace System
 {
     // The Parse methods provided by the numeric classes convert a

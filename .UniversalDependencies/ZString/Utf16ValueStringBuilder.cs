@@ -3,6 +3,8 @@ using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace Cysharp.Text
 {
     public partial struct Utf16ValueStringBuilder : IDisposable, IBufferWriter<char>, IResettableBufferWriter<char>

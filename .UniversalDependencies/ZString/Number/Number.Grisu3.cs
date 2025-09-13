@@ -5,6 +5,8 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace System
 {
     internal static partial class Number

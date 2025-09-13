@@ -10,6 +10,8 @@ using System.Text;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
+// ReSharper disable InconsistentNaming
+
 namespace Cysharp.Text
 {
 <# foreach(var utf in utfTypes ) { var isUtf16 = (utf == "Utf16"); var elemType = isUtf16 ? "char" : "byte"; #>
