@@ -23,9 +23,9 @@ namespace Extenity.JsonToolbox.Converters
 		{
 			if (!objectType.IsGenericType) return false;
 
-			var _type = objectType.GetGenericTypeDefinition();
+			var type = objectType.GetGenericTypeDefinition();
 
-			return typeof(Dictionary<,>) == _type || typeof(IDictionary<,>) == _type;
+			return typeof(Dictionary<,>) == type || typeof(IDictionary<,>) == type;
 		}
 
 		/// <summary>
@@ -45,19 +45,19 @@ namespace Extenity.JsonToolbox.Converters
 		{
 			if (JsonToken.Null == reader.TokenType) return null;
 
-			var _result = Activator.CreateInstance(objectType) as IDictionary;
-			var _args = objectType.GetGenericArguments();
+			var result = Activator.CreateInstance(objectType) as IDictionary;
+			var args = objectType.GetGenericArguments();
 
-			foreach (JObject _pair in JArray.Load(reader))
+			foreach (JObject pair in JArray.Load(reader))
 			{
-				var _key = _pair["Key"].ToObject(_args[0], serializer);
-				var _value = _pair["Value"].ToObject(_args[1], serializer);
+				var key = pair["Key"].ToObject(args[0], serializer);
+				var value = pair["Value"].ToObject(args[1], serializer);
 
-				if (!_result.Contains(_key)) _result.Add(_key, _value);
-				else throw new Exception($"Dictionary has a repeating key: {_pair.ToString(Formatting.None)}");
+				if (!result.Contains(key)) result.Add(key, value);
+				else throw new Exception($"Dictionary has a repeating key: {pair.ToString(Formatting.None)}");
 			}
 
-			return _result;
+			return result;
 		}
 
 		/// <summary>

@@ -6,6 +6,7 @@ using static Unity.Mathematics.math;
 namespace Extenity.MathToolbox
 {
 
+	// ReSharper disable once InconsistentNaming
 	public static class float2Tools
 	{
 		public static readonly float2 Zero = float2(0f, 0f);

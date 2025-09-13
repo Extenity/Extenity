@@ -42,19 +42,19 @@ namespace Extenity.JsonToolbox.Converters
 		/// <param name="name">Name.</param>
 		private static MemberInfo GetMember(string name)
 		{
-			var _flag = BindingFlags.Instance | BindingFlags.Public;
+			var flag = BindingFlags.Instance | BindingFlags.Public;
 
-			var _field = typeof(T).GetField(name, _flag);
-			if (null != _field) return _field;
+			var field = typeof(T).GetField(name, flag);
+			if (null != field) return field;
 
-			var _property = typeof(T).GetProperty(name, _flag);
-			if (null == _property) Throw(name, "Public instance field or property {0} is not found.");
+			var property = typeof(T).GetProperty(name, flag);
+			if (null == property) Throw(name, "Public instance field or property {0} is not found.");
 
-			if (null == _property.GetGetMethod()) Throw(name, "Property {0} is not readable.");
-			if (null == _property.GetSetMethod()) Throw(name, "Property {0} is not writable.");
+			if (null == property.GetGetMethod()) Throw(name, "Property {0} is not readable.");
+			if (null == property.GetSetMethod()) Throw(name, "Property {0} is not writable.");
 
-			if (_property.GetIndexParameters().Any()) Throw(name, "Not support property {0} with indexes.");
-			return _property;
+			if (property.GetIndexParameters().Any()) Throw(name, "Not support property {0} with indexes.");
+			return property;
 		}
 
 		/// <summary>
@@ -131,15 +131,15 @@ namespace Extenity.JsonToolbox.Converters
 		{
 			if (null != _properties) return _properties;
 
-			var _names = GetPropertyNames();
+			var names = GetPropertyNames();
 
-			if (null == _names || !_names.Any())
+			if (null == names || !names.Any())
 				throw new InvalidProgramException("GetPropertyNames() cannot return empty.");
 
-			if (_names.Any((name) => string.IsNullOrEmpty(name)))
+			if (names.Any((name) => string.IsNullOrEmpty(name)))
 				throw new InvalidProgramException("GetPropertyNames() cannot contain empty value.");
 
-			_properties = _names.Distinct().ToDictionary((name) => name, (name) => GetMember(name));
+			_properties = names.Distinct().ToDictionary((name) => name, (name) => GetMember(name));
 			return _properties;
 		}
 
@@ -189,16 +189,16 @@ namespace Extenity.JsonToolbox.Converters
 		{
 			if (JsonToken.Null == reader.TokenType) return null;
 
-			var _object = JObject.Load(reader);
-			var _result = CreateInstance() as object;
+			var obj = JObject.Load(reader);
+			var result = CreateInstance() as object;
 
-			foreach (var _pair in GetProperties())
+			foreach (var pair in GetProperties())
 			{
-				var _value = _object[_pair.Key].ToObject(GetValueType(_pair.Value), serializer);
-				SetValue(_pair.Value, _result, _value);
+				var value = obj[pair.Key].ToObject(GetValueType(pair.Value), serializer);
+				SetValue(pair.Value, result, value);
 			}
 
-			return _result;
+			return result;
 		}
 
 		/// <summary>
@@ -209,15 +209,15 @@ namespace Extenity.JsonToolbox.Converters
 		/// <param name="serializer">The calling serializer.</param>
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{
-			var _object = new JObject();
+			var obj = new JObject();
 
-			foreach (var _pair in GetProperties())
+			foreach (var pair in GetProperties())
 			{
-				var _value = GetValue(_pair.Value, value);
-				_object[_pair.Key] = JToken.FromObject(_value, serializer);
+				var itemValue = GetValue(pair.Value, value);
+				obj[pair.Key] = JToken.FromObject(itemValue, serializer);
 			}
 
-			_object.WriteTo(writer);
+			obj.WriteTo(writer);
 		}
 
 		#endregion
