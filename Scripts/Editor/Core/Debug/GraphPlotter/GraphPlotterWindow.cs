@@ -69,9 +69,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		private Color LegendHiddenTextColor;
 		private Color LegendHiddenTextColor_Free = new Color(0f, 0f, 0f, 0.5f);
 		private Color LegendHiddenTextColor_Pro = new Color(1f, 1f, 1f, 0.5f);
-		private Color channelHeaderColor;
-		private Color channelHeaderColor_Free = new Color(0.2f, 0.2f, 0.2f);
-		private Color channelHeaderColor_Pro = new Color(0.5f, 0.5f, 0.5f);
+		private Color ChannelHeaderColor;
+		private Color ChannelHeaderColor_Free = new Color(0.2f, 0.2f, 0.2f);
+		private Color ChannelHeaderColor_Pro = new Color(0.5f, 0.5f, 0.5f);
 		private Color GraphTitleColor = new Color(0.7f, 0.7f, 0.7f);
 		private Color GraphMinMaxTextColor = new Color(0f, 1f, 0f, 0.7f);
 		private Color TimeTextColor;
@@ -92,13 +92,13 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			new Color(0.12f, 0.12f, 0.12f, 0f)
 		};
 
-		private GUIStyle headerStyle;
-		private GUIStyle minStyle;
-		private GUIStyle maxStyle;
-		private GUIStyle timeIntervalSelectionStyle;
-		private GUIStyle timeStyle;
-		private GUIStyle valueTextStyle;
-		private GUIStyle simpleStyle;
+		private GUIStyle HeaderStyle;
+		private GUIStyle MinStyle;
+		private GUIStyle MaxStyle;
+		private GUIStyle TimeIntervalSelectionStyle;
+		private GUIStyle TimeStyle;
+		private GUIStyle ValueTextStyle;
+		private GUIStyle SimpleStyle;
 
 		private void CreateStyles()
 		{
@@ -108,7 +108,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				TopBarBackgroundColor = TopBarBackgroundColor_Pro;
 				LegendTextColor = LegendTextColor_Pro;
 				LegendHiddenTextColor = LegendHiddenTextColor_Pro;
-				channelHeaderColor = channelHeaderColor_Pro;
+				ChannelHeaderColor = ChannelHeaderColor_Pro;
 				TimeTextColor = TimeTextColor_Pro;
 			}
 			else
@@ -117,46 +117,46 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				TopBarBackgroundColor = TopBarBackgroundColor_Free;
 				LegendTextColor = LegendTextColor_Free;
 				LegendHiddenTextColor = LegendHiddenTextColor_Free;
-				channelHeaderColor = channelHeaderColor_Free;
+				ChannelHeaderColor = ChannelHeaderColor_Free;
 				TimeTextColor = TimeTextColor_Free;
 			}
 
-			headerStyle = new GUIStyle();
-			headerStyle.normal.textColor = GraphTitleColor;
+			HeaderStyle = new GUIStyle();
+			HeaderStyle.normal.textColor = GraphTitleColor;
 
-			maxStyle = new GUIStyle();
-			maxStyle.normal.textColor = GraphMinMaxTextColor;
-			maxStyle.alignment = TextAnchor.LowerRight;
+			MaxStyle = new GUIStyle();
+			MaxStyle.normal.textColor = GraphMinMaxTextColor;
+			MaxStyle.alignment = TextAnchor.LowerRight;
 
-			minStyle = new GUIStyle();
-			minStyle.normal.textColor = GraphMinMaxTextColor;
-			minStyle.alignment = TextAnchor.UpperRight;
+			MinStyle = new GUIStyle();
+			MinStyle.normal.textColor = GraphMinMaxTextColor;
+			MinStyle.alignment = TextAnchor.UpperRight;
 
 			//timeWindowStyle = new GUIStyle();
 			//timeWindowStyle.normal.textColor = Color.grey;
 			//timeWindowStyle.alignment = TextAnchor.MiddleRight;
 
-			valueTextStyle = new GUIStyle();
+			ValueTextStyle = new GUIStyle();
 
-			timeIntervalSelectionStyle = new GUIStyle();
-			timeIntervalSelectionStyle.clipping = TextClipping.Overflow;
-			timeIntervalSelectionStyle.alignment = TextAnchor.MiddleCenter;
-			timeIntervalSelectionStyle.normal.textColor = Color.white;
+			TimeIntervalSelectionStyle = new GUIStyle();
+			TimeIntervalSelectionStyle.clipping = TextClipping.Overflow;
+			TimeIntervalSelectionStyle.alignment = TextAnchor.MiddleCenter;
+			TimeIntervalSelectionStyle.normal.textColor = Color.white;
 
-			timeStyle = new GUIStyle();
-			timeStyle.normal.textColor = TimeTextColor;
+			TimeStyle = new GUIStyle();
+			TimeStyle.normal.textColor = TimeTextColor;
 
-			simpleStyle = new GUIStyle();
-			simpleStyle.normal.textColor = Color.white;
+			SimpleStyle = new GUIStyle();
+			SimpleStyle.normal.textColor = Color.white;
 		}
 
 		#endregion
 
-		private float scrollPositionY = 0f;
-		private float scrollPositionTime = 0f;
-		private float scrollPositionTimeMax = 0f;
+		private float ScrollPositionY = 0f;
+		private float ScrollPositionTime = 0f;
+		private float ScrollPositionTimeMax = 0f;
 
-		private Channel selectedChannel;
+		private Channel SelectedChannel;
 
 		// Graph height resizing
 		private bool IsResizingGraphHeight = false;
@@ -165,18 +165,18 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 		private float MouseYPositionBeforeResizingGraphHeight;
 		private int HeightResizingGraphIndex;
 
-		private bool legendResize = false;
+		private bool LegendResize = false;
 
-		private bool wasInPauseMode = false;
+		private bool WasInPauseMode = false;
 
-		private Graph timeIntervalSelectionGraph = null;
-		private float timeIntervalStartTime;
-		private float timeIntervalEndTime;
+		private Graph TimeIntervalSelectionGraph = null;
+		private float TimeIntervalStartTime;
+		private float TimeIntervalEndTime;
 
-		private Vector3[] points = new Vector3[20000];
-		private Vector3[] arrowPoints = new Vector3[4];
-		private Vector3[] diamondPoints = new Vector3[5];
-		private Vector3[] horizontalLines = new Vector3[7];
+		private Vector3[] Points = new Vector3[20000];
+		private Vector3[] ArrowPoints = new Vector3[4];
+		private Vector3[] DiamondPoints = new Vector3[5];
+		private Vector3[] HorizontalLines = new Vector3[7];
 
 		private readonly List<TagEntry> TagEntries = new List<TagEntry>(100);
 
@@ -247,7 +247,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			if (!isInPauseMode)
 			{
 				// smooth catch up. Nice!
-				scrollPositionTime = 0f;
+				ScrollPositionTime = 0f;
 			}
 
 			if (currentEventType == EventType.MouseDown &&
@@ -267,7 +267,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				var graph = FilteredGraphs[i];
 				var range = graph.Range;
 
-				var graphAreaRect = new Rect(LegendWidth, i * GraphHeight + topBarRect.height - scrollPositionY, graphWidth, GraphHeight);
+				var graphAreaRect = new Rect(LegendWidth, i * GraphHeight + topBarRect.height - ScrollPositionY, graphWidth, GraphHeight);
 				var graphRect = new Rect(graphAreaRect.xMin, graphAreaRect.yMin + SpaceAboveGraph, graphAreaRect.width - 20, totalGraphHeight - 5);
 				//GUITools.DrawRect(graphAreaRect, Color.red, 2f);
 				//GUITools.DrawRect(graphRect, Color.blue, 2f);
@@ -275,10 +275,10 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				var span = range.Span;
 
 				GUI.color = Color.white;
-				GUI.Label(new Rect(LegendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), graph.Title, headerStyle);
+				GUI.Label(new Rect(LegendWidth + 10f, graphAreaRect.yMin + 10, 100f, 30f), graph.Title, HeaderStyle);
 
-				var timeEnd = LatestTimeOfFilteredGraphs + scrollPositionTime;
-				var timeStart = LatestTimeOfFilteredGraphs - TimeWindow + scrollPositionTime;
+				var timeEnd = LatestTimeOfFilteredGraphs + ScrollPositionTime;
+				var timeStart = LatestTimeOfFilteredGraphs - TimeWindow + ScrollPositionTime;
 
 				switch (range.Sizing)
 				{
@@ -296,20 +296,20 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				}
 
 				if (range.Min < float.PositiveInfinity)
-					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMax + 5f, 200f, 20f), range.Min.ToString(), minStyle);
+					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMax + 5f, 200f, 20f), range.Min.ToString(), MinStyle);
 
 				if (range.Max > float.NegativeInfinity)
-					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), range.Max.ToString(), maxStyle);
+					GUI.Label(new Rect(graphRect.xMax - 200f - 5f, graphRect.yMin - 5f - 20f, 200f, 20f), range.Max.ToString(), MaxStyle);
 
 				// Graph resizing
 				{
 					var resizeRect = new Rect(0f, graphAreaRect.yMax - 10, width - 12, 21);
-					if (!legendResize)
+					if (!LegendResize)
 					{
 						EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.SplitResizeUpDown);
 					}
 
-					if (currentEventType == EventType.MouseDown && resizeRect.Contains(mousePosition) && !legendResize)
+					if (currentEventType == EventType.MouseDown && resizeRect.Contains(mousePosition) && !LegendResize)
 					{
 						IsResizingGraphHeight = true;
 						HeightResizingGraphIndex = i;
@@ -352,15 +352,15 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					{
 						if (currentEventType == EventType.MouseDown)
 						{
-							timeIntervalStartTime = max(0f, time);
-							timeIntervalEndTime = timeIntervalStartTime;
-							timeIntervalSelectionGraph = graph;
+							TimeIntervalStartTime = max(0f, time);
+							TimeIntervalEndTime = TimeIntervalStartTime;
+							TimeIntervalSelectionGraph = graph;
 						}
 					}
 
-					if (timeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
+					if (TimeIntervalSelectionGraph == graph && currentEventType == EventType.MouseDrag)
 					{
-						timeIntervalEndTime = max(0f, time);
+						TimeIntervalEndTime = max(0f, time);
 					}
 				}
 
@@ -372,7 +372,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					var deselectedColor = channel.Color;
 					deselectedColor.a = DeselectedChannelAlpha;
 
-					var color = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
+					var color = (SelectedChannel == null) || (channel == SelectedChannel) ? channel.Color : deselectedColor;
 
 					Handles.color = color;
 
@@ -380,24 +380,24 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 					for (int j = 0; j < channel.SampleBufferSize - 1; j++)
 					{
-						var index_a = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
-						var index_b = (index_a + 1) % channel.SampleBufferSize;
+						var indexA = (channel.CurrentSampleIndex + j) % channel.SampleBufferSize;
+						var indexB = (indexA + 1) % channel.SampleBufferSize;
 
-						var time_a = channel.Samples[index_a].AxisX;
-						var time_b = channel.Samples[index_b].AxisX;
+						var timeA = channel.Samples[indexA].AxisX;
+						var timeB = channel.Samples[indexB].AxisX;
 
-						if (float.IsNaN(time_a) || float.IsNaN(time_b))
+						if (float.IsNaN(timeA) || float.IsNaN(timeB))
 							continue;
 
-						if (time_b > time_a && !(time_b < timeStart || time_a > timeEnd))
+						if (timeB > timeA && !(timeB < timeStart || timeA > timeEnd))
 						{
-							var sample_a = channel.Samples[index_a].AxisY;
-							var sample_b = channel.Samples[index_b].AxisY;
+							var sampleA = channel.Samples[indexA].AxisY;
+							var sampleB = channel.Samples[indexB].AxisY;
 
-							if (float.IsNaN(sample_a) || float.IsNaN(sample_b))
+							if (float.IsNaN(sampleA) || float.IsNaN(sampleB))
 								continue;
 
-							var aNormalizedSample = (sample_a - range.Min) / span;
+							var aNormalizedSample = (sampleA - range.Min) / span;
 							if (span == 0f)
 							{
 								aNormalizedSample = 0.5f;
@@ -407,7 +407,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 								aNormalizedSample = Mathf.Clamp01(aNormalizedSample);
 							}
 
-							var bNormalizedSample = (sample_b - range.Min) / span;
+							var bNormalizedSample = (sampleB - range.Min) / span;
 							if (span == 0f)
 							{
 								bNormalizedSample = 0.5f;
@@ -420,38 +420,38 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 							// Draw graph step.
 							if (InterpolationTypeIndex == 0)
 							{
-								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+								Points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (timeB - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
 							}
 							else
 							{
-								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
-								points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (time_b - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
+								Points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (timeB - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - aNormalizedSample), 0f);
+								Points[pointIndex++] = new Vector3(graphRect.xMin + graphRect.width * (timeB - timeStart) / TimeWindow, graphRect.yMin + graphRect.height * (1f - bNormalizedSample), 0f);
 							}
 						}
 					}
 
 					if (pointIndex > 0)
 					{
-						var lastPoint = points[pointIndex - 1];
+						var lastPoint = Points[pointIndex - 1];
 
-						for (int p = pointIndex; p < points.Length; p++)
+						for (int p = pointIndex; p < Points.Length; p++)
 						{
-							points[p] = lastPoint;
+							Points[p] = lastPoint;
 						}
 
-						Handles.DrawPolyLine(points);
+						Handles.DrawPolyLine(Points);
 					}
 				}
 
-				if (timeIntervalSelectionGraph == graph && timeIntervalStartTime != timeIntervalEndTime)
+				if (TimeIntervalSelectionGraph == graph && TimeIntervalStartTime != TimeIntervalEndTime)
 				{
 					GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.1f);
 
-					var selectionTime_left = max(0f, min(timeIntervalStartTime, timeIntervalEndTime));
-					var selectionTime_right = max(0f, max(timeIntervalStartTime, timeIntervalEndTime));
+					var selectionTime_Left = max(0f, min(TimeIntervalStartTime, TimeIntervalEndTime));
+					var selectionTime_Right = max(0f, max(TimeIntervalStartTime, TimeIntervalEndTime));
 
-					var left = graphRect.width * (selectionTime_left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
-					var right = graphRect.width * (selectionTime_right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+					var left = graphRect.width * (selectionTime_Left - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
+					var right = graphRect.width * (selectionTime_Right - timeStart) / (timeEnd - timeStart) + graphRect.xMin;
 
 					GUI.DrawTexture(new Rect(left, graphRect.yMin, right - left, graphRect.height), GUITools.WhiteTexture, ScaleMode.StretchToFill);
 
@@ -465,7 +465,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					Handles.DrawLine(new Vector3(right, graphRect.yMin, 0), new Vector3(right, graphRect.yMax, 0));
 					Handles.DrawLine(new Vector3(left, (graphRect.yMin + graphRect.yMax) * 0.5f, 0), new Vector3(right, (graphRect.yMin + graphRect.yMax) * 0.5f, 0));
 
-					GUI.Label(new Rect(left, graphRect.yMax, right - left, 20), (selectionTime_right - selectionTime_left) + " secs", timeIntervalSelectionStyle);
+					GUI.Label(new Rect(left, graphRect.yMax, right - left, 20), (selectionTime_Right - selectionTime_Left) + " secs", TimeIntervalSelectionStyle);
 				}
 
 
@@ -477,8 +477,8 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 				{
 					var contextNameRect = new Rect(22f, graphAreaRect.yMin + 10f, LegendWidth - 30f, 16f);
 
-					GUI.color = channelHeaderColor;
-					GUI.Label(contextNameRect, graph.Context.name, simpleStyle);
+					GUI.color = ChannelHeaderColor;
+					GUI.Label(contextNameRect, graph.Context.name, SimpleStyle);
 
 					EditorGUIUtility.AddCursorRect(contextNameRect, MouseCursor.Link);
 
@@ -509,19 +509,19 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					var deselectedColor = channel.Color;
 					deselectedColor.a = DeselectedChannelAlpha;
 
-					var channelColor = (selectedChannel == null) || (channel == selectedChannel) ? channel.Color : deselectedColor;
+					var channelColor = (SelectedChannel == null) || (channel == SelectedChannel) ? channel.Color : deselectedColor;
 
 					var index = -1;
 
 					for (int k = 1; k < channel.Samples.Length - 1; k++)
 					{
-						int sampleIndex_a = (channel.CurrentSampleIndex + k) % channel.Samples.Length;
-						int sampleIndex_b = (sampleIndex_a + 1) % channel.Samples.Length;
+						int sampleIndexA = (channel.CurrentSampleIndex + k) % channel.Samples.Length;
+						int sampleIndexB = (sampleIndexA + 1) % channel.Samples.Length;
 
-						if (mouseTime >= channel.Samples[sampleIndex_a].AxisX &&
-						    mouseTime <= channel.Samples[sampleIndex_b].AxisX)
+						if (mouseTime >= channel.Samples[sampleIndexA].AxisX &&
+						    mouseTime <= channel.Samples[sampleIndexB].AxisX)
 						{
-							index = abs(channel.Samples[sampleIndex_a].AxisX - mouseTime) <= abs(channel.Samples[sampleIndex_b].AxisX - mouseTime) ? sampleIndex_a : sampleIndex_b;
+							index = abs(channel.Samples[sampleIndexA].AxisX - mouseTime) <= abs(channel.Samples[sampleIndexB].AxisX - mouseTime) ? sampleIndexA : sampleIndexB;
 							break;
 						}
 					}
@@ -537,14 +537,14 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					}
 
 					// Draw time marker.
-					if (j == 0 && selectedChannel == null)
+					if (j == 0 && SelectedChannel == null)
 					{
 						GUI.color = TimeTextColor;
 
 						if (!float.IsNaN(time))
 						{
 							GUI.Label(new Rect(LegendTextOffset, graphAreaRect.yMax - LegendTextOffset * 2f, LegendWidth, 20),
-							          "t = " + time, timeStyle);
+							          "t = " + time, TimeStyle);
 						}
 					}
 
@@ -565,34 +565,34 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					if (normalizedSampleValue < 0f)
 					{
 						// Draw down arrow.
-						arrowPoints[0] = samplePosition + new Vector3(-handleRadius, -handleRadius, 0);
-						arrowPoints[1] = samplePosition + new Vector3(handleRadius, -handleRadius, 0);
-						arrowPoints[2] = samplePosition + new Vector3(0, handleRadius, 0);
-						arrowPoints[3] = arrowPoints[0];
+						ArrowPoints[0] = samplePosition + new Vector3(-handleRadius, -handleRadius, 0);
+						ArrowPoints[1] = samplePosition + new Vector3(handleRadius, -handleRadius, 0);
+						ArrowPoints[2] = samplePosition + new Vector3(0, handleRadius, 0);
+						ArrowPoints[3] = ArrowPoints[0];
 
-						Handles.DrawPolyLine(arrowPoints);
+						Handles.DrawPolyLine(ArrowPoints);
 					}
 					else if (normalizedSampleValue > 1f)
 					{
 						// Draw up arrow.
-						arrowPoints[0] = samplePosition + new Vector3(-handleRadius, handleRadius, 0);
-						arrowPoints[1] = samplePosition + new Vector3(handleRadius, handleRadius, 0);
-						arrowPoints[2] = samplePosition + new Vector3(0, -handleRadius, 0);
-						arrowPoints[3] = arrowPoints[0];
+						ArrowPoints[0] = samplePosition + new Vector3(-handleRadius, handleRadius, 0);
+						ArrowPoints[1] = samplePosition + new Vector3(handleRadius, handleRadius, 0);
+						ArrowPoints[2] = samplePosition + new Vector3(0, -handleRadius, 0);
+						ArrowPoints[3] = ArrowPoints[0];
 
-						Handles.DrawPolyLine(arrowPoints);
+						Handles.DrawPolyLine(ArrowPoints);
 					}
 					else
 					{
 						// Draw circle.
 						var size = handleRadius * 0.75f;
-						diamondPoints[0] = samplePosition + new Vector3(0, size, 0);
-						diamondPoints[1] = samplePosition + new Vector3(size, 0, 0);
-						diamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
-						diamondPoints[3] = samplePosition + new Vector3(-size, 0, 0);
-						diamondPoints[4] = diamondPoints[0];
+						DiamondPoints[0] = samplePosition + new Vector3(0, size, 0);
+						DiamondPoints[1] = samplePosition + new Vector3(size, 0, 0);
+						DiamondPoints[2] = samplePosition + new Vector3(0, -size, 0);
+						DiamondPoints[3] = samplePosition + new Vector3(-size, 0, 0);
+						DiamondPoints[4] = DiamondPoints[0];
 
-						Handles.DrawPolyLine(diamondPoints);
+						Handles.DrawPolyLine(DiamondPoints);
 					}
 
 					string sampleValueString;
@@ -608,38 +608,38 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 					var valueText = channel.Name + sampleValueString;
 
 					GUI.color = new Color(1f, 1f, 1f, 1f);
-					valueTextStyle.normal.textColor = Color.white;
+					ValueTextStyle.normal.textColor = Color.white;
 
-					if (channel == selectedChannel)
+					if (channel == SelectedChannel)
 					{
-						var sampleTextWidth = valueTextStyle.CalcSize(new GUIContent(valueText)).x;
+						var sampleTextWidth = ValueTextStyle.CalcSize(new GUIContent(valueText)).x;
 
 						if (samplePosition.x + sampleTextWidth + 40 > position.width)
 						{
-							valueTextStyle.alignment = TextAnchor.MiddleRight;
-							GUI.Label(new Rect(samplePosition.x - sampleTextWidth - 15, samplePosition.y - 20, sampleTextWidth, 20), valueText, valueTextStyle);
+							ValueTextStyle.alignment = TextAnchor.MiddleRight;
+							GUI.Label(new Rect(samplePosition.x - sampleTextWidth - 15, samplePosition.y - 20, sampleTextWidth, 20), valueText, ValueTextStyle);
 						}
 						else
 						{
-							valueTextStyle.alignment = TextAnchor.MiddleLeft;
-							GUI.Label(new Rect(samplePosition.x + 15, samplePosition.y, sampleTextWidth, 20), valueText, valueTextStyle);
+							ValueTextStyle.alignment = TextAnchor.MiddleLeft;
+							GUI.Label(new Rect(samplePosition.x + 15, samplePosition.y, sampleTextWidth, 20), valueText, ValueTextStyle);
 						}
 
 						GUI.color = new Color(1f, 1f, 1f, 0.5f);
-						GUI.Label(new Rect(10, graphRect.yMax - 10, LegendWidth, 20), "Time = " + time, timeStyle);
+						GUI.Label(new Rect(10, graphRect.yMax - 10, LegendWidth, 20), "Time = " + time, TimeStyle);
 					}
 
 					GUI.color = new Color(1f, 1f, 1f, 1f);
 
-					valueTextStyle.normal.textColor = selectedChannel == null || selectedChannel == channel
+					ValueTextStyle.normal.textColor = SelectedChannel == null || SelectedChannel == channel
 						? LegendTextColor
 						: LegendHiddenTextColor;
-					valueTextStyle.alignment = TextAnchor.MiddleLeft;
-					valueTextStyle.clipping = TextClipping.Clip;
+					ValueTextStyle.alignment = TextAnchor.MiddleLeft;
+					ValueTextStyle.clipping = TextClipping.Clip;
 
 					var offset = 30f;
 					var selectionRect = new Rect(0f, graphAreaRect.yMin + offset + 20 * j, LegendWidth, 16f);
-					GUI.Label(new Rect(22f, graphAreaRect.yMin + 30f + 20 * j, LegendWidth - 30f, 16f), valueText, valueTextStyle);
+					GUI.Label(new Rect(22f, graphAreaRect.yMin + 30f + 20 * j, LegendWidth - 30f, 16f), valueText, ValueTextStyle);
 
 					EditorGUIUtility.AddCursorRect(selectionRect, MouseCursor.Link);
 
@@ -693,7 +693,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 						GUI.color = eventColor;
 						GUI.contentColor = Color.white;
-						GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), TagEntries[iTag].Text, simpleStyle);
+						GUI.Label(new Rect(graphRect.xMin + graphRect.width * normalizedX - 5, graphRect.yMax + 5f, 100f, 20f), TagEntries[iTag].Text, SimpleStyle);
 					}
 				}
 			}
@@ -701,7 +701,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			// select/deselect.
 			if (currentEventType == EventType.MouseDown)
 			{
-				selectedChannel = newSelectedChannel;
+				SelectedChannel = newSelectedChannel;
 			}
 
 			GUI.color = new Color(1f, 1f, 1f, 1f);
@@ -712,8 +712,8 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			{
 				// separator line
 				Handles.color = Color.grey;
-				Handles.DrawLine(new Vector3(0f, (i + 1) * GraphHeight + topBarRect.height - scrollPositionY, 0f),
-				                 new Vector3(width, (i + 1) * GraphHeight + topBarRect.height - scrollPositionY, 0f));
+				Handles.DrawLine(new Vector3(0f, (i + 1) * GraphHeight + topBarRect.height - ScrollPositionY, 0f),
+				                 new Vector3(width, (i + 1) * GraphHeight + topBarRect.height - ScrollPositionY, 0f));
 			}
 
 			// Scrollbar
@@ -721,17 +721,17 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			var visibleHeightY = min(scrollMaxY, position.height - topBarRect.height);
 
 			GUI.color = Color.white;
-			scrollPositionY = GUI.VerticalScrollbar(
+			ScrollPositionY = GUI.VerticalScrollbar(
 				new Rect(position.width - 15, topBarRect.height, 15f, position.height - topBarRect.height),
-				scrollPositionY, visibleHeightY, 0f, scrollMaxY);
-			scrollPositionY = max(scrollPositionY, 0f);
+				ScrollPositionY, visibleHeightY, 0f, scrollMaxY);
+			ScrollPositionY = max(ScrollPositionY, 0f);
 
 			if (isInPauseMode)
 			{
-				if (!wasInPauseMode)
+				if (!WasInPauseMode)
 				{
 					// Reset scroll position when going into pause mode.
-					scrollPositionTime = 0f;
+					ScrollPositionTime = 0f;
 
 					// Find the maximum time span in samples.
 					var minTime = LatestTimeOfFilteredGraphs;
@@ -745,19 +745,19 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 							maxTime = graphMaxTime;
 					}
 
-					scrollPositionTimeMax = (maxTime - minTime) + 1f;
+					ScrollPositionTimeMax = (maxTime - minTime) + 1f;
 				}
 
 				GUI.color = Color.white;
-				scrollPositionTime = GUI.HorizontalScrollbar(
+				ScrollPositionTime = GUI.HorizontalScrollbar(
 					new Rect(LegendWidth, height - 15f, width - LegendWidth - 15f, 15f),
-					scrollPositionTime,
-					min(scrollPositionTimeMax, TimeWindow),
-					-scrollPositionTimeMax + TimeWindow,
+					ScrollPositionTime,
+					min(ScrollPositionTimeMax, TimeWindow),
+					-ScrollPositionTimeMax + TimeWindow,
 					TimeWindow
 				);
 
-				scrollPositionTime = min(0f, scrollPositionTime);
+				ScrollPositionTime = min(0f, ScrollPositionTime);
 			}
 
 			// Top bar
@@ -800,23 +800,23 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 			if (currentEventType == EventType.MouseDown && legendResizeRect.Contains(mousePosition) && !IsResizingGraphHeight)
 			{
-				legendResize = true;
+				LegendResize = true;
 			}
 
-			if (currentEventType == EventType.MouseDrag && legendResize)
+			if (currentEventType == EventType.MouseDrag && LegendResize)
 			{
 				LegendWidth = mousePosition.x.FloorToInt();
 				EditorPrefs.SetInt(EditorSettings.LegendWidth, LegendWidth);
 			}
 
-			if (currentEventType == EventType.MouseUp && legendResize)
+			if (currentEventType == EventType.MouseUp && LegendResize)
 			{
-				legendResize = false;
+				LegendResize = false;
 			}
 
 			Repaint();
 
-			wasInPauseMode = isInPauseMode;
+			WasInPauseMode = isInPauseMode;
 		}
 
 		private void DrawHorizontalLines(Rect graphRect, VerticalRange range)
@@ -824,24 +824,24 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			Handles.color = GraphBoundsLineColor;
 			var ratio = clamp(graphRect.height * range.Min / range.Span + graphRect.yMax, graphRect.yMin, graphRect.yMax);
 
-			horizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
-			horizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
-			horizontalLines[2] = new Vector3(graphRect.xMin, ratio);
+			HorizontalLines[0] = new Vector3(graphRect.xMax, graphRect.yMin);
+			HorizontalLines[1] = new Vector3(graphRect.xMin, graphRect.yMin);
+			HorizontalLines[2] = new Vector3(graphRect.xMin, ratio);
 
 			if (range.Min <= 0f && range.Max >= 0f)
 			{
-				horizontalLines[3] = new Vector3(graphRect.xMax, ratio);
+				HorizontalLines[3] = new Vector3(graphRect.xMax, ratio);
 			}
 			else
 			{
-				horizontalLines[3] = new Vector3(graphRect.xMin, ratio);
+				HorizontalLines[3] = new Vector3(graphRect.xMin, ratio);
 			}
 
-			horizontalLines[4] = new Vector3(graphRect.xMin, ratio);
-			horizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
-			horizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
+			HorizontalLines[4] = new Vector3(graphRect.xMin, ratio);
+			HorizontalLines[5] = new Vector3(graphRect.xMin, graphRect.yMax);
+			HorizontalLines[6] = new Vector3(graphRect.xMax, graphRect.yMax);
 
-			Handles.DrawPolyLine(horizontalLines);
+			Handles.DrawPolyLine(HorizontalLines);
 		}
 
 		#endregion
@@ -1028,7 +1028,7 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				if (currentContextFilterIndex != newContextFilterIndex)
 				{
-					scrollPositionY = 0;
+					ScrollPositionY = 0;
 
 					if (newContextFilterIndex == 0)
 					{

@@ -44,27 +44,27 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowPosition_x = EditorGUILayout.Toggle(Me.PlotPositionX, GUILayout.Width(14));
-				if (newShowPosition_x != Me.PlotPositionX)
+				bool newShowPositionX = EditorGUILayout.Toggle(Me.PlotPositionX, GUILayout.Width(14));
+				if (newShowPositionX != Me.PlotPositionX)
 				{
 					Undo.RecordObject(target, "Toggle position x");
-					Me.PlotPositionX = newShowPosition_x;
+					Me.PlotPositionX = newShowPositionX;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowPosition_y = EditorGUILayout.Toggle(Me.PlotPositionY, GUILayout.Width(14));
-				if (newShowPosition_y != Me.PlotPositionY)
+				bool newShowPositionY = EditorGUILayout.Toggle(Me.PlotPositionY, GUILayout.Width(14));
+				if (newShowPositionY != Me.PlotPositionY)
 				{
 					Undo.RecordObject(target, "Toggle position y");
-					Me.PlotPositionY = newShowPosition_y;
+					Me.PlotPositionY = newShowPositionY;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowPosition_z = EditorGUILayout.Toggle(Me.PlotPositionZ, GUILayout.Width(14));
-				if (newShowPosition_z != Me.PlotPositionZ)
+				bool newShowPositionZ = EditorGUILayout.Toggle(Me.PlotPositionZ, GUILayout.Width(14));
+				if (newShowPositionZ != Me.PlotPositionZ)
 				{
 					Undo.RecordObject(target, "Toggle position z");
-					Me.PlotPositionZ = newShowPosition_z;
+					Me.PlotPositionZ = newShowPositionZ;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
@@ -97,27 +97,27 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowRotation_x = EditorGUILayout.Toggle(Me.PlotRotationX, GUILayout.Width(14));
-				if (newShowRotation_x != Me.PlotRotationX)
+				bool newShowRotationX = EditorGUILayout.Toggle(Me.PlotRotationX, GUILayout.Width(14));
+				if (newShowRotationX != Me.PlotRotationX)
 				{
 					Undo.RecordObject(target, "Toggle rotation x");
-					Me.PlotRotationX = newShowRotation_x;
+					Me.PlotRotationX = newShowRotationX;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowRotation_y = EditorGUILayout.Toggle(Me.PlotRotationY, GUILayout.Width(14));
-				if (newShowRotation_y != Me.PlotRotationY)
+				bool newShowRotationY = EditorGUILayout.Toggle(Me.PlotRotationY, GUILayout.Width(14));
+				if (newShowRotationY != Me.PlotRotationY)
 				{
 					Undo.RecordObject(target, "Toggle rotation y");
-					Me.PlotRotationY = newShowRotation_y;
+					Me.PlotRotationY = newShowRotationY;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowRotation_z = EditorGUILayout.Toggle(Me.PlotRotationZ, GUILayout.Width(14));
-				if (newShowRotation_z != Me.PlotRotationZ)
+				bool newShowRotationZ = EditorGUILayout.Toggle(Me.PlotRotationZ, GUILayout.Width(14));
+				if (newShowRotationZ != Me.PlotRotationZ)
 				{
 					Undo.RecordObject(target, "Toggle rotation z");
-					Me.PlotRotationZ = newShowRotation_z;
+					Me.PlotRotationZ = newShowRotationZ;
 				}
 
 				GUILayout.Label("z", GUILayout.Width(18));
@@ -152,27 +152,27 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Fields");
-				bool newShowScale_x = EditorGUILayout.Toggle(Me.PlotScaleX, GUILayout.Width(14));
-				if (newShowScale_x != Me.PlotScaleX)
+				bool newShowScaleX = EditorGUILayout.Toggle(Me.PlotScaleX, GUILayout.Width(14));
+				if (newShowScaleX != Me.PlotScaleX)
 				{
 					Undo.RecordObject(target, "Toggle scale x");
-					Me.PlotScaleX = newShowScale_x;
+					Me.PlotScaleX = newShowScaleX;
 				}
 				GUILayout.Label("x", GUILayout.Width(18));
 
-				bool newShowScale_y = EditorGUILayout.Toggle(Me.PlotScaleY, GUILayout.Width(14));
-				if (newShowScale_y != Me.PlotScaleY)
+				bool newShowScaleY = EditorGUILayout.Toggle(Me.PlotScaleY, GUILayout.Width(14));
+				if (newShowScaleY != Me.PlotScaleY)
 				{
 					Undo.RecordObject(target, "Toggle scale y");
-					Me.PlotScaleY = newShowScale_y;
+					Me.PlotScaleY = newShowScaleY;
 				}
 				GUILayout.Label("y", GUILayout.Width(18));
 
-				bool newShowScale_z = EditorGUILayout.Toggle(Me.PlotScaleZ, GUILayout.Width(14));
-				if (newShowScale_z != Me.PlotScaleZ)
+				bool newShowScaleZ = EditorGUILayout.Toggle(Me.PlotScaleZ, GUILayout.Width(14));
+				if (newShowScaleZ != Me.PlotScaleZ)
 				{
 					Undo.RecordObject(target, "Toggle scale z");
-					Me.PlotScaleZ = newShowScale_z;
+					Me.PlotScaleZ = newShowScaleZ;
 				}
 				GUILayout.Label("z", GUILayout.Width(18));
 				EditorGUILayout.EndHorizontal();
