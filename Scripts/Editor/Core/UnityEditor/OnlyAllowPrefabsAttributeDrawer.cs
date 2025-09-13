@@ -27,7 +27,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 					var prefabType = PrefabUtility.GetPrefabType(obj);
 					OnlyAllowPrefabsAttribute thisAttribute = (OnlyAllowPrefabsAttribute)attribute;
 
-					var denied = thisAttribute.allowImportedModels
+					var denied = thisAttribute.AllowImportedModels
 						? prefabType != PrefabType.Prefab && prefabType != PrefabType.ModelPrefab
 						: prefabType != PrefabType.Prefab;
 

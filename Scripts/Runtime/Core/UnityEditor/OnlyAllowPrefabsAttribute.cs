@@ -18,11 +18,11 @@ namespace Extenity.UnityEditorToolbox
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public sealed class OnlyAllowPrefabsAttribute : BaseAttribute
 	{
-		public readonly bool allowImportedModels;
+		public readonly bool AllowImportedModels;
 
 		public OnlyAllowPrefabsAttribute(bool allowImportedModels = true)
 		{
-			this.allowImportedModels = allowImportedModels;
+			AllowImportedModels = allowImportedModels;
 		}
 	}
 
