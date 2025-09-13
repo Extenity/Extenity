@@ -1,6 +1,8 @@
 using Extenity.DebugToolbox;
 using static Unity.Mathematics.math;
 
+// ReSharper disable InconsistentNaming
+
 namespace Extenity.MathToolbox
 {
 

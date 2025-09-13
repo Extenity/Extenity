@@ -116,7 +116,7 @@ namespace Extenity.JsonToolbox.Converters
 		/// <summary>
 		/// The stored property names with the member.
 		/// </summary>
-		private static Dictionary<string, MemberInfo> _properties;
+		private static Dictionary<string, MemberInfo> Properties;
 
 		#endregion
 
@@ -129,7 +129,7 @@ namespace Extenity.JsonToolbox.Converters
 		/// <returns>The properties.</returns>
 		private Dictionary<string, MemberInfo> GetProperties()
 		{
-			if (null != _properties) return _properties;
+			if (null != Properties) return Properties;
 
 			var names = GetPropertyNames();
 
@@ -139,8 +139,8 @@ namespace Extenity.JsonToolbox.Converters
 			if (names.Any((name) => string.IsNullOrEmpty(name)))
 				throw new InvalidProgramException("GetPropertyNames() cannot contain empty value.");
 
-			_properties = names.Distinct().ToDictionary((name) => name, (name) => GetMember(name));
-			return _properties;
+			Properties = names.Distinct().ToDictionary((name) => name, (name) => GetMember(name));
+			return Properties;
 		}
 
 		/// <summary>

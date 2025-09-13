@@ -105,10 +105,10 @@ namespace Extenity.MessagingToolbox
 				}
 				return LifeSpanTarget;
 #else
-				var Callback = GetCallback(isSwitchedOn);
-				if (Callback != null) // Check if the callback is specified by user. See 11853135.
+				var callback = GetCallback(isSwitchedOn);
+				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
-					return Callback.Target as ContextObject;
+					return callback.Target as ContextObject;
 				}
 				return null;
 #endif
@@ -123,22 +123,22 @@ namespace Extenity.MessagingToolbox
 
 			public Action GetCallbackAndCheckIfAlive(bool isSwitchedOn)
 			{
-				var Callback = GetCallback(isSwitchedOn);
+				var callback = GetCallback(isSwitchedOn);
 
-				if (Callback == null)
+				if (callback == null)
 					return null;
 
 #if UnityFeatures
-				if (Callback.Target is UnityEngine.Object) // The same with: callback.IsUnityObjectTargeted()
+				if (callback.Target is UnityEngine.Object) // The same with: callback.IsUnityObjectTargeted()
 				{
-					return (Callback.Target as UnityEngine.Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
-						? Callback
+					return (callback.Target as UnityEngine.Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
+						? callback
 						: null;
 				}
 				else
 #endif
 				{
-					return Callback;
+					return callback;
 					// This was the previous implementation, which failed static non-UnityObject methods.
 					// return Callback.Target != null ? Callback : null;
 				}

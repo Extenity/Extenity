@@ -11,23 +11,23 @@ namespace Extenity.ParallelToolbox
 
 		public DelayedCaller(int capacity = 10)
 		{
-			delayedCalls = new List<TAction>(capacity);
+			DelayedCalls = new List<TAction>(capacity);
 		}
 
 		#endregion
 
 		#region Call List
 
-		public List<TAction> delayedCalls;
+		public List<TAction> DelayedCalls;
 
 		public void AddDelayedCall(TAction method)
 		{
-			delayedCalls.Add(method);
+			DelayedCalls.Add(method);
 		}
 
 		public void ClearAllDelayedCalls()
 		{
-			delayedCalls.Clear();
+			DelayedCalls.Clear();
 		}
 
 		#endregion
@@ -36,10 +36,10 @@ namespace Extenity.ParallelToolbox
 
 		public void CallAllDelayedCalls(Action<TAction> caller,  bool clearCallListAfterwards = true)
 		{
-			if (delayedCalls.IsNullOrEmpty())
+			if (DelayedCalls.IsNullOrEmpty())
 				return;
 
-			foreach (var delayedCall in delayedCalls)
+			foreach (var delayedCall in DelayedCalls)
 			{
 				caller(delayedCall);
 			}

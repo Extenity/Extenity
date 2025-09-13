@@ -133,8 +133,8 @@ namespace Extenity.MathToolbox
 				return point.DistanceTo(lineEnd);
 
 			var b = c1 / c2;
-			var Pb = lineStart + b * v;
-			return point.DistanceTo(Pb);
+			var pb = lineStart + b * v;
+			return point.DistanceTo(pb);
 		}
 
 		/// <summary>
@@ -152,8 +152,8 @@ namespace Extenity.MathToolbox
 				return point.SqrDistanceTo(lineB);
 
 			var b = c1 / c2;
-			var Pb = lineA + b * v;
-			return point.SqrDistanceTo(Pb);
+			var pb = lineA + b * v;
+			return point.SqrDistanceTo(pb);
 		}
 
 		#endregion

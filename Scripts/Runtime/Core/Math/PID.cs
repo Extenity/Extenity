@@ -2,6 +2,8 @@
 
 using System;
 
+// ReSharper disable InconsistentNaming
+
 namespace Extenity.MathToolbox
 {
 
