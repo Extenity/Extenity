@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\.UniversalDependencies\Unity.Mathematics\Unity.Mathematics.csproj" />
+    <ProjectReference Include="..\..\..\.UniversalDependencies\ZString\ZString.csproj" />
   </ItemGroup>
 
   <ItemGroup>
