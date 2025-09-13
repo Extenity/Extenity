@@ -19,6 +19,10 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	  <WarningLevel>0</WarningLevel>
+	</PropertyGroup>
+
 	<ItemGroup Condition="$(TargetFramework) == 'netstandard2.1'">
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
 	</ItemGroup>
