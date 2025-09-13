@@ -183,10 +183,10 @@ namespace Extenity
 		/// </summary>
 		private static void CheckExpectedTime(float originalTime, float cachedTime, string parameterName)
 		{
-			const float TimeEqualityCheckTolerance = 1.0f / 1000.0f / 1000.0f; // 1 microsecond
+			const float timeEqualityCheckTolerance = 1.0f / 1000.0f / 1000.0f; // 1 microsecond
 
 			// ReSharper disable once CompareOfFloatsByEqualityOperator
-			if (!originalTime.IsAlmostEqual(cachedTime, TimeEqualityCheckTolerance))
+			if (!originalTime.IsAlmostEqual(cachedTime, timeEqualityCheckTolerance))
 			{
 				Log.Fatal($"{nameof(Loop)} System detected that the cached time became obsolete for '{parameterName}' parameter. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported time: {originalTime:F}\nLoop cached time: {cachedTime:F}\nDifference: {(originalTime - cachedTime):F}");
 			}

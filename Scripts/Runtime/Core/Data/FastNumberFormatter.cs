@@ -42,6 +42,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using Extenity.CodingToolbox;
 
+// ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 
 namespace System
@@ -51,9 +52,9 @@ namespace System
 	internal sealed partial class NumberFormatter
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		internal static extern unsafe void GetFormatterTables(out ulong* MantissaBitsTable, out int* TensExponentTable,
-			out char* DigitLowerTable, out char* DigitUpperTable,
-			out long* TenPowersList, out int* DecHexDigits);
+		internal static extern unsafe void GetFormatterTables(out ulong* mantissaBitsTable, out int* tensExponentTable,
+			out char* digitLowerTable, out char* digitUpperTable,
+			out long* tenPowersList, out int* decHexDigits);
 	}
 
 }

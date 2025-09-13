@@ -12,35 +12,35 @@ namespace Extenity.AnimationToolbox
 		public Color Color1 = Color.gray;
 		public Color Color2 = Color.white;
 
-		private Color startColor;
-		private Color endColor;
-		private float lastColorChangeTime;
+		private Color StartColor;
+		private Color EndColor;
+		private float LastColorChangeTime;
 
-		private Material material;
+		private Material Material;
 
 		protected void Start()
 		{
-			material = GetComponent<Renderer>().material;
-			startColor = Color1;
-			endColor = Color2;
+			Material = GetComponent<Renderer>().material;
+			StartColor = Color1;
+			EndColor = Color2;
 		}
 
 		protected void Update()
 		{
-			var ratio = (Time.time - lastColorChangeTime) / FadeDuration;
+			var ratio = (Time.time - LastColorChangeTime) / FadeDuration;
 			ratio = Mathf.Clamp01(ratio);
-			material.color = Color.Lerp(startColor, endColor, sqrt(ratio));
+			Material.color = Color.Lerp(StartColor, EndColor, sqrt(ratio));
 			//material.color = Color.Lerp(startColor, endColor, ratio * ratio);
 			//material.color = Color.Lerp(startColor, endColor, ratio);
 
 			if (ratio == 1f)
 			{
-				lastColorChangeTime = Time.time;
+				LastColorChangeTime = Time.time;
 
 				// Switch colors
-				var temp = startColor;
-				startColor = endColor;
-				endColor = temp;
+				var temp = StartColor;
+				StartColor = EndColor;
+				EndColor = temp;
 			}
 		}
 	}

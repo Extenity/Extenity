@@ -317,13 +317,13 @@ namespace Extenity.ApplicationToolbox
 		/// </summary>
 		public static void CheckVersionConfigurationConsistency()
 		{
-			ApplicationVersion AndroidVersion;
+			ApplicationVersion androidVersion;
 			ApplicationVersion iOSVersion;
-			ApplicationVersion ApplicationVersion;
+			ApplicationVersion applicationVersion;
 
 			try
 			{
-				AndroidVersion = GetAndroidVersion();
+				androidVersion = GetAndroidVersion();
 			}
 			catch (Exception exception)
 			{
@@ -339,20 +339,20 @@ namespace Extenity.ApplicationToolbox
 			}
 			try
 			{
-				ApplicationVersion = GetUnityApplicationVersion();
+				applicationVersion = GetUnityApplicationVersion();
 			}
 			catch (Exception exception)
 			{
 				throw new Exception("Failed to get version configuration.", exception);
 			}
 
-			if (!Equals(AndroidVersion, iOSVersion))
+			if (!Equals(androidVersion, iOSVersion))
 			{
-				throw new Exception($"Android version '{AndroidVersion}' and iOS version '{iOSVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+				throw new Exception($"Android version '{androidVersion}' and iOS version '{iOSVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
 			}
-			if (!Equals(AndroidVersion, ApplicationVersion))
+			if (!Equals(androidVersion, applicationVersion))
 			{
-				throw new Exception($"Android version '{AndroidVersion}' and Bundle version '{ApplicationVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
+				throw new Exception($"Android version '{androidVersion}' and Bundle version '{applicationVersion}' does not match. This must be manually resolved. Correct it from project configuration then try again.");
 			}
 		}
 
@@ -364,19 +364,19 @@ namespace Extenity.ApplicationToolbox
 			}
 			catch
 			{
-				ApplicationVersion AndroidVersion;
+				ApplicationVersion androidVersion;
 				ApplicationVersion iOSVersion;
-				ApplicationVersion UnityVersion;
+				ApplicationVersion unityVersion;
 
-				try { AndroidVersion = GetAndroidVersion(); }
-				catch { AndroidVersion = new ApplicationVersion(1, 0); }
+				try { androidVersion = GetAndroidVersion(); }
+				catch { androidVersion = new ApplicationVersion(1, 0); }
 				try { iOSVersion = GetIOSVersion(); }
 				catch { iOSVersion = new ApplicationVersion(1, 0); }
-				try { UnityVersion = GetUnityApplicationVersion(); }
-				catch { UnityVersion = new ApplicationVersion(1, 0); }
+				try { unityVersion = GetUnityApplicationVersion(); }
+				catch { unityVersion = new ApplicationVersion(1, 0); }
 
-				var maxVersion = AndroidVersion > iOSVersion ? AndroidVersion : iOSVersion;
-				maxVersion = UnityVersion > maxVersion ? UnityVersion : maxVersion;
+				var maxVersion = androidVersion > iOSVersion ? androidVersion : iOSVersion;
+				maxVersion = unityVersion > maxVersion ? unityVersion : maxVersion;
 
 				Log.Warning($"Fixing platform versions to the detected maximum version '{maxVersion}'.");
 				SetAllPlatformVersions(maxVersion, true);

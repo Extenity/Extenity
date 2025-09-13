@@ -147,33 +147,33 @@ namespace Extenity.ApplicationToolbox
 
 #if UNITY_EDITOR
 
-		private static void FindJsonDiff(JToken Current, JToken Model, StringBuilder result, string linePrefix)
+		private static void FindJsonDiff(JToken currentToken, JToken modelToken, StringBuilder result, string linePrefix)
 		{
-			if (JToken.DeepEquals(Current, Model))
+			if (JToken.DeepEquals(currentToken, modelToken))
 				return;
 
 			var fields = GetFields();
 
-			switch (Current.Type)
+			switch (currentToken.Type)
 			{
 				case JTokenType.Object:
 				{
-					var current = Current as JObject;
-					var model = Model as JObject;
+					var current = currentToken as JObject;
+					var model = modelToken as JObject;
 					var addedKeys = current.Properties().Select(c => c.Name).Except(model.Properties().Select(c => c.Name));
 					var removedKeys = model.Properties().Select(c => c.Name).Except(current.Properties().Select(c => c.Name));
-					var unchangedKeys = current.Properties().Where(c => JToken.DeepEquals(c.Value, Model[c.Name])).Select(c => c.Name);
+					var unchangedKeys = current.Properties().Where(c => JToken.DeepEquals(c.Value, modelToken[c.Name])).Select(c => c.Name);
 					foreach (var k in addedKeys)
 					{
 						var key = fields.FirstOrDefault(item => item.Key == k).FieldInfo?.Name ?? k;
 						var originalValue = "NEW";
-						var modifiedValue = Current[k];
+						var modifiedValue = currentToken[k];
 						result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
 					}
 					foreach (var k in removedKeys)
 					{
 						var key = fields.FirstOrDefault(item => item.Key == k).FieldInfo?.Name ?? k;
-						var originalValue = Model[k];
+						var originalValue = modelToken[k];
 						var modifiedValue = "DELETED";
 						result.AppendLine($"{linePrefix}{key} \t: {originalValue}  =>  {modifiedValue}");
 					}
@@ -199,8 +199,8 @@ namespace Extenity.ApplicationToolbox
 					break;
 				default:
 				{
-					var originalValue = Model.ToString();
-					var modifiedValue = Current.ToString();
+					var originalValue = modelToken.ToString();
+					var modifiedValue = currentToken.ToString();
 					result.AppendLine($"{linePrefix} \t: {originalValue}  =>  {modifiedValue}");
 				}
 					break;

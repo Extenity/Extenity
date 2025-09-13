@@ -227,6 +227,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		[Serializable]
 		private class NameOnlyPackageManifest
 		{
+			// ReSharper disable once InconsistentNaming
 			public string name = null;
 		}
 
