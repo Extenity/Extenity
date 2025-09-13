@@ -11,8 +11,8 @@
 
 		<!-- NuGet Packaging -->
 		<Description>Zero allocation StringBuilder for .NET Core and Unity.</Description>
-		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>../../opensource.snk</AssemblyOriginatorKeyFile>
+		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup Condition="$(TargetFramework) == 'netstandard2.1'">
@@ -191,15 +191,4 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-
-	<!-- Copy files for Unity -->
-	<PropertyGroup>
-		<DestinationRoot>$(MSBuildProjectDirectory)\..\ZString.Unity\Assets\Scripts\ZString\</DestinationRoot>
-	</PropertyGroup>
-	<ItemGroup>
-		<TargetFiles1 Include="$(MSBuildProjectDirectory)\**\*.cs" Exclude="**\bin\**\*.*;**\obj\**\*.*;_InternalVisibleTo.cs" />
-	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$(TargetFramework) == 'netstandard2.1'">
-		<Copy SourceFiles="@(TargetFiles1)" DestinationFiles="$(DestinationRoot)\%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
-	</Target>
 </Project>
