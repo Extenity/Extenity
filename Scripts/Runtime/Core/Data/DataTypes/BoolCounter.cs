@@ -57,6 +57,7 @@ namespace Extenity.DataToolbox
 #if UNITY_5_3_OR_NEWER
 		[UnityEngine.SerializeField]
 #endif
+		// ReSharper disable once InconsistentNaming
 		private int counter;
 
 		/// <summary>

@@ -64,18 +64,18 @@ namespace Extenity.CryptoToolbox
 		/// Encrypt a string using RijndaelManaged encryptor.
 		/// </summary>
 		/// <param name="plainText">string to be encrypted</param>
-		/// <param name="IV">initialization vector to be used by crypto algorithm</param>
-		public byte[] Encrypt(string plainText, byte[] IV)
+		/// <param name="iv">initialization vector to be used by crypto algorithm</param>
+		public byte[] Encrypt(string plainText, byte[] iv)
 		{
 			if (Rijn == null)
 				throw new Exception("Provider is not initialized");
 			if (plainText == null || plainText.Length <= 0)
 				throw new ArgumentNullException(nameof(plainText));
-			if (IV == null || IV.Length <= 0)
-				throw new ArgumentNullException(nameof(IV));
+			if (iv == null || iv.Length <= 0)
+				throw new ArgumentNullException(nameof(iv));
 			byte[] encrypted;
 
-			using (var encryptor = Rijn.CreateEncryptor(Rijn.Key, IV))
+			using (var encryptor = Rijn.CreateEncryptor(Rijn.Key, iv))
 			{
 				using (var memoryStream = new MemoryStream())
 				{
@@ -137,19 +137,19 @@ namespace Extenity.CryptoToolbox
 		/// Based on https://msdn.microsoft.com/en-us/library/system.security.cryptography.rijndaelmanaged(v=vs.110).aspx
 		/// </summary>
 		/// <param name="cipherText">bytes to be decrypted back to plaintext</param>
-		/// <param name="IV">initialization vector used to encrypt the bytes</param>
-		public string Decrypt(byte[] cipherText, byte[] IV)
+		/// <param name="iv">initialization vector used to encrypt the bytes</param>
+		public string Decrypt(byte[] cipherText, byte[] iv)
 		{
 			if (Rijn == null)
 				throw new Exception("Provider is not initialized");
 			if (cipherText == null || cipherText.Length <= 0)
 				throw new ArgumentNullException(nameof(cipherText));
-			if (IV == null || IV.Length <= 0)
-				throw new ArgumentNullException(nameof(IV));
+			if (iv == null || iv.Length <= 0)
+				throw new ArgumentNullException(nameof(iv));
 
 			string plainText;
 
-			using (var decryptor = Rijn.CreateDecryptor(Rijn.Key, IV))
+			using (var decryptor = Rijn.CreateDecryptor(Rijn.Key, iv))
 			{
 				using (var memoryStream = new MemoryStream(cipherText))
 				{
