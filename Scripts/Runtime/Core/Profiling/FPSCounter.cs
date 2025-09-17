@@ -1,6 +1,7 @@
 #if UNITY_5_3_OR_NEWER
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_2019_3_OR_NEWER
 using UnityEngine.Rendering;
@@ -64,7 +65,9 @@ namespace Extenity.ProfilingToolbox
 
 			TickAnalyzer.Reset(Time.realtimeSinceStartup, MeanEntryCount);
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
+			RenderPipelineManager.beginContextRendering += OnBeginContextRendering;
+#elif UNITY_2019_3_OR_NEWER
 			RenderPipelineManager.beginFrameRendering += OnBeginFrameRendering;
 #else
 			RenderPipeline.beginFrameRendering += OnBeginFrameRendering;
@@ -77,7 +80,9 @@ namespace Extenity.ProfilingToolbox
 				return;
 			IsCapturing = false;
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
+			RenderPipelineManager.beginContextRendering -= OnBeginContextRendering;
+#elif UNITY_2019_3_OR_NEWER
 			RenderPipelineManager.beginFrameRendering -= OnBeginFrameRendering;
 #else
 			RenderPipeline.beginFrameRendering -= OnBeginFrameRendering;
@@ -86,7 +91,9 @@ namespace Extenity.ProfilingToolbox
 			TickAnalyzer.Reset(0f, MeanEntryCount);
 		}
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
+		private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
+#elif UNITY_2019_3_OR_NEWER
 		private void OnBeginFrameRendering(ScriptableRenderContext context, Camera[] cameras)
 #else
 		private void OnBeginFrameRendering(Camera[] cameras)
