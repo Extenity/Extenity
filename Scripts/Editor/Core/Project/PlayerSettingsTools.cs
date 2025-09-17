@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Extenity.DataToolbox;
 using UnityEditor;
+using UnityEditor.Build;
 
 namespace Extenity.ProjectToolbox
 {
@@ -81,7 +82,7 @@ namespace Extenity.ProjectToolbox
 				try
 				{
 					var joined = string.Join(";", defineSymbols.Value.ToArray());
-					PlayerSettings.SetScriptingDefineSymbolsForGroup(defineSymbols.Key, joined);
+				    PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(defineSymbols.Key), joined);
 				}
 				catch (Exception exception)
 				{
@@ -123,7 +124,7 @@ namespace Extenity.ProjectToolbox
 			Log.Info($"Adding {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
 
 			symbols = symbols.OrderBy(entry => entry.Index).ToArray();
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var definesString = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 			var allDefines = definesString.Split(';').ToList();
 
 			foreach (var symbol in symbols)
@@ -229,7 +230,7 @@ namespace Extenity.ProjectToolbox
 
 		public static string GetDefineSymbols(BuildTargetGroup targetGroup)
 		{
-			return PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+		    return PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 		}
 
 		public static bool HasDefineSymbol(string symbol)
