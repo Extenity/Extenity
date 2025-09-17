@@ -35,21 +35,11 @@ namespace Extenity.NavigationToolbox.Editor
 			SnapLayerMaskProperty = serializedObject.FindProperty("SnapLayerMask");
 
 			NavigationEditorGUITools.ResetGizmoSelectionOfCustomNavigationLink();
-#if UNITY_2022
-			throw new System.NotImplementedException();
-#else
-			NavMeshVisualizationSettings.showNavigation++;
-#endif
 		}
 
 		private void OnDisable()
 		{
 			NavigationEditorGUITools.ResetGizmoSelectionOfCustomNavigationLink();
-#if UNITY_2022
-			throw new System.NotImplementedException();
-#else
-			NavMeshVisualizationSettings.showNavigation--;
-#endif
 		}
 
 		public override void OnInspectorGUI()
