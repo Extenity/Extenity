@@ -59,7 +59,7 @@ namespace Extenity.ProjectToolbox
 
 				try
 				{
-					var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group)
+					var defineSymbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group))
 					                                  .Split(';')
 					                                  .Select(d => d.Trim())
 					                                  .ToList();
@@ -149,7 +149,7 @@ namespace Extenity.ProjectToolbox
 			var newDefinesString = string.Join(";", allDefines);
 			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
 			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
+				PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup), newDefinesString);
 			}
 
 			// Ensure the symbols added.
@@ -182,7 +182,7 @@ namespace Extenity.ProjectToolbox
 				throw new ArgumentException();
 			Log.Info($"Removing {symbols.Length.ToStringWithEnglishPluralPostfix("define symbol")} '{string.Join(", ", symbols)}'.");
 
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var definesString = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 			var allDefines = definesString.Split(';').ToList();
 			var originalDefines = allDefines.Clone();
 			var removedDefines = new List<DefineSymbolEntry>();
@@ -198,7 +198,7 @@ namespace Extenity.ProjectToolbox
 			var newDefinesString = string.Join(";", allDefines);
 			if (!definesString.Equals(newDefinesString, StringComparison.Ordinal))
 			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newDefinesString);
+				PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup), newDefinesString);
 			}
 
 			// Ensure the symbols removed.
@@ -244,7 +244,7 @@ namespace Extenity.ProjectToolbox
 			if (string.IsNullOrWhiteSpace(symbol))
 				throw new ArgumentNullException(nameof(symbol));
 
-			var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			var definesString = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 			var allDefines = definesString.Split(';').ToList();
 			var result = allDefines.Contains(symbol);
 
