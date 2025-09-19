@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.MathToolbox;
 using Extenity.TextureToolbox;
@@ -293,6 +294,9 @@ namespace Extenity.DebugToolbox.GraphPlotting.Editor
 						graph.CalculateVerticalRangeInTimeWindow(timeStart, timeEnd, 0f, 0f);
 					}
 						break;
+					case VerticalSizing.Fixed:
+					case VerticalSizing.Expansive:
+						break; // Ignore others
 				}
 
 				if (range.Min < float.PositiveInfinity)

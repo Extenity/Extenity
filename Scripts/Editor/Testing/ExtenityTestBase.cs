@@ -177,6 +177,8 @@ namespace Extenity.Testing
 					}
 					break;
 				}
+				default:
+					break; // Ignore others
 			}
 
 			Logs.Add((type, condition));

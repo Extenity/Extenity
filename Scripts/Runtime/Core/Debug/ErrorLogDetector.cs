@@ -32,6 +32,8 @@ namespace Extenity.DebugToolbox
 		{
 			switch (type)
 			{
+				case LogType.Log:
+					break; // Skip regular log messages.
 				case LogType.Error:
 				case LogType.Assert:
 					if (DetectErrors)
