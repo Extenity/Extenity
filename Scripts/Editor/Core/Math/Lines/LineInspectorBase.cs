@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using Extenity.CameraToolbox;
@@ -308,6 +309,8 @@ namespace Extenity.MathToolbox.Editor
 						break;
 						//default:
 						//	throw new ArgumentOutOfRangeException("eventType", eventType, "Event type '" + eventType + "' is not implemented.");
+					default:
+						break; // Ignore others
 				}
 
 				Handles.BeginGUI();

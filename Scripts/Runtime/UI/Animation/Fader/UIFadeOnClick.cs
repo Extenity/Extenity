@@ -16,6 +16,8 @@ namespace Extenity.UIToolbox
 
 			switch (ActionOnClick)
 			{
+				case FadeState.Untouched:
+					break;
 				case FadeState.FadedIn:
 					Fader.FadeIn();
 					break;

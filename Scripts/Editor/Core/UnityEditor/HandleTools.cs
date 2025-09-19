@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -149,6 +150,8 @@ namespace Extenity.UnityEditorToolbox.Editor
 						Handles.matrix = cachedMatrix;
 					}
 					break;
+				default:
+					break; // Ignore others
 			}
 
 			return position;

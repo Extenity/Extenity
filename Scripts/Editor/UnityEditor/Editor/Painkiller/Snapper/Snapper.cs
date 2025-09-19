@@ -150,6 +150,8 @@ namespace Extenity.PainkillerToolbox.Editor
 				case EventType.MouseUp:
 					IsMouseDown = false;
 					break;
+				default:
+					break; // Ignore others
 			}
 
 			if (!IsActive)

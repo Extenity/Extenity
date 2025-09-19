@@ -63,6 +63,8 @@ namespace Extenity.UIToolbox
 							return Fader.FadeOut;
 						else
 							return Fader.FadeIn;
+					case AnimationState.Untouched:
+						throw new ArgumentOutOfRangeException(nameof(targetState), targetState, null);
 				}
 				return null;
 			}
