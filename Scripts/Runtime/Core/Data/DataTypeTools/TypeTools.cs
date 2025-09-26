@@ -492,6 +492,20 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
+		#region Nullable
+
+		public static bool IsNullable(this Type type)
+		{
+			return Nullable.GetUnderlyingType(type) != null;
+		}
+
+		public static Type TrimNullable(this Type type)
+		{
+			return Nullable.GetUnderlyingType(type) ?? type;
+		}
+
+		#endregion
+
 		#region Get Default Value Of Type
 
 		private static Dictionary<Type, object> DefaultValues = new Dictionary<Type, object>();
