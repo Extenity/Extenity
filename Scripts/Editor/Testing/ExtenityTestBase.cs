@@ -11,6 +11,7 @@ using Extenity.UnityTestToolbox;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.TestTools;
 #if UNITY_EDITOR
 using Extenity.ParallelToolbox.Editor;
@@ -60,6 +61,18 @@ namespace Extenity.Testing
 			DeinitializeLogCatching();
 			EnsureAllCheckpointsReached();
 			UnityTestTools.Cleanup();
+
+			// Disable the profiler if it was enabled during the test.
+			// This helps a lot when trying to profile a test, as Unity Editor will
+			// bog down with many Editor frames if the profiler is not immediately
+			// disabled after the test.
+			// Note that Record button will still show as if it's recording, but it won't
+			// actually record anything when Profiler.enabled is false. Could not find
+			// a way to turn off the Record button.
+			if (AutoDisableProfilerAtTheEndOfTest && Profiler.enabled)
+			{
+				Profiler.enabled = false;
+			}
 		}
 
 		#endregion
@@ -325,6 +338,12 @@ namespace Extenity.Testing
 				ThrowTimedOut();
 			}
 		}
+
+		#endregion
+
+		#region Profiling
+
+		public bool AutoDisableProfilerAtTheEndOfTest = true;
 
 		#endregion
 
