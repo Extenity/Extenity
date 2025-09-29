@@ -48,6 +48,9 @@ namespace Extenity
 
 		#region Log
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Any(LogSeverity severity, string message)
 		{
@@ -66,6 +69,9 @@ namespace Extenity
 			}
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void AnyWithContext(ContextObject overriddenContext, LogSeverity severity, string message)
 		{
@@ -87,6 +93,9 @@ namespace Extenity
 #if DisableVerboseLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Verbose(string message)
 		{
@@ -95,6 +104,9 @@ namespace Extenity
 
 #if DisableVerboseLogging
 		[Conditional("DummyConditionThatNeverExists")]
+#endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
 #endif
 		[DebuggerHidden]
 		public void VerboseWithContext(ContextObject overriddenContext, string message)
@@ -105,6 +117,9 @@ namespace Extenity
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Info(string message)
 		{
@@ -114,42 +129,63 @@ namespace Extenity
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void InfoWithContext(ContextObject overriddenContext, string message)
 		{
 			Log._Info(Category, overriddenContext, message);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Warning(string message)
 		{
 			Log._Warning(Category, Context, message);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void WarningWithContext(ContextObject overriddenContext, string message)
 		{
 			Log._Warning(Category, overriddenContext, message);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Error(string message)
 		{
 			Log._Error(Category, Context, message);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Error(Exception exception)
 		{
 			Log._Error(Category, Context, exception);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void ErrorWithContext(ContextObject overriddenContext, string message)
 		{
 			Log._Error(Category, overriddenContext, message);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void ErrorWithContext(ContextObject overriddenContext, Exception exception)
 		{
@@ -159,6 +195,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Fatal(string message)
 		{
@@ -168,6 +207,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void Fatal(Exception exception)
 		{
@@ -177,6 +219,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void FatalWithContext(ContextObject overriddenContext, string message)
 		{
@@ -186,6 +231,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void FatalWithContext(ContextObject overriddenContext, Exception exception)
 		{
@@ -197,6 +245,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void InternalError(int errorCode)
 		{
@@ -208,6 +259,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void InternalError(int errorCode, Exception innerException)
 		{
@@ -219,6 +273,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode)
 		{
@@ -230,6 +287,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public void InternalErrorWithContext(ContextObject overriddenContext, int errorCode, Exception innerException)
 		{

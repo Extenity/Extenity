@@ -11,6 +11,9 @@ namespace Extenity.DebugToolbox
 	{
 		#region Sticky Logs
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public static void LogSticky(int identifier,
 		                             UnityEngine.LogType logType,
@@ -22,6 +25,9 @@ namespace Extenity.DebugToolbox
 			_LogSticky(identifier, logType, logOptions, message, context);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public static void RemoveLogEntriesByIdentifier(int identifier)
 		{

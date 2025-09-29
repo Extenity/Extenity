@@ -276,6 +276,9 @@ namespace Extenity
 #if DisableVerboseLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Verbose(string category, ContextObject context, string message)
 		{
@@ -289,6 +292,9 @@ namespace Extenity
 #if DisableInfoLogging
 		[Conditional("DummyConditionThatNeverExists")]
 #endif
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Info(string category, ContextObject context, string message)
 		{
@@ -299,6 +305,9 @@ namespace Extenity
 #endif
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Warning(string category, ContextObject context, string message)
 		{
@@ -309,6 +318,9 @@ namespace Extenity
 #endif
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Error(string category, ContextObject context, string message)
 		{
@@ -319,6 +331,9 @@ namespace Extenity
 #endif
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Error(string category, ContextObject context, Exception exception)
 		{
@@ -332,6 +347,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Fatal(string category, ContextObject context, string message)
 		{
@@ -345,6 +363,9 @@ namespace Extenity
 		/// <summary>
 		/// Sends error message to Unity Cloud Diagnostics tool without breaking the code flow by throwing an exception.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _Fatal(string category, ContextObject context, Exception exception)
 		{
@@ -360,6 +381,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _InternalError(string category, ContextObject context, int errorCode)
 		{
@@ -375,6 +399,9 @@ namespace Extenity
 		///
 		/// See also 'InternalException'.
 		/// </summary>
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		internal static void _InternalError(string category, ContextObject context, int errorCode, Exception innerException)
 		{
@@ -405,12 +432,18 @@ namespace Extenity
 		/*
 		#region Log Tools - Methods
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public static void CurrentMethodNotImplemented()
 		{
 			Fatal("Method '" + DebugReflection.PreviousMethodNameWithType + "' is not implemented!");
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public static void CurrentMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 		{
@@ -420,6 +453,9 @@ namespace Extenity
 			    category);
 		}
 
+#if UNITY_2022_2_OR_NEWER
+		[UnityEngine.HideInCallstack]
+#endif
 		[DebuggerHidden]
 		public static void PreviousMethod(string additionalText = null, LogCategory category = LogCategory.Info)
 		{
