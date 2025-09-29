@@ -239,6 +239,12 @@ namespace Extenity
 
 		#endregion
 
+		#region Safe or Unsafe Mode
+
+		public static bool EnableCatchingExceptionsInUpdateCallbacks = true;
+
+		#endregion
+
 		#region Log
 
 		private static readonly Logger Log = new(nameof(Loop));

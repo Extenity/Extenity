@@ -13,17 +13,38 @@ namespace Extenity
 
 		private void FixedUpdate()
 		{
-			LoopHelper.PreFixedUpdateCallbacks.InvokeSafe();
+			if (Loop.EnableCatchingExceptionsInUpdateCallbacks)
+			{
+				LoopHelper.PreFixedUpdateCallbacks.InvokeSafe();
+			}
+			else
+			{
+				LoopHelper.PreFixedUpdateCallbacks.InvokeUnsafe();
+			}
 		}
 
 		private void Update()
 		{
-			LoopHelper.PreUpdateCallbacks.InvokeSafe();
+			if (Loop.EnableCatchingExceptionsInUpdateCallbacks)
+			{
+				LoopHelper.PreUpdateCallbacks.InvokeSafe();
+			}
+			else
+			{
+				LoopHelper.PreUpdateCallbacks.InvokeUnsafe();
+			}
 		}
 
 		private void LateUpdate()
 		{
-			LoopHelper.PreLateUpdateCallbacks.InvokeSafe();
+			if (Loop.EnableCatchingExceptionsInUpdateCallbacks)
+			{
+				LoopHelper.PreLateUpdateCallbacks.InvokeSafe();
+			}
+			else
+			{
+				LoopHelper.PreLateUpdateCallbacks.InvokeUnsafe();
+			}
 		}
 	}
 
