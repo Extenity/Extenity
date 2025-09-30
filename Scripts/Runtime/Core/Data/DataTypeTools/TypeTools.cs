@@ -447,6 +447,27 @@ namespace Extenity.DataToolbox
 			{ typeof(Boolean), "Boolean" },
 			{ typeof(Byte), "Byte" },
 			{ typeof(SByte), "SByte" },
+			{ typeof(String), "String" },
+			{ typeof(Char), "Char" },
+			{ typeof(System.Object), "Object" },
+		};
+
+		public static readonly Dictionary<string, string> PrettyTypeNameConversions = new Dictionary<string, string>
+		{
+			{ "float", "Single" },
+			{ "double", "Double" },
+			{ "short", "Int16" },
+			{ "int", "Int32" },
+			{ "long", "Int64" },
+			{ "ushort", "UInt16" },
+			{ "uint", "UInt32" },
+			{ "ulong", "UInt64" },
+			{ "bool", "Boolean" },
+			{ "byte", "Byte" },
+			{ "sbyte", "SByte" },
+			{ "string", "String" },
+			{ "char", "Char" },
+			{ "object", "Object" },
 		};
 
 		public static string GetPrettyName(this Type type)
@@ -460,6 +481,15 @@ namespace Extenity.DataToolbox
 				return name;
 			}
 			return type.Name;
+		}
+
+		public static string GetPrettyName(string typeName)
+		{
+			if (string.IsNullOrWhiteSpace(typeName))
+			{
+				return "[Unknown]";
+			}
+			return PrettyTypeNameConversions.GetValueOrDefault(typeName, typeName);
 		}
 
 		public static string NameWithGenericArguments(this Type type)
