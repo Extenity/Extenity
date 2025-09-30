@@ -66,16 +66,16 @@ namespace Extenity.ProfilingToolbox
 			{
 				if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
 				{
-					Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
+					Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
 				}
 				else
 				{
-					Logger.Any(LogSeverityBelowThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
+					Logger.Any(LogSeverityBelowThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "'"));
 				}
 			}
 			else // No threshold duration specified, so we log everything.
 			{
-				Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds(), "'"));
+				Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "'"));
 			}
 		}
 	}
