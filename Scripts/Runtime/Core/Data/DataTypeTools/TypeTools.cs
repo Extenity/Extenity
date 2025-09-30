@@ -436,15 +436,15 @@ namespace Extenity.DataToolbox
 
 		public static readonly Dictionary<Type, string> PrettyTypeNames = new Dictionary<Type, string>
 		{
-			{ typeof(Single), "Float" },
+			{ typeof(Single), "Single" },
 			{ typeof(Double), "Double" },
-			{ typeof(Int16), "Short" },
-			{ typeof(Int32), "Int" },
-			{ typeof(Int64), "Long" },
-			{ typeof(UInt16), "UShort" },
-			{ typeof(UInt32), "UInt" },
-			{ typeof(UInt64), "ULong" },
-			{ typeof(Boolean), "Bool" },
+			{ typeof(Int16), "Int16" },
+			{ typeof(Int32), "Int32" },
+			{ typeof(Int64), "Int64" },
+			{ typeof(UInt16), "UInt16" },
+			{ typeof(UInt32), "UInt32" },
+			{ typeof(UInt64), "UInt64" },
+			{ typeof(Boolean), "Boolean" },
 			{ typeof(Byte), "Byte" },
 			{ typeof(SByte), "SByte" },
 #if UNITY_5_3_OR_NEWER
