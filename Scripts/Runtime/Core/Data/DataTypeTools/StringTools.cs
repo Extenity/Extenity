@@ -1468,6 +1468,17 @@ namespace Extenity.DataToolbox
 			return $"{minutes}:{seconds:00}.{milliseconds:000}";
 		}
 
+		public static string ToStringMinutesSecondsMicrosecondsFromSeconds(this double totalSeconds)
+		{
+			// Round to microseconds
+			totalSeconds = (totalSeconds * 1000000.0).RoundToInt() / 1000000.0;
+
+			var minutes = (long)(totalSeconds / 60);
+			var seconds = (int)(totalSeconds % 60);
+			var microseconds = ((totalSeconds - Math.Truncate(totalSeconds)) * 1000000).RoundToInt();
+			return $"{minutes}:{seconds:00}.{microseconds:000000}";
+		}
+
 		public static string ToStringMillisecondsFromSeconds(this double totalSeconds)
 		{
 			return (totalSeconds * 1000).ToString("0.000");
