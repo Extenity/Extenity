@@ -447,13 +447,6 @@ namespace Extenity.DataToolbox
 			{ typeof(Boolean), "Boolean" },
 			{ typeof(Byte), "Byte" },
 			{ typeof(SByte), "SByte" },
-#if UNITY_5_3_OR_NEWER
-			{ typeof(UnityEngine.Vector2), "Vector2" },
-			{ typeof(UnityEngine.Vector3), "Vector3" },
-			{ typeof(UnityEngine.Vector4), "Vector4" },
-			{ typeof(UnityEngine.Quaternion), "Quaternion" },
-			{ typeof(UnityEngine.Matrix4x4), "Matrix4x4" },
-#endif
 		};
 
 		public static string GetPrettyName(this Type type)
