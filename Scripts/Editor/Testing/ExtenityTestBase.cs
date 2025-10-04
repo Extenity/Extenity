@@ -145,13 +145,20 @@ namespace Extenity.Testing
 
 		#region Log Catching
 
-		private const bool DefaultDoesNotCareAboutCleanLogs = false;
-		private bool DoesNotCareAboutCleanLogs;
+		protected enum LogExpectation
+		{
+			NoLogsAllowed,
+			AllowInfoAndBelow,
+			AllowAllLogs,
+		}
+
+		private const LogExpectation ExpectedLogsDefault = LogExpectation.NoLogsAllowed;
+		private LogExpectation ExpectedLogs;
 		protected List<(LogType Type, string Message)> Logs;
 
 		private void InitializeLogCatching()
 		{
-			DoesNotCareAboutCleanLogs = DefaultDoesNotCareAboutCleanLogs;
+			ExpectedLogs = ExpectedLogsDefault;
 
 			if (Logs == null)
 				Logs = New.List<(LogType, string)>(100);
@@ -164,9 +171,9 @@ namespace Extenity.Testing
 
 		private void DeinitializeLogCatching()
 		{
-			if (!DoesNotCareAboutCleanLogs && TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
+			if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
 			{
-				AssertExpectNoLogs();
+				AssertExpectLogs(ExpectedLogs);
 			}
 
 			Application.logMessageReceived -= RegisterLogMessage;
@@ -199,9 +206,35 @@ namespace Extenity.Testing
 
 		protected void AssertExpectNoLogs()
 		{
+			AssertExpectLogs(LogExpectation.NoLogsAllowed);
+		}
+
+		protected void AssertExpectLogs(LogExpectation expectedLogs)
+		{
 			if (Logs.Count > 0)
 			{
-				Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test.");
+				switch (expectedLogs)
+				{
+					case LogExpectation.NoLogsAllowed:
+					{
+						// All logs are unexpected
+						Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test.");
+						break;
+					}
+					case LogExpectation.AllowInfoAndBelow:
+					{
+						// Only info and below are expected
+						Logs.RemoveAll(entry => entry.Type == LogType.Log);
+						break;
+					}
+					case LogExpectation.AllowAllLogs:
+					{
+						// Nothing is unexpected
+						break;
+					}
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -226,9 +259,9 @@ namespace Extenity.Testing
 		/// <para>This method should be called inside a test to explicitly tell the coder who takes a look at that unit
 		/// test to understand that the test does not expect a clean console log history.</para>
 		/// </summary>
-		protected void MarkThatThisTestDoesNotCareAboutCleanLogs()
+		protected void SetExpectedLogs(LogExpectation expectedLogs)
 		{
-			DoesNotCareAboutCleanLogs = true;
+			ExpectedLogs = expectedLogs;
 		}
 
 		#endregion
@@ -351,7 +384,7 @@ namespace Extenity.Testing
 
 		protected IEnumerator PlayLikeMonkey(float testDuration, Func<int> playSingleSession)
 		{
-			MarkThatThisTestDoesNotCareAboutCleanLogs();
+			SetExpectedLogs(LogExpectation.AllowInfoAndBelow); // Because there might be gameplay logs
 
 			const float EditorRefreshIntervals = 1.5f;
 			var editorRefreshCountdown = EditorRefreshIntervals;
