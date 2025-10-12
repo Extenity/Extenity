@@ -575,7 +575,16 @@ namespace Extenity.AssetToolbox.Editor
 
 		#region Reload Scripts
 
-		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reload Scripts", priority = 40)] // Priority is just below the Reimport All option. Unfortunately seems like there is no way to put this option near Refresh or Reimport options, because priority 39 puts the item above them.  
+		// Shortcut Ctrl+Cmd+R on Mac, Ctrl+Alt+R on Windows
+		#if UNITY_EDITOR_OSX
+		private const string ReloadScriptsShortcut = " %^r";
+		#elif UNITY_EDITOR_WIN
+		private const string ReloadScriptsShortcut = " &^r";
+		#else
+		private const string ReloadScriptsShortcut = "";
+		#endif
+
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reload Scripts" + ReloadScriptsShortcut, priority = 40)] // Priority is just below the Reimport All option. Unfortunately seems like there is no way to put this option near Refresh or Reimport options, because priority 39 puts the item above them.  
 		public static void ReloadScripts()
 		{
 			Log.Info("Reloading assemblies");
