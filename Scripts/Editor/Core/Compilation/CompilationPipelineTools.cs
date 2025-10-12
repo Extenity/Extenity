@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEngine;
 
 namespace Extenity.CompilationToolbox.Editor
 {
@@ -66,6 +68,57 @@ namespace Extenity.CompilationToolbox.Editor
 			{
 				return ScriptType.Test;
 			}
+		}
+
+		#endregion
+
+		#region Pause Recompilation
+
+		private const string PauseRecompilationMenuPath = "Assets/Pause Recompilation";
+		private const string ResumeRecompilationMenuPath = "Assets/Resume Recompilation";
+		private const string ToggleRecompilationMenuPath = "Assets/Toggle Recompilation %&r";
+
+		private static bool IsRecompilationPaused;
+
+		[MenuItem(PauseRecompilationMenuPath, priority = 551)]
+		public static void PauseRecompilation()
+		{
+			IsRecompilationPaused = true;
+			EditorApplication.LockReloadAssemblies();
+			Debug.Log("Recompilation paused. Scripts will not be recompiled until resumed.");
+		}
+
+		[MenuItem(ResumeRecompilationMenuPath, priority = 552)]
+		public static void ResumeRecompilation()
+		{
+			IsRecompilationPaused = false;
+			EditorApplication.UnlockReloadAssemblies();
+			Debug.Log("Recompilation resumed. Scripts will now be recompiled on changes.");
+		}
+
+		[MenuItem(ToggleRecompilationMenuPath, priority = 553)]
+		public static void ToggleRecompilation()
+		{
+			if (IsRecompilationPaused)
+			{
+				ResumeRecompilation();
+			}
+			else
+			{
+				PauseRecompilation();
+			}
+		}
+
+		[MenuItem(PauseRecompilationMenuPath, true)]
+		public static bool ValidatePauseRecompilation()
+		{
+			return !IsRecompilationPaused;
+		}
+
+		[MenuItem(ResumeRecompilationMenuPath, true)]
+		public static bool ValidateResumeRecompilation()
+		{
+			return IsRecompilationPaused;
 		}
 
 		#endregion
