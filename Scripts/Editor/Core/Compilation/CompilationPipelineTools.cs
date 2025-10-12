@@ -15,6 +15,8 @@ namespace Extenity.CompilationToolbox.Editor
 
 	public static class CompilationPipelineTools
 	{
+		#region Get Script Paths
+
 		private static List<string> _ScriptPathsOfRuntimeAssemblies;
 		public static List<string> ScriptPathsOfRuntimeAssemblies
 		{
@@ -46,6 +48,10 @@ namespace Extenity.CompilationToolbox.Editor
 			}
 		}
 
+		#endregion
+
+		#region Script Metadata
+
 		public static ScriptType GetScriptType(string scriptPath)
 		{
 			if (ScriptPathsOfRuntimeAssemblies.Contains(scriptPath))
@@ -61,6 +67,8 @@ namespace Extenity.CompilationToolbox.Editor
 				return ScriptType.Test;
 			}
 		}
+
+		#endregion
 	}
 
 }
