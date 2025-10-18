@@ -80,7 +80,7 @@ namespace Extenity.Testing
 		#region Cancellation Token
 
 		private CancellationTokenSource CancellationTokenSource;
-		protected CancellationToken CancellationToken;
+		public CancellationToken CancellationToken;
 
 		private void InitializeCancellationToken()
 		{
@@ -97,13 +97,13 @@ namespace Extenity.Testing
 
 		#region Timing
 
-		protected float StartTime;
+		public float StartTime;
 		private const float DefaultPassedTimeThreshold = 3f;
-		protected float PassedTimeThreshold;
-		protected float PassedTime => Time.realtimeSinceStartup - StartTime;
+		public float PassedTimeThreshold;
+		public float PassedTime => Time.realtimeSinceStartup - StartTime;
 
 		private WaitUntilResult _WaitUntilResult;
-		protected WaitUntilResult WaitUntilResult => _WaitUntilResult ?? (_WaitUntilResult = new WaitUntilResult());
+		public WaitUntilResult WaitUntilResult => _WaitUntilResult ?? (_WaitUntilResult = new WaitUntilResult());
 
 		private void InitializeTiming()
 		{
@@ -111,18 +111,18 @@ namespace Extenity.Testing
 			_WaitUntilResult = null;
 		}
 
-		protected void CheckPassedTestTimeThreshold()
+		public void CheckPassedTestTimeThreshold()
 		{
 			if (PassedTime > PassedTimeThreshold)
 				throw new Exception("Test taking too long. Exceeded the threshold of " + PassedTimeThreshold + " second(s).");
 		}
 
-		protected void LogPassedTime()
+		public void LogPassedTime()
 		{
 			Log.Info("Passed time: " + TimeSpan.FromSeconds(PassedTime).ToStringMinutesSecondsMilliseconds());
 		}
 
-		protected async Task<bool> WaitUntilWithTimeout(Func<bool> condition, float timeoutSeconds)
+		public async Task<bool> WaitUntilWithTimeout(Func<bool> condition, float timeoutSeconds)
 		{
 			if (condition())
 				return true;
@@ -145,7 +145,7 @@ namespace Extenity.Testing
 
 		#region Log Catching
 
-		protected enum LogExpectation
+		public enum LogExpectation
 		{
 			NoLogsAllowed,
 			AllowInfoAndBelow,
@@ -154,7 +154,7 @@ namespace Extenity.Testing
 
 		private const LogExpectation ExpectedLogsDefault = LogExpectation.NoLogsAllowed;
 		private LogExpectation ExpectedLogs;
-		protected List<(LogType Type, string Message)> Logs;
+		public List<(LogType Type, string Message)> Logs;
 
 		private void InitializeLogCatching()
 		{
@@ -204,12 +204,12 @@ namespace Extenity.Testing
 			Logs.Add((type, condition));
 		}
 
-		protected void AssertExpectNoLogs()
+		public void AssertExpectNoLogs()
 		{
 			AssertExpectLogs(LogExpectation.NoLogsAllowed);
 		}
 
-		protected void AssertExpectLogs(LogExpectation expectedLogs)
+		public void AssertExpectLogs(LogExpectation expectedLogs)
 		{
 			if (Logs.Count > 0)
 			{
@@ -238,7 +238,7 @@ namespace Extenity.Testing
 			}
 		}
 
-		protected void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
+		public void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
 		{
 			foreach (var expectedExceptionLog in expectedLogs.Where(entry => entry.Type == LogType.Exception))
 			{
@@ -259,7 +259,7 @@ namespace Extenity.Testing
 		/// <para>This method should be called inside a test to explicitly tell the coder who takes a look at that unit
 		/// test to understand that the test does not expect a clean console log history.</para>
 		/// </summary>
-		protected void SetExpectedLogs(LogExpectation expectedLogs)
+		public void SetExpectedLogs(LogExpectation expectedLogs)
 		{
 			ExpectedLogs = expectedLogs;
 		}
@@ -295,20 +295,20 @@ namespace Extenity.Testing
 			ReachedCheckpoints = new HashSet<string>();
 		}
 
-		protected void ExpectCheckpoints(string checkpoint1)
+		public void ExpectCheckpoints(string checkpoint1)
 		{
 			ClearCheckpoints();
 			ExpectedCheckpoints.Add(checkpoint1);
 		}
 
-		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2)
+		public void ExpectCheckpoints(string checkpoint1, string checkpoint2)
 		{
 			ClearCheckpoints();
 			ExpectedCheckpoints.Add(checkpoint1);
 			ExpectedCheckpoints.Add(checkpoint2);
 		}
 
-		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3)
+		public void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3)
 		{
 			ClearCheckpoints();
 			ExpectedCheckpoints.Add(checkpoint1);
@@ -316,7 +316,7 @@ namespace Extenity.Testing
 			ExpectedCheckpoints.Add(checkpoint3);
 		}
 
-		protected void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3, string checkpoint4)
+		public void ExpectCheckpoints(string checkpoint1, string checkpoint2, string checkpoint3, string checkpoint4)
 		{
 			ClearCheckpoints();
 			ExpectedCheckpoints.Add(checkpoint1);
@@ -325,7 +325,7 @@ namespace Extenity.Testing
 			ExpectedCheckpoints.Add(checkpoint4);
 		}
 
-		protected void InformCheckpoint(string checkpoint)
+		public void InformCheckpoint(string checkpoint)
 		{
 			ReachedCheckpoints.Add(checkpoint);
 		}
@@ -339,7 +339,7 @@ namespace Extenity.Testing
 		/// by a programmer. Use this method in simple coroutines instead of throwing directly, so that the compiler
 		/// will always show an error if there is no yield in the coroutine.
 		/// </summary>
-		protected void Throw(string message)
+		public void Throw(string message)
 		{
 			throw new Exception(message);
 		}
@@ -349,7 +349,7 @@ namespace Extenity.Testing
 		/// by a programmer. Use this method in simple coroutines instead of throwing directly, so that the compiler
 		/// will always show an error if there is no yield in the coroutine.
 		/// </summary>
-		protected void ThrowNotImplemented()
+		public void ThrowNotImplemented()
 		{
 			throw new NotImplementedException();
 		}
@@ -359,12 +359,12 @@ namespace Extenity.Testing
 		/// by a programmer. Use this method in simple coroutines instead of throwing directly, so that the compiler
 		/// will always show an error if there is no yield in the coroutine.
 		/// </summary>
-		protected void ThrowTimedOut()
+		public void ThrowTimedOut()
 		{
 			throw new Exception("The operation did not complete in allowed duration.");
 		}
 
-		protected void ThrowIfWaitUntilTimedOut()
+		public void ThrowIfWaitUntilTimedOut()
 		{
 			if (WaitUntilResult.IsTimedOut)
 			{
@@ -382,7 +382,7 @@ namespace Extenity.Testing
 
 		#region Monkey Testing
 
-		protected IEnumerator PlayLikeMonkey(float testDuration, Func<int> playSingleSession)
+		public IEnumerator PlayLikeMonkey(float testDuration, Func<int> playSingleSession)
 		{
 			SetExpectedLogs(LogExpectation.AllowInfoAndBelow); // Because there might be gameplay logs
 
