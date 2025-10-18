@@ -264,6 +264,30 @@ namespace Extenity.Testing
 			ExpectedLogs = expectedLogs;
 		}
 
+		/// <remarks>
+		/// Note that this method only marks already logged messages, not future messages.
+		/// It allows omitting log message before the point of calling this method,
+		/// and allows denying the same log message at later stages of the test.
+		/// So, call this method after the log message is emitted, if you want to mark it as expected.
+		/// </remarks>
+		/// <returns>The number of log messages that were marked as expected.</returns>
+		public int MarkLogsAsExpectedThatIncludes(string includedText)
+		{
+			var foundCount = 0;
+			for (var i = 0; i < Logs.Count; i++)
+			{
+				if (Logs[i].Message.Contains(includedText, StringComparison.Ordinal))
+				{
+					// Mark this log as expected by removing it from the log list.
+					Logs.RemoveAt(i);
+					i--;
+					foundCount++;
+				}
+			}
+
+			return foundCount;
+		}
+
 		#endregion
 
 		#region Checkpoints
