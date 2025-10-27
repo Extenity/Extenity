@@ -759,6 +759,18 @@ namespace Extenity.MathToolbox
 
 		#endregion
 
+		#region Easing
+
+		public static float EaseInOutQuad(float t)
+		{
+			if (t < 0.5f)
+				return 2f * t * t;
+			else
+				return -1f + (4f - 2f * t) * t;
+		}
+
+		#endregion
+		
 		#region Snapping
 
 		public static bool IsSnapped(this float value, float snapStep, float snapOffset, float precision = 0.001f)
