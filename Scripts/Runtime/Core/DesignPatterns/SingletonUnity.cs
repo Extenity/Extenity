@@ -125,7 +125,7 @@ namespace Extenity.DesignPatternsToolbox
 				}
 				if (!_EditorInstance)
 				{
-					_EditorInstance = FindObjectOfType<T>();
+					_EditorInstance = FindAnyObjectByType<T>();
 					if (!_EditorInstance)
 					{
 						Log.With("Singleton").Error($"Could not find an instance of singleton '{typeof(T).Name}' in scene.");
@@ -141,7 +141,7 @@ namespace Extenity.DesignPatternsToolbox
 			{
 				if (!_EditorInstance)
 				{
-					_EditorInstance = FindObjectOfType<T>();
+					_EditorInstance = FindAnyObjectByType<T>();
 				}
 				return _EditorInstance;
 			}
