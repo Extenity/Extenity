@@ -1287,6 +1287,7 @@ namespace Extenity.GameObjectToolbox
 			var count = results?.Length ?? 0;
 			if (count != 1)
 				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
+			// ReSharper disable once PossibleNullReferenceException
 			return results[0] as T;
 		}
 
