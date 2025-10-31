@@ -8,30 +8,6 @@ namespace Extenity.IMGUIToolbox.Editor
 	// See tests for examples of how to use.
 	public static class TreeElementUtility
 	{
-		public static void TreeToList<T>(T root, IList<T> result) where T : TreeElement
-		{
-			if (result == null)
-				throw new NullReferenceException("The input 'IList<T> result' list is null");
-			result.Clear();
-
-			Stack<T> stack = new Stack<T>();
-			stack.Push(root);
-
-			while (stack.Count > 0)
-			{
-				T current = stack.Pop();
-				result.Add(current);
-
-				if (current.children != null && current.children.Count > 0)
-				{
-					for (int i = current.children.Count - 1; i >= 0; i--)
-					{
-						stack.Push((T)current.children[i]);
-					}
-				}
-			}
-		}
-
 		// Returns the root of the tree parsed from the list (always the first element).
 		// Important: the first item and is required to have a depth value of -1. 
 		// The rest of the items should have depth >= 0. 
@@ -116,53 +92,6 @@ namespace Extenity.IMGUIToolbox.Editor
 
 			if (list.Count > 1 && list[1].depth != 0)
 				throw new ArgumentException("Input list item at index 1 is assumed to have a depth of 0", nameof(list));
-		}
-
-		// For updating depth values below any given element e.g after reparenting elements
-		public static void UpdateDepthValues<T>(T root) where T : TreeElement
-		{
-			if (root == null)
-				throw new ArgumentNullException(nameof(root), "The root is null");
-
-			if (!root.hasChildren)
-				return;
-
-			Stack<TreeElement> stack = new Stack<TreeElement>();
-			stack.Push(root);
-			while (stack.Count > 0)
-			{
-				TreeElement current = stack.Pop();
-				if (current.children != null)
-				{
-					foreach (var child in current.children)
-					{
-						child.depth = current.depth + 1;
-						stack.Push(child);
-					}
-				}
-			}
-		}
-
-		// Returns true if there is an ancestor of child in the elements list
-		private static bool IsChildOf<T>(T child, IList<T> elements) where T : TreeElement
-		{
-			while (child != null)
-			{
-				child = (T)child.parent;
-				if (elements.Contains(child))
-					return true;
-			}
-			return false;
-		}
-
-		public static IList<T> FindCommonAncestorsWithinList<T>(IList<T> elements) where T : TreeElement
-		{
-			if (elements.Count == 1)
-				return new List<T>(elements);
-
-			List<T> result = new List<T>(elements);
-			result.RemoveAll(g => IsChildOf(g, elements));
-			return result;
 		}
 	}
 

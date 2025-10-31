@@ -16,16 +16,8 @@ namespace Extenity.IMGUIToolbox.Editor
 	{
 		private IList<T> m_Data;
 		private T m_Root;
-		private int m_MaxID;
 
 		public T root { get { return m_Root; } set { m_Root = value; } }
-#pragma warning disable 67
-		public event Action modelChanged;
-#pragma warning restore 67
-		public int numberOfDataElements
-		{
-			get { return m_Data.Count; }
-		}
 
 		public TreeModel(IList<T> data)
 		{
@@ -50,13 +42,6 @@ namespace Extenity.IMGUIToolbox.Editor
 			m_Data = data;
 			if (m_Data.Count > 0)
 				m_Root = TreeElementUtility.ListToTree(data);
-
-			m_MaxID = m_Data.Max(e => e.id);
-		}
-
-		public int GenerateUniqueID()
-		{
-			return ++m_MaxID;
 		}
 
 		public IList<int> GetAncestors(int id)
@@ -104,97 +89,6 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 
 			return parentsBelow;
-		}
-
-		public void RemoveElements(IList<int> elementIDs)
-		{
-			IList<T> elements = m_Data.Where(element => elementIDs.Contains(element.id)).ToArray();
-			RemoveElements(elements);
-		}
-
-		public void RemoveElements(IList<T> elements)
-		{
-			foreach (var element in elements)
-				if (element == m_Root)
-					throw new ArgumentException("It is not allowed to remove the root element");
-
-			var commonAncestors = TreeElementUtility.FindCommonAncestorsWithinList(elements);
-
-			foreach (var element in commonAncestors)
-			{
-				element.parent.children.Remove(element);
-				element.parent = null;
-			}
-
-			TreeElementUtility.TreeToList(m_Root, m_Data);
-
-			Changed();
-		}
-
-		public void AddElements(IList<T> elements, TreeElement parent, int insertPosition)
-		{
-			if (elements == null)
-				throw new ArgumentNullException(nameof(elements), "elements is null");
-			if (elements.Count == 0)
-				throw new ArgumentNullException(nameof(elements), "elements Count is 0: nothing to add");
-			if (parent == null)
-				throw new ArgumentNullException(nameof(parent), "parent is null");
-
-			if (parent.children == null)
-				parent.children = new List<TreeElement>();
-
-			parent.children.InsertRange(insertPosition, elements.Cast<TreeElement>());
-			foreach (var element in elements)
-			{
-				element.parent = parent;
-				element.depth = parent.depth + 1;
-				TreeElementUtility.UpdateDepthValues(element);
-			}
-
-			TreeElementUtility.TreeToList(m_Root, m_Data);
-
-			Changed();
-		}
-
-		public void AddRoot(T root)
-		{
-			if (root == null)
-				throw new ArgumentNullException(nameof(root), "root is null");
-
-			if (m_Data == null)
-				throw new InvalidOperationException("Internal Error: data list is null");
-
-			if (m_Data.Count != 0)
-				throw new InvalidOperationException("AddRoot is only allowed on empty data list");
-
-			root.id = GenerateUniqueID();
-			root.depth = -1;
-			m_Data.Add(root);
-		}
-
-		public void AddElement(T element, TreeElement parent, int insertPosition)
-		{
-			if (element == null)
-				throw new ArgumentNullException(nameof(element), "element is null");
-			if (parent == null)
-				throw new ArgumentNullException(nameof(parent), "parent is null");
-
-			if (parent.children == null)
-				parent.children = new List<TreeElement>();
-
-			parent.children.Insert(insertPosition, element);
-			element.parent = parent;
-
-			TreeElementUtility.UpdateDepthValues(parent);
-			TreeElementUtility.TreeToList(m_Root, m_Data);
-
-			Changed();
-		}
-
-		private void Changed()
-		{
-			if (modelChanged != null)
-				modelChanged();
 		}
 	}
 

@@ -11,16 +11,8 @@ namespace Extenity.IMGUIToolbox.Editor
 #pragma warning disable 67
 		private TreeModel<T> m_TreeModel;
 		private readonly List<TreeViewItem> m_Rows = new List<TreeViewItem>(100);
-		public event Action treeChanged;
-
-		public TreeModel<T> treeModel { get { return m_TreeModel; } }
 #pragma warning restore 67
 
-
-		public ExtenityTreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) : base(state)
-		{
-			Init(model);
-		}
 
 		public ExtenityTreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model)
 			: base(state, multiColumnHeader)
@@ -31,15 +23,6 @@ namespace Extenity.IMGUIToolbox.Editor
 		private void Init(TreeModel<T> model)
 		{
 			m_TreeModel = model;
-			m_TreeModel.modelChanged += ModelChanged;
-		}
-
-		private void ModelChanged()
-		{
-			if (treeChanged != null)
-				treeChanged();
-
-			Reload();
 		}
 
 		protected override TreeViewItem BuildRoot()
