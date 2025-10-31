@@ -5,7 +5,7 @@ using UnityEditor.IMGUI.Controls;
 namespace Extenity.PainkillerToolbox.Editor
 {
 
-	public abstract class CatalogueTreeView<TElement> : TreeViewWithTreeModel<TElement>
+	public abstract class CatalogueTreeView<TElement> : ExtenityTreeViewWithTreeModel<TElement>
 		where TElement : TreeElement
 	{
 		#region Configuration

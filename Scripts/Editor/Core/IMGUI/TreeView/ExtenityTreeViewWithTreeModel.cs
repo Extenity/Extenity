@@ -7,7 +7,7 @@ using UnityEditor.IMGUI.Controls;
 namespace Extenity.IMGUIToolbox.Editor
 {
 
-	public class TreeViewWithTreeModel<T> : TreeView where T : TreeElement
+	public class ExtenityTreeViewWithTreeModel<T> : TreeView where T : TreeElement
 	{
 #pragma warning disable 67
 		private TreeModel<T> m_TreeModel;
@@ -19,12 +19,12 @@ namespace Extenity.IMGUIToolbox.Editor
 #pragma warning restore 67
 
 
-		public TreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) : base(state)
+		public ExtenityTreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) : base(state)
 		{
 			Init(model);
 		}
 
-		public TreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model)
+		public ExtenityTreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model)
 			: base(state, multiColumnHeader)
 		{
 			Init(model);
@@ -47,7 +47,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		protected override TreeViewItem BuildRoot()
 		{
 			int depthForHiddenRoot = -1;
-			return new TreeViewItem<T>(m_TreeModel.root.id, depthForHiddenRoot, m_TreeModel.root.name, m_TreeModel.root);
+			return new ExtenityTreeViewItem<T>(m_TreeModel.root.id, depthForHiddenRoot, m_TreeModel.root.name, m_TreeModel.root);
 		}
 
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
@@ -79,7 +79,7 @@ namespace Extenity.IMGUIToolbox.Editor
 		{
 			foreach (T child in parent.children)
 			{
-				var item = new TreeViewItem<T>(child.id, depth, child.name, child);
+				var item = new ExtenityTreeViewItem<T>(child.id, depth, child.name, child);
 				newRows.Add(item);
 
 				if (child.hasChildren)
@@ -112,7 +112,7 @@ namespace Extenity.IMGUIToolbox.Editor
 				// Matches search?
 				if (current.name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
 				{
-					result.Add(new TreeViewItem<T>(current.id, kItemDepth, current.name, current));
+					result.Add(new ExtenityTreeViewItem<T>(current.id, kItemDepth, current.name, current));
 				}
 
 				if (current.children != null && current.children.Count > 0)
@@ -181,7 +181,7 @@ namespace Extenity.IMGUIToolbox.Editor
 						bool validDrag = ValidDrag(args.parentItem, draggedRows);
 						if (args.performDrop && validDrag)
 						{
-							T parentData = ((TreeViewItem<T>)args.parentItem).Data;
+							T parentData = ((ExtenityTreeViewItem<T>)args.parentItem).Data;
 							OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
 						}
 						return validDrag ? DragAndDropVisualMode.Move : DragAndDropVisualMode.None;
@@ -207,7 +207,7 @@ namespace Extenity.IMGUIToolbox.Editor
 
 			var draggedElements = new List<TreeElement>();
 			foreach (var x in draggedRows)
-				draggedElements.Add(((TreeViewItem<T>)x).Data);
+				draggedElements.Add(((ExtenityTreeViewItem<T>)x).Data);
 
 			var selectedIDs = draggedElements.Select(x => x.id).ToArray();
 			m_TreeModel.MoveElements(parent, insertIndex, draggedElements);
