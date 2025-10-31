@@ -6,15 +6,15 @@ using UnityEditor.IMGUI.Controls;
 namespace Extenity.IMGUIToolbox.Editor
 {
 
-	public class ExtenityTreeViewWithTreeModel<T> : TreeView where T : TreeElement
+	public class ExtenityTreeViewWithTreeModel<T> : TreeView<int> where T : TreeElement
 	{
 #pragma warning disable 67
 		private TreeModel<T> m_TreeModel;
-		private readonly List<TreeViewItem> m_Rows = new List<TreeViewItem>(100);
+		private readonly List<TreeViewItem<int>> m_Rows = new List<TreeViewItem<int>>(100);
 #pragma warning restore 67
 
 
-		public ExtenityTreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model)
+		public ExtenityTreeViewWithTreeModel(TreeViewState<int> state, MultiColumnHeader multiColumnHeader, TreeModel<T> model)
 			: base(state, multiColumnHeader)
 		{
 			Init(model);
@@ -25,13 +25,13 @@ namespace Extenity.IMGUIToolbox.Editor
 			m_TreeModel = model;
 		}
 
-		protected override TreeViewItem BuildRoot()
+		protected override TreeViewItem<int> BuildRoot()
 		{
 			int depthForHiddenRoot = -1;
 			return new ExtenityTreeViewItem<T>(m_TreeModel.root.id, depthForHiddenRoot, m_TreeModel.root.name, m_TreeModel.root);
 		}
 
-		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
+		protected override IList<TreeViewItem<int>> BuildRows(TreeViewItem<int> root)
 		{
 			if (m_TreeModel.root == null)
 			{
@@ -56,7 +56,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			return m_Rows;
 		}
 
-		private void AddChildrenRecursive(T parent, int depth, IList<TreeViewItem> newRows)
+		private void AddChildrenRecursive(T parent, int depth, IList<TreeViewItem<int>> newRows)
 		{
 			foreach (T child in parent.children)
 			{
@@ -77,7 +77,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			}
 		}
 
-		private void Search(T searchFromThis, string search, List<TreeViewItem> result)
+		private void Search(T searchFromThis, string search, List<TreeViewItem<int>> result)
 		{
 			if (string.IsNullOrEmpty(search))
 				throw new ArgumentException("Invalid search: cannot be null or empty", nameof(search));
@@ -107,7 +107,7 @@ namespace Extenity.IMGUIToolbox.Editor
 			SortSearchResult(result);
 		}
 
-		protected virtual void SortSearchResult(List<TreeViewItem> rows)
+		protected virtual void SortSearchResult(List<TreeViewItem<int>> rows)
 		{
 			rows.Sort((x, y) => EditorUtility.NaturalCompare(x.displayName, y.displayName)); // sort by displayName by default, can be overriden for multicolumn solutions
 		}

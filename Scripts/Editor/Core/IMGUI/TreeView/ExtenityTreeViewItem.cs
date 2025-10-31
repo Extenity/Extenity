@@ -3,7 +3,7 @@
 namespace Extenity.IMGUIToolbox.Editor
 {
 
-	public class ExtenityTreeViewItem<T> : TreeViewItem where T : TreeElement
+	public class ExtenityTreeViewItem<T> : TreeViewItem<int> where T : TreeElement
 	{
 		public T Data { get; set; }
 

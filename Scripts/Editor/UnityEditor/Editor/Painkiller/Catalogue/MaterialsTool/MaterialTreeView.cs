@@ -162,7 +162,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			return state;
 		}
 
-		protected override bool CanRename(TreeViewItem item)
+		protected override bool CanRename(TreeViewItem<int> item)
 		{
 			return false;
 		}
@@ -171,7 +171,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 		}
 
-		protected override bool CanMultiSelect(TreeViewItem item)
+		protected override bool CanMultiSelect(TreeViewItem<int> item)
 		{
 			return true;
 		}
@@ -277,7 +277,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		public MaterialTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model)
+		public MaterialTreeView(TreeViewState<int> state, MultiColumnHeader multiColumnHeader, TreeModel<MaterialElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
@@ -297,14 +297,14 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		// Note that we only build the visible rows. Only the backend has the full tree information. 
 		// The treeview only creates info for the row list.
-		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
+		protected override IList<TreeViewItem<int>> BuildRows(TreeViewItem<int> root)
 		{
 			var rows = base.BuildRows(root);
 			SortIfNeeded(root, rows);
 			return rows;
 		}
 
-		public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
+		public static void TreeToList(TreeViewItem<int> root, IList<TreeViewItem<int>> result)
 		{
 			if (root == null)
 				throw new NullReferenceException(nameof(root));
@@ -316,7 +316,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (root.children == null)
 				return;
 
-			var stack = new Stack<TreeViewItem>();
+			var stack = new Stack<TreeViewItem<int>>();
 			for (int i = root.children.Count - 1; i >= 0; i--)
 				stack.Push(root.children[i]);
 
@@ -344,7 +344,7 @@ namespace Extenity.PainkillerToolbox.Editor
 			SortIfNeeded(rootItem, GetRows());
 		}
 
-		private void SortIfNeeded(TreeViewItem root, IList<TreeViewItem> rows)
+		private void SortIfNeeded(TreeViewItem<int> root, IList<TreeViewItem<int>> rows)
 		{
 			if (rows.Count <= 1)
 				return;
@@ -402,7 +402,7 @@ namespace Extenity.PainkillerToolbox.Editor
 				}
 			}
 
-			rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
+			rootItem.children = orderedQuery.Cast<TreeViewItem<int>>().ToList();
 		}
 
 		private IOrderedEnumerable<IMGUIToolbox.Editor.ExtenityTreeViewItem<MaterialElement>> InitialOrder(IEnumerable<IMGUIToolbox.Editor.ExtenityTreeViewItem<MaterialElement>> myTypes, int[] history)

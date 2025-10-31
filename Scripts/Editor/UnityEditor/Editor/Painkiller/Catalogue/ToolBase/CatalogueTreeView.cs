@@ -17,7 +17,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
-		public CatalogueTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
+		public CatalogueTreeView(TreeViewState<int> state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
 			: base(state, multiColumnHeader, model)
 		{
 			rowHeight = RowHeights;
