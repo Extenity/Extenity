@@ -59,7 +59,7 @@ namespace Extenity.PainkillerToolbox.Editor
 		private bool IsTreeViewInitialized;
 
 		[SerializeField]
-		private TreeViewState TreeViewState;
+		private ExtenityTreeViewState TreeViewState;
 		[SerializeField]
 		private MultiColumnHeaderState MultiColumnHeaderState;
 
@@ -82,7 +82,7 @@ namespace Extenity.PainkillerToolbox.Editor
 
 			// Check if it already exists (deserialized from window layout file or scriptable object)
 			if (TreeViewState == null)
-				TreeViewState = new TreeViewState();
+				TreeViewState = new ExtenityTreeViewState();
 
 			var isFirstInitialization = MultiColumnHeaderState == null;
 			var headerState = MaterialTreeView.CreateDefaultMultiColumnHeaderState();
