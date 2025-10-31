@@ -1258,9 +1258,20 @@ namespace Extenity.GameObjectToolbox
 			return obj as T;
 		}
 
+		[Obsolete("Object.FindObjectsOfType has been deprecated. Use FindSingleObjectByTypeEnsured instead which lets you decide whether you need the results sorted or not.  FindObjectsOfType sorts the results by InstanceID, but if you do not need this using FindObjectSortMode.None is considerably faster.", false)]
 		public static object FindSingleObjectOfTypeEnsured(Type type)
 		{
 			var results = Object.FindObjectsOfType(type);
+			var count = results?.Length ?? 0;
+			if (count != 1)
+				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
+			// ReSharper disable once PossibleNullReferenceException
+			return results[0];
+		}
+
+		public static object FindSingleObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive, FindObjectsSortMode sortMode)
+		{
+			var results = Object.FindObjectsByType(type, findObjectsInactive, sortMode);
 			var count = results?.Length ?? 0;
 			if (count != 1)
 				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
