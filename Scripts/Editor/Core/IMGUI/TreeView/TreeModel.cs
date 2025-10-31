@@ -191,38 +191,6 @@ namespace Extenity.IMGUIToolbox.Editor
 			Changed();
 		}
 
-		public void MoveElements(TreeElement parentElement, int insertionIndex, List<TreeElement> elements)
-		{
-			if (insertionIndex < 0)
-				throw new ArgumentException("Invalid input: insertionIndex is -1, client needs to decide what index elements should be reparented at");
-
-			// Invalid reparenting input
-			if (parentElement == null)
-				return;
-
-			// We are moving items so we adjust the insertion index to accomodate that any items above the insertion index is removed before inserting
-			if (insertionIndex > 0)
-				insertionIndex -= parentElement.children.GetRange(0, insertionIndex).Count(elements.Contains);
-
-			// Remove draggedItems from their parents
-			foreach (var draggedItem in elements)
-			{
-				draggedItem.parent.children.Remove(draggedItem);    // remove from old parent
-				draggedItem.parent = parentElement;                 // set new parent
-			}
-
-			if (parentElement.children == null)
-				parentElement.children = new List<TreeElement>();
-
-			// Insert dragged items under new parent
-			parentElement.children.InsertRange(insertionIndex, elements);
-
-			TreeElementUtility.UpdateDepthValues(root);
-			TreeElementUtility.TreeToList(m_Root, m_Data);
-
-			Changed();
-		}
-
 		private void Changed()
 		{
 			if (modelChanged != null)
