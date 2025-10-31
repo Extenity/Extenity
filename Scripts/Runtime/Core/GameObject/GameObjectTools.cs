@@ -1205,9 +1205,26 @@ namespace Extenity.GameObjectToolbox
 
 		#region FindObjectOfTypeEnsured and FindSingleObjectOfTypeEnsured
 
+		[Obsolete("Object.FindObjectOfType has been deprecated. Use FindFirstObjectByTypeEnsured instead or if finding any instance is acceptable the faster FindAnyObjectByTypeEnsured", false)]
 		public static object FindObjectOfTypeEnsured(Type type)
 		{
 			var obj = Object.FindObjectOfType(type);
+			if (!obj)
+				throw new Exception($"Could not find object of type '{type.Name}'.");
+			return obj;
+		}
+
+		public static object FindFirstObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive)
+		{
+			var obj = Object.FindFirstObjectByType(type, findObjectsInactive);
+			if (!obj)
+				throw new Exception($"Could not find object of type '{type.Name}'.");
+			return obj;
+		}
+
+		public static object FindAnyObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive)
+		{
+			var obj = Object.FindAnyObjectByType(type, findObjectsInactive);
 			if (!obj)
 				throw new Exception($"Could not find object of type '{type.Name}'.");
 			return obj;
