@@ -27,7 +27,7 @@ namespace Extenity.MessagingToolbox
 
 		private static readonly Dictionary<string, ExtenityEvent> EventsByEventNames = new Dictionary<string, ExtenityEvent>();
 
-		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterEvent(string eventName, Action callback, int order = 0)
 		{
 			if (string.IsNullOrEmpty(eventName) ||

@@ -216,7 +216,7 @@ namespace Extenity.MessagingToolbox
 
 		#region Add / Remove Listener
 
-		/// <param name="order">Lesser ordered callback gets called earlier. Callbacks that have the same order gets called in the order of AddListener calls. Negative values are allowed.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 #if UnityFeatures
 		public void AddListener(Action callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, UnityEngine.Object lifeSpanTarget = null)
 #else
