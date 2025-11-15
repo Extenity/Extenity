@@ -109,6 +109,48 @@ namespace Extenity
 
 		#endregion
 
+		#region Manually Run The Loop
+
+		public static void ManuallyRunLoopOnce(int fixedUpdateIterations)
+		{
+			if (EnableCatchingExceptionsInUpdateCallbacks)
+			{
+				for (int i = 0; i < fixedUpdateIterations; i++)
+				{
+					Instance.PreFixedUpdateCallbacks.InvokeSafe();
+					Instance.FixedUpdateCallbacks.InvokeSafe();
+					Instance.PostFixedUpdateCallbacks.InvokeSafe();
+				}
+
+				Instance.PreUpdateCallbacks.InvokeSafe();
+				Instance.UpdateCallbacks.InvokeSafe();
+				Instance.PostUpdateCallbacks.InvokeSafe();
+
+				Instance.PreLateUpdateCallbacks.InvokeSafe();
+				Instance.LateUpdateCallbacks.InvokeSafe();
+				Instance.PostLateUpdateCallbacks.InvokeSafe();
+			}
+			else
+			{
+				for (int i = 0; i < fixedUpdateIterations; i++)
+				{
+					Instance.PreFixedUpdateCallbacks.InvokeUnsafe();
+					Instance.FixedUpdateCallbacks.InvokeUnsafe();
+					Instance.PostFixedUpdateCallbacks.InvokeUnsafe();
+				}
+
+				Instance.PreUpdateCallbacks.InvokeUnsafe();
+				Instance.UpdateCallbacks.InvokeUnsafe();
+				Instance.PostUpdateCallbacks.InvokeUnsafe();
+
+				Instance.PreLateUpdateCallbacks.InvokeUnsafe();
+				Instance.LateUpdateCallbacks.InvokeUnsafe();
+				Instance.PostLateUpdateCallbacks.InvokeUnsafe();
+			}
+		}
+
+		#endregion
+
 		#region Timings
 
 #if DisableExtenityTimeCaching
