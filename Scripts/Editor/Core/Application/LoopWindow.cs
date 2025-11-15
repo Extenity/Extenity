@@ -7,7 +7,7 @@ using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Extenity
+namespace Extenity.FlowToolbox
 {
 
 	public class LoopWindow : ExtenityEditorWindowBase

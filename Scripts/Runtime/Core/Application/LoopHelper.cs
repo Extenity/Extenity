@@ -3,13 +3,12 @@
 using System;
 using Extenity.ApplicationToolbox;
 using Extenity.DebugToolbox.GraphPlotting;
-using Extenity.FlowToolbox;
 using Extenity.MessagingToolbox;
 using Extenity.ProfilingToolbox;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity
+namespace Extenity.FlowToolbox
 {
 
 	public class LoopHelper : MonoBehaviour

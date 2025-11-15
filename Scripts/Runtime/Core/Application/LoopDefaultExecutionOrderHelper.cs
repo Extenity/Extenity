@@ -3,7 +3,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Extenity
+namespace Extenity.FlowToolbox
 {
 
 	[HideMonoScript]

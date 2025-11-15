@@ -1,5 +1,6 @@
 #if UNITY_5_3_OR_NEWER
 
+using Extenity.FlowToolbox;
 using UnityEngine;
 
 namespace Extenity.AnimationToolbox

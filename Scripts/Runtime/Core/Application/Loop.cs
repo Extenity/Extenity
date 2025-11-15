@@ -1,11 +1,10 @@
 #if UNITY_5_3_OR_NEWER
 
 using System;
-using Extenity.FlowToolbox;
 using Extenity.MathToolbox;
 using UnityEngine;
 
-namespace Extenity
+namespace Extenity.FlowToolbox
 {
 
 	public static class Loop
