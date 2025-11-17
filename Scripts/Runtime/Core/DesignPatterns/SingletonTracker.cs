@@ -40,7 +40,7 @@ namespace Extenity.DesignPatternsToolbox
 
 		public static void SingletonInstantiated(string className)
 		{
-			if (_SingletonCalls.ContainsKey(className))
+			if (!_SingletonCalls.TryAdd(className, 1))
 			{
 				if (_SingletonCalls[className] < 0)
 				{
@@ -52,10 +52,6 @@ namespace Extenity.DesignPatternsToolbox
 				{
 					Log.With("Singleton").Error($"Singleton '{className}' instantiated {_SingletonCalls[className]} times");
 				}
-			}
-			else
-			{
-				_SingletonCalls.Add(className, 1);
 			}
 		}
 
