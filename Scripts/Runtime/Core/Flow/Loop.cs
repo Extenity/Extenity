@@ -50,6 +50,10 @@ namespace Extenity.FlowToolbox
 			go.AddComponent<LoopPostExecutionOrderHelper>().LoopHelper = Instance;
 		}
 
+		#endregion
+
+		#region Deinitialization
+
 		public static void DeinitializeSystem()
 		{
 			Invoker.DeinitializeSystem();
