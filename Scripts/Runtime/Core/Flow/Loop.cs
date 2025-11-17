@@ -1,6 +1,7 @@
 #if UNITY_5_3_OR_NEWER
 
 using System;
+using System.Collections.Generic;
 using Extenity.MathToolbox;
 using UnityEngine;
 
@@ -292,6 +293,50 @@ namespace Extenity.FlowToolbox
 		#region Safe or Unsafe Mode
 
 		public static bool EnableCatchingExceptionsInUpdateCallbacks = true;
+
+		#endregion
+
+		#region Callback Cleanup Verification
+
+		public static void EnsureAllCallbacksDeregistered()
+		{
+			if (Instance == null)
+				return;
+
+			var totalCallbacks = 0;
+			List<string> callbackDetails = null;
+
+			void CheckCallbacks(MessagingToolbox.ExtenityEvent extenityEvent, string callbackName)
+			{
+				if (extenityEvent.IsAnyListenerRegistered)
+				{
+					if (callbackDetails == null)
+					{
+						callbackDetails = new List<string>(); // It's okay to do allocation if an error happens.
+					}
+					var count = extenityEvent.ListenersCount;
+					totalCallbacks += count;
+					callbackDetails.Add($"{callbackName}: {count}");
+				}
+			}
+
+			CheckCallbacks(Instance.PreFixedUpdateCallbacks, "PreFixedUpdate");
+			CheckCallbacks(Instance.PreUpdateCallbacks, "PreUpdate");
+			CheckCallbacks(Instance.PreLateUpdateCallbacks, "PreLateUpdate");
+
+			CheckCallbacks(Instance.FixedUpdateCallbacks, "FixedUpdate");
+			CheckCallbacks(Instance.UpdateCallbacks, "Update");
+			CheckCallbacks(Instance.LateUpdateCallbacks, "LateUpdate");
+
+			CheckCallbacks(Instance.PostFixedUpdateCallbacks, "PostFixedUpdate");
+			CheckCallbacks(Instance.PostUpdateCallbacks, "PostUpdate");
+			CheckCallbacks(Instance.PostLateUpdateCallbacks, "PostLateUpdate");
+
+			if (totalCallbacks > 0)
+			{
+				throw new Exception($"Loop has {totalCallbacks} callback(s) still registered:\n" + string.Join("\n", callbackDetails));
+			}
+		}
 
 		#endregion
 
