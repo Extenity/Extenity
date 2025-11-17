@@ -54,7 +54,7 @@ namespace Extenity.FlowToolbox
 		{
 			Invoker.DeinitializeSystem();
 
-			if (Instance)
+			if (Instance != null)
 			{
 				GameObject.DestroyImmediate(Instance.gameObject);
 				Instance = null;
@@ -91,9 +91,9 @@ namespace Extenity.FlowToolbox
 		public static void RegisterPreUpdate       (Action callback, int order = 0) { Instance.PreUpdateCallbacks.AddListener(callback, order);      }
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPreLateUpdate   (Action callback, int order = 0) { Instance.PreLateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance) Instance.PreFixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterPreUpdate     (Action callback) { if (Instance) Instance.PreUpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterPreLateUpdate (Action callback) { if (Instance) Instance.PreLateUpdateCallbacks.RemoveListener(callback);       }
+		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance != null) Instance.PreFixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterPreUpdate     (Action callback) { if (Instance != null) Instance.PreUpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterPreLateUpdate (Action callback) { if (Instance != null) Instance.PreLateUpdateCallbacks.RemoveListener(callback);       }
 
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterFixedUpdate  (Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
@@ -101,9 +101,9 @@ namespace Extenity.FlowToolbox
 		public static void RegisterUpdate       (Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order);      }
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterLateUpdate   (Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterFixedUpdate(Action callback) { if (Instance) Instance.FixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterUpdate     (Action callback) { if (Instance) Instance.UpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterLateUpdate (Action callback) { if (Instance) Instance.LateUpdateCallbacks.RemoveListener(callback);       }
+		public static void DeregisterFixedUpdate(Action callback) { if (Instance != null) Instance.FixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterUpdate     (Action callback) { if (Instance != null) Instance.UpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterLateUpdate (Action callback) { if (Instance != null) Instance.LateUpdateCallbacks.RemoveListener(callback);       }
 
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPostFixedUpdate  (Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks.AddListener(callback, order); }
@@ -111,9 +111,9 @@ namespace Extenity.FlowToolbox
 		public static void RegisterPostUpdate       (Action callback, int order = 0) { Instance.PostUpdateCallbacks.AddListener(callback, order);      }
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPostLateUpdate   (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance) Instance.PostFixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterPostUpdate     (Action callback) { if (Instance) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterPostLateUpdate (Action callback) { if (Instance) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
+		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance != null) Instance.PostFixedUpdateCallbacks.RemoveListener(callback);      }
+		public static void DeregisterPostUpdate     (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
+		public static void DeregisterPostLateUpdate (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
 		// @formatter:on
 
 		#endregion

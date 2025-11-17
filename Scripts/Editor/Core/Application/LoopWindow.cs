@@ -47,7 +47,7 @@ namespace Extenity.FlowToolbox
 		protected override void OnGUIDerived()
 		{
 			var instance = Loop.Instance;
-			if (!instance)
+			if (instance == null)
 			{
 				GUILayout.Label("Loop instance is not available.");
 				return;
