@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Extenity.DataToolbox;
+using Extenity.FlowToolbox;
 using Extenity.MathToolbox;
 using Extenity.ParallelToolbox;
 using Extenity.UnityTestToolbox;
@@ -60,6 +61,7 @@ namespace Extenity.Testing
 
 			DeinitializeLogCatching();
 			EnsureAllCheckpointsReached();
+			Loop.EnsureAllCallbacksDeregistered();
 			UnityTestTools.Cleanup();
 
 			// Disable the profiler if it was enabled during the test.
