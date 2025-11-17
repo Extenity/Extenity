@@ -37,6 +37,12 @@ namespace Extenity.Testing
 			// This should be the very first line of the test.
 			StartTime = Time.realtimeSinceStartup;
 
+			// Ensure Loop is initialized for edit mode tests
+			if (Loop.Instance == null)
+			{
+				Loop.InitializeSystem();
+			}
+
 			InitializeCancellationToken();
 			InitializeTiming();
 			InitializeLogCatching();

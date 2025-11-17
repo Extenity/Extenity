@@ -2,8 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Extenity.MathToolbox;
+using Extenity.MessagingToolbox;
 using UnityEngine;
+using UnityEngine.LowLevel;
+using UnityEngine.PlayerLoop;
 
 namespace Extenity.FlowToolbox
 {
@@ -31,10 +35,7 @@ namespace Extenity.FlowToolbox
 
 		public static void InitializeSystem()
 		{
-			DeinitializeSystem();
-#if UNITY_EDITOR
-			SetToDeinitializeSystemAfterComingOutOfPlayMode();
-#endif
+			// DeinitializeSystem(); Decided not to deinitialize Loop system anytime. If it's up, it stays up until application quits, or Editor recompiles.
 
 			Invoker.InitializeSystem();
 
@@ -42,12 +43,12 @@ namespace Extenity.FlowToolbox
 			// Otherwise cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
 			SetCachedTimesFromUnityTimes();
 
-			var go = new GameObject("[ExtenityInternals]");
-			GameObject.DontDestroyOnLoad(go);
-			Instance = go.AddComponent<LoopHelper>();
-			go.AddComponent<LoopPreExecutionOrderHelper>().LoopHelper = Instance;
-			go.AddComponent<LoopDefaultExecutionOrderHelper>().LoopHelper = Instance;
-			go.AddComponent<LoopPostExecutionOrderHelper>().LoopHelper = Instance;
+			Instance = new LoopHelper();
+
+			// Inject custom update callbacks into Unity's PlayerLoop
+			var playerLoop = PlayerLoop.GetCurrentPlayerLoop();
+			InjectIntoPlayerLoop(ref playerLoop);
+			PlayerLoop.SetPlayerLoop(playerLoop);
 		}
 
 		#endregion
@@ -60,29 +61,16 @@ namespace Extenity.FlowToolbox
 
 			if (Instance != null)
 			{
-				GameObject.DestroyImmediate(Instance.gameObject);
+				// Remove custom callbacks from Unity's PlayerLoop
+				var playerLoop = PlayerLoop.GetCurrentPlayerLoop();
+				RemoveFromPlayerLoop(ref playerLoop);
+				PlayerLoop.SetPlayerLoop(playerLoop);
+
 				Instance = null;
 			}
 
 			ResetCachedTimes();
 		}
-
-#if UNITY_EDITOR
-		private static void SetToDeinitializeSystemAfterComingOutOfPlayMode()
-		{
-			UnityEditor.EditorApplication.playModeStateChanged -= DeinitializeOnPlayModeChanges;
-			UnityEditor.EditorApplication.playModeStateChanged += DeinitializeOnPlayModeChanges;
-
-			void DeinitializeOnPlayModeChanges(UnityEditor.PlayModeStateChange playModeStateChange)
-			{
-				if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredEditMode)
-				{
-					UnityEditor.EditorApplication.playModeStateChanged -= DeinitializeOnPlayModeChanges;
-					DeinitializeSystem();
-				}
-			}
-		}
-#endif
 
 		#endregion
 
@@ -119,6 +107,158 @@ namespace Extenity.FlowToolbox
 		public static void DeregisterPostUpdate     (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
 		public static void DeregisterPostLateUpdate (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
 		// @formatter:on
+
+		#endregion
+
+		#region PlayerLoop Injection
+
+		private static void InjectIntoPlayerLoop(ref PlayerLoopSystem playerLoop)
+		{
+			InsertLoopSystemBefore<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<PreFixedUpdateRunner>());
+			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<FixedUpdateRunner>());
+			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner), CreateLoopSystem<PostFixedUpdateRunner>());
+
+			InsertLoopSystemBefore<Update>(ref playerLoop, typeof(Update.ScriptRunBehaviourUpdate), CreateLoopSystem<PreUpdateRunner>());
+			InsertLoopSystemAfter<Update>(ref playerLoop, typeof(Update.ScriptRunBehaviourUpdate), CreateLoopSystem<UpdateRunner>());
+			InsertLoopSystemAfter<Update>(ref playerLoop, typeof(UpdateRunner), CreateLoopSystem<PostUpdateRunner>());
+
+			InsertLoopSystemBefore<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<PreLateUpdateRunner>());
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<LateUpdateRunner>());
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner), CreateLoopSystem<PostLateUpdateRunner>());
+		}
+
+		private static void RemoveFromPlayerLoop(ref PlayerLoopSystem playerLoop)
+		{
+			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PreFixedUpdateRunner));
+			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner));
+			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PostFixedUpdateRunner));
+
+			RemoveLoopSystem<Update>(ref playerLoop, typeof(PreUpdateRunner));
+			RemoveLoopSystem<Update>(ref playerLoop, typeof(UpdateRunner));
+			RemoveLoopSystem<Update>(ref playerLoop, typeof(PostUpdateRunner));
+
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdateRunner));
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner));
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner));
+		}
+
+		private static PlayerLoopSystem CreateLoopSystem<T>() where T : struct
+		{
+			return new PlayerLoopSystem
+			{
+				type = typeof(T),
+				updateDelegate = GetUpdateDelegateFor<T>()
+			};
+		}
+
+		private static void InsertLoopSystemBefore<TParent>(ref PlayerLoopSystem rootLoop, Type beforeType, PlayerLoopSystem systemToInsert)
+		{
+			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
+			{
+				if (rootLoop.subSystemList[i].type == typeof(TParent))
+				{
+					var subsystems = rootLoop.subSystemList[i].subSystemList;
+					for (int j = 0; j < subsystems.Length; j++)
+					{
+						if (subsystems[j].type == beforeType)
+						{
+							var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
+							Array.Copy(subsystems, 0, newSubsystems, 0, j);
+							newSubsystems[j] = systemToInsert;
+							Array.Copy(subsystems, j, newSubsystems, j + 1, subsystems.Length - j);
+							rootLoop.subSystemList[i].subSystemList = newSubsystems;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		private static void InsertLoopSystemAfter<TParent>(ref PlayerLoopSystem rootLoop, Type afterType, PlayerLoopSystem systemToInsert)
+		{
+			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
+			{
+				if (rootLoop.subSystemList[i].type == typeof(TParent))
+				{
+					var subsystems = rootLoop.subSystemList[i].subSystemList;
+					for (int j = 0; j < subsystems.Length; j++)
+					{
+						if (subsystems[j].type == afterType)
+						{
+							var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
+							Array.Copy(subsystems, 0, newSubsystems, 0, j + 1);
+							newSubsystems[j + 1] = systemToInsert;
+							Array.Copy(subsystems, j + 1, newSubsystems, j + 2, subsystems.Length - j - 1);
+							rootLoop.subSystemList[i].subSystemList = newSubsystems;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		private static void RemoveLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, Type systemType)
+		{
+			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
+			{
+				if (rootLoop.subSystemList[i].type == typeof(TParent))
+				{
+					var subsystems = rootLoop.subSystemList[i].subSystemList;
+					for (int j = 0; j < subsystems.Length; j++)
+					{
+						if (subsystems[j].type == systemType)
+						{
+							var newSubsystems = new PlayerLoopSystem[subsystems.Length - 1];
+							Array.Copy(subsystems, 0, newSubsystems, 0, j);
+							Array.Copy(subsystems, j + 1, newSubsystems, j, subsystems.Length - j - 1);
+							rootLoop.subSystemList[i].subSystemList = newSubsystems;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
+		{
+			if (typeof(T) == typeof(PreFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
+			if (typeof(T) == typeof(FixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
+			if (typeof(T) == typeof(PostFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
+
+			if (typeof(T) == typeof(PreUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };
+			if (typeof(T) == typeof(UpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomUpdate(UnscaledTime); InvokeSafeIfEnabled(Instance.UpdateCallbacks); };
+			if (typeof(T) == typeof(PostUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostUpdateCallbacks); };
+
+			if (typeof(T) == typeof(PreLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
+			if (typeof(T) == typeof(LateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
+			if (typeof(T) == typeof(PostLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
+
+			throw new NotImplementedException($"No update delegate defined for type {typeof(T)}");
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void InvokeSafeIfEnabled(ExtenityEvent extenityEvent)
+		{
+			if (EnableCatchingExceptionsInUpdateCallbacks)
+			{
+				extenityEvent.InvokeSafe();
+			}
+			else
+			{
+				extenityEvent.InvokeUnsafe();
+			}
+		}
+
+		// Marker types for PlayerLoop injection
+		private struct PreFixedUpdateRunner { }
+		private struct FixedUpdateRunner { }
+		private struct PostFixedUpdateRunner { }
+		private struct PreUpdateRunner { }
+		private struct UpdateRunner { }
+		private struct PostUpdateRunner { }
+		private struct PreLateUpdateRunner { }
+		private struct LateUpdateRunner { }
+		private struct PostLateUpdateRunner { }
 
 		#endregion
 

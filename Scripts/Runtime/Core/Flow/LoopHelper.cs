@@ -1,65 +1,12 @@
 #if UNITY_5_3_OR_NEWER
 
-using System;
-using Extenity.ApplicationToolbox;
-using Extenity.DebugToolbox.GraphPlotting;
 using Extenity.MessagingToolbox;
-using Extenity.ProfilingToolbox;
-using Sirenix.OdinInspector;
-using UnityEngine;
 
 namespace Extenity.FlowToolbox
 {
 
-	public class LoopHelper : MonoBehaviour
+	public class LoopHelper
 	{
-		#region Update
-
-		private void FixedUpdate()
-		{
-			FixedUpdateCount++;
-#if !DisableExtenityTimeCaching
-			Loop.SetCachedTimesFromUnityTimes();
-#endif
-
-			// FastInvokes are called before any other callbacks. Note that Loop.FixedUpdate is executed before
-			// LoopPreExecutionOrderHelper.FixedUpdate as defined in Script Execution Order Project Settings.
-			Invoker.Handler.CustomFixedUpdate(Loop.Time);
-
-			// Instance.FixedUpdateCallbacks.ClearIfRequired();
-		}
-
-		private void Update()
-		{
-			UpdateCount++;
-#if !DisableExtenityTimeCaching
-			Loop.SetCachedTimesFromUnityTimes();
-#endif
-
-			if (FPSAnalyzer != null)
-			{
-				FPSAnalyzer.Tick(Loop.Time);
-			}
-
-			// FastInvokes are called before any other callbacks. Note that Loop.Update is executed before
-			// LoopPreExecutionOrderHelper.Update as defined in Script Execution Order Project Settings.
-			Invoker.Handler.CustomUpdate(Loop.UnscaledTime);
-
-			// Instance.UpdateCallbacks.ClearIfRequired();
-		}
-
-		private void LateUpdate()
-		{
-			LateUpdateCount++;
-#if !DisableExtenityTimeCaching
-			Loop.SetCachedTimesFromUnityTimes();
-#endif
-
-			// Instance.LateUpdateCallbacks.ClearIfRequired();
-		}
-
-		#endregion
-
 		#region Callbacks
 
 		public readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
@@ -78,6 +25,7 @@ namespace Extenity.FlowToolbox
 
 		#region Counters
 
+		/* TODO: This functionality became lost when switching to use PlayerLoop API, instead of MonoBehaviour callbacks. It will be reimplemented later.
 		[Title("Stats")]
 		[NonSerialized, ShowInInspector]
 		public int UpdateCount;
@@ -85,11 +33,13 @@ namespace Extenity.FlowToolbox
 		public int FixedUpdateCount;
 		[NonSerialized, ShowInInspector]
 		public int LateUpdateCount;
+		*/
 
 		#endregion
 
 		#region FPS Analyzer
 
+		/* TODO: This functionality became lost when switching to use PlayerLoop API, instead of MonoBehaviour callbacks. It will be reimplemented later.
 		[Title("FPS Analyzer")]
 		[NonSerialized, ShowInInspector, InlineProperty, HideLabel]
 		public TickAnalyzer FPSAnalyzer;
@@ -126,6 +76,7 @@ namespace Extenity.FlowToolbox
 				FPSAnalyzer = null;
 			}
 		}
+		*/
 
 		#endregion
 	}
