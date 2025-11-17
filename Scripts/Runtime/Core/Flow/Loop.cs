@@ -37,10 +37,10 @@ namespace Extenity.FlowToolbox
 #endif
 
 			Invoker.InitializeSystem();
-			
+
 			// Initialize cached times here at start.
 			// Otherwise cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
-			SetCachedTimesFromUnityTimes(); 
+			SetCachedTimesFromUnityTimes();
 
 			var go = new GameObject("[ExtenityInternals]");
 			GameObject.DontDestroyOnLoad(go);
@@ -59,7 +59,7 @@ namespace Extenity.FlowToolbox
 				GameObject.DestroyImmediate(Instance.gameObject);
 				Instance = null;
 			}
-			
+
 			ResetCachedTimes();
 		}
 
@@ -68,7 +68,7 @@ namespace Extenity.FlowToolbox
 		{
 			UnityEditor.EditorApplication.playModeStateChanged -= DeinitializeOnPlayModeChanges;
 			UnityEditor.EditorApplication.playModeStateChanged += DeinitializeOnPlayModeChanges;
-			
+
 			void DeinitializeOnPlayModeChanges(UnityEditor.PlayModeStateChange playModeStateChange)
 			{
 				if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredEditMode)
