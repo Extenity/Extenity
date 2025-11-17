@@ -149,10 +149,10 @@ namespace Extenity.ApplicationToolbox
 				{
 					// CAUTION! DO NOT CHANGE HASH ALGORITHM OR PATH!
 					// We need consistency, rather than better hash algorithms.
-					// That's why GetHashCodeGuaranteed is used because it will
+					// That's why GetHashCodeAsNet472 is used because it will
 					// stay here, guaranteed to be never modified forever.
 					var path = ApplicationPath;
-					var hash = path.GetHashCodeGuaranteed();
+					var hash = path.GetHashCodeAsNet472();
 					_PathHash = hash.ToHexString(false);
 				}
 				return _PathHash;

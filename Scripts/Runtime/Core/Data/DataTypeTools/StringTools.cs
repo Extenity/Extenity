@@ -1792,14 +1792,14 @@ namespace Extenity.DataToolbox
 			//return hashCodeStart ^ hashCodeMedium ^ hashCodeEnd;
 		}
 
-		// A hash algorithm that is guaranteed to be never modified in future.
+		// A hash algorithm that is guaranteed to be never modified in the future.
 		// The algorithm is the exact copy of string.GetHashCode() grabbed from
 		// Reference Source Codes for .NET 4.7.2.
 		// https://referencesource.microsoft.com/#mscorlib/system/string.cs
 		//
-		// Note that .NET implementation may change in future, as it has before.
-		// But GetHashCodeGuaranteed is here to stay.
-		public static int GetHashCodeGuaranteed([NotNull] this string str)
+		// Note that .NET implementation may change in the future, as it has before.
+		// But GetHashCodeAsNet472 is here to stay.
+		public static int GetHashCodeAsNet472([NotNull] this string str)
 		{
 			if (str == null)
 				throw new ArgumentNullException(nameof(str));

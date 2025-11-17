@@ -990,30 +990,30 @@ namespace ExtenityTests.DataToolbox
 		#region Hash
 
 		[Test]
-		public static void GetHashCodeGuaranteed()
+		public static void GetHashCodeAsNet472()
 		{
 			var valueBag = new HashSet<string>(); // This will allow ignoring of checking the hashes for the same generated values.
 			var history = new Dictionary<int, string>(100000); // This will be used for checking if the hash is generated before. Also it will be used for logging the previously generated hash value.
 
 			// ReSharper disable once AssignNullToNotNullAttribute
-			Assert.Throws<ArgumentNullException>(() => ((string)null).GetHashCodeGuaranteed());
+			Assert.Throws<ArgumentNullException>(() => ((string)null).GetHashCodeAsNet472());
 
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "", 757602046);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, " ", -842352768);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "\t", -842352729);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "a", -842352705);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "ab", -840386625);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "abc", 536991770);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "1", -842352753);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "a1", -843466817);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "1a", -840321137);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "aa", -840321089);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "aaa", -625742108);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "11", -843466865);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "111", 1508494276);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "12", -843532401);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "123", -1623739142);
-			TestValue_GetHashCodeGuaranteed(valueBag, history, "bvuYGfg823tbn181", -2132762692);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "", 757602046);
+			TestValue_GetHashCodeAsNet472(valueBag, history, " ", -842352768);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "\t", -842352729);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "a", -842352705);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "ab", -840386625);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "abc", 536991770);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "1", -842352753);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "a1", -843466817);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "1a", -840321137);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "aa", -840321089);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "aaa", -625742108);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "11", -843466865);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "111", 1508494276);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "12", -843532401);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "123", -1623739142);
+			TestValue_GetHashCodeAsNet472(valueBag, history, "bvuYGfg823tbn181", -2132762692);
 
 			/*
 			// Just add some random values and expect them to not collide.
@@ -1027,7 +1027,7 @@ namespace ExtenityTests.DataToolbox
 			{
 				RandomTools.FillRandomly(buffer);
 				var value = buffer.ConvertToString(0, Random.Range(1, 10));
-				if (!TestValue_GetHashCodeGuaranteed(valueBag, history, value))
+				if (!TestValue_GetHashCodeAsNet472(valueBag, history, value))
 					i--;
 			}
 			*/
@@ -1035,16 +1035,16 @@ namespace ExtenityTests.DataToolbox
 
 		//private static void CreateLog(System.Text.StringBuilder builder, string value)
 		//{
-		//	var hash = value.GetHashCodeGuaranteed();
-		//	builder.AppendLine($@"TestValue_GetHashCodeGuaranteed(history, ""{value}"", {hash});");
+		//	var hash = value.GetHashCodeAsNet472();
+		//	builder.AppendLine($@"TestValue_GetHashCodeAsNet472(history, ""{value}"", {hash});");
 		//}
 
-		private static bool TestValue_GetHashCodeGuaranteed(HashSet<string> valueBag, Dictionary<int, string> history, string value)
+		private static bool TestValue_GetHashCodeAsNet472(HashSet<string> valueBag, Dictionary<int, string> history, string value)
 		{
 			if (!valueBag.Add(value))
 				return false;
 
-			var hash = value.GetHashCodeGuaranteed();
+			var hash = value.GetHashCodeAsNet472();
 
 			// Just make sure there will be no collision with our basic dataset.
 			// If it's not the case, something is really going sideways.
@@ -1055,12 +1055,12 @@ namespace ExtenityTests.DataToolbox
 			return true;
 		}
 
-		private static bool TestValue_GetHashCodeGuaranteed(HashSet<string> valueBag, Dictionary<int, string> history, string value, int expectedHash)
+		private static bool TestValue_GetHashCodeAsNet472(HashSet<string> valueBag, Dictionary<int, string> history, string value, int expectedHash)
 		{
 			if (!valueBag.Add(value))
 				return false;
 
-			var hash = value.GetHashCodeGuaranteed();
+			var hash = value.GetHashCodeAsNet472();
 
 			// Just make sure there will be no collision with our basic dataset.
 			// If it's not the case, something is really going sideways.
