@@ -13,15 +13,6 @@ namespace Extenity.FlowToolbox
 
 	public class LoopHelper : MonoBehaviour
 	{
-		#region Deinitialization
-
-		private void OnApplicationQuit()
-		{
-			ApplicationTools.IsShuttingDown = true;
-		}
-
-		#endregion
-
 		#region Update
 
 		private void FixedUpdate()

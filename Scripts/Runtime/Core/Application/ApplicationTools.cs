@@ -17,7 +17,21 @@ namespace Extenity.ApplicationToolbox
 		#region Deinitialization
 
 #if UNITY_5_3_OR_NEWER
-		public static bool IsShuttingDown = false;
+		private static bool _IsShuttingDown = false;
+		public static bool IsShuttingDown => _IsShuttingDown;
+
+		[UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void Initialize()
+		{
+			_IsShuttingDown = false;
+			UnityEngine.Application.quitting -= OnApplicationQuitting;
+			UnityEngine.Application.quitting += OnApplicationQuitting;
+		}
+
+		private static void OnApplicationQuitting()
+		{
+			_IsShuttingDown = true;
+		}
 #endif
 
 		#endregion
