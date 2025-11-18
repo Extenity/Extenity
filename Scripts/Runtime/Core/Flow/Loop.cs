@@ -29,13 +29,17 @@ namespace Extenity.FlowToolbox
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Instantiate()
 		{
-			Debug.Assert(Instance == null);
+			// Debug.Assert(Instance == null); Decided not to deinitialize Loop system anytime. If it's up, it stays up until application quits, or Editor recompiles.
 			InitializeSystem();
 		}
 
 		public static void InitializeSystem()
 		{
 			// DeinitializeSystem(); Decided not to deinitialize Loop system anytime. If it's up, it stays up until application quits, or Editor recompiles.
+			if (Instance != null)
+			{
+				return;
+			}
 
 			Invoker.InitializeSystem();
 
