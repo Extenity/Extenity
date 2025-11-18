@@ -20,6 +20,13 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
+		#region Counters
+
+		public static int FrameCount;
+		public static int FixedUpdateCount;
+
+		#endregion
+
 		#region Initialization
 
 		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea.
@@ -293,11 +300,11 @@ namespace Extenity.FlowToolbox
 
 		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
 		{
-			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
+			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); FrameCount++; InvokeSafeIfEnabled(Instance.TimeCallbacks); };
 			if (typeof(T) == typeof(NetworkingRunner)) return () => { InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
 
 			if (typeof(T) == typeof(PreFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
-			if (typeof(T) == typeof(FixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
+			if (typeof(T) == typeof(FixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); FixedUpdateCount++; Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
 			if (typeof(T) == typeof(PostFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
 
 			if (typeof(T) == typeof(PreUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };

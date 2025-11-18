@@ -29,20 +29,6 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
-		#region Counters
-
-		/* TODO: This functionality became lost when switching to use PlayerLoop API, instead of MonoBehaviour callbacks. It will be reimplemented later.
-		[Title("Stats")]
-		[NonSerialized, ShowInInspector]
-		public int UpdateCount;
-		[NonSerialized, ShowInInspector]
-		public int FixedUpdateCount;
-		[NonSerialized, ShowInInspector]
-		public int LateUpdateCount;
-		*/
-
-		#endregion
-
 		#region FPS Analyzer
 
 		/* TODO: This functionality became lost when switching to use PlayerLoop API, instead of MonoBehaviour callbacks. It will be reimplemented later.

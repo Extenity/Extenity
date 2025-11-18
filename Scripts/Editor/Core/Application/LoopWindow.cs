@@ -55,6 +55,14 @@ namespace Extenity.FlowToolbox
 
 			ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, false, true);
 
+			// Display counters
+			EditorGUILayoutTools.DrawHeader("Counters");
+			EditorGUI.indentLevel++;
+			EditorGUILayout.LabelField("Frame Count", Loop.FrameCount.ToString());
+			EditorGUILayout.LabelField("Fixed Update Count", Loop.FixedUpdateCount.ToString());
+			EditorGUI.indentLevel--;
+			GUILayout.Space(8f);
+
 			DrawListenersList("FixedUpdate ({0})",
 			                  instance.PreFixedUpdateCallbacks._Listeners,
 			                  instance.FixedUpdateCallbacks._Listeners,
