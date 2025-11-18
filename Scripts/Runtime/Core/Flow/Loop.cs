@@ -78,78 +78,95 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
-		#region Callbacks
+		#region Callback Registration
+
+		// @formatter:off
 
 		/// <summary>Registers a callback for custom time calculations. Runs right after Unity updates its internal time values, before any Update callbacks. Use this to implement custom time management or time scaling.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterTime        (Action callback, int order = 0) { Instance.TimeCallbacks.AddListener(callback, order);       }
+		public static void RegisterTime                 (Action callback, int order = 0) { Instance.TimeCallbacks                 .AddListener(callback, order); }
+
 		/// <summary>Registers a callback for networking operations. Runs right after Time callbacks and before any Update callbacks. Network updates happen early so game logic can consume fresh network data.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterNetworking  (Action callback, int order = 0) { Instance.NetworkingCallbacks.AddListener(callback, order); }
-		public static void DeregisterTime      (Action callback) { if (Instance != null) Instance.TimeCallbacks.RemoveListener(callback);       }
-		public static void DeregisterNetworking(Action callback) { if (Instance != null) Instance.NetworkingCallbacks.RemoveListener(callback); }
+		public static void RegisterNetworking           (Action callback, int order = 0) { Instance.NetworkingCallbacks           .AddListener(callback, order); }
 
-		// @formatter:off
 		/// <summary>Registers a callback to run before FixedUpdate. Runs before Unity's MonoBehaviour FixedUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPreFixedUpdate  (Action callback, int order = 0) { Instance.PreFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPreFixedUpdate       (Action callback, int order = 0) { Instance.PreFixedUpdateCallbacks       .AddListener(callback, order); }
+
 		/// <summary>Registers a callback to run before Update. Runs before Unity's MonoBehaviour Update callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPreUpdate       (Action callback, int order = 0) { Instance.PreUpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterPreUpdate            (Action callback, int order = 0) { Instance.PreUpdateCallbacks            .AddListener(callback, order); }
+
 		/// <summary>Registers a callback to run before LateUpdate. Runs before Unity's MonoBehaviour LateUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPreLateUpdate   (Action callback, int order = 0) { Instance.PreLateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterPreFixedUpdate(Action callback) { if (Instance != null) Instance.PreFixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterPreUpdate     (Action callback) { if (Instance != null) Instance.PreUpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterPreLateUpdate (Action callback) { if (Instance != null) Instance.PreLateUpdateCallbacks.RemoveListener(callback);       }
+		public static void RegisterPreLateUpdate        (Action callback, int order = 0) { Instance.PreLateUpdateCallbacks        .AddListener(callback, order); }
 
 		/// <summary>Registers a callback to run during FixedUpdate. Runs after Unity's MonoBehaviour FixedUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterFixedUpdate  (Action callback, int order = 0) { Instance.FixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterFixedUpdate          (Action callback, int order = 0) { Instance.FixedUpdateCallbacks          .AddListener(callback, order); }
+
 		/// <summary>Registers a callback to run during Update. Runs after Unity's MonoBehaviour Update callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterUpdate       (Action callback, int order = 0) { Instance.UpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterUpdate               (Action callback, int order = 0) { Instance.UpdateCallbacks               .AddListener(callback, order); }
+
 		/// <summary>Registers a callback to run during LateUpdate. Runs after Unity's MonoBehaviour LateUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterLateUpdate   (Action callback, int order = 0) { Instance.LateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterFixedUpdate(Action callback) { if (Instance != null) Instance.FixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterUpdate     (Action callback) { if (Instance != null) Instance.UpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterLateUpdate (Action callback) { if (Instance != null) Instance.LateUpdateCallbacks.RemoveListener(callback);       }
+		public static void RegisterLateUpdate           (Action callback, int order = 0) { Instance.LateUpdateCallbacks           .AddListener(callback, order); }
 
 		/// <summary>Registers a callback to run after FixedUpdate. Runs after Unity's MonoBehaviour FixedUpdate callbacks and after FixedUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPostFixedUpdate  (Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks.AddListener(callback, order); }
+		public static void RegisterPostFixedUpdate      (Action callback, int order = 0) { Instance.PostFixedUpdateCallbacks      .AddListener(callback, order); }
 		/// <summary>Registers a callback to run after Update. Runs after Unity's MonoBehaviour Update callbacks and after Update callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPostUpdate       (Action callback, int order = 0) { Instance.PostUpdateCallbacks.AddListener(callback, order);      }
+		public static void RegisterPostUpdate           (Action callback, int order = 0) { Instance.PostUpdateCallbacks           .AddListener(callback, order); }
 		/// <summary>Registers a callback to run after LateUpdate. Runs after Unity's MonoBehaviour LateUpdate callbacks and after LateUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPostLateUpdate   (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks.AddListener(callback, order);  }
-		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance != null) Instance.PostFixedUpdateCallbacks.RemoveListener(callback);      }
-		public static void DeregisterPostUpdate     (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
-		public static void DeregisterPostLateUpdate (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
+		public static void RegisterPostLateUpdate       (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks       .AddListener(callback, order); }
 
 		/// <summary>Registers a callback for setting rendering-related data. Runs after all update logic but before rendering begins. Use this to update shader properties, material values, or other render state that should be set right before rendering.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPreRender(Action callback, int order = 0) { Instance.PreRenderCallbacks.AddListener(callback, order); }
+		public static void RegisterPreRender            (Action callback, int order = 0) { Instance.PreRenderCallbacks            .AddListener(callback, order); }
+
 		/// <summary>Registers a callback for setting UI rendering-related data. Runs after PreRender callbacks and before rendering begins. Use this to update UI element properties that should be set right before UI rendering. UI typically renders on top of the scene.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
-		public static void RegisterPreUI    (Action callback, int order = 0) { Instance.PreUICallbacks.AddListener(callback, order);     }
-		public static void DeregisterPreRender(Action callback) { if (Instance != null) Instance.PreRenderCallbacks.RemoveListener(callback); }
-		public static void DeregisterPreUI    (Action callback) { if (Instance != null) Instance.PreUICallbacks.RemoveListener(callback);     }
+		public static void RegisterPreUI                (Action callback, int order = 0) { Instance.PreUICallbacks                .AddListener(callback, order); }
+
+		// @formatter:on
+
+		#endregion
+
+		#region Callback Deregistration
+
+		// @formatter:off
+
+		public static void DeregisterTime                 (Action callback) { if (Instance != null) Instance.TimeCallbacks                 .RemoveListener(callback); }
+		public static void DeregisterNetworking           (Action callback) { if (Instance != null) Instance.NetworkingCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPreFixedUpdate       (Action callback) { if (Instance != null) Instance.PreFixedUpdateCallbacks       .RemoveListener(callback); }
+		public static void DeregisterPreUpdate            (Action callback) { if (Instance != null) Instance.PreUpdateCallbacks            .RemoveListener(callback); }
+		public static void DeregisterPreLateUpdate        (Action callback) { if (Instance != null) Instance.PreLateUpdateCallbacks        .RemoveListener(callback); }
+		public static void DeregisterFixedUpdate          (Action callback) { if (Instance != null) Instance.FixedUpdateCallbacks          .RemoveListener(callback); }
+		public static void DeregisterUpdate               (Action callback) { if (Instance != null) Instance.UpdateCallbacks               .RemoveListener(callback); }
+		public static void DeregisterLateUpdate           (Action callback) { if (Instance != null) Instance.LateUpdateCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPostFixedUpdate      (Action callback) { if (Instance != null) Instance.PostFixedUpdateCallbacks      .RemoveListener(callback); }
+		public static void DeregisterPostUpdate           (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPostLateUpdate       (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks       .RemoveListener(callback); }
+		public static void DeregisterPreRender            (Action callback) { if (Instance != null) Instance.PreRenderCallbacks            .RemoveListener(callback); }
+		public static void DeregisterPreUI                (Action callback) { if (Instance != null) Instance.PreUICallbacks                .RemoveListener(callback); }
+
 		// @formatter:on
 
 		#endregion
