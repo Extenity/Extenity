@@ -299,23 +299,23 @@ namespace Extenity.FlowToolbox
 
 		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
 		{
-			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
-			if (typeof(T) == typeof(NetworkingRunner)) return () => { InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
+			// @formatter:off
 
-			if (typeof(T) == typeof(PreFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
-			if (typeof(T) == typeof(FixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); FixedUpdateCount++; Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
-			if (typeof(T) == typeof(PostFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
+			if (typeof(T) == typeof(TimeRunner                 )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
+			if (typeof(T) == typeof(NetworkingRunner           )) return () => {                                 InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
+			if (typeof(T) == typeof(PreFixedUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
+			if (typeof(T) == typeof(FixedUpdateRunner          )) return () => { SetCachedTimesFromUnityTimes(); FixedUpdateCount++; Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
+			if (typeof(T) == typeof(PostFixedUpdateRunner      )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
+			if (typeof(T) == typeof(PreUpdateRunner            )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };
+			if (typeof(T) == typeof(UpdateRunner               )) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomUpdate(UnscaledTime); InvokeSafeIfEnabled(Instance.UpdateCallbacks); };
+			if (typeof(T) == typeof(PostUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostUpdateCallbacks); };
+			if (typeof(T) == typeof(PreLateUpdateRunner        )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
+			if (typeof(T) == typeof(LateUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
+			if (typeof(T) == typeof(PostLateUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
+			if (typeof(T) == typeof(PreRenderRunner            )) return () => {                                 InvokeSafeIfEnabled(Instance.PreRenderCallbacks); };
+			if (typeof(T) == typeof(PreUIRunner                )) return () => {                                 InvokeSafeIfEnabled(Instance.PreUICallbacks); };
 
-			if (typeof(T) == typeof(PreUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };
-			if (typeof(T) == typeof(UpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomUpdate(UnscaledTime); InvokeSafeIfEnabled(Instance.UpdateCallbacks); };
-			if (typeof(T) == typeof(PostUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostUpdateCallbacks); };
-
-			if (typeof(T) == typeof(PreLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
-			if (typeof(T) == typeof(LateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
-			if (typeof(T) == typeof(PostLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
-
-			if (typeof(T) == typeof(PreRenderRunner)) return () => { InvokeSafeIfEnabled(Instance.PreRenderCallbacks); };
-			if (typeof(T) == typeof(PreUIRunner)) return () => { InvokeSafeIfEnabled(Instance.PreUICallbacks); };
+			// @formatter:on
 
 			throw new NotImplementedException($"No update delegate defined for type {typeof(T)}");
 		}
