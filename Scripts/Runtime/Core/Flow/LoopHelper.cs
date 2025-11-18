@@ -9,6 +9,9 @@ namespace Extenity.FlowToolbox
 	{
 		#region Callbacks
 
+		public readonly ExtenityEvent TimeCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent NetworkingCallbacks = new ExtenityEvent();
+
 		public readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PreLateUpdateCallbacks = new ExtenityEvent();
@@ -20,6 +23,9 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PostFixedUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
+
+		public readonly ExtenityEvent PreRenderCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent PreUICallbacks = new ExtenityEvent();
 
 		#endregion
 

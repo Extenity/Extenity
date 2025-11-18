@@ -76,6 +76,17 @@ namespace Extenity.FlowToolbox
 
 		#region Callbacks
 
+		/// <summary>Registers a callback for custom time calculations. Runs right after Unity updates its internal time values, before any Update callbacks. Use this to implement custom time management or time scaling.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterTime        (Action callback, int order = 0) { Instance.TimeCallbacks.AddListener(callback, order);       }
+		/// <summary>Registers a callback for networking operations. Runs right after Time callbacks and before any Update callbacks. Network updates happen early so game logic can consume fresh network data.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterNetworking  (Action callback, int order = 0) { Instance.NetworkingCallbacks.AddListener(callback, order); }
+		public static void DeregisterTime      (Action callback) { if (Instance != null) Instance.TimeCallbacks.RemoveListener(callback);       }
+		public static void DeregisterNetworking(Action callback) { if (Instance != null) Instance.NetworkingCallbacks.RemoveListener(callback); }
+
 		// @formatter:off
 		/// <summary>Registers a callback to run before FixedUpdate. Runs before Unity's MonoBehaviour FixedUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
@@ -124,6 +135,17 @@ namespace Extenity.FlowToolbox
 		public static void DeregisterPostFixedUpdate(Action callback) { if (Instance != null) Instance.PostFixedUpdateCallbacks.RemoveListener(callback);      }
 		public static void DeregisterPostUpdate     (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks.RemoveListener(callback);           }
 		public static void DeregisterPostLateUpdate (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks.RemoveListener(callback);       }
+
+		/// <summary>Registers a callback for setting rendering-related data. Runs after all update logic but before rendering begins. Use this to update shader properties, material values, or other render state that should be set right before rendering.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterPreRender(Action callback, int order = 0) { Instance.PreRenderCallbacks.AddListener(callback, order); }
+		/// <summary>Registers a callback for setting UI rendering-related data. Runs after PreRender callbacks and before rendering begins. Use this to update UI element properties that should be set right before UI rendering. UI typically renders on top of the scene.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterPreUI    (Action callback, int order = 0) { Instance.PreUICallbacks.AddListener(callback, order);     }
+		public static void DeregisterPreRender(Action callback) { if (Instance != null) Instance.PreRenderCallbacks.RemoveListener(callback); }
+		public static void DeregisterPreUI    (Action callback) { if (Instance != null) Instance.PreUICallbacks.RemoveListener(callback);     }
 		// @formatter:on
 
 		#endregion
@@ -132,6 +154,9 @@ namespace Extenity.FlowToolbox
 
 		private static void InjectIntoPlayerLoop(ref PlayerLoopSystem playerLoop)
 		{
+			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeUpdate.WaitForLastPresentationAndUpdateTime), CreateLoopSystem<TimeRunner>());
+			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeRunner), CreateLoopSystem<NetworkingRunner>());
+
 			InsertLoopSystemBefore<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<PreFixedUpdateRunner>());
 			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<FixedUpdateRunner>());
 			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner), CreateLoopSystem<PostFixedUpdateRunner>());
@@ -143,10 +168,16 @@ namespace Extenity.FlowToolbox
 			InsertLoopSystemBefore<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<PreLateUpdateRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<LateUpdateRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner), CreateLoopSystem<PostLateUpdateRunner>());
+
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner), CreateLoopSystem<PreRenderRunner>());
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner), CreateLoopSystem<PreUIRunner>());
 		}
 
 		private static void RemoveFromPlayerLoop(ref PlayerLoopSystem playerLoop)
 		{
+			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(TimeRunner));
+			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner));
+
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PreFixedUpdateRunner));
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner));
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PostFixedUpdateRunner));
@@ -158,6 +189,8 @@ namespace Extenity.FlowToolbox
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner));
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner));
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreUIRunner));
 		}
 
 		private static PlayerLoopSystem CreateLoopSystem<T>() where T : struct
@@ -239,6 +272,9 @@ namespace Extenity.FlowToolbox
 
 		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
 		{
+			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
+			if (typeof(T) == typeof(NetworkingRunner)) return () => { InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
+
 			if (typeof(T) == typeof(PreFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
 			if (typeof(T) == typeof(FixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
 			if (typeof(T) == typeof(PostFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
@@ -250,6 +286,9 @@ namespace Extenity.FlowToolbox
 			if (typeof(T) == typeof(PreLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
 			if (typeof(T) == typeof(LateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
 			if (typeof(T) == typeof(PostLateUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
+
+			if (typeof(T) == typeof(PreRenderRunner)) return () => { InvokeSafeIfEnabled(Instance.PreRenderCallbacks); };
+			if (typeof(T) == typeof(PreUIRunner)) return () => { InvokeSafeIfEnabled(Instance.PreUICallbacks); };
 
 			throw new NotImplementedException($"No update delegate defined for type {typeof(T)}");
 		}
@@ -268,15 +307,23 @@ namespace Extenity.FlowToolbox
 		}
 
 		// Marker types for PlayerLoop injection
+		private struct TimeRunner { }
+		private struct NetworkingRunner { }
+
 		private struct PreFixedUpdateRunner { }
 		private struct FixedUpdateRunner { }
 		private struct PostFixedUpdateRunner { }
+
 		private struct PreUpdateRunner { }
 		private struct UpdateRunner { }
 		private struct PostUpdateRunner { }
+
 		private struct PreLateUpdateRunner { }
 		private struct LateUpdateRunner { }
 		private struct PostLateUpdateRunner { }
+
+		private struct PreRenderRunner { }
+		private struct PreUIRunner { }
 
 		#endregion
 
@@ -286,6 +333,9 @@ namespace Extenity.FlowToolbox
 		{
 			if (EnableCatchingExceptionsInUpdateCallbacks)
 			{
+				Instance.TimeCallbacks.InvokeSafe();
+				Instance.NetworkingCallbacks.InvokeSafe();
+
 				for (int i = 0; i < fixedUpdateIterations; i++)
 				{
 					Instance.PreFixedUpdateCallbacks.InvokeSafe();
@@ -300,9 +350,15 @@ namespace Extenity.FlowToolbox
 				Instance.PreLateUpdateCallbacks.InvokeSafe();
 				Instance.LateUpdateCallbacks.InvokeSafe();
 				Instance.PostLateUpdateCallbacks.InvokeSafe();
+
+				Instance.PreRenderCallbacks.InvokeSafe();
+				Instance.PreUICallbacks.InvokeSafe();
 			}
 			else
 			{
+				Instance.TimeCallbacks.InvokeUnsafe();
+				Instance.NetworkingCallbacks.InvokeUnsafe();
+
 				for (int i = 0; i < fixedUpdateIterations; i++)
 				{
 					Instance.PreFixedUpdateCallbacks.InvokeUnsafe();
@@ -317,6 +373,9 @@ namespace Extenity.FlowToolbox
 				Instance.PreLateUpdateCallbacks.InvokeUnsafe();
 				Instance.LateUpdateCallbacks.InvokeUnsafe();
 				Instance.PostLateUpdateCallbacks.InvokeUnsafe();
+
+				Instance.PreRenderCallbacks.InvokeUnsafe();
+				Instance.PreUICallbacks.InvokeUnsafe();
 			}
 		}
 
@@ -482,6 +541,9 @@ namespace Extenity.FlowToolbox
 				}
 			}
 
+			CheckCallbacks(Instance.TimeCallbacks, "Time");
+			CheckCallbacks(Instance.NetworkingCallbacks, "Networking");
+
 			CheckCallbacks(Instance.PreFixedUpdateCallbacks, "PreFixedUpdate");
 			CheckCallbacks(Instance.PreUpdateCallbacks, "PreUpdate");
 			CheckCallbacks(Instance.PreLateUpdateCallbacks, "PreLateUpdate");
@@ -493,6 +555,9 @@ namespace Extenity.FlowToolbox
 			CheckCallbacks(Instance.PostFixedUpdateCallbacks, "PostFixedUpdate");
 			CheckCallbacks(Instance.PostUpdateCallbacks, "PostUpdate");
 			CheckCallbacks(Instance.PostLateUpdateCallbacks, "PostLateUpdate");
+
+			CheckCallbacks(Instance.PreRenderCallbacks, "PreRender");
+			CheckCallbacks(Instance.PreUICallbacks, "PreUI");
 
 			if (totalCallbacks > 0)
 			{
