@@ -16,7 +16,7 @@ namespace Extenity.FlowToolbox
 	{
 		#region Singleton
 
-		public static LoopHelper Instance;
+		public static LoopCallbacks Instance;
 
 		#endregion
 
@@ -54,7 +54,7 @@ namespace Extenity.FlowToolbox
 			// Otherwise, cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
 			SetCachedTimesFromUnityTimes();
 
-			Instance = new LoopHelper();
+			Instance = new LoopCallbacks();
 
 			// Inject custom update callbacks into Unity's PlayerLoop
 			var playerLoop = PlayerLoop.GetCurrentPlayerLoop();

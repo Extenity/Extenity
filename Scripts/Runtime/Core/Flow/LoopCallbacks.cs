@@ -5,7 +5,7 @@ using Extenity.MessagingToolbox;
 namespace Extenity.FlowToolbox
 {
 
-	public class LoopHelper
+	public class LoopCallbacks
 	{
 		#region Callbacks
 
