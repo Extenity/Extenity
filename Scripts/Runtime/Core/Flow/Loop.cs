@@ -160,19 +160,19 @@ namespace Extenity.FlowToolbox
 
 		// @formatter:off
 
-		public static void DeregisterTime                 (Action callback) { if (Instance != null) Instance.TimeCallbacks                 .RemoveListener(callback); }
-		public static void DeregisterNetworking           (Action callback) { if (Instance != null) Instance.NetworkingCallbacks           .RemoveListener(callback); }
-		public static void DeregisterPreFixedUpdate       (Action callback) { if (Instance != null) Instance.PreFixedUpdateCallbacks       .RemoveListener(callback); }
-		public static void DeregisterPreUpdate            (Action callback) { if (Instance != null) Instance.PreUpdateCallbacks            .RemoveListener(callback); }
-		public static void DeregisterPreLateUpdate        (Action callback) { if (Instance != null) Instance.PreLateUpdateCallbacks        .RemoveListener(callback); }
-		public static void DeregisterFixedUpdate          (Action callback) { if (Instance != null) Instance.FixedUpdateCallbacks          .RemoveListener(callback); }
-		public static void DeregisterUpdate               (Action callback) { if (Instance != null) Instance.UpdateCallbacks               .RemoveListener(callback); }
-		public static void DeregisterLateUpdate           (Action callback) { if (Instance != null) Instance.LateUpdateCallbacks           .RemoveListener(callback); }
-		public static void DeregisterPostFixedUpdate      (Action callback) { if (Instance != null) Instance.PostFixedUpdateCallbacks      .RemoveListener(callback); }
-		public static void DeregisterPostUpdate           (Action callback) { if (Instance != null) Instance.PostUpdateCallbacks           .RemoveListener(callback); }
-		public static void DeregisterPostLateUpdate       (Action callback) { if (Instance != null) Instance.PostLateUpdateCallbacks       .RemoveListener(callback); }
-		public static void DeregisterPreRender            (Action callback) { if (Instance != null) Instance.PreRenderCallbacks            .RemoveListener(callback); }
-		public static void DeregisterPreUI                (Action callback) { if (Instance != null) Instance.PreUICallbacks                .RemoveListener(callback); }
+		public static void DeregisterTime                 (Action callback) { Instance.TimeCallbacks                 .RemoveListener(callback); }
+		public static void DeregisterNetworking           (Action callback) { Instance.NetworkingCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPreFixedUpdate       (Action callback) { Instance.PreFixedUpdateCallbacks       .RemoveListener(callback); }
+		public static void DeregisterPreUpdate            (Action callback) { Instance.PreUpdateCallbacks            .RemoveListener(callback); }
+		public static void DeregisterPreLateUpdate        (Action callback) { Instance.PreLateUpdateCallbacks        .RemoveListener(callback); }
+		public static void DeregisterFixedUpdate          (Action callback) { Instance.FixedUpdateCallbacks          .RemoveListener(callback); }
+		public static void DeregisterUpdate               (Action callback) { Instance.UpdateCallbacks               .RemoveListener(callback); }
+		public static void DeregisterLateUpdate           (Action callback) { Instance.LateUpdateCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPostFixedUpdate      (Action callback) { Instance.PostFixedUpdateCallbacks      .RemoveListener(callback); }
+		public static void DeregisterPostUpdate           (Action callback) { Instance.PostUpdateCallbacks           .RemoveListener(callback); }
+		public static void DeregisterPostLateUpdate       (Action callback) { Instance.PostLateUpdateCallbacks       .RemoveListener(callback); }
+		public static void DeregisterPreRender            (Action callback) { Instance.PreRenderCallbacks            .RemoveListener(callback); }
+		public static void DeregisterPreUI                (Action callback) { Instance.PreUICallbacks                .RemoveListener(callback); }
 
 		// @formatter:on
 
