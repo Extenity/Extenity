@@ -44,7 +44,7 @@ namespace Extenity.FlowToolbox
 			Invoker.InitializeSystem();
 
 			// Initialize cached times here at start.
-			// Otherwise cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
+			// Otherwise, cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
 			SetCachedTimesFromUnityTimes();
 
 			Instance = new LoopHelper();
@@ -548,7 +548,7 @@ namespace Extenity.FlowToolbox
 			var totalCallbacks = 0;
 			List<string> callbackDetails = null;
 
-			void CheckCallbacks(MessagingToolbox.ExtenityEvent extenityEvent, string callbackName)
+			void CheckCallbacks(ExtenityEvent extenityEvent, string callbackName)
 			{
 				if (extenityEvent.IsAnyListenerRegistered)
 				{
