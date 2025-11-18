@@ -22,7 +22,6 @@ namespace Extenity.FlowToolbox
 
 		#region Counters
 
-		public static int FrameCount;
 		public static int FixedUpdateCount;
 
 		#endregion
@@ -300,7 +299,7 @@ namespace Extenity.FlowToolbox
 
 		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
 		{
-			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); FrameCount++; InvokeSafeIfEnabled(Instance.TimeCallbacks); };
+			if (typeof(T) == typeof(TimeRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
 			if (typeof(T) == typeof(NetworkingRunner)) return () => { InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
 
 			if (typeof(T) == typeof(PreFixedUpdateRunner)) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
@@ -416,12 +415,14 @@ namespace Extenity.FlowToolbox
 		public static float Time         { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.time;         }
 		public static float DeltaTime    { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.deltaTime;    }
 		public static float UnscaledTime { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.unscaledTime; }
+		public static int   FrameCount   { [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)] get => UnityEngine.Time.frameCount;   }
 
 #elif !UNITY_EDITOR && !DEBUG
 
 		public static float Time;
 		public static float DeltaTime;
 		public static float UnscaledTime;
+		public static int FrameCount;
 
 #else
 
@@ -470,6 +471,21 @@ namespace Extenity.FlowToolbox
 			private set => _UnscaledTime = value;
 		}
 
+		private static int _FrameCount;
+		public static int FrameCount
+		{
+			get
+			{
+#if UNITY_EDITOR
+				if (!Application.isPlaying) // Use Unity times when working in editor.
+					return UnityEngine.Time.frameCount;
+#endif
+				CheckCachedIntValue(UnityEngine.Time.frameCount, _FrameCount, "frameCount");
+				return _FrameCount;
+			}
+			private set => _FrameCount = value;
+		}
+
 		/// <summary>
 		/// Makes sure cached value is exactly the same with Unity's value.
 		/// Value is cached at the start of Update calls. This method ensures each time
@@ -492,6 +508,25 @@ namespace Extenity.FlowToolbox
 			}
 		}
 
+		/// <summary>
+		/// Makes sure cached value is exactly the same with Unity's value.
+		/// Value is cached at the start of Update calls. This method ensures each time
+		/// the code gets that cached value, if asked Unity instead, Unity too would tell
+		/// the same value that is exactly equal to the cached value. If not, that means
+		/// a serious internal error.
+		///
+		/// If that error happens, error contains which parameter is problematic
+		/// (time, deltaTime, etc.). Also look into the callstack to see which Update method
+		/// it is (FixedUpdate, LateUpdate, etc.).
+		/// </summary>
+		private static void CheckCachedIntValue(int originalValue, int cachedValue, string memberName)
+		{
+			if (originalValue != cachedValue)
+			{
+				Log.Fatal($"Loop System detected that the cached 'Time.{memberName}' became obsolete. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported value: {originalValue}\nLoop cached value: {cachedValue}\nDifference: {(originalValue - cachedValue)}");
+			}
+		}
+
 #endif
 
 		internal static void SetCachedTimesFromUnityTimes()
@@ -500,6 +535,7 @@ namespace Extenity.FlowToolbox
 			Time = UnityEngine.Time.time;
 			DeltaTime = UnityEngine.Time.deltaTime;
 			UnscaledTime = UnityEngine.Time.unscaledTime;
+			FrameCount = UnityEngine.Time.frameCount;
 #endif
 		}
 
@@ -509,6 +545,7 @@ namespace Extenity.FlowToolbox
 			Time = float.NaN;
 			DeltaTime = float.NaN;
 			UnscaledTime = float.NaN;
+			FrameCount = int.MinValue;
 #endif
 		}
 
