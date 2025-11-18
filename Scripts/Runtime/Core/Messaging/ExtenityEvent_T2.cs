@@ -2,6 +2,10 @@
 #define UnityFeatures
 #endif
 
+#if UnityFeatures && (DEVELOPMENT_BUILD || UNITY_EDITOR)
+#define EnableProfiling
+#endif
+
 using System.Collections.Generic;
 using System.Text;
 using Extenity.DataToolbox;
@@ -11,6 +15,10 @@ using Exception = System.Exception;
 using NotImplementedException = System.NotImplementedException;
 using NotSupportedException = System.NotSupportedException;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+
+#if EnableProfiling
+using Unity.Profiling;
+#endif
 
 // This is the way that Log system supports various Context types in different environments like
 // both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
@@ -28,6 +36,28 @@ namespace Extenity.MessagingToolbox
 
 	public class ExtenityEvent<T1, T2>
 	{
+		#region Profiler Markers
+
+#if EnableProfiling
+
+		private static readonly Dictionary<Action<T1, T2>, ProfilerMarker> ProfilerMarkerCache = new Dictionary<Action<T1, T2>, ProfilerMarker>();
+
+		private static ProfilerMarker GetOrCreateProfilerMarker(Action<T1, T2> callback)
+		{
+			if (!ProfilerMarkerCache.TryGetValue(callback, out var marker))
+			{
+				var typeName = callback.Method.DeclaringType?.Name ?? "Unknown";
+				var methodName = callback.Method.Name;
+				marker = new ProfilerMarker($"{typeName}.{methodName}");
+				ProfilerMarkerCache[callback] = marker;
+			}
+			return marker;
+		}
+
+#endif
+
+		#endregion
+
 		#region Listeners
 
 		public struct Listener
@@ -441,7 +471,12 @@ namespace Extenity.MessagingToolbox
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
 						InvokingCallback = listener.Callback;
-						callback(param1, param2);
+#if EnableProfiling
+						using (GetOrCreateProfilerMarker(callback).Auto())
+#endif
+						{
+							callback(param1, param2);
+						}
 						InvokingCallback = null;
 					}
 
@@ -491,7 +526,12 @@ namespace Extenity.MessagingToolbox
 					try
 					{
 						InvokingCallback = listener.Callback;
-						callback(param1, param2);
+#if EnableProfiling
+						using (GetOrCreateProfilerMarker(callback).Auto())
+#endif
+						{
+							callback(param1, param2);
+						}
 						InvokingCallback = null;
 					}
 					// Let these exceptions pass through. It means there is an unexpected developer error,
