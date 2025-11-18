@@ -434,7 +434,7 @@ namespace Extenity.FlowToolbox
 				if (!Application.isPlaying) // Use Unity times when working in editor.
 					return UnityEngine.Time.time;
 #endif
-				CheckExpectedTime(UnityEngine.Time.time, _Time, nameof(Time));
+				CheckCachedFloatValue(UnityEngine.Time.time, _Time, "time");
 				return _Time;
 			}
 			private set => _Time = value;
@@ -449,7 +449,7 @@ namespace Extenity.FlowToolbox
 				if (!Application.isPlaying) // Use Unity times when working in editor.
 					return UnityEngine.Time.deltaTime;
 #endif
-				CheckExpectedTime(UnityEngine.Time.deltaTime, _DeltaTime, nameof(DeltaTime));
+				CheckCachedFloatValue(UnityEngine.Time.deltaTime, _DeltaTime, "deltaTime");
 				return _DeltaTime;
 			}
 			private set => _DeltaTime = value;
@@ -464,15 +464,15 @@ namespace Extenity.FlowToolbox
 				if (!Application.isPlaying) // Use Unity times when working in editor.
 					return UnityEngine.Time.unscaledTime;
 #endif
-				CheckExpectedTime(UnityEngine.Time.unscaledTime, _UnscaledTime, nameof(UnscaledTime));
+				CheckCachedFloatValue(UnityEngine.Time.unscaledTime, _UnscaledTime, "unscaledTime");
 				return _UnscaledTime;
 			}
 			private set => _UnscaledTime = value;
 		}
 
 		/// <summary>
-		/// Makes sure cached time value is exactly the same with Unity's time value.
-		/// Time value is cached at the start of Update calls. This method ensures each time
+		/// Makes sure cached value is exactly the same with Unity's value.
+		/// Value is cached at the start of Update calls. This method ensures each time
 		/// the code gets that cached value, if asked Unity instead, Unity too would tell
 		/// the same value that is exactly equal to the cached value. If not, that means
 		/// a serious internal error.
@@ -481,14 +481,14 @@ namespace Extenity.FlowToolbox
 		/// (time, deltaTime, etc.). Also look into the callstack to see which Update method
 		/// it is (FixedUpdate, LateUpdate, etc.).
 		/// </summary>
-		private static void CheckExpectedTime(float originalTime, float cachedTime, string parameterName)
+		private static void CheckCachedFloatValue(float originalValue, float cachedValue, string memberName)
 		{
-			const float timeEqualityCheckTolerance = 1.0f / 1000.0f / 1000.0f; // 1 microsecond
+			const float TimeEqualityCheckTolerance = 1.0f / 1000.0f / 1000.0f; // 1 microsecond, if the value is in seconds.
 
 			// ReSharper disable once CompareOfFloatsByEqualityOperator
-			if (!originalTime.IsAlmostEqual(cachedTime, timeEqualityCheckTolerance))
+			if (!originalValue.IsAlmostEqual(cachedValue, TimeEqualityCheckTolerance))
 			{
-				Log.Fatal($"{nameof(Loop)} System detected that the cached time became obsolete for '{parameterName}' parameter. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported time: {originalTime:F}\nLoop cached time: {cachedTime:F}\nDifference: {(originalTime - cachedTime):F}");
+				Log.Fatal($"Loop System detected that the cached 'Time.{memberName}' became obsolete. This system allows optimization by caching Unity's Time API results. It can be disabled via 'DisableExtenityTimeCaching' compiler directive.\nUnity reported value: {originalValue}\nLoop cached value: {cachedValue}\nDifference: {(originalValue - cachedValue)}");
 			}
 		}
 
