@@ -42,6 +42,10 @@ namespace Extenity.Testing
 			{
 				Loop.InitializeSystem();
 			}
+			else
+			{
+				Loop.EnsureAllCallbacksDeregistered();
+			}
 
 			InitializeCancellationToken();
 			InitializeTiming();
