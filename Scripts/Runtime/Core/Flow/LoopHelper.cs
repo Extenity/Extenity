@@ -28,49 +28,6 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PreUICallbacks = new ExtenityEvent();
 
 		#endregion
-
-		#region FPS Analyzer
-
-		/* TODO: This functionality became lost when switching to use PlayerLoop API, instead of MonoBehaviour callbacks. It will be reimplemented later.
-		[Title("FPS Analyzer")]
-		[NonSerialized, ShowInInspector, InlineProperty, HideLabel]
-		public TickAnalyzer FPSAnalyzer;
-		private bool _IsFPSAnalyzerEnabled;
-
-		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), DisableIf(nameof(_IsFPSAnalyzerEnabled))]
-		public void EnableFPSAnalyzer()
-		{
-			EnableFPSAnalyzer(true);
-		}
-
-		[Button(ButtonSizes.Large), ButtonGroup("ToggleFPSAnalyzer"), EnableIf(nameof(_IsFPSAnalyzerEnabled))]
-		public void DisableFPSAnalyzer()
-		{
-			EnableFPSAnalyzer(false);
-		}
-
-		public void EnableFPSAnalyzer(bool enable)
-		{
-			if (enable == _IsFPSAnalyzerEnabled)
-				return;
-
-			_IsFPSAnalyzerEnabled = enable;
-			if (enable)
-			{
-				FPSAnalyzer = new TickAnalyzer(
-					new TickPlotter("FPS", VerticalRange.ZeroBasedAdaptive(), gameObject),
-					Loop.Time,
-					TickAnalyzer.HistorySizeFor(60, 5));
-			}
-			else
-			{
-				// Deinitialize existing one.
-				FPSAnalyzer = null;
-			}
-		}
-		*/
-
-		#endregion
 	}
 
 }
