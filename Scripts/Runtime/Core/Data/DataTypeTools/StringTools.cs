@@ -822,6 +822,19 @@ namespace Extenity.DataToolbox
 			stringBuilder.AppendLine(linePart3);
 		}
 
+		public static bool StringEquals(this StringBuilder stringBuilder, string other)
+		{
+			if (stringBuilder.Length != other.Length)
+				return false;
+
+			for (int i = 0; i < stringBuilder.Length; i++)
+			{
+				if (stringBuilder[i] != other[i])
+					return false;
+			}
+			return true;
+		}
+
 		#endregion
 
 		#region Conversions - Predefined Numbers
