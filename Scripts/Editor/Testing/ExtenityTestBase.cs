@@ -264,6 +264,17 @@ namespace Extenity.Testing
 			Logs.Clear();
 		}
 
+		public void FailIfAnyErrorLogged()
+		{
+			foreach (var log in Logs)
+			{
+				if (log.Type == LogType.Error || log.Type == LogType.Exception)
+				{
+					Assert.Fail("Stopped the test because there was an unexpected error/exception log. Check previous errors.");
+				}
+			}
+		}
+
 		/// <summary>
 		/// <para>There is an assertion check at the end of all tests that looks into console log history to see if
 		/// an unexpected log has been written throughout the test.</para>
