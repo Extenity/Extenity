@@ -141,6 +141,11 @@ namespace Extenity.FlowToolbox
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPostLateUpdate       (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks       .AddListener(callback, order); }
 
+		/// <summary>Registers a callback for camera placement updates. Runs after PostLateUpdate and before PreRender, allowing all game logic calculations to complete before camera positioning is finalized. This ensures that all PreRender operations know the camera is properly positioned.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterCameraPlacementUpdate(Action callback, int order = 0) { Instance.CameraPlacementUpdateCallbacks.AddListener(callback, order); }
+
 		/// <summary>Registers a callback for setting rendering-related data. Runs after all update logic but before rendering begins. Use this to update shader properties, material values, or other render state that should be set right before rendering.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
@@ -170,6 +175,7 @@ namespace Extenity.FlowToolbox
 		public static void DeregisterPostFixedUpdate      (Action callback) { Instance.PostFixedUpdateCallbacks      .RemoveListener(callback); }
 		public static void DeregisterPostUpdate           (Action callback) { Instance.PostUpdateCallbacks           .RemoveListener(callback); }
 		public static void DeregisterPostLateUpdate       (Action callback) { Instance.PostLateUpdateCallbacks       .RemoveListener(callback); }
+		public static void DeregisterCameraPlacementUpdate(Action callback) { Instance.CameraPlacementUpdateCallbacks.RemoveListener(callback); }
 		public static void DeregisterPreRender            (Action callback) { Instance.PreRenderCallbacks            .RemoveListener(callback); }
 		public static void DeregisterPreUI                (Action callback) { Instance.PreUICallbacks                .RemoveListener(callback); }
 
@@ -196,7 +202,9 @@ namespace Extenity.FlowToolbox
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<LateUpdateRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner), CreateLoopSystem<PostLateUpdateRunner>());
 
-			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner), CreateLoopSystem<PreRenderRunner>());
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner), CreateLoopSystem<CameraPlacementUpdateRunner>());
+
+			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(CameraPlacementUpdateRunner), CreateLoopSystem<PreRenderRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner), CreateLoopSystem<PreUIRunner>());
 		}
 
@@ -216,6 +224,7 @@ namespace Extenity.FlowToolbox
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PostLateUpdateRunner));
+			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(CameraPlacementUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreUIRunner));
 		}
@@ -312,6 +321,7 @@ namespace Extenity.FlowToolbox
 			if (typeof(T) == typeof(PreLateUpdateRunner        )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
 			if (typeof(T) == typeof(LateUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
 			if (typeof(T) == typeof(PostLateUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
+			if (typeof(T) == typeof(CameraPlacementUpdateRunner)) return () => {                                 InvokeSafeIfEnabled(Instance.CameraPlacementUpdateCallbacks); };
 			if (typeof(T) == typeof(PreRenderRunner            )) return () => {                                 InvokeSafeIfEnabled(Instance.PreRenderCallbacks); };
 			if (typeof(T) == typeof(PreUIRunner                )) return () => {                                 InvokeSafeIfEnabled(Instance.PreUICallbacks); };
 
@@ -349,6 +359,8 @@ namespace Extenity.FlowToolbox
 		private struct LateUpdateRunner { }
 		private struct PostLateUpdateRunner { }
 
+		private struct CameraPlacementUpdateRunner { }
+
 		private struct PreRenderRunner { }
 		private struct PreUIRunner { }
 
@@ -378,6 +390,8 @@ namespace Extenity.FlowToolbox
 				Instance.LateUpdateCallbacks.InvokeSafe();
 				Instance.PostLateUpdateCallbacks.InvokeSafe();
 
+				Instance.CameraPlacementUpdateCallbacks.InvokeSafe();
+
 				Instance.PreRenderCallbacks.InvokeSafe();
 				Instance.PreUICallbacks.InvokeSafe();
 			}
@@ -400,6 +414,8 @@ namespace Extenity.FlowToolbox
 				Instance.PreLateUpdateCallbacks.InvokeUnsafe();
 				Instance.LateUpdateCallbacks.InvokeUnsafe();
 				Instance.PostLateUpdateCallbacks.InvokeUnsafe();
+
+				Instance.CameraPlacementUpdateCallbacks.InvokeUnsafe();
 
 				Instance.PreRenderCallbacks.InvokeUnsafe();
 				Instance.PreUICallbacks.InvokeUnsafe();
@@ -620,6 +636,8 @@ namespace Extenity.FlowToolbox
 			CheckCallbacks(Instance.PostFixedUpdateCallbacks, "PostFixedUpdate");
 			CheckCallbacks(Instance.PostUpdateCallbacks, "PostUpdate");
 			CheckCallbacks(Instance.PostLateUpdateCallbacks, "PostLateUpdate");
+
+			CheckCallbacks(Instance.CameraPlacementUpdateCallbacks, "CameraPlacementUpdate");
 
 			CheckCallbacks(Instance.PreRenderCallbacks, "PreRender");
 			CheckCallbacks(Instance.PreUICallbacks, "PreUI");

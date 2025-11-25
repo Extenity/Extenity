@@ -24,6 +24,8 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
 
+		public readonly ExtenityEvent CameraPlacementUpdateCallbacks = new ExtenityEvent();
+
 		public readonly ExtenityEvent PreRenderCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PreUICallbacks = new ExtenityEvent();
 
