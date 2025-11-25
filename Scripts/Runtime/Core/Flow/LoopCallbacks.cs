@@ -11,6 +11,7 @@ namespace Extenity.FlowToolbox
 
 		public readonly ExtenityEvent TimeCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent NetworkingCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent InputUpdateCallbacks = new ExtenityEvent();
 
 		public readonly ExtenityEvent PreFixedUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PreUpdateCallbacks = new ExtenityEvent();

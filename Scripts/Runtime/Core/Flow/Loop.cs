@@ -98,6 +98,11 @@ namespace Extenity.FlowToolbox
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterNetworking           (Action callback, int order = 0) { Instance.NetworkingCallbacks           .AddListener(callback, order); }
 
+		/// <summary>Registers a callback for input update operations. Runs after Networking callbacks and before PreFixedUpdate. This is where hardware input is processed and its data is made available to the application, ensuring all game logic operations have access to updated input without delay.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterInputUpdate          (Action callback, int order = 0) { Instance.InputUpdateCallbacks          .AddListener(callback, order); }
+
 		/// <summary>Registers a callback to run before FixedUpdate. Runs before Unity's MonoBehaviour FixedUpdate callbacks.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
@@ -166,6 +171,7 @@ namespace Extenity.FlowToolbox
 
 		public static void DeregisterTime                 (Action callback) { Instance.TimeCallbacks                 .RemoveListener(callback); }
 		public static void DeregisterNetworking           (Action callback) { Instance.NetworkingCallbacks           .RemoveListener(callback); }
+		public static void DeregisterInputUpdate          (Action callback) { Instance.InputUpdateCallbacks          .RemoveListener(callback); }
 		public static void DeregisterPreFixedUpdate       (Action callback) { Instance.PreFixedUpdateCallbacks       .RemoveListener(callback); }
 		public static void DeregisterPreUpdate            (Action callback) { Instance.PreUpdateCallbacks            .RemoveListener(callback); }
 		public static void DeregisterPreLateUpdate        (Action callback) { Instance.PreLateUpdateCallbacks        .RemoveListener(callback); }
@@ -189,6 +195,7 @@ namespace Extenity.FlowToolbox
 		{
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeUpdate.WaitForLastPresentationAndUpdateTime), CreateLoopSystem<TimeRunner>());
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeRunner), CreateLoopSystem<NetworkingRunner>());
+			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner), CreateLoopSystem<InputUpdateRunner>());
 
 			InsertLoopSystemBefore<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<PreFixedUpdateRunner>());
 			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<FixedUpdateRunner>());
@@ -212,6 +219,7 @@ namespace Extenity.FlowToolbox
 		{
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(TimeRunner));
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner));
+			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(InputUpdateRunner));
 
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PreFixedUpdateRunner));
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner));
@@ -312,6 +320,7 @@ namespace Extenity.FlowToolbox
 
 			if (typeof(T) == typeof(TimeRunner                 )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.TimeCallbacks); };
 			if (typeof(T) == typeof(NetworkingRunner           )) return () => {                                 InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
+			if (typeof(T) == typeof(InputUpdateRunner          )) return () => {                                 InvokeSafeIfEnabled(Instance.InputUpdateCallbacks); };
 			if (typeof(T) == typeof(PreFixedUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
 			if (typeof(T) == typeof(FixedUpdateRunner          )) return () => { SetCachedTimesFromUnityTimes(); FixedUpdateCount++; Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
 			if (typeof(T) == typeof(PostFixedUpdateRunner      )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
@@ -346,6 +355,7 @@ namespace Extenity.FlowToolbox
 		// Marker types for PlayerLoop injection
 		private struct TimeRunner { }
 		private struct NetworkingRunner { }
+		private struct InputUpdateRunner { }
 
 		private struct PreFixedUpdateRunner { }
 		private struct FixedUpdateRunner { }
@@ -374,6 +384,7 @@ namespace Extenity.FlowToolbox
 			{
 				Instance.TimeCallbacks.InvokeSafe();
 				Instance.NetworkingCallbacks.InvokeSafe();
+				Instance.InputUpdateCallbacks.InvokeSafe();
 
 				for (int i = 0; i < fixedUpdateIterations; i++)
 				{
@@ -399,6 +410,7 @@ namespace Extenity.FlowToolbox
 			{
 				Instance.TimeCallbacks.InvokeUnsafe();
 				Instance.NetworkingCallbacks.InvokeUnsafe();
+				Instance.InputUpdateCallbacks.InvokeUnsafe();
 
 				for (int i = 0; i < fixedUpdateIterations; i++)
 				{
@@ -624,6 +636,7 @@ namespace Extenity.FlowToolbox
 
 			CheckCallbacks(Instance.TimeCallbacks, "Time");
 			CheckCallbacks(Instance.NetworkingCallbacks, "Networking");
+			CheckCallbacks(Instance.InputUpdateCallbacks, "InputUpdate");
 
 			CheckCallbacks(Instance.PreFixedUpdateCallbacks, "PreFixedUpdate");
 			CheckCallbacks(Instance.PreUpdateCallbacks, "PreUpdate");
