@@ -21,14 +21,14 @@ namespace Extenity.ApplicationToolbox
 		public const int MinorAndBuildDigits = BuildDigits * MinorDigits;
 		//#endif
 
-		// Max major version is here for no good reason. May safely be changed in future. But think wisely about how that would change other systems that uses the version.
+		// Max major version is here for no good reason. May safely be changed in the future. But think wisely about how that would change other systems that uses the version.
 		public const int MaxMajorVersion = 49;
-		public const int MinMajorVersion = 1;
+		public const int MinMajorVersion = 0;
 		public const int MaxMinorVersion = MinorDigits - 1;
-		public const int MinMinorVersion = 0;
+		public const int MinMinorVersion = 1;
 #if !BuildlessVersioning
 		public const int MaxBuildVersion = BuildDigits - 1;
-		public const int MinBuildVersion = 0;
+		public const int MinBuildVersion = 1;
 #endif
 
 		#endregion
