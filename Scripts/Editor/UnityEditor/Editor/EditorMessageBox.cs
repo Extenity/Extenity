@@ -73,7 +73,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			popup.CancelButton = cancelButton;
 			popup.UserInputFields = userInputFields;
 			popup.NeedsFocus = true;
-			popup.ShowAuxWindow();
+			popup.ShowModalUtility();
 
 			while (true)
 			{
