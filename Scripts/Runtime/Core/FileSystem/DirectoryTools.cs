@@ -449,7 +449,7 @@ namespace Extenity.FileSystemToolbox
 		/// <summary>
 		/// Source: https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
 		/// </summary>
-		public static bool DeleteWithContent(string directoryPath)
+		public static bool DeleteWithContent(string directoryPath, bool verboseLogging = false)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
@@ -460,16 +460,28 @@ namespace Extenity.FileSystemToolbox
 
 				foreach (var file in files)
 				{
+					if (verboseLogging)
+					{
+						Log.With(nameof(DirectoryTools)).Verbose("Deleting file: " + file);
+					}
 					FileTools.Delete(file);
 				}
 
 				foreach (var subDirectory in subDirectories)
 				{
-					DeleteWithContent(subDirectory);
+					DeleteWithContent(subDirectory, verboseLogging);
 				}
 
+				if (verboseLogging)
+				{
+					Log.With(nameof(DirectoryTools)).Verbose("Deleting empty directory: " + directoryPath);
+				}
 				_DeleteNonRecursive(directoryPath);
 				return true;
+			}
+			else if (verboseLogging)
+			{
+				Log.With(nameof(DirectoryTools)).Verbose("Nothing to delete. Directory does not exist: " + directoryPath);
 			}
 			return false;
 		}
