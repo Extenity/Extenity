@@ -414,21 +414,21 @@ namespace Extenity.FileSystemToolbox
 
 		#region Delete Directory
 
-		private static void _DeleteNonRecursive(string path)
+		private static void _DeleteNonRecursive(string directoryPath)
 		{
 			try
 			{
-				Directory.Delete(path, false);
+				Directory.Delete(directoryPath, false);
 			}
 			catch (IOException) 
 			{
 				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				Directory.Delete(path, false);
+				Directory.Delete(directoryPath, false);
 			}
 			catch (UnauthorizedAccessException)
 			{
 				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				Directory.Delete(path, false);
+				Directory.Delete(directoryPath, false);
 			}
 		}
 
