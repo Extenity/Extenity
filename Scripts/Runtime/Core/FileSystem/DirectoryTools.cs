@@ -58,14 +58,14 @@ namespace Extenity.FileSystemToolbox
 
 		#region Files In Directory
 
-		public static bool IsDirectoryEmpty(string path)
+		public static bool IsDirectoryEmpty(string directoryPath)
 		{
 			// The old implementation. It was not performance friendly.
-			// return Directory.GetFileSystemEntries(path).Length == 0;
+			// return Directory.GetFileSystemEntries(directoryPath).Length == 0;
 
 			try
 			{
-				var items = Directory.EnumerateFileSystemEntries(path);
+				var items = Directory.EnumerateFileSystemEntries(directoryPath);
 				foreach (var item in items)
 				{
 					// The .DS_Store files are not important.
