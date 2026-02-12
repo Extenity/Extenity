@@ -432,15 +432,15 @@ namespace Extenity.FileSystemToolbox
 			}
 		}
 
-		public static bool DeleteIfEmpty(string path)
+		public static bool DeleteIfEmpty(string directoryPath)
 		{
 			AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 
-			if (Directory.Exists(path) &&
-				Directory.GetFiles(path).Length == 0 &&
-			    Directory.GetDirectories(path).Length == 0)
+			if (Directory.Exists(directoryPath) &&
+				Directory.GetFiles(directoryPath).Length == 0 &&
+			    Directory.GetDirectories(directoryPath).Length == 0)
 			{
-				_DeleteNonRecursive(path);
+				_DeleteNonRecursive(directoryPath);
 				return true;
 			}
 			return false;
