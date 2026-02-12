@@ -430,6 +430,12 @@ namespace Extenity.FileSystemToolbox
 				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
 				Directory.Delete(directoryPath, false);
 			}
+
+			// Double check to ensure the directory is deleted.
+			if (Directory.Exists(directoryPath))
+			{
+				throw new Exception("Failed to delete directory: " + directoryPath);
+			}
 		}
 
 		public static bool DeleteIfEmpty(string directoryPath)
