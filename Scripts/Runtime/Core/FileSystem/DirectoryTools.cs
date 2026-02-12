@@ -614,11 +614,11 @@ namespace Extenity.FileSystemToolbox
 
 		#region Get Root Directory
 
-		public static string GetRootDirectory(this string path)
+		public static string GetRootDirectory(this string directoryPath)
 		{
-			path = path.FixDirectorySeparatorChars();
-			var root = Path.GetPathRoot(path);
-			var pathWithoutRoot = path.Substring(root.Length);
+			directoryPath = directoryPath.FixDirectorySeparatorChars();
+			var root = Path.GetPathRoot(directoryPath);
+			var pathWithoutRoot = directoryPath.Substring(root.Length);
 			var split = pathWithoutRoot.Split(Path.DirectorySeparatorChar);
 			if (split.Length == 0)
 				return "";
