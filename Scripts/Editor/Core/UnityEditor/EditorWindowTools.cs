@@ -109,7 +109,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#endregion
 
-		#region Unity Built-in Editor Windows
+		#region Unity Built-in Editor Windows / Game View
 
 		private static EditorWindow _GameView;
 		public static EditorWindow GameView
@@ -118,8 +118,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 			{
 				if (_GameView == null)
 				{
-					var type = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
-					var gameViews = GetAllEditorWindowsOfType(type);
+					var gameViews = GameViews;
 					_GameView = gameViews != null && gameViews.Length > 0
 						? gameViews[0]
 						: null;
@@ -128,6 +127,53 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
+		public static EditorWindow[] GameViews
+		{
+			get
+			{
+				return GetAllEditorWindowsOfType(GameViewType);
+			}
+		}
+
+		private static Type _GameViewType;
+		public static Type GameViewType
+		{
+			get
+			{
+				if (_GameViewType == null)
+				{
+					_GameViewType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+				}
+				return _GameViewType;
+			}
+		}
+
+		private static PropertyInfo _GameViewTargetSizeProperty;
+		private static PropertyInfo GameViewTargetSizeProperty
+		{
+			get
+			{
+				if (_GameViewTargetSizeProperty == null)
+				{
+					_GameViewTargetSizeProperty = GameViewType.GetProperty("targetSize", BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+				return _GameViewTargetSizeProperty;
+			}
+		}
+
+		public static bool TryGetGameViewResolution(out Vector2 resolution)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				resolution = Vector2.zero;
+				return false;
+			}
+
+			resolution = (Vector2)GameViewTargetSizeProperty.GetValue(gameView);
+			return true;
+		}
+ 
 		#endregion
 
 		#region Make An Editor Window Full-Screen
