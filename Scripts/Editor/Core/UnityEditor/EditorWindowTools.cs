@@ -135,8 +135,130 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
+		public static bool TryGetGameViewResolution(out Vector2 resolution)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				resolution = Vector2.zero;
+				return false;
+			}
+
+			resolution = (Vector2)GameViewTargetSizeProperty.GetValue(gameView);
+			return true;
+		}
+
+		public static bool TryGetCurrentGameViewSizeIndex(out int index)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				index = -1;
+				return false;
+			}
+
+			index = (int)GameViewSelectedSizeIndexProperty.GetValue(gameView);
+			return true;
+
+		}
+
+		public static bool TrySetCurrentGameViewSizeIndex(int index)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				return false;
+			}
+
+			GameViewSelectedSizeIndexProperty.SetValue(gameView, index);
+			gameView.Repaint();
+			return true;
+		}
+
+		public static bool GameViewSizeExists(int width, int height)
+		{
+			return IndexOfFirstGameViewSize(width, height) >= 0;
+		}
+
+		public static int IndexOfFirstGameViewSize(int width, int height)
+		{
+			var group = GameViewSizeGroup;
+
+			int totalCount = (int)GameViewSizeGroupGetTotalCountMethod.Invoke(group, null);
+
+			for (int index = 0; index < totalCount; index++)
+			{
+				var size = GameViewSizeGroupGetGameViewSizeMethod.Invoke(group, new object[] { index });
+				if (size == null)
+				{
+					continue;
+				}
+
+				int sizeWidth = (int)GameViewSizeWidthProperty.GetValue(size);
+				int sizeHeight = (int)GameViewSizeHeightProperty.GetValue(size);
+
+				if (sizeWidth == width && sizeHeight == height)
+				{
+					return index;
+				}
+			}
+
+			return -1;
+		}
+
+		public static bool TryFindGameViewSizeIndexByName(string name, out int index)
+		{
+			var group = GameViewSizeGroup;
+
+			int totalCount = (int)GameViewSizeGroupGetTotalCountMethod.Invoke(group, null);
+
+			for (index = 0; index < totalCount; index++)
+			{
+				var size = GameViewSizeGroupGetGameViewSizeMethod.Invoke(group, new object[] { index });
+				if (size == null)
+				{
+					throw new InternalException(11845126);
+				}
+
+				var baseText = (string)GameViewSizeBaseTextProperty.GetValue(size);
+				if (baseText == name)
+				{
+					return true;
+				}
+			}
+
+			index = -1;
+			return false;
+		}
+
+		public static void AddGameViewSize(string name, int width, int height)
+		{
+			var fixedResolutionValue = Enum.ToObject(GameViewSizeTypeEnum, 1);
+			var constructor = GameViewSizeType.GetConstructor(new[] { GameViewSizeTypeEnum, typeof(int), typeof(int), typeof(string) });
+			var newSize = constructor!.Invoke(new[] { fixedResolutionValue, width, height, name });
+			GameViewSizeGroupAddCustomSizeMethod.Invoke(GameViewSizeGroup, new[] { newSize });
+		}
+
+		public static void RemoveGameViewSizeAtIndex(int index)
+		{
+			GameViewSizeGroupRemoveCustomSizeMethod.Invoke(GameViewSizeGroup, new object[] { index });
+		}
+
+		public static bool TryUpdateGameViewSize(int index, int width, int height)
+		{
+			var size = GameViewSizeGroupGetGameViewSizeMethod.Invoke(GameViewSizeGroup, new object[] { index });
+			if (size == null)
+			{
+				return false;
+			}
+
+			GameViewSizeWidthProperty.SetValue(size, width);
+			GameViewSizeHeightProperty.SetValue(size, height);
+			return true;
+		}
+
 		private static Type _GameViewType;
-		public static Type GameViewType
+		private static Type GameViewType
 		{
 			get
 			{
@@ -161,19 +283,211 @@ namespace Extenity.UnityEditorToolbox.Editor
 			}
 		}
 
-		public static bool TryGetGameViewResolution(out Vector2 resolution)
+		private static PropertyInfo _GameViewSelectedSizeIndexProperty;
+		private static PropertyInfo GameViewSelectedSizeIndexProperty
 		{
-			var gameView = GameView;
-			if (gameView == null)
+			get
 			{
-				resolution = Vector2.zero;
-				return false;
+				if (_GameViewSelectedSizeIndexProperty == null)
+				{
+					_GameViewSelectedSizeIndexProperty = GameViewType.GetProperty("selectedSizeIndex", BindingFlags.Public | BindingFlags.Instance);
+				}
+				return _GameViewSelectedSizeIndexProperty;
 			}
-
-			resolution = (Vector2)GameViewTargetSizeProperty.GetValue(gameView);
-			return true;
 		}
- 
+
+		private static Type _GameViewSizesType;
+		private static Type GameViewSizesType
+		{
+			get
+			{
+				if (_GameViewSizesType == null)
+				{
+					_GameViewSizesType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameViewSizes");
+				}
+				return _GameViewSizesType;
+			}
+		}
+
+		private static Type _GameViewSizeType;
+		private static Type GameViewSizeType
+		{
+			get
+			{
+				if (_GameViewSizeType == null)
+				{
+					_GameViewSizeType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameViewSize");
+				}
+				return _GameViewSizeType;
+			}
+		}
+
+		private static Type _GameViewSizeTypeEnum;
+		private static Type GameViewSizeTypeEnum
+		{
+			get
+			{
+				if (_GameViewSizeTypeEnum == null)
+				{
+					_GameViewSizeTypeEnum = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameViewSizeType");
+				}
+				return _GameViewSizeTypeEnum;
+			}
+		}
+
+		private static object _GameViewSizesInstance;
+
+		private static object GameViewSizesInstance
+		{
+			get
+			{
+				if (_GameViewSizesInstance != null)
+				{
+					return _GameViewSizesInstance;
+				}
+
+				var instanceProperty = GameViewSizesType.BaseType!.GetProperty("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+				var instance = instanceProperty!.GetValue(null);
+				if (instance == null)
+				{
+					throw new InternalException(11845124);
+				}
+
+				_GameViewSizesInstance = instance;
+				return instance;
+			}
+		}
+
+		private static object GameViewSizeGroup
+		{
+			get
+			{
+				var currentGroup = GameViewSizesCurrentGroupProperty.GetValue(GameViewSizesInstance);
+				if (currentGroup == null)
+				{
+					throw new InternalException(11845125);
+				}
+
+				return currentGroup;
+			}
+		}
+
+		private static PropertyInfo _GameViewSizesCurrentGroupProperty;
+		private static PropertyInfo GameViewSizesCurrentGroupProperty
+		{
+			get
+			{
+				if (_GameViewSizesCurrentGroupProperty == null)
+				{
+					_GameViewSizesCurrentGroupProperty = GameViewSizesInstance.GetType().GetProperty("currentGroup", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+				return _GameViewSizesCurrentGroupProperty;
+			}
+		}
+
+		private static MethodInfo _GameViewSizeGroupGetTotalCountMethod;
+		private static MethodInfo GameViewSizeGroupGetTotalCountMethod
+		{
+			get
+			{
+				if (_GameViewSizeGroupGetTotalCountMethod == null)
+				{
+					_GameViewSizeGroupGetTotalCountMethod = GameViewSizeGroup.GetType().GetMethod("GetTotalCount");
+				}
+				return _GameViewSizeGroupGetTotalCountMethod;
+			}
+		}
+
+		private static MethodInfo _GameViewSizeGroupGetGameViewSizeMethod;
+		private static MethodInfo GameViewSizeGroupGetGameViewSizeMethod
+		{
+			get
+			{
+				if (_GameViewSizeGroupGetGameViewSizeMethod == null)
+				{
+					_GameViewSizeGroupGetGameViewSizeMethod = GameViewSizeGroup.GetType().GetMethod("GetGameViewSize");
+				}
+				return _GameViewSizeGroupGetGameViewSizeMethod;
+			}
+		}
+
+		private static MethodInfo _GameViewSizeGroupAddCustomSizeMethod;
+		private static MethodInfo GameViewSizeGroupAddCustomSizeMethod
+		{
+			get
+			{
+				if (_GameViewSizeGroupAddCustomSizeMethod == null)
+				{
+					_GameViewSizeGroupAddCustomSizeMethod = GameViewSizeGroup.GetType().GetMethod("AddCustomSize");
+				}
+				return _GameViewSizeGroupAddCustomSizeMethod;
+			}
+		}
+
+		private static MethodInfo _GameViewSizeGroupRemoveCustomSizeMethod;
+		private static MethodInfo GameViewSizeGroupRemoveCustomSizeMethod
+		{
+			get
+			{
+				if (_GameViewSizeGroupRemoveCustomSizeMethod == null)
+				{
+					_GameViewSizeGroupRemoveCustomSizeMethod = GameViewSizeGroup.GetType().GetMethod("RemoveCustomSize");
+				}
+				return _GameViewSizeGroupRemoveCustomSizeMethod;
+			}
+		}
+
+		private static PropertyInfo _GameViewSizeWidthProperty;
+		private static PropertyInfo GameViewSizeWidthProperty
+		{
+			get
+			{
+				if (_GameViewSizeWidthProperty == null)
+				{
+					var sampleSize = GameViewSizeGroupGetGameViewSizeMethod.Invoke(GameViewSizeGroup, new object[] { 0 });
+					if (sampleSize != null)
+					{
+						_GameViewSizeWidthProperty = sampleSize.GetType().GetProperty("width", BindingFlags.Public | BindingFlags.Instance);
+					}
+				}
+				return _GameViewSizeWidthProperty;
+			}
+		}
+
+		private static PropertyInfo _GameViewSizeHeightProperty;
+		private static PropertyInfo GameViewSizeHeightProperty
+		{
+			get
+			{
+				if (_GameViewSizeHeightProperty == null)
+				{
+					var sampleSize = GameViewSizeGroupGetGameViewSizeMethod.Invoke(GameViewSizeGroup, new object[] { 0 });
+					if (sampleSize != null)
+					{
+						_GameViewSizeHeightProperty = sampleSize.GetType().GetProperty("height", BindingFlags.Public | BindingFlags.Instance);
+					}
+				}
+				return _GameViewSizeHeightProperty;
+			}
+		}
+
+		private static PropertyInfo _GameViewSizeBaseTextProperty;
+		private static PropertyInfo GameViewSizeBaseTextProperty
+		{
+			get
+			{
+				if (_GameViewSizeBaseTextProperty == null)
+				{
+					var sampleSize = GameViewSizeGroupGetGameViewSizeMethod.Invoke(GameViewSizeGroup, new object[] { 0 });
+					if (sampleSize != null)
+					{
+						_GameViewSizeBaseTextProperty = sampleSize.GetType().GetProperty("baseText", BindingFlags.Public | BindingFlags.Instance);
+					}
+				}
+				return _GameViewSizeBaseTextProperty;
+			}
+		}
+
 		#endregion
 
 		#region Make An Editor Window Full-Screen
