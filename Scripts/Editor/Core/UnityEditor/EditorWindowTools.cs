@@ -148,6 +148,56 @@ namespace Extenity.UnityEditorToolbox.Editor
 			return true;
 		}
 
+		public static bool TryGetGameViewWindowSize(out Vector2 size)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				size = Vector2.zero;
+				return false;
+			}
+
+			size = gameView.position.size;
+			return true;
+		}
+
+		public static bool TryGetGameViewScale(out float scale)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				scale = 0f;
+				return false;
+			}
+
+			var zoomArea = GameViewZoomAreaField.GetValue(gameView);
+			var scaleVector = (Vector2)ZoomableAreaScaleProperty.GetValue(zoomArea);
+			scale = scaleVector.y;
+			return true;
+		}
+
+		/// <summary>
+		/// Note that Unity will apply its own clipping when we try to set the scale here.
+		/// So, the result would not always be the same as the value we set here.
+		/// </summary>
+		public static bool TrySetGameViewScale(float scale)
+		{
+			var gameView = GameView;
+			if (gameView == null)
+			{
+				return false;
+			}
+
+			// Not sure if this is the correct way to calculate the focus point. Not tested properly.
+			var zoomArea = GameViewZoomAreaField.GetValue(gameView);
+			var shownArea = (Rect)GameViewZoomableAreaShownAreaInsideMarginsProperty.GetValue(zoomArea);
+			var focusPoint = shownArea.position + shownArea.size * 0.5f;
+
+			GameViewZoomableAreaSetScaleFocusedMethod.Invoke(zoomArea, new object[] { focusPoint, Vector2.one * scale });
+			gameView.Repaint();
+			return true;
+		}
+
 		public static bool TryGetCurrentGameViewSizeIndex(out int index)
 		{
 			var gameView = GameView;
@@ -293,6 +343,71 @@ namespace Extenity.UnityEditorToolbox.Editor
 					_GameViewSelectedSizeIndexProperty = GameViewType.GetProperty("selectedSizeIndex", BindingFlags.Public | BindingFlags.Instance);
 				}
 				return _GameViewSelectedSizeIndexProperty;
+			}
+		}
+
+		private static FieldInfo _GameViewZoomAreaField;
+		private static FieldInfo GameViewZoomAreaField
+		{
+			get
+			{
+				if (_GameViewZoomAreaField == null)
+				{
+					_GameViewZoomAreaField = GameViewType.GetField("m_ZoomArea", BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+				return _GameViewZoomAreaField;
+			}
+		}
+
+		private static Type _ZoomableAreaType;
+		private static Type ZoomableAreaType
+		{
+			get
+			{
+				if (_ZoomableAreaType == null)
+				{
+					_ZoomableAreaType = typeof(EditorWindow).Assembly.GetType("UnityEditor.ZoomableArea");
+				}
+				return _ZoomableAreaType;
+			}
+		}
+
+		private static PropertyInfo _ZoomableAreaScaleProperty;
+		private static PropertyInfo ZoomableAreaScaleProperty
+		{
+			get
+			{
+				if (_ZoomableAreaScaleProperty == null)
+				{
+					_ZoomableAreaScaleProperty = ZoomableAreaType.GetProperty("scale", BindingFlags.Public | BindingFlags.Instance);
+				}
+				return _ZoomableAreaScaleProperty;
+			}
+		}
+
+		private static PropertyInfo _GameViewZoomableAreaShownAreaInsideMarginsProperty;
+		private static PropertyInfo GameViewZoomableAreaShownAreaInsideMarginsProperty
+		{
+			get
+			{
+				if (_GameViewZoomableAreaShownAreaInsideMarginsProperty == null)
+				{
+					_GameViewZoomableAreaShownAreaInsideMarginsProperty = ZoomableAreaType.GetProperty("shownAreaInsideMargins", BindingFlags.Public | BindingFlags.Instance);
+				}
+				return _GameViewZoomableAreaShownAreaInsideMarginsProperty;
+			}
+		}
+
+		private static MethodInfo _GameViewZoomableAreaSetScaleFocusedMethod;
+		private static MethodInfo GameViewZoomableAreaSetScaleFocusedMethod
+		{
+			get
+			{
+				if (_GameViewZoomableAreaSetScaleFocusedMethod == null)
+				{
+					_GameViewZoomableAreaSetScaleFocusedMethod = ZoomableAreaType.GetMethod("SetScaleFocused", BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(Vector2), typeof(Vector2) }, null);
+				}
+				return _GameViewZoomableAreaSetScaleFocusedMethod;
 			}
 		}
 
