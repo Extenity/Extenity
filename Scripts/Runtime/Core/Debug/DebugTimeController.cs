@@ -1,5 +1,6 @@
 #if (EnableDebugTimeControllerInBuilds || UNITY_EDITOR) && !ENABLE_INPUT_SYSTEM
 
+using Extenity.FlowToolbox;
 using UnityEngine;
 using static Unity.Mathematics.math;
 
