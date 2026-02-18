@@ -101,17 +101,17 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Push/Pop Selection
 
-		private static List<int[]> SelectionStack;
+		private static List<EntityId[]> SelectionStack;
 
 		public static void PushSelection(bool keepSelection = false)
 		{
 			Log.Verbose("Pushing current selection");
 			if (SelectionStack == null)
-				SelectionStack = new List<int[]>(4);
+				SelectionStack = new List<EntityId[]>(4);
 			else if (SelectionStack.Count == 100)
 				Log.Warning("Enormous amount of selection pushes detected.");
 
-			var selection = Selection.instanceIDs;
+			var selection = Selection.entityIds;
 			SelectionStack.Add(selection);
 
 			if (!keepSelection)
@@ -126,7 +126,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 			var selection = SelectionStack[SelectionStack.Count - 1];
 			SelectionStack.RemoveAt(SelectionStack.Count - 1);
-			Selection.instanceIDs = selection;
+			Selection.entityIds = selection;
 		}
 
 		#endregion

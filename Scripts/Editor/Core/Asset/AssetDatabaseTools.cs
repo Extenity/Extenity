@@ -886,7 +886,7 @@ namespace Extenity.AssetToolbox.Editor
 			if (obj == null)
 				return false;
 
-			var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+			var path = AssetDatabase.GetAssetPath(obj.GetEntityId());
 			if (string.IsNullOrEmpty(path))
 				return false;
 
