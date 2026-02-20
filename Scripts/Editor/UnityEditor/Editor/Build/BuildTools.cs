@@ -358,7 +358,8 @@ namespace Extenity.BuildToolbox.Editor
 			string outputExecutablePath,
 			bool deleteDebugSymbolsFolder)
 		{
-			var outputDirectory = Path.GetDirectoryName(outputExecutablePath);
+			var outputDirectoryPath = Path.GetDirectoryName(outputExecutablePath);
+			var outputDirectoryName = Path.GetFileName(outputDirectoryPath);
 
 			// Clear unwanted files
 			{
@@ -370,8 +371,10 @@ namespace Extenity.BuildToolbox.Editor
 				{
 					Thread.Sleep(2000); // Just wait for couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
 
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BackUpThisFolder_ButDontShipItWithYourGame"));
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BurstDebugInformation_DoNotShip"));
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, "_BackUpThisFolder_ButDontShipItWithYourGame"));
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, "_BurstDebugInformation_DoNotShip"));
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, outputDirectoryName + "_BackUpThisFolder_ButDontShipItWithYourGame"));
+					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, outputDirectoryName + "_BurstDebugInformation_DoNotShip"));
 				}
 
 				deletedFiles.LogList($"Cleared '{deletedFiles.Count}' files:");
