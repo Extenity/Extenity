@@ -169,24 +169,46 @@ namespace Extenity.WWWToolbox
 
 		private async void ListenThread()
 		{
-			Log.Verbose($"Listening at {Port}");
-			Listener = new HttpListener();
-			Listener.Prefixes.Add($"http://{Host}:{Port}/");
-			Listener.Start();
-			while (true)
+			try
 			{
+				Log.Verbose($"Listening at {Port}");
+				Listener = new HttpListener();
+				Listener.Prefixes.Add($"http://{Host}:{Port}/");
+				Listener.Start();
+				while (true)
+				{
+					try
+					{
+						var context = await Listener.GetContextAsync();
+						ProcessRequest(context);
+					}
+					catch (ThreadAbortException)
+					{
+						break; // Exit the thread
+					}
+					catch (Exception exception)
+					{
+						Log.Fatal(exception);
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				// This try-catch block in async void method is essential
+				// - to prevent crashes due to exceptions thrown in async void method,
+				// - and to display error logs that would otherwise be swallowed.
+				// This is a template code that is enforced to all async void methods.
 				try
 				{
-					var context = await Listener.GetContextAsync();
-					ProcessRequest(context);
+					// Do the logging, and do nothing else in here.
+					// If a custom exception handling is needed, add another try-catch above.
+					Log.Error("Exception occurred in async void method: " + exception);
 				}
-				catch (ThreadAbortException)
+				catch
 				{
-					break; // Exit the thread
-				}
-				catch (Exception exception)
-				{
-					Log.Fatal(exception);
+					// Do absolutely nothing in this catch block. Reaching here means
+					// the application is in pretty bad shape. But it increases the chances
+					// of error catching systems to report the error to cloud.
 				}
 			}
 		}
