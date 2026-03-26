@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
+using Extenity.ParallelToolbox;
 using Extenity.ParallelToolbox.Editor;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
@@ -34,33 +35,33 @@ namespace Extenity.ApplicationToolbox.Editor
 		#region Menu - Delete Loose Environment Paths
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine", priority = ExtenityMenu.SystemPriority + 1)]
-		public static async void DeleteLooseEnvironmentPaths_Machine()
+		public static void DeleteLooseEnvironmentPaths_Machine()
 		{
-			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Machine, true);
+			DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Machine, true).FireAndForget();
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/User", priority = ExtenityMenu.SystemPriority + 2)]
-		public static async void DeleteLooseEnvironmentPaths_User()
+		public static void DeleteLooseEnvironmentPaths_User()
 		{
-			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.User, true);
+			DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.User, true).FireAndForget();
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Process", priority = ExtenityMenu.SystemPriority + 3)]
-		public static async void DeleteLooseEnvironmentPaths_Process()
+		public static void DeleteLooseEnvironmentPaths_Process()
 		{
-			await DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Process, true);
+			DeleteLooseEnvironmentPaths(EnvironmentVariableTarget.Process, true).FireAndForget();
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User", priority = ExtenityMenu.SystemPriority + 4)]
-		public static async void DeleteLooseEnvironmentPaths_MachineUser()
+		public static void DeleteLooseEnvironmentPaths_MachineUser()
 		{
-			await DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User }, true);
+			DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User }, true).FireAndForget();
 		}
 
 		[MenuItem(Menu + "Delete Loose Environment Paths/Machine, User, Process", priority = ExtenityMenu.SystemPriority + 5)]
-		public static async void DeleteLooseEnvironmentPaths_MachineUserProcess()
+		public static void DeleteLooseEnvironmentPaths_MachineUserProcess()
 		{
-			await DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User, EnvironmentVariableTarget.Process }, true);
+			DeleteLooseEnvironmentPaths(new[] { EnvironmentVariableTarget.Machine, EnvironmentVariableTarget.User, EnvironmentVariableTarget.Process }, true).FireAndForget();
 		}
 
 		#endregion

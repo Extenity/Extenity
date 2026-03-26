@@ -7,6 +7,7 @@ using Extenity.AssetToolbox.Editor;
 using Extenity.DataToolbox;
 using Extenity.DataToolbox.Editor;
 using Extenity.FileSystemToolbox;
+using Extenity.ParallelToolbox;
 using UnityEditor;
 
 namespace Extenity.UnityEditorToolbox.Editor
@@ -37,7 +38,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 		                                                             EditorPrefLogOptions.NoLogging);
 
 		[InitializeOnEditorLaunchMethod]
-		private static async void RunAtEditorLaunch()
+		private static void RunAtEditorLaunch()
+		{
+			_RunAtEditorLaunch().FireAndForget();
+		}
+
+		private static async Task _RunAtEditorLaunch()
 		{
 			if (EnableRunAtEditorLaunch.Value)
 			{
@@ -155,31 +161,28 @@ namespace Extenity.UnityEditorToolbox.Editor
 		#region Menu
 
 		[MenuItem(Menu + "Clear all", priority = ExtenityMenu.CleanUpPriority + 1)]
-		public static async void ClearAll()
+		public static void ClearAll()
 		{
-			await DoClearAll();
+			DoClearAll().FireAndForget();
 			Log.Info("Cleanup finished.");
 		}
 
 		[MenuItem(Menu + "Clear .orig files", priority = ExtenityMenu.CleanUpPriority + 21)]
-		public static async void ClearOrigFiles()
+		public static void ClearOrigFiles()
 		{
-			await DoClearFiles(OrigFileFilter, true);
-			Log.Info("Cleanup finished.");
+			DoClearFiles(OrigFileFilter, true).FireAndForgetAndContinue(() => Log.Info("Cleanup finished."));
 		}
 
 		[MenuItem(Menu + "Clear thumbs.db files", priority = ExtenityMenu.CleanUpPriority + 22)]
-		public static async void ClearThumbsDbFiles()
+		public static void ClearThumbsDbFiles()
 		{
-			await DoClearFiles(ThumbsDBFileFilter, true);
-			Log.Info("Cleanup finished.");
+			DoClearFiles(ThumbsDBFileFilter, true).FireAndForgetAndContinue(() => Log.Info("Cleanup finished."));
 		}
 
 		[MenuItem(Menu + "Clear empty directories", priority = ExtenityMenu.CleanUpPriority + 23)]
-		public static async void ClearEmptyDirectories()
+		public static void ClearEmptyDirectories()
 		{
-			await DoClearEmptyDirectories(true);
-			Log.Info("Cleanup finished.");
+			DoClearEmptyDirectories(true).FireAndForgetAndContinue(() => Log.Info("Cleanup finished."));
 		}
 
 		[MenuItem(Menu + "Auto Cleanup at Editor launch/Enable", priority = ExtenityMenu.CleanUpPriority + 41)]

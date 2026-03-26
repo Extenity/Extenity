@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Extenity.AssetToolbox.Editor;
+using Extenity.ParallelToolbox;
 using Extenity.UnityEditorToolbox;
 using Extenity.UnityEditorToolbox.Editor;
 using UnityEditor;
@@ -618,23 +619,22 @@ namespace __NAMESPACE__
 		#region Menu Commands
 
 		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
-		private static async void _CreateScript_MainScriptGroup()
+		private static void _CreateScript_MainScriptGroup()
 		{
-			await CreateSnippet(MainScriptGroup);
+			CreateSnippet(MainScriptGroup).FireAndForget();
 		}
 
 		[MenuItem(ExtenityMenu.CreateAssetBaseContext + "C# Script (Namespaced Empty)", priority = ExtenityMenu.UnityCreateCSScriptMenuPriority)]
-		private static async void _CreateScript_EmptyScriptGroup()
+		private static void _CreateScript_EmptyScriptGroup()
 		{
-			await CreateSnippet(EmptyScriptGroup);
+			CreateSnippet(EmptyScriptGroup).FireAndForget();
 		}
 
 		[MenuItem(ExtenityMenu.CreateAssetTestingContext + "Test Assembly Folder - Triple Assemblies", priority = ExtenityMenu.UnityCreateTestingScriptMenuPriority)]
-		private static async void _CreateScript_TestAssembliesGroup()
+		private static void _CreateScript_TestAssembliesGroup()
 		{
-			await CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests");
+			CreateSnippet(TestAssembliesGroup, scriptName => scriptName + ".Tests").FireAndForget();
 		}
-
 
 		#endregion
 
