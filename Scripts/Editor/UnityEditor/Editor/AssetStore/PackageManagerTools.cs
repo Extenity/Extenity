@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Extenity.DataToolbox;
-using Extenity.ParallelToolbox.Editor;
 using Extenity.ReflectionToolbox;
 using Debug = UnityEngine.Debug;
 using Client = UnityEditor.PackageManager.Client;
@@ -85,7 +84,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			return result;
 		}
 
-		public static async void SearchAllViaClient()
+		public static async Task SearchAllViaClient()
 		{
 			var request = Client.SearchAll();
 			Log.Info("Searching all packages");
@@ -110,7 +109,7 @@ namespace Extenity.UnityEditorToolbox.UnityPackageManagement.Editor
 			}
 		}
 
-		public static async void ListPackagesViaClient()
+		public static async Task ListPackagesViaClient()
 		{
 			var request = Client.List(false, true);
 			Log.Info("Requesting package list");
