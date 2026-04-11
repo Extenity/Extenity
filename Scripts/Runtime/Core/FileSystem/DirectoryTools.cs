@@ -427,6 +427,12 @@ namespace Extenity.FileSystemToolbox
 					{
 						throw new Exception("Failed to delete directory: " + directoryPath);
 					}
+
+					return;
+				}
+				catch (DirectoryNotFoundException)
+				{
+					// It's okay if the directory could not be found.
 					return;
 				}
 				catch (IOException) 

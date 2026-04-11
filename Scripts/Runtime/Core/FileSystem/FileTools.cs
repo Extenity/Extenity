@@ -279,6 +279,8 @@ namespace Extenity.FileSystemToolbox
 
 			if (checkIfExists && !fileInfo.Exists)
 			{
+				// The file does not exist. Return false to tell the caller that this
+				// deletion was a no-op.
 				return false;
 			}
 
@@ -303,7 +305,14 @@ namespace Extenity.FileSystemToolbox
 					File.Delete(fileInfo.FullName);
 					return true;
 				}
-				catch (IOException) 
+				catch (FileNotFoundException)
+				{
+					// It's okay if the file is deleted outside of this code.
+					// Just return false, so that the caller would know we weren't
+					// the ones that deleted it.
+					return false;
+				}
+				catch (IOException)
 				{
 					// Ignore this type of exception and give it a one more try.
 				}
