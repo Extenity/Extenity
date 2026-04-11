@@ -291,21 +291,44 @@ namespace Extenity.FileSystemToolbox
 				// fileInfo.Attributes = FileAttributes.Normal;
 			}
 
-			try
+			for (int i = 0; i < 5; i++) // Try many times
 			{
-				File.Delete(fileInfo.FullName);
+				try
+				{
+					File.Delete(fileInfo.FullName);
+					return true;
+				}
+				catch (IOException) 
+				{
+					// Ignore this type of exception and give it a one more try.
+				}
+				catch (UnauthorizedAccessException)
+				{
+					// Ignore this type of exception and give it a one more try.
+				}
+
+				// Increase waiting duration between attempts.
+				int sleepDuration = 0;
+				switch (i)
+				{
+					case 0: sleepDuration = 1; break;
+					case 1: sleepDuration = 200; break;
+					case 2: sleepDuration = 600; break;
+					case 3: sleepDuration = 1000; break;
+					case 4: sleepDuration = 2000; break;
+					default:
+						File.Delete(fileInfo.FullName); // Last try. Allow this one to throw.
+						break;
+				}
+
+				// Allow the system or other applications to release file handles
+				// by waiting and then try once more.
+				Thread.Sleep(sleepDuration);
+				AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 			}
-			catch (IOException) 
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				File.Delete(fileInfo.FullName);
-			}
-			catch (UnauthorizedAccessException)
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				File.Delete(fileInfo.FullName);
-			}
-			return true;
+
+			// The code should not reach here.
+			throw new InternalException(11509861);
 		}
 
 		#endregion

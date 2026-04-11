@@ -416,26 +416,50 @@ namespace Extenity.FileSystemToolbox
 
 		private static void _DeleteNonRecursive(string directoryPath)
 		{
-			try
+			for (int i = 0; i < 5; i++) // Try many times
 			{
-				Directory.Delete(directoryPath, false);
-			}
-			catch (IOException) 
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				Directory.Delete(directoryPath, false);
-			}
-			catch (UnauthorizedAccessException)
-			{
-				Thread.Sleep(1); // Allow system to release file handles by waiting and then try once more
-				Directory.Delete(directoryPath, false);
+				try
+				{
+					Directory.Delete(directoryPath, false);
+
+					// Double check to ensure the directory is deleted.
+					if (Directory.Exists(directoryPath))
+					{
+						throw new Exception("Failed to delete directory: " + directoryPath);
+					}
+					return;
+				}
+				catch (IOException) 
+				{
+					// Ignore this type of exception and give it a one more try.
+				}
+				catch (UnauthorizedAccessException)
+				{
+					// Ignore this type of exception and give it a one more try.
+				}
+
+				// Increase waiting duration between attempts.
+				int sleepDuration = 0;
+				switch (i)
+				{
+					case 0: sleepDuration = 1; break;
+					case 1: sleepDuration = 200; break;
+					case 2: sleepDuration = 600; break;
+					case 3: sleepDuration = 1000; break;
+					case 4: sleepDuration = 2000; break;
+					default:
+						Directory.Delete(directoryPath, false); // Last try. Allow this one to throw.
+						break;
+				}
+
+				// Allow the system or other applications to release file handles
+				// by waiting and then try once more.
+				Thread.Sleep(sleepDuration);
+				AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 			}
 
-			// Double check to ensure the directory is deleted.
-			if (Directory.Exists(directoryPath))
-			{
-				throw new Exception("Failed to delete directory: " + directoryPath);
-			}
+			// The code should not reach here.
+			throw new InternalException(11509862);
 		}
 
 		public static bool DeleteIfEmpty(string directoryPath)
