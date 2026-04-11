@@ -447,9 +447,7 @@ namespace Extenity.FileSystemToolbox
 					case 2: sleepDuration = 600; break;
 					case 3: sleepDuration = 1000; break;
 					case 4: sleepDuration = 2000; break;
-					default:
-						Directory.Delete(directoryPath, false); // Last try. Allow this one to throw.
-						return;
+					default: throw new InternalException(11485152);
 				}
 
 				// Allow the system or other applications to release file handles
@@ -458,8 +456,7 @@ namespace Extenity.FileSystemToolbox
 				AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 			}
 
-			// The code should not reach here.
-			throw new InternalException(11509862);
+			Directory.Delete(directoryPath, false); // Last try. Allow this one to throw.
 		}
 
 		public static bool DeleteIfEmpty(string directoryPath)

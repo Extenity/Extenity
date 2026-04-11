@@ -308,7 +308,7 @@ namespace Extenity.FileSystemToolbox
 				}
 
 				// Increase waiting duration between attempts.
-				int sleepDuration = 0;
+				int sleepDuration;
 				switch (i)
 				{
 					case 0: sleepDuration = 1; break;
@@ -316,9 +316,7 @@ namespace Extenity.FileSystemToolbox
 					case 2: sleepDuration = 600; break;
 					case 3: sleepDuration = 1000; break;
 					case 4: sleepDuration = 2000; break;
-					default:
-						File.Delete(fileInfo.FullName); // Last try. Allow this one to throw.
-						return true;
+					default: throw new InternalException(11485151);
 				}
 
 				// Allow the system or other applications to release file handles
@@ -327,8 +325,8 @@ namespace Extenity.FileSystemToolbox
 				AssetDatabaseRuntimeTools.ReleaseCachedFileHandles(); // Make Unity release the files to prevent any IO errors.
 			}
 
-			// The code should not reach here.
-			throw new InternalException(11509861);
+			File.Delete(fileInfo.FullName); // Last try. Allow this one to throw.
+			return true;
 		}
 
 		#endregion
