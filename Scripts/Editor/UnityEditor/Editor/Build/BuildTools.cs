@@ -273,8 +273,6 @@ namespace Extenity.BuildToolbox.Editor
 		/// <param name="folderNamePrefix">The executable base name used by Unity as the folder name prefix.</param>
 		public static void ClearDebugSymbolsFolders(string parentDirectory, string folderNamePrefix)
 		{
-			Thread.Sleep(2000); // Just wait for a couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
-
 			var backupFolderPath = Path.Combine(parentDirectory, folderNamePrefix + "_BackUpThisFolder_ButDontShipItWithYourGame");
 			if (!DirectoryTools.DeleteWithContent(backupFolderPath))
 			{
