@@ -302,15 +302,46 @@ namespace Extenity.FileSystemToolbox
 			{
 				try
 				{
+					if (i > 0) // Skip the first iteration, as the file existence was already checked above.
+					{
+						if (checkIfExists && !fileInfo.Exists)
+						{
+							// It's okay if the file is deleted outside of this method.
+							// Just return false, so that the caller would know we weren't
+							// the ones that deleted it.
+							// Note that File.Delete silently succeeds if the file is
+							// missing. So, this is the only way to support returning
+							// false if the caller needs to know when 'checkIfExists'
+							// is requested.
+							return false;
+						}
+					}
+
 					File.Delete(fileInfo.FullName);
 					return true;
 				}
-				catch (FileNotFoundException)
+				// catch (FileNotFoundException)
+				// {
+				// 	  The File.Delete does not actually throw FileNotFoundException.
+				// }
+				catch (DirectoryNotFoundException)
 				{
-					// It's okay if the file is deleted outside of this code.
+					// It's okay if the file is deleted outside of this method.
 					// Just return false, so that the caller would know we weren't
 					// the ones that deleted it.
-					return false;
+					if (checkIfExists)
+					{
+						// Respect that the caller wants to know if we were the ones
+						// that deleted the file. So, return false to tell correctly.
+						return false;
+					}
+					else
+					{
+						// If the checkIfExists is not requested, the File.Delete
+						// were going to just silently succeed and the method would
+						// have returned true. So, we are simulating this behavior here.
+						return true;
+					}
 				}
 				catch (IOException)
 				{
