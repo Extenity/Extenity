@@ -318,7 +318,7 @@ namespace Extenity.FileSystemToolbox
 					case 4: sleepDuration = 2000; break;
 					default:
 						File.Delete(fileInfo.FullName); // Last try. Allow this one to throw.
-						break;
+						return true;
 				}
 
 				// Allow the system or other applications to release file handles

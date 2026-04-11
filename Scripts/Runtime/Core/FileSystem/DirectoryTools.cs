@@ -449,7 +449,7 @@ namespace Extenity.FileSystemToolbox
 					case 4: sleepDuration = 2000; break;
 					default:
 						Directory.Delete(directoryPath, false); // Last try. Allow this one to throw.
-						break;
+						return;
 				}
 
 				// Allow the system or other applications to release file handles
