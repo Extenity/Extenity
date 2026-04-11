@@ -259,6 +259,36 @@ namespace Extenity.BuildToolbox.Editor
 
 	public static class BuildTools
 	{
+		#region Debug Symbols Cleanup
+
+		/// <summary>
+		/// Deletes Unity's two debug symbol folders that sit next to the built executable.
+		/// Unity emits these prefixed with the executable base name on every supported
+		/// platform (e.g. "MyGame_BackUpThisFolder_ButDontShipItWithYourGame" and
+		/// "MyGame_BurstDebugInformation_DoNotShip"). Both are expected to always exist
+		/// for non-development builds, so this throws if either is missing. If Unity ever
+		/// renames them, we want to fail loudly instead of silently shipping debug symbols.
+		/// </summary>
+		/// <param name="parentDirectory">The directory that contains the executable and the debug folders.</param>
+		/// <param name="folderNamePrefix">The executable base name used by Unity as the folder name prefix.</param>
+		public static void ClearDebugSymbolsFolders(string parentDirectory, string folderNamePrefix)
+		{
+			Thread.Sleep(2000); // Just wait for a couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
+
+			var backupFolderPath = Path.Combine(parentDirectory, folderNamePrefix + "_BackUpThisFolder_ButDontShipItWithYourGame");
+			if (!DirectoryTools.DeleteWithContent(backupFolderPath))
+			{
+				throw new Exception($"Expected debug folder was not found at '{backupFolderPath}'. Unity may have changed its debug folder naming convention.");
+			}
+			var burstDebugFolderPath = Path.Combine(parentDirectory, folderNamePrefix + "_BurstDebugInformation_DoNotShip");
+			if (!DirectoryTools.DeleteWithContent(burstDebugFolderPath))
+			{
+				throw new Exception($"Expected Burst debug folder was not found at '{burstDebugFolderPath}'. Unity may have changed its debug folder naming convention.");
+			}
+		}
+
+		#endregion
+
 		#region Windows Build Cleanup
 
 		public static void ClearWindowsBuild(
@@ -309,10 +339,7 @@ namespace Extenity.BuildToolbox.Editor
 				// Clear debug symbols folder
 				if (deleteDebugSymbolsFolder)
 				{
-					Thread.Sleep(2000); // Just wait for couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
-
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BackUpThisFolder_ButDontShipItWithYourGame"));
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectory, "_BurstDebugInformation_DoNotShip"));
+					ClearDebugSymbolsFolders(outputDirectory, executableNameWithoutExtension);
 				}
 				// Clear DLL artifacts
 				if (deleteDLLArtifacts)
@@ -369,12 +396,7 @@ namespace Extenity.BuildToolbox.Editor
 				// Clear debug symbols folder
 				if (deleteDebugSymbolsFolder)
 				{
-					Thread.Sleep(2000); // Just wait for couple of seconds to hopefully prevent "IOException: Sharing violation on path ..." error.
-
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, "_BackUpThisFolder_ButDontShipItWithYourGame"));
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, "_BurstDebugInformation_DoNotShip"));
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, outputDirectoryName + "_BackUpThisFolder_ButDontShipItWithYourGame"));
-					DirectoryTools.DeleteWithContent(Path.Combine(outputDirectoryPath, outputDirectoryName + "_BurstDebugInformation_DoNotShip"));
+					ClearDebugSymbolsFolders(outputDirectoryPath, outputDirectoryName);
 				}
 
 				deletedFiles.LogList($"Cleared '{deletedFiles.Count}' files:");
