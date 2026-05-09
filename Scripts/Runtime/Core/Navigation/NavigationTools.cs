@@ -3,9 +3,6 @@
 #if !DisableUnityAI
 
 using System;
-using System.Collections.Generic;
-using Extenity.MathToolbox;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 

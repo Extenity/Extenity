@@ -4,11 +4,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using Extenity.CameraToolbox;
 using Extenity.DataToolbox;
-using Extenity.GameObjectToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.MathToolbox;
 using Extenity.ProfilingToolbox;
 using UnityEditor.SceneManagement;
+#if PACKAGE_PHYSICS
+using Extenity.GameObjectToolbox;
+#endif
 
 namespace Extenity.UnityEditorToolbox.Editor
 {

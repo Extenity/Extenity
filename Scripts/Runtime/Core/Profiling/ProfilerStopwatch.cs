@@ -1,17 +1,6 @@
 using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
 
-// This is the way that Log system supports various Context types in different environments like
-// both in Unity and in UniversalExtenity. Also don't add 'using UnityEngine' or 'using System'
-// in this code file to prevent any possible confusions. Use 'using' selectively, like
-// 'using Exception = System.Exception;'
-// See 11746845.
-#if UNITY_5_3_OR_NEWER
-using ContextObject = UnityEngine.Object;
-#else
-using ContextObject = System.Object;
-#endif
-
 namespace Extenity.ProfilingToolbox
 {
 

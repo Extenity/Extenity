@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Extenity.IMGUIToolbox.Editor;
 using Extenity.MathToolbox;
 using Extenity.TextureToolbox;

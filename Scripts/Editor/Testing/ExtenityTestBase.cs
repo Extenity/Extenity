@@ -14,9 +14,6 @@ using NUnit.Framework.Interfaces;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.TestTools;
-#if UNITY_EDITOR
-using Extenity.ParallelToolbox.Editor;
-#endif
 
 namespace Extenity.Testing
 {

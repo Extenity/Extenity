@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+#if UNITY_STANDALONE_WIN
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+#endif
 
 namespace Extenity.ApplicationToolbox
 {

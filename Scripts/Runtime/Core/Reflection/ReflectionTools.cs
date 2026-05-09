@@ -15,10 +15,8 @@ using System.Reflection.Emit;
 
 #if UNITY_5_3_OR_NEWER
 using Extenity.GameObjectToolbox;
-using Extenity.MathToolbox;
 using Extenity.SystemToolbox;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 #endif
@@ -1409,9 +1407,9 @@ namespace Extenity.ReflectionToolbox
 				}
 			}
 #endif
-			else if (type.IsSameOrSubclassOf(typeof(UnityEvent)))
+			else if (type.IsSameOrSubclassOf(typeof(UnityEngine.Events.UnityEvent)))
 			{
-				var unityEvent = (UnityEvent)referencedObject;
+				var unityEvent = (UnityEngine.Events.UnityEvent)referencedObject;
 				var eventCount = unityEvent.GetPersistentEventCount();
 
 				for (int i = 0; i < eventCount; i++)
@@ -1541,18 +1539,18 @@ namespace Extenity.ReflectionToolbox
 							typeof(Vector3Int),
 
 							// Extenity types
-							typeof(Bounds2),
-							typeof(Bounds2Int),
-							typeof(Bounds2IntRevised),
-							typeof(ClampedInt),
-							typeof(ClampedFloat),
-							typeof(PathPoint),
-							typeof(PIDConfiguration),
+							typeof(MathToolbox.Bounds2),
+							typeof(MathToolbox.Bounds2Int),
+							typeof(MathToolbox.Bounds2IntRevised),
+							typeof(MathToolbox.ClampedInt),
+							typeof(MathToolbox.ClampedFloat),
+							typeof(MathToolbox.PathPoint),
+							typeof(MathToolbox.PIDConfiguration),
 #if UNITY_EDITOR
-							typeof(Line.DebugConfigurationData),
-							typeof(Spline.DebugConfigurationData),
-							typeof(OrientedLine.DebugConfigurationData),
-							//typeof(OrientedSpline.DebugConfigurationData), Uncomment when implemented
+							typeof(MathToolbox.Line.DebugConfigurationData),
+							typeof(MathToolbox.Spline.DebugConfigurationData),
+							typeof(MathToolbox.OrientedLine.DebugConfigurationData),
+							//typeof(MathToolbox.OrientedSpline.DebugConfigurationData), Uncomment when implemented
 #endif
 						}
 					);

@@ -1,7 +1,5 @@
 ﻿//#define EnableBlackoutUILog
 
-using System.Diagnostics;
-using Extenity.DebugToolbox;
 using Extenity.DesignPatternsToolbox;
 
 namespace Extenity.UIToolbox

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Extenity;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.UnityTestToolbox;
