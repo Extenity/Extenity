@@ -103,6 +103,7 @@ namespace Extenity.AnimationToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
 		private void OnValidate()
 		{
 			if (!Transform)
@@ -110,6 +111,7 @@ namespace Extenity.AnimationToolbox
 				Transform = transform;
 			}
 		}
+#endif
 
 		#endregion
 	}

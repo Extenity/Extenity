@@ -353,6 +353,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 
 		protected virtual void OnValidateDerived() { }
 
+#if UNITY_EDITOR
 		protected void OnValidate()
 		{
 			if (!Application.isPlaying) // Only run validate in edit mode.
@@ -365,6 +366,7 @@ namespace Extenity.KernelToolbox.UnityInterface
 				OnValidateDerived();
 			}
 		}
+#endif
 
 		#endregion
 

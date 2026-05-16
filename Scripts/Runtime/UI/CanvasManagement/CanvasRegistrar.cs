@@ -60,10 +60,12 @@ namespace Extenity.UIToolbox
 
 		#region Editor
 
+#if UNITY_EDITOR
 		protected void OnValidate()
 		{
 			GetCanvasLink();
 		}
+#endif
 
 		#endregion
 	}
