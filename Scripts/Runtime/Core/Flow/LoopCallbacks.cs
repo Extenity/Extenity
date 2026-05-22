@@ -25,6 +25,20 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PostUpdateCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PostLateUpdateCallbacks = new ExtenityEvent();
 
+		public readonly ExtenityEvent UpdateEvery10FramesCallbacks = new ExtenityEvent();
+
+		// Periodic, scaled (game) time. Pauses with Time.timeScale = 0.
+		public readonly ExtenityEvent UpdateEvery100MillisecondsCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery250MillisecondsCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery500MillisecondsCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery1000MillisecondsCallbacks = new ExtenityEvent();
+
+		// Periodic, unscaled (wall-clock) time. Keeps ticking when Time.timeScale = 0.
+		public readonly ExtenityEvent UpdateEvery100MillisecondsUnscaledCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery250MillisecondsUnscaledCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery500MillisecondsUnscaledCallbacks = new ExtenityEvent();
+		public readonly ExtenityEvent UpdateEvery1000MillisecondsUnscaledCallbacks = new ExtenityEvent();
+
 		public readonly ExtenityEvent CameraPlacementUpdateCallbacks = new ExtenityEvent();
 
 		public readonly ExtenityEvent PreRenderCallbacks = new ExtenityEvent();

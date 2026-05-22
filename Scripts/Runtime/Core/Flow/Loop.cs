@@ -26,6 +26,65 @@ namespace Extenity.FlowToolbox
 
 		#endregion
 
+		#region Constants
+
+		/// <summary>How many frames between consecutive invocations of <see cref="RegisterUpdateEvery10Frames"/> callbacks. The callback fires on frames where <c>FrameCount % UpdateEvery10FramesPeriod == 0</c>.</summary>
+		private const int UpdateEvery10FramesPeriod = 10;
+
+		private const float UpdateEvery100MillisecondsPeriod  = 0.1f;
+		private const float UpdateEvery250MillisecondsPeriod  = 0.25f;
+		private const float UpdateEvery500MillisecondsPeriod  = 0.5f;
+		private const float UpdateEvery1000MillisecondsPeriod = 1.0f;
+
+		#endregion
+
+		#region Periodic Update Last-Fire Timestamps
+
+		// Scaled (game) time, using Loop.Time. Affected by Time.timeScale.
+		private static float _LastFire_UpdateEvery100Milliseconds;
+		private static float _LastFire_UpdateEvery250Milliseconds;
+		private static float _LastFire_UpdateEvery500Milliseconds;
+		private static float _LastFire_UpdateEvery1000Milliseconds;
+
+		// Unscaled (wall-clock) time, using Loop.UnscaledTime. Keeps ticking when Time.timeScale = 0.
+		private static float _LastFire_UpdateEvery100MillisecondsUnscaled;
+		private static float _LastFire_UpdateEvery250MillisecondsUnscaled;
+		private static float _LastFire_UpdateEvery500MillisecondsUnscaled;
+		private static float _LastFire_UpdateEvery1000MillisecondsUnscaled;
+
+		private static void InitializePeriodicUpdateTimers()
+		{
+			_LastFire_UpdateEvery100Milliseconds          = Time;
+			_LastFire_UpdateEvery250Milliseconds          = Time;
+			_LastFire_UpdateEvery500Milliseconds          = Time;
+			_LastFire_UpdateEvery1000Milliseconds         = Time;
+			_LastFire_UpdateEvery100MillisecondsUnscaled  = UnscaledTime;
+			_LastFire_UpdateEvery250MillisecondsUnscaled  = UnscaledTime;
+			_LastFire_UpdateEvery500MillisecondsUnscaled  = UnscaledTime;
+			_LastFire_UpdateEvery1000MillisecondsUnscaled = UnscaledTime;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void CheckAndFirePeriodic(ref float lastFire, float now, float period, ExtenityEvent callbacks)
+		{
+			var elapsed = now - lastFire;
+			if (elapsed >= period)
+			{
+				// Advance 'lastFire' by exactly one period so the cadence stays anchored
+				// to a fixed grid (lastFire + N*period) instead of drifting forward by
+				// frame jitter on each fire. If more than one period was missed
+				// (editor pause/resume, hitch, freeze), jump to 'now' so we don't burn
+				// the next several frames firing catch-up calls.
+				lastFire = elapsed >= 2f * period
+					? now
+					: lastFire + period;
+
+				InvokeSafeIfEnabled(callbacks);
+			}
+		}
+
+		#endregion
+
 		#region Initialization
 
 		// Instantiating game objects in SubsystemRegistration and AfterAssembliesLoaded is a bad idea.
@@ -52,6 +111,10 @@ namespace Extenity.FlowToolbox
 			// Initialize cached times here at start.
 			// Otherwise, cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
 			SetCachedTimesFromUnityTimes();
+
+			// Seed periodic-update timers from "now" so the first fire happens one period after startup,
+			// not on the first frame (which is already the heaviest frame).
+			InitializePeriodicUpdateTimers();
 
 			Instance = new LoopCallbacks();
 
@@ -146,6 +209,47 @@ namespace Extenity.FlowToolbox
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPostLateUpdate       (Action callback, int order = 0) { Instance.PostLateUpdateCallbacks       .AddListener(callback, order); }
 
+		/// <summary>Registers a callback that runs once every <see cref="UpdateEvery10FramesPeriod"/> frames, right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Cadence is gated on <c>FrameCount % 10 == 0</c>, so every registered callback fires together on the same frame.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery10Frames                (Action callback, int order = 0) { Instance.UpdateEvery10FramesCallbacks                .AddListener(callback, order); }
+
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery100MillisecondsPeriod"/> seconds of <b>scaled</b> game time (<see cref="Time"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Affected by <c>Time.timeScale</c> — the cadence slows and pauses with the game. See <see cref="RegisterUpdateEvery100MillisecondsUnscaled"/> for a wall-clock variant.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery100Milliseconds         (Action callback, int order = 0) { Instance.UpdateEvery100MillisecondsCallbacks         .AddListener(callback, order); }
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery100MillisecondsPeriod"/> seconds of <b>unscaled</b> wall-clock time (<see cref="UnscaledTime"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Keeps ticking when <c>Time.timeScale = 0</c>; the right default for UI/diagnostics work that shouldn't pause with the game. See <see cref="RegisterUpdateEvery100Milliseconds"/> for a variant that pauses with the game.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery100MillisecondsUnscaled (Action callback, int order = 0) { Instance.UpdateEvery100MillisecondsUnscaledCallbacks .AddListener(callback, order); }
+
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery250MillisecondsPeriod"/> seconds of <b>scaled</b> game time (<see cref="Time"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Affected by <c>Time.timeScale</c> — the cadence slows and pauses with the game. See <see cref="RegisterUpdateEvery250MillisecondsUnscaled"/> for a wall-clock variant.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery250Milliseconds         (Action callback, int order = 0) { Instance.UpdateEvery250MillisecondsCallbacks         .AddListener(callback, order); }
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery250MillisecondsPeriod"/> seconds of <b>unscaled</b> wall-clock time (<see cref="UnscaledTime"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Keeps ticking when <c>Time.timeScale = 0</c>; the right default for UI/diagnostics work that shouldn't pause with the game. See <see cref="RegisterUpdateEvery250Milliseconds"/> for a variant that pauses with the game.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery250MillisecondsUnscaled (Action callback, int order = 0) { Instance.UpdateEvery250MillisecondsUnscaledCallbacks .AddListener(callback, order); }
+
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery500MillisecondsPeriod"/> seconds of <b>scaled</b> game time (<see cref="Time"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Affected by <c>Time.timeScale</c> — the cadence slows and pauses with the game. See <see cref="RegisterUpdateEvery500MillisecondsUnscaled"/> for a wall-clock variant.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery500Milliseconds         (Action callback, int order = 0) { Instance.UpdateEvery500MillisecondsCallbacks         .AddListener(callback, order); }
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery500MillisecondsPeriod"/> seconds of <b>unscaled</b> wall-clock time (<see cref="UnscaledTime"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Keeps ticking when <c>Time.timeScale = 0</c>; the right default for UI/diagnostics work that shouldn't pause with the game. See <see cref="RegisterUpdateEvery500Milliseconds"/> for a variant that pauses with the game.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery500MillisecondsUnscaled (Action callback, int order = 0) { Instance.UpdateEvery500MillisecondsUnscaledCallbacks .AddListener(callback, order); }
+
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery1000MillisecondsPeriod"/> seconds of <b>scaled</b> game time (<see cref="Time"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Affected by <c>Time.timeScale</c> — the cadence slows and pauses with the game. See <see cref="RegisterUpdateEvery1000MillisecondsUnscaled"/> for a wall-clock variant.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery1000Milliseconds        (Action callback, int order = 0) { Instance.UpdateEvery1000MillisecondsCallbacks        .AddListener(callback, order); }
+		/// <summary>Registers a callback that runs at most once every <see cref="UpdateEvery1000MillisecondsPeriod"/> seconds of <b>unscaled</b> wall-clock time (<see cref="UnscaledTime"/>), right after PostUpdate. Intended for code that doesn't need to run every frame and can tolerate the resulting latency (e.g. periodic refreshes, low-frequency polling, throttled diagnostics). Keeps ticking when <c>Time.timeScale = 0</c>; the right default for UI/diagnostics work that shouldn't pause with the game. See <see cref="RegisterUpdateEvery1000Milliseconds"/> for a variant that pauses with the game.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterUpdateEvery1000MillisecondsUnscaled(Action callback, int order = 0) { Instance.UpdateEvery1000MillisecondsUnscaledCallbacks.AddListener(callback, order); }
+
 		/// <summary>Registers a callback for camera placement updates. Runs after PostLateUpdate and before PreRender, allowing all game logic calculations to complete before camera positioning is finalized. This ensures that all PreRender operations know the camera is properly positioned.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
@@ -180,8 +284,17 @@ namespace Extenity.FlowToolbox
 		public static void DeregisterLateUpdate           (Action callback) { Instance.LateUpdateCallbacks           .RemoveListener(callback); }
 		public static void DeregisterPostFixedUpdate      (Action callback) { Instance.PostFixedUpdateCallbacks      .RemoveListener(callback); }
 		public static void DeregisterPostUpdate           (Action callback) { Instance.PostUpdateCallbacks           .RemoveListener(callback); }
-		public static void DeregisterPostLateUpdate       (Action callback) { Instance.PostLateUpdateCallbacks       .RemoveListener(callback); }
-		public static void DeregisterCameraPlacementUpdate(Action callback) { Instance.CameraPlacementUpdateCallbacks.RemoveListener(callback); }
+		public static void DeregisterPostLateUpdate                     (Action callback) { Instance.PostLateUpdateCallbacks                     .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery10Frames                (Action callback) { Instance.UpdateEvery10FramesCallbacks                .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery100Milliseconds         (Action callback) { Instance.UpdateEvery100MillisecondsCallbacks         .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery100MillisecondsUnscaled (Action callback) { Instance.UpdateEvery100MillisecondsUnscaledCallbacks .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery250Milliseconds         (Action callback) { Instance.UpdateEvery250MillisecondsCallbacks         .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery250MillisecondsUnscaled (Action callback) { Instance.UpdateEvery250MillisecondsUnscaledCallbacks .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery500Milliseconds         (Action callback) { Instance.UpdateEvery500MillisecondsCallbacks         .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery500MillisecondsUnscaled (Action callback) { Instance.UpdateEvery500MillisecondsUnscaledCallbacks .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery1000Milliseconds        (Action callback) { Instance.UpdateEvery1000MillisecondsCallbacks        .RemoveListener(callback); }
+		public static void DeregisterUpdateEvery1000MillisecondsUnscaled(Action callback) { Instance.UpdateEvery1000MillisecondsUnscaledCallbacks.RemoveListener(callback); }
+		public static void DeregisterCameraPlacementUpdate              (Action callback) { Instance.CameraPlacementUpdateCallbacks              .RemoveListener(callback); }
 		public static void DeregisterPreRender            (Action callback) { Instance.PreRenderCallbacks            .RemoveListener(callback); }
 		public static void DeregisterPreUI                (Action callback) { Instance.PreUICallbacks                .RemoveListener(callback); }
 
@@ -204,6 +317,7 @@ namespace Extenity.FlowToolbox
 			InsertLoopSystemBefore<Update>(ref playerLoop, typeof(Update.ScriptRunBehaviourUpdate), CreateLoopSystem<PreUpdateRunner>());
 			InsertLoopSystemAfter<Update>(ref playerLoop, typeof(Update.ScriptRunBehaviourUpdate), CreateLoopSystem<UpdateRunner>());
 			InsertLoopSystemAfter<Update>(ref playerLoop, typeof(UpdateRunner), CreateLoopSystem<PostUpdateRunner>());
+			InsertLoopSystemAfter<Update>(ref playerLoop, typeof(PostUpdateRunner), CreateLoopSystem<InfrequentUpdatesRunner>());
 
 			InsertLoopSystemBefore<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<PreLateUpdateRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdate.ScriptRunBehaviourLateUpdate), CreateLoopSystem<LateUpdateRunner>());
@@ -228,6 +342,7 @@ namespace Extenity.FlowToolbox
 			RemoveLoopSystem<Update>(ref playerLoop, typeof(PreUpdateRunner));
 			RemoveLoopSystem<Update>(ref playerLoop, typeof(UpdateRunner));
 			RemoveLoopSystem<Update>(ref playerLoop, typeof(PostUpdateRunner));
+			RemoveLoopSystem<Update>(ref playerLoop, typeof(InfrequentUpdatesRunner));
 
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreLateUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(LateUpdateRunner));
@@ -327,6 +442,27 @@ namespace Extenity.FlowToolbox
 			if (typeof(T) == typeof(PreUpdateRunner            )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };
 			if (typeof(T) == typeof(UpdateRunner               )) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomUpdate(UnscaledTime); InvokeSafeIfEnabled(Instance.UpdateCallbacks); };
 			if (typeof(T) == typeof(PostUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostUpdateCallbacks); };
+			if (typeof(T) == typeof(InfrequentUpdatesRunner    )) return () =>
+			{
+				SetCachedTimesFromUnityTimes();
+				// Frame-based: all callbacks fire together on frames where FrameCount % 10 == 0.
+				if (FrameCount % UpdateEvery10FramesPeriod == 0) 
+				{
+					InvokeSafeIfEnabled(Instance.UpdateEvery10FramesCallbacks);
+				}
+				var t = Time;
+				var u = UnscaledTime;
+				// Time-based, scaled (Loop.Time). Pauses with Time.timeScale = 0. Fire fastest-to-slowest.
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery100Milliseconds,          t, UpdateEvery100MillisecondsPeriod,  Instance.UpdateEvery100MillisecondsCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery250Milliseconds,          t, UpdateEvery250MillisecondsPeriod,  Instance.UpdateEvery250MillisecondsCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery500Milliseconds,          t, UpdateEvery500MillisecondsPeriod,  Instance.UpdateEvery500MillisecondsCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery1000Milliseconds,         t, UpdateEvery1000MillisecondsPeriod, Instance.UpdateEvery1000MillisecondsCallbacks);
+				// Time-based, unscaled (Loop.UnscaledTime). Keeps ticking through pause.
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery100MillisecondsUnscaled,  u, UpdateEvery100MillisecondsPeriod,  Instance.UpdateEvery100MillisecondsUnscaledCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery250MillisecondsUnscaled,  u, UpdateEvery250MillisecondsPeriod,  Instance.UpdateEvery250MillisecondsUnscaledCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery500MillisecondsUnscaled,  u, UpdateEvery500MillisecondsPeriod,  Instance.UpdateEvery500MillisecondsUnscaledCallbacks);
+				CheckAndFirePeriodic(ref _LastFire_UpdateEvery1000MillisecondsUnscaled, u, UpdateEvery1000MillisecondsPeriod, Instance.UpdateEvery1000MillisecondsUnscaledCallbacks);
+			};
 			if (typeof(T) == typeof(PreLateUpdateRunner        )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreLateUpdateCallbacks); };
 			if (typeof(T) == typeof(LateUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.LateUpdateCallbacks); };
 			if (typeof(T) == typeof(PostLateUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostLateUpdateCallbacks); };
@@ -364,6 +500,7 @@ namespace Extenity.FlowToolbox
 		private struct PreUpdateRunner { }
 		private struct UpdateRunner { }
 		private struct PostUpdateRunner { }
+		private struct InfrequentUpdatesRunner { }
 
 		private struct PreLateUpdateRunner { }
 		private struct LateUpdateRunner { }
@@ -397,6 +534,19 @@ namespace Extenity.FlowToolbox
 				Instance.UpdateCallbacks.InvokeSafe();
 				Instance.PostUpdateCallbacks.InvokeSafe();
 
+				// In ManuallyRunLoopOnce we fire all infrequent-update callbacks unconditionally
+				// (without checking frame count or elapsed time) so a single manual loop step
+				// is enough to exercise them in tests.
+				Instance.UpdateEvery10FramesCallbacks.InvokeSafe();
+				Instance.UpdateEvery100MillisecondsCallbacks.InvokeSafe();
+				Instance.UpdateEvery250MillisecondsCallbacks.InvokeSafe();
+				Instance.UpdateEvery500MillisecondsCallbacks.InvokeSafe();
+				Instance.UpdateEvery1000MillisecondsCallbacks.InvokeSafe();
+				Instance.UpdateEvery100MillisecondsUnscaledCallbacks.InvokeSafe();
+				Instance.UpdateEvery250MillisecondsUnscaledCallbacks.InvokeSafe();
+				Instance.UpdateEvery500MillisecondsUnscaledCallbacks.InvokeSafe();
+				Instance.UpdateEvery1000MillisecondsUnscaledCallbacks.InvokeSafe();
+
 				Instance.PreLateUpdateCallbacks.InvokeSafe();
 				Instance.LateUpdateCallbacks.InvokeSafe();
 				Instance.PostLateUpdateCallbacks.InvokeSafe();
@@ -422,6 +572,19 @@ namespace Extenity.FlowToolbox
 				Instance.PreUpdateCallbacks.InvokeUnsafe();
 				Instance.UpdateCallbacks.InvokeUnsafe();
 				Instance.PostUpdateCallbacks.InvokeUnsafe();
+
+				// In ManuallyRunLoopOnce we fire all infrequent-update callbacks unconditionally
+				// (without checking frame count or elapsed time) so a single manual loop step
+				// is enough to exercise them in tests.
+				Instance.UpdateEvery10FramesCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery100MillisecondsCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery250MillisecondsCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery500MillisecondsCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery1000MillisecondsCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery100MillisecondsUnscaledCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery250MillisecondsUnscaledCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery500MillisecondsUnscaledCallbacks.InvokeUnsafe();
+				Instance.UpdateEvery1000MillisecondsUnscaledCallbacks.InvokeUnsafe();
 
 				Instance.PreLateUpdateCallbacks.InvokeUnsafe();
 				Instance.LateUpdateCallbacks.InvokeUnsafe();
@@ -649,6 +812,16 @@ namespace Extenity.FlowToolbox
 			CheckCallbacks(Instance.PostFixedUpdateCallbacks, "PostFixedUpdate");
 			CheckCallbacks(Instance.PostUpdateCallbacks, "PostUpdate");
 			CheckCallbacks(Instance.PostLateUpdateCallbacks, "PostLateUpdate");
+
+			CheckCallbacks(Instance.UpdateEvery10FramesCallbacks, "UpdateEvery10Frames");
+			CheckCallbacks(Instance.UpdateEvery100MillisecondsCallbacks,          "UpdateEvery100Milliseconds");
+			CheckCallbacks(Instance.UpdateEvery100MillisecondsUnscaledCallbacks,  "UpdateEvery100MillisecondsUnscaled");
+			CheckCallbacks(Instance.UpdateEvery250MillisecondsCallbacks,          "UpdateEvery250Milliseconds");
+			CheckCallbacks(Instance.UpdateEvery250MillisecondsUnscaledCallbacks,  "UpdateEvery250MillisecondsUnscaled");
+			CheckCallbacks(Instance.UpdateEvery500MillisecondsCallbacks,          "UpdateEvery500Milliseconds");
+			CheckCallbacks(Instance.UpdateEvery500MillisecondsUnscaledCallbacks,  "UpdateEvery500MillisecondsUnscaled");
+			CheckCallbacks(Instance.UpdateEvery1000MillisecondsCallbacks,         "UpdateEvery1000Milliseconds");
+			CheckCallbacks(Instance.UpdateEvery1000MillisecondsUnscaledCallbacks, "UpdateEvery1000MillisecondsUnscaled");
 
 			CheckCallbacks(Instance.CameraPlacementUpdateCallbacks, "CameraPlacementUpdate");
 
