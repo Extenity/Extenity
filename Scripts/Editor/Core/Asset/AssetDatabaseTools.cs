@@ -94,25 +94,30 @@ namespace Extenity.AssetToolbox.Editor
 
 		public static List<string> GetAllSceneAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".unity")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".unity", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllPrefabAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".prefab")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllModelAssetPaths()
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".fbx") ||
-				       lower.EndsWith(".dae") ||
-				       lower.EndsWith(".3ds") ||
-				       lower.EndsWith(".dxf") ||
-				       lower.EndsWith(".obj") ||
-				       lower.EndsWith(".skp");
+				return item.EndsWith(".fbx", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".dae", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".3ds", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".dxf", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".obj", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".skp", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
@@ -120,28 +125,29 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".anim") ||
-				       lower.EndsWith(".controller") ||
-				       lower.EndsWith(".overrideController") ||
-				       lower.EndsWith(".mask");
+				return item.EndsWith(".anim", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".controller", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".overrideController", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mask", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
 		public static List<string> GetAllMaterialAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".mat")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".mat", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllShaderAssetPaths(bool shaders, bool shaderVariants, bool shaderGraphs, bool computeShaders)
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return (computeShaders && lower.EndsWith(".compute")) ||
-				       (shaderGraphs && lower.EndsWith(".shadergraph")) ||
-				       (shaderVariants && lower.EndsWith(".shadervariants")) ||
-				       (shaders && lower.EndsWith(".shader"));
+				return (computeShaders && item.EndsWith(".compute", StringComparison.OrdinalIgnoreCase)) ||
+				       (shaderGraphs && item.EndsWith(".shadergraph", StringComparison.OrdinalIgnoreCase)) ||
+				       (shaderVariants && item.EndsWith(".shadervariants", StringComparison.OrdinalIgnoreCase)) ||
+				       (shaders && item.EndsWith(".shader", StringComparison.OrdinalIgnoreCase));
 			}).ToList();
 		}
 
@@ -149,59 +155,69 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".cubemap") ||
-				       lower.EndsWith(".bmp") ||
-				       lower.EndsWith(".exr") ||
-				       lower.EndsWith(".gif") ||
-				       lower.EndsWith(".hdr") ||
-				       lower.EndsWith(".iff") ||
-				       lower.EndsWith(".jpg") ||
-				       lower.EndsWith(".pict") ||
-				       lower.EndsWith(".png") ||
-				       lower.EndsWith(".psd") ||
-				       lower.EndsWith(".tga") ||
-				       lower.EndsWith(".tiff");
+				return item.EndsWith(".cubemap", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".exr", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".hdr", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".iff", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".pict", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".psd", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".tga", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".tiff", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
 		public static List<string> GetAllProceduralTextureAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".sbsar")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".sbsar", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllRenderTextureAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".renderTexture")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".renderTexture", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllLightmapAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".giparams")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".giparams", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllFlareAssetPaths()
 		{
-			return GetAllAssetPathsExcludingFolders().Where(item => item.ToLowerInvariant().EndsWith(".flare")).ToList();
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+			{
+				return item.EndsWith(".flare", StringComparison.OrdinalIgnoreCase);
+			}).ToList();
 		}
 
 		public static List<string> GetAllVideoAssetPaths()
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".asf") ||
-				       lower.EndsWith(".avi") ||
-				       lower.EndsWith(".dv") ||
-				       lower.EndsWith(".m4v") ||
-				       lower.EndsWith(".mov") ||
-				       lower.EndsWith(".mp4") ||
-				       lower.EndsWith(".mpg") ||
-				       lower.EndsWith(".mpeg") ||
-				       lower.EndsWith(".ogv") ||
-				       lower.EndsWith(".vp8") ||
-				       lower.EndsWith(".webm") ||
-				       lower.EndsWith(".wmv");
+				return item.EndsWith(".asf", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".avi", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".dv", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".m4v", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mpg", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mpeg", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".ogv", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".vp8", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".webm", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".wmv", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
@@ -209,9 +225,8 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".guiskin") ||
-				       lower.EndsWith(".fontsettings");
+				return item.EndsWith(".guiskin", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".fontsettings", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
@@ -219,17 +234,16 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".mixer") ||
-				       lower.EndsWith(".mp3") ||
-				       lower.EndsWith(".ogg") ||
-				       lower.EndsWith(".wav") ||
-				       lower.EndsWith(".aiff ") ||
-				       lower.EndsWith(".aif") ||
-				       lower.EndsWith(".mod") ||
-				       lower.EndsWith(".it") ||
-				       lower.EndsWith(".s3m") ||
-				       lower.EndsWith(".xm");
+				return item.EndsWith(".mixer", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".aiff ", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".aif", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".mod", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".it", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".s3m", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".xm", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
@@ -237,9 +251,8 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".physicMaterial") ||
-				       lower.EndsWith(".physicsMaterial2D");
+				return item.EndsWith(".physicMaterial", StringComparison.OrdinalIgnoreCase) ||
+				       item.EndsWith(".physicsMaterial2D", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
@@ -247,8 +260,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
 			{
-				var lower = item.ToLowerInvariant();
-				return lower.EndsWith(".cs", StringComparison.OrdinalIgnoreCase);
+				return item.EndsWith(".cs", StringComparison.OrdinalIgnoreCase);
 			}).ToList();
 		}
 
