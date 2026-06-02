@@ -560,7 +560,19 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
-		#region Script Assets
+		#region Script and ScriptableObject Assets
+
+		/// <summary>
+		/// MonoBehaviour ClassID in Unity's internal serialization system. This value is written to YAML files
+		/// like <c>--- !u!114 &amp;11400000</c>.
+		/// </summary>
+		private const int MonoBehaviourClassID = 114;
+
+		public static bool IsScriptableObjectAsset(string assetPath)
+		{
+			return TryGetMainObjectClassIDOfAssetIfSerializedAsText(assetPath, out var classID) &&
+			       classID == MonoBehaviourClassID;
+		}
 
 		public static void OpenScriptInIDE(string scriptPath, int line = -1, int column = -1)
 		{
@@ -585,6 +597,54 @@ namespace Extenity.AssetToolbox.Editor
 
 		#endregion
 
+		#region Unity YAML
+
+		/// <summary>
+		/// Unity YAML document marker. Example: <c>--- !u!114 &amp;11400000</c>
+		/// </summary>
+		public const string UnityYAMLDocumentMarker = "--- !u!";
+
+		/// <summary>
+		/// Reads the ClassID of the main (first) object from a Unity YAML asset file, without importing it through
+		/// AssetDatabase. The document header looks like <c>--- !u!114 &amp;11400000</c>, where <c>114</c> is the
+		/// ClassID. Returns <c>false</c> if the file contains no Unity YAML document marker (e.g. a binary-serialized
+		/// asset), which is an expected operational outcome rather than a failure.
+		/// </summary>
+		public static bool TryGetMainObjectClassIDOfAssetIfSerializedAsText(string assetPath, out int classID)
+		{
+			using var reader = new StreamReader(assetPath);
+			string line;
+			while ((line = reader.ReadLine()) != null)
+			{
+				if (!line.StartsWith(UnityYAMLDocumentMarker, StringComparison.Ordinal))
+				{
+					continue;
+				}
+
+				// Parse the class id digits that immediately follow the marker, up to the next space (before the anchor).
+				var start = UnityYAMLDocumentMarker.Length;
+				var end = start;
+				while (end < line.Length && char.IsDigit(line[end]))
+				{
+					end++;
+				}
+
+				if (end > start && int.TryParse(line.Substring(start, end - start), out classID))
+				{
+					return true;
+				}
+
+				// A document marker that does not carry a parseable ClassID means the file is not in the format we expect.
+				// This is a broken assumption, not an expected runtime condition. So, fail loudly.
+				throw new Exception($"Failed to parse the ClassID from Unity YAML document marker '{line}' in asset '{assetPath}'.");
+			}
+
+			classID = default;
+			return false;
+		}
+
+		#endregion
+		
 		#region Reload Scripts
 
 		// Shortcut Ctrl+Cmd+R on Mac, Ctrl+Alt+R on Windows
