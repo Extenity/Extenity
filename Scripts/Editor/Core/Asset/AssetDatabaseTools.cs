@@ -108,6 +108,30 @@ namespace Extenity.AssetToolbox.Editor
 			}).ToList();
 		}
 
+		public static List<string> GetAllAssetsWithAssetExtension()
+		{
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+				{
+					return item.EndsWith(".asset", StringComparison.OrdinalIgnoreCase);
+				}).ToList();
+		}
+
+		public static List<string> GetAllScriptableObjectAssetPathsThatAreSerializedAsText()
+		{
+			// The '.asset' extension is shared by ScriptableObjects and various native assets (meshes, textures,
+			// presets, etc.), so the extension alone is not enough to identify a ScriptableObject. We detect it by
+			// reading the Unity YAML header that is already on disk, looking for the MonoBehaviour ClassID as the
+			// asset's main object. This deliberately does not ask AssetDatabase (which may not have imported the
+			// asset yet) and does not need compiled types (the ScriptableObject script may not be compiled yet).
+			// Works only on assets that are serialized as Text, not Binary.
+			return GetAllAssetPathsExcludingFolders().Where(item =>
+				{
+					return item.EndsWith(".asset", StringComparison.OrdinalIgnoreCase);
+				})
+				.Where(IsScriptableObjectAsset)
+				.ToList();
+		}
+
 		public static List<string> GetAllModelAssetPaths()
 		{
 			return GetAllAssetPathsExcludingFolders().Where(item =>
@@ -721,6 +745,38 @@ namespace Extenity.AssetToolbox.Editor
 			AssetDatabase.StopAssetEditing();
 			AssetDatabase.Refresh();
 			Log.Info($"Done reimporting {paths.Count} prefab related assets.");
+		}
+
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All ScriptableObjects (text serialized only)", priority = 44)] // Priority is just below the Reimport All option.
+		public static void ReimportAllScriptableObjects()
+		{
+			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all scriptable objects");
+
+			var paths = GetAllScriptableObjectAssetPathsThatAreSerializedAsText().OrderByDescending(item => item).ToList();
+			AssetDatabase.StartAssetEditing();
+			foreach (var path in paths)
+			{
+				AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+			}
+			AssetDatabase.StopAssetEditing();
+			AssetDatabase.Refresh();
+			Log.Info($"Done reimporting {paths.Count} scriptable object related assets.");
+		}
+
+		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Assets with .asset Extension", priority = 45)] // Priority is just below the Reimport All option.
+		public static void ReimportAllAssetsWithAssetExtension()
+		{
+			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all assets with '.asset' extension");
+
+			var paths = GetAllAssetsWithAssetExtension().OrderByDescending(item => item).ToList();
+			AssetDatabase.StartAssetEditing();
+			foreach (var path in paths)
+			{
+				AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+			}
+			AssetDatabase.StopAssetEditing();
+			AssetDatabase.Refresh();
+			Log.Info($"Done reimporting {paths.Count} assets with '.asset' extension.");
 		}
 
 		#endregion
