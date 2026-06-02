@@ -616,7 +616,7 @@ namespace Extenity.AssetToolbox.Editor
 				AssetDatabase.Refresh();
 			}
 
-			Log.Info("Done.");
+			Log.Info($"Done reimporting {paths.Count} script related assets.");
 		}
 
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
@@ -632,7 +632,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 			AssetDatabase.StopAssetEditing();
 			AssetDatabase.Refresh();
-			Log.Info("Done.");
+			Log.Info($"Done reimporting {paths.Count} shader related assets.");
 		}
 
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
@@ -648,7 +648,7 @@ namespace Extenity.AssetToolbox.Editor
 			}
 			AssetDatabase.StopAssetEditing();
 			AssetDatabase.Refresh();
-			Log.Info("Done.");
+			Log.Info($"Done reimporting {paths.Count} prefab related assets.");
 		}
 
 		#endregion
