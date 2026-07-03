@@ -219,30 +219,31 @@ namespace Extenity.Testing
 
 		public void AssertExpectNoLogsForLogSeverity(LogExpectation expectedLogSeverity)
 		{
+			switch (expectedLogSeverity)
+			{
+				case LogExpectation.NoLogsAllowed:
+				{
+					// All logs are unexpected
+					break;
+				}
+				case LogExpectation.AllowInfoAndBelow:
+				{
+					// Only info and below are expected. Clear all such logs.
+					Logs.RemoveAll(entry => entry.Type == LogType.Log);
+					break;
+				}
+				case LogExpectation.AllowAllLogs:
+				{
+					// Nothing is unexpected
+					return;
+				}
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
 			if (Logs.Count > 0)
 			{
-				switch (expectedLogSeverity)
-				{
-					case LogExpectation.NoLogsAllowed:
-					{
-						// All logs are unexpected
-						Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test:\n" + string.Join('\n', Logs.Select(log => string.Concat(log.Type.ToString(), ": ", log.Message))));
-						break;
-					}
-					case LogExpectation.AllowInfoAndBelow:
-					{
-						// Only info and below are expected
-						Logs.RemoveAll(entry => entry.Type == LogType.Log);
-						break;
-					}
-					case LogExpectation.AllowAllLogs:
-					{
-						// Nothing is unexpected
-						break;
-					}
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
+				Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test:\n" + string.Join('\n', Logs.Select(log => string.Concat(log.Type.ToString(), ": ", log.Message))));
 			}
 		}
 
