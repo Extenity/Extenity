@@ -165,52 +165,51 @@ namespace Extenity.Testing
 		private LogExpectation ExpectedLogs;
 		public List<(LogType Type, string Message)> Logs;
 
+		private LogCaptureScope LogCaptureScope;
+
 		private void InitializeLogCatching()
 		{
 			ExpectedLogs = ExpectedLogsDefault;
-
-			if (Logs == null)
-				Logs = New.List<(LogType, string)>(100);
-			else
-				Logs.Clear();
-
-			Application.logMessageReceived -= RegisterLogMessage; // Just in case.
-			Application.logMessageReceived += RegisterLogMessage;
+			LogCaptureScope = new LogCaptureScope(ShouldRecordLog);
+			Logs = LogCaptureScope.Logs;
 		}
 
 		private void DeinitializeLogCatching()
 		{
-			if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
+			try
 			{
-				AssertExpectLogs(ExpectedLogs);
+				if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
+				{
+					AssertExpectLogs(ExpectedLogs);
+				}
 			}
-
-			Application.logMessageReceived -= RegisterLogMessage;
-
-			Release.List(ref Logs);
+			finally
+			{
+				// Always restore the original log handler, even if the log assertion above fails.
+				Logs = null;
+				LogCaptureScope.Dispose();
+				LogCaptureScope = null;
+			}
 		}
 
-		private void RegisterLogMessage(string condition, string stacktrace, LogType type)
+		private static bool ShouldRecordLog(LogType type, string message)
 		{
-			if (condition.StartsWith("#")) // Ignore lines that starts with comment '#' character
-				return;
-
-			// Ignore unimportant Unity logs
-			switch (type)
+			// Special treatment for # logs, that are used for development purposes and have nothing to do with any other system.
+			if (message.StartsWith("#", StringComparison.Ordinal))
 			{
-				case LogType.Warning:
-				{
-					if (condition.StartsWith("Diagnostic switches are active and may impact performance or degrade your user experience", StringComparison.Ordinal))
-					{
-						return;
-					}
-					break;
-				}
-				default:
-					break; // Ignore others
+				return false;
 			}
 
-			Logs.Add((type, condition));
+			if (type == LogType.Warning)
+			{
+				// Discard Unity's diagnostic log that pops up here and there.
+				if (message.StartsWith("Diagnostic switches are active and may impact performance or degrade your user experience", StringComparison.Ordinal))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public void AssertExpectNoLogs()
@@ -227,7 +226,7 @@ namespace Extenity.Testing
 					case LogExpectation.NoLogsAllowed:
 					{
 						// All logs are unexpected
-						Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test.");
+						Assert.Fail($"There were '{Logs.Count}' unexpected log entries emitted in test:\n" + string.Join('\n', Logs.Select(log => string.Concat(log.Type.ToString(), ": ", log.Message))));
 						break;
 					}
 					case LogExpectation.AllowInfoAndBelow:
@@ -284,28 +283,20 @@ namespace Extenity.Testing
 			ExpectedLogs = expectedLogs;
 		}
 
+		/// <summary>
+		/// Removes every captured log whose message contains <paramref name="includedText"/>
+		/// and returns how many were removed. Call this method after a log message is emitted,
+		/// if you want to mark it as expected.
+		/// </summary>
 		/// <remarks>
 		/// Note that this method only marks already logged messages, not future messages.
 		/// It allows omitting log message before the point of calling this method,
 		/// and allows denying the same log message at later stages of the test.
-		/// So, call this method after the log message is emitted, if you want to mark it as expected.
 		/// </remarks>
 		/// <returns>The number of log messages that were marked as expected.</returns>
 		public int MarkLogsAsExpectedThatIncludes(string includedText)
 		{
-			var foundCount = 0;
-			for (var i = 0; i < Logs.Count; i++)
-			{
-				if (Logs[i].Message.Contains(includedText, StringComparison.Ordinal))
-				{
-					// Mark this log as expected by removing it from the log list.
-					Logs.RemoveAt(i);
-					i--;
-					foundCount++;
-				}
-			}
-
-			return foundCount;
+			return LogCaptureScope.MarkLogsAsExpectedThatIncludes(includedText);
 		}
 
 		#endregion
