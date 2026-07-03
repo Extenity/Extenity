@@ -87,13 +87,7 @@ namespace Extenity.DataToolbox
 		{
 		}
 
-		public StringFilterEntry(StringFilterType filterType, string filter)
-		{
-			FilterType = filterType;
-			Filter = filter;
-		}
-
-		public StringFilterEntry(StringFilterType filterType, string filter, StringComparison comparisonType, bool inverted = false, bool mustMatch = false)
+		public StringFilterEntry(StringFilterType filterType, string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
 		{
 			FilterType = filterType;
 			Filter = filter;
@@ -106,7 +100,32 @@ namespace Extenity.DataToolbox
 
 		#region Creators
 
-		public static StringFilterEntry CreateSmartWildcard(string filter)
+		public static StringFilterEntry CreateExact(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
+		{
+			return  new StringFilterEntry(StringFilterType.Exactly, filter, comparisonType, inverted, mustMatch);
+		}
+
+		public static StringFilterEntry CreateContains(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
+		{
+			return new StringFilterEntry(StringFilterType.Contains, filter, comparisonType, inverted, mustMatch);
+		}
+
+		public static StringFilterEntry CreateStartsWith(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
+		{
+			return new StringFilterEntry(StringFilterType.StartsWith, filter, comparisonType, inverted, mustMatch);
+		}
+
+		public static StringFilterEntry CreateEndsWith(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
+		{
+			return new StringFilterEntry(StringFilterType.EndsWith, filter, comparisonType, inverted, mustMatch);
+		}
+
+		public static StringFilterEntry CreateWildcard(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
+		{
+			return new StringFilterEntry(StringFilterType.Wildcard, filter, comparisonType, inverted, mustMatch);
+		}
+
+		public static StringFilterEntry CreateWildcardOrSimpler(string filter, StringComparison comparisonType = StringComparison.InvariantCulture, bool inverted = false, bool mustMatch = false)
 		{
 			var seenAtTheBeginning = false;
 			for (int i = 0; i < filter.Length; i++)
@@ -114,7 +133,7 @@ namespace Extenity.DataToolbox
 				if (filter[i] == '?')
 				{
 					// Nothing more to do about '?' matching. It's only supported by wildcards.
-					return new StringFilterEntry(StringFilterType.Wildcard, filter);
+					return new StringFilterEntry(StringFilterType.Wildcard, filter, comparisonType, inverted, mustMatch);
 				}
 
 				if (filter[i] == '*')
@@ -123,7 +142,7 @@ namespace Extenity.DataToolbox
 					{
 						if (filter.Length == 1)
 						{
-							return new StringFilterEntry(StringFilterType.Any, "");
+							return new StringFilterEntry(StringFilterType.Any, "", comparisonType, inverted, mustMatch);
 						}
 
 						// Wildcard at the beginning
@@ -133,22 +152,22 @@ namespace Extenity.DataToolbox
 					{
 						// Wildcard at the end
 						return seenAtTheBeginning
-							? new StringFilterEntry(StringFilterType.Contains, filter.Substring(1, filter.Length - 2))
-							: new StringFilterEntry(StringFilterType.StartsWith, filter.Substring(0, filter.Length - 1));
+							? new StringFilterEntry(StringFilterType.Contains, filter.Substring(1, filter.Length - 2), comparisonType, inverted, mustMatch)
+							: new StringFilterEntry(StringFilterType.StartsWith, filter.Substring(0, filter.Length - 1), comparisonType, inverted, mustMatch);
 					}
 					else
 					{
 						// Wildcard in the middle
 						// Fall back to wildcard matching, which is non performant.
 						// TODO OPTIMIZATION: There are still things to do for performance.
-						return new StringFilterEntry(StringFilterType.Wildcard, filter);
+						return new StringFilterEntry(StringFilterType.Wildcard, filter, comparisonType, inverted, mustMatch);
 					}
 				}
 			}
 
 			return seenAtTheBeginning
-				? new StringFilterEntry(StringFilterType.EndsWith, filter.Substring(1, filter.Length - 1))
-				: new StringFilterEntry(StringFilterType.Exactly, filter);
+				? new StringFilterEntry(StringFilterType.EndsWith, filter.Substring(1, filter.Length - 1), comparisonType, inverted, mustMatch)
+				: new StringFilterEntry(StringFilterType.Exactly, filter, comparisonType, inverted, mustMatch);
 		}
 
 		#endregion
