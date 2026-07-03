@@ -79,7 +79,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 			// Increase version
 			{
 				var version = new ApplicationVersion(config.Metadata.version);
-				version = version.IncrementedLower;
+				version = version.IncrementedBuild;
 				config.Metadata.version = version.ToString();
 				EditorUtility.SetDirty(config);
 				AssetDatabase.SaveAssets();
@@ -300,7 +300,7 @@ namespace Extenity.UnityProjectTemplateToolbox.Editor
 		private static void IncreaseVersion(TemplateBuilderConfiguration config)
 		{
 			var version = new ApplicationVersion(config.Metadata.version);
-			version = version.IncrementedLower;
+			version = version.IncrementedBuild;
 			config.Metadata.version = version.ToString();
 			EditorUtility.SetDirty(config);
 			AssetDatabase.SaveAssets();
