@@ -247,17 +247,43 @@ namespace Extenity.Testing
 			}
 		}
 
-		public void AssertExpectLog(params (LogType Type, string Message)[] expectedLogs)
+		public void AssertExpectLog(params (LogType Type, StringFilterEntry Message)[] expectedLogs)
 		{
 			foreach (var expectedExceptionLog in expectedLogs.Where(entry => entry.Type == LogType.Exception))
 			{
 				// Tell Unity we are expecting the exception. Unity checks the logs if an exception was logged in
 				// test. We are handling the exception log in our own way, so there is no need for Unity to jump into
 				// conclusions.
-				LogAssert.Expect(LogType.Exception, expectedExceptionLog.Message);
+				if (expectedExceptionLog.Message.FilterType == StringFilterType.Exactly &&
+				    expectedExceptionLog.Message.ComparisonType == StringComparison.InvariantCulture)
+				{
+					LogAssert.Expect(LogType.Exception, expectedExceptionLog.Message.Filter);
+				}
+				else
+				{
+					throw new NotSupportedException("Exception logs that are expected during tests should be stated with Exactly and InvariantCulture string filter configuration, because Unity only accepts full messages in LogAssert.Expect API.");
+				}
 			}
 
-			Assert.AreEqual(expectedLogs.ToList(), Logs);
+			if (expectedLogs.Length != Logs.Count)
+			{
+				Assert.Fail($"Expected '{expectedLogs.Length}' log entries but got '{Logs.Count}':\n" +
+				            "Expected:\n" + string.Join('\n', expectedLogs.Select(log => string.Concat(log.Type.ToString(), ": ", log.Message.ToHumanReadableString()))) + "\n" +
+				            "Actual:\n" + string.Join('\n', Logs.Select(log => string.Concat(log.Type.ToString(), ": ", log.Message))));
+			}
+
+			for (var i = 0; i < expectedLogs.Length; i++)
+			{
+				var expectedLog = expectedLogs[i];
+				var actualLog = Logs[i];
+				if (expectedLog.Type != actualLog.Type || !expectedLog.Message.IsMatching(actualLog.Message))
+				{
+					Assert.Fail($"Log entry at index '{i}' did not match.\n" +
+					            $"Expected: {expectedLog.Type}: {expectedLog.Message.ToHumanReadableString()}\n" +
+					            $"Actual: {actualLog.Type}: {actualLog.Message}");
+				}
+			}
+
 			Logs.Clear();
 		}
 

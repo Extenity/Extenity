@@ -3,6 +3,7 @@
 using Extenity.MessagingToolbox;
 using NUnit.Framework;
 using UnityEngine;
+using static Extenity.DataToolbox.StringFilterEntry;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -50,7 +51,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void Switch_CallbackInstantlyInvoked_InitiallySwitchedOff()
 		{
 			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 		}
 
 		[Test]
@@ -58,14 +59,14 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestMessenger.SwitchOn("LevelLoaded");
 			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 		}
 
 		[Test]
 		public void Switch_EmittingSwitchedOffAtFirstWontCallTheOffCallback()
 		{
 			TestMessenger.AddSwitchListener("LevelLoaded", SwitchedOnCallback, SwitchedOffCallback);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 
 			TestMessenger.SwitchOff("LevelLoaded");
 			AssertExpectNoLogs();
@@ -83,7 +84,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 
 			TestMessenger.SwitchOn("LevelLoaded");
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			TestMessenger.SwitchOn("LevelLoaded");
 			TestMessenger.SwitchOn("LevelLoaded");
@@ -102,11 +103,11 @@ namespace ExtenityTests.MessagingToolbox
 
 			if (TestMessenger.GetSwitch("LevelLoaded"))
 			{
-				AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+				AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			}
 			else
 			{
-				AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+				AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			}
 		}
 

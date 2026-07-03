@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Logger = Extenity.Logger;
 using Object = UnityEngine.Object;
+using static Extenity.DataToolbox.StringFilterEntry;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -42,7 +43,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void CallbackInstantlyInvoked_InitiallySwitchedOff()
 		{
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 		}
 
 		[Test]
@@ -50,7 +51,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			SwitchOn();
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 		}
 
 		[Test]
@@ -60,7 +61,7 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.That(new Action(CallbackOn).Target as Object, Is.Null);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 		}
 
 		[Test]
@@ -71,7 +72,7 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.That(new Action(TestSwitchSubject.CallbackOn).Target as Object, Is.Not.Null);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 		}
 
 		[Test]
@@ -82,9 +83,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnC, null);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -95,9 +96,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnC, null, -30);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback C.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback A.")));
 		}
 
 
@@ -112,12 +113,12 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnF, null, 30);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."),
-			                (LogType.Log, "Called SwitchOn callback D."),
-			                (LogType.Log, "Called SwitchOn callback E."),
-			                (LogType.Log, "Called SwitchOn callback F."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback D.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback E.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback F.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -129,9 +130,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnC, null, 30);
 
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Exception, "Test_ExtenityEventException: Called throwing callback."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Exception, CreateExact("Test_ExtenityEventException: Called throwing callback.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -143,7 +144,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnC, null, 30);
 
 			Assert.Throws<Test_ExtenityEventException>(() => TestSwitch.SwitchOnUnsafe());
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")));
 		}
 
 		[Test]
@@ -154,9 +155,9 @@ namespace ExtenityTests.MessagingToolbox
 			for (int i = 0; i < 10; i++)
 			{
 				SwitchOn();
-				AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+				AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 				SwitchOff();
-				AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+				AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			}
 		}
 
@@ -181,7 +182,7 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			SwitchOn();
 			SwitchOn();
@@ -194,7 +195,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void AddingListenersMoreThanOnceIsIgnored()
 		{
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
@@ -203,7 +204,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// Note that the callback is called only once.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
 			TestSwitch.AddListener(CallbackOn, CallbackOff);
@@ -215,59 +216,59 @@ namespace ExtenityTests.MessagingToolbox
 		public void AddingDifferentSetsOfListenersConsideredNotTheSame_Take1()
 		{
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			// SwitchOn callback is the same but SwitchOff callback is different.
 			TestSwitch.AddListener(CallbackOnA, CallbackOffB);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")));
 
 			// The same SwitchOn callback called twice, since they are considered as different callback sets.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback A.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
 		public void AddingDifferentSetsOfListenersConsideredNotTheSame_Take2()
 		{
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			// SwitchOff callback is the same but SwitchOn callback is different.
 			TestSwitch.AddListener(CallbackOnB, CallbackOffA);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 
 			// The same SwitchOff callback called twice, since they are considered as different callback sets.
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback A.")));
 		}
 
 		[Test]
 		public void AlrightNotToHaveSwitchOnCallback()
 		{
 			TestSwitch.AddListener(null, CallbackOffA);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			SwitchOn();
 			AssertExpectNoLogs();
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			SwitchOn();
 			AssertExpectNoLogs();
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 		}
 
 		[Test]
@@ -277,13 +278,13 @@ namespace ExtenityTests.MessagingToolbox
 			AssertExpectNoLogs();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")));
 
 			SwitchOff();
 			AssertExpectNoLogs();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")));
 
 			SwitchOff();
 			AssertExpectNoLogs();
@@ -293,7 +294,7 @@ namespace ExtenityTests.MessagingToolbox
 		public void AlrightNotToHaveSwitchOnCallback_EvenHavingLifeSpanOfRemovedAtFirstEmit()
 		{
 			TestSwitch.AddListener(null, CallbackOffA, 0, ListenerLifeSpan.RemovedAtFirstEmit);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")));
 
 			// We don't get any calls but the callback is removed at that point.
 			SwitchOn();
@@ -333,7 +334,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestSwitch.AddListener(SwitchOff, null);
 			SwitchOn();
-			AssertExpectLog((LogType.Exception, "Exception: Invoked switch off while an invocation is ongoing."));
+			AssertExpectLog((LogType.Exception, CreateExact("Exception: Invoked switch off while an invocation is ongoing.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -342,7 +343,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestSwitch.AddListener(() => TestSwitch.AddListener(CallbackOn, CallbackOff), null);
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Exception, "NotSupportedException: Adding listener while invoking is not supported."));
+			AssertExpectLog((LogType.Exception, CreateExact("NotSupportedException: Adding listener while invoking is not supported.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -377,7 +378,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.Permanent);
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called 1"));
+			AssertExpectLog((LogType.Log, CreateExact("Called 1")));
 		}
 
 		[Test]
@@ -399,10 +400,10 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.AddListener(CallbackThatAddsSelf, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called 1"),
-			                (LogType.Log, "Called 2"),
-			                (LogType.Log, "Called 3"),
-			                (LogType.Exception, "Test_ExtenitySwitchException: Hard brakes!"));
+			AssertExpectLog((LogType.Log, CreateExact("Called 1")),
+			                (LogType.Log, CreateExact("Called 2")),
+			                (LogType.Log, CreateExact("Called 3")),
+			                (LogType.Exception, CreateExact("Test_ExtenitySwitchException: Hard brakes!")));
 		}
 
 #endif
@@ -428,11 +429,11 @@ namespace ExtenityTests.MessagingToolbox
 		public void AlrightToRemoveListenerInsideCallback_ManualRemove()
 		{
 			TestSwitch.AddListener(CallbackOnAndRemove, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 
 			// Callback removes itself.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			// No more calls.
 			SwitchOff();
@@ -444,11 +445,11 @@ namespace ExtenityTests.MessagingToolbox
 		public void AlrightToRemoveListenerInsideCallback_UsingRemoveCurrentListener()
 		{
 			TestSwitch.AddListener(CallbackOnAndRemoveSelf, CallbackOff);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 
 			// Callback removes itself.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			// No more calls.
 			SwitchOff();
@@ -472,18 +473,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -492,18 +493,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -512,18 +513,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -532,25 +533,25 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnB, CallbackOffB);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnA, CallbackOffA);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			TestSwitch.RemoveListener(CallbackOnC, CallbackOffC);
 
@@ -569,19 +570,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndRemoveA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -590,19 +591,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndRemoveB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -611,19 +612,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndRemoveC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -633,17 +634,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -653,17 +654,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -673,17 +674,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -696,19 +697,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndRemoveSelf, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -717,19 +718,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndRemoveSelf, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -738,19 +739,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndRemoveSelf, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -760,17 +761,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -780,17 +781,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveSelf);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -800,17 +801,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveSelf);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -823,19 +824,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndRemoveB, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                //(LogType.Log, CreateExact("Called SwitchOn callback B.")), Removed when OnA is called.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -844,19 +845,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndRemoveC, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnA is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -865,19 +866,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndRemoveA, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -886,19 +887,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndRemoveC, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnB is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -907,19 +908,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndRemoveA, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -928,19 +929,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndRemoveB, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		#endregion
@@ -954,14 +955,14 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."), // OffA fails to remove B because it was not registered at the time it was tried to be removed.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")), // OffA fails to remove B because it was not registered at the time it was tried to be removed.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -971,14 +972,14 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C.")); // OffA fails to remove C because it was not registered at the time it was tried to be removed.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C."))); // OffA fails to remove C because it was not registered at the time it was tried to be removed.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -988,13 +989,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveA);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffB, then removed inside OffB.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffB, then removed inside OffB.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1004,14 +1005,14 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndRemoveC);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C.")); // OffB fails to remove C because it was not registered at the time it was tried to be removed.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C."))); // OffB fails to remove C because it was not registered at the time it was tried to be removed.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1021,13 +1022,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveA);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1037,13 +1038,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndRemoveB);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")), // Not removed right now because OffB is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		#endregion
@@ -1055,7 +1056,7 @@ namespace ExtenityTests.MessagingToolbox
 			// In that case, there is no need to register the callback, since it should be instantly removed afterwards.
 			SwitchOn();
 			TestSwitch.AddListener(CallbackOn, null, 0, ListenerLifeSpan.RemovedAtFirstEmit);
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			AssertRegisteredCallbackCount(0); // The callback is instantly called and not registered into the list.
 		}
 
@@ -1065,11 +1066,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
 			TestSwitch.RemoveListener(CallbackOn, CallbackOff);
@@ -1087,11 +1088,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
@@ -1123,11 +1124,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestSwitchSubject();
@@ -1159,7 +1160,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			SwitchOff();
@@ -1175,7 +1176,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			SwitchOff();
@@ -1210,7 +1211,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			SwitchOff();
@@ -1245,20 +1246,20 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1267,20 +1268,20 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.Permanent);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.RemovedAtFirstEmit);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1289,20 +1290,20 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.Permanent);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.RemovedAtFirstEmit);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -1316,18 +1317,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyLifeSpanTargetTestObject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1337,18 +1338,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyLifeSpanTargetTestObject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1358,18 +1359,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyLifeSpanTargetTestObject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -1383,19 +1384,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndDestroyLifeSpanTarget, CallbackOffA, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1405,19 +1406,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroyLifeSpanTarget, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1427,19 +1428,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroyLifeSpanTarget, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -1450,17 +1451,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1471,17 +1472,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroyLifeSpanTarget, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1492,17 +1493,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroyLifeSpanTarget, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -1516,19 +1517,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndDestroyLifeSpanTarget, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                //(LogType.Log, CreateExact("Called SwitchOn callback B.")), Removed when OnA is called.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1538,19 +1539,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndDestroyLifeSpanTarget, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnA is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -1560,19 +1561,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnBAndDestroyLifeSpanTarget, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1582,19 +1583,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroyLifeSpanTarget, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnB is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -1604,19 +1605,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroyLifeSpanTarget, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1626,19 +1627,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnCAndDestroyLifeSpanTarget, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		#endregion
@@ -1653,13 +1654,13 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject)); // Because LifeSpanTarget was destroyed above.
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                //(LogType.Log, "Called SwitchOff callback B."), Removed when OffA is called.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                //(LogType.Log, CreateExact("Called SwitchOff callback B.")), Removed when OffA is called.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1670,13 +1671,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject)); // Because LifeSpanTarget was destroyed above.
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
-			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffA is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOff callback C."))); Removed when OffA is called.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 		}
 
 		[Test]
@@ -1687,13 +1688,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroyLifeSpanTarget);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffB, then removed inside OffB.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffB, then removed inside OffB.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1704,13 +1705,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroyLifeSpanTarget);
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(CallbackOnC, CallbackOffC, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject)); // Because LifeSpanTarget was destroyed above.
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
-			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffB is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOff callback C."))); Removed when OffB is called.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 		}
 
 		[Test]
@@ -1721,13 +1722,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroyLifeSpanTarget);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -1738,13 +1739,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroyLifeSpanTarget);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")), // Not removed right now because OffB is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		#endregion
@@ -1758,18 +1759,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyTestSwitchSubject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1779,18 +1780,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyTestSwitchSubject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1800,18 +1801,18 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			DestroyTestSwitchSubject();
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -1825,19 +1826,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnAAndDestroySubject, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1847,19 +1848,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnBAndDestroySubject, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1869,19 +1870,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnCAndDestroySubject, TestSwitchSubject.CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -1892,17 +1893,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1913,17 +1914,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffBAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1934,17 +1935,17 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffCAndDestroySubject);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		#endregion
@@ -1958,19 +1959,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                //(LogType.Log, "Called SwitchOn callback B."), Removed when OnA is called.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                //(LogType.Log, CreateExact("Called SwitchOn callback B.")), Removed when OnA is called.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -1980,19 +1981,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnAAndDestroySubject, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnA is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnA is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -2002,19 +2003,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnB, then removed inside OnB.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnB, then removed inside OnB.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -2024,19 +2025,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(CallbackOnBAndDestroySubject, CallbackOffB);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
-			//              (LogType.Log, "Called SwitchOn callback C.")); Removed when OnB is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOn callback C."))); Removed when OnB is called.
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
 		}
 
 		[Test]
@@ -2046,19 +2047,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnA, TestSwitchSubject.CallbackOffA);
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."), // Not removed right now because OnA is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")), // Not removed right now because OnA is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		[Test]
@@ -2068,19 +2069,19 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnA, CallbackOffA);
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnCAndDestroySubject, CallbackOffC);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			// This is where it's removed.
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."), // Not removed right now because OnB is called before OnC, then removed inside OnC.
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")), // Not removed right now because OnB is called before OnC, then removed inside OnC.
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 		}
 
 		#endregion
@@ -2095,13 +2096,13 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB)); // Because Subject was destroyed above.
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                //(LogType.Log, "Called SwitchOff callback B."), Removed when OffA is called.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                //(LogType.Log, CreateExact("Called SwitchOff callback B.")), Removed when OffA is called.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -2112,13 +2113,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC)); // Because Subject was destroyed above.
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
-			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffA is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOff callback C."))); Removed when OffA is called.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 		}
 
 		[Test]
@@ -2129,13 +2130,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroySubject);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffC);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffB, then removed inside OffB.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffB, then removed inside OffB.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -2146,13 +2147,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffBAndDestroySubject);
 			Assert.Throws<Exception>(() => TestSwitch.AddListener(TestSwitchSubject.CallbackOnC, TestSwitchSubject.CallbackOffC)); // Because Subject was destroyed above.
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."));
-			//              (LogType.Log, "Called SwitchOff callback C.")); Removed when OffB is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")));
+			//              (LogType.Log, CreateExact("Called SwitchOff callback C."))); Removed when OffB is called.
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback B.")));
 		}
 
 		[Test]
@@ -2163,13 +2164,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(CallbackOnB, CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroySubject);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."), // Not removed right now because OffA is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback B."),
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")), // Not removed right now because OffA is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback B."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback B.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		[Test]
@@ -2180,13 +2181,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOnB, TestSwitchSubject.CallbackOffB);
 			TestSwitch.AddListener(CallbackOnC, CallbackOffCAndDestroySubject);
 			// This is where it's removed.
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback A."),
-			                (LogType.Log, "Called SwitchOff callback B."), // Not removed right now because OffB is called before OffC, then removed inside OffC.
-			                (LogType.Log, "Called SwitchOff callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback B.")), // Not removed right now because OffB is called before OffC, then removed inside OffC.
+			                (LogType.Log, CreateExact("Called SwitchOff callback C.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback A."),
-			                (LogType.Log, "Called SwitchOn callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
 		#endregion
@@ -2216,7 +2217,7 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called SwitchOff callback with order 60.");
 				},
 				60);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order 60."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback with order 60.")));
 
 			TestSwitch.AddListener(
 				() =>
@@ -2228,7 +2229,7 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called SwitchOff callback with order -40.");
 				},
 				-40);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback with order -40.")));
 
 			TestSwitch.AddListener(
 				() =>
@@ -2240,7 +2241,7 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called SwitchOff callback with default order, added first.");
 				}
 			);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added first."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback with default order, added first.")));
 
 			TestSwitch.AddListener(
 				() =>
@@ -2252,19 +2253,19 @@ namespace ExtenityTests.MessagingToolbox
 					Log.Info("Called SwitchOff callback with default order, added second.");
 				}
 			);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with default order, added second."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback with default order, added second.")));
 
 			SwitchOn();
-			AssertExpectLog((LogType.Log, "Called SwitchOn callback with order -40."),
-			                (LogType.Log, "Called SwitchOn callback with default order, added first."),
-			                (LogType.Log, "Called SwitchOn callback with default order, added second."),
-			                (LogType.Log, "Called SwitchOn callback with order 60."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback with order -40.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback with default order, added first.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback with default order, added second.")),
+			                (LogType.Log, CreateExact("Called SwitchOn callback with order 60.")));
 
 			SwitchOff();
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback with order -40."),
-			                (LogType.Log, "Called SwitchOff callback with default order, added first."),
-			                (LogType.Log, "Called SwitchOff callback with default order, added second."),
-			                (LogType.Log, "Called SwitchOff callback with order 60."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback with order -40.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback with default order, added first.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback with default order, added second.")),
+			                (LogType.Log, CreateExact("Called SwitchOff callback with order 60.")));
 		}
 
 		#endregion
@@ -2336,7 +2337,7 @@ namespace ExtenityTests.MessagingToolbox
 		private void RegisterCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
 		{
 			TestSwitch.AddListener(CallbackOn, CallbackOff, order, lifeSpan, lifeSpanTarget);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			AssertRegisteredCallbackCount(1);
 		}
 
@@ -2344,7 +2345,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			CreateTestSwitchSubject();
 			TestSwitch.AddListener(TestSwitchSubject.CallbackOn, TestSwitchSubject.CallbackOff, order, lifeSpan, lifeSpanTarget);
-			AssertExpectLog((LogType.Log, "Called SwitchOff callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOff callback.")));
 			AssertRegisteredCallbackCount(1);
 		}
 

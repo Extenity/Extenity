@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Logger = Extenity.Logger;
 using Object = UnityEngine.Object;
+using static Extenity.DataToolbox.StringFilterEntry;
 
 namespace ExtenityTests.MessagingToolbox
 {
@@ -44,7 +45,7 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.That(new Action(Callback).Target as Object, Is.Null);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 		}
 
 		[Test]
@@ -55,7 +56,7 @@ namespace ExtenityTests.MessagingToolbox
 			Assert.That(new Action(TestEventSubject.Callback).Target as Object, Is.Not.Null);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 		}
 
 		[Test]
@@ -66,9 +67,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CallbackC);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -79,9 +80,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CallbackC, -30);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback C."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback C.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback A.")));
 		}
 
 
@@ -96,12 +97,12 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CallbackF, 30);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."),
-			                (LogType.Log, "Called callback D."),
-			                (LogType.Log, "Called callback E."),
-			                (LogType.Log, "Called callback F."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")),
+			                (LogType.Log, CreateExact("Called callback D.")),
+			                (LogType.Log, CreateExact("Called callback E.")),
+			                (LogType.Log, CreateExact("Called callback F.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -113,9 +114,9 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CallbackC, 30);
 
 			TestEvent.InvokeSafe();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Exception, "Test_ExtenityEventException: Called throwing callback."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Exception, CreateExact("Test_ExtenityEventException: Called throwing callback.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -127,7 +128,7 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.AddListener(CallbackC, 30);
 
 			Assert.Throws<Test_ExtenityEventException>(() => TestEvent.InvokeUnsafe());
-			AssertExpectLog((LogType.Log, "Called callback A."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")));
 		}
 
 		[Test]
@@ -138,7 +139,7 @@ namespace ExtenityTests.MessagingToolbox
 			for (int i = 0; i < 10; i++)
 			{
 				Invoke();
-				AssertExpectLog((LogType.Log, "Called callback."));
+				AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			}
 		}
 
@@ -152,7 +153,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// Note that the callback is called only once.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			TestEvent.AddListener(Callback);
 			TestEvent.AddListener(Callback);
@@ -284,7 +285,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// Callback removes itself.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			// No more calls.
 			Invoke();
@@ -298,7 +299,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// Callback removes itself.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			// No more calls.
 			Invoke();
@@ -325,11 +326,11 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.RemoveListener(CallbackA);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -342,11 +343,11 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.RemoveListener(CallbackB);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -359,11 +360,11 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.RemoveListener(CallbackC);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -376,13 +377,13 @@ namespace ExtenityTests.MessagingToolbox
 			TestEvent.RemoveListener(CallbackB);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			TestEvent.RemoveListener(CallbackA);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback C.")));
 
 			TestEvent.RemoveListener(CallbackC);
 
@@ -403,13 +404,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -421,13 +422,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -439,13 +440,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -461,13 +462,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -479,13 +480,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -497,13 +498,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -519,13 +520,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when A is called.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			//              (LogType.Log, CreateExact("Called callback B.")), Removed when A is called.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -537,13 +538,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when A is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when A is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -555,13 +556,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before B, then removed inside B.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -573,13 +574,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when B is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when B is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -591,13 +592,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -609,13 +610,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")), // Not removed right now because B is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		#endregion
@@ -626,11 +627,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			// Manually removing is the only way. (or there is that LifeSpanTarget feature too)
 			TestEvent.RemoveListener(Callback);
@@ -648,11 +649,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterCallbacks(0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			// Destroy the LifeSpanTarget and the registered listener will not be called anymore.
 			DestroyLifeSpanTargetTestObject();
@@ -684,11 +685,11 @@ namespace ExtenityTests.MessagingToolbox
 			RegisterSubjectCallbacks(0, ListenerLifeSpan.Permanent);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 
 			// Destroy the Subject and the registered listener will not be called anymore.
 			DestroyTestEventSubject();
@@ -720,7 +721,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
@@ -736,7 +737,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
@@ -771,7 +772,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			// The callback will be deregistered after this.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback.")));
 			AssertRegisteredCallbackCount(0);
 
 			Invoke();
@@ -809,14 +810,14 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -828,14 +829,14 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -847,14 +848,14 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			AssertRegisteredCallbackCount(2);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -872,11 +873,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyLifeSpanTargetTestObject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -890,11 +891,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyLifeSpanTargetTestObject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -908,11 +909,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyLifeSpanTargetTestObject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -929,13 +930,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -948,13 +949,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -967,13 +968,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -990,13 +991,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when A is called.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			//              (LogType.Log, CreateExact("Called callback B.")), Removed when A is called.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1009,13 +1010,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when A is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when A is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -1028,13 +1029,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before B, then removed inside B.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1047,13 +1048,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when B is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when B is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -1066,13 +1067,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1085,13 +1086,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")), // Not removed right now because B is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		#endregion
@@ -1109,11 +1110,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyTestEventSubject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1127,11 +1128,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyTestEventSubject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1145,11 +1146,11 @@ namespace ExtenityTests.MessagingToolbox
 			DestroyTestEventSubject();
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -1166,13 +1167,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1185,13 +1186,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1204,13 +1205,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		#endregion
@@ -1227,13 +1228,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			//              (LogType.Log, "Called callback B."), Removed when A is called.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			//              (LogType.Log, CreateExact("Called callback B.")), Removed when A is called.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1246,13 +1247,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when A is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when A is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -1265,13 +1266,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before B, then removed inside B.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before B, then removed inside B.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1284,13 +1285,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
-			//              (LogType.Log, "Called callback C.")); Removed when B is called.
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
+			//              (LogType.Log, CreateExact("Called callback C."))); Removed when B is called.
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")));
 		}
 
 		[Test]
@@ -1303,13 +1304,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."), // Not removed right now because A is called before C, then removed inside C.
-			                (LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")), // Not removed right now because A is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback B."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback B.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		[Test]
@@ -1322,13 +1323,13 @@ namespace ExtenityTests.MessagingToolbox
 
 			// This is where it's removed.
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback B."), // Not removed right now because B is called before C, then removed inside C.
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback B.")), // Not removed right now because B is called before C, then removed inside C.
+			                (LogType.Log, CreateExact("Called callback C.")));
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback A."),
-			                (LogType.Log, "Called callback C."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
+			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
 		#endregion
@@ -1377,10 +1378,10 @@ namespace ExtenityTests.MessagingToolbox
 			);
 
 			Invoke();
-			AssertExpectLog((LogType.Log, "Called callback with order -40."),
-			                (LogType.Log, "Called callback with default order, added first."),
-			                (LogType.Log, "Called callback with default order, added second."),
-			                (LogType.Log, "Called callback with order 60."));
+			AssertExpectLog((LogType.Log, CreateExact("Called callback with order -40.")),
+			                (LogType.Log, CreateExact("Called callback with default order, added first.")),
+			                (LogType.Log, CreateExact("Called callback with default order, added second.")),
+			                (LogType.Log, CreateExact("Called callback with order 60.")));
 		}
 
 		#endregion
