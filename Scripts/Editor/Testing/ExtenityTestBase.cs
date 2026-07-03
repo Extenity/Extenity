@@ -261,7 +261,7 @@ namespace Extenity.Testing
 				}
 				else
 				{
-					throw new NotSupportedException("Exception logs that are expected during tests should be stated with Exactly and InvariantCulture string filter configuration, because Unity only accepts full messages in LogAssert.Expect API.");
+					throw new NotSupportedException("You should modify your test codes for expected Exception logs. These are expected to be stated with Exactly and InvariantCulture string filter configuration, because Unity only accepts full messages in LogAssert.Expect API.");
 				}
 			}
 
