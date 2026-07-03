@@ -52,7 +52,7 @@ namespace ExtenityTests.Build
 		{
 			DirectoryTools.Create(repoPath);
 
-			RunGit(repoPath, "init");
+			RunGit(repoPath, "init --initial-branch=main");
 			RunGit(repoPath, "config core.safecrlf false"); // Disable CRLF line ending conversion warnings.
 		}
 
