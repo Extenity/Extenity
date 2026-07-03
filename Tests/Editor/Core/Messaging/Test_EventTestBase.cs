@@ -26,8 +26,18 @@ namespace ExtenityTests.MessagingToolbox
 				_TestEvent = null;
 			}
 
-			DestroyLifeSpanTargetTestObject(false);
-			DestroyTestEventSubject(false);
+			if (_LifeSpanTargetTestObject != null)
+			{
+				DestroyLifeSpanTargetTestObject();
+			}
+
+			if (_TestEventSubject != null)
+			{
+				DestroyTestEventSubject();
+			}
+
+			WasLifeSpanTargetDestroyedAtTheFirstCall = false;
+			WasTestEventSubjectDestroyedAtTheFirstCall = false;
 
 			base.OnDeinitialize();
 		}
@@ -93,9 +103,9 @@ namespace ExtenityTests.MessagingToolbox
 			return _LifeSpanTargetTestObject;
 		}
 
-		public void DestroyLifeSpanTargetTestObject(bool ensureExists = true)
+		public void DestroyLifeSpanTargetTestObject()
 		{
-			if (ensureExists && !_LifeSpanTargetTestObject)
+			if (!_LifeSpanTargetTestObject)
 				throw new Exception("The LifeSpanTarget test object was not created."); // There is something wrong with tests.
 
 			if (_LifeSpanTargetTestObject)
@@ -110,6 +120,31 @@ namespace ExtenityTests.MessagingToolbox
 				}
 
 				_LifeSpanTargetTestObject = null;
+			}
+		}
+
+		#endregion
+
+		#region Destroy From Listener
+
+		private bool WasLifeSpanTargetDestroyedAtTheFirstCall;
+		private bool WasTestEventSubjectDestroyedAtTheFirstCall;
+
+		public void DestroyLifeSpanTargetTestObjectAtTheFirstCallAndSkipInConsecutiveCalls()
+		{
+			if (!WasLifeSpanTargetDestroyedAtTheFirstCall)
+			{
+				DestroyLifeSpanTargetTestObject();
+				WasLifeSpanTargetDestroyedAtTheFirstCall = true;
+			}
+		}
+
+		public void DestroyTestEventSubjectAtTheFirstCallAndSkipInConsecutiveCalls()
+		{
+			if (!WasTestEventSubjectDestroyedAtTheFirstCall)
+			{
+				DestroyTestEventSubject();
+				WasTestEventSubjectDestroyedAtTheFirstCall = true;
 			}
 		}
 
@@ -142,12 +177,7 @@ namespace ExtenityTests.MessagingToolbox
 
 		public void DestroyTestEventSubject()
 		{
-			DestroyTestEventSubject(true);
-		}
-
-		public void DestroyTestEventSubject(bool ensureExists)
-		{
-			if (ensureExists && !_TestEventSubject)
+			if (!_TestEventSubject)
 				throw new Exception("The TestEventSubject test object was not created."); // There is something wrong with tests.
 
 			if (_TestEventSubject)

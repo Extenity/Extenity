@@ -1418,13 +1418,13 @@ namespace ExtenityTests.MessagingToolbox
 		private void CallbackCAndRemoveA()  { CallbackC();  TestEvent.RemoveListener(CallbackA); }
 		private void CallbackCAndRemoveB()  { CallbackC();  TestEvent.RemoveListener(CallbackB); }
 
-		private void CallbackAAndDestroyLifeSpanTarget()  { CallbackA();  DestroyLifeSpanTargetTestObject(); }
-		private void CallbackBAndDestroyLifeSpanTarget()  { CallbackB();  DestroyLifeSpanTargetTestObject(); }
-		private void CallbackCAndDestroyLifeSpanTarget()  { CallbackC();  DestroyLifeSpanTargetTestObject(); }
+		private void CallbackAAndDestroyLifeSpanTarget()  { CallbackA();  DestroyLifeSpanTargetTestObjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
+		private void CallbackBAndDestroyLifeSpanTarget()  { CallbackB();  DestroyLifeSpanTargetTestObjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
+		private void CallbackCAndDestroyLifeSpanTarget()  { CallbackC();  DestroyLifeSpanTargetTestObjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
 
-		private void CallbackAAndDestroySubject()  { CallbackA();  DestroyTestEventSubject(); }
-		private void CallbackBAndDestroySubject()  { CallbackB();  DestroyTestEventSubject(); }
-		private void CallbackCAndDestroySubject()  { CallbackC();  DestroyTestEventSubject(); }
+		private void CallbackAAndDestroySubject()  { CallbackA();  DestroyTestEventSubjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
+		private void CallbackBAndDestroySubject()  { CallbackB();  DestroyTestEventSubjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
+		private void CallbackCAndDestroySubject()  { CallbackC();  DestroyTestEventSubjectAtTheFirstCallAndSkipInConsecutiveCalls(); }
 		// @formatter:on
 
 		private void RegisterCallbacks(int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, Object lifeSpanTarget = null)
