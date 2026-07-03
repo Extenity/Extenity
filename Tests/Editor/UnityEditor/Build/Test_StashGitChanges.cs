@@ -81,8 +81,13 @@ namespace ExtenityTests.Build
 
 		private void AddSubmoduleToTheDummyRepo(string repoPath, string submodule)
 		{
-			RunGit(repoPath, $"submodule add {submodule} Sub");
-			RunGit(repoPath, "submodule update --init --force --remote");
+			// The submodule path must be quoted, since it may contain spaces (e.g. Unity's
+			// persistentDataPath on macOS goes through "Application Support"). Also, git 2.38+
+			// refuses the 'file' transport for submodule operations by default, so it is
+			// explicitly allowed here via '-c', which keeps the override scoped to these
+			// commands on the dummy repo instead of touching any real git configuration.
+			RunGit(repoPath, $"-c protocol.file.allow=always submodule add \"{submodule}\" Sub");
+			RunGit(repoPath, "-c protocol.file.allow=always submodule update --init --force --remote");
 		}
 
 		private void RunGit(string repoPath, string command)
