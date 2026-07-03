@@ -161,15 +161,15 @@ namespace Extenity.Testing
 			AllowAllLogs,
 		}
 
-		private const LogExpectation ExpectedLogsDefault = LogExpectation.NoLogsAllowed;
-		private LogExpectation ExpectedLogs;
+		private const LogExpectation ExpectedLogSeverityDefault = LogExpectation.NoLogsAllowed;
+		private LogExpectation ExpectedLogSeverity;
 		public List<(LogType Type, string Message)> Logs;
 
 		private LogCaptureScope LogCaptureScope;
 
 		private void InitializeLogCatching()
 		{
-			ExpectedLogs = ExpectedLogsDefault;
+			ExpectedLogSeverity = ExpectedLogSeverityDefault;
 			LogCaptureScope = new LogCaptureScope(ShouldRecordLog);
 			Logs = LogCaptureScope.Logs;
 		}
@@ -180,7 +180,7 @@ namespace Extenity.Testing
 			{
 				if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
 				{
-					AssertExpectLogs(ExpectedLogs);
+					AssertExpectNoLogsForLogSeverity(ExpectedLogSeverity);
 				}
 			}
 			finally
@@ -214,14 +214,14 @@ namespace Extenity.Testing
 
 		public void AssertExpectNoLogs()
 		{
-			AssertExpectLogs(LogExpectation.NoLogsAllowed);
+			AssertExpectNoLogsForLogSeverity(LogExpectation.NoLogsAllowed);
 		}
 
-		public void AssertExpectLogs(LogExpectation expectedLogs)
+		public void AssertExpectNoLogsForLogSeverity(LogExpectation expectedLogSeverity)
 		{
 			if (Logs.Count > 0)
 			{
-				switch (expectedLogs)
+				switch (expectedLogSeverity)
 				{
 					case LogExpectation.NoLogsAllowed:
 					{
@@ -278,9 +278,9 @@ namespace Extenity.Testing
 		/// <para>This method should be called inside a test to explicitly tell the coder who takes a look at that unit
 		/// test to understand that the test does not expect a clean console log history.</para>
 		/// </summary>
-		public void SetExpectedLogs(LogExpectation expectedLogs)
+		public void SetExpectedLogSeverity(LogExpectation expectedLogSeverity)
 		{
-			ExpectedLogs = expectedLogs;
+			ExpectedLogSeverity = expectedLogSeverity;
 		}
 
 		/// <summary>
@@ -419,7 +419,7 @@ namespace Extenity.Testing
 
 		public IEnumerator PlayLikeMonkey(float testDuration, Func<int> playSingleSession)
 		{
-			SetExpectedLogs(LogExpectation.AllowInfoAndBelow); // Because there might be gameplay logs
+			SetExpectedLogSeverity(LogExpectation.AllowInfoAndBelow); // Because there might be gameplay logs
 
 			const float EditorRefreshIntervals = 1.5f;
 			var editorRefreshCountdown = EditorRefreshIntervals;
