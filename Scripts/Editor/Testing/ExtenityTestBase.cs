@@ -249,6 +249,9 @@ namespace Extenity.Testing
 
 		public void AssertExpectLog(params (LogType Type, StringFilterEntry Message)[] expectedLogs)
 		{
+			/*
+			// This became outdated with the fact that ExtenityTestBase is overriding Unity debug logs.
+			// Kept here commented out if we ever decide to remove that log override.
 			foreach (var expectedExceptionLog in expectedLogs.Where(entry => entry.Type == LogType.Exception))
 			{
 				// Tell Unity we are expecting the exception. Unity checks the logs if an exception was logged in
@@ -264,6 +267,7 @@ namespace Extenity.Testing
 					throw new NotSupportedException("You should modify your test codes for expected Exception logs. These are expected to be stated with Exactly and InvariantCulture string filter configuration, because Unity only accepts full messages in LogAssert.Expect API.");
 				}
 			}
+			*/
 
 			if (expectedLogs.Length != Logs.Count)
 			{
