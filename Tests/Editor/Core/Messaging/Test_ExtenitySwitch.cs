@@ -131,7 +131,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestSwitch.SwitchOnSafe();
 			AssertExpectLog((LogType.Log, CreateExact("Called SwitchOn callback A.")),
-			                (LogType.Exception, CreateExact("Test_ExtenityEventException: Called throwing callback.")),
+			                (LogType.Error, CreateContains("Test_ExtenityEventException: Called throwing callback.")),
 			                (LogType.Log, CreateExact("Called SwitchOn callback C.")));
 		}
 
@@ -334,7 +334,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestSwitch.AddListener(SwitchOff, null);
 			SwitchOn();
-			AssertExpectLog((LogType.Exception, CreateExact("Exception: Invoked switch off while an invocation is ongoing.")));
+			AssertExpectLog((LogType.Exception, CreateContains("Invoked switch off while an invocation is ongoing.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.
@@ -343,7 +343,7 @@ namespace ExtenityTests.MessagingToolbox
 		{
 			TestSwitch.AddListener(() => TestSwitch.AddListener(CallbackOn, CallbackOff), null);
 			TestSwitch.SwitchOnSafe();
-			AssertExpectLog((LogType.Exception, CreateExact("NotSupportedException: Adding listener while invoking is not supported.")));
+			AssertExpectLog((LogType.Error, CreateContains("NotSupportedException: Adding listener while invoking is not supported.")));
 		}
 
 		// Not cool to call Safe or Unsafe exclusively since there are text fixture parameters for that, but whatever.

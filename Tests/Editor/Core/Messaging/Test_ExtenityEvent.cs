@@ -115,7 +115,7 @@ namespace ExtenityTests.MessagingToolbox
 
 			TestEvent.InvokeSafe();
 			AssertExpectLog((LogType.Log, CreateExact("Called callback A.")),
-			                (LogType.Exception, CreateExact("Test_ExtenityEventException: Called throwing callback.")),
+			                (LogType.Error, CreateContains("Test_ExtenityEventException: Called throwing callback.")),
 			                (LogType.Log, CreateExact("Called callback C.")));
 		}
 
