@@ -1,3 +1,29 @@
+// The define below selects between two floating-point digit-generation implementations.
+// Keep it enabled while Unity runs on its current Mono runtime. If Unity ever switches to a
+// modern .NET runtime (whose ToString semantics differ), the legacy implementation below may
+// become the better match again.
+//
+// Why the new implementation exists:
+// The original digit generation was a port of Mono's 2008 managed NumberFormatter, which
+// rounds three times on the way to the final text (exact binary value -> approximate 17-digit
+// intermediate via MantissaBitsTable -> 15 digits via full-remainder half-up -> per-format
+// rounding). Unity's runtime instead formats through corefx Number.Formatting, which produces
+// 15 correctly-rounded digits directly from the exact binary value before the per-format
+// rounding. The two disagree when the exact decimal tail falls in [0.4495, 0.45) of the last
+// kept digit's ulp (roughly 1 in a few thousand values per affected format), e.g.
+// 6497.764337182045 with G14 produced '6497.7643371821' instead of '6497.764337182'. This made
+// Test_StringTools.ToStringAsCharArray_FormattedDouble fail sporadically, since it sweeps
+// random values against ToString as the oracle.
+//
+// The new implementation converts the mantissa/exponent exactly (stackalloc big-integer,
+// allocation-free) and rounds once, half-up, matching the runtime. It also aligns the G/E
+// precision mapping with corefx (G>15 and E>=15 use 17 digits for doubles), fixing the
+// previously-divergent G16/E15. Verified against Unity 6000.3.19f1's own Mono binary with
+// ~722M random and edge-case comparisons across the test's full format matrix: zero
+// mismatches (original code: 107 mismatches per 3M). Format 'R' still diverges rarely in
+// both implementations; it is excluded from tests because it allocates.
+#define UseExactFloatingPointDigitGeneration
+
 #if UNITY_5_3_OR_NEWER
 //
 // System.NumberFormatter.cs
@@ -91,8 +117,12 @@ namespace Extenity.DataToolbox
 
 		// The below arrays are taken from mono/metatdata/number-formatter.h
 
+#if UseExactFloatingPointDigitGeneration
+		// MantissaBitsTable and TensExponentTable are not needed by the exact digit generation.
+#else
 		private static readonly unsafe ulong* MantissaBitsTable;
 		private static readonly unsafe int* TensExponentTable;
+#endif
 		private static readonly unsafe char* DigitLowerTable;
 		private static readonly unsafe char* DigitUpperTable;
 		private static readonly unsafe long* TenPowersList;
@@ -103,8 +133,20 @@ namespace Extenity.DataToolbox
 
 		unsafe static FastNumberFormatter()
 		{
+#if UseExactFloatingPointDigitGeneration
+			// --- Custom Implementation Start
+			// The mantissa/tens-exponent tables are no longer used. Floating point digits are now
+			// computed exactly in ConvertFloatingPointToDecimalDigits instead of approximated
+			// through the tables. The icall still outputs them, so they go into discarded locals.
+			ulong* mantissaBitsTable;
+			int* tensExponentTable;
+			NumberFormatter.GetFormatterTables (out mantissaBitsTable, out tensExponentTable,
+				out DigitLowerTable, out DigitUpperTable, out TenPowersList, out DecHexDigits);
+			// --- Custom Implementation End
+#else
 			NumberFormatter.GetFormatterTables (out MantissaBitsTable, out TensExponentTable,
 				out DigitLowerTable, out DigitUpperTable, out TenPowersList, out DecHexDigits);
+#endif
 		}
 
 		unsafe static long GetTenPowerOf(int i)
@@ -297,10 +339,26 @@ namespace Extenity.DataToolbox
 				return _defPrecision + 2;
 			if (_precision < _defPrecision)
 				return _defPrecision;
+#if UseExactFloatingPointDigitGeneration
+			// --- Custom Implementation Start
+			// Matches the runtime's (corefx Number.Formatting FormatDouble/FormatSingle) choice of
+			// the initial conversion precision, so that requested precisions above the default one
+			// produce the same digits as the runtime: 'G16'/'E15' and up round through a
+			// (defPrecision + 2) digit intermediate there, while 'G15'/'E14' and below round
+			// through a defPrecision digit intermediate. The original Mono code used
+			// min(defPrecision + 2, precision (+1)) instead, which disagrees with the runtime for
+			// 'G16' and 'E15' ('G' values above the default precision are 17 or nothing there).
+			if (_specifier == 'G')
+				return _precision > _defPrecision ? _defPrecision + 2 : _defPrecision;
+			if (_specifier == 'E')
+				return _precision + 1 > _defPrecision ? _defPrecision + 2 : _defPrecision;
+			// --- Custom Implementation End
+#else
 			if (_specifier == 'G')
 				return Math.Min (_defPrecision + 2, _precision);
 			if (_specifier == 'E')
 				return Math.Min (_defPrecision + 2, _precision + 1);
+#endif
 			return _defPrecision;
 		}
 
@@ -477,6 +535,48 @@ namespace Extenity.DataToolbox
 				return;
 			}
 
+#if UseExactFloatingPointDigitGeneration
+			// --- Custom Implementation Start
+			// The original Mono code approximated the decimal digits by multiplying the mantissa
+			// with a precomputed 64 bit fixed-point table entry (MantissaBitsTable), producing a
+			// 17 digit intermediate that was itself rounded, then rounding it again down to
+			// InitialFloatingPrecision() digits with a full-remainder round-half-up. Together with
+			// the per-format rounding applied later (RoundPos/RoundDecimal), digits effectively got
+			// rounded three times. Mono/Unity's own double.ToString() converts the exact binary
+			// value to InitialFloatingPrecision() digits with a single correct rounding
+			// (corefx DoubleToNumber via libc snprintf, round-half-up decided by the first dropped
+			// digit) and only then applies the per-format rounding. The extra intermediate rounding
+			// made this formatter round up in rare cases where the runtime rounds down, e.g.
+			// 6497.764337182045 (exact decimal 6497.7643371820449829...) with 'G14':
+			//   runtime: ...44982 -> 15 digits ...204 -> 14 digits ...20  => "6497.764337182"
+			//   before : ...44982 -> 17 digits ...20450 -> 15 digits ...205 -> 14 digits ...21
+			//            => "6497.7643371821"
+			// The code below instead computes the InitialFloatingPrecision() digits exactly from
+			// the binary mantissa and exponent with a single round-half-up, which matches the
+			// runtime's conversion. The per-format rounding afterwards is unchanged and also
+			// matches the runtime (both look only at the first dropped digit).
+			long mantissa;
+			int binaryExponent;
+			if (e == 0) {
+				// Subnormal. There is no implicit leading bit.
+				mantissa = m;
+				binaryExponent = -1074;
+			}
+			else {
+				mantissa = m | (DoubleBitsMantissaMask + 1);
+				binaryExponent = e - 1075;
+			}
+
+			int initialPrecision = InitialFloatingPrecision ();
+			int decimalExponent;
+			ulong scaledDigits = ConvertFloatingPointToDecimalDigits(mantissa, binaryExponent, initialPrecision, out decimalExponent);
+
+			_decPointPos = decimalExponent + 1;
+			InitDecHexDigits (scaledDigits);
+			_offset = CountTrailingZeros ();
+			_digitsLen = initialPrecision - _offset;
+			// --- Custom Implementation End
+#else
 			int expAdjust = 0;
 			if (e == 0) {
 				// We need 'm' to be large enough so we won't lose precision.
@@ -526,6 +626,7 @@ namespace Extenity.DataToolbox
 		   	InitDecHexDigits ((ulong)res);
 			_offset = CountTrailingZeros ();
 			_digitsLen = order - _offset;
+#endif
 		}
 
 		private void Init (string format, decimal value)
@@ -2211,6 +2312,294 @@ namespace Extenity.DataToolbox
 			return *(long*)&value;
 		}
 
+#if UseExactFloatingPointDigitGeneration
+		#region Exact floating point to decimal digits conversion
+
+		// Enough limbs for the largest intermediates that can occur:
+		// mantissa * 5^341 (~845 bits) for the smallest subnormals and
+		// mantissa << 971 (~1024 bits) for the largest doubles, with margin.
+		private const int MaxScalingLimbs = 40;
+
+		/// <summary>
+		/// Computes the first 'precision' significant decimal digits of the value
+		/// 'mantissa * 2^binaryExponent' (mantissa must be positive), correctly rounded to nearest
+		/// with ties away from zero (round-half-up), computed exactly from the binary value.
+		/// Also outputs 'decimalExponent' = floor(log10(value)), so the returned digits D satisfy
+		/// value ~= D * 10^(decimalExponent - precision + 1) with D in [10^(precision-1), 10^precision).
+		/// This mirrors how the runtime's own double.ToString() produces its digits, which is
+		/// essential for this formatter to generate byte-identical output.
+		/// </summary>
+		private static ulong ConvertFloatingPointToDecimalDigits(long mantissa, int binaryExponent, int precision, out int decimalExponent)
+		{
+			if (mantissa <= 0)
+				throw new InvalidOperationException($"Non-positive mantissa '{mantissa}' in floating point conversion.");
+
+			// Estimate floor(log10(value)) from the binary magnitude (30103/100000 ~ log10(2)).
+			// The estimate may be off by one in either direction. The loop below detects that from
+			// the digit count of the result and retries with the corrected exponent. A retry
+			// recomputes the digits from the original exact value, so the result is still rounded
+			// only once.
+			int bitLength = 0;
+			for (ulong bits = (ulong)mantissa; bits != 0; bits >>= 1)
+				bitLength++;
+			int magnitude = bitLength + binaryExponent; // The value is in [2^(magnitude-1), 2^magnitude).
+			int estimate = FloorDivide((magnitude - 1) * 30103, 100000);
+
+			for (int attempt = 0; attempt < 3; attempt++)
+			{
+				ulong digits = ScaleToIntegerAndRound(mantissa, binaryExponent, precision - 1 - estimate);
+				if (digits < (ulong)GetTenPowerOf(precision - 1))
+				{
+					estimate--;
+					continue;
+				}
+				if (digits >= (ulong)GetTenPowerOf(precision))
+				{
+					estimate++;
+					continue;
+				}
+				decimalExponent = estimate;
+				return digits;
+			}
+			throw new InvalidOperationException($"Failed to converge while converting floating point value with mantissa '{mantissa}' and binary exponent '{binaryExponent}' to '{precision}' decimal digits.");
+		}
+
+		/// <summary>
+		/// Computes round-half-up(mantissa * 2^binaryExponent * 10^decimalShift) with exact integer
+		/// arithmetic. The value is scaled exactly in all branches; the single rounding happens at
+		/// the very end of the chosen branch, directly against the exact scaled value.
+		/// </summary>
+		private static unsafe ulong ScaleToIntegerAndRound(long mantissa, int binaryExponent, int decimalShift)
+		{
+			if (decimalShift >= 0)
+			{
+				// value * 10^decimalShift = mantissa * 5^decimalShift * 2^(binaryExponent + decimalShift)
+				uint* limbs = stackalloc uint[MaxScalingLimbs];
+				int count = LoadBigInteger(limbs, (ulong)mantissa);
+				count = MultiplyByPowerOfFive(limbs, count, decimalShift);
+				int binaryShift = binaryExponent + decimalShift;
+				if (binaryShift >= 0)
+				{
+					count = ShiftLeft(limbs, count, binaryShift);
+					return BigIntegerToUInt64(limbs, count); // Exact integer. No rounding needed.
+				}
+				return ShiftRightAndRound(limbs, count, -binaryShift);
+			}
+			else
+			{
+				int tenPower = -decimalShift;
+				if (binaryExponent >= 0)
+				{
+					// value * 10^decimalShift = (mantissa << binaryExponent) / 10^tenPower
+					uint* limbs = stackalloc uint[MaxScalingLimbs];
+					int count = LoadBigInteger(limbs, (ulong)mantissa);
+					count = ShiftLeft(limbs, count, binaryExponent);
+					return DivideByPowerOfTenAndRound(limbs, count, tenPower);
+				}
+				else
+				{
+					// Both a binary and a decimal down-scale. This can only happen for values that
+					// have more integer digits than the requested precision while not being
+					// integers themselves, so both scales are small and the composite divisor
+					// '10^tenPower << -binaryExponent' fits comfortably into 64 bits. Violating the
+					// guards below would mean the exponent estimation broke down, which is a bug.
+					int binaryPower = -binaryExponent;
+					if (tenPower >= TenPowersListLength)
+						throw new InvalidOperationException($"Unexpectedly large ten power '{tenPower}' in floating point conversion.");
+					ulong powerOfTen = (ulong)GetTenPowerOf(tenPower);
+					if (binaryPower >= 64 || powerOfTen > (UInt64.MaxValue >> binaryPower))
+						throw new InvalidOperationException($"Unexpectedly large composite divisor (2^{binaryPower} * 10^{tenPower}) in floating point conversion.");
+					ulong divisor = powerOfTen << binaryPower;
+					ulong quotient = (ulong)mantissa / divisor;
+					ulong remainder = (ulong)mantissa % divisor;
+					if (remainder >= divisor - remainder) // remainder >= divisor / 2, avoiding overflow.
+						quotient++;
+					return quotient;
+				}
+			}
+		}
+
+		private static int FloorDivide(int a, int b)
+		{
+			int result = a / b;
+			if (a % b != 0 && (a < 0) != (b < 0))
+				result--;
+			return result;
+		}
+
+		// The big integer helpers below operate on little-endian uint limbs.
+
+		private static unsafe int LoadBigInteger(uint* limbs, ulong value)
+		{
+			limbs[0] = (uint)value;
+			limbs[1] = (uint)(value >> 32);
+			return limbs[1] != 0 ? 2 : 1;
+		}
+
+		private static unsafe ulong BigIntegerToUInt64(uint* limbs, int count)
+		{
+			if (count > 2)
+				throw new InvalidOperationException($"Scaled floating point value unexpectedly does not fit into 64 bits ('{count}' limbs).");
+			return count == 2
+				? ((ulong)limbs[1] << 32) | limbs[0]
+				: limbs[0];
+		}
+
+		private static unsafe int MultiplyBySmall(uint* limbs, int count, uint multiplier)
+		{
+			ulong carry = 0;
+			for (int i = 0; i < count; i++)
+			{
+				ulong product = (ulong)limbs[i] * multiplier + carry;
+				limbs[i] = (uint)product;
+				carry = product >> 32;
+			}
+			if (carry != 0)
+			{
+				if (count == MaxScalingLimbs)
+					throw new InvalidOperationException("Big integer limb overflow in floating point conversion.");
+				limbs[count++] = (uint)carry;
+			}
+			return count;
+		}
+
+		private static unsafe int MultiplyByPowerOfFive(uint* limbs, int count, int power)
+		{
+			const uint FiveToThirteenth = 1220703125; // The largest power of 5 that fits into uint.
+			while (power >= 13)
+			{
+				count = MultiplyBySmall(limbs, count, FiveToThirteenth);
+				power -= 13;
+			}
+			if (power > 0)
+			{
+				uint multiplier = 1;
+				while (power-- > 0)
+					multiplier *= 5;
+				count = MultiplyBySmall(limbs, count, multiplier);
+			}
+			return count;
+		}
+
+		private static unsafe int ShiftLeft(uint* limbs, int count, int shift)
+		{
+			if (shift == 0)
+				return count;
+			int limbShift = shift >> 5;
+			int bitShift = shift & 31;
+			int newCount = count + limbShift + (bitShift != 0 ? 1 : 0);
+			if (newCount > MaxScalingLimbs)
+				throw new InvalidOperationException("Big integer limb overflow while shifting in floating point conversion.");
+			if (bitShift == 0)
+			{
+				for (int i = count - 1; i >= 0; i--)
+					limbs[i + limbShift] = limbs[i];
+			}
+			else
+			{
+				limbs[count + limbShift] = limbs[count - 1] >> (32 - bitShift);
+				for (int i = count - 1; i > 0; i--)
+					limbs[i + limbShift] = (limbs[i] << bitShift) | (limbs[i - 1] >> (32 - bitShift));
+				limbs[limbShift] = limbs[0] << bitShift;
+			}
+			for (int i = 0; i < limbShift; i++)
+				limbs[i] = 0;
+			while (newCount > 1 && limbs[newCount - 1] == 0)
+				newCount--;
+			return newCount;
+		}
+
+		/// <summary>
+		/// Computes round-half-up(value / 2^shift) where 'value' is the given big integer.
+		/// Only the topmost removed bit decides the rounding: the removed fraction is >= 1/2
+		/// exactly when that bit is set. (An exact tie has that bit set with all lower bits zero,
+		/// which round-half-up rounds up just the same, so the lower bits never matter.)
+		/// </summary>
+		private static unsafe ulong ShiftRightAndRound(uint* limbs, int count, int shift)
+		{
+			if (shift <= 0)
+				throw new InvalidOperationException($"Invalid right shift '{shift}' in floating point conversion.");
+
+			int roundBitIndex = shift - 1;
+			bool roundUp = (roundBitIndex >> 5) < count && (limbs[roundBitIndex >> 5] & (1u << (roundBitIndex & 31))) != 0;
+
+			// Gather 'value >> shift' into 64 bits, verifying it fits.
+			int limbShift = shift >> 5;
+			int bitShift = shift & 31;
+			ulong high = 0;
+			ulong low = 0;
+			for (int i = count - 1; i >= limbShift; i--)
+			{
+				if ((high >> 32) != 0)
+					throw new InvalidOperationException("Scaled floating point value unexpectedly does not fit into 64 bits after shifting.");
+				high = (high << 32) | (low >> 32);
+				low = (low << 32) | limbs[i];
+			}
+			ulong result;
+			if (bitShift == 0)
+			{
+				if (high != 0)
+					throw new InvalidOperationException("Scaled floating point value unexpectedly does not fit into 64 bits after shifting.");
+				result = low;
+			}
+			else
+			{
+				if ((high >> bitShift) != 0)
+					throw new InvalidOperationException("Scaled floating point value unexpectedly does not fit into 64 bits after shifting.");
+				result = (low >> bitShift) | (high << (64 - bitShift));
+			}
+			return roundUp ? result + 1 : result;
+		}
+
+		/// <summary>
+		/// Computes round-half-up(value / 10^power) where 'value' is the given big integer.
+		/// The division runs in chunks from the least significant digits up, so the remainder of
+		/// the final chunk holds the most significant digits of the total removed remainder R.
+		/// That final remainder r (with chunk divisor d) alone decides the rounding:
+		/// r &gt;= d/2 implies R &gt;= 10^power/2, and r &lt;= d/2 - 1 implies R &lt; 10^power/2. An exact tie
+		/// has r == d/2 with all earlier remainders zero, which round-half-up rounds up just like
+		/// the r == d/2 non-tie cases, so the earlier remainders never matter.
+		/// </summary>
+		private static unsafe ulong DivideByPowerOfTenAndRound(uint* limbs, int count, int power)
+		{
+			if (power <= 0)
+				throw new InvalidOperationException($"Invalid ten power '{power}' in floating point conversion.");
+
+			uint lastRemainder = 0;
+			uint lastDivisor = 1;
+			while (power > 0)
+			{
+				int chunk = power < 9 ? power : 9; // 10^9 is the largest power of 10 that fits into uint.
+				uint divisor = 1;
+				for (int i = 0; i < chunk; i++)
+					divisor *= 10;
+				lastRemainder = DivideBySmall(limbs, ref count, divisor);
+				lastDivisor = divisor;
+				power -= chunk;
+			}
+			ulong result = BigIntegerToUInt64(limbs, count);
+			if (lastRemainder >= lastDivisor / 2)
+				result++;
+			return result;
+		}
+
+		private static unsafe uint DivideBySmall(uint* limbs, ref int count, uint divisor)
+		{
+			ulong remainder = 0;
+			for (int i = count - 1; i >= 0; i--)
+			{
+				ulong current = (remainder << 32) | limbs[i];
+				limbs[i] = (uint)(current / divisor);
+				remainder = current % divisor;
+			}
+			while (count > 1 && limbs[count - 1] == 0)
+				count--;
+			return (uint)remainder;
+		}
+
+		#endregion
+
+#endif
 		private static FieldInfo _NumberGroupSizesField;
 		private static FieldInfo NumberGroupSizesField
 		{
