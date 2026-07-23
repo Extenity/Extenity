@@ -902,6 +902,11 @@ namespace ExtenityTests.DataToolbox
 		{
 			lock (BigBuffer)
 			{
+				// Warm up JIT compilation before measuring
+				BigBuffer.Clear();
+				convertToCharArray(value, format, BigBuffer);
+
+				// Do the actual measurement
 				BigBuffer.Clear();
 				UnityTestTools.BeginMemoryCheck();
 				var length = convertToCharArray(value, format, BigBuffer);
