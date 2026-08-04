@@ -75,9 +75,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				}
 			}
 
+			if (!sortByName)
+			{
+				return;
+			}
+
 			contextObjects.Sort((a, b) =>
 			{
-				var comparison = a.name.CompareTo(b.name);
+				var comparison = String.Compare(a.name, b.name, StringComparison.Ordinal);
 				if (comparison != 0)
 					return comparison;
 				return a.GetInstanceID().CompareTo(b.GetInstanceID());
