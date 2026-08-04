@@ -1214,6 +1214,7 @@ namespace Extenity.GameObjectToolbox
 			return obj;
 		}
 
+#if !UNITY_6000_4_OR_NEWER
 		public static object FindFirstObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive)
 		{
 			var obj = Object.FindFirstObjectByType(type, findObjectsInactive);
@@ -1221,6 +1222,7 @@ namespace Extenity.GameObjectToolbox
 				throw new Exception($"Could not find object of type '{type.Name}'.");
 			return obj;
 		}
+#endif
 
 		public static object FindAnyObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive)
 		{
@@ -1240,6 +1242,7 @@ namespace Extenity.GameObjectToolbox
 			return obj as T;
 		}
 
+#if !UNITY_6000_4_OR_NEWER
 		public static T FindFirstObjectByTypeEnsured<T>(FindObjectsInactive findObjectsInactive) where T : class
 		{
 			var type = typeof(T);
@@ -1248,6 +1251,7 @@ namespace Extenity.GameObjectToolbox
 				throw new Exception($"Could not find object of type '{type.Name}'.");
 			return obj as T;
 		}
+#endif
 
 		public static T FindAnyObjectByTypeEnsured<T>(FindObjectsInactive findObjectsInactive) where T : class
 		{
@@ -1269,9 +1273,17 @@ namespace Extenity.GameObjectToolbox
 			return results[0];
 		}
 
-		public static object FindSingleObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive, FindObjectsSortMode sortMode)
+		public static object FindSingleObjectByTypeEnsured(Type type, FindObjectsInactive findObjectsInactive
+#if !UNITY_6000_4_OR_NEWER
+		                                                 , FindObjectsSortMode sortMode
+#endif
+		)
 		{
-			var results = Object.FindObjectsByType(type, findObjectsInactive, sortMode);
+			var results = Object.FindObjectsByType(type, findObjectsInactive
+#if !UNITY_6000_4_OR_NEWER
+			                                     , sortMode
+#endif
+			                                      );
 			var count = results?.Length ?? 0;
 			if (count != 1)
 				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
@@ -1291,10 +1303,18 @@ namespace Extenity.GameObjectToolbox
 			return results[0] as T;
 		}
 
-		public static T FindSingleObjectByTypeEnsured<T>(FindObjectsInactive findObjectsInactive, FindObjectsSortMode sortMode) where T : class
+		public static T FindSingleObjectByTypeEnsured<T>(FindObjectsInactive findObjectsInactive
+#if !UNITY_6000_4_OR_NEWER
+		                                               , FindObjectsSortMode sortMode
+#endif
+		) where T : class
 		{
 			var type = typeof(T);
-			var results = Object.FindObjectsByType(type, findObjectsInactive, sortMode);
+			var results = Object.FindObjectsByType(type, findObjectsInactive
+#if !UNITY_6000_4_OR_NEWER
+			                                     , sortMode
+#endif
+			                                      );
 			var count = results?.Length ?? 0;
 			if (count != 1)
 				throw new Exception($"Expected single '{type.Name}' whereas '{count}' available.");
