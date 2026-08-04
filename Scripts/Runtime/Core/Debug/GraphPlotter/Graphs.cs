@@ -85,7 +85,11 @@ namespace Extenity.DebugToolbox.GraphPlotting
 				var comparison = String.Compare(a.name, b.name, StringComparison.Ordinal);
 				if (comparison != 0)
 					return comparison;
+#if UNITY_6000_4_OR_NEWER
+				return a.GetEntityId().CompareTo(b.GetEntityId());
+#else
 				return a.GetInstanceID().CompareTo(b.GetInstanceID());
+#endif
 			});
 		}
 

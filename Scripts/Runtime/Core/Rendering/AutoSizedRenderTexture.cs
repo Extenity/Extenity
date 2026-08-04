@@ -95,7 +95,12 @@ namespace Extenity.RenderingToolbox
 		private static AutoSizedRenderTexture CreateGameObject(bool hideInHierarchy)
 		{
 			var go = new GameObject();
-			go.name = "_AutoSizedRenderTexture-" + go.GetInstanceID();
+			go.name = "_AutoSizedRenderTexture-"
+#if UNITY_6000_4_OR_NEWER
+			        + go.GetEntityId();
+#else
+			        + go.GetInstanceID();
+#endif
 
 			if (hideInHierarchy)
 			{
