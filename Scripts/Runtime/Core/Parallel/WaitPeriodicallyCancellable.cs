@@ -1,15 +1,12 @@
 #if UNITY_5_3_OR_NEWER
 
-using System;
 using UnityEngine;
 
 namespace Extenity.ParallelToolbox
 {
 
-	[Serializable]
 	public class WaitPeriodicallyCancellable : CustomYieldInstruction
 	{
-		[NonSerialized]
 		public float PeriodStartTime;
 		public float Period;
 		public bool UseRealtime = true;
