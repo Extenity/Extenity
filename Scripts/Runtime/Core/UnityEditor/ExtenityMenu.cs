@@ -1,7 +1,5 @@
 #if UNITY_EDITOR
 
-using UnityEditor;
-
 namespace Extenity.UnityEditorToolbox
 {
 
@@ -30,10 +28,8 @@ namespace Extenity.UnityEditorToolbox
 		public const int GameObjectOperationsPriorityEnd = GameObjectOperationsPriority + 82;
 		public const string Logging = Path + "Logging/";
 		public const int LoggingPriority = GameObjectOperationsPriorityEnd + Subgroup; // TODO: Something causes the Logging entry to be listed as a new group, rather than listed right after GameObject Operations.
-		public const string UI = Path + "UI/";
-		public const int UIPriority = LoggingPriority + Subgroup;
 		public const string Terrain = Path + "Terrain/";
-		public const int TerrainPriority = UIPriority + Subgroup;
+		public const int TerrainPriority = LoggingPriority + Subgroup;
 
 		public const string Painkiller = Path + "Painkiller/";
 		public const int PainkillerPriority = TerrainPriority + Group;
@@ -61,11 +57,6 @@ namespace Extenity.UnityEditorToolbox
 		public const int UnityCreateTestingScriptMenuPriority = 82; // Unity's "Test Assembly Folder" option is 83.
 		public const string AssetOperationsContext = AssetsBaseContext + "Extenity Asset Operations" + RefreshHelper + "/";
 
-		// Right-click Game Object context menu
-		public const string UIContext = "GameObject/UI/";
-		public const string WidgetsContext = UIContext;
-		public const string WidgetsContextPostfix = " - Extenity";
-
 		// Right-click Component context menu
 		public const string ComponentContext = "CONTEXT/Component/";
 
@@ -74,10 +65,6 @@ namespace Extenity.UnityEditorToolbox
 		public const int UnityPlayMenuPriority_BelowDuplicate = 120; // Use this to add a MenuItem just below Unity's "Edit/Duplicate"
 		public const int UnityPlayMenuPriority_AbovePlay = 159; // Use this to add a MenuItem just above Unity's "Edit/Play"
 		public const string Edit = "Edit/";
-
-		// Prioritize menu parents
-		[MenuItem(WidgetsContext, priority = 1000)] // 1000 is above all Unity default entries.
-		private static void __WidgetsContext(MenuCommand menuCommand) { }
 	}
 
 }
