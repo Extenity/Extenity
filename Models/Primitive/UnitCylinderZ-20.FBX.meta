@@ -23,7 +23,7 @@ ModelImporter:
     materialImportMode: 0
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
     searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
