@@ -1,3 +1,4 @@
+using System;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEngine;
 using UnityEditor;
@@ -17,6 +18,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 		{
 		}
 
+		[NonSerialized]
 		public TagsPane ProcessTagsPane = new TagsPane();
 		public string[] ProcessTags;
 

@@ -1,5 +1,6 @@
 ﻿#if UNITY_5_3_OR_NEWER
 
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -35,6 +36,7 @@ namespace Extenity.RenderingToolbox
 		#region Events
 
 		public class RenderTextureChangedEvent : UnityEvent<RenderTexture> { }
+		[NonSerialized]
 		public RenderTextureChangedEvent OnRenderTextureChanged = new RenderTextureChangedEvent();
 
 		private void InvokeChangedEvent()

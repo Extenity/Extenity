@@ -1,5 +1,6 @@
 #if UNITY_5_3_OR_NEWER
 
+using System;
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting
@@ -81,7 +82,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotPositionZ = true;
 		public CoordinateSystem PositionSpace = CoordinateSystem.World;
 		public VerticalRange PositionRange = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph PositionGraph;
+		[NonSerialized]
 		public Channel[] PositionChannels;
 		// -----------------------------------------------------
 		// Input - Rotation
@@ -92,7 +95,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotRotationZ = true;
 		public CoordinateSystem RotationSpace = CoordinateSystem.World;
 		public VerticalRange RotationRange = VerticalRange.Fixed(0f, 360f);
+		[NonSerialized]
 		public Graph RotationGraph;
+		[NonSerialized]
 		public Channel[] RotationChannels;
 		// -----------------------------------------------------
 		// Input - Scale
@@ -103,7 +108,9 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotScaleZ = true;
 		public ScaleCoordinateSystem ScaleSpace = ScaleCoordinateSystem.Local;
 		public VerticalRange ScaleRange = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph ScaleGraph;
+		[NonSerialized]
 		public Channel[] ScaleChannels;
 		// -----------------------------------------------------
 

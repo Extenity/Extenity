@@ -2,6 +2,7 @@
 
 #if !DisableUnityPhysics2D
 
+using System;
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting
@@ -82,6 +83,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotPositionX = true;
 		public bool PlotPositionY = true;
 		public VerticalRange PositionRange = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph PositionGraph;
 		private Channel[] PositionChannels;
 		// -----------------------------------------------------
@@ -90,6 +92,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotRotation = false;
 		public bool ClampRotation = true;
 		public VerticalRange RotationRange = VerticalRange.Fixed(0f, 360f);
+		[NonSerialized]
 		public Graph RotationGraph;
 		private Channel RotationChannel;
 		// -----------------------------------------------------
@@ -99,6 +102,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		public bool PlotVelocityX = true;
 		public bool PlotVelocityY = true;
 		public VerticalRange VelocityRange = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph VelocityGraph;
 		private Channel[] VelocityChannels;
 		// -----------------------------------------------------
@@ -106,6 +110,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool PlotAngularVelocity = false;
 		public VerticalRange AngularVelocityRange = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph AngularVelocityGraph;
 		private Channel AngularVelocityChannel;
 		// -----------------------------------------------------

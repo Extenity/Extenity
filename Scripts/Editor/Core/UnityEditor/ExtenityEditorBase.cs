@@ -196,6 +196,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		#region Cached Properties
 
+		[NonSerialized]
 		public Dictionary<string, SerializedProperty> CachedSerializedProperties;
 
 		public SerializedProperty GetProperty(string propertyName)

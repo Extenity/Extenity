@@ -1,5 +1,6 @@
 ﻿#if UNITY_5_3_OR_NEWER
 
+using System;
 using Extenity.DataToolbox;
 using UnityEngine;
 
@@ -63,6 +64,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// Input - No value other than Debug log calls
 		// -----------------------------------------------------
 		public StringFilter Filter;
+		[NonSerialized]
 		public Graph Graph;
 		// -----------------------------------------------------
 

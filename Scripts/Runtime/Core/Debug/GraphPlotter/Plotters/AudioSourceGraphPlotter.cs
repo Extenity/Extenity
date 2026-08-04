@@ -1,5 +1,6 @@
 #if ExtenityAudio
 
+using System;
 using UnityEngine;
 
 namespace Extenity.DebugToolbox.GraphPlotting
@@ -77,6 +78,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool PlotVolume = false;
 		public VerticalRange VolumeRange = VerticalRange.Fixed(0f, 1f);
+		[NonSerialized]
 		public Graph VolumeGraph;
 		private Channel VolumeChannel;
 		// -----------------------------------------------------
@@ -84,12 +86,14 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		// -----------------------------------------------------
 		public bool PlotPitch = false;
 		public VerticalRange PitchRange = VerticalRange.Expansive(0f, 2f);
+		[NonSerialized]
 		public Graph PitchGraph;
 		private Channel PitchChannel;
 		// -----------------------------------------------------
 		// Input - IsPlaying
 		// -----------------------------------------------------
 		public bool PlotIsPlaying = false;
+		[NonSerialized]
 		public Graph IsPlayingGraph;
 		private Channel IsPlayingChannel;
 		// -----------------------------------------------------

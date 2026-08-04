@@ -93,6 +93,7 @@ namespace Extenity.DebugToolbox.GraphPlotting
 		[HideInInspector] // Not meant to be shown in raw format
 		public List<ChannelField> ChannelFields = new List<ChannelField>();
 		public VerticalRange Range = VerticalRange.Adaptive();
+		[NonSerialized]
 		public Graph Graph;
 		// -----------------------------------------------------
 
