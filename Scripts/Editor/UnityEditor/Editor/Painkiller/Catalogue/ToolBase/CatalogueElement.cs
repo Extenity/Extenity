@@ -12,13 +12,17 @@ namespace Extenity.PainkillerToolbox.Editor
 		#region Initialization
 
 		public CatalogueElement(Object asset, int depth)
+#if UNITY_6000_4_OR_NEWER
+			: base(asset.name, depth, asset.GetEntityId())
+#else
 			: base(asset.name, depth, asset.GetInstanceID())
+#endif
 		{
 			Asset = asset;
 		}
 
 		public CatalogueElement()
-			: base(null, -1, 0)
+			: base(null, -1, default)
 		{
 			Asset = null;
 		}

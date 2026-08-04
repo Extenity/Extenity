@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Extenity.IMGUIToolbox.Editor
 {
@@ -24,7 +25,11 @@ namespace Extenity.IMGUIToolbox.Editor
 			SetData(data);
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public T Find(EntityId id)
+#else
 		public T Find(int id)
+#endif
 		{
 			return m_Data.FirstOrDefault(element => element.id == id);
 		}
@@ -44,9 +49,17 @@ namespace Extenity.IMGUIToolbox.Editor
 				m_Root = TreeElementUtility.ListToTree(data);
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public IList<EntityId> GetAncestors(EntityId id)
+#else
 		public IList<int> GetAncestors(int id)
+#endif
 		{
+#if UNITY_6000_4_OR_NEWER
+			var parents = new List<EntityId>();
+#else
 			var parents = new List<int>();
+#endif
 			TreeElement T = Find(id);
 			if (T != null)
 			{
@@ -59,22 +72,38 @@ namespace Extenity.IMGUIToolbox.Editor
 			return parents;
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public IList<EntityId> GetDescendantsThatHaveChildren(EntityId id)
+#else
 		public IList<int> GetDescendantsThatHaveChildren(int id)
+#endif
 		{
 			T searchFromThis = Find(id);
 			if (searchFromThis != null)
 			{
 				return GetParentsBelowStackBased(searchFromThis);
 			}
+#if UNITY_6000_4_OR_NEWER
+			return new List<EntityId>();
+#else
 			return new List<int>();
+#endif
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		private IList<EntityId> GetParentsBelowStackBased(TreeElement searchFromThis)
+#else
 		private IList<int> GetParentsBelowStackBased(TreeElement searchFromThis)
+#endif
 		{
 			Stack<TreeElement> stack = new Stack<TreeElement>();
 			stack.Push(searchFromThis);
 
+#if UNITY_6000_4_OR_NEWER
+			var parentsBelow = new List<EntityId>();
+#else
 			var parentsBelow = new List<int>();
+#endif
 			while (stack.Count > 0)
 			{
 				TreeElement current = stack.Pop();

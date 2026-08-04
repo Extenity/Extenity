@@ -8,7 +8,11 @@ namespace Extenity.IMGUIToolbox.Editor
 	[Serializable]
 	public class TreeElement
 	{
+#if UNITY_6000_4_OR_NEWER
+		[SerializeField] EntityId m_ID;
+#else
 		[SerializeField] int m_ID;
+#endif
 		[SerializeField] string m_Name;
 		[SerializeField] int m_Depth;
 		[NonSerialized] TreeElement m_Parent;
@@ -43,17 +47,29 @@ namespace Extenity.IMGUIToolbox.Editor
 			set { m_Name = value; }
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public EntityId id
+		{
+			get { return m_ID; }
+			set { m_ID = value; }
+		}
+#else
 		public int id
 		{
 			get { return m_ID; }
 			set { m_ID = value; }
 		}
+#endif
 
 		public TreeElement()
 		{
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public TreeElement(string name, int depth, EntityId id)
+#else
 		public TreeElement(string name, int depth, int id)
+#endif
 		{
 			m_Name = name;
 			m_ID = id;

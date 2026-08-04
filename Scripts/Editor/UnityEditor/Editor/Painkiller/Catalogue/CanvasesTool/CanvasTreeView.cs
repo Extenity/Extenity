@@ -116,7 +116,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			return state;
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		protected override bool CanRename(TreeViewItem<EntityId> item)
+#else
 		protected override bool CanRename(TreeViewItem<int> item)
+#endif
 		{
 			return false;
 		}
@@ -125,7 +129,11 @@ namespace Extenity.PainkillerToolbox.Editor
 		{
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		protected override bool CanMultiSelect(TreeViewItem<EntityId> item)
+#else
 		protected override bool CanMultiSelect(TreeViewItem<int> item)
+#endif
 		{
 			return true;
 		}
@@ -208,7 +216,11 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
+#if UNITY_6000_4_OR_NEWER
+		public CanvasTreeView(TreeViewState<EntityId> state, MultiColumnHeader multiColumnHeader, TreeModel<CanvasElement> model)
+#else
 		public CanvasTreeView(TreeViewState<int> state, MultiColumnHeader multiColumnHeader, TreeModel<CanvasElement> model)
+#endif
 			: base(state, multiColumnHeader, model)
 		{
 			Assert.AreEqual(SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
@@ -228,14 +240,22 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		// Note that we only build the visible rows. Only the backend has the full tree information. 
 		// The treeview only creates info for the row list.
+#if UNITY_6000_4_OR_NEWER
+		protected override IList<TreeViewItem<EntityId>> BuildRows(TreeViewItem<EntityId> root)
+#else
 		protected override IList<TreeViewItem<int>> BuildRows(TreeViewItem<int> root)
+#endif
 		{
 			var rows = base.BuildRows(root);
 			SortIfNeeded(root, rows);
 			return rows;
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		public static void TreeToList(TreeViewItem<EntityId> root, IList<TreeViewItem<EntityId>> result)
+#else
 		public static void TreeToList(TreeViewItem<int> root, IList<TreeViewItem<int>> result)
+#endif
 		{
 			if (root == null)
 				throw new NullReferenceException(nameof(root));
@@ -247,7 +267,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			if (root.children == null)
 				return;
 
+#if UNITY_6000_4_OR_NEWER
+			var stack = new Stack<TreeViewItem<EntityId>>();
+#else
 			var stack = new Stack<TreeViewItem<int>>();
+#endif
 			for (int i = root.children.Count - 1; i >= 0; i--)
 				stack.Push(root.children[i]);
 
@@ -275,7 +299,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			SortIfNeeded(rootItem, GetRows());
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		private void SortIfNeeded(TreeViewItem<EntityId> root, IList<TreeViewItem<EntityId>> rows)
+#else
 		private void SortIfNeeded(TreeViewItem<int> root, IList<TreeViewItem<int>> rows)
+#endif
 		{
 			if (rows.Count <= 1)
 				return;
@@ -291,7 +319,11 @@ namespace Extenity.PainkillerToolbox.Editor
 			Repaint();
 		}
 
+#if UNITY_6000_4_OR_NEWER
+		private void SortChildrenByMultipleColumns(TreeViewItem<EntityId> parentItem, bool recursive)
+#else
 		private void SortChildrenByMultipleColumns(TreeViewItem<int> parentItem, bool recursive)
+#endif
 		{
 			// TODO: Recursion into children items. Recursion will be implemented when the CanvasTreeView is first used as a tree, rather than a list.
 			if (recursive)
@@ -356,7 +388,11 @@ namespace Extenity.PainkillerToolbox.Editor
 				}
 			}
 
+#if UNITY_6000_4_OR_NEWER
+			parentItem.children = orderedQuery.Cast<TreeViewItem<EntityId>>().ToList();
+#else
 			parentItem.children = orderedQuery.Cast<TreeViewItem<int>>().ToList();
+#endif
 		}
 
 		#endregion

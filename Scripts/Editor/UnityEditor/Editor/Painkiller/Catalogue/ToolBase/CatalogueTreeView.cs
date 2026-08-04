@@ -1,6 +1,7 @@
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+using UnityEngine;
 
 namespace Extenity.PainkillerToolbox.Editor
 {
@@ -17,7 +18,11 @@ namespace Extenity.PainkillerToolbox.Editor
 
 		#region Initialization
 
+#if UNITY_6000_4_OR_NEWER
+		public CatalogueTreeView(TreeViewState<EntityId> state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
+#else
 		public CatalogueTreeView(TreeViewState<int> state, MultiColumnHeader multiColumnHeader, TreeModel<TElement> model)
+#endif
 			: base(state, multiColumnHeader, model)
 		{
 			rowHeight = RowHeights;
