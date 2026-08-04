@@ -13,6 +13,7 @@ using UnityEngine;
 namespace Extenity.PainkillerToolbox.Editor
 {
 
+	[Serializable]
 	public abstract class CatalogueTool
 	{
 		#region Style

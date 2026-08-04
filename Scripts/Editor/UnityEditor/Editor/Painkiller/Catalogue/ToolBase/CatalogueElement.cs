@@ -1,11 +1,14 @@
+using System;
 using Extenity.DataToolbox;
 using Extenity.IMGUIToolbox.Editor;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Extenity.PainkillerToolbox.Editor
 {
 
+	[Serializable]
 	public abstract class CatalogueElement<TElement> : TreeElement
 		where TElement : CatalogueElement<TElement>, new()
 	{

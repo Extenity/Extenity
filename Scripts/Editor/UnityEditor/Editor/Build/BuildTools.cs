@@ -147,6 +147,7 @@ namespace Extenity.BuildToolbox.Editor
 
 	#region Temporary Build Operation
 
+	[Serializable]
 	public abstract class TemporaryBuildOperation
 	{
 		public bool IsInitialized = false;
