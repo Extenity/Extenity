@@ -269,46 +269,6 @@ namespace Extenity.ApplicationToolbox.Editor
 
 		#endregion
 
-		#region Find Tool Path In Editor Installation
-
-		public static string FindToolPathInEditorInstallation(string fileName, string preferContaining = null, string ignoreContaining = null, bool log = true)
-		{
-			ignoreContaining = ignoreContaining.FixDirectorySeparatorChars('/');
-			preferContaining = preferContaining.FixDirectorySeparatorChars('/');
-			var editorDirectory = EditorApplicationTools.UnityEditorInstallationDirectory;
-			var paths = Directory.GetFiles(editorDirectory, fileName, SearchOption.AllDirectories).ToList();
-
-			// Remove any paths that contain 'ignoreContaining'.
-			if (!string.IsNullOrEmpty(ignoreContaining) && paths.Count > 0)
-			{
-				paths = paths.Where(path => !path.FixDirectorySeparatorChars('/').Contains(ignoreContaining)).ToList();
-			}
-			// Select the ones that contain 'preferContaining' if multiple paths were found.
-			if (!string.IsNullOrEmpty(preferContaining) && paths.Count > 1)
-			{
-				paths = paths.Where(path => path.FixDirectorySeparatorChars('/').Contains(preferContaining)).ToList();
-			}
-
-			if (paths.Count == 0)
-			{
-				throw new FileNotFoundException($"Could not find '{fileName}' under Unity Editor installation at '{editorDirectory}'.");
-			}
-			else if (paths.Count > 1)
-			{
-				throw new Exception($"There are more than one '{fileName}' under Unity Editor installation at '{editorDirectory}':\n{string.Join("\n", paths)}");
-			}
-			else
-			{
-				var path = paths[0];
-				path = Path.GetDirectoryName(path).AddDirectorySeparatorToEnd().FixDirectorySeparatorChars();
-				if (log)
-					Log.Info($"Found '{fileName}' at path: {path}");
-				return path;
-			}
-		}
-
-		#endregion
-
 		#region Delete Path
 
 		public static void DeleteAnyExistingEnvironmentPathThatPointsTo(string fileName, EnvironmentVariableTarget target, bool log = true)

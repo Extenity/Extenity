@@ -11,61 +11,6 @@ namespace Extenity.ApplicationToolbox.Editor
 
 	public static class EditorApplicationTools
 	{
-		#region Paths - Unity Editor
-
-		private static string _UnityEditorExecutableDirectory;
-		public static string UnityEditorExecutableDirectory
-		{
-			get
-			{
-				if (_UnityEditorExecutableDirectory == null)
-				{
-					//_UnityEditorExecutableDirectory = AppDomain.CurrentDomain.BaseDirectory; This returns null for some reason.
-					var file = new FileInfo(typeof(EditorApplication).Assembly.Location);
-					var directory = file.Directory;
-					var parentDirectory = directory.Parent;
-#if UNITY_EDITOR_WIN
-					if (directory.Name != "Managed" || parentDirectory.Name != "Data")
-#elif UNITY_EDITOR_OSX
-					if (directory.Name != "Managed" || parentDirectory.Name != "Contents")
-#else
-					throw new System.NotImplementedException();
-#endif
-					{
-						throw new Exception("Unexpected Unity Editor executable location: " + file);
-					}
-					_UnityEditorExecutableDirectory = parentDirectory.Parent.FullName;
-				}
-				return _UnityEditorExecutableDirectory;
-			}
-		}
-
-		private static string _UnityEditorInstallationDirectory;
-		public static string UnityEditorInstallationDirectory
-		{
-			get
-			{
-				if (_UnityEditorInstallationDirectory == null)
-				{
-					var executableDirectory = new DirectoryInfo(UnityEditorExecutableDirectory);
-#if UNITY_EDITOR_WIN
-					if (executableDirectory.Name != "Editor")
-#elif UNITY_EDITOR_OSX
-					if (executableDirectory.Name != "Unity.app")
-#else
-					throw new System.NotImplementedException();
-#endif
-					{
-						throw new Exception("Unexpected Unity Editor executable location: " + executableDirectory.FullName);
-					}
-					_UnityEditorInstallationDirectory = executableDirectory.Parent.FullName;
-				}
-				return _UnityEditorInstallationDirectory;
-			}
-		}
-
-		#endregion
-
 		#region Update Continuum
 
 		/// <summary>
@@ -204,41 +149,6 @@ namespace Extenity.ApplicationToolbox.Editor
 					}
 				}
 			}
-		}
-
-		#endregion
-
-		#region Check For Android SDK Installation
-
-		[MenuItem(ExtenityMenu.System + "Tell If Android SDK Is Installed With Unity", priority = ExtenityMenu.SystemPriority + 1)]
-		private static void TellIfAndroidSDKInstalledWithUnity()
-		{
-			bool isInstalled;
-			using (QuickProfilerStopwatch.WithLog(Log, "Android SDK installation detection"))
-			{
-				isInstalled = IsAndroidSDKInstalledWithUnity();
-			}
-
-			EditorUtility.DisplayDialog("Info", $"Android SDK is {(isInstalled ? "" : "NOT ")}installed with Unity.", "Okay");
-		}		
-		
-		public static bool IsAndroidSDKInstalledWithUnity()
-		{
-#if UNITY_EDITOR_WIN
-			var adbFileName = "adb.exe";
-#elif UNITY_EDITOR_OSX
-			var adbFileName = "adb";
-#else
-			var adbFileName = "";
-			throw new System.NotImplementedException();
-#endif
-			var editorDirectory = UnityEditorInstallationDirectory;
-			var paths = Directory.GetFiles(editorDirectory, adbFileName, SearchOption.AllDirectories);
-			if (paths.Length == 0)
-				return false;
-			if (paths.Length == 1)
-				return true;
-			throw new Exception($"While checking if Android SDK is installed with Unity, found more than one '{adbFileName}' files under Unity Editor installation at '{editorDirectory}'.");
 		}
 
 		#endregion
