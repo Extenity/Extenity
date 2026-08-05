@@ -562,7 +562,12 @@ namespace Extenity.DataToolbox
 
 		public static IEnumerable<Type> FindDerivedTypesInAllAssemblies(Type baseType)
 		{
-			return AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.FindDerivedTypes(baseType));
+#if UNITY_6000_6_OR_NEWER
+			var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+			return assemblies.SelectMany(assembly => assembly.FindDerivedTypes(baseType));
 		}
 
 		#endregion

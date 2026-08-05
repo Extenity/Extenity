@@ -28,7 +28,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 				stringBuilder.AppendLine("Script detected outside of asmdefs, which increases compilation times. Click to see details.");
 				stringBuilder.AppendLine("Make sure these types are covered in Assembly Definitions:");
 
-				var unwantedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
+#if UNITY_6000_6_OR_NEWER
+				var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+				var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+				var unwantedAssemblies = assemblies.Where(assembly =>
 				{
 					var name = assembly.GetName().Name;
 					return name.Equals("Assembly-CSharp-Editor", StringComparison.Ordinal) ||

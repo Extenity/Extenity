@@ -2271,7 +2271,12 @@ namespace Extenity.GameObjectToolbox
 		{
 			Log.Info("This tool is for Extenity development. It helps finding the required components that should be included in the code of GameObjectTools.IsComponentEnabled method.");
 
-			var allComponentTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+#if UNITY_6000_6_OR_NEWER
+			var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+			var allComponentTypes = (from assembly in assemblies
 			                         from module in assembly.GetModules()
 			                         from type in module.GetTypes()
 			                         where type.IsSubclassOf(typeof(Component))

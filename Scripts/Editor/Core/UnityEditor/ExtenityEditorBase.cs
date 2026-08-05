@@ -712,7 +712,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 				ExtenityEditorTypes = new Dictionary<Type, Type>();
 
-				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+#if UNITY_6000_6_OR_NEWER
+				var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+				var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+				foreach (var assembly in assemblies)
 				{
 					foreach (var inspectorType in assembly.GetTypes())
 					{

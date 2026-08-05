@@ -80,7 +80,12 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 		private static void CallAttributedMethods()
 		{
-			var methods = AppDomain.CurrentDomain.GetAssemblies()
+#if UNITY_6000_6_OR_NEWER
+			var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+			var methods = assemblies
 				.SelectMany(assembly => assembly
 					.GetTypes()
 					.SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))

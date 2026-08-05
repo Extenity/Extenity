@@ -933,7 +933,12 @@ namespace Extenity.ReflectionToolbox
 
 		public static Type[] SearchTypeInAllAssemblies(StringFilter typeFullNameFilter)
 		{
-			return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+#if UNITY_6000_6_OR_NEWER
+			var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
+			return (from assembly in assemblies
 			        from module in assembly.GetModules()
 			        from type in module.GetTypes()
 			        where typeFullNameFilter.IsMatching(type.FullName)
