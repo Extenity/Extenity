@@ -63,6 +63,7 @@ namespace Extenity.CodingToolbox.Editor
 						    name.Equals("IsReadOnlyAttribute", StringComparison.Ordinal) ||
 						    name.Equals("NullableAttribute", StringComparison.Ordinal) ||
 						    name.Equals("NullableContextAttribute", StringComparison.Ordinal) ||
+						    name.Equals("IgnoresAccessChecksToAttribute", StringComparison.Ordinal) ||
 						    name.StartsWith("UnitySourceGenerated", StringComparison.Ordinal) || // Encountered types: UnitySourceGeneratedAssemblyMonoScriptTypes, UnitySourceGeneratedAssemblyMonoScriptTypes_v1 
 						    name.StartsWith("MonoScript", StringComparison.Ordinal) ||           // Encountered types: MonoScriptInfo, MonoScriptData
 						    name.StartsWith("FileMonoScript", StringComparison.Ordinal))         // Encountered types: FileMonoScripts
