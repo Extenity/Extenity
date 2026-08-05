@@ -2,7 +2,7 @@
 #define UnityFeatures
 #endif
 
-#if UnityFeatures && (DEVELOPMENT_BUILD || UNITY_EDITOR)
+#if UnityFeatures && (DEBUG || UNITY_EDITOR)
 #define EnableProfiling
 #endif
 
