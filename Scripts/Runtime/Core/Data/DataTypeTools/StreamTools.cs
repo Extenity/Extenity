@@ -10,14 +10,14 @@ namespace Extenity.DataToolbox
 
 		public static void CloseAndDisposeSafe(ref Stream stream)
 		{
-			if (stream == null)
+			var local = stream;
+			stream = null;
+			if (local == null)
 				return;
 
 			try
 			{
-				stream.Close();
-				stream.Dispose();
-				stream = null;
+				local.Dispose();
 			}
 			catch
 			{
@@ -27,12 +27,9 @@ namespace Extenity.DataToolbox
 
 		public static void CloseAndDisposeEnsured(ref Stream stream)
 		{
-			if (stream == null)
-				return;
-
-			stream.Close();
-			stream.Dispose();
+			var local = stream;
 			stream = null;
+			local?.Dispose();
 		}
 
 		#endregion
