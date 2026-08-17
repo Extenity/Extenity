@@ -43,7 +43,6 @@ namespace Extenity.JsonToolbox
 				// Quality of Life improvement converters
 				new OneLinerArrayConverter<bool>(),
 				new OneLinerArrayConverter<char>(),
-				new OneLinerArrayConverter<byte>(),
 				new OneLinerArrayConverter<sbyte>(),
 				new OneLinerArrayConverter<Int16>(),
 				new OneLinerArrayConverter<Int32>(),
@@ -53,6 +52,7 @@ namespace Extenity.JsonToolbox
 				new OneLinerArrayConverter<UInt64>(),
 				new OneLinerArrayConverter<float>(),
 				new OneLinerArrayConverter<double>(),
+				// new OneLinerArrayConverter<byte>(), Explicitly decided to not use this. Newtonsoft already serializes byte[] as a base64 string, which is both single line and around 4 times more compact than an array of numbers.
 				// new OneLinerArrayConverter<string>(), Explicitly decided to not use this. They might be long. Better have strings line by line.
 			},
 		};
