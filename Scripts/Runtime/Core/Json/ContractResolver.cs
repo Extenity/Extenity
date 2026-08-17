@@ -10,30 +10,21 @@ namespace Extenity.JsonToolbox
 		protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
 		{
 			var property = base.CreateProperty(member, memberSerialization);
-			property.Writable = CanSetMemberValue(member, true);
+			property.Writable = CanSetMemberValue(member);
 			return property;
 		}
 
-		static bool CanSetMemberValue(MemberInfo member, bool nonPublic)
+		/// <summary>
+		/// Allows deserializing into non-public fields and properties with non-public setters.
+		/// </summary>
+		static bool CanSetMemberValue(MemberInfo member)
 		{
-			switch (member.MemberType)
+			return member switch
 			{
-				case MemberTypes.Field:
-					var fieldInfo = (FieldInfo)member;
-					return nonPublic || fieldInfo.IsPublic;
-
-				case MemberTypes.Property:
-					var propertyInfo = (PropertyInfo)member;
-
-					if (!propertyInfo.CanWrite)
-						return false;
-					if (nonPublic)
-						return true;
-					return propertyInfo.GetSetMethod(nonPublic) != null;
-
-				default:
-					return false;
-			}
+				FieldInfo => true,
+				PropertyInfo propertyInfo => propertyInfo.CanWrite,
+				_ => false
+			};
 		}
 	}
 
