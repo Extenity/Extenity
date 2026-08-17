@@ -288,7 +288,7 @@ namespace Extenity.DataToolbox
 
 		public static string ClipIfNecessary(this string text, int maxCharacters)
 		{
-			return text.Length <= maxCharacters ? text : text.Substring(0, maxCharacters);
+			return text == null || text.Length <= maxCharacters ? text : text.Substring(0, maxCharacters);
 		}
 
 		public static string SubstringBetween(this string text, string startTag, string endTag, int startIndex = 0)
