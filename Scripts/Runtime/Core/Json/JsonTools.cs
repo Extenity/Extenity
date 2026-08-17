@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using Extenity.DataToolbox;
 using Extenity.FileSystemToolbox;
 using Extenity.JsonToolbox.Converters;
 using Newtonsoft.Json;
@@ -84,10 +86,13 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var serializedJsonPath = FileTools.WriteAllTextToTempDirectory("SerializationFailure/Serialized.json", serializedJson);
-				var reserializedJsonPath = FileTools.WriteAllTextToTempDirectory("SerializationFailure/Reserialized.json", reserializedJson);
-				Log.Error($"Serialization failure (Error part 1/3). See '{serializedJsonPath}' The serialized json is:\n" + serializedJson);
-				Log.Error($"Serialization failure (Error part 2/3). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson);
+				var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
+				var serializedJsonPath = Path.Combine(tempDirectory, "SerializationFailure/Serialized.json");
+				var reserializedJsonPath = Path.Combine(tempDirectory, "SerializationFailure/Reserialized.json");
+				File.WriteAllText(serializedJsonPath, serializedJson);
+				File.WriteAllText(reserializedJsonPath, reserializedJson);
+				Log.Error($"Serialization failure (Error part 1/3). See '{serializedJsonPath}' The serialized json is:\n" + serializedJson.ClipIfNecessary(2000));
+				Log.Error($"Serialization failure (Error part 2/3). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson.ClipIfNecessary(2000));
 #if UNITY_EDITOR
 				// TODO:
 				// BuildTools.LaunchBeyondCompareFileComparison(serializedJsonPath, reserializedJsonPath);
@@ -136,12 +141,16 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var originalJsonPath = FileTools.WriteAllTextToTempDirectory("DeserializationFailure/Original.json", json);
-				var upgradedJsonPath = FileTools.WriteAllTextToTempDirectory("DeserializationFailure/Upgraded.json", upgradedJson?.ToString());
-				var reserializedJsonPath = FileTools.WriteAllTextToTempDirectory("DeserializationFailure/Reserialized.json", reserializedJson?.ToString());
-				Log.Error($"Deserialization failure (Error part 1/4). See '{originalJsonPath}' The original json is:\n" + json);
-				Log.Error($"Deserialization failure (Error part 2/4). See '{upgradedJsonPath}' The upgraded json is:\n" + upgradedJson?.ToString());
-				Log.Error($"Deserialization failure (Error part 3/4). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson?.ToString());
+				var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
+				var originalJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Original.json");
+				var upgradedJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Upgraded.json");
+				var reserializedJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Reserialized.json");
+				File.WriteAllText(originalJsonPath, json);
+				File.WriteAllText(upgradedJsonPath, upgradedJson?.ToString());
+				File.WriteAllText(reserializedJsonPath, reserializedJson?.ToString());
+				Log.Error($"Deserialization failure (Error part 1/4). See '{originalJsonPath}' The original json is:\n" + json.ClipIfNecessary(2000));
+				Log.Error($"Deserialization failure (Error part 2/4). See '{upgradedJsonPath}' The upgraded json is:\n" + upgradedJson?.ToString().ClipIfNecessary(2000));
+				Log.Error($"Deserialization failure (Error part 3/4). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson?.ToString().ClipIfNecessary(2000));
 #if UNITY_EDITOR
 				// TODO:
 				// BuildTools.LaunchBeyondCompareFileComparison(upgradedJsonPath, reserializedJsonPath);
