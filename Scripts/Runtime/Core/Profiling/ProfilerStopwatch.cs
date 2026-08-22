@@ -3,118 +3,47 @@ using Extenity.DataToolbox;
 
 namespace Extenity.ProfilingToolbox
 {
-
-	public struct ProfilerStopwatch
+	public readonly struct ProfilerStopwatch
 	{
-		public double StartTime { get; private set; }
-		public double EndTime { get; private set; }
+		public readonly double StartTime;
 
-		public bool IsStarted => EndTime == -1;
+		public double ElapsedSecondsDouble => PrecisionTiming.PreciseTime - StartTime;
+		public float ElapsedSeconds => (float)(PrecisionTiming.PreciseTime - StartTime);
+		public float ElapsedMilliseconds => 0.001f * (float)(PrecisionTiming.PreciseTime - StartTime);
 
-		public double Elapsed
+		#region Initialization
+
+		public static ProfilerStopwatch Start()
 		{
-			get
-			{
-				if (IsStarted)
-				{
-					return CurrentTime - StartTime;
-				}
-				return EndTime - StartTime;
-			}
+			return new ProfilerStopwatch(PrecisionTiming.PreciseTime);
 		}
 
-		public double CurrentTime
+		public static void GetSecondsAndRestart(ref ProfilerStopwatch reference, out float currentElapsedSeconds)
 		{
-			get { return PrecisionTiming.PreciseTime; }
+			currentElapsedSeconds = reference.ElapsedSeconds;
+			reference = Start();
 		}
 
-		public void Start()
+		public static void GetMillisecondsAndRestart(ref ProfilerStopwatch reference, out float currentElapsedMilliseconds)
 		{
-			if (IsStarted)
-			{
-				Log.Error("Tried to start profiler stopwatch but it was already started.");
-				return;
-			}
-
-			EndTime = -1;
-			
-			// Note that CurrentTime is called at the very end of Start,
-			// without doing any other work to allow precise measurements between Start and End.
-			StartTime = CurrentTime;
+			currentElapsedMilliseconds = reference.ElapsedMilliseconds;
+			reference = Start();
 		}
 
-		/// <summary>
-		/// Stops the stopwatch and returns elapsed time.
-		/// </summary>
-		public double End()
+		private ProfilerStopwatch(double startTime)
 		{
-			// Note that CurrentTime is called as soon as possible in the first line of End,
-			// without doing any other work to allow precise measurements between Start and End.
-			var endTime = CurrentTime; 
-
-			if (!IsStarted)
-			{
-				StartTime = 0;
-				EndTime = 0;
-				Log.Error("Tried to end profiler stopwatch but it was not started.");
-				return 0;
-			}
-
-			// Note that EndTime is also used in IsStarted. So we have to set its value after the check above.
-			EndTime = endTime;
-			var elapsed = Elapsed;
-
-			TotalCalls++;
-			CumulativeTime += elapsed;
-			return elapsed;
-		}
-
-		/// <summary>
-		/// Stops the stopwatch if running and starts again. Returns elapsed time.
-		/// </summary>
-		public double Restart()
-		{
-			double elapsed;
-			if (IsStarted)
-			{
-				elapsed = End();
-			}
-			else
-			{
-				elapsed = 0.0;
-			}
-			Start();
-			return elapsed;
-		}
-
-		#region Log
-
-		private static readonly Logger Log = new(nameof(ProfilerStopwatch));
-
-		public string GetLogMessage(string profilerMessageFormat)
-		{
-			return string.Format(profilerMessageFormat, Elapsed.ToStringMinutesSecondsMillisecondsFromSeconds());
-		}
-
-		public string GetCumulativeLogMessage(string profilerMessageFormat)
-		{
-			return string.Format(profilerMessageFormat, CumulativeTime.ToStringMinutesSecondsMillisecondsFromSeconds());
+			StartTime = startTime;
 		}
 
 		#endregion
 
-		#region Cumulative Time
+		#region Log
 
-		public int TotalCalls { get; private set; }
-		public double CumulativeTime { get; private set; }
-
-		public void ResetCumulativeTime()
+		public string GetLogMessage(string profilerMessageFormat)
 		{
-			TotalCalls = 0;
-			CumulativeTime = 0;
+			return string.Format(profilerMessageFormat, ElapsedSecondsDouble.ToStringMinutesSecondsMillisecondsFromSeconds());
 		}
 
 		#endregion
 	}
-
 }
