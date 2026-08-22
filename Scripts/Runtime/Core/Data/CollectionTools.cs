@@ -24,11 +24,6 @@ namespace Extenity.DataToolbox
 			return array.Length;
 		}
 
-		public static bool IsEqual<T>(this IEnumerable<T> source, in IEnumerable<T> other)
-		{
-			return new CollectionComparer<T>().Equals(source, other);
-		}
-
 		public static bool IsNullOrEmpty<T>(this T[] source)
 		{
 			return source == null || source.Length == 0;
@@ -1493,119 +1488,6 @@ namespace Extenity.DataToolbox
 		}
 
 		#endregion
-	}
-
-	public class CollectionComparer<T> : IEqualityComparer<IEnumerable<T>>
-	{
-		public bool Equals(IEnumerable<T> first, IEnumerable<T> second)
-		{
-			if ((first == null) != (second == null))
-				return false;
-
-			if (!object.ReferenceEquals(first, second) && (first != null))
-			{
-				if (first.Count() != second.Count())
-					return false;
-
-				if ((first.Count() != 0) && HaveMismatchedElement(first, second))
-					return false;
-			}
-
-			return true;
-		}
-
-		private static bool HaveMismatchedElement(IEnumerable<T> first, IEnumerable<T> second)
-		{
-			var firstElementCounts = GetElementCounts(first, out var firstCount);
-			var secondElementCounts = GetElementCounts(second, out var secondCount);
-
-			if (firstCount != secondCount)
-				return true;
-
-			foreach (var kvp in firstElementCounts)
-			{
-				firstCount = kvp.Value;
-				secondElementCounts.TryGetValue(kvp.Key, out secondCount);
-
-				if (firstCount != secondCount)
-					return true;
-			}
-
-			return false;
-		}
-
-		private static Dictionary<T, int> GetElementCounts(IEnumerable<T> enumerable, out int nullCount)
-		{
-			var dictionary = new Dictionary<T, int>();
-			nullCount = 0;
-
-			foreach (T element in enumerable)
-			{
-				if (element == null)
-				{
-					nullCount++;
-				}
-				else
-				{
-					dictionary.TryGetValue(element, out var num);
-					num++;
-					dictionary[element] = num;
-				}
-			}
-
-			return dictionary;
-		}
-
-		public int GetHashCode(IEnumerable<T> enumerable)
-		{
-			int hash = 17;
-
-			foreach (T val in enumerable.OrderBy(x => x))
-				hash = hash * 23 + val.GetHashCode();
-
-			return hash;
-		}
-	}
-
-	public class GenericComparer<T> : IEqualityComparer<T> where T : class
-	{
-		private readonly Func<T, object> Expression;
-
-		public GenericComparer(Func<T, object> expression)
-		{
-			Expression = expression;
-		}
-
-		public bool Equals(T x, T y)
-		{
-			var value1 = Expression.Invoke(x);
-			var value2 = Expression.Invoke(y);
-			return value1 != null && value1.Equals(value2);
-		}
-
-		public int GetHashCode(T obj)
-		{
-			return obj.GetHashCode();
-		}
-	}
-
-	public class GenericComparer<T1, T2> : IEqualityComparer<T1, T2>
-	{
-		private readonly Func<T1, object> Expression1;
-		private readonly Func<T2, object> Expression2;
-
-		public GenericComparer(Func<T1, object> expression1, Func<T2, object> expression2)
-		{
-			Expression1 = expression1;
-			Expression2 = expression2;
-		}
-
-		public bool Equals(T1 x, T2 y)
-		{
-			var value1 = Expression1.Invoke(x);
-			var value2 = Expression2.Invoke(y);
-			return value1 != null && value1.Equals(value2);
-		}
 	}
 
 }
