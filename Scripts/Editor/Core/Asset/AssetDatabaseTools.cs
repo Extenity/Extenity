@@ -696,7 +696,7 @@ namespace Extenity.AssetToolbox.Editor
 		{
 			var paths = GetAllScriptAssetPaths().OrderByDescending(item => item).ToList();
 
-			using (QuickProfilerStopwatch.WithLog(Log, "Reimporting all scripts"))
+			using (QuickProfilerStopwatch.WithInfoLog("Reimporting all scripts"))
 			{
 				Log.Info($"Reimporting {paths.Count} scripts.");
 				AssetDatabase.StartAssetEditing();
@@ -707,7 +707,7 @@ namespace Extenity.AssetToolbox.Editor
 				AssetDatabase.StopAssetEditing();
 			}
 
-			using (QuickProfilerStopwatch.WithLog(Log, "Refreshing AssetDatabase"))
+			using (QuickProfilerStopwatch.WithInfoLog("Refreshing AssetDatabase"))
 			{
 				AssetDatabase.Refresh();
 			}
@@ -718,7 +718,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Shaders", priority = 42)] // Priority is just below the Reimport All option.
 		public static void ReimportAllShaders()
 		{
-			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all shaders");
+			using var _ = QuickProfilerStopwatch.WithInfoLog("Reimporting all shaders");
 
 			var paths = GetAllShaderAssetPaths(true, true, true, true).OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();
@@ -734,7 +734,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Prefabs", priority = 43)] // Priority is just below the Reimport All option.
 		public static void ReimportAllPrefabs()
 		{
-			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all prefabs");
+			using var _ = QuickProfilerStopwatch.WithInfoLog("Reimporting all prefabs");
 
 			var paths = GetAllPrefabAssetPaths().OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();
@@ -750,7 +750,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All ScriptableObjects (text serialized only)", priority = 44)] // Priority is just below the Reimport All option.
 		public static void ReimportAllScriptableObjects()
 		{
-			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all scriptable objects");
+			using var _ = QuickProfilerStopwatch.WithInfoLog("Reimporting all scriptable objects");
 
 			var paths = GetAllScriptableObjectAssetPathsThatAreSerializedAsText().OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();
@@ -766,7 +766,7 @@ namespace Extenity.AssetToolbox.Editor
 		[MenuItem(ExtenityMenu.AssetsBaseContext + "Reimport All Assets with .asset Extension", priority = 45)] // Priority is just below the Reimport All option.
 		public static void ReimportAllAssetsWithAssetExtension()
 		{
-			using var _ = QuickProfilerStopwatch.WithLog(Log, "Reimporting all assets with '.asset' extension");
+			using var _ = QuickProfilerStopwatch.WithInfoLog("Reimporting all assets with '.asset' extension");
 
 			var paths = GetAllAssetsWithAssetExtension().OrderByDescending(item => item).ToList();
 			AssetDatabase.StartAssetEditing();

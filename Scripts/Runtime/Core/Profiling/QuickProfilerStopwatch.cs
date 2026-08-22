@@ -1,104 +1,161 @@
+using System;
 using System.Collections.Generic;
-using Cysharp.Text;
+using System.Runtime.CompilerServices;
+using Extenity.ApplicationToolbox;
 using Extenity.DataToolbox;
-using IDisposable = System.IDisposable;
 
 namespace Extenity.ProfilingToolbox
 {
-
-	public struct QuickProfilerStopwatch : IDisposable
+	public enum QuickProfilerLoggingType
 	{
-		private ProfilerStopwatch Stopwatch;
-		private readonly Logger Logger;
+		InfoLog = 0,
+		WarningLog,
+		InfoLogAboveThreshold,
+		WarningLogAboveThreshold,
+		WarningLogAboveAndInfoLogBelowThreshold,
+		WarningLogAboveThresholdCappedAt5,
+	}
+
+	/// <summary>
+	/// Times a scope and logs on disposal. Construct only through static methods.
+	/// </summary>
+	public readonly struct QuickProfilerStopwatch : IDisposable
+	{
 		private readonly string ProfilerTitle;
+		private readonly double StartTime;
 		private readonly float ThresholdDurationToConsiderLogging;
-		private readonly LogSeverity LogSeverityAboveThreshold;
-		private readonly LogSeverity LogSeverityBelowThreshold;
-		private readonly int CapLogCountAt;
-		private bool HasThresholdDuration => ThresholdDurationToConsiderLogging > 0f;
+		private readonly QuickProfilerLoggingType LoggingType;
 
-		public static QuickProfilerStopwatch WithLog(string profilerTitle, LogSeverity logSeverity = LogSeverity.Info, int capLogCountAt = 0)
+		private const int LogCountCap = 5;
+
+		private static double CurrentTime
 		{
-			return new(new Logger("Profiling"), profilerTitle, 0, logSeverity, LogSeverity.None, capLogCountAt);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => PrecisionTiming.PreciseTime;
 		}
 
-		public static QuickProfilerStopwatch WithLog(Logger logger, string profilerTitle, LogSeverity logSeverity = LogSeverity.Info, int capLogCountAt = 0)
+		public static QuickProfilerStopwatch WithInfoLog(string profilerTitle)
 		{
-			return new(logger, profilerTitle, 0, logSeverity, LogSeverity.None, capLogCountAt);
+			return new(profilerTitle, 0, QuickProfilerLoggingType.InfoLog);
 		}
 
-		public static QuickProfilerStopwatch WithThreshold(string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None, int capLogCountAt = 0)
+		public static QuickProfilerStopwatch WithWarningLog(string profilerTitle)
 		{
-			return new(new Logger("Profiling"), profilerTitle, thresholdDurationToConsiderLogging, logSeverityAboveThreshold, logSeverityBelowThreshold, capLogCountAt);
+			return new(profilerTitle, 0, QuickProfilerLoggingType.WarningLog);
 		}
 
-		public static QuickProfilerStopwatch WithThreshold(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None, int capLogCountAt = 0)
+		public static QuickProfilerStopwatch WithInfoLogAboveThreshold(string profilerTitle, float thresholdDurationToConsiderLogging)
 		{
-			return new(logger, profilerTitle, thresholdDurationToConsiderLogging, logSeverityAboveThreshold, logSeverityBelowThreshold, capLogCountAt);
+			return new(profilerTitle, thresholdDurationToConsiderLogging, QuickProfilerLoggingType.InfoLogAboveThreshold);
 		}
 
-		private QuickProfilerStopwatch(Logger logger, string profilerTitle, float thresholdDurationToConsiderLogging, LogSeverity logSeverityAboveThreshold = LogSeverity.Warning, LogSeverity logSeverityBelowThreshold = LogSeverity.None, int capLogCountAt = 0)
+		public static QuickProfilerStopwatch WithWarningLogAboveThreshold(string profilerTitle, float thresholdDurationToConsiderLogging)
 		{
-			Stopwatch = new ProfilerStopwatch();
-			Logger = logger;
+			return new(profilerTitle, thresholdDurationToConsiderLogging, QuickProfilerLoggingType.WarningLogAboveThreshold);
+		}
+
+		public static QuickProfilerStopwatch WithWarningLogAboveAndInfoLogBelowThreshold(string profilerTitle, float thresholdDurationToConsiderLogging)
+		{
+			return new(profilerTitle, thresholdDurationToConsiderLogging, QuickProfilerLoggingType.WarningLogAboveAndInfoLogBelowThreshold);
+		}
+
+		public static QuickProfilerStopwatch WithWarningLogAboveThresholdCappedAt5(string profilerTitle, float thresholdDurationToConsiderLogging)
+		{
+			return new(profilerTitle, thresholdDurationToConsiderLogging, QuickProfilerLoggingType.WarningLogAboveThresholdCappedAt5);
+		}
+
+		private QuickProfilerStopwatch(string profilerTitle,
+									   float thresholdDurationToConsiderLogging,
+									   QuickProfilerLoggingType loggingType)
+		{
 			ProfilerTitle = profilerTitle;
 			ThresholdDurationToConsiderLogging = thresholdDurationToConsiderLogging;
-			LogSeverityAboveThreshold = logSeverityAboveThreshold;
-			LogSeverityBelowThreshold = logSeverityBelowThreshold;
-			CapLogCountAt = capLogCountAt;
+			LoggingType = loggingType;
 
-			Stopwatch.Start();
+			StartTime = CurrentTime;
 		}
 
+		// Hot path. Dispose must not be called more than once, or it will report twice.
+		// Default constructor should not be used, or Dispose will throw.
 		public void Dispose()
 		{
-			Stopwatch.End();
+			var elapsedTime = CurrentTime - StartTime;
 
-			if (HasThresholdDuration)
+			switch (LoggingType)
 			{
-				if (Stopwatch.Elapsed > ThresholdDurationToConsiderLogging)
+				case QuickProfilerLoggingType.InfoLog:
 				{
-					if (ConsumeLogBudgetAndDecideIfShouldLog(LogSeverityAboveThreshold))
+					Logger.Info($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}'");
+					break;
+				}
+				case QuickProfilerLoggingType.WarningLog:
+				{
+					Logger.Warning($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}'");
+					break;
+				}
+				case QuickProfilerLoggingType.InfoLogAboveThreshold:
+				{
+					if (elapsedTime > ThresholdDurationToConsiderLogging)
 					{
-						Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "' which is longer than the expected '", ThresholdDurationToConsiderLogging, "' seconds"));
+						Logger.Info($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}' which is longer than the expected '{ThresholdDurationToConsiderLogging}' seconds");
 					}
+
+					break;
 				}
-				else if (ConsumeLogBudgetAndDecideIfShouldLog(LogSeverityBelowThreshold))
+				case QuickProfilerLoggingType.WarningLogAboveThreshold:
 				{
-					Logger.Any(LogSeverityBelowThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "'"));
+					if (elapsedTime > ThresholdDurationToConsiderLogging)
+					{
+						Logger.Warning($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}' which is longer than the expected '{ThresholdDurationToConsiderLogging}' seconds");
+					}
+
+					break;
 				}
-			}
-			else // No threshold duration specified, so we log everything.
-			{
-				if (ConsumeLogBudgetAndDecideIfShouldLog(LogSeverityAboveThreshold))
+				case QuickProfilerLoggingType.WarningLogAboveAndInfoLogBelowThreshold:
 				{
-					Logger.Any(LogSeverityAboveThreshold, ZString.Concat("Running '", ProfilerTitle, "' took '", Stopwatch.Elapsed.ToStringMinutesSecondsMicrosecondsFromSeconds(), "'"));
+					if (elapsedTime > ThresholdDurationToConsiderLogging)
+					{
+						Logger.Warning($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}' which is longer than the expected '{ThresholdDurationToConsiderLogging}' seconds");
+					}
+					else
+					{
+						Logger.Info($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}'");
+					}
+
+					break;
 				}
+				case QuickProfilerLoggingType.WarningLogAboveThresholdCappedAt5:
+				{
+					if (elapsedTime > ThresholdDurationToConsiderLogging && ConsumeLogBudgetAndDecideIfShouldLog())
+					{
+						Logger.Warning($"Running '{ProfilerTitle}' took '{elapsedTime.ToStringMinutesSecondsMicrosecondsFromSeconds()}' which is longer than the expected '{ThresholdDurationToConsiderLogging}' seconds");
+					}
+
+					break;
+				}
+				default:
+					throw new ArgumentOutOfRangeException(nameof(LoggingType));
 			}
 		}
+
+		#region Log
+
+		private static readonly Logger Logger = new("Profiling");
+
+		#endregion
 
 		#region Log Budget
 
-		private static readonly Dictionary<string, int> LogCountsByTitle = new();
+		private static readonly Dictionary<string, byte> LogCountsByTitle = new(0);
 
-		private bool ConsumeLogBudgetAndDecideIfShouldLog(LogSeverity severity)
+		private bool ConsumeLogBudgetAndDecideIfShouldLog()
 		{
-			if (severity == LogSeverity.None)
-			{
-				return false;
-			}
-
-			if (CapLogCountAt <= 0)
-			{
-				return true;
-			}
-
 			lock (LogCountsByTitle)
 			{
-				var count = LogCountsByTitle.GetValueOrDefault(ProfilerTitle, 0);
-				if (count < CapLogCountAt)
+				var count = LogCountsByTitle.GetValueOrDefault(ProfilerTitle, default);
+				if (count < LogCountCap)
 				{
-					LogCountsByTitle[ProfilerTitle] = count + 1;
+					LogCountsByTitle[ProfilerTitle] = (byte)(count + 1);
 					return true;
 				}
 
@@ -108,5 +165,4 @@ namespace Extenity.ProfilingToolbox
 
 		#endregion
 	}
-
 }
