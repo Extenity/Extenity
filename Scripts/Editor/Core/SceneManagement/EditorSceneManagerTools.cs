@@ -78,7 +78,7 @@ namespace Extenity.SceneManagementToolbox.Editor
 
 		public static void LoadMultipleScenes(IList<string> loadedScenesWithActiveAtFirst)
 		{
-			if (loadedScenesWithActiveAtFirst.IsNotNullAndEmpty())
+			if (loadedScenesWithActiveAtFirst.IsNotNullAndNotEmpty())
 			{
 				var i = 0;
 				var scene = EditorSceneManager.OpenScene(loadedScenesWithActiveAtFirst[i++], OpenSceneMode.Single);

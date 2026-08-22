@@ -351,7 +351,7 @@ namespace Extenity.BuildToolbox.Editor
 					DirectoryTools.DeleteFilesWithPatternInDirectory(outputDirectory, "UnityCrashHandler64.exe", SearchOption.AllDirectories, ref deletedFiles, ref failedFiles);
 				}
 				// Clear by extensions
-				if (deleteFilesWithExtensions.IsNotNullAndEmpty())
+				if (deleteFilesWithExtensions.IsNotNullAndNotEmpty())
 				{
 					foreach (var extension in deleteFilesWithExtensions)
 					{
@@ -359,7 +359,7 @@ namespace Extenity.BuildToolbox.Editor
 					}
 				}
 				// Clear by file name patterns
-				if (deleteFilesWithFileNamePatterns.IsNotNullAndEmpty())
+				if (deleteFilesWithFileNamePatterns.IsNotNullAndNotEmpty())
 				{
 					foreach (var filePattern in deleteFilesWithFileNamePatterns)
 					{

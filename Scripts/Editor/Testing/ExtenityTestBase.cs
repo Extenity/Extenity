@@ -339,7 +339,7 @@ namespace Extenity.Testing
 
 		private void EnsureAllCheckpointsReached()
 		{
-			if (ExpectedCheckpoints.IsNotNullAndEmpty())
+			if (ExpectedCheckpoints.IsNotNullAndNotEmpty())
 			{
 				foreach (var reachedCheckpoint in ReachedCheckpoints)
 				{

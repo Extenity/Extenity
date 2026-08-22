@@ -133,7 +133,7 @@ namespace Extenity.UnityEditorToolbox.Editor
 
 				if (foldout)
 				{
-					var enabled = filteredObjects.IsNotNullAndEmpty();
+					var enabled = filteredObjects.IsNotNullAndNotEmpty();
 
 					if (GUILayoutTools.Button("Select All", enabled, ButtonWidth))
 					{

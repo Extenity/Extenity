@@ -35,12 +35,12 @@ namespace Extenity.DataToolbox
 			return source == null || source.Count == 0;
 		}
 
-		public static bool IsNotNullAndEmpty<T>([NotNullWhen(true)] this T[] source)
+		public static bool IsNotNullAndNotEmpty<T>([NotNullWhen(true)] this T[] source)
 		{
 			return source != null && source.Length != 0;
 		}
 
-		public static bool IsNotNullAndEmpty<T>([NotNullWhen(true)] this ICollection<T> source)
+		public static bool IsNotNullAndNotEmpty<T>([NotNullWhen(true)] this ICollection<T> source)
 		{
 			return source != null && source.Count != 0;
 		}

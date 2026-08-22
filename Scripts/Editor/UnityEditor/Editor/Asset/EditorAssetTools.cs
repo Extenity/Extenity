@@ -100,7 +100,7 @@ namespace Extenity.AssetToolbox.Editor
 		private static bool Validate_SaveRenderTextureToFile()
 		{
 			var objects = Selection.objects;
-			return objects.IsNotNullAndEmpty() && objects.Any(item => item is RenderTexture);
+			return objects.IsNotNullAndNotEmpty() && objects.Any(item => item is RenderTexture);
 		}
 
 		[MenuItem(SaveRenderTextureMenu + "All", priority = 2901)]
@@ -147,7 +147,7 @@ namespace Extenity.AssetToolbox.Editor
 		private static void _SaveSelectedRenderTexturesToFile(TextureFormat format, bool linear)
 		{
 			var selectedObjects = Selection.objects;
-			if (selectedObjects.IsNotNullAndEmpty())
+			if (selectedObjects.IsNotNullAndNotEmpty())
 			{
 				foreach (var selected in selectedObjects)
 				{
