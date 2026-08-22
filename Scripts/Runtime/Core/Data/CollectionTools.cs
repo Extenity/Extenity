@@ -1426,7 +1426,9 @@ namespace Extenity.DataToolbox
 
 		public static int Locate(this byte[] self, byte[] candidate, int searchStartIndex = 0, int searchEndIndex = 0)
 		{
-			if (IsEmptyLocate(self, candidate))
+			if (self.Length == 0 ||
+			    candidate.Length == 0 ||
+			    candidate.Length > self.Length)
 				return -1;
 			if (searchStartIndex >= self.Length)
 				return -1;
@@ -1446,7 +1448,9 @@ namespace Extenity.DataToolbox
 
 		public static int[] LocateMultiple(this byte[] self, byte[] candidate, int searchStartIndex = 0, int searchEndIndex = 0)
 		{
-			if (IsEmptyLocate(self, candidate))
+			if (self.Length == 0 ||
+			    candidate.Length == 0 ||
+			    candidate.Length > self.Length)
 				return Array.Empty<int>();
 			if (searchStartIndex >= self.Length)
 				return Array.Empty<int>();
@@ -1476,15 +1480,6 @@ namespace Extenity.DataToolbox
 					return false;
 
 			return true;
-		}
-
-		private static bool IsEmptyLocate(byte[] array, byte[] candidate)
-		{
-			return array == null
-				   || candidate == null
-				   || array.Length == 0
-				   || candidate.Length == 0
-				   || candidate.Length > array.Length;
 		}
 
 		#endregion
