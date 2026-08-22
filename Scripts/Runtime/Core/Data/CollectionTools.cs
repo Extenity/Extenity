@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Generic.Extenity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Extenity.DataToolbox
 {
@@ -24,27 +25,27 @@ namespace Extenity.DataToolbox
 			return array.Length;
 		}
 
-		public static bool IsNullOrEmpty<T>(this T[] source)
+		public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this T[] source)
 		{
 			return source == null || source.Length == 0;
 		}
 
-		public static bool IsNullOrEmpty<T>(this ICollection<T> source)
+		public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this ICollection<T> source)
 		{
 			return source == null || source.Count == 0;
 		}
 
-		public static bool IsNotNullAndEmpty<T>(this T[] source)
+		public static bool IsNotNullAndEmpty<T>([NotNullWhen(true)] this T[] source)
 		{
 			return source != null && source.Length != 0;
 		}
 
-		public static bool IsNotNullAndEmpty<T>(this ICollection<T> source)
+		public static bool IsNotNullAndEmpty<T>([NotNullWhen(true)] this ICollection<T> source)
 		{
 			return source != null && source.Count != 0;
 		}
 
-		public static bool IsAllNullOrEmpty(this string[] source)
+		public static bool IsAllNullOrEmpty([NotNullWhen(false)] this string[] source)
 		{
 			if (source == null)
 				return true;
