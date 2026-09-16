@@ -188,13 +188,16 @@ namespace Extenity.TextureToolbox
 		/// </summary>
 		public static Texture2D CopyTextureAsReadable(this Texture2D texture)
 		{
+			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
+			RenderTextureReadWrite readWrite = isSRGB ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear;
+
 			// Create a temporary RenderTexture of the same size as the texture
 			RenderTexture tmp = RenderTexture.GetTemporary(
 								texture.width,
 								texture.height,
 								0,
 								RenderTextureFormat.Default,
-								RenderTextureReadWrite.Linear);
+								readWrite);
 
 			// Blit the pixels on texture to the RenderTexture
 			Graphics.Blit(texture, tmp);
@@ -215,7 +218,6 @@ namespace Extenity.TextureToolbox
 			// fails to receive the ReadPixels copy ("Unable to retrieve image reference"). RGBA32
 			// is universally supported and tmp is already an uncompressed RenderTextureFormat.
 			// Default target, so no data is lost by always requesting 4 channels here.
-			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
 			GraphicsFormat readableFormat = GraphicsFormatUtility.GetGraphicsFormat(TextureFormat.RGBA32, isSRGB);
 			var myTexture2D = InternalCreateTexture(texture.width, texture.height, readableFormat);
 
@@ -238,13 +240,16 @@ namespace Extenity.TextureToolbox
 		/// </summary>
 		public static Texture2D ResizeAndCopyTextureAsReadable(this Texture2D texture, int newWidth, int newHeight)
 		{
+			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
+			RenderTextureReadWrite readWrite = isSRGB ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear;
+
 			// Create a temporary RenderTexture of the same size as the texture
 			RenderTexture tmp = RenderTexture.GetTemporary(
 								newWidth,
 								newHeight,
 								0,
 								RenderTextureFormat.Default,
-								RenderTextureReadWrite.sRGB);
+								readWrite);
 
 			// Blit the pixels on texture to the RenderTexture
 			Graphics.Blit(texture, tmp);
@@ -257,7 +262,6 @@ namespace Extenity.TextureToolbox
 
 			// See CopyTextureAsReadable above for why this must always be RGBA32, never
 			// texture.graphicsFormat and never RGB24.
-			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
 			GraphicsFormat readableFormat = GraphicsFormatUtility.GetGraphicsFormat(TextureFormat.RGBA32, isSRGB);
 			var myTexture2D = InternalCreateTexture(newWidth, newHeight, readableFormat);
 
