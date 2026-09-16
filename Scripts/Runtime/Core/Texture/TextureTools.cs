@@ -205,9 +205,19 @@ namespace Extenity.TextureToolbox
 			// Set the current RenderTexture to the temporary one we created
 			RenderTexture.active = tmp;
 
-			// Create a new readable Texture2D to copy the pixels to it
-			var graphicsFormat = texture.graphicsFormat;
-			var myTexture2D = InternalCreateTexture(texture.width, texture.width, graphicsFormat);
+			// Create a new readable Texture2D to copy the pixels to it. This must always be RGBA32
+			// — NOT texture.graphicsFormat, and NOT RGB24 even for a source with no alpha channel
+			// — because plenty of formats (the source's own, e.g. R8G8B8_SRGB or a compressed
+			// format like ASTC/BC7; but also plain RGB24/R8G8B8 itself) are not valid formats for a
+			// plain sampled Texture2D on every graphics API (confirmed failing under Metal here).
+			// Creating one with such a format either fails outright ("not supported for Sample
+			// usage", leaving a null-backed Texture2D that throws on the next call) or silently
+			// fails to receive the ReadPixels copy ("Unable to retrieve image reference"). RGBA32
+			// is universally supported and tmp is already an uncompressed RenderTextureFormat.
+			// Default target, so no data is lost by always requesting 4 channels here.
+			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
+			GraphicsFormat readableFormat = GraphicsFormatUtility.GetGraphicsFormat(TextureFormat.RGBA32, isSRGB);
+			var myTexture2D = InternalCreateTexture(texture.width, texture.height, readableFormat);
 
 			// Copy the pixels from the RenderTexture to the new Texture
 			myTexture2D.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
@@ -245,9 +255,11 @@ namespace Extenity.TextureToolbox
 			// Set the current RenderTexture to the temporary one we created
 			RenderTexture.active = tmp;
 
-			// Create a new readable Texture2D to copy the pixels to it
-			var graphicsFormat = texture.graphicsFormat;
-			var myTexture2D = InternalCreateTexture(texture.width, texture.width, graphicsFormat);
+			// See CopyTextureAsReadable above for why this must always be RGBA32, never
+			// texture.graphicsFormat and never RGB24.
+			bool isSRGB = GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
+			GraphicsFormat readableFormat = GraphicsFormatUtility.GetGraphicsFormat(TextureFormat.RGBA32, isSRGB);
+			var myTexture2D = InternalCreateTexture(newWidth, newHeight, readableFormat);
 
 			// Copy the pixels from the RenderTexture to the new Texture
 			myTexture2D.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0, 0);
