@@ -33,7 +33,16 @@ namespace Extenity.UnityTestToolbox
 		#region Memory Checker
 
 		private static bool MemoryCheckStarted;
+
+#if UNITY_5_3_OR_NEWER
+		// GC.GetAllocatedBytesForCurrentThread does not move in Unity's Mono runtime, not even around allocations that
+		// certainly happen, so it cannot tell whether anything was allocated. Unity's profiler records a GC.Alloc sample
+		// for every managed allocation instead, which is what Unity Test Framework's Is.Not.AllocatingGCMemory()
+		// constraint counts. It counts allocations, not bytes.
+		private static UnityEngine.Profiling.Recorder AllocationRecorder;
+#else
 		private static Int64 AllocatedBytesAtMemoryCheckStart;
+#endif
 
 		public static void BeginMemoryCheck()
 		{
@@ -43,17 +52,50 @@ namespace Extenity.UnityTestToolbox
 				throw new Exception("Memory check was already started.");
 			}
 
+#if UNITY_5_3_OR_NEWER
+			if (AllocationRecorder == null)
+			{
+				AllocationRecorder = UnityEngine.Profiling.Recorder.Get("GC.Alloc");
+			}
+			if (!AllocationRecorder.isValid)
+			{
+				throw new InvalidOperationException("The GC.Alloc profiler recorder is not available, so allocations cannot be checked. Memory checks need the Unity Editor or a development build.");
+			}
+
+			// Disabling flushes what the recorder captured so far, so the count read at the end covers only the code
+			// between the two calls.
+			AllocationRecorder.enabled = false;
+#if !UNITY_WEBGL
+			AllocationRecorder.FilterToCurrentThread();
+#endif
+			MemoryCheckStarted = true;
+			AllocationRecorder.enabled = true;
+#else
 			MemoryCheckStarted = true;
 			AllocatedBytesAtMemoryCheckStart = GC.GetAllocatedBytesForCurrentThread();
+#endif
 		}
 
 		public static bool EndMemoryCheck()
 		{
 			if (!MemoryCheckStarted)
 			{
-				throw new Exception("Memory check was not started.");
+				ThrowMemoryCheckNotStarted();
 			}
 
+#if UNITY_5_3_OR_NEWER
+			AllocationRecorder.enabled = false;
+#if !UNITY_WEBGL
+			AllocationRecorder.CollectFromAllThreads();
+#endif
+			MemoryCheckStarted = false;
+			var allocationCount = AllocationRecorder.sampleBlockCount;
+			if (allocationCount != 0)
+			{
+				LogDetectedAllocations(allocationCount);
+			}
+			return allocationCount != 0;
+#else
 			var change = GC.GetAllocatedBytesForCurrentThread() - AllocatedBytesAtMemoryCheckStart;
 			MemoryCheckStarted = false;
 			if (change != 0)
@@ -61,7 +103,24 @@ namespace Extenity.UnityTestToolbox
 				Log.With("MemoryCheck").Warning($"Detected a memory change of '{change:N0}' bytes.");
 			}
 			return change != 0;
+#endif
 		}
+
+		// EndMemoryCheck is compiled on its first call, while the recorder is still recording. Mono creates a method's
+		// string literals when it compiles the method, so a message written inside EndMemoryCheck showed up as extra
+		// allocations of the code under test on the first check of a session. The messages live in these methods, which
+		// are only compiled when they run: on a failure, or after recording has stopped.
+		private static void ThrowMemoryCheckNotStarted()
+		{
+			throw new Exception("Memory check was not started.");
+		}
+
+#if UNITY_5_3_OR_NEWER
+		private static void LogDetectedAllocations(int allocationCount)
+		{
+			Log.With("MemoryCheck").Warning($"Detected '{allocationCount:N0}' GC allocation(s).");
+		}
+#endif
 
 		#endregion
 
