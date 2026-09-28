@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Extenity.MathToolbox;
 using Extenity.MessagingToolbox;
@@ -116,11 +117,11 @@ namespace Extenity.FlowToolbox
 			// not on the first frame (which is already the heaviest frame).
 			InitializePeriodicUpdateTimers();
 
-			Instance = new LoopCallbacks();
-
-			// Inject custom update callbacks into Unity's PlayerLoop
+			// Inject custom update callbacks into Unity's PlayerLoop. Injection is prepared before the instance is
+			// created, so a failing injection leaves the system uninitialized rather than half initialized.
 			var playerLoop = PlayerLoop.GetCurrentPlayerLoop();
 			InjectIntoPlayerLoop(ref playerLoop);
+			Instance = new LoopCallbacks();
 			PlayerLoop.SetPlayerLoop(playerLoop);
 		}
 
@@ -265,6 +266,11 @@ namespace Extenity.FlowToolbox
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterPreUI                (Action callback, int order = 0) { Instance.PreUICallbacks                .AddListener(callback, order); }
 
+		/// <summary>Registers a callback that runs right after UI Toolkit repaints its panels (PostLateUpdate.UIElementsRepaintPanels), before renderers are updated and the frame is rendered. UI Toolkit regenerates text and records its draw commands in that step, so this is the earliest point where the current frame's UI Toolkit text geometry and layout are known, while scene objects placed here still render in the same frame. Use this to mirror UI Toolkit visuals with scene objects without a frame of lag.</summary>
+		/// <param name="callback">The callback method to register.</param>
+		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
+		public static void RegisterPostUIToolkitRepaint (Action callback, int order = 0) { Instance.PostUIToolkitRepaintCallbacks .AddListener(callback, order); }
+
 		// @formatter:on
 
 		#endregion
@@ -297,6 +303,7 @@ namespace Extenity.FlowToolbox
 		public static void DeregisterCameraPlacementUpdate              (Action callback) { Instance.CameraPlacementUpdateCallbacks              .RemoveListener(callback); }
 		public static void DeregisterPreRender            (Action callback) { Instance.PreRenderCallbacks            .RemoveListener(callback); }
 		public static void DeregisterPreUI                (Action callback) { Instance.PreUICallbacks                .RemoveListener(callback); }
+		public static void DeregisterPostUIToolkitRepaint (Action callback) { Instance.PostUIToolkitRepaintCallbacks .RemoveListener(callback); }
 
 		// @formatter:on
 
@@ -327,6 +334,46 @@ namespace Extenity.FlowToolbox
 
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(CameraPlacementUpdateRunner), CreateLoopSystem<PreRenderRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner), CreateLoopSystem<PreUIRunner>());
+
+			var uiToolkitRepaintType = GetUIToolkitRepaintPanelsType();
+			if (!ContainsLoopSystem<PostLateUpdate>(ref playerLoop, uiToolkitRepaintType))
+			{
+				throw new InvalidOperationException($"Loop could not find UI Toolkit's panel repaint step '{nameof(PostLateUpdate)}.{uiToolkitRepaintType.Name}' in the player loop, so it can't run PostUIToolkitRepaint callbacks. Unity has probably moved that step.");
+			}
+			InsertLoopSystemAfter<PostLateUpdate>(ref playerLoop, uiToolkitRepaintType, CreateLoopSystem<PostUIToolkitRepaintRunner>());
+		}
+
+		/// <summary>
+		/// UI Toolkit's panel repaint step is internal to Unity, so it is looked up by name.
+		/// </summary>
+		private static Type GetUIToolkitRepaintPanelsType()
+		{
+			const string typeName = "UIElementsRepaintPanels";
+			var type = typeof(PostLateUpdate).GetNestedType(typeName, BindingFlags.Public | BindingFlags.NonPublic);
+			if (type == null)
+			{
+				throw new InvalidOperationException($"Loop could not find UI Toolkit's panel repaint step type '{nameof(PostLateUpdate)}.{typeName}', so it can't run PostUIToolkitRepaint callbacks. Unity has probably renamed it.");
+			}
+			return type;
+		}
+
+		private static bool ContainsLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, Type systemType)
+		{
+			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
+			{
+				if (rootLoop.subSystemList[i].type == typeof(TParent))
+				{
+					var subsystems = rootLoop.subSystemList[i].subSystemList;
+					for (int j = 0; j < subsystems.Length; j++)
+					{
+						if (subsystems[j].type == systemType)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 		private static void RemoveFromPlayerLoop(ref PlayerLoopSystem playerLoop)
@@ -350,6 +397,8 @@ namespace Extenity.FlowToolbox
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(CameraPlacementUpdateRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner));
 			RemoveLoopSystem<PreLateUpdate>(ref playerLoop, typeof(PreUIRunner));
+
+			RemoveLoopSystem<PostLateUpdate>(ref playerLoop, typeof(PostUIToolkitRepaintRunner));
 		}
 
 		private static PlayerLoopSystem CreateLoopSystem<T>() where T : struct
@@ -469,6 +518,7 @@ namespace Extenity.FlowToolbox
 			if (typeof(T) == typeof(CameraPlacementUpdateRunner)) return () => {                                 InvokeSafeIfEnabled(Instance.CameraPlacementUpdateCallbacks); };
 			if (typeof(T) == typeof(PreRenderRunner            )) return () => {                                 InvokeSafeIfEnabled(Instance.PreRenderCallbacks); };
 			if (typeof(T) == typeof(PreUIRunner                )) return () => {                                 InvokeSafeIfEnabled(Instance.PreUICallbacks); };
+			if (typeof(T) == typeof(PostUIToolkitRepaintRunner )) return () => {                                 InvokeSafeIfEnabled(Instance.PostUIToolkitRepaintCallbacks); };
 
 			// @formatter:on
 
@@ -510,6 +560,8 @@ namespace Extenity.FlowToolbox
 
 		private struct PreRenderRunner { }
 		private struct PreUIRunner { }
+
+		private struct PostUIToolkitRepaintRunner { }
 
 		#endregion
 
@@ -555,6 +607,8 @@ namespace Extenity.FlowToolbox
 
 				Instance.PreRenderCallbacks.InvokeSafe();
 				Instance.PreUICallbacks.InvokeSafe();
+
+				Instance.PostUIToolkitRepaintCallbacks.InvokeSafe();
 			}
 			else
 			{
@@ -594,6 +648,8 @@ namespace Extenity.FlowToolbox
 
 				Instance.PreRenderCallbacks.InvokeUnsafe();
 				Instance.PreUICallbacks.InvokeUnsafe();
+
+				Instance.PostUIToolkitRepaintCallbacks.InvokeUnsafe();
 			}
 		}
 
@@ -827,6 +883,8 @@ namespace Extenity.FlowToolbox
 
 			CheckCallbacks(Instance.PreRenderCallbacks, "PreRender");
 			CheckCallbacks(Instance.PreUICallbacks, "PreUI");
+
+			CheckCallbacks(Instance.PostUIToolkitRepaintCallbacks, "PostUIToolkitRepaint");
 
 			if (totalCallbacks > 0)
 			{

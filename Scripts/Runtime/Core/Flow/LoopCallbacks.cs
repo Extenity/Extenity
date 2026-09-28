@@ -44,6 +44,8 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PreRenderCallbacks = new ExtenityEvent();
 		public readonly ExtenityEvent PreUICallbacks = new ExtenityEvent();
 
+		public readonly ExtenityEvent PostUIToolkitRepaintCallbacks = new ExtenityEvent();
+
 		#endregion
 	}
 
