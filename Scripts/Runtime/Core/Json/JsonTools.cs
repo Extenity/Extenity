@@ -86,9 +86,10 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
-				var serializedJsonPath = Path.Combine(tempDirectory, "SerializationFailure/Serialized.json");
-				var reserializedJsonPath = Path.Combine(tempDirectory, "SerializationFailure/Reserialized.json");
+				var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "SerializationFailure");
+				Directory.CreateDirectory(failureDirectory);
+				var serializedJsonPath = Path.Combine(failureDirectory, "Serialized.json");
+				var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
 				File.WriteAllText(serializedJsonPath, serializedJson);
 				File.WriteAllText(reserializedJsonPath, reserializedJson);
 				Log.Error($"Serialization failure (Error part 1/3). See '{serializedJsonPath}' The serialized json is:\n" + serializedJson.ClipIfNecessary(2000));
@@ -141,10 +142,11 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var tempDirectory = DirectoryTools.CreateTemporaryDirectory();
-				var originalJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Original.json");
-				var upgradedJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Upgraded.json");
-				var reserializedJsonPath = Path.Combine(tempDirectory, "DeserializationFailure/Reserialized.json");
+				var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "DeserializationFailure");
+				Directory.CreateDirectory(failureDirectory);
+				var originalJsonPath = Path.Combine(failureDirectory, "Original.json");
+				var upgradedJsonPath = Path.Combine(failureDirectory, "Upgraded.json");
+				var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
 				File.WriteAllText(originalJsonPath, json);
 				File.WriteAllText(upgradedJsonPath, upgradedJson?.ToString());
 				File.WriteAllText(reserializedJsonPath, reserializedJson?.ToString());
