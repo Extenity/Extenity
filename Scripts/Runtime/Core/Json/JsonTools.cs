@@ -86,18 +86,25 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "SerializationFailure");
-				Directory.CreateDirectory(failureDirectory);
-				var serializedJsonPath = Path.Combine(failureDirectory, "Serialized.json");
-				var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
-				File.WriteAllText(serializedJsonPath, serializedJson);
-				File.WriteAllText(reserializedJsonPath, reserializedJson);
-				Log.Error($"Serialization failure (Error part 1/3). See '{serializedJsonPath}' The serialized json is:\n" + serializedJson.ClipIfNecessary(2000));
-				Log.Error($"Serialization failure (Error part 2/3). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson.ClipIfNecessary(2000));
+				try
+				{
+					var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "SerializationFailure");
+					Directory.CreateDirectory(failureDirectory);
+					var serializedJsonPath = Path.Combine(failureDirectory, "Serialized.json");
+					var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
+					File.WriteAllText(serializedJsonPath, serializedJson);
+					File.WriteAllText(reserializedJsonPath, reserializedJson);
+					Log.Error($"Serialization failure (Error part 1/3). See '{serializedJsonPath}' The serialized json is:\n" + serializedJson.ClipIfNecessary(2000));
+					Log.Error($"Serialization failure (Error part 2/3). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson.ClipIfNecessary(2000));
 #if UNITY_EDITOR
-				// TODO:
-				// BuildTools.LaunchBeyondCompareFileComparison(serializedJsonPath, reserializedJsonPath);
+					// TODO:
+					// BuildTools.LaunchBeyondCompareFileComparison(serializedJsonPath, reserializedJsonPath);
 #endif
+				}
+				catch (Exception detailedOutputException)
+				{
+					throw new AggregateException("Serialization crosscheck failed and detailed output failed too. See inner exceptions for details.", exception, detailedOutputException);
+				}
 				throw new Exception("Serialization crosscheck failed (Error part 3/3). See previous errors for details.", exception);
 			}
 		}
@@ -142,21 +149,28 @@ namespace Extenity.JsonToolbox
 			}
 			catch (Exception exception)
 			{
-				var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "DeserializationFailure");
-				Directory.CreateDirectory(failureDirectory);
-				var originalJsonPath = Path.Combine(failureDirectory, "Original.json");
-				var upgradedJsonPath = Path.Combine(failureDirectory, "Upgraded.json");
-				var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
-				File.WriteAllText(originalJsonPath, json);
-				File.WriteAllText(upgradedJsonPath, upgradedJson?.ToString());
-				File.WriteAllText(reserializedJsonPath, reserializedJson?.ToString());
-				Log.Error($"Deserialization failure (Error part 1/4). See '{originalJsonPath}' The original json is:\n" + json.ClipIfNecessary(2000));
-				Log.Error($"Deserialization failure (Error part 2/4). See '{upgradedJsonPath}' The upgraded json is:\n" + upgradedJson?.ToString().ClipIfNecessary(2000));
-				Log.Error($"Deserialization failure (Error part 3/4). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson?.ToString().ClipIfNecessary(2000));
+				try
+				{
+					var failureDirectory = Path.Combine(DirectoryTools.CreateTemporaryDirectory(), "DeserializationFailure");
+					Directory.CreateDirectory(failureDirectory);
+					var originalJsonPath = Path.Combine(failureDirectory, "Original.json");
+					var upgradedJsonPath = Path.Combine(failureDirectory, "Upgraded.json");
+					var reserializedJsonPath = Path.Combine(failureDirectory, "Reserialized.json");
+					File.WriteAllText(originalJsonPath, json);
+					File.WriteAllText(upgradedJsonPath, upgradedJson?.ToString());
+					File.WriteAllText(reserializedJsonPath, reserializedJson?.ToString());
+					Log.Error($"Deserialization failure (Error part 1/4). See '{originalJsonPath}' The original json is:\n" + json.ClipIfNecessary(2000));
+					Log.Error($"Deserialization failure (Error part 2/4). See '{upgradedJsonPath}' The upgraded json is:\n" + upgradedJson?.ToString().ClipIfNecessary(2000));
+					Log.Error($"Deserialization failure (Error part 3/4). See '{reserializedJsonPath}' The reserialized json is:\n" + reserializedJson?.ToString().ClipIfNecessary(2000));
 #if UNITY_EDITOR
-				// TODO:
-				// BuildTools.LaunchBeyondCompareFileComparison(upgradedJsonPath, reserializedJsonPath);
+					// TODO:
+					// BuildTools.LaunchBeyondCompareFileComparison(upgradedJsonPath, reserializedJsonPath);
 #endif
+				}
+				catch (Exception detailedOutputException)
+				{
+					throw new AggregateException("Deserialization crosscheck failed and detailed output failed too. See inner exceptions for details.", exception, detailedOutputException);
+				}
 				throw new Exception("Deserialization crosscheck failed (Error part 4/4). See previous errors for details.", exception);
 			}
 		}
