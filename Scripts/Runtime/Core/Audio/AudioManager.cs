@@ -60,9 +60,10 @@ namespace Extenity.Audio
 
 		#region Deinitialization
 
-		//protected void OnDestroy()
-		//{
-		//}
+		protected override void OnDestroyDerived()
+		{
+			// DeinitializeIncidentTracker();
+		}
 
 		#endregion
 
@@ -970,7 +971,12 @@ namespace Extenity.Audio
 				OccurrenceCounts[i] = new Dictionary<uint, int>(InitialIncidentTrackerDictionaryCapacity);
 			}
 
-			this.FastInvokeRepeating(ClearIncidentTrackerCounts, 1f, 1f, true);
+			Loop.RegisterUpdateEvery1000MillisecondsUnscaled(ClearIncidentTrackerCounts);
+		}
+
+		private void DeinitializeIncidentTracker()
+		{
+			Loop.DeregisterUpdateEvery1000MillisecondsUnscaled(ClearIncidentTrackerCounts);
 		}
 
 		private void ClearIncidentTrackerCounts()
