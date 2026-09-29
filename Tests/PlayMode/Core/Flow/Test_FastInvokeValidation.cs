@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if ExtenityFastInvoke
+
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using Extenity.DataToolbox;
@@ -67,3 +69,5 @@ namespace ExtenityTests.FlowToolbox
 	}
 
 }
+
+#endif

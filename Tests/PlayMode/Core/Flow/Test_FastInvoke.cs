@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if ExtenityFastInvoke
+
+using System;
 using System.Collections;
 using Extenity.FlowToolbox;
 using Extenity.ParallelToolbox;
@@ -438,3 +440,5 @@ namespace ExtenityTests.FlowToolbox
 	}
 
 }
+
+#endif

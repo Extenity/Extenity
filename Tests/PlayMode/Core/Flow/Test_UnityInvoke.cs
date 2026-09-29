@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if ExtenityFastInvoke
+
+using System.Collections;
 using Extenity.Testing;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -45,3 +47,5 @@ namespace ExtenityTests.FlowToolbox
 	}
 
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if ExtenityFastInvoke
+
 using System;
 using System.Collections;
 using Extenity.FlowToolbox;
@@ -499,3 +501,5 @@ namespace ExtenityTests.FlowToolbox
 	}
 
 }
+
+#endif

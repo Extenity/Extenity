@@ -107,7 +107,9 @@ namespace Extenity.FlowToolbox
 				return;
 			}
 
+#if ExtenityFastInvoke
 			Invoker.InitializeSystem();
+#endif
 
 			// Initialize cached times here at start.
 			// Otherwise, cached time initialization will be delayed until Unity calls one of LoopHelper's Update methods.
@@ -131,7 +133,9 @@ namespace Extenity.FlowToolbox
 
 		public static void DeinitializeSystem()
 		{
+#if ExtenityFastInvoke
 			Invoker.DeinitializeSystem();
+#endif
 
 			if (Instance != null)
 			{
@@ -486,10 +490,25 @@ namespace Extenity.FlowToolbox
 			if (typeof(T) == typeof(NetworkingRunner           )) return () => {                                 InvokeSafeIfEnabled(Instance.NetworkingCallbacks); };
 			if (typeof(T) == typeof(InputUpdateRunner          )) return () => {                                 InvokeSafeIfEnabled(Instance.InputUpdateCallbacks); };
 			if (typeof(T) == typeof(PreFixedUpdateRunner       )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreFixedUpdateCallbacks); };
-			if (typeof(T) == typeof(FixedUpdateRunner          )) return () => { SetCachedTimesFromUnityTimes(); FixedUpdateCount++; Invoker.Handler.CustomFixedUpdate(Time); InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks); };
+			if (typeof(T) == typeof(FixedUpdateRunner          )) return () =>
+			{
+				SetCachedTimesFromUnityTimes();
+				FixedUpdateCount++;
+#if ExtenityFastInvoke
+				Invoker.Handler.CustomFixedUpdate(Time);
+#endif
+				InvokeSafeIfEnabled(Instance.FixedUpdateCallbacks);
+			};
 			if (typeof(T) == typeof(PostFixedUpdateRunner      )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostFixedUpdateCallbacks); };
 			if (typeof(T) == typeof(PreUpdateRunner            )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PreUpdateCallbacks); };
-			if (typeof(T) == typeof(UpdateRunner               )) return () => { SetCachedTimesFromUnityTimes(); Invoker.Handler.CustomUpdate(UnscaledTime); InvokeSafeIfEnabled(Instance.UpdateCallbacks); };
+			if (typeof(T) == typeof(UpdateRunner               )) return () =>
+			{
+				SetCachedTimesFromUnityTimes();
+#if ExtenityFastInvoke
+				Invoker.Handler.CustomUpdate(UnscaledTime);
+#endif
+				InvokeSafeIfEnabled(Instance.UpdateCallbacks);
+			};
 			if (typeof(T) == typeof(PostUpdateRunner           )) return () => { SetCachedTimesFromUnityTimes(); InvokeSafeIfEnabled(Instance.PostUpdateCallbacks); };
 			if (typeof(T) == typeof(InfrequentUpdatesRunner    )) return () =>
 			{
