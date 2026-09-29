@@ -18,41 +18,6 @@ namespace Extenity.DataToolbox
 		OnlyInEditor = 2,
 	}
 
-#if UNITY_5_3_OR_NEWER
-
-	public class DeferredSaveHelper : AutoSingletonUnity<DeferredSaveHelper>
-	{
-		protected override void AwakeDerived()
-		{
-			DontDestroyOnLoad(this);
-		}
-
-		#region Test
-
-		// Test tools. Keep them here commented out for future needs.
-		/*
-		protected void Update()
-		{
-			if (Input.GetKeyDown(KeyCode.Alpha2))
-			{
-				DeferredSave(2f);
-			}
-			if (Input.GetKeyDown(KeyCode.Alpha5))
-			{
-				DeferredSave(5f);
-			}
-			if (Input.GetKeyDown(KeyCode.Alpha9))
-			{
-				DeferredSave(9f);
-			}
-		}
-		*/
-
-		#endregion
-	}
-
-#endif
-
 	public static class PlayerPrefsTools
 	{
 		public static void SetBool(string key, bool value)
