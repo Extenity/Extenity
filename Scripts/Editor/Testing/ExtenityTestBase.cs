@@ -34,22 +34,22 @@ namespace Extenity.Testing
 			// This should be the very first line of the test.
 			StartTime = Time.realtimeSinceStartup;
 
-			// Ensure Loop is initialized for edit mode tests
-			if (Loop.Instance == null)
-			{
-				Loop.InitializeSystem();
-			}
-			else
-			{
-				Loop.EnsureAllCallbacksDeregistered();
-			}
+			// Mark everything as not initialized first, so TearDown only cleans up what this SetUp managed to
+			// initialize if it fails midway, instead of throwing secondary errors that hide the real one.
+			IsOnInitializeCalled = false;
+			LoopCallbackCheck = LoopCallbackCheckMode.None;
+			LoopCallbackSnapshot = null;
 
+			InitializeLoopCallbackCheck();
 			InitializeCancellationToken();
 			InitializeTiming();
 			InitializeLogCatching();
 
+			IsOnInitializeCalled = true;
 			OnInitialize();
 		}
+
+		private bool IsOnInitializeCalled;
 
 		#endregion
 
@@ -64,11 +64,15 @@ namespace Extenity.Testing
 		{
 			DeinitializeCancellationToken();
 
-			OnDeinitialize();
+			// Skip the derived class' cleanup if SetUp failed before calling its initialization.
+			if (IsOnInitializeCalled)
+			{
+				OnDeinitialize();
+			}
 
 			DeinitializeLogCatching();
 			EnsureAllCheckpointsReached();
-			Loop.EnsureAllCallbacksDeregistered();
+			DeinitializeLoopCallbackCheck();
 			UnityTestTools.Cleanup();
 
 			// Disable the profiler if it was enabled during the test.
@@ -99,7 +103,77 @@ namespace Extenity.Testing
 
 		private void DeinitializeCancellationToken()
 		{
-			CancellationTokenSource.Cancel();
+			// Not created if SetUp failed before reaching it.
+			if (CancellationTokenSource != null)
+			{
+				CancellationTokenSource.Cancel();
+				CancellationTokenSource = null;
+			}
+		}
+
+		#endregion
+
+		#region Loop Callback Check
+
+		private enum LoopCallbackCheckMode
+		{
+			/// <summary>SetUp failed before the check could start. TearDown skips the check.</summary>
+			None,
+			/// <summary>No Loop callbacks are allowed at SetUp and TearDown.</summary>
+			NoCallbacksAllowed,
+			/// <summary>The callbacks registered at SetUp must be exactly the same at TearDown.</summary>
+			MatchSnapshot,
+		}
+
+		private LoopCallbackCheckMode LoopCallbackCheck;
+		private Loop.CallbackSnapshot LoopCallbackSnapshot;
+
+		private void InitializeLoopCallbackCheck()
+		{
+			// Ensure Loop is initialized for edit mode tests
+			if (Loop.Instance == null)
+			{
+				Loop.InitializeSystem();
+			}
+
+			if (Application.isPlaying)
+			{
+				// In Play Mode, the application may keep callbacks registered for its whole lifetime (e.g. registered
+				// from a [RuntimeInitializeOnLoadMethod]). These are expected, so only require the test to leave the
+				// Loop callbacks exactly as it found them: nothing added, nothing removed. Note that with domain
+				// reload disabled for entering Play Mode, the callbacks also survive from previous Play Mode sessions,
+				// which the snapshot covers as well.
+				LoopCallbackSnapshot = Loop.CaptureCallbackSnapshot();
+				LoopCallbackCheck = LoopCallbackCheckMode.MatchSnapshot;
+			}
+			else
+			{
+				Loop.EnsureAllCallbacksDeregistered();
+				LoopCallbackCheck = LoopCallbackCheckMode.NoCallbacksAllowed;
+			}
+		}
+
+		private void DeinitializeLoopCallbackCheck()
+		{
+			var mode = LoopCallbackCheck;
+			var snapshot = LoopCallbackSnapshot;
+			LoopCallbackCheck = LoopCallbackCheckMode.None;
+			LoopCallbackSnapshot = null;
+
+			switch (mode)
+			{
+				case LoopCallbackCheckMode.None:
+					// SetUp failed before the check started. Its error is already reported.
+					break;
+				case LoopCallbackCheckMode.NoCallbacksAllowed:
+					Loop.EnsureAllCallbacksDeregistered();
+					break;
+				case LoopCallbackCheckMode.MatchSnapshot:
+					Loop.EnsureCallbacksMatchSnapshot(snapshot);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+			}
 		}
 
 		#endregion
@@ -176,6 +250,13 @@ namespace Extenity.Testing
 
 		private void DeinitializeLogCatching()
 		{
+			// Not created if SetUp failed before reaching it.
+			if (LogCaptureScope == null)
+			{
+				Logs = null;
+				return;
+			}
+
 			try
 			{
 				if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)

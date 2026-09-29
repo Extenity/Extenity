@@ -831,6 +831,10 @@ namespace Extenity.FlowToolbox
 
 		#region Callback Cleanup Verification
 
+		/// <summary>
+		/// Throws if any callback is registered in any of the Loop's callback lists. The exception names each
+		/// leftover callback's list, method and declaring type.
+		/// </summary>
 		public static void EnsureAllCallbacksDeregistered()
 		{
 			if (Instance == null)
@@ -839,7 +843,7 @@ namespace Extenity.FlowToolbox
 			var totalCallbacks = 0;
 			List<string> callbackDetails = null;
 
-			void CheckCallbacks(ExtenityEvent extenityEvent, string callbackName)
+			foreach (var (callbackName, extenityEvent) in Instance.AllCallbackLists)
 			{
 				if (extenityEvent.IsAnyListenerRegistered)
 				{
@@ -847,49 +851,159 @@ namespace Extenity.FlowToolbox
 					{
 						callbackDetails = new List<string>(); // It's okay to do allocation if an error happens.
 					}
-					var count = extenityEvent.ListenersCount;
-					totalCallbacks += count;
-					callbackDetails.Add($"{callbackName}: {count}");
+					var listeners = extenityEvent._Listeners;
+					totalCallbacks += listeners.Count;
+					foreach (var listener in listeners)
+					{
+						callbackDetails.Add($"{callbackName}: {DescribeCallback(listener.Callback)}");
+					}
 				}
 			}
-
-			CheckCallbacks(Instance.TimeCallbacks, "Time");
-			CheckCallbacks(Instance.NetworkingCallbacks, "Networking");
-			CheckCallbacks(Instance.InputUpdateCallbacks, "InputUpdate");
-
-			CheckCallbacks(Instance.PreFixedUpdateCallbacks, "PreFixedUpdate");
-			CheckCallbacks(Instance.PreUpdateCallbacks, "PreUpdate");
-			CheckCallbacks(Instance.PreLateUpdateCallbacks, "PreLateUpdate");
-
-			CheckCallbacks(Instance.FixedUpdateCallbacks, "FixedUpdate");
-			CheckCallbacks(Instance.UpdateCallbacks, "Update");
-			CheckCallbacks(Instance.LateUpdateCallbacks, "LateUpdate");
-
-			CheckCallbacks(Instance.PostFixedUpdateCallbacks, "PostFixedUpdate");
-			CheckCallbacks(Instance.PostUpdateCallbacks, "PostUpdate");
-			CheckCallbacks(Instance.PostLateUpdateCallbacks, "PostLateUpdate");
-
-			CheckCallbacks(Instance.UpdateEvery10FramesCallbacks, "UpdateEvery10Frames");
-			CheckCallbacks(Instance.UpdateEvery100MillisecondsCallbacks,          "UpdateEvery100Milliseconds");
-			CheckCallbacks(Instance.UpdateEvery100MillisecondsUnscaledCallbacks,  "UpdateEvery100MillisecondsUnscaled");
-			CheckCallbacks(Instance.UpdateEvery250MillisecondsCallbacks,          "UpdateEvery250Milliseconds");
-			CheckCallbacks(Instance.UpdateEvery250MillisecondsUnscaledCallbacks,  "UpdateEvery250MillisecondsUnscaled");
-			CheckCallbacks(Instance.UpdateEvery500MillisecondsCallbacks,          "UpdateEvery500Milliseconds");
-			CheckCallbacks(Instance.UpdateEvery500MillisecondsUnscaledCallbacks,  "UpdateEvery500MillisecondsUnscaled");
-			CheckCallbacks(Instance.UpdateEvery1000MillisecondsCallbacks,         "UpdateEvery1000Milliseconds");
-			CheckCallbacks(Instance.UpdateEvery1000MillisecondsUnscaledCallbacks, "UpdateEvery1000MillisecondsUnscaled");
-
-			CheckCallbacks(Instance.CameraPlacementUpdateCallbacks, "CameraPlacementUpdate");
-
-			CheckCallbacks(Instance.PreRenderCallbacks, "PreRender");
-			CheckCallbacks(Instance.PreUICallbacks, "PreUI");
-
-			CheckCallbacks(Instance.PostUIToolkitRepaintCallbacks, "PostUIToolkitRepaint");
 
 			if (totalCallbacks > 0)
 			{
 				throw new Exception($"Loop has {totalCallbacks} callback(s) still registered:\n" + string.Join("\n", callbackDetails));
 			}
+		}
+
+		/// <summary>
+		/// The callbacks that were registered in each of the Loop's callback lists at the time
+		/// <see cref="CaptureCallbackSnapshot"/> was called. Compare it later with
+		/// <see cref="EnsureCallbacksMatchSnapshot"/>.
+		/// </summary>
+		public sealed class CallbackSnapshot
+		{
+			/// <summary>Registered callbacks of each list, in the same order as <see cref="LoopCallbacks.AllCallbackLists"/>.</summary>
+			internal readonly Action[][] CallbacksPerList;
+
+			internal CallbackSnapshot(Action[][] callbacksPerList)
+			{
+				CallbacksPerList = callbacksPerList;
+			}
+
+			public int TotalCallbackCount
+			{
+				get
+				{
+					var count = 0;
+					foreach (var callbacks in CallbacksPerList)
+					{
+						count += callbacks.Length;
+					}
+					return count;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Records exactly which callbacks are registered in each of the Loop's callback lists right now. Use it
+		/// where callbacks legitimately stay registered for the whole application lifetime (e.g. registered from a
+		/// [RuntimeInitializeOnLoadMethod]), so <see cref="EnsureAllCallbacksDeregistered"/> can't be used, but
+		/// callbacks that were added or removed in between still need to be caught. Allocates, so don't call it
+		/// every frame.
+		/// </summary>
+		public static CallbackSnapshot CaptureCallbackSnapshot()
+		{
+			if (Instance == null)
+				throw new Exception("Loop is not initialized.");
+
+			var allCallbackLists = Instance.AllCallbackLists;
+			var callbacksPerList = new Action[allCallbackLists.Length][];
+			for (var i = 0; i < allCallbackLists.Length; i++)
+			{
+				var listeners = allCallbackLists[i].Callbacks._Listeners;
+				var callbacks = new Action[listeners.Count];
+				for (var j = 0; j < listeners.Count; j++)
+				{
+					callbacks[j] = listeners[j].Callback;
+				}
+				callbacksPerList[i] = callbacks;
+			}
+			return new CallbackSnapshot(callbacksPerList);
+		}
+
+		/// <summary>
+		/// Throws if the Loop's registered callbacks differ from the <paramref name="snapshot"/>: a callback that was
+		/// registered since the snapshot, or a callback in the snapshot that is no longer registered. The exception
+		/// names each differing callback's list, method and declaring type.
+		/// If the Loop was deinitialized since the snapshot, it has no callbacks registered, so every callback in the
+		/// snapshot counts as removed. If it was deinitialized and initialized again, the new instance's callbacks are
+		/// compared with the snapshot.
+		/// </summary>
+		public static void EnsureCallbacksMatchSnapshot(CallbackSnapshot snapshot)
+		{
+			if (snapshot == null)
+				throw new ArgumentNullException(nameof(snapshot));
+
+			List<string> differences = null;
+			List<Action> unmatchedCurrentCallbacks = null;
+			// Any LoopCallbacks instance has the same lists in the same order, so a reinitialized Loop can be compared
+			// too. A deinitialized Loop is compared as a new instance, with all of its lists empty.
+			var allCallbackLists = (Instance ?? new LoopCallbacks()).AllCallbackLists;
+			for (var i = 0; i < allCallbackLists.Length; i++)
+			{
+				var (callbackName, extenityEvent) = allCallbackLists[i];
+				var listeners = extenityEvent._Listeners;
+				var snapshotCallbacks = snapshot.CallbacksPerList[i];
+
+				// Quick path without allocations for the usual case, where nothing has changed.
+				if (listeners.Count == snapshotCallbacks.Length)
+				{
+					var isSame = true;
+					for (var j = 0; j < listeners.Count; j++)
+					{
+						if (listeners[j].Callback != snapshotCallbacks[j])
+						{
+							isSame = false;
+							break;
+						}
+					}
+					if (isSame)
+						continue;
+				}
+
+				// Compare as multisets, since listeners may be reordered by registration order values.
+				// It's okay to do allocation if an error happens.
+				unmatchedCurrentCallbacks ??= new List<Action>();
+				unmatchedCurrentCallbacks.Clear();
+				for (var j = 0; j < listeners.Count; j++)
+				{
+					unmatchedCurrentCallbacks.Add(listeners[j].Callback);
+				}
+
+				foreach (var snapshotCallback in snapshotCallbacks)
+				{
+					var index = unmatchedCurrentCallbacks.IndexOf(snapshotCallback);
+					if (index >= 0)
+					{
+						unmatchedCurrentCallbacks.RemoveAt(index);
+					}
+					else
+					{
+						differences ??= new List<string>();
+						differences.Add($"Removed from {callbackName}: {DescribeCallback(snapshotCallback)}");
+					}
+				}
+				foreach (var addedCallback in unmatchedCurrentCallbacks)
+				{
+					differences ??= new List<string>();
+					differences.Add($"Added to {callbackName}: {DescribeCallback(addedCallback)}");
+				}
+			}
+
+			if (differences != null)
+			{
+				throw new Exception($"Loop callbacks differ from the snapshot in {differences.Count} place(s):\n" + string.Join("\n", differences));
+			}
+		}
+
+		private static string DescribeCallback(Action callback)
+		{
+			if (callback == null)
+				return "null";
+			var method = callback.Method;
+			var declaringTypeName = method.DeclaringType?.FullName ?? "UnknownType";
+			return $"{declaringTypeName}.{method.Name}";
 		}
 
 		#endregion

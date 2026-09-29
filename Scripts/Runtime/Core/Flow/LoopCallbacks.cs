@@ -47,6 +47,56 @@ namespace Extenity.FlowToolbox
 		public readonly ExtenityEvent PostUIToolkitRepaintCallbacks = new ExtenityEvent();
 
 		#endregion
+
+		#region All Callback Lists
+
+		/// <summary>
+		/// Every callback list above, paired with its name. This is the one place that enumerates them, so anything
+		/// that needs to go through all callback lists (like the cleanup checks in <see cref="Loop"/>) stays in sync
+		/// when a new list is added.
+		/// </summary>
+		public readonly (string Name, ExtenityEvent Callbacks)[] AllCallbackLists;
+
+		public LoopCallbacks()
+		{
+			AllCallbackLists = new[]
+			{
+				("Time", TimeCallbacks),
+				("Networking", NetworkingCallbacks),
+				("InputUpdate", InputUpdateCallbacks),
+
+				("PreFixedUpdate", PreFixedUpdateCallbacks),
+				("PreUpdate", PreUpdateCallbacks),
+				("PreLateUpdate", PreLateUpdateCallbacks),
+
+				("FixedUpdate", FixedUpdateCallbacks),
+				("Update", UpdateCallbacks),
+				("LateUpdate", LateUpdateCallbacks),
+
+				("PostFixedUpdate", PostFixedUpdateCallbacks),
+				("PostUpdate", PostUpdateCallbacks),
+				("PostLateUpdate", PostLateUpdateCallbacks),
+
+				("UpdateEvery10Frames", UpdateEvery10FramesCallbacks),
+				("UpdateEvery100Milliseconds", UpdateEvery100MillisecondsCallbacks),
+				("UpdateEvery100MillisecondsUnscaled", UpdateEvery100MillisecondsUnscaledCallbacks),
+				("UpdateEvery250Milliseconds", UpdateEvery250MillisecondsCallbacks),
+				("UpdateEvery250MillisecondsUnscaled", UpdateEvery250MillisecondsUnscaledCallbacks),
+				("UpdateEvery500Milliseconds", UpdateEvery500MillisecondsCallbacks),
+				("UpdateEvery500MillisecondsUnscaled", UpdateEvery500MillisecondsUnscaledCallbacks),
+				("UpdateEvery1000Milliseconds", UpdateEvery1000MillisecondsCallbacks),
+				("UpdateEvery1000MillisecondsUnscaled", UpdateEvery1000MillisecondsUnscaledCallbacks),
+
+				("CameraPlacementUpdate", CameraPlacementUpdateCallbacks),
+
+				("PreRender", PreRenderCallbacks),
+				("PreUI", PreUICallbacks),
+
+				("PostUIToolkitRepaint", PostUIToolkitRepaintCallbacks),
+			};
+		}
+
+		#endregion
 	}
 
 }
