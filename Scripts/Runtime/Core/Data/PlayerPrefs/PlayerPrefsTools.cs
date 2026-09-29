@@ -83,9 +83,7 @@ namespace Extenity.DataToolbox
 
 		#region Deferred Save
 
-#pragma warning disable CS0414
-		private static float DeferredSaveTriggerTime = -1f;
-#pragma warning restore CS0414
+		private static double DeferredSaveTriggerTime = -1.0;
 
 		/// <summary>
 		/// Triggers a delayed save operation. If triggered again consecutively, the delay will be set to the closest time.
@@ -94,45 +92,46 @@ namespace Extenity.DataToolbox
 		public static void DeferredSave(float delay)
 		{
 #if UNITY_5_3_OR_NEWER
-			var now = Time.unscaledTime;
+			var now = Loop.UnscaledTime;
 
-			if (DeferredSaveTriggerTime > 0f)
+			if (DeferredSaveTriggerTime > 0.0)
 			{
 				// See if which one is bigger and choose the closest one.
 				var remainingTimeOfOngoingOperation = DeferredSaveTriggerTime - now;
-				if (delay < remainingTimeOfOngoingOperation)
-				{
-					DeferredSaveHelper.Instance.CancelFastInvoke(OnTimeToSave); // Cancel the previous call first.
-				}
-				else
+				if (delay >= remainingTimeOfOngoingOperation)
 				{
 					// No need to do anything. Ignore current deferred save request because the ongoing operation is expected to be completed even sooner.
 					return;
 				}
+			}
+			else
+			{
+				Loop.RegisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
 			}
 
 			DeferredSaveTriggerTime = now + delay;
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
 #endif
-			DeferredSaveHelper.Instance.FastInvoke(OnTimeToSave, delay, true);
 #else
 			throw new System.NotImplementedException();
 #endif
 		}
 
-		private static void OnTimeToSave()
-		{
 #if UNITY_5_3_OR_NEWER
+		private static void CheckDeferredSave()
+		{
+			if (Loop.UnscaledTime < DeferredSaveTriggerTime)
+				return;
+
 #if EnableDeferredSaveLogging
-			Log.Info($"Deferred saving triggered at '{Time.unscaledTime}'");
+			Log.Info($"Deferred saving triggered at '{Loop.UnscaledTime}'");
 #endif
-			DeferredSaveTriggerTime = -1f;
+			DeferredSaveTriggerTime = -1.0;
+			Loop.DeregisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
 			PlayerPrefs.Save();
-#else
-			throw new System.NotImplementedException();
-#endif
 		}
+#endif
 
 		#endregion
 	}
