@@ -68,13 +68,24 @@ namespace Extenity.JsonToolbox
 		/// </summary>
 		public static string SerializeCrosschecked<T>(T obj, JsonSerializerSettings settings)
 		{
+			return SerializeCrosschecked(obj, typeof(T), settings);
+		}
+
+		/// <summary>
+		/// Same as <see cref="SerializeCrosschecked{T}"/>, but deserializes the copy as <paramref name="type"/>.
+		/// Pass the object's runtime type when the static type is a base class or 'object'. Otherwise the copy
+		/// is deserialized as the static type, e.g. as a JObject for 'object', which keeps every number as a double
+		/// and reports differences that do not exist in the typed data.
+		/// </summary>
+		public static string SerializeCrosschecked(object obj, Type type, JsonSerializerSettings settings)
+		{
 			if (obj == null)
 				return null;
 			string serializedJson = SerializeObject(obj, Formatting.Indented, settings);
 			string reserializedJson = null;
 			try
 			{
-				T copy = DeserializeObject<T>(serializedJson, settings);
+				object copy = JsonConvert.DeserializeObject(serializedJson, type, settings);
 				reserializedJson = SerializeObject(copy, Formatting.Indented, settings);
 
 				if (!serializedJson.Equals(reserializedJson, StringComparison.Ordinal))
