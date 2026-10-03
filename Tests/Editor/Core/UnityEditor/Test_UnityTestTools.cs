@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.UnityTestToolbox;
@@ -44,6 +45,50 @@ namespace ExtenityTests.UnityTestToolbox
 			var allocated = UnityTestTools.EndMemoryCheck();
 
 			Assert.IsFalse(allocated, $"The memory check reported allocations in code that makes none (sum {sum}).");
+		}
+
+		private static volatile bool StopBackgroundAllocations;
+		private static object BackgroundKeptAlive;
+
+		[Test]
+		public void MemoryCheck_IgnoresAllocationsOfOtherThreads()
+		{
+			const int CheckCount = 200000;
+
+			StopBackgroundAllocations = false;
+			var allocatorThread = new Thread(() =>
+			{
+				while (!StopBackgroundAllocations)
+				{
+					BackgroundKeptAlive = new byte[32];
+				}
+			});
+			allocatorThread.IsBackground = true;
+			allocatorThread.Start();
+
+			var falseDetectionAt = -1;
+			try
+			{
+				for (int i = 0; i < CheckCount; i++)
+				{
+					UnityTestTools.BeginMemoryCheck();
+					if (UnityTestTools.EndMemoryCheck())
+					{
+						falseDetectionAt = i;
+						break;
+					}
+				}
+			}
+			finally
+			{
+				StopBackgroundAllocations = true;
+				allocatorThread.Join();
+			}
+
+			if (falseDetectionAt >= 0)
+			{
+				Assert.Fail($"The memory check reported another thread's allocation as its own at check '{falseDetectionAt}' of '{CheckCount}'.");
+			}
 		}
 
 		#endregion

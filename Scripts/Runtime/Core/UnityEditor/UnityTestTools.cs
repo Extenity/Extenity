@@ -67,6 +67,10 @@ namespace Extenity.UnityTestToolbox
 			AllocationRecorder.enabled = false;
 #if !UNITY_WEBGL
 			AllocationRecorder.FilterToCurrentThread();
+			// Right after the filter changes, the next flush may still bring other threads' samples. Flushing once
+			// more throws those away before the measured part starts.
+			AllocationRecorder.enabled = true;
+			AllocationRecorder.enabled = false;
 #endif
 			MemoryCheckStarted = true;
 			AllocationRecorder.enabled = true;
@@ -84,10 +88,11 @@ namespace Extenity.UnityTestToolbox
 			}
 
 #if UNITY_5_3_OR_NEWER
+			// Unity Test Framework calls CollectFromAllThreads here, before reading the count. That lifts the
+			// current-thread filter early enough for other threads' allocations to slip into the count now and then,
+			// which made checks fail at random. So the recorder stays filtered to the current thread instead.
+			// BeginMemoryCheck sets the filter again on every check anyway.
 			AllocationRecorder.enabled = false;
-#if !UNITY_WEBGL
-			AllocationRecorder.CollectFromAllThreads();
-#endif
 			MemoryCheckStarted = false;
 			var allocationCount = AllocationRecorder.sampleBlockCount;
 			if (allocationCount != 0)
