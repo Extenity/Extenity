@@ -40,16 +40,20 @@ namespace Extenity.MessagingToolbox
 
 #if EnableProfiling
 
-		private static readonly Dictionary<Action<T1>, ProfilerMarker> ProfilerMarkerCache = new Dictionary<Action<T1>, ProfilerMarker>();
+		// Keyed by method rather than by delegate, so the cache stays bounded by the number of distinct listener
+		// methods and does not keep delegate targets alive. The marker is resolved once when the listener is
+		// created and stored in the listener, so invoking does not need to look it up.
+		private static readonly Dictionary<System.Reflection.MethodInfo, ProfilerMarker> ProfilerMarkerCache = new Dictionary<System.Reflection.MethodInfo, ProfilerMarker>();
 
 		private static ProfilerMarker GetOrCreateProfilerMarker(Action<T1> callback)
 		{
-			if (!ProfilerMarkerCache.TryGetValue(callback, out var marker))
+			var method = callback.Method;
+			if (!ProfilerMarkerCache.TryGetValue(method, out var marker))
 			{
-				var typeName = callback.Method.DeclaringType?.Name ?? "Unknown";
-				var methodName = callback.Method.Name;
+				var typeName = method.DeclaringType?.Name ?? "Unknown";
+				var methodName = method.Name;
 				marker = new ProfilerMarker($"{typeName}.{methodName}");
-				ProfilerMarkerCache[callback] = marker;
+				ProfilerMarkerCache[method] = marker;
 			}
 			return marker;
 		}
@@ -72,6 +76,9 @@ namespace Extenity.MessagingToolbox
 			public readonly UnityEngine.Object LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
 #endif
+#if EnableProfiling
+			public readonly ProfilerMarker ProfilerMarker;
+#endif
 
 #if UnityFeatures
 			public Listener(Action<T1> callback, int order, ListenerLifeSpan lifeSpan, UnityEngine.Object lifeSpanTarget)
@@ -88,6 +95,9 @@ namespace Extenity.MessagingToolbox
 #if UnityFeatures
 				LifeSpanTarget = lifeSpanTarget;
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
+#endif
+#if EnableProfiling
+				ProfilerMarker = callback != null ? GetOrCreateProfilerMarker(callback) : default;
 #endif
 			}
 
@@ -160,6 +170,22 @@ namespace Extenity.MessagingToolbox
 					// return Callback.Target != null ? Callback : null;
 				}
 			}
+
+#if UnityFeatures
+			/// <summary>
+			/// Gives the same result as <see cref="GetCallbackAndCheckIfAlive"/>, but only for a listener that already
+			/// passed the <see cref="IsObjectDestroyed"/> check. Skips checking the callback target's liveness again.
+			/// </summary>
+			public Action<T1> GetCallbackOfNotDestroyedListener()
+			{
+				// IsObjectDestroyed already ensured that the callback is not null and, if its target was an alive Unity
+				// object at registration, that the target is still alive. A target that was an already destroyed Unity
+				// object at registration is not covered by IsObjectDestroyed and it can't be alive now.
+				if (IsCallbackTargetsUnityObject || !(Callback.Target is UnityEngine.Object))
+					return Callback;
+				return null;
+			}
+#endif
 		}
 
 		/// <summary>
@@ -467,12 +493,16 @@ namespace Extenity.MessagingToolbox
 						Listeners.RemoveAt(InvokeIndex--);
 					}
 
+#if UnityFeatures
+					var callback = listener.GetCallbackOfNotDestroyedListener(); // IsObjectDestroyed is checked above.
+#else
 					var callback = listener.GetCallbackAndCheckIfAlive();
+#endif
 					if (callback != null) // Check if the callback is specified by user. See 11853135.
 					{
 						InvokingCallback = listener.Callback;
 #if EnableProfiling
-						using (GetOrCreateProfilerMarker(callback).Auto())
+						using (listener.ProfilerMarker.Auto())
 #endif
 						{
 							callback(param1);
@@ -520,14 +550,18 @@ namespace Extenity.MessagingToolbox
 					Listeners.RemoveAt(InvokeIndex--);
 				}
 
+#if UnityFeatures
+				var callback = listener.GetCallbackOfNotDestroyedListener(); // IsObjectDestroyed is checked above.
+#else
 				var callback = listener.GetCallbackAndCheckIfAlive();
+#endif
 				if (callback != null) // Check if the callback is specified by user. See 11853135.
 				{
 					try
 					{
 						InvokingCallback = listener.Callback;
 #if EnableProfiling
-						using (GetOrCreateProfilerMarker(callback).Auto())
+						using (listener.ProfilerMarker.Auto())
 #endif
 						{
 							callback(param1);
