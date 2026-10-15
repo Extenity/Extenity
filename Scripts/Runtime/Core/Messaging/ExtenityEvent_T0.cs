@@ -255,14 +255,7 @@ namespace Extenity.MessagingToolbox
 			if (IsInvoking)
 				throw new Exception("Cleanup is not allowed while invoking.");
 
-			for (int i = Listeners.Count - 1; i >= 0; i--)
-			{
-				if (Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
-				{
-					Listeners.RemoveAt(i);
-					i--;
-				}
-			}
+			Listeners.RemoveAll(IsListenerDestroyed);
 		}
 #endif
 

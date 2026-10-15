@@ -918,6 +918,26 @@ namespace ExtenityTests.MessagingToolbox
 
 		#endregion
 
+		#region CleanUp
+
+		[Test]
+		public void CleanUp_RemovesAllDestroyedListeners_IncludingNeighbouringOnes()
+		{
+			CreateLifeSpanTargetTestObject();
+			TestEvent.AddListener(CallbackA, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
+			TestEvent.AddListener(CallbackB, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
+			TestEvent.AddListener(CallbackC);
+			TestEvent.AddListener(CallbackD, 0, ListenerLifeSpan.Permanent, LifeSpanTargetTestObject);
+
+			DestroyLifeSpanTargetTestObject();
+			TestEvent.CleanUp();
+
+			Assert.AreEqual(1, TestEvent.ListenersCount, "Unexpected listener count after cleanup.");
+			Assert.IsTrue(TestEvent.IsCallbackRegistered(CallbackC));
+		}
+
+		#endregion
+
 		#region DestroyingLifeSpanTarget_InsideListener_DoesNotAffectOtherListeners
 
 		[Test]
