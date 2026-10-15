@@ -456,6 +456,11 @@ namespace Extenity.MessagingToolbox
 
 		#region Invoke
 
+#if UnityFeatures
+		// Cached to avoid allocating a delegate each time the destroyed listeners are removed.
+		private static readonly System.Predicate<Listener> IsListenerDestroyed = listener => listener.IsObjectDestroyed;
+#endif
+
 		private bool IsInvoking = false;
 		private int InvokeIndex = -1;
 		private Action InvokingCallback;
@@ -469,6 +474,9 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
+#if UnityFeatures
+			var hasDestroyedListeners = false;
+#endif
 
 			try
 			{
@@ -478,7 +486,10 @@ namespace Extenity.MessagingToolbox
 #if UnityFeatures
 					if (listener.IsObjectDestroyed)
 					{
-						Listeners.RemoveAt(InvokeIndex);
+						// Removed in a single pass after invoking. Removing here would shift the rest of the list
+						// for each destroyed listener, which costs quadratic time when many objects are destroyed.
+						hasDestroyedListeners = true;
+						InvokeIndex++;
 						continue;
 					}
 #endif
@@ -516,6 +527,12 @@ namespace Extenity.MessagingToolbox
 				IsInvoking = false;
 				InvokeIndex = -1;
 				InvokingCallback = null;
+#if UnityFeatures
+				if (hasDestroyedListeners)
+				{
+					Listeners.RemoveAll(IsListenerDestroyed);
+				}
+#endif
 			}
 		}
 
@@ -528,6 +545,9 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
+#if UnityFeatures
+			var hasDestroyedListeners = false;
+#endif
 
 			while (InvokeIndex < Listeners.Count)
 			{
@@ -535,7 +555,10 @@ namespace Extenity.MessagingToolbox
 #if UnityFeatures
 				if (listener.IsObjectDestroyed)
 				{
-					Listeners.RemoveAt(InvokeIndex);
+					// Removed in a single pass after invoking. Removing here would shift the rest of the list
+					// for each destroyed listener, which costs quadratic time when many objects are destroyed.
+					hasDestroyedListeners = true;
+					InvokeIndex++;
 					continue;
 				}
 #endif
@@ -596,6 +619,12 @@ namespace Extenity.MessagingToolbox
 			IsInvoking = false;
 			InvokeIndex = -1;
 			InvokingCallback = null;
+#if UnityFeatures
+			if (hasDestroyedListeners)
+			{
+				Listeners.RemoveAll(IsListenerDestroyed);
+			}
+#endif
 		}
 
 		#endregion
