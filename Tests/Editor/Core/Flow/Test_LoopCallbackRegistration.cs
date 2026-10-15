@@ -54,6 +54,42 @@ namespace ExtenityTests.FlowToolbox
 			Assert.IsEmpty(duplicateNames, "Duplicate names: " + string.Join(", ", duplicateNames));
 		}
 
+		/// <summary>
+		/// The Loop window lists the callbacks in <see cref="LoopCallbacks.AllCallbackLists"/> order to show the
+		/// order they run in, so that order has to match the invocation order.
+		/// </summary>
+		[Test]
+		public void AllCallbackLists_IsInInvocationOrder([Values(true, false)] bool catchExceptions)
+		{
+			var invokedListNames = new List<string>();
+			var registered = new List<(ExtenityEvent Callbacks, Action Callback)>();
+			var previousCatchExceptions = Loop.EnableCatchingExceptionsInUpdateCallbacks;
+
+			try
+			{
+				foreach (var (name, callbacks) in Loop.Instance.AllCallbackLists)
+				{
+					Action callback = () => invokedListNames.Add(name);
+					callbacks.AddListener(callback);
+					registered.Add((callbacks, callback));
+				}
+
+				Loop.EnableCatchingExceptionsInUpdateCallbacks = catchExceptions;
+				Loop.ManuallyRunLoopOnce(1);
+			}
+			finally
+			{
+				Loop.EnableCatchingExceptionsInUpdateCallbacks = previousCatchExceptions;
+				foreach (var (callbacks, callback) in registered)
+				{
+					callbacks.RemoveListener(callback);
+				}
+			}
+
+			CollectionAssert.AreEqual(ListNames.ToList(), invokedListNames,
+				$"Expected: {string.Join(", ", ListNames)}\nInvoked: {string.Join(", ", invokedListNames)}");
+		}
+
 		#endregion
 
 		#region Register And Deregister Methods
