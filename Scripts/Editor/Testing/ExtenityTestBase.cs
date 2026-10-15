@@ -39,6 +39,7 @@ namespace Extenity.Testing
 			IsOnInitializeCalled = false;
 			LoopCallbackCheck = LoopCallbackCheckMode.None;
 			LoopCallbackSnapshot = null;
+			IsLoopInitializedForEditModeTest = false;
 
 			InitializeLoopCallbackCheck();
 			InitializeCancellationToken();
@@ -128,12 +129,19 @@ namespace Extenity.Testing
 		private LoopCallbackCheckMode LoopCallbackCheck;
 		private Loop.CallbackSnapshot LoopCallbackSnapshot;
 
+		/// <summary>
+		/// Whether this test's SetUp brought Loop up in Edit Mode. TearDown then takes it down again, so the test
+		/// doesn't leave Loop's runners in the Editor's player loop.
+		/// </summary>
+		private bool IsLoopInitializedForEditModeTest;
+
 		private void InitializeLoopCallbackCheck()
 		{
 			// Ensure Loop is initialized for edit mode tests
 			if (Loop.Instance == null)
 			{
 				Loop.InitializeSystem();
+				IsLoopInitializedForEditModeTest = !Application.isPlaying;
 			}
 
 			if (Application.isPlaying)
@@ -157,22 +165,36 @@ namespace Extenity.Testing
 		{
 			var mode = LoopCallbackCheck;
 			var snapshot = LoopCallbackSnapshot;
+			var isLoopInitializedForEditModeTest = IsLoopInitializedForEditModeTest;
 			LoopCallbackCheck = LoopCallbackCheckMode.None;
 			LoopCallbackSnapshot = null;
+			IsLoopInitializedForEditModeTest = false;
 
-			switch (mode)
+			try
 			{
-				case LoopCallbackCheckMode.None:
-					// SetUp failed before the check started. Its error is already reported.
-					break;
-				case LoopCallbackCheckMode.NoCallbacksAllowed:
-					Loop.EnsureAllCallbacksDeregistered();
-					break;
-				case LoopCallbackCheckMode.MatchSnapshot:
-					Loop.EnsureCallbacksMatchSnapshot(snapshot);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+				switch (mode)
+				{
+					case LoopCallbackCheckMode.None:
+						// SetUp failed before the check started. Its error is already reported.
+						break;
+					case LoopCallbackCheckMode.NoCallbacksAllowed:
+						Loop.EnsureAllCallbacksDeregistered();
+						break;
+					case LoopCallbackCheckMode.MatchSnapshot:
+						Loop.EnsureCallbacksMatchSnapshot(snapshot);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+				}
+			}
+			finally
+			{
+				// Taken down even if the check failed, which also drops the callbacks this test left behind, so they
+				// are reported only for this test and not again for every test that runs after it.
+				if (isLoopInitializedForEditModeTest)
+				{
+					Loop.DeinitializeSystem();
+				}
 			}
 		}
 
