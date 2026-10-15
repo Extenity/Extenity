@@ -96,6 +96,16 @@ namespace Extenity.FlowToolbox
 		private static void Instantiate()
 		{
 			// Debug.Assert(Instance == null); Decided not to deinitialize Loop system anytime. If it's up, it stays up until application quits, or Editor recompiles.
+			if (Instance != null)
+			{
+				// The system is already up, which happens when entering Play Mode with domain reload disabled.
+				// Unity times start over from zero, so the times that were cached and the periodic-update timers
+				// seeded in the previous session are now in the future. Seed them again from "now", otherwise
+				// the scaled periodic callbacks would not fire until the game time catches up with them.
+				SetCachedTimesFromUnityTimes();
+				InitializePeriodicUpdateTimers();
+				return;
+			}
 			InitializeSystem();
 		}
 
