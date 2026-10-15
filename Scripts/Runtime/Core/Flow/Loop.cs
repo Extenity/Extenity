@@ -325,7 +325,7 @@ namespace Extenity.FlowToolbox
 
 		#region PlayerLoop Injection
 
-		private static void InjectIntoPlayerLoop(ref PlayerLoopSystem playerLoop)
+		internal static void InjectIntoPlayerLoop(ref PlayerLoopSystem playerLoop)
 		{
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeUpdate.WaitForLastPresentationAndUpdateTime), CreateLoopSystem<TimeRunner>());
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeRunner), CreateLoopSystem<NetworkingRunner>());
@@ -349,12 +349,7 @@ namespace Extenity.FlowToolbox
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(CameraPlacementUpdateRunner), CreateLoopSystem<PreRenderRunner>());
 			InsertLoopSystemAfter<PreLateUpdate>(ref playerLoop, typeof(PreRenderRunner), CreateLoopSystem<PreUIRunner>());
 
-			var uiToolkitRepaintType = GetUIToolkitRepaintPanelsType();
-			if (!ContainsLoopSystem<PostLateUpdate>(ref playerLoop, uiToolkitRepaintType))
-			{
-				throw new InvalidOperationException($"Loop could not find UI Toolkit's panel repaint step '{nameof(PostLateUpdate)}.{uiToolkitRepaintType.Name}' in the player loop, so it can't run PostUIToolkitRepaint callbacks. Unity has probably moved that step.");
-			}
-			InsertLoopSystemAfter<PostLateUpdate>(ref playerLoop, uiToolkitRepaintType, CreateLoopSystem<PostUIToolkitRepaintRunner>());
+			InsertLoopSystemAfter<PostLateUpdate>(ref playerLoop, GetUIToolkitRepaintPanelsType(), CreateLoopSystem<PostUIToolkitRepaintRunner>());
 		}
 
 		/// <summary>
@@ -371,26 +366,7 @@ namespace Extenity.FlowToolbox
 			return type;
 		}
 
-		private static bool ContainsLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, Type systemType)
-		{
-			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
-			{
-				if (rootLoop.subSystemList[i].type == typeof(TParent))
-				{
-					var subsystems = rootLoop.subSystemList[i].subSystemList;
-					for (int j = 0; j < subsystems.Length; j++)
-					{
-						if (subsystems[j].type == systemType)
-						{
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-
-		private static void RemoveFromPlayerLoop(ref PlayerLoopSystem playerLoop)
+		internal static void RemoveFromPlayerLoop(ref PlayerLoopSystem playerLoop)
 		{
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(TimeRunner));
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner));
@@ -424,72 +400,81 @@ namespace Extenity.FlowToolbox
 			};
 		}
 
-		private static void InsertLoopSystemBefore<TParent>(ref PlayerLoopSystem rootLoop, Type beforeType, PlayerLoopSystem systemToInsert)
+		internal static void InsertLoopSystemBefore<TParent>(ref PlayerLoopSystem rootLoop, Type beforeType, PlayerLoopSystem systemToInsert)
 		{
-			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
-			{
-				if (rootLoop.subSystemList[i].type == typeof(TParent))
-				{
-					var subsystems = rootLoop.subSystemList[i].subSystemList;
-					for (int j = 0; j < subsystems.Length; j++)
-					{
-						if (subsystems[j].type == beforeType)
-						{
-							var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
-							Array.Copy(subsystems, 0, newSubsystems, 0, j);
-							newSubsystems[j] = systemToInsert;
-							Array.Copy(subsystems, j, newSubsystems, j + 1, subsystems.Length - j);
-							rootLoop.subSystemList[i].subSystemList = newSubsystems;
-							return;
-						}
-					}
-				}
-			}
+			var phaseIndex = GetPhaseIndex<TParent>(rootLoop, $"insert '{systemToInsert.type.Name}'");
+			var subsystems = rootLoop.subSystemList[phaseIndex].subSystemList;
+			var j = GetSubsystemIndex<TParent>(subsystems, beforeType, $"insert '{systemToInsert.type.Name}' before it");
+
+			var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
+			Array.Copy(subsystems, 0, newSubsystems, 0, j);
+			newSubsystems[j] = systemToInsert;
+			Array.Copy(subsystems, j, newSubsystems, j + 1, subsystems.Length - j);
+			rootLoop.subSystemList[phaseIndex].subSystemList = newSubsystems;
 		}
 
-		private static void InsertLoopSystemAfter<TParent>(ref PlayerLoopSystem rootLoop, Type afterType, PlayerLoopSystem systemToInsert)
+		internal static void InsertLoopSystemAfter<TParent>(ref PlayerLoopSystem rootLoop, Type afterType, PlayerLoopSystem systemToInsert)
 		{
-			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
-			{
-				if (rootLoop.subSystemList[i].type == typeof(TParent))
-				{
-					var subsystems = rootLoop.subSystemList[i].subSystemList;
-					for (int j = 0; j < subsystems.Length; j++)
-					{
-						if (subsystems[j].type == afterType)
-						{
-							var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
-							Array.Copy(subsystems, 0, newSubsystems, 0, j + 1);
-							newSubsystems[j + 1] = systemToInsert;
-							Array.Copy(subsystems, j + 1, newSubsystems, j + 2, subsystems.Length - j - 1);
-							rootLoop.subSystemList[i].subSystemList = newSubsystems;
-							return;
-						}
-					}
-				}
-			}
+			var phaseIndex = GetPhaseIndex<TParent>(rootLoop, $"insert '{systemToInsert.type.Name}'");
+			var subsystems = rootLoop.subSystemList[phaseIndex].subSystemList;
+			var j = GetSubsystemIndex<TParent>(subsystems, afterType, $"insert '{systemToInsert.type.Name}' after it");
+
+			var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
+			Array.Copy(subsystems, 0, newSubsystems, 0, j + 1);
+			newSubsystems[j + 1] = systemToInsert;
+			Array.Copy(subsystems, j + 1, newSubsystems, j + 2, subsystems.Length - j - 1);
+			rootLoop.subSystemList[phaseIndex].subSystemList = newSubsystems;
 		}
 
-		private static void RemoveLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, Type systemType)
+		internal static void RemoveLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, Type systemType)
 		{
-			for (int i = 0; i < rootLoop.subSystemList.Length; i++)
+			var phaseIndex = GetPhaseIndex<TParent>(rootLoop, $"remove '{systemType.Name}'");
+			var subsystems = rootLoop.subSystemList[phaseIndex].subSystemList;
+			var j = GetSubsystemIndex<TParent>(subsystems, systemType, "remove it");
+
+			var newSubsystems = new PlayerLoopSystem[subsystems.Length - 1];
+			Array.Copy(subsystems, 0, newSubsystems, 0, j);
+			Array.Copy(subsystems, j + 1, newSubsystems, j, subsystems.Length - j - 1);
+			rootLoop.subSystemList[phaseIndex].subSystemList = newSubsystems;
+		}
+
+		/// <summary>
+		/// Finds the top-level phase (like <see cref="Update"/>) in the player loop. Throws if it's not there, since
+		/// that means Unity changed its player loop and Loop's callbacks of that phase would silently never run.
+		/// </summary>
+		private static int GetPhaseIndex<TParent>(in PlayerLoopSystem rootLoop, string operationDescription)
+		{
+			var phases = rootLoop.subSystemList;
+			if (phases != null)
 			{
-				if (rootLoop.subSystemList[i].type == typeof(TParent))
+				for (int i = 0; i < phases.Length; i++)
 				{
-					var subsystems = rootLoop.subSystemList[i].subSystemList;
-					for (int j = 0; j < subsystems.Length; j++)
+					if (phases[i].type == typeof(TParent))
 					{
-						if (subsystems[j].type == systemType)
-						{
-							var newSubsystems = new PlayerLoopSystem[subsystems.Length - 1];
-							Array.Copy(subsystems, 0, newSubsystems, 0, j);
-							Array.Copy(subsystems, j + 1, newSubsystems, j, subsystems.Length - j - 1);
-							rootLoop.subSystemList[i].subSystemList = newSubsystems;
-							return;
-						}
+						return i;
 					}
 				}
 			}
+			throw new InvalidOperationException($"Loop could not find the '{typeof(TParent).Name}' phase in the player loop, so it can't {operationDescription}. Unity has probably changed its player loop.");
+		}
+
+		/// <summary>
+		/// Finds a step inside a phase of the player loop. Throws if it's not there, since that means Unity moved or
+		/// renamed the step that Loop is anchored to, or Loop's own step is missing.
+		/// </summary>
+		private static int GetSubsystemIndex<TParent>(PlayerLoopSystem[] subsystems, Type systemType, string operationDescription)
+		{
+			if (subsystems != null)
+			{
+				for (int j = 0; j < subsystems.Length; j++)
+				{
+					if (subsystems[j].type == systemType)
+					{
+						return j;
+					}
+				}
+			}
+			throw new InvalidOperationException($"Loop could not find '{typeof(TParent).Name}.{systemType.Name}' in the player loop, so it can't {operationDescription}. Unity has probably moved or renamed that step, or something else replaced the player loop.");
 		}
 
 		private static PlayerLoopSystem.UpdateFunction GetUpdateDelegateFor<T>() where T : struct
@@ -568,29 +553,29 @@ namespace Extenity.FlowToolbox
 		}
 
 		// Marker types for PlayerLoop injection
-		private struct TimeRunner { }
-		private struct NetworkingRunner { }
-		private struct InputUpdateRunner { }
+		internal struct TimeRunner { }
+		internal struct NetworkingRunner { }
+		internal struct InputUpdateRunner { }
 
-		private struct PreFixedUpdateRunner { }
-		private struct FixedUpdateRunner { }
-		private struct PostFixedUpdateRunner { }
+		internal struct PreFixedUpdateRunner { }
+		internal struct FixedUpdateRunner { }
+		internal struct PostFixedUpdateRunner { }
 
-		private struct PreUpdateRunner { }
-		private struct UpdateRunner { }
-		private struct PostUpdateRunner { }
-		private struct InfrequentUpdatesRunner { }
+		internal struct PreUpdateRunner { }
+		internal struct UpdateRunner { }
+		internal struct PostUpdateRunner { }
+		internal struct InfrequentUpdatesRunner { }
 
-		private struct PreLateUpdateRunner { }
-		private struct LateUpdateRunner { }
-		private struct PostLateUpdateRunner { }
+		internal struct PreLateUpdateRunner { }
+		internal struct LateUpdateRunner { }
+		internal struct PostLateUpdateRunner { }
 
-		private struct CameraPlacementUpdateRunner { }
+		internal struct CameraPlacementUpdateRunner { }
 
-		private struct PreRenderRunner { }
-		private struct PreUIRunner { }
+		internal struct PreRenderRunner { }
+		internal struct PreUIRunner { }
 
-		private struct PostUIToolkitRepaintRunner { }
+		internal struct PostUIToolkitRepaintRunner { }
 
 		#endregion
 
