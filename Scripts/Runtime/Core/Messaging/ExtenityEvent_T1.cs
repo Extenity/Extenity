@@ -50,9 +50,7 @@ namespace Extenity.MessagingToolbox
 			var method = callback.Method;
 			if (!ProfilerMarkerCache.TryGetValue(method, out var marker))
 			{
-				var typeName = method.DeclaringType?.Name ?? "Unknown";
-				var methodName = method.Name;
-				marker = new ProfilerMarker($"{typeName}.{methodName}");
+				marker = new ProfilerMarker(ExtenityEventTools.GetProfilerMarkerName(method));
 				ProfilerMarkerCache[method] = marker;
 			}
 			return marker;
