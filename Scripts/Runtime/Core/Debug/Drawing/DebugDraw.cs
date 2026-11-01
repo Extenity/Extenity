@@ -13,6 +13,9 @@ using Extenity.DataToolbox;
 using Extenity.DesignPatternsToolbox;
 using Extenity.MathToolbox;
 using Extenity.TextureToolbox;
+#if UNITY_DRAWER
+using UnityEngine.UIElements;
+#endif
 using Debug = UnityEngine.Debug;
 
 namespace Extenity.DebugToolbox
@@ -41,8 +44,19 @@ namespace Extenity.DebugToolbox
 		{
 			InitializeTextures();
 
-#if !UNITY_DRAWER
+#if UNITY_DRAWER
+			// Nothing to draw yet. The component is enabled only while there are bars or texts on screen,
+			// so LateUpdate does not run at all when there is nothing to draw.
+			enabled = false;
+#else
 			CreateLineMaterial();
+#endif
+		}
+
+		protected override void OnDestroyDerived()
+		{
+#if UNITY_DRAWER
+			DestroyPanel();
 #endif
 		}
 
@@ -51,31 +65,214 @@ namespace Extenity.DebugToolbox
 		#region Update
 
 #if UNITY_DRAWER
-		private void Update()
+		private void LateUpdate()
 		{
+			// LateUpdate, so that the values set in this frame's Update calls are shown in this frame.
+			var currentTime = Time.time;
+			RemoveExpiredBars(currentTime);
+			RemoveExpiredWriteScreen(currentTime);
+			RemoveExpiredWriteScene(currentTime);
+
+			if (barData.Count == 0 && writeScreenData.Count == 0 && writeSceneData.Count == 0)
+			{
+				StopDrawing();
+				return;
+			}
+
+			SetOverlayVisible(!DebugDrawingDisabled);
 			if (DebugDrawingDisabled)
 				return;
 
-			OnUpdateBar();
-			OnUpdateWriteScreen();
-			OnUpdateWriteScene();
+			RefreshBars();
+			RefreshWriteScreen();
+			RefreshWriteScene();
 		}
 #endif
 
 		#endregion
 
-		#region GUI
+		#region UI Toolkit Panel
 
 #if UNITY_DRAWER
-		private void OnGUI() // Ignored by Code Correct
-		{
-			if (DebugDrawingDisabled)
-				return;
 
-			DrawBar();
-			DrawWriteScreen();
-			DrawWriteScene();
+		/// <summary>
+		/// The UI Toolkit theme of the panel that draws bars and texts. When not set, a theme that is already loaded
+		/// is used, preferring Unity's default runtime theme. Set it before the first bar or text is drawn when the
+		/// application does not load any UI Toolkit theme by itself.
+		/// </summary>
+		public static ThemeStyleSheet Theme;
+
+		/// <summary>
+		/// Sorting order of the panel that draws bars and texts. High by default, so that debug drawings stay above
+		/// the application's own UI. Applied when the panel is created.
+		/// </summary>
+		public static float PanelSortingOrder = 32000f;
+
+		private const string UnityDefaultRuntimeThemeName = "UnityDefaultRuntimeTheme";
+
+		private PanelSettings panelSettings;
+		private GameObject documentObject;
+		private UIDocument document;
+		private VisualElement overlayRoot;
+		private bool isOverlayVisible = true;
+
+		private void StartDrawing()
+		{
+			if (documentObject == null)
+			{
+				BuildPanel();
+			}
+
+			if (!documentObject.activeSelf)
+			{
+				documentObject.SetActive(true);
+				// UIDocument creates a new root visual element each time it gets enabled, so the overlay is
+				// attached again every time the document comes back.
+				var documentRoot = document.rootVisualElement;
+				documentRoot.pickingMode = PickingMode.Ignore;
+				overlayRoot.RemoveFromHierarchy();
+				documentRoot.Add(overlayRoot);
+			}
+
+			enabled = true;
 		}
+
+		private void StopDrawing()
+		{
+			enabled = false;
+			if (documentObject != null)
+			{
+				// No panel to update or render while there is nothing to draw.
+				documentObject.SetActive(false);
+			}
+		}
+
+		private void SetOverlayVisible(bool visible)
+		{
+			if (isOverlayVisible == visible)
+				return;
+			isOverlayVisible = visible;
+			overlayRoot.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+		}
+
+		private void BuildPanel()
+		{
+			var theme = FindTheme();
+
+			panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+			panelSettings.name = "DebugDrawPanelSettings";
+			panelSettings.hideFlags = HideFlags.DontSave;
+			panelSettings.sortingOrder = PanelSortingOrder;
+			// One panel unit per screen pixel, so that the Screen based positions below map directly to the panel.
+			panelSettings.scaleMode = PanelScaleMode.ConstantPixelSize;
+			panelSettings.scale = 1f;
+			panelSettings.clearColor = false;
+			panelSettings.themeStyleSheet = theme;
+
+			documentObject = new GameObject("DebugDrawDocument");
+			documentObject.transform.SetParent(transform, false);
+			// Inactive until StartDrawing, which attaches the overlay when it activates the document.
+			documentObject.SetActive(false);
+			document = documentObject.AddComponent<UIDocument>();
+			document.panelSettings = panelSettings;
+
+			overlayRoot = new VisualElement { name = "DebugDraw_Overlay", pickingMode = PickingMode.Ignore };
+			overlayRoot.style.position = Position.Absolute;
+			overlayRoot.style.left = 0f;
+			overlayRoot.style.top = 0f;
+			overlayRoot.style.right = 0f;
+			overlayRoot.style.bottom = 0f;
+			isOverlayVisible = true;
+		}
+
+		private static ThemeStyleSheet FindTheme()
+		{
+			if (Theme)
+				return Theme;
+
+			var loadedThemes = Resources.FindObjectsOfTypeAll<ThemeStyleSheet>();
+			if (loadedThemes.Length == 0)
+			{
+				throw new InvalidOperationException($"{nameof(DebugDraw)} found no loaded UI Toolkit theme to draw its bars and texts with. Assign {nameof(DebugDraw)}.{nameof(Theme)} before drawing.");
+			}
+			foreach (var loadedTheme in loadedThemes)
+			{
+				if (loadedTheme.name == UnityDefaultRuntimeThemeName)
+					return loadedTheme;
+			}
+			return loadedThemes[0];
+		}
+
+		private void DestroyPanel()
+		{
+			if (documentObject != null)
+			{
+				Destroy(documentObject);
+				documentObject = null;
+			}
+			if (panelSettings != null)
+			{
+				Destroy(panelSettings);
+				panelSettings = null;
+			}
+		}
+
+		/// <summary>
+		/// Colours given to DebugDraw are treated as linear colours in linear colour space projects, the same way
+		/// Debug.DrawLine and immediate mode GUI treat them, while UI Toolkit takes them as sRGB. Converting keeps the
+		/// on-screen colours the same as those of the lines.
+		/// </summary>
+		private static Color ToPanelColor(Color color)
+		{
+			return QualitySettings.activeColorSpace == ColorSpace.Linear ? color.gamma : color;
+		}
+
+		private static Label CreateLabel(string name, int fontSize)
+		{
+			var label = new Label { name = name, pickingMode = PickingMode.Ignore };
+			label.style.position = Position.Absolute;
+			label.style.marginLeft = 0f;
+			label.style.marginRight = 0f;
+			label.style.marginTop = 0f;
+			label.style.marginBottom = 0f;
+			label.style.paddingLeft = 0f;
+			label.style.paddingRight = 0f;
+			label.style.paddingTop = LabelVerticalPadding;
+			label.style.paddingBottom = LabelVerticalPadding;
+			label.style.fontSize = fontSize;
+			return label;
+		}
+
+		private static VisualElement CreateBox(string name)
+		{
+			var box = new VisualElement { name = name, pickingMode = PickingMode.Ignore };
+			box.style.position = Position.Absolute;
+			return box;
+		}
+
+		private static void SetRect(VisualElement element, float x, float y, float width, float height)
+		{
+			element.style.left = x;
+			element.style.top = y;
+			element.style.width = width;
+			element.style.height = height;
+		}
+
+		/// <summary>
+		/// Places the element between two horizontal positions given in any order, like a rectangle with a negative
+		/// width would be drawn.
+		/// </summary>
+		private static void SetHorizontalSpan(VisualElement element, int start, int end)
+		{
+			element.style.left = Mathf.Min(start, end);
+			element.style.width = Mathf.Abs(end - start);
+		}
+
+		private const int LabelVerticalPadding = 3;
+		private const int DefaultTextFontSize = 12;
+		// Texts are drawn slightly dimmer than their given colors, like the default label style used to draw them.
+		private static readonly Color TextColorTint = new Color(0.9f, 0.9f, 0.9f, 1f);
+
 #endif
 
 		#endregion
@@ -583,6 +780,9 @@ namespace Extenity.DebugToolbox
 			public float duration;
 			internal float lastUpdateTime;
 			internal int updatedInFrame;
+#if UNITY_DRAWER
+			internal BarElements elements;
+#endif
 
 			public BarData(int lineIndex, NineSliceAnchor anchor)
 			{
@@ -623,34 +823,17 @@ namespace Extenity.DebugToolbox
 		private const int BarBackgroundMarginDouble = BarBackgroundMargin * 2;
 
 		private List<BarData> barData = new List<BarData>(20);
-		private GUIStyle barGuiStyleText;
-		private GUIStyle barGuiStyleMinText;
-		private GUIStyle barGuiStyleMaxText;
-		private float barTextHeight;
 
-		#region Initialization
-
-		private void InitializeBars()
-		{
-			barGuiStyleText = new GUIStyle(GUI.skin.GetStyle("Label"));
-			barGuiStyleText.fontSize = 11;
-			barGuiStyleMinText = new GUIStyle(GUI.skin.GetStyle("Label"));
-			barGuiStyleMaxText = new GUIStyle(GUI.skin.GetStyle("Label"));
-			barGuiStyleMinText.normal.textColor *= 0.9f;
-			barGuiStyleMaxText.normal.textColor *= 0.9f;
-			barGuiStyleMinText.fontSize = 9;
-			barGuiStyleMaxText.fontSize = 9;
-			barGuiStyleMinText.alignment = TextAnchor.LowerLeft;
-			barGuiStyleMaxText.alignment = TextAnchor.LowerRight;
-			barTextHeight = barGuiStyleText.CalcSize(new GUIContent("A")).y;
-		}
-
-		private bool IsBarInitialized
-		{
-			get { return barGuiStyleMinText != null; }
-		}
-
-		#endregion
+#if UNITY_DRAWER
+		private const int BarTextFontSize = 11;
+		private const int BarMinMaxTextFontSize = 9;
+		// The height of a single line of bar text, including the label's vertical padding.
+		private const float BarTextHeight = 18f;
+		private const float BarHeight = BarAreaHeight * 0.2f;
+		private static readonly Color BarTextColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+		private static readonly Color BarMinMaxTextColor = BarTextColor * 0.9f;
+		private static readonly Color BarShadowedValueTint = new Color(0.6f, 0.6f, 0.6f, 0.6f);
+#endif
 
 		#region User - Bar Bool
 
@@ -846,6 +1029,9 @@ namespace Extenity.DebugToolbox
 			data.lastUpdateTime = Time.time;
 			data.updatedInFrame = Time.frameCount;
 
+#if UNITY_DRAWER
+			Instance.StartDrawing();
+#endif
 			return data;
 		}
 
@@ -860,6 +1046,9 @@ namespace Extenity.DebugToolbox
 			data.lastUpdateTime = Time.time;
 			data.updatedInFrame = Time.frameCount;
 
+#if UNITY_DRAWER
+			Instance.StartDrawing();
+#endif
 			return data;
 		}
 
@@ -883,67 +1072,192 @@ namespace Extenity.DebugToolbox
 
 		#region Update Bar
 
-		private void OnUpdateBar()
-		{
-			float currentTime = Time.time;
+#if UNITY_DRAWER
 
+		private void RemoveExpiredBars(float currentTime)
+		{
 			for (int i = barData.Count - 1; i >= 0; i--)
 			{
 				var data = barData[i];
 
 				if (data.duration < 0f || data.lastUpdateTime + data.duration < currentTime)
 				{
+					data.elements?.Root.RemoveFromHierarchy();
+					data.elements = null;
 					barData.RemoveAt(i);
 				}
 			}
 		}
 
+#endif
+
 		#endregion
 
 		#region Draw Bar
 
-		private static Texture2D barBackgroundTexture;
-		private static Texture2D barTexture;
-		private static Color lastBarBackgroundColor;
-		private static Color lastBarColor;
+#if UNITY_DRAWER
 
-		private void DrawBar()
+		internal sealed class BarElements
+		{
+			public VisualElement Root;
+			public Label Text;
+			public VisualElement Background;
+			public VisualElement BarArea;
+			public VisualElement ShadowedBar;
+			public VisualElement Bar;
+			public Label MinText;
+			public Label MaxText;
+
+			// Last shown values, so that texts are only formatted again when they change.
+			public string ShownText;
+			public float ShownValue = float.NaN;
+			public float ShownMinValue = float.NaN;
+			public float ShownMaxValue = float.NaN;
+			public Color ShownBarColor;
+			public Color ShownBackgroundColor;
+		}
+
+		private void RefreshBars()
 		{
 			for (int i = 0; i < barData.Count; i++)
 			{
-				DrawBarInternal(barData[i]);
+				RefreshBar(barData[i]);
 			}
 		}
 
-		private void DrawBarInternal(BarData data)
+		private BarElements CreateBarElements()
 		{
-			if (!IsBarInitialized)
+			var elements = new BarElements();
+
+			elements.Root = CreateBox("DebugDraw_Bar");
+			overlayRoot.Add(elements.Root);
+
+			elements.Text = CreateLabel("DebugDraw_BarText", BarTextFontSize);
+			elements.Text.style.color = ToPanelColor(BarTextColor);
+			elements.Text.style.overflow = Overflow.Hidden;
+			elements.Text.style.whiteSpace = WhiteSpace.Normal;
+			elements.Text.style.unityTextAlign = TextAnchor.UpperLeft;
+			elements.Root.Add(elements.Text);
+
+			elements.Background = CreateBox("DebugDraw_BarBackground");
+			elements.Root.Add(elements.Background);
+
+			elements.BarArea = CreateBox("DebugDraw_BarArea");
+			elements.Root.Add(elements.BarArea);
+
+			elements.ShadowedBar = CreateBox("DebugDraw_ShadowedBar");
+			elements.ShadowedBar.style.top = 0f;
+			elements.ShadowedBar.style.height = BarHeight;
+			elements.BarArea.Add(elements.ShadowedBar);
+
+			elements.Bar = CreateBox("DebugDraw_BarValue");
+			elements.Bar.style.top = 0f;
+			elements.Bar.style.height = BarHeight;
+			elements.BarArea.Add(elements.Bar);
+
+			elements.MinText = CreateLabel("DebugDraw_BarMinText", BarMinMaxTextFontSize);
+			elements.MinText.style.color = ToPanelColor(BarMinMaxTextColor);
+			elements.MinText.style.unityTextAlign = TextAnchor.LowerLeft;
+			elements.Root.Add(elements.MinText);
+
+			elements.MaxText = CreateLabel("DebugDraw_BarMaxText", BarMinMaxTextFontSize);
+			elements.MaxText.style.color = ToPanelColor(BarMinMaxTextColor);
+			elements.MaxText.style.unityTextAlign = TextAnchor.LowerRight;
+			elements.Root.Add(elements.MaxText);
+
+			return elements;
+		}
+
+		private void RefreshBar(BarData data)
+		{
+			var elements = data.elements;
+			if (elements == null)
 			{
-				InitializeBars();
+				elements = CreateBarElements();
+				data.elements = elements;
 			}
 
-			if (barBackgroundTexture == null)
+			var rectArea = CalculateBarArea(data);
+			var width = rectArea.width;
+
+			// The bar area sits right below the bar text. The background frames it with a margin and the min max texts
+			// go right below the background.
+			var barY = BarTextHeight;
+			var backgroundHeight = BarHeight + BarBackgroundMarginDouble;
+			SetRect(elements.Root, rectArea.x, rectArea.y, width, rectArea.height);
+			SetRect(elements.Text, 0f, 0f, width, rectArea.height);
+			SetRect(elements.Background, -BarBackgroundMargin, barY - BarBackgroundMargin, width + BarBackgroundMarginDouble, backgroundHeight);
+			SetRect(elements.BarArea, 0f, barY, width, BarHeight);
+			SetRect(elements.MinText, 0f, barY - BarBackgroundMargin + backgroundHeight, width, backgroundHeight);
+			SetRect(elements.MaxText, 0f, barY - BarBackgroundMargin + backgroundHeight, width, backgroundHeight);
+
+			// A clamped bar is cut at the edges of the bar area.
+			elements.BarArea.style.overflow = data.clamp ? Overflow.Hidden : Overflow.Visible;
+
+			// Texts
+			if (!ReferenceEquals(elements.ShownText, data.text) || elements.ShownValue != data.value)
 			{
-				barBackgroundTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+				elements.ShownText = data.text;
+				elements.ShownValue = data.value;
+				elements.Text.text = string.IsNullOrEmpty(data.text)
+					? data.value.ToString("0.0000")
+					: data.text + ": " + data.value.ToString("0.0000");
 			}
-			if (barTexture == null)
+			if (elements.ShownMinValue != data.minValue)
 			{
-				barTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+				elements.ShownMinValue = data.minValue;
+				elements.MinText.text = data.minValue.ToString("0.0000");
+			}
+			if (elements.ShownMaxValue != data.maxValue)
+			{
+				elements.ShownMaxValue = data.maxValue;
+				elements.MaxText.text = data.maxValue.ToString("0.0000");
 			}
 
-			if (lastBarBackgroundColor != data.CurrentBackgroundColor)
+			// Colors. The bar is shown with its active colors in the frames it gets updated, and dimmer otherwise.
+			var barColor = data.CurrentBarColor;
+			var backgroundColor = data.CurrentBackgroundColor;
+			if (elements.ShownBarColor != barColor)
 			{
-				barBackgroundTexture.SetPixel(0, 0, data.CurrentBackgroundColor);
-				barBackgroundTexture.Apply();
-				lastBarBackgroundColor = data.CurrentBackgroundColor;
+				elements.ShownBarColor = barColor;
+				elements.Bar.style.backgroundColor = ToPanelColor(barColor);
+				elements.ShadowedBar.style.backgroundColor = ToPanelColor(barColor * BarShadowedValueTint);
 			}
-			if (lastBarColor != data.CurrentBarColor)
+			if (elements.ShownBackgroundColor != backgroundColor)
 			{
-				barTexture.SetPixel(0, 0, data.CurrentBarColor);
-				barTexture.Apply();
-				lastBarColor = data.CurrentBarColor;
+				elements.ShownBackgroundColor = backgroundColor;
+				elements.Background.style.backgroundColor = ToPanelColor(backgroundColor);
 			}
 
+			// Bar
+			var barStart = CalculateBarPosition(width, data.centerValue, data);
+			var barEnd = CalculateBarPosition(width, data.value, data);
+			SetHorizontalSpan(elements.Bar, barStart, barEnd);
+			if (float.IsNaN(data.shadowedValue))
+			{
+				elements.ShadowedBar.style.display = DisplayStyle.None;
+			}
+			else
+			{
+				elements.ShadowedBar.style.display = DisplayStyle.Flex;
+				SetHorizontalSpan(elements.ShadowedBar, barStart, CalculateBarPosition(width, data.shadowedValue, data));
+			}
+
+			if (data.duration == 0f)
+			{
+				data.duration = -1f; // Mark data to be removed in next update
+			}
+		}
+
+		private static int CalculateBarPosition(float width, float value, BarData data)
+		{
+			var position = width * ((value - data.minValue) / (data.maxValue - data.minValue));
+			// A bar without a range (e.g. a shadowed value set on a line that has no bar) has nothing to show.
+			return float.IsFinite(position) ? (int)position : 0;
+		}
+
+		private static Rect CalculateBarArea(BarData data)
+		{
 			var rectArea = new Rect(0f, 0f, data.width, BarAreaHeight);
 
 			switch (data.anchor)
@@ -972,81 +1286,10 @@ namespace Extenity.DebugToolbox
 				default: throw new ArgumentOutOfRangeException();
 			}
 
-			var rectBar = rectArea;
-			rectBar.y += barTextHeight;
-			rectBar.height *= 0.2f;
-
-			var rectBackground = new Rect(
-				rectBar.x - BarBackgroundMargin,
-				rectBar.y - BarBackgroundMargin,
-				rectBar.width + BarBackgroundMarginDouble,
-				rectBar.height + BarBackgroundMarginDouble);
-
-			// Draw text and value
-			{
-				if (string.IsNullOrEmpty(data.text))
-				{
-					GUI.Label(rectArea, data.value.ToString("0.0000"), barGuiStyleText);
-				}
-				else
-				{
-					GUI.Label(rectArea, data.text + ": " + data.value.ToString("0.0000"), barGuiStyleText);
-				}
-			}
-
-			// Draw background and bar
-			{
-				var barStart = (int)(rectArea.width * ((data.centerValue - data.minValue) / (data.maxValue - data.minValue)));
-				var barEnd = (int)(rectArea.width * ((data.value - data.minValue) / (data.maxValue - data.minValue)));
-				var rect = rectBar;
-
-				if (data.clamp)
-				{
-					GUI.DrawTexture(rectBackground, barBackgroundTexture);
-					GUI.BeginGroup(rectBar);
-					rect.x = barStart;
-					rect.y = 0;
-					if (!float.IsNaN(data.shadowedValue))
-					{
-						var barShadowedEnd = (int)(rectArea.width * ((data.shadowedValue - data.minValue) / (data.maxValue - data.minValue)));
-						rect.width = barShadowedEnd - barStart;
-						GUI.DrawTexture(rect, barTexture, ScaleMode.StretchToFill, true, 0f, new Color(0.6f, 0.6f, 0.6f, 0.6f), 0f, 0f);
-					}
-					rect.width = barEnd - barStart;
-					GUI.DrawTexture(rect, barTexture);
-					GUI.EndGroup();
-				}
-				else
-				{
-					GUI.DrawTexture(rectBackground, barBackgroundTexture);
-					rect.x += barStart;
-					if (!float.IsNaN(data.shadowedValue))
-					{
-						var barShadowedEnd = (int)(rectArea.width * ((data.shadowedValue - data.minValue) / (data.maxValue - data.minValue)));
-						rect.width = barShadowedEnd - barStart;
-						GUI.DrawTexture(rect, barTexture, ScaleMode.StretchToFill, true, 0f, new Color(0.6f, 0.6f, 0.6f, 0.6f), 0f, 0f);
-					}
-					rect.width = barEnd - barStart;
-					GUI.DrawTexture(rect, barTexture);
-				}
-			}
-
-			// Draw min max texts
-			{
-				var rect = rectBackground;
-				rect.x += BarBackgroundMargin;
-				rect.y += rectBackground.height;
-				rect.width = rectBar.width;
-
-				GUI.Label(rect, data.minValue.ToString("0.0000"), barGuiStyleMinText);
-				GUI.Label(rect, data.maxValue.ToString("0.0000"), barGuiStyleMaxText);
-			}
-
-			if (data.duration == 0f)
-			{
-				data.duration = -1f; // Mark data to be removed in next update
-			}
+			return rectArea;
 		}
+
+#endif
 
 		#endregion
 
@@ -1065,6 +1308,9 @@ namespace Extenity.DebugToolbox
 			public float startTime;
 			public float duration;
 #pragma warning restore 649
+#if UNITY_DRAWER
+			public Label label;
+#endif
 
 			public WriteScreenData(int lineIndex, NineSliceAnchor anchor)
 			{
@@ -1132,6 +1378,10 @@ namespace Extenity.DebugToolbox
 			data.color = textColor;
 			data.startTime = Time.time;
 			data.duration = duration;
+
+#if UNITY_DRAWER
+			Instance.StartDrawing();
+#endif
 		}
 
 		private WriteScreenData GetOrCreateWriteScreenData(int lineIndex, NineSliceAnchor anchor)
@@ -1150,32 +1400,47 @@ namespace Extenity.DebugToolbox
 			return newData;
 		}
 
-		private void OnUpdateWriteScreen()
-		{
-			float currentTime = Time.time;
+#if UNITY_DRAWER
 
+		private void RemoveExpiredWriteScreen(float currentTime)
+		{
 			for (int i = writeScreenData.Count - 1; i >= 0; i--)
 			{
 				var data = writeScreenData[i];
 
 				if (data.startTime + data.duration < currentTime)
 				{
+					data.label?.RemoveFromHierarchy();
+					data.label = null;
 					writeScreenData.RemoveAt(i);
 				}
 			}
 		}
 
-		private void DrawWriteScreen()
+		private void RefreshWriteScreen()
 		{
 			for (int i = 0; i < writeScreenData.Count; i++)
 			{
 				var data = writeScreenData[i];
-				var oldColor = GUI.contentColor;
-				GUI.contentColor = data.color;
-				GUI.Label(data.rect, data.text);
-				GUI.contentColor = oldColor;
+				var label = data.label;
+				if (label == null)
+				{
+					label = CreateLabel("DebugDraw_WriteScreen", DefaultTextFontSize);
+					// Long texts wrap and get cut at the bottom of the text area.
+					label.style.whiteSpace = WhiteSpace.Normal;
+					label.style.overflow = Overflow.Hidden;
+					label.style.unityTextAlign = TextAnchor.UpperLeft;
+					overlayRoot.Add(label);
+					data.label = label;
+				}
+
+				SetRect(label, data.rect.x, data.rect.y, data.rect.width, data.rect.height);
+				label.text = data.text;
+				label.style.color = ToPanelColor(data.color * TextColorTint);
 			}
 		}
+
+#endif
 
 		#endregion
 
@@ -1189,6 +1454,9 @@ namespace Extenity.DebugToolbox
 			public Color color;
 			public float startTime;
 			public float duration;
+#if UNITY_DRAWER
+			public Label label;
+#endif
 
 			public WriteSceneData(int lineIndex, Vector3 position)
 			{
@@ -1215,6 +1483,10 @@ namespace Extenity.DebugToolbox
 			data.color = textColor;
 			data.startTime = Time.time;
 			data.duration = duration;
+
+#if UNITY_DRAWER
+			Instance.StartDrawing();
+#endif
 		}
 
 		private WriteSceneData GetOrCreateWriteSceneData(int lineIndex, Vector3 position)
@@ -1233,42 +1505,79 @@ namespace Extenity.DebugToolbox
 			return newData;
 		}
 
-		private void OnUpdateWriteScene()
-		{
-			float currentTime = Time.time;
+#if UNITY_DRAWER
 
+		private bool isMissingMainCameraLogged;
+
+		private void RemoveExpiredWriteScene(float currentTime)
+		{
 			for (int i = writeSceneData.Count - 1; i >= 0; i--)
 			{
 				var data = writeSceneData[i];
 
 				if (data.startTime + data.duration < currentTime)
 				{
+					data.label?.RemoveFromHierarchy();
+					data.label = null;
 					writeSceneData.RemoveAt(i);
 				}
 			}
 		}
 
-		private void DrawWriteScene()
+		private void RefreshWriteScene()
 		{
+			if (writeSceneData.Count == 0)
+				return;
+
+			var camera = Camera.main;
+			if (!camera)
+			{
+				// Operational: scenes may go without a main camera for a while, e.g. while loading.
+				if (!isMissingMainCameraLogged)
+				{
+					isMissingMainCameraLogged = true;
+					Log.With(nameof(DebugDraw)).Warning($"{nameof(DebugDraw)} cannot place the texts written to the scene because there is no main camera. They are hidden until a camera tagged MainCamera is available.");
+				}
+				for (int i = 0; i < writeSceneData.Count; i++)
+				{
+					if (writeSceneData[i].label != null)
+						writeSceneData[i].label.style.display = DisplayStyle.None;
+				}
+				return;
+			}
+			isMissingMainCameraLogged = false;
+
 			for (int i = 0; i < writeSceneData.Count; i++)
 			{
 				var data = writeSceneData[i];
-				var screenPosition = Camera.main.WorldToScreenPoint(data.position);
+				var label = data.label;
+				if (label == null)
+				{
+					label = CreateLabel("DebugDraw_WriteScene", DefaultTextFontSize);
+					label.style.whiteSpace = WhiteSpace.NoWrap;
+					// Centered on the position.
+					label.style.translate = new Translate(Length.Percent(-50f), Length.Percent(-50f));
+					overlayRoot.Add(label);
+					data.label = label;
+				}
 
-				GUIStyle style = "Label";
-				var size = style.CalcSize(new GUIContent(data.text));
-				var halfSize = size * 0.5f;
-				var rect = new Rect(
-					screenPosition.x - halfSize.x,
-					Screen.height - (screenPosition.y + halfSize.y) - (data.lineIndex * writeSceneTextAreaHeight),
-					size.x, size.y);
+				var screenPosition = camera.WorldToScreenPoint(data.position);
+				if (screenPosition.z < 0f)
+				{
+					// Behind the camera.
+					label.style.display = DisplayStyle.None;
+					continue;
+				}
 
-				var oldColor = GUI.contentColor;
-				GUI.contentColor = data.color;
-				GUI.Label(rect, data.text);
-				GUI.contentColor = oldColor;
+				label.style.display = DisplayStyle.Flex;
+				label.style.left = screenPosition.x;
+				label.style.top = Screen.height - screenPosition.y - data.lineIndex * writeSceneTextAreaHeight;
+				label.text = data.text;
+				label.style.color = ToPanelColor(data.color * TextColorTint);
 			}
 		}
+
+#endif
 
 		#endregion
 
