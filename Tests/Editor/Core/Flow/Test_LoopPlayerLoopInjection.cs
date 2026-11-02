@@ -25,8 +25,15 @@ namespace ExtenityTests.FlowToolbox
 			AssertConsecutive<TimeUpdate>(playerLoop,
 				typeof(TimeUpdate.WaitForLastPresentationAndUpdateTime),
 				typeof(Loop.TimeRunner),
-				typeof(Loop.NetworkingRunner),
-				typeof(Loop.InputUpdateRunner));
+				typeof(Loop.NetworkingRunner));
+
+			var earlyUpdateTypes = GetPhaseTypes<EarlyUpdate>(playerLoop);
+			Assert.AreEqual(typeof(Loop.InputUpdateRunner), earlyUpdateTypes.Last(),
+				$"'{nameof(Loop.InputUpdateRunner)}' should be the last step of '{nameof(EarlyUpdate)}'.\n\nPlayer loop:\n" + DescribeTree(playerLoop));
+			var gameViewRectIndex = earlyUpdateTypes.IndexOf(typeof(EarlyUpdate.UpdateMainGameViewRect));
+			Assert.GreaterOrEqual(gameViewRectIndex, 0, $"'{nameof(EarlyUpdate)}.{nameof(EarlyUpdate.UpdateMainGameViewRect)}' is not in the Editor's default player loop.");
+			Assert.Less(gameViewRectIndex, earlyUpdateTypes.IndexOf(typeof(Loop.InputUpdateRunner)),
+				"Input must run after the Game view rect is updated, so Screen describes the Game view in the Editor.");
 
 			AssertConsecutive<FixedUpdate>(playerLoop,
 				typeof(Loop.PreFixedUpdateRunner),

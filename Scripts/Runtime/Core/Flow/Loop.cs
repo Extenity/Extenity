@@ -176,7 +176,7 @@ namespace Extenity.FlowToolbox
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterNetworking           (Action callback, int order = 0) { Instance.NetworkingCallbacks           .AddListener(callback, order); }
 
-		/// <summary>Registers a callback for input update operations. Runs after Networking callbacks and before PreFixedUpdate. This is where hardware input is processed and its data is made available to the application, ensuring all game logic operations have access to updated input without delay.</summary>
+		/// <summary>Registers a callback for input update operations. Runs after Networking callbacks and before PreFixedUpdate, at the end of Unity's EarlyUpdate phase, so Screen already describes the Game view in the Editor. This is where hardware input is processed and its data is made available to the application, ensuring all game logic operations have access to updated input without delay.</summary>
 		/// <param name="callback">The callback method to register.</param>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 		public static void RegisterInputUpdate          (Action callback, int order = 0) { Instance.InputUpdateCallbacks          .AddListener(callback, order); }
@@ -329,7 +329,13 @@ namespace Extenity.FlowToolbox
 		{
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeUpdate.WaitForLastPresentationAndUpdateTime), CreateLoopSystem<TimeRunner>());
 			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(TimeRunner), CreateLoopSystem<NetworkingRunner>());
-			InsertLoopSystemAfter<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner), CreateLoopSystem<InputUpdateRunner>());
+			// Input runs at the end of EarlyUpdate rather than in TimeUpdate: in the Editor, Screen.width/height only
+			// describe the Game view after EarlyUpdate.UpdateMainGameViewRect. Before that they hold the size of
+			// whichever Editor view was drawn last, and input consumers that convert pointer positions with Screen
+			// (like UI Toolkit's InputForUI) would get wrong coordinates. Still after Networking and before
+			// PreFixedUpdate. Appended rather than anchored to that step, so the position doesn't depend on which
+			// EarlyUpdate steps a platform has.
+			AppendLoopSystem<EarlyUpdate>(ref playerLoop, CreateLoopSystem<InputUpdateRunner>());
 
 			InsertLoopSystemBefore<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<PreFixedUpdateRunner>());
 			InsertLoopSystemAfter<FixedUpdate>(ref playerLoop, typeof(FixedUpdate.ScriptRunBehaviourFixedUpdate), CreateLoopSystem<FixedUpdateRunner>());
@@ -370,7 +376,7 @@ namespace Extenity.FlowToolbox
 		{
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(TimeRunner));
 			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(NetworkingRunner));
-			RemoveLoopSystem<TimeUpdate>(ref playerLoop, typeof(InputUpdateRunner));
+			RemoveLoopSystem<EarlyUpdate>(ref playerLoop, typeof(InputUpdateRunner));
 
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(PreFixedUpdateRunner));
 			RemoveLoopSystem<FixedUpdate>(ref playerLoop, typeof(FixedUpdateRunner));
@@ -410,6 +416,17 @@ namespace Extenity.FlowToolbox
 			Array.Copy(subsystems, 0, newSubsystems, 0, j);
 			newSubsystems[j] = systemToInsert;
 			Array.Copy(subsystems, j, newSubsystems, j + 1, subsystems.Length - j);
+			rootLoop.subSystemList[phaseIndex].subSystemList = newSubsystems;
+		}
+
+		internal static void AppendLoopSystem<TParent>(ref PlayerLoopSystem rootLoop, PlayerLoopSystem systemToInsert)
+		{
+			var phaseIndex = GetPhaseIndex<TParent>(rootLoop, $"append '{systemToInsert.type.Name}'");
+			var subsystems = rootLoop.subSystemList[phaseIndex].subSystemList ?? Array.Empty<PlayerLoopSystem>();
+
+			var newSubsystems = new PlayerLoopSystem[subsystems.Length + 1];
+			Array.Copy(subsystems, 0, newSubsystems, 0, subsystems.Length);
+			newSubsystems[subsystems.Length] = systemToInsert;
 			rootLoop.subSystemList[phaseIndex].subSystemList = newSubsystems;
 		}
 
