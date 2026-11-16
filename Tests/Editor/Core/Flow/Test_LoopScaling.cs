@@ -112,6 +112,74 @@ namespace ExtenityTests.FlowToolbox
 			AssertAtMostLinear(growth, $"Deregistering one callback ({orderPattern})");
 		}
 
+
+		/// <summary>
+		/// Registering many callbacks in one go, like when instantiating many objects in a single frame. The whole
+		/// burst is measured, so the exponent tells how the cost of a burst grows with its size.
+		/// </summary>
+		[Test]
+		public void RegisterBurst_TotalCostGrowsAtMostLinearly()
+		{
+			var growth = MeasureGrowth(count =>
+			{
+				var burst = CreateCallbacks(count, OrderPattern.SameOrder, 1);
+				return MeasureFastest(
+					setup: null,
+					operation: () => RegisterAll(burst),
+					teardown: () => DeregisterAll(burst));
+			});
+			AssertAtMostLinear(growth, "Registering a burst of callbacks");
+		}
+
+		public enum DeregistrationSequence
+		{
+			SameAsRegistration,
+			ReverseOfRegistration,
+			Random,
+		}
+
+		/// <summary>
+		/// Deregistering many callbacks in one go, like when destroying many objects in a single frame. The whole
+		/// burst is measured, together with the Loop run after it that drops the deregistered callbacks from the
+		/// list.
+		/// </summary>
+		[Test]
+		public void DeregisterBurst_TotalCostGrowsAtMostLinearly([Values] DeregistrationSequence sequence)
+		{
+			var growth = MeasureGrowth(count =>
+			{
+				var burst = CreateCallbacks(count, OrderPattern.SameOrder, 1);
+				var deregistrationBurst = new List<(Action Callback, int Order)>(burst);
+				switch (sequence)
+				{
+					case DeregistrationSequence.SameAsRegistration:
+						break;
+					case DeregistrationSequence.ReverseOfRegistration:
+						deregistrationBurst.Reverse();
+						break;
+					case DeregistrationSequence.Random:
+						var random = new Random(3);
+						for (int i = deregistrationBurst.Count - 1; i > 0; i--)
+						{
+							var j = random.Next(i + 1);
+							(deregistrationBurst[i], deregistrationBurst[j]) = (deregistrationBurst[j], deregistrationBurst[i]);
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(sequence), sequence, null);
+				}
+				return MeasureFastest(
+					setup: () => RegisterAll(burst),
+					operation: () =>
+					{
+						DeregisterAll(deregistrationBurst);
+						Loop.ManuallyRunLoopOnce(1);
+					},
+					teardown: null);
+			});
+			AssertAtMostLinear(growth, $"Deregistering a burst of callbacks ({sequence})");
+		}
+
 		#endregion
 
 		#region Invocation
