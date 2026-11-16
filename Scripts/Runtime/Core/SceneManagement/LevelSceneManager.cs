@@ -38,7 +38,14 @@ namespace Extenity.SceneManagementToolbox
 		{
 			if (!Application.isPlaying)
 			{
-				InitializeLevelSceneList();
+				// The list is generated again only when it is lost (it is not serialized, so an assembly reload
+				// drops it). Changes arrive through OnValidate and the build settings callback. Generating it in
+				// every editor update logged the whole scene list every frame while something kept the editor
+				// updating, like an open inspector.
+				if (LevelScenes == null)
+				{
+					InitializeLevelSceneList();
+				}
 				RegisterForBuildSettingsSceneListChanges();
 			}
 		}
