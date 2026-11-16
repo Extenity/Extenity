@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -41,7 +42,8 @@ namespace Extenity.InspectorToolbox.Editor
 		/// <summary>
 		/// Runs what Unity runs for a visible panel once per editor update: styles and layout, bindings (tracked
 		/// property values included) and scheduled items. Bindings are polled by Unity at most every 100 ms,
-		/// so wait that long between two calls when a binding must notice a change.
+		/// so wait that long between two calls when a binding must notice a change. Unlike an editor update,
+		/// it binds every element that waits to be bound (see <see cref="BindAllWaitingElements"/>).
 		/// </summary>
 		public void Update()
 		{
@@ -65,11 +67,35 @@ namespace Extenity.InspectorToolbox.Editor
 		private static void Update(IPanel panel)
 		{
 			UpdateStylesAndLayout(panel);
-			UpdateBindingsMethod.Invoke(panel, null);
+			BindAllWaitingElements(panel);
 			TickSchedulingUpdatersMethod.Invoke(panel, null);
 			UpdateScheduledEventsMethod.Invoke(SchedulerProperty.GetValue(panel), null);
 			UpdateStylesAndLayout(panel);
 		}
+
+		/// <summary>
+		/// Unity binds the elements that wait to be bound for at most 100 ms per editor update and leaves the
+		/// rest for the next updates. A window gets an update every frame, so the rest follows a moment later.
+		/// Here the next update is the next call, and how much of a large inspector is bound by then would
+		/// depend on how fast the machine is at that moment: a caller that waits for the tree to stop changing
+		/// would wait a different number of calls each time, or stop while fields are still unbound. So the
+		/// update of bindings is repeated until nothing waits.
+		/// </summary>
+		private static void BindAllWaitingElements(IPanel panel)
+		{
+			var waiting = ElementsToBindField.GetValue(GetUpdaterMethod.Invoke(panel, new[] { BindingsPhase })) as HashSet<VisualElement>
+			              ?? throw new InvalidOperationException("Unity's list of the elements that wait to be bound was not found.");
+			for (var pass = 0; pass < MaxBindingPasses; pass++)
+			{
+				UpdateBindingsMethod.Invoke(panel, null);
+				if (waiting.Count == 0)
+					return;
+			}
+			throw new InvalidOperationException($"{waiting.Count} elements still wait to be bound after {MaxBindingPasses} binding updates. Binding them keeps asking for more binding.");
+		}
+
+		/// <summary>Far above what is needed: building every foldout of an inspector with about 34,000 elements needed at most 82 in one call.</summary>
+		private const int MaxBindingPasses = 10000;
 
 		/// <summary>
 		/// Resolves styles and lays the tree out. The panel's own layout validation is not used because it asks
@@ -137,6 +163,16 @@ namespace Extenity.InspectorToolbox.Editor
 		private static readonly object StylesPhase = Enum.Parse(UpdatePhaseType, "Styles");
 		private static readonly object LayoutPhase = Enum.Parse(UpdatePhaseType, "Layout");
 		private static readonly MethodInfo UpdateBindingsMethod = RequireMethod(BasePanelType, "UpdateBindings");
+
+		private static readonly object BindingsPhase = Enum.Parse(UpdatePhaseType, "Bindings");
+
+		private static readonly MethodInfo GetUpdaterMethod =
+			BasePanelType.GetMethod("GetUpdater", AnyInstance, null, new[] { UpdatePhaseType }, null)
+			?? throw new MissingMethodException("UnityEngine.UIElements.BaseVisualElementPanel", "GetUpdater");
+
+		private static readonly FieldInfo ElementsToBindField =
+			typeof(VisualElement).Assembly.GetType("UnityEngine.UIElements.VisualTreeBindingsUpdater", true).GetField("m_ElementsToBind", AnyInstance)
+			?? throw new MissingFieldException("UnityEngine.UIElements.VisualTreeBindingsUpdater", "m_ElementsToBind");
 		private static readonly MethodInfo TickSchedulingUpdatersMethod = RequireMethod(BasePanelType, "TickSchedulingUpdaters");
 
 		private static readonly PropertyInfo SchedulerProperty =
