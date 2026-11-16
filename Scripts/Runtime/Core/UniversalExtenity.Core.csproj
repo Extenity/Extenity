@@ -18,10 +18,4 @@
     <ProjectReference Include="..\..\..\.UniversalDependencies\ZString\ZString.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Sirenix.OdinInspector.Attributes">
-      <HintPath>..\..\..\.UniversalDependencies\OdinInspector\Sirenix.OdinInspector.Attributes.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

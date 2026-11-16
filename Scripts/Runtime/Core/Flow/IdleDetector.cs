@@ -1,7 +1,6 @@
 #if UNITY_5_3_OR_NEWER && ExtenityFastInvoke
 
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,7 +11,6 @@ namespace Extenity.FlowToolbox
 	{
 		[Header("Idle")]
 		public float RequiredTimeToGoIntoIdle = 5f;
-		[ShowInInspector, ReadOnly]
 		public bool IsIdle { get; private set; }
 
 		[Tooltip("Switch this on to enable idle detection feature. Switching it off allows minimizing the overhead of idle detection.")]

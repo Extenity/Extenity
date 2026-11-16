@@ -20,6 +20,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
+        "DOTween.dll",
         "nunit.framework.dll"
     ],
     "autoReferenced": false,

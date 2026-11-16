@@ -2,7 +2,6 @@
 
 using System;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.AnimationToolbox
@@ -88,8 +87,6 @@ namespace Extenity.AnimationToolbox
 			}
 		}
 
-		[TitleGroup("Playback")]
-		[HorizontalGroup("Playback/Buttons"), Button(ButtonSizes.Large), PropertyOrder(100)]
 		public void Stop()
 		{
 			if (CurrentAnimation != null)

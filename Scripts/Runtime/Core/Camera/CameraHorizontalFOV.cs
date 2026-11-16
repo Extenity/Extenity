@@ -1,6 +1,5 @@
 ﻿#if UNITY_5_3_OR_NEWER
 
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.CameraToolbox
@@ -9,10 +8,8 @@ namespace Extenity.CameraToolbox
 	[ExecuteAlways]
 	public class CameraHorizontalFOV : MonoBehaviour
 	{
-		[Required]
 		public Camera Camera;
 
-		[OnValueChanged(nameof(Invalidate))]
 		public float HorizontalFOV = 45f;
 
 		private float LastAspectRatio = -1f;

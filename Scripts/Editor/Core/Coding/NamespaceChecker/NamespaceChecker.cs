@@ -21,7 +21,7 @@ namespace Extenity.CodingToolbox.Editor
 		{
 			using (QuickProfilerStopwatch.WithWarningLogAboveThreshold(nameof(NamespaceChecker), 1f))
 			{
-				var assemblies = Sirenix.Utilities.AssemblyUtilities.GetAllAssemblies();
+				var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 				foreach (var assembly in assemblies)
 				{
 					var attributes = assembly.GetCustomAttributes<EnsuredNamespaceAttribute>().ToArray();

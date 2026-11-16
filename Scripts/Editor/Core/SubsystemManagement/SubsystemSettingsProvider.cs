@@ -1,33 +1,23 @@
 #if UNITY_5_3_OR_NEWER
 #if ExtenitySubsystems
 
-using Sirenix.OdinInspector.Editor;
+using Extenity.InspectorToolbox.Editor;
 using UnityEditor;
-using UnityEngine;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Extenity.SubsystemManagementToolbox
 {
 
+	/// <summary>
+	/// The Subsystems page of the Project Settings: the inspector of the project's <see cref="SubsystemSettings"/>,
+	/// or a button that creates the settings with their defaults when the project has none.
+	/// </summary>
 	public class SubsystemSettingsProvider : SettingsProvider
 	{
-		#region Configuration
-
-		class Styles
-		{
-			public static GUIContent TargetInterface = new GUIContent("Target Interface");
-			public static GUIContent Shortcut = new GUIContent("Shortcut");
-			public static GUIContent InvalidKey = new GUIContent("Invalid key");
-		}
-
-		#endregion
+		internal const string CreateButtonName = "subsystem-settings-create-button";
 
 		#region Initialization
-
-		public override void OnActivate(string searchContext, VisualElement rootElement)
-		{
-			base.OnActivate(searchContext, rootElement);
-		}
 
 		private SubsystemSettingsProvider(string path, SettingsScope scope)
 			: base(path, scope)
@@ -37,19 +27,30 @@ namespace Extenity.SubsystemManagementToolbox
 		[SettingsProvider]
 		public static SettingsProvider Create()
 		{
-			var provider = new SubsystemSettingsProvider("Project/Subsystems", SettingsScope.Project);
-
-			// Automatically extract all keywords from the Styles.
-			provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
-			return provider;
+			return new SubsystemSettingsProvider("Project/Subsystems", SettingsScope.Project)
+			{
+				keywords = new[] { "Subsystem", "Subsystems", "Application Subsystems", "Scene Subsystems", "Scene Setup" },
+			};
 		}
 
 		#endregion
 
-		#region Deinitialization
+		#region Activation
+
+		private VisualElement Root;
+		private UnityEditor.Editor SettingsEditor;
+
+		public override void OnActivate(string searchContext, VisualElement rootElement)
+		{
+			base.OnActivate(searchContext, rootElement);
+			Root = rootElement;
+			Rebuild();
+		}
 
 		public override void OnDeactivate()
 		{
+			DestroySettingsEditor();
+			Root = null;
 			base.OnDeactivate();
 		}
 
@@ -57,53 +58,60 @@ namespace Extenity.SubsystemManagementToolbox
 
 		#region GUI
 
-		[SerializeField]
-		private OdinEditor _OdinEditor;
-
-		private void InitializeGUI()
+		/// <summary>Builds the page again for the settings that exist now.</summary>
+		internal void Rebuild()
 		{
-			if (_OdinEditor == null ||
-			    _OdinEditor.target == null ||
-			    !(_OdinEditor.target as SubsystemSettings).IsFileNameValid())
+			if (Root == null)
+				throw new System.InvalidOperationException("The settings page is not active.");
+
+			DestroySettingsEditor();
+			Root.Clear();
+			InspectorStyles.Apply(Root);
+
+			var title = new Label("Subsystems");
+			title.style.fontSize = 19;
+			title.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
+			title.style.marginLeft = 9;
+			title.style.marginTop = 1;
+			title.style.marginBottom = 8;
+			Root.Add(title);
+
+			if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension) &&
+			    settings.IsFileNameValid())
 			{
-				if (_OdinEditor)
-				{
-					OdinEditor.DestroyImmediate(_OdinEditor);
-					_OdinEditor = null;
-				}
-
-				if (SubsystemSettings.GetInstance(out var settings, SubsystemConstants.ConfigurationFileNameWithoutExtension))
-				{
-					_OdinEditor = (OdinEditor)OdinEditor.CreateEditor(settings, typeof(OdinEditor));
-				}
-				else
-				{
-					_OdinEditor = null;
-				}
-			}
-		}
-
-		public override void OnGUI(string searchContext)
-		{
-			InitializeGUI();
-
-			EditorGUI.BeginChangeCheck();
-
-			if (_OdinEditor != null)
-			{
-				_OdinEditor.OnInspectorGUI();
+				SettingsEditor = UnityEditor.Editor.CreateEditor(settings);
+				var scroll = new ScrollView(ScrollViewMode.Vertical);
+				scroll.style.flexGrow = 1;
+				scroll.Add(new InspectorElement(SettingsEditor));
+				Root.Add(scroll);
 			}
 			else
 			{
-				if (GUILayout.Button("Create Default Settings"))
+				var box = new BoxGroup();
+				box.style.marginLeft = 9;
+				box.style.marginRight = 9;
+				box.Add(new MessageBox("The project has no subsystem settings yet.", MessageSeverity.Info));
+				var button = new Button(() =>
 				{
 					SubsystemSettings.Create(SubsystemConstants.ConfigurationDefaultFilePath);
-				}
+					Rebuild();
+				})
+				{
+					name = CreateButtonName,
+					text = "Create Default Settings",
+				};
+				box.Add(button);
+				Root.Add(box);
 			}
+		}
 
-			if (EditorGUI.EndChangeCheck())
+		private void DestroySettingsEditor()
+		{
+			if (SettingsEditor)
 			{
+				UnityEngine.Object.DestroyImmediate(SettingsEditor);
 			}
+			SettingsEditor = null;
 		}
 
 		#endregion

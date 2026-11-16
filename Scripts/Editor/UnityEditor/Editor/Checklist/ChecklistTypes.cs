@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities.Editor;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Extenity.UnityEditorToolbox
 {
@@ -21,21 +16,19 @@ namespace Extenity.UnityEditorToolbox
 	}
 
 	[Serializable]
-	public class ChecklistItem : ISearchFilterable
+	public class ChecklistItem
 	{
-		[HideInInspector]
 		public string Title;
 
-		[HideInInspector]
+		[TextArea(3, 30)]
 		public string Description;
 
-		[HideInInspector]
 		public ChecklistItemStatus Status;
 
 		/// <summary>
 		/// Allows entering notes, like the user might enter a note to self when a careful inspection is needed.
 		/// </summary>
-		[HideInInspector]
+		[TextArea(3, 30)]
 		public string Notes;
 
 		#region Initialization
@@ -67,137 +60,28 @@ namespace Extenity.UnityEditorToolbox
 
 		#endregion
 
-		#region Editor
-
-		[NonSerialized]
-		private bool IsFoldout;
-
-		[OnInspectorGUI]
-		private void DrawStatusIcon(InspectorProperty property)
-		{
-			EditorGUI.BeginChangeCheck();
-
-			GUILayout.BeginVertical();
-
-			// Summary line
-			GUILayout.BeginHorizontal();
-			{
-				// Icon
-				{
-					var icon = CheckIfCompletedOrSkipped()
-						? ChecklistIcons.Texture_Accept
-						: ChecklistIcons.Texture_Reject;
-					if (GUILayout.Button(icon, ChecklistStyles.IconStyle, ChecklistStyles.SmallIconLayoutOptions))
-					{
-						if (Status == ChecklistItemStatus.Completed)
-						{
-							Status = ChecklistItemStatus.NeedsAttention;
-						}
-						else
-						{
-							Status = ChecklistItemStatus.Completed;
-						}
-					}
-				}
-
-				// Status
-				{
-					var rect = GUILayoutUtility.GetRect(112, ChecklistStyles.SmallIconSize, GUILayout.Width(112));
-					Status = EnumSelector<ChecklistItemStatus>.DrawEnumField(rect, GUIContent.none, Status, ChecklistStyles.StatusDropdownStyle);
-				}
-
-				// Foldout title
-				{
-					IsFoldout = SirenixEditorGUI.Foldout(IsFoldout, Title);
-				}
-			}
-			GUILayout.EndHorizontal();
-
-			// Details
-			if (string.IsNullOrWhiteSpace(Title))
-			{
-				// Enforce opening the details when first adding an item.
-				IsFoldout = true;
-			}
-			if (IsFoldout)
-			{
-				GUILayout.Space(6f);
-				GUILayout.BeginHorizontal();
-				GUILayout.Space(ChecklistStyles.SmallIconSize + 8);
-				SirenixEditorGUI.BeginBox();
-				GUILayout.BeginVertical();
-				GUILayout.Space(6f);
-
-				// Title
-				{
-					GUILayout.Label(nameof(Title));
-					Title = GUILayout.TextField(Title);
-				}
-
-				GUILayout.Space(6f);
-
-				// Description
-				{
-					GUILayout.Label(nameof(Description));
-					var lineCount = Mathf.Max(3, Description.CountLines());
-					var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * lineCount);
-					Description = EditorGUI.TextArea(rect, Description, EditorStyles.textArea);
-				}
-
-				GUILayout.Space(6f);
-
-				// Notes
-				{
-					GUILayout.Label(nameof(Notes));
-					var lineCount = Mathf.Max(3, Notes.CountLines());
-					var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * lineCount);
-					Notes = EditorGUI.TextArea(rect, Notes, EditorStyles.textArea);
-				}
-
-				GUILayout.Space(6f);
-				GUILayout.EndVertical();
-				SirenixEditorGUI.EndBox();
-				GUILayout.EndHorizontal();
-			}
-
-			GUILayout.EndVertical();
-
-			if (EditorGUI.EndChangeCheck())
-			{
-				var serializationRoot = property.SerializationRoot;
-				for (int index = 0; index < serializationRoot.ValueEntry.ValueCount; ++index)
-				{
-					Object weakValue = serializationRoot.ValueEntry.WeakValues[index] as Object;
-					if (weakValue)
-					{
-						EditorUtility.SetDirty(weakValue);
-						// TODO: Figure out a way to make Undo work.
-						// Undo.RegisterCompleteObjectUndo(weakValue, "Checklist modification");
-					}
-				}
-			}
-		}
+		#region Search
 
 		public bool IsMatch(string searchString)
 		{
-			return Description.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
-			       Notes.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
-			       Title.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0;
+			return Contains(Description, searchString) ||
+			       Contains(Notes, searchString) ||
+			       Contains(Title, searchString);
+		}
+
+		internal static bool Contains(string text, string searchString)
+		{
+			return text != null && text.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0;
 		}
 
 		#endregion
 	}
 
 	[Serializable]
-	public class ChecklistGroup : ISearchFilterable
+	public class ChecklistGroup
 	{
-		[Title("Group", HorizontalLine = false)]
-		[HorizontalGroup("Title")]
-		[HideLabel, PropertySpace(SpaceBefore = 4)]
 		public string GroupTitle;
 
-		[ListDrawerSettings(DefaultExpandedState = true)]
-		[PropertySpace(SpaceAfter = 20)]
 		public List<ChecklistItem> Items;
 
 		#region Initialization
@@ -237,36 +121,21 @@ namespace Extenity.UnityEditorToolbox
 
 		#endregion
 
-		#region Editor
-
-		[OnInspectorGUI, PropertySpace(SpaceBefore = 18)]
-		[HorizontalGroup("Title", Width = ChecklistStyles.MidIconSize), PropertyOrder(-1)]
-		private void _DrawIcon()
-		{
-			var icon = CheckIfAllItemsAreCompletedOrSkipped()
-				? ChecklistIcons.Texture_Accept
-				: ChecklistIcons.Texture_Reject;
-			GUILayout.Label(icon, ChecklistStyles.MidIconLayoutOptions);
-		}
+		#region Search
 
 		public bool IsMatch(string searchString)
 		{
-			return GroupTitle.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0;
+			return ChecklistItem.Contains(GroupTitle, searchString);
 		}
 
 		#endregion
 	}
 
 	[Serializable]
-	public class ChecklistCategory : ISearchFilterable
+	public class ChecklistCategory
 	{
-		[Title("Category", HorizontalLine = false)]
-		[HorizontalGroup("Title")]
-		[HideLabel, PropertySpace(SpaceBefore = 4)]
 		public string CategoryTitle;
 
-		[ListDrawerSettings(DefaultExpandedState = true)]
-		[PropertySpace(SpaceAfter = 20)]
 		public List<ChecklistGroup> Groups;
 
 		#region Initialization
@@ -306,21 +175,11 @@ namespace Extenity.UnityEditorToolbox
 
 		#endregion
 
-		#region Editor
-
-		[OnInspectorGUI, PropertySpace(SpaceBefore = 12)]
-		[HorizontalGroup("Title", Width = ChecklistStyles.BigIconSize), PropertyOrder(-1)]
-		private void _DrawIcon()
-		{
-			var icon = CheckIfAllGroupsAreCompletedOrSkipped()
-				? ChecklistIcons.Texture_Accept
-				: ChecklistIcons.Texture_Reject;
-			GUILayout.Label(icon, ChecklistStyles.BigIconLayoutOptions);
-		}
+		#region Search
 
 		public bool IsMatch(string searchString)
 		{
-			return CategoryTitle.IndexOf(searchString, StringComparison.InvariantCultureIgnoreCase) >= 0;
+			return ChecklistItem.Contains(CategoryTitle, searchString);
 		}
 
 		#endregion

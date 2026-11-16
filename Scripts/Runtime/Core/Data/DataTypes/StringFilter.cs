@@ -1,6 +1,5 @@
 using System;
 using Extenity.MathToolbox;
-using Sirenix.OdinInspector;
 
 namespace Extenity.DataToolbox
 {
@@ -68,17 +67,13 @@ namespace Extenity.DataToolbox
 	[Serializable]
 	public class StringFilterEntry
 	{
-		[HorizontalGroup(Width = 86), HideLabel]
 		public StringFilterType FilterType = StringFilterType.Contains;
-		[HorizontalGroup, HideLabel]
-		[InfoBox("$_FilterWarning", InfoMessageType.Warning, VisibleIf = "_IsFilterWarning")]
 		public string Filter = "";
-		[HorizontalGroup(Width = 190), HideLabel]
 		public StringComparison ComparisonType = StringComparison.InvariantCulture;
-		[HorizontalGroup(Width = 30), LabelWidth(52)]
 		public bool Inverted = false;
-		[HorizontalGroup(Width = 30), LabelWidth(74)]
-		[PropertyTooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
+#if UNITY_5_3_OR_NEWER
+		[UnityEngine.Tooltip("When checking if a text matches the filter list, 'MustMatch' option states that the check must match this filter entry to be accepted. If the text does not match any one of the 'MustMatch' filter entries, check will fail. In other words, this option basically allows to build filters like 'AND' operator.")]
+#endif
 		public bool MustMatch = false;
 
 		#region Initialization
@@ -278,10 +273,12 @@ namespace Extenity.DataToolbox
 
 		#endregion
 
-		#region Editor
+		#region Inspector
 
-#if UNITY_EDITOR
-		private string _FilterWarning
+		/// <summary>
+		/// A warning about a filter value that has no effect, or null when the entry is consistent.
+		/// </summary>
+		internal string FilterWarning
 		{
 			get
 			{
@@ -295,8 +292,6 @@ namespace Extenity.DataToolbox
 				return null;
 			}
 		}
-		private bool _IsFilterWarning => !string.IsNullOrEmpty(_FilterWarning);
-#endif
 
 		#endregion
 	}

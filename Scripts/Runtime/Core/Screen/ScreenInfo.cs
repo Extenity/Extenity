@@ -1,7 +1,6 @@
 #if UNITY_5_3_OR_NEWER
 
 using System;
-using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
 using static Unity.Mathematics.math;
@@ -21,7 +20,6 @@ namespace Extenity.ScreenToolbox
 		public bool IsPortrait => Height > Width;
 		public bool IsLandscape => !IsPortrait;
 		public float DPI;
-		[InlineProperty]
 		public Rect SafeArea;
 
 		public float WidthInches => IsInchesInfoAvailable ? Width / DPI : float.NaN;

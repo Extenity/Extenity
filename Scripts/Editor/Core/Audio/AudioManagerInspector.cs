@@ -10,7 +10,7 @@ using UnityEditor;
 namespace Extenity.Audio.Editor
 {
 
-	// TODO: Convert this to Odin Inspector.
+	// TODO: Convert this to an InspectorToolbox inspector.
 	[CustomEditor(typeof(AudioManager))]
 	public class AudioManagerInspector : ExtenityEditorBase<AudioManager>
 	{

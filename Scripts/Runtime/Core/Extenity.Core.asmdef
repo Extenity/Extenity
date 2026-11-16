@@ -13,9 +13,7 @@
     "precompiledReferences": [
         "DOTween.dll",
         "Unity.SharpZipLib.dll",
-        "Newtonsoft.Json.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Utilities.Editor.dll"
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

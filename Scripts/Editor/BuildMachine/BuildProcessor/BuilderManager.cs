@@ -69,8 +69,7 @@ namespace Extenity.BuildMachine.Editor
 					    !name.StartsWith("StompyRobot", StringComparison.Ordinal) &&
 					    !name.StartsWith("SRDebugger", StringComparison.Ordinal) &&
 					    !name.StartsWith("ICSharpCode", StringComparison.Ordinal) &&
-					    !name.StartsWith("CodeStage", StringComparison.Ordinal) &&
-					    !name.StartsWith("Sirenix", StringComparison.Ordinal))
+					    !name.StartsWith("CodeStage", StringComparison.Ordinal))
 					{
 						assemblies.Add(assembly);
 					}

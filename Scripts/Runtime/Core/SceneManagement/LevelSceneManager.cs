@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Extenity.DataToolbox;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -61,22 +60,13 @@ namespace Extenity.SceneManagementToolbox
 				UnityEditor.EditorBuildSettings.sceneListChanged += InitializeLevelSceneList;
 			}
 		}
-
-		// It's not cool to keep the inspector redraw itself every frame. But failed to find a working way to repaint
-		// only when the data changes.
-		[OnInspectorGUI]
-		private void RedrawConstantly()
-		{
-			Sirenix.Utilities.Editor.GUIHelper.RequestRepaint();
-		}
 #endif
 
 		#endregion
 
 		#region Level Scene List
 
-		[NonSerialized, ShowInInspector, ReadOnly]
-		[ListDrawerSettings(DefaultExpandedState = true)]
+		[NonSerialized]
 		public string[] LevelScenes;
 
 		private void InitializeLevelSceneList()

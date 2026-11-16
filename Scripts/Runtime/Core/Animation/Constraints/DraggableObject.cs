@@ -3,7 +3,6 @@
 using System;
 using Extenity.MathToolbox;
 using Extenity.PhysicsToolbox;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.AnimationToolbox
@@ -40,20 +39,16 @@ namespace Extenity.AnimationToolbox
 
 		#region Dragging
 
-		[Title("Dragging")]
+		[Header("Dragging")]
 		public Transform Object;
 		public ObjectDraggingType DraggingType = ObjectDraggingType.HoverInFrontOfCamera;
 
-		[ShowIf("@DraggingType == ObjectDraggingType." + nameof(ObjectDraggingType.HoverInFrontOfCamera))]
 		[Range(0f, 10f)]
 		public float DistanceFromCamera = 3f;
 
-		[ShowIf("@DraggingType == ObjectDraggingType." + nameof(ObjectDraggingType.SnapWithRaycast))]
 		[Range(0f, 10f)]
 		public float DistanceFromHitPoint = 3f;
-		[ShowIf("@DraggingType == ObjectDraggingType." + nameof(ObjectDraggingType.SnapWithRaycast))]
 		public float RaycastMaxDistance = 0f;
-		[ShowIf("@DraggingType == ObjectDraggingType." + nameof(ObjectDraggingType.SnapWithRaycast))]
 		public LayerMask RaycastLayerMask = ~0;
 
 		private void CalculateDraggingPosition()
@@ -95,7 +90,7 @@ namespace Extenity.AnimationToolbox
 
 		#region Smooth Follow
 
-		[Title("Smooth Movement")]
+		[Header("Smooth Movement")]
 		public float MovementSmoothingFactor = 20f;
 
 		[Tooltip("If the movement distance exceeds this threshold distance, the object will be directly teleported to the target without smoothing.")]

@@ -13,10 +13,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Newtonsoft.Json.dll",
-        "Sirenix.OdinInspector.Editor.dll",
-        "Sirenix.Utilities.dll",
-        "Sirenix.Utilities.Editor.dll"
+        "DOTween.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

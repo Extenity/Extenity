@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Extenity.DataToolbox;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Extenity.UnityEditorToolbox
@@ -10,10 +9,8 @@ namespace Extenity.UnityEditorToolbox
 	// TODO: Fail the build if the list is not completed. Not every item should fail though.
 
 	[CreateAssetMenu(fileName = "Checklist", menuName = "Checklist")]
-	[HideMonoScript]
 	[Serializable]
 	[ExcludeFromPresetAttribute]
-	[Searchable]
 	public class Checklist : ExtenityScriptableObject<Checklist>
 	{
 		#region Configuration
@@ -24,7 +21,6 @@ namespace Extenity.UnityEditorToolbox
 
 		#region Data
 
-		[ListDrawerSettings(DefaultExpandedState = true)]
 		public List<ChecklistCategory> Categories;
 
 		#endregion
