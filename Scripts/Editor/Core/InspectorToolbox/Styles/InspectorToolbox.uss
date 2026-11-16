@@ -1,0 +1,704 @@
+/*
+ * Inspector toolbox. Metrics follow Unity's own inspector: 12 px text, 18 px rows, 15 px indent.
+ * Colours come from Unity's variables where one exists, otherwise from the skin sheets
+ * (InspectorToolbox.Dark.uss / InspectorToolbox.Light.uss), which define every --ext-color-* variable.
+ */
+
+.ext-inspector {
+    --ext-space-1: 2px;
+    --ext-space-2: 4px;
+    --ext-space-3: 6px;
+    --ext-space-4: 8px;
+    --ext-space-5: 12px;
+    --ext-space-6: 16px;
+    --ext-radius: 3px;
+    --ext-row-height: 18px;
+    --ext-indent: 15px;
+    --ext-accent-bar-width: 3px;
+    --ext-section-header-height: 22px;
+    --ext-button-height: 20px;
+    --ext-button-height-large: 28px;
+    --ext-button-height-small: 16px;
+    --ext-list-max-height: 420px;
+    --ext-index-label-width: 28px;
+}
+
+/* ---- Search filter of sections ---- */
+
+.ext-search-hidden {
+    display: none;
+}
+
+.ext-section-search {
+    width: auto;
+    margin: var(--ext-space-1) 0 var(--ext-space-3) 0;
+}
+
+/* ---- Fields ---- */
+
+.ext-field__row {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.ext-field__main {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+}
+
+.ext-suffix {
+    color: var(--ext-color-text-muted);
+    margin: 0 var(--ext-space-1) 1px var(--ext-space-2);
+    padding: 0;
+    min-width: 16px;
+    min-height: var(--ext-row-height);
+    -unity-text-align: middle-left;
+}
+
+.ext-field--invalid {
+    border-left-width: 2px;
+    padding-left: 12px;
+    margin-left: -14px;
+}
+
+.ext-field--invalid-error {
+    border-left-color: var(--ext-color-error);
+}
+
+.ext-field--invalid-warning {
+    border-left-color: var(--ext-color-warning);
+}
+
+.ext-field--invalid-info {
+    border-left-color: var(--ext-color-info);
+}
+
+/* Read-only values stay fully legible: no dimming, no input frame. */
+.ext-readonly .unity-disabled,
+.ext-readonly:disabled {
+    opacity: 1;
+}
+
+.ext-readonly .unity-base-field__input,
+.ext-readonly .unity-base-text-field__input {
+    background-color: var(--ext-color-live-bg);
+    border-color: rgba(0, 0, 0, 0);
+}
+
+/* ---- Long labels ---- */
+
+.ext-label--wrapped,
+.ext-label--stacked {
+    white-space: normal;
+    overflow: visible;
+}
+
+.ext-field--stacked {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.ext-field--stacked > .ext-label--stacked {
+    width: auto;
+    min-width: 0;
+    margin-right: 0;
+    padding-bottom: var(--ext-space-1);
+}
+
+/* A check box needs no line of its own: when its label does not fit beside it, it stands before the label. */
+.unity-toggle.ext-field--stacked {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.unity-toggle.ext-field--stacked > .ext-label--stacked {
+    flex-shrink: 1;
+    padding-bottom: 0;
+    padding-left: var(--ext-space-1);
+}
+
+.unity-toggle.ext-field--stacked > .unity-toggle__input {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+/* The input keeps the height of one line next to a label that takes two. */
+.ext-field--wrapped-label {
+    align-items: flex-start;
+}
+
+/* ---- Messages ---- */
+
+.ext-message {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: var(--ext-space-2) var(--ext-space-3);
+    margin: var(--ext-space-1) 0 var(--ext-space-2) 0;
+    border-radius: var(--ext-radius);
+    border-left-width: 3px;
+}
+
+.ext-message__icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin-right: var(--ext-space-3);
+}
+
+.ext-message__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    white-space: normal;
+    padding: 0;
+    margin: 0;
+    -unity-text-align: upper-left;
+}
+
+.ext-message--info {
+    border-left-color: var(--ext-color-info);
+    background-color: var(--ext-color-info-bg);
+}
+
+.ext-message--warning {
+    border-left-color: var(--ext-color-warning);
+    background-color: var(--ext-color-warning-bg);
+}
+
+.ext-message--error {
+    border-left-color: var(--ext-color-error);
+    background-color: var(--ext-color-error-bg);
+}
+
+.ext-message--none {
+    border-left-color: var(--ext-color-neutral-border);
+    background-color: var(--ext-color-neutral-bg);
+}
+
+/* ---- Groups ---- */
+
+.ext-title {
+    margin-top: var(--ext-space-5);
+}
+
+.ext-title__label {
+    -unity-font-style: bold;
+    margin: 0 0 var(--ext-space-1) 3px;
+    padding: 0 0 1px 0;
+}
+
+/*
+ * Groups with a frame keep a gutter of one indent on the left. The arrows of foldouts inside hang in it,
+ * as they hang in the left margin of the inspector itself.
+ */
+.ext-box {
+    background-color: var(--ext-color-group-bg);
+    border-width: 1px;
+    border-color: var(--ext-color-group-border);
+    border-radius: var(--ext-radius);
+    padding: var(--ext-space-2) var(--ext-space-3) var(--ext-space-3) var(--ext-indent);
+    margin: var(--ext-space-2) 0;
+}
+
+.ext-box__header {
+    -unity-font-style: bold;
+    height: 20px;
+    -unity-text-align: middle-left;
+    padding: 0 0 var(--ext-space-1) 0;
+    margin: 0 0 var(--ext-space-2) 0;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--ext-color-separator);
+}
+
+.ext-group-foldout {
+    margin-top: var(--ext-space-1);
+}
+
+.ext-group-foldout > .unity-foldout__toggle .unity-foldout__text {
+    -unity-font-style: bold;
+}
+
+.ext-accent-group {
+    border-left-width: var(--ext-accent-bar-width);
+    border-radius: var(--ext-radius);
+    margin: var(--ext-space-3) 0;
+    overflow: hidden;
+}
+
+.ext-accent-group__header {
+    -unity-font-style: bold;
+    min-height: 22px;
+    -unity-text-align: middle-left;
+    padding: 0 var(--ext-space-3) 0 var(--ext-indent);
+    margin: 0;
+    color: var(--unity-colors-default-text);
+}
+
+/* A foldout header shows its arrow inside the gutter. */
+.unity-foldout__toggle.ext-accent-group__header {
+    padding-left: 3px;
+}
+
+.ext-accent-group__header .unity-foldout__text {
+    -unity-font-style: bold;
+}
+
+.ext-accent-group__content {
+    padding: var(--ext-space-2) var(--ext-space-3) var(--ext-space-3) var(--ext-indent);
+    margin: 0;
+}
+
+.ext-accent-group__foldout {
+    margin: 0;
+}
+
+/* ---- Sections ---- */
+
+.ext-section {
+    margin: 0 0 1px 0;
+}
+
+.ext-section > .unity-foldout__toggle {
+    min-height: var(--ext-section-header-height);
+    margin: 0 -6px 0 -15px;
+    padding-left: 18px;
+    background-color: var(--unity-colors-inspector_titlebar-background);
+    border-top-width: 1px;
+    border-top-color: var(--unity-colors-inspector_titlebar-border);
+}
+
+.ext-section > .unity-foldout__toggle .unity-foldout__text {
+    -unity-font-style: bold;
+}
+
+.ext-section > .unity-foldout__content {
+    margin-left: 0;
+    padding: var(--ext-space-2) 0 var(--ext-space-4) 0;
+}
+
+/* ---- Rows and buttons ---- */
+
+.ext-row {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.ext-row__item {
+    flex-shrink: 1;
+    margin-right: var(--ext-space-2);
+}
+
+.ext-row__label {
+    -unity-text-align: middle-left;
+    min-height: var(--ext-row-height);
+    margin-left: 3px;
+}
+
+.ext-row--no-fields {
+    align-items: center;
+}
+
+/* Only the first field of a row uses the label column. The others take what their text needs. */
+.ext-row > .ext-row__item--compact .unity-base-field__label {
+    min-width: 0;
+    width: auto;
+    margin-right: var(--ext-space-2);
+}
+
+.ext-button {
+    height: var(--ext-button-height);
+    margin: var(--ext-space-1) 0 var(--ext-space-1) 3px;
+    flex-shrink: 1;
+}
+
+.ext-button--large {
+    height: var(--ext-button-height-large);
+    -unity-font-style: bold;
+}
+
+.ext-button--small {
+    height: var(--ext-button-height-small);
+    font-size: 11px;
+}
+
+.ext-button--positive {
+    background-color: var(--ext-color-button-positive);
+}
+
+.ext-button--positive:hover {
+    background-color: var(--ext-color-button-positive-hover);
+}
+
+.ext-button--destructive {
+    background-color: var(--ext-color-button-destructive);
+}
+
+.ext-button--destructive:hover {
+    background-color: var(--ext-color-button-destructive-hover);
+}
+
+.ext-button-row {
+    flex-direction: row;
+    margin: var(--ext-space-2) 0;
+}
+
+.ext-button-row > .ext-button {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: var(--ext-space-2);
+}
+
+.ext-button-form__footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: var(--ext-space-2);
+}
+
+.ext-button-form__footer > .ext-button {
+    min-width: 96px;
+}
+
+/* ---- Dropdown ---- */
+
+.ext-dropdown--unknown .unity-base-popup-field__text {
+    color: var(--ext-color-warning);
+}
+
+/* ---- Live values ---- */
+
+.ext-live__input {
+    flex-direction: row;
+    align-items: center;
+    min-height: var(--ext-row-height);
+    background-color: var(--ext-color-live-bg);
+    border-radius: var(--ext-radius);
+    padding: 0 var(--ext-space-2);
+    overflow: hidden;
+}
+
+.ext-live__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ext-live--multiline .ext-live__text {
+    white-space: normal;
+    overflow: visible;
+}
+
+.ext-live--multiline .ext-live__input {
+    align-items: flex-start;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.ext-live--placeholder .ext-live__text {
+    color: var(--ext-color-text-muted);
+    -unity-font-style: italic;
+}
+
+.ext-live--error .ext-live__text {
+    color: var(--ext-color-error);
+}
+
+.ext-live__bar {
+    width: 72px;
+    height: 4px;
+    margin-right: var(--ext-space-3);
+    border-radius: 2px;
+    background-color: var(--ext-color-separator);
+    flex-shrink: 0;
+}
+
+.ext-live__bar-fill {
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--ext-color-bar);
+}
+
+.ext-live-list__rows {
+    margin-bottom: var(--ext-space-2);
+}
+
+.ext-live-list__row {
+    flex-direction: row;
+    min-height: var(--ext-row-height);
+    padding: 0 var(--ext-space-2);
+}
+
+.ext-live-list__key {
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+    -unity-text-align: middle-left;
+}
+
+.ext-live-list__key--index {
+    width: var(--ext-index-label-width);
+    color: var(--ext-color-text-muted);
+    -unity-text-align: middle-right;
+    margin-right: var(--ext-space-3);
+}
+
+.ext-live-list__value {
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 0;
+    white-space: normal;
+    -unity-text-align: middle-left;
+}
+
+/* ---- Lists ---- */
+
+.ext-list__header {
+    margin: 0;
+}
+
+.ext-list__count {
+    color: var(--ext-color-text-muted);
+    margin-left: auto;
+    padding: 0 var(--ext-space-1) 0 var(--ext-space-3);
+    -unity-text-align: middle-right;
+    -unity-font-style: normal;
+    flex-shrink: 0;
+}
+
+.ext-list--overridden > .ext-list__header > .unity-foldout__toggle .unity-foldout__text {
+    -unity-font-style: bold;
+}
+
+.ext-list__messages {
+    margin-left: var(--ext-indent);
+}
+
+.ext-list__search {
+    flex-direction: row;
+    align-items: center;
+    margin: var(--ext-space-1) 0 var(--ext-space-2) 0;
+}
+
+.ext-list__search > .unity-toolbar-search-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: auto;
+    margin: 0;
+}
+
+.ext-list__search-counter {
+    color: var(--ext-color-text-muted);
+    margin-left: var(--ext-space-3);
+    min-width: 0;
+}
+
+.ext-list--capped {
+    max-height: var(--ext-list-max-height);
+}
+
+.ext-list__row {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: var(--ext-space-1) var(--ext-space-2) var(--ext-space-1) 0;
+}
+
+.ext-list__index {
+    width: var(--ext-index-label-width);
+    min-width: var(--ext-index-label-width);
+    min-height: var(--ext-row-height);
+    color: var(--ext-color-text-muted);
+    -unity-text-align: middle-right;
+    padding: 0;
+    margin: 1px var(--ext-space-3) 0 0;
+}
+
+.ext-list__field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+}
+
+.ext-list__none {
+    color: var(--ext-color-text-muted);
+    -unity-font-style: italic;
+    min-height: var(--ext-row-height);
+    -unity-text-align: middle-left;
+    margin-left: 3px;
+}
+
+/* The index sits left of the arrow of an element that has a foldout. */
+.ext-list__row--foldout > .ext-list__index {
+    margin-right: var(--ext-indent);
+}
+
+/*
+ * The body of an element with a foldout uses the width of its row: it starts under the index, not under the
+ * title. In a narrow inspector the 34 px decide whether the labels of the element fit next to their fields.
+ * (Index width 28 + its margin 15 = 43; the body keeps 9 px, the room of the arrows of the foldouts in it.)
+ */
+.ext-list__row--indexed.ext-list__row--foldout > .ext-list__field > .unity-property-field > .unity-foldout > .unity-foldout__content,
+.ext-list__row--indexed.ext-list__row--foldout > .ext-list__field > .unity-property-field > .ext-instance > .unity-foldout > .unity-foldout__content {
+    margin-left: -34px;
+}
+
+/* The type button of a managed reference lies over the right end of the element's header line. */
+.ext-list__row--typed > .ext-list__field {
+    padding-right: 0;
+}
+
+.ext-list__row--typed .ext-nested > .unity-foldout__toggle,
+.ext-list__row--typed .ext-list__none {
+    margin-right: 24px;
+}
+
+.ext-list__type {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.ext-list__type:hover {
+    background-color: var(--ext-color-live-bg);
+}
+
+.ext-list__type-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* An empty list shows its header and the add button, not Unity's box that says "List is empty". */
+.ext-list--empty > .ext-list__header > .unity-foldout__content > .ext-list__view > .unity-scroll-view {
+    display: none;
+}
+
+.ext-list--empty > .ext-list__header > .unity-foldout__content > .ext-list__view {
+    border-width: 0;
+    min-height: 0;
+}
+
+.ext-table__cell {
+    margin: 1px var(--ext-space-1);
+}
+
+/* ---- Previews, inline editors, small field variants ---- */
+
+.ext-preview {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.ext-preview__field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+}
+
+.ext-preview__image {
+    margin: 1px 0 1px var(--ext-space-2);
+    flex-shrink: 0;
+    background-color: var(--ext-color-live-bg);
+    border-radius: var(--ext-radius);
+}
+
+.ext-inline-editor__foldout {
+    margin: 0;
+}
+
+/* The arrow lies in the margin left of the object field's label, on the field's line. */
+.ext-inline-editor__foldout > .unity-foldout__toggle {
+    position: absolute;
+    left: -15px;
+    top: -19px;
+    width: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+.ext-inline-editor--empty > .ext-inline-editor__foldout {
+    display: none;
+}
+
+.ext-inline-editor__content {
+    border-left-width: 1px;
+    border-left-color: var(--ext-color-guide);
+    padding-left: var(--ext-space-4);
+    margin: var(--ext-space-1) 0 var(--ext-space-3) 0;
+}
+
+.ext-folder-picker__button {
+    width: 24px;
+    min-width: 24px;
+    margin: 0 0 0 var(--ext-space-1);
+    padding: 0;
+}
+
+.ext-toggle-left .unity-toggle__input {
+    flex-grow: 0;
+}
+
+.ext-tabs {
+    margin: var(--ext-space-2) 0;
+}
+
+/* ---- Numbers on one line ---- */
+
+.ext-number-line__input {
+    flex-direction: row;
+    min-height: var(--ext-row-height);
+}
+
+/* Under a stacked label the numbers take the whole line. */
+.ext-field--stacked > .ext-number-line__input {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+
+/* In a table cell every pixel counts: the numbers stand close together. */
+.ext-table__cell .ext-number-line__number {
+    margin-left: 1px;
+}
+
+.ext-table__cell .ext-number-line__number > .unity-base-field__input {
+    padding-left: 2px;
+    padding-right: 1px;
+}
+
+.ext-number-line__number {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    margin: 0 0 0 var(--ext-space-2);
+    min-width: 0;
+}
+
+.ext-number-line__input > .ext-number-line__number--first {
+    margin-left: 0;
+}
+
+/* The short member name takes the width of its text, not a label column. */
+.ext-number-line__number > .unity-base-field__label {
+    min-width: 0;
+    width: auto;
+    flex-basis: auto;
+    flex-grow: 0;
+    margin-right: var(--ext-space-1);
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+.ext-number-line__number > .unity-base-field__input {
+    min-width: 0;
+}

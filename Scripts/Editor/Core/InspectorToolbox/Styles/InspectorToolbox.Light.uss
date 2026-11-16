@@ -1,0 +1,29 @@
+/* Colours of the inspector toolbox for the light editor skin. Variables only. */
+.ext-inspector {
+    --ext-color-text-muted: #5F5F5F;
+    --ext-color-group-bg: rgba(0, 0, 0, 0.03);
+    --ext-color-group-border: rgba(0, 0, 0, 0.18);
+    --ext-color-separator: rgba(0, 0, 0, 0.12);
+    --ext-color-guide: rgba(0, 0, 0, 0.14);
+    --ext-color-row-alt: rgba(0, 0, 0, 0.03);
+    --ext-color-live-bg: rgba(0, 0, 0, 0.04);
+    --ext-color-bar: rgba(0, 0, 0, 0.22);
+
+    --ext-color-info: #1F6FBF;
+    --ext-color-warning: #9A6B00;
+    --ext-color-error: #B3261E;
+    --ext-color-success: #2E7D32;
+    --ext-color-info-bg: rgba(31, 111, 191, 0.10);
+    --ext-color-warning-bg: rgba(154, 107, 0, 0.10);
+    --ext-color-error-bg: rgba(179, 38, 30, 0.10);
+    --ext-color-neutral-bg: rgba(0, 0, 0, 0.04);
+    --ext-color-neutral-border: rgba(0, 0, 0, 0.30);
+
+    --ext-color-button-positive: rgba(46, 125, 50, 0.30);
+    --ext-color-button-positive-hover: rgba(46, 125, 50, 0.42);
+    --ext-color-button-destructive: rgba(179, 38, 30, 0.28);
+    --ext-color-button-destructive-hover: rgba(179, 38, 30, 0.40);
+
+    --ext-accent-bg-alpha: 0.10;
+    --ext-accent-header-alpha: 0.20;
+}
