@@ -33,6 +33,9 @@ namespace Extenity.DebugToolbox
 		private static void Initialize()
 		{
 			DefaultFixedDeltaTime = Time.fixedDeltaTime;
+			// The Loop and its callbacks survive entering Play Mode when the domain is not reloaded. So the callback
+			// may still be registered from the previous Play Mode session.
+			Loop.DeregisterUpdate(CustomUpdate);
 			Loop.RegisterUpdate(CustomUpdate);
 		}
 
