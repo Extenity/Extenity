@@ -15,6 +15,7 @@ using Exception = System.Exception;
 using NotImplementedException = System.NotImplementedException;
 using NotSupportedException = System.NotSupportedException;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+using RuntimeHelpers = System.Runtime.CompilerServices.RuntimeHelpers;
 
 #if EnableProfiling
 using Unity.Profiling;
@@ -62,21 +63,34 @@ namespace Extenity.MessagingToolbox
 
 		#region Listeners
 
-		public struct Listener
+		/// <summary>
+		/// A registered callback and its registration parameters. It stays in the listener list for a short while
+		/// after it is removed (see <see cref="IsRemoved"/>), until the list is compacted.
+		/// </summary>
+		public sealed class Listener
 		{
-			public readonly Action<T1, T2> Callback;
+			private Action<T1, T2> _Callback;
+			public Action<T1, T2> Callback => _Callback;
 #if UnityFeatures
 			public readonly bool IsCallbackTargetsUnityObject;
 #endif
 			public readonly int Order;
 			public readonly ListenerLifeSpan LifeSpan;
 #if UnityFeatures
-			public readonly UnityEngine.Object LifeSpanTarget;
+			private UnityEngine.Object _LifeSpanTarget;
+			public UnityEngine.Object LifeSpanTarget => _LifeSpanTarget;
 			public readonly bool IsLifeSpanTargetAssigned;
 #endif
 #if EnableProfiling
 			public readonly ProfilerMarker ProfilerMarker;
 #endif
+
+			private bool _IsRemoved;
+			/// <summary>
+			/// Whether the listener was removed from its event. A removed listener is never called again. It only
+			/// waits in the listener list to be dropped when the list is compacted.
+			/// </summary>
+			public bool IsRemoved => _IsRemoved;
 
 #if UnityFeatures
 			public Listener(Action<T1, T2> callback, int order, ListenerLifeSpan lifeSpan, UnityEngine.Object lifeSpanTarget)
@@ -84,14 +98,14 @@ namespace Extenity.MessagingToolbox
 			public Listener(Action<T1, T2> callback, int order, ListenerLifeSpan lifeSpan)
 #endif
 			{
-				Callback = callback;
+				_Callback = callback;
 #if UnityFeatures
 				IsCallbackTargetsUnityObject = callback?.Target as UnityEngine.Object; // As in: callback.IsUnityObjectTargeted()
 #endif
 				Order = order;
 				LifeSpan = lifeSpan;
 #if UnityFeatures
-				LifeSpanTarget = lifeSpanTarget;
+				_LifeSpanTarget = lifeSpanTarget;
 				IsLifeSpanTargetAssigned = lifeSpanTarget != null;
 #endif
 #if EnableProfiling
@@ -99,13 +113,29 @@ namespace Extenity.MessagingToolbox
 #endif
 			}
 
-			public bool IsInvalid => Callback == null;
+			/// <summary>
+			/// Marks the listener as removed. Releasing the references lets the callback's target be garbage
+			/// collected without waiting for the listener list to be compacted.
+			/// </summary>
+			internal void MarkAsRemoved(bool releaseReferences)
+			{
+				_IsRemoved = true;
+				if (releaseReferences)
+				{
+					_Callback = null;
+#if UnityFeatures
+					_LifeSpanTarget = null;
+#endif
+				}
+			}
+
+			public bool IsInvalid => _Callback == null;
 
 #if UnityFeatures
-			public bool IsCallbackTargetedUnityObjectDestroyed => IsCallbackTargetsUnityObject && !(Callback.Target as UnityEngine.Object); // As in: SwitchOnCallback.IsUnityObjectTargetedAndDestroyed
-			public bool IsCallbackNullOrTargetedUnityObjectDestroyed => Callback == null || IsCallbackTargetedUnityObjectDestroyed;
+			public bool IsCallbackTargetedUnityObjectDestroyed => IsCallbackTargetsUnityObject && _Callback != null && !(_Callback.Target as UnityEngine.Object); // As in: SwitchOnCallback.IsUnityObjectTargetedAndDestroyed
+			public bool IsCallbackNullOrTargetedUnityObjectDestroyed => _Callback == null || IsCallbackTargetedUnityObjectDestroyed;
 
-			public bool IsLifeSpanTargetDestroyed => IsLifeSpanTargetAssigned && !LifeSpanTarget;
+			public bool IsLifeSpanTargetDestroyed => IsLifeSpanTargetAssigned && !_LifeSpanTarget;
 #endif
 
 			public bool ShouldRemoveAfterEmit
@@ -131,17 +161,17 @@ namespace Extenity.MessagingToolbox
 				{
 #if UnityFeatures
 					// First, try to get callback delegate object. If not available, get the LifeSpanTarget object.
-					if (Callback != null) // Check if the callback is specified by user. See 11853135.
+					if (_Callback != null) // Check if the callback is specified by user. See 11853135.
 					{
-						var obj = Callback.Target as UnityEngine.Object;
+						var obj = _Callback.Target as UnityEngine.Object;
 						if (obj)
 							return obj;
 					}
-					return LifeSpanTarget;
+					return _LifeSpanTarget;
 #else
-					if (Callback != null) // Check if the callback is specified by user. See 11853135.
+					if (_Callback != null) // Check if the callback is specified by user. See 11853135.
 					{
-						return Callback.Target as ContextObject;
+						return _Callback.Target as ContextObject;
 					}
 					return null;
 #endif
@@ -150,20 +180,20 @@ namespace Extenity.MessagingToolbox
 
 			public Action<T1, T2> GetCallbackAndCheckIfAlive()
 			{
-				if (Callback == null)
+				if (_Callback == null)
 					return null;
 
 #if UnityFeatures
-				if (Callback.Target is UnityEngine.Object) // The same with: callback.IsUnityObjectTargeted()
+				if (_Callback.Target is UnityEngine.Object) // The same with: callback.IsUnityObjectTargeted()
 				{
-					return (Callback.Target as UnityEngine.Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
-						? Callback
+					return (_Callback.Target as UnityEngine.Object) // The same with: callback.IsUnityObjectTargetedAndAlive()
+						? _Callback
 						: null;
 				}
 				else
 #endif
 				{
-					return Callback;
+					return _Callback;
 					// This was the previous implementation, which failed static non-UnityObject methods.
 					// return Callback.Target != null ? Callback : null;
 				}
@@ -179,40 +209,89 @@ namespace Extenity.MessagingToolbox
 				// IsObjectDestroyed already ensured that the callback is not null and, if its target was an alive Unity
 				// object at registration, that the target is still alive. A target that was an already destroyed Unity
 				// object at registration is not covered by IsObjectDestroyed and it can't be alive now.
-				if (IsCallbackTargetsUnityObject || !(Callback.Target is UnityEngine.Object))
-					return Callback;
+				if (IsCallbackTargetsUnityObject || !(_Callback.Target is UnityEngine.Object))
+					return _Callback;
 				return null;
 			}
 #endif
 		}
 
 		/// <summary>
+		/// Hashes a callback by the identity of its target object, so the many callbacks of the same method on
+		/// different objects spread over the buckets. Callbacks of static methods have no target and are hashed by
+		/// their method. Equality is the usual delegate equality: the same target and the same method.
+		/// </summary>
+		private sealed class CallbackComparer : IEqualityComparer<Action<T1, T2>>
+		{
+			public static readonly CallbackComparer Instance = new CallbackComparer();
+
+			public bool Equals(Action<T1, T2> x, Action<T1, T2> y)
+			{
+				return x == y;
+			}
+
+			public int GetHashCode(Action<T1, T2> callback)
+			{
+				var target = callback.Target;
+				return target != null
+					? RuntimeHelpers.GetHashCode(target)
+					: callback.Method.GetHashCode();
+			}
+		}
+
+		/// <summary>
 		/// CAUTION! Do not modify! Use AddListener and RemoveListener instead.
 		/// </summary>
-		public List<Listener> _Listeners => Listeners;
+		public List<Listener> _Listeners
+		{
+			get
+			{
+				if (RemovedListenerCount > 0)
+				{
+					Compact();
+				}
+				return Listeners;
+			}
+		}
+
+		/// <summary>
+		/// The listeners in invocation order. Removed listeners stay in the list, marked as removed, until
+		/// <see cref="Compact"/> drops them in a single pass. That way removing a listener costs the same however
+		/// many listeners there are.
+		/// </summary>
 		private readonly List<Listener> Listeners = new List<Listener>(10);
+
+		/// <summary>
+		/// Finds the listener of a callback without searching the list. Holds the registered listeners only, not the
+		/// removed ones that still wait in the list.
+		/// </summary>
+		private readonly Dictionary<Action<T1, T2>, Listener> ListenersByCallback = new Dictionary<Action<T1, T2>, Listener>(CallbackComparer.Instance);
+
+		/// <summary>How many listeners in the list are marked as removed and wait to be dropped.</summary>
+		private int RemovedListenerCount;
+
+		/// <summary>
+		/// Outside of invoking, the list is compacted when the removed listeners waiting in it outnumber both this
+		/// value and the registered listeners. That keeps the list from growing without bounds when listeners are
+		/// added and removed many times without invoking in between, and still costs a constant time per removal
+		/// on average.
+		/// </summary>
+		private const int MinimumRemovedListenerCountToCompact = 32;
 
 		public bool IsCallbackRegistered(Action<T1, T2> callback)
 		{
-			for (var i = 0; i < Listeners.Count; i++)
-			{
-				if (Listeners[i].Callback == callback)
-					return true;
-			}
-			return false;
+			return callback != null && ListenersByCallback.ContainsKey(callback);
 		}
 
+		/// <returns>The listener of the callback, or null if the callback is not registered.</returns>
 		public Listener GetListenerByCallback(Action<T1, T2> callback)
 		{
-			for (var i = 0; i < Listeners.Count; i++)
-			{
-				if (Listeners[i].Callback == callback)
-					return Listeners[i];
-			}
-			return default;
+			if (callback != null && ListenersByCallback.TryGetValue(callback, out var listener))
+				return listener;
+			return null;
 		}
 
-		public int ListenersCount => Listeners.Count;
+		public int ListenersCount => ListenersByCallback.Count;
 
 #if UnityFeatures
 		public int ListenersAliveCount
@@ -222,7 +301,8 @@ namespace Extenity.MessagingToolbox
 				var count = 0;
 				for (int i = Listeners.Count - 1; i >= 0; i--)
 				{
-					if (!Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
+					var listener = Listeners[i];
+					if (!listener.IsRemoved && !listener.IsObjectDestroyed) // Check if the targeted object is destroyed
 					{
 						count++;
 					}
@@ -232,7 +312,7 @@ namespace Extenity.MessagingToolbox
 		}
 #endif
 
-		public bool IsAnyListenerRegistered => Listeners.Count > 0;
+		public bool IsAnyListenerRegistered => ListenersByCallback.Count > 0;
 
 #if UnityFeatures
 		public bool IsAnyAliveListenerRegistered
@@ -241,7 +321,8 @@ namespace Extenity.MessagingToolbox
 			{
 				for (int i = Listeners.Count - 1; i >= 0; i--)
 				{
-					if (!Listeners[i].IsObjectDestroyed) // Check if the targeted object is destroyed
+					var listener = Listeners[i];
+					if (!listener.IsRemoved && !listener.IsObjectDestroyed) // Check if the targeted object is destroyed
 					{
 						return true;
 					}
@@ -255,14 +336,73 @@ namespace Extenity.MessagingToolbox
 			if (IsInvoking)
 				throw new Exception("Cleanup is not allowed while invoking.");
 
-			Listeners.RemoveAll(IsListenerDestroyed);
+			for (var i = 0; i < Listeners.Count; i++)
+			{
+				var listener = Listeners[i];
+				if (!listener.IsRemoved && listener.IsObjectDestroyed)
+				{
+					MarkAsRemoved(listener);
+				}
+			}
+			if (RemovedListenerCount > 0)
+			{
+				Compact();
+			}
 		}
 #endif
+
+		/// <summary>
+		/// Takes the listener out of the registered listeners and marks it as removed. It stays in the list until
+		/// <see cref="Compact"/>.
+		/// </summary>
+		private void MarkAsRemoved(Listener listener)
+		{
+			if (!ListenersByCallback.Remove(listener.Callback))
+			{
+				throw new InternalException(117357192); // The list and the lookup must hold the same listeners.
+			}
+			// The ongoing invocation may still need the callback and the life span target of the listener it is
+			// calling (for example to log an exception thrown by a callback that removed itself). Compacting at the
+			// end of the invocation drops the listener anyway.
+			listener.MarkAsRemoved(releaseReferences: !IsInvoking);
+			RemovedListenerCount++;
+		}
+
+		/// <summary>
+		/// Drops the listeners that are marked as removed from the list, in a single pass. Allowed while invoking.
+		/// </summary>
+		private void Compact()
+		{
+			var writeIndex = 0;
+			var invokeIndex = InvokeIndex; // -1 if not currently invoking.
+			for (var readIndex = 0; readIndex < Listeners.Count; readIndex++)
+			{
+				var listener = Listeners[readIndex];
+				if (listener.IsRemoved)
+				{
+					// Keep the invocation at the same listener. If that one is being dropped, the invocation
+					// continues with the next listener that stays.
+					if (readIndex <= InvokeIndex)
+					{
+						invokeIndex--;
+					}
+					continue;
+				}
+				Listeners[writeIndex++] = listener;
+			}
+			Listeners.RemoveRange(writeIndex, Listeners.Count - writeIndex);
+			RemovedListenerCount = 0;
+			InvokeIndex = invokeIndex;
+		}
 
 		#endregion
 
 		#region Add / Remove Listener
 
+		/// <summary>
+		/// Adding a callback that is already registered logs a warning. With the same parameters, the second
+		/// registration is ignored. With different parameters, it replaces the existing registration.
+		/// </summary>
 		/// <param name="order">Lesser ordered callbacks are called earlier. Negative values are allowed. Callbacks that have the same order are called in registration order. You can easily see order of all callbacks in Tools>Extenity>Application>Loop window.</param>
 #if UnityFeatures
 		public void AddListener(Action<T1, T2> callback, int order = 0, ListenerLifeSpan lifeSpan = ListenerLifeSpan.Permanent, UnityEngine.Object lifeSpanTarget = null)
@@ -288,32 +428,36 @@ namespace Extenity.MessagingToolbox
 			}
 
 			// See if the callback was already registered.
-			for (var i = 0; i < Listeners.Count; i++)
+			if (ListenersByCallback.TryGetValue(callback, out var existingListener))
 			{
-				if (Listeners[i].Callback == callback)
-				{
-					// The callback is already registered. See if there is a change in its parameters.
-					if (Listeners[i].Order != order ||
-					    Listeners[i].LifeSpan != lifeSpan
+				var isSameParameters = existingListener.Order == order &&
+				                       existingListener.LifeSpan == lifeSpan
 #if UnityFeatures
-					    || Listeners[i].LifeSpanTarget != lifeSpanTarget
+				                       && existingListener.LifeSpanTarget == lifeSpanTarget
 #endif
-					    )
-					{
-						// Trying to add the same callback with different parameters. Just remove the existing one and
-						// create a new one with new parameters. That should happen rarely, so no need to optimize this.
-						Listeners.RemoveAt(i);
-					}
-					else
-					{
-						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(Listeners[i])}.");
-						return; // Silently ignore
-					}
-
-					break; // No need to iterate others. Impossible to add a delegate more than once.
+					;
+				if (isSameParameters)
+				{
+					Log.WarningWithContext(existingListener.LogObject, $"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpanForMethodAndObject(existingListener)}. The second registration is ignored.");
+					return;
 				}
+
+				// Trying to add the same callback with different parameters. Remove the existing one and create a
+				// new one with new parameters.
+#if UnityFeatures
+				Log.WarningWithContext(existingListener.LogObject, $"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan, lifeSpanTarget)}, which was registered with {_Detailed_OrderAndLifeSpanForMethodAndObject(existingListener)}. The new registration replaces the existing one.");
+#else
+				Log.WarningWithContext(existingListener.LogObject, $"Tried to add an already registered callback with {_Detailed_OrderAndLifeSpan(order, lifeSpan)}, which was registered with {_Detailed_OrderAndLifeSpanForMethodAndObject(existingListener)}. The new registration replaces the existing one.");
+#endif
+				MarkAsRemoved(existingListener);
 			}
+
+#if UnityFeatures
+			var listener = new Listener(callback, order, lifeSpan, lifeSpanTarget);
+#else
+			var listener = new Listener(callback, order, lifeSpan);
+#endif
+			ListenersByCallback.Add(callback, listener);
 
 			// Cover all the shortcuts that we can add the listener at the end of the list and move on.
 			//
@@ -322,39 +466,37 @@ namespace Extenity.MessagingToolbox
 			// Line 2: If trying to add a callback with 0 order and the last item is ordered as 0, fear not!
 			// Just add it to the end and move on. While doing that, also cover the possibility that the order
 			// is greater(or equal) than the last item's order.
-#if UnityFeatures
-			var listener = new Listener(callback, order, lifeSpan, lifeSpanTarget);
-#else
-			var listener = new Listener(callback, order, lifeSpan);
-#endif
-			var done = false;
+			//
+			// Note that the listeners that are marked as removed keep their order. So the list is always sorted by
+			// order, whether they are dropped yet or not.
 			if (Listeners.Count == 0 || // Line 1
 			    order >= Listeners[Listeners.Count - 1].Order) // Line 2
 			{
 				if (ExtenityEventTools.VerboseLogging)
-					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} at the end, resulting '{Listeners.Count + 1}' listener(s).");
+					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} at the end, resulting '{ListenersByCallback.Count}' listener(s).");
 				Listeners.Add(listener);
-				done = true;
 			}
 			else
 			{
-				for (int i = 0; i < Listeners.Count; i++)
+				// Binary search for the first listener that has a greater order. Inserting there puts the listener
+				// after the ones that have the same order, which keeps the registration order among them.
+				var low = 0;
+				var high = Listeners.Count;
+				while (low < high)
 				{
-					if (order < Listeners[i].Order)
+					var middle = low + (high - low) / 2;
+					if (Listeners[middle].Order <= order)
 					{
-						if (ExtenityEventTools.VerboseLogging)
-							Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} at index '{i}', resulting '{Listeners.Count + 1}' listener(s).");
-						Listeners.Insert(i, listener);
-						done = true;
-						break;
+						low = middle + 1;
+					}
+					else
+					{
+						high = middle;
 					}
 				}
-			}
-			// This is a safety belt for the developer. Whatever optimization is going on inside the lines above would
-			// only be useful if it leaves us with the listener added or inserted into the list no matter what.
-			if (!done)
-			{
-				throw new InternalException(117357191); // The code should not reach here.
+				if (ExtenityEventTools.VerboseLogging)
+					Log.Verbose($"Adding listener with {_Detailed_OrderAndLifeSpanForMethodAndObject(listener)} in between, resulting '{ListenersByCallback.Count}' listener(s).");
+				Listeners.Insert(low, listener);
 			}
 		}
 
@@ -363,26 +505,26 @@ namespace Extenity.MessagingToolbox
 			if (callback == null)
 				return false; // Silently ignore
 
-			for (var i = 0; i < Listeners.Count; i++)
+			if (!ListenersByCallback.TryGetValue(callback, out var listener))
 			{
-				if (Listeners[i].Callback == callback)
-				{
-					if (ExtenityEventTools.VerboseLogging)
-						Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(Listeners[i].Order, callback)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
-
-					// Also shift the iteration index if currently invoking. Note that InvokeIndex will be -1 if not currently invoking.
-					if (InvokeIndex >= i)
-					{
-						InvokeIndex--;
-					}
-
-					Listeners.RemoveAt(i);
-					return true;
-				}
+				if (ExtenityEventTools.VerboseLogging)
+					Log.Verbose($"Failed to remove listener for {_Detailed_MethodAndObject(callback)}.");
+				return false;
 			}
+
 			if (ExtenityEventTools.VerboseLogging)
-				Log.Verbose($"Failed to remove listener for {_Detailed_MethodAndObject(callback)}.");
-			return false;
+				Log.Verbose($"Removing listener with {_Detailed_OrderForMethodAndObject(listener.Order, callback)}, resulting '{ListenersByCallback.Count - 1}' listener(s).");
+
+			MarkAsRemoved(listener);
+
+			// An ongoing invocation compacts the list when it ends.
+			if (!IsInvoking &&
+			    RemovedListenerCount >= MinimumRemovedListenerCountToCompact &&
+			    RemovedListenerCount > ListenersByCallback.Count)
+			{
+				Compact();
+			}
+			return true;
 		}
 
 		public void RemoveCurrentListener()
@@ -403,10 +545,11 @@ namespace Extenity.MessagingToolbox
 				Log.Verbose("Removing all listeners.");
 
 			Listeners.Clear();
+			ListenersByCallback.Clear();
+			RemovedListenerCount = 0;
 		}
 
-		// TODO: Needs testing (Only roughly tested). See RemoveListener(Action callback) tests and apply the same where possible. Should test with both System.Object and UnityEngine.Object targets.
-		// TODO: Copy to other ExtenityEvent generic implementations
+		// TODO: Needs testing (Only roughly tested). See RemoveListener tests and apply the same where possible. Should test with both System.Object and UnityEngine.Object targets.
 		public void RemoveAllListenersThatTargets(object callbackTarget)
 		{
 			if (IsInvoking)
@@ -421,20 +564,15 @@ namespace Extenity.MessagingToolbox
 
 			for (var i = 0; i < Listeners.Count; i++)
 			{
-				if (Listeners[i].Callback != null &&
-				    Listeners[i].Callback.Target == callbackTarget)
+				var listener = Listeners[i];
+				if (!listener.IsRemoved &&
+				    listener.Callback != null &&
+				    listener.Callback.Target == callbackTarget)
 				{
 					if (ExtenityEventTools.VerboseLogging)
-						Log.Verbose($"Removing listener with {_Detailed_CallbackTarget(callbackTarget)} at index '{i}', resulting '{Listeners.Count - 1}' listener(s).");
+						Log.Verbose($"Removing listener with {_Detailed_CallbackTarget(callbackTarget)}, resulting '{ListenersByCallback.Count - 1}' listener(s).");
 
-					// Also shift the iteration index if currently invoking. Note that InvokeIndex will be -1 if not currently invoking.
-					if (InvokeIndex >= i)
-					{
-						InvokeIndex--;
-					}
-
-					Listeners.RemoveAt(i);
-					i--;
+					MarkAsRemoved(listener);
 					removedCount++;
 				}
 			}
@@ -443,16 +581,15 @@ namespace Extenity.MessagingToolbox
 				if (ExtenityEventTools.VerboseLogging)
 					Log.Verbose($"Failed to remove any listeners for {_Detailed_CallbackTarget(callbackTarget)}.");
 			}
+			else
+			{
+				Compact();
+			}
 		}
 
 		#endregion
 
 		#region Invoke
-
-#if UnityFeatures
-		// Cached to avoid allocating a delegate each time the destroyed listeners are removed.
-		private static readonly System.Predicate<Listener> IsListenerDestroyed = listener => listener.IsObjectDestroyed;
-#endif
 
 		private bool IsInvoking = false;
 		private int InvokeIndex = -1;
@@ -467,21 +604,24 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
-#if UnityFeatures
-			var hasDestroyedListeners = false;
-#endif
 
 			try
 			{
 				while (InvokeIndex < Listeners.Count)
 				{
 					var listener = Listeners[InvokeIndex];
+					if (listener.IsRemoved)
+					{
+						InvokeIndex++;
+						continue;
+					}
 #if UnityFeatures
 					if (listener.IsObjectDestroyed)
 					{
-						// Removed in a single pass after invoking. Removing here would shift the rest of the list
-						// for each destroyed listener, which costs quadratic time when many objects are destroyed.
-						hasDestroyedListeners = true;
+						// Dropped from the list in a single pass after invoking. Dropping here would shift the rest
+						// of the list for each destroyed listener, which costs quadratic time when many objects are
+						// destroyed.
+						MarkAsRemoved(listener);
 						InvokeIndex++;
 						continue;
 					}
@@ -492,7 +632,7 @@ namespace Extenity.MessagingToolbox
 						//
 						// Removing before the call also ensures that the callback will be removed even though
 						// an exception is thrown inside the callback.
-						Listeners.RemoveAt(InvokeIndex--);
+						MarkAsRemoved(listener);
 					}
 
 #if UnityFeatures
@@ -520,12 +660,10 @@ namespace Extenity.MessagingToolbox
 				IsInvoking = false;
 				InvokeIndex = -1;
 				InvokingCallback = null;
-#if UnityFeatures
-				if (hasDestroyedListeners)
+				if (RemovedListenerCount > 0)
 				{
-					Listeners.RemoveAll(IsListenerDestroyed);
+					Compact();
 				}
-#endif
 			}
 		}
 
@@ -538,19 +676,22 @@ namespace Extenity.MessagingToolbox
 			}
 			IsInvoking = true;
 			InvokeIndex = 0;
-#if UnityFeatures
-			var hasDestroyedListeners = false;
-#endif
 
 			while (InvokeIndex < Listeners.Count)
 			{
 				var listener = Listeners[InvokeIndex];
+				if (listener.IsRemoved)
+				{
+					InvokeIndex++;
+					continue;
+				}
 #if UnityFeatures
 				if (listener.IsObjectDestroyed)
 				{
-					// Removed in a single pass after invoking. Removing here would shift the rest of the list
-					// for each destroyed listener, which costs quadratic time when many objects are destroyed.
-					hasDestroyedListeners = true;
+					// Dropped from the list in a single pass after invoking. Dropping here would shift the rest of
+					// the list for each destroyed listener, which costs quadratic time when many objects are
+					// destroyed.
+					MarkAsRemoved(listener);
 					InvokeIndex++;
 					continue;
 				}
@@ -561,7 +702,7 @@ namespace Extenity.MessagingToolbox
 					//
 					// Removing before the call also ensures that the callback will be removed even though
 					// an exception is thrown inside the callback.
-					Listeners.RemoveAt(InvokeIndex--);
+					MarkAsRemoved(listener);
 				}
 
 #if UnityFeatures
@@ -586,6 +727,9 @@ namespace Extenity.MessagingToolbox
 					// rather than an expected runtime error. The developer must be alerted about this.
 					// ExtenityEvent does not assume such exceptions are 'Safe' to ignore in InvokeSafe.
 					// See 11861024.
+					//
+					// The listeners that were removed until here stay in the list, marked as removed. The next
+					// invocation skips and drops them.
 					catch (NotImplementedException)
 					{
 						IsInvoking = false;
@@ -612,12 +756,10 @@ namespace Extenity.MessagingToolbox
 			IsInvoking = false;
 			InvokeIndex = -1;
 			InvokingCallback = null;
-#if UnityFeatures
-			if (hasDestroyedListeners)
+			if (RemovedListenerCount > 0)
 			{
-				Listeners.RemoveAll(IsListenerDestroyed);
+				Compact();
 			}
-#endif
 		}
 
 		#endregion
@@ -646,6 +788,8 @@ namespace Extenity.MessagingToolbox
 			for (var i = 0; i < Listeners.Count; i++)
 			{
 				var listener = Listeners[i];
+				if (listener.IsRemoved)
+					continue;
 
 				stringBuilder.Append(linePrefix);
 #if UnityFeatures
@@ -673,7 +817,7 @@ namespace Extenity.MessagingToolbox
 			return $"order '{order}' for {_Detailed_MethodAndObject(callback)}";
 		}
 
-		private string _Detailed_OrderAndLifeSpan(in Listener listener)
+		private string _Detailed_OrderAndLifeSpan(Listener listener)
 		{
 #if UnityFeatures
 			return _Detailed_OrderAndLifeSpan(listener.Order, listener.LifeSpan, listener.LifeSpanTarget);
@@ -694,7 +838,7 @@ namespace Extenity.MessagingToolbox
 		}
 #endif
 
-		private string _Detailed_OrderAndLifeSpanForMethodAndObject(in Listener listener)
+		private string _Detailed_OrderAndLifeSpanForMethodAndObject(Listener listener)
 		{
 			return $"{_Detailed_OrderAndLifeSpan(listener)} for {_Detailed_MethodAndObject(listener.Callback)}";
 		}
