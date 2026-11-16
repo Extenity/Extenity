@@ -20,24 +20,14 @@ namespace Extenity.GameObjectToolbox.Editor
 		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Loaded Scenes", priority = ExtenityMenu.GameObjectOperationsPriority + 0)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InLoadedScenes()
 		{
-			var excludedTypes = new Type[]
-			{
-#if ExtenityInstantiator
-				typeof(Instantiator),
-#endif
-			};
+			var excludedTypes = Array.Empty<Type>();
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(excludedTypes, SceneListFilter.LoadedScenesAndDontDestroyOnLoadScene, true, true);
 		}
 
 		[MenuItem(Menu + "Delete Empty Unreferenced GameObjects/In Active Scene", priority = ExtenityMenu.GameObjectOperationsPriority + 1)]
 		private static void Menu_DestroyEmptyUnreferencedGameObjects_InActiveScene()
 		{
-			var excludedTypes = new Type[]
-			{
-#if ExtenityInstantiator
-				typeof(Instantiator),
-#endif
-			};
+			var excludedTypes = Array.Empty<Type>();
 			EditorGameObjectTools.DestroyEmptyUnreferencedGameObjectsInScenes(excludedTypes, SceneListFilter.LoadedActiveScene, true, true);
 		}
 
