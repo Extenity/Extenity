@@ -208,12 +208,6 @@ namespace ExtenityTests.Inspectors
 			samples.Add(checklist);
 
 			// The types behind the optional defines of the package, when they are compiled in.
-			foreach (var typeName in new[] { "Extenity.FlowToolbox.IdleDetector" })
-			{
-				var type = FindType(typeName);
-				if (type != null)
-					samples.Add(CreateComponent(type));
-			}
 			var subsystemSettingsType = FindType("Extenity.SubsystemManagementToolbox.SubsystemSettings");
 			if (subsystemSettingsType != null)
 			{
