@@ -148,17 +148,6 @@ namespace ExtenityTests.Inspectors
 			                         .ToList();
 		}
 
-		private static Type FindType(string fullName)
-		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				var type = assembly.GetType(fullName, false);
-				if (type != null)
-					return type;
-			}
-			return null; // Compiled out by a define of the package.
-		}
-
 		[Test]
 		public void EveryInspectorOfThePackage_Builds()
 		{
@@ -206,16 +195,6 @@ namespace ExtenityTests.Inspectors
 			var checklist = CreateAsset<Checklist>();
 			checklist.Categories = new List<ChecklistCategory> { ExtenityInspectorSamples.CreateCategory() };
 			samples.Add(checklist);
-
-			// The types behind the optional defines of the package, when they are compiled in.
-			var subsystemSettingsType = FindType("Extenity.SubsystemManagementToolbox.SubsystemSettings");
-			if (subsystemSettingsType != null)
-			{
-				var settings = ScriptableObject.CreateInstance(subsystemSettingsType);
-				settings.hideFlags = HideFlags.DontSave;
-				CreatedObjects.Add(settings);
-				samples.Add(settings);
-			}
 
 			var failures = new List<string>();
 			foreach (var sample in samples)

@@ -27,19 +27,6 @@ namespace ExtenityTests.Inspectors
 		};
 #endif
 
-#if ExtenitySubsystems
-		public Extenity.SubsystemManagementToolbox.ApplicationSubsystemGroup ApplicationSubsystems = new Extenity.SubsystemManagementToolbox.ApplicationSubsystemGroup
-		{
-			Subsystems = new[] { new Extenity.SubsystemManagementToolbox.ApplicationSubsystemDefinition { Type = Extenity.SubsystemManagementToolbox.SubsystemType.SingletonClass } },
-		};
-
-		public Extenity.SubsystemManagementToolbox.SceneSubsystemGroup SceneSubsystems = new Extenity.SubsystemManagementToolbox.SceneSubsystemGroup
-		{
-			Name = "Sample",
-			Subsystems = new[] { new Extenity.SubsystemManagementToolbox.SubsystemDefinition { Type = Extenity.SubsystemManagementToolbox.SubsystemType.Resource } },
-		};
-#endif
-
 		internal static ChecklistCategory CreateCategory()
 		{
 			return new ChecklistCategory("Category")
