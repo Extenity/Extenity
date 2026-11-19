@@ -21,16 +21,19 @@ namespace Extenity.InspectorToolbox.Editor
 		public VisualElement ValidationMessageContainer { get; }
 
 		private readonly ListOptions Options;
+		private readonly InspectorInstance Owner;
 		private readonly LazyFoldout Header;
 		private MultiColumnListView Table;
 
-		public ExtTableView(SerializedProperty arrayProperty, string label, ListOptions options)
+		/// <param name="owner">The inspector the table belongs to. Its cells are bound with the property handler cache of that inspector.</param>
+		public ExtTableView(SerializedProperty arrayProperty, string label, ListOptions options, InspectorInstance owner = null)
 		{
 			if (arrayProperty == null)
 				throw new ArgumentNullException(nameof(arrayProperty));
 			if (!arrayProperty.isArray || arrayProperty.propertyType == SerializedPropertyType.String)
 				throw new ArgumentException($"'{arrayProperty.propertyPath}' is not an array or a list.", nameof(arrayProperty));
 			Options = options ?? throw new ArgumentNullException(nameof(options));
+			Owner = owner;
 			SerializedObject = arrayProperty.serializedObject;
 			ArrayPropertyPath = arrayProperty.propertyPath;
 
@@ -104,16 +107,20 @@ namespace Extenity.InspectorToolbox.Editor
 							return;
 						var property = array.GetArrayElementAtIndex(rowIndex).FindPropertyRelative(fieldName)
 						               ?? throw new InvalidOperationException($"An element of '{ArrayPropertyPath}' has no serialized field '{fieldName}' for the table column.");
-						if (column.NumbersOnOneLine)
+						// A table without an owner (default) selects nothing and binds as before.
+						using (Owner?.SelectHandlerCache() ?? default)
 						{
-							cell.Clear();
-							var numbers = new NumberLineField(property, "", showMemberNames: false);
-							cell.Add(numbers);
-							numbers.Bind(SerializedObject);
-						}
-						else
-						{
-							((PropertyField)cell).BindProperty(property);
+							if (column.NumbersOnOneLine)
+							{
+								cell.Clear();
+								var numbers = new NumberLineField(property, "", showMemberNames: false);
+								cell.Add(numbers);
+								numbers.Bind(SerializedObject);
+							}
+							else
+							{
+								((PropertyField)cell).BindProperty(property);
+							}
 						}
 					},
 					unbindCell = (cell, rowIndex) =>
@@ -127,7 +134,10 @@ namespace Extenity.InspectorToolbox.Editor
 			}
 			content.Add(Table);
 			if (content.panel != null)
-				Table.Bind(SerializedObject);
+			{
+				using (Owner?.SelectHandlerCache() ?? default)
+					Table.Bind(SerializedObject);
+			}
 		}
 
 		private const float BaseColumnWidth = 100f;

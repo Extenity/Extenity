@@ -57,9 +57,15 @@ namespace Extenity.InspectorToolbox.Editor
 		private bool AreTrackersRegistered;
 		private bool IsLiveScheduleStarted;
 		private SerializedObject[] PerTargetSerializedObjects;
+		/// <summary>
+		/// Unity's property handler cache that was selected when the inspector was created: the one its first
+		/// fields were bound with. Null when none was selected. See <see cref="SelectHandlerCache"/>.
+		/// </summary>
+		private readonly object HandlerCache;
 
 		internal InspectorInstance(InspectorBlueprint blueprint, SerializedObject serializedObject, string propertyPath, string label)
 		{
+			HandlerCache = PropertyHandlerCacheScope.Selected;
 			Blueprint = blueprint;
 			Context = new InspectorContext(serializedObject, propertyPath);
 			Label = label;
@@ -297,8 +303,21 @@ namespace Extenity.InspectorToolbox.Editor
 		{
 			if (content.panel == null)
 				return;
-			content.Bind(Context.SerializedObject);
+			using (SelectHandlerCache())
+				content.Bind(Context.SerializedObject);
 			LongLabelFitter.Request(content);
+		}
+
+		/// <summary>
+		/// For binding content of the inspector later than the inspector itself: a foldout that opens, a row of
+		/// a list that scrolls into view. Unity then remembers the drawers of the new fields in the same cache
+		/// as those of the first fields, which is the cache of the editor when the inspector is shown in the
+		/// Inspector window, and not in whichever cache happens to be selected at that later moment (see
+		/// <see cref="PropertyHandlerCacheScope"/>). Dispose the result right after binding.
+		/// </summary>
+		internal PropertyHandlerCacheScope SelectHandlerCache()
+		{
+			return PropertyHandlerCacheScope.Select(HandlerCache);
 		}
 
 		#endregion

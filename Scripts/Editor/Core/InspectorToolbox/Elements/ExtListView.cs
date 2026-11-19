@@ -311,7 +311,11 @@ namespace Extenity.InspectorToolbox.Editor
 			                 || (elementProperty.propertyType == SerializedPropertyType.ManagedReference && elementProperty.managedReferenceValue != null);
 			row.EnableInClassList(RowUssClassName + "--foldout", hasFoldout && Options.ElementDropdownItems == null && Options.ElementFactory == null && !IsElementDrawnByAnotherDrawer);
 			if (row.panel != null)
-				field.Bind(SerializedObject);
+			{
+				// A list without an owner (default) selects nothing and binds as before.
+				using (Owner?.SelectHandlerCache() ?? default)
+					field.Bind(SerializedObject);
+			}
 		}
 
 		private void UnbindRow(VisualElement element, int rowIndex)
@@ -792,7 +796,7 @@ namespace Extenity.InspectorToolbox.Editor
 			if (property.serializedObject.isEditingMultipleObjects)
 				return new PropertyField(property, label);
 			if (options.Table)
-				return new ExtTableView(property, label, options);
+				return new ExtTableView(property, label, options, instance);
 			return new ExtListView(property, label, options, instance);
 		}
 	}
