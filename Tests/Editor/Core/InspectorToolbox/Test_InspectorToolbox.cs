@@ -1429,6 +1429,54 @@ namespace ExtenityTests.InspectorToolbox
 		}
 
 		[Test]
+		public void BuiltInspector_RemembersItsDrawersInTheCacheOfItsEditor_AndLeavesNothingInUnitysGlobalCache()
+		{
+			var target = Create<FixtureObject>();
+			target.Required = "x";
+			target.NestedList.Add(new FixtureNested { Id = "in list" });
+			target.LabelledList.Add(new FixtureNested { Id = "labelled" });
+			target.Names.Add("apple");
+			target.Names.Add("pear");
+			target.PickedNames.Add("A");
+			target.Shapes.Add(new FixtureCircle());
+			target.Table.Add(default);
+			target.Linked = Create<FixturePlainObject>();
+			SetExpanded(target, nameof(FixtureObject.Nested), false);
+
+			var rememberedBefore = CountDrawersInUnitysGlobalCache();
+			var selectedBefore = PropertyHandlerCacheScope.Selected;
+
+			var built = Build(target);
+			built.ExpandAllLazyContent(3);
+			Pump(built);
+			built.ReevaluateAll();
+			built.RefreshAllLiveValues();
+			Assert.Greater(built.GetAllInstances().Count, 5, "The test needs nested inspectors: Unity finds their drawers through its cache.");
+			// What a test or a person does between the updates: the rows of a list are bound again.
+			var list = ListOf(built, nameof(FixtureObject.Names));
+			list.SearchText = "apple";
+			list.SearchText = "";
+			Pump(built);
+
+			// What is remembered there outlives the inspector and its object, and can be handed to a property
+			// of another object later: Unity finds an entry by the instance id xor a hash of the property path.
+			Assert.AreEqual(rememberedBefore, CountDrawersInUnitysGlobalCache(), "Building the inspector left drawers in Unity's global property handler cache.");
+			Assert.AreSame(selectedBefore, PropertyHandlerCacheScope.Selected, "The property handler cache that was selected before was not selected again.");
+		}
+
+		private static int CountDrawersInUnitysGlobalCache()
+		{
+			const BindingFlags Any = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			var utilityType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility", true);
+			var cacheField = utilityType.GetField("s_GlobalCache", Any)
+			                 ?? throw new MissingFieldException("UnityEditor.ScriptAttributeUtility", "s_GlobalCache");
+			var cache = cacheField.GetValue(null);
+			var handlersField = cache.GetType().GetField("m_PropertyHandlers", Any)
+			                    ?? throw new MissingFieldException("UnityEditor.PropertyHandlerCache", "m_PropertyHandlers");
+			return ((System.Collections.ICollection)handlersField.GetValue(cache)).Count;
+		}
+
+		[Test]
 		public void ExpandAllLazyContent_ReachesTheElementsOfAUnityDefaultList_ThatWasClosed()
 		{
 			// An object without a custom editor: Unity's own foldouts and list, with nested inspectors inside.

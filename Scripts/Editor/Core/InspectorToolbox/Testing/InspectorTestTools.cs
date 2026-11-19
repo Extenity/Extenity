@@ -260,17 +260,20 @@ namespace Extenity.InspectorToolbox.Editor
 				Editor = UnityEditor.Editor.CreateEditor(targets);
 				if (Editor == null)
 					throw new InvalidOperationException($"Unity created no editor for '{targets[0]}'.");
-				var gui = Editor.CreateInspectorGUI();
-				if (gui == null)
+				using (SelectHandlerCache())
 				{
-					gui = new VisualElement { name = "default-inspector" };
-					InspectorElement.FillDefaultInspector(gui, Editor.serializedObject, Editor);
-					UsesDefaultInspector = true;
+					var gui = Editor.CreateInspectorGUI();
+					if (gui == null)
+					{
+						gui = new VisualElement { name = "default-inspector" };
+						InspectorElement.FillDefaultInspector(gui, Editor.serializedObject, Editor);
+						UsesDefaultInspector = true;
+					}
+					Root = gui;
+					Panel.Root.Add(Root);
+					Root.Bind(Editor.serializedObject);
+					Panel.Update();
 				}
-				Root = gui;
-				Panel.Root.Add(Root);
-				Root.Bind(Editor.serializedObject);
-				Panel.Update();
 				RootInstance = (Root as InspectorRootElement)?.Instance;
 			}
 			catch
@@ -280,10 +283,22 @@ namespace Extenity.InspectorToolbox.Editor
 			}
 		}
 
+		/// <summary>
+		/// Whatever binds a property while this inspector is built, updated or opened remembers its drawer in the
+		/// cache of the inspector's own editor, as in the Inspector window, and not in Unity's global cache, where
+		/// it would outlive the inspector and could be handed to a property of another object later (see
+		/// <see cref="PropertyHandlerCacheScope"/>). The editor empties its cache when it is destroyed.
+		/// </summary>
+		private PropertyHandlerCacheScope SelectHandlerCache()
+		{
+			return PropertyHandlerCacheScope.SelectCacheOf(Editor);
+		}
+
 		/// <summary>Runs one update of the panel: layout, bindings, scheduled items.</summary>
 		public void Update()
 		{
-			Panel.Update();
+			using (SelectHandlerCache())
+				Panel.Update();
 		}
 
 		/// <summary>Every inspector instance in the tree: the object's own and those of nested drawers that are built.</summary>
@@ -305,14 +320,21 @@ namespace Extenity.InspectorToolbox.Editor
 
 		public void ReevaluateAll()
 		{
-			foreach (var instance in GetAllInstances())
-				instance.Reevaluate();
+			// Evaluating can build content (a group opening), which binds it.
+			using (SelectHandlerCache())
+			{
+				foreach (var instance in GetAllInstances())
+					instance.Reevaluate();
+			}
 		}
 
 		public void RefreshAllLiveValues()
 		{
-			foreach (var instance in GetAllInstances())
-				instance.RefreshLiveValues();
+			using (SelectHandlerCache())
+			{
+				foreach (var instance in GetAllInstances())
+					instance.RefreshLiveValues();
+			}
 		}
 
 		/// <summary>
@@ -337,6 +359,7 @@ namespace Extenity.InspectorToolbox.Editor
 		{
 			if (maxListElements < 0)
 				throw new ArgumentOutOfRangeException(nameof(maxListElements));
+			using var handlerCache = SelectHandlerCache();
 			var scope = within ?? Root;
 
 			var serializedObject = SerializedObject;
