@@ -118,8 +118,12 @@ namespace ExtenityTests.InspectorToolbox
 			var fieldB = new PropertyField(list.GetArrayElementAtIndex(1));
 			Panel.Root.Add(fieldA);
 			Panel.Root.Add(fieldB);
-			Panel.Root.Bind(serializedObject);
-			Panel.Update();
+			// Without an editor Unity would remember the two drawers in its global cache, which outlives the test.
+			using (PropertyHandlerCacheScope.SelectNew())
+			{
+				Panel.Root.Bind(serializedObject);
+				Panel.Update();
+			}
 
 			// AssumedA has no drawer of its own: the drawer registered for the base type with useForChildren draws it.
 			Assert.IsNotNull(fieldA.Q("assumed-drawer-base"), "The element of a derived type was not drawn by the base type's drawer.");

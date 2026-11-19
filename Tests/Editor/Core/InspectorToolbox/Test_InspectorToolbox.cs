@@ -638,12 +638,16 @@ namespace ExtenityTests.InspectorToolbox
 			var drawer = new FixtureNestedInspector();
 			var line = EditorGUIUtility.singleLineHeight;
 
-			property.isExpanded = false;
-			Assert.AreEqual(line, drawer.GetPropertyHeight(property, new GUIContent("Nested")), 0.01f);
-			property.isExpanded = true;
-			Assert.Greater(drawer.GetPropertyHeight(property, new GUIContent("Nested")), line * 4f);
-			Assert.Greater(drawer.GetPropertyHeight(property, GUIContent.none), line * 3f);
-			property.isExpanded = false;
+			// Without an editor Unity would remember the drawers of the children in its global cache, which outlives the test.
+			using (PropertyHandlerCacheScope.SelectNew())
+			{
+				property.isExpanded = false;
+				Assert.AreEqual(line, drawer.GetPropertyHeight(property, new GUIContent("Nested")), 0.01f);
+				property.isExpanded = true;
+				Assert.Greater(drawer.GetPropertyHeight(property, new GUIContent("Nested")), line * 4f);
+				Assert.Greater(drawer.GetPropertyHeight(property, GUIContent.none), line * 3f);
+				property.isExpanded = false;
+			}
 		}
 
 		#endregion
