@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Extenity.DataToolbox
 {
@@ -19,19 +20,27 @@ namespace Extenity.DataToolbox
 			Time = ConvertToDouble(dateTime);
 		}
 
+		/// <summary>
+		/// Reads a timestamp written with the invariant culture, as <see cref="ToString"/> writes it, whatever the
+		/// culture of the machine. Thousands separators are not allowed, so that a timestamp written with a decimal
+		/// comma throws instead of being read as a much larger number.
+		/// </summary>
 		public static UnixTime Parse(string unixTimestampStr)
 		{
-			return new UnixTime(double.Parse(unixTimestampStr));
+			return new UnixTime(double.Parse(unixTimestampStr, NumberStyles.Float, CultureInfo.InvariantCulture));
 		}
 
+		/// <summary>
+		/// Writes the timestamp with the invariant culture, so that <see cref="Parse"/> reads it back on any machine.
+		/// </summary>
 		public override string ToString()
 		{
-			return Time.ToString();
+			return Time.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public string ToStringInt()
 		{
-			return TimeInt.ToString();
+			return TimeInt.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public static DateTime ToDateTime(double value)
@@ -43,7 +52,7 @@ namespace Extenity.DataToolbox
 
 		public static DateTime ConvertFrom(string unixTimestamp)
 		{
-			return ConvertFrom(Convert.ToDouble(unixTimestamp));
+			return ConvertFrom(Parse(unixTimestamp).Time);
 		}
 
 		public static DateTime ConvertFrom(double unixTimestamp)

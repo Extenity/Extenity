@@ -1178,24 +1178,27 @@ namespace Extenity.DataToolbox
 
 #if UNITY_5_3_OR_NEWER
 
+		// ToSerializableString and the Parse methods below write and read numbers with the invariant culture, so that
+		// text written on one machine reads back the same on any other, whatever the culture of either machine.
+
 		public static string ToSerializableString(this Vector2 val)
 		{
-			return val.x + " " + val.y;
+			return ToInvariantString(val.x) + " " + ToInvariantString(val.y);
 		}
 
 		public static string ToSerializableString(this Vector3 val)
 		{
-			return val.x + " " + val.y + " " + val.z;
+			return ToInvariantString(val.x) + " " + ToInvariantString(val.y) + " " + ToInvariantString(val.z);
 		}
 
 		public static string ToSerializableString(this Vector4 val)
 		{
-			return val.x + " " + val.y + " " + val.z + " " + val.w;
+			return ToInvariantString(val.x) + " " + ToInvariantString(val.y) + " " + ToInvariantString(val.z) + " " + ToInvariantString(val.w);
 		}
 
 		public static string ToSerializableString(this Quaternion val)
 		{
-			return val.x + " " + val.y + " " + val.z + " " + val.w;
+			return ToInvariantString(val.x) + " " + ToInvariantString(val.y) + " " + ToInvariantString(val.z) + " " + ToInvariantString(val.w);
 		}
 
 		public static string ToStringAngleAxis(this Quaternion val)
@@ -1219,28 +1222,47 @@ namespace Extenity.DataToolbox
 		public static Vector2 ParseVector2(this string text)
 		{
 			var parts = text.Split(' ');
-			return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+			return new Vector2(ParseInvariantFloat(parts[0]), ParseInvariantFloat(parts[1]));
 		}
 
 		public static Vector3 ParseVector3(this string text)
 		{
 			var parts = text.Split(' ');
-			return new Vector3(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]));
+			return new Vector3(ParseInvariantFloat(parts[0]), ParseInvariantFloat(parts[1]), ParseInvariantFloat(parts[2]));
 		}
 
 		public static Vector4 ParseVector4(this string text)
 		{
 			var parts = text.Split(' ');
-			return new Vector4(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
+			return new Vector4(ParseInvariantFloat(parts[0]), ParseInvariantFloat(parts[1]), ParseInvariantFloat(parts[2]), ParseInvariantFloat(parts[3]));
 		}
 
 		public static Quaternion ParseQuaternion(this string text)
 		{
 			var parts = text.Split(' ');
-			return new Quaternion(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
+			return new Quaternion(ParseInvariantFloat(parts[0]), ParseInvariantFloat(parts[1]), ParseInvariantFloat(parts[2]), ParseInvariantFloat(parts[3]));
 		}
 
 #endif
+
+		private static string ToInvariantString(float value)
+		{
+			return value.ToString(CultureInfo.InvariantCulture);
+		}
+
+		/// <summary>
+		/// Reads a number written with the invariant culture. Thousands separators are not allowed, so that a number
+		/// written with a decimal comma, such as "1,5", throws instead of being read as 15.
+		/// </summary>
+		private static float ParseInvariantFloat(string text)
+		{
+			return float.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
+		}
+
+		private static double ParseInvariantDouble(string text)
+		{
+			return double.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
+		}
 
 		#endregion
 
@@ -1634,6 +1656,10 @@ namespace Extenity.DataToolbox
 
 		#region Serialization
 
+		// Serialize and the Deserialize methods below write and read numbers with the invariant culture, so that text
+		// written on one machine reads back the same on any other, and a decimal comma never collides with the
+		// default separator.
+
 		public static string Serialize<T>(this T array, char separator = ',', int capacity = 0) where T : ICollection
 		{
 			if (array.Count == 0)
@@ -1644,7 +1670,9 @@ namespace Extenity.DataToolbox
 			int i = array.Count;
 			foreach (var elem in array)
 			{
-				stringBuilder.Append(elem.ToString());
+				stringBuilder.Append(elem is IFormattable formattable
+					? formattable.ToString(null, CultureInfo.InvariantCulture)
+					: elem.ToString());
 				if (--i > 0)
 				{
 					stringBuilder.Append(separator);
@@ -1682,7 +1710,7 @@ namespace Extenity.DataToolbox
 			var array = new byte[listString.Length];
 
 			for (int i = 0; i < listString.Length; i++)
-				array[i] = byte.Parse(listString[i]);
+				array[i] = byte.Parse(listString[i], NumberStyles.Integer, CultureInfo.InvariantCulture);
 
 			return array;
 		}
@@ -1696,7 +1724,7 @@ namespace Extenity.DataToolbox
 			var array = new int[listString.Length];
 
 			for (int i = 0; i < listString.Length; i++)
-				array[i] = Int32.Parse(listString[i]);
+				array[i] = Int32.Parse(listString[i], NumberStyles.Integer, CultureInfo.InvariantCulture);
 
 			return array;
 		}
@@ -1710,7 +1738,7 @@ namespace Extenity.DataToolbox
 			var array = new float[listString.Length];
 
 			for (int i = 0; i < listString.Length; i++)
-				array[i] = Single.Parse(listString[i]);
+				array[i] = ParseInvariantFloat(listString[i]);
 
 			return array;
 		}
@@ -1724,7 +1752,7 @@ namespace Extenity.DataToolbox
 			var array = new double[listString.Length];
 
 			for (int i = 0; i < listString.Length; i++)
-				array[i] = Double.Parse(listString[i]);
+				array[i] = ParseInvariantDouble(listString[i]);
 
 			return array;
 		}

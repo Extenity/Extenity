@@ -86,7 +86,7 @@ namespace Extenity.MathToolbox.Editor
 			for (int i = 0; i < Points.Count; i++)
 			{
 				var point = Points[i];
-				stringBuilder.AppendLine(point.x + " " + point.y + " " + point.z);
+				stringBuilder.AppendLine(((Vector3)point).ToSerializableString());
 			}
 
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
@@ -100,10 +100,7 @@ namespace Extenity.MathToolbox.Editor
 				var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int iLine = 0; iLine < lines.Length; iLine++)
 				{
-					var line = lines[iLine];
-					var split = line.Split(' ');
-					var point = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
-					Points.Add(point);
+					Points.Add(lines[iLine].ParseVector3());
 				}
 			}
 		}

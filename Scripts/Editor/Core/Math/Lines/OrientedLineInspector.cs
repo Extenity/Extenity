@@ -96,7 +96,7 @@ namespace Extenity.MathToolbox.Editor
 			for (int i = 0; i < Points.Count; i++)
 			{
 				var point = Points[i];
-				stringBuilder.AppendLine(point.Position.x + " " + point.Position.y + " " + point.Position.z + " " + point.Orientation.x + " " + point.Orientation.y + " " + point.Orientation.z);
+				stringBuilder.AppendLine(((Vector3)point.Position).ToSerializableString() + " " + ((Vector3)point.Orientation).ToSerializableString());
 			}
 
 			Clipboard.SetClipboardText(stringBuilder.ToString(), false);
@@ -112,8 +112,8 @@ namespace Extenity.MathToolbox.Editor
 				{
 					var line = lines[iLine];
 					var split = line.Split(' ');
-					var position = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
-					var orientation = new Vector3(float.Parse(split[3]), float.Parse(split[4]), float.Parse(split[5]));
+					var position = string.Join(" ", split, 0, 3).ParseVector3();
+					var orientation = string.Join(" ", split, 3, 3).ParseVector3();
 					Points.Add(new OrientedPoint(position, orientation));
 				}
 			}

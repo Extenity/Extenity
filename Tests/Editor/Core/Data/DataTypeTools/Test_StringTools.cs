@@ -7,6 +7,7 @@ using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.UnityTestToolbox;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace ExtenityTests.DataToolbox
 {
@@ -1023,9 +1024,9 @@ namespace ExtenityTests.DataToolbox
 		/// <summary>
 		/// Runs the action with Turkish as the culture of the current thread, which writes a comma as the
 		/// decimal separator, so that a test shows a method that formats with the culture of the machine on any
-		/// machine. The earlier culture is put back afterwards.
+		/// machine. The earlier culture is put back afterwards. Test_UnixTime uses it too.
 		/// </summary>
-		private static void RunInCommaDecimalSeparatorCulture(Action action)
+		internal static void RunInCommaDecimalSeparatorCulture(Action action)
 		{
 			var commaCulture = CultureInfo.GetCultureInfo("tr-TR");
 			Assert.AreEqual(",", commaCulture.NumberFormat.NumberDecimalSeparator, "The culture chosen for the test does not write a decimal comma.");
@@ -1041,6 +1042,109 @@ namespace ExtenityTests.DataToolbox
 			{
 				thread.CurrentCulture = previousCulture;
 			}
+		}
+
+		#endregion
+
+		#region Conversions - Vector2/Vector3/Quaternion
+
+		[Test]
+		public void ToSerializableStringAndParse()
+		{
+			// The text is the same whatever the culture of the machine, and reads back to the same value.
+			AssertSerializableStringAndParse();
+			RunInCommaDecimalSeparatorCulture(AssertSerializableStringAndParse);
+		}
+
+		private static void AssertSerializableStringAndParse()
+		{
+			Assert.AreEqual("1.5 -2.25", new Vector2(1.5f, -2.25f).ToSerializableString());
+			Assert.AreEqual("1.5 -2.25 3", new Vector3(1.5f, -2.25f, 3f).ToSerializableString());
+			Assert.AreEqual("1.5 -2.25 3 0.125", new Vector4(1.5f, -2.25f, 3f, 0.125f).ToSerializableString());
+			Assert.AreEqual("1.5 -2.25 3 0.125", new Quaternion(1.5f, -2.25f, 3f, 0.125f).ToSerializableString());
+
+			Assert.AreEqual(new Vector2(1.5f, -2.25f), "1.5 -2.25".ParseVector2());
+			Assert.AreEqual(new Vector3(1.5f, -2.25f, 3f), "1.5 -2.25 3".ParseVector3());
+			Assert.AreEqual(new Vector4(1.5f, -2.25f, 3f, 0.125f), "1.5 -2.25 3 0.125".ParseVector4());
+			var quaternion = "1.5 -2.25 3 0.125".ParseQuaternion();
+			Assert.AreEqual(new Vector4(1.5f, -2.25f, 3f, 0.125f), new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+		}
+
+		[Test]
+		public void Parse_ThrowsOnDecimalComma()
+		{
+			// A number written with a decimal comma is not read as a number with a thousands separator ("1,5" as 15).
+			AssertParseThrowsOnDecimalComma();
+			RunInCommaDecimalSeparatorCulture(AssertParseThrowsOnDecimalComma);
+		}
+
+		private static void AssertParseThrowsOnDecimalComma()
+		{
+			Assert.Throws<FormatException>(() => "1,5 2".ParseVector2());
+			Assert.Throws<FormatException>(() => "1,5 2 3".ParseVector3());
+			Assert.Throws<FormatException>(() => "1,5 2 3 4".ParseVector4());
+			Assert.Throws<FormatException>(() => "1,5 2 3 4".ParseQuaternion());
+		}
+
+		#endregion
+
+		#region Serialization
+
+		[Test]
+		public void SerializeAndDeserialize()
+		{
+			// The text is the same whatever the culture of the machine, and reads back to the same values.
+			AssertSerializeAndDeserialize();
+			RunInCommaDecimalSeparatorCulture(AssertSerializeAndDeserialize);
+		}
+
+		private static void AssertSerializeAndDeserialize()
+		{
+			Assert.AreEqual("1.5,-2.25,3", new[] { 1.5f, -2.25f, 3f }.Serialize());
+			CollectionAssert.AreEqual(new[] { 1.5f, -2.25f, 3f }, "1.5,-2.25,3".DeserializeFloat());
+
+			Assert.AreEqual("1.5,-2.25,3", new[] { 1.5d, -2.25d, 3d }.Serialize());
+			CollectionAssert.AreEqual(new[] { 1.5d, -2.25d, 3d }, "1.5,-2.25,3".DeserializeDouble());
+
+			Assert.AreEqual("1,-2,3", new[] { 1, -2, 3 }.Serialize());
+			CollectionAssert.AreEqual(new[] { 1, -2, 3 }, "1,-2,3".DeserializeInt());
+
+			Assert.AreEqual("1,2,255", new byte[] { 1, 2, 255 }.Serialize());
+			CollectionAssert.AreEqual(new byte[] { 1, 2, 255 }, "1,2,255".DeserializeByte());
+
+			var vector2s = new[] { new Vector2(1.5f, -2.25f), new Vector2(0.5f, 0f) };
+			Assert.AreEqual("1.5 -2.25,0.5 0", vector2s.Serialize(value => value.ToSerializableString()));
+			CollectionAssert.AreEqual(vector2s, "1.5 -2.25,0.5 0".DeserializeVector2());
+
+			var vector3s = new[] { new Vector3(1.5f, -2.25f, 3f), new Vector3(0.5f, 0f, 1f) };
+			Assert.AreEqual("1.5 -2.25 3,0.5 0 1", vector3s.Serialize(value => value.ToSerializableString()));
+			CollectionAssert.AreEqual(vector3s, "1.5 -2.25 3,0.5 0 1".DeserializeVector3());
+
+			var quaternions = new[] { new Quaternion(1.5f, -2.25f, 3f, 0.125f), new Quaternion(0f, 0f, 0f, 1f) };
+			Assert.AreEqual("1.5 -2.25 3 0.125,0 0 0 1", quaternions.Serialize(value => value.ToSerializableString()));
+			var deserializedQuaternions = new List<Quaternion>("1.5 -2.25 3 0.125,0 0 0 1".DeserializeQuaternion());
+			Assert.AreEqual(2, deserializedQuaternions.Count);
+			for (int i = 0; i < quaternions.Length; i++)
+			{
+				var expected = quaternions[i];
+				var actual = deserializedQuaternions[i];
+				Assert.AreEqual(new Vector4(expected.x, expected.y, expected.z, expected.w), new Vector4(actual.x, actual.y, actual.z, actual.w));
+			}
+		}
+
+		[Test]
+		public void Deserialize_ThrowsOnDecimalComma()
+		{
+			// A number written with a decimal comma is not read as a number with a thousands separator ("1,5" as 15).
+			// The separator is not the default comma here, which would split "1,5" into two numbers before parsing.
+			AssertDeserializeThrowsOnDecimalComma();
+			RunInCommaDecimalSeparatorCulture(AssertDeserializeThrowsOnDecimalComma);
+		}
+
+		private static void AssertDeserializeThrowsOnDecimalComma()
+		{
+			Assert.Throws<FormatException>(() => "1,5;2,5".DeserializeFloat(';'));
+			Assert.Throws<FormatException>(() => "1,5;2,5".DeserializeDouble(';'));
 		}
 
 		#endregion
