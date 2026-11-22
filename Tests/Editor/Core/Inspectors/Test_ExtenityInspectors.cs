@@ -177,9 +177,6 @@ namespace ExtenityTests.Inspectors
 			SetExpectedLogSeverity(LogExpectation.AllowAllLogs);
 
 			var inspectorTypes = GetExtenityInspectorTypes();
-			foreach (var inspectorType in inspectorTypes)
-				InspectorTestTools.GetBlueprint(inspectorType);
-			InspectorTestTools.ResetInstantiationCounts();
 
 			var samples = new List<Object>
 			{
@@ -196,6 +193,8 @@ namespace ExtenityTests.Inspectors
 			checklist.Categories = new List<ChecklistCategory> { ExtenityInspectorSamples.CreateCategory() };
 			samples.Add(checklist);
 
+			// The inspector types of the instances that the built trees hold once everything in them is built.
+			var reachedInspectorTypes = new HashSet<Type>();
 			var failures = new List<string>();
 			foreach (var sample in samples)
 			{
@@ -207,6 +206,8 @@ namespace ExtenityTests.Inspectors
 						built.ExpandAllLazyContent(3);
 						built.ReevaluateAll();
 						built.RefreshAllLiveValues();
+						foreach (var instance in built.GetAllInstances())
+							reachedInspectorTypes.Add(instance.Blueprint.InspectorType);
 						if (built.UsesDefaultInspector && sample is not ExtenityInspectorSamples)
 							failures.Add($"{sample.GetType().Name}: drawn by Unity's default inspector, not by its own.");
 					}
@@ -220,7 +221,7 @@ namespace ExtenityTests.Inspectors
 			}
 			Assert.That(failures, Is.Empty, "Inspectors failed:\n" + string.Join("\n", failures));
 
-			var unreached = inspectorTypes.Where(type => InspectorTestTools.GetBlueprint(type).InstantiationCount == 0)
+			var unreached = inspectorTypes.Where(type => !reachedInspectorTypes.Contains(type))
 			                              .Select(type => type.FullName)
 			                              .ToList();
 			Assert.That(unreached, Is.Empty, "No sample shows these inspectors, so they are never built by a test:\n" + string.Join("\n", unreached));

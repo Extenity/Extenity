@@ -26,9 +26,6 @@ namespace Extenity.InspectorToolbox.Editor
 		public bool Sections { get; internal set; }
 		public bool SectionsSearchable { get; internal set; }
 
-		/// <summary>How many instances were made from this blueprint since the last domain reload or reset.</summary>
-		public int InstantiationCount { get; internal set; }
-
 		internal readonly List<FieldRuleData> Rules = new List<FieldRuleData>();
 		internal readonly Dictionary<string, FieldRuleData> RulesByName = new Dictionary<string, FieldRuleData>(StringComparer.Ordinal);
 		internal readonly List<InspectorNode> Nodes = new List<InspectorNode>();
@@ -236,7 +233,6 @@ namespace Extenity.InspectorToolbox.Editor
 					? $"'{TargetType.Name}' is an object type. Its inspector draws the whole object, not the property '{propertyPath}'."
 					: $"'{TargetType.Name}' is a nested type. Its inspector needs the path of the property to draw.");
 			}
-			InstantiationCount++;
 			return new InspectorInstance(this, serializedObject, propertyPath, label);
 		}
 

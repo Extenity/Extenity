@@ -583,7 +583,6 @@ namespace ExtenityTests.InspectorToolbox
 			target.NestedList.Add(new FixtureNested { Id = "second" });
 			target.Shape = new FixtureSquare { Name = "a square" };
 			target.Shapes.Add(new FixtureCircle { Name = "a circle" });
-			InspectorTestTools.ResetInstantiationCounts();
 
 			var built = Build(target);
 			Assert.IsNull(built.RootInstance);
@@ -601,9 +600,11 @@ namespace ExtenityTests.InspectorToolbox
 			target.NestedList[0].Id = "renamed";
 			Pump(built);
 			CollectionAssert.Contains(built.Root.Query<LazyFoldout>().ToList().Select(foldout => foldout.text).ToList(), "renamed");
-			Assert.GreaterOrEqual(InspectorTestTools.GetBlueprint(typeof(FixtureNestedInspector)).InstantiationCount, 3);
-			Assert.GreaterOrEqual(InspectorTestTools.GetBlueprint(typeof(FixtureShapeInspector)).InstantiationCount, 2);
-			Assert.GreaterOrEqual(InspectorTestTools.GetBlueprint(typeof(FixtureStructInspector)).InstantiationCount, 1);
+			var instanceCounts = built.GetAllInstances().GroupBy(instance => instance.Blueprint.InspectorType)
+			                          .ToDictionary(group => group.Key, group => group.Count());
+			Assert.GreaterOrEqual(instanceCounts.GetValueOrDefault(typeof(FixtureNestedInspector)), 3);
+			Assert.GreaterOrEqual(instanceCounts.GetValueOrDefault(typeof(FixtureShapeInspector)), 2);
+			Assert.GreaterOrEqual(instanceCounts.GetValueOrDefault(typeof(FixtureStructInspector)), 1);
 
 			// The rule of the base type's inspector applies to the derived instance, and the derived type's own
 			// field is still drawn.

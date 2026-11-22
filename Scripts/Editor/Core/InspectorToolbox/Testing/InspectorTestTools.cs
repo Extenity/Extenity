@@ -78,13 +78,6 @@ namespace Extenity.InspectorToolbox.Editor
 			return ((ICustomizedInspector)Activator.CreateInstance(inspectorType)).GetBlueprint();
 		}
 
-		/// <summary>Sets the instantiation count of every blueprint built so far back to zero.</summary>
-		public static void ResetInstantiationCounts()
-		{
-			foreach (var blueprint in InspectorBlueprints.Built)
-				blueprint.InstantiationCount = 0;
-		}
-
 		/// <summary>Runs what a click on the button runs.</summary>
 		public static void Click(Button button)
 		{
