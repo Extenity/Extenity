@@ -33,9 +33,6 @@ namespace Extenity.InspectorToolbox.Editor
 			return blueprint;
 		}
 
-		/// <summary>Every blueprint built so far.</summary>
-		public static IReadOnlyCollection<InspectorBlueprint> Built => ByInspectorType.Values;
-
 		/// <summary>
 		/// The blueprint of the nested inspector that Unity would draw a value of the given type with, or false
 		/// when the type has no property drawer or its drawer is not a nested inspector.
