@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 using Extenity.DataToolbox;
 using Extenity.Testing;
 using Extenity.UnityTestToolbox;
@@ -966,6 +968,13 @@ namespace ExtenityTests.DataToolbox
 		[Test]
 		public void ToStringMillisecondsFromSeconds()
 		{
+			// The result is the same whatever the culture of the machine.
+			AssertMillisecondsFromSeconds();
+			RunInCommaDecimalSeparatorCulture(AssertMillisecondsFromSeconds);
+		}
+
+		private static void AssertMillisecondsFromSeconds()
+		{
 			Assert.AreEqual("0.000", (0d).ToStringMillisecondsFromSeconds());
 			Assert.AreEqual("1000.000", (1d).ToStringMillisecondsFromSeconds());
 			Assert.AreEqual("2000.000", (2d).ToStringMillisecondsFromSeconds());
@@ -987,6 +996,51 @@ namespace ExtenityTests.DataToolbox
 			Assert.AreEqual("1.002", (0.0010016d).ToStringMillisecondsFromSeconds());
 			Assert.AreEqual("1.999", (0.0019994d).ToStringMillisecondsFromSeconds());
 			Assert.AreEqual("2.000", (0.0019996d).ToStringMillisecondsFromSeconds());
+		}
+
+		[Test]
+		public void ToStringMicrosecondsFromSeconds()
+		{
+			// The result is the same whatever the culture of the machine.
+			AssertMicrosecondsFromSeconds();
+			RunInCommaDecimalSeparatorCulture(AssertMicrosecondsFromSeconds);
+		}
+
+		private static void AssertMicrosecondsFromSeconds()
+		{
+			Assert.AreEqual("0.000", (0d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("1000000.000", (1d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("60000000.000", (60d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("10000000000.000", (10000d).ToStringMicrosecondsFromSeconds());
+
+			Assert.AreEqual("0.001", (0.000000001d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("1.000", (0.000001d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("1.500", (0.0000015d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("1000.000", (0.001d).ToStringMicrosecondsFromSeconds());
+			Assert.AreEqual("1001.000", (0.001001d).ToStringMicrosecondsFromSeconds());
+		}
+
+		/// <summary>
+		/// Runs the action with Turkish as the culture of the current thread, which writes a comma as the
+		/// decimal separator, so that a test shows a method that formats with the culture of the machine on any
+		/// machine. The earlier culture is put back afterwards.
+		/// </summary>
+		private static void RunInCommaDecimalSeparatorCulture(Action action)
+		{
+			var commaCulture = CultureInfo.GetCultureInfo("tr-TR");
+			Assert.AreEqual(",", commaCulture.NumberFormat.NumberDecimalSeparator, "The culture chosen for the test does not write a decimal comma.");
+
+			var thread = Thread.CurrentThread;
+			var previousCulture = thread.CurrentCulture;
+			try
+			{
+				thread.CurrentCulture = commaCulture;
+				action();
+			}
+			finally
+			{
+				thread.CurrentCulture = previousCulture;
+			}
 		}
 
 		#endregion

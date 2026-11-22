@@ -1494,12 +1494,12 @@ namespace Extenity.DataToolbox
 
 		public static string ToStringMillisecondsFromSeconds(this double totalSeconds)
 		{
-			return (totalSeconds * 1000).ToString("0.000");
+			return (totalSeconds * 1000).ToString("0.000", CultureInfo.InvariantCulture);
 		}
 
 		public static string ToStringMicrosecondsFromSeconds(this double totalSeconds)
 		{
-			return (totalSeconds * 1000000).ToString("0.000");
+			return (totalSeconds * 1000000).ToString("0.000", CultureInfo.InvariantCulture);
 		}
 
 		#endregion
