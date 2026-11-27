@@ -83,17 +83,22 @@ namespace Extenity.DataToolbox
 
 		#region Deferred Save
 
-#if UNITY_5_3_OR_NEWER
 		private static bool _IsDeferredSavePending;
+#if UNITY_5_3_OR_NEWER
 		private static double DeferredSaveTriggerTime;
 #endif
+
+		/// <summary>
+		/// Whether a save requested with <see cref="DeferredSave"/> is still waiting to be written to disk.
+		/// </summary>
+		public static bool IsDeferredSavePending => _IsDeferredSavePending;
 
 		/// <summary>
 		/// Triggers a delayed save operation. If triggered again before the save happens, the closest of the two times
 		/// is kept, so a stream of changes is written at most once per delay rather than being put off by every change.
 		///
-		/// A pending save is also written when the application quits, which in the Editor includes leaving Play Mode.
-		/// Nothing is left pending from one Play Mode session to the next.
+		/// A pending save is also written when the application quits, which in the Editor includes leaving Play Mode, and
+		/// when <see cref="FlushDeferredSave"/> is called. Nothing is left pending from one Play Mode session to the next.
 		/// </summary>
 		public static void DeferredSave(float delay)
 		{
@@ -137,12 +142,15 @@ namespace Extenity.DataToolbox
 #endif
 			FlushDeferredSave();
 		}
+#endif
 
 		/// <summary>
-		/// Writes the save that <see cref="DeferredSave"/> left pending to disk now. Does nothing when no save is pending.
+		/// Writes the save that <see cref="DeferredSave"/> left pending to disk now, for example when the screen that made
+		/// the changes closes. Does nothing when no save is pending.
 		/// </summary>
-		private static void FlushDeferredSave()
+		public static void FlushDeferredSave()
 		{
+#if UNITY_5_3_OR_NEWER
 			if (!_IsDeferredSavePending)
 				return;
 
@@ -150,8 +158,10 @@ namespace Extenity.DataToolbox
 			Loop.DeregisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
 			Application.quitting -= FlushDeferredSave;
 			PlayerPrefs.Save();
-		}
+#else
+			throw new System.NotImplementedException();
 #endif
+		}
 
 		#endregion
 	}
