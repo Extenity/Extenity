@@ -89,9 +89,12 @@ namespace Extenity.DataToolbox
 #endif
 
 		/// <summary>
-		/// Triggers a delayed save operation. If triggered again consecutively, the delay will be set to the closest time.
+		/// Triggers a delayed save operation. If triggered again before the save happens, the closest of the two times
+		/// is kept, so a stream of changes is written at most once per delay rather than being put off by every change.
+		///
+		/// A pending save is also written when the application quits, which in the Editor includes leaving Play Mode.
+		/// Nothing is left pending from one Play Mode session to the next.
 		/// </summary>
-		/// <param name="delay"></param>
 		public static void DeferredSave(float delay)
 		{
 #if UNITY_5_3_OR_NEWER
@@ -110,6 +113,7 @@ namespace Extenity.DataToolbox
 			else
 			{
 				Loop.RegisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
+				Application.quitting += FlushDeferredSave;
 				_IsDeferredSavePending = true;
 			}
 
@@ -131,8 +135,20 @@ namespace Extenity.DataToolbox
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred saving triggered at '{Loop.UnscaledTime}'");
 #endif
+			FlushDeferredSave();
+		}
+
+		/// <summary>
+		/// Writes the save that <see cref="DeferredSave"/> left pending to disk now. Does nothing when no save is pending.
+		/// </summary>
+		private static void FlushDeferredSave()
+		{
+			if (!_IsDeferredSavePending)
+				return;
+
 			_IsDeferredSavePending = false;
 			Loop.DeregisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
+			Application.quitting -= FlushDeferredSave;
 			PlayerPrefs.Save();
 		}
 #endif
