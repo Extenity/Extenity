@@ -83,7 +83,10 @@ namespace Extenity.DataToolbox
 
 		#region Deferred Save
 
-		private static double DeferredSaveTriggerTime = -1.0;
+#if UNITY_5_3_OR_NEWER
+		private static bool _IsDeferredSavePending;
+		private static double DeferredSaveTriggerTime;
+#endif
 
 		/// <summary>
 		/// Triggers a delayed save operation. If triggered again consecutively, the delay will be set to the closest time.
@@ -94,7 +97,7 @@ namespace Extenity.DataToolbox
 #if UNITY_5_3_OR_NEWER
 			var now = Loop.UnscaledTime;
 
-			if (DeferredSaveTriggerTime > 0.0)
+			if (_IsDeferredSavePending)
 			{
 				// See if which one is bigger and choose the closest one.
 				var remainingTimeOfOngoingOperation = DeferredSaveTriggerTime - now;
@@ -107,6 +110,7 @@ namespace Extenity.DataToolbox
 			else
 			{
 				Loop.RegisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
+				_IsDeferredSavePending = true;
 			}
 
 			DeferredSaveTriggerTime = now + delay;
@@ -127,7 +131,7 @@ namespace Extenity.DataToolbox
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred saving triggered at '{Loop.UnscaledTime}'");
 #endif
-			DeferredSaveTriggerTime = -1.0;
+			_IsDeferredSavePending = false;
 			Loop.DeregisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
 			PlayerPrefs.Save();
 		}
