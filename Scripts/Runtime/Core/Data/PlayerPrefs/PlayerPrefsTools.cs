@@ -93,6 +93,13 @@ namespace Extenity.DataToolbox
 		/// </summary>
 		public static bool IsDeferredSavePending => _IsDeferredSavePending;
 
+#if UNITY_5_3_OR_NEWER
+		/// <summary>
+		/// Writes the preferences to disk. Tests replace it to count the writes without touching the disk.
+		/// </summary>
+		internal static Action SaveToDisk = PlayerPrefs.Save;
+#endif
+
 		/// <summary>
 		/// Triggers a delayed save operation. If triggered again before the save happens, the closest of the two times
 		/// is kept, so a stream of changes is written at most once per delay rather than being put off by every change.
@@ -103,8 +110,15 @@ namespace Extenity.DataToolbox
 		public static void DeferredSave(float delay)
 		{
 #if UNITY_5_3_OR_NEWER
-			var now = Loop.UnscaledTime;
+			DeferredSave(delay, Loop.UnscaledTime);
+#else
+			throw new System.NotImplementedException();
+#endif
+		}
 
+#if UNITY_5_3_OR_NEWER
+		internal static void DeferredSave(float delay, double now)
+		{
 			if (_IsDeferredSavePending)
 			{
 				// See if which one is bigger and choose the closest one.
@@ -126,19 +140,20 @@ namespace Extenity.DataToolbox
 #if EnableDeferredSaveLogging
 			Log.Info($"Deferred save with a delay of '{delay}' is set for '{DeferredSaveTriggerTime}'");
 #endif
-#else
-			throw new System.NotImplementedException();
-#endif
 		}
 
-#if UNITY_5_3_OR_NEWER
 		private static void CheckDeferredSave()
 		{
-			if (Loop.UnscaledTime < DeferredSaveTriggerTime)
+			CheckDeferredSave(Loop.UnscaledTime);
+		}
+
+		internal static void CheckDeferredSave(double now)
+		{
+			if (now < DeferredSaveTriggerTime)
 				return;
 
 #if EnableDeferredSaveLogging
-			Log.Info($"Deferred saving triggered at '{Loop.UnscaledTime}'");
+			Log.Info($"Deferred saving triggered at '{now}'");
 #endif
 			FlushDeferredSave();
 		}
@@ -157,7 +172,7 @@ namespace Extenity.DataToolbox
 			_IsDeferredSavePending = false;
 			Loop.DeregisterUpdateEvery100MillisecondsUnscaled(CheckDeferredSave);
 			Application.quitting -= FlushDeferredSave;
-			PlayerPrefs.Save();
+			SaveToDisk();
 #else
 			throw new System.NotImplementedException();
 #endif
