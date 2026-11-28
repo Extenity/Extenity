@@ -9,7 +9,7 @@ namespace Extenity.ProfilingToolbox
 
 		public double ElapsedSecondsDouble => PrecisionTiming.PreciseTime - StartTime;
 		public float ElapsedSeconds => (float)(PrecisionTiming.PreciseTime - StartTime);
-		public float ElapsedMilliseconds => 0.001f * (float)(PrecisionTiming.PreciseTime - StartTime);
+		public float ElapsedMilliseconds => (float)((PrecisionTiming.PreciseTime - StartTime) * 1000.0);
 
 		#region Initialization
 
